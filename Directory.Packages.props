@@ -7,7 +7,9 @@
   <ItemGroup>
     <!-- Aspire packages -->
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.5.1" />
+      <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="9.5.1"/>
     <PackageVersion Include="Aspire.Hosting.Redis" Version="9.5.1" />
+      <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.5.1"/>
     <PackageVersion Include="Aspire.StackExchange.Redis.OutputCaching" Version="9.5.1" />
     <!-- ASP.NET Core packages -->
     <PackageVersion Include="JetBrains.Annotations" Version="2025.2.2" />
