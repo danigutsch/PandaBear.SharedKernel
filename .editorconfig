@@ -86,3 +86,14 @@ csharp_prefer_static_local_function = true:suggestion
 csharp_style_conditional_delegate_call = true:suggestion
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 dotnet_diagnostic.CA1812.severity = silent
+
+# Migrations - disable code analysis warnings
+[**/Migrations/*.cs]
+dotnet_diagnostic.CA1002.severity = none
+dotnet_diagnostic.CA1062.severity = none
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1711.severity = none
+dotnet_diagnostic.CA1814.severity = none
+dotnet_diagnostic.CA1852.severity = none
+dotnet_diagnostic.IDE0161.severity = none
+generated_code = true
