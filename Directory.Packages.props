@@ -13,34 +13,39 @@
         <PackageVersion Include="Aspire.StackExchange.Redis.OutputCaching" Version="9.5.2"/>
         <!-- ASP.NET Core packages -->
         <PackageVersion Include="JetBrains.Annotations" Version="2025.2.2"/>
-        <PackageVersion Include="Microsoft.AspNetCore.Components.QuickGrid" Version="9.0.10"/>
-        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0-rc.1.25451.107"/>
-        <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.0-rc.1.25451.107"/>
-        <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0-rc.1.25451.107"/>
+        <PackageVersion Include="Microsoft.AspNetCore.Components.QuickGrid" Version="10.0.0-rc.2.25502.107"/>
+        <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0-rc.2.25502.107"/>
         <!-- Compiler tooling -->
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0"/>
+        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0"/>
         <!-- Extensions packages -->
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+        <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0-rc.2.25502.107">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageVersion>
-        <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.9.0"/>
-        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.0-rc.1.25451.107"/>
-        <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.1"/>
+        <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.0-rc.2.25502.107"/>
+        <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.10.0"/>
+        <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.2"/>
         <!-- OpenTelemetry packages -->
         <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.13.1"/>
         <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.13.1"/>
         <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.13.0"/>
-        <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.12.0-beta.2"/>
-        <PackageVersion Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.12.0-beta.1"/>
+        <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.13.0-beta.2"/>
+        <PackageVersion Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.13.0-beta.1"/>
         <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.13.0"/>
-        <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0"/>
+        <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.13.0"/>
         <!-- Test packages -->
-        <PackageVersion Include="TngTech.ArchUnitNET.xUnitV3" Version="0.12.3"/>
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0"/>
         <PackageVersion Include="coverlet.collector" Version="6.0.4"/>
-        <PackageVersion Include="Reqnroll.xunit.v3" Version="3.2.0"/>
-        <PackageVersion Include="xunit.v3" Version="3.1.0"/>
+        <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0-rc.2.25502.107"/>
+        <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.0-rc.2.25502.107"/>
+        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.0"/>
+        <PackageVersion Include="Reqnroll.xunit.v3" Version="3.2.1"/>
+        <PackageVersion Include="TngTech.ArchUnitNET.xUnitV3" Version="0.12.3"/>
         <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5"/>
+        <PackageVersion Include="xunit.v3" Version="3.2.0"/>
+
+
+        <!-- **TEMPORARY** -->
+        <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="17.14.28"/>
+        <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.14.28"/>
     </ItemGroup>
 </Project>
