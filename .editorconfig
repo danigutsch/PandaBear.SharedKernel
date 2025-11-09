@@ -128,6 +128,25 @@ insert_final_newline = true
 trim_trailing_whitespace = true
 insert_final_newline = true
 
+# Shell scripts (Unix line endings required)
+[*.sh]
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+
+# Shell script configuration files
+[.shellcheckrc]
+end_of_line = lf
+insert_final_newline = true
+
+# Git hooks (shell scripts without extension)
+[scripts/{pre-commit,post-commit,prepare-commit-msg,commit-msg}]
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+
 # Migrations - disable code analysis warnings
 [**/Migrations/*.cs]
 dotnet_diagnostic.CA1002.severity = none
