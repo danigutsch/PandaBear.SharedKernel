@@ -69,6 +69,13 @@ insert_final_newline = true
 csharp_using_directive_placement = outside_namespace:warning
 csharp_prefer_simple_using_statement = true:warning
 csharp_prefer_braces = true:warning
+
+csharp_max_line_length = 120
+csharp_wrap_parameters_style = wrap_if_long
+
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+
 csharp_style_namespace_declarations = file_scoped:warning
 csharp_style_prefer_method_group_conversion = true:suggestion
 csharp_style_prefer_top_level_statements = true:suggestion
