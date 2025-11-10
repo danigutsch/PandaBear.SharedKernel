@@ -42,8 +42,6 @@
         <PackageVersion Include="TngTech.ArchUnitNET.xUnitV3" Version="0.12.3"/>
         <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5"/>
         <PackageVersion Include="xunit.v3" Version="3.2.0"/>
-
-
         <!-- **TEMPORARY** -->
         <PackageVersion Include="Microsoft.Build.Tasks.Core" Version="17.14.28"/>
         <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.14.28"/>
