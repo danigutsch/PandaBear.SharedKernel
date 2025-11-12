@@ -16,7 +16,7 @@
         <PackageVersion Include="Microsoft.AspNetCore.Components.QuickGrid" Version="10.0.0-rc.2.25502.107"/>
         <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0-rc.2.25502.107"/>
         <!-- Compiler tooling -->
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0"/>
+        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0"/>
         <!-- Extensions packages -->
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.11">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
