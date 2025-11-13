@@ -70,7 +70,7 @@ csharp_using_directive_placement = outside_namespace:warning
 csharp_prefer_simple_using_statement = true:warning
 csharp_prefer_braces = true:warning
 
-csharp_max_line_length = 120
+csharp_max_line_length = 200
 csharp_wrap_parameters_style = wrap_if_long
 
 csharp_indent_block_contents = true
