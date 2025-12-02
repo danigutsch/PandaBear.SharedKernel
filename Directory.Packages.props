@@ -6,12 +6,12 @@
     </PropertyGroup>
     <ItemGroup>
         <!-- Aspire packages -->
-        <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.0.0"/>
-        <PackageVersion Include="Aspire.Hosting.Redis" Version="13.0.0"/>
-        <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.5.2"/>
-        <PackageVersion Include="Aspire.StackExchange.Redis.OutputCaching" Version="13.0.0"/>
+        <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.0.1"/>
+        <PackageVersion Include="Aspire.Hosting.Redis" Version="13.0.1"/>
+        <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.0.1"/>
+        <PackageVersion Include="Aspire.StackExchange.Redis.OutputCaching" Version="13.0.1"/>
         <!-- ASP.NET Core packages -->
-        <PackageVersion Include="JetBrains.Annotations" Version="2025.2.2"/>
+        <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4"/>
         <PackageVersion Include="Microsoft.AspNetCore.Components.QuickGrid" Version="10.0.0"/>
         <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0"/>
         <!-- Extensions packages -->
@@ -40,8 +40,6 @@
         <PackageVersion Include="Reqnroll.xunit.v3" Version="3.2.1"/>
         <PackageVersion Include="TngTech.ArchUnitNET.xUnitV3" Version="0.12.3"/>
         <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5"/>
-        <PackageVersion Include="xunit.v3" Version="3.2.0"/>
-        <!-- **TEMPORARY** -->
-        <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0"/>
+        <PackageVersion Include="xunit.v3" Version="3.2.1"/>
     </ItemGroup>
 </Project>
