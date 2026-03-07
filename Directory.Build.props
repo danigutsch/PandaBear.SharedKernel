@@ -6,7 +6,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<NoDefaultExcludes>true</NoDefaultExcludes>
-		<InvariantGlobalization>true</InvariantGlobalization>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
