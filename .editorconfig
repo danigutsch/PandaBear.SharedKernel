@@ -61,6 +61,7 @@ dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
 dotnet_style_prefer_compound_assignment = true:warning
 dotnet_style_prefer_simplified_interpolation = true:warning
 dotnet_diagnostic.CA2007.severity = none
+dotnet_code_quality.CA2000.dispose_ownership_transfer_at_method_call = true
 dotnet_style_predefined_type_for_locals_parameters_members = true:silent
 
 [*.cs]
