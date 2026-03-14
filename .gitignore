@@ -365,3 +365,6 @@ FodyWeavers.xsd
 
 # Gherkin feature files generated code-behind
 *.feature.cs
+
+# Temporary reference files for user reference
+tmp/
