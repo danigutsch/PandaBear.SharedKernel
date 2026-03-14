@@ -165,3 +165,8 @@ dotnet_diagnostic.CA1814.severity = none
 dotnet_diagnostic.CA1852.severity = none
 dotnet_diagnostic.IDE0161.severity = none
 generated_code = true
+
+# C# extension block false-positive in .NET 10 analyzers (dotnet/sdk#51681).
+# Keep scoped to the single file and remove when upgrading to an SDK with the fix.
+[tests/ViajantesTurismo.Admin.Tests.Shared/Integration/Helpers/ApiTestExtensions.cs]
+dotnet_diagnostic.CA1034.severity = none
