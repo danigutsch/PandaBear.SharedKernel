@@ -15,4 +15,13 @@
 		<AnalysisMode>All</AnalysisMode>
 	</PropertyGroup>
 
+	<!-- Centralize build output for dev containers to avoid Windows bind mount permission issues -->
+	<!-- See: https://code.visualstudio.com/remote/advancedcontainers/improve-performance -->
+	<PropertyGroup Condition="'$(REMOTE_CONTAINERS)' == 'true'">
+		<BaseIntermediateOutputPath>$(MSBuildThisFileDirectory).build\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
+		<BaseOutputPath>$(MSBuildThisFileDirectory).build\bin\$(MSBuildProjectName)\</BaseOutputPath>
+		<OutputPath>$(BaseOutputPath)$(Configuration)\</OutputPath>
+	</PropertyGroup>
+
 </Project>
