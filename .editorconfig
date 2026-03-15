@@ -102,6 +102,7 @@ csharp_style_prefer_not_pattern = true:warning
 csharp_style_prefer_extended_property_pattern = true:warning
 dotnet_diagnostic.CA1812.severity = silent
 dotnet_diagnostic.CA1716.severity = none
+dotnet_diagnostic.CA1062.severity = warning
 
 # Shell scripts
 [*.{sh,bash}]
