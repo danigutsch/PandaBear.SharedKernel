@@ -2,7 +2,6 @@
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="'' != $([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
 	<PropertyGroup>
-		<IsTestProject>true</IsTestProject>
 		<NoWarn>$(NoWarn)CA1062;CA1707;CA1515;CA2007;CA5394;CS1591</NoWarn>
 		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
 		<TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
