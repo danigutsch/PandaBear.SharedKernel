@@ -172,3 +172,8 @@ generated_code = true
 # Keep scoped to the single file and remove when upgrading to an SDK with the fix.
 [tests/ViajantesTurismo.Admin.Tests.Shared/Integration/Helpers/ApiTestExtensions.cs]
 dotnet_diagnostic.CA1034.severity = none
+
+# Test helpers and test cases intentionally favor readable builders/overloads.
+# Keep S107 disabled across the tests tree.
+[tests/**.cs]
+dotnet_diagnostic.S107.severity = none
