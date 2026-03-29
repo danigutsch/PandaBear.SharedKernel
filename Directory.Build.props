@@ -18,6 +18,8 @@
 	<!-- Centralize build output for dev containers to avoid Windows bind mount permission issues -->
 	<!-- See: https://code.visualstudio.com/remote/advancedcontainers/improve-performance -->
 	<PropertyGroup Condition="'$(REMOTE_CONTAINERS)' == 'true'">
+		<!-- Keep project-local bin/obj excluded when container outputs move to .build -->
+		<DefaultItemExcludes>$(DefaultItemExcludes);bin/**;obj/**</DefaultItemExcludes>
 		<BaseIntermediateOutputPath>$(MSBuildThisFileDirectory).build\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
 		<IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
 		<BaseOutputPath>$(MSBuildThisFileDirectory).build\bin\$(MSBuildProjectName)\</BaseOutputPath>
