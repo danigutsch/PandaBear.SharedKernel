@@ -14,11 +14,19 @@
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 		<AnalysisLevel>latest</AnalysisLevel>
 		<AnalysisMode>All</AnalysisMode>
+		<NuGetAudit>true</NuGetAudit>
+		<NuGetAuditMode>all</NuGetAuditMode>
+		<NuGetAuditLevel>high</NuGetAuditLevel>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
 		<PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="all" />
 	</ItemGroup>
+
+	<PropertyGroup Condition="'$(CI)' == 'true' or '$(TF_BUILD)' == 'True' or '$(GITHUB_ACTIONS)' == 'true'">
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+		<RestoreLockedMode>true</RestoreLockedMode>
+	</PropertyGroup>
 
 	<!-- Centralize build output for dev containers to avoid Windows bind mount permission issues -->
 	<!-- See: https://code.visualstudio.com/remote/advancedcontainers/improve-performance -->
