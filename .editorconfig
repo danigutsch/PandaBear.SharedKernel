@@ -177,3 +177,10 @@ dotnet_diagnostic.CA1034.severity = none
 # Keep S107 disabled across the tests tree.
 [tests/**.cs]
 dotnet_diagnostic.S107.severity = none
+
+# Behavior step definitions intentionally use repeated binding shapes and no-op bridge steps
+# to keep Gherkin wording readable. Keep these Sonar rules scoped to step files only.
+[tests/ViajantesTurismo.Admin.BehaviorTests/Steps/**/*.cs]
+dotnet_diagnostic.S1186.severity = none
+dotnet_diagnostic.S4136.severity = none
+dotnet_diagnostic.S4144.severity = none
