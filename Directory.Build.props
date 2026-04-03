@@ -16,6 +16,10 @@
 		<AnalysisMode>All</AnalysisMode>
 	</PropertyGroup>
 
+	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
+		<PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="all" />
+	</ItemGroup>
+
 	<!-- Centralize build output for dev containers to avoid Windows bind mount permission issues -->
 	<!-- See: https://code.visualstudio.com/remote/advancedcontainers/improve-performance -->
 	<PropertyGroup Condition="'$(REMOTE_CONTAINERS)' == 'true'">
