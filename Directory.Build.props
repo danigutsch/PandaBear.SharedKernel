@@ -7,6 +7,7 @@
 		<Nullable>enable</Nullable>
 		<NoDefaultExcludes>true</NoDefaultExcludes>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
