@@ -368,3 +368,9 @@ FodyWeavers.xsd
 
 # Temporary reference files for user reference
 tmp/
+
+# Local environment files (templates such as .env.example are committed separately)
+.env
+.env.local
+.env.*.local
+.local/
