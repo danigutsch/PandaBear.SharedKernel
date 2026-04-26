@@ -34,6 +34,7 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
 
         // Assert
+        GeneratorSnapshotVerifier.Verify(generatedSource);
         Assert.Contains("RequestCount = 1;", generatedSource, StringComparison.Ordinal);
         Assert.Contains("HandlerCount = 1;", generatedSource, StringComparison.Ordinal);
         Assert.Contains("PipelineCount = 1;", generatedSource, StringComparison.Ordinal);
