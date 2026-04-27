@@ -22,6 +22,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
+        <ProjectReference Include="..\SharedKernel.Mediator.Testing.ReferenceDispatcher\SharedKernel.Mediator.Testing.ReferenceDispatcher.csproj" />
     </ItemGroup>
 
 </Project>

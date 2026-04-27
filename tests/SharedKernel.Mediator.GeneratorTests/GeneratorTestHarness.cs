@@ -1,6 +1,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using SharedKernel.Mediator.SourceGenerator;
+using System.Reflection;
+using System.Runtime.Loader;
 
 namespace SharedKernel.Mediator.GeneratorTests;
 
@@ -20,12 +22,23 @@ internal static class GeneratorTestHarness
         IEnumerable<MetadataReference>? additionalReferences = null,
         bool includeMediatorReference = true)
     {
-        var syntaxTree = CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview));
+        return CreateCompilation([DefaultUsings + source], assemblyName, additionalReferences, includeMediatorReference);
+    }
+
+    public static CSharpCompilation CreateCompilation(
+        IEnumerable<string> sources,
+        string assemblyName = "SharedKernel.Mediator.Tests.Dynamic",
+        IEnumerable<MetadataReference>? additionalReferences = null,
+        bool includeMediatorReference = true)
+    {
+        var syntaxTrees = sources
+            .Select(static source => CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Preview)))
+            .ToArray();
         var references = GetMetadataReferences(additionalReferences, includeMediatorReference);
 
         return CSharpCompilation.Create(
             assemblyName: assemblyName,
-            syntaxTrees: [syntaxTree],
+            syntaxTrees: syntaxTrees,
             references: references,
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
     }
@@ -82,6 +95,23 @@ internal static class GeneratorTestHarness
 
         stream.Position = 0;
         return MetadataReference.CreateFromImage(stream.ToArray());
+    }
+
+    public static Assembly LoadAssembly(CSharpCompilation compilation)
+    {
+        using var stream = new MemoryStream();
+        var emitResult = compilation.Emit(stream);
+
+        if (!emitResult.Success)
+        {
+            var diagnostics = string.Join(
+                Environment.NewLine,
+                emitResult.Diagnostics.Select(static diagnostic => diagnostic.ToString()));
+            throw new InvalidOperationException($"Failed to emit test compilation:{Environment.NewLine}{diagnostics}");
+        }
+
+        stream.Position = 0;
+        return new AssemblyLoadContext(compilation.AssemblyName, isCollectible: true).LoadFromStream(stream);
     }
 
     private static List<MetadataReference> GetMetadataReferences(

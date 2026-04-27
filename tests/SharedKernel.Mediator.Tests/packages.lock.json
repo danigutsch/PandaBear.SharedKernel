@@ -144,6 +144,12 @@
       },
       "sharedkernel.mediator.abstractions": {
         "type": "Project"
+      },
+      "sharedkernel.mediator.testing.referencedispatcher": {
+        "type": "Project",
+        "dependencies": {
+          "SharedKernel.Mediator.Abstractions": "[1.0.0, )"
+        }
       }
     }
   }

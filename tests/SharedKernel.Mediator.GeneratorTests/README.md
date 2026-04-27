@@ -9,6 +9,7 @@ Unit tests for `SharedKernel.Mediator.SourceGenerator`.
 - Generated DI registration output
 - Generated mediator shell output
 - Generated DI accessibility and duplicate-registration diagnostics
+- Generated dispatch behavior compared with the reference dispatcher
 - Deterministic generator behavior across repeated runs
 
 ## Current Traits

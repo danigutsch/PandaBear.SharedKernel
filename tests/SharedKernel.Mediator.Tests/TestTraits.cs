@@ -9,4 +9,5 @@ internal static class TestTraits
     public const string UnitScope = "Unit";
     public const string AbstractionsComponent = "SharedKernel.Mediator.Abstractions";
     public const string ContractsCapability = "Contracts";
+    public const string ReferenceDispatcherCapability = "ReferenceDispatcher";
 }
