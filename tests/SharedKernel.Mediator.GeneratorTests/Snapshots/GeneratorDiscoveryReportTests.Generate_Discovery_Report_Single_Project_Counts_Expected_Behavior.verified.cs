@@ -2,6 +2,9 @@
 
 namespace SharedKernel.Mediator.Generated;
 
+/// <summary>
+/// Provides the generated discovery report for the current mediator compilation.
+/// </summary>
 internal static class MediatorDiscoveryReport
 {
     public const int RequestCount = 1;

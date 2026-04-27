@@ -4,8 +4,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace SharedKernel.Mediator;
 
+/// <summary>
+/// Provides the generated dependency injection registrations for mediator services.
+/// </summary>
 public static partial class SharedKernelMediatorServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds the generated mediator registrations to the service collection.
+    /// </summary>
+    /// <param name="services">The service collection to populate.</param>
+    /// <returns>The same service collection so calls can be chained.</returns>
     public static IServiceCollection AddSharedKernelMediator(this IServiceCollection services)
     {
         global::System.ArgumentNullException.ThrowIfNull(services);

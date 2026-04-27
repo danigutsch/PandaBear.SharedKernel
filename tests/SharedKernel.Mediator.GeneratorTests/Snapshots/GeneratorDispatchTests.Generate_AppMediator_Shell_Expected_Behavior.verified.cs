@@ -2,8 +2,15 @@
 
 namespace SharedKernel.Mediator;
 
+/// <summary>
+/// Provides the generated mediator shell owned by the consumer compilation.
+/// </summary>
 public sealed partial class AppMediator : IMediator
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AppMediator"/> class.
+    /// </summary>
+    /// <param name="services">The scoped service provider used by generated mediator code.</param>
     public AppMediator(global::System.IServiceProvider services)
     {
         global::System.ArgumentNullException.ThrowIfNull(services);
@@ -11,8 +18,12 @@ public sealed partial class AppMediator : IMediator
         Services = services;
     }
 
+    /// <summary>
+    /// Gets the scoped service provider used by generated mediator code.
+    /// </summary>
     internal global::System.IServiceProvider Services { get; }
 
+    /// <inheritdoc />
     public global::System.Threading.Tasks.ValueTask<TResponse> Send<TResponse>(
         global::SharedKernel.Mediator.IRequest<TResponse> request,
         global::System.Threading.CancellationToken ct)
@@ -22,6 +33,7 @@ public sealed partial class AppMediator : IMediator
         throw new global::System.NotSupportedException("Generated request dispatch is not available yet.");
     }
 
+    /// <inheritdoc />
     public global::System.Threading.Tasks.ValueTask Publish<TNotification>(
         TNotification notification,
         global::System.Threading.CancellationToken ct)
