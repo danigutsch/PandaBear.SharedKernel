@@ -55,6 +55,10 @@ public sealed class GeneratorDependencyInjectionTests
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedSource);
         Assert.Contains("public static partial class SharedKernelMediatorServiceCollectionExtensions", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("services.AddScoped<AppMediator>();", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("services.AddScoped<ISender>(static sp => sp.GetRequiredService<AppMediator>());", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("services.AddScoped<IPublisher>(static sp => sp.GetRequiredService<AppMediator>());", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("services.AddScoped<IMediator>(static sp => sp.GetRequiredService<AppMediator>());", generatedSource, StringComparison.Ordinal);
         Assert.Contains("services.AddTransient<global::Demo.CreateTourHandler>();", generatedSource, StringComparison.Ordinal);
         Assert.Contains("services.AddTransient<global::SharedKernel.Mediator.ICommandHandler<global::Demo.CreateTour, int>, global::Demo.CreateTourHandler>();", generatedSource, StringComparison.Ordinal);
         Assert.Contains("services.AddTransient<global::SharedKernel.Mediator.IPipelineBehavior<global::Demo.CreateTour, int>, global::Demo.ValidationBehavior>();", generatedSource, StringComparison.Ordinal);
