@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace SharedKernel.Mediator.GeneratorTests;
 
 [Trait(TestTraits.CapabilityName, TestTraits.DependencyInjectionCapability)]
@@ -108,5 +110,89 @@ public sealed class GeneratorDependencyInjectionTests
         Assert.Contains("services.AddTransient<global::Demo.CreateTourHandler>();", generatedSource, StringComparison.Ordinal);
         Assert.Contains("services.AddTransient<global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
         Assert.Contains("services.AddTransient<global::SharedKernel.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_Service_Registration_Internal_Handler_In_Primary_Assembly_Expected_Behavior()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            internal sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+        var diagnostics = runResult.Results.Single().Diagnostics;
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == "SKMED010");
+        Assert.Contains("services.AddTransient<global::Demo.CreateTourHandler>();", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_Service_Registration_Internal_Handler_From_Marked_Module_Diagnostic_Expected_Behavior()
+    {
+        // Arrange
+        const string moduleSource = """
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+
+            namespace ModuleA;
+
+            public sealed record SearchTours(string Query) : IQuery<int>;
+
+            internal sealed class SearchToursHandler : IQueryHandler<SearchTours, int>
+            {
+                public ValueTask<int> Handle(SearchTours request, CancellationToken ct) => ValueTask.FromResult(10);
+            }
+            """;
+        var moduleReference = GeneratorTestHarness.CreateMetadataReference(moduleSource, "SharedKernel.Mediator.Tests.ModuleA");
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: [moduleReference]);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+        var diagnostics = runResult.Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == "SKMED010"
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::ModuleA.SearchToursHandler", StringComparison.Ordinal));
+        Assert.DoesNotContain("services.AddTransient<global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "services.AddTransient<global::SharedKernel.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();",
+            generatedSource,
+            StringComparison.Ordinal);
     }
 }

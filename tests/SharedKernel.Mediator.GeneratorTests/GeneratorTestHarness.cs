@@ -34,11 +34,23 @@ internal static class GeneratorTestHarness
         CSharpCompilation compilation,
         string hintName = "SharedKernel.Mediator.Generated.DiscoveryReport.g.cs")
     {
+        var runResult = RunGeneratorDriver(compilation);
+        return GetGeneratedSource(runResult, hintName);
+    }
+
+    public static GeneratorDriverRunResult RunGeneratorDriver(CSharpCompilation compilation)
+    {
         var generator = new SharedKernelMediatorGenerator();
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
 
         driver = driver.RunGenerators(compilation);
-        var runResult = driver.GetRunResult();
+        return driver.GetRunResult();
+    }
+
+    public static string GetGeneratedSource(
+        GeneratorDriverRunResult runResult,
+        string hintName = "SharedKernel.Mediator.Generated.DiscoveryReport.g.cs")
+    {
         var generatedSource = runResult.Results.Single().GeneratedSources.SingleOrDefault(
             source => string.Equals(source.HintName, hintName, StringComparison.Ordinal));
 
