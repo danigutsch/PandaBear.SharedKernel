@@ -23,6 +23,83 @@ public sealed partial class AppMediator : IMediator
     /// </summary>
     internal global::System.IServiceProvider Services { get; }
 
+
+    /// <summary>
+    /// Sends a <see cref="global::Demo.CreateTour"/> request through the generated mediator dispatch path.
+    /// </summary>
+    /// <param name="request">The request instance to dispatch.</param>
+    /// <param name="ct">The cancellation token for the operation.</param>
+    /// <returns>The produced response value.</returns>
+    public global::System.Threading.Tasks.ValueTask<int> Send(global::Demo.CreateTour request,
+        global::System.Threading.CancellationToken ct)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.CreateTourHandler>(Services);
+
+        return handler.Handle(request, ct);
+    }
+
+    /// <summary>
+    /// Sends a <see cref="global::Demo.DeleteTour"/> request through the generated mediator dispatch path.
+    /// </summary>
+    /// <param name="request">The request instance to dispatch.</param>
+    /// <param name="ct">The cancellation token for the operation.</param>
+    /// <returns>The produced response value.</returns>
+    public global::System.Threading.Tasks.ValueTask<global::SharedKernel.Mediator.Unit> Send(global::Demo.DeleteTour request,
+        global::System.Threading.CancellationToken ct)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.DeleteTourHandler>(Services);
+
+        return handler.Handle(request, ct);
+    }
+
+    /// <summary>
+    /// Sends a <see cref="global::Demo.GetTourById"/> request through the generated mediator dispatch path.
+    /// </summary>
+    /// <param name="request">The request instance to dispatch.</param>
+    /// <param name="ct">The cancellation token for the operation.</param>
+    /// <returns>The produced response value.</returns>
+    public global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.GetTourById request,
+        global::System.Threading.CancellationToken ct)
+    {
+        var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.GetTourByIdHandler>(Services);
+
+        return handler.Handle(request, ct);
+    }
+
+    /// <summary>
+    /// Sends a <see cref="global::Demo.LookupTour"/> request through the generated mediator dispatch path.
+    /// </summary>
+    /// <param name="request">The request instance to dispatch.</param>
+    /// <param name="ct">The cancellation token for the operation.</param>
+    /// <returns>The produced response value.</returns>
+    public global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.LookupTour request,
+        global::System.Threading.CancellationToken ct)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.LookupTourHandler>(Services);
+
+        return handler.Handle(request, ct);
+    }
+
+    /// <summary>
+    /// Sends a <see cref="global::Demo.MissingTour"/> request through the generated mediator dispatch path.
+    /// </summary>
+    /// <param name="request">The request instance to dispatch.</param>
+    /// <param name="ct">The cancellation token for the operation.</param>
+    /// <returns>The produced response value.</returns>
+    public global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.MissingTour request,
+        global::System.Threading.CancellationToken ct)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        return GeneratedDispatch.ThrowNoHandler<string>(request);
+    }
+
     /// <inheritdoc />
     public global::System.Threading.Tasks.ValueTask<TResponse> Send<TResponse>(
         global::SharedKernel.Mediator.IRequest<TResponse> request,
@@ -30,7 +107,7 @@ public sealed partial class AppMediator : IMediator
     {
         global::System.ArgumentNullException.ThrowIfNull(request);
 
-        throw new global::System.NotSupportedException("Generated request dispatch is not available yet.");
+        return GeneratedDispatch.Send<TResponse>(this, request, ct);
     }
 
     /// <inheritdoc />
@@ -42,5 +119,59 @@ public sealed partial class AppMediator : IMediator
         global::System.ArgumentNullException.ThrowIfNull(notification);
 
         throw new global::System.NotSupportedException("Generated notification dispatch is not available yet.");
+    }
+}
+
+internal static class GeneratedDispatch
+{
+    public static global::System.Threading.Tasks.ValueTask<TResponse> Send<TResponse>(
+        AppMediator mediator,
+        global::SharedKernel.Mediator.IRequest<TResponse> request,
+        global::System.Threading.CancellationToken ct)
+    {
+        return request switch
+        {
+            global::Demo.CreateTour typed => Cast<int, TResponse>(mediator.Send(typed, ct)),
+            global::Demo.DeleteTour typed => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),
+            global::Demo.GetTourById typed => Cast<string, TResponse>(mediator.Send(typed, ct)),
+            global::Demo.LookupTour typed => Cast<string, TResponse>(mediator.Send(typed, ct)),
+            global::Demo.MissingTour typed => Cast<string, TResponse>(mediator.Send(typed, ct)),
+            _ => ThrowNoHandler<TResponse>(request),
+        };
+    }
+
+    public static async global::System.Threading.Tasks.ValueTask<TTarget> Cast<TSource, TTarget>(
+        global::System.Threading.Tasks.ValueTask<TSource> source)
+    {
+        var result = await source.ConfigureAwait(false);
+
+        if (result is TTarget typed)
+        {
+            return typed;
+        }
+
+        return ThrowInvalidResponseCast<TSource, TTarget>();
+    }
+
+    public static global::System.Threading.Tasks.ValueTask<TResponse> ThrowNoHandler<TResponse>(
+        global::SharedKernel.Mediator.IRequest<TResponse> request)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        throw new global::System.NotSupportedException($"Generated request dispatch is not available for request type '{request.GetType().FullName}'.");
+    }
+
+    public static global::System.Threading.Tasks.ValueTask<TResponse> ThrowAmbiguousHandlers<TResponse>(
+        global::SharedKernel.Mediator.IRequest<TResponse> request,
+        int handlerCount)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        throw new global::System.InvalidOperationException($"Generated request dispatch found {handlerCount} accessible handlers for request type '{request.GetType().FullName}'.");
+    }
+
+    public static TTarget ThrowInvalidResponseCast<TSource, TTarget>()
+    {
+        throw new global::System.InvalidOperationException($"Generated request dispatch returned '{typeof(TSource).FullName}' when '{typeof(TTarget).FullName}' was expected.");
     }
 }
