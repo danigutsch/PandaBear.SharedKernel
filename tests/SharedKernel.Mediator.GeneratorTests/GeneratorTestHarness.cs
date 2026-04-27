@@ -30,15 +30,24 @@ internal static class GeneratorTestHarness
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
     }
 
-    public static string RunGenerator(CSharpCompilation compilation)
+    public static string RunGenerator(
+        CSharpCompilation compilation,
+        string hintName = "SharedKernel.Mediator.Generated.DiscoveryReport.g.cs")
     {
         var generator = new SharedKernelMediatorGenerator();
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
 
         driver = driver.RunGenerators(compilation);
         var runResult = driver.GetRunResult();
+        var generatedSource = runResult.Results.Single().GeneratedSources.SingleOrDefault(
+            source => string.Equals(source.HintName, hintName, StringComparison.Ordinal));
 
-        return runResult.Results.Single().GeneratedSources.Single().SourceText.ToString();
+        if (generatedSource.SourceText is null)
+        {
+            throw new InvalidOperationException($"Generated source not found: {hintName}");
+        }
+
+        return generatedSource.SourceText.ToString();
     }
 
     public static MetadataReference CreateMetadataReference(

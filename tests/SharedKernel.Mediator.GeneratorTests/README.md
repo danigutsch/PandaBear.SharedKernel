@@ -6,6 +6,7 @@ Unit tests for `SharedKernel.Mediator.SourceGenerator`.
 
 - Discovery-model generation from mediator contracts
 - Generated discovery-report output
+- Generated DI registration output
 - Deterministic generator behavior across repeated runs
 
 ## Current Traits
@@ -13,6 +14,7 @@ Unit tests for `SharedKernel.Mediator.SourceGenerator`.
 - `TestScope=Unit`
 - `TestComponent=SharedKernel.Mediator.SourceGenerator`
 - `TestCapability=Discovery`
+- `TestCapability=DependencyInjection`
 
 ## Dependencies
 
