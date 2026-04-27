@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace SharedKernel.Mediator.GeneratorTests;
 
 [Trait(TestTraits.CapabilityName, TestTraits.DiscoveryCapability)]
@@ -201,6 +203,38 @@ public sealed class GeneratorDiscoveryReportTests
         Assert.Contains("Response=global::Demo.Page<global::Demo.TourRow>", generatedSource, StringComparison.Ordinal);
         Assert.Contains("ResponseGenericDefinition=global::Demo.Page<TItem>", generatedSource, StringComparison.Ordinal);
         Assert.Contains("ResponseTypeArguments=[global::Demo.TourRow]", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Result_Like_Wrapper_Shape_Captured()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record Result<TValue>(TValue Value, bool IsSuccess);
+
+            public sealed record GetTour() : IQuery<Result<string>>;
+
+            public sealed class GetTourHandler : IQueryHandler<GetTour, Result<string>>
+            {
+                public ValueTask<Result<string>> Handle(GetTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(new Result<string>("ok", true));
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
+
+        // Assert
+        Assert.Contains("Response=global::Demo.Result<string>", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("ResponseGenericDefinition=global::Demo.Result<TValue>", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("ResponseTypeArguments=[string]", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -414,6 +448,104 @@ public sealed class GeneratorDiscoveryReportTests
             "global::Demo.ValidationEarlyBehavior(Stage=-1000,Order=5,Applicability=Closed,OpenGeneric=<none>)",
             "global::Demo.ValidationLateBehavior(Stage=-1000,Order=30,Applicability=Closed,OpenGeneric=<none>)",
             "global::Demo.TransactionBehavior(Stage=-400,Order=10,Applicability=Closed,OpenGeneric=<none>)");
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Request_With_No_Handler_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record MissingTour(int Id) : IQuery<string>;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnostics = runResult.Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == "SKMED001"
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.MissingTour", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Request_With_Multiple_Handlers_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+
+            public sealed class LookupTourHandlerOne : IQueryHandler<LookupTour, string>
+            {
+                public ValueTask<string> Handle(LookupTour request, CancellationToken ct) => ValueTask.FromResult("one");
+            }
+
+            public sealed class LookupTourHandlerTwo : IQueryHandler<LookupTour, string>
+            {
+                public ValueTask<string> Handle(LookupTour request, CancellationToken ct) => ValueTask.FromResult("two");
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnostics = runResult.Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == "SKMED002"
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.LookupTour", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Explicit_Interface_Handler_Invalid_Signature_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+
+            public sealed class ExplicitLookupTourHandler : IQueryHandler<LookupTour, string>
+            {
+                ValueTask<string> IQueryHandler<LookupTour, string>.Handle(LookupTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(request.Code);
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnostics = runResult.Results.Single().Diagnostics;
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == "SKMED003"
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ExplicitLookupTourHandler", StringComparison.Ordinal));
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == "SKMED001"
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.LookupTour", StringComparison.Ordinal));
+        Assert.DoesNotContain("services.AddTransient<global::Demo.ExplicitLookupTourHandler>();", generatedSource, StringComparison.Ordinal);
     }
 
     private static void AssertOrdered(string actual, params string[] expectedSegments)

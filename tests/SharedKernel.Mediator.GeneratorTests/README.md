@@ -6,9 +6,10 @@ Unit tests for `SharedKernel.Mediator.SourceGenerator`.
 
 - Discovery-model generation from mediator contracts
 - Generated discovery-report output
+- Discovery diagnostics for missing, multiple, invalid-signature, inaccessible, and duplicate
+  registration cases
 - Generated DI registration output
 - Generated mediator shell output
-- Generated DI accessibility and duplicate-registration diagnostics
 - Generated dispatch behavior compared with the reference dispatcher
 - Deterministic generator behavior across repeated runs
 
