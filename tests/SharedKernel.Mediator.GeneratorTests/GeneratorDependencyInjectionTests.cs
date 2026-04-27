@@ -195,4 +195,52 @@ public sealed class GeneratorDependencyInjectionTests
             generatedSource,
             StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void Generate_Service_Registration_Duplicate_Self_Registration_Diagnostic_Expected_Behavior()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record TourCreated(int Id) : INotification;
+            public sealed record TourUpdated(int Id) : INotification;
+
+            public sealed class TourEventsHandler : INotificationHandler<TourCreated>, INotificationHandler<TourUpdated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
+
+                public ValueTask Handle(TourUpdated notification, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+        var diagnostics = runResult.Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == "SKMED012"
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.TourEventsHandler", StringComparison.Ordinal));
+        Assert.Equal(
+            1,
+            generatedSource.Split("services.AddTransient<global::Demo.TourEventsHandler>();", StringSplitOptions.None).Length - 1);
+        Assert.Contains(
+            "services.AddTransient<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourCreated>, global::Demo.TourEventsHandler>();",
+            generatedSource,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "services.AddTransient<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourUpdated>, global::Demo.TourEventsHandler>();",
+            generatedSource,
+            StringComparison.Ordinal);
+    }
 }
