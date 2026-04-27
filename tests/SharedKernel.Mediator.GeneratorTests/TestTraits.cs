@@ -10,4 +10,5 @@ internal static class TestTraits
     public const string SourceGeneratorComponent = "SharedKernel.Mediator.SourceGenerator";
     public const string DiscoveryCapability = "Discovery";
     public const string DependencyInjectionCapability = "DependencyInjection";
+    public const string DispatchCapability = "Dispatch";
 }
