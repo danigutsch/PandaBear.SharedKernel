@@ -9,6 +9,7 @@
     <ItemGroup>
         <PackageReference Include="BenchmarkDotNet" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="$(MediatorRoslynVersion)" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     </ItemGroup>
 
     <ItemGroup>
