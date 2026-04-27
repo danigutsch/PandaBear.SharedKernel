@@ -4,7 +4,7 @@ namespace SharedKernel.Mediator.Tests;
 public sealed class MediatorContractsTests
 {
     [Fact]
-    public void ICommand_Is_Assignable_To_IRequest_Unit_Expected_Behavior()
+    public void ICommand_Is_Assignable_To_IRequest_Unit()
     {
         // Arrange
         var commandType = typeof(TestCommand);
@@ -17,7 +17,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void IQuery_Of_T_Is_Assignable_To_IRequest_Of_T_Expected_Behavior()
+    public void IQuery_Of_T_Is_Assignable_To_IRequest_Of_T()
     {
         // Arrange
         var queryType = typeof(TestQuery);
@@ -30,7 +30,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void ICommand_Of_T_Is_Assignable_To_IRequest_Of_T_Expected_Behavior()
+    public void ICommand_Of_T_Is_Assignable_To_IRequest_Of_T()
     {
         // Arrange
         var commandType = typeof(TestCommandWithResponse);
@@ -43,7 +43,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void Handler_Variance_Works_Where_Expected_Expected_Behavior()
+    public void Handler_Variance_Works_Where_Expected()
     {
         // Arrange
         var handlerContractType = typeof(IQueryHandler<DerivedQuery, string>);
@@ -56,7 +56,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void Notification_Contracts_Allow_Class_And_Struct_Expected_Behavior()
+    public void Notification_Contracts_Allow_Class_And_Struct()
     {
         // Arrange
         var classNotificationType = typeof(INotificationHandler<ClassNotification>);
@@ -72,7 +72,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void Stream_And_Pipeline_Contracts_Compile_Expected_Behavior()
+    public void Stream_And_Pipeline_Contracts_Compile()
     {
         // Arrange
         var streamHandlerType = typeof(IStreamRequestHandler<TestStreamRequest, string>);

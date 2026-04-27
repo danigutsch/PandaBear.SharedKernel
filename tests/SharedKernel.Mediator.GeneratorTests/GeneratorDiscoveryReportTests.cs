@@ -4,7 +4,7 @@ namespace SharedKernel.Mediator.GeneratorTests;
 public sealed class GeneratorDiscoveryReportTests
 {
     [Fact]
-    public void Generate_Discovery_Report_Single_Project_Counts_Expected_Behavior()
+    public void Generate_Discovery_Report_Single_Project_Counts()
     {
         // Arrange
         const string source = """
@@ -61,7 +61,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Repeated_Runs_Are_Deterministic_Expected_Behavior()
+    public void Generate_Discovery_Report_Repeated_Runs_Are_Deterministic()
     {
         // Arrange
         const string source = """
@@ -88,7 +88,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Marked_Module_Assembly_Included_Expected_Behavior()
+    public void Generate_Discovery_Report_Marked_Module_Assembly_Included()
     {
         // Arrange
         const string moduleSource = """
@@ -132,7 +132,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Unmarked_Module_Assembly_Ignored_Expected_Behavior()
+    public void Generate_Discovery_Report_Unmarked_Module_Assembly_Ignored()
     {
         // Arrange
         const string moduleSource = """
@@ -172,7 +172,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Response_Metadata_Captured_Expected_Behavior()
+    public void Generate_Discovery_Report_Response_Metadata_Captured()
     {
         // Arrange
         const string source = """
@@ -204,7 +204,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Without_Mediator_References_Returns_Empty_Model_Expected_Behavior()
+    public void Generate_Discovery_Report_Without_Mediator_References_Returns_Empty_Model()
     {
         // Arrange
         const string source = """
@@ -229,7 +229,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Nested_Plain_Request_Discovered_Expected_Behavior()
+    public void Generate_Discovery_Report_Nested_Plain_Request_Discovered()
     {
         // Arrange
         const string source = """
@@ -265,7 +265,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Command_Without_Response_Uses_Unit_Expected_Behavior()
+    public void Generate_Discovery_Report_Command_Without_Response_Uses_Unit()
     {
         // Arrange
         const string source = """
@@ -291,7 +291,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Abstract_And_Interface_Shapes_Are_Ignored_Expected_Behavior()
+    public void Generate_Discovery_Report_Abstract_And_Interface_Shapes_Are_Ignored()
     {
         // Arrange
         const string source = """
@@ -361,7 +361,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Pipeline_And_Handler_Order_Is_Deterministic_Expected_Behavior()
+    public void Generate_Discovery_Report_Pipeline_And_Handler_Order_Is_Deterministic()
     {
         // Arrange
         const string source = """

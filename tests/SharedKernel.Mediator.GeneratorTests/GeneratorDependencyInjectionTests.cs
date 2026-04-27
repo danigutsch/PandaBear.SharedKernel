@@ -6,7 +6,7 @@ namespace SharedKernel.Mediator.GeneratorTests;
 public sealed class GeneratorDependencyInjectionTests
 {
     [Fact]
-    public void Generate_Service_Registration_Single_Project_Expected_Behavior()
+    public void Generate_Service_Registration_Single_Project()
     {
         // Arrange
         const string source = """
@@ -69,7 +69,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Marked_Module_Assembly_Included_Expected_Behavior()
+    public void Generate_Service_Registration_Marked_Module_Assembly_Included()
     {
         // Arrange
         const string moduleSource = """
@@ -113,7 +113,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Internal_Handler_In_Primary_Assembly_Expected_Behavior()
+    public void Generate_Service_Registration_Internal_Handler_In_Primary_Assembly()
     {
         // Arrange
         const string source = """
@@ -145,7 +145,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Internal_Handler_From_Marked_Module_Diagnostic_Expected_Behavior()
+    public void Generate_Service_Registration_Internal_Handler_From_Marked_Module_Diagnostic()
     {
         // Arrange
         const string moduleSource = """
@@ -197,7 +197,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Duplicate_Self_Registration_Diagnostic_Expected_Behavior()
+    public void Generate_Service_Registration_Duplicate_Self_Registration_Diagnostic()
     {
         // Arrange
         const string source = """

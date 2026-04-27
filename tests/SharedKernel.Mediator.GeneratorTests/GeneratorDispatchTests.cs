@@ -4,7 +4,7 @@ namespace SharedKernel.Mediator.GeneratorTests;
 public sealed class GeneratorDispatchTests
 {
     [Fact]
-    public void Generate_AppMediator_Shell_Expected_Behavior()
+    public void Generate_AppMediator_Shell()
     {
         // Arrange
         const string source = """
