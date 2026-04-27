@@ -6,6 +6,10 @@ internal sealed record TestCommand : ICommand;
 
 internal sealed record TestCommandWithResponse : ICommand<int>;
 
+internal class BaseQuery : IQuery<string>;
+
+internal sealed class DerivedQuery : BaseQuery;
+
 internal sealed record TestQuery : IQuery<string>;
 
 internal sealed record TestStreamRequest : IStreamRequest<string>;
@@ -50,5 +54,14 @@ internal sealed class TestPipelineBehavior : IPipelineBehavior<TestQuery, string
     public ValueTask<string> Handle(TestQuery request, RequestHandlerContinuation<string> next, CancellationToken ct)
     {
         return next();
+    }
+}
+
+internal sealed class BaseQueryHandler : IQueryHandler<BaseQuery, string>
+{
+    /// <inheritdoc />
+    public ValueTask<string> Handle(BaseQuery request, CancellationToken ct)
+    {
+        return ValueTask.FromResult("ok");
     }
 }

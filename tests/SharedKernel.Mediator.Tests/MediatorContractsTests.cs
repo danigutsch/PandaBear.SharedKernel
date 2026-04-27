@@ -43,6 +43,19 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
+    public void Handler_Variance_Works_Where_Expected_Expected_Behavior()
+    {
+        // Arrange
+        var handlerContractType = typeof(IQueryHandler<DerivedQuery, string>);
+
+        // Act
+        var isAssignable = handlerContractType.IsAssignableFrom(typeof(BaseQueryHandler));
+
+        // Assert
+        Assert.True(isAssignable);
+    }
+
+    [Fact]
     public void Notification_Contracts_Allow_Class_And_Struct_Expected_Behavior()
     {
         // Arrange
