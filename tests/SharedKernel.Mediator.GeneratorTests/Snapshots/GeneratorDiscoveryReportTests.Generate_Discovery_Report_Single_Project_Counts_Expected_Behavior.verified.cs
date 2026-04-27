@@ -5,4 +5,29 @@ internal static class MediatorDiscoveryReport
     public const int RequestCount = 1;
     public const int HandlerCount = 1;
     public const int PipelineCount = 1;
+    public const int NotificationCount = 1;
+    public const int NotificationHandlerCount = 1;
+    public const int StreamRequestCount = 1;
+    public const int StreamHandlerCount = 1;
+    public const int ModuleCount = 1;
+
+    public static string[] Modules { get; } =
+    [
+        "SharedKernel.Mediator.Tests.Dynamic | Primary=True | Marker=True",
+    ];
+
+    public static string[] Requests { get; } =
+    [
+        "global::Demo.CreateTour | Kind=CommandWithResponse | Response=int | ResponseGenericDefinition=<none> | ResponseTypeArguments=[] | IsValueType=False | Handlers=[global::Demo.CreateTourHandler(CommandWithResponse,Public,Handle)] | Pipelines=[global::Demo.ValidationBehavior(Stage=-1000,Order=0,Applicability=Closed,OpenGeneric=<none>)]",
+    ];
+
+    public static string[] Notifications { get; } =
+    [
+        "global::Demo.TourCreated | Handlers=[global::Demo.TourCreatedHandler(Public,Handle)]",
+    ];
+
+    public static string[] StreamRequests { get; } =
+    [
+        "global::Demo.StreamTours | ItemResponse=string | ItemResponseGenericDefinition=<none> | ItemResponseTypeArguments=[] | Handlers=[global::Demo.StreamToursHandler(Public,Handle)]",
+    ];
 }

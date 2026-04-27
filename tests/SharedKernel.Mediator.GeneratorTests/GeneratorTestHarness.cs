@@ -6,13 +6,25 @@ namespace SharedKernel.Mediator.GeneratorTests;
 
 internal static class GeneratorTestHarness
 {
-    public static CSharpCompilation CreateCompilation(string source)
+    private const string DefaultUsings = """
+        using System;
+        using System.Collections.Generic;
+        using System.Threading;
+        using System.Threading.Tasks;
+
+        """;
+
+    public static CSharpCompilation CreateCompilation(
+        string source,
+        string assemblyName = "SharedKernel.Mediator.Tests.Dynamic",
+        IEnumerable<MetadataReference>? additionalReferences = null,
+        bool includeMediatorReference = true)
     {
-        var syntaxTree = CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Preview));
-        var references = GetMetadataReferences();
+        var syntaxTree = CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview));
+        var references = GetMetadataReferences(additionalReferences, includeMediatorReference);
 
         return CSharpCompilation.Create(
-            assemblyName: "SharedKernel.Mediator.Tests.Dynamic",
+            assemblyName: assemblyName,
             syntaxTrees: [syntaxTree],
             references: references,
             options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
@@ -29,7 +41,31 @@ internal static class GeneratorTestHarness
         return runResult.Results.Single().GeneratedSources.Single().SourceText.ToString();
     }
 
-    private static List<MetadataReference> GetMetadataReferences()
+    public static MetadataReference CreateMetadataReference(
+        string source,
+        string assemblyName,
+        IEnumerable<MetadataReference>? additionalReferences = null,
+        bool includeMediatorReference = true)
+    {
+        var compilation = CreateCompilation(source, assemblyName, additionalReferences, includeMediatorReference);
+        using var stream = new MemoryStream();
+        var emitResult = compilation.Emit(stream);
+
+        if (!emitResult.Success)
+        {
+            var diagnostics = string.Join(
+                Environment.NewLine,
+                emitResult.Diagnostics.Select(static diagnostic => diagnostic.ToString()));
+            throw new InvalidOperationException($"Failed to emit test compilation:{Environment.NewLine}{diagnostics}");
+        }
+
+        stream.Position = 0;
+        return MetadataReference.CreateFromImage(stream.ToArray());
+    }
+
+    private static List<MetadataReference> GetMetadataReferences(
+        IEnumerable<MetadataReference>? additionalReferences,
+        bool includeMediatorReference)
     {
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
         ArgumentException.ThrowIfNullOrEmpty(trustedPlatformAssemblies);
@@ -40,7 +76,15 @@ internal static class GeneratorTestHarness
             .Cast<MetadataReference>()
             .ToList();
 
-        references.Add(MetadataReference.CreateFromFile(typeof(IRequest<>).Assembly.Location));
+        if (includeMediatorReference)
+        {
+            references.Add(MetadataReference.CreateFromFile(typeof(IRequest<>).Assembly.Location));
+        }
+
+        if (additionalReferences is not null)
+        {
+            references.AddRange(additionalReferences);
+        }
 
         return references;
     }

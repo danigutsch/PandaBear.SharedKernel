@@ -10,6 +10,12 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Remove="Snapshots/**/*.verified.cs" />
+        <Compile Remove="Snapshots/**/*.received.cs" />
+        <None Include="Snapshots/**/*.verified.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
         <Using Include="Xunit" />
     </ItemGroup>
 
