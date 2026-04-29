@@ -17,6 +17,7 @@
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.2.1" />
     <PackageVersion Include="Aspire.StackExchange.Redis.OutputCaching" Version="13.2.1" />
     <!-- Code analysis packages -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
     <PackageVersion Include="SonarAnalyzer.CSharp" Version="10.22.0.136894" />
     <!-- ASP.NET Core packages -->
     <PackageVersion Include="Microsoft.AspNetCore.Components.QuickGrid" Version="10.0.5" />
