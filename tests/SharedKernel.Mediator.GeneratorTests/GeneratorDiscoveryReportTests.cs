@@ -470,7 +470,7 @@ public sealed class GeneratorDiscoveryReportTests
         // Assert
         Assert.Contains(
             diagnostics,
-            static diagnostic => diagnostic.Id == "SKMED001"
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingHandler
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.MissingTour", StringComparison.Ordinal));
     }
 
@@ -504,7 +504,7 @@ public sealed class GeneratorDiscoveryReportTests
         // Assert
         Assert.Contains(
             diagnostics,
-            static diagnostic => diagnostic.Id == "SKMED002"
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MultipleHandlers
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.LookupTour", StringComparison.Ordinal));
     }
 
@@ -546,7 +546,7 @@ public sealed class GeneratorDiscoveryReportTests
         // Assert
         Assert.Contains(
             diagnostics,
-            static diagnostic => diagnostic.Id == "SKMED013"
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.UnprovenObjectDispatchCoverage
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains(
                                      "SharedKernel.Mediator.Tests.ModuleA.Unmarked",
                                      StringComparison.Ordinal));
@@ -583,11 +583,11 @@ public sealed class GeneratorDiscoveryReportTests
         // Assert
         Assert.Contains(
             diagnostics,
-            static diagnostic => diagnostic.Id == "SKMED003"
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ExplicitLookupTourHandler", StringComparison.Ordinal));
         Assert.Contains(
             diagnostics,
-            static diagnostic => diagnostic.Id == "SKMED001"
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingHandler
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.LookupTour", StringComparison.Ordinal));
         Assert.DoesNotContain("services.AddTransient<global::Demo.ExplicitLookupTourHandler>();", generatedSource, StringComparison.Ordinal);
     }

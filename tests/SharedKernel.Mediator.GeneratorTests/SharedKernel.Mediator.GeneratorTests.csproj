@@ -33,4 +33,8 @@
         <ProjectReference Include="..\SharedKernel.Mediator.Testing.ReferenceDispatcher\SharedKernel.Mediator.Testing.ReferenceDispatcher.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <Compile Include="..\..\src\Mediator\SharedKernel.Mediator.SourceGenerator\MediatorDiagnosticIds.cs" Link="MediatorDiagnosticIds.cs" />
+    </ItemGroup>
+
 </Project>

@@ -140,7 +140,7 @@ public sealed class GeneratorDependencyInjectionTests
         var diagnostics = runResult.Results.Single().Diagnostics;
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == "SKMED010");
+        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
         Assert.Contains("services.AddTransient<global::Demo.CreateTourHandler>();", generatedSource, StringComparison.Ordinal);
     }
 
@@ -187,7 +187,7 @@ public sealed class GeneratorDependencyInjectionTests
         // Assert
         Assert.Contains(
             diagnostics,
-            static diagnostic => diagnostic.Id == "SKMED010"
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InaccessibleRegistrationType
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::ModuleA.SearchToursHandler", StringComparison.Ordinal));
         Assert.DoesNotContain("services.AddTransient<global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
         Assert.DoesNotContain(
@@ -239,7 +239,7 @@ public sealed class GeneratorDependencyInjectionTests
         var diagnostics = runResult.Results.Single().Diagnostics;
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == "SKMED010");
+        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
         Assert.Contains("services.AddTransient<global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
         Assert.Contains(
             "services.AddTransient<global::SharedKernel.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();",
@@ -288,7 +288,7 @@ public sealed class GeneratorDependencyInjectionTests
         // Assert
         Assert.Contains(
             diagnostics,
-            static diagnostic => diagnostic.Id == "SKMED011"
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingModuleMarker
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains(
                                      "SharedKernel.Mediator.Tests.ModuleA.Unmarked",
                                      StringComparison.Ordinal));
@@ -328,7 +328,7 @@ public sealed class GeneratorDependencyInjectionTests
         // Assert
         Assert.Contains(
             diagnostics,
-            static diagnostic => diagnostic.Id == "SKMED012"
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicateGeneratedRegistration
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.TourEventsHandler", StringComparison.Ordinal));
         Assert.Equal(
             1,

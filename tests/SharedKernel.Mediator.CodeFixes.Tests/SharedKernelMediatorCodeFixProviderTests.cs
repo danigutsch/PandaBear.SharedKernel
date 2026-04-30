@@ -20,7 +20,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync("SKMED001");
+        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
@@ -31,7 +31,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Assert
         Assert.Contains("public sealed class MissingTourHandler", generatedHandlerSource, StringComparison.Ordinal);
         Assert.Contains("IQueryHandler<global::Demo.MissingTour, string>", generatedHandlerSource, StringComparison.Ordinal);
-        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == "SKMED001");
+        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == MediatorDiagnosticIds.MissingHandler);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync("SKMED003");
+        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
@@ -72,8 +72,8 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "return ((global::SharedKernel.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);",
             updatedDocumentText,
             StringComparison.Ordinal);
-        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == "SKMED003");
-        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == "SKMED001");
+        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == MediatorDiagnosticIds.InvalidHandlerSignature);
+        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == MediatorDiagnosticIds.MissingHandler);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var workspace = CodeFixTestWorkspace.CreateWithProjectReference(primarySource, moduleSource);
         var provider = new SharedKernelMediatorCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
-            "SKMED010",
+            MediatorDiagnosticIds.InaccessibleRegistrationType,
             "Module.cs",
             "SearchToursHandler",
             ImmutableDictionary<string, string?>.Empty.Add("PrimaryAssemblyName", "SharedKernel.Mediator.CodeFixes.Tests.Primary"));
@@ -125,7 +125,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
 
         // Assert
         Assert.Contains("public sealed class SearchToursHandler", updatedModuleSource, StringComparison.Ordinal);
-        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == "SKMED010");
+        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
         Assert.Contains("services.AddTransient<global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
     }
 
@@ -162,7 +162,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var workspace = CodeFixTestWorkspace.CreateWithProjectReference(primarySource, moduleSource);
         var provider = new SharedKernelMediatorCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
-            "SKMED010",
+            MediatorDiagnosticIds.InaccessibleRegistrationType,
             "Module.cs",
             "SearchToursHandler",
             ImmutableDictionary<string, string?>.Empty.Add("PrimaryAssemblyName", "SharedKernel.Mediator.CodeFixes.Tests.Primary"));
@@ -182,7 +182,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "[assembly: global::System.Runtime.CompilerServices.InternalsVisibleTo(\"SharedKernel.Mediator.CodeFixes.Tests.Primary\")]",
             friendAssemblySource,
             StringComparison.Ordinal);
-        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == "SKMED010");
+        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
         Assert.Contains("services.AddTransient<global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
     }
 
@@ -217,7 +217,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var workspace = CodeFixTestWorkspace.CreateWithProjectReference(primarySource, moduleSource);
         var provider = new SharedKernelMediatorCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
-            "SKMED011",
+            MediatorDiagnosticIds.MissingModuleMarker,
             "Module.cs",
             "SearchTours");
 
@@ -232,7 +232,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
 
         // Assert
         Assert.Contains("[assembly: global::SharedKernel.Mediator.MediatorModuleAttribute]", markerSource, StringComparison.Ordinal);
-        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == "SKMED011");
+        Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == MediatorDiagnosticIds.MissingModuleMarker);
         Assert.Contains("services.AddTransient<global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
     }
 }
