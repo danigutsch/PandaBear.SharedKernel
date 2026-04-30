@@ -14,6 +14,7 @@ Benchmark harness for the `SharedKernel.Mediator` discovery generator and API-sh
 - Compare generated-style and hand-written mediator DI service-provider build costs
 - Measure handler, mediator, and first-dispatch DI costs
 - Measure generated object-switch dispatch separately from typed and generic dispatch
+- Measure direct, typed, generic-switch, and object-switch dispatch across request-count scale points
 
 ## Run
 
@@ -22,6 +23,7 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *ApiShapeBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *DependencyInjectionBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *ObjectDispatchBenchmarks*
+dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *DispatchScaleBenchmarks*
 ```
 
 ## Notes
@@ -36,6 +38,9 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
   resolution, and first-dispatch costs stay close to the current generated shape.
 - `ObjectDispatchBenchmarks` isolates the extra boxing and switch path for `SendObject` without
   widening the core mediator abstractions.
+- `DispatchScaleBenchmarks` fixes the current request shape to class/no-pipeline dispatch and scales
+  only the number of generated request types so the request-count rows in the checklist stay
+  isolated from later shape and pipeline variables.
 
 ## See Also
 

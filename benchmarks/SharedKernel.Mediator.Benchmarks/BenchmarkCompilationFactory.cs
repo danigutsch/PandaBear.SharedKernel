@@ -1,6 +1,8 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using SharedKernel.Mediator.SourceGenerator;
+using System.Reflection;
+using System.Runtime.Loader;
 
 namespace SharedKernel.Mediator.Benchmarks;
 
@@ -21,16 +23,43 @@ internal static class BenchmarkCompilationFactory
     /// Creates a compilation for the provided benchmark source.
     /// </summary>
     /// <param name="source">The benchmark input source.</param>
+    /// <param name="assemblyName">The dynamic assembly name.</param>
     /// <returns>The Roslyn compilation used by the benchmarks.</returns>
-    public static CSharpCompilation CreateCompilation(string source)
+    public static CSharpCompilation CreateCompilation(
+        string source,
+        string assemblyName = "SharedKernel.Mediator.Benchmarks.Dynamic")
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview));
 
         return CSharpCompilation.Create(
-            "SharedKernel.Mediator.Benchmarks.Dynamic",
+            assemblyName,
             [syntaxTree],
             GetMetadataReferences(),
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+    }
+
+    /// <summary>
+    /// Emits and loads an in-memory benchmark assembly.
+    /// </summary>
+    /// <param name="source">The benchmark source to compile.</param>
+    /// <param name="assemblyName">The dynamic assembly name.</param>
+    /// <returns>The loaded benchmark assembly.</returns>
+    public static Assembly LoadAssembly(string source, string assemblyName)
+    {
+        var compilation = CreateCompilation(source, assemblyName);
+        using var stream = new MemoryStream();
+        var emitResult = compilation.Emit(stream);
+
+        if (!emitResult.Success)
+        {
+            var diagnostics = string.Join(
+                Environment.NewLine,
+                emitResult.Diagnostics.Select(static diagnostic => diagnostic.ToString()));
+            throw new InvalidOperationException($"Failed to emit benchmark compilation:{Environment.NewLine}{diagnostics}");
+        }
+
+        stream.Position = 0;
+        return new AssemblyLoadContext(assemblyName, isCollectible: true).LoadFromStream(stream);
     }
 
     /// <summary>
