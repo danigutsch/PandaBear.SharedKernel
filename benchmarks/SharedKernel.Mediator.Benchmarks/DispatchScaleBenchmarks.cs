@@ -4,8 +4,10 @@ using System.Reflection;
 namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>
-/// Measures dispatch-shape costs across request-count scale points for the current no-pipeline path.
+/// Measures dispatch-shape costs across request-count scale points and pipeline-count variants.
 /// </summary>
+[Config(typeof(DispatchScaleBenchmarkConfig))]
+[DisassemblyDiagnoser(maxDepth: 0)]
 [MemoryDiagnoser]
 public class DispatchScaleBenchmarks
 {
@@ -24,10 +26,32 @@ public class DispatchScaleBenchmarks
     /// </summary>
     public const string ReadonlyRecordStructShape = DispatchBenchmarkSourceFactory.ReadonlyRecordStructShape;
 
+    /// <summary>
+    /// The explicit zero-pipeline dispatch baseline.
+    /// </summary>
+    public const int NoPipelineCount = DispatchBenchmarkSourceFactory.NoPipelineCount;
+
+    /// <summary>
+    /// The one-pipeline dispatch variant.
+    /// </summary>
+    public const int OnePipelineCount = DispatchBenchmarkSourceFactory.OnePipelineCount;
+
+    /// <summary>
+    /// The three-pipeline dispatch variant.
+    /// </summary>
+    public const int ThreePipelineCount = DispatchBenchmarkSourceFactory.ThreePipelineCount;
+
+    /// <summary>
+    /// The ten-pipeline dispatch variant.
+    /// </summary>
+    public const int TenPipelineCount = DispatchBenchmarkSourceFactory.TenPipelineCount;
+
     private Func<CancellationToken, ValueTask<int>> directHandlerCall = null!;
     private Func<CancellationToken, ValueTask<int>> generatedTypedOverload = null!;
     private Func<CancellationToken, ValueTask<int>> generatedGenericSwitch = null!;
     private Func<CancellationToken, ValueTask<object?>> generatedObjectSwitch = null!;
+    private string benchmarkSource = string.Empty;
+    private string assemblyName = string.Empty;
 
     /// <summary>
     /// Gets or sets the number of generated request types under test.
@@ -42,14 +66,21 @@ public class DispatchScaleBenchmarks
     public string RequestShape { get; set; } = ClassShape;
 
     /// <summary>
+    /// Gets or sets the number of pipeline behaviors emitted per request.
+    /// </summary>
+    [Params(NoPipelineCount, OnePipelineCount, ThreePipelineCount, TenPipelineCount)]
+    public int PipelineCount { get; set; } = OnePipelineCount;
+
+    /// <summary>
     /// Builds the generated benchmark assembly and captures the exported delegates.
     /// </summary>
     [GlobalSetup]
     public void Setup()
     {
-        var assemblyName = $"SharedKernel.Mediator.Benchmarks.DispatchScale.{RequestShape}.{RequestCount}";
+        benchmarkSource = DispatchBenchmarkSourceFactory.CreateSource(RequestCount, RequestShape, PipelineCount);
+        assemblyName = $"SharedKernel.Mediator.Benchmarks.DispatchScale.{RequestShape}.P{PipelineCount}.{RequestCount}";
         var assembly = BenchmarkCompilationFactory.LoadAssembly(
-            DispatchBenchmarkSourceFactory.CreateSource(RequestCount, RequestShape),
+            benchmarkSource,
             assemblyName);
 
         directHandlerCall = CreateExport<Func<CancellationToken, ValueTask<int>>>(assembly, "CreateDirectHandlerCall");
@@ -96,6 +127,16 @@ public class DispatchScaleBenchmarks
     public ValueTask<object?> GeneratedObjectSwitch()
     {
         return generatedObjectSwitch(CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Measures the synthetic benchmark-assembly build path for the current dispatch case.
+    /// </summary>
+    /// <returns>The emitted benchmark assembly size in bytes.</returns>
+    [Benchmark(Description = "Generated benchmark assembly build time")]
+    public int BuildGeneratedAssembly()
+    {
+        return BenchmarkCompilationFactory.GetEmittedAssemblySize(benchmarkSource, assemblyName);
     }
 
     private static TDelegate CreateExport<TDelegate>(Assembly assembly, string methodName)

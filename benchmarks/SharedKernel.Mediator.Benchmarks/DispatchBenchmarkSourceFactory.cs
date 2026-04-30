@@ -11,16 +11,22 @@ internal static class DispatchBenchmarkSourceFactory
     public const string ClassShape = "Class";
     public const string RecordClassShape = "RecordClass";
     public const string ReadonlyRecordStructShape = "ReadonlyRecordStruct";
+    public const int NoPipelineCount = 0;
+    public const int OnePipelineCount = 1;
+    public const int ThreePipelineCount = 3;
+    public const int TenPipelineCount = 10;
 
     /// <summary>
     /// Creates benchmark source with the requested request volume.
     /// </summary>
     /// <param name="requestCount">The number of request/handler pairs to emit.</param>
     /// <param name="requestShape">The request shape to emit.</param>
+    /// <param name="pipelineCount">The number of pipeline behaviors to emit per request.</param>
     /// <returns>The synthetic dispatch benchmark source file.</returns>
-    public static string CreateSource(int requestCount, string requestShape)
+    public static string CreateSource(int requestCount, string requestShape, int pipelineCount)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestCount);
+        ArgumentOutOfRangeException.ThrowIfNegative(pipelineCount);
 
         var targetIndex = requestCount - 1;
         var builder = new StringBuilder();
@@ -46,6 +52,27 @@ internal static class DispatchBenchmarkSourceFactory
                 .AppendLine(");");
             builder.AppendLine("}");
             builder.AppendLine();
+
+            for (var pipelineIndex = 0; pipelineIndex < pipelineCount; pipelineIndex++)
+            {
+                builder.Append("[PipelineOrder(PipelineStage.Validation, Order = ")
+                    .Append(pipelineIndex)
+                    .AppendLine(")]");
+                builder.Append("public sealed class Request")
+                    .Append(index)
+                    .Append("Pipeline")
+                    .Append(pipelineIndex)
+                    .Append(" : IPipelineBehavior<Request")
+                    .Append(index)
+                    .AppendLine(", int>");
+                builder.AppendLine("{");
+                builder.Append("    public ValueTask<int> Handle(Request")
+                    .Append(index)
+                    .Append(" request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();")
+                    .AppendLine();
+                builder.AppendLine("}");
+                builder.AppendLine();
+            }
         }
 
         builder.AppendLine("public sealed class BenchmarkAppMediator : IMediator");
@@ -58,6 +85,19 @@ internal static class DispatchBenchmarkSourceFactory
                 .Append("Handler handler")
                 .Append(index)
                 .AppendLine(" = new();");
+
+            for (var pipelineIndex = 0; pipelineIndex < pipelineCount; pipelineIndex++)
+            {
+                builder.Append("    private readonly Request")
+                    .Append(index)
+                    .Append("Pipeline")
+                    .Append(pipelineIndex)
+                    .Append(" pipeline")
+                    .Append(index)
+                    .Append('_')
+                    .Append(pipelineIndex)
+                    .AppendLine(" = new();");
+            }
         }
 
         builder.AppendLine();
@@ -68,9 +108,39 @@ internal static class DispatchBenchmarkSourceFactory
                 .Append(index)
                 .AppendLine(" request, CancellationToken ct)");
             builder.AppendLine("    {");
-            builder.Append("        return handler")
-                .Append(index)
-                .AppendLine(".Handle(request, ct);");
+
+            if (pipelineCount == 0)
+            {
+                builder.Append("        return handler")
+                    .Append(index)
+                    .AppendLine(".Handle(request, ct);");
+            }
+            else
+            {
+                builder.AppendLine("        RequestHandlerContinuation<int> next = () =>");
+                builder.Append("            handler")
+                    .Append(index)
+                    .AppendLine(".Handle(request, ct);");
+                builder.AppendLine();
+
+                for (var pipelineIndex = pipelineCount - 1; pipelineIndex >= 0; pipelineIndex--)
+                {
+                    builder.Append("        var pipeline")
+                        .Append(pipelineIndex)
+                        .AppendLine("Next = next;");
+                    builder.Append("        next = () => pipeline")
+                        .Append(index)
+                        .Append('_')
+                        .Append(pipelineIndex)
+                        .Append(".Handle(request, pipeline")
+                        .Append(pipelineIndex)
+                        .AppendLine("Next, ct);");
+                    builder.AppendLine();
+                }
+
+                builder.AppendLine("        return next();");
+            }
+
             builder.AppendLine("    }");
             builder.AppendLine();
         }

@@ -48,18 +48,23 @@ internal static class BenchmarkCompilationFactory
     {
         var compilation = CreateCompilation(source, assemblyName);
         using var stream = new MemoryStream();
-        var emitResult = compilation.Emit(stream);
-
-        if (!emitResult.Success)
-        {
-            var diagnostics = string.Join(
-                Environment.NewLine,
-                emitResult.Diagnostics.Select(static diagnostic => diagnostic.ToString()));
-            throw new InvalidOperationException($"Failed to emit benchmark compilation:{Environment.NewLine}{diagnostics}");
-        }
-
+        EmitAssembly(compilation, stream);
         stream.Position = 0;
         return new AssemblyLoadContext(assemblyName, isCollectible: true).LoadFromStream(stream);
+    }
+
+    /// <summary>
+    /// Emits the provided benchmark source and returns the emitted assembly size in bytes.
+    /// </summary>
+    /// <param name="source">The benchmark source to compile.</param>
+    /// <param name="assemblyName">The dynamic assembly name.</param>
+    /// <returns>The emitted assembly size in bytes.</returns>
+    public static int GetEmittedAssemblySize(string source, string assemblyName)
+    {
+        var compilation = CreateCompilation(source, assemblyName);
+        using var stream = new MemoryStream();
+        EmitAssembly(compilation, stream);
+        return checked((int)stream.Length);
     }
 
     /// <summary>
@@ -99,5 +104,18 @@ internal static class BenchmarkCompilationFactory
 
         references.Add(MetadataReference.CreateFromFile(typeof(IRequest<>).Assembly.Location));
         return references;
+    }
+
+    private static void EmitAssembly(CSharpCompilation compilation, MemoryStream stream)
+    {
+        var emitResult = compilation.Emit(stream);
+
+        if (!emitResult.Success)
+        {
+            var diagnostics = string.Join(
+                Environment.NewLine,
+                emitResult.Diagnostics.Select(static diagnostic => diagnostic.ToString()));
+            throw new InvalidOperationException($"Failed to emit benchmark compilation:{Environment.NewLine}{diagnostics}");
+        }
     }
 }
