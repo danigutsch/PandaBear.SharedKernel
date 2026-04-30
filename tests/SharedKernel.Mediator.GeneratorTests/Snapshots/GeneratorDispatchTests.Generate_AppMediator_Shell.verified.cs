@@ -110,6 +110,21 @@ public sealed partial class AppMediator : IMediator
         return GeneratedDispatch.Send<TResponse>(this, request, ct);
     }
 
+    /// <summary>
+    /// Sends a request instance through the generated object-dispatch path.
+    /// </summary>
+    /// <param name="request">The boxed request instance to dispatch.</param>
+    /// <param name="ct">The cancellation token for the operation.</param>
+    /// <returns>The boxed response value produced by the generated dispatch path.</returns>
+    public global::System.Threading.Tasks.ValueTask<object?> SendObject(
+        object request,
+        global::System.Threading.CancellationToken ct)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        return GeneratedDispatch.SendObject(this, request, ct);
+    }
+
     /// <inheritdoc />
     public global::System.Threading.Tasks.ValueTask Publish<TNotification>(
         TNotification notification,
@@ -140,6 +155,22 @@ internal static class GeneratedDispatch
         };
     }
 
+    public static global::System.Threading.Tasks.ValueTask<object?> SendObject(
+        AppMediator mediator,
+        object request,
+        global::System.Threading.CancellationToken ct)
+    {
+        return request switch
+        {
+            global::Demo.CreateTour typed => Box<int>(mediator.Send(typed, ct)),
+            global::Demo.DeleteTour typed => Box<global::SharedKernel.Mediator.Unit>(mediator.Send(typed, ct)),
+            global::Demo.GetTourById typed => Box<string>(mediator.Send(typed, ct)),
+            global::Demo.LookupTour typed => Box<string>(mediator.Send(typed, ct)),
+            global::Demo.MissingTour typed => Box<string>(mediator.Send(typed, ct)),
+            _ => ThrowUnknownRequestObject(request),
+        };
+    }
+
     public static async global::System.Threading.Tasks.ValueTask<TTarget> Cast<TSource, TTarget>(
         global::System.Threading.Tasks.ValueTask<TSource> source)
     {
@@ -153,12 +184,26 @@ internal static class GeneratedDispatch
         return ThrowInvalidResponseCast<TSource, TTarget>();
     }
 
+    public static async global::System.Threading.Tasks.ValueTask<object?> Box<TSource>(
+        global::System.Threading.Tasks.ValueTask<TSource> source)
+    {
+        return await source.ConfigureAwait(false);
+    }
+
     public static global::System.Threading.Tasks.ValueTask<TResponse> ThrowNoHandler<TResponse>(
         global::SharedKernel.Mediator.IRequest<TResponse> request)
     {
         global::System.ArgumentNullException.ThrowIfNull(request);
 
         throw new global::System.NotSupportedException($"Generated request dispatch is not available for request type '{request.GetType().FullName}'.");
+    }
+
+    public static global::System.Threading.Tasks.ValueTask<object?> ThrowUnknownRequestObject(
+        object request)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        throw new global::System.NotSupportedException($"Generated object dispatch is not available for request type '{request.GetType().FullName}'.");
     }
 
     public static global::System.Threading.Tasks.ValueTask<TResponse> ThrowAmbiguousHandlers<TResponse>(

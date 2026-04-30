@@ -509,6 +509,50 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
+    public void Generate_Discovery_Report_Unmarked_Module_Object_Dispatch_Coverage_Diagnostic()
+    {
+        // Arrange
+        const string moduleSource = """
+            using SharedKernel.Mediator;
+
+            namespace ModuleA;
+
+            public sealed record SearchTours(string Query) : IQuery<int>;
+
+            public sealed class SearchToursHandler : IQueryHandler<SearchTours, int>
+            {
+                public ValueTask<int> Handle(SearchTours request, CancellationToken ct) => ValueTask.FromResult(10);
+            }
+            """;
+        var moduleReference = GeneratorTestHarness.CreateMetadataReference(moduleSource, "SharedKernel.Mediator.Tests.ModuleA.Unmarked");
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: [moduleReference]);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnostics = runResult.Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == "SKMED013"
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains(
+                                     "SharedKernel.Mediator.Tests.ModuleA.Unmarked",
+                                     StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void Generate_Discovery_Report_Explicit_Interface_Handler_Invalid_Signature_Diagnostic()
     {
         // Arrange

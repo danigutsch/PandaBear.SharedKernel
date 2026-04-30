@@ -13,6 +13,7 @@ Benchmark harness for the `SharedKernel.Mediator` discovery generator and API-sh
 - Cover synchronous and asynchronous completion paths
 - Compare generated-style and hand-written mediator DI service-provider build costs
 - Measure handler, mediator, and first-dispatch DI costs
+- Measure generated object-switch dispatch separately from typed and generic dispatch
 
 ## Run
 
@@ -20,6 +21,7 @@ Benchmark harness for the `SharedKernel.Mediator` discovery generator and API-sh
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *DiscoveryBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *ApiShapeBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *DependencyInjectionBenchmarks*
+dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *ObjectDispatchBenchmarks*
 ```
 
 ## Notes
@@ -32,6 +34,8 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
   benchmark comparison and is not part of the production mediator contract.
 - `DependencyInjectionBenchmarks` uses a generated-style benchmark mediator shell so DI build,
   resolution, and first-dispatch costs stay close to the current generated shape.
+- `ObjectDispatchBenchmarks` isolates the extra boxing and switch path for `SendObject` without
+  widening the core mediator abstractions.
 
 ## See Also
 
