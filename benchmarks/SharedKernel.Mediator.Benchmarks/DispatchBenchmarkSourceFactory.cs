@@ -8,12 +8,17 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// </summary>
 internal static class DispatchBenchmarkSourceFactory
 {
+    public const string ClassShape = "Class";
+    public const string RecordClassShape = "RecordClass";
+    public const string ReadonlyRecordStructShape = "ReadonlyRecordStruct";
+
     /// <summary>
     /// Creates benchmark source with the requested request volume.
     /// </summary>
     /// <param name="requestCount">The number of request/handler pairs to emit.</param>
+    /// <param name="requestShape">The request shape to emit.</param>
     /// <returns>The synthetic dispatch benchmark source file.</returns>
-    public static string CreateSource(int requestCount)
+    public static string CreateSource(int requestCount, string requestShape)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestCount);
 
@@ -26,9 +31,7 @@ internal static class DispatchBenchmarkSourceFactory
 
         for (var index = 0; index < requestCount; index++)
         {
-            builder.Append("public sealed record Request")
-                .Append(index)
-                .AppendLine("(int Id) : IQuery<int>;");
+            AppendRequestDeclaration(builder, index, requestShape);
             builder.AppendLine();
             builder.Append("public sealed class Request")
                 .Append(index)
@@ -183,5 +186,35 @@ internal static class DispatchBenchmarkSourceFactory
         builder.AppendLine("}");
 
         return builder.ToString();
+    }
+
+    private static void AppendRequestDeclaration(StringBuilder builder, int index, string requestShape)
+    {
+        switch (requestShape)
+        {
+            case ClassShape:
+                builder.Append("public sealed class Request")
+                    .Append(index)
+                    .AppendLine("(int id) : IQuery<int>")
+                    .AppendLine("{")
+                    .AppendLine("    public int Id { get; } = id;")
+                    .AppendLine("}");
+                break;
+
+            case RecordClassShape:
+                builder.Append("public sealed record Request")
+                    .Append(index)
+                    .AppendLine("(int Id) : IQuery<int>;");
+                break;
+
+            case ReadonlyRecordStructShape:
+                builder.Append("public readonly record struct Request")
+                    .Append(index)
+                    .AppendLine("(int Id) : IQuery<int>;");
+                break;
+
+            default:
+                throw new InvalidOperationException($"Unsupported request shape '{requestShape}'.");
+        }
     }
 }

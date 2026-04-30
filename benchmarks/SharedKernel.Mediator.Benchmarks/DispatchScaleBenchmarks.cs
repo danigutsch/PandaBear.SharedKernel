@@ -4,11 +4,26 @@ using System.Reflection;
 namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>
-/// Measures dispatch-shape costs across request-count scale points for the current class-request, no-pipeline path.
+/// Measures dispatch-shape costs across request-count scale points for the current no-pipeline path.
 /// </summary>
 [MemoryDiagnoser]
 public class DispatchScaleBenchmarks
 {
+    /// <summary>
+    /// The class-request benchmark shape.
+    /// </summary>
+    public const string ClassShape = DispatchBenchmarkSourceFactory.ClassShape;
+
+    /// <summary>
+    /// The record-class benchmark shape.
+    /// </summary>
+    public const string RecordClassShape = DispatchBenchmarkSourceFactory.RecordClassShape;
+
+    /// <summary>
+    /// The readonly-record-struct benchmark shape.
+    /// </summary>
+    public const string ReadonlyRecordStructShape = DispatchBenchmarkSourceFactory.ReadonlyRecordStructShape;
+
     private Func<CancellationToken, ValueTask<int>> directHandlerCall = null!;
     private Func<CancellationToken, ValueTask<int>> generatedTypedOverload = null!;
     private Func<CancellationToken, ValueTask<int>> generatedGenericSwitch = null!;
@@ -21,14 +36,20 @@ public class DispatchScaleBenchmarks
     public int RequestCount { get; set; }
 
     /// <summary>
+    /// Gets or sets the request shape under test.
+    /// </summary>
+    [Params(ClassShape, RecordClassShape, ReadonlyRecordStructShape)]
+    public string RequestShape { get; set; } = ClassShape;
+
+    /// <summary>
     /// Builds the generated benchmark assembly and captures the exported delegates.
     /// </summary>
     [GlobalSetup]
     public void Setup()
     {
-        var assemblyName = $"SharedKernel.Mediator.Benchmarks.DispatchScale.{RequestCount}";
+        var assemblyName = $"SharedKernel.Mediator.Benchmarks.DispatchScale.{RequestShape}.{RequestCount}";
         var assembly = BenchmarkCompilationFactory.LoadAssembly(
-            DispatchBenchmarkSourceFactory.CreateSource(RequestCount),
+            DispatchBenchmarkSourceFactory.CreateSource(RequestCount, RequestShape),
             assemblyName);
 
         directHandlerCall = CreateExport<Func<CancellationToken, ValueTask<int>>>(assembly, "CreateDirectHandlerCall");

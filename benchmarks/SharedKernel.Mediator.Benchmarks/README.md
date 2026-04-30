@@ -38,9 +38,10 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
   resolution, and first-dispatch costs stay close to the current generated shape.
 - `ObjectDispatchBenchmarks` isolates the extra boxing and switch path for `SendObject` without
   widening the core mediator abstractions.
-- `DispatchScaleBenchmarks` fixes the current request shape to class/no-pipeline dispatch and scales
-  only the number of generated request types so the request-count rows in the checklist stay
-  isolated from later shape and pipeline variables.
+- `DispatchScaleBenchmarks` currently covers class, record class, and readonly record struct request
+  forms while holding pipeline count at zero.
+- The dispatch scale suite varies request count across `1`, `10`, `100`, `1,000`, and `5,000`
+  generated request types for each covered request shape.
 
 ## See Also
 
