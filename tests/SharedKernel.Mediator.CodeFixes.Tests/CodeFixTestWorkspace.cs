@@ -81,6 +81,74 @@ internal sealed class CodeFixTestWorkspace
     }
 
     /// <summary>
+    /// Creates a two-project workspace with the primary project referencing a module project.
+    /// </summary>
+    /// <param name="primarySource">The source placed in the primary project.</param>
+    /// <param name="moduleSource">The source placed in the referenced module project.</param>
+    /// <param name="primaryAssemblyName">The dynamic primary assembly name.</param>
+    /// <param name="moduleAssemblyName">The dynamic module assembly name.</param>
+    /// <returns>The initialized multi-project workspace.</returns>
+    public static CodeFixTestWorkspace CreateWithProjectReference(
+        string primarySource,
+        string moduleSource,
+        string primaryAssemblyName = "SharedKernel.Mediator.CodeFixes.Tests.Primary",
+        string moduleAssemblyName = "SharedKernel.Mediator.CodeFixes.Tests.Module")
+    {
+        var workspace = new AdhocWorkspace();
+        var versionStamp = VersionStamp.Create();
+        var parseOptions = new CSharpParseOptions(LanguageVersion.Preview);
+        var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+        var metadataReferences = GetMetadataReferences().ToList();
+
+        var moduleProjectId = ProjectId.CreateNewId(moduleAssemblyName);
+        var moduleDocumentId = DocumentId.CreateNewId(moduleProjectId, "Module.cs");
+        var primaryProjectId = ProjectId.CreateNewId(primaryAssemblyName);
+        var primaryDocumentId = DocumentId.CreateNewId(primaryProjectId, "Primary.cs");
+
+        var solution = workspace.CurrentSolution
+            .AddProject(
+                ProjectInfo.Create(
+                    moduleProjectId,
+                    versionStamp,
+                    name: moduleAssemblyName,
+                    assemblyName: moduleAssemblyName,
+                    language: LanguageNames.CSharp,
+                    filePath: $"/{moduleAssemblyName}.csproj",
+                    outputFilePath: $"/{moduleAssemblyName}.dll",
+                    compilationOptions: compilationOptions,
+                    parseOptions: parseOptions,
+                    metadataReferences: metadataReferences))
+            .AddDocument(
+                DocumentInfo.Create(
+                    moduleDocumentId,
+                    "Module.cs",
+                    loader: TextLoader.From(TextAndVersion.Create(SourceText.From(DefaultUsings + moduleSource), versionStamp)),
+                    filePath: "/Module.cs"))
+            .AddProject(
+                ProjectInfo.Create(
+                    primaryProjectId,
+                    versionStamp,
+                    name: primaryAssemblyName,
+                    assemblyName: primaryAssemblyName,
+                    language: LanguageNames.CSharp,
+                    filePath: $"/{primaryAssemblyName}.csproj",
+                    outputFilePath: $"/{primaryAssemblyName}.dll",
+                    compilationOptions: compilationOptions,
+                    parseOptions: parseOptions,
+                    metadataReferences: metadataReferences))
+            .AddDocument(
+                DocumentInfo.Create(
+                    primaryDocumentId,
+                    "Primary.cs",
+                    loader: TextLoader.From(TextAndVersion.Create(SourceText.From(DefaultUsings + primarySource), versionStamp)),
+                    filePath: "/Primary.cs"))
+            .AddProjectReference(primaryProjectId, new ProjectReference(moduleProjectId));
+        workspace.TryApplyChanges(solution);
+
+        return new CodeFixTestWorkspace(workspace, primaryProjectId, primaryDocumentId);
+    }
+
+    /// <summary>
     /// Gets all generator diagnostics for the current workspace state.
     /// </summary>
     /// <returns>The diagnostics emitted by the mediator source generator.</returns>
@@ -108,6 +176,41 @@ internal sealed class CodeFixTestWorkspace
     }
 
     /// <summary>
+    /// Creates a synthetic diagnostic on the named document for code-fix testing.
+    /// </summary>
+    /// <param name="diagnosticId">The diagnostic identifier to create.</param>
+    /// <param name="documentName">The document name hosting the diagnostic.</param>
+    /// <param name="markerText">The text to locate for the diagnostic span.</param>
+    /// <param name="properties">Optional diagnostic properties.</param>
+    /// <returns>The created diagnostic.</returns>
+    public async Task<Diagnostic> CreateDocumentDiagnosticAsync(
+        string diagnosticId,
+        string documentName,
+        string markerText,
+        ImmutableDictionary<string, string?>? properties = null)
+    {
+        var document = Assert.Single(
+            Workspace.CurrentSolution.Projects.SelectMany(static project => project.Documents),
+            candidate => string.Equals(candidate.Name, documentName, StringComparison.Ordinal));
+        var text = await document.GetTextAsync().ConfigureAwait(false);
+        var source = text.ToString();
+        var start = source.IndexOf(markerText, StringComparison.Ordinal);
+        Assert.True(start >= 0, $"Could not find marker text '{markerText}' in document '{documentName}'.");
+        var syntaxTree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
+        Assert.NotNull(syntaxTree);
+        var span = new TextSpan(start, markerText.Length);
+        var descriptor = new DiagnosticDescriptor(
+            diagnosticId,
+            title: diagnosticId,
+            messageFormat: diagnosticId,
+            category: "Usage",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        return Diagnostic.Create(descriptor, Location.Create(syntaxTree!, span), properties);
+    }
+
+    /// <summary>
     /// Gets the current primary document text.
     /// </summary>
     /// <returns>The latest source text from the primary document.</returns>
@@ -117,16 +220,46 @@ internal sealed class CodeFixTestWorkspace
     }
 
     /// <summary>
+    /// Gets a document text by file name across all projects in the workspace.
+    /// </summary>
+    /// <param name="documentName">The document name to locate.</param>
+    /// <returns>The text from the requested document.</returns>
+    public async Task<string> GetDocumentTextAsync(string documentName)
+    {
+        var document = Assert.Single(
+            Workspace.CurrentSolution.Projects.SelectMany(static project => project.Documents),
+            candidate => string.Equals(candidate.Name, documentName, StringComparison.Ordinal));
+        return (await document.GetTextAsync().ConfigureAwait(false)).ToString();
+    }
+
+    /// <summary>
     /// Gets a generated document text by file name.
     /// </summary>
     /// <param name="documentName">The document name to locate.</param>
     /// <returns>The text from the requested document.</returns>
     public async Task<string> GetAdditionalDocumentTextAsync(string documentName)
     {
-        var document = Assert.Single(
-            Project.Documents,
-            candidate => string.Equals(candidate.Name, documentName, StringComparison.Ordinal));
-        return (await document.GetTextAsync().ConfigureAwait(false)).ToString();
+        return await GetDocumentTextAsync(documentName).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Gets a generated source by hint name from the current primary project compilation.
+    /// </summary>
+    /// <param name="hintName">The generated source hint name.</param>
+    /// <returns>The generated source text.</returns>
+    public async Task<string> GetGeneratedSourceAsync(string hintName)
+    {
+        var compilation = (CSharpCompilation?)await Project.GetCompilationAsync().ConfigureAwait(false);
+        Assert.NotNull(compilation);
+
+        var generator = new SharedKernelMediatorGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+        driver = driver.RunGenerators(compilation);
+        var runResult = driver.GetRunResult();
+        var generatedSource = Assert.Single(
+            runResult.Results.Single().GeneratedSources,
+            candidate => string.Equals(candidate.HintName, hintName, StringComparison.Ordinal));
+        return generatedSource.SourceText.ToString();
     }
 
     /// <summary>
@@ -138,8 +271,11 @@ internal sealed class CodeFixTestWorkspace
     public async Task<IReadOnlyList<CodeAction>> GetCodeActionsAsync(CodeFixProvider provider, Diagnostic diagnostic)
     {
         var actions = new List<CodeAction>();
+        var document = diagnostic.Location.SourceTree is null
+            ? Document
+            : Workspace.CurrentSolution.GetDocument(diagnostic.Location.SourceTree) ?? Document;
         var codeFixContext = new CodeFixContext(
-            Document,
+            document,
             diagnostic,
             (action, _) => actions.Add(action),
             CancellationToken.None);
