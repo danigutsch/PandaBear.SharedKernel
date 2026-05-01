@@ -81,6 +81,94 @@ internal sealed class CodeFixTestWorkspace
     }
 
     /// <summary>
+    /// Creates a new workspace whose primary document relies on a companion <c>GlobalUsings.cs</c> file.
+    /// </summary>
+    /// <param name="source">The source to place in the primary document.</param>
+    /// <param name="globalUsingsSource">The source to place in the global-usings document.</param>
+    /// <param name="assemblyName">The dynamic assembly name.</param>
+    /// <returns>The initialized test workspace.</returns>
+    public static CodeFixTestWorkspace CreateWithGlobalUsings(
+        string source,
+        string globalUsingsSource,
+        string assemblyName = "SharedKernel.Mediator.CodeFixes.Tests.Dynamic")
+    {
+        var workspace = new AdhocWorkspace();
+        var projectId = ProjectId.CreateNewId(assemblyName);
+        var versionStamp = VersionStamp.Create();
+        var documentId = DocumentId.CreateNewId(projectId, "Test0.cs");
+        var parseOptions = new CSharpParseOptions(LanguageVersion.Preview);
+        var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+        var projectInfo = ProjectInfo.Create(
+            projectId,
+            versionStamp,
+            name: assemblyName,
+            assemblyName: assemblyName,
+            language: LanguageNames.CSharp,
+            filePath: $"/{assemblyName}.csproj",
+            outputFilePath: $"/{assemblyName}.dll",
+            compilationOptions: compilationOptions,
+            parseOptions: parseOptions,
+            metadataReferences: GetMetadataReferences());
+
+        workspace.AddProject(projectInfo);
+        workspace.AddDocument(
+            DocumentInfo.Create(
+                DocumentId.CreateNewId(projectId, "GlobalUsings.cs"),
+                "GlobalUsings.cs",
+                loader: TextLoader.From(TextAndVersion.Create(SourceText.From(globalUsingsSource), versionStamp)),
+                filePath: "/GlobalUsings.cs"));
+        workspace.AddDocument(
+            DocumentInfo.Create(
+                documentId,
+                "Test0.cs",
+                loader: TextLoader.From(TextAndVersion.Create(SourceText.From(source), versionStamp)),
+                filePath: "/Test0.cs"));
+
+        return new CodeFixTestWorkspace(workspace, projectId, documentId);
+    }
+
+    /// <summary>
+    /// Creates a new workspace with nullable reference types enabled at the project level.
+    /// </summary>
+    /// <param name="source">The source to place in the primary document.</param>
+    /// <param name="assemblyName">The dynamic assembly name.</param>
+    /// <returns>The initialized test workspace.</returns>
+    public static CodeFixTestWorkspace CreateWithNullableEnabled(
+        string source,
+        string assemblyName = "SharedKernel.Mediator.CodeFixes.Tests.Dynamic")
+    {
+        var workspace = new AdhocWorkspace();
+        var projectId = ProjectId.CreateNewId(assemblyName);
+        var versionStamp = VersionStamp.Create();
+        var documentId = DocumentId.CreateNewId(projectId, "Test0.cs");
+        var parseOptions = new CSharpParseOptions(LanguageVersion.Preview);
+        var compilationOptions = new CSharpCompilationOptions(
+            OutputKind.DynamicallyLinkedLibrary,
+            nullableContextOptions: NullableContextOptions.Enable);
+        var projectInfo = ProjectInfo.Create(
+            projectId,
+            versionStamp,
+            name: assemblyName,
+            assemblyName: assemblyName,
+            language: LanguageNames.CSharp,
+            filePath: $"/{assemblyName}.csproj",
+            outputFilePath: $"/{assemblyName}.dll",
+            compilationOptions: compilationOptions,
+            parseOptions: parseOptions,
+            metadataReferences: GetMetadataReferences());
+
+        workspace.AddProject(projectInfo);
+        workspace.AddDocument(
+            DocumentInfo.Create(
+                documentId,
+                "Test0.cs",
+                loader: TextLoader.From(TextAndVersion.Create(SourceText.From(DefaultUsings + source), versionStamp)),
+                filePath: "/Test0.cs"));
+
+        return new CodeFixTestWorkspace(workspace, projectId, documentId);
+    }
+
+    /// <summary>
     /// Creates a two-project workspace with the primary project referencing a module project.
     /// </summary>
     /// <param name="primarySource">The source placed in the primary project.</param>
