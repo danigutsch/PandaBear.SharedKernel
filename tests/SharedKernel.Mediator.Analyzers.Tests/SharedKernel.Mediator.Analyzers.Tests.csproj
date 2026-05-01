@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>SharedKernel.Mediator.Analyzers.Tests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="$(MediatorRoslynVersion)" />
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3.mtp-v2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
+        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator.Analyzers\SharedKernel.Mediator.Analyzers.csproj" />
+    </ItemGroup>
+
+</Project>
