@@ -105,6 +105,113 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Missing_Request_Generates_Handler_File_From_Block_Scoped_Namespace()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo
+            {
+                public sealed record MissingTour(int Id) : IQuery<string>;
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var generatedHandlerSource = await workspace.GetAdditionalDocumentTextAsync("MissingTourHandler.cs");
+
+        // Assert
+        Assert.Contains("namespace Demo;", generatedHandlerSource, StringComparison.Ordinal);
+        Assert.Contains("public sealed class MissingTourHandler", generatedHandlerSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Explicit_Interface_Handler_In_Block_Scoped_Namespace_Adds_Public_Forwarding_Handle_Method()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo
+            {
+                public sealed record LookupTour(string Code) : IQuery<string>;
+
+                public sealed class ExplicitLookupTourHandler : IQueryHandler<LookupTour, string>
+                {
+                    ValueTask<string> IQueryHandler<LookupTour, string>.Handle(LookupTour request, CancellationToken ct)
+                    {
+                        return ValueTask.FromResult(request.Code);
+                    }
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.InvalidHandlerSignature);
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "return ((global::SharedKernel.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Interface_In_Block_Scoped_Namespace_Adds_IRequest_Response_Type()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo
+            {
+                public sealed record MissingTour(int Id);
+
+                public sealed class TourFacade(ISender sender)
+                {
+                    public ValueTask<string> Load(CancellationToken ct)
+                    {
+                        return sender.Send<string>(new MissingTour(42), ct);
+                    }
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            InvalidRequestArgumentDiagnosticId,
+            "Test0.cs",
+            "MissingTour(42)");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Add IRequest<string>", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "public sealed record MissingTour(int Id) : global::SharedKernel.Mediator.IRequest<string>;",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Explicit_Interface_Handler_Adds_Public_Forwarding_Handle_Method()
     {
         // Arrange
