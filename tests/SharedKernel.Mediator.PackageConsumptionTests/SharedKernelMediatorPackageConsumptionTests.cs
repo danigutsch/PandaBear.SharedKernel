@@ -49,6 +49,38 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     {
         // Arrange
         using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorGeneratedConsumer");
+        WriteGeneratedConsumerProject(workspace);
+
+        // Act
+        var buildOutput = await workspace.Build();
+        var appMediatorFiles = workspace.GetGeneratedFiles("SharedKernel.Mediator.Generated.AppMediator.g.cs");
+        var dependencyInjectionFiles = workspace.GetGeneratedFiles("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+
+        // Assert
+        Assert.Contains("Build succeeded.", buildOutput, StringComparison.Ordinal);
+        Assert.NotEmpty(appMediatorFiles);
+        Assert.NotEmpty(dependencyInjectionFiles);
+    }
+
+    [Fact]
+    public async Task Runtime_And_Source_Generator_Packages_Can_Be_Published_By_A_Fresh_Project()
+    {
+        // Arrange
+        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorPublishedConsumer");
+        WriteGeneratedConsumerProject(workspace);
+
+        // Act
+        var publishOutput = await workspace.Publish("-c", "Release");
+        var publishDirectory = workspace.GetPublishDirectory();
+
+        // Assert
+        Assert.NotEmpty(publishOutput);
+        Assert.True(Directory.Exists(publishDirectory));
+        Assert.NotEmpty(Directory.GetFiles(publishDirectory, "*", SearchOption.TopDirectoryOnly));
+    }
+
+    private void WriteGeneratedConsumerProject(PackageConsumptionWorkspace workspace)
+    {
         workspace.WriteProject(
             $$"""
             <Project Sdk="Microsoft.NET.Sdk">
@@ -93,15 +125,5 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
                 }
             }
             """));
-
-        // Act
-        var buildOutput = await workspace.Build();
-        var appMediatorFiles = workspace.GetGeneratedFiles("SharedKernel.Mediator.Generated.AppMediator.g.cs");
-        var dependencyInjectionFiles = workspace.GetGeneratedFiles("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
-
-        // Assert
-        Assert.Contains("Build succeeded.", buildOutput, StringComparison.Ordinal);
-        Assert.NotEmpty(appMediatorFiles);
-        Assert.NotEmpty(dependencyInjectionFiles);
     }
 }

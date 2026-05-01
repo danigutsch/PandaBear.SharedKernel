@@ -54,6 +54,27 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     }
 
     /// <summary>
+    /// Publishes the consumer project.
+    /// </summary>
+    /// <param name="arguments">Additional arguments passed after <c>dotnet publish</c>.</param>
+    /// <returns>The dotnet publish output.</returns>
+    public Task<string> Publish(params string[] arguments)
+    {
+        return DotNetCli.RunAsync(ProjectDirectory, ["publish", ProjectFilePath, .. arguments]);
+    }
+
+    /// <summary>
+    /// Gets the publish directory for the current consumer project.
+    /// </summary>
+    /// <param name="configuration">The build configuration. Defaults to <c>Release</c>.</param>
+    /// <param name="targetFramework">The target framework. Defaults to <c>net10.0</c>.</param>
+    /// <returns>The publish directory path.</returns>
+    public string GetPublishDirectory(string configuration = "Release", string targetFramework = "net10.0")
+    {
+        return Path.Combine(ProjectDirectory, "bin", configuration, targetFramework, "publish");
+    }
+
+    /// <summary>
     /// Gets the generated file paths for a given generated source file name.
     /// </summary>
     /// <param name="fileName">The generated source file name to locate.</param>
