@@ -134,6 +134,6 @@ public sealed partial class AppMediator : IMediator
     {
         global::System.ArgumentNullException.ThrowIfNull(notification);
 
-        throw new global::System.NotSupportedException("Generated notification dispatch is not available yet.");
+        return GeneratedDispatch.Publish(this, notification, ct);
     }
 }

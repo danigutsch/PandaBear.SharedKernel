@@ -37,6 +37,27 @@ internal static class GeneratedDispatch
         };
     }
 
+    public static global::System.Threading.Tasks.ValueTask Publish<TNotification>(
+        AppMediator mediator,
+        TNotification notification,
+        global::System.Threading.CancellationToken ct)
+        where TNotification : global::SharedKernel.Mediator.INotification
+    {
+        return notification switch
+        {
+            global::Demo.TourCreated typed => Publish_0000(mediator.Services, typed, ct),
+            _ => global::System.Threading.Tasks.ValueTask.CompletedTask,
+        };
+    }
+
+    private static global::System.Threading.Tasks.ValueTask Publish_0000(
+        global::System.IServiceProvider services,
+        global::Demo.TourCreated notification,
+        global::System.Threading.CancellationToken ct)
+    {
+        return global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandler>(services).Handle(notification, ct);
+    }
+
     public static async global::System.Threading.Tasks.ValueTask<TTarget> Cast<TSource, TTarget>(
         global::System.Threading.Tasks.ValueTask<TSource> source)
     {

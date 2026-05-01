@@ -248,6 +248,250 @@ public sealed class GeneratorDispatchBehaviorTests
             traceEntries);
     }
 
+    [Fact]
+    public async Task Generated_Notification_Dispatch_Matches_Reference_Dispatcher_With_Exact_Type_Matching()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public static class TraceLog
+            {
+                public static List<string> Entries { get; } = [];
+            }
+
+            public abstract record BaseNotification(string Name) : INotification;
+
+            public sealed record DerivedNotification(string Name) : BaseNotification(Name);
+
+            public sealed class BaseNotificationHandler : INotificationHandler<BaseNotification>
+            {
+                public ValueTask Handle(BaseNotification notification, CancellationToken ct)
+                {
+                    TraceLog.Entries.Add($"base:{notification.Name}");
+                    return ValueTask.CompletedTask;
+                }
+            }
+
+            public sealed class DerivedNotificationHandlerOne : INotificationHandler<DerivedNotification>
+            {
+                public ValueTask Handle(DerivedNotification notification, CancellationToken ct)
+                {
+                    TraceLog.Entries.Add($"derived-1:{notification.Name}");
+                    return ValueTask.CompletedTask;
+                }
+            }
+
+            public sealed class DerivedNotificationHandlerTwo : INotificationHandler<DerivedNotification>
+            {
+                public ValueTask Handle(DerivedNotification notification, CancellationToken ct)
+                {
+                    TraceLog.Entries.Add($"derived-2:{notification.Name}");
+                    return ValueTask.CompletedTask;
+                }
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var baseHandler = Activator.CreateInstance(runtime.GetRequiredType("Demo.BaseNotificationHandler"))!;
+        var derivedHandlerOne = Activator.CreateInstance(runtime.GetRequiredType("Demo.DerivedNotificationHandlerOne"))!;
+        var derivedHandlerTwo = Activator.CreateInstance(runtime.GetRequiredType("Demo.DerivedNotificationHandlerTwo"))!;
+        var notification = (INotification)Activator.CreateInstance(runtime.GetRequiredType("Demo.DerivedNotification"), "tour")!;
+        var referenceDispatcher = new ReferenceDispatcherBuilder()
+            .AddNotificationHandler(runtime.GetRequiredType("Demo.BaseNotification"), baseHandler)
+            .AddNotificationHandler(runtime.GetRequiredType("Demo.DerivedNotification"), derivedHandlerOne)
+            .AddNotificationHandler(runtime.GetRequiredType("Demo.DerivedNotification"), derivedHandlerTwo)
+            .Build();
+        var generatedDispatcher = runtime.CreateMediator(baseHandler, derivedHandlerOne, derivedHandlerTwo);
+
+        // Act
+        await referenceDispatcher.Publish(notification, CancellationToken.None);
+        var referenceTrace = runtime.ReadTraceEntries("Demo.TraceLog");
+        runtime.ClearTraceEntries("Demo.TraceLog");
+        await generatedDispatcher.Publish(notification, CancellationToken.None);
+        var generatedTrace = runtime.ReadTraceEntries("Demo.TraceLog");
+
+        // Assert
+        Assert.Equal(referenceTrace, generatedTrace);
+        Assert.Equal(
+            [
+                "derived-1:tour",
+                "derived-2:tour",
+            ],
+            generatedTrace);
+    }
+
+    [Fact]
+    public async Task Generated_Notification_Dispatch_With_Zero_Handlers_Completes_Without_Effects()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public static class TraceLog
+            {
+                public static List<string> Entries { get; } = [];
+            }
+
+            public sealed record TourCreated(int Id) : INotification;
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var notification = (INotification)Activator.CreateInstance(runtime.GetRequiredType("Demo.TourCreated"), 42)!;
+        var mediator = runtime.CreateMediator();
+
+        // Act
+        await mediator.Publish(notification, CancellationToken.None);
+
+        // Assert
+        Assert.Empty(runtime.ReadTraceEntries("Demo.TraceLog"));
+    }
+
+    [Fact]
+    public async Task Generated_Notification_Dispatch_With_One_Handler_Invokes_Handler()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public static class TraceLog
+            {
+                public static List<string> Entries { get; } = [];
+            }
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class TourCreatedHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                {
+                    TraceLog.Entries.Add($"handler:{notification.Id}");
+                    return ValueTask.CompletedTask;
+                }
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var handler = Activator.CreateInstance(runtime.GetRequiredType("Demo.TourCreatedHandler"))!;
+        var notification = (INotification)Activator.CreateInstance(runtime.GetRequiredType("Demo.TourCreated"), 42)!;
+        var mediator = runtime.CreateMediator(handler);
+
+        // Act
+        await mediator.Publish(notification, CancellationToken.None);
+        var traceEntries = runtime.ReadTraceEntries("Demo.TraceLog");
+
+        // Assert
+        Assert.Equal(["handler:42"], traceEntries);
+    }
+
+    [Fact]
+    public async Task Generated_Notification_Dispatch_Stops_On_First_Exception()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public static class TraceLog
+            {
+                public static List<string> Entries { get; } = [];
+            }
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class FailingHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                {
+                    TraceLog.Entries.Add("before-fail");
+                    throw new InvalidOperationException("boom");
+                }
+            }
+
+            public sealed class SkippedHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                {
+                    TraceLog.Entries.Add("after-fail");
+                    return ValueTask.CompletedTask;
+                }
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var mediator = runtime.CreateMediator(
+            Activator.CreateInstance(runtime.GetRequiredType("Demo.FailingHandler"))!,
+            Activator.CreateInstance(runtime.GetRequiredType("Demo.SkippedHandler"))!);
+        var notification = (INotification)Activator.CreateInstance(runtime.GetRequiredType("Demo.TourCreated"), 42)!;
+
+        // Act
+        async Task Act()
+        {
+            await mediator.Publish(notification, CancellationToken.None);
+        }
+
+        // Assert
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(Act);
+        Assert.Equal("boom", exception.Message);
+        Assert.Equal(["before-fail"], runtime.ReadTraceEntries("Demo.TraceLog"));
+    }
+
+    [Fact]
+    public async Task Generated_Notification_Dispatch_Propagates_Cancellation_Token_To_Handlers()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public static class TraceLog
+            {
+                public static List<string> Entries { get; } = [];
+            }
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class TourCreatedHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                {
+                    TraceLog.Entries.Add($"handler:{ct.CanBeCanceled}");
+                    return ValueTask.CompletedTask;
+                }
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var mediator = runtime.CreateMediator(Activator.CreateInstance(runtime.GetRequiredType("Demo.TourCreatedHandler"))!);
+        var notification = (INotification)Activator.CreateInstance(runtime.GetRequiredType("Demo.TourCreated"), 42)!;
+        using var cts = new CancellationTokenSource();
+
+        // Act
+        await mediator.Publish(notification, cts.Token);
+        var traceEntries = runtime.ReadTraceEntries("Demo.TraceLog");
+
+        // Assert
+        Assert.Equal(["handler:True"], traceEntries);
+    }
+
     private sealed class GeneratedMediatorRuntimeContext : IDisposable
     {
         private readonly Assembly assembly;
@@ -322,6 +566,13 @@ public sealed class GeneratorDispatchBehaviorTests
             var traceType = GetRequiredType(typeName);
             var entries = (IReadOnlyList<string>)traceType.GetProperty("Entries", BindingFlags.Public | BindingFlags.Static)!.GetValue(null)!;
             return [.. entries];
+        }
+
+        public void ClearTraceEntries(string typeName)
+        {
+            var traceType = GetRequiredType(typeName);
+            var entries = (System.Collections.IList)traceType.GetProperty("Entries", BindingFlags.Public | BindingFlags.Static)!.GetValue(null)!;
+            entries.Clear();
         }
 
         public void Dispose()
