@@ -51,18 +51,22 @@ public sealed class GeneratorDispatchBehaviorTests
             }
             """;
         var designTimeCompilation = GeneratorTestHarness.CreateCompilation(source);
-        var generatedSource = GeneratorTestHarness.RunGenerator(
-            designTimeCompilation,
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(designTimeCompilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
             "SharedKernel.Mediator.Generated.AppMediator.g.cs");
+        var generatedDispatchSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            "SharedKernel.Mediator.Generated.GeneratedDispatch.g.cs");
         var runtimeCompilation = GeneratorTestHarness.CreateCompilation(
             [
                 """
                 using System;
                 using System.Threading;
                 using System.Threading.Tasks;
-                using SharedKernel.Mediator;
                 """ + Environment.NewLine + source,
                 generatedSource,
+                generatedDispatchSource,
                 serviceProviderExtensionsSource,
             ],
             assemblyName: "SharedKernel.Mediator.Tests.GeneratedDispatchRuntime");

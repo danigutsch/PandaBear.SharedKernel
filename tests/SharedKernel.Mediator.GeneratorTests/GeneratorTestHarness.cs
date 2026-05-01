@@ -1,8 +1,10 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using SharedKernel.Mediator.SourceGenerator;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Collections.Immutable;
 
 namespace SharedKernel.Mediator.GeneratorTests;
 
@@ -51,10 +53,16 @@ internal static class GeneratorTestHarness
         return GetGeneratedSource(runResult, hintName);
     }
 
-    public static GeneratorDriverRunResult RunGeneratorDriver(CSharpCompilation compilation)
+    public static GeneratorDriverRunResult RunGeneratorDriver(
+        CSharpCompilation compilation,
+        ImmutableDictionary<string, string>? globalOptions = null)
     {
         var generator = new SharedKernelMediatorGenerator();
-        GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(
+            generators: [generator.AsSourceGenerator()],
+            additionalTexts: [],
+            parseOptions: (CSharpParseOptions?)compilation.SyntaxTrees.FirstOrDefault()?.Options,
+            optionsProvider: new TestAnalyzerConfigOptionsProvider(globalOptions));
 
         driver = driver.RunGenerators(compilation);
         return driver.GetRunResult();
@@ -138,5 +146,36 @@ internal static class GeneratorTestHarness
         }
 
         return references;
+    }
+
+    private sealed class TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>? globalOptions)
+        : AnalyzerConfigOptionsProvider
+    {
+        private readonly AnalyzerConfigOptions global = new TestAnalyzerConfigOptions(globalOptions);
+
+        public override AnalyzerConfigOptions GlobalOptions => global;
+
+        public override AnalyzerConfigOptions GetOptions(SyntaxTree tree)
+        {
+            return TestAnalyzerConfigOptions.Empty;
+        }
+
+        public override AnalyzerConfigOptions GetOptions(AdditionalText textFile)
+        {
+            return TestAnalyzerConfigOptions.Empty;
+        }
+    }
+
+    private sealed class TestAnalyzerConfigOptions(ImmutableDictionary<string, string>? values)
+        : AnalyzerConfigOptions
+    {
+        public static readonly TestAnalyzerConfigOptions Empty = new(null);
+
+        private readonly ImmutableDictionary<string, string> options = values ?? ImmutableDictionary<string, string>.Empty;
+
+        public override bool TryGetValue(string key, out string value)
+        {
+            return options.TryGetValue(key, out value!);
+        }
     }
 }

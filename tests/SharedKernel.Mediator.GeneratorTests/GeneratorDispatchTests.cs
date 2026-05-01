@@ -52,12 +52,17 @@ public sealed class GeneratorDispatchTests
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(
-            compilation,
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
             "SharedKernel.Mediator.Generated.AppMediator.g.cs");
+        var generatedDispatchSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            "SharedKernel.Mediator.Generated.GeneratedDispatch.g.cs");
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedSource);
+        GeneratorSnapshotVerifier.Verify(generatedDispatchSource, testName: "Generate_GeneratedDispatch_Shell");
         Assert.Contains("public sealed partial class AppMediator : IMediator", generatedSource, StringComparison.Ordinal);
         Assert.Contains("internal global::System.IServiceProvider Services { get; }", generatedSource, StringComparison.Ordinal);
         Assert.Contains("public global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.LookupTour request,", generatedSource, StringComparison.Ordinal);
@@ -66,15 +71,17 @@ public sealed class GeneratorDispatchTests
         Assert.Contains("public global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.GetTourById request,", generatedSource, StringComparison.Ordinal);
         Assert.Contains("return GeneratedDispatch.Send<TResponse>(this, request, ct);", generatedSource, StringComparison.Ordinal);
         Assert.Contains("public global::System.Threading.Tasks.ValueTask<object?> SendObject(", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.LookupTour typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.CreateTour typed => Cast<int, TResponse>(mediator.Send(typed, ct)),", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.DeleteTour typed => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.GetTourById typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.LookupTour typed => Box<string>(mediator.Send(typed, ct)),", generatedSource, StringComparison.Ordinal);
         Assert.Contains("return GeneratedDispatch.ThrowNoHandler<string>(request);", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("public static global::System.Threading.Tasks.ValueTask<TResponse> ThrowNoHandler<TResponse>(", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("public static global::System.Threading.Tasks.ValueTask<object?> ThrowUnknownRequestObject(", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("public static TTarget ThrowInvalidResponseCast<TSource, TTarget>()", generatedSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("internal static class GeneratedDispatch", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("internal static class GeneratedDispatch", generatedDispatchSource, StringComparison.Ordinal);
+        Assert.Contains("global::Demo.LookupTour typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
+        Assert.Contains("global::Demo.CreateTour typed => Cast<int, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
+        Assert.Contains("global::Demo.DeleteTour typed => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
+        Assert.Contains("global::Demo.GetTourById typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
+        Assert.Contains("global::Demo.LookupTour typed => Box<string>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
+        Assert.Contains("public static global::System.Threading.Tasks.ValueTask<TResponse> ThrowNoHandler<TResponse>(", generatedDispatchSource, StringComparison.Ordinal);
+        Assert.Contains("public static global::System.Threading.Tasks.ValueTask<object?> ThrowUnknownRequestObject(", generatedDispatchSource, StringComparison.Ordinal);
+        Assert.Contains("public static TTarget ThrowInvalidResponseCast<TSource, TTarget>()", generatedDispatchSource, StringComparison.Ordinal);
         Assert.Contains("Generated notification dispatch is not available yet.", generatedSource, StringComparison.Ordinal);
     }
 }
