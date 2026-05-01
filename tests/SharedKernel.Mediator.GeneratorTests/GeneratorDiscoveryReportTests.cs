@@ -622,6 +622,80 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
+    public void Generate_Discovery_Report_Notification_Handlers_Without_Explicit_Order_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class HandlerA : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+
+            public sealed class HandlerB : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.NotificationHandlersRequireExplicitOrder
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.TourCreated", StringComparison.Ordinal)
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.HandlerA", StringComparison.Ordinal));
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.NotificationHandlersRequireExplicitOrder
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.HandlerB", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Duplicate_Notification_Order_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            [NotificationOrder(10)]
+            public sealed class HandlerA : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+
+            [NotificationOrder(10)]
+            public sealed class HandlerB : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicateNotificationHandlerOrder
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.TourCreated", StringComparison.Ordinal)
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("10", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void Generate_Discovery_Report_Request_With_No_Handler_Diagnostic()
     {
         // Arrange

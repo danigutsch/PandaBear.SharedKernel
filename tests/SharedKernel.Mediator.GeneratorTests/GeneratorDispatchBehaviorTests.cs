@@ -278,6 +278,7 @@ public sealed class GeneratorDispatchBehaviorTests
                 }
             }
 
+            [NotificationOrder(20)]
             public sealed class DerivedNotificationHandlerOne : INotificationHandler<DerivedNotification>
             {
                 public ValueTask Handle(DerivedNotification notification, CancellationToken ct)
@@ -287,6 +288,7 @@ public sealed class GeneratorDispatchBehaviorTests
                 }
             }
 
+            [NotificationOrder(10)]
             public sealed class DerivedNotificationHandlerTwo : INotificationHandler<DerivedNotification>
             {
                 public ValueTask Handle(DerivedNotification notification, CancellationToken ct)
@@ -319,8 +321,8 @@ public sealed class GeneratorDispatchBehaviorTests
         Assert.Equal(referenceTrace, generatedTrace);
         Assert.Equal(
             [
-                "derived-1:tour",
                 "derived-2:tour",
+                "derived-1:tour",
             ],
             generatedTrace);
     }

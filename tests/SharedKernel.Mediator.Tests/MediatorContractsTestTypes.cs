@@ -36,6 +36,16 @@ internal sealed class StructNotificationHandler : INotificationHandler<StructNot
     }
 }
 
+[NotificationOrder(5)]
+internal sealed class OrderedClassNotificationHandler : INotificationHandler<ClassNotification>
+{
+    /// <inheritdoc />
+    public ValueTask Handle(ClassNotification notification, CancellationToken ct)
+    {
+        return ValueTask.CompletedTask;
+    }
+}
+
 internal sealed class TestStreamHandler : IStreamRequestHandler<TestStreamRequest, string>
 {
     /// <inheritdoc />

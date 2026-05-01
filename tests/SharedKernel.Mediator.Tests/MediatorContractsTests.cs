@@ -72,6 +72,22 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
+    public void Notification_Order_Attribute_Exposes_Configured_Order()
+    {
+        // Arrange
+        var attribute = typeof(OrderedClassNotificationHandler)
+            .GetCustomAttributes(typeof(NotificationOrderAttribute), inherit: false)
+            .Cast<NotificationOrderAttribute>()
+            .Single();
+
+        // Act
+        var order = attribute.Order;
+
+        // Assert
+        Assert.Equal(5, order);
+    }
+
+    [Fact]
     public void Stream_And_Pipeline_Contracts_Compile()
     {
         // Arrange
