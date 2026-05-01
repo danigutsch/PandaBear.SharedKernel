@@ -8,6 +8,7 @@ namespace SharedKernel.Mediator.CodeFixes.Tests;
 public sealed class SharedKernelMediatorCodeFixProviderTests
 {
     private const string MissingArgumentDiagnosticId = "CS7036";
+    private const string InvalidRequestArgumentDiagnosticId = "CS1503";
 
     [Fact]
     public async Task Missing_Request_Generates_Handler_File()
@@ -34,6 +35,46 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         Assert.Contains("public sealed class MissingTourHandler", generatedHandlerSource, StringComparison.Ordinal);
         Assert.Contains("IQueryHandler<global::Demo.MissingTour, string>", generatedHandlerSource, StringComparison.Ordinal);
         Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == MediatorDiagnosticIds.MissingHandler);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Interface_Adds_IRequest_Response_Type()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record MissingTour(int Id);
+
+            public sealed class TourFacade(ISender sender)
+            {
+                public ValueTask<string> Load(CancellationToken ct)
+                {
+                    return sender.Send<string>(new MissingTour(42), ct);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            InvalidRequestArgumentDiagnosticId,
+            "Test0.cs",
+            "MissingTour(42)");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Add IRequest<string>", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "public sealed record MissingTour(int Id) : global::SharedKernel.Mediator.IRequest<string>;",
+            updatedDocumentText,
+            StringComparison.Ordinal);
     }
 
     [Fact]
