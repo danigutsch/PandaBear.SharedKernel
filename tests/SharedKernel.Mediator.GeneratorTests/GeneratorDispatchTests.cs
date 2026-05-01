@@ -59,6 +59,9 @@ public sealed class GeneratorDispatchTests
         var generatedDispatchSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
             "SharedKernel.Mediator.Generated.GeneratedDispatch.g.cs");
+        var generatedPipelinesSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            "SharedKernel.Mediator.Generated.GeneratedPipelines.g.cs");
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedSource);
@@ -74,6 +77,7 @@ public sealed class GeneratorDispatchTests
         Assert.Contains("return GeneratedDispatch.ThrowNoHandler<string>(request);", generatedSource, StringComparison.Ordinal);
         Assert.DoesNotContain("internal static class GeneratedDispatch", generatedSource, StringComparison.Ordinal);
         Assert.Contains("internal static class GeneratedDispatch", generatedDispatchSource, StringComparison.Ordinal);
+        Assert.Contains("internal static class GeneratedPipelines", generatedPipelinesSource, StringComparison.Ordinal);
         Assert.Contains("global::Demo.LookupTour typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
         Assert.Contains("global::Demo.CreateTour typed => Cast<int, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
         Assert.Contains("global::Demo.DeleteTour typed => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
@@ -83,5 +87,47 @@ public sealed class GeneratorDispatchTests
         Assert.Contains("public static global::System.Threading.Tasks.ValueTask<object?> ThrowUnknownRequestObject(", generatedDispatchSource, StringComparison.Ordinal);
         Assert.Contains("public static TTarget ThrowInvalidResponseCast<TSource, TTarget>()", generatedDispatchSource, StringComparison.Ordinal);
         Assert.Contains("Generated notification dispatch is not available yet.", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_AppMediator_Uses_Generated_Pipeline_Helper_When_Pipelines_Exist()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
+            }
+
+            [PipelineOrder(PipelineStage.Validation, Order = 5)]
+            public sealed class ValidationBehavior : IPipelineBehavior<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedMediatorSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            "SharedKernel.Mediator.Generated.AppMediator.g.cs");
+        var generatedPipelinesSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            "SharedKernel.Mediator.Generated.GeneratedPipelines.g.cs");
+
+        // Assert
+        Assert.Contains("return GeneratedPipelines.Invoke_0000(this, request, ct);", generatedMediatorSource, StringComparison.Ordinal);
+        Assert.Contains("public static global::System.Threading.Tasks.ValueTask<int> Invoke_0000(AppMediator mediator, global::Demo.CreateTour request,", generatedPipelinesSource, StringComparison.Ordinal);
+        Assert.Contains("var pipeline0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.ValidationBehavior>(mediator.Services);", generatedPipelinesSource, StringComparison.Ordinal);
+        Assert.Contains("return pipeline0.Handle(request, () => handler.Handle(request, ct), ct);", generatedPipelinesSource, StringComparison.Ordinal);
     }
 }

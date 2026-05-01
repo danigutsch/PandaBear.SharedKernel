@@ -69,6 +69,43 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
+    public void Generate_Service_Registration_Open_Generic_Pipeline_Is_Closed_Per_Request()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
+            }
+
+            [PipelineOrder(PipelineStage.Validation, Order = 10)]
+            public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+                where TRequest : IRequest<TResponse>
+            {
+                public ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct) => next();
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var generatedSource = GeneratorTestHarness.RunGenerator(
+            compilation,
+            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+
+        // Assert
+        Assert.Contains("services.AddTransient<global::Demo.ValidationBehavior<global::Demo.CreateTour, int>>();", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("services.AddTransient<global::SharedKernel.Mediator.IPipelineBehavior<global::Demo.CreateTour, int>, global::Demo.ValidationBehavior<global::Demo.CreateTour, int>>();", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Generate_Service_Registration_Marked_Module_Assembly_Included()
     {
         // Arrange

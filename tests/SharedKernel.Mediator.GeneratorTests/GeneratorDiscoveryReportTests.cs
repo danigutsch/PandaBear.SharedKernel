@@ -451,6 +451,177 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
+    public void Generate_Discovery_Report_Open_Generic_Pipeline_Is_Bound_To_Request_Response_Pair()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(1);
+            }
+
+            [PipelineOrder(PipelineStage.Validation, Order = 10)]
+            public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+                where TRequest : IRequest<TResponse>
+            {
+                public ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct) => next();
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
+
+        // Assert
+        Assert.Contains(
+            "global::Demo.ValidationBehavior<global::Demo.CreateTour, int>(Stage=-1000,Order=10,Applicability=OpenGeneric,OpenGeneric=global::Demo.ValidationBehavior<TRequest, TResponse>)",
+            generatedSource,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Pipeline_Duplicate_Order_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(1);
+            }
+
+            [PipelineOrder(PipelineStage.Validation, Order = 10)]
+            public sealed class ValidationA : IPipelineBehavior<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
+            }
+
+            [PipelineOrder(PipelineStage.Validation, Order = 10)]
+            public sealed class ValidationB : IPipelineBehavior<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicatePipelineOrder
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.CreateTour", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Pipeline_Never_Applies_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public abstract record AbstractCreateTour(string Name) : ICommand<int>;
+
+            public sealed class ValidationBehavior : IPipelineBehavior<AbstractCreateTour, int>
+            {
+                public ValueTask<int> Handle(AbstractCreateTour request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.NeverAppliesPipeline
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ValidationBehavior", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Pipeline_Invalid_Generic_Arity_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(1);
+            }
+
+            public sealed class ValidationBehavior<TRequest> : IPipelineBehavior<TRequest, int>
+                where TRequest : IRequest<int>
+            {
+                public ValueTask<int> Handle(TRequest request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidPipelineGenericArity
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ValidationBehavior<TRequest>", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Pipeline_Unbound_Constraints_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(1);
+            }
+
+            public sealed class QueryOnlyBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+                where TRequest : IQuery<TResponse>
+            {
+                public ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct) => next();
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.UnboundPipelineConstraints
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.QueryOnlyBehavior<TRequest, TResponse>", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void Generate_Discovery_Report_Request_With_No_Handler_Diagnostic()
     {
         // Arrange
