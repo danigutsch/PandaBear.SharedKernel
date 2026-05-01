@@ -7,6 +7,8 @@ namespace SharedKernel.Mediator.CodeFixes.Tests;
 /// </summary>
 public sealed class SharedKernelMediatorCodeFixProviderTests
 {
+    private const string MissingArgumentDiagnosticId = "CS7036";
+
     [Fact]
     public async Task Missing_Request_Generates_Handler_File()
     {
@@ -127,6 +129,133 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         Assert.Contains("public sealed class SearchToursHandler", updatedModuleSource, StringComparison.Ordinal);
         Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
         Assert.Contains("services.AddTransient<global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_CancellationToken_Adds_Parameter_To_Public_Handle_Method()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+
+            public sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
+            {
+                public ValueTask<string> Handle(LookupTour request)
+                {
+                    return ValueTask.FromResult(request.Code);
+                }
+
+                ValueTask<string> IQueryHandler<LookupTour, string>.Handle(LookupTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(request.Code);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MediatorDiagnosticIds.MissingCancellationToken,
+            "Test0.cs",
+            "Handle(LookupTour request)");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Add CancellationToken ct parameter", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "public ValueTask<string> Handle(LookupTour request, global::System.Threading.CancellationToken ct)",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_CancellationToken_Forwarding_Adds_Ct_Argument()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+            public sealed record SearchTour(string Code) : IQuery<string>;
+
+            public sealed class LookupTourHandler(ISender sender) : IQueryHandler<LookupTour, string>
+            {
+                public async ValueTask<string> Handle(LookupTour request, CancellationToken ct)
+                {
+                    return await sender.Send(new SearchTour(request.Code));
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MissingArgumentDiagnosticId,
+            "Test0.cs",
+            "sender.Send(new SearchTour(request.Code))");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Forward CancellationToken ct", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "return await sender.Send(new SearchTour(request.Code), ct);",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Wrong_CancellationToken_Forwarding_Replaces_Argument_With_Ct()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+            public sealed record SearchTour(string Code) : IQuery<string>;
+
+            public sealed class LookupTourHandler(ISender sender) : IQueryHandler<LookupTour, string>
+            {
+                public async ValueTask<string> Handle(LookupTour request, CancellationToken ct)
+                {
+                    return await sender.Send(new SearchTour(request.Code), CancellationToken.None);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MediatorDiagnosticIds.MissingCancellationForwarding,
+            "Test0.cs",
+            "CancellationToken.None");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Forward CancellationToken ct", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "return await sender.Send(new SearchTour(request.Code), ct);",
+            updatedDocumentText,
+            StringComparison.Ordinal);
     }
 
     [Fact]
