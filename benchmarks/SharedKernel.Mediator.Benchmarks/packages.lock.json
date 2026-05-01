@@ -172,6 +172,9 @@
       "sharedkernel.mediator.abstractions": {
         "type": "Project"
       },
+      "sharedkernel.mediator.analyzers": {
+        "type": "Project"
+      },
       "sharedkernel.mediator.sourcegenerator": {
         "type": "Project"
       },
