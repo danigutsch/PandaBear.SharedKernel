@@ -38,6 +38,33 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
+    public void Fix_All_Is_Advertised_Only_For_Safe_Diagnostics()
+    {
+        // Arrange
+        var provider = new SharedKernelMediatorCodeFixProvider();
+
+        // Act
+        var supportedDiagnosticIds = provider.GetFixAllProvider()
+            .GetSupportedFixAllDiagnosticIds(provider)
+            .OrderBy(static id => id, StringComparer.Ordinal)
+            .ToArray();
+
+        // Assert
+        Assert.Equal(
+            [
+                InvalidRequestArgumentDiagnosticId,
+                MissingArgumentDiagnosticId,
+                MediatorDiagnosticIds.MissingHandler,
+                MediatorDiagnosticIds.MissingCancellationToken,
+                MediatorDiagnosticIds.MissingModuleMarker,
+            ],
+            supportedDiagnosticIds);
+        Assert.DoesNotContain(MediatorDiagnosticIds.InvalidHandlerSignature, supportedDiagnosticIds);
+        Assert.DoesNotContain(MediatorDiagnosticIds.MissingCancellationForwarding, supportedDiagnosticIds);
+        Assert.DoesNotContain(MediatorDiagnosticIds.InaccessibleRegistrationType, supportedDiagnosticIds);
+    }
+
+    [Fact]
     public async Task Missing_Request_Interface_Adds_IRequest_Response_Type()
     {
         // Arrange
