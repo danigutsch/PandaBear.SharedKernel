@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.CodeFixes;
 
 namespace SharedKernel.Mediator.CodeFixes.Tests;
 
@@ -38,6 +39,32 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
+    public void Fixable_Diagnostic_Ids_Match_Registered_Mediator_Fixes()
+    {
+        // Arrange
+        var provider = new SharedKernelMediatorCodeFixProvider();
+
+        // Act
+        var diagnosticIds = provider.FixableDiagnosticIds
+            .OrderBy(static id => id, StringComparer.Ordinal)
+            .ToArray();
+
+        // Assert
+        Assert.Equal(
+            [
+                InvalidRequestArgumentDiagnosticId,
+                MissingArgumentDiagnosticId,
+                MediatorDiagnosticIds.MissingHandler,
+                MediatorDiagnosticIds.InvalidHandlerSignature,
+                MediatorDiagnosticIds.MissingCancellationToken,
+                MediatorDiagnosticIds.MissingCancellationForwarding,
+                MediatorDiagnosticIds.InaccessibleRegistrationType,
+                MediatorDiagnosticIds.MissingModuleMarker,
+            ],
+            diagnosticIds);
+    }
+
+    [Fact]
     public void Fix_All_Is_Advertised_Only_For_Safe_Diagnostics()
     {
         // Arrange
@@ -62,6 +89,36 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         Assert.DoesNotContain(MediatorDiagnosticIds.InvalidHandlerSignature, supportedDiagnosticIds);
         Assert.DoesNotContain(MediatorDiagnosticIds.MissingCancellationForwarding, supportedDiagnosticIds);
         Assert.DoesNotContain(MediatorDiagnosticIds.InaccessibleRegistrationType, supportedDiagnosticIds);
+    }
+
+    [Fact]
+    public void Fix_All_Provider_Throws_When_Original_Provider_Is_Null()
+    {
+        // Arrange
+        var fixAllProvider = new SharedKernelMediatorCodeFixProvider().GetFixAllProvider();
+
+        // Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => fixAllProvider.GetSupportedFixAllDiagnosticIds(null!));
+        Assert.Equal("originalCodeFixProvider", exception.ParamName);
+    }
+
+    [Fact]
+    public void Fix_All_Provider_Exposes_The_Batch_Fixer_Scopes()
+    {
+        // Arrange
+        var fixAllProvider = new SharedKernelMediatorCodeFixProvider().GetFixAllProvider();
+
+        // Act
+        var supportedScopes = fixAllProvider.GetSupportedFixAllScopes()
+            .OrderBy(static scope => scope)
+            .ToArray();
+        var expectedScopes = WellKnownFixAllProviders.BatchFixer
+            .GetSupportedFixAllScopes()
+            .OrderBy(static scope => scope)
+            .ToArray();
+
+        // Assert
+        Assert.Equal(expectedScopes, supportedScopes);
     }
 
     [Fact]
@@ -102,6 +159,221 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "public sealed record MissingTour(int Id) : global::SharedKernel.Mediator.IRequest<string>;",
             updatedDocumentText,
             StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Interface_Adds_IQuery_Response_Type_When_Query_Handler_Exists()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record MissingTour(int Id);
+
+            public sealed class MissingTourHandler : IQueryHandler<MissingTour, string>
+            {
+                public ValueTask<string> Handle(MissingTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(request.Id.ToString());
+                }
+            }
+
+            public sealed class TourFacade(ISender sender)
+            {
+                public ValueTask<string> Load(CancellationToken ct)
+                {
+                    return sender.Send<string>(new MissingTour(42), ct);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            InvalidRequestArgumentDiagnosticId,
+            "Test0.cs",
+            "MissingTour(42)");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Add IQuery<string>", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "public sealed record MissingTour(int Id) : global::SharedKernel.Mediator.IQuery<string>;",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Interface_Adds_ICommand_Response_Type_When_Command_Handler_Exists()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name);
+
+            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(request.Name.Length);
+                }
+            }
+
+            public sealed class TourFacade(ISender sender)
+            {
+                public ValueTask<int> Create(CancellationToken ct)
+                {
+                    return sender.Send<int>(new CreateTour("Rome"), ct);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            InvalidRequestArgumentDiagnosticId,
+            "Test0.cs",
+            "CreateTour(\"Rome\")");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Add ICommand<int>", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "public sealed record CreateTour(string Name) : global::SharedKernel.Mediator.ICommand<int>;",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Interface_Adds_ICommand_When_Void_Command_Handler_Exists()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record ArchiveTour(int Id);
+
+            public sealed class ArchiveTourHandler : ICommandHandler<ArchiveTour>
+            {
+                public ValueTask<Unit> Handle(ArchiveTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(Unit.Value);
+                }
+            }
+
+            public sealed class TourFacade(ISender sender)
+            {
+                public ValueTask<Unit> Archive(CancellationToken ct)
+                {
+                    return sender.Send<Unit>(new ArchiveTour(42), ct);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            InvalidRequestArgumentDiagnosticId,
+            "Test0.cs",
+            "ArchiveTour(42)");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Add ICommand", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "public sealed record ArchiveTour(int Id) : global::SharedKernel.Mediator.ICommand;",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Interface_Does_Not_Register_When_Request_Already_Implements_A_Mediator_Interface()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record MissingTour(int Id) : IRequest<string>;
+
+            public sealed class TourFacade(ISender sender)
+            {
+                public ValueTask<string> Load(CancellationToken ct)
+                {
+                    return sender.Send<string>(new MissingTour(42), ct);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            InvalidRequestArgumentDiagnosticId,
+            "Test0.cs",
+            "MissingTour(42)");
+
+        // Act
+        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Interface_Does_Not_Register_For_Non_Send_Invocation()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record MissingTour(int Id);
+
+            public sealed class TourFacade
+            {
+                public ValueTask<string> Load(MissingTour request, CancellationToken ct)
+                {
+                    return Handle(request, ct);
+                }
+
+                private static ValueTask<string> Handle(MissingTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(request.Id.ToString());
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            InvalidRequestArgumentDiagnosticId,
+            "Test0.cs",
+            "request");
+
+        // Act
+        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
     }
 
     [Fact]
@@ -181,6 +453,126 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Assert
         Assert.Contains("IQueryHandler<global::Demo.MissingTour, string?>", generatedHandlerSource, StringComparison.Ordinal);
         Assert.Contains("ValueTask<string?>", generatedHandlerSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Generates_IRequest_Handler_File()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record LookupTour(string Code) : IRequest<string>;
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var generatedHandlerSource = await workspace.GetAdditionalDocumentTextAsync("LookupTourHandler.cs");
+
+        // Assert
+        Assert.Contains(
+            "public sealed class LookupTourHandler : global::SharedKernel.Mediator.IRequestHandler<global::Demo.LookupTour, string>",
+            generatedHandlerSource,
+            StringComparison.Ordinal);
+        Assert.Contains("public global::System.Threading.Tasks.ValueTask<string> Handle(", generatedHandlerSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Generates_ICommand_Response_Handler_File()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var generatedHandlerSource = await workspace.GetAdditionalDocumentTextAsync("CreateTourHandler.cs");
+
+        // Assert
+        Assert.Contains(
+            "public sealed class CreateTourHandler : global::SharedKernel.Mediator.ICommandHandler<global::Demo.CreateTour, int>",
+            generatedHandlerSource,
+            StringComparison.Ordinal);
+        Assert.Contains("public global::System.Threading.Tasks.ValueTask<int> Handle(", generatedHandlerSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Generates_ICommand_Handler_File()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record ArchiveTour(int Id) : ICommand;
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var generatedHandlerSource = await workspace.GetAdditionalDocumentTextAsync("ArchiveTourHandler.cs");
+
+        // Assert
+        Assert.Contains(
+            "public sealed class ArchiveTourHandler : global::SharedKernel.Mediator.ICommandHandler<global::Demo.ArchiveTour>",
+            generatedHandlerSource,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "public global::System.Threading.Tasks.ValueTask<global::SharedKernel.Mediator.Unit> Handle(",
+            generatedHandlerSource,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Does_Not_Generate_Handler_When_A_Handler_Already_Exists()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record ExistingTour(int Id) : IQuery<string>;
+
+            public sealed class ExistingTourHandler : IQueryHandler<ExistingTour, string>
+            {
+                public ValueTask<string> Handle(ExistingTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(request.Id.ToString());
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MediatorDiagnosticIds.MissingHandler,
+            "Test0.cs",
+            "ExistingTour");
+
+        // Act
+        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
     }
 
     [Fact]
@@ -426,6 +818,122 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "public sealed record MissingTour(int Id) : global::SharedKernel.Mediator.IRequest<string?>;",
             updatedDocumentText,
             StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Explicit_Interface_Request_Handler_Adds_Public_Forwarding_Handle_Method()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record LookupTour(string Code) : IRequest<string>;
+
+            public sealed class ExplicitLookupTourHandler : IRequestHandler<LookupTour, string>
+            {
+                ValueTask<string> IRequestHandler<LookupTour, string>.Handle(LookupTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(request.Code);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.InvalidHandlerSignature);
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "return ((global::SharedKernel.Mediator.IRequestHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Explicit_Interface_Command_Handler_Adds_Public_Forwarding_Handle_Method()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record ArchiveTour(int Id) : ICommand;
+
+            public sealed class ArchiveTourHandler : ICommandHandler<ArchiveTour>
+            {
+                ValueTask<Unit> ICommandHandler<ArchiveTour>.Handle(ArchiveTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(Unit.Value);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.InvalidHandlerSignature);
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "public global::System.Threading.Tasks.ValueTask<global::SharedKernel.Mediator.Unit> Handle(global::Demo.ArchiveTour request, global::System.Threading.CancellationToken ct)",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "return ((global::SharedKernel.Mediator.ICommandHandler<global::Demo.ArchiveTour>)this).Handle(request, ct);",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Explicit_Interface_Handler_Does_Not_Register_When_A_Public_Handle_Method_Already_Exists()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+
+            public sealed class ExplicitLookupTourHandler : IQueryHandler<LookupTour, string>
+            {
+                public ValueTask<string> Handle(LookupTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(request.Code);
+                }
+
+                ValueTask<string> IQueryHandler<LookupTour, string>.Handle(LookupTour request, CancellationToken ct)
+                {
+                    return Handle(request, ct);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MediatorDiagnosticIds.InvalidHandlerSignature,
+            "Test0.cs",
+            "ExplicitLookupTourHandler");
+
+        // Act
+        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
     }
 
     [Fact]

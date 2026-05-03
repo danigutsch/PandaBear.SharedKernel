@@ -58,11 +58,13 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
 
         // Act
         var buildOutput = await workspace.Build();
+        var runOutput = await workspace.Run();
         var appMediatorFiles = workspace.GetGeneratedFiles("SharedKernel.Mediator.Generated.AppMediator.g.cs");
         var dependencyInjectionFiles = workspace.GetGeneratedFiles("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
         Assert.Contains("Build succeeded.", buildOutput, StringComparison.Ordinal);
+        Assert.Contains("result=VT-42", runOutput, StringComparison.Ordinal);
         Assert.NotEmpty(appMediatorFiles);
         Assert.NotEmpty(dependencyInjectionFiles);
     }

@@ -56,6 +56,16 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     }
 
     /// <summary>
+    /// Runs the consumer project without rebuilding it.
+    /// </summary>
+    /// <param name="arguments">Additional arguments passed after <c>dotnet run</c>.</param>
+    /// <returns>The dotnet run output.</returns>
+    public Task<string> Run(params string[] arguments)
+    {
+        return DotNetCli.RunAsync(ProjectDirectory, ["run", "--project", ProjectFilePath, "--no-build", .. arguments]);
+    }
+
+    /// <summary>
     /// Publishes the consumer project.
     /// </summary>
     /// <param name="arguments">Additional arguments passed after <c>dotnet publish</c>.</param>
