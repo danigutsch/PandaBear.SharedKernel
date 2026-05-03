@@ -526,6 +526,136 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
+    public async Task Generated_Stream_Dispatch_Yields_First_Item_Without_Full_Enumeration()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+            using System.Runtime.CompilerServices;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public static class TraceLog
+            {
+                public static List<string> Entries { get; } = [];
+            }
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    TraceLog.Entries.Add("handler-before");
+                    for (var index = 1; index <= request.Count; index++)
+                    {
+                        await Task.Yield();
+                        TraceLog.Entries.Add($"handler-yield:{index}");
+                        yield return $"item:{index}";
+                    }
+
+                    TraceLog.Entries.Add("handler-after");
+                }
+            }
+
+            [PipelineOrder(PipelineStage.Validation, Order = 5)]
+            public sealed class ValidationBehavior : IStreamPipelineBehavior<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    StreamHandlerContinuation<string> next,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    TraceLog.Entries.Add("validation-before");
+                    await foreach (var item in next().WithCancellation(ct))
+                    {
+                        TraceLog.Entries.Add($"validation-yield:{item}");
+                        yield return item;
+                    }
+
+                    TraceLog.Entries.Add("validation-after");
+                }
+            }
+
+            [PipelineOrder(PipelineStage.Observability, Order = 10)]
+            public sealed class ObservabilityBehavior : IStreamPipelineBehavior<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    StreamHandlerContinuation<string> next,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    TraceLog.Entries.Add("observability-before");
+                    await foreach (var item in next().WithCancellation(ct))
+                    {
+                        TraceLog.Entries.Add($"observability-yield:{item}");
+                        yield return item;
+                    }
+
+                    TraceLog.Entries.Add("observability-after");
+                }
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var requestType = runtime.GetRequiredType("Demo.StreamTours");
+        var handler = Activator.CreateInstance(runtime.GetRequiredType("Demo.StreamToursHandler"))!;
+        var validation = Activator.CreateInstance(runtime.GetRequiredType("Demo.ValidationBehavior"))!;
+        var observability = Activator.CreateInstance(runtime.GetRequiredType("Demo.ObservabilityBehavior"))!;
+        var request = (IStreamRequest<string>)Activator.CreateInstance(requestType, 3)!;
+        var referenceDispatcher = new ReferenceDispatcherBuilder()
+            .AddStreamHandler(requestType, typeof(string), handler)
+            .AddStreamPipeline(requestType, typeof(string), validation)
+            .AddStreamPipeline(requestType, typeof(string), observability)
+            .Build();
+        var mediator = runtime.CreateMediator(handler, validation, observability);
+
+        // Act
+        string referenceFirstItem;
+        string[] referenceTrace;
+        await using (var referenceEnumerator = referenceDispatcher.Send(request, CancellationToken.None)
+                         .GetAsyncEnumerator(CancellationToken.None))
+        {
+            var referenceHasItem = await referenceEnumerator.MoveNextAsync();
+            Assert.True(referenceHasItem);
+            referenceFirstItem = referenceEnumerator.Current;
+            referenceTrace = runtime.ReadTraceEntries("Demo.TraceLog");
+        }
+
+        runtime.ClearTraceEntries("Demo.TraceLog");
+
+        string generatedFirstItem;
+        string[] generatedTrace;
+        await using (var generatedEnumerator = mediator.Send(request, CancellationToken.None)
+                         .GetAsyncEnumerator(CancellationToken.None))
+        {
+            var generatedHasItem = await generatedEnumerator.MoveNextAsync();
+            Assert.True(generatedHasItem);
+            generatedFirstItem = generatedEnumerator.Current;
+            generatedTrace = runtime.ReadTraceEntries("Demo.TraceLog");
+        }
+
+        // Assert
+        Assert.Equal("item:1", referenceFirstItem);
+        Assert.Equal(referenceFirstItem, generatedFirstItem);
+        Assert.Equal(
+            [
+                "validation-before",
+                "observability-before",
+                "handler-before",
+                "handler-yield:1",
+                "observability-yield:item:1",
+                "validation-yield:item:1",
+            ],
+            referenceTrace);
+        Assert.Equal(referenceTrace, generatedTrace);
+    }
+
+    [Fact]
     public async Task Generated_Notification_Dispatch_Matches_Reference_Dispatcher_With_Exact_Type_Matching()
     {
         // Arrange
