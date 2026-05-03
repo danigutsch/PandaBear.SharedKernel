@@ -176,6 +176,7 @@ internal static class StreamDispatchBenchmarkSourceFactory
                     {
                         while (reader.TryRead(out var item))
                         {
+                            ct.ThrowIfCancellationRequested();
                             yield return item;
                         }
                     }
@@ -225,6 +226,30 @@ internal static class StreamDispatchBenchmarkSourceFactory
                     }
 
                     return count;
+                }
+
+                public static async ValueTask<int> CancelAfterFirstItemAsync(IAsyncEnumerable<int> source, CancellationToken ct)
+                {
+                    using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                    await using var enumerator = source.GetAsyncEnumerator(linkedCts.Token);
+
+                    if (!await enumerator.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        return 0;
+                    }
+
+                    linkedCts.Cancel();
+
+                    try
+                    {
+                        await enumerator.MoveNextAsync().ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return enumerator.Current;
+                    }
+
+                    throw new InvalidOperationException("Benchmark cancellation did not surface before enumeration completed.");
                 }
             }
 
@@ -345,6 +370,41 @@ internal static class StreamDispatchBenchmarkSourceFactory
                     var mediator = new BenchmarkAppMediator();
                     var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}});
                     return ct => StreamConsumers.EnumerateAllAsync(mediator.SendViaBufferedCopy(request, ct), ct);
+                }
+
+                public static Func<CancellationToken, ValueTask<int>> CreateDirectStreamHandlerCancellation()
+                {
+                    var handler = new BenchmarkStreamHandler();
+                    var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}});
+                    return ct => StreamConsumers.CancelAfterFirstItemAsync(handler.Handle(request, ct), ct);
+                }
+
+                public static Func<CancellationToken, ValueTask<int>> CreateGeneratedMediatorDirectReturnCancellation()
+                {
+                    var mediator = new BenchmarkAppMediator();
+                    var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}});
+                    return ct => StreamConsumers.CancelAfterFirstItemAsync(mediator.Send(request, ct), ct);
+                }
+
+                public static Func<CancellationToken, ValueTask<int>> CreateGeneratedWrapperCancellation()
+                {
+                    var mediator = new BenchmarkAppMediator();
+                    IStreamRequest<int> request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}});
+                    return ct => StreamConsumers.CancelAfterFirstItemAsync(mediator.Send(request, ct), ct);
+                }
+
+                public static Func<CancellationToken, ValueTask<int>> CreateChannelCopyCancellation()
+                {
+                    var mediator = new BenchmarkAppMediator();
+                    var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}});
+                    return ct => StreamConsumers.CancelAfterFirstItemAsync(mediator.SendViaChannel(request, ct), ct);
+                }
+
+                public static Func<CancellationToken, ValueTask<int>> CreateBufferedCopyCancellation()
+                {
+                    var mediator = new BenchmarkAppMediator();
+                    var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}});
+                    return ct => StreamConsumers.CancelAfterFirstItemAsync(mediator.SendViaBufferedCopy(request, ct), ct);
                 }
             }
             """;
