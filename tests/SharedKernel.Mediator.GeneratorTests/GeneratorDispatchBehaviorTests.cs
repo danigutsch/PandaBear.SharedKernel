@@ -287,12 +287,242 @@ public sealed class GeneratorDispatchBehaviorTests
         var mediator = runtime.CreateMediator(handler);
 
         // Act
-        var referenceItems = await CollectAsync(referenceDispatcher.CreateStream(request, CancellationToken.None));
-        var generatedItems = await CollectAsync(mediator.CreateStream(request, CancellationToken.None));
+        var referenceItems = await CollectAsync(referenceDispatcher.Send(request, CancellationToken.None));
+        var generatedItems = await CollectAsync(mediator.Send(request, CancellationToken.None));
 
         // Assert
         Assert.Equal(referenceItems, generatedItems);
         Assert.Equal(["item:1", "item:2", "item:3"], generatedItems);
+    }
+
+    [Fact]
+    public async Task Generated_Client_Stream_Request_Dispatch_Matches_Reference_Dispatcher()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Runtime.CompilerServices;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record UploadTours(int Count) : IStreamCommand<int, string>
+            {
+                public IAsyncEnumerable<int> Items => CreateItems(Count);
+
+                private static async IAsyncEnumerable<int> CreateItems(
+                    int count,
+                    [EnumeratorCancellation] CancellationToken ct = default)
+                {
+                    for (var index = 1; index <= count; index++)
+                    {
+                        await Task.Yield();
+                        ct.ThrowIfCancellationRequested();
+                        yield return index;
+                    }
+                }
+            }
+
+            public sealed class UploadToursHandler : IRequestHandler<UploadTours, string>
+            {
+                public async ValueTask<string> Handle(UploadTours request, CancellationToken ct)
+                {
+                    var total = 0;
+                    await foreach (var item in request.Items.WithCancellation(ct))
+                    {
+                        total += item;
+                    }
+
+                    return total.ToString();
+                }
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var requestType = runtime.GetRequiredType("Demo.UploadTours");
+        var handler = Activator.CreateInstance(runtime.GetRequiredType("Demo.UploadToursHandler"))!;
+        var request = (IRequest<string>)Activator.CreateInstance(requestType, 3)!;
+        var referenceDispatcher = new ReferenceDispatcherBuilder()
+            .AddRequestHandler(requestType, typeof(string), handler)
+            .Build();
+        var mediator = runtime.CreateMediator(handler);
+
+        // Act
+        var referenceResponse = await referenceDispatcher.Send(request, CancellationToken.None);
+        var generatedResponse = await mediator.Send(request, CancellationToken.None);
+
+        // Assert
+        Assert.Equal(referenceResponse, generatedResponse);
+        Assert.Equal("6", generatedResponse);
+    }
+
+    [Fact]
+    public async Task Generated_Duplex_Stream_Request_Dispatch_Matches_Reference_Dispatcher()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Runtime.CompilerServices;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record TransformTours(int Count) : IDuplexStreamCommand<int, string>
+            {
+                public IAsyncEnumerable<int> Items => CreateItems(Count);
+
+                private static async IAsyncEnumerable<int> CreateItems(
+                    int count,
+                    [EnumeratorCancellation] CancellationToken ct = default)
+                {
+                    for (var index = 1; index <= count; index++)
+                    {
+                        await Task.Yield();
+                        ct.ThrowIfCancellationRequested();
+                        yield return index;
+                    }
+                }
+            }
+
+            public sealed class TransformToursHandler : IStreamRequestHandler<TransformTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    TransformTours request,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    await foreach (var item in request.Items.WithCancellation(ct))
+                    {
+                        yield return $"item:{item}";
+                    }
+                }
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var requestType = runtime.GetRequiredType("Demo.TransformTours");
+        var handler = Activator.CreateInstance(runtime.GetRequiredType("Demo.TransformToursHandler"))!;
+        var request = (IStreamRequest<string>)Activator.CreateInstance(requestType, 3)!;
+        var referenceDispatcher = new ReferenceDispatcherBuilder()
+            .AddStreamHandler(requestType, typeof(string), handler)
+            .Build();
+        var mediator = runtime.CreateMediator(handler);
+
+        // Act
+        var referenceItems = await CollectAsync(referenceDispatcher.Send(request, CancellationToken.None));
+        var generatedItems = await CollectAsync(mediator.Send(request, CancellationToken.None));
+
+        // Assert
+        Assert.Equal(referenceItems, generatedItems);
+        Assert.Equal(["item:1", "item:2", "item:3"], generatedItems);
+    }
+
+    [Fact]
+    public async Task Generated_Stream_Dispatch_Executes_Stream_Pipelines_In_Stage_And_Order_Sequence()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+            using System.Runtime.CompilerServices;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public static class TraceLog
+            {
+                public static List<string> Entries { get; } = [];
+            }
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    TraceLog.Entries.Add("handler-before");
+                    for (var index = 1; index <= request.Count; index++)
+                    {
+                        await Task.Yield();
+                        yield return $"item:{index}";
+                    }
+
+                    TraceLog.Entries.Add("handler-after");
+                }
+            }
+
+            [PipelineOrder(PipelineStage.Validation, Order = 5)]
+            public sealed class ValidationBehavior : IStreamPipelineBehavior<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    StreamHandlerContinuation<string> next,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    TraceLog.Entries.Add("validation-before");
+                    await foreach (var item in next().WithCancellation(ct))
+                    {
+                        yield return item;
+                    }
+
+                    TraceLog.Entries.Add("validation-after");
+                }
+            }
+
+            [PipelineOrder(PipelineStage.Observability, Order = 10)]
+            public sealed class ObservabilityBehavior : IStreamPipelineBehavior<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    StreamHandlerContinuation<string> next,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    TraceLog.Entries.Add("observability-before");
+                    await foreach (var item in next().WithCancellation(ct))
+                    {
+                        yield return item;
+                    }
+
+                    TraceLog.Entries.Add("observability-after");
+                }
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var requestType = runtime.GetRequiredType("Demo.StreamTours");
+        var handler = Activator.CreateInstance(runtime.GetRequiredType("Demo.StreamToursHandler"))!;
+        var validation = Activator.CreateInstance(runtime.GetRequiredType("Demo.ValidationBehavior"))!;
+        var observability = Activator.CreateInstance(runtime.GetRequiredType("Demo.ObservabilityBehavior"))!;
+        var request = (IStreamRequest<string>)Activator.CreateInstance(requestType, 2)!;
+        var referenceDispatcher = new ReferenceDispatcherBuilder()
+            .AddStreamHandler(requestType, typeof(string), handler)
+            .AddStreamPipeline(requestType, typeof(string), validation)
+            .AddStreamPipeline(requestType, typeof(string), observability)
+            .Build();
+        var mediator = runtime.CreateMediator(handler, validation, observability);
+
+        // Act
+        var referenceItems = await CollectAsync(referenceDispatcher.Send(request, CancellationToken.None));
+        var referenceTrace = runtime.ReadTraceEntries("Demo.TraceLog");
+        runtime.ClearTraceEntries("Demo.TraceLog");
+        var generatedItems = await CollectAsync(mediator.Send(request, CancellationToken.None));
+        var generatedTrace = runtime.ReadTraceEntries("Demo.TraceLog");
+
+        // Assert
+        Assert.Equal(referenceItems, generatedItems);
+        Assert.Equal(["item:1", "item:2"], generatedItems);
+        Assert.Equal(
+            [
+                "validation-before",
+                "observability-before",
+                "handler-before",
+                "handler-after",
+                "observability-after",
+                "validation-after",
+            ],
+            referenceTrace);
+        Assert.Equal(referenceTrace, generatedTrace);
     }
 
     [Fact]

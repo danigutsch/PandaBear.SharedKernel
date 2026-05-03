@@ -37,14 +37,14 @@ internal static class GeneratedDispatch
         };
     }
 
-    public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> CreateStream<TResponse>(
+    public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> Send<TResponse>(
         AppMediator mediator,
         global::SharedKernel.Mediator.IStreamRequest<TResponse> request,
         global::System.Threading.CancellationToken ct)
     {
         return request switch
         {
-            global::Demo.StreamTours typed => CastStream<string, TResponse>(mediator.CreateStream(typed, ct), ct),
+            global::Demo.StreamTours typed => CastStream<string, TResponse>(mediator.Send(typed, ct), ct),
             _ => ThrowNoStreamHandler<TResponse>(request),
         };
     }

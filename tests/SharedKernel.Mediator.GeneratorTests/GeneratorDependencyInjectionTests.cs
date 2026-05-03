@@ -106,6 +106,47 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
+    public void Generate_Service_Registration_Stream_Pipeline_Is_Closed_Per_Stream_Request()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record StreamTours() : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
+                {
+                    yield return "tour";
+                    await Task.CompletedTask;
+                }
+            }
+
+            [PipelineOrder(PipelineStage.Validation, Order = 10)]
+            public sealed class ValidationBehavior<TRequest, TResponse> : IStreamPipelineBehavior<TRequest, TResponse>
+                where TRequest : IStreamRequest<TResponse>
+            {
+                public IAsyncEnumerable<TResponse> Handle(TRequest request, StreamHandlerContinuation<TResponse> next, CancellationToken ct) => next();
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var generatedSource = GeneratorTestHarness.RunGenerator(
+            compilation,
+            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+
+        // Assert
+        Assert.Contains("services.AddTransient<global::Demo.ValidationBehavior<global::Demo.StreamTours, string>>();", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("services.AddTransient<global::SharedKernel.Mediator.IStreamPipelineBehavior<global::Demo.StreamTours, string>, global::Demo.ValidationBehavior<global::Demo.StreamTours, string>>();", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Generate_Service_Registration_Marked_Module_Assembly_Included()
     {
         // Arrange

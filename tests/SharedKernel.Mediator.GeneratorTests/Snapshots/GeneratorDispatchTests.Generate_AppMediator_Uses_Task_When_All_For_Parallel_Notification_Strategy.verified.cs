@@ -27,7 +27,7 @@ internal static class GeneratedDispatch
         };
     }
 
-    public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> CreateStream<TResponse>(
+    public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> Send<TResponse>(
         AppMediator mediator,
         global::SharedKernel.Mediator.IStreamRequest<TResponse> request,
         global::System.Threading.CancellationToken ct)
