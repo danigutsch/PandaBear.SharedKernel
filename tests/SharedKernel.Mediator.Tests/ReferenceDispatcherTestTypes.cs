@@ -114,4 +114,23 @@ internal static class ReferenceDispatcherTestTypes
             }
         }
     }
+
+    [PipelineOrder(PipelineStage.Validation, Order = 10)]
+    internal sealed class StreamValidationPipeline(List<string> events) : IStreamPipelineBehavior<StreamTours, string>
+    {
+        /// <inheritdoc />
+        public async IAsyncEnumerable<string> Handle(
+            StreamTours request,
+            StreamHandlerContinuation<string> next,
+            [EnumeratorCancellation] CancellationToken ct)
+        {
+            events.Add("StreamValidation:Before");
+            await foreach (var item in next().WithCancellation(ct))
+            {
+                yield return item;
+            }
+
+            events.Add("StreamValidation:After");
+        }
+    }
 }

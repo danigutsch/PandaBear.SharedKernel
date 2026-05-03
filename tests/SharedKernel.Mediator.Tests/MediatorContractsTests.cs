@@ -108,22 +108,69 @@ public sealed class MediatorContractsTests
     {
         // Arrange
         var streamHandlerType = typeof(IStreamRequestHandler<TestStreamRequest, string>);
+        var streamPipelineType = typeof(IStreamPipelineBehavior<TestStreamRequest, string>);
+        var streamCommandHandlerType = typeof(IRequestHandler<TestStreamCommand, string>);
+        var duplexStreamHandlerType = typeof(IStreamRequestHandler<TestDuplexStreamCommand, string>);
         var pipelineType = typeof(IPipelineBehavior<TestQuery, string>);
 
         // Act
         var streamConstraintHolds = streamHandlerType.IsAssignableFrom(typeof(TestStreamHandler));
+        var streamPipelineConstraintHolds = streamPipelineType.IsAssignableFrom(typeof(TestStreamPipelineBehavior));
+        var streamCommandConstraintHolds = streamCommandHandlerType.IsAssignableFrom(typeof(TestStreamCommandHandler));
+        var duplexStreamConstraintHolds = duplexStreamHandlerType.IsAssignableFrom(typeof(TestDuplexStreamCommandHandler));
         var pipelineConstraintHolds = pipelineType.IsAssignableFrom(typeof(TestPipelineBehavior));
 
         // Assert
         Assert.True(streamConstraintHolds);
+        Assert.True(streamPipelineConstraintHolds);
+        Assert.True(streamCommandConstraintHolds);
+        Assert.True(duplexStreamConstraintHolds);
         Assert.True(pipelineConstraintHolds);
     }
 
     [Fact]
-    public void ISender_Exposes_CreateStream_Generic_Method()
+    public void Semantic_Stream_Contracts_Distinguish_Unary_Stream_Input_And_Duplex_Stream_Shapes()
     {
         // Arrange
-        var method = typeof(ISender).GetMethod(nameof(ISender.CreateStream));
+        var streamCommandType = typeof(TestStreamCommand);
+        var streamQueryType = typeof(TestStreamQuery);
+        var streamInputQueryType = typeof(TestStreamInputQuery);
+        var duplexStreamCommandType = typeof(TestDuplexStreamCommand);
+        var duplexStreamQueryType = typeof(TestDuplexStreamQuery);
+
+        // Act
+        var isStreamCommand = typeof(IStreamCommand<int, string>).IsAssignableFrom(streamCommandType);
+        var isStreamQuery = typeof(IStreamQuery<string>).IsAssignableFrom(streamQueryType);
+        var isStreamInputQuery = typeof(IStreamQuery<int, string>).IsAssignableFrom(streamInputQueryType);
+        var isDuplexStreamCommand = typeof(IDuplexStreamCommand<int, string>).IsAssignableFrom(duplexStreamCommandType);
+        var isDuplexStreamQuery = typeof(IDuplexStreamQuery<int, string>).IsAssignableFrom(duplexStreamQueryType);
+        var isUnaryRequest = typeof(IRequest<string>).IsAssignableFrom(streamCommandType);
+        var isResponseOnlyStream = typeof(IStreamRequest<string>).IsAssignableFrom(streamCommandType);
+        var isResponseStreamCommand = typeof(IStreamRequest<string>).IsAssignableFrom(duplexStreamCommandType);
+        var isResponseStreamQuery = typeof(IStreamRequest<string>).IsAssignableFrom(streamQueryType);
+
+        // Assert
+        Assert.True(isStreamCommand);
+        Assert.True(isStreamQuery);
+        Assert.True(isStreamInputQuery);
+        Assert.True(isDuplexStreamCommand);
+        Assert.True(isDuplexStreamQuery);
+        Assert.True(isUnaryRequest);
+        Assert.False(isResponseOnlyStream);
+        Assert.True(isResponseStreamCommand);
+        Assert.True(isResponseStreamQuery);
+    }
+
+    [Fact]
+    public void ISender_Exposes_Stream_Send_Generic_Method()
+    {
+        // Arrange
+        var method = typeof(ISender)
+            .GetMethods()
+            .Single(
+                candidate => candidate.Name == nameof(ISender.Send)
+                    && candidate.GetParameters()[0].ParameterType.IsGenericType
+                    && candidate.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == typeof(IStreamRequest<>));
 
         // Act
         var returnType = method?.ReturnType;

@@ -14,6 +14,16 @@ internal sealed record TestQuery : IQuery<string>;
 
 internal sealed record TestStreamRequest : IStreamRequest<string>;
 
+internal sealed record TestStreamCommand(IAsyncEnumerable<int> Items) : IStreamCommand<int, string>;
+
+internal sealed record TestDuplexStreamCommand(IAsyncEnumerable<int> Items) : IDuplexStreamCommand<int, string>;
+
+internal sealed record TestStreamQuery : IStreamQuery<string>;
+
+internal sealed record TestStreamInputQuery(IAsyncEnumerable<int> Items) : IStreamQuery<int, string>;
+
+internal sealed record TestDuplexStreamQuery(IAsyncEnumerable<int> Items) : IDuplexStreamQuery<int, string>;
+
 internal sealed record ClassNotification : INotification;
 
 internal readonly record struct StructNotification : INotification;
@@ -58,6 +68,44 @@ internal sealed class TestStreamHandler : IStreamRequestHandler<TestStreamReques
     {
         await Task.Yield();
         yield return "item";
+    }
+}
+
+internal sealed class TestStreamCommandHandler : IRequestHandler<TestStreamCommand, string>
+{
+    /// <inheritdoc />
+    public async ValueTask<string> Handle(TestStreamCommand request, CancellationToken ct)
+    {
+        var count = 0;
+        await foreach (var item in request.Items.WithCancellation(ct))
+        {
+            count += item;
+        }
+
+        return count.ToString(global::System.Globalization.CultureInfo.InvariantCulture);
+    }
+}
+
+internal sealed class TestDuplexStreamCommandHandler : IStreamRequestHandler<TestDuplexStreamCommand, string>
+{
+    /// <inheritdoc />
+    public async IAsyncEnumerable<string> Handle(
+        TestDuplexStreamCommand request,
+        [EnumeratorCancellation] CancellationToken ct)
+    {
+        await foreach (var item in request.Items.WithCancellation(ct))
+        {
+            yield return item.ToString(global::System.Globalization.CultureInfo.InvariantCulture);
+        }
+    }
+}
+
+internal sealed class TestStreamPipelineBehavior : IStreamPipelineBehavior<TestStreamRequest, string>
+{
+    /// <inheritdoc />
+    public IAsyncEnumerable<string> Handle(TestStreamRequest request, StreamHandlerContinuation<string> next, CancellationToken ct)
+    {
+        return next();
     }
 }
 
