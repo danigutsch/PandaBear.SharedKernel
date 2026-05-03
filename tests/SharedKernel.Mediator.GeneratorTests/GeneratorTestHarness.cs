@@ -53,6 +53,17 @@ internal static class GeneratorTestHarness
         return GetGeneratedSource(runResult, hintName);
     }
 
+    public static string GenerateSource(
+        string source,
+        string hintName = "SharedKernel.Mediator.Generated.DiscoveryReport.g.cs",
+        IEnumerable<MetadataReference>? additionalReferences = null,
+        bool includeMediatorReference = true,
+        string assemblyName = "SharedKernel.Mediator.Tests.Dynamic")
+    {
+        var compilation = CreateCompilation(source, assemblyName, additionalReferences, includeMediatorReference);
+        return RunGenerator(compilation, hintName);
+    }
+
     public static GeneratorDriverRunResult RunGeneratorDriver(
         CSharpCompilation compilation,
         ImmutableDictionary<string, string>? globalOptions = null)
@@ -66,6 +77,17 @@ internal static class GeneratorTestHarness
 
         driver = driver.RunGenerators(compilation);
         return driver.GetRunResult();
+    }
+
+    public static GeneratorDriverRunResult RunGeneratorDriver(
+        string source,
+        IEnumerable<MetadataReference>? additionalReferences = null,
+        ImmutableDictionary<string, string>? globalOptions = null,
+        bool includeMediatorReference = true,
+        string assemblyName = "SharedKernel.Mediator.Tests.Dynamic")
+    {
+        var compilation = CreateCompilation(source, assemblyName, additionalReferences, includeMediatorReference);
+        return RunGeneratorDriver(compilation, globalOptions);
     }
 
     public static string GetGeneratedSource(

@@ -48,10 +48,8 @@ public sealed class GeneratorDiscoveryReportTests
             }
             """;
 
-        var compilation = GeneratorTestHarness.CreateCompilation(source);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
+        var generatedSource = GeneratorTestHarness.GenerateSource(source);
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedSource);
@@ -120,10 +118,8 @@ public sealed class GeneratorDiscoveryReportTests
                 public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
             }
             """;
-        var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: [moduleReference]);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
+        var generatedSource = GeneratorTestHarness.GenerateSource(source, additionalReferences: [moduleReference]);
 
         // Assert
         Assert.Contains("RequestCount = 2;", generatedSource, StringComparison.Ordinal);
@@ -162,10 +158,8 @@ public sealed class GeneratorDiscoveryReportTests
                 public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
             }
             """;
-        var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: [moduleReference]);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
+        var generatedSource = GeneratorTestHarness.GenerateSource(source, additionalReferences: [moduleReference]);
 
         // Assert
         Assert.Contains("RequestCount = 1;", generatedSource, StringComparison.Ordinal);
@@ -193,10 +187,8 @@ public sealed class GeneratorDiscoveryReportTests
                 public ValueTask<Page<TourRow>> Handle(ListTours request, CancellationToken ct) => ValueTask.FromResult(new Page<TourRow>([]));
             }
             """;
-        var compilation = GeneratorTestHarness.CreateCompilation(source);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
+        var generatedSource = GeneratorTestHarness.GenerateSource(source);
 
         // Assert
         Assert.Contains("global::Demo.ListTours | Kind=Query", generatedSource, StringComparison.Ordinal);
@@ -248,10 +240,8 @@ public sealed class GeneratorDiscoveryReportTests
             {
             }
             """;
-        var compilation = GeneratorTestHarness.CreateCompilation(source, includeMediatorReference: false);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
+        var generatedSource = GeneratorTestHarness.GenerateSource(source, includeMediatorReference: false);
 
         // Assert
         Assert.Contains("RequestCount = 0;", generatedSource, StringComparison.Ordinal);
@@ -287,10 +277,8 @@ public sealed class GeneratorDiscoveryReportTests
                 }
             }
             """;
-        var compilation = GeneratorTestHarness.CreateCompilation(source);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
+        var generatedSource = GeneratorTestHarness.GenerateSource(source);
 
         // Assert
         Assert.Contains("global::Demo.Container.LookupTour | Kind=Request", generatedSource, StringComparison.Ordinal);
@@ -314,10 +302,8 @@ public sealed class GeneratorDiscoveryReportTests
                 public ValueTask<Unit> Handle(DeleteTour request, CancellationToken ct) => ValueTask.FromResult(Unit.Value);
             }
             """;
-        var compilation = GeneratorTestHarness.CreateCompilation(source);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
+        var generatedSource = GeneratorTestHarness.GenerateSource(source);
 
         // Assert
         Assert.Contains("global::Demo.DeleteTour | Kind=Command | Response=global::SharedKernel.Mediator.Unit", generatedSource, StringComparison.Ordinal);
@@ -377,10 +363,8 @@ public sealed class GeneratorDiscoveryReportTests
                 public abstract ValueTask<int> Handle(AbstractRequest request, RequestHandlerContinuation<int> next, CancellationToken ct);
             }
             """;
-        var compilation = GeneratorTestHarness.CreateCompilation(source);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
+        var generatedSource = GeneratorTestHarness.GenerateSource(source);
 
         // Assert
         Assert.Contains("NotificationCount = 1;", generatedSource, StringComparison.Ordinal);

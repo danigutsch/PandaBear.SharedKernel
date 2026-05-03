@@ -47,11 +47,9 @@ public sealed class GeneratorDependencyInjectionTests
                 }
             }
             """;
-        var compilation = GeneratorTestHarness.CreateCompilation(source);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(
-            compilation,
+        var generatedSource = GeneratorTestHarness.GenerateSource(
+            source,
             "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
@@ -93,11 +91,9 @@ public sealed class GeneratorDependencyInjectionTests
                 public ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct) => next();
             }
             """;
-        var compilation = GeneratorTestHarness.CreateCompilation(source);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(
-            compilation,
+        var generatedSource = GeneratorTestHarness.GenerateSource(
+            source,
             "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
@@ -134,11 +130,9 @@ public sealed class GeneratorDependencyInjectionTests
                 public IAsyncEnumerable<TResponse> Handle(TRequest request, StreamHandlerContinuation<TResponse> next, CancellationToken ct) => next();
             }
             """;
-        var compilation = GeneratorTestHarness.CreateCompilation(source);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(
-            compilation,
+        var generatedSource = GeneratorTestHarness.GenerateSource(
+            source,
             "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
@@ -177,12 +171,11 @@ public sealed class GeneratorDependencyInjectionTests
                 public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
             }
             """;
-        var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: [moduleReference]);
-
         // Act
-        var generatedSource = GeneratorTestHarness.RunGenerator(
-            compilation,
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+        var generatedSource = GeneratorTestHarness.GenerateSource(
+            source,
+            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs",
+            additionalReferences: [moduleReference]);
 
         // Assert
         Assert.Contains("services.AddTransient<global::Demo.CreateTourHandler>();", generatedSource, StringComparison.Ordinal);
