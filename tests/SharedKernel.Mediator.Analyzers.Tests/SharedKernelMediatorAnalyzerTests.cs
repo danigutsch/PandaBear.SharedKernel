@@ -8,6 +8,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     private const string MissingCancellationTokenId = "SKMED004";
     private const string HandlerReturnTypeMismatchId = "SKMED005";
     private const string MissingCancellationForwardingId = "SKMED006";
+    private const string MissingEnumeratorCancellationId = "SKMED007";
     private const string InvalidPipelineGenericArityId = "SKMED020";
     private const string HandlerShouldNotCallSenderId = "SKMED500";
 
@@ -158,6 +159,122 @@ public sealed class SharedKernelMediatorAnalyzerTests
 
         // Assert
         Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MissingCancellationForwardingId);
+    }
+
+    [Fact]
+    public async Task Async_Stream_Handler_Without_EnumeratorCancellation_Reports_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
+                {
+                    await Task.Yield();
+                    yield return request.Count.ToString();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MissingEnumeratorCancellationId);
+    }
+
+    [Fact]
+    public async Task Async_Stream_Pipeline_Without_EnumeratorCancellation_Reports_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamValidationBehavior : IStreamPipelineBehavior<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTours request, StreamHandlerContinuation<string> next, CancellationToken ct)
+                {
+                    await Task.Yield();
+                    await foreach (var item in next())
+                    {
+                        yield return item;
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MissingEnumeratorCancellationId);
+    }
+
+    [Fact]
+    public async Task Async_Stream_Handler_With_EnumeratorCancellation_Does_Not_Report_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    [global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct)
+                {
+                    await Task.Yield();
+                    yield return request.Count.ToString();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MissingEnumeratorCancellationId);
+    }
+
+    [Fact]
+    public async Task Non_Iterator_Stream_Pipeline_Does_Not_Report_EnumeratorCancellation_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamValidationBehavior : IStreamPipelineBehavior<StreamTours, string>
+            {
+                public IAsyncEnumerable<string> Handle(StreamTours request, StreamHandlerContinuation<string> next, CancellationToken ct)
+                {
+                    return next();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MissingEnumeratorCancellationId);
     }
 
     [Fact]
