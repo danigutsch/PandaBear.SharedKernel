@@ -11,10 +11,14 @@ internal static class StreamDispatchBenchmarkSourceFactory
     /// Creates benchmark source with the requested stream-item count.
     /// </summary>
     /// <param name="itemCount">The number of streamed items to emit.</param>
+    /// <param name="backpressurePauseRounds">
+    /// The number of cooperative consumer yields used when observing producer lead.
+    /// </param>
     /// <returns>The synthetic stream-dispatch benchmark source file.</returns>
-    public static string CreateSource(int itemCount)
+    public static string CreateSource(int itemCount, int backpressurePauseRounds = 32)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(itemCount);
+        ArgumentOutOfRangeException.ThrowIfNegative(backpressurePauseRounds);
 
         return $$"""
             #nullable enable
@@ -25,13 +29,13 @@ internal static class StreamDispatchBenchmarkSourceFactory
 
             namespace BenchmarkApp;
 
-            public sealed record BenchmarkStreamRequest(int ItemCount) : IStreamRequest<int>;
+            public sealed record BenchmarkStreamRequest(int ItemCount, BackpressureProbe? Probe = null) : IStreamRequest<int>;
 
             public sealed class BenchmarkStreamHandler : IStreamRequestHandler<BenchmarkStreamRequest, int>
             {
                 public IAsyncEnumerable<int> Handle(BenchmarkStreamRequest request, CancellationToken ct)
                 {
-                    return new RangeAsyncEnumerable(request.ItemCount, ct);
+                    return new RangeAsyncEnumerable(request.ItemCount, ct, request.Probe);
                 }
             }
 
@@ -251,34 +255,77 @@ internal static class StreamDispatchBenchmarkSourceFactory
 
                     throw new InvalidOperationException("Benchmark cancellation did not surface before enumeration completed.");
                 }
+
+                public static async ValueTask<int> ObserveProducerLeadAsync(
+                    IAsyncEnumerable<int> source,
+                    BackpressureProbe probe,
+                    int pauseRounds,
+                    CancellationToken ct)
+                {
+                    ArgumentNullException.ThrowIfNull(probe);
+                    ArgumentOutOfRangeException.ThrowIfNegative(pauseRounds);
+
+                    await using var enumerator = source.GetAsyncEnumerator(ct);
+                    if (!await enumerator.MoveNextAsync().ConfigureAwait(false))
+                    {
+                        return 0;
+                    }
+
+                    for (var i = 0; i < pauseRounds; i++)
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        await Task.Yield();
+                    }
+
+                    return probe.ProducedCount;
+                }
+            }
+
+            public sealed class BackpressureProbe
+            {
+                private int producedCount;
+
+                public int ProducedCount => Volatile.Read(ref producedCount);
+
+                public void OnProduced()
+                {
+                    Interlocked.Increment(ref producedCount);
+                }
             }
 
             internal sealed class RangeAsyncEnumerable : IAsyncEnumerable<int>
             {
                 private readonly int count;
                 private readonly CancellationToken cancellationToken;
+                private readonly BackpressureProbe? probe;
 
-                public RangeAsyncEnumerable(int count, CancellationToken cancellationToken)
+                public RangeAsyncEnumerable(int count, CancellationToken cancellationToken, BackpressureProbe? probe)
                 {
                     this.count = count;
                     this.cancellationToken = cancellationToken;
+                    this.probe = probe;
                 }
 
                 public IAsyncEnumerator<int> GetAsyncEnumerator(CancellationToken cancellationToken = default)
                 {
-                    return new Enumerator(count, CancellationTokenSource.CreateLinkedTokenSource(this.cancellationToken, cancellationToken).Token);
+                    return new Enumerator(
+                        count,
+                        CancellationTokenSource.CreateLinkedTokenSource(this.cancellationToken, cancellationToken).Token,
+                        probe);
                 }
 
                 private sealed class Enumerator : IAsyncEnumerator<int>
                 {
                     private readonly int count;
                     private readonly CancellationToken cancellationToken;
+                    private readonly BackpressureProbe? probe;
                     private int index;
 
-                    public Enumerator(int count, CancellationToken cancellationToken)
+                    public Enumerator(int count, CancellationToken cancellationToken, BackpressureProbe? probe)
                     {
                         this.count = count;
                         this.cancellationToken = cancellationToken;
+                        this.probe = probe;
                     }
 
                     public int Current { get; private set; }
@@ -295,6 +342,7 @@ internal static class StreamDispatchBenchmarkSourceFactory
 
                         index++;
                         Current = index;
+                        probe?.OnProduced();
                         return ValueTask.FromResult(true);
                     }
                 }
@@ -405,6 +453,66 @@ internal static class StreamDispatchBenchmarkSourceFactory
                     var mediator = new BenchmarkAppMediator();
                     var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}});
                     return ct => StreamConsumers.CancelAfterFirstItemAsync(mediator.SendViaBufferedCopy(request, ct), ct);
+                }
+
+                public static Func<CancellationToken, ValueTask<int>> CreateDirectStreamHandlerBackpressure()
+                {
+                    var handler = new BenchmarkStreamHandler();
+                    var probe = new BackpressureProbe();
+                    var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}}, probe);
+                    return ct => StreamConsumers.ObserveProducerLeadAsync(
+                        handler.Handle(request, ct),
+                        probe,
+                        {{backpressurePauseRounds.ToString(CultureInfo.InvariantCulture)}},
+                        ct);
+                }
+
+                public static Func<CancellationToken, ValueTask<int>> CreateGeneratedMediatorDirectReturnBackpressure()
+                {
+                    var mediator = new BenchmarkAppMediator();
+                    var probe = new BackpressureProbe();
+                    var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}}, probe);
+                    return ct => StreamConsumers.ObserveProducerLeadAsync(
+                        mediator.Send(request, ct),
+                        probe,
+                        {{backpressurePauseRounds.ToString(CultureInfo.InvariantCulture)}},
+                        ct);
+                }
+
+                public static Func<CancellationToken, ValueTask<int>> CreateGeneratedWrapperBackpressure()
+                {
+                    var mediator = new BenchmarkAppMediator();
+                    var probe = new BackpressureProbe();
+                    IStreamRequest<int> request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}}, probe);
+                    return ct => StreamConsumers.ObserveProducerLeadAsync(
+                        mediator.Send(request, ct),
+                        probe,
+                        {{backpressurePauseRounds.ToString(CultureInfo.InvariantCulture)}},
+                        ct);
+                }
+
+                public static Func<CancellationToken, ValueTask<int>> CreateChannelCopyBackpressure()
+                {
+                    var mediator = new BenchmarkAppMediator();
+                    var probe = new BackpressureProbe();
+                    var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}}, probe);
+                    return ct => StreamConsumers.ObserveProducerLeadAsync(
+                        mediator.SendViaChannel(request, ct),
+                        probe,
+                        {{backpressurePauseRounds.ToString(CultureInfo.InvariantCulture)}},
+                        ct);
+                }
+
+                public static Func<CancellationToken, ValueTask<int>> CreateBufferedCopyBackpressure()
+                {
+                    var mediator = new BenchmarkAppMediator();
+                    var probe = new BackpressureProbe();
+                    var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}}, probe);
+                    return ct => StreamConsumers.ObserveProducerLeadAsync(
+                        mediator.SendViaBufferedCopy(request, ct),
+                        probe,
+                        {{backpressurePauseRounds.ToString(CultureInfo.InvariantCulture)}},
+                        ct);
                 }
             }
             """;
