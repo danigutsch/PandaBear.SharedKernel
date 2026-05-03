@@ -58,6 +58,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
                 MediatorDiagnosticIds.InvalidHandlerSignature,
                 MediatorDiagnosticIds.MissingCancellationToken,
                 MediatorDiagnosticIds.MissingCancellationForwarding,
+                MediatorDiagnosticIds.MissingEnumeratorCancellation,
                 MediatorDiagnosticIds.InaccessibleRegistrationType,
                 MediatorDiagnosticIds.MissingModuleMarker,
             ],
@@ -83,6 +84,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
                 MissingArgumentDiagnosticId,
                 MediatorDiagnosticIds.MissingHandler,
                 MediatorDiagnosticIds.MissingCancellationToken,
+                MediatorDiagnosticIds.MissingEnumeratorCancellation,
                 MediatorDiagnosticIds.MissingModuleMarker,
             ],
             supportedDiagnosticIds);
@@ -1113,6 +1115,91 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Assert
         Assert.Contains(
             "return await sender.Send(new SearchTour(request.Code), ct);",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_EnumeratorCancellation_Adds_Attribute_To_Stream_Handler()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
+                {
+                    await Task.Yield();
+                    yield return request.Count.ToString();
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MediatorDiagnosticIds.MissingEnumeratorCancellation,
+            "Test0.cs",
+            "CancellationToken ct");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Add [EnumeratorCancellation]", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "[global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_EnumeratorCancellation_Adds_Attribute_To_Stream_Pipeline()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamValidationBehavior : IStreamPipelineBehavior<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTours request, StreamHandlerContinuation<string> next, CancellationToken ct)
+                {
+                    await Task.Yield();
+                    await foreach (var item in next())
+                    {
+                        yield return item;
+                    }
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MediatorDiagnosticIds.MissingEnumeratorCancellation,
+            "Test0.cs",
+            "CancellationToken ct");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Add [EnumeratorCancellation]", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "[global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct",
             updatedDocumentText,
             StringComparison.Ordinal);
     }
