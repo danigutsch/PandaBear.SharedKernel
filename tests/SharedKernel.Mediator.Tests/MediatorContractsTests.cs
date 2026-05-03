@@ -88,6 +88,22 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
+    public void Notification_Dispatch_Attribute_Exposes_Configured_Strategy()
+    {
+        // Arrange
+        var attribute = typeof(ParallelClassNotification)
+            .GetCustomAttributes(typeof(NotificationDispatchAttribute), inherit: false)
+            .Cast<NotificationDispatchAttribute>()
+            .Single();
+
+        // Act
+        var strategy = attribute.Strategy;
+
+        // Assert
+        Assert.Equal(NotificationDispatchStrategy.Parallel, strategy);
+    }
+
+    [Fact]
     public void Stream_And_Pipeline_Contracts_Compile()
     {
         // Arrange

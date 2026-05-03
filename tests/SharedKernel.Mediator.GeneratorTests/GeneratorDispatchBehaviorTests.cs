@@ -399,6 +399,116 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
+    public async Task Generated_Notification_Dispatch_Uses_Per_Notification_Strategy()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public static class TraceLog
+            {
+                public static List<string> Entries { get; } = [];
+            }
+
+            public static class ParallelGate
+            {
+                private static int started;
+                private static readonly TaskCompletionSource<bool> AllStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+                public static async ValueTask Enter(string name, CancellationToken ct)
+                {
+                    TraceLog.Entries.Add($"start:{name}");
+                    if (Interlocked.Increment(ref started) == 2)
+                    {
+                        AllStarted.TrySetResult(true);
+                    }
+
+                    await AllStarted.Task.WaitAsync(ct);
+                    TraceLog.Entries.Add($"end:{name}");
+                }
+            }
+
+            public sealed record SequentialNotification(int Id) : INotification;
+
+            [NotificationDispatch(NotificationDispatchStrategy.Parallel)]
+            public sealed record ParallelNotification(int Id) : INotification;
+
+            [NotificationOrder(20)]
+            public sealed class SequentialHandlerOne : INotificationHandler<SequentialNotification>
+            {
+                public ValueTask Handle(SequentialNotification notification, CancellationToken ct)
+                {
+                    TraceLog.Entries.Add("sequential-1");
+                    return ValueTask.CompletedTask;
+                }
+            }
+
+            [NotificationOrder(10)]
+            public sealed class SequentialHandlerTwo : INotificationHandler<SequentialNotification>
+            {
+                public ValueTask Handle(SequentialNotification notification, CancellationToken ct)
+                {
+                    TraceLog.Entries.Add("sequential-2");
+                    return ValueTask.CompletedTask;
+                }
+            }
+
+            public sealed class ParallelHandlerOne : INotificationHandler<ParallelNotification>
+            {
+                public ValueTask Handle(ParallelNotification notification, CancellationToken ct)
+                {
+                    return ParallelGate.Enter("parallel-1", ct);
+                }
+            }
+
+            public sealed class ParallelHandlerTwo : INotificationHandler<ParallelNotification>
+            {
+                public ValueTask Handle(ParallelNotification notification, CancellationToken ct)
+                {
+                    return ParallelGate.Enter("parallel-2", ct);
+                }
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var mediator = runtime.CreateMediator(
+            Activator.CreateInstance(runtime.GetRequiredType("Demo.SequentialHandlerOne"))!,
+            Activator.CreateInstance(runtime.GetRequiredType("Demo.SequentialHandlerTwo"))!,
+            Activator.CreateInstance(runtime.GetRequiredType("Demo.ParallelHandlerOne"))!,
+            Activator.CreateInstance(runtime.GetRequiredType("Demo.ParallelHandlerTwo"))!);
+        var sequentialNotification = (INotification)Activator.CreateInstance(
+            runtime.GetRequiredType("Demo.SequentialNotification"),
+            42)!;
+        var parallelNotification = (INotification)Activator.CreateInstance(
+            runtime.GetRequiredType("Demo.ParallelNotification"),
+            43)!;
+
+        // Act
+        await mediator.Publish(sequentialNotification, CancellationToken.None);
+        var sequentialTrace = runtime.ReadTraceEntries("Demo.TraceLog");
+        runtime.ClearTraceEntries("Demo.TraceLog");
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(1));
+        await mediator.Publish(parallelNotification, cts.Token);
+        var parallelTrace = runtime.ReadTraceEntries("Demo.TraceLog");
+
+        // Assert
+        Assert.Equal(["sequential-2", "sequential-1"], sequentialTrace);
+        Assert.Equal(4, parallelTrace.Length);
+        Assert.All(parallelTrace[..2], static entry => Assert.StartsWith("start:", entry, StringComparison.Ordinal));
+        Assert.All(parallelTrace[2..], static entry => Assert.StartsWith("end:", entry, StringComparison.Ordinal));
+        Assert.Contains("start:parallel-1", parallelTrace, StringComparer.Ordinal);
+        Assert.Contains("start:parallel-2", parallelTrace, StringComparer.Ordinal);
+        Assert.Contains("end:parallel-1", parallelTrace, StringComparer.Ordinal);
+        Assert.Contains("end:parallel-2", parallelTrace, StringComparer.Ordinal);
+    }
+
+    [Fact]
     public async Task Generated_Notification_Dispatch_Stops_On_First_Exception()
     {
         // Arrange

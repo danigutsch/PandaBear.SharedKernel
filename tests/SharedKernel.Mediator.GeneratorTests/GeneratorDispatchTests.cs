@@ -140,4 +140,43 @@ public sealed class GeneratorDispatchTests
         Assert.Contains("var pipeline0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.ValidationBehavior>(mediator.Services);", generatedPipelinesSource, StringComparison.Ordinal);
         Assert.Contains("return pipeline0.Handle(request, () => handler.Handle(request, ct), ct);", generatedPipelinesSource, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void Generate_AppMediator_Uses_Task_When_All_For_Parallel_Notification_Strategy()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            [NotificationDispatch(NotificationDispatchStrategy.Parallel)]
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class TourCreatedHandlerOne : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+
+            public sealed class TourCreatedHandlerTwo : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedDispatchSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            "SharedKernel.Mediator.Generated.GeneratedDispatch.g.cs");
+
+        // Assert
+        GeneratorSnapshotVerifier.Verify(generatedDispatchSource);
+        Assert.Contains("var handler0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerOne>(services).Handle(notification, ct);", generatedDispatchSource, StringComparison.Ordinal);
+        Assert.Contains("var handler1 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerTwo>(services).Handle(notification, ct);", generatedDispatchSource, StringComparison.Ordinal);
+        Assert.Contains("await global::System.Threading.Tasks.Task.WhenAll(handler0.AsTask(), handler1.AsTask()).ConfigureAwait(false);", generatedDispatchSource, StringComparison.Ordinal);
+    }
 }

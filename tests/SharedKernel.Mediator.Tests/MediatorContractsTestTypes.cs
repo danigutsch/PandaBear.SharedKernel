@@ -18,6 +18,9 @@ internal sealed record ClassNotification : INotification;
 
 internal readonly record struct StructNotification : INotification;
 
+[NotificationDispatch(NotificationDispatchStrategy.Parallel)]
+internal sealed record ParallelClassNotification : INotification;
+
 internal sealed class ClassNotificationHandler : INotificationHandler<ClassNotification>
 {
     /// <inheritdoc />
