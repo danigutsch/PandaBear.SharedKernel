@@ -249,6 +249,53 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
+    public async Task Generated_Stream_Dispatch_Matches_Reference_Dispatcher()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Runtime.CompilerServices;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    for (var index = 1; index <= request.Count; index++)
+                    {
+                        await Task.Yield();
+                        ct.ThrowIfCancellationRequested();
+                        yield return $"item:{index}";
+                    }
+                }
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var requestType = runtime.GetRequiredType("Demo.StreamTours");
+        var handler = Activator.CreateInstance(runtime.GetRequiredType("Demo.StreamToursHandler"))!;
+        var request = (IStreamRequest<string>)Activator.CreateInstance(requestType, 3)!;
+        var referenceDispatcher = new ReferenceDispatcherBuilder()
+            .AddStreamHandler(requestType, typeof(string), handler)
+            .Build();
+        var mediator = runtime.CreateMediator(handler);
+
+        // Act
+        var referenceItems = await CollectAsync(referenceDispatcher.CreateStream(request, CancellationToken.None));
+        var generatedItems = await CollectAsync(mediator.CreateStream(request, CancellationToken.None));
+
+        // Assert
+        Assert.Equal(referenceItems, generatedItems);
+        Assert.Equal(["item:1", "item:2", "item:3"], generatedItems);
+    }
+
+    [Fact]
     public async Task Generated_Notification_Dispatch_Matches_Reference_Dispatcher_With_Exact_Type_Matching()
     {
         // Arrange
@@ -704,5 +751,17 @@ public sealed class GeneratorDispatchBehaviorTests
         {
             return services.TryGetValue(serviceType, out var service) ? service : null;
         }
+    }
+
+    private static async Task<string[]> CollectAsync(IAsyncEnumerable<string> source)
+    {
+        List<string> items = [];
+
+        await foreach (var item in source)
+        {
+            items.Add(item);
+        }
+
+        return [.. items];
     }
 }

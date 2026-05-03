@@ -27,6 +27,17 @@ internal static class GeneratedDispatch
         };
     }
 
+    public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> CreateStream<TResponse>(
+        AppMediator mediator,
+        global::SharedKernel.Mediator.IStreamRequest<TResponse> request,
+        global::System.Threading.CancellationToken ct)
+    {
+        return request switch
+        {
+            _ => ThrowNoStreamHandler<TResponse>(request),
+        };
+    }
+
     public static global::System.Threading.Tasks.ValueTask Publish<TNotification>(
         AppMediator mediator,
         TNotification notification,
@@ -85,6 +96,48 @@ internal static class GeneratedDispatch
         throw new global::System.NotSupportedException($"Generated object dispatch is not available for request type '{request.GetType().FullName}'.");
     }
 
+    public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> ThrowNoStreamHandler<TResponse>(
+        global::SharedKernel.Mediator.IStreamRequest<TResponse> request)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        return new ThrowingAsyncEnumerable<TResponse>(new global::System.NotSupportedException($"Generated stream dispatch is not available for request type '{request.GetType().FullName}'."));
+    }
+
+    public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> ThrowAmbiguousStreamHandlers<TResponse>(
+        global::SharedKernel.Mediator.IStreamRequest<TResponse> request,
+        int handlerCount)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        return new ThrowingAsyncEnumerable<TResponse>(new global::System.InvalidOperationException($"Generated stream dispatch found {handlerCount} accessible handlers for request type '{request.GetType().FullName}'."));
+    }
+
+    public static async global::System.Collections.Generic.IAsyncEnumerable<TTarget> CastStream<TSource, TTarget>(
+        global::System.Collections.Generic.IAsyncEnumerable<TSource> source,
+        [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken ct)
+    {
+        var enumerator = source.GetAsyncEnumerator(ct);
+        try
+        {
+            while (await enumerator.MoveNextAsync().ConfigureAwait(false))
+            {
+                var item = enumerator.Current;
+                if (item is TTarget typed)
+                {
+                    yield return typed;
+                    continue;
+                }
+
+                ThrowInvalidResponseCast<TSource, TTarget>();
+            }
+        }
+        finally
+        {
+            await enumerator.DisposeAsync().ConfigureAwait(false);
+        }
+    }
+
     public static global::System.Threading.Tasks.ValueTask<TResponse> ThrowAmbiguousHandlers<TResponse>(
         global::SharedKernel.Mediator.IRequest<TResponse> request,
         int handlerCount)
@@ -97,5 +150,25 @@ internal static class GeneratedDispatch
     public static TTarget ThrowInvalidResponseCast<TSource, TTarget>()
     {
         throw new global::System.InvalidOperationException($"Generated request dispatch returned '{typeof(TSource).FullName}' when '{typeof(TTarget).FullName}' was expected.");
+    }
+
+    private sealed class ThrowingAsyncEnumerable<T>(global::System.Exception exception) : global::System.Collections.Generic.IAsyncEnumerable<T>, global::System.Collections.Generic.IAsyncEnumerator<T>
+    {
+        public T Current => throw exception;
+
+        public global::System.Threading.Tasks.ValueTask DisposeAsync()
+        {
+            return global::System.Threading.Tasks.ValueTask.CompletedTask;
+        }
+
+        public global::System.Collections.Generic.IAsyncEnumerator<T> GetAsyncEnumerator(global::System.Threading.CancellationToken cancellationToken = default)
+        {
+            return this;
+        }
+
+        public global::System.Threading.Tasks.ValueTask<bool> MoveNextAsync()
+        {
+            return global::System.Threading.Tasks.ValueTask.FromException<bool>(exception);
+        }
     }
 }

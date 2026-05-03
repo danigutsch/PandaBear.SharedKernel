@@ -101,6 +101,22 @@ public sealed partial class AppMediator : IMediator
         return GeneratedDispatch.ThrowNoHandler<string>(request);
     }
 
+    /// <summary>
+    /// Creates a <see cref="global::Demo.StreamTours"/> stream through the generated mediator dispatch path.
+    /// </summary>
+    /// <param name="request">The stream request instance to dispatch.</param>
+    /// <param name="ct">The cancellation token for the operation.</param>
+    /// <returns>The produced response stream.</returns>
+    public global::System.Collections.Generic.IAsyncEnumerable<string> CreateStream(global::Demo.StreamTours request,
+        global::System.Threading.CancellationToken ct)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.StreamToursHandler>(Services);
+
+        return handler.Handle(request, ct);
+    }
+
     /// <inheritdoc />
     public global::System.Threading.Tasks.ValueTask<TResponse> Send<TResponse>(
         global::SharedKernel.Mediator.IRequest<TResponse> request,
@@ -109,6 +125,21 @@ public sealed partial class AppMediator : IMediator
         global::System.ArgumentNullException.ThrowIfNull(request);
 
         return GeneratedDispatch.Send<TResponse>(this, request, ct);
+    }
+
+    /// <summary>
+    /// Creates a stream request instance through the generated stream-dispatch path.
+    /// </summary>
+    /// <param name="request">The stream request instance to dispatch.</param>
+    /// <param name="ct">The cancellation token for the operation.</param>
+    /// <returns>The produced response stream.</returns>
+    public global::System.Collections.Generic.IAsyncEnumerable<TResponse> CreateStream<TResponse>(
+        global::SharedKernel.Mediator.IStreamRequest<TResponse> request,
+        global::System.Threading.CancellationToken ct)
+    {
+        global::System.ArgumentNullException.ThrowIfNull(request);
+
+        return GeneratedDispatch.CreateStream<TResponse>(this, request, ct);
     }
 
     /// <summary>

@@ -118,4 +118,18 @@ public sealed class MediatorContractsTests
         Assert.True(streamConstraintHolds);
         Assert.True(pipelineConstraintHolds);
     }
+
+    [Fact]
+    public void ISender_Exposes_CreateStream_Generic_Method()
+    {
+        // Arrange
+        var method = typeof(ISender).GetMethod(nameof(ISender.CreateStream));
+
+        // Act
+        var returnType = method?.ReturnType;
+
+        // Assert
+        Assert.NotNull(method);
+        Assert.Equal(typeof(IAsyncEnumerable<>), returnType?.GetGenericTypeDefinition());
+    }
 }
