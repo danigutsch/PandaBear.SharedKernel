@@ -190,7 +190,7 @@ internal static class DispatchBenchmarkSourceFactory
         builder.AppendLine("        throw new NotSupportedException(\"Benchmark notification dispatch is not implemented.\");");
         builder.AppendLine("    }");
         builder.AppendLine();
-        builder.AppendLine("    public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamRequest<TResponse> request, CancellationToken ct)");
+        builder.AppendLine("    public IAsyncEnumerable<TResponse> Send<TResponse>(IStreamRequest<TResponse> request, CancellationToken ct)");
         builder.AppendLine("    {");
         builder.AppendLine("        ArgumentNullException.ThrowIfNull(request);");
         builder.AppendLine("        throw new NotSupportedException(\"Benchmark stream dispatch is not implemented.\");");

@@ -26,6 +26,11 @@ internal static class AnalyzerBenchmarkSourceFactory
         builder.AppendLine("    {");
         builder.AppendLine("        throw new NotSupportedException();");
         builder.AppendLine("    }");
+        builder.AppendLine();
+        builder.AppendLine("    public IAsyncEnumerable<TResponse> Send<TResponse>(IStreamRequest<TResponse> request, CancellationToken ct)");
+        builder.AppendLine("    {");
+        builder.AppendLine("        throw new NotSupportedException();");
+        builder.AppendLine("    }");
         builder.AppendLine("}");
         builder.AppendLine();
 

@@ -167,7 +167,7 @@ public class DependencyInjectionBenchmarks
         }
 
         /// <inheritdoc />
-        public IAsyncEnumerable<TResponse> CreateStream<TResponse>(IStreamRequest<TResponse> request, CancellationToken ct)
+        public IAsyncEnumerable<TResponse> Send<TResponse>(IStreamRequest<TResponse> request, CancellationToken ct)
         {
             ArgumentNullException.ThrowIfNull(request);
             throw new NotSupportedException("Benchmark stream dispatch is not implemented.");
