@@ -16,6 +16,7 @@ public class ApiShapeBenchmarks
 
     private Func<CancellationToken, ValueTask<int>> valueTaskHandler = null!;
     private Func<CancellationToken, Task<int>> taskHandler = null!;
+    private Func<CancellationToken, ValueTask<Unit>> unitCommandHandler = null!;
 
     /// <summary>
     /// Gets or sets the request shape under test.
@@ -43,18 +44,24 @@ public class ApiShapeBenchmarks
                 var classRequest = new ClassRequest(42);
                 valueTaskHandler = ct => Handle(classRequest, completesSynchronously, ct);
                 taskHandler = ct => HandleWithTask(classRequest, completesSynchronously, ct);
+                var classCommand = new ClassCommandRequest(42);
+                unitCommandHandler = ct => HandleUnit(classCommand, completesSynchronously, ct);
                 break;
 
             case RecordClassShape:
                 var recordClassRequest = new RecordClassRequest(42);
                 valueTaskHandler = ct => Handle(recordClassRequest, completesSynchronously, ct);
                 taskHandler = ct => HandleWithTask(recordClassRequest, completesSynchronously, ct);
+                var recordClassCommand = new RecordClassCommandRequest(42);
+                unitCommandHandler = ct => HandleUnit(recordClassCommand, completesSynchronously, ct);
                 break;
 
             case ReadonlyRecordStructShape:
                 var recordStructRequest = new ReadonlyRecordStructRequest(42);
                 valueTaskHandler = ct => Handle(recordStructRequest, completesSynchronously, ct);
                 taskHandler = ct => HandleWithTask(recordStructRequest, completesSynchronously, ct);
+                var recordStructCommand = new ReadonlyRecordStructCommandRequest(42);
+                unitCommandHandler = ct => HandleUnit(recordStructCommand, completesSynchronously, ct);
                 break;
 
             default:
@@ -80,6 +87,16 @@ public class ApiShapeBenchmarks
     public Task<int> DirectTaskComparisonHelper()
     {
         return taskHandler(CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Measures the direct mediator-style <see cref="ValueTask{TResult}"/> command path returning <see cref="Unit"/>.
+    /// </summary>
+    /// <returns>The handled unit response.</returns>
+    [Benchmark(Description = "Direct Unit command")]
+    public ValueTask<Unit> DirectUnitCommand()
+    {
+        return unitCommandHandler(CancellationToken.None);
     }
 
     private static ValueTask<int> Handle(ClassRequest request, bool completesSynchronously, CancellationToken ct)
@@ -110,6 +127,24 @@ public class ApiShapeBenchmarks
     private static Task<int> HandleWithTask(ReadonlyRecordStructRequest request, bool completesSynchronously, CancellationToken ct)
     {
         return completesSynchronously ? Task.FromResult(request.Id) : HandleWithTaskAsync(request, ct);
+    }
+
+    private static ValueTask<Unit> HandleUnit(ClassCommandRequest request, bool completesSynchronously, CancellationToken ct)
+    {
+        _ = request;
+        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnitAsync(ct);
+    }
+
+    private static ValueTask<Unit> HandleUnit(RecordClassCommandRequest request, bool completesSynchronously, CancellationToken ct)
+    {
+        _ = request;
+        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnitAsync(ct);
+    }
+
+    private static ValueTask<Unit> HandleUnit(ReadonlyRecordStructCommandRequest request, bool completesSynchronously, CancellationToken ct)
+    {
+        _ = request;
+        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnitAsync(ct);
     }
 
     private static async ValueTask<int> HandleAsync(ClassRequest request, CancellationToken ct)
@@ -154,12 +189,28 @@ public class ApiShapeBenchmarks
         return request.Id;
     }
 
+    private static async ValueTask<Unit> HandleUnitAsync(CancellationToken ct)
+    {
+        await Task.Yield();
+        ct.ThrowIfCancellationRequested();
+        return Unit.Value;
+    }
+
     private sealed class ClassRequest(int id)
+    {
+        public int Id { get; } = id;
+    }
+
+    private sealed class ClassCommandRequest(int id)
     {
         public int Id { get; } = id;
     }
 
     private sealed record RecordClassRequest(int Id);
 
+    private sealed record RecordClassCommandRequest(int Id);
+
     private readonly record struct ReadonlyRecordStructRequest(int Id);
+
+    private readonly record struct ReadonlyRecordStructCommandRequest(int Id);
 }

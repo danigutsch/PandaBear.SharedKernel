@@ -9,6 +9,7 @@ Benchmark harness for the `SharedKernel.Mediator` discovery generator and API-sh
 - Capture generator allocation impact with BenchmarkDotNet's memory diagnoser
 - Track generated source length for the baseline and edited inputs inside the benchmark fixture
 - Compare direct `ValueTask<T>` and benchmark-only `Task<T>` handler returns
+- Compare direct `Unit` command completion alongside the result-returning paths
 - Cover class, record class, and readonly record struct requests
 - Cover synchronous and asynchronous completion paths
 - Compare generated-style and hand-written mediator DI service-provider build costs
@@ -36,6 +37,8 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
 - `One-handler edit rebuild` reruns the graph against a compilation whose first handler body changed.
 - `ApiShapeBenchmarks` isolates handler return-path shape only; the `Task<T>` path exists for
   benchmark comparison and is not part of the production mediator contract.
+- The same suite now includes a direct `Unit` command benchmark so BM001 covers the non-result
+  mediator command shape as well.
 - `DependencyInjectionBenchmarks` uses a generated-style benchmark mediator shell so DI build,
   resolution, and first-dispatch costs stay close to the current generated shape.
 - `ObjectDispatchBenchmarks` isolates the extra boxing and switch path for `SendObject` without
