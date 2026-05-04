@@ -31,6 +31,7 @@ internal static class DispatchBenchmarkSourceFactory
         var targetIndex = requestCount - 1;
         var builder = new StringBuilder();
         builder.AppendLine("using SharedKernel.Mediator;");
+        builder.AppendLine("using System.Collections.Frozen;");
         builder.AppendLine();
         builder.AppendLine("namespace BenchmarkApp;");
         builder.AppendLine();
@@ -77,6 +78,9 @@ internal static class DispatchBenchmarkSourceFactory
 
         builder.AppendLine("public sealed class BenchmarkAppMediator : IMediator");
         builder.AppendLine("{");
+        builder.AppendLine("    private static readonly Dictionary<Type, Func<BenchmarkAppMediator, IRequest<int>, CancellationToken, ValueTask<int>>> DictionaryDispatchers = CreateDictionaryDispatchers();");
+        builder.AppendLine("    private static readonly FrozenDictionary<Type, Func<BenchmarkAppMediator, IRequest<int>, CancellationToken, ValueTask<int>>> FrozenDictionaryDispatchers = CreateFrozenDictionaryDispatchers();");
+        builder.AppendLine();
 
         for (var index = 0; index < requestCount; index++)
         {
@@ -164,6 +168,29 @@ internal static class DispatchBenchmarkSourceFactory
         builder.AppendLine("        };");
         builder.AppendLine("    }");
         builder.AppendLine();
+        builder.AppendLine("    public ValueTask<int> SendViaStaticGenericCache<TRequest>(TRequest request, CancellationToken ct)");
+        builder.AppendLine("        where TRequest : IRequest<int>");
+        builder.AppendLine("    {");
+        builder.AppendLine("        ArgumentNullException.ThrowIfNull(request);");
+        builder.AppendLine("        return GenericDispatchCache<TRequest>.Dispatch(this, request, ct);");
+        builder.AppendLine("    }");
+        builder.AppendLine();
+        builder.AppendLine("    public ValueTask<int> SendViaDictionary(IRequest<int> request, CancellationToken ct)");
+        builder.AppendLine("    {");
+        builder.AppendLine("        ArgumentNullException.ThrowIfNull(request);");
+        builder.AppendLine("        return DictionaryDispatchers.TryGetValue(request.GetType(), out var dispatch)");
+        builder.AppendLine("            ? dispatch(this, request, ct)");
+        builder.AppendLine("            : ThrowNoHandler(request);");
+        builder.AppendLine("    }");
+        builder.AppendLine();
+        builder.AppendLine("    public ValueTask<int> SendViaFrozenDictionary(IRequest<int> request, CancellationToken ct)");
+        builder.AppendLine("    {");
+        builder.AppendLine("        ArgumentNullException.ThrowIfNull(request);");
+        builder.AppendLine("        return FrozenDictionaryDispatchers.TryGetValue(request.GetType(), out var dispatch)");
+        builder.AppendLine("            ? dispatch(this, request, ct)");
+        builder.AppendLine("            : ThrowNoHandler(request);");
+        builder.AppendLine("    }");
+        builder.AppendLine();
         builder.AppendLine("    public ValueTask<object?> SendObject(object request, CancellationToken ct)");
         builder.AppendLine("    {");
         builder.AppendLine("        ArgumentNullException.ThrowIfNull(request);");
@@ -217,9 +244,61 @@ internal static class DispatchBenchmarkSourceFactory
         builder.AppendLine("        throw new NotSupportedException($\"Benchmark mediator dispatch is not available for request type '{request.GetType().FullName}'.\");");
         builder.AppendLine("    }");
         builder.AppendLine();
+        builder.AppendLine("    private static Dictionary<Type, Func<BenchmarkAppMediator, IRequest<int>, CancellationToken, ValueTask<int>>> CreateDictionaryDispatchers()");
+        builder.AppendLine("    {");
+        builder.AppendLine("        return new Dictionary<Type, Func<BenchmarkAppMediator, IRequest<int>, CancellationToken, ValueTask<int>>>");
+        builder.AppendLine("        {");
+
+        for (var index = 0; index < requestCount; index++)
+        {
+            builder.Append("            [typeof(Request")
+                .Append(index)
+                .Append(")] = static (mediator, request, ct) => mediator.Send((Request")
+                .Append(index)
+                .AppendLine(")request, ct),");
+        }
+
+        builder.AppendLine("        };");
+        builder.AppendLine("    }");
+        builder.AppendLine();
+        builder.AppendLine("    private static FrozenDictionary<Type, Func<BenchmarkAppMediator, IRequest<int>, CancellationToken, ValueTask<int>>> CreateFrozenDictionaryDispatchers()");
+        builder.AppendLine("    {");
+        builder.AppendLine("        return CreateDictionaryDispatchers().ToFrozenDictionary();");
+        builder.AppendLine("    }");
+        builder.AppendLine();
         builder.AppendLine("    private static ValueTask<object?> ThrowUnknownRequestObject(object request)");
         builder.AppendLine("    {");
         builder.AppendLine("        throw new NotSupportedException($\"Benchmark object dispatch is not available for request type '{request.GetType().FullName}'.\");");
+        builder.AppendLine("    }");
+        builder.AppendLine("}");
+        builder.AppendLine();
+        builder.AppendLine("file static class GenericDispatchCache<TRequest>");
+        builder.AppendLine("    where TRequest : IRequest<int>");
+        builder.AppendLine("{");
+        builder.AppendLine("    public static Func<BenchmarkAppMediator, TRequest, CancellationToken, ValueTask<int>> Dispatch { get; } = CreateDispatch();");
+        builder.AppendLine();
+        builder.AppendLine("    private static Func<BenchmarkAppMediator, TRequest, CancellationToken, ValueTask<int>> CreateDispatch()");
+        builder.AppendLine("    {");
+
+        for (var index = 0; index < requestCount; index++)
+        {
+            builder.Append("        if (typeof(TRequest) == typeof(Request")
+                .Append(index)
+                .AppendLine("))");
+            builder.AppendLine("        {");
+            builder.Append("            return static (mediator, request, ct) => mediator.Send((Request")
+                .Append(index)
+                .AppendLine(")(object)request, ct);");
+            builder.AppendLine("        }");
+            builder.AppendLine();
+        }
+
+        builder.AppendLine("        return static (_, request, _) => ThrowNoHandler(request);");
+        builder.AppendLine("    }");
+        builder.AppendLine();
+        builder.AppendLine("    private static ValueTask<int> ThrowNoHandler(IRequest<int> request)");
+        builder.AppendLine("    {");
+        builder.AppendLine("        throw new NotSupportedException($\"Benchmark cached dispatch is not available for request type '{request.GetType().FullName}'.\");");
         builder.AppendLine("    }");
         builder.AppendLine("}");
         builder.AppendLine();
@@ -248,6 +327,36 @@ internal static class DispatchBenchmarkSourceFactory
             .Append(targetIndex)
             .AppendLine("(42);");
         builder.AppendLine("        return ct => mediator.Send(request, ct);");
+        builder.AppendLine("    }");
+        builder.AppendLine();
+        builder.Append("    public static Func<CancellationToken, ValueTask<int>> CreateStaticGenericCache()");
+        builder.AppendLine();
+        builder.AppendLine("    {");
+        builder.AppendLine("        var mediator = new BenchmarkAppMediator();");
+        builder.Append("        var request = new Request")
+            .Append(targetIndex)
+            .AppendLine("(42);");
+        builder.AppendLine("        return ct => mediator.SendViaStaticGenericCache(request, ct);");
+        builder.AppendLine("    }");
+        builder.AppendLine();
+        builder.Append("    public static Func<CancellationToken, ValueTask<int>> CreateDictionaryDispatch()");
+        builder.AppendLine();
+        builder.AppendLine("    {");
+        builder.AppendLine("        var mediator = new BenchmarkAppMediator();");
+        builder.Append("        IRequest<int> request = new Request")
+            .Append(targetIndex)
+            .AppendLine("(42);");
+        builder.AppendLine("        return ct => mediator.SendViaDictionary(request, ct);");
+        builder.AppendLine("    }");
+        builder.AppendLine();
+        builder.Append("    public static Func<CancellationToken, ValueTask<int>> CreateFrozenDictionaryDispatch()");
+        builder.AppendLine();
+        builder.AppendLine("    {");
+        builder.AppendLine("        var mediator = new BenchmarkAppMediator();");
+        builder.Append("        IRequest<int> request = new Request")
+            .Append(targetIndex)
+            .AppendLine("(42);");
+        builder.AppendLine("        return ct => mediator.SendViaFrozenDictionary(request, ct);");
         builder.AppendLine("    }");
         builder.AppendLine();
         builder.Append("    public static Func<CancellationToken, ValueTask<object?>> CreateGeneratedObjectSwitch()");

@@ -15,7 +15,8 @@ Benchmark harness for the `SharedKernel.Mediator` discovery generator and API-sh
 - Compare generated-style and hand-written mediator DI service-provider build costs
 - Measure handler, mediator, and first-dispatch DI costs
 - Measure generated object-switch dispatch separately from typed and generic dispatch
-- Measure direct, typed, generic-switch, and object-switch dispatch across request-count scale points
+- Measure direct, typed, generic-switch, static-generic-cache, dictionary, frozen-dictionary, and
+  object-switch dispatch across request-count scale points
 - Report BenchmarkDotNet mean, allocation, GC, and code-size metrics for the dispatch-scale suite
 - Report synthetic generated-source size and benchmark-assembly build time for dispatch-scale cases
 
@@ -46,6 +47,8 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
 - `DispatchScaleBenchmarks` covers class, record class, and readonly record struct request forms.
 - The dispatch scale suite varies request count across `1`, `10`, `100`, `1,000`, and `5,000`
   generated request types for each covered request shape.
+- The same suite now compares candidate lookup strategies for generic dispatch:
+  static generic cache, mutable dictionary, and `FrozenDictionary`.
 - The dispatch scale suite now also varies pipeline count across `0`, `1`, `3`, and `10`, with the
   non-zero variants executing real generated-style pipeline chains around the handler call.
 - `DispatchScaleBenchmarks` uses BenchmarkDotNet's memory diagnoser, disassembly diagnoser, and a

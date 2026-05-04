@@ -49,6 +49,9 @@ public class DispatchScaleBenchmarks
     private Func<CancellationToken, ValueTask<int>> directHandlerCall = null!;
     private Func<CancellationToken, ValueTask<int>> generatedTypedOverload = null!;
     private Func<CancellationToken, ValueTask<int>> generatedGenericSwitch = null!;
+    private Func<CancellationToken, ValueTask<int>> staticGenericCache = null!;
+    private Func<CancellationToken, ValueTask<int>> dictionaryDispatch = null!;
+    private Func<CancellationToken, ValueTask<int>> frozenDictionaryDispatch = null!;
     private Func<CancellationToken, ValueTask<object?>> generatedObjectSwitch = null!;
     private string benchmarkSource = string.Empty;
     private string assemblyName = string.Empty;
@@ -86,6 +89,9 @@ public class DispatchScaleBenchmarks
         directHandlerCall = CreateExport<Func<CancellationToken, ValueTask<int>>>(assembly, "CreateDirectHandlerCall");
         generatedTypedOverload = CreateExport<Func<CancellationToken, ValueTask<int>>>(assembly, "CreateGeneratedTypedOverload");
         generatedGenericSwitch = CreateExport<Func<CancellationToken, ValueTask<int>>>(assembly, "CreateGeneratedGenericSwitch");
+        staticGenericCache = CreateExport<Func<CancellationToken, ValueTask<int>>>(assembly, "CreateStaticGenericCache");
+        dictionaryDispatch = CreateExport<Func<CancellationToken, ValueTask<int>>>(assembly, "CreateDictionaryDispatch");
+        frozenDictionaryDispatch = CreateExport<Func<CancellationToken, ValueTask<int>>>(assembly, "CreateFrozenDictionaryDispatch");
         generatedObjectSwitch = CreateExport<Func<CancellationToken, ValueTask<object?>>>(assembly, "CreateGeneratedObjectSwitch");
     }
 
@@ -117,6 +123,36 @@ public class DispatchScaleBenchmarks
     public ValueTask<int> GeneratedGenericSwitch()
     {
         return generatedGenericSwitch(CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Measures a static generic cache candidate.
+    /// </summary>
+    /// <returns>The handled response.</returns>
+    [Benchmark(Description = "Static generic cache candidate")]
+    public ValueTask<int> StaticGenericCache()
+    {
+        return staticGenericCache(CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Measures a dictionary-backed dispatch candidate.
+    /// </summary>
+    /// <returns>The handled response.</returns>
+    [Benchmark(Description = "Dictionary candidate")]
+    public ValueTask<int> DictionaryDispatch()
+    {
+        return dictionaryDispatch(CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Measures a frozen-dictionary-backed dispatch candidate.
+    /// </summary>
+    /// <returns>The handled response.</returns>
+    [Benchmark(Description = "FrozenDictionary candidate")]
+    public ValueTask<int> FrozenDictionaryDispatch()
+    {
+        return frozenDictionaryDispatch(CancellationToken.None);
     }
 
     /// <summary>
