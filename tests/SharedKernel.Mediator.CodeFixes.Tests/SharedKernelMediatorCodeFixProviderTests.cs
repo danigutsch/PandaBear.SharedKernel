@@ -91,6 +91,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         Assert.DoesNotContain(MediatorDiagnosticIds.InvalidHandlerSignature, supportedDiagnosticIds);
         Assert.DoesNotContain(MediatorDiagnosticIds.MissingCancellationForwarding, supportedDiagnosticIds);
         Assert.DoesNotContain(MediatorDiagnosticIds.InaccessibleRegistrationType, supportedDiagnosticIds);
+        Assert.DoesNotContain(MediatorDiagnosticIds.NotificationHandlersRequireExplicitOrder, supportedDiagnosticIds);
+        Assert.DoesNotContain(MediatorDiagnosticIds.DuplicateNotificationHandlerOrder, supportedDiagnosticIds);
+        Assert.DoesNotContain(MediatorDiagnosticIds.InvalidPipelineGenericArity, supportedDiagnosticIds);
+        Assert.DoesNotContain(MediatorDiagnosticIds.DuplicatePipelineOrder, supportedDiagnosticIds);
+        Assert.DoesNotContain(MediatorDiagnosticIds.NeverAppliesPipeline, supportedDiagnosticIds);
+        Assert.DoesNotContain(MediatorDiagnosticIds.UnboundPipelineConstraints, supportedDiagnosticIds);
+        Assert.DoesNotContain(MediatorDiagnosticIds.HandlerShouldNotCallSender, supportedDiagnosticIds);
     }
 
     [Fact]

@@ -169,6 +169,13 @@
         "resolved": "4.7.0",
         "contentHash": "VybpaOQQhqE6siHppMktjfGBw1GCwvCqiufqmP8F1nj7fTUNtW35LOEt3UZTEsECfo+ELAl/9o9nJx3U91i7vA=="
       },
+      "sharedkernel.mediator": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.5, )",
+          "SharedKernel.Mediator.Abstractions": "[1.0.0, )"
+        }
+      },
       "sharedkernel.mediator.abstractions": {
         "type": "Project"
       },

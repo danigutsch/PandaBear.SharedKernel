@@ -117,6 +117,7 @@ internal static class BenchmarkCompilationFactory
             .ToList();
 
         references.Add(MetadataReference.CreateFromFile(typeof(IRequest<>).Assembly.Location));
+        references.Add(MetadataReference.CreateFromFile(typeof(SharedKernelMediatorActivitySource).Assembly.Location));
         return references;
     }
 
