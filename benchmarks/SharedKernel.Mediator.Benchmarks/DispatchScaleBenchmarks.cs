@@ -22,6 +22,11 @@ public class DispatchScaleBenchmarks
     public const string RecordClassShape = DispatchBenchmarkSourceFactory.RecordClassShape;
 
     /// <summary>
+    /// The struct benchmark shape.
+    /// </summary>
+    public const string StructShape = DispatchBenchmarkSourceFactory.StructShape;
+
+    /// <summary>
     /// The readonly-record-struct benchmark shape.
     /// </summary>
     public const string ReadonlyRecordStructShape = DispatchBenchmarkSourceFactory.ReadonlyRecordStructShape;
@@ -65,7 +70,7 @@ public class DispatchScaleBenchmarks
     /// <summary>
     /// Gets or sets the request shape under test.
     /// </summary>
-    [Params(ClassShape, RecordClassShape, ReadonlyRecordStructShape)]
+    [Params(ClassShape, RecordClassShape, StructShape, ReadonlyRecordStructShape)]
     public string RequestShape { get; set; } = ClassShape;
 
     /// <summary>

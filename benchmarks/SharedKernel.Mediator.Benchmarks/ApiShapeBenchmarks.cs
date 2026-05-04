@@ -10,6 +10,7 @@ public class ApiShapeBenchmarks
 {
     private const string ClassShape = "Class";
     private const string RecordClassShape = "RecordClass";
+    private const string StructShape = "Struct";
     private const string ReadonlyRecordStructShape = "ReadonlyRecordStruct";
     private const string SynchronousCompletion = "Synchronous";
     private const string AsynchronousCompletion = "Asynchronous";
@@ -21,7 +22,7 @@ public class ApiShapeBenchmarks
     /// <summary>
     /// Gets or sets the request shape under test.
     /// </summary>
-    [Params(ClassShape, RecordClassShape, ReadonlyRecordStructShape)]
+    [Params(ClassShape, RecordClassShape, StructShape, ReadonlyRecordStructShape)]
     public string RequestShape { get; set; } = ClassShape;
 
     /// <summary>
@@ -54,6 +55,14 @@ public class ApiShapeBenchmarks
                 taskHandler = ct => HandleWithTask(recordClassRequest, completesSynchronously, ct);
                 var recordClassCommand = new RecordClassCommandRequest(42);
                 unitCommandHandler = ct => HandleUnit(recordClassCommand, completesSynchronously, ct);
+                break;
+
+            case StructShape:
+                var structRequest = new StructRequest(42);
+                valueTaskHandler = ct => Handle(structRequest, completesSynchronously, ct);
+                taskHandler = ct => HandleWithTask(structRequest, completesSynchronously, ct);
+                var structCommand = new StructCommandRequest(42);
+                unitCommandHandler = ct => HandleUnit(structCommand, completesSynchronously, ct);
                 break;
 
             case ReadonlyRecordStructShape:
@@ -109,6 +118,11 @@ public class ApiShapeBenchmarks
         return completesSynchronously ? ValueTask.FromResult(request.Id) : HandleAsync(request, ct);
     }
 
+    private static ValueTask<int> Handle(StructRequest request, bool completesSynchronously, CancellationToken ct)
+    {
+        return completesSynchronously ? ValueTask.FromResult(request.Id) : HandleAsync(request, ct);
+    }
+
     private static ValueTask<int> Handle(ReadonlyRecordStructRequest request, bool completesSynchronously, CancellationToken ct)
     {
         return completesSynchronously ? ValueTask.FromResult(request.Id) : HandleAsync(request, ct);
@@ -120,6 +134,11 @@ public class ApiShapeBenchmarks
     }
 
     private static Task<int> HandleWithTask(RecordClassRequest request, bool completesSynchronously, CancellationToken ct)
+    {
+        return completesSynchronously ? Task.FromResult(request.Id) : HandleWithTaskAsync(request, ct);
+    }
+
+    private static Task<int> HandleWithTask(StructRequest request, bool completesSynchronously, CancellationToken ct)
     {
         return completesSynchronously ? Task.FromResult(request.Id) : HandleWithTaskAsync(request, ct);
     }
@@ -136,6 +155,12 @@ public class ApiShapeBenchmarks
     }
 
     private static ValueTask<Unit> HandleUnit(RecordClassCommandRequest request, bool completesSynchronously, CancellationToken ct)
+    {
+        _ = request;
+        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnitAsync(ct);
+    }
+
+    private static ValueTask<Unit> HandleUnit(StructCommandRequest request, bool completesSynchronously, CancellationToken ct)
     {
         _ = request;
         return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnitAsync(ct);
@@ -161,6 +186,13 @@ public class ApiShapeBenchmarks
         return request.Id;
     }
 
+    private static async ValueTask<int> HandleAsync(StructRequest request, CancellationToken ct)
+    {
+        await Task.Yield();
+        ct.ThrowIfCancellationRequested();
+        return request.Id;
+    }
+
     private static async ValueTask<int> HandleAsync(ReadonlyRecordStructRequest request, CancellationToken ct)
     {
         await Task.Yield();
@@ -176,6 +208,13 @@ public class ApiShapeBenchmarks
     }
 
     private static async Task<int> HandleWithTaskAsync(RecordClassRequest request, CancellationToken ct)
+    {
+        await Task.Yield();
+        ct.ThrowIfCancellationRequested();
+        return request.Id;
+    }
+
+    private static async Task<int> HandleWithTaskAsync(StructRequest request, CancellationToken ct)
     {
         await Task.Yield();
         ct.ThrowIfCancellationRequested();
@@ -209,6 +248,16 @@ public class ApiShapeBenchmarks
     private sealed record RecordClassRequest(int Id);
 
     private sealed record RecordClassCommandRequest(int Id);
+
+    private readonly struct StructRequest(int id)
+    {
+        public int Id { get; } = id;
+    }
+
+    private readonly struct StructCommandRequest(int id)
+    {
+        public int Id { get; } = id;
+    }
 
     private readonly record struct ReadonlyRecordStructRequest(int Id);
 

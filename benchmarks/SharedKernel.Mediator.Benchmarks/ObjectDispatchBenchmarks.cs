@@ -10,6 +10,7 @@ public class ObjectDispatchBenchmarks
 {
     private const string ClassShape = "Class";
     private const string RecordClassShape = "RecordClass";
+    private const string StructShape = "Struct";
     private const string ReadonlyRecordStructShape = "ReadonlyRecordStruct";
 
     private Func<CancellationToken, ValueTask<int>> typedDispatch = null!;
@@ -19,7 +20,7 @@ public class ObjectDispatchBenchmarks
     /// <summary>
     /// Gets or sets the request shape under test.
     /// </summary>
-    [Params(ClassShape, RecordClassShape, ReadonlyRecordStructShape)]
+    [Params(ClassShape, RecordClassShape, StructShape, ReadonlyRecordStructShape)]
     public string RequestShape { get; set; } = ClassShape;
 
     /// <summary>
@@ -42,6 +43,13 @@ public class ObjectDispatchBenchmarks
                 typedDispatch = ct => BenchmarkMediator.Send(recordClassRequest, ct);
                 genericDispatch = ct => BenchmarkMediator.Send<int>(recordClassRequest, ct);
                 objectDispatch = ct => BenchmarkMediator.SendObject(recordClassRequest, ct);
+                break;
+
+            case StructShape:
+                var structRequest = new StructRequest(42);
+                typedDispatch = ct => BenchmarkMediator.Send(structRequest, ct);
+                genericDispatch = ct => BenchmarkMediator.Send<int>(structRequest, ct);
+                objectDispatch = ct => BenchmarkMediator.SendObject(structRequest, ct);
                 break;
 
             case ReadonlyRecordStructShape:
@@ -100,6 +108,12 @@ public class ObjectDispatchBenchmarks
             return ValueTask.FromResult(request.Id);
         }
 
+        public static ValueTask<int> Send(StructRequest request, CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+            return ValueTask.FromResult(request.Id);
+        }
+
         public static ValueTask<int> Send(ReadonlyRecordStructRequest request, CancellationToken ct)
         {
             ct.ThrowIfCancellationRequested();
@@ -112,6 +126,7 @@ public class ObjectDispatchBenchmarks
             {
                 ClassRequest typed => Cast(Send(typed, ct)),
                 RecordClassRequest typed => Cast(Send(typed, ct)),
+                StructRequest typed => Cast(Send(typed, ct)),
                 ReadonlyRecordStructRequest typed => Cast(Send(typed, ct)),
                 _ => ValueTask.FromException<int>(
                     new NotSupportedException($"Generated request dispatch is not available for request type '{request.GetType().FullName}'.")),
@@ -126,6 +141,7 @@ public class ObjectDispatchBenchmarks
             {
                 ClassRequest typed => Box(Send(typed, ct)),
                 RecordClassRequest typed => Box(Send(typed, ct)),
+                StructRequest typed => Box(Send(typed, ct)),
                 ReadonlyRecordStructRequest typed => Box(Send(typed, ct)),
                 _ => ValueTask.FromException<object?>(
                     new NotSupportedException($"Generated object dispatch is not available for request type '{request.GetType().FullName}'.")),
@@ -149,6 +165,11 @@ public class ObjectDispatchBenchmarks
     }
 
     private sealed record RecordClassRequest(int Id) : IRequest<int>;
+
+    private readonly struct StructRequest(int id) : IRequest<int>
+    {
+        public int Id { get; } = id;
+    }
 
     private readonly record struct ReadonlyRecordStructRequest(int Id) : IRequest<int>;
 }

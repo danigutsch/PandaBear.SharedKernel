@@ -10,7 +10,7 @@ Benchmark harness for the `SharedKernel.Mediator` discovery generator and API-sh
 - Track generated source length for the baseline and edited inputs inside the benchmark fixture
 - Compare direct `ValueTask<T>` and benchmark-only `Task<T>` handler returns
 - Compare direct `Unit` command completion alongside the result-returning paths
-- Cover class, record class, and readonly record struct requests
+- Cover class, record class, struct, and readonly record struct requests
 - Cover synchronous and asynchronous completion paths
 - Compare generated-style and hand-written mediator DI service-provider build costs
 - Measure handler, mediator, and first-dispatch DI costs
@@ -42,13 +42,19 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
   mediator command shape as well.
 - `DependencyInjectionBenchmarks` uses a generated-style benchmark mediator shell so DI build,
   resolution, and first-dispatch costs stay close to the current generated shape.
+- The DI benchmark now covers transient, scoped, and singleton-stateless handler lifetime candidates
+  plus handler dependency counts `0`, `1`, and `5`.
 - `ObjectDispatchBenchmarks` isolates the extra boxing and switch path for `SendObject` without
   widening the core mediator abstractions.
-- `DispatchScaleBenchmarks` covers class, record class, and readonly record struct request forms.
+- `DispatchScaleBenchmarks` covers class, record class, struct, and readonly record struct request
+  forms.
 - The dispatch scale suite varies request count across `1`, `10`, `100`, `1,000`, and `5,000`
   generated request types for each covered request shape.
 - The same suite now compares candidate lookup strategies for generic dispatch:
   static generic cache, mutable dictionary, and `FrozenDictionary`.
+- `PipelineDispatchBenchmarks` already covers the BM004 pipeline matrix across `0`, `1`, `3`, `5`,
+  and `10` behaviors, plus delegate-chain, static-delegate-chain, generated-nested-call, and
+  chain-object strategy comparisons.
 - The dispatch scale suite now also varies pipeline count across `0`, `1`, `3`, and `10`, with the
   non-zero variants executing real generated-style pipeline chains around the handler call.
 - `DispatchScaleBenchmarks` uses BenchmarkDotNet's memory diagnoser, disassembly diagnoser, and a

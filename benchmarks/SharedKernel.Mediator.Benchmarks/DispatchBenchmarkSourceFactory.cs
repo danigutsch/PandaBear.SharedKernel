@@ -10,6 +10,7 @@ internal static class DispatchBenchmarkSourceFactory
 {
     public const string ClassShape = "Class";
     public const string RecordClassShape = "RecordClass";
+    public const string StructShape = "Struct";
     public const string ReadonlyRecordStructShape = "ReadonlyRecordStruct";
     public const int NoPipelineCount = 0;
     public const int OnePipelineCount = 1;
@@ -390,6 +391,22 @@ internal static class DispatchBenchmarkSourceFactory
                 builder.Append("public sealed record Request")
                     .Append(index)
                     .AppendLine("(int Id) : IQuery<int>;");
+                break;
+
+            case StructShape:
+                builder.Append("public readonly struct Request")
+                    .Append(index)
+                    .AppendLine(" : IQuery<int>")
+                    .AppendLine("{")
+                    .Append("    public Request")
+                    .Append(index)
+                    .AppendLine("(int id)")
+                    .AppendLine("    {")
+                    .AppendLine("        Id = id;")
+                    .AppendLine("    }")
+                    .AppendLine()
+                    .AppendLine("    public int Id { get; }")
+                    .AppendLine("}");
                 break;
 
             case ReadonlyRecordStructShape:
