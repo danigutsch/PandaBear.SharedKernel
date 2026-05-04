@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Collections.Immutable;
+using System.Reflection;
 
 namespace SharedKernel.Mediator.GeneratorTests;
 
@@ -58,6 +60,89 @@ public sealed class GeneratorDiscoveryReportTests
         Assert.Contains("PipelineCount = 1;", generatedSource, StringComparison.Ordinal);
         Assert.Contains("NotificationCount = 1;", generatedSource, StringComparison.Ordinal);
         Assert.Contains("StreamRequestCount = 1;", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_Call_Graph_Json_Artifact_Is_Not_Emitted_By_Default()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record GetTour(int Id) : IQuery<string>;
+
+            public sealed class GetTourHandler : IQueryHandler<GetTour, string>
+            {
+                public ValueTask<string> Handle(GetTour request, CancellationToken ct) => ValueTask.FromResult("tour");
+            }
+            """;
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(source);
+        var hasCallGraphSource = runResult.Results.Single().GeneratedSources.Any(
+            static source => string.Equals(source.HintName, "SharedKernel.Mediator.Generated.CallGraph.g.cs", StringComparison.Ordinal));
+
+        // Assert
+        Assert.False(hasCallGraphSource);
+    }
+
+    [Fact]
+    public void Generate_Call_Graph_Json_Artifact_When_Enabled()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
+            }
+
+            [PipelineOrder(PipelineStage.Validation)]
+            public sealed class ValidationBehavior : IPipelineBehavior<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
+            }
+
+            [NotificationDispatch(NotificationDispatchStrategy.Parallel)]
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class TourCreatedHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+
+            public sealed record StreamTours() : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
+                {
+                    yield return "tour";
+                    await Task.CompletedTask;
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty.Add("sharedkernel_mediator_emit_call_graph_json", bool.TrueString);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(source, globalOptions: options);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult, "SharedKernel.Mediator.Generated.CallGraph.g.cs");
+        var json = LoadGeneratedCallGraphJson(source, generatedSource);
+
+        // Assert
+        GeneratorSnapshotVerifier.Verify(json, extension: "json");
+        Assert.Contains("\"request\": \"global::Demo.CreateTour\"", json, StringComparison.Ordinal);
+        Assert.Contains("\"dispatch\": \"parallel\"", json, StringComparison.Ordinal);
+        Assert.Contains("\"request\": \"global::Demo.StreamTours\"", json, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -832,5 +917,24 @@ public sealed class GeneratorDiscoveryReportTests
             Assert.True(nextIndex > currentIndex, $"Expected segment out of order: {expectedSegment}");
             currentIndex = nextIndex;
         }
+    }
+
+    private static string LoadGeneratedCallGraphJson(string source, string generatedCallGraphSource)
+    {
+        const string runtimeUsings = """
+            using System;
+            using System.Collections.Generic;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(
+            [runtimeUsings + source, generatedCallGraphSource],
+            assemblyName: "SharedKernel.Mediator.Tests.GeneratedCallGraphRuntime");
+        var assembly = GeneratorTestHarness.LoadAssembly(compilation);
+        var callGraphType = assembly.GetType("SharedKernel.Mediator.Generated.MediatorCallGraph", throwOnError: true)!;
+        return (string)callGraphType
+            .GetProperty("Json", BindingFlags.Public | BindingFlags.Static)!
+            .GetValue(null)!;
     }
 }

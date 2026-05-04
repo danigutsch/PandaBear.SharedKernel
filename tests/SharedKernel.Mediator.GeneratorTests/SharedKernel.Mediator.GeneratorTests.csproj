@@ -10,9 +10,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Snapshots/**/*.verified.cs" />
-        <Compile Remove="Snapshots/**/*.received.cs" />
-        <None Include="Snapshots/**/*.verified.cs" />
+        <Compile Remove="Snapshots/**/*.verified.*" />
+        <Compile Remove="Snapshots/**/*.received.*" />
+        <None Include="Snapshots/**/*.verified.*" />
     </ItemGroup>
 
     <ItemGroup>

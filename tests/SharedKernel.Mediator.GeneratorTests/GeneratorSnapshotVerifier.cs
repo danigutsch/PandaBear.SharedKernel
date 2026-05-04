@@ -14,17 +14,19 @@ internal static class GeneratorSnapshotVerifier
     /// <param name="actual">The generated source text to verify.</param>
     /// <param name="filePath">The calling test file path.</param>
     /// <param name="testName">The calling test method name.</param>
+    /// <param name="extension">The approved snapshot file extension.</param>
     public static void Verify(
         string actual,
         [CallerFilePath] string filePath = "",
-        [CallerMemberName] string testName = "")
+        [CallerMemberName] string testName = "",
+        string extension = "cs")
     {
         var snapshotDirectory = Path.Combine(Path.GetDirectoryName(filePath)!, "Snapshots");
         Directory.CreateDirectory(snapshotDirectory);
 
         var snapshotName = $"{Path.GetFileNameWithoutExtension(filePath)}.{testName}";
-        var verifiedPath = Path.Combine(snapshotDirectory, $"{snapshotName}.verified.cs");
-        var receivedPath = Path.Combine(snapshotDirectory, $"{snapshotName}.received.cs");
+        var verifiedPath = Path.Combine(snapshotDirectory, $"{snapshotName}.verified.{extension}");
+        var receivedPath = Path.Combine(snapshotDirectory, $"{snapshotName}.received.{extension}");
 
         var normalizedActual = Normalize(actual);
 

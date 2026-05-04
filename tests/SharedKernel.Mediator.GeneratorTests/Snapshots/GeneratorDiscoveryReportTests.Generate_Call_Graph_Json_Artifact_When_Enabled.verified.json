@@ -1,0 +1,32 @@
+{
+  "requests": [
+    {
+      "request": "global::Demo.CreateTour",
+      "response": "int",
+      "handler": "global::Demo.CreateTourHandler",
+      "pipelines": [
+        "global::Demo.ValidationBehavior"
+      ],
+      "aot": "fully-generated"
+    }
+  ],
+  "notifications": [
+    {
+      "notification": "global::Demo.TourCreated",
+      "handlers": [
+        "global::Demo.TourCreatedHandler"
+      ],
+      "dispatch": "parallel"
+    }
+  ],
+  "streamRequests": [
+    {
+      "request": "global::Demo.StreamTours",
+      "response": "string",
+      "handler": "global::Demo.StreamToursHandler",
+      "pipelines": [
+      ],
+      "aot": "fully-generated"
+    }
+  ]
+}
