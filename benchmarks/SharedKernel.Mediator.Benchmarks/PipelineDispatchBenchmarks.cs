@@ -6,6 +6,8 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures pipeline-dispatch strategy costs across pipeline depth, completion mode, and request shape.
 /// </summary>
+[Config(typeof(BenchmarkOutputConfig))]
+[DisassemblyDiagnoser(maxDepth: 0)]
 [MemoryDiagnoser]
 public class PipelineDispatchBenchmarks
 {

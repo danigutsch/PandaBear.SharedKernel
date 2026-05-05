@@ -6,6 +6,7 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures sequential and parallel notification publish costs across handler-count scale points.
 /// </summary>
+[Config(typeof(BenchmarkOutputConfig))]
 [MemoryDiagnoser]
 public class NotificationPublishBenchmarks
 {

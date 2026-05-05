@@ -5,6 +5,8 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures direct request-handler API shape costs across request forms and completion modes.
 /// </summary>
+[Config(typeof(BenchmarkOutputConfig))]
+[DisassemblyDiagnoser(maxDepth: 0)]
 [MemoryDiagnoser]
 public class ApiShapeBenchmarks
 {

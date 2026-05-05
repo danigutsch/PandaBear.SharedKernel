@@ -9,6 +9,7 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures mediator analyzer throughput across source size, diagnostic density, and analyzer options.
 /// </summary>
+[Config(typeof(BenchmarkOutputConfig))]
 [MemoryDiagnoser]
 public class AnalyzerPerformanceBenchmarks
 {

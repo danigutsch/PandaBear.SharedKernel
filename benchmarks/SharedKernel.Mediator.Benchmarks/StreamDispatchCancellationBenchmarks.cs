@@ -6,6 +6,7 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures mid-stream cancellation latency for the stream-dispatch strategies under comparison.
 /// </summary>
+[Config(typeof(BenchmarkOutputConfig))]
 [MemoryDiagnoser]
 public class StreamDispatchCancellationBenchmarks
 {

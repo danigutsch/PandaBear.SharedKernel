@@ -13,17 +13,21 @@ Benchmark harness for the `SharedKernel.Mediator` discovery generator and API-sh
 - Compare direct `Unit` command completion alongside the result-returning paths
 - Cover class, record class, struct, and readonly record struct requests
 - Cover synchronous and asynchronous completion paths
+- Add shared benchmark-report columns for median, P95, P99, and benchmark conditions
 - Compare generated-style and hand-written mediator DI service-provider build costs
 - Measure handler, mediator, and first-dispatch DI costs
 - Measure notification publish across sequential and parallel handler-count scale points
 - Measure notification exception and cancellation publish paths
+- Measure notification publish generation overhead and report generated source size
 - Measure stream dispatch across direct, generated, channel-copy, buffered-copy, and manual-iterator
   strategies
 - Measure analyzer throughput across clean/diagnostic-heavy inputs and analyzer option toggles
 - Measure generated object-switch dispatch separately from typed and generic dispatch
 - Measure direct, typed, generic-switch, static-generic-cache, dictionary, frozen-dictionary, and
   object-switch dispatch across request-count scale points
-- Report BenchmarkDotNet mean, allocation, GC, and code-size metrics for the dispatch-scale suite
+- Report BenchmarkDotNet mean, median, P95, P99, allocation, GC, conditions, and code-size metrics
+  for the relevant runtime suites
+- Report generated-source size for the relevant generator-focused suites
 - Report synthetic generated-source size and benchmark-assembly build time for dispatch-scale cases
 
 ## Run
@@ -72,6 +76,9 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
   `ManyDiagnostics` source modes, strict architecture rules off/on, and cancellation scan off/on.
 - `ObjectDispatchBenchmarks` isolates the extra boxing and switch path for `SendObject` without
   widening the core mediator abstractions.
+- The shared `BenchmarkOutputConfig` adds explicit `Median`, `P95`, `P99`, and `Conditions` columns
+  so those values are present in every benchmark summary instead of depending on BenchmarkDotNet's
+  heuristics.
 - `DispatchScaleBenchmarks` covers class, record class, struct, and readonly record struct request
   forms.
 - The dispatch scale suite varies request count across `1`, `10`, `100`, `1,000`, and `5,000`
@@ -83,9 +90,16 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
   chain-object strategy comparisons.
 - The dispatch scale suite now also varies pipeline count across `0`, `1`, `3`, and `10`, with the
   non-zero variants executing real generated-style pipeline chains around the handler call.
-- `DispatchScaleBenchmarks` uses BenchmarkDotNet's memory diagnoser, disassembly diagnoser, and a
-  custom generated-source-size column so the summary includes mean, allocated bytes, Gen0/Gen1/Gen2,
-  code size, generated source size, and a measured assembly-build-time benchmark.
+- `ApiShapeBenchmarks`, `ObjectDispatchBenchmarks`, `PipelineDispatchBenchmarks`, and
+  `DispatchScaleBenchmarks` use `[DisassemblyDiagnoser(maxDepth: 0)]` so those suites report JIT
+  code size alongside timing statistics. `maxDepth: 0` limits disassembly to the benchmark method
+  itself, not its callees, keeping output focused on the dispatch entry path and preventing
+  excessive output or run-time overhead from callee expansion.
+- `DiscoveryBenchmarks`, `NotificationPublishGenerationBenchmarks`, and `DispatchScaleBenchmarks`
+  report generated source size through benchmark-specific summary columns for the generator-focused
+  slices.
+- All benchmark classes keep BenchmarkDotNet's memory diagnoser enabled, so allocated bytes plus
+  `Gen0`/`Gen1`/`Gen2` stay visible in every summary.
 
 ## See Also
 

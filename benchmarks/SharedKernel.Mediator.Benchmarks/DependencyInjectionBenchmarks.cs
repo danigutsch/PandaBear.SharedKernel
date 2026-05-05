@@ -6,6 +6,7 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures generated-style versus hand-written mediator dependency-injection costs.
 /// </summary>
+[Config(typeof(BenchmarkOutputConfig))]
 [MemoryDiagnoser]
 public class DependencyInjectionBenchmarks
 {

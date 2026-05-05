@@ -6,6 +6,7 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Observes how far a producer can advance while the consumer pauses after the first item.
 /// </summary>
+[Config(typeof(BenchmarkOutputConfig))]
 [MemoryDiagnoser]
 public class StreamDispatchBackpressureBenchmarks
 {

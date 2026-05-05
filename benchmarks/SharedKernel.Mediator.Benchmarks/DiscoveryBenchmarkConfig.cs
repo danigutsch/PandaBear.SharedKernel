@@ -1,11 +1,9 @@
-using BenchmarkDotNet.Configs;
-
 namespace SharedKernel.Mediator.Benchmarks;
 
 /// <summary>
 /// Configures the discovery benchmark summary columns.
 /// </summary>
-internal sealed class DiscoveryBenchmarkConfig : ManualConfig
+internal sealed class DiscoveryBenchmarkConfig : BenchmarkOutputConfig
 {
     /// <summary>
     /// Initializes the discovery benchmark configuration.

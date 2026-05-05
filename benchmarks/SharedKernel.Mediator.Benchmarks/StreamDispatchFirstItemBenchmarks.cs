@@ -6,6 +6,7 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures first-item latency for the stream-dispatch strategies under comparison.
 /// </summary>
+[Config(typeof(BenchmarkOutputConfig))]
 [MemoryDiagnoser]
 public class StreamDispatchFirstItemBenchmarks
 {

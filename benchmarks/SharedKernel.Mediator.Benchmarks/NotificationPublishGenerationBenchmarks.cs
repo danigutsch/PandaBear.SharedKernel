@@ -6,6 +6,7 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures notification publish generation overhead for explicitly ordered versus unordered handlers.
 /// </summary>
+[Config(typeof(NotificationPublishGenerationBenchmarkConfig))]
 [MemoryDiagnoser]
 public class NotificationPublishGenerationBenchmarks
 {

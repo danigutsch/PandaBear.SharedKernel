@@ -5,6 +5,8 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures a generated-style object dispatch switch separately from typed and generic dispatch.
 /// </summary>
+[Config(typeof(BenchmarkOutputConfig))]
+[DisassemblyDiagnoser(maxDepth: 0)]
 [MemoryDiagnoser]
 public class ObjectDispatchBenchmarks
 {

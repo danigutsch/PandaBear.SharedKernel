@@ -7,6 +7,7 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures dispatch overhead for optional mediator observability under different listener states.
 /// </summary>
+[Config(typeof(BenchmarkOutputConfig))]
 [MemoryDiagnoser]
 public class ObservabilityDispatchBenchmarks
 {

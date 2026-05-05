@@ -6,6 +6,7 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures exceptional and canceled notification publish paths for sequential and parallel strategies.
 /// </summary>
+[Config(typeof(BenchmarkOutputConfig))]
 [MemoryDiagnoser]
 public class NotificationPublishFailureBenchmarks
 {
