@@ -46,7 +46,7 @@ internal static class AnalyzerBenchmarkSourceFactory
                 case NoDiagnostics:
                     builder.Append("public sealed class Request")
                         .Append(index.ToString(CultureInfo.InvariantCulture))
-                        .AppendLine("Handler : IQueryHandler<Request")
+                        .Append("Handler : IQueryHandler<Request")
                         .Append(index.ToString(CultureInfo.InvariantCulture))
                         .AppendLine(", int>")
                         .AppendLine("{")

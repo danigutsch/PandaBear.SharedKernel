@@ -19,6 +19,7 @@ Benchmark harness for the `SharedKernel.Mediator` discovery generator and API-sh
 - Measure notification exception and cancellation publish paths
 - Measure stream dispatch across direct, generated, channel-copy, buffered-copy, and manual-iterator
   strategies
+- Measure analyzer throughput across clean/diagnostic-heavy inputs and analyzer option toggles
 - Measure generated object-switch dispatch separately from typed and generic dispatch
 - Measure direct, typed, generic-switch, static-generic-cache, dictionary, frozen-dictionary, and
   object-switch dispatch across request-count scale points
@@ -36,6 +37,7 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *StreamDispatchFirstItemBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *StreamDispatchEnumerationBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *StreamDispatchCancellationBenchmarks*
+dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *AnalyzerPerformanceBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *ObjectDispatchBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *DispatchScaleBenchmarks*
 ```
@@ -66,6 +68,8 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
   latency, full enumeration, and the custom allocated-bytes-per-item metric.
 - The same stream suite now also includes the missing manual-iterator-copy strategy and the existing
   cancellation-latency benchmark class.
+- `AnalyzerPerformanceBenchmarks` covers the BM012 analyzer matrix across `NoDiagnostics` and
+  `ManyDiagnostics` source modes, strict architecture rules off/on, and cancellation scan off/on.
 - `ObjectDispatchBenchmarks` isolates the extra boxing and switch path for `SendObject` without
   widening the core mediator abstractions.
 - `DispatchScaleBenchmarks` covers class, record class, struct, and readonly record struct request
