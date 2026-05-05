@@ -14,6 +14,10 @@ Benchmark harness for the `SharedKernel.Mediator` discovery generator and API-sh
 - Cover synchronous and asynchronous completion paths
 - Compare generated-style and hand-written mediator DI service-provider build costs
 - Measure handler, mediator, and first-dispatch DI costs
+- Measure notification publish across sequential and parallel handler-count scale points
+- Measure notification exception and cancellation publish paths
+- Measure stream dispatch across direct, generated, channel-copy, buffered-copy, and manual-iterator
+  strategies
 - Measure generated object-switch dispatch separately from typed and generic dispatch
 - Measure direct, typed, generic-switch, static-generic-cache, dictionary, frozen-dictionary, and
   object-switch dispatch across request-count scale points
@@ -26,6 +30,11 @@ Benchmark harness for the `SharedKernel.Mediator` discovery generator and API-sh
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *DiscoveryBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *ApiShapeBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *DependencyInjectionBenchmarks*
+dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *NotificationPublishBenchmarks*
+dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *NotificationPublishFailureBenchmarks*
+dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *StreamDispatchFirstItemBenchmarks*
+dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *StreamDispatchEnumerationBenchmarks*
+dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *StreamDispatchCancellationBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *ObjectDispatchBenchmarks*
 dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj -c Release -- --filter *DispatchScaleBenchmarks*
 ```
@@ -44,6 +53,15 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
   resolution, and first-dispatch costs stay close to the current generated shape.
 - The DI benchmark now covers transient, scoped, and singleton-stateless handler lifetime candidates
   plus handler dependency counts `0`, `1`, and `5`.
+- `NotificationPublishBenchmarks` already covers the BM006 sequential handler-count matrix
+  `0/1/3/10/50` and also includes the parallel publish path that the checklist still labeled later.
+- `NotificationPublishFailureBenchmarks` covers the BM006 exception and cancellation paths for both
+  sequential and parallel publish strategies.
+- The BM007 stream suites already cover direct stream handler, generated direct return, generated
+  wrapper, channel copy, buffered copy, item-count scale points `0/1/10/1,000/100,000`, first-item
+  latency, full enumeration, and the custom allocated-bytes-per-item metric.
+- The same stream suite now also includes the missing manual-iterator-copy strategy and the existing
+  cancellation-latency benchmark class.
 - `ObjectDispatchBenchmarks` isolates the extra boxing and switch path for `SendObject` without
   widening the core mediator abstractions.
 - `DispatchScaleBenchmarks` covers class, record class, struct, and readonly record struct request

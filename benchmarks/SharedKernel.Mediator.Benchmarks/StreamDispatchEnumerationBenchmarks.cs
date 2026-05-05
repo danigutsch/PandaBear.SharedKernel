@@ -15,6 +15,7 @@ public class StreamDispatchEnumerationBenchmarks
     private Func<CancellationToken, ValueTask<int>> generatedWrapper = null!;
     private Func<CancellationToken, ValueTask<int>> channelCopy = null!;
     private Func<CancellationToken, ValueTask<int>> bufferedCopy = null!;
+    private Func<CancellationToken, ValueTask<int>> manualIteratorCopy = null!;
 
     /// <summary>
     /// Gets or sets the number of stream items yielded by the synthetic source.
@@ -37,6 +38,7 @@ public class StreamDispatchEnumerationBenchmarks
         generatedWrapper = CreateExport(assembly, "CreateGeneratedWrapperEnumeration");
         channelCopy = CreateExport(assembly, "CreateChannelCopyEnumeration");
         bufferedCopy = CreateExport(assembly, "CreateBufferedCopyEnumeration");
+        manualIteratorCopy = CreateExport(assembly, "CreateManualIteratorCopyEnumeration");
     }
 
     /// <summary>
@@ -87,6 +89,16 @@ public class StreamDispatchEnumerationBenchmarks
     public ValueTask<int> BufferedCopy()
     {
         return bufferedCopy(CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Measures a manual-iterator-copy wrapper path.
+    /// </summary>
+    /// <returns>The total number of yielded items.</returns>
+    [Benchmark(Description = "Manual iterator copy")]
+    public ValueTask<int> ManualIteratorCopy()
+    {
+        return manualIteratorCopy(CancellationToken.None);
     }
 
     private static Func<CancellationToken, ValueTask<int>> CreateExport(Assembly assembly, string methodName)

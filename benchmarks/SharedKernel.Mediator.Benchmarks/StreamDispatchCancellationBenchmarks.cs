@@ -14,6 +14,7 @@ public class StreamDispatchCancellationBenchmarks
     private Func<CancellationToken, ValueTask<int>> generatedWrapper = null!;
     private Func<CancellationToken, ValueTask<int>> channelCopy = null!;
     private Func<CancellationToken, ValueTask<int>> bufferedCopy = null!;
+    private Func<CancellationToken, ValueTask<int>> manualIteratorCopy = null!;
 
     /// <summary>
     /// Gets or sets the number of stream items yielded by the synthetic source.
@@ -36,6 +37,7 @@ public class StreamDispatchCancellationBenchmarks
         generatedWrapper = CreateExport(assembly, "CreateGeneratedWrapperCancellation");
         channelCopy = CreateExport(assembly, "CreateChannelCopyCancellation");
         bufferedCopy = CreateExport(assembly, "CreateBufferedCopyCancellation");
+        manualIteratorCopy = CreateExport(assembly, "CreateManualIteratorCopyCancellation");
     }
 
     /// <summary>
@@ -86,6 +88,16 @@ public class StreamDispatchCancellationBenchmarks
     public ValueTask<int> BufferedCopy()
     {
         return bufferedCopy(CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Measures cancellation latency for a manual-iterator-copy wrapper path.
+    /// </summary>
+    /// <returns>The first yielded item before cancellation.</returns>
+    [Benchmark(Description = "Manual iterator copy")]
+    public ValueTask<int> ManualIteratorCopy()
+    {
+        return manualIteratorCopy(CancellationToken.None);
     }
 
     private static Func<CancellationToken, ValueTask<int>> CreateExport(Assembly assembly, string methodName)

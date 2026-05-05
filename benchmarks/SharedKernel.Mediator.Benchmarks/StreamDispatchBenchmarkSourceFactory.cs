@@ -69,6 +69,11 @@ internal static class StreamDispatchBenchmarkSourceFactory
                     return GeneratedDispatch.SendViaBufferedCopy(this, request, ct);
                 }
 
+                public IAsyncEnumerable<int> SendViaManualIterator(BenchmarkStreamRequest request, CancellationToken ct)
+                {
+                    return GeneratedDispatch.SendViaManualIterator(this, request, ct);
+                }
+
                 public ValueTask<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken ct)
                 {
                     ArgumentNullException.ThrowIfNull(request);
@@ -113,6 +118,14 @@ internal static class StreamDispatchBenchmarkSourceFactory
                     CancellationToken ct)
                 {
                     return BufferBeforeYield(mediator.Send(request, ct), ct);
+                }
+
+                public static IAsyncEnumerable<int> SendViaManualIterator(
+                    BenchmarkAppMediator mediator,
+                    BenchmarkStreamRequest request,
+                    CancellationToken ct)
+                {
+                    return ManualIteratorCopy(mediator.Send(request, ct), ct);
                 }
 
                 private static async IAsyncEnumerable<TTarget> CastStream<TSource, TTarget>(
@@ -202,6 +215,13 @@ internal static class StreamDispatchBenchmarkSourceFactory
                         ct.ThrowIfCancellationRequested();
                         yield return item;
                     }
+                }
+
+                private static IAsyncEnumerable<int> ManualIteratorCopy(
+                    IAsyncEnumerable<int> source,
+                    CancellationToken ct)
+                {
+                    return new ManualIteratorCopyEnumerable(source, ct);
                 }
 
                 internal static IAsyncEnumerable<TResponse> ThrowNoStreamHandler<TResponse>(IStreamRequest<TResponse> request)
@@ -348,6 +368,61 @@ internal static class StreamDispatchBenchmarkSourceFactory
                 }
             }
 
+            internal sealed class ManualIteratorCopyEnumerable : IAsyncEnumerable<int>
+            {
+                private readonly IAsyncEnumerable<int> source;
+                private readonly CancellationToken cancellationToken;
+
+                public ManualIteratorCopyEnumerable(IAsyncEnumerable<int> source, CancellationToken cancellationToken)
+                {
+                    this.source = source;
+                    this.cancellationToken = cancellationToken;
+                }
+
+                public IAsyncEnumerator<int> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+                {
+                    var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(this.cancellationToken, cancellationToken);
+                    return new Enumerator(source.GetAsyncEnumerator(linkedCts.Token), linkedCts);
+                }
+
+                private sealed class Enumerator : IAsyncEnumerator<int>
+                {
+                    private readonly IAsyncEnumerator<int> inner;
+                    private readonly CancellationTokenSource linkedCts;
+
+                    public Enumerator(IAsyncEnumerator<int> inner, CancellationTokenSource linkedCts)
+                    {
+                        this.inner = inner;
+                        this.linkedCts = linkedCts;
+                    }
+
+                    public int Current { get; private set; }
+
+                    public async ValueTask DisposeAsync()
+                    {
+                        try
+                        {
+                            await inner.DisposeAsync().ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            linkedCts.Dispose();
+                        }
+                    }
+
+                    public async ValueTask<bool> MoveNextAsync()
+                    {
+                        if (!await inner.MoveNextAsync().ConfigureAwait(false))
+                        {
+                            return false;
+                        }
+
+                        Current = inner.Current;
+                        return true;
+                    }
+                }
+            }
+
             public static class BenchmarkExports
             {
                 public static Func<CancellationToken, ValueTask<int>> CreateDirectStreamHandlerFirstItem()
@@ -385,6 +460,13 @@ internal static class StreamDispatchBenchmarkSourceFactory
                     return ct => StreamConsumers.ReadFirstItemAsync(mediator.SendViaBufferedCopy(request, ct), ct);
                 }
 
+                public static Func<CancellationToken, ValueTask<int>> CreateManualIteratorCopyFirstItem()
+                {
+                    var mediator = new BenchmarkAppMediator();
+                    var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}});
+                    return ct => StreamConsumers.ReadFirstItemAsync(mediator.SendViaManualIterator(request, ct), ct);
+                }
+
                 public static Func<CancellationToken, ValueTask<int>> CreateDirectStreamHandlerEnumeration()
                 {
                     var handler = new BenchmarkStreamHandler();
@@ -420,6 +502,13 @@ internal static class StreamDispatchBenchmarkSourceFactory
                     return ct => StreamConsumers.EnumerateAllAsync(mediator.SendViaBufferedCopy(request, ct), ct);
                 }
 
+                public static Func<CancellationToken, ValueTask<int>> CreateManualIteratorCopyEnumeration()
+                {
+                    var mediator = new BenchmarkAppMediator();
+                    var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}});
+                    return ct => StreamConsumers.EnumerateAllAsync(mediator.SendViaManualIterator(request, ct), ct);
+                }
+
                 public static Func<CancellationToken, ValueTask<int>> CreateDirectStreamHandlerCancellation()
                 {
                     var handler = new BenchmarkStreamHandler();
@@ -453,6 +542,13 @@ internal static class StreamDispatchBenchmarkSourceFactory
                     var mediator = new BenchmarkAppMediator();
                     var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}});
                     return ct => StreamConsumers.CancelAfterFirstItemAsync(mediator.SendViaBufferedCopy(request, ct), ct);
+                }
+
+                public static Func<CancellationToken, ValueTask<int>> CreateManualIteratorCopyCancellation()
+                {
+                    var mediator = new BenchmarkAppMediator();
+                    var request = new BenchmarkStreamRequest({{itemCount.ToString(CultureInfo.InvariantCulture)}});
+                    return ct => StreamConsumers.CancelAfterFirstItemAsync(mediator.SendViaManualIterator(request, ct), ct);
                 }
 
                 public static Func<CancellationToken, ValueTask<int>> CreateDirectStreamHandlerBackpressure()
