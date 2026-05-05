@@ -8,6 +8,7 @@ Benchmark harness for the `SharedKernel.Mediator` discovery generator and API-sh
 - Compare clean-build, no-op rebuild, and one-handler-edit rebuild scenarios
 - Capture generator allocation impact with BenchmarkDotNet's memory diagnoser
 - Track generated source length for the baseline and edited inputs inside the benchmark fixture
+- Report generated source count and total generated source size for discovery benchmark cases
 - Compare direct `ValueTask<T>` and benchmark-only `Task<T>` handler returns
 - Compare direct `Unit` command completion alongside the result-returning paths
 - Cover class, record class, struct, and readonly record struct requests
@@ -45,6 +46,9 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
 - `Clean build` recreates the compilation from source before running the generator.
 - `No-op rebuild` reuses the same compilation and generator graph.
 - `One-handler edit rebuild` reruns the graph against a compilation whose first handler body changed.
+- `DiscoveryBenchmarks` covers the BM011 generator-build matrix across request counts
+  `10/100/1,000/5,000`, the three rebuild scenarios, generated source count, and generated source
+  size.
 - `ApiShapeBenchmarks` isolates handler return-path shape only; the `Task<T>` path exists for
   benchmark comparison and is not part of the production mediator contract.
 - The same suite now includes a direct `Unit` command benchmark so BM001 covers the non-result

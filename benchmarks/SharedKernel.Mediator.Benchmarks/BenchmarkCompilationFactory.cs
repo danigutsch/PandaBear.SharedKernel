@@ -105,6 +105,20 @@ internal static class BenchmarkCompilationFactory
         return driver.GetRunResult().Results.Single().GeneratedSources.Sum(static source => source.SourceText.Length);
     }
 
+    /// <summary>
+    /// Runs the generator and returns the number of emitted source files.
+    /// </summary>
+    /// <param name="compilation">The compilation to run against.</param>
+    /// <param name="generatorDriver">
+    /// An optional existing driver used to simulate repeat incremental runs.
+    /// </param>
+    /// <returns>The number of generated source files emitted by the generator.</returns>
+    public static int GetGeneratedSourceCount(CSharpCompilation compilation, GeneratorDriver? generatorDriver = null)
+    {
+        var driver = (generatorDriver ?? CreateGeneratorDriver()).RunGenerators(compilation);
+        return driver.GetRunResult().Results.Single().GeneratedSources.Length;
+    }
+
     private static List<MetadataReference> GetMetadataReferences()
     {
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");

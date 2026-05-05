@@ -7,6 +7,7 @@ namespace SharedKernel.Mediator.Benchmarks;
 /// <summary>
 /// Measures discovery-report generation across the main M03 scale points.
 /// </summary>
+[Config(typeof(DiscoveryBenchmarkConfig))]
 [MemoryDiagnoser]
 public class DiscoveryBenchmarks
 {
