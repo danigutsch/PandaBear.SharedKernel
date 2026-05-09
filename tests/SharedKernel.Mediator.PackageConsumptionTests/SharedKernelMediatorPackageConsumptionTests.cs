@@ -121,6 +121,10 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         Assert.True(runtimeMetrics.FirstDispatch > TimeSpan.Zero, "First dispatch time must be measurable.");
         Assert.True(runtimeMetrics.SteadyStateDispatch > TimeSpan.Zero, "Steady-state dispatch time must be measurable.");
         Assert.True(generatedSourceSize > 0, "Generated source size must be greater than zero.");
+        Assert.Contains("pipeline-before=LookupTour", coldStartMeasurement.Output, StringComparison.Ordinal);
+        Assert.Contains("pipeline-after=LookupTour", coldStartMeasurement.Output, StringComparison.Ordinal);
+        Assert.Contains("notification-handled=VT-42", coldStartMeasurement.Output, StringComparison.Ordinal);
+        Assert.Contains("stream-count=3", coldStartMeasurement.Output, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -489,6 +493,8 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             </Project>
             """,
             ("Consumer.cs", """
+            using System.Collections.Generic;
+            using System.Runtime.CompilerServices;
             using Microsoft.Extensions.DependencyInjection;
             using SharedKernel.Mediator;
 
@@ -501,6 +507,43 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
                 public ValueTask<string> Handle(LookupTour request, CancellationToken ct)
                 {
                     return ValueTask.FromResult(request.Code);
+                }
+            }
+
+            public sealed record TourFound(string Code) : INotification;
+
+            public sealed class TourFoundHandler : INotificationHandler<TourFound>
+            {
+                public ValueTask Handle(TourFound notification, CancellationToken ct)
+                {
+                    Console.WriteLine($"notification-handled={notification.Code}");
+                    return ValueTask.CompletedTask;
+                }
+            }
+
+            public sealed record StreamTourCodes(int Count) : IStreamQuery<string>;
+
+            public sealed class StreamTourCodesHandler : IStreamRequestHandler<StreamTourCodes, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTourCodes request, [EnumeratorCancellation] CancellationToken ct)
+                {
+                    for (var i = 0; i < request.Count; i++)
+                    {
+                        yield return $"VT-{i:D4}";
+                        await Task.Yield();
+                    }
+                }
+            }
+
+            public sealed class TimingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+                where TRequest : IRequest<TResponse>
+            {
+                public async ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct)
+                {
+                    Console.WriteLine($"pipeline-before={typeof(TRequest).Name}");
+                    var response = await next();
+                    Console.WriteLine($"pipeline-after={typeof(TRequest).Name}");
+                    return response;
                 }
             }
             """),
@@ -522,6 +565,17 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             var firstDispatchStopwatch = Stopwatch.StartNew();
             var firstDispatchResult = await mediator.Send(new LookupTour("VT-42"), CancellationToken.None);
             firstDispatchStopwatch.Stop();
+
+            await mediator.Publish(new TourFound(firstDispatchResult), CancellationToken.None);
+
+            var streamCount = 0;
+            await foreach (var code in mediator.Send(new StreamTourCodes(3), CancellationToken.None))
+            {
+                streamCount++;
+                _ = code;
+            }
+
+            Console.WriteLine($"stream-count={streamCount}");
 
             const int steadyStateIterations = 200;
             var steadyStateStopwatch = Stopwatch.StartNew();
