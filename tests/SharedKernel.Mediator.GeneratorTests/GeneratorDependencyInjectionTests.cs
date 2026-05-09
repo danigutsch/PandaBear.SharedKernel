@@ -9,48 +9,16 @@ public sealed class GeneratorDependencyInjectionTests
     public void Generate_Service_Registration_Single_Project()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
+        var source = TestSources.ModuleHeader
+            + TestSources.CreateTourWithHandler
+            + TestSources.CreateTourValidationBehavior
+            + TestSources.TourCreatedWithHandler
+            + TestSources.StreamToursWithHandler;
 
-            [assembly: MediatorModule]
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-
-            [PipelineOrder(PipelineStage.Validation)]
-            public sealed class ValidationBehavior : IPipelineBehavior<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
-            }
-
-            public sealed record TourCreated(int Id) : INotification;
-
-            public sealed class TourCreatedHandler : INotificationHandler<TourCreated>
-            {
-                public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
-            }
-
-            public sealed record StreamTours() : IStreamRequest<string>;
-
-            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
-            {
-                public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
-                {
-                    yield return "tour";
-                    await Task.CompletedTask;
-                }
-            }
-            """;
         // Act
         var generatedSource = GeneratorTestHarness.GenerateSource(
             source,
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+            GeneratedHintNames.DependencyInjection);
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedSource);
@@ -70,20 +38,9 @@ public sealed class GeneratorDependencyInjectionTests
     public void Generate_Service_Registration_Open_Generic_Pipeline_Is_Closed_Per_Request()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-
+        var source = TestSources.ModuleHeader
+            + TestSources.CreateTourWithHandler
+            + """
             [PipelineOrder(PipelineStage.Validation, Order = 10)]
             public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
                 where TRequest : IRequest<TResponse>
@@ -94,7 +51,7 @@ public sealed class GeneratorDependencyInjectionTests
         // Act
         var generatedSource = GeneratorTestHarness.GenerateSource(
             source,
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+            GeneratedHintNames.DependencyInjection);
 
         // Assert
         Assert.Contains("services.AddTransient<global::Demo.ValidationBehavior<global::Demo.CreateTour, int>>();", generatedSource, StringComparison.Ordinal);
@@ -105,24 +62,9 @@ public sealed class GeneratorDependencyInjectionTests
     public void Generate_Service_Registration_Stream_Pipeline_Is_Closed_Per_Stream_Request()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace Demo;
-
-            public sealed record StreamTours() : IStreamRequest<string>;
-
-            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
-            {
-                public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
-                {
-                    yield return "tour";
-                    await Task.CompletedTask;
-                }
-            }
-
+        var source = TestSources.ModuleHeader
+            + TestSources.StreamToursWithHandler
+            + """
             [PipelineOrder(PipelineStage.Validation, Order = 10)]
             public sealed class ValidationBehavior<TRequest, TResponse> : IStreamPipelineBehavior<TRequest, TResponse>
                 where TRequest : IStreamRequest<TResponse>
@@ -133,7 +75,7 @@ public sealed class GeneratorDependencyInjectionTests
         // Act
         var generatedSource = GeneratorTestHarness.GenerateSource(
             source,
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+            GeneratedHintNames.DependencyInjection);
 
         // Assert
         Assert.Contains("services.AddTransient<global::Demo.ValidationBehavior<global::Demo.StreamTours, string>>();", generatedSource, StringComparison.Ordinal);
@@ -144,37 +86,12 @@ public sealed class GeneratorDependencyInjectionTests
     public void Generate_Service_Registration_Marked_Module_Assembly_Included()
     {
         // Arrange
-        const string moduleSource = """
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace ModuleA;
-
-            public sealed record SearchTours(string Query) : IQuery<int>;
-
-            public sealed class SearchToursHandler : IQueryHandler<SearchTours, int>
-            {
-                public ValueTask<int> Handle(SearchTours request, CancellationToken ct) => ValueTask.FromResult(10);
-            }
-            """;
-        var moduleReference = GeneratorTestHarness.CreateMetadataReference(moduleSource, "SharedKernel.Mediator.Tests.ModuleA");
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-            """;
+        var moduleReference = GeneratorTestHarness.CreateMetadataReference(TestSources.ModuleAMarkedSource, "SharedKernel.Mediator.Tests.ModuleA");
+        var source = TestSources.DemoHeader + TestSources.CreateTourWithHandler;
         // Act
         var generatedSource = GeneratorTestHarness.GenerateSource(
             source,
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs",
+            GeneratedHintNames.DependencyInjection,
             additionalReferences: [moduleReference]);
 
         // Assert
@@ -187,13 +104,8 @@ public sealed class GeneratorDependencyInjectionTests
     public void Generate_Service_Registration_Internal_Handler_In_Primary_Assembly()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace Demo;
-
+        var source = TestSources.ModuleHeader
+            + """
             public sealed record CreateTour(string Name) : ICommand<int>;
 
             internal sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
@@ -204,11 +116,9 @@ public sealed class GeneratorDependencyInjectionTests
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
         // Act
-        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
-        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
-            runResult,
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
-        var diagnostics = runResult.Results.Single().Diagnostics;
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
 
         // Assert
         Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
@@ -234,26 +144,13 @@ public sealed class GeneratorDependencyInjectionTests
             }
             """;
         var moduleReference = GeneratorTestHarness.CreateMetadataReference(moduleSource, "SharedKernel.Mediator.Tests.ModuleA");
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-            """;
+        var source = TestSources.DemoHeader + TestSources.CreateTourWithHandler;
         var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: [moduleReference]);
 
         // Act
-        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
-        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
-            runResult,
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
-        var diagnostics = runResult.Results.Single().Diagnostics;
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
 
         // Assert
         Assert.Contains(
@@ -288,26 +185,13 @@ public sealed class GeneratorDependencyInjectionTests
             }
             """;
         var moduleReference = GeneratorTestHarness.CreateMetadataReference(moduleSource, "SharedKernel.Mediator.Tests.ModuleA");
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-            """;
+        var source = TestSources.DemoHeader + TestSources.CreateTourWithHandler;
         var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: [moduleReference]);
 
         // Act
-        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
-        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
-            runResult,
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
-        var diagnostics = runResult.Results.Single().Diagnostics;
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
 
         // Assert
         Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
@@ -322,39 +206,14 @@ public sealed class GeneratorDependencyInjectionTests
     public void Generate_Service_Registration_Unmarked_Module_Diagnostic()
     {
         // Arrange
-        const string moduleSource = """
-            using SharedKernel.Mediator;
-
-            namespace ModuleA;
-
-            public sealed record SearchTours(string Query) : IQuery<int>;
-
-            public sealed class SearchToursHandler : IQueryHandler<SearchTours, int>
-            {
-                public ValueTask<int> Handle(SearchTours request, CancellationToken ct) => ValueTask.FromResult(10);
-            }
-            """;
-        var moduleReference = GeneratorTestHarness.CreateMetadataReference(moduleSource, "SharedKernel.Mediator.Tests.ModuleA.Unmarked");
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-            """;
+        var moduleReference = GeneratorTestHarness.CreateMetadataReference(TestSources.ModuleAUnmarkedSource, "SharedKernel.Mediator.Tests.ModuleA.Unmarked");
+        var source = TestSources.DemoHeader + TestSources.CreateTourWithHandler;
         var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: [moduleReference]);
 
         // Act
-        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
-        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
-            runResult,
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
-        var diagnostics = runResult.Results.Single().Diagnostics;
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
 
         // Assert
         Assert.Contains(
@@ -370,13 +229,8 @@ public sealed class GeneratorDependencyInjectionTests
     public void Generate_Service_Registration_Duplicate_Self_Registration_Diagnostic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace Demo;
-
+        var source = TestSources.ModuleHeader
+            + """
             public sealed record TourCreated(int Id) : INotification;
             public sealed record TourUpdated(int Id) : INotification;
 
@@ -390,11 +244,9 @@ public sealed class GeneratorDependencyInjectionTests
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
         // Act
-        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
-        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
-            runResult,
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
-        var diagnostics = runResult.Results.Single().Diagnostics;
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
 
         // Assert
         Assert.Contains(

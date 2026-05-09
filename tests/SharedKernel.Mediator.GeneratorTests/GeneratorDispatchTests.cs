@@ -73,13 +73,13 @@ public sealed class GeneratorDispatchTests
         var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
         var generatedSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
-            "SharedKernel.Mediator.Generated.AppMediator.g.cs");
+            GeneratedHintNames.AppMediator);
         var generatedDispatchSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
-            "SharedKernel.Mediator.Generated.GeneratedDispatch.g.cs");
+            GeneratedHintNames.GeneratedDispatch);
         var generatedPipelinesSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
-            "SharedKernel.Mediator.Generated.GeneratedPipelines.g.cs");
+            GeneratedHintNames.GeneratedPipelines);
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedSource);
@@ -120,20 +120,9 @@ public sealed class GeneratorDispatchTests
     public void Generate_AppMediator_Uses_Generated_Pipeline_Helper_When_Pipelines_Exist()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-
+        var source = TestSources.ModuleHeader
+            + TestSources.CreateTourWithHandler
+            + """
             [PipelineOrder(PipelineStage.Validation, Order = 5)]
             public sealed class ValidationBehavior : IPipelineBehavior<CreateTour, int>
             {
@@ -146,10 +135,10 @@ public sealed class GeneratorDispatchTests
         var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
         var generatedMediatorSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
-            "SharedKernel.Mediator.Generated.AppMediator.g.cs");
+            GeneratedHintNames.AppMediator);
         var generatedPipelinesSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
-            "SharedKernel.Mediator.Generated.GeneratedPipelines.g.cs");
+            GeneratedHintNames.GeneratedPipelines);
 
         // Assert
         Assert.Contains("return GeneratedPipelines.Invoke_0000(this, request, ct);", generatedMediatorSource, StringComparison.Ordinal);
@@ -162,24 +151,9 @@ public sealed class GeneratorDispatchTests
     public void Generate_AppMediator_Uses_Generated_Stream_Pipeline_Helper_When_Stream_Pipelines_Exist()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace Demo;
-
-            public sealed record StreamTours() : IStreamRequest<string>;
-
-            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
-            {
-                public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
-                {
-                    yield return "tour";
-                    await Task.CompletedTask;
-                }
-            }
-
+        var source = TestSources.ModuleHeader
+            + TestSources.StreamToursWithHandler
+            + """
             [PipelineOrder(PipelineStage.Validation, Order = 5)]
             public sealed class ValidationBehavior : IStreamPipelineBehavior<StreamTours, string>
             {
@@ -192,10 +166,10 @@ public sealed class GeneratorDispatchTests
         var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
         var generatedMediatorSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
-            "SharedKernel.Mediator.Generated.AppMediator.g.cs");
+            GeneratedHintNames.AppMediator);
         var generatedPipelinesSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
-            "SharedKernel.Mediator.Generated.GeneratedPipelines.g.cs");
+            GeneratedHintNames.GeneratedPipelines);
 
         // Assert
         Assert.Contains("return GeneratedPipelines.InvokeStream_0000(this, request, ct);", generatedMediatorSource, StringComparison.Ordinal);
@@ -208,13 +182,8 @@ public sealed class GeneratorDispatchTests
     public void Generate_AppMediator_Uses_Task_When_All_For_Parallel_Notification_Strategy()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace Demo;
-
+        var source = TestSources.ModuleHeader
+            + """
             [NotificationDispatch(NotificationDispatchStrategy.Parallel)]
             public sealed record TourCreated(int Id) : INotification;
 
@@ -234,7 +203,7 @@ public sealed class GeneratorDispatchTests
         var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
         var generatedDispatchSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
-            "SharedKernel.Mediator.Generated.GeneratedDispatch.g.cs");
+            GeneratedHintNames.GeneratedDispatch);
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedDispatchSource);

@@ -11,44 +11,11 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Single_Project_Counts()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-
-            [PipelineOrder(PipelineStage.Validation)]
-            public sealed class ValidationBehavior : IPipelineBehavior<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
-            }
-
-            public sealed record TourCreated(int Id) : INotification;
-
-            public sealed class TourCreatedHandler : INotificationHandler<TourCreated>
-            {
-                public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
-            }
-
-            public sealed record StreamTours() : IStreamRequest<string>;
-
-            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
-            {
-                public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
-                {
-                    yield return "tour";
-                    await Task.CompletedTask;
-                }
-            }
-            """;
+        var source = TestSources.ModuleHeader
+            + TestSources.CreateTourWithHandler
+            + TestSources.CreateTourValidationBehavior
+            + TestSources.TourCreatedWithHandler
+            + TestSources.StreamToursWithHandler;
 
         // Act
         var generatedSource = GeneratorTestHarness.GenerateSource(source);
@@ -66,23 +33,12 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Call_Graph_Json_Artifact_Is_Not_Emitted_By_Default()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record GetTour(int Id) : IQuery<string>;
-
-            public sealed class GetTourHandler : IQueryHandler<GetTour, string>
-            {
-                public ValueTask<string> Handle(GetTour request, CancellationToken ct) => ValueTask.FromResult("tour");
-            }
-            """;
+        var source = TestSources.DemoHeader + TestSources.GetTourWithHandler;
 
         // Act
         var runResult = GeneratorTestHarness.RunGeneratorDriver(source);
         var hasCallGraphSource = runResult.Results.Single().GeneratedSources.Any(
-            static source => string.Equals(source.HintName, "SharedKernel.Mediator.Generated.CallGraph.g.cs", StringComparison.Ordinal));
+            static source => string.Equals(source.HintName, GeneratedHintNames.CallGraph, StringComparison.Ordinal));
 
         // Assert
         Assert.False(hasCallGraphSource);
@@ -92,50 +48,16 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Call_Graph_Json_Artifact_When_Enabled()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-
-            [PipelineOrder(PipelineStage.Validation)]
-            public sealed class ValidationBehavior : IPipelineBehavior<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
-            }
-
-            [NotificationDispatch(NotificationDispatchStrategy.Parallel)]
-            public sealed record TourCreated(int Id) : INotification;
-
-            public sealed class TourCreatedHandler : INotificationHandler<TourCreated>
-            {
-                public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
-            }
-
-            public sealed record StreamTours() : IStreamRequest<string>;
-
-            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
-            {
-                public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
-                {
-                    yield return "tour";
-                    await Task.CompletedTask;
-                }
-            }
-            """;
+        var source = TestSources.ModuleHeader
+            + TestSources.CreateTourWithHandler
+            + TestSources.CreateTourValidationBehavior
+            + TestSources.TourCreatedParallelWithHandler
+            + TestSources.StreamToursWithHandler;
         var options = ImmutableDictionary<string, string>.Empty.Add("sharedkernel_mediator_emit_call_graph_json", bool.TrueString);
 
         // Act
         var runResult = GeneratorTestHarness.RunGeneratorDriver(source, globalOptions: options);
-        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult, "SharedKernel.Mediator.Generated.CallGraph.g.cs");
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult, GeneratedHintNames.CallGraph);
         var json = LoadGeneratedCallGraphJson(source, generatedSource);
 
         // Assert
@@ -149,18 +71,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Repeated_Runs_Are_Deterministic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record GetTour(int Id) : IQuery<string>;
-
-            public sealed class GetTourHandler : IQueryHandler<GetTour, string>
-            {
-                public ValueTask<string> Handle(GetTour request, CancellationToken ct) => ValueTask.FromResult("tour");
-            }
-            """;
+        var source = TestSources.DemoHeader + TestSources.GetTourWithHandler;
 
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
@@ -176,33 +87,8 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Marked_Module_Assembly_Included()
     {
         // Arrange
-        const string moduleSource = """
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace ModuleA;
-
-            public sealed record SearchTours(string Query) : IQuery<int>;
-
-            public sealed class SearchToursHandler : IQueryHandler<SearchTours, int>
-            {
-                public ValueTask<int> Handle(SearchTours request, CancellationToken ct) => ValueTask.FromResult(10);
-            }
-            """;
-        var moduleReference = GeneratorTestHarness.CreateMetadataReference(moduleSource, "SharedKernel.Mediator.Tests.ModuleA");
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-            """;
+        var moduleReference = GeneratorTestHarness.CreateMetadataReference(TestSources.ModuleAMarkedSource, "SharedKernel.Mediator.Tests.ModuleA");
+        var source = TestSources.DemoHeader + TestSources.CreateTourWithHandler;
         // Act
         var generatedSource = GeneratorTestHarness.GenerateSource(source, additionalReferences: [moduleReference]);
 
@@ -218,31 +104,8 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Unmarked_Module_Assembly_Ignored()
     {
         // Arrange
-        const string moduleSource = """
-            using SharedKernel.Mediator;
-
-            namespace ModuleA;
-
-            public sealed record SearchTours(string Query) : IQuery<int>;
-
-            public sealed class SearchToursHandler : IQueryHandler<SearchTours, int>
-            {
-                public ValueTask<int> Handle(SearchTours request, CancellationToken ct) => ValueTask.FromResult(10);
-            }
-            """;
-        var moduleReference = GeneratorTestHarness.CreateMetadataReference(moduleSource, "SharedKernel.Mediator.Tests.ModuleA.Unmarked");
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-            """;
+        var moduleReference = GeneratorTestHarness.CreateMetadataReference(TestSources.ModuleAUnmarkedSource, "SharedKernel.Mediator.Tests.ModuleA.Unmarked");
+        var source = TestSources.DemoHeader + TestSources.CreateTourWithHandler;
         // Act
         var generatedSource = GeneratorTestHarness.GenerateSource(source, additionalReferences: [moduleReference]);
 
@@ -256,11 +119,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Response_Metadata_Captured()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public sealed record TourRow(int Id, string Name);
 
             public sealed record Page<TItem>(IReadOnlyList<TItem> Items);
@@ -286,11 +145,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Result_Like_Wrapper_Shape_Captured()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public sealed record Result<TValue>(TValue Value, bool IsSuccess);
 
             public sealed record GetTour() : IQuery<Result<string>>;
@@ -341,11 +196,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Nested_Plain_Request_Discovered()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public sealed class Container
             {
                 public sealed record LookupTour(int Id) : IRequest<string>;
@@ -375,11 +226,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Command_Without_Response_Uses_Unit()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public sealed record DeleteTour(int Id) : ICommand;
 
             public sealed class DeleteTourHandler : ICommandHandler<DeleteTour>
@@ -399,11 +246,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Abstract_And_Interface_Shapes_Are_Ignored()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public abstract record AbstractRequest(int Id) : ICommand<int>;
 
             public abstract class AbstractRequestHandler : ICommandHandler<AbstractRequest, int>
@@ -467,11 +310,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Pipeline_And_Handler_Order_Is_Deterministic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public sealed record CreateTour(string Name) : ICommand<int>;
 
             public sealed class ZedCreateTourHandler : ICommandHandler<CreateTour, int>
@@ -523,18 +362,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Open_Generic_Pipeline_Is_Bound_To_Request_Response_Pair()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(1);
-            }
-
+        const string source = TestSources.DemoHeader + TestSources.CreateTourWithHandler + """
             [PipelineOrder(PipelineStage.Validation, Order = 10)]
             public sealed class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
                 where TRequest : IRequest<TResponse>
@@ -558,18 +386,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Pipeline_Duplicate_Order_Diagnostic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(1);
-            }
-
+        const string source = TestSources.DemoHeader + TestSources.CreateTourWithHandler + """
             [PipelineOrder(PipelineStage.Validation, Order = 10)]
             public sealed class ValidationA : IPipelineBehavior<CreateTour, int>
             {
@@ -598,11 +415,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Pipeline_Never_Applies_Diagnostic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public abstract record AbstractCreateTour(string Name) : ICommand<int>;
 
             public sealed class ValidationBehavior : IPipelineBehavior<AbstractCreateTour, int>
@@ -626,18 +439,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Pipeline_Invalid_Generic_Arity_Diagnostic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(1);
-            }
-
+        const string source = TestSources.DemoHeader + TestSources.CreateTourWithHandler + """
             public sealed class ValidationBehavior<TRequest> : IPipelineBehavior<TRequest, int>
                 where TRequest : IRequest<int>
             {
@@ -660,18 +462,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Pipeline_Unbound_Constraints_Diagnostic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(1);
-            }
-
+        const string source = TestSources.DemoHeader + TestSources.CreateTourWithHandler + """
             public sealed class QueryOnlyBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
                 where TRequest : IQuery<TResponse>
             {
@@ -694,11 +485,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Notification_Handlers_Without_Explicit_Order_Diagnostic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public sealed record TourCreated(int Id) : INotification;
 
             public sealed class HandlerA : INotificationHandler<TourCreated>
@@ -732,11 +519,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Duplicate_Notification_Order_Diagnostic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public sealed record TourCreated(int Id) : INotification;
 
             [NotificationOrder(10)]
@@ -768,11 +551,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Request_With_No_Handler_Diagnostic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public sealed record MissingTour(int Id) : IQuery<string>;
             """;
         var compilation = GeneratorTestHarness.CreateCompilation(source);
@@ -792,11 +571,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Request_With_Multiple_Handlers_Diagnostic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public sealed record LookupTour(string Code) : IQuery<string>;
 
             public sealed class LookupTourHandlerOne : IQueryHandler<LookupTour, string>
@@ -826,31 +601,8 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Unmarked_Module_Object_Dispatch_Coverage_Diagnostic()
     {
         // Arrange
-        const string moduleSource = """
-            using SharedKernel.Mediator;
-
-            namespace ModuleA;
-
-            public sealed record SearchTours(string Query) : IQuery<int>;
-
-            public sealed class SearchToursHandler : IQueryHandler<SearchTours, int>
-            {
-                public ValueTask<int> Handle(SearchTours request, CancellationToken ct) => ValueTask.FromResult(10);
-            }
-            """;
-        var moduleReference = GeneratorTestHarness.CreateMetadataReference(moduleSource, "SharedKernel.Mediator.Tests.ModuleA.Unmarked");
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
-            public sealed record CreateTour(string Name) : ICommand<int>;
-
-            public sealed class CreateTourHandler : ICommandHandler<CreateTour, int>
-            {
-                public ValueTask<int> Handle(CreateTour request, CancellationToken ct) => ValueTask.FromResult(42);
-            }
-            """;
+        var moduleReference = GeneratorTestHarness.CreateMetadataReference(TestSources.ModuleAUnmarkedSource, "SharedKernel.Mediator.Tests.ModuleA.Unmarked");
+        var source = TestSources.DemoHeader + TestSources.CreateTourWithHandler;
         var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: [moduleReference]);
 
         // Act
@@ -870,11 +622,7 @@ public sealed class GeneratorDiscoveryReportTests
     public void Generate_Discovery_Report_Explicit_Interface_Handler_Invalid_Signature_Diagnostic()
     {
         // Arrange
-        const string source = """
-            using SharedKernel.Mediator;
-
-            namespace Demo;
-
+        const string source = TestSources.DemoHeader + """
             public sealed record LookupTour(string Code) : IQuery<string>;
 
             public sealed class ExplicitLookupTourHandler : IQueryHandler<LookupTour, string>
@@ -888,11 +636,9 @@ public sealed class GeneratorDiscoveryReportTests
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
         // Act
-        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
-        var diagnostics = runResult.Results.Single().Diagnostics;
-        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
-            runResult,
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
 
         // Assert
         Assert.Contains(

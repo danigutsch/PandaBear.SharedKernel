@@ -47,7 +47,7 @@ internal static class GeneratorTestHarness
 
     public static string RunGenerator(
         CSharpCompilation compilation,
-        string hintName = "SharedKernel.Mediator.Generated.DiscoveryReport.g.cs")
+        string hintName = GeneratedHintNames.DiscoveryReport)
     {
         var runResult = RunGeneratorDriver(compilation);
         return GetGeneratedSource(runResult, hintName);
@@ -55,7 +55,7 @@ internal static class GeneratorTestHarness
 
     public static string GenerateSource(
         string source,
-        string hintName = "SharedKernel.Mediator.Generated.DiscoveryReport.g.cs",
+        string hintName = GeneratedHintNames.DiscoveryReport,
         IEnumerable<MetadataReference>? additionalReferences = null,
         bool includeMediatorReference = true,
         string assemblyName = "SharedKernel.Mediator.Tests.Dynamic")
@@ -90,9 +90,17 @@ internal static class GeneratorTestHarness
         return RunGeneratorDriver(compilation, globalOptions);
     }
 
+    public static (string Source, ImmutableArray<Diagnostic> Diagnostics) RunAndGetResult(
+        CSharpCompilation compilation,
+        string hintName = GeneratedHintNames.DiscoveryReport)
+    {
+        var runResult = RunGeneratorDriver(compilation);
+        return (GetGeneratedSource(runResult, hintName), runResult.Results.Single().Diagnostics);
+    }
+
     public static string GetGeneratedSource(
         GeneratorDriverRunResult runResult,
-        string hintName = "SharedKernel.Mediator.Generated.DiscoveryReport.g.cs")
+        string hintName = GeneratedHintNames.DiscoveryReport)
     {
         var generatedSource = runResult.Results.Single().GeneratedSources.SingleOrDefault(
             source => string.Equals(source.HintName, hintName, StringComparison.Ordinal));
@@ -112,22 +120,16 @@ internal static class GeneratorTestHarness
         bool includeMediatorReference = true)
     {
         var compilation = CreateCompilation(source, assemblyName, additionalReferences, includeMediatorReference);
-        using var stream = new MemoryStream();
-        var emitResult = compilation.Emit(stream);
-
-        if (!emitResult.Success)
-        {
-            var diagnostics = string.Join(
-                Environment.NewLine,
-                emitResult.Diagnostics.Select(static diagnostic => diagnostic.ToString()));
-            throw new InvalidOperationException($"Failed to emit test compilation:{Environment.NewLine}{diagnostics}");
-        }
-
-        stream.Position = 0;
-        return MetadataReference.CreateFromImage(stream.ToArray());
+        return MetadataReference.CreateFromImage(EmitToBytes(compilation));
     }
 
     public static Assembly LoadAssembly(CSharpCompilation compilation)
+    {
+        return new AssemblyLoadContext(compilation.AssemblyName, isCollectible: true)
+            .LoadFromStream(new MemoryStream(EmitToBytes(compilation)));
+    }
+
+    private static byte[] EmitToBytes(CSharpCompilation compilation)
     {
         using var stream = new MemoryStream();
         var emitResult = compilation.Emit(stream);
@@ -140,8 +142,7 @@ internal static class GeneratorTestHarness
             throw new InvalidOperationException($"Failed to emit test compilation:{Environment.NewLine}{diagnostics}");
         }
 
-        stream.Position = 0;
-        return new AssemblyLoadContext(compilation.AssemblyName, isCollectible: true).LoadFromStream(stream);
+        return stream.ToArray();
     }
 
     private static List<MetadataReference> GetMetadataReferences(
