@@ -665,6 +665,55 @@ public sealed class GeneratorDiscoveryReportTests
         }
     }
 
+    [Fact]
+    public void Snapshot_Missing_Handler_Diagnostic_Message()
+    {
+        // Arrange
+        const string source = TestSources.DemoHeader + """
+            public sealed record MissingTour(int Id) : IQuery<string>;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
+        var diagnostic = Assert.Single(diagnostics, static d => d.Id == MediatorDiagnosticIds.MissingHandler);
+        var message = diagnostic.GetMessage(CultureInfo.InvariantCulture);
+
+        // Assert
+        GeneratorSnapshotVerifier.Verify(message, extension: "txt");
+    }
+
+    [Fact]
+    public void Snapshot_Duplicate_Pipeline_Order_Diagnostic_Message()
+    {
+        // Arrange
+        const string source = TestSources.DemoHeader + TestSources.CreateTourWithHandler + """
+            [PipelineOrder(PipelineStage.Validation, Order = 10)]
+            public sealed class ValidationA : IPipelineBehavior<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
+            }
+
+            [PipelineOrder(PipelineStage.Validation, Order = 10)]
+            public sealed class ValidationB : IPipelineBehavior<CreateTour, int>
+            {
+                public ValueTask<int> Handle(CreateTour request, RequestHandlerContinuation<int> next, CancellationToken ct) => next();
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
+        var diagnostic = diagnostics.First(static d => d.Id == MediatorDiagnosticIds.DuplicatePipelineOrder);
+        var message = diagnostic.GetMessage(CultureInfo.InvariantCulture);
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static d => d.Id == MediatorDiagnosticIds.DuplicatePipelineOrder);
+        GeneratorSnapshotVerifier.Verify(message, extension: "txt");
+    }
+
     private static string LoadGeneratedCallGraphJson(string source, string generatedCallGraphSource)
     {
         const string runtimeUsings = """

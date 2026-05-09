@@ -141,6 +141,7 @@ public sealed class GeneratorDispatchTests
             GeneratedHintNames.GeneratedPipelines);
 
         // Assert
+        GeneratorSnapshotVerifier.Verify(generatedPipelinesSource);
         Assert.Contains("return GeneratedPipelines.Invoke_0000(this, request, ct);", generatedMediatorSource, StringComparison.Ordinal);
         Assert.Contains("public static global::System.Threading.Tasks.ValueTask<int> Invoke_0000(AppMediator mediator, global::Demo.CreateTour request,", generatedPipelinesSource, StringComparison.Ordinal);
         Assert.Contains("var pipeline0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.ValidationBehavior>(mediator.Services);", generatedPipelinesSource, StringComparison.Ordinal);
@@ -172,6 +173,7 @@ public sealed class GeneratorDispatchTests
             GeneratedHintNames.GeneratedPipelines);
 
         // Assert
+        GeneratorSnapshotVerifier.Verify(generatedPipelinesSource);
         Assert.Contains("return GeneratedPipelines.InvokeStream_0000(this, request, ct);", generatedMediatorSource, StringComparison.Ordinal);
         Assert.Contains("public static global::System.Collections.Generic.IAsyncEnumerable<string> InvokeStream_0000(AppMediator mediator, global::Demo.StreamTours request,", generatedPipelinesSource, StringComparison.Ordinal);
         Assert.Contains("var pipeline0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.ValidationBehavior>(mediator.Services);", generatedPipelinesSource, StringComparison.Ordinal);
