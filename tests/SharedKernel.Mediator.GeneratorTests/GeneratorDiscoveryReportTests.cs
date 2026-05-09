@@ -652,6 +652,94 @@ public sealed class GeneratorDiscoveryReportTests
         Assert.DoesNotContain("services.AddTransient<global::Demo.ExplicitLookupTourHandler>();", generatedSource, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Generate_Discovery_Report_Explicit_Interface_Stream_Handler_Invalid_Signature_Diagnostic()
+    {
+        // Arrange
+        const string source = TestSources.DemoHeader + """
+            public sealed record StreamTours() : IStreamRequest<string>;
+
+            public sealed class ExplicitStreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                IAsyncEnumerable<string> IStreamRequestHandler<StreamTours, string>.Handle(StreamTours request, CancellationToken ct)
+                {
+                    yield return request.ToString();
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ExplicitStreamToursHandler", StringComparison.Ordinal));
+        Assert.DoesNotContain("services.AddTransient<global::Demo.ExplicitStreamToursHandler>();", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Stream_Handler_Wrong_Return_Type_Invalid_Signature_Diagnostic()
+    {
+        // Arrange
+        const string source = TestSources.DemoHeader + """
+            public sealed record StreamTours() : IStreamRequest<string>;
+
+            public sealed class WrongReturnStreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public Task<IAsyncEnumerable<string>> Handle(StreamTours request, CancellationToken ct)
+                    => Task.FromResult(AsyncEnumerable.Empty<string>());
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.WrongReturnStreamToursHandler", StringComparison.Ordinal));
+        Assert.DoesNotContain("services.AddTransient<global::Demo.WrongReturnStreamToursHandler>();", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Stream_Handler_Missing_CancellationToken_Invalid_Signature_Diagnostic()
+    {
+        // Arrange
+        const string source = TestSources.DemoHeader + """
+            public sealed record StreamTours() : IStreamRequest<string>;
+
+            public sealed class NoCancellationStreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public IAsyncEnumerable<string> Handle(StreamTours request)
+                {
+                    yield return request.ToString();
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.NoCancellationStreamToursHandler", StringComparison.Ordinal));
+        Assert.DoesNotContain("services.AddTransient<global::Demo.NoCancellationStreamToursHandler>();", generatedSource, StringComparison.Ordinal);
+    }
+
     private static void AssertOrdered(string actual, params string[] expectedSegments)
     {
         var currentIndex = -1;
