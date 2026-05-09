@@ -123,6 +123,349 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         Assert.True(generatedSourceSize > 0, "Generated source size must be greater than zero.");
     }
 
+    [Fact]
+    public async Task Analyzer_Package_Produces_Diagnostics_For_Missing_Cancellation_Forwarding()
+    {
+        // Arrange
+        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorAnalyzerConsumer");
+        workspace.WriteProject(
+            $$"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>net10.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+              </PropertyGroup>
+              <ItemGroup>
+                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
+                {{workspace.GetPackageReference("SharedKernel.Mediator.Analyzers", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+              </ItemGroup>
+            </Project>
+            """,
+            ("Consumer.cs", """
+            using System.Threading;
+            using System.Threading.Tasks;
+            using SharedKernel.Mediator;
+
+            namespace Consumer;
+
+            public sealed record FindTour(int Id) : IQuery<string>;
+
+            public sealed class DispatchingService(ISender sender)
+            {
+                public async Task<string> Dispatch(CancellationToken ct)
+                {
+                    // SKMED006: ct is available but not forwarded
+                    return await sender.Send(new FindTour(1), CancellationToken.None);
+                }
+            }
+            """));
+
+        // Act
+        var buildOutput = await workspace.Build();
+
+        // Assert
+        Assert.Contains("SKMED006", buildOutput, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Code_Fix_Package_Forwards_Available_Cancellation_Token()
+    {
+        // Arrange
+        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorCodeFixConsumer");
+        workspace.WriteProject(
+            $$"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>net10.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+              </PropertyGroup>
+              <ItemGroup>
+                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
+                {{workspace.GetPackageReference("SharedKernel.Mediator.Analyzers", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+                {{workspace.GetPackageReference("SharedKernel.Mediator.CodeFixes", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+              </ItemGroup>
+            </Project>
+            """,
+            ("Consumer.cs", """
+            using System.Threading;
+            using System.Threading.Tasks;
+            using SharedKernel.Mediator;
+
+            namespace Consumer;
+
+            public sealed record FindTour(int Id) : IQuery<string>;
+
+            public sealed class DispatchingService(ISender sender)
+            {
+                public async Task<string> Dispatch(CancellationToken ct)
+                {
+                    // SKMED006: ct is available but not forwarded
+                    return await sender.Send(new FindTour(1), CancellationToken.None);
+                }
+            }
+            """));
+
+        var buildOutputBefore = await workspace.Build();
+        Assert.Contains("SKMED006", buildOutputBefore, StringComparison.Ordinal);
+
+        // Act
+        await workspace.Format("SKMED006");
+        var buildOutputAfter = await workspace.Build();
+
+        // Assert
+        Assert.DoesNotContain("SKMED006", buildOutputAfter, StringComparison.Ordinal);
+        Assert.Contains("Build succeeded.", buildOutputAfter, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Abstractions_Are_Available_Transitively_Through_Runtime_Package()
+    {
+        // Arrange
+        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorTransitiveConsumer");
+        workspace.WriteProject(
+            $$"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>net10.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+              </PropertyGroup>
+              <ItemGroup>
+                {{workspace.GetPackageReference("SharedKernel.Mediator")}}
+              </ItemGroup>
+            </Project>
+            """,
+            ("Consumer.cs", """
+            using System.Threading;
+            using System.Threading.Tasks;
+            using SharedKernel.Mediator;
+
+            namespace Consumer;
+
+            // IQuery<string> comes from SharedKernel.Mediator.Abstractions — transitively referenced
+            public sealed record LookupTour(string Code) : IQuery<string>;
+
+            public sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
+            {
+                public ValueTask<string> Handle(LookupTour request, CancellationToken ct)
+                    => ValueTask.FromResult(request.Code);
+            }
+            """));
+
+        // Act
+        var buildOutput = await workspace.Build();
+
+        // Assert
+        Assert.Contains("Build succeeded.", buildOutput, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Source_Generator_PrivateAssets_Prevents_Transitive_Generation()
+    {
+        // Arrange
+        const string libraryName = "MediatorLibraryModule";
+        const string consumerName = "MediatorLibraryConsumer";
+
+        using var workspace = new PackageConsumptionWorkspace(packageFeed, consumerName);
+
+        workspace.WriteAdditionalProject(
+            libraryName,
+            $$"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>net10.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+                <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+                <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+              </PropertyGroup>
+              <ItemGroup>
+                <Compile Remove="Generated/**/*.cs" />
+              </ItemGroup>
+              <ItemGroup>
+                {{workspace.GetPackageReference("SharedKernel.Mediator")}}
+                {{workspace.GetPackageReference("SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+              </ItemGroup>
+            </Project>
+            """,
+            ("AssemblyInfo.cs", """
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+            """),
+            ("Handler.cs", """
+            using System.Threading;
+            using System.Threading.Tasks;
+            using SharedKernel.Mediator;
+
+            namespace MediatorLibraryModule;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+
+            public sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
+            {
+                public ValueTask<string> Handle(LookupTour request, CancellationToken ct)
+                    => ValueTask.FromResult(request.Code);
+            }
+            """));
+
+        workspace.WriteProject(
+            $$"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>net10.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+                <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+                <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+              </PropertyGroup>
+              <ItemGroup>
+                {{workspace.GetProjectReference(libraryName)}}
+              </ItemGroup>
+            </Project>
+            """,
+            ("Consumer.cs", """
+            using System.Threading;
+            using System.Threading.Tasks;
+            using MediatorLibraryModule;
+
+            namespace Consumer;
+
+            public static class Program
+            {
+                public static async Task Main()
+                {
+                    var handler = new LookupTourHandler();
+                    var result = await handler.Handle(new LookupTour("VT-42"), CancellationToken.None);
+                    System.Console.WriteLine(result);
+                }
+            }
+            """));
+
+        // Act
+        await workspace.BuildProject(libraryName);
+        var consumerBuildOutput = await workspace.Build();
+
+        // Assert
+        Assert.Contains("Build succeeded.", consumerBuildOutput, StringComparison.Ordinal);
+
+        var libraryGeneratedFiles = workspace.GetAdditionalProjectGeneratedFiles(libraryName, "SharedKernel.Mediator.Generated.AppMediator.g.cs");
+        var consumerGeneratedFiles = workspace.GetGeneratedFiles("SharedKernel.Mediator.Generated.AppMediator.g.cs");
+
+        Assert.NotEmpty(libraryGeneratedFiles);
+        Assert.Empty(consumerGeneratedFiles);
+    }
+
+    [Fact]
+    public async Task Multi_Project_Module_Composition_Registers_All_Handlers()
+    {
+        // Arrange
+        const string moduleName = "MediatorModuleA";
+        const string appName = "MediatorComposedApp";
+
+        using var workspace = new PackageConsumptionWorkspace(packageFeed, appName);
+
+        workspace.WriteAdditionalProject(
+            moduleName,
+            $$"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>net10.0</TargetFramework>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+              </PropertyGroup>
+              <ItemGroup>
+                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
+              </ItemGroup>
+            </Project>
+            """,
+            ("AssemblyInfo.cs", """
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+            """),
+            ("Handler.cs", """
+            using System.Threading;
+            using System.Threading.Tasks;
+            using SharedKernel.Mediator;
+
+            namespace MediatorModuleA;
+
+            public sealed record GetTourName(int Id) : IQuery<string>;
+
+            public sealed class GetTourNameHandler : IQueryHandler<GetTourName, string>
+            {
+                public ValueTask<string> Handle(GetTourName request, CancellationToken ct)
+                    => ValueTask.FromResult($"Tour-{request.Id}");
+            }
+            """));
+
+        workspace.WriteProject(
+            $$"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>net10.0</TargetFramework>
+                <OutputType>Exe</OutputType>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+              </PropertyGroup>
+              <ItemGroup>
+                {{workspace.GetProjectReference(moduleName)}}
+                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
+                {{workspace.GetPackageReference("SharedKernel.Mediator")}}
+                {{workspace.GetPackageReference("SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+                <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="{{packageFeed.DependencyInjectionPackageVersion}}" />
+              </ItemGroup>
+            </Project>
+            """,
+            ("LookupTour.cs", """
+            using System.Threading;
+            using System.Threading.Tasks;
+            using SharedKernel.Mediator;
+
+            namespace MediatorComposedApp;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+
+            public sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
+            {
+                public ValueTask<string> Handle(LookupTour request, CancellationToken ct)
+                    => ValueTask.FromResult(request.Code);
+            }
+            """),
+            ("Program.cs", """
+            using MediatorComposedApp;
+            using MediatorModuleA;
+            using Microsoft.Extensions.DependencyInjection;
+            using SharedKernel.Mediator;
+
+            var services = new ServiceCollection();
+            services.AddSharedKernelMediator();
+
+            using var provider = services.BuildServiceProvider();
+            using var scope = provider.CreateScope();
+
+            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+
+            var lookupResult = await mediator.Send(new LookupTour("VT-42"), CancellationToken.None);
+            var getTourResult = await mediator.Send(new GetTourName(7), CancellationToken.None);
+
+            Console.WriteLine($"lookup={lookupResult}");
+            Console.WriteLine($"getTour={getTourResult}");
+            """));
+
+        // Act
+        var buildOutput = await workspace.Build();
+        var runOutput = await workspace.Run();
+
+        // Assert
+        Assert.Contains("Build succeeded.", buildOutput, StringComparison.Ordinal);
+        Assert.Contains("lookup=VT-42", runOutput, StringComparison.Ordinal);
+        Assert.Contains("getTour=Tour-7", runOutput, StringComparison.Ordinal);
+    }
+
     private void WriteGeneratedConsumerProject(PackageConsumptionWorkspace workspace)
     {
         workspace.WriteProject(

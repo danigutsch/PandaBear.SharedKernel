@@ -7,12 +7,10 @@ namespace SharedKernel.Mediator.PackageConsumptionTests;
 /// </summary>
 public sealed class MediatorPackageFeedFixture : IAsyncLifetime
 {
-    private const string TestPackageVersion = "1.0.0-package-test";
-
     /// <summary>
     /// Gets the packed package version used by the test feed.
     /// </summary>
-    public string PackageVersion { get; } = TestPackageVersion;
+    public string PackageVersion { get; } = $"1.0.0-test-{Guid.NewGuid():N}";
 
     /// <summary>
     /// Gets the local feed path that contains the packed mediator packages.
@@ -41,6 +39,8 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
         await Pack("src/Mediator/SharedKernel.Mediator.Abstractions/SharedKernel.Mediator.Abstractions.csproj").ConfigureAwait(false);
         await Pack("src/Mediator/SharedKernel.Mediator/SharedKernel.Mediator.csproj").ConfigureAwait(false);
         await Pack("src/Mediator/SharedKernel.Mediator.SourceGenerator/SharedKernel.Mediator.SourceGenerator.csproj").ConfigureAwait(false);
+        await Pack("src/Mediator/SharedKernel.Mediator.Analyzers/SharedKernel.Mediator.Analyzers.csproj").ConfigureAwait(false);
+        await Pack("src/Mediator/SharedKernel.Mediator.CodeFixes/SharedKernel.Mediator.CodeFixes.csproj").ConfigureAwait(false);
     }
 
     /// <inheritdoc />

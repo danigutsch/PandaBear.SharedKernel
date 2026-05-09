@@ -52,7 +52,7 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     /// <returns>The dotnet build output.</returns>
     public Task<string> Build()
     {
-        return DotNetCli.RunAsync(ProjectDirectory, "build", ProjectFilePath, "--nologo");
+        return DotNetCli.RunAsync(ProjectDirectory, "build", ProjectFilePath, "--nologo", "--verbosity", "normal");
     }
 
     /// <summary>
@@ -117,6 +117,68 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     public string[] GetGeneratedFiles(string fileName)
     {
         return Directory.GetFiles(ProjectDirectory, fileName, SearchOption.AllDirectories);
+    }
+
+    /// <summary>
+    /// Writes an additional project into the workspace root alongside the primary project.
+    /// </summary>
+    /// <param name="projectName">The name of the additional project.</param>
+    /// <param name="projectFileContent">The project file content.</param>
+    /// <param name="files">The source files to write into the additional project.</param>
+    public void WriteAdditionalProject(string projectName, string projectFileContent, params (string FileName, string Content)[] files)
+    {
+        var projectDirectory = Path.Combine(RootPath, projectName);
+        Directory.CreateDirectory(projectDirectory);
+        File.WriteAllText(Path.Combine(projectDirectory, projectName + ".csproj"), projectFileContent);
+
+        foreach (var file in files)
+        {
+            File.WriteAllText(Path.Combine(projectDirectory, file.FileName), file.Content);
+        }
+    }
+
+    /// <summary>
+    /// Gets a project-reference XML fragment targeting an additional project in this workspace.
+    /// </summary>
+    /// <param name="projectName">The name of the additional project written via <see cref="WriteAdditionalProject"/>.</param>
+    /// <returns>The project reference XML line.</returns>
+    public string GetProjectReference(string projectName)
+    {
+        var projectFilePath = Path.Combine(RootPath, projectName, projectName + ".csproj");
+        return $"""<ProjectReference Include="{projectFilePath}" />""";
+    }
+
+    /// <summary>
+    /// Builds an additional project written via <see cref="WriteAdditionalProject"/>.
+    /// </summary>
+    /// <param name="projectName">The name of the additional project.</param>
+    /// <returns>The dotnet build output.</returns>
+    public Task<string> BuildProject(string projectName)
+    {
+        var projectFilePath = Path.Combine(RootPath, projectName, projectName + ".csproj");
+        return DotNetCli.RunAsync(Path.Combine(RootPath, projectName), "build", projectFilePath, "--nologo", "--verbosity", "normal");
+    }
+
+    /// <summary>
+    /// Gets generated file paths matching <paramref name="fileName"/> inside an additional project directory.
+    /// </summary>
+    /// <param name="projectName">The name of the additional project.</param>
+    /// <param name="fileName">The generated source file name to locate.</param>
+    /// <returns>The matching generated file paths.</returns>
+    public string[] GetAdditionalProjectGeneratedFiles(string projectName, string fileName)
+    {
+        var projectDirectory = Path.Combine(RootPath, projectName);
+        return Directory.GetFiles(projectDirectory, fileName, SearchOption.AllDirectories);
+    }
+
+    /// <summary>
+    /// Runs <c>dotnet format</c> targeting the primary project and applies fixes for the specified diagnostic.
+    /// </summary>
+    /// <param name="diagnosticId">The diagnostic identifier to fix (e.g. <c>SKMED004</c>).</param>
+    /// <returns>The dotnet format output.</returns>
+    public Task<string> Format(string diagnosticId)
+    {
+        return DotNetCli.RunAsync(ProjectDirectory, "format", ProjectFilePath, "--diagnostics", diagnosticId);
     }
 
     /// <summary>
