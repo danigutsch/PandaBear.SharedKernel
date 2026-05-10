@@ -170,6 +170,12 @@
       },
       "sharedkernel.mediator.analyzers": {
         "type": "Project"
+      },
+      "sharedkernel.testing.roslyn": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp": "[5.3.0, )"
+        }
       }
     }
   }

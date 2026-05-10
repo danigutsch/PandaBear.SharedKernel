@@ -176,6 +176,12 @@
         "dependencies": {
           "SharedKernel.Mediator.Abstractions": "[1.0.0, )"
         }
+      },
+      "sharedkernel.testing.roslyn": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp": "[5.3.0, )"
+        }
       }
     }
   }

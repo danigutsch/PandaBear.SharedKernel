@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using SharedKernel.Testing.Roslyn;
 namespace SharedKernel.Mediator.Analyzers.Tests;
 
 internal static class AnalyzerTestHarness
@@ -59,36 +60,5 @@ internal static class AnalyzerTestHarness
         }
 
         yield return MetadataReference.CreateFromFile(typeof(IRequest<>).Assembly.Location);
-    }
-
-    private sealed class TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>? globalOptions)
-        : AnalyzerConfigOptionsProvider
-    {
-        private readonly AnalyzerConfigOptions global = new TestAnalyzerConfigOptions(globalOptions);
-
-        public override AnalyzerConfigOptions GlobalOptions => global;
-
-        public override AnalyzerConfigOptions GetOptions(SyntaxTree tree)
-        {
-            return TestAnalyzerConfigOptions.Empty;
-        }
-
-        public override AnalyzerConfigOptions GetOptions(AdditionalText textFile)
-        {
-            return TestAnalyzerConfigOptions.Empty;
-        }
-    }
-
-    private sealed class TestAnalyzerConfigOptions(ImmutableDictionary<string, string>? values)
-        : AnalyzerConfigOptions
-    {
-        public static readonly TestAnalyzerConfigOptions Empty = new(null);
-
-        private readonly ImmutableDictionary<string, string> options = values ?? ImmutableDictionary<string, string>.Empty;
-
-        public override bool TryGetValue(string key, out string value)
-        {
-            return options.TryGetValue(key, out value!);
-        }
     }
 }
