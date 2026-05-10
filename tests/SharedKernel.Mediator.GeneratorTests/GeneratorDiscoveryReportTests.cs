@@ -802,6 +802,62 @@ public sealed class GeneratorDiscoveryReportTests
         GeneratorSnapshotVerifier.Verify(message, extension: "txt");
     }
 
+    [Fact]
+    public void Generate_Discovery_Report_Stream_Request_With_No_Handler_Diagnostic()
+    {
+        // Arrange
+        const string source = TestSources.DemoHeader + """
+            public sealed record MissingStreamTour(int Count) : IStreamRequest<string>;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingHandler
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.MissingStreamTour", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Generate_Discovery_Report_Stream_Request_With_Multiple_Handlers_Diagnostic()
+    {
+        // Arrange
+        const string source = TestSources.DemoHeader + """
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandlerOne : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTours request, [global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct)
+                {
+                    await Task.Yield();
+                    yield return "one";
+                }
+            }
+
+            public sealed class StreamToursHandlerTwo : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTours request, [global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct)
+                {
+                    await Task.Yield();
+                    yield return "two";
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MultipleHandlers
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.StreamTours", StringComparison.Ordinal));
+    }
+
     private static string LoadGeneratedCallGraphJson(string source, string generatedCallGraphSource)
     {
         const string runtimeUsings = """
