@@ -159,7 +159,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add IRequest<string>", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -207,7 +207,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add IQuery<string>", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IQuery<string>"), StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -255,7 +255,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add ICommand<int>", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("ICommand<int>"), StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -303,7 +303,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add ICommand", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("ICommand"), StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -735,7 +735,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add IRequest<string>", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -778,7 +778,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add IRequest<string>", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -818,7 +818,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add IRequest<string?>", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string?>"), StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -1028,7 +1028,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Make type public", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.MakeTypePublic, StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedModuleSource = await workspace.GetDocumentTextAsync("Module.cs");
         var diagnosticsAfterFix = await workspace.GetGeneratorDiagnosticsAsync();
@@ -1074,7 +1074,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add CancellationToken ct parameter", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddCancellationTokenParameter, StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -1115,7 +1115,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Forward CancellationToken ct", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -1156,7 +1156,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add [EnumeratorCancellation]", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -1200,7 +1200,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add [EnumeratorCancellation]", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -1241,7 +1241,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Forward CancellationToken ct", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -1347,7 +1347,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add [assembly: MediatorModule]", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddMediatorModuleAttribute, StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var markerSource = await workspace.GetDocumentTextAsync("MediatorModuleAssemblyInfo.cs");
         var diagnosticsAfterFix = await workspace.GetGeneratorDiagnosticsAsync();
@@ -1389,7 +1389,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Forward CancellationToken cancellationToken", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("cancellationToken"), StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -1469,7 +1469,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add [EnumeratorCancellation]", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -1514,7 +1514,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Add CancellationToken ct parameter", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.AddCancellationTokenParameter, StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
@@ -1594,7 +1594,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(
             await workspace.GetCodeActionsAsync(provider, diagnostic),
-            static candidate => string.Equals(candidate.Title, "Forward CancellationToken ct", StringComparison.Ordinal));
+            static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
         await workspace.ApplyCodeActionAsync(codeAction);
         var updatedDocumentText = await workspace.GetDocumentTextAsync();
 
