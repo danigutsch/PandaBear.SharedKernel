@@ -690,12 +690,13 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             throw new InvalidOperationException($"Failed to start published executable '{publishedExecutable}'.");
         }
 
-        var standardOutput = await process.StandardOutput.ReadToEndAsync(TestContext.Current.CancellationToken);
-        var standardError = await process.StandardError.ReadToEndAsync(TestContext.Current.CancellationToken);
+        var stdoutTask = process.StandardOutput.ReadToEndAsync(TestContext.Current.CancellationToken);
+        var stderrTask = process.StandardError.ReadToEndAsync(TestContext.Current.CancellationToken);
+        await Task.WhenAll(stdoutTask, stderrTask);
         await process.WaitForExitAsync(TestContext.Current.CancellationToken);
         stopwatch.Stop();
 
-        var output = string.Concat(standardOutput, standardError);
+        var output = string.Concat(await stdoutTask, await stderrTask);
 
         if (process.ExitCode != 0)
         {
