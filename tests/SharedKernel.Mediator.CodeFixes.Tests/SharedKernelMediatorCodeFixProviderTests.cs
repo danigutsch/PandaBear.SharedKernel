@@ -1481,6 +1481,131 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Missing_CancellationToken_Adds_Parameter_To_Void_Command_Handler()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record ArchiveTour(string Code) : ICommand;
+
+            public sealed class ArchiveTourHandler : ICommandHandler<ArchiveTour>
+            {
+                public ValueTask<Unit> Handle(ArchiveTour request)
+                {
+                    return ValueTask.FromResult(Unit.Value);
+                }
+
+                ValueTask<Unit> ICommandHandler<ArchiveTour>.Handle(ArchiveTour request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(Unit.Value);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MediatorDiagnosticIds.MissingCancellationToken,
+            "Test0.cs",
+            "Handle(ArchiveTour request)");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Add CancellationToken ct parameter", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "public ValueTask<Unit> Handle(ArchiveTour request, global::System.Threading.CancellationToken ct)",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_CancellationToken_Does_Not_Register_When_Method_Name_Is_Not_Handle()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record ArchiveTour(string Code) : ICommand;
+
+            public sealed class ArchiveTourHandler : ICommandHandler<ArchiveTour>
+            {
+                public ValueTask<Unit> Execute(ArchiveTour request)
+                {
+                    return ValueTask.FromResult(Unit.Value);
+                }
+
+                ValueTask<Unit> ICommandHandler<ArchiveTour>.Handle(ArchiveTour request, CancellationToken ct)
+                {
+                    return Execute(request);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MediatorDiagnosticIds.MissingCancellationToken,
+            "Test0.cs",
+            "Execute(ArchiveTour request)");
+
+        // Act
+        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Missing_CancellationToken_Forwarding_Adds_Ct_Argument_For_Publish()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record ArchiveTour(string Code) : ICommand;
+            public sealed record TourArchived(string Code) : INotification;
+
+            public sealed class ArchiveTourHandler(IPublisher publisher) : ICommandHandler<ArchiveTour>
+            {
+                public async ValueTask<Unit> Handle(ArchiveTour request, CancellationToken ct)
+                {
+                    await publisher.Publish(new TourArchived(request.Code));
+                    return Unit.Value;
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MissingArgumentDiagnosticId,
+            "Test0.cs",
+            "publisher.Publish(new TourArchived(request.Code))");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Forward CancellationToken ct", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "await publisher.Publish(new TourArchived(request.Code), ct);",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Missing_Request_Interface_Does_Not_Register_When_Request_Implements_ICommand_Of_Response()
     {
         // Arrange
