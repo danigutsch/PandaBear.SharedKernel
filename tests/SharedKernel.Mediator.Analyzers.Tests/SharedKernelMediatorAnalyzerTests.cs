@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using SharedKernel.Testing.Roslyn;
 
 namespace SharedKernel.Mediator.Analyzers.Tests;
 
@@ -510,36 +511,5 @@ public sealed class SharedKernelMediatorAnalyzerTests
 
         // Assert
         Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.HandlerShouldNotCallSender);
-    }
-
-    private sealed class TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>? globalOptions)
-        : Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider
-    {
-        private readonly Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions global = new TestAnalyzerConfigOptions(globalOptions);
-
-        public override Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions GlobalOptions => global;
-
-        public override Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions GetOptions(Microsoft.CodeAnalysis.SyntaxTree tree)
-        {
-            return TestAnalyzerConfigOptions.Empty;
-        }
-
-        public override Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions GetOptions(Microsoft.CodeAnalysis.AdditionalText textFile)
-        {
-            return TestAnalyzerConfigOptions.Empty;
-        }
-    }
-
-    private sealed class TestAnalyzerConfigOptions(ImmutableDictionary<string, string>? values)
-        : Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions
-    {
-        public static readonly TestAnalyzerConfigOptions Empty = new(null);
-
-        private readonly ImmutableDictionary<string, string> options = values ?? ImmutableDictionary<string, string>.Empty;
-
-        public override bool TryGetValue(string key, out string value)
-        {
-            return options.TryGetValue(key, out value!);
-        }
     }
 }
