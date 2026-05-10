@@ -380,6 +380,146 @@ public sealed class SharedKernelMediatorAnalyzerTests
         Assert.True(options.EnableCancellationAnalysis);
     }
 
+    [Fact]
+    public async Task Explicit_Interface_Stream_Handler_Reports_Invalid_Handler_Signature()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+            using System.Runtime.CompilerServices;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                async IAsyncEnumerable<string> IStreamRequestHandler<StreamTours, string>.Handle(
+                    StreamTours request,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    await Task.Yield();
+                    yield return request.Count.ToString();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == InvalidHandlerSignatureId);
+    }
+
+    [Fact]
+    public async Task Stream_Handler_Without_CancellationToken_Reports_Missing_CancellationToken()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+            using System.Runtime.CompilerServices;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTours request)
+                {
+                    await Task.Yield();
+                    yield return request.Count.ToString();
+                }
+
+                async IAsyncEnumerable<string> IStreamRequestHandler<StreamTours, string>.Handle(
+                    StreamTours request,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    await Task.Yield();
+                    yield return request.Count.ToString();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MissingCancellationTokenId);
+    }
+
+    [Fact]
+    public async Task Stream_Handler_With_Wrong_Return_Type_Reports_Return_Type_Mismatch()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+            using System.Runtime.CompilerServices;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public IEnumerable<string> Handle(StreamTours request, CancellationToken ct)
+                {
+                    yield return request.Count.ToString();
+                }
+
+                async IAsyncEnumerable<string> IStreamRequestHandler<StreamTours, string>.Handle(
+                    StreamTours request,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    await Task.Yield();
+                    yield return request.Count.ToString();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == HandlerReturnTypeMismatchId);
+    }
+
+    [Fact]
+    public async Task Stream_Handler_Calling_Sender_Reports_Handler_Should_Not_Call_Sender()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+            using System.Runtime.CompilerServices;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+            public sealed record LookupTour(string Code) : IQuery<string>;
+
+            public sealed class StreamToursHandler(ISender sender) : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    var result = await sender.Send(new LookupTour("test"), ct);
+                    yield return result;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == HandlerShouldNotCallSenderId);
+    }
+
     private sealed class TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>? globalOptions)
         : Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider
     {
