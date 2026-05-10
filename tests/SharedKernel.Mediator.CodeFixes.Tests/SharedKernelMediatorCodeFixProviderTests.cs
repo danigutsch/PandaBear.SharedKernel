@@ -1358,4 +1358,158 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         Assert.DoesNotContain(diagnosticsAfterFix, static candidate => candidate.Id == MediatorDiagnosticIds.MissingModuleMarker);
         Assert.Contains("services.AddTransient<global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public async Task Missing_CancellationToken_Forwarding_Title_Uses_Actual_Parameter_Name()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+            public sealed record SearchTour(string Code) : IQuery<string>;
+
+            public sealed class LookupTourHandler(ISender sender) : IQueryHandler<LookupTour, string>
+            {
+                public async ValueTask<string> Handle(LookupTour request, CancellationToken cancellationToken)
+                {
+                    return await sender.Send(new SearchTour(request.Code));
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MissingArgumentDiagnosticId,
+            "Test0.cs",
+            "sender.Send(new SearchTour(request.Code))");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Forward CancellationToken cancellationToken", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "return await sender.Send(new SearchTour(request.Code), cancellationToken);",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_CancellationToken_Forwarding_Does_Not_Register_When_No_CancellationToken_In_Scope()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+            public sealed record SearchTour(string Code) : IQuery<string>;
+
+            public sealed class LookupTourHandler(ISender sender) : IQueryHandler<LookupTour, string>
+            {
+                public async ValueTask<string> Handle(LookupTour request, CancellationToken ct)
+                {
+                    return await CallInner();
+                }
+
+                private async ValueTask<string> CallInner()
+                {
+                    return await sender.Send(new SearchTour("x"));
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MissingArgumentDiagnosticId,
+            "Test0.cs",
+            "sender.Send(new SearchTour(\"x\"))");
+
+        // Act
+        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Missing_EnumeratorCancellation_Adds_Attribute_With_Non_Ct_Parameter_Name()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken cancellationToken)
+                {
+                    await Task.Yield();
+                    yield return request.Count.ToString();
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            MediatorDiagnosticIds.MissingEnumeratorCancellation,
+            "Test0.cs",
+            "CancellationToken cancellationToken");
+
+        // Act
+        var codeAction = Assert.Single(
+            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            static candidate => string.Equals(candidate.Title, "Add [EnumeratorCancellation]", StringComparison.Ordinal));
+        await workspace.ApplyCodeActionAsync(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+
+        // Assert
+        Assert.Contains(
+            "[global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken",
+            updatedDocumentText,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Missing_Request_Interface_Does_Not_Register_When_Request_Implements_ICommand_Of_Response()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record CreateTour(string Name) : ICommand<int>;
+
+            public sealed class TourFacade(ISender sender)
+            {
+                public ValueTask<int> Create(CancellationToken ct)
+                {
+                    return sender.Send<int>(new CreateTour("Rome"), ct);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+            InvalidRequestArgumentDiagnosticId,
+            "Test0.cs",
+            "CreateTour(\"Rome\")");
+
+        // Act
+        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
 }
