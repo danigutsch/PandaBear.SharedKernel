@@ -244,6 +244,37 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
+    public async Task Non_Iterator_Stream_Handler_Reports_SKMED008_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
+                    => GetItems();
+
+                private async IAsyncEnumerable<string> GetItems()
+                {
+                    yield return "item";
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
+    }
+
+    [Fact]
     public async Task Non_Iterator_Stream_Pipeline_Does_Not_Report_EnumeratorCancellation_Diagnostic()
     {
         // Arrange
