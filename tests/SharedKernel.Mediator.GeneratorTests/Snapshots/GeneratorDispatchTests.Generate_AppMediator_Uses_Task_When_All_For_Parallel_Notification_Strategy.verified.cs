@@ -46,19 +46,51 @@ internal static class GeneratedDispatch
     {
         return notification switch
         {
-            global::Demo.TourCreated typed => Publish_0000(mediator.Services, typed, ct),
+            global::Demo.TourCreated typed => Publish_0000(mediator, typed, ct),
             _ => global::System.Threading.Tasks.ValueTask.CompletedTask,
         };
     }
 
     private static async global::System.Threading.Tasks.ValueTask Publish_0000(
-        global::System.IServiceProvider services,
+        AppMediator mediator,
         global::Demo.TourCreated notification,
         global::System.Threading.CancellationToken ct)
     {
-        var handler0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerOne>(services).Handle(notification, ct);
-        var handler1 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerTwo>(services).Handle(notification, ct);
-        await global::System.Threading.Tasks.Task.WhenAll(handler0.AsTask(), handler1.AsTask()).ConfigureAwait(false);
+        var activity = mediator.Instrumentation.ActivitySource.StartActivity("mediator.publish", global::System.Diagnostics.ActivityKind.Internal);
+        activity?.SetTag("mediator.notification.name", "TourCreated");
+        activity?.SetTag("mediator.notification.assembly", "SharedKernel.Mediator.Tests.Dynamic");
+        activity?.SetTag("mediator.notification.handler.count", 2);
+        var sw = global::System.Diagnostics.Stopwatch.GetTimestamp();
+        var outcome = "success";
+        try
+        {
+            var handler0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerOne>(mediator.Services).Handle(notification, ct);
+            var handler1 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerTwo>(mediator.Services).Handle(notification, ct);
+            await global::System.Threading.Tasks.Task.WhenAll(handler0.AsTask(), handler1.AsTask()).ConfigureAwait(false);
+            activity?.SetTag("mediator.outcome", "success");
+            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
+        }
+        catch (global::System.OperationCanceledException)
+        {
+            outcome = "cancelled";
+            activity?.SetTag("mediator.outcome", "cancelled");
+            throw;
+        }
+        catch (global::System.Exception ex)
+        {
+            outcome = "error";
+            activity?.SetTag("error.type", ex.GetType().Name);
+            activity?.AddException(ex);
+            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);
+            activity?.SetTag("mediator.outcome", "error");
+            throw;
+        }
+        finally
+        {
+            activity?.Dispose();
+            mediator.Instrumentation.NotificationsTotal.Add(1, new global::System.Diagnostics.TagList { { "mediator.notification.name", "TourCreated" }, { "mediator.outcome", outcome } });
+            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { "mediator.notification.name", "TourCreated" }, { "mediator.outcome", outcome } });
+        }
     }
 
     public static async global::System.Threading.Tasks.ValueTask<TTarget> Cast<TSource, TTarget>(

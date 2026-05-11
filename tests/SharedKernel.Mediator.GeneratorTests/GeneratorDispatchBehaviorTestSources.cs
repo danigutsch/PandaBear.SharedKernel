@@ -390,4 +390,136 @@ internal static class GeneratorDispatchBehaviorTestSources
             }
             """;
     }
+
+    public static string SendWithException()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record GetTour(int Id) : IRequest<string>;
+
+            public sealed class GetTourHandler : IRequestHandler<GetTour, string>
+            {
+                public ValueTask<string> Handle(GetTour request, CancellationToken ct)
+                    => throw new InvalidOperationException("handler boom");
+            }
+            """;
+    }
+
+    public static string PublishWithCancellation()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class TourCreatedHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    return ValueTask.CompletedTask;
+                }
+            }
+            """;
+    }
+
+    public static string StreamDispatchWithCancellationNoPipelines()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+            using System.Runtime.CompilerServices;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    for (var index = 1; index <= request.Count; index++)
+                    {
+                        await Task.Yield();
+                        ct.ThrowIfCancellationRequested();
+                        yield return $"item:{index}";
+                    }
+                }
+            }
+            """;
+    }
+
+    public static string StreamDispatchWithExceptionNoPipelines()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+            using System.Runtime.CompilerServices;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    await Task.Yield();
+                    yield return "item:1";
+                    throw new InvalidOperationException("boom");
+                }
+            }
+            """;
+    }
+
+    public static string StreamDispatchNoPipelines()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+            using System.Runtime.CompilerServices;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public async IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    for (var index = 1; index <= request.Count; index++)
+                    {
+                        await Task.Yield();
+                        yield return $"item:{index}";
+                    }
+                }
+            }
+            """;
+    }
 }

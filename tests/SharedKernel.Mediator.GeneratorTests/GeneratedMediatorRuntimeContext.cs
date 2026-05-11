@@ -1,3 +1,4 @@
+using System.Diagnostics.Metrics;
 using System.Reflection;
 
 namespace SharedKernel.Mediator.GeneratorTests;
@@ -6,6 +7,7 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
 {
     private readonly Assembly assembly;
     private readonly Type mediatorType;
+    private readonly TestMeterFactory meterFactory = new();
 
     private GeneratedMediatorRuntimeContext(Assembly assembly, Type mediatorType)
     {
@@ -82,7 +84,13 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
 
     public IMediator CreateMediator(params object[] services)
     {
-        return (IMediator)Activator.CreateInstance(mediatorType, new TestServiceProvider(services))!;
+        var resolvedServices = services.ToList();
+        if (!resolvedServices.OfType<AppMediatorInstrumentation>().Any())
+        {
+            resolvedServices.Add(new AppMediatorInstrumentation(meterFactory));
+        }
+
+        return (IMediator)Activator.CreateInstance(mediatorType, new TestServiceProvider([.. resolvedServices]))!;
     }
 
     public string[] ReadTraceEntries(string typeName = "Demo.TraceLog")
@@ -101,6 +109,7 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
 
     public void Dispose()
     {
+        meterFactory.Dispose();
         if (assembly is IDisposable disposableAssembly)
         {
             disposableAssembly.Dispose();
@@ -114,6 +123,26 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
         public object? GetService(Type serviceType)
         {
             return services.TryGetValue(serviceType, out var service) ? service : null;
+        }
+    }
+
+    private sealed class TestMeterFactory : IMeterFactory
+    {
+        private readonly List<Meter> meters = [];
+
+        Meter IMeterFactory.Create(MeterOptions options)
+        {
+            var meter = new Meter(options);
+            meters.Add(meter);
+            return meter;
+        }
+
+        public void Dispose()
+        {
+            foreach (var meter in meters)
+            {
+                meter.Dispose();
+            }
         }
     }
 }

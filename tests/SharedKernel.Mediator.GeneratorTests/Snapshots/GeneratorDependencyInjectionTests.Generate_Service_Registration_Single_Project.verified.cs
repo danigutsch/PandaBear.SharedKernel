@@ -18,6 +18,8 @@ public static partial class SharedKernelMediatorServiceCollectionExtensions
     public static IServiceCollection AddSharedKernelMediator(this IServiceCollection services)
     {
         global::System.ArgumentNullException.ThrowIfNull(services);
+        services.AddMetrics();
+        services.AddSingleton<AppMediatorInstrumentation>();
         services.AddScoped<AppMediator>();
         services.AddScoped<ISender>(static sp => sp.GetRequiredService<AppMediator>());
         services.AddScoped<IPublisher>(static sp => sp.GetRequiredService<AppMediator>());
