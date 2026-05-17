@@ -23,7 +23,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Send_exception_records_error_outcome_with_error_type_tag()
+    public async Task Records_Error_Outcome_And_Error_Type_Tag_For_A_Send_Exception()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -40,13 +40,15 @@ public sealed class GeneratorTelemetryBehaviorTests
 
         // Assert
         var span = Assert.Single(stopped, a => a.OperationName == "mediator.send");
+        var outcome = span.GetTagItem("mediator.outcome");
+        var errorType = span.GetTagItem("error.type");
         Assert.Equal(ActivityStatusCode.Error, span.Status);
-        Assert.Equal("error", span.GetTagItem("mediator.outcome"));
-        Assert.Equal("InvalidOperationException", span.GetTagItem("error.type"));
+        Assert.Equal("error", outcome);
+        Assert.Equal("InvalidOperationException", errorType);
     }
 
     [Fact]
-    public async Task Publish_cancellation_records_cancelled_outcome()
+    public async Task Records_A_Cancelled_Outcome_For_Publish_Cancellation()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -65,12 +67,14 @@ public sealed class GeneratorTelemetryBehaviorTests
 
         // Assert
         var span = Assert.Single(stopped, a => a.OperationName == "mediator.publish");
-        Assert.Equal("cancelled", span.GetTagItem("mediator.outcome"));
-        Assert.Null(span.GetTagItem("error.type"));
+        var outcome = span.GetTagItem("mediator.outcome");
+        var errorType = span.GetTagItem("error.type");
+        Assert.Equal("cancelled", outcome);
+        Assert.Null(errorType);
     }
 
     [Fact]
-    public async Task Stream_exception_during_enumeration_is_captured_on_span()
+    public async Task Captures_A_Stream_Enumeration_Exception_On_The_Span()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -92,13 +96,15 @@ public sealed class GeneratorTelemetryBehaviorTests
 
         // Assert
         var span = Assert.Single(stopped, a => a.OperationName == "mediator.stream");
+        var outcome = span.GetTagItem("mediator.outcome");
+        var errorType = span.GetTagItem("error.type");
         Assert.Equal(ActivityStatusCode.Error, span.Status);
-        Assert.Equal("error", span.GetTagItem("mediator.outcome"));
-        Assert.Equal("InvalidOperationException", span.GetTagItem("error.type"));
+        Assert.Equal("error", outcome);
+        Assert.Equal("InvalidOperationException", errorType);
     }
 
     [Fact]
-    public async Task Stream_cancellation_during_enumeration_records_cancelled_outcome()
+    public async Task Records_A_Cancelled_Outcome_For_Stream_Cancellation_During_Enumeration()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -121,12 +127,14 @@ public sealed class GeneratorTelemetryBehaviorTests
 
         // Assert
         var span = Assert.Single(stopped, a => a.OperationName == "mediator.stream");
-        Assert.Equal("cancelled", span.GetTagItem("mediator.outcome"));
-        Assert.Null(span.GetTagItem("error.type"));
+        var outcome = span.GetTagItem("mediator.outcome");
+        var errorType = span.GetTagItem("error.type");
+        Assert.Equal("cancelled", outcome);
+        Assert.Null(errorType);
     }
 
     [Fact]
-    public async Task Stream_span_is_closed_after_enumeration_not_after_send()
+    public async Task Closes_The_Stream_Span_After_Enumeration_Instead_Of_After_Send()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -150,6 +158,7 @@ public sealed class GeneratorTelemetryBehaviorTests
 
         // Assert — span closed after full enumeration
         var span = Assert.Single(stopped, a => a.OperationName == "mediator.stream");
-        Assert.Equal("success", span.GetTagItem("mediator.outcome"));
+        var outcome = span.GetTagItem("mediator.outcome");
+        Assert.Equal("success", outcome);
     }
 }
