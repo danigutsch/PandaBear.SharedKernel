@@ -14,6 +14,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
     public const string ParallelStrategy = "Parallel";
     public const int DefaultFailureHandlerCount = 10;
 
+    private const string DoubleIndent = "        ";
     private const string IndentedOpenBrace = "    {";
     private const string IndentedCloseBrace = "    }";
     private const string ReturnCompletedTask = "return ValueTask.CompletedTask;";
@@ -285,7 +286,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
                 .Append(notificationType)
                 .AppendLine(" notification, CancellationToken ct)");
             builder.AppendLine(IndentedOpenBrace);
-            builder.Append("        ")
+            builder.Append(DoubleIndent)
                 .Append(handlerBodyFactory(index))
                 .AppendLine();
             builder.AppendLine(IndentedCloseBrace);
@@ -321,11 +322,11 @@ internal static class NotificationPublishBenchmarkSourceFactory
             .Append('(')
             .Append(notificationType)
             .AppendLine(" notification, CancellationToken ct)");
-        builder.AppendLine("    {");
+        builder.AppendLine(IndentedOpenBrace);
 
         if (handlerCount == 0)
         {
-            builder.AppendLine("        " + ReturnCompletedTask);
+            builder.AppendLine(DoubleIndent + ReturnCompletedTask);
         }
         else
         {
@@ -334,7 +335,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
                 .AppendLine("_0000(notification, ct);");
         }
 
-        builder.AppendLine("    }");
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
 
         if (handlerCount == 0)
@@ -345,11 +346,11 @@ internal static class NotificationPublishBenchmarkSourceFactory
         builder.Append("    private async ValueTask ")
             .Append(methodName)
             .AppendLine("_0000(")
-            .Append("        ")
+            .Append(DoubleIndent)
             .Append(notificationType)
             .AppendLine(" notification,")
             .AppendLine("        CancellationToken ct)")
-            .AppendLine("    {");
+            .AppendLine(IndentedOpenBrace);
 
         for (var index = 0; index < handlerCount; index++)
         {
@@ -360,7 +361,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
                 .AppendLine();
         }
 
-        builder.AppendLine("    }");
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
     }
 
@@ -377,11 +378,11 @@ internal static class NotificationPublishBenchmarkSourceFactory
             .Append('(')
             .Append(notificationType)
             .AppendLine(" notification, CancellationToken ct)");
-        builder.AppendLine("    {");
+        builder.AppendLine(IndentedOpenBrace);
 
         if (handlerCount == 0)
         {
-            builder.AppendLine("        " + ReturnCompletedTask);
+            builder.AppendLine(DoubleIndent + ReturnCompletedTask);
         }
         else
         {
@@ -390,7 +391,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
                 .AppendLine("_0000(notification, ct);");
         }
 
-        builder.AppendLine("    }");
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
 
         if (handlerCount == 0)
@@ -401,11 +402,11 @@ internal static class NotificationPublishBenchmarkSourceFactory
         builder.Append("    private async ValueTask ")
             .Append(methodName)
             .AppendLine("_0000(")
-            .Append("        ")
+            .Append(DoubleIndent)
             .Append(notificationType)
             .AppendLine(" notification,")
             .AppendLine("        CancellationToken ct)")
-            .AppendLine("    {");
+            .AppendLine(IndentedOpenBrace);
 
         for (var index = 0; index < handlerCount; index++)
         {
@@ -433,7 +434,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
         }
 
         builder.AppendLine(").ConfigureAwait(false);");
-        builder.AppendLine("    }");
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
     }
 }
