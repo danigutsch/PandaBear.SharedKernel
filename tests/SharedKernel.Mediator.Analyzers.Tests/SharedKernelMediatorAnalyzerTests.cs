@@ -675,4 +675,47 @@ public sealed class SharedKernelMediatorAnalyzerTests
         Assert.DoesNotContain(diagnostics, static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
         Assert.DoesNotContain(diagnostics, static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
     }
+
+    [Fact]
+    public async Task Non_Iterator_Stream_Handler_That_Forwards_CancellationToken_Does_Not_Report_NonIterator_Diagnostic()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Collections.Generic;
+            using System.Runtime.CompilerServices;
+            using System.Threading;
+
+            namespace Demo;
+
+            public sealed record StreamTours(int Count) : IStreamRequest<string>;
+
+            public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+            {
+                public IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
+                {
+                    ArgumentNullException.ThrowIfNull(request);
+                    return GetItems(request.Count, ct);
+                }
+
+                private static async IAsyncEnumerable<string> GetItems(
+                    int count,
+                    [EnumeratorCancellation] CancellationToken ct)
+                {
+                    for (var index = 0; index < count; index++)
+                    {
+                        ct.ThrowIfCancellationRequested();
+                        yield return index.ToString();
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
+        Assert.DoesNotContain(diagnostics, static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+    }
 }
