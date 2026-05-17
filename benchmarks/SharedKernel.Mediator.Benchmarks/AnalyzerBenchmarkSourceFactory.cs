@@ -11,6 +11,9 @@ internal static class AnalyzerBenchmarkSourceFactory
     public const string NoDiagnostics = "NoDiagnostics";
     public const string ManyDiagnostics = "ManyDiagnostics";
 
+    private const string IndentedOpenBrace = "    {";
+    private const string IndentedCloseBrace = "    }";
+
     public static string CreateSource(int requestCount, string diagnosticsMode)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(requestCount);
@@ -23,14 +26,14 @@ internal static class AnalyzerBenchmarkSourceFactory
         builder.AppendLine("public sealed class BenchmarkSender : ISender");
         builder.AppendLine("{");
         builder.AppendLine("    public ValueTask<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken ct)");
-        builder.AppendLine("    {");
+        builder.AppendLine(IndentedOpenBrace);
         builder.AppendLine("        throw new NotSupportedException();");
-        builder.AppendLine("    }");
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
         builder.AppendLine("    public IAsyncEnumerable<TResponse> Send<TResponse>(IStreamRequest<TResponse> request, CancellationToken ct)");
-        builder.AppendLine("    {");
+        builder.AppendLine(IndentedOpenBrace);
         builder.AppendLine("        throw new NotSupportedException();");
-        builder.AppendLine("    }");
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine("}");
         builder.AppendLine();
 
@@ -53,10 +56,10 @@ internal static class AnalyzerBenchmarkSourceFactory
                         .Append("    public ValueTask<int> Handle(Request")
                         .Append(index.ToString(CultureInfo.InvariantCulture))
                         .AppendLine(" request, CancellationToken ct)")
-                        .AppendLine("    {")
+                        .AppendLine(IndentedOpenBrace)
                         .AppendLine("        ct.ThrowIfCancellationRequested();")
                         .AppendLine("        return ValueTask.FromResult(request.Id);")
-                        .AppendLine("    }")
+                        .AppendLine(IndentedCloseBrace)
                         .AppendLine("}")
                         .AppendLine();
                     break;
@@ -71,20 +74,20 @@ internal static class AnalyzerBenchmarkSourceFactory
                         .Append("    public async ValueTask<int> Handle(Request")
                         .Append(index.ToString(CultureInfo.InvariantCulture))
                         .AppendLine(" request, CancellationToken ct)")
-                        .AppendLine("    {")
+                        .AppendLine(IndentedOpenBrace)
                         .Append("        return await sender.Send(new Request")
                         .Append(index.ToString(CultureInfo.InvariantCulture))
                         .AppendLine("(request.Id), CancellationToken.None);")
-                        .AppendLine("    }")
+                        .AppendLine(IndentedCloseBrace)
                         .AppendLine()
                         .Append("    ValueTask<int> IQueryHandler<Request")
                         .Append(index.ToString(CultureInfo.InvariantCulture))
                         .Append(", int>.Handle(Request")
                         .Append(index.ToString(CultureInfo.InvariantCulture))
                         .AppendLine(" request, CancellationToken ct)")
-                        .AppendLine("    {")
+                        .AppendLine(IndentedOpenBrace)
                         .AppendLine("        return ValueTask.FromResult(request.Id);")
-                        .AppendLine("    }")
+                        .AppendLine(IndentedCloseBrace)
                         .AppendLine("}")
                         .AppendLine();
                     break;
