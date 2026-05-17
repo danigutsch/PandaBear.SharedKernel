@@ -21,7 +21,7 @@ internal static class GeneratorSnapshotVerifier
         [CallerMemberName] string testName = "",
         string extension = "cs")
     {
-        var snapshotDirectory = Path.Combine(Path.GetDirectoryName(filePath)!, "Snapshots");
+        var snapshotDirectory = GetSnapshotDirectory(filePath);
         Directory.CreateDirectory(snapshotDirectory);
 
         var snapshotName = $"{Path.GetFileNameWithoutExtension(filePath)}.{testName}";
@@ -48,6 +48,33 @@ internal static class GeneratorSnapshotVerifier
         {
             File.Delete(receivedPath);
         }
+    }
+
+    private static string GetSnapshotDirectory(string filePath)
+    {
+        var fileName = Path.GetFileName(filePath);
+        var projectDirectory = FindRepositoryDirectoryContaining(
+            Path.Combine("tests", "SharedKernel.Mediator.GeneratorTests", fileName));
+
+        return Path.Combine(projectDirectory, "Snapshots");
+    }
+
+    private static string FindRepositoryDirectoryContaining(string relativePath)
+    {
+        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (currentDirectory is not null)
+        {
+            var candidatePath = Path.Combine(currentDirectory.FullName, relativePath);
+            if (File.Exists(candidatePath))
+            {
+                return Path.GetDirectoryName(candidatePath)!;
+            }
+
+            currentDirectory = currentDirectory.Parent;
+        }
+
+        throw new XunitException($"Could not locate repository path for '{relativePath}'.");
     }
 
     /// <summary>
