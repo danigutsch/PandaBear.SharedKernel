@@ -14,6 +14,19 @@ internal static class NotificationPublishBenchmarkSourceFactory
     public const string ParallelStrategy = "Parallel";
     public const int DefaultFailureHandlerCount = 10;
 
+    private const string IndentedOpenBrace = "    {";
+    private const string IndentedCloseBrace = "    }";
+    private const string ReturnCompletedTask = "return ValueTask.CompletedTask;";
+    private const string PublisherDeclaration = "        var publisher = new BenchmarkPublisher();";
+    private const string AsyncLambdaHeader = "        return async () =>";
+    private const string LambdaOpenBrace = "        {";
+    private const string TryKeyword = "            try";
+    private const string TryOpenBrace = "            {";
+    private const string ReturnZero = "                return 0;";
+    private const string TryCloseBrace = "            }";
+    private const string ReturnOne = "                return 1;";
+    private const string LambdaClose = "        };";
+
     /// <summary>
     /// Creates a runtime benchmark source with sequential, parallel, exception, and cancellation publish paths.
     /// </summary>
@@ -46,13 +59,13 @@ internal static class NotificationPublishBenchmarkSourceFactory
             notificationType: "SequentialNotification",
             handlerPrefix: "SequentialNotificationHandler",
             handlerCount,
-            handlerBody: "return ValueTask.CompletedTask;");
+            handlerBody: ReturnCompletedTask);
         AppendHandlerFamily(
             builder,
             notificationType: "ParallelNotification",
             handlerPrefix: "ParallelNotificationHandler",
             handlerCount,
-            handlerBody: "return ValueTask.CompletedTask;");
+            handlerBody: ReturnCompletedTask);
         AppendHandlerFamily(
             builder,
             notificationType: "ExceptionalSequentialNotification",
@@ -60,7 +73,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
             failureHandlerCount,
             handlerBodyFactory: static index => index == DefaultFailureHandlerCount / 2
                 ? "throw new InvalidOperationException(\"boom\");"
-                : "return ValueTask.CompletedTask;");
+                : ReturnCompletedTask);
         AppendHandlerFamily(
             builder,
             notificationType: "ExceptionalParallelNotification",
@@ -68,7 +81,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
             failureHandlerCount,
             handlerBodyFactory: static index => index == DefaultFailureHandlerCount / 2
                 ? "throw new InvalidOperationException(\"boom\");"
-                : "return ValueTask.CompletedTask;");
+                : ReturnCompletedTask);
         AppendHandlerFamily(
             builder,
             notificationType: "CancellationSequentialNotification",
@@ -113,88 +126,88 @@ internal static class NotificationPublishBenchmarkSourceFactory
         builder.AppendLine("public static class BenchmarkExports");
         builder.AppendLine("{");
         builder.AppendLine("    public static Func<CancellationToken, ValueTask> CreateSequentialPublish()");
-        builder.AppendLine("    {");
-        builder.AppendLine("        var publisher = new BenchmarkPublisher();");
+        builder.AppendLine(IndentedOpenBrace);
+        builder.AppendLine(PublisherDeclaration);
         builder.AppendLine("        return publisher.PublishSequential;");
-        builder.AppendLine("    }");
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
         builder.AppendLine("    public static Func<CancellationToken, ValueTask> CreateParallelPublish()");
-        builder.AppendLine("    {");
-        builder.AppendLine("        var publisher = new BenchmarkPublisher();");
+        builder.AppendLine(IndentedOpenBrace);
+        builder.AppendLine(PublisherDeclaration);
         builder.AppendLine("        return publisher.PublishParallel;");
-        builder.AppendLine("    }");
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
         builder.AppendLine("    public static Func<ValueTask<int>> CreateSequentialExceptionPath()");
-        builder.AppendLine("    {");
-        builder.AppendLine("        var publisher = new BenchmarkPublisher();");
-        builder.AppendLine("        return async () =>");
-        builder.AppendLine("        {");
-        builder.AppendLine("            try");
-        builder.AppendLine("            {");
+        builder.AppendLine(IndentedOpenBrace);
+        builder.AppendLine(PublisherDeclaration);
+        builder.AppendLine(AsyncLambdaHeader);
+        builder.AppendLine(LambdaOpenBrace);
+        builder.AppendLine(TryKeyword);
+        builder.AppendLine(TryOpenBrace);
         builder.AppendLine("                await publisher.PublishSequentialException(CancellationToken.None).ConfigureAwait(false);");
-        builder.AppendLine("                return 0;");
-        builder.AppendLine("            }");
+        builder.AppendLine(ReturnZero);
+        builder.AppendLine(TryCloseBrace);
         builder.AppendLine("            catch (InvalidOperationException)");
-        builder.AppendLine("            {");
-        builder.AppendLine("                return 1;");
-        builder.AppendLine("            }");
-        builder.AppendLine("        };");
-        builder.AppendLine("    }");
+        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(ReturnOne);
+        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(LambdaClose);
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
         builder.AppendLine("    public static Func<ValueTask<int>> CreateParallelExceptionPath()");
-        builder.AppendLine("    {");
-        builder.AppendLine("        var publisher = new BenchmarkPublisher();");
-        builder.AppendLine("        return async () =>");
-        builder.AppendLine("        {");
-        builder.AppendLine("            try");
-        builder.AppendLine("            {");
+        builder.AppendLine(IndentedOpenBrace);
+        builder.AppendLine(PublisherDeclaration);
+        builder.AppendLine(AsyncLambdaHeader);
+        builder.AppendLine(LambdaOpenBrace);
+        builder.AppendLine(TryKeyword);
+        builder.AppendLine(TryOpenBrace);
         builder.AppendLine("                await publisher.PublishParallelException(CancellationToken.None).ConfigureAwait(false);");
-        builder.AppendLine("                return 0;");
-        builder.AppendLine("            }");
+        builder.AppendLine(ReturnZero);
+        builder.AppendLine(TryCloseBrace);
         builder.AppendLine("            catch (Exception)");
-        builder.AppendLine("            {");
-        builder.AppendLine("                return 1;");
-        builder.AppendLine("            }");
-        builder.AppendLine("        };");
-        builder.AppendLine("    }");
+        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(ReturnOne);
+        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(LambdaClose);
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
         builder.AppendLine("    public static Func<ValueTask<int>> CreateSequentialCancellationPath()");
-        builder.AppendLine("    {");
-        builder.AppendLine("        var publisher = new BenchmarkPublisher();");
-        builder.AppendLine("        return async () =>");
-        builder.AppendLine("        {");
+        builder.AppendLine(IndentedOpenBrace);
+        builder.AppendLine(PublisherDeclaration);
+        builder.AppendLine(AsyncLambdaHeader);
+        builder.AppendLine(LambdaOpenBrace);
         builder.AppendLine("            using var cts = new CancellationTokenSource();");
         builder.AppendLine("            cts.Cancel();");
-        builder.AppendLine("            try");
-        builder.AppendLine("            {");
+        builder.AppendLine(TryKeyword);
+        builder.AppendLine(TryOpenBrace);
         builder.AppendLine("                await publisher.PublishSequentialCancellation(cts.Token).ConfigureAwait(false);");
-        builder.AppendLine("                return 0;");
-        builder.AppendLine("            }");
+        builder.AppendLine(ReturnZero);
+        builder.AppendLine(TryCloseBrace);
         builder.AppendLine("            catch (OperationCanceledException)");
-        builder.AppendLine("            {");
-        builder.AppendLine("                return 1;");
-        builder.AppendLine("            }");
-        builder.AppendLine("        };");
-        builder.AppendLine("    }");
+        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(ReturnOne);
+        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(LambdaClose);
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
         builder.AppendLine("    public static Func<ValueTask<int>> CreateParallelCancellationPath()");
-        builder.AppendLine("    {");
-        builder.AppendLine("        var publisher = new BenchmarkPublisher();");
-        builder.AppendLine("        return async () =>");
-        builder.AppendLine("        {");
+        builder.AppendLine(IndentedOpenBrace);
+        builder.AppendLine(PublisherDeclaration);
+        builder.AppendLine(AsyncLambdaHeader);
+        builder.AppendLine(LambdaOpenBrace);
         builder.AppendLine("            using var cts = new CancellationTokenSource();");
         builder.AppendLine("            cts.Cancel();");
-        builder.AppendLine("            try");
-        builder.AppendLine("            {");
+        builder.AppendLine(TryKeyword);
+        builder.AppendLine(TryOpenBrace);
         builder.AppendLine("                await publisher.PublishParallelCancellation(cts.Token).ConfigureAwait(false);");
-        builder.AppendLine("                return 0;");
-        builder.AppendLine("            }");
+        builder.AppendLine(ReturnZero);
+        builder.AppendLine(TryCloseBrace);
         builder.AppendLine("            catch (OperationCanceledException)");
-        builder.AppendLine("            {");
-        builder.AppendLine("                return 1;");
-        builder.AppendLine("            }");
-        builder.AppendLine("        };");
-        builder.AppendLine("    }");
+        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(ReturnOne);
+        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(LambdaClose);
+        builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine("}");
 
         return builder.ToString();
@@ -271,11 +284,11 @@ internal static class NotificationPublishBenchmarkSourceFactory
             builder.Append("    public ValueTask Handle(")
                 .Append(notificationType)
                 .AppendLine(" notification, CancellationToken ct)");
-            builder.AppendLine("    {");
+             builder.AppendLine(IndentedOpenBrace);
             builder.Append("        ")
                 .Append(handlerBodyFactory(index))
                 .AppendLine();
-            builder.AppendLine("    }");
+             builder.AppendLine(IndentedCloseBrace);
             builder.AppendLine("}");
             builder.AppendLine();
         }
@@ -312,7 +325,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
 
         if (handlerCount == 0)
         {
-            builder.AppendLine("        return ValueTask.CompletedTask;");
+            builder.AppendLine("        " + ReturnCompletedTask);
         }
         else
         {
@@ -368,7 +381,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
 
         if (handlerCount == 0)
         {
-            builder.AppendLine("        return ValueTask.CompletedTask;");
+            builder.AppendLine("        " + ReturnCompletedTask);
         }
         else
         {
