@@ -21,9 +21,9 @@ internal static class NotificationPublishBenchmarkSourceFactory
     private const string AsyncLambdaHeader = "        return async () =>";
     private const string LambdaOpenBrace = "        {";
     private const string TryKeyword = "            try";
-    private const string TryOpenBrace = "            {";
+    private const string NestedBlockOpenBrace = "            {";
     private const string ReturnZero = "                return 0;";
-    private const string TryCloseBrace = "            }";
+    private const string NestedBlockCloseBrace = "            }";
     private const string ReturnOne = "                return 1;";
     private const string LambdaClose = "        };";
 
@@ -143,14 +143,14 @@ internal static class NotificationPublishBenchmarkSourceFactory
         builder.AppendLine(AsyncLambdaHeader);
         builder.AppendLine(LambdaOpenBrace);
         builder.AppendLine(TryKeyword);
-        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(NestedBlockOpenBrace);
         builder.AppendLine("                await publisher.PublishSequentialException(CancellationToken.None).ConfigureAwait(false);");
         builder.AppendLine(ReturnZero);
-        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(NestedBlockCloseBrace);
         builder.AppendLine("            catch (InvalidOperationException)");
-        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(NestedBlockOpenBrace);
         builder.AppendLine(ReturnOne);
-        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(NestedBlockCloseBrace);
         builder.AppendLine(LambdaClose);
         builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
@@ -160,14 +160,14 @@ internal static class NotificationPublishBenchmarkSourceFactory
         builder.AppendLine(AsyncLambdaHeader);
         builder.AppendLine(LambdaOpenBrace);
         builder.AppendLine(TryKeyword);
-        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(NestedBlockOpenBrace);
         builder.AppendLine("                await publisher.PublishParallelException(CancellationToken.None).ConfigureAwait(false);");
         builder.AppendLine(ReturnZero);
-        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(NestedBlockCloseBrace);
         builder.AppendLine("            catch (Exception)");
-        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(NestedBlockOpenBrace);
         builder.AppendLine(ReturnOne);
-        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(NestedBlockCloseBrace);
         builder.AppendLine(LambdaClose);
         builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
@@ -179,14 +179,14 @@ internal static class NotificationPublishBenchmarkSourceFactory
         builder.AppendLine("            using var cts = new CancellationTokenSource();");
         builder.AppendLine("            cts.Cancel();");
         builder.AppendLine(TryKeyword);
-        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(NestedBlockOpenBrace);
         builder.AppendLine("                await publisher.PublishSequentialCancellation(cts.Token).ConfigureAwait(false);");
         builder.AppendLine(ReturnZero);
-        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(NestedBlockCloseBrace);
         builder.AppendLine("            catch (OperationCanceledException)");
-        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(NestedBlockOpenBrace);
         builder.AppendLine(ReturnOne);
-        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(NestedBlockCloseBrace);
         builder.AppendLine(LambdaClose);
         builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine();
@@ -198,14 +198,14 @@ internal static class NotificationPublishBenchmarkSourceFactory
         builder.AppendLine("            using var cts = new CancellationTokenSource();");
         builder.AppendLine("            cts.Cancel();");
         builder.AppendLine(TryKeyword);
-        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(NestedBlockOpenBrace);
         builder.AppendLine("                await publisher.PublishParallelCancellation(cts.Token).ConfigureAwait(false);");
         builder.AppendLine(ReturnZero);
-        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(NestedBlockCloseBrace);
         builder.AppendLine("            catch (OperationCanceledException)");
-        builder.AppendLine(TryOpenBrace);
+        builder.AppendLine(NestedBlockOpenBrace);
         builder.AppendLine(ReturnOne);
-        builder.AppendLine(TryCloseBrace);
+        builder.AppendLine(NestedBlockCloseBrace);
         builder.AppendLine(LambdaClose);
         builder.AppendLine(IndentedCloseBrace);
         builder.AppendLine("}");
@@ -284,11 +284,11 @@ internal static class NotificationPublishBenchmarkSourceFactory
             builder.Append("    public ValueTask Handle(")
                 .Append(notificationType)
                 .AppendLine(" notification, CancellationToken ct)");
-             builder.AppendLine(IndentedOpenBrace);
+            builder.AppendLine(IndentedOpenBrace);
             builder.Append("        ")
                 .Append(handlerBodyFactory(index))
                 .AppendLine();
-             builder.AppendLine(IndentedCloseBrace);
+            builder.AppendLine(IndentedCloseBrace);
             builder.AppendLine("}");
             builder.AppendLine();
         }
