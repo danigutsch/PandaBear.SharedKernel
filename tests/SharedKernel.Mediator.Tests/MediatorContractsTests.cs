@@ -174,9 +174,10 @@ public sealed class MediatorContractsTests
 
         // Act
         var returnType = method?.ReturnType;
+        var genericReturnType = returnType?.GetGenericTypeDefinition();
 
         // Assert
         Assert.NotNull(method);
-        Assert.Equal(typeof(IAsyncEnumerable<>), returnType?.GetGenericTypeDefinition());
+        Assert.Equal(typeof(IAsyncEnumerable<>), genericReturnType);
     }
 }

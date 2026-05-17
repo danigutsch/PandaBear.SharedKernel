@@ -52,7 +52,8 @@ internal static class AnalyzerTestHarness
     private static IEnumerable<MetadataReference> GetMetadataReferences()
     {
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        Assert.False(string.IsNullOrWhiteSpace(trustedPlatformAssemblies));
+        var isMissingTrustedAssemblies = string.IsNullOrWhiteSpace(trustedPlatformAssemblies);
+        Assert.False(isMissingTrustedAssemblies);
 
         foreach (var path in trustedPlatformAssemblies!.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
         {

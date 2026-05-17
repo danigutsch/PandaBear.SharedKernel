@@ -938,8 +938,9 @@ public sealed class GeneratorDispatchBehaviorTests
 
         // Assert
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(Act);
+        var traceEntries = runtime.ReadTraceEntries("Demo.TraceLog");
         Assert.Equal("boom", exception.Message);
-        Assert.Equal(["before-fail"], runtime.ReadTraceEntries("Demo.TraceLog"));
+        Assert.Equal(["before-fail"], traceEntries);
     }
 
     [Fact]

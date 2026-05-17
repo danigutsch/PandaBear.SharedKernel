@@ -79,10 +79,11 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         // Act
         var publishOutput = await workspace.Publish("-c", "Release");
         var publishDirectory = workspace.GetPublishDirectory();
+        var publishDirectoryExists = Directory.Exists(publishDirectory);
 
         // Assert
         Assert.NotEmpty(publishOutput);
-        Assert.True(Directory.Exists(publishDirectory));
+        Assert.True(publishDirectoryExists);
         Assert.NotEmpty(Directory.GetFiles(publishDirectory, "*", SearchOption.TopDirectoryOnly));
     }
 
@@ -110,11 +111,13 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         var coldStartMeasurement = await RunPublishedExecutable(publishedExecutable);
         var runtimeMetrics = ParseRuntimeMetrics(coldStartMeasurement.Output);
         var nativeBinarySize = new FileInfo(publishedExecutable).Length;
+        var publishDirectoryExists = Directory.Exists(publishDirectory);
+        var publishedExecutableExists = File.Exists(publishedExecutable);
 
         // Assert
         Assert.NotEmpty(publishOutput);
-        Assert.True(Directory.Exists(publishDirectory));
-        Assert.True(File.Exists(publishedExecutable));
+        Assert.True(publishDirectoryExists);
+        Assert.True(publishedExecutableExists);
         Assert.Equal(0, trimWarningCount);
         Assert.True(nativeBinarySize > 0, "Native binary size must be greater than zero.");
         Assert.True(coldStartMeasurement.Duration > TimeSpan.Zero, "Cold start time must be measurable.");
