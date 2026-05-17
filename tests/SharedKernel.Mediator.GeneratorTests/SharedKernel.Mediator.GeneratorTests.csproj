@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>SharedKernel.Mediator.GeneratorTests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Remove="Snapshots/**/*.verified.*" />
+        <Compile Remove="Snapshots/**/*.received.*" />
+        <None Include="Snapshots/**/*.verified.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="$(MediatorRoslynVersion)" />
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3.mtp-v2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
+        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator\SharedKernel.Mediator.csproj" />
+        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj" />
+        <ProjectReference Include="..\SharedKernel.Mediator.Testing.ReferenceDispatcher\SharedKernel.Mediator.Testing.ReferenceDispatcher.csproj" />
+        <ProjectReference Include="..\SharedKernel.Testing.Roslyn\SharedKernel.Testing.Roslyn.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\..\src\Mediator\SharedKernel.Mediator.SourceGenerator\MediatorDiagnosticIds.cs" Link="MediatorDiagnosticIds.cs" />
+    </ItemGroup>
+
+</Project>
