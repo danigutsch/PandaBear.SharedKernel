@@ -55,6 +55,17 @@ public readonly struct Result<T> : IEquatable<Result<T>>
     public ResultError? ErrorDetails => IsFailure ? error : null;
 
     /// <summary>
+    /// Returns the current success value when the result succeeded.
+    /// </summary>
+    /// <param name="currentValue">The current success value when the result succeeded; otherwise <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> when the result succeeded.</returns>
+    public bool TryGetValue([NotNullWhen(true)] out T? currentValue)
+    {
+        currentValue = IsSuccess ? value : default;
+        return currentValue is not null;
+    }
+
+    /// <summary>
     /// Returns the current error details when the result failed.
     /// </summary>
     /// <param name="currentError">The current error details when the result failed; otherwise <see langword="null"/>.</param>
