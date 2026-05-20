@@ -84,6 +84,38 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     }
 
     /// <summary>
+    /// Maps the current option value into a new option value.
+    /// </summary>
+    /// <typeparam name="TResult">The projected reference type.</typeparam>
+    /// <param name="map">The projection to apply when a value is present.</param>
+    /// <returns>The projected option, or an empty option when no value is present.</returns>
+    public Option<TResult> Map<TResult>(Func<T, TResult> map)
+        where TResult : class
+    {
+        ArgumentNullException.ThrowIfNull(map);
+
+        return TryGetValue(out var currentValue)
+            ? Option.Some(map(currentValue))
+            : Option.None<TResult>();
+    }
+
+    /// <summary>
+    /// Binds the current option value into another option.
+    /// </summary>
+    /// <typeparam name="TResult">The projected reference type.</typeparam>
+    /// <param name="bind">The projection to apply when a value is present.</param>
+    /// <returns>The bound option, or an empty option when no value is present.</returns>
+    public Option<TResult> Bind<TResult>(Func<T, Option<TResult>> bind)
+        where TResult : class
+    {
+        ArgumentNullException.ThrowIfNull(bind);
+
+        return TryGetValue(out var currentValue)
+            ? bind(currentValue)
+            : Option.None<TResult>();
+    }
+
+    /// <summary>
     /// Projects the option into one of two result values.
     /// </summary>
     /// <typeparam name="TResult">The result type produced by the match.</typeparam>
