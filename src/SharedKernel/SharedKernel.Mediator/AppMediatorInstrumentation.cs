@@ -20,7 +20,7 @@ public sealed class AppMediatorInstrumentation : IDisposable
         ArgumentNullException.ThrowIfNull(meterFactory);
 
         _activitySource = SharedKernelMediatorActivitySource.Source;
-        _meter = meterFactory.Create("SharedKernel.Mediator");
+        _meter = meterFactory.Create(MediatorTelemetry.Name);
         RequestsTotal = _meter.CreateCounter<long>("mediator.requests", "{request}", "Total mediator requests dispatched.");
         RequestsDuration = _meter.CreateHistogram<double>("mediator.request.duration", "ms", "Duration of mediator request dispatch.");
         NotificationsTotal = _meter.CreateCounter<long>("mediator.notifications", "{notification}", "Total mediator notifications dispatched.");
