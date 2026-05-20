@@ -91,6 +91,44 @@ public readonly struct Result<T> : IEquatable<Result<T>>
     }
 
     /// <summary>
+    /// Maps the current success value into a new result value using an asynchronous projection.
+    /// </summary>
+    /// <typeparam name="TResult">The projected non-null success type.</typeparam>
+    /// <param name="map">The asynchronous projection to apply when the result succeeded.</param>
+    /// <returns>The mapped result, or the original failure when the result failed.</returns>
+    public async Task<Result<TResult>> Map<TResult>(Func<T, Task<TResult>> map)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(map);
+
+        if (TryGetValue(out var currentValue))
+        {
+            return Result.Ok(await map(currentValue).ConfigureAwait(false));
+        }
+
+        return new Result<TResult>(Status, default, ErrorDetails);
+    }
+
+    /// <summary>
+    /// Maps the current success value into a new result value using an asynchronous projection.
+    /// </summary>
+    /// <typeparam name="TResult">The projected non-null success type.</typeparam>
+    /// <param name="map">The asynchronous projection to apply when the result succeeded.</param>
+    /// <returns>The mapped result, or the original failure when the result failed.</returns>
+    public async ValueTask<Result<TResult>> Map<TResult>(Func<T, ValueTask<TResult>> map)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(map);
+
+        if (TryGetValue(out var currentValue))
+        {
+            return Result.Ok(await map(currentValue).ConfigureAwait(false));
+        }
+
+        return new Result<TResult>(Status, default, ErrorDetails);
+    }
+
+    /// <summary>
     /// Binds the current success value into another result.
     /// </summary>
     /// <typeparam name="TResult">The projected non-null success type.</typeparam>
@@ -104,6 +142,44 @@ public readonly struct Result<T> : IEquatable<Result<T>>
         return TryGetValue(out var currentValue)
             ? bind(currentValue)
             : new Result<TResult>(Status, default, ErrorDetails);
+    }
+
+    /// <summary>
+    /// Binds the current success value into another result using an asynchronous projection.
+    /// </summary>
+    /// <typeparam name="TResult">The projected non-null success type.</typeparam>
+    /// <param name="bind">The asynchronous projection to apply when the result succeeded.</param>
+    /// <returns>The bound result, or the original failure when the result failed.</returns>
+    public async Task<Result<TResult>> Bind<TResult>(Func<T, Task<Result<TResult>>> bind)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(bind);
+
+        if (TryGetValue(out var currentValue))
+        {
+            return await bind(currentValue).ConfigureAwait(false);
+        }
+
+        return new Result<TResult>(Status, default, ErrorDetails);
+    }
+
+    /// <summary>
+    /// Binds the current success value into another result using an asynchronous projection.
+    /// </summary>
+    /// <typeparam name="TResult">The projected non-null success type.</typeparam>
+    /// <param name="bind">The asynchronous projection to apply when the result succeeded.</param>
+    /// <returns>The bound result, or the original failure when the result failed.</returns>
+    public async ValueTask<Result<TResult>> Bind<TResult>(Func<T, ValueTask<Result<TResult>>> bind)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(bind);
+
+        if (TryGetValue(out var currentValue))
+        {
+            return await bind(currentValue).ConfigureAwait(false);
+        }
+
+        return new Result<TResult>(Status, default, ErrorDetails);
     }
 
     /// <summary>
@@ -139,6 +215,46 @@ public readonly struct Result<T> : IEquatable<Result<T>>
         {
             ResultStatus.Ok or ResultStatus.Created or ResultStatus.Accepted => whenSuccess(GetRequiredValue()),
             ResultStatus.Invalid or ResultStatus.Unauthorized or ResultStatus.Forbidden or ResultStatus.NotFound or ResultStatus.Conflict or ResultStatus.Error or ResultStatus.CriticalError or ResultStatus.Unavailable => whenFailure(GetRequiredError()),
+            _ => throw new InvalidOperationException(UninitializedResultMessage),
+        };
+    }
+
+    /// <summary>
+    /// Projects the result into one of two result values using asynchronous delegates.
+    /// </summary>
+    /// <typeparam name="TResult">The projected result type.</typeparam>
+    /// <param name="whenSuccess">Called when the result succeeded.</param>
+    /// <param name="whenFailure">Called when the result failed.</param>
+    /// <returns>The value produced by the matched branch.</returns>
+    public async Task<TResult> Match<TResult>(Func<T, Task<TResult>> whenSuccess, Func<ResultError, Task<TResult>> whenFailure)
+    {
+        ArgumentNullException.ThrowIfNull(whenSuccess);
+        ArgumentNullException.ThrowIfNull(whenFailure);
+
+        return Status switch
+        {
+            ResultStatus.Ok or ResultStatus.Created or ResultStatus.Accepted => await whenSuccess(GetRequiredValue()).ConfigureAwait(false),
+            ResultStatus.Invalid or ResultStatus.Unauthorized or ResultStatus.Forbidden or ResultStatus.NotFound or ResultStatus.Conflict or ResultStatus.Error or ResultStatus.CriticalError or ResultStatus.Unavailable => await whenFailure(GetRequiredError()).ConfigureAwait(false),
+            _ => throw new InvalidOperationException(UninitializedResultMessage),
+        };
+    }
+
+    /// <summary>
+    /// Projects the result into one of two result values using asynchronous delegates.
+    /// </summary>
+    /// <typeparam name="TResult">The projected result type.</typeparam>
+    /// <param name="whenSuccess">Called when the result succeeded.</param>
+    /// <param name="whenFailure">Called when the result failed.</param>
+    /// <returns>The value produced by the matched branch.</returns>
+    public async ValueTask<TResult> Match<TResult>(Func<T, ValueTask<TResult>> whenSuccess, Func<ResultError, ValueTask<TResult>> whenFailure)
+    {
+        ArgumentNullException.ThrowIfNull(whenSuccess);
+        ArgumentNullException.ThrowIfNull(whenFailure);
+
+        return Status switch
+        {
+            ResultStatus.Ok or ResultStatus.Created or ResultStatus.Accepted => await whenSuccess(GetRequiredValue()).ConfigureAwait(false),
+            ResultStatus.Invalid or ResultStatus.Unauthorized or ResultStatus.Forbidden or ResultStatus.NotFound or ResultStatus.Conflict or ResultStatus.Error or ResultStatus.CriticalError or ResultStatus.Unavailable => await whenFailure(GetRequiredError()).ConfigureAwait(false),
             _ => throw new InvalidOperationException(UninitializedResultMessage),
         };
     }

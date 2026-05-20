@@ -77,6 +77,46 @@ public readonly struct Result : IEquatable<Result>
     }
 
     /// <summary>
+    /// Projects the result into one of two result values using asynchronous delegates.
+    /// </summary>
+    /// <typeparam name="TResult">The projected result type.</typeparam>
+    /// <param name="whenSuccess">Called when the result succeeded.</param>
+    /// <param name="whenFailure">Called when the result failed.</param>
+    /// <returns>The value produced by the matched branch.</returns>
+    public async Task<TResult> Match<TResult>(Func<Task<TResult>> whenSuccess, Func<ResultError, Task<TResult>> whenFailure)
+    {
+        ArgumentNullException.ThrowIfNull(whenSuccess);
+        ArgumentNullException.ThrowIfNull(whenFailure);
+
+        return Status switch
+        {
+            ResultStatus.Ok or ResultStatus.Created or ResultStatus.NoContent or ResultStatus.Accepted => await whenSuccess().ConfigureAwait(false),
+            ResultStatus.Invalid or ResultStatus.Unauthorized or ResultStatus.Forbidden or ResultStatus.NotFound or ResultStatus.Conflict or ResultStatus.Error or ResultStatus.CriticalError or ResultStatus.Unavailable => await whenFailure(GetRequiredError()).ConfigureAwait(false),
+            _ => throw new InvalidOperationException(UninitializedResultMessage),
+        };
+    }
+
+    /// <summary>
+    /// Projects the result into one of two result values using asynchronous delegates.
+    /// </summary>
+    /// <typeparam name="TResult">The projected result type.</typeparam>
+    /// <param name="whenSuccess">Called when the result succeeded.</param>
+    /// <param name="whenFailure">Called when the result failed.</param>
+    /// <returns>The value produced by the matched branch.</returns>
+    public async ValueTask<TResult> Match<TResult>(Func<ValueTask<TResult>> whenSuccess, Func<ResultError, ValueTask<TResult>> whenFailure)
+    {
+        ArgumentNullException.ThrowIfNull(whenSuccess);
+        ArgumentNullException.ThrowIfNull(whenFailure);
+
+        return Status switch
+        {
+            ResultStatus.Ok or ResultStatus.Created or ResultStatus.NoContent or ResultStatus.Accepted => await whenSuccess().ConfigureAwait(false),
+            ResultStatus.Invalid or ResultStatus.Unauthorized or ResultStatus.Forbidden or ResultStatus.NotFound or ResultStatus.Conflict or ResultStatus.Error or ResultStatus.CriticalError or ResultStatus.Unavailable => await whenFailure(GetRequiredError()).ConfigureAwait(false),
+            _ => throw new InvalidOperationException(UninitializedResultMessage),
+        };
+    }
+
+    /// <summary>
     /// Creates a successful result with OK status.
     /// </summary>
     /// <returns>A successful result.</returns>

@@ -62,6 +62,44 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     }
 
     /// <summary>
+    /// Maps the current option value into a new option value using an asynchronous projection.
+    /// </summary>
+    /// <typeparam name="TResult">The projected non-null type.</typeparam>
+    /// <param name="map">The asynchronous projection to apply when a value is present.</param>
+    /// <returns>The projected option, or an empty option when no value is present.</returns>
+    public async Task<Option<TResult>> Map<TResult>(Func<T, Task<TResult>> map)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(map);
+
+        if (TryGetValue(out var currentValue))
+        {
+            return Option.Some(await map(currentValue).ConfigureAwait(false));
+        }
+
+        return Option.None<TResult>();
+    }
+
+    /// <summary>
+    /// Maps the current option value into a new option value using an asynchronous projection.
+    /// </summary>
+    /// <typeparam name="TResult">The projected non-null type.</typeparam>
+    /// <param name="map">The asynchronous projection to apply when a value is present.</param>
+    /// <returns>The projected option, or an empty option when no value is present.</returns>
+    public async ValueTask<Option<TResult>> Map<TResult>(Func<T, ValueTask<TResult>> map)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(map);
+
+        if (TryGetValue(out var currentValue))
+        {
+            return Option.Some(await map(currentValue).ConfigureAwait(false));
+        }
+
+        return Option.None<TResult>();
+    }
+
+    /// <summary>
     /// Binds the current option value into another option.
     /// </summary>
     /// <typeparam name="TResult">The projected non-null type.</typeparam>
@@ -75,6 +113,44 @@ public readonly struct Option<T> : IEquatable<Option<T>>
         return TryGetValue(out var currentValue)
             ? bind(currentValue)
             : Option.None<TResult>();
+    }
+
+    /// <summary>
+    /// Binds the current option value into another option using an asynchronous projection.
+    /// </summary>
+    /// <typeparam name="TResult">The projected non-null type.</typeparam>
+    /// <param name="bind">The asynchronous projection to apply when a value is present.</param>
+    /// <returns>The bound option, or an empty option when no value is present.</returns>
+    public async Task<Option<TResult>> Bind<TResult>(Func<T, Task<Option<TResult>>> bind)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(bind);
+
+        if (TryGetValue(out var currentValue))
+        {
+            return await bind(currentValue).ConfigureAwait(false);
+        }
+
+        return Option.None<TResult>();
+    }
+
+    /// <summary>
+    /// Binds the current option value into another option using an asynchronous projection.
+    /// </summary>
+    /// <typeparam name="TResult">The projected non-null type.</typeparam>
+    /// <param name="bind">The asynchronous projection to apply when a value is present.</param>
+    /// <returns>The bound option, or an empty option when no value is present.</returns>
+    public async ValueTask<Option<TResult>> Bind<TResult>(Func<T, ValueTask<Option<TResult>>> bind)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(bind);
+
+        if (TryGetValue(out var currentValue))
+        {
+            return await bind(currentValue).ConfigureAwait(false);
+        }
+
+        return Option.None<TResult>();
     }
 
     /// <summary>
@@ -92,6 +168,40 @@ public readonly struct Option<T> : IEquatable<Option<T>>
         return TryGetValue(out var currentValue)
             ? whenSome(currentValue)
             : whenNone();
+    }
+
+    /// <summary>
+    /// Projects the option into one of two result values using asynchronous delegates.
+    /// </summary>
+    /// <typeparam name="TResult">The result type produced by the match.</typeparam>
+    /// <param name="whenSome">Called when a value is present.</param>
+    /// <param name="whenNone">Called when the option is empty.</param>
+    /// <returns>The value produced by the matched branch.</returns>
+    public async Task<TResult> Match<TResult>(Func<T, Task<TResult>> whenSome, Func<Task<TResult>> whenNone)
+    {
+        ArgumentNullException.ThrowIfNull(whenSome);
+        ArgumentNullException.ThrowIfNull(whenNone);
+
+        return TryGetValue(out var currentValue)
+            ? await whenSome(currentValue).ConfigureAwait(false)
+            : await whenNone().ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Projects the option into one of two result values using asynchronous delegates.
+    /// </summary>
+    /// <typeparam name="TResult">The result type produced by the match.</typeparam>
+    /// <param name="whenSome">Called when a value is present.</param>
+    /// <param name="whenNone">Called when the option is empty.</param>
+    /// <returns>The value produced by the matched branch.</returns>
+    public async ValueTask<TResult> Match<TResult>(Func<T, ValueTask<TResult>> whenSome, Func<ValueTask<TResult>> whenNone)
+    {
+        ArgumentNullException.ThrowIfNull(whenSome);
+        ArgumentNullException.ThrowIfNull(whenNone);
+
+        return TryGetValue(out var currentValue)
+            ? await whenSome(currentValue).ConfigureAwait(false)
+            : await whenNone().ConfigureAwait(false);
     }
 
     /// <inheritdoc />
