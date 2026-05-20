@@ -1,4 +1,4 @@
-# SharedKernel.Results
+# SharedKernel.Functional
 
 Core result and option primitives for shared-kernel workflows.
 
@@ -74,7 +74,7 @@ The asynchronous overloads are intended to preserve the same semantics as the sy
 
 ## Benchmark Notes
 
-Benchmarks for this package live under `benchmarks/SharedKernel.Results.Benchmarks`.
+Benchmarks for this package live under `benchmarks/SharedKernel.Functional.Benchmarks`.
 
 Current benchmark findings:
 

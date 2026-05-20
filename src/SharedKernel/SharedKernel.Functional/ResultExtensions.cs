@@ -1,4 +1,4 @@
-namespace SharedKernel.Results;
+namespace SharedKernel.Functional;
 
 /// <summary>
 /// Extension methods for converting failed results.

@@ -1,4 +1,4 @@
-namespace SharedKernel.Results;
+namespace SharedKernel.Functional;
 
 /// <summary>
 /// Represents error details for a failed result.

@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Results</PackageId>
-        <Description>Core result and option primitives for shared-kernel workflows.</Description>
-        <RootNamespace>SharedKernel.Results</RootNamespace>
+        <PackageId>SharedKernel.Functional</PackageId>
+        <Description>Core functional result and option primitives for shared-kernel workflows.</Description>
+        <RootNamespace>SharedKernel.Functional</RootNamespace>
         <IsAotCompatible>true</IsAotCompatible>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <PackageTags>results;option;shared-kernel;dotnet</PackageTags>
+        <PackageTags>functional;results;option;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

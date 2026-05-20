@@ -1,4 +1,4 @@
-namespace SharedKernel.Results;
+namespace SharedKernel.Functional;
 
 /// <summary>
 /// Creates <see cref="Option{T}"/> instances without putting static members on the generic type.

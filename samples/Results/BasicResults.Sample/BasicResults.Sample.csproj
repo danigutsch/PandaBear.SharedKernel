@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\..\src\SharedKernel\SharedKernel.Results\SharedKernel.Results.csproj" />
+        <ProjectReference Include="..\..\..\src\SharedKernel\SharedKernel.Functional\SharedKernel.Functional.csproj" />
     </ItemGroup>
 
 </Project>
