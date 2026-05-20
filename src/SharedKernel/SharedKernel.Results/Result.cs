@@ -8,6 +8,8 @@ namespace SharedKernel.Results;
 public readonly struct Result : IEquatable<Result>
 {
     private readonly ResultError? error;
+    private const string UninitializedResultMessage = "Result status is not initialized.";
+    private const string FailedResultMustContainErrorDetailsMessage = "Failed results must contain error details.";
 
     internal Result(ResultStatus status, ResultError? error)
     {
@@ -25,7 +27,7 @@ public readonly struct Result : IEquatable<Result>
     /// Gets a value indicating whether the operation failed.
     /// </summary>
     [MemberNotNullWhen(true, nameof(ErrorDetails))]
-    public bool IsFailure => !IsSuccess;
+    public bool IsFailure => Status is ResultStatus.Invalid or ResultStatus.Unauthorized or ResultStatus.Forbidden or ResultStatus.NotFound or ResultStatus.Conflict or ResultStatus.Error or ResultStatus.CriticalError or ResultStatus.Unavailable;
 
     /// <summary>
     /// Gets the result status.
@@ -44,8 +46,14 @@ public readonly struct Result : IEquatable<Result>
     /// <returns><see langword="true"/> when the result failed.</returns>
     public bool TryGetError([NotNullWhen(true)] out ResultError? currentError)
     {
-        currentError = ErrorDetails;
-        return currentError is not null;
+        if (IsFailure)
+        {
+            currentError = GetRequiredError();
+            return true;
+        }
+
+        currentError = null;
+        return false;
     }
 
     /// <summary>
@@ -60,9 +68,12 @@ public readonly struct Result : IEquatable<Result>
         ArgumentNullException.ThrowIfNull(whenSuccess);
         ArgumentNullException.ThrowIfNull(whenFailure);
 
-        return TryGetError(out var currentError)
-            ? whenFailure(currentError)
-            : whenSuccess();
+        return Status switch
+        {
+            ResultStatus.Ok or ResultStatus.Created or ResultStatus.NoContent or ResultStatus.Accepted => whenSuccess(),
+            ResultStatus.Invalid or ResultStatus.Unauthorized or ResultStatus.Forbidden or ResultStatus.NotFound or ResultStatus.Conflict or ResultStatus.Error or ResultStatus.CriticalError or ResultStatus.Unavailable => whenFailure(GetRequiredError()),
+            _ => throw new InvalidOperationException(UninitializedResultMessage),
+        };
     }
 
     /// <summary>
@@ -314,6 +325,9 @@ public readonly struct Result : IEquatable<Result>
         return new ResultError(detail, code, clonedValidationErrors);
     }
 
+    private ResultError GetRequiredError() =>
+        error ?? throw new InvalidOperationException(FailedResultMustContainErrorDetailsMessage);
+
     /// <inheritdoc />
     public bool Equals(Result other) =>
         IsSuccess == other.IsSuccess &&
@@ -327,10 +341,20 @@ public readonly struct Result : IEquatable<Result>
     public override int GetHashCode() => HashCode.Combine(IsSuccess, Status, error);
 
     /// <inheritdoc />
-    public override string ToString() =>
-        IsSuccess
-            ? $"Success: {Status}"
-            : $"Failure: {Status} - {error?.Detail}";
+    public override string ToString()
+    {
+        if (IsSuccess)
+        {
+            return $"Success: {Status}";
+        }
+
+        if (IsFailure)
+        {
+            return $"Failure: {Status} - {error?.Detail}";
+        }
+
+        return $"Unknown: {Status}";
+    }
 
     /// <summary>
     /// Determines whether two result instances are equal.

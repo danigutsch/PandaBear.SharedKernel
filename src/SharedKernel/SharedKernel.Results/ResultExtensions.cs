@@ -62,6 +62,11 @@ public static class ResultExtensions
             throw new InvalidOperationException(CannotConvertSuccessfulResultMessage);
         }
 
+        if (status is ResultStatus.Unknown || !Enum.IsDefined(status))
+        {
+            throw new InvalidOperationException($"Unsupported result status: {status}");
+        }
+
         var details = errorDetails ?? throw new InvalidOperationException(FailedResultMustContainErrorDetailsMessage);
 
         return status switch
@@ -74,7 +79,6 @@ public static class ResultExtensions
             ResultStatus.Conflict => factories.Conflict(details.Detail),
             ResultStatus.CriticalError => factories.CriticalError(details.Detail),
             ResultStatus.Unavailable => factories.Unavailable(details.Detail),
-            ResultStatus.Unknown => throw new InvalidOperationException($"Unsupported result status: {status}"),
             _ => throw new InvalidOperationException($"Unsupported result status: {status}"),
         };
     }

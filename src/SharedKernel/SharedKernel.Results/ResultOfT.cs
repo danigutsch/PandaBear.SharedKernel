@@ -11,6 +11,9 @@ public readonly struct Result<T> : IEquatable<Result<T>>
 {
     private readonly T? value;
     private readonly ResultError? error;
+    private const string UninitializedResultMessage = "Result status is not initialized.";
+    private const string SuccessfulResultMustContainValueMessage = "Successful results must contain a value.";
+    private const string FailedResultMustContainErrorDetailsMessage = "Failed results must contain error details.";
 
     internal Result(ResultStatus status, T? value, ResultError? error)
     {
@@ -33,7 +36,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>
     [MemberNotNullWhen(true, nameof(ErrorDetails))]
     [MemberNotNullWhen(false, nameof(Value))]
     [MemberNotNullWhen(false, nameof(value))]
-    public bool IsFailure => !IsSuccess;
+    public bool IsFailure => Status is ResultStatus.Invalid or ResultStatus.Unauthorized or ResultStatus.Forbidden or ResultStatus.NotFound or ResultStatus.Conflict or ResultStatus.Error or ResultStatus.CriticalError or ResultStatus.Unavailable;
 
     /// <summary>
     /// Gets the result status.
@@ -46,7 +49,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>
     /// <exception cref="InvalidOperationException">Thrown when the result is not successful.</exception>
     public T Value =>
         IsSuccess
-            ? value
+            ? value ?? throw new InvalidOperationException(SuccessfulResultMustContainValueMessage)
             : throw new InvalidOperationException($"Cannot access Value of a failed result. Error: {error?.Detail}");
 
     /// <summary>
@@ -61,8 +64,14 @@ public readonly struct Result<T> : IEquatable<Result<T>>
     /// <returns><see langword="true"/> when the result succeeded.</returns>
     public bool TryGetValue([NotNullWhen(true)] out T? currentValue)
     {
-        currentValue = IsSuccess ? value : default;
-        return currentValue is not null;
+        if (IsSuccess)
+        {
+            currentValue = value ?? throw new InvalidOperationException(SuccessfulResultMustContainValueMessage);
+            return true;
+        }
+
+        currentValue = default;
+        return false;
     }
 
     /// <summary>
@@ -104,8 +113,14 @@ public readonly struct Result<T> : IEquatable<Result<T>>
     /// <returns><see langword="true"/> when the result failed.</returns>
     public bool TryGetError([NotNullWhen(true)] out ResultError? currentError)
     {
-        currentError = ErrorDetails;
-        return currentError is not null;
+        if (IsFailure)
+        {
+            currentError = GetRequiredError();
+            return true;
+        }
+
+        currentError = null;
+        return false;
     }
 
     /// <summary>
@@ -120,16 +135,38 @@ public readonly struct Result<T> : IEquatable<Result<T>>
         ArgumentNullException.ThrowIfNull(whenSuccess);
         ArgumentNullException.ThrowIfNull(whenFailure);
 
-        return TryGetValue(out var currentValue)
-            ? whenSuccess(currentValue)
-            : whenFailure(ErrorDetails!);
+        return Status switch
+        {
+            ResultStatus.Ok or ResultStatus.Created or ResultStatus.Accepted => whenSuccess(GetRequiredValue()),
+            ResultStatus.Invalid or ResultStatus.Unauthorized or ResultStatus.Forbidden or ResultStatus.NotFound or ResultStatus.Conflict or ResultStatus.Error or ResultStatus.CriticalError or ResultStatus.Unavailable => whenFailure(GetRequiredError()),
+            _ => throw new InvalidOperationException(UninitializedResultMessage),
+        };
     }
 
     /// <summary>
     /// Converts this result to a non-generic result.
     /// </summary>
     /// <returns>A non-generic result preserving status and error information.</returns>
-    public Result ToResult() => new(Status, ErrorDetails);
+    public Result ToResult()
+    {
+        if (IsSuccess)
+        {
+            return new Result(Status, null);
+        }
+
+        if (IsFailure)
+        {
+            return new Result(Status, GetRequiredError());
+        }
+
+        throw new InvalidOperationException(UninitializedResultMessage);
+    }
+
+    private T GetRequiredValue() =>
+        value ?? throw new InvalidOperationException(SuccessfulResultMustContainValueMessage);
+
+    private ResultError GetRequiredError() =>
+        error ?? throw new InvalidOperationException(FailedResultMustContainErrorDetailsMessage);
 
     /// <inheritdoc />
     public bool Equals(Result<T> other)
@@ -154,10 +191,20 @@ public readonly struct Result<T> : IEquatable<Result<T>>
             : HashCode.Combine(IsSuccess, Status, error);
 
     /// <inheritdoc />
-    public override string ToString() =>
-        IsSuccess
-            ? $"Success: {Status} - {value}"
-            : $"Failure: {Status} - {error?.Detail}";
+    public override string ToString()
+    {
+        if (IsSuccess)
+        {
+            return $"Success: {Status} - {value}";
+        }
+
+        if (IsFailure)
+        {
+            return $"Failure: {Status} - {error?.Detail}";
+        }
+
+        return $"Unknown: {Status}";
+    }
 
     /// <summary>
     /// Determines whether two result instances are equal.

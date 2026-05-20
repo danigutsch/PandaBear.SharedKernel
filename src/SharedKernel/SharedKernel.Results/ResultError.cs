@@ -143,7 +143,7 @@ public sealed class ResultError : IEquatable<ResultError>
         var clone = new Dictionary<string, IReadOnlyList<string>>(validationErrors.Count, StringComparer.Ordinal);
         foreach (var (field, messages) in validationErrors)
         {
-            clone[field] = [.. messages];
+            clone[field] = Array.AsReadOnly([.. messages]);
         }
 
         return clone;
