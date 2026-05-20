@@ -32,7 +32,7 @@ static Result<string> CreateBooking(string tourCode, string passengerName)
         return Result.Invalid<string>("Booking request is invalid.", "passengerName", "Passenger name is required.");
     }
 
-    return Result.Ok($"{tourCode}-{passengerName[..1].ToUpperInvariant()}001");
+    return Result.Created($"{tourCode}-{passengerName[..1].ToUpperInvariant()}001");
 }
 
 static Result<string> FindTourSummary(string tourCode) =>
