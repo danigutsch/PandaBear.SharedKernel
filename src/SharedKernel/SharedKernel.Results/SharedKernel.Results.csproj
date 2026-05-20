@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.Results</PackageId>
+        <Description>Core result and option primitives for shared-kernel workflows.</Description>
+        <RootNamespace>SharedKernel.Results</RootNamespace>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+</Project>
