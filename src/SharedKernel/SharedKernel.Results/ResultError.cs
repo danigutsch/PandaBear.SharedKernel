@@ -27,7 +27,7 @@ public sealed class ResultError : IEquatable<ResultError>
     /// <param name="detail">Specific explanation of the problem instance.</param>
     /// <param name="code">Stable machine-readable error code.</param>
     /// <param name="validationErrors">Optional validation errors keyed by field name.</param>
-    public ResultError(
+    internal ResultError(
         string detail,
         string code,
         IReadOnlyDictionary<string, IReadOnlyList<string>>? validationErrors)

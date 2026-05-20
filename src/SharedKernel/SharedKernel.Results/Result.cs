@@ -141,7 +141,7 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="detail">The error detail.</param>
     /// <param name="validationErrors">The validation errors keyed by field name.</param>
     /// <returns>A failed result.</returns>
-    public static Result Invalid(string detail, Dictionary<string, string[]> validationErrors) =>
+    public static Result Invalid(string detail, IReadOnlyDictionary<string, string[]> validationErrors) =>
         new(ResultStatus.Invalid, CreateValidationError(detail, ResultErrorCodes.Invalid, validationErrors));
 
     /// <summary>
@@ -162,7 +162,7 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="detail">The error detail.</param>
     /// <param name="validationErrors">The validation errors keyed by field name.</param>
     /// <returns>A failed result.</returns>
-    public static Result<T> Invalid<T>(string detail, Dictionary<string, string[]> validationErrors)
+    public static Result<T> Invalid<T>(string detail, IReadOnlyDictionary<string, string[]> validationErrors)
         where T : notnull => new(ResultStatus.Invalid, default, CreateValidationError(detail, ResultErrorCodes.Invalid, validationErrors));
 
     /// <summary>
@@ -295,7 +295,7 @@ public readonly struct Result : IEquatable<Result>
         });
     }
 
-    private static ResultError CreateValidationError(string detail, string code, Dictionary<string, string[]> validationErrors)
+    private static ResultError CreateValidationError(string detail, string code, IReadOnlyDictionary<string, string[]> validationErrors)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(detail);
         ArgumentNullException.ThrowIfNull(validationErrors);
