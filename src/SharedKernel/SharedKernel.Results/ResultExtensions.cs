@@ -79,12 +79,21 @@ public static class ResultExtensions
         };
     }
 
-    private static Dictionary<string, string[]> ToValidationDictionary(IReadOnlyDictionary<string, string[]>? validationErrors) =>
-        validationErrors?.ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.ToArray(),
-            StringComparer.Ordinal)
-        ?? throw new InvalidOperationException(FailedResultMustContainErrorDetailsMessage);
+    private static Dictionary<string, string[]> ToValidationDictionary(IReadOnlyDictionary<string, IReadOnlyList<string>>? validationErrors)
+    {
+        if (validationErrors is null)
+        {
+            throw new InvalidOperationException(FailedResultMustContainErrorDetailsMessage);
+        }
+
+        var result = new Dictionary<string, string[]>(validationErrors.Count, StringComparer.Ordinal);
+        foreach (var (field, messages) in validationErrors)
+        {
+            result[field] = [.. messages];
+        }
+
+        return result;
+    }
 
     private readonly record struct FailureResultFactories<TResult>(
         Func<string, Dictionary<string, string[]>, TResult> Invalid,

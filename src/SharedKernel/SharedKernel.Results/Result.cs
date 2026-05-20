@@ -133,7 +133,7 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="message">The field validation message.</param>
     /// <returns>A failed result.</returns>
     public static Result Invalid(string detail, string field, string message) =>
-        new(ResultStatus.Invalid, CreateValidationError(detail, field, message));
+        new(ResultStatus.Invalid, CreateValidationError(detail, ResultErrorCodes.Invalid, field, message));
 
     /// <summary>
     /// Creates a failed invalid result with multiple validation errors.
@@ -142,7 +142,7 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="validationErrors">The validation errors keyed by field name.</param>
     /// <returns>A failed result.</returns>
     public static Result Invalid(string detail, Dictionary<string, string[]> validationErrors) =>
-        new(ResultStatus.Invalid, CreateValidationError(detail, validationErrors));
+        new(ResultStatus.Invalid, CreateValidationError(detail, ResultErrorCodes.Invalid, validationErrors));
 
     /// <summary>
     /// Creates a failed invalid result with one validation error.
@@ -153,7 +153,7 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="message">The field validation message.</param>
     /// <returns>A failed result.</returns>
     public static Result<T> Invalid<T>(string detail, string field, string message)
-        where T : notnull => new(ResultStatus.Invalid, default, CreateValidationError(detail, field, message));
+        where T : notnull => new(ResultStatus.Invalid, default, CreateValidationError(detail, ResultErrorCodes.Invalid, field, message));
 
     /// <summary>
     /// Creates a failed invalid result with multiple validation errors.
@@ -163,14 +163,14 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="validationErrors">The validation errors keyed by field name.</param>
     /// <returns>A failed result.</returns>
     public static Result<T> Invalid<T>(string detail, Dictionary<string, string[]> validationErrors)
-        where T : notnull => new(ResultStatus.Invalid, default, CreateValidationError(detail, validationErrors));
+        where T : notnull => new(ResultStatus.Invalid, default, CreateValidationError(detail, ResultErrorCodes.Invalid, validationErrors));
 
     /// <summary>
     /// Creates a failed not found result.
     /// </summary>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
-    public static Result NotFound(string detail) => new(ResultStatus.NotFound, CreateError(detail));
+    public static Result NotFound(string detail) => new(ResultStatus.NotFound, CreateError(detail, ResultErrorCodes.NotFound));
 
     /// <summary>
     /// Creates a failed not found result.
@@ -179,14 +179,14 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
     public static Result<T> NotFound<T>(string detail)
-        where T : notnull => new(ResultStatus.NotFound, default, CreateError(detail));
+        where T : notnull => new(ResultStatus.NotFound, default, CreateError(detail, ResultErrorCodes.NotFound));
 
     /// <summary>
     /// Creates a failed unauthorized result.
     /// </summary>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
-    public static Result Unauthorized(string detail) => new(ResultStatus.Unauthorized, CreateError(detail));
+    public static Result Unauthorized(string detail) => new(ResultStatus.Unauthorized, CreateError(detail, ResultErrorCodes.Unauthorized));
 
     /// <summary>
     /// Creates a failed unauthorized result.
@@ -195,14 +195,14 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
     public static Result<T> Unauthorized<T>(string detail)
-        where T : notnull => new(ResultStatus.Unauthorized, default, CreateError(detail));
+        where T : notnull => new(ResultStatus.Unauthorized, default, CreateError(detail, ResultErrorCodes.Unauthorized));
 
     /// <summary>
     /// Creates a failed forbidden result.
     /// </summary>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
-    public static Result Forbidden(string detail) => new(ResultStatus.Forbidden, CreateError(detail));
+    public static Result Forbidden(string detail) => new(ResultStatus.Forbidden, CreateError(detail, ResultErrorCodes.Forbidden));
 
     /// <summary>
     /// Creates a failed forbidden result.
@@ -211,14 +211,14 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
     public static Result<T> Forbidden<T>(string detail)
-        where T : notnull => new(ResultStatus.Forbidden, default, CreateError(detail));
+        where T : notnull => new(ResultStatus.Forbidden, default, CreateError(detail, ResultErrorCodes.Forbidden));
 
     /// <summary>
     /// Creates a failed conflict result.
     /// </summary>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
-    public static Result Conflict(string detail) => new(ResultStatus.Conflict, CreateError(detail));
+    public static Result Conflict(string detail) => new(ResultStatus.Conflict, CreateError(detail, ResultErrorCodes.Conflict));
 
     /// <summary>
     /// Creates a failed conflict result.
@@ -227,14 +227,14 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
     public static Result<T> Conflict<T>(string detail)
-        where T : notnull => new(ResultStatus.Conflict, default, CreateError(detail));
+        where T : notnull => new(ResultStatus.Conflict, default, CreateError(detail, ResultErrorCodes.Conflict));
 
     /// <summary>
     /// Creates a failed error result.
     /// </summary>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
-    public static Result Error(string detail) => new(ResultStatus.Error, CreateError(detail));
+    public static Result Error(string detail) => new(ResultStatus.Error, CreateError(detail, ResultErrorCodes.Error));
 
     /// <summary>
     /// Creates a failed error result.
@@ -243,14 +243,14 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
     public static Result<T> Error<T>(string detail)
-        where T : notnull => new(ResultStatus.Error, default, CreateError(detail));
+        where T : notnull => new(ResultStatus.Error, default, CreateError(detail, ResultErrorCodes.Error));
 
     /// <summary>
     /// Creates a failed critical error result.
     /// </summary>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
-    public static Result CriticalError(string detail) => new(ResultStatus.CriticalError, CreateError(detail));
+    public static Result CriticalError(string detail) => new(ResultStatus.CriticalError, CreateError(detail, ResultErrorCodes.CriticalError));
 
     /// <summary>
     /// Creates a failed critical error result.
@@ -259,14 +259,14 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
     public static Result<T> CriticalError<T>(string detail)
-        where T : notnull => new(ResultStatus.CriticalError, default, CreateError(detail));
+        where T : notnull => new(ResultStatus.CriticalError, default, CreateError(detail, ResultErrorCodes.CriticalError));
 
     /// <summary>
     /// Creates a failed unavailable result.
     /// </summary>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
-    public static Result Unavailable(string detail) => new(ResultStatus.Unavailable, CreateError(detail));
+    public static Result Unavailable(string detail) => new(ResultStatus.Unavailable, CreateError(detail, ResultErrorCodes.Unavailable));
 
     /// <summary>
     /// Creates a failed unavailable result.
@@ -275,27 +275,27 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="detail">The error detail.</param>
     /// <returns>A failed result.</returns>
     public static Result<T> Unavailable<T>(string detail)
-        where T : notnull => new(ResultStatus.Unavailable, default, CreateError(detail));
+        where T : notnull => new(ResultStatus.Unavailable, default, CreateError(detail, ResultErrorCodes.Unavailable));
 
-    private static ResultError CreateError(string detail)
+    private static ResultError CreateError(string detail, string code)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(detail);
-        return new ResultError(detail);
+        return new ResultError(detail, code);
     }
 
-    private static ResultError CreateValidationError(string detail, string field, string message)
+    private static ResultError CreateValidationError(string detail, string code, string field, string message)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(detail);
         ArgumentException.ThrowIfNullOrWhiteSpace(field);
         ArgumentException.ThrowIfNullOrWhiteSpace(message);
 
-        return new ResultError(detail, new Dictionary<string, string[]>
+        return new ResultError(detail, code, new Dictionary<string, string[]>
         {
             [field] = [message],
         });
     }
 
-    private static ResultError CreateValidationError(string detail, Dictionary<string, string[]> validationErrors)
+    private static ResultError CreateValidationError(string detail, string code, Dictionary<string, string[]> validationErrors)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(detail);
         ArgumentNullException.ThrowIfNull(validationErrors);
@@ -305,12 +305,13 @@ public readonly struct Result : IEquatable<Result>
             throw new ArgumentOutOfRangeException(nameof(validationErrors), "Validation errors dictionary cannot be empty.");
         }
 
-        return new ResultError(
-            detail,
-            validationErrors.ToDictionary(
-                kvp => kvp.Key,
-                kvp => kvp.Value.ToArray(),
-                StringComparer.Ordinal));
+        var clonedValidationErrors = new Dictionary<string, string[]>(validationErrors.Count, StringComparer.Ordinal);
+        foreach (var (field, messages) in validationErrors)
+        {
+            clonedValidationErrors[field] = [.. messages];
+        }
+
+        return new ResultError(detail, code, clonedValidationErrors);
     }
 
     /// <inheritdoc />

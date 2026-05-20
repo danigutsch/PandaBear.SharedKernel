@@ -50,8 +50,9 @@ public sealed class ValidationErrors
 
         if (errors.Count == 1)
         {
-            var singleError = errors[0].ErrorDetails!;
-            return Result.Invalid<T>(singleError.Detail, ToValidationDictionary(singleError.ValidationErrors!));
+            var singleError = errors[0].ErrorDetails ?? throw new InvalidOperationException("Validation errors must include error details.");
+            var validationErrors = singleError.ValidationErrors ?? throw new InvalidOperationException("Validation errors must include field details.");
+            return Result.Invalid<T>(singleError.Detail, ToValidationDictionary(validationErrors));
         }
 
         return Result.Invalid<T>(MultipleValidationErrorsDetailMessage, MergeValidationErrors());
@@ -113,15 +114,23 @@ public sealed class ValidationErrors
             }
         }
 
-        return mergedValidationErrors.ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.ToArray(),
-            StringComparer.Ordinal);
+        var result = new Dictionary<string, string[]>(mergedValidationErrors.Count, StringComparer.Ordinal);
+        foreach (var (field, messages) in mergedValidationErrors)
+        {
+            result[field] = [.. messages];
+        }
+
+        return result;
     }
 
-    private static Dictionary<string, string[]> ToValidationDictionary(IReadOnlyDictionary<string, string[]> validationErrors) =>
-        validationErrors.ToDictionary(
-            kvp => kvp.Key,
-            kvp => kvp.Value.ToArray(),
-            StringComparer.Ordinal);
+    private static Dictionary<string, string[]> ToValidationDictionary(IReadOnlyDictionary<string, IReadOnlyList<string>> validationErrors)
+    {
+        var result = new Dictionary<string, string[]>(validationErrors.Count, StringComparer.Ordinal);
+        foreach (var (field, messages) in validationErrors)
+        {
+            result[field] = [.. messages];
+        }
+
+        return result;
+    }
 }
