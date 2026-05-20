@@ -14,6 +14,18 @@ var passengerMessage = maybePassenger.Match(
     static nickname => $"Nickname: {nickname}",
     static () => "Nickname: none");
 
+var asyncLookupMessage = await FindTourSummaryAsync("VT-42")
+    .Map(static summary => Task.FromResult(summary.ToUpperInvariant()))
+    .Match(
+        static summary => $"Async tour summary: {summary}",
+        static error => $"Async lookup failed: {error.Detail}");
+
+var asyncPassengerOption = await ValueTask.FromResult(Option.FromNullable(GetPassengerNickname("Ada Lovelace")))
+    .Map(static nickname => ValueTask.FromResult(nickname.ToUpperInvariant()));
+var asyncPassengerMessage = await asyncPassengerOption.Match(
+    static nickname => ValueTask.FromResult($"Async nickname: {nickname}"),
+    static () => ValueTask.FromResult("Async nickname: none"));
+
 var invalidBookingMessage = CreateBooking("", "").Match(
     static confirmation => $"Created booking: {confirmation}",
     static error => FormatValidationFailure(error));
@@ -21,6 +33,8 @@ var invalidBookingMessage = CreateBooking("", "").Match(
 Console.WriteLine(bookingMessage);
 Console.WriteLine(lookupMessage);
 Console.WriteLine(passengerMessage);
+Console.WriteLine(asyncLookupMessage);
+Console.WriteLine(asyncPassengerMessage);
 Console.WriteLine(invalidBookingMessage);
 
 return;
@@ -51,6 +65,9 @@ static Result<string> FindTourSummary(string tourCode) =>
     tourCode == "VT-42"
         ? Result.Ok("VT-42 | Porto river ride")
         : Result.NotFound<string>($"Tour '{tourCode}' was not found.");
+
+static Task<Result<string>> FindTourSummaryAsync(string tourCode) =>
+    Task.FromResult(FindTourSummary(tourCode));
 
 static string? GetPassengerNickname(string passengerName) =>
     passengerName == "Ada Lovelace"
