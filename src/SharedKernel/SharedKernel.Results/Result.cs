@@ -49,6 +49,23 @@ public readonly struct Result : IEquatable<Result>
     }
 
     /// <summary>
+    /// Projects the result into one of two result values.
+    /// </summary>
+    /// <typeparam name="TResult">The projected result type.</typeparam>
+    /// <param name="whenSuccess">Called when the result succeeded.</param>
+    /// <param name="whenFailure">Called when the result failed.</param>
+    /// <returns>The value produced by the matched branch.</returns>
+    public TResult Match<TResult>(Func<TResult> whenSuccess, Func<ResultError, TResult> whenFailure)
+    {
+        ArgumentNullException.ThrowIfNull(whenSuccess);
+        ArgumentNullException.ThrowIfNull(whenFailure);
+
+        return TryGetError(out var currentError)
+            ? whenFailure(currentError)
+            : whenSuccess();
+    }
+
+    /// <summary>
     /// Creates a successful result with OK status.
     /// </summary>
     /// <returns>A successful result.</returns>

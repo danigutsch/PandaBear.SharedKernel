@@ -66,6 +66,38 @@ public readonly struct Result<T> : IEquatable<Result<T>>
     }
 
     /// <summary>
+    /// Maps the current success value into a new result value.
+    /// </summary>
+    /// <typeparam name="TResult">The projected non-null success type.</typeparam>
+    /// <param name="map">The projection to apply when the result succeeded.</param>
+    /// <returns>The mapped result, or the original failure when the result failed.</returns>
+    public Result<TResult> Map<TResult>(Func<T, TResult> map)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(map);
+
+        return TryGetValue(out var currentValue)
+            ? Result.Ok(map(currentValue))
+            : new Result<TResult>(Status, default, ErrorDetails);
+    }
+
+    /// <summary>
+    /// Binds the current success value into another result.
+    /// </summary>
+    /// <typeparam name="TResult">The projected non-null success type.</typeparam>
+    /// <param name="bind">The projection to apply when the result succeeded.</param>
+    /// <returns>The bound result, or the original failure when the result failed.</returns>
+    public Result<TResult> Bind<TResult>(Func<T, Result<TResult>> bind)
+        where TResult : notnull
+    {
+        ArgumentNullException.ThrowIfNull(bind);
+
+        return TryGetValue(out var currentValue)
+            ? bind(currentValue)
+            : new Result<TResult>(Status, default, ErrorDetails);
+    }
+
+    /// <summary>
     /// Returns the current error details when the result failed.
     /// </summary>
     /// <param name="currentError">The current error details when the result failed; otherwise <see langword="null"/>.</param>
@@ -74,6 +106,23 @@ public readonly struct Result<T> : IEquatable<Result<T>>
     {
         currentError = ErrorDetails;
         return currentError is not null;
+    }
+
+    /// <summary>
+    /// Projects the result into one of two result values.
+    /// </summary>
+    /// <typeparam name="TResult">The projected result type.</typeparam>
+    /// <param name="whenSuccess">Called when the result succeeded.</param>
+    /// <param name="whenFailure">Called when the result failed.</param>
+    /// <returns>The value produced by the matched branch.</returns>
+    public TResult Match<TResult>(Func<T, TResult> whenSuccess, Func<ResultError, TResult> whenFailure)
+    {
+        ArgumentNullException.ThrowIfNull(whenSuccess);
+        ArgumentNullException.ThrowIfNull(whenFailure);
+
+        return TryGetValue(out var currentValue)
+            ? whenSuccess(currentValue)
+            : whenFailure(ErrorDetails!);
     }
 
     /// <summary>
