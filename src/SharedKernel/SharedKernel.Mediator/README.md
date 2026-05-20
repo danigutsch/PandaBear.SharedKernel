@@ -39,4 +39,4 @@ dispatch, and steady-state dispatch metrics.
 ## See Also
 
 - [SharedKernel.Mediator.SourceGenerator](../SharedKernel.Mediator.SourceGenerator/README.md)
-- [BasicCqrs.Sample](../../../samples/Mediator/BasicCqrs.Sample/README.md)
+- [Mediator.Sample](../../../samples/Mediator/Mediator.Sample/README.md)
