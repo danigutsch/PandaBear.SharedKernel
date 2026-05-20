@@ -105,6 +105,12 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <inheritdoc />
     public override int GetHashCode() => HashCode.Combine(HasValue, value);
 
+    /// <inheritdoc />
+    public override string ToString() =>
+        TryGetValue(out var currentValue)
+            ? $"Some({currentValue})"
+            : "None";
+
     /// <summary>
     /// Determines whether two option instances are equal.
     /// </summary>

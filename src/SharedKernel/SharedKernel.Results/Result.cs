@@ -325,6 +325,12 @@ public readonly struct Result : IEquatable<Result>
     /// <inheritdoc />
     public override int GetHashCode() => HashCode.Combine(IsSuccess, Status, error);
 
+    /// <inheritdoc />
+    public override string ToString() =>
+        IsSuccess
+            ? $"Success: {Status}"
+            : $"Failure: {Status} - {error?.Detail}";
+
     /// <summary>
     /// Determines whether two result instances are equal.
     /// </summary>
