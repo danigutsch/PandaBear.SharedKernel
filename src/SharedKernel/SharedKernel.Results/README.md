@@ -13,10 +13,15 @@ It is intended to provide a dependency-light package surface that can stay reusa
 
 ## Current State
 
-This project currently establishes the package and repository structure for the shared-kernel
- results package.
-Follow-up work will migrate the existing `Result`, `Result<T>`, `Option<T>`, and related types from
- `ViajantesTurismo.Common` into this project.
+This project currently provides:
+
+- `Option<T>` for optional non-null values
+- `Result` and `Result<T>` for success and failure flows
+- `ResultError` and `ResultStatus` for shared error details and status mapping
+- composition helpers such as `Map`, `Bind`, `Match`, `TryGetValue`, `TryGetError`, and `ToResult`
+
+The package is intentionally small and dependency-light.
+Future work can extend the composition surface and adoption across the rest of the repository.
 
 ## AOT and Trimming
 
@@ -29,5 +34,5 @@ None.
 
 ## See Also
 
-- [SharedKernel.Mediator.Abstractions](../../Mediator/SharedKernel.Mediator.Abstractions/README.md)
-- [SharedKernel.Mediator](../../Mediator/SharedKernel.Mediator/README.md)
+- [SharedKernel.Mediator.Abstractions](../SharedKernel.Mediator.Abstractions/README.md)
+- [SharedKernel.Mediator](../SharedKernel.Mediator/README.md)
