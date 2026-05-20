@@ -19,7 +19,7 @@ public readonly struct Result : IEquatable<Result>
     /// Gets a value indicating whether the operation succeeded.
     /// </summary>
     [MemberNotNullWhen(false, nameof(ErrorDetails))]
-    public bool IsSuccess => Status is ResultStatus.Ok or ResultStatus.NoContent or ResultStatus.Accepted;
+    public bool IsSuccess => Status is ResultStatus.Ok or ResultStatus.Created or ResultStatus.NoContent or ResultStatus.Accepted;
 
     /// <summary>
     /// Gets a value indicating whether the operation failed.
@@ -78,7 +78,12 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="value">The success value.</param>
     /// <returns>A successful result containing the value.</returns>
     public static Result<T> Ok<T>(T value)
-        where T : notnull => new(ResultStatus.Ok, value, null);
+        where T : notnull
+    {
+        ArgumentNullException.ThrowIfNull(value);
+
+        return new(ResultStatus.Ok, value, null);
+    }
 
     /// <summary>
     /// Creates a successful result with NoContent status.
@@ -93,7 +98,12 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="value">The success value.</param>
     /// <returns>A successful created result containing the value.</returns>
     public static Result<T> Created<T>(T value)
-        where T : notnull => new(ResultStatus.Created, value, null);
+        where T : notnull
+    {
+        ArgumentNullException.ThrowIfNull(value);
+
+        return new(ResultStatus.Created, value, null);
+    }
 
     /// <summary>
     /// Creates a successful result with Accepted status.
@@ -108,7 +118,12 @@ public readonly struct Result : IEquatable<Result>
     /// <param name="value">The success value.</param>
     /// <returns>A successful accepted result containing the value.</returns>
     public static Result<T> Accepted<T>(T value)
-        where T : notnull => new(ResultStatus.Accepted, value, null);
+        where T : notnull
+    {
+        ArgumentNullException.ThrowIfNull(value);
+
+        return new(ResultStatus.Accepted, value, null);
+    }
 
     /// <summary>
     /// Creates a failed invalid result with one validation error.
