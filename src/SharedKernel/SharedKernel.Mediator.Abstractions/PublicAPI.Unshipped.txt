@@ -45,6 +45,8 @@ SharedKernel.Mediator.IStreamRequestHandler<TRequest, TResponse>
 SharedKernel.Mediator.IStreamRequestHandler<TRequest, TResponse>.Handle(TRequest request, System.Threading.CancellationToken ct) -> System.Collections.Generic.IAsyncEnumerable<TResponse>!
 SharedKernel.Mediator.MediatorModuleAttribute
 SharedKernel.Mediator.MediatorModuleAttribute.MediatorModuleAttribute() -> void
+SharedKernel.Mediator.MediatorTelemetry
+static SharedKernel.Mediator.MediatorTelemetry.Name.get -> string!
 SharedKernel.Mediator.PipelineOrderAttribute
 SharedKernel.Mediator.PipelineOrderAttribute.Order.get -> int
 SharedKernel.Mediator.PipelineOrderAttribute.Order.init -> void

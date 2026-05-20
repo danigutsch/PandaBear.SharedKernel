@@ -12,5 +12,5 @@ SharedKernel.Mediator.AppMediatorInstrumentation.RequestsDuration.get -> System.
 SharedKernel.Mediator.AppMediatorInstrumentation.RequestsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
 SharedKernel.Mediator.AppMediatorInstrumentation.StreamsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
 SharedKernel.Mediator.SharedKernelMediatorActivitySource
-const SharedKernel.Mediator.SharedKernelMediatorActivitySource.ActivitySourceName = "SharedKernel.Mediator" -> string!
+static SharedKernel.Mediator.SharedKernelMediatorActivitySource.ActivitySourceName.get -> string!
 static SharedKernel.Mediator.SharedKernelMediatorActivitySource.Source.get -> System.Diagnostics.ActivitySource!

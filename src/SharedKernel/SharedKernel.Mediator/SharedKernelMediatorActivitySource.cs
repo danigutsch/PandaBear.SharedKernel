@@ -10,7 +10,7 @@ public static class SharedKernelMediatorActivitySource
     /// <summary>
     /// The stable activity source name for mediator request dispatch.
     /// </summary>
-    public const string ActivitySourceName = "SharedKernel.Mediator";
+    public static string ActivitySourceName => MediatorTelemetry.Name;
 
     /// <summary>
     /// Gets the shared activity source for mediator request dispatch.
