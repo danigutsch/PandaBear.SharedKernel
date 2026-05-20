@@ -14,7 +14,7 @@ public static class Option
     /// <param name="value">The value to wrap.</param>
     /// <returns>An option containing <paramref name="value"/>.</returns>
     public static Option<T> Some<T>(T value)
-        where T : class
+        where T : notnull
     {
         ArgumentNullException.ThrowIfNull(value);
 
@@ -27,7 +27,7 @@ public static class Option
     /// <typeparam name="T">The wrapped reference type.</typeparam>
     /// <returns>An empty option.</returns>
     public static Option<T> None<T>()
-        where T : class => new(null, false);
+        where T : notnull => new(default, false);
 
     /// <summary>
     /// Creates an option from a nullable reference.
@@ -36,7 +36,7 @@ public static class Option
     /// <param name="value">The nullable value to wrap.</param>
     /// <returns>An empty option for <see langword="null"/>; otherwise an option containing the value.</returns>
     public static Option<T> FromNullable<T>(T? value)
-        where T : class =>
+        where T : notnull =>
         value is null ? None<T>() : Some(value);
 }
 
@@ -45,7 +45,7 @@ public static class Option
 /// </summary>
 /// <typeparam name="T">The wrapped reference type.</typeparam>
 public readonly struct Option<T> : IEquatable<Option<T>>
-    where T : class
+    where T : notnull
 {
     private readonly T? value;
 
@@ -90,7 +90,7 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <param name="map">The projection to apply when a value is present.</param>
     /// <returns>The projected option, or an empty option when no value is present.</returns>
     public Option<TResult> Map<TResult>(Func<T, TResult> map)
-        where TResult : class
+        where TResult : notnull
     {
         ArgumentNullException.ThrowIfNull(map);
 
@@ -106,7 +106,7 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// <param name="bind">The projection to apply when a value is present.</param>
     /// <returns>The bound option, or an empty option when no value is present.</returns>
     public Option<TResult> Bind<TResult>(Func<T, Option<TResult>> bind)
-        where TResult : class
+        where TResult : notnull
     {
         ArgumentNullException.ThrowIfNull(bind);
 
