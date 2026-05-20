@@ -1,0 +1,16 @@
+#nullable enable
+SharedKernel.Mediator.ActivityBehavior<TRequest, TResponse>
+SharedKernel.Mediator.ActivityBehavior<TRequest, TResponse>.ActivityBehavior() -> void
+SharedKernel.Mediator.ActivityBehavior<TRequest, TResponse>.Handle(TRequest request, SharedKernel.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+SharedKernel.Mediator.AppMediatorInstrumentation
+SharedKernel.Mediator.AppMediatorInstrumentation.ActivitySource.get -> System.Diagnostics.ActivitySource!
+SharedKernel.Mediator.AppMediatorInstrumentation.AppMediatorInstrumentation(System.Diagnostics.Metrics.IMeterFactory! meterFactory) -> void
+SharedKernel.Mediator.AppMediatorInstrumentation.Dispose() -> void
+SharedKernel.Mediator.AppMediatorInstrumentation.NotificationsDuration.get -> System.Diagnostics.Metrics.Histogram<double>!
+SharedKernel.Mediator.AppMediatorInstrumentation.NotificationsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
+SharedKernel.Mediator.AppMediatorInstrumentation.RequestsDuration.get -> System.Diagnostics.Metrics.Histogram<double>!
+SharedKernel.Mediator.AppMediatorInstrumentation.RequestsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
+SharedKernel.Mediator.AppMediatorInstrumentation.StreamsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
+SharedKernel.Mediator.SharedKernelMediatorActivitySource
+const SharedKernel.Mediator.SharedKernelMediatorActivitySource.ActivitySourceName = "SharedKernel.Mediator" -> string!
+static SharedKernel.Mediator.SharedKernelMediatorActivitySource.Source.get -> System.Diagnostics.ActivitySource!

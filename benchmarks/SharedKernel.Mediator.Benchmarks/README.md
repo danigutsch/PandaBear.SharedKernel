@@ -107,4 +107,4 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
 
 ## See Also
 
-- [SharedKernel.Mediator.SourceGenerator](../../src/Mediator/SharedKernel.Mediator.SourceGenerator/README.md)
+- [SharedKernel.Mediator.SourceGenerator](../../src/SharedKernel/SharedKernel.Mediator.SourceGenerator/README.md)

@@ -21,8 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator\SharedKernel.Mediator.csproj" />
-        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator\SharedKernel.Mediator.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
         <ProjectReference Include="..\SharedKernel.Mediator.Testing.ReferenceDispatcher\SharedKernel.Mediator.Testing.ReferenceDispatcher.csproj" />
     </ItemGroup>
 

@@ -376,3 +376,4 @@ tmp/
 .env.local
 .env.*.local
 .local/
+.sonarqube/

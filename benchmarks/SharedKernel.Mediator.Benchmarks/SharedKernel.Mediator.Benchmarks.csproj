@@ -13,10 +13,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator\SharedKernel.Mediator.csproj" />
-        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
-        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator.Analyzers\SharedKernel.Mediator.Analyzers.csproj" />
-        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator\SharedKernel.Mediator.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.Analyzers\SharedKernel.Mediator.Analyzers.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj" />
     </ItemGroup>
 
 </Project>
