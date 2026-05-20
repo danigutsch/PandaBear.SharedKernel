@@ -1,3 +1,4 @@
 # BenchmarkDotNet requires public benchmark entry types, so CA1515 is noise in benchmark projects.
 [*.cs]
 dotnet_diagnostic.CA1515.severity = none
+dotnet_diagnostic.CA1822.severity = none
