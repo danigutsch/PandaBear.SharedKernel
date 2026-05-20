@@ -7,31 +7,49 @@ namespace SharedKernel.Mediator.SourceGenerator;
 /// </summary>
 internal sealed class DiscoveryState
 {
-    public Dictionary<string, RawRequestContract> RequestContracts { get; } = new(StringComparer.Ordinal);
+    public DiscoveryState()
+    {
+        RequestContracts = new Dictionary<string, RawRequestContract>(StringComparer.Ordinal);
+        RequestHandlers = [];
+        Pipelines = [];
+        NotificationContracts = new Dictionary<string, RawNotificationContract>(StringComparer.Ordinal);
+        NotificationHandlers = [];
+        StreamRequestContracts = new Dictionary<string, RawStreamRequestContract>(StringComparer.Ordinal);
+        StreamHandlers = [];
+        StreamPipelines = [];
+        Diagnostics = [];
+        DiagnosedInaccessibleTypes = new HashSet<string>(StringComparer.Ordinal);
+        GeneratedRegistrationKeys = new HashSet<string>(StringComparer.Ordinal);
+        DiagnosedDuplicateRegistrationKeys = new HashSet<string>(StringComparer.Ordinal);
+        DiagnosedInvalidHandlerKeys = new HashSet<string>(StringComparer.Ordinal);
+        DiagnosedUnmarkedAssemblies = new HashSet<string>(StringComparer.Ordinal);
+    }
 
-    public List<HandlerDescriptor> RequestHandlers { get; } = [];
+    public Dictionary<string, RawRequestContract> RequestContracts { get; }
 
-    public List<RawPipelineDescriptor> Pipelines { get; } = [];
+    public List<HandlerDescriptor> RequestHandlers { get; }
 
-    public Dictionary<string, RawNotificationContract> NotificationContracts { get; } = new(StringComparer.Ordinal);
+    public List<RawPipelineDescriptor> Pipelines { get; }
 
-    public List<RawNotificationHandlerDescriptor> NotificationHandlers { get; } = [];
+    public Dictionary<string, RawNotificationContract> NotificationContracts { get; }
 
-    public Dictionary<string, RawStreamRequestContract> StreamRequestContracts { get; } = new(StringComparer.Ordinal);
+    public List<RawNotificationHandlerDescriptor> NotificationHandlers { get; }
 
-    public List<StreamHandlerDescriptor> StreamHandlers { get; } = [];
+    public Dictionary<string, RawStreamRequestContract> StreamRequestContracts { get; }
 
-    public List<RawPipelineDescriptor> StreamPipelines { get; } = [];
+    public List<StreamHandlerDescriptor> StreamHandlers { get; }
 
-    public List<Diagnostic> Diagnostics { get; } = [];
+    public List<RawPipelineDescriptor> StreamPipelines { get; }
 
-    public HashSet<string> DiagnosedInaccessibleTypes { get; } = new(StringComparer.Ordinal);
+    public List<Diagnostic> Diagnostics { get; }
 
-    public HashSet<string> GeneratedRegistrationKeys { get; } = new(StringComparer.Ordinal);
+    public HashSet<string> DiagnosedInaccessibleTypes { get; }
 
-    public HashSet<string> DiagnosedDuplicateRegistrationKeys { get; } = new(StringComparer.Ordinal);
+    public HashSet<string> GeneratedRegistrationKeys { get; }
 
-    public HashSet<string> DiagnosedInvalidHandlerKeys { get; } = new(StringComparer.Ordinal);
+    public HashSet<string> DiagnosedDuplicateRegistrationKeys { get; }
 
-    public HashSet<string> DiagnosedUnmarkedAssemblies { get; } = new(StringComparer.Ordinal);
+    public HashSet<string> DiagnosedInvalidHandlerKeys { get; }
+
+    public HashSet<string> DiagnosedUnmarkedAssemblies { get; }
 }
