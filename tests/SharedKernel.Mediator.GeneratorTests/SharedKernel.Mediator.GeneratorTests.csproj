@@ -28,15 +28,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
-        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator\SharedKernel.Mediator.csproj" />
-        <ProjectReference Include="..\..\src\Mediator\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator\SharedKernel.Mediator.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj" />
         <ProjectReference Include="..\SharedKernel.Mediator.Testing.ReferenceDispatcher\SharedKernel.Mediator.Testing.ReferenceDispatcher.csproj" />
         <ProjectReference Include="..\SharedKernel.Testing.Roslyn\SharedKernel.Testing.Roslyn.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Include="..\..\src\Mediator\SharedKernel.Mediator.SourceGenerator\MediatorDiagnosticIds.cs" Link="MediatorDiagnosticIds.cs" />
+        <Compile Include="..\..\src\SharedKernel\SharedKernel.Mediator.SourceGenerator\MediatorDiagnosticIds.cs" Link="MediatorDiagnosticIds.cs" />
     </ItemGroup>
 
 </Project>

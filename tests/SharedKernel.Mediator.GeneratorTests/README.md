@@ -30,4 +30,4 @@ Unit tests for `SharedKernel.Mediator.SourceGenerator`.
 ## See Also
 
 - [tests/README.md](../README.md)
-- [SharedKernel.Mediator.SourceGenerator](../../src/Mediator/SharedKernel.Mediator.SourceGenerator/README.md)
+- [SharedKernel.Mediator.SourceGenerator](../../src/SharedKernel/SharedKernel.Mediator.SourceGenerator/README.md)

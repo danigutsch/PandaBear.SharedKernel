@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.Mediator</PackageId>
+        <Description>Runtime support surface for SharedKernel.Mediator.</Description>
+        <RootNamespace>SharedKernel.Mediator</RootNamespace>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Diagnostics" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>

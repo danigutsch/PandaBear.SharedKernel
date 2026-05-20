@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.Mediator.Abstractions</PackageId>
+        <Description>Core abstractions for SharedKernel.Mediator.</Description>
+        <RootNamespace>SharedKernel.Mediator</RootNamespace>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+    </ItemGroup>
+
+</Project>

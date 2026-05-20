@@ -1,0 +1,5 @@
+#nullable enable
+SharedKernel.Mediator.Analyzers.SharedKernelMediatorAnalyzer
+SharedKernel.Mediator.Analyzers.SharedKernelMediatorAnalyzer.SharedKernelMediatorAnalyzer() -> void
+override SharedKernel.Mediator.Analyzers.SharedKernelMediatorAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override SharedKernel.Mediator.Analyzers.SharedKernelMediatorAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

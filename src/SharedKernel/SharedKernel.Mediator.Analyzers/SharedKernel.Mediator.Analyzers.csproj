@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <PackageId>SharedKernel.Mediator.Analyzers</PackageId>
+        <Description>Analyzers for SharedKernel.Mediator.</Description>
+        <RootNamespace>SharedKernel.Mediator.Analyzers</RootNamespace>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" VersionOverride="$(MediatorRoslynAnalyzersVersion)" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="$(MediatorRoslynVersion)" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="..\SharedKernel.Mediator.SourceGenerator\MediatorDiagnosticIds.cs" Link="MediatorDiagnosticIds.cs" />
+        <Compile Include="..\SharedKernel.Mediator.SourceGenerator\MediatorDiagnosticDescriptors.cs" Link="MediatorDiagnosticDescriptors.cs" />
+        <Compile Include="..\SharedKernel.Mediator.SourceGenerator\MetadataNames.cs" Link="MetadataNames.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+        <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
+        <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+
+</Project>

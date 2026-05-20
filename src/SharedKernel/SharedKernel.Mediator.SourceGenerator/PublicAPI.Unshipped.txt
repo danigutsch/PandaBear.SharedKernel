@@ -1,0 +1,4 @@
+#nullable enable
+SharedKernel.Mediator.SourceGenerator.SharedKernelMediatorGenerator
+SharedKernel.Mediator.SourceGenerator.SharedKernelMediatorGenerator.SharedKernelMediatorGenerator() -> void
+SharedKernel.Mediator.SourceGenerator.SharedKernelMediatorGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void

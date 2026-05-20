@@ -36,11 +36,11 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
         FeedPath = Path.Combine(RootPath, "feed");
         Directory.CreateDirectory(FeedPath);
 
-        await Pack("src/Mediator/SharedKernel.Mediator.Abstractions/SharedKernel.Mediator.Abstractions.csproj").ConfigureAwait(false);
-        await Pack("src/Mediator/SharedKernel.Mediator/SharedKernel.Mediator.csproj").ConfigureAwait(false);
-        await Pack("src/Mediator/SharedKernel.Mediator.SourceGenerator/SharedKernel.Mediator.SourceGenerator.csproj").ConfigureAwait(false);
-        await Pack("src/Mediator/SharedKernel.Mediator.Analyzers/SharedKernel.Mediator.Analyzers.csproj").ConfigureAwait(false);
-        await Pack("src/Mediator/SharedKernel.Mediator.CodeFixes/SharedKernel.Mediator.CodeFixes.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.Mediator.Abstractions/SharedKernel.Mediator.Abstractions.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.Mediator/SharedKernel.Mediator.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.Mediator.SourceGenerator/SharedKernel.Mediator.SourceGenerator.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.Mediator.Analyzers/SharedKernel.Mediator.Analyzers.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.Mediator.CodeFixes/SharedKernel.Mediator.CodeFixes.csproj").ConfigureAwait(false);
     }
 
     /// <inheritdoc />
