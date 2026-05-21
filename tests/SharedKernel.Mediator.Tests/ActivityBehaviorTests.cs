@@ -25,14 +25,7 @@ public sealed class ActivityBehaviorTests
     {
         // Arrange
         List<Activity> stoppedActivities = [];
-        using var listener = new ActivityListener
-        {
-            ShouldListenTo = static source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
-            Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-            SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllDataAndRecorded,
-            ActivityStopped = stoppedActivities.Add,
-        };
-        ActivitySource.AddActivityListener(listener);
+        using var listener = CreateCapturingListener(stoppedActivities);
         var behavior = new ActivityBehavior<TestQuery, int>();
         var request = new TestQuery(42);
 
@@ -48,6 +41,8 @@ public sealed class ActivityBehaviorTests
         Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.request_type" && tag.Value == typeof(TestQuery).FullName);
         Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.response_type" && tag.Value == typeof(int).FullName);
         Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.outcome" && tag.Value == "success");
+        Assert.DoesNotContain(activity.Tags, static tag => tag.Key == "error.type");
+        Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -69,14 +64,7 @@ public sealed class ActivityBehaviorTests
     {
         // Arrange
         List<Activity> stoppedActivities = [];
-        using var listener = new ActivityListener
-        {
-            ShouldListenTo = static source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
-            Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-            SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllDataAndRecorded,
-            ActivityStopped = stoppedActivities.Add,
-        };
-        ActivitySource.AddActivityListener(listener);
+        using var listener = CreateCapturingListener(stoppedActivities);
         var behavior = new ActivityBehavior<TestQuery, int>();
         var request = new TestQuery(11);
 
@@ -107,14 +95,7 @@ public sealed class ActivityBehaviorTests
     {
         // Arrange
         List<Activity> stoppedActivities = [];
-        using var listener = new ActivityListener
-        {
-            ShouldListenTo = static source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
-            Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-            SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllDataAndRecorded,
-            ActivityStopped = stoppedActivities.Add,
-        };
-        ActivitySource.AddActivityListener(listener);
+        using var listener = CreateCapturingListener(stoppedActivities);
         var behavior = new ActivityBehavior<TestQuery, int>();
         var request = new TestQuery(12);
 
@@ -131,6 +112,54 @@ public sealed class ActivityBehaviorTests
         Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.outcome" && tag.Value == "cancelled");
         Assert.DoesNotContain(activity.Tags, static tag => tag.Key == "error.type");
         Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
+    }
+
+    [Fact]
+    public async Task Activity_Behavior_Does_Not_Record_An_Error_When_The_Handler_Handles_The_Exception_Internally()
+    {
+        // Arrange
+        List<Activity> stoppedActivities = [];
+        using var listener = CreateCapturingListener(stoppedActivities);
+        var behavior = new ActivityBehavior<TestQuery, int>();
+        var request = new TestQuery(13);
+
+        // Act
+        var response = await behavior.Handle(
+            request,
+            static () =>
+            {
+                try
+                {
+                    throw new InvalidOperationException("boom");
+                }
+                catch (InvalidOperationException)
+                {
+                    return ValueTask.FromResult(99);
+                }
+            },
+            CancellationToken.None);
+
+        // Assert
+        Assert.Equal(99, response);
+        var activity = Assert.Single(stoppedActivities);
+        Assert.Equal(ActivityStatusCode.Ok, activity.Status);
+        Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.outcome" && tag.Value == "success");
+        Assert.DoesNotContain(activity.Tags, static tag => tag.Key == "error.type");
+        Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
+    }
+
+    private static ActivityListener CreateCapturingListener(List<Activity> stoppedActivities)
+    {
+        var listener = new ActivityListener
+        {
+            ShouldListenTo = static source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
+            Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+            SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllDataAndRecorded,
+            ActivityStopped = stoppedActivities.Add,
+        };
+
+        ActivitySource.AddActivityListener(listener);
+        return listener;
     }
 
     private sealed record TestQuery(int Id) : IQuery<int>;

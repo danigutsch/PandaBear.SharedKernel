@@ -411,6 +411,55 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    public static string SendSuccess()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record GetTour(int Id) : IRequest<string>;
+
+            public sealed class GetTourHandler : IRequestHandler<GetTour, string>
+            {
+                public ValueTask<string> Handle(GetTour request, CancellationToken ct)
+                    => ValueTask.FromResult($"tour:{request.Id}");
+            }
+            """;
+    }
+
+    public static string SendWithHandledException()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record GetTour(int Id) : IRequest<string>;
+
+            public sealed class GetTourHandler : IRequestHandler<GetTour, string>
+            {
+                public ValueTask<string> Handle(GetTour request, CancellationToken ct)
+                {
+                    try
+                    {
+                        throw new InvalidOperationException("handler boom");
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        return ValueTask.FromResult("fallback");
+                    }
+                }
+            }
+            """;
+    }
+
     public static string PublishWithCancellation()
     {
         return """
@@ -430,6 +479,46 @@ internal static class GeneratorDispatchBehaviorTestSources
                     ct.ThrowIfCancellationRequested();
                     return ValueTask.CompletedTask;
                 }
+            }
+            """;
+    }
+
+    public static string PublishSuccess()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class TourCreatedHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                    => ValueTask.CompletedTask;
+            }
+            """;
+    }
+
+    public static string PublishWithException()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class TourCreatedHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                    => throw new InvalidOperationException("handler boom");
             }
             """;
     }
