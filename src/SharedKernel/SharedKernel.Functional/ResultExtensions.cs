@@ -7,6 +7,7 @@ public static class ResultExtensions
 {
     private const string CannotConvertSuccessfulResultMessage = "Cannot convert a successful result. Only failed results can be converted.";
     private const string FailedResultMustContainErrorDetailsMessage = "Failed results must contain error details.";
+    private const string ValidationErrorsMustContainFieldDetailsMessage = "Validation errors must include field details.";
 
     /// <summary>
     /// Converts a failed non-generic result to a generic result.
@@ -87,7 +88,7 @@ public static class ResultExtensions
     {
         if (validationErrors is null)
         {
-            throw new InvalidOperationException(FailedResultMustContainErrorDetailsMessage);
+            throw new InvalidOperationException(ValidationErrorsMustContainFieldDetailsMessage);
         }
 
         var result = new Dictionary<string, string[]>(validationErrors.Count, StringComparer.Ordinal);

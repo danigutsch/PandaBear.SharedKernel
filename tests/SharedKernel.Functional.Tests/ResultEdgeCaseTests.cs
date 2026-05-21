@@ -40,7 +40,11 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = Assert.Throws<ArgumentNullException>(() => Result.Ok<string>(null!));
+        var exception = ReflectionTestHelpers.InvokeSingleParameterStaticGenericAndUnwrapArgumentNull(
+            typeof(Result),
+            nameof(Result.Ok),
+            typeof(string),
+            null);
 
         // Assert
         Assert.Equal("value", exception.ParamName);
@@ -51,7 +55,11 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = Assert.Throws<ArgumentNullException>(() => Result.Created<string>(null!));
+        var exception = ReflectionTestHelpers.InvokeSingleParameterStaticGenericAndUnwrapArgumentNull(
+            typeof(Result),
+            nameof(Result.Created),
+            typeof(string),
+            null);
 
         // Assert
         Assert.Equal("value", exception.ParamName);
@@ -62,7 +70,11 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = Assert.Throws<ArgumentNullException>(() => Result.Accepted<string>(null!));
+        var exception = ReflectionTestHelpers.InvokeSingleParameterStaticGenericAndUnwrapArgumentNull(
+            typeof(Result),
+            nameof(Result.Accepted),
+            typeof(string),
+            null);
 
         // Assert
         Assert.Equal("value", exception.ParamName);

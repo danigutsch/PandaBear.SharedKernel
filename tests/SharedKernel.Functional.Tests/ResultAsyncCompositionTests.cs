@@ -493,10 +493,12 @@ public sealed class ResultAsyncCompositionTests
     public async Task Rejects_A_Null_Task_Result_Source_For_Map()
     {
         // Arrange
-        Task<Result<string>> source = null!;
-
-        // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => source.Map(static value => value.Length));
+        var exception = ReflectionTestHelpers.InvokeStaticGenericAndUnwrapArgumentNull(
+            typeof(ResultTaskExtensions),
+            nameof(ResultTaskExtensions.Map),
+            [typeof(string), typeof(int)],
+            parameters => ReflectionTestHelpers.HasTwoParameters(typeof(Task<Result<string>>), typeof(Func<string, int>), parameters),
+            [null, static (string value) => value.Length]);
 
         // Assert
         Assert.Equal("source", exception.ParamName);
@@ -506,10 +508,12 @@ public sealed class ResultAsyncCompositionTests
     public async Task Rejects_A_Null_Task_Result_Source_For_Bind()
     {
         // Arrange
-        Task<Result<string>> source = null!;
-
-        // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => source.Bind(static value => Result.Ok(value.Length)));
+        var exception = ReflectionTestHelpers.InvokeStaticGenericAndUnwrapArgumentNull(
+            typeof(ResultTaskExtensions),
+            nameof(ResultTaskExtensions.Bind),
+            [typeof(string), typeof(int)],
+            parameters => ReflectionTestHelpers.HasTwoParameters(typeof(Task<Result<string>>), typeof(Func<string, Result<int>>), parameters),
+            [null, static (string value) => Result.Ok(value.Length)]);
 
         // Assert
         Assert.Equal("source", exception.ParamName);
@@ -519,10 +523,15 @@ public sealed class ResultAsyncCompositionTests
     public async Task Rejects_A_Null_Task_Result_Source_For_Match()
     {
         // Arrange
-        Task<Result<string>> source = null!;
-
-        // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => source.Match(static value => value.Length, static error => error.Detail.Length));
+        var exception = ReflectionTestHelpers.InvokeStaticGenericAndUnwrapArgumentNull(
+            typeof(ResultTaskExtensions),
+            nameof(ResultTaskExtensions.Match),
+            [typeof(string), typeof(int)],
+            parameters => parameters.Length == 3
+                && parameters[0].ParameterType == typeof(Task<Result<string>>)
+                && parameters[1].ParameterType == typeof(Func<string, int>)
+                && parameters[2].ParameterType == typeof(Func<ResultError, int>),
+            [null, static (string value) => value.Length, static (ResultError error) => error.Detail.Length]);
 
         // Assert
         Assert.Equal("source", exception.ParamName);
@@ -533,10 +542,12 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        Func<string, Task<int>> map = null!;
-
-        // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => result.Map(map));
+        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+            result,
+            nameof(Result<string>.Map),
+            [typeof(int)],
+            parameters => ReflectionTestHelpers.HasSingleFuncParameterReturning(typeof(Task<>), parameters),
+            [null]);
 
         // Assert
         Assert.Equal("map", exception.ParamName);
@@ -547,10 +558,12 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        Func<string, ValueTask<int>> map = null!;
-
-        // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await result.Map(map));
+        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+            result,
+            nameof(Result<string>.Map),
+            [typeof(int)],
+            parameters => ReflectionTestHelpers.HasSingleFuncParameterReturning(typeof(ValueTask<>), parameters),
+            [null]);
 
         // Assert
         Assert.Equal("map", exception.ParamName);
@@ -561,10 +574,12 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        Func<string, Task<Result<int>>> bind = null!;
-
-        // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => result.Bind(bind));
+        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+            result,
+            nameof(Result<string>.Bind),
+            [typeof(int)],
+            parameters => ReflectionTestHelpers.HasSingleFuncParameterReturning(typeof(Task<>), parameters),
+            [null]);
 
         // Assert
         Assert.Equal("bind", exception.ParamName);
@@ -575,10 +590,12 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        Func<string, ValueTask<Result<int>>> bind = null!;
-
-        // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await result.Bind(bind));
+        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+            result,
+            nameof(Result<string>.Bind),
+            [typeof(int)],
+            parameters => ReflectionTestHelpers.HasSingleFuncParameterReturning(typeof(ValueTask<>), parameters),
+            [null]);
 
         // Assert
         Assert.Equal("bind", exception.ParamName);
@@ -589,10 +606,12 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        Func<string, Task<int>> whenSuccess = null!;
-
-        // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => result.Match(whenSuccess, static error => Task.FromResult(error.Detail.Length)));
+        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+            result,
+            nameof(Result<string>.Match),
+            [typeof(int)],
+            parameters => ReflectionTestHelpers.HasTwoParametersWithReturnKinds(typeof(Task<>), typeof(Task<>), parameters),
+            [null, static (ResultError error) => Task.FromResult(error.Detail.Length)]);
 
         // Assert
         Assert.Equal("whenSuccess", exception.ParamName);
@@ -603,10 +622,12 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        Func<string, ValueTask<int>> whenSuccess = null!;
-
-        // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await result.Match(whenSuccess, static error => ValueTask.FromResult(error.Detail.Length)));
+        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+            result,
+            nameof(Result<string>.Match),
+            [typeof(int)],
+            parameters => ReflectionTestHelpers.HasTwoParametersWithReturnKinds(typeof(ValueTask<>), typeof(ValueTask<>), parameters),
+            [null, static (ResultError error) => ValueTask.FromResult(error.Detail.Length)]);
 
         // Assert
         Assert.Equal("whenSuccess", exception.ParamName);
@@ -617,10 +638,12 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok();
-        Func<Task<int>> whenSuccess = null!;
-
-        // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => result.Match(whenSuccess, static error => Task.FromResult(error.Detail.Length)));
+        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+            result,
+            nameof(Result.Match),
+            [typeof(int)],
+            parameters => ReflectionTestHelpers.HasTwoParametersWithReturnKinds(typeof(Task<>), typeof(Task<>), parameters),
+            [null, static (ResultError error) => Task.FromResult(error.Detail.Length)]);
 
         // Assert
         Assert.Equal("whenSuccess", exception.ParamName);
@@ -631,10 +654,12 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok();
-        Func<ValueTask<int>> whenSuccess = null!;
-
-        // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await result.Match(whenSuccess, static error => ValueTask.FromResult(error.Detail.Length)));
+        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+            result,
+            nameof(Result.Match),
+            [typeof(int)],
+            parameters => ReflectionTestHelpers.HasTwoParametersWithReturnKinds(typeof(ValueTask<>), typeof(ValueTask<>), parameters),
+            [null, static (ResultError error) => ValueTask.FromResult(error.Detail.Length)]);
 
         // Assert
         Assert.Equal("whenSuccess", exception.ParamName);

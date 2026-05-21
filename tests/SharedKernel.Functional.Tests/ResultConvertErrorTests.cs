@@ -87,7 +87,7 @@ public sealed class ResultConvertErrorTests
         var exception = Assert.Throws<InvalidOperationException>(() => malformedResult.ConvertError<string>());
 
         // Assert
-        Assert.Equal("Failed results must contain error details.", exception.Message);
+        Assert.Equal("Validation errors must include field details.", exception.Message);
     }
 
     [Theory]

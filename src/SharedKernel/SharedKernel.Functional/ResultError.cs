@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+
 namespace SharedKernel.Functional;
 
 /// <summary>
@@ -132,7 +134,7 @@ public sealed class ResultError : IEquatable<ResultError>
         return true;
     }
 
-    private static Dictionary<string, IReadOnlyList<string>>? CloneValidationErrors(
+    private static ReadOnlyDictionary<string, IReadOnlyList<string>>? CloneValidationErrors(
         IReadOnlyDictionary<string, string[]>? validationErrors)
     {
         if (validationErrors is null)
@@ -146,6 +148,6 @@ public sealed class ResultError : IEquatable<ResultError>
             clone[field] = Array.AsReadOnly([.. messages]);
         }
 
-        return clone;
+        return new ReadOnlyDictionary<string, IReadOnlyList<string>>(clone);
     }
 }
