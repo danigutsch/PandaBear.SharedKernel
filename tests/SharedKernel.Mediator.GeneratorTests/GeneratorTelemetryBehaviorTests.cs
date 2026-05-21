@@ -47,9 +47,11 @@ public sealed class GeneratorTelemetryBehaviorTests
         Assert.Equal("InvalidOperationException", errorType);
 
         var exceptionEvent = Assert.Single(span.Events, static evt => evt.Name == "exception");
-        Assert.Contains(exceptionEvent.Tags!, static tag =>
+        var exceptionTags = exceptionEvent.Tags;
+        Assert.NotNull(exceptionTags);
+        Assert.Contains(exceptionTags, static tag =>
             tag.Key == "exception.type" && string.Equals(tag.Value as string, typeof(InvalidOperationException).FullName, StringComparison.Ordinal));
-        Assert.Contains(exceptionEvent.Tags!, static tag =>
+        Assert.Contains(exceptionTags, static tag =>
             tag.Key == "exception.message" && string.Equals(tag.Value as string, "handler boom", StringComparison.Ordinal));
     }
 
@@ -110,9 +112,11 @@ public sealed class GeneratorTelemetryBehaviorTests
         Assert.Equal("InvalidOperationException", errorType);
 
         var exceptionEvent = Assert.Single(span.Events, static evt => evt.Name == "exception");
-        Assert.Contains(exceptionEvent.Tags!, static tag =>
+        var exceptionTags = exceptionEvent.Tags;
+        Assert.NotNull(exceptionTags);
+        Assert.Contains(exceptionTags, static tag =>
             tag.Key == "exception.type" && string.Equals(tag.Value as string, typeof(InvalidOperationException).FullName, StringComparison.Ordinal));
-        Assert.Contains(exceptionEvent.Tags!, static tag =>
+        Assert.Contains(exceptionTags, static tag =>
             tag.Key == "exception.message" && string.Equals(tag.Value as string, "boom", StringComparison.Ordinal));
     }
 

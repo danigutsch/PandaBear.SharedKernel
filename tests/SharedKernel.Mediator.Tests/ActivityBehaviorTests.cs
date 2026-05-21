@@ -44,8 +44,10 @@ public sealed class ActivityBehaviorTests
         var activity = Assert.Single(stoppedActivities);
         Assert.Equal(nameof(TestQuery), activity.OperationName);
         Assert.Equal(SharedKernelMediatorActivitySource.ActivitySourceName, activity.Source.Name);
+        Assert.Equal(ActivityStatusCode.Ok, activity.Status);
         Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.request_type" && tag.Value == typeof(TestQuery).FullName);
         Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.response_type" && tag.Value == typeof(int).FullName);
+        Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.outcome" && tag.Value == "success");
     }
 
     [Fact]
@@ -92,9 +94,11 @@ public sealed class ActivityBehaviorTests
         Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.outcome" && tag.Value == "error");
 
         var exceptionEvent = Assert.Single(activity.Events, static evt => evt.Name == "exception");
-        Assert.Contains(exceptionEvent.Tags!, static tag =>
+        var exceptionTags = exceptionEvent.Tags;
+        Assert.NotNull(exceptionTags);
+        Assert.Contains(exceptionTags, static tag =>
             tag.Key == "exception.type" && string.Equals(tag.Value as string, typeof(InvalidOperationException).FullName, StringComparison.Ordinal));
-        Assert.Contains(exceptionEvent.Tags!, static tag =>
+        Assert.Contains(exceptionTags, static tag =>
             tag.Key == "exception.message" && string.Equals(tag.Value as string, "boom", StringComparison.Ordinal));
     }
 
@@ -123,7 +127,7 @@ public sealed class ActivityBehaviorTests
 
         // Assert
         var activity = Assert.Single(stoppedActivities);
-        Assert.Equal(ActivityStatusCode.Ok, activity.Status);
+        Assert.Equal(ActivityStatusCode.Unset, activity.Status);
         Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.outcome" && tag.Value == "cancelled");
         Assert.DoesNotContain(activity.Tags, static tag => tag.Key == "error.type");
         Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
