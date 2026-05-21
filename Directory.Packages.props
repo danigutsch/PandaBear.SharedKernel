@@ -1,19 +1,17 @@
 <Project>
-
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
-
   <PropertyGroup>
     <MediatorRoslynAnalyzersVersion>5.3.0</MediatorRoslynAnalyzersVersion>
     <MediatorRoslynVersion>5.3.0</MediatorRoslynVersion>
   </PropertyGroup>
-
   <ItemGroup>
     <!-- Aspire packages -->
     <PackageVersion Include="Aspire.Hosting.PostgreSQL" Version="13.3.4" />
     <PackageVersion Include="Aspire.Hosting.Redis" Version="13.3.4" />
+    <PackageVersion Include="Aspire.Hosting.Testing" Version="13.3.5" />
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.3.4" />
     <PackageVersion Include="Aspire.StackExchange.Redis.OutputCaching" Version="13.3.4" />
     <!-- Code analysis packages -->
@@ -56,5 +54,4 @@
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
   </ItemGroup>
-
 </Project>
