@@ -8,11 +8,12 @@ public sealed class OptionEdgeCaseTests
     public void Rejects_Null_Values()
     {
         // Act
-        var exception = ReflectionTestHelpers.InvokeSingleParameterStaticGenericAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeStaticGenericAndCapture<ArgumentNullException>(
             typeof(Option),
             nameof(Option.Some),
-            typeof(string),
-            null);
+            [typeof(string)],
+            [typeof(string)],
+            [null]);
 
         // Assert
         Assert.Equal("value", exception.ParamName);

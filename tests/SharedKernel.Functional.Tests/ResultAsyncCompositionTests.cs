@@ -493,11 +493,11 @@ public sealed class ResultAsyncCompositionTests
     public async Task Rejects_A_Null_Task_Result_Source_For_Map()
     {
         // Arrange
-        var exception = ReflectionTestHelpers.InvokeStaticGenericAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeStaticGenericAndCapture<ArgumentNullException>(
             typeof(ResultTaskExtensions),
             nameof(ResultTaskExtensions.Map),
             [typeof(string), typeof(int)],
-            parameters => ReflectionTestHelpers.HasTwoParameters(typeof(Task<Result<string>>), typeof(Func<string, int>), parameters),
+            [typeof(Task<Result<string>>), typeof(Func<string, int>)],
             [null, static (string value) => value.Length]);
 
         // Assert
@@ -508,11 +508,11 @@ public sealed class ResultAsyncCompositionTests
     public async Task Rejects_A_Null_Task_Result_Source_For_Bind()
     {
         // Arrange
-        var exception = ReflectionTestHelpers.InvokeStaticGenericAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeStaticGenericAndCapture<ArgumentNullException>(
             typeof(ResultTaskExtensions),
             nameof(ResultTaskExtensions.Bind),
             [typeof(string), typeof(int)],
-            parameters => ReflectionTestHelpers.HasTwoParameters(typeof(Task<Result<string>>), typeof(Func<string, Result<int>>), parameters),
+            [typeof(Task<Result<string>>), typeof(Func<string, Result<int>>)],
             [null, static (string value) => Result.Ok(value.Length)]);
 
         // Assert
@@ -523,14 +523,11 @@ public sealed class ResultAsyncCompositionTests
     public async Task Rejects_A_Null_Task_Result_Source_For_Match()
     {
         // Arrange
-        var exception = ReflectionTestHelpers.InvokeStaticGenericAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeStaticGenericAndCapture<ArgumentNullException>(
             typeof(ResultTaskExtensions),
             nameof(ResultTaskExtensions.Match),
             [typeof(string), typeof(int)],
-            parameters => parameters.Length == 3
-                && parameters[0].ParameterType == typeof(Task<Result<string>>)
-                && parameters[1].ParameterType == typeof(Func<string, int>)
-                && parameters[2].ParameterType == typeof(Func<ResultError, int>),
+            [typeof(Task<Result<string>>), typeof(Func<string, int>), typeof(Func<ResultError, int>)],
             [null, static (string value) => value.Length, static (ResultError error) => error.Detail.Length]);
 
         // Assert
@@ -542,11 +539,11 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeInstanceGenericAndCapture<ArgumentNullException>(
             result,
             nameof(Result<string>.Map),
             [typeof(int)],
-            parameters => ReflectionTestHelpers.HasSingleFuncParameterReturning(typeof(Task<>), parameters),
+            [typeof(Func<string, Task<int>>)],
             [null]);
 
         // Assert
@@ -558,11 +555,11 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeInstanceGenericAndCapture<ArgumentNullException>(
             result,
             nameof(Result<string>.Map),
             [typeof(int)],
-            parameters => ReflectionTestHelpers.HasSingleFuncParameterReturning(typeof(ValueTask<>), parameters),
+            [typeof(Func<string, ValueTask<int>>)],
             [null]);
 
         // Assert
@@ -574,11 +571,11 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeInstanceGenericAndCapture<ArgumentNullException>(
             result,
             nameof(Result<string>.Bind),
             [typeof(int)],
-            parameters => ReflectionTestHelpers.HasSingleFuncParameterReturning(typeof(Task<>), parameters),
+            [typeof(Func<string, Task<Result<int>>>)],
             [null]);
 
         // Assert
@@ -590,11 +587,11 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeInstanceGenericAndCapture<ArgumentNullException>(
             result,
             nameof(Result<string>.Bind),
             [typeof(int)],
-            parameters => ReflectionTestHelpers.HasSingleFuncParameterReturning(typeof(ValueTask<>), parameters),
+            [typeof(Func<string, ValueTask<Result<int>>>)],
             [null]);
 
         // Assert
@@ -606,11 +603,11 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeInstanceGenericAndCapture<ArgumentNullException>(
             result,
             nameof(Result<string>.Match),
             [typeof(int)],
-            parameters => ReflectionTestHelpers.HasTwoParametersWithReturnKinds(typeof(Task<>), typeof(Task<>), parameters),
+            [typeof(Func<string, Task<int>>), typeof(Func<ResultError, Task<int>>)],
             [null, static (ResultError error) => Task.FromResult(error.Detail.Length)]);
 
         // Assert
@@ -622,11 +619,11 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeInstanceGenericAndCapture<ArgumentNullException>(
             result,
             nameof(Result<string>.Match),
             [typeof(int)],
-            parameters => ReflectionTestHelpers.HasTwoParametersWithReturnKinds(typeof(ValueTask<>), typeof(ValueTask<>), parameters),
+            [typeof(Func<string, ValueTask<int>>), typeof(Func<ResultError, ValueTask<int>>)],
             [null, static (ResultError error) => ValueTask.FromResult(error.Detail.Length)]);
 
         // Assert
@@ -638,11 +635,11 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok();
-        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeInstanceGenericAndCapture<ArgumentNullException>(
             result,
             nameof(Result.Match),
             [typeof(int)],
-            parameters => ReflectionTestHelpers.HasTwoParametersWithReturnKinds(typeof(Task<>), typeof(Task<>), parameters),
+            [typeof(Func<Task<int>>), typeof(Func<ResultError, Task<int>>)],
             [null, static (ResultError error) => Task.FromResult(error.Detail.Length)]);
 
         // Assert
@@ -654,11 +651,11 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok();
-        var exception = ReflectionTestHelpers.InvokeInstanceAndUnwrapArgumentNull(
+        var exception = InvocationTestHelpers.InvokeInstanceGenericAndCapture<ArgumentNullException>(
             result,
             nameof(Result.Match),
             [typeof(int)],
-            parameters => ReflectionTestHelpers.HasTwoParametersWithReturnKinds(typeof(ValueTask<>), typeof(ValueTask<>), parameters),
+            [typeof(Func<ValueTask<int>>), typeof(Func<ResultError, ValueTask<int>>)],
             [null, static (ResultError error) => ValueTask.FromResult(error.Detail.Length)]);
 
         // Assert

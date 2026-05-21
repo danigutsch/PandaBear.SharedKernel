@@ -160,14 +160,13 @@ public sealed class ResultErrorTests
     {
         // Arrange
         // Act
-        var exception = ReflectionTestHelpers.InvokeConstructorAndCapture(
+        var exception = InvocationTestHelpers.InvokeConstructorAndCapture<ArgumentException>(
             typeof(ResultError),
             [typeof(string), typeof(string), typeof(IReadOnlyDictionary<string, string[]>)],
             [detail, ResultErrorCodes.Error, null]);
 
         // Assert
-        var argumentException = Assert.IsAssignableFrom<ArgumentException>(exception);
-        Assert.Equal("detail", argumentException.ParamName);
+        Assert.Equal("detail", exception.ParamName);
     }
 
     [Theory]
@@ -178,13 +177,12 @@ public sealed class ResultErrorTests
     {
         // Arrange
         // Act
-        var exception = ReflectionTestHelpers.InvokeConstructorAndCapture(
+        var exception = InvocationTestHelpers.InvokeConstructorAndCapture<ArgumentException>(
             typeof(ResultError),
             [typeof(string), typeof(string), typeof(IReadOnlyDictionary<string, string[]>)],
             ["Something went wrong", code, null]);
 
         // Assert
-        var argumentException = Assert.IsAssignableFrom<ArgumentException>(exception);
-        Assert.Equal("code", argumentException.ParamName);
+        Assert.Equal("code", exception.ParamName);
     }
 }

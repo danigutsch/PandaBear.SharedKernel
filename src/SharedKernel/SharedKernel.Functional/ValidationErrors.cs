@@ -6,6 +6,8 @@ namespace SharedKernel.Functional;
 public sealed class ValidationErrors
 {
     private const string MultipleValidationErrorsDetailMessage = "Multiple validation errors occurred.";
+    private const string ValidationErrorsMustIncludeErrorDetailsMessage = "Validation errors must include error details.";
+    private const string ValidationErrorsMustIncludeFieldDetailsMessage = "Validation errors must include field details.";
 
     private readonly List<Result> errors = [];
 
@@ -28,6 +30,7 @@ public sealed class ValidationErrors
 
         if (errors.Count == 1)
         {
+            ValidateInvalidResult(errors[0]);
             return errors[0];
         }
 
@@ -50,8 +53,8 @@ public sealed class ValidationErrors
 
         if (errors.Count == 1)
         {
-            var singleError = errors[0].ErrorDetails ?? throw new InvalidOperationException("Validation errors must include error details.");
-            var validationErrors = singleError.ValidationErrors ?? throw new InvalidOperationException("Validation errors must include field details.");
+            var singleError = GetRequiredErrorDetails(errors[0]);
+            var validationErrors = GetRequiredValidationErrors(singleError);
             return Result.Invalid<T>(singleError.Detail, ToValidationDictionary(validationErrors));
         }
 
@@ -96,11 +99,7 @@ public sealed class ValidationErrors
 
         foreach (var error in errors)
         {
-            var validationErrors = error.ErrorDetails?.ValidationErrors;
-            if (validationErrors is null)
-            {
-                continue;
-            }
+            var validationErrors = GetRequiredValidationErrors(GetRequiredErrorDetails(error));
 
             foreach (var (field, messages) in validationErrors)
             {
@@ -133,4 +132,15 @@ public sealed class ValidationErrors
 
         return result;
     }
+
+    private static void ValidateInvalidResult(Result error)
+    {
+        _ = GetRequiredValidationErrors(GetRequiredErrorDetails(error));
+    }
+
+    private static ResultError GetRequiredErrorDetails(Result error) =>
+        error.ErrorDetails ?? throw new InvalidOperationException(ValidationErrorsMustIncludeErrorDetailsMessage);
+
+    private static IReadOnlyDictionary<string, IReadOnlyList<string>> GetRequiredValidationErrors(ResultError error) =>
+        error.ValidationErrors ?? throw new InvalidOperationException(ValidationErrorsMustIncludeFieldDetailsMessage);
 }
