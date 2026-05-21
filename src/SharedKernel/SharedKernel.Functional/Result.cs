@@ -10,6 +10,8 @@ public readonly struct Result : IEquatable<Result>
     private readonly ResultError? error;
     private const string UninitializedResultMessage = "Result status is not initialized.";
     private const string FailedResultMustContainErrorDetailsMessage = "Failed results must contain error details.";
+    private const string ValidationErrorMessagesMustBeProvidedMessage = "Validation error message lists must be non-empty.";
+    private const string ValidationErrorMessagesMustNotContainNullOrWhitespaceMessage = "Validation error messages must be non-empty.";
 
     internal Result(ResultStatus status, ResultError? error)
     {
@@ -359,6 +361,19 @@ public readonly struct Result : IEquatable<Result>
         var clonedValidationErrors = new Dictionary<string, string[]>(validationErrors.Count, StringComparer.Ordinal);
         foreach (var (field, messages) in validationErrors)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(field);
+            ArgumentNullException.ThrowIfNull(messages);
+
+            if (messages.Length == 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(validationErrors), ValidationErrorMessagesMustBeProvidedMessage);
+            }
+
+            if (messages.Any(static message => string.IsNullOrWhiteSpace(message)))
+            {
+                throw new ArgumentOutOfRangeException(nameof(validationErrors), ValidationErrorMessagesMustNotContainNullOrWhitespaceMessage);
+            }
+
             clonedValidationErrors[field] = [.. messages];
         }
 

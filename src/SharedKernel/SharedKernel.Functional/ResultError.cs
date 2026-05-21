@@ -8,6 +8,8 @@ namespace SharedKernel.Functional;
 public sealed class ResultError : IEquatable<ResultError>
 {
     private readonly IReadOnlyDictionary<string, IReadOnlyList<string>>? validationErrors;
+    private const string ValidationErrorMessagesMustBeProvidedMessage = "Validation error message lists must be non-empty.";
+    private const string ValidationErrorMessagesMustNotContainNullOrWhitespaceMessage = "Validation error messages must be non-empty.";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ResultError"/> class.
@@ -145,6 +147,19 @@ public sealed class ResultError : IEquatable<ResultError>
         var clone = new Dictionary<string, IReadOnlyList<string>>(validationErrors.Count, StringComparer.Ordinal);
         foreach (var (field, messages) in validationErrors)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(field);
+            ArgumentNullException.ThrowIfNull(messages);
+
+            if (messages.Length == 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(validationErrors), ValidationErrorMessagesMustBeProvidedMessage);
+            }
+
+            if (messages.Any(static message => string.IsNullOrWhiteSpace(message)))
+            {
+                throw new ArgumentOutOfRangeException(nameof(validationErrors), ValidationErrorMessagesMustNotContainNullOrWhitespaceMessage);
+            }
+
             clone[field] = Array.AsReadOnly([.. messages]);
         }
 

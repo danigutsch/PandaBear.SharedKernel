@@ -196,6 +196,54 @@ public sealed class ResultCoreTests
         Assert.Equal("validationErrors", exception.ParamName);
     }
 
+    [Fact]
+    public void Rejects_Validation_Dictionaries_With_Empty_Field_Names()
+    {
+        // Arrange
+        var validationErrors = new Dictionary<string, string[]>
+        {
+            [string.Empty] = ["Name is required"],
+        };
+
+        // Act
+        var exception = Assert.Throws<ArgumentException>(() => Result.Invalid("Validation failed", validationErrors));
+
+        // Assert
+        Assert.Equal("field", exception.ParamName);
+    }
+
+    [Fact]
+    public void Rejects_Validation_Dictionaries_With_Empty_Message_Arrays()
+    {
+        // Arrange
+        var validationErrors = new Dictionary<string, string[]>
+        {
+            ["Name"] = [],
+        };
+
+        // Act
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => Result.Invalid("Validation failed", validationErrors));
+
+        // Assert
+        Assert.Equal("validationErrors", exception.ParamName);
+    }
+
+    [Fact]
+    public void Rejects_Validation_Dictionaries_With_Null_Message_Entries()
+    {
+        // Arrange
+        var validationErrors = new Dictionary<string, string[]>
+        {
+            ["Name"] = NullArgumentData.StringArray(),
+        };
+
+        // Act
+        var exception = Assert.Throws<ArgumentNullException>(() => Result.Invalid("Validation failed", validationErrors));
+
+        // Assert
+        Assert.Equal("messages", exception.ParamName);
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -204,7 +252,7 @@ public sealed class ResultCoreTests
     {
         // Arrange
         // Act
-        var exception = Record.Exception(() => Result.Error(detail!));
+        var exception = Record.Exception(() => Result.Error(detail ?? NullArgumentData.String()));
 
         // Assert
         Assert.NotNull(exception);
@@ -220,7 +268,7 @@ public sealed class ResultCoreTests
     {
         // Arrange
         // Act
-        var exception = Record.Exception(() => Result.Invalid("Validation failed", field!, "Name is required"));
+        var exception = Record.Exception(() => Result.Invalid("Validation failed", field ?? NullArgumentData.String(), "Name is required"));
 
         // Assert
         Assert.NotNull(exception);
@@ -236,7 +284,7 @@ public sealed class ResultCoreTests
     {
         // Arrange
         // Act
-        var exception = Record.Exception(() => Result.Invalid("Validation failed", "Name", message!));
+        var exception = Record.Exception(() => Result.Invalid("Validation failed", "Name", message ?? NullArgumentData.String()));
 
         // Assert
         Assert.NotNull(exception);

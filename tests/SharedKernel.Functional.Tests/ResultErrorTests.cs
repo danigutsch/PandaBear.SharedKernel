@@ -160,13 +160,12 @@ public sealed class ResultErrorTests
     {
         // Arrange
         // Act
-        var exception = InvocationTestHelpers.InvokeConstructorAndCapture<ArgumentException>(
-            typeof(ResultError),
-            [typeof(string), typeof(string), typeof(IReadOnlyDictionary<string, string[]>)],
-            [detail, ResultErrorCodes.Error, null]);
+        var exception = Record.Exception(() => new ResultError(detail ?? NullArgumentData.String(), ResultErrorCodes.Error));
 
         // Assert
-        Assert.Equal("detail", exception.ParamName);
+        Assert.NotNull(exception);
+        var argumentException = Assert.IsAssignableFrom<ArgumentException>(exception);
+        Assert.Equal("detail", argumentException.ParamName);
     }
 
     [Theory]
@@ -177,12 +176,32 @@ public sealed class ResultErrorTests
     {
         // Arrange
         // Act
-        var exception = InvocationTestHelpers.InvokeConstructorAndCapture<ArgumentException>(
-            typeof(ResultError),
-            [typeof(string), typeof(string), typeof(IReadOnlyDictionary<string, string[]>)],
-            ["Something went wrong", code, null]);
+        var exception = Record.Exception(() => new ResultError("Something went wrong", code ?? NullArgumentData.String()));
 
         // Assert
-        Assert.Equal("code", exception.ParamName);
+        Assert.NotNull(exception);
+        var argumentException = Assert.IsAssignableFrom<ArgumentException>(exception);
+        Assert.Equal("code", argumentException.ParamName);
     }
+
+    [Fact]
+    public void Rejects_Validation_Dictionaries_With_Null_Message_Arrays()
+    {
+        // Arrange
+        var validationErrors = CreateValidationErrorsWithNullMessageArray();
+
+        // Act
+        var exception = Record.Exception(() => new ResultError("Validation failed", ResultErrorCodes.Invalid, validationErrors));
+
+        // Assert
+        Assert.NotNull(exception);
+        var argumentException = Assert.IsAssignableFrom<ArgumentException>(exception);
+        Assert.Equal("messages", argumentException.ParamName);
+    }
+
+    private static Dictionary<string, string[]> CreateValidationErrorsWithNullMessageArray() =>
+        new Dictionary<string, string[]>
+        {
+            ["Name"] = NullArgumentData.StringArray(),
+        };
 }

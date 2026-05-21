@@ -267,7 +267,7 @@ public sealed class OptionAsyncCompositionTests
     public async Task Rejects_A_Null_Task_Option_Source_For_Map()
     {
         // Arrange
-        Task<Option<string>> source = null!;
+        var source = NullArgumentData.Task<Option<string>>();
 
         // Act
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => source.Map(static value => value.Length));
@@ -280,7 +280,7 @@ public sealed class OptionAsyncCompositionTests
     public async Task Rejects_A_Null_Task_Option_Source_For_Bind()
     {
         // Arrange
-        Task<Option<string>> source = null!;
+        var source = NullArgumentData.Task<Option<string>>();
 
         // Act
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => source.Bind(static value => Option.Some(value.Length)));
@@ -293,7 +293,7 @@ public sealed class OptionAsyncCompositionTests
     public async Task Rejects_A_Null_Task_Option_Source_For_Match()
     {
         // Arrange
-        Task<Option<string>> source = null!;
+        var source = NullArgumentData.Task<Option<string>>();
 
         // Act
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => source.Match(static value => value.Length, static () => 0));
@@ -307,7 +307,7 @@ public sealed class OptionAsyncCompositionTests
     {
         // Arrange
         var option = Option.Some("porto");
-        Func<string, Task<int>> map = null!;
+        var map = NullArgumentData.TaskFunc<string, int>();
 
         // Act
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => option.Map(map));
@@ -321,7 +321,7 @@ public sealed class OptionAsyncCompositionTests
     {
         // Arrange
         var option = Option.Some("porto");
-        Func<string, ValueTask<int>> map = null!;
+        var map = NullArgumentData.ValueTaskFunc<string, int>();
 
         // Act
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await option.Map(map));
@@ -335,7 +335,7 @@ public sealed class OptionAsyncCompositionTests
     {
         // Arrange
         var option = Option.Some("porto");
-        Func<string, Task<Option<int>>> bind = null!;
+        var bind = NullArgumentData.TaskFunc<string, Option<int>>();
 
         // Act
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => option.Bind(bind));
@@ -349,7 +349,7 @@ public sealed class OptionAsyncCompositionTests
     {
         // Arrange
         var option = Option.Some("porto");
-        Func<string, ValueTask<Option<int>>> bind = null!;
+        var bind = NullArgumentData.ValueTaskFunc<string, Option<int>>();
 
         // Act
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await option.Bind(bind));
@@ -363,7 +363,7 @@ public sealed class OptionAsyncCompositionTests
     {
         // Arrange
         var option = Option.Some("porto");
-        Func<string, Task<int>> whenSome = null!;
+        var whenSome = NullArgumentData.TaskFunc<string, int>();
 
         // Act
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => option.Match(whenSome, static () => Task.FromResult(0)));
@@ -377,7 +377,7 @@ public sealed class OptionAsyncCompositionTests
     {
         // Arrange
         var option = Option.Some("porto");
-        Func<string, ValueTask<int>> whenSome = null!;
+        var whenSome = NullArgumentData.ValueTaskFunc<string, int>();
 
         // Act
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await option.Match(whenSome, static () => ValueTask.FromResult(0)));
