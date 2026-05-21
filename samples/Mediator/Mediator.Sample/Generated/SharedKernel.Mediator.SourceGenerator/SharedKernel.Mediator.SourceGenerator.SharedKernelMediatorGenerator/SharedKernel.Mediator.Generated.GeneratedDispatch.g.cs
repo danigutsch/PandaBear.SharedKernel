@@ -61,38 +61,38 @@ internal static class GeneratedDispatch
         global::Mediator.Sample.TourBooked notification,
         global::System.Threading.CancellationToken ct)
     {
-        var activity = mediator.Instrumentation.ActivitySource.StartActivity("mediator.publish", global::System.Diagnostics.ActivityKind.Internal);
-        activity?.SetTag("mediator.notification.name", "TourBooked");
-        activity?.SetTag("mediator.notification.assembly", "Mediator.Sample");
-        activity?.SetTag("mediator.notification.handler.count", 1);
+        var activity = mediator.Instrumentation.ActivitySource.StartActivity(global::SharedKernel.Mediator.MediatorTelemetry.ActivityPublish, global::System.Diagnostics.ActivityKind.Internal);
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, "TourBooked");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationAssembly, "Mediator.Sample");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationHandlerCount, 1);
         var sw = global::System.Diagnostics.Stopwatch.GetTimestamp();
-        var outcome = "success";
+        var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         try
         {
             await global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Mediator.Sample.TourBookedHandler>(mediator.Services).Handle(notification, ct).ConfigureAwait(false);
-            activity?.SetTag("mediator.outcome", "success");
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
         }
         catch (global::System.OperationCanceledException)
         {
-            outcome = "cancelled";
-            activity?.SetTag("mediator.outcome", "cancelled");
+            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);
             throw;
         }
         catch (global::System.Exception ex)
         {
-            outcome = "error";
-            activity?.SetTag("error.type", ex.GetType().Name);
+            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
             activity?.AddException(ex);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);
-            activity?.SetTag("mediator.outcome", "error");
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);
             throw;
         }
         finally
         {
             activity?.Dispose();
-            mediator.Instrumentation.NotificationsTotal.Add(1, new global::System.Diagnostics.TagList { { "mediator.notification.name", "TourBooked" }, { "mediator.outcome", outcome } });
-            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { "mediator.notification.name", "TourBooked" }, { "mediator.outcome", outcome } });
+            mediator.Instrumentation.NotificationsTotal.Add(1, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, "TourBooked" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });
+            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, "TourBooked" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });
         }
     }
 

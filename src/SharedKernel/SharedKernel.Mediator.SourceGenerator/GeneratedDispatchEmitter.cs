@@ -262,65 +262,65 @@ internal static class GeneratedDispatchEmitter
                 builder.AppendLine("        return global::System.Threading.Tasks.ValueTask.CompletedTask;");
                 break;
             case 1:
-                builder.AppendLine("        var activity = mediator.Instrumentation.ActivitySource.StartActivity(\"mediator.publish\", global::System.Diagnostics.ActivityKind.Internal);");
-                builder.Append("        activity?.SetTag(\"mediator.notification.name\", ")
+                builder.AppendLine("        var activity = mediator.Instrumentation.ActivitySource.StartActivity(global::SharedKernel.Mediator.MediatorTelemetry.ActivityPublish, global::System.Diagnostics.ActivityKind.Internal);");
+                builder.Append("        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, ")
                     .Append(notificationNameLiteral)
                     .AppendLine(");");
-                builder.Append("        activity?.SetTag(\"mediator.notification.assembly\", ")
+                builder.Append("        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationAssembly, ")
                     .Append(assemblyNameLiteral)
                     .AppendLine(");");
-                builder.Append("        activity?.SetTag(\"mediator.notification.handler.count\", ")
+                builder.Append("        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationHandlerCount, ")
                     .Append(accessibleHandlers.Length.ToString(CultureInfo.InvariantCulture))
                     .AppendLine(");");
                 builder.AppendLine("        var sw = global::System.Diagnostics.Stopwatch.GetTimestamp();");
-                builder.AppendLine("        var outcome = \"success\";");
+                builder.AppendLine("        var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;");
                 builder.AppendLine("        try");
                 builder.AppendLine("        {");
                 builder.Append("            await global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<")
                     .Append(accessibleHandlers[0].MetadataName)
                     .AppendLine(">(mediator.Services).Handle(notification, ct).ConfigureAwait(false);");
-                builder.AppendLine("            activity?.SetTag(\"mediator.outcome\", \"success\");");
+                builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);");
                 builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);");
                 builder.AppendLine("        }");
                 builder.AppendLine("        catch (global::System.OperationCanceledException)");
                 builder.AppendLine("        {");
-                builder.AppendLine("            outcome = \"cancelled\";");
-                builder.AppendLine("            activity?.SetTag(\"mediator.outcome\", \"cancelled\");");
+                builder.AppendLine("            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;");
+                builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);");
                 builder.AppendLine("            throw;");
                 builder.AppendLine("        }");
                 builder.AppendLine("        catch (global::System.Exception ex)");
                 builder.AppendLine("        {");
-                builder.AppendLine("            outcome = \"error\";");
-                builder.AppendLine("            activity?.SetTag(\"error.type\", ex.GetType().Name);");
+                builder.AppendLine("            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;");
+                builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);");
                 builder.AppendLine("            activity?.AddException(ex);");
                 builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);");
-                builder.AppendLine("            activity?.SetTag(\"mediator.outcome\", \"error\");");
+                builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);");
                 builder.AppendLine("            throw;");
                 builder.AppendLine("        }");
                 builder.AppendLine("        finally");
                 builder.AppendLine("        {");
                 builder.AppendLine("            activity?.Dispose();");
-                builder.Append("            mediator.Instrumentation.NotificationsTotal.Add(1, new global::System.Diagnostics.TagList { { \"mediator.notification.name\", ")
+                builder.Append("            mediator.Instrumentation.NotificationsTotal.Add(1, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, ")
                     .Append(notificationNameLiteral)
-                    .AppendLine(" }, { \"mediator.outcome\", outcome } });");
-                builder.Append("            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { \"mediator.notification.name\", ")
+                    .AppendLine(" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });");
+                builder.Append("            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, ")
                     .Append(notificationNameLiteral)
-                    .AppendLine(" }, { \"mediator.outcome\", outcome } });");
+                    .AppendLine(" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });");
                 builder.AppendLine("        }");
                 break;
             default:
-                builder.AppendLine("        var activity = mediator.Instrumentation.ActivitySource.StartActivity(\"mediator.publish\", global::System.Diagnostics.ActivityKind.Internal);");
-                builder.Append("        activity?.SetTag(\"mediator.notification.name\", ")
+                builder.AppendLine("        var activity = mediator.Instrumentation.ActivitySource.StartActivity(global::SharedKernel.Mediator.MediatorTelemetry.ActivityPublish, global::System.Diagnostics.ActivityKind.Internal);");
+                builder.Append("        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, ")
                     .Append(notificationNameLiteral)
                     .AppendLine(");");
-                builder.Append("        activity?.SetTag(\"mediator.notification.assembly\", ")
+                builder.Append("        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationAssembly, ")
                     .Append(assemblyNameLiteral)
                     .AppendLine(");");
-                builder.Append("        activity?.SetTag(\"mediator.notification.handler.count\", ")
+                builder.Append("        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationHandlerCount, ")
                     .Append(accessibleHandlers.Length.ToString(CultureInfo.InvariantCulture))
                     .AppendLine(");");
                 builder.AppendLine("        var sw = global::System.Diagnostics.Stopwatch.GetTimestamp();");
-                builder.AppendLine("        var outcome = \"success\";");
+                builder.AppendLine("        var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;");
                 builder.AppendLine("        try");
                 builder.AppendLine("        {");
                 if (notification.PublishInParallel)
@@ -355,8 +355,8 @@ internal static class GeneratedDispatchEmitter
                     {
                         var handler = accessibleHandlers[handlerIndex];
                         builder.AppendLine("            {");
-                        builder.AppendLine("                var handlerActivity = mediator.Instrumentation.ActivitySource.StartActivity(\"mediator.notification.handle\", global::System.Diagnostics.ActivityKind.Internal);");
-                        builder.Append("                handlerActivity?.SetTag(\"mediator.handler.name\", ")
+                        builder.AppendLine("                var handlerActivity = mediator.Instrumentation.ActivitySource.StartActivity(global::SharedKernel.Mediator.MediatorTelemetry.ActivityNotificationHandler, global::System.Diagnostics.ActivityKind.Internal);");
+                        builder.Append("                handlerActivity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagHandlerName, ")
                             .Append(MediatorGenerationNames.EscapeStringLiteral(GetSimpleName(handler.MetadataName)))
                             .AppendLine(");");
                         builder.AppendLine("                try");
@@ -364,20 +364,20 @@ internal static class GeneratedDispatchEmitter
                         builder.Append("                    await global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<")
                             .Append(handler.MetadataName)
                             .AppendLine(">(mediator.Services).Handle(notification, ct).ConfigureAwait(false);");
-                        builder.AppendLine("                    handlerActivity?.SetTag(\"mediator.outcome\", \"success\");");
+                        builder.AppendLine("                    handlerActivity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);");
                         builder.AppendLine("                    handlerActivity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);");
                         builder.AppendLine("                }");
                         builder.AppendLine("                catch (global::System.OperationCanceledException)");
                         builder.AppendLine("                {");
-                        builder.AppendLine("                    handlerActivity?.SetTag(\"mediator.outcome\", \"cancelled\");");
+                        builder.AppendLine("                    handlerActivity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);");
                         builder.AppendLine("                    throw;");
                         builder.AppendLine("                }");
                         builder.AppendLine("                catch (global::System.Exception ex)");
                         builder.AppendLine("                {");
-                        builder.AppendLine("                    handlerActivity?.SetTag(\"error.type\", ex.GetType().Name);");
+                        builder.AppendLine("                    handlerActivity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);");
                         builder.AppendLine("                    handlerActivity?.AddException(ex);");
                         builder.AppendLine("                    handlerActivity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);");
-                        builder.AppendLine("                    handlerActivity?.SetTag(\"mediator.outcome\", \"error\");");
+                        builder.AppendLine("                    handlerActivity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);");
                         builder.AppendLine("                    throw;");
                         builder.AppendLine("                }");
                         builder.AppendLine("                finally");
@@ -388,33 +388,33 @@ internal static class GeneratedDispatchEmitter
                     }
                 }
 
-                builder.AppendLine("            activity?.SetTag(\"mediator.outcome\", \"success\");");
+                builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);");
                 builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);");
                 builder.AppendLine("        }");
                 builder.AppendLine("        catch (global::System.OperationCanceledException)");
                 builder.AppendLine("        {");
-                builder.AppendLine("            outcome = \"cancelled\";");
-                builder.AppendLine("            activity?.SetTag(\"mediator.outcome\", \"cancelled\");");
+                builder.AppendLine("            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;");
+                builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);");
                 builder.AppendLine("            throw;");
                 builder.AppendLine("        }");
                 builder.AppendLine("        catch (global::System.Exception ex)");
                 builder.AppendLine("        {");
-                builder.AppendLine("            outcome = \"error\";");
-                builder.AppendLine("            activity?.SetTag(\"error.type\", ex.GetType().Name);");
+                builder.AppendLine("            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;");
+                builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);");
                 builder.AppendLine("            activity?.AddException(ex);");
                 builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);");
-                builder.AppendLine("            activity?.SetTag(\"mediator.outcome\", \"error\");");
+                builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);");
                 builder.AppendLine("            throw;");
                 builder.AppendLine("        }");
                 builder.AppendLine("        finally");
                 builder.AppendLine("        {");
                 builder.AppendLine("            activity?.Dispose();");
-                builder.Append("            mediator.Instrumentation.NotificationsTotal.Add(1, new global::System.Diagnostics.TagList { { \"mediator.notification.name\", ")
+                builder.Append("            mediator.Instrumentation.NotificationsTotal.Add(1, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, ")
                     .Append(notificationNameLiteral)
-                    .AppendLine(" }, { \"mediator.outcome\", outcome } });");
-                builder.Append("            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { \"mediator.notification.name\", ")
+                    .AppendLine(" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });");
+                builder.Append("            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, ")
                     .Append(notificationNameLiteral)
-                    .AppendLine(" }, { \"mediator.outcome\", outcome } });");
+                    .AppendLine(" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });");
                 builder.AppendLine("        }");
                 break;
         }

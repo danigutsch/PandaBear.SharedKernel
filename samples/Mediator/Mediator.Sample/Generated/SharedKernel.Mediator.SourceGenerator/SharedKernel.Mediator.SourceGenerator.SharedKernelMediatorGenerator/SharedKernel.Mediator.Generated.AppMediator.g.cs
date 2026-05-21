@@ -44,42 +44,42 @@ public sealed partial class AppMediator : IMediator
     {
         global::System.ArgumentNullException.ThrowIfNull(request);
 
-        var activity = _instrumentation.ActivitySource.StartActivity("mediator.send", global::System.Diagnostics.ActivityKind.Internal);
-        activity?.SetTag("mediator.request.name", "CreateBooking");
-        activity?.SetTag("mediator.request.assembly", "Mediator.Sample");
-        activity?.SetTag("mediator.handler.name", "CreateBookingHandler");
-        activity?.SetTag("mediator.pipeline.depth", 0);
+        var activity = _instrumentation.ActivitySource.StartActivity(global::SharedKernel.Mediator.MediatorTelemetry.ActivitySend, global::System.Diagnostics.ActivityKind.Internal);
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName, "CreateBooking");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagRequestAssembly, "Mediator.Sample");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagHandlerName, "CreateBookingHandler");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagPipelineDepth, 0);
         var sw = global::System.Diagnostics.Stopwatch.GetTimestamp();
-        var outcome = "success";
+        var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         try
         {
             var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Mediator.Sample.CreateBookingHandler>(Services);
 
             var result = await handler.Handle(request, ct).ConfigureAwait(false);
-            activity?.SetTag("mediator.outcome", "success");
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
             return result;
         }
         catch (global::System.OperationCanceledException)
         {
-            outcome = "cancelled";
-            activity?.SetTag("mediator.outcome", "cancelled");
+            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);
             throw;
         }
         catch (global::System.Exception ex)
         {
-            outcome = "error";
-            activity?.SetTag("error.type", ex.GetType().Name);
+            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
             activity?.AddException(ex);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);
-            activity?.SetTag("mediator.outcome", "error");
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);
             throw;
         }
         finally
         {
             activity?.Dispose();
-            _instrumentation.RequestsTotal.Add(1, new global::System.Diagnostics.TagList { { "mediator.request.name", "CreateBooking" }, { "mediator.outcome", outcome } });
-            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { "mediator.request.name", "CreateBooking" }, { "mediator.outcome", outcome } });
+            _instrumentation.RequestsTotal.Add(1, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName, "CreateBooking" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });
+            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName, "CreateBooking" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });
         }
     }
 
@@ -94,42 +94,42 @@ public sealed partial class AppMediator : IMediator
     {
         global::System.ArgumentNullException.ThrowIfNull(request);
 
-        var activity = _instrumentation.ActivitySource.StartActivity("mediator.send", global::System.Diagnostics.ActivityKind.Internal);
-        activity?.SetTag("mediator.request.name", "LookupTourSummary");
-        activity?.SetTag("mediator.request.assembly", "Mediator.Sample");
-        activity?.SetTag("mediator.handler.name", "LookupTourSummaryHandler");
-        activity?.SetTag("mediator.pipeline.depth", 0);
+        var activity = _instrumentation.ActivitySource.StartActivity(global::SharedKernel.Mediator.MediatorTelemetry.ActivitySend, global::System.Diagnostics.ActivityKind.Internal);
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName, "LookupTourSummary");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagRequestAssembly, "Mediator.Sample");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagHandlerName, "LookupTourSummaryHandler");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagPipelineDepth, 0);
         var sw = global::System.Diagnostics.Stopwatch.GetTimestamp();
-        var outcome = "success";
+        var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         try
         {
             var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Mediator.Sample.LookupTourSummaryHandler>(Services);
 
             var result = await handler.Handle(request, ct).ConfigureAwait(false);
-            activity?.SetTag("mediator.outcome", "success");
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
             return result;
         }
         catch (global::System.OperationCanceledException)
         {
-            outcome = "cancelled";
-            activity?.SetTag("mediator.outcome", "cancelled");
+            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);
             throw;
         }
         catch (global::System.Exception ex)
         {
-            outcome = "error";
-            activity?.SetTag("error.type", ex.GetType().Name);
+            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
             activity?.AddException(ex);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);
-            activity?.SetTag("mediator.outcome", "error");
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);
             throw;
         }
         finally
         {
             activity?.Dispose();
-            _instrumentation.RequestsTotal.Add(1, new global::System.Diagnostics.TagList { { "mediator.request.name", "LookupTourSummary" }, { "mediator.outcome", outcome } });
-            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { "mediator.request.name", "LookupTourSummary" }, { "mediator.outcome", outcome } });
+            _instrumentation.RequestsTotal.Add(1, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName, "LookupTourSummary" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });
+            _instrumentation.RequestsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName, "LookupTourSummary" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });
         }
     }
 
@@ -150,11 +150,11 @@ public sealed partial class AppMediator : IMediator
     private async global::System.Collections.Generic.IAsyncEnumerable<string> SendStream_0000(global::Mediator.Sample.StreamTourCodes request,
         [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken ct)
     {
-        var activity = _instrumentation.ActivitySource.StartActivity("mediator.stream", global::System.Diagnostics.ActivityKind.Internal);
-        activity?.SetTag("mediator.request.name", "StreamTourCodes");
-        activity?.SetTag("mediator.request.assembly", "Mediator.Sample");
-        activity?.SetTag("mediator.handler.name", "StreamTourCodesHandler");
-        var outcome = "success";
+        var activity = _instrumentation.ActivitySource.StartActivity(global::SharedKernel.Mediator.MediatorTelemetry.ActivityStream, global::System.Diagnostics.ActivityKind.Internal);
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName, "StreamTourCodes");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagRequestAssembly, "Mediator.Sample");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagHandlerName, "StreamTourCodesHandler");
+        var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Mediator.Sample.StreamTourCodesHandler>(Services);
 
         var enumerator = handler.Handle(request, ct).GetAsyncEnumerator(ct);
@@ -169,22 +169,22 @@ public sealed partial class AppMediator : IMediator
                 }
                 catch (global::System.OperationCanceledException)
                 {
-                    outcome = "cancelled";
-                    activity?.SetTag("mediator.outcome", "cancelled");
+                    outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;
+                    activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);
                     throw;
                 }
                 catch (global::System.Exception ex)
                 {
-                    outcome = "error";
-                    activity?.SetTag("error.type", ex.GetType().Name);
+                    outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;
+                    activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
                     activity?.AddException(ex);
                     activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);
-                    activity?.SetTag("mediator.outcome", "error");
+                    activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);
                     throw;
                 }
                 if (!hasNext)
                 {
-                    activity?.SetTag("mediator.outcome", "success");
+                    activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
                     activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
                     break;
                 }
@@ -195,7 +195,7 @@ public sealed partial class AppMediator : IMediator
         {
             await enumerator.DisposeAsync();
             activity?.Dispose();
-            _instrumentation.StreamsTotal.Add(1, new global::System.Diagnostics.TagList { { "mediator.request.name", "StreamTourCodes" }, { "mediator.outcome", outcome } });
+            _instrumentation.StreamsTotal.Add(1, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName, "StreamTourCodes" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });
         }
     }
 

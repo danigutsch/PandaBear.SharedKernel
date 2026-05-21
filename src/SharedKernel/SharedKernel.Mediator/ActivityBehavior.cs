@@ -17,28 +17,28 @@ public sealed class ActivityBehavior<TRequest, TResponse> : IPipelineBehavior<TR
         using var activity = SharedKernelMediatorActivitySource.StartRequestActivity<TRequest>();
         if (activity is not null)
         {
-            activity.SetTag("sharedkernel.mediator.request_type", request.GetType().FullName ?? typeof(TRequest).FullName ?? typeof(TRequest).Name);
-            activity.SetTag("sharedkernel.mediator.response_type", typeof(TResponse).FullName ?? typeof(TResponse).Name);
+            activity.SetTag(MediatorTelemetry.TagRequestType, request.GetType().FullName ?? typeof(TRequest).FullName ?? typeof(TRequest).Name);
+            activity.SetTag(MediatorTelemetry.TagResponseType, typeof(TResponse).FullName ?? typeof(TResponse).Name);
         }
 
         try
         {
             var response = await next().ConfigureAwait(false);
-            activity?.SetTag("sharedkernel.mediator.outcome", "success");
+            activity?.SetTag(MediatorTelemetry.TagRuntimeOutcome, MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Ok);
             return response;
         }
         catch (OperationCanceledException)
         {
-            activity?.SetTag("sharedkernel.mediator.outcome", "cancelled");
+            activity?.SetTag(MediatorTelemetry.TagRuntimeOutcome, MediatorTelemetry.OutcomeCancelled);
             throw;
         }
         catch (Exception ex)
         {
-            activity?.SetTag("error.type", ex.GetType().Name);
+            activity?.SetTag(MediatorTelemetry.TagErrorType, ex.GetType().Name);
             activity?.AddException(ex);
             activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Error, ex.GetType().Name);
-            activity?.SetTag("sharedkernel.mediator.outcome", "error");
+            activity?.SetTag(MediatorTelemetry.TagRuntimeOutcome, MediatorTelemetry.OutcomeError);
             throw;
         }
     }

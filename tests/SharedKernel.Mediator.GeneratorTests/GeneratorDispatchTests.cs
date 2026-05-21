@@ -97,6 +97,10 @@ public sealed class GeneratorDispatchTests
         Assert.Contains("return GeneratedDispatch.Publish(this, notification, ct);", generatedSource, StringComparison.Ordinal);
         Assert.Contains("public global::System.Threading.Tasks.ValueTask<object?> SendObject(", generatedSource, StringComparison.Ordinal);
         Assert.Contains("throw new global::System.NotSupportedException($\"Generated request dispatch is not available for request type '{request.GetType().FullName}'.\");", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.ActivitySend", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess", generatedSource, StringComparison.Ordinal);
         Assert.DoesNotContain("internal static class GeneratedDispatch", generatedSource, StringComparison.Ordinal);
         Assert.Contains("internal static class GeneratedDispatch", generatedDispatchSource, StringComparison.Ordinal);
         Assert.Contains("internal static class GeneratedPipelines", generatedPipelinesSource, StringComparison.Ordinal);
