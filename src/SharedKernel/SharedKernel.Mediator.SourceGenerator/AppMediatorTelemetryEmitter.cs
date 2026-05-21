@@ -15,12 +15,12 @@ internal static class AppMediatorTelemetryEmitter
         builder.AppendLine();
         builder.AppendLine("internal static class AppMediatorTelemetry");
         builder.AppendLine("{");
-        builder.AppendLine("    internal const string ActivitySourceName = global::SharedKernel.Mediator.MediatorTelemetry.Name;");
-        builder.AppendLine("    internal const string MeterName = global::SharedKernel.Mediator.MediatorTelemetry.Name;");
-        builder.AppendLine("    internal const string SendSpanName = global::SharedKernel.Mediator.MediatorTelemetry.ActivitySend;");
-        builder.AppendLine("    internal const string StreamSpanName = global::SharedKernel.Mediator.MediatorTelemetry.ActivityStream;");
-        builder.AppendLine("    internal const string PublishSpanName = global::SharedKernel.Mediator.MediatorTelemetry.ActivityPublish;");
-        builder.AppendLine("    internal const string HandlerSpanName = global::SharedKernel.Mediator.MediatorTelemetry.ActivityNotificationHandler;");
+        builder.AppendLine("    internal static string ActivitySourceName => global::SharedKernel.Mediator.MediatorTelemetry.Name;");
+        builder.AppendLine("    internal static string MeterName => global::SharedKernel.Mediator.MediatorTelemetry.Name;");
+        builder.AppendLine("    internal static string SendSpanName => global::SharedKernel.Mediator.MediatorTelemetry.ActivitySend;");
+        builder.AppendLine("    internal static string StreamSpanName => global::SharedKernel.Mediator.MediatorTelemetry.ActivityStream;");
+        builder.AppendLine("    internal static string PublishSpanName => global::SharedKernel.Mediator.MediatorTelemetry.ActivityPublish;");
+        builder.AppendLine("    internal static string HandlerSpanName => global::SharedKernel.Mediator.MediatorTelemetry.ActivityNotificationHandler;");
         builder.AppendLine("}");
         return builder.ToString();
     }
