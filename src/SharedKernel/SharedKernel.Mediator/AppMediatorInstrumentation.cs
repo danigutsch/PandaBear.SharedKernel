@@ -21,11 +21,11 @@ public sealed class AppMediatorInstrumentation : IDisposable
 
         _activitySource = SharedKernelMediatorActivitySource.Source;
         _meter = meterFactory.Create(MediatorTelemetry.Name);
-        RequestsTotal = _meter.CreateCounter<long>("mediator.requests", "{request}", "Total mediator requests dispatched.");
-        RequestsDuration = _meter.CreateHistogram<double>("mediator.request.duration", "ms", "Duration of mediator request dispatch.");
-        NotificationsTotal = _meter.CreateCounter<long>("mediator.notifications", "{notification}", "Total mediator notifications dispatched.");
-        NotificationsDuration = _meter.CreateHistogram<double>("mediator.notification.duration", "ms", "Duration of mediator notification fan-out.");
-        StreamsTotal = _meter.CreateCounter<long>("mediator.streams", "{request}", "Total mediator stream requests dispatched.");
+        RequestsTotal = _meter.CreateCounter<long>(MediatorTelemetry.MetricRequests, "{request}", "Total mediator requests dispatched.");
+        RequestsDuration = _meter.CreateHistogram<double>(MediatorTelemetry.MetricRequestDuration, "ms", "Duration of mediator request dispatch.");
+        NotificationsTotal = _meter.CreateCounter<long>(MediatorTelemetry.MetricNotifications, "{notification}", "Total mediator notifications dispatched.");
+        NotificationsDuration = _meter.CreateHistogram<double>(MediatorTelemetry.MetricNotificationDuration, "ms", "Duration of mediator notification fan-out.");
+        StreamsTotal = _meter.CreateCounter<long>(MediatorTelemetry.MetricStreams, "{request}", "Total mediator stream requests dispatched.");
     }
 
     /// <summary>

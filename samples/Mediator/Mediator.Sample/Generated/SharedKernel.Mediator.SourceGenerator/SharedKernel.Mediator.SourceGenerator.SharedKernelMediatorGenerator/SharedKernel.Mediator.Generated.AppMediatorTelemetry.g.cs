@@ -5,10 +5,10 @@ namespace SharedKernel.Mediator;
 
 internal static class AppMediatorTelemetry
 {
-    internal const string ActivitySourceName = "SharedKernel.Mediator";
-    internal const string MeterName = "SharedKernel.Mediator";
-    internal const string SendSpanName = "mediator.send";
-    internal const string StreamSpanName = "mediator.stream";
-    internal const string PublishSpanName = "mediator.publish";
-    internal const string HandlerSpanName = "mediator.notification.handle";
+    internal static string ActivitySourceName => global::SharedKernel.Mediator.MediatorTelemetry.Name;
+    internal static string MeterName => global::SharedKernel.Mediator.MediatorTelemetry.Name;
+    internal static string SendSpanName => global::SharedKernel.Mediator.MediatorTelemetry.ActivitySend;
+    internal static string StreamSpanName => global::SharedKernel.Mediator.MediatorTelemetry.ActivityStream;
+    internal static string PublishSpanName => global::SharedKernel.Mediator.MediatorTelemetry.ActivityPublish;
+    internal static string HandlerSpanName => global::SharedKernel.Mediator.MediatorTelemetry.ActivityNotificationHandler;
 }

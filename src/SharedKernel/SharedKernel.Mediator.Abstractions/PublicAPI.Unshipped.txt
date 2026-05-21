@@ -46,7 +46,31 @@ SharedKernel.Mediator.IStreamRequestHandler<TRequest, TResponse>.Handle(TRequest
 SharedKernel.Mediator.MediatorModuleAttribute
 SharedKernel.Mediator.MediatorModuleAttribute.MediatorModuleAttribute() -> void
 SharedKernel.Mediator.MediatorTelemetry
+static SharedKernel.Mediator.MediatorTelemetry.ActivityNotificationHandler.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.ActivityPublish.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.ActivitySend.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.ActivityStream.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.MetricNotificationDuration.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.MetricNotifications.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.MetricRequestDuration.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.MetricRequests.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.MetricStreams.get -> string!
 static SharedKernel.Mediator.MediatorTelemetry.Name.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.OutcomeError.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagErrorType.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagHandlerName.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagNotificationAssembly.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagNotificationHandlerCount.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagNotificationName.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagOutcome.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagPipelineDepth.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagRequestAssembly.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagRequestName.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagRequestType.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagResponseType.get -> string!
+static SharedKernel.Mediator.MediatorTelemetry.TagRuntimeOutcome.get -> string!
 SharedKernel.Mediator.PipelineOrderAttribute
 SharedKernel.Mediator.PipelineOrderAttribute.Order.get -> int
 SharedKernel.Mediator.PipelineOrderAttribute.Order.init -> void
