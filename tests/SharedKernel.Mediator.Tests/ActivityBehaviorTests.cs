@@ -9,7 +9,7 @@ public sealed class ActivityBehaviorTests
     public void SharedKernel_Mediator_Activity_Source_Uses_Stable_Package_Name()
     {
         // Arrange
-        const string expectedName = "SharedKernel.Mediator";
+        var expectedName = MediatorTelemetry.Name;
 
         // Act
         var activitySourceName = SharedKernelMediatorActivitySource.ActivitySourceName;
@@ -18,6 +18,37 @@ public sealed class ActivityBehaviorTests
         // Assert
         Assert.Equal(expectedName, activitySourceName);
         Assert.Equal(expectedName, sourceName);
+    }
+
+    [Fact]
+    public void Mediator_Telemetry_Contract_Uses_Stable_Names()
+    {
+        // Assert
+        Assert.Equal("SharedKernel.Mediator", MediatorTelemetry.Name);
+        Assert.Equal("mediator.send", MediatorTelemetry.ActivitySend);
+        Assert.Equal("mediator.stream", MediatorTelemetry.ActivityStream);
+        Assert.Equal("mediator.publish", MediatorTelemetry.ActivityPublish);
+        Assert.Equal("mediator.notification.handle", MediatorTelemetry.ActivityNotificationHandler);
+        Assert.Equal("mediator.requests", MediatorTelemetry.MetricRequests);
+        Assert.Equal("mediator.request.duration", MediatorTelemetry.MetricRequestDuration);
+        Assert.Equal("mediator.notifications", MediatorTelemetry.MetricNotifications);
+        Assert.Equal("mediator.notification.duration", MediatorTelemetry.MetricNotificationDuration);
+        Assert.Equal("mediator.streams", MediatorTelemetry.MetricStreams);
+        Assert.Equal("sharedkernel.mediator.request_type", MediatorTelemetry.TagRequestType);
+        Assert.Equal("sharedkernel.mediator.response_type", MediatorTelemetry.TagResponseType);
+        Assert.Equal("sharedkernel.mediator.outcome", MediatorTelemetry.TagRuntimeOutcome);
+        Assert.Equal("mediator.request.name", MediatorTelemetry.TagRequestName);
+        Assert.Equal("mediator.request.assembly", MediatorTelemetry.TagRequestAssembly);
+        Assert.Equal("mediator.handler.name", MediatorTelemetry.TagHandlerName);
+        Assert.Equal("mediator.pipeline.depth", MediatorTelemetry.TagPipelineDepth);
+        Assert.Equal("mediator.notification.name", MediatorTelemetry.TagNotificationName);
+        Assert.Equal("mediator.notification.assembly", MediatorTelemetry.TagNotificationAssembly);
+        Assert.Equal("mediator.notification.handler.count", MediatorTelemetry.TagNotificationHandlerCount);
+        Assert.Equal("mediator.outcome", MediatorTelemetry.TagOutcome);
+        Assert.Equal("error.type", MediatorTelemetry.TagErrorType);
+        Assert.Equal("success", MediatorTelemetry.OutcomeSuccess);
+        Assert.Equal("cancelled", MediatorTelemetry.OutcomeCancelled);
+        Assert.Equal("error", MediatorTelemetry.OutcomeError);
     }
 
     [Fact]
@@ -38,10 +69,10 @@ public sealed class ActivityBehaviorTests
         Assert.Equal(nameof(TestQuery), activity.OperationName);
         Assert.Equal(SharedKernelMediatorActivitySource.ActivitySourceName, activity.Source.Name);
         Assert.Equal(ActivityStatusCode.Ok, activity.Status);
-        Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.request_type" && tag.Value == typeof(TestQuery).FullName);
-        Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.response_type" && tag.Value == typeof(int).FullName);
-        Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.outcome" && tag.Value == "success");
-        Assert.DoesNotContain(activity.Tags, static tag => tag.Key == "error.type");
+        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRequestType && tag.Value == typeof(TestQuery).FullName);
+        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagResponseType && tag.Value == typeof(int).FullName);
+        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeSuccess);
+        Assert.DoesNotContain(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType);
         Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
     }
 
@@ -78,8 +109,8 @@ public sealed class ActivityBehaviorTests
         // Assert
         var activity = Assert.Single(stoppedActivities);
         Assert.Equal(ActivityStatusCode.Error, activity.Status);
-        Assert.Contains(activity.Tags, static tag => tag.Key == "error.type" && tag.Value == "InvalidOperationException");
-        Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.outcome" && tag.Value == "error");
+        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType && tag.Value == "InvalidOperationException");
+        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeError);
 
         var exceptionEvent = Assert.Single(activity.Events, static evt => evt.Name == "exception");
         var exceptionTags = exceptionEvent.Tags;
@@ -109,8 +140,8 @@ public sealed class ActivityBehaviorTests
         // Assert
         var activity = Assert.Single(stoppedActivities);
         Assert.Equal(ActivityStatusCode.Unset, activity.Status);
-        Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.outcome" && tag.Value == "cancelled");
-        Assert.DoesNotContain(activity.Tags, static tag => tag.Key == "error.type");
+        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeCancelled);
+        Assert.DoesNotContain(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType);
         Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
     }
 
@@ -143,8 +174,8 @@ public sealed class ActivityBehaviorTests
         Assert.Equal(99, response);
         var activity = Assert.Single(stoppedActivities);
         Assert.Equal(ActivityStatusCode.Ok, activity.Status);
-        Assert.Contains(activity.Tags, static tag => tag.Key == "sharedkernel.mediator.outcome" && tag.Value == "success");
-        Assert.DoesNotContain(activity.Tags, static tag => tag.Key == "error.type");
+        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeSuccess);
+        Assert.DoesNotContain(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType);
         Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
     }
 

@@ -15,12 +15,12 @@ internal static class AppMediatorTelemetryEmitter
         builder.AppendLine();
         builder.AppendLine("internal static class AppMediatorTelemetry");
         builder.AppendLine("{");
-        builder.AppendLine("    internal const string ActivitySourceName = \"SharedKernel.Mediator\";");
-        builder.AppendLine("    internal const string MeterName = \"SharedKernel.Mediator\";");
-        builder.AppendLine("    internal const string SendSpanName = \"mediator.send\";");
-        builder.AppendLine("    internal const string StreamSpanName = \"mediator.stream\";");
-        builder.AppendLine("    internal const string PublishSpanName = \"mediator.publish\";");
-        builder.AppendLine("    internal const string HandlerSpanName = \"mediator.notification.handle\";");
+        builder.AppendLine("    internal const string ActivitySourceName = global::SharedKernel.Mediator.MediatorTelemetry.Name;");
+        builder.AppendLine("    internal const string MeterName = global::SharedKernel.Mediator.MediatorTelemetry.Name;");
+        builder.AppendLine("    internal const string SendSpanName = global::SharedKernel.Mediator.MediatorTelemetry.ActivitySend;");
+        builder.AppendLine("    internal const string StreamSpanName = global::SharedKernel.Mediator.MediatorTelemetry.ActivityStream;");
+        builder.AppendLine("    internal const string PublishSpanName = global::SharedKernel.Mediator.MediatorTelemetry.ActivityPublish;");
+        builder.AppendLine("    internal const string HandlerSpanName = global::SharedKernel.Mediator.MediatorTelemetry.ActivityNotificationHandler;");
         builder.AppendLine("}");
         return builder.ToString();
     }

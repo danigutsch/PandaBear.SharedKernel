@@ -56,40 +56,40 @@ internal static class GeneratedDispatch
         global::Demo.TourCreated notification,
         global::System.Threading.CancellationToken ct)
     {
-        var activity = mediator.Instrumentation.ActivitySource.StartActivity("mediator.publish", global::System.Diagnostics.ActivityKind.Internal);
-        activity?.SetTag("mediator.notification.name", "TourCreated");
-        activity?.SetTag("mediator.notification.assembly", "SharedKernel.Mediator.Tests.Dynamic");
-        activity?.SetTag("mediator.notification.handler.count", 2);
+        var activity = mediator.Instrumentation.ActivitySource.StartActivity(global::SharedKernel.Mediator.MediatorTelemetry.ActivityPublish, global::System.Diagnostics.ActivityKind.Internal);
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, "TourCreated");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationAssembly, "SharedKernel.Mediator.Tests.Dynamic");
+        activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationHandlerCount, 2);
         var sw = global::System.Diagnostics.Stopwatch.GetTimestamp();
-        var outcome = "success";
+        var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         try
         {
             var handler0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerOne>(mediator.Services).Handle(notification, ct);
             var handler1 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerTwo>(mediator.Services).Handle(notification, ct);
             await global::System.Threading.Tasks.Task.WhenAll(handler0.AsTask(), handler1.AsTask()).ConfigureAwait(false);
-            activity?.SetTag("mediator.outcome", "success");
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
         }
         catch (global::System.OperationCanceledException)
         {
-            outcome = "cancelled";
-            activity?.SetTag("mediator.outcome", "cancelled");
+            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);
             throw;
         }
         catch (global::System.Exception ex)
         {
-            outcome = "error";
-            activity?.SetTag("error.type", ex.GetType().Name);
+            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
             activity?.AddException(ex);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);
-            activity?.SetTag("mediator.outcome", "error");
+            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);
             throw;
         }
         finally
         {
             activity?.Dispose();
-            mediator.Instrumentation.NotificationsTotal.Add(1, new global::System.Diagnostics.TagList { { "mediator.notification.name", "TourCreated" }, { "mediator.outcome", outcome } });
-            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { "mediator.notification.name", "TourCreated" }, { "mediator.outcome", outcome } });
+            mediator.Instrumentation.NotificationsTotal.Add(1, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, "TourCreated" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });
+            mediator.Instrumentation.NotificationsDuration.Record(global::System.Diagnostics.Stopwatch.GetElapsedTime(sw).TotalMilliseconds, new global::System.Diagnostics.TagList { { global::SharedKernel.Mediator.MediatorTelemetry.TagNotificationName, "TourCreated" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });
         }
     }
 
