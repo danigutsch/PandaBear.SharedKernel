@@ -21,6 +21,25 @@ public sealed class ActivityBehavior<TRequest, TResponse> : IPipelineBehavior<TR
             activity.SetTag("sharedkernel.mediator.response_type", typeof(TResponse).FullName ?? typeof(TResponse).Name);
         }
 
-        return await next().ConfigureAwait(false);
+        try
+        {
+            var response = await next().ConfigureAwait(false);
+            activity?.SetTag("sharedkernel.mediator.outcome", "success");
+            activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Ok);
+            return response;
+        }
+        catch (OperationCanceledException)
+        {
+            activity?.SetTag("sharedkernel.mediator.outcome", "cancelled");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            activity?.SetTag("error.type", ex.GetType().Name);
+            activity?.AddException(ex);
+            activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Error, ex.GetType().Name);
+            activity?.SetTag("sharedkernel.mediator.outcome", "error");
+            throw;
+        }
     }
 }
