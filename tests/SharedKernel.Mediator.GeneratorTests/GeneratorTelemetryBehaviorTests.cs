@@ -45,6 +45,12 @@ public sealed class GeneratorTelemetryBehaviorTests
         Assert.Equal(ActivityStatusCode.Error, span.Status);
         Assert.Equal("error", outcome);
         Assert.Equal("InvalidOperationException", errorType);
+
+        var exceptionEvent = Assert.Single(span.Events, static evt => evt.Name == "exception");
+        Assert.Contains(exceptionEvent.Tags!, static tag =>
+            tag.Key == "exception.type" && string.Equals(tag.Value as string, typeof(InvalidOperationException).FullName, StringComparison.Ordinal));
+        Assert.Contains(exceptionEvent.Tags!, static tag =>
+            tag.Key == "exception.message" && string.Equals(tag.Value as string, "handler boom", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -71,6 +77,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var errorType = span.GetTagItem("error.type");
         Assert.Equal("cancelled", outcome);
         Assert.Null(errorType);
+        Assert.DoesNotContain(span.Events, static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -101,6 +108,12 @@ public sealed class GeneratorTelemetryBehaviorTests
         Assert.Equal(ActivityStatusCode.Error, span.Status);
         Assert.Equal("error", outcome);
         Assert.Equal("InvalidOperationException", errorType);
+
+        var exceptionEvent = Assert.Single(span.Events, static evt => evt.Name == "exception");
+        Assert.Contains(exceptionEvent.Tags!, static tag =>
+            tag.Key == "exception.type" && string.Equals(tag.Value as string, typeof(InvalidOperationException).FullName, StringComparison.Ordinal));
+        Assert.Contains(exceptionEvent.Tags!, static tag =>
+            tag.Key == "exception.message" && string.Equals(tag.Value as string, "boom", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -131,6 +144,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var errorType = span.GetTagItem("error.type");
         Assert.Equal("cancelled", outcome);
         Assert.Null(errorType);
+        Assert.DoesNotContain(span.Events, static evt => evt.Name == "exception");
     }
 
     [Fact]
