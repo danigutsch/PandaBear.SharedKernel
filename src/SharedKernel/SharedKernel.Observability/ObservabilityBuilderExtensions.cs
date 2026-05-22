@@ -30,8 +30,8 @@ public static class ObservabilityBuilderExtensions
             logging.IncludeScopes = true;
         });
 
-        var serviceVersion = Assembly.GetEntryAssembly()?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion
-            ?? Assembly.GetEntryAssembly()?.GetName().Version?.ToString();
+        var entryAssembly = Assembly.GetEntryAssembly();
+        var serviceVersion = entryAssembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
         var resourceBuilder = ResourceBuilder.CreateDefault().AddDetector(new ExplicitServiceNameDetector(builder.Environment.ApplicationName, serviceVersion));
         builder.Services.AddOpenTelemetry()
             .WithMetrics(metrics =>
