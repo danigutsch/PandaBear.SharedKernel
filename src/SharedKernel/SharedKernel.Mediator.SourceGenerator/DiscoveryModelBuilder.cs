@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 namespace SharedKernel.Mediator.SourceGenerator;
 
 /// <summary>
-/// Builds the <see cref="DiscoveryModel"/> from a <see cref="Microsoft.CodeAnalysis.Compilation"/>.
+/// Builds the <see cref="DiscoveryModel"/> from a <see cref="Compilation"/>.
 /// Orchestrates assembly scanning, type collection, and descriptor construction.
 /// Implementation is split across partial files by concern.
 /// </summary>

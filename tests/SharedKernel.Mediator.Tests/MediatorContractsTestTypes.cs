@@ -82,7 +82,7 @@ internal sealed class TestStreamCommandHandler : IRequestHandler<TestStreamComma
             count += item;
         }
 
-        return count.ToString(global::System.Globalization.CultureInfo.InvariantCulture);
+        return count.ToString(System.Globalization.CultureInfo.InvariantCulture);
     }
 }
 
@@ -95,7 +95,7 @@ internal sealed class TestDuplexStreamCommandHandler : IStreamRequestHandler<Tes
     {
         await foreach (var item in request.Items.WithCancellation(ct))
         {
-            yield return item.ToString(global::System.Globalization.CultureInfo.InvariantCulture);
+            yield return item.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
     }
 }
