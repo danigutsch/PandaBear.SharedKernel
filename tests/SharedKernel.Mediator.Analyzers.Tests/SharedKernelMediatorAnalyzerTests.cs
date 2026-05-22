@@ -397,7 +397,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var provider = new TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>.Empty);
 
         // Act
-        var options = SharedKernel.Mediator.Analyzers.MediatorAnalyzerConfigOptions.Parse(provider);
+        var options = MediatorAnalyzerConfigOptions.Parse(provider);
 
         // Assert
         Assert.True(options.CqrsStrict);

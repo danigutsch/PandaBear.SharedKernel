@@ -83,7 +83,7 @@ internal static class GeneratedPipelinesEmitter
 
         for (var pipelineIndex = 0; pipelineIndex < pipelines.Length; pipelineIndex++)
         {
-            writer.Line($"var pipeline{pipelineIndex.ToString(global::System.Globalization.CultureInfo.InvariantCulture)} = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<{pipelines[pipelineIndex].MetadataName}>(mediator.Services);");
+            writer.Line($"var pipeline{pipelineIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)} = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<{pipelines[pipelineIndex].MetadataName}>(mediator.Services);");
         }
 
         writer.Line($"var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<{handlerMetadataName}>(mediator.Services);");
@@ -106,7 +106,7 @@ internal static class GeneratedPipelinesEmitter
     private static string GetMethodName(bool isStream, int index)
     {
         return (isStream ? "InvokeStream_" : "Invoke_")
-            + index.ToString("D4", global::System.Globalization.CultureInfo.InvariantCulture);
+            + index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture);
     }
 
     private static string GetReturnType(bool isStream, string responseMetadataName)
