@@ -3,7 +3,7 @@ namespace SharedKernel.Observability.Tests;
 public class ExplicitServiceNameDetectorTests
 {
     [Fact]
-    public void detect_sets_service_name_attribute()
+    public void Detect_Sets_Service_Name_Attribute()
     {
         var detector = new SharedKernel.Observability.ExplicitServiceNameDetector("observable-app");
         var resource = detector.Detect();

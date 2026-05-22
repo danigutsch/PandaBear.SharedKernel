@@ -5,20 +5,20 @@ namespace SharedKernel.Observability;
 /// <summary>
 /// An OpenTelemetry resource detector that ensures service.name is set explicitly from application config or host.
 /// </summary>
-public sealed class ExplicitServiceNameDetector(string serviceName) : IResourceDetector
+public sealed class ExplicitServiceNameDetector : IResourceDetector
 {
+    private readonly string _serviceName;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExplicitServiceNameDetector"/> class.
+    /// </summary>
+    /// <param name="serviceName">The explicit service name to use for resource identity.</param>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="serviceName"/> is null or whitespace.</exception>
     public ExplicitServiceNameDetector(string serviceName)
-        : this(serviceName, validate: true) { }
-
-    private ExplicitServiceNameDetector(string serviceName, bool validate)
-        : this(serviceName)
     {
-        if (validate && string.IsNullOrWhiteSpace(serviceName))
-            throw new ArgumentException("Service name cannot be null or whitespace.", nameof(serviceName));
-    }
+        ArgumentException.ThrowIfNullOrWhiteSpace(serviceName);
 
-{
-    private readonly string _serviceName = serviceName;
+        _serviceName = serviceName;
+    }
 
     /// <inheritdoc/>
     public Resource Detect() => new Resource(new Dictionary<string, object> { ["service.name"] = _serviceName });

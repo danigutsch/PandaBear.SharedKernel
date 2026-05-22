@@ -29,10 +29,10 @@ public static class ObservabilityBuilderExtensions
             logging.IncludeScopes = true;
         });
 
+        var resourceBuilder = ResourceBuilder.CreateDefault().AddDetector(new ExplicitServiceNameDetector(builder.Environment.ApplicationName));
         builder.Services.AddOpenTelemetry()
             .WithMetrics(metrics =>
             {
-                var resourceBuilder = ResourceBuilder.CreateDefault().AddDetector(new ExplicitServiceNameDetector(builder.Environment.ApplicationName));
                 metrics.SetResourceBuilder(resourceBuilder);
                 metrics.AddRuntimeInstrumentation();
             })
