@@ -31,7 +31,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var request = ctx.CreateInstance("Demo.GetTour", 5);
 
         // Act
-        var response = await mediator.Send<string>((IRequest<string>)request, CancellationToken.None);
+        var response = await mediator.Send((IRequest<string>)request, CancellationToken.None);
 
         // Assert
         Assert.Equal("tour:5", response);
@@ -51,7 +51,7 @@ public sealed class GeneratorTelemetryBehaviorTests
 
         // Act
         await Assert.ThrowsAnyAsync<InvalidOperationException>(
-            () => mediator.Send<string>((IRequest<string>)request, CancellationToken.None).AsTask());
+            () => mediator.Send((IRequest<string>)request, CancellationToken.None).AsTask());
 
         // Assert
         var span = Assert.Single(stopped, a => a.OperationName == MediatorTelemetry.ActivitySend);
@@ -83,7 +83,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var request = ctx.CreateInstance("Demo.GetTour", 7);
 
         // Act
-        var response = await mediator.Send<string>((IRequest<string>)request, CancellationToken.None);
+        var response = await mediator.Send((IRequest<string>)request, CancellationToken.None);
 
         // Assert
         Assert.Equal("tour:7", response);
@@ -109,7 +109,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var request = ctx.CreateInstance("Demo.GetTour", 1);
 
         // Act
-        var response = await mediator.Send<string>((IRequest<string>)request, CancellationToken.None);
+        var response = await mediator.Send((IRequest<string>)request, CancellationToken.None);
 
         // Assert
         Assert.Equal("fallback", response);
@@ -222,7 +222,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         // Act
         await Assert.ThrowsAnyAsync<InvalidOperationException>(async () =>
         {
-            await foreach (var _ in mediator.Send<string>((IStreamRequest<string>)request, CancellationToken.None))
+            await foreach (var _ in mediator.Send((IStreamRequest<string>)request, CancellationToken.None))
             {
                 // consume until exception
             }
@@ -261,7 +261,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         // Act
         await Assert.ThrowsAnyAsync<OperationCanceledException>(async () =>
         {
-            await foreach (var _ in mediator.Send<string>((IStreamRequest<string>)request, cts.Token))
+            await foreach (var _ in mediator.Send((IStreamRequest<string>)request, cts.Token))
             {
                 await cts.CancelAsync();
             }
@@ -289,7 +289,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var request = ctx.CreateInstance("Demo.StreamTours", 3);
 
         // Act
-        var stream = mediator.Send<string>((IStreamRequest<string>)request, CancellationToken.None);
+        var stream = mediator.Send((IStreamRequest<string>)request, CancellationToken.None);
 
         // The span must NOT be stopped yet — Send() just returns IAsyncEnumerable
         Assert.DoesNotContain(stopped, a => a.OperationName == MediatorTelemetry.ActivityStream);
