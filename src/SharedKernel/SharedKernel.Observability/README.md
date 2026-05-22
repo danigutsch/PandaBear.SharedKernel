@@ -26,4 +26,3 @@ extension in your application startup and supply any required parameters for ser
 - [OpenTelemetry](https://www.nuget.org/packages/OpenTelemetry)
 - [OpenTelemetry.Extensions.Hosting](https://www.nuget.org/packages/OpenTelemetry.Extensions.Hosting)
 - [OpenTelemetry.Instrumentation.Runtime](https://www.nuget.org/packages/OpenTelemetry.Instrumentation.Runtime)
-
