@@ -32,12 +32,13 @@ public static class ObservabilityBuilderExtensions
         builder.Services.AddOpenTelemetry()
             .WithMetrics(metrics =>
             {
-                metrics.SetResourceBuilder(ResourceBuilder.CreateDefault().AddDetector(new ExplicitServiceNameDetector(builder.Environment.ApplicationName)));
+                var resourceBuilder = ResourceBuilder.CreateDefault().AddDetector(new ExplicitServiceNameDetector(builder.Environment.ApplicationName));
+                metrics.SetResourceBuilder(resourceBuilder);
                 metrics.AddRuntimeInstrumentation();
             })
             .WithTracing(tracing =>
             {
-                tracing.SetResourceBuilder(ResourceBuilder.CreateDefault().AddDetector(new ExplicitServiceNameDetector(builder.Environment.ApplicationName)));
+                tracing.SetResourceBuilder(resourceBuilder);
             });
 
         return builder;

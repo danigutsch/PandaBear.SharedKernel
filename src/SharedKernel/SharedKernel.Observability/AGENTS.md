@@ -18,4 +18,3 @@ Instructions for SharedKernel.Observability
 ## References
 
 - [docs/CODING_GUIDELINES.md](../../../docs/CODING_GUIDELINES.md)
-- [docs/OBSERVABILITY.md](../../../docs/OBSERVABILITY.md)

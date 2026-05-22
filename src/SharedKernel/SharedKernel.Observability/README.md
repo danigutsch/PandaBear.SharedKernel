@@ -24,9 +24,8 @@ extension in your application startup and supply any required parameters for ser
 ## Dependencies
 
 - [OpenTelemetry](https://www.nuget.org/packages/OpenTelemetry)
-- [OpenTelemetry.Metrics](https://www.nuget.org/packages/OpenTelemetry)
-- [OpenTelemetry.Trace](https://www.nuget.org/packages/OpenTelemetry)
+- [OpenTelemetry.Extensions.Hosting](https://www.nuget.org/packages/OpenTelemetry.Extensions.Hosting)
+- [OpenTelemetry.Instrumentation.Runtime](https://www.nuget.org/packages/OpenTelemetry.Instrumentation.Runtime)
 
 ## See Also
 
-- [docs/OBSERVABILITY.md](../../../docs/OBSERVABILITY.md) (if present)

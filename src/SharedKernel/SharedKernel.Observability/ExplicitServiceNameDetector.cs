@@ -7,6 +7,17 @@ namespace SharedKernel.Observability;
 /// </summary>
 public sealed class ExplicitServiceNameDetector(string serviceName) : IResourceDetector
 {
+    public ExplicitServiceNameDetector(string serviceName)
+        : this(serviceName, validate: true) { }
+
+    private ExplicitServiceNameDetector(string serviceName, bool validate)
+        : this(serviceName)
+    {
+        if (validate && string.IsNullOrWhiteSpace(serviceName))
+            throw new ArgumentException("Service name cannot be null or whitespace.", nameof(serviceName));
+    }
+
+{
     private readonly string _serviceName = serviceName;
 
     /// <inheritdoc/>

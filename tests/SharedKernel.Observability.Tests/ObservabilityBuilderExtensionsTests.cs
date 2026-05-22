@@ -2,7 +2,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace SharedKernel.Observability.Tests;
 
-public class ObservabilityBuilderExtensions
+public sealed class ObservabilityBuilderExtensionsTests
 {
     [Fact]
     public void configure_open_telemetry_can_be_called_and_returns_builder()
