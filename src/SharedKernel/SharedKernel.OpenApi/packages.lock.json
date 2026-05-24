@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "dependencies": {
+    "net10.0": {
+      "Microsoft.AspNetCore.OpenApi": {
+        "type": "Direct",
+        "requested": "[10.0.8, )",
+        "resolved": "10.0.8",
+        "contentHash": "cw24xHE2QaWwyEG9GQwFbjboyabub6Vd80DIItUGENzcQOa/BEnTrXsg2GADqWTmY/3ycqk9ToLGjgvF/VRlGA==",
+        "dependencies": {
+          "Microsoft.OpenApi": "2.0.0"
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions": {
+        "type": "Direct",
+        "requested": "[10.0.8, )",
+        "resolved": "10.0.8",
+        "contentHash": "21nbDV60SRPWGIivsyl6lqBeEJNG1sginhhfWgRrr3Ais7aQ12To25OAHQxgoiJkjqy1aQ6RxpZBGYuTi7Ge6A=="
+      },
+      "Microsoft.NET.ILLink.Tasks": {
+        "type": "Direct",
+        "requested": "[10.0.8, )",
+        "resolved": "10.0.8",
+        "contentHash": "dVbSXGIFNR5nZcv2tOLoWI+a9T4jtFd77IYjuND+QVe360qWgAF7H0WtoopYhRw/+SgpGUTyrkrh+65+ClNnfw=="
+      },
+      "SonarAnalyzer.CSharp": {
+        "type": "Direct",
+        "requested": "[10.26.0.140279, )",
+        "resolved": "10.26.0.140279",
+        "contentHash": "n6+KDAbvKCJs0oYIQlxFdsmvcj1YSJ7TiqEd5jYq58T1s1Q4bwymFMeVFGDUyDKqSH9YO/7Fobvm0u9WJ7MaRQ=="
+      },
+      "Microsoft.OpenApi": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "GGYLfzV/G/ct80OZ45JxnWP7NvMX1BCugn/lX7TH5o0lcVaviavsLMTxmFV2AybXWjbi3h6FF1vgZiTK6PXndw=="
+      }
+    }
+  }
+}
