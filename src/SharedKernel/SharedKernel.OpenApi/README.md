@@ -5,12 +5,11 @@ Reusable OpenAPI helpers for API projects in this repository.
 Current scope:
 
 - define boundary-specific OpenAPI document registrations
-- detect ASP.NET Core build-time OpenAPI document generation
 
 Non-goals:
 
 - generic API-project abstractions unrelated to OpenAPI
-- application-specific boundary definitions
+- application-specific route-group extension methods
 
 Usage:
 
