@@ -67,6 +67,11 @@ public sealed class MultipartFormRequestBodyDocumentTransformer : IOpenApiDocume
                     continue;
                 }
 
+                if (!RequiresMultipartSchemaNormalization(schema))
+                {
+                    continue;
+                }
+
                 schema.Type = JsonSchemaType.Object;
                 schema.AllOf = [];
                 schema.AnyOf = [];
@@ -115,5 +120,18 @@ public sealed class MultipartFormRequestBodyDocumentTransformer : IOpenApiDocume
 
         schema = openApiSchema;
         return true;
+    }
+
+    private static bool RequiresMultipartSchemaNormalization(OpenApiSchema schema)
+    {
+        if (schema.AllOf is null || schema.AllOf.Count == 0)
+        {
+            return false;
+        }
+
+        return schema.AllOf.Any(static item =>
+            item is not OpenApiSchema nestedSchema
+            || nestedSchema.Type != JsonSchemaType.Object
+            || nestedSchema.Properties is null);
     }
 }
