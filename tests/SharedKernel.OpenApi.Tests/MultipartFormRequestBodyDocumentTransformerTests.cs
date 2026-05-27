@@ -23,7 +23,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
 
         // Assert
         Assert.Equal(JsonSchemaType.Object, schema.Type);
-        Assert.True(schema.Properties is null || schema.Properties.Count == 0);
+        Assert.NotNull(schema.Properties);
         Assert.NotNull(schema.AllOf);
         Assert.DoesNotContain(schema.AllOf, static item => item.Type != JsonSchemaType.Object || item.Properties is null);
 
