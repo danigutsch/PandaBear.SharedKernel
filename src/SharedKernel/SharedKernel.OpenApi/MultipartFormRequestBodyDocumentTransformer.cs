@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Options;
@@ -87,25 +88,19 @@ public sealed class MultipartFormRequestBodyDocumentTransformer : IOpenApiDocume
                     }
 
                     var parameterSchema = await context.GetOrCreateSchemaAsync(parameter.Type, parameter, cancellationToken);
-                    var parameterContainer = new OpenApiSchema
-                    {
-                        Type = JsonSchemaType.Object,
-                        Properties = new Dictionary<string, IOpenApiSchema>(StringComparer.Ordinal)
-                        {
-                            [parameter.Name] = parameterSchema
-                        }
-                    };
+                    schema.Properties[parameter.Name] = parameterSchema;
 
-                    if (parameter.IsRequired || parameter.ModelMetadata.IsRequired)
+                    if (parameter.IsRequired
+                        || parameter.ModelMetadata.IsRequired
+                        || parameter.ModelMetadata.ValidatorMetadata.OfType<RequiredAttribute>().Any())
                     {
                         schema.Required.Add(parameter.Name);
-                        parameterContainer.Required = new HashSet<string>(StringComparer.Ordinal)
-                        {
-                            parameter.Name
-                        };
                     }
+                }
 
-                    schema.AllOf.Add(parameterContainer);
+                if (schema.Required.Count == 0)
+                {
+                    schema.Required = null;
                 }
             }
         }
