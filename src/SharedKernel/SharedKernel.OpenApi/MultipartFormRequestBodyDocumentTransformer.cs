@@ -87,12 +87,25 @@ public sealed class MultipartFormRequestBodyDocumentTransformer : IOpenApiDocume
                     }
 
                     var parameterSchema = await context.GetOrCreateSchemaAsync(parameter.Type, parameter, cancellationToken);
-                    schema.Properties[parameter.Name] = parameterSchema;
+                    var parameterContainer = new OpenApiSchema
+                    {
+                        Type = JsonSchemaType.Object,
+                        Properties = new Dictionary<string, IOpenApiSchema>(StringComparer.Ordinal)
+                        {
+                            [parameter.Name] = parameterSchema
+                        }
+                    };
 
-                    if (parameter.IsRequired)
+                    if (parameter.IsRequired || parameter.ModelMetadata.IsRequired)
                     {
                         schema.Required.Add(parameter.Name);
+                        parameterContainer.Required = new HashSet<string>(StringComparer.Ordinal)
+                        {
+                            parameter.Name
+                        };
                     }
+
+                    schema.AllOf.Add(parameterContainer);
                 }
             }
         }
