@@ -24,10 +24,13 @@ public static class OpenApiServiceCollectionExtensions
         foreach (var boundaryName in boundaryNames)
         {
             services.AddOpenApi(boundaryName, options =>
+            {
+                options.AddDocumentTransformer<MultipartFormRequestBodyDocumentTransformer>();
                 options.ShouldInclude = description =>
                     description.RelativePath is string relativePath
                     && (string.Equals(relativePath, boundaryName, StringComparison.OrdinalIgnoreCase)
-                        || relativePath.StartsWith($"{boundaryName}/", StringComparison.OrdinalIgnoreCase)));
+                        || relativePath.StartsWith($"{boundaryName}/", StringComparison.OrdinalIgnoreCase));
+            });
         }
     }
 }
