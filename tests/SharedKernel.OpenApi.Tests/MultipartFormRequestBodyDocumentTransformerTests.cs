@@ -32,8 +32,31 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             .SelectMany(static item => item.Properties!.Keys)
             .ToArray();
 
+        var requiredContainer = schema.AllOf
+            .FirstOrDefault(static item => item.Properties?.ContainsKey("file") == true);
+
+        Assert.NotNull(requiredContainer);
+        Assert.NotNull(requiredContainer.Required);
+        Assert.Contains("file", requiredContainer.Required);
         Assert.Contains("file", propertyNames);
         Assert.Contains("conflictResolutions", propertyNames);
+    }
+
+    [Fact]
+    public async Task Leaves_Root_Required_Null_When_No_Form_Fields_Are_Required()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateUploadsDocument(group =>
+            group.MapPost("/optional", ([AsParameters] TestOptionalCommitImportFormDto form) => TypedResults.Ok())
+                .DisableAntiforgery());
+
+        // Act
+        var schema = GetMultipartSchema(document, "/uploads/optional");
+
+        // Assert
+        Assert.Equal(JsonSchemaType.Object, schema.Type);
+        Assert.NotNull(schema.AllOf);
+        Assert.Null(schema.Required);
     }
 
     [Fact]
