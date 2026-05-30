@@ -30,6 +30,22 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public void Throws_When_A_Boundary_Name_Is_Whitespace()
+    {
+        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(new ServiceCollection(), ["tours", " "]));
+
+        Assert.IsType<ArgumentException>(exception.InnerException);
+    }
+
+    [Fact]
+    public void Throws_When_Boundary_Names_Contain_Duplicates()
+    {
+        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(new ServiceCollection(), ["tours", "Tours"]));
+
+        Assert.IsType<ArgumentException>(exception.InnerException);
+    }
+
+    [Fact]
     public async Task Includes_Exact_Boundary_And_Nested_Paths_Only()
     {
         // Arrange
