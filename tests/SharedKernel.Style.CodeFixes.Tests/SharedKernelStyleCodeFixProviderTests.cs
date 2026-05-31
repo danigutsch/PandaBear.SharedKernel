@@ -31,7 +31,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
         await workspace.ApplyCodeAction(codeAction);
-        var updatedText = await workspace.GetDocumentTextAsync();
+        var updatedText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);

@@ -29,7 +29,14 @@ internal sealed class CodeFixTestWorkspace
 
     private DocumentId DocumentId { get; }
 
-    private Document Document => Workspace.CurrentSolution.GetDocument(DocumentId)!;
+    private Document Document
+    {
+        get
+        {
+            var document = Workspace.CurrentSolution.GetDocument(DocumentId);
+            return Assert.IsType<Document>(document);
+        }
+    }
 
     public static CodeFixTestWorkspace Create(string source, string assemblyName = "SharedKernel.Style.CodeFixes.Tests.Dynamic")
     {
@@ -104,7 +111,7 @@ internal sealed class CodeFixTestWorkspace
         Workspace.TryApplyChanges(applyOperation.ChangedSolution);
     }
 
-    public async Task<string> GetDocumentTextAsync()
+    public async Task<string> GetDocumentText()
     {
         return (await Document.GetTextAsync().ConfigureAwait(false)).ToString();
     }

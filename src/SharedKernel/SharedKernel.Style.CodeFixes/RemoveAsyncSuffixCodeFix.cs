@@ -65,16 +65,24 @@ internal static class RemoveAsyncSuffixCodeFix
 
     private static bool HasRenameConflict(IMethodSymbol methodSymbol, string updatedName)
     {
-        return methodSymbol.ContainingType
-            .GetMembers(updatedName)
-            .OfType<IMethodSymbol>()
-            .Any(candidate =>
-                !SymbolEqualityComparer.Default.Equals(candidate, methodSymbol)
-                && candidate.MethodKind == methodSymbol.MethodKind
-                && candidate.Parameters.Length == methodSymbol.Parameters.Length
-                && candidate.TypeParameters.Length == methodSymbol.TypeParameters.Length
-                && candidate.Arity == methodSymbol.Arity
-                && ParametersMatch(candidate.Parameters, methodSymbol.Parameters));
+        for (INamedTypeSymbol? containingType = methodSymbol.ContainingType; containingType is not null; containingType = containingType.BaseType)
+        {
+            if (containingType
+                .GetMembers(updatedName)
+                .OfType<IMethodSymbol>()
+                .Any(candidate =>
+                    !SymbolEqualityComparer.Default.Equals(candidate, methodSymbol)
+                    && candidate.MethodKind == methodSymbol.MethodKind
+                    && candidate.Parameters.Length == methodSymbol.Parameters.Length
+                    && candidate.TypeParameters.Length == methodSymbol.TypeParameters.Length
+                    && candidate.Arity == methodSymbol.Arity
+                    && ParametersMatch(candidate.Parameters, methodSymbol.Parameters)))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool ParametersMatch(ImmutableArray<IParameterSymbol> left, ImmutableArray<IParameterSymbol> right)
