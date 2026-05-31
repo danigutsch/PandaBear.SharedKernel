@@ -2,6 +2,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace SharedKernel.Style.Analyzers;
 
+/// <summary>
+/// Captures the analyzer-config switches that shape async-suffix rule behavior.
+/// </summary>
 internal readonly struct StyleAnalyzerConfigOptions(bool allowAsyncSuffixOverrides, bool allowAsyncSuffixInterfaceImplementations)
 {
     private const string AllowAsyncSuffixOverridesKey = "sharedkernel_style_allow_async_suffix_overrides";
@@ -11,6 +14,9 @@ internal readonly struct StyleAnalyzerConfigOptions(bool allowAsyncSuffixOverrid
 
     public bool AllowAsyncSuffixInterfaceImplementations { get; } = allowAsyncSuffixInterfaceImplementations;
 
+    /// <summary>
+    /// Reads the style-analyzer options from the current analyzer config provider.
+    /// </summary>
     public static StyleAnalyzerConfigOptions Parse(AnalyzerConfigOptionsProvider optionsProvider)
     {
         if (optionsProvider is null)

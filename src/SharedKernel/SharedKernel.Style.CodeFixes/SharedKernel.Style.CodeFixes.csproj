@@ -13,6 +13,7 @@
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" VersionOverride="$(MediatorRoslynAnalyzersVersion)" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="$(MediatorRoslynVersion)" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" VersionOverride="$(MediatorRoslynVersion)" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>

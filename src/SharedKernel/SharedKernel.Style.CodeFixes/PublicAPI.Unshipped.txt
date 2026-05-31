@@ -1,0 +1,6 @@
+#nullable enable
+SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider
+SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.SharedKernelStyleCodeFixProvider() -> void
+override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
+override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!

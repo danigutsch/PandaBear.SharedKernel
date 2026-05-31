@@ -40,6 +40,38 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Async_Suffix_Fix_Is_Not_Offered_When_Target_Name_Would_Conflict()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public async Task<string> LoadAsync(CancellationToken ct)
+                {
+                    await Task.Yield();
+                    return "VT-42";
+                }
+
+                public Task<string> Load(CancellationToken ct)
+                {
+                    return Task.FromResult("existing");
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync");
+
+        // Act
+        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
     public void Fixable_Diagnostic_Ids_Match_Registered_Style_Fixes()
     {
         // Arrange

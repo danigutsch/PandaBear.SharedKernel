@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -5,10 +6,16 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
 namespace SharedKernel.Style.CodeFixes;
 
+/// <summary>
+/// Registers the rename-based code fix for <c>SKSTYLE001</c> diagnostics.
+/// </summary>
 internal static class RemoveAsyncSuffixCodeFix
 {
     private const string AsyncSuffix = "Async";
 
+    /// <summary>
+    /// Registers a rename code action when the diagnostic targets a method declaration.
+    /// </summary>
     public static async Task Register(CodeFixContext context, Diagnostic diagnostic)
     {
         var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
@@ -33,7 +40,8 @@ internal static class RemoveAsyncSuffixCodeFix
         }
 
         var updatedName = methodSymbol.Name.Substring(0, methodSymbol.Name.Length - AsyncSuffix.Length);
-        if (string.IsNullOrWhiteSpace(updatedName))
+        if (string.IsNullOrWhiteSpace(updatedName)
+            || HasRenameConflict(methodSymbol, updatedName))
         {
             return;
         }
@@ -53,5 +61,38 @@ internal static class RemoveAsyncSuffixCodeFix
         CancellationToken cancellationToken)
     {
         return Renamer.RenameSymbolAsync(solution, methodSymbol, new SymbolRenameOptions(), updatedName, cancellationToken);
+    }
+
+    private static bool HasRenameConflict(IMethodSymbol methodSymbol, string updatedName)
+    {
+        return methodSymbol.ContainingType
+            .GetMembers(updatedName)
+            .OfType<IMethodSymbol>()
+            .Any(candidate =>
+                !SymbolEqualityComparer.Default.Equals(candidate, methodSymbol)
+                && candidate.MethodKind == methodSymbol.MethodKind
+                && candidate.Parameters.Length == methodSymbol.Parameters.Length
+                && candidate.TypeParameters.Length == methodSymbol.TypeParameters.Length
+                && candidate.Arity == methodSymbol.Arity
+                && ParametersMatch(candidate.Parameters, methodSymbol.Parameters));
+    }
+
+    private static bool ParametersMatch(ImmutableArray<IParameterSymbol> left, ImmutableArray<IParameterSymbol> right)
+    {
+        if (left.Length != right.Length)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < left.Length; index++)
+        {
+            if (!SymbolEqualityComparer.Default.Equals(left[index].Type, right[index].Type)
+                || left[index].RefKind != right[index].RefKind)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
