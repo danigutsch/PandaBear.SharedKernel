@@ -22,7 +22,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Style.Analyzers\SharedKernel.Style.Analyzers.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Style.CodeFixes\SharedKernel.Style.CodeFixes.csproj" />
     </ItemGroup>
 

@@ -62,7 +62,7 @@ internal sealed class CodeFixTestWorkspace
         return new CodeFixTestWorkspace(workspace, projectId, documentId);
     }
 
-    public async Task<Diagnostic> CreateDocumentDiagnosticAsync(string diagnosticId, string markerText)
+    public async Task<Diagnostic> CreateDocumentDiagnostic(string diagnosticId, string markerText)
     {
         var text = await Document.GetTextAsync().ConfigureAwait(false);
         var source = text.ToString();
@@ -71,6 +71,7 @@ internal sealed class CodeFixTestWorkspace
 
         var syntaxTree = await Document.GetSyntaxTreeAsync().ConfigureAwait(false);
         Assert.NotNull(syntaxTree);
+        var nonNullSyntaxTree = syntaxTree;
 
         var descriptor = new DiagnosticDescriptor(
             diagnosticId,
@@ -80,10 +81,10 @@ internal sealed class CodeFixTestWorkspace
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
-        return Diagnostic.Create(descriptor, Location.Create(syntaxTree!, new TextSpan(start, markerText.Length)));
+        return Diagnostic.Create(descriptor, Location.Create(nonNullSyntaxTree, new TextSpan(start, markerText.Length)));
     }
 
-    public async Task<IReadOnlyList<CodeAction>> GetCodeActionsAsync(CodeFixProvider provider, Diagnostic diagnostic)
+    public async Task<IReadOnlyList<CodeAction>> GetCodeActions(CodeFixProvider provider, Diagnostic diagnostic)
     {
         var actions = new List<CodeAction>();
         var context = new CodeFixContext(
@@ -96,7 +97,7 @@ internal sealed class CodeFixTestWorkspace
         return actions;
     }
 
-    public async Task ApplyCodeActionAsync(CodeAction action)
+    public async Task ApplyCodeAction(CodeAction action)
     {
         var operations = await action.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
         var applyOperation = Assert.Single(operations.OfType<ApplyChangesOperation>());
@@ -112,8 +113,9 @@ internal sealed class CodeFixTestWorkspace
     {
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
         Assert.False(string.IsNullOrWhiteSpace(trustedPlatformAssemblies));
+        var trustedAssemblyPaths = Assert.IsType<string>(trustedPlatformAssemblies);
 
-        foreach (var path in trustedPlatformAssemblies!.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+        foreach (var path in trustedAssemblyPaths.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
         {
             yield return MetadataReference.CreateFromFile(path);
         }

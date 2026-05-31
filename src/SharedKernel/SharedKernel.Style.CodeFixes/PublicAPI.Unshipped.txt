@@ -4,3 +4,5 @@ SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.SharedKernelStyleC
 override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
 override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
 override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+SharedKernel.Style.Analyzers.StyleDiagnosticIds
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001" -> string!

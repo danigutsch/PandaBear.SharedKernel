@@ -22,7 +22,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             """;
 
         // Act
-        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
         var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
@@ -48,7 +48,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             """;
 
         // Act
-        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
         Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
@@ -71,7 +71,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             """;
 
         // Act
-        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
         Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
@@ -96,7 +96,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             .Add("sharedkernel_style_allow_async_suffix_interface_implementations", "false");
 
         // Act
-        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source, options);
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, options);
 
         // Assert
         Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
@@ -116,7 +116,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             """;
 
         // Act
-        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
         Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
@@ -136,7 +136,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             """;
 
         // Act
-        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnosticsAsync(source);
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
         Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);

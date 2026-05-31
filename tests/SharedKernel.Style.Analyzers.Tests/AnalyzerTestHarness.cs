@@ -29,7 +29,7 @@ internal static class AnalyzerTestHarness
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
     }
 
-    public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnosticsAsync(
+    public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
         ImmutableDictionary<string, string>? globalOptions = null,
         string assemblyName = "SharedKernel.Style.Analyzers.Tests.Dynamic")
@@ -55,8 +55,9 @@ internal static class AnalyzerTestHarness
     {
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
         Assert.False(string.IsNullOrWhiteSpace(trustedPlatformAssemblies));
+        var trustedAssemblyPaths = Assert.IsType<string>(trustedPlatformAssemblies);
 
-        foreach (var path in trustedPlatformAssemblies!.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+        foreach (var path in trustedAssemblyPaths.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
         {
             yield return MetadataReference.CreateFromFile(path);
         }

@@ -26,11 +26,11 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentTextAsync();
 
         // Assert
@@ -62,10 +62,10 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync");
 
         // Act
-        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
         Assert.Empty(codeActions);
