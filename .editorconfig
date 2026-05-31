@@ -107,6 +107,7 @@ csharp_style_prefer_extended_property_pattern = true:warning
 dotnet_diagnostic.CA1812.severity = silent
 dotnet_diagnostic.CA1716.severity = none
 dotnet_diagnostic.CA1062.severity = error
+dotnet_diagnostic.SKSTYLE001.severity = suggestion
 
 # Shell scripts
 [*.{sh,bash}]
@@ -187,3 +188,8 @@ dotnet_diagnostic.S107.severity = none
 dotnet_diagnostic.S1186.severity = none
 dotnet_diagnostic.S4136.severity = none
 dotnet_diagnostic.S4144.severity = none
+
+# SharedKernel style analyzer defaults
+[*]
+sharedkernel_style_allow_async_suffix_overrides = true
+sharedkernel_style_allow_async_suffix_interface_implementations = true
