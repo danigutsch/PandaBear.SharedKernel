@@ -72,6 +72,97 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Async_Suffix_Fix_Is_Not_Offered_When_Base_Type_Already_Defines_Target_Name()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public abstract class BaseLoader
+            {
+                public virtual Task<string> Load(CancellationToken ct)
+                {
+                    return Task.FromResult("base");
+                }
+            }
+
+            public sealed class TourLoader : BaseLoader
+            {
+                public async Task<string> LoadAsync(CancellationToken ct)
+                {
+                    await Task.Yield();
+                    return "VT-42";
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Async_Suffix_Fix_Is_Not_Offered_For_Override_Methods()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public abstract class BaseReader : StringReader
+            {
+            }
+
+            public sealed class DemoReader : BaseReader
+            {
+                public override Task<string?> ReadLineAsync()
+                {
+                    return Task.FromResult<string?>(string.Empty);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "ReadLineAsync");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Async_Suffix_Fix_Is_Not_Offered_For_Interface_Implementations()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AsyncLifecycle : IAsyncDisposable
+            {
+                public ValueTask DisposeAsync()
+                {
+                    return ValueTask.CompletedTask;
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "DisposeAsync");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
     public void Fixable_Diagnostic_Ids_Match_Registered_Style_Fixes()
     {
         // Arrange
