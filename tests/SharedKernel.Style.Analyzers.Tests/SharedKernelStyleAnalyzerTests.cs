@@ -149,8 +149,8 @@ public sealed class SharedKernelStyleAnalyzerTests
     public void Parse_Throws_When_Analyzer_Config_Provider_Is_Null()
     {
         // Assert
-        AnalyzerConfigOptionsProvider? optionsProvider = null;
-        var exception = Assert.Throws<ArgumentNullException>(() => StyleAnalyzerConfigOptions.Parse(optionsProvider, null));
+        object? optionsProvider = null;
+        var exception = Assert.Throws<ArgumentNullException>(() => ParseNullOptionsProvider(optionsProvider));
         Assert.Equal("optionsProvider", exception.ParamName);
     }
 
@@ -233,6 +233,11 @@ public sealed class SharedKernelStyleAnalyzerTests
             value = string.Empty;
             return false;
         }
+    }
+
+    private static StyleAnalyzerConfigOptions ParseNullOptionsProvider(object? optionsProvider)
+    {
+        return StyleAnalyzerConfigOptions.Parse(optionsProvider as AnalyzerConfigOptionsProvider, null);
     }
 
 }
