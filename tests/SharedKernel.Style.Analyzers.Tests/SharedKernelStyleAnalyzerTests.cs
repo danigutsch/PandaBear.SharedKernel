@@ -149,7 +149,9 @@ public sealed class SharedKernelStyleAnalyzerTests
     public void Parse_Throws_When_Analyzer_Config_Provider_Is_Null()
     {
         // Assert
-        var exception = Assert.Throws<ArgumentNullException>(() => StyleAnalyzerConfigOptions.Parse(null!, null));
+#pragma warning disable CS8625
+        var exception = Assert.Throws<ArgumentNullException>(() => StyleAnalyzerConfigOptions.Parse(null, null));
+#pragma warning restore CS8625
         Assert.Equal("optionsProvider", exception.ParamName);
     }
 
@@ -221,6 +223,16 @@ public sealed class SharedKernelStyleAnalyzerTests
 
         private readonly ImmutableDictionary<string, string> options = values ?? ImmutableDictionary<string, string>.Empty;
 
-        public override bool TryGetValue(string key, out string value) => options.TryGetValue(key, out value!);
+        public override bool TryGetValue(string key, out string value)
+        {
+            if (options.TryGetValue(key, out var candidateValue))
+            {
+                value = candidateValue;
+                return true;
+            }
+
+            value = string.Empty;
+            return false;
+        }
     }
 }

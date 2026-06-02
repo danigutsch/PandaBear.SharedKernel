@@ -11,6 +11,7 @@ internal sealed class CodeFixTestWorkspace
     private const string DefaultUsings = """
         using System;
         using System.Collections.Generic;
+        using System.IO;
         using System.Threading;
         using System.Threading.Tasks;
 
