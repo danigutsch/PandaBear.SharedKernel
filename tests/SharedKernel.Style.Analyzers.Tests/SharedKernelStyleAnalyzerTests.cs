@@ -149,9 +149,8 @@ public sealed class SharedKernelStyleAnalyzerTests
     public void Parse_Throws_When_Analyzer_Config_Provider_Is_Null()
     {
         // Assert
-#pragma warning disable CS8625
-        var exception = Assert.Throws<ArgumentNullException>(() => StyleAnalyzerConfigOptions.Parse(null, null));
-#pragma warning restore CS8625
+        AnalyzerConfigOptionsProvider? optionsProvider = null;
+        var exception = Assert.Throws<ArgumentNullException>(() => StyleAnalyzerConfigOptions.Parse(optionsProvider, null));
         Assert.Equal("optionsProvider", exception.ParamName);
     }
 
@@ -235,4 +234,5 @@ public sealed class SharedKernelStyleAnalyzerTests
             return false;
         }
     }
+
 }
