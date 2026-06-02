@@ -189,4 +189,34 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         Assert.Equal([global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix], supportedDiagnosticIds);
     }
+
+    [Fact]
+    public void Fix_All_Provider_Throws_When_Original_Provider_Is_Null()
+    {
+        // Arrange
+        var fixAllProvider = new SharedKernelStyleCodeFixProvider().GetFixAllProvider();
+
+        // Assert
+        var exception = Assert.Throws<ArgumentNullException>(() => fixAllProvider.GetSupportedFixAllDiagnosticIds(null!));
+        Assert.Equal("originalCodeFixProvider", exception.ParamName);
+    }
+
+    [Fact]
+    public void Fix_All_Provider_Exposes_The_Batch_Fixer_Scopes()
+    {
+        // Arrange
+        var fixAllProvider = new SharedKernelStyleCodeFixProvider().GetFixAllProvider();
+
+        // Act
+        var supportedScopes = fixAllProvider.GetSupportedFixAllScopes()
+            .OrderBy(static scope => scope)
+            .ToArray();
+        var expectedScopes = WellKnownFixAllProviders.BatchFixer
+            .GetSupportedFixAllScopes()
+            .OrderBy(static scope => scope)
+            .ToArray();
+
+        // Assert
+        Assert.Equal(expectedScopes, supportedScopes);
+    }
 }
