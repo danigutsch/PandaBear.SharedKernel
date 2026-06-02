@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace SharedKernel.Style.Analyzers;
@@ -17,7 +18,7 @@ internal readonly struct StyleAnalyzerConfigOptions(bool allowAsyncSuffixOverrid
     /// <summary>
     /// Reads the style-analyzer options from the current analyzer config provider.
     /// </summary>
-    public static StyleAnalyzerConfigOptions Parse(AnalyzerConfigOptionsProvider optionsProvider)
+    public static StyleAnalyzerConfigOptions Parse(AnalyzerConfigOptionsProvider optionsProvider, SyntaxTree? syntaxTree)
     {
         if (optionsProvider is null)
         {
@@ -25,12 +26,18 @@ internal readonly struct StyleAnalyzerConfigOptions(bool allowAsyncSuffixOverrid
         }
 
         return new StyleAnalyzerConfigOptions(
-            ReadBooleanOption(optionsProvider, AllowAsyncSuffixOverridesKey, defaultValue: true),
-            ReadBooleanOption(optionsProvider, AllowAsyncSuffixInterfaceImplementationsKey, defaultValue: true));
+            ReadBooleanOption(optionsProvider, syntaxTree, AllowAsyncSuffixOverridesKey, defaultValue: true),
+            ReadBooleanOption(optionsProvider, syntaxTree, AllowAsyncSuffixInterfaceImplementationsKey, defaultValue: true));
     }
 
-    private static bool ReadBooleanOption(AnalyzerConfigOptionsProvider optionsProvider, string key, bool defaultValue)
+    private static bool ReadBooleanOption(AnalyzerConfigOptionsProvider optionsProvider, SyntaxTree? syntaxTree, string key, bool defaultValue)
     {
+        if (syntaxTree is not null
+            && optionsProvider.GetOptions(syntaxTree).TryGetValue(key, out var syntaxTreeValue))
+        {
+            return bool.TryParse(syntaxTreeValue, out var syntaxTreeParsedValue) ? syntaxTreeParsedValue : defaultValue;
+        }
+
         if (!optionsProvider.GlobalOptions.TryGetValue(key, out var value))
         {
             return defaultValue;

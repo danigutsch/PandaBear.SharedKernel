@@ -39,6 +39,13 @@ internal static class RemoveAsyncSuffixCodeFix
             return;
         }
 
+        if (methodSymbol.IsOverride
+            || methodSymbol.ExplicitInterfaceImplementations.Length > 0
+            || ImplementsInterfaceContract(methodSymbol))
+        {
+            return;
+        }
+
         var updatedName = methodSymbol.Name.Substring(0, methodSymbol.Name.Length - AsyncSuffix.Length);
         if (string.IsNullOrWhiteSpace(updatedName)
             || HasRenameConflict(methodSymbol, updatedName))
@@ -102,5 +109,14 @@ internal static class RemoveAsyncSuffixCodeFix
         }
 
         return true;
+    }
+
+    private static bool ImplementsInterfaceContract(IMethodSymbol methodSymbol)
+    {
+        return methodSymbol.ContainingType.AllInterfaces
+            .SelectMany(@interface => @interface.GetMembers(methodSymbol.Name).OfType<IMethodSymbol>())
+            .Any(interfaceMethod => SymbolEqualityComparer.Default.Equals(
+                methodSymbol.ContainingType.FindImplementationForInterfaceMember(interfaceMethod),
+                methodSymbol));
     }
 }

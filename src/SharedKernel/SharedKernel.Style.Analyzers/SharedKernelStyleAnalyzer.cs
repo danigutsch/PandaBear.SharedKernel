@@ -39,8 +39,17 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 
     private static void InitializeCompilation(CompilationStartAnalysisContext context)
     {
-        var options = StyleAnalyzerConfigOptions.Parse(context.Options.AnalyzerConfigOptionsProvider);
-        context.RegisterSymbolAction(symbolContext => AnalyzeMethod(symbolContext, options), SymbolKind.Method);
+        context.RegisterSymbolAction(
+            symbolContext =>
+            {
+                var sourceLocation = symbolContext.Symbol.Locations.FirstOrDefault(static location => location.IsInSource);
+                AnalyzeMethod(
+                    symbolContext,
+                    StyleAnalyzerConfigOptions.Parse(
+                        symbolContext.Options.AnalyzerConfigOptionsProvider,
+                        sourceLocation?.SourceTree));
+            },
+            SymbolKind.Method);
     }
 
     private static void AnalyzeMethod(SymbolAnalysisContext context, StyleAnalyzerConfigOptions options)

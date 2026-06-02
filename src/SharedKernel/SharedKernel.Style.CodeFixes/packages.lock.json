@@ -253,9 +253,6 @@
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "6.1.0"
         }
-      },
-      "sharedkernel.style.analyzers": {
-        "type": "Project"
       }
     }
   }
