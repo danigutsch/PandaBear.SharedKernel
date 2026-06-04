@@ -1,0 +1,7 @@
+#nullable enable
+SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer
+SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer.SharedKernelStyleAnalyzer() -> void
+override SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
+SharedKernel.Style.Analyzers.StyleDiagnosticIds
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001" -> string!
