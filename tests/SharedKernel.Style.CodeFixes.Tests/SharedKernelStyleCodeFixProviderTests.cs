@@ -148,6 +148,59 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var executeIndex = updatedText.IndexOf("public Task<string> Execute", StringComparison.Ordinal);
         var renamedOverloadIndex = updatedText.IndexOf("public async Task<string> Load(CancellationToken ct)", StringComparison.Ordinal);
         var existingOverloadIndex = updatedText.IndexOf("public Task<string> Load(string route, CancellationToken ct)", StringComparison.Ordinal);
+        Assert.True(executeIndex >= 0);
+        Assert.True(renamedOverloadIndex >= 0);
+        Assert.True(existingOverloadIndex >= 0);
+        Assert.True(renamedOverloadIndex < existingOverloadIndex);
+        Assert.True(existingOverloadIndex < executeIndex);
+    }
+
+    [Fact]
+    public async Task Async_Suffix_Fix_Regroups_Overloads_When_Earlier_References_Shift_Declaration_Position()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                private const string Prefix = nameof(LoadAsync) + nameof(LoadAsync);
+
+                public Task<string> Load(string route, CancellationToken ct)
+                {
+                    return Task.FromResult(route + Prefix);
+                }
+
+                public Task<string> Execute(CancellationToken ct)
+                {
+                    return LoadAsync(ct);
+                }
+
+                public async Task<string> LoadAsync(CancellationToken ct)
+                {
+                    await Task.Yield();
+                    return Prefix;
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.DoesNotContain("nameof(LoadAsync)", updatedText, StringComparison.Ordinal);
+        Assert.Contains("nameof(Load)", updatedText, StringComparison.Ordinal);
+        var executeIndex = updatedText.IndexOf("public Task<string> Execute", StringComparison.Ordinal);
+        var renamedOverloadIndex = updatedText.IndexOf("public async Task<string> Load(CancellationToken ct)", StringComparison.Ordinal);
+        var existingOverloadIndex = updatedText.IndexOf("public Task<string> Load(string route, CancellationToken ct)", StringComparison.Ordinal);
+        Assert.True(executeIndex >= 0);
+        Assert.True(renamedOverloadIndex >= 0);
+        Assert.True(existingOverloadIndex >= 0);
         Assert.True(renamedOverloadIndex < existingOverloadIndex);
         Assert.True(existingOverloadIndex < executeIndex);
     }
@@ -185,7 +238,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -199,6 +252,9 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         Assert.Contains("Load(string route, CancellationToken ct)", updatedText, StringComparison.Ordinal);
         Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
         Assert.Contains("return Load(ct);", updatedText, StringComparison.Ordinal);
+        Assert.True(loadWithoutParametersIndex >= 0);
+        Assert.True(loadWithCancellationTokenIndex >= 0);
+        Assert.True(loadWithTwoParametersIndex >= 0);
         Assert.True(loadWithoutParametersIndex < loadWithCancellationTokenIndex);
         Assert.True(loadWithCancellationTokenIndex < loadWithTwoParametersIndex);
     }

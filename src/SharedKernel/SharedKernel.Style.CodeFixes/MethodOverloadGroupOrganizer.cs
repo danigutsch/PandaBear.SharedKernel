@@ -1,8 +1,6 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
-
 namespace SharedKernel.Style.CodeFixes;
 
 /// <summary>
@@ -16,7 +14,7 @@ internal static class MethodOverloadGroupOrganizer
     public static async Task<Solution> Organize(
         Solution solution,
         DocumentId documentId,
-        int diagnosticSpanStart,
+        MethodDeclarationSyntax targetMethod,
         string updatedName,
         CancellationToken cancellationToken)
     {
@@ -32,9 +30,7 @@ internal static class MethodOverloadGroupOrganizer
             return solution;
         }
 
-        var targetMethod = root.FindNode(new TextSpan(diagnosticSpanStart, updatedName.Length), getInnermostNodeForTie: true)
-            .FirstAncestorOrSelf<MethodDeclarationSyntax>();
-        if (targetMethod?.Parent is not TypeDeclarationSyntax containingType)
+        if (root.FindNode(targetMethod.Span, getInnermostNodeForTie: true).FirstAncestorOrSelf<MethodDeclarationSyntax>()?.Parent is not TypeDeclarationSyntax containingType)
         {
             return solution;
         }
@@ -56,6 +52,7 @@ internal static class MethodOverloadGroupOrganizer
             return solution;
         }
 
+        var overloadIndexSet = new HashSet<int>(overloadIndices);
         var firstIndex = overloadIndices.Min();
         var orderedOverloads = overloadIndices
             .Select(index => (MethodDeclarationSyntax)members[index])
@@ -71,7 +68,7 @@ internal static class MethodOverloadGroupOrganizer
                 reorderedMembers.AddRange(orderedOverloads);
             }
 
-            if (!overloadIndices.Contains(index))
+            if (!overloadIndexSet.Contains(index))
             {
                 reorderedMembers.Add(members[index]);
             }

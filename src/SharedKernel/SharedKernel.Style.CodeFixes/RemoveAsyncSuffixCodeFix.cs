@@ -74,12 +74,56 @@ internal static class RemoveAsyncSuffixCodeFix
             updatedName,
             cancellationToken).ConfigureAwait(false);
 
+        var renamedDocument = renamedSolution.GetDocument(document.Id);
+        if (renamedDocument is null)
+        {
+            return renamedSolution;
+        }
+
+        var renamedRoot = await renamedDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+        var renamedSemanticModel = await renamedDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+        if (renamedRoot is null || renamedSemanticModel is null)
+        {
+            return renamedSolution;
+        }
+
+        var renamedMethodDeclaration = renamedRoot.DescendantNodes()
+            .OfType<MethodDeclarationSyntax>()
+            .FirstOrDefault(candidate =>
+                renamedSemanticModel.GetDeclaredSymbol(candidate, cancellationToken) is IMethodSymbol candidateSymbol
+                && IsRenamedMethodMatch(candidateSymbol, methodSymbol, updatedName));
+        if (renamedMethodDeclaration is null)
+        {
+            return renamedSolution;
+        }
+
         return await MethodOverloadGroupOrganizer.Organize(
             renamedSolution,
             document.Id,
-            diagnosticSpanStart: methodSymbol.Locations[0].SourceSpan.Start,
+            renamedMethodDeclaration,
             updatedName,
             cancellationToken).ConfigureAwait(false);
+    }
+
+    private static bool IsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
+    {
+        var originalMethodSymbol = (IMethodSymbol)originalSymbol;
+
+        if (!string.Equals(candidateSymbol.Name, updatedName, StringComparison.Ordinal)
+            || !string.Equals(GetTypeIdentity(candidateSymbol.ContainingType), GetTypeIdentity(originalMethodSymbol.ContainingType), StringComparison.Ordinal)
+            || candidateSymbol.Parameters.Length != originalMethodSymbol.Parameters.Length
+            || candidateSymbol.Arity != originalMethodSymbol.Arity
+            || candidateSymbol.MethodKind != originalMethodSymbol.MethodKind)
+        {
+            return false;
+        }
+
+        return ParametersMatch(candidateSymbol.Parameters, originalMethodSymbol.Parameters);
+    }
+
+    private static string GetTypeIdentity(INamedTypeSymbol containingType)
+    {
+        return containingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
     }
 
     private static bool HasRenameConflict(IMethodSymbol methodSymbol, string updatedName)
