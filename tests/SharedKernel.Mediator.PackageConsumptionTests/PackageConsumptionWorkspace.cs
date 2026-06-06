@@ -52,7 +52,7 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     /// <returns>The dotnet build output.</returns>
     public Task<string> Build()
     {
-        return DotNetCli.RunAsync(ProjectDirectory, "build", ProjectFilePath, "--nologo", "--verbosity", "normal");
+        return DotNetCli.Run(ProjectDirectory, "build", ProjectFilePath, "--nologo", "--verbosity", "normal");
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     /// <returns>The dotnet run output.</returns>
     public Task<string> Run(params string[] arguments)
     {
-        return DotNetCli.RunAsync(ProjectDirectory, ["run", "--project", ProjectFilePath, "--no-build", .. arguments]);
+        return DotNetCli.Run(ProjectDirectory, ["run", "--project", ProjectFilePath, "--no-build", .. arguments]);
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     /// <returns>The dotnet publish output.</returns>
     public Task<string> Publish(params string[] arguments)
     {
-        return DotNetCli.RunAsync(ProjectDirectory, ["publish", ProjectFilePath, .. arguments]);
+        return DotNetCli.Run(ProjectDirectory, ["publish", ProjectFilePath, .. arguments]);
     }
 
     /// <summary>
@@ -156,7 +156,7 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     public Task<string> BuildProject(string projectName)
     {
         var projectFilePath = Path.Combine(RootPath, projectName, projectName + ".csproj");
-        return DotNetCli.RunAsync(Path.Combine(RootPath, projectName), "build", projectFilePath, "--nologo", "--verbosity", "normal");
+        return DotNetCli.Run(Path.Combine(RootPath, projectName), "build", projectFilePath, "--nologo", "--verbosity", "normal");
     }
 
     /// <summary>
@@ -178,7 +178,7 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     /// <returns>The dotnet format output.</returns>
     public Task<string> Format(string diagnosticId)
     {
-        return DotNetCli.RunAsync(ProjectDirectory, "format", ProjectFilePath, "--diagnostics", diagnosticId);
+        return DotNetCli.Run(ProjectDirectory, "format", ProjectFilePath, "--diagnostics", diagnosticId);
     }
 
     /// <summary>

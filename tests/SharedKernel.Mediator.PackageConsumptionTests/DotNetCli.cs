@@ -14,7 +14,7 @@ internal static class DotNetCli
     /// <param name="workingDirectory">The working directory used for the command.</param>
     /// <param name="arguments">The arguments passed to dotnet.</param>
     /// <returns>The combined standard output and error text.</returns>
-    public static async Task<string> RunAsync(string workingDirectory, params string[] arguments)
+    public static async Task<string> Run(string workingDirectory, params string[] arguments)
     {
         using var process = new Process();
         process.StartInfo = new ProcessStartInfo

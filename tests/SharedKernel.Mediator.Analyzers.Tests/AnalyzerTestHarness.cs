@@ -28,7 +28,7 @@ internal static class AnalyzerTestHarness
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
     }
 
-    public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnosticsAsync(
+    public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
         ImmutableDictionary<string, string>? globalOptions = null)
     {

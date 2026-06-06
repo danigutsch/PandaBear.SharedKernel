@@ -18,7 +18,7 @@ internal readonly struct StyleAnalyzerConfigOptions(bool allowAsyncSuffixOverrid
     /// <summary>
     /// Reads the style-analyzer options from the current analyzer config provider.
     /// </summary>
-    public static StyleAnalyzerConfigOptions Parse(AnalyzerConfigOptionsProvider optionsProvider, SyntaxTree? syntaxTree)
+	public static StyleAnalyzerConfigOptions Parse(AnalyzerConfigOptionsProvider? optionsProvider, SyntaxTree? syntaxTree)
     {
         if (optionsProvider is null)
         {
