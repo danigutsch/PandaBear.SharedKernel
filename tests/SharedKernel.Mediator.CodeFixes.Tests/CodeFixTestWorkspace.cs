@@ -240,7 +240,7 @@ internal sealed class CodeFixTestWorkspace
     /// Gets all generator diagnostics for the current workspace state.
     /// </summary>
     /// <returns>The diagnostics emitted by the mediator source generator.</returns>
-    public async Task<ImmutableArray<Diagnostic>> GetGeneratorDiagnosticsAsync()
+    public async Task<ImmutableArray<Diagnostic>> GetGeneratorDiagnostics()
     {
         var compilation = (CSharpCompilation?)await Project.GetCompilationAsync().ConfigureAwait(false);
         Assert.NotNull(compilation);
@@ -257,9 +257,9 @@ internal sealed class CodeFixTestWorkspace
     /// </summary>
     /// <param name="diagnosticId">The diagnostic identifier to locate.</param>
     /// <returns>The matching diagnostic.</returns>
-    public async Task<Diagnostic> GetSingleGeneratorDiagnosticAsync(string diagnosticId)
+    public async Task<Diagnostic> GetSingleGeneratorDiagnostic(string diagnosticId)
     {
-        var diagnostics = await GetGeneratorDiagnosticsAsync().ConfigureAwait(false);
+        var diagnostics = await GetGeneratorDiagnostics().ConfigureAwait(false);
         return Assert.Single(diagnostics, diagnostic => diagnostic.Id == diagnosticId);
     }
 
@@ -271,7 +271,7 @@ internal sealed class CodeFixTestWorkspace
     /// <param name="markerText">The text to locate for the diagnostic span.</param>
     /// <param name="properties">Optional diagnostic properties.</param>
     /// <returns>The created diagnostic.</returns>
-    public async Task<Diagnostic> CreateDocumentDiagnosticAsync(
+    public async Task<Diagnostic> CreateDocumentDiagnostic(
         string diagnosticId,
         string documentName,
         string markerText,
@@ -302,7 +302,7 @@ internal sealed class CodeFixTestWorkspace
     /// Gets the current primary document text.
     /// </summary>
     /// <returns>The latest source text from the primary document.</returns>
-    public async Task<string> GetDocumentTextAsync()
+    public async Task<string> GetDocumentText()
     {
         return (await Document.GetTextAsync().ConfigureAwait(false)).ToString();
     }
@@ -312,7 +312,7 @@ internal sealed class CodeFixTestWorkspace
     /// </summary>
     /// <param name="documentName">The document name to locate.</param>
     /// <returns>The text from the requested document.</returns>
-    public async Task<string> GetDocumentTextAsync(string documentName)
+    public async Task<string> GetDocumentText(string documentName)
     {
         var document = Assert.Single(
             Workspace.CurrentSolution.Projects.SelectMany(static project => project.Documents),
@@ -325,9 +325,9 @@ internal sealed class CodeFixTestWorkspace
     /// </summary>
     /// <param name="documentName">The document name to locate.</param>
     /// <returns>The text from the requested document.</returns>
-    public async Task<string> GetAdditionalDocumentTextAsync(string documentName)
+    public async Task<string> GetAdditionalDocumentText(string documentName)
     {
-        return await GetDocumentTextAsync(documentName).ConfigureAwait(false);
+        return await GetDocumentText(documentName).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -335,7 +335,7 @@ internal sealed class CodeFixTestWorkspace
     /// </summary>
     /// <param name="hintName">The generated source hint name.</param>
     /// <returns>The generated source text.</returns>
-    public async Task<string> GetGeneratedSourceAsync(string hintName)
+    public async Task<string> GetGeneratedSource(string hintName)
     {
         var compilation = (CSharpCompilation?)await Project.GetCompilationAsync().ConfigureAwait(false);
         Assert.NotNull(compilation);
@@ -356,7 +356,7 @@ internal sealed class CodeFixTestWorkspace
     /// <param name="provider">The provider under test.</param>
     /// <param name="diagnostic">The diagnostic to fix.</param>
     /// <returns>The registered code actions.</returns>
-    public async Task<IReadOnlyList<CodeAction>> GetCodeActionsAsync(CodeFixProvider provider, Diagnostic diagnostic)
+    public async Task<IReadOnlyList<CodeAction>> GetCodeActions(CodeFixProvider provider, Diagnostic diagnostic)
     {
         var actions = new List<CodeAction>();
         var document = diagnostic.Location.SourceTree is null
@@ -376,7 +376,7 @@ internal sealed class CodeFixTestWorkspace
     /// Applies the selected code action to the current workspace state.
     /// </summary>
     /// <param name="action">The action to apply.</param>
-    public async Task ApplyCodeActionAsync(CodeAction action)
+    public async Task ApplyCodeAction(CodeAction action)
     {
         var operations = await action.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
 

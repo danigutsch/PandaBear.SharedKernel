@@ -24,13 +24,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentTextAsync("MissingTourHandler.cs");
-        var diagnosticsAfterFix = await workspace.GetGeneratorDiagnosticsAsync();
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
+        var diagnosticsAfterFix = await workspace.GetGeneratorDiagnostics();
 
         // Assert
         Assert.Contains("public sealed class MissingTourHandler", generatedHandlerSource, StringComparison.Ordinal);
@@ -151,17 +151,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             InvalidRequestArgumentDiagnosticId,
             "Test0.cs",
             "MissingTour(42)");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -199,17 +199,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             InvalidRequestArgumentDiagnosticId,
             "Test0.cs",
             "MissingTour(42)");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IQuery<string>"), StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -247,17 +247,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             InvalidRequestArgumentDiagnosticId,
             "Test0.cs",
             "CreateTour(\"Rome\")");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("ICommand<int>"), StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -295,17 +295,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             InvalidRequestArgumentDiagnosticId,
             "Test0.cs",
             "ArchiveTour(42)");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("ICommand"), StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -335,13 +335,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             InvalidRequestArgumentDiagnosticId,
             "Test0.cs",
             "MissingTour(42)");
 
         // Act
-        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
         Assert.Empty(codeActions);
@@ -373,13 +373,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             InvalidRequestArgumentDiagnosticId,
             "Test0.cs",
             "request");
 
         // Act
-        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
         Assert.Empty(codeActions);
@@ -399,12 +399,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentTextAsync("MissingTourHandler.cs");
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
 
         // Assert
         Assert.Contains("namespace Demo;", generatedHandlerSource, StringComparison.Ordinal);
@@ -427,12 +427,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.CreateWithGlobalUsings(source, globalUsingsSource);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentTextAsync("MissingTourHandler.cs");
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
 
         // Assert
         Assert.Contains("namespace Demo;", generatedHandlerSource, StringComparison.Ordinal);
@@ -452,12 +452,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.CreateWithNullableEnabled(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentTextAsync("MissingTourHandler.cs");
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
 
         // Assert
         Assert.Contains("IQueryHandler<global::Demo.MissingTour, string?>", generatedHandlerSource, StringComparison.Ordinal);
@@ -477,12 +477,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentTextAsync("LookupTourHandler.cs");
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("LookupTourHandler.cs");
 
         // Assert
         Assert.Contains(
@@ -505,12 +505,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentTextAsync("CreateTourHandler.cs");
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("CreateTourHandler.cs");
 
         // Assert
         Assert.Contains(
@@ -533,12 +533,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.MissingHandler);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var generatedHandlerSource = await workspace.GetAdditionalDocumentTextAsync("ArchiveTourHandler.cs");
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var generatedHandlerSource = await workspace.GetAdditionalDocumentText("ArchiveTourHandler.cs");
 
         // Assert
         Assert.Contains(
@@ -572,13 +572,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.MissingHandler,
             "Test0.cs",
             "ExistingTour");
 
         // Act
-        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
         Assert.Empty(codeActions);
@@ -606,12 +606,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.InvalidHandlerSignature);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -648,12 +648,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.CreateWithGlobalUsings(source, globalUsingsSource);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.InvalidHandlerSignature);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -687,12 +687,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.CreateWithNullableEnabled(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.InvalidHandlerSignature);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -727,17 +727,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             InvalidRequestArgumentDiagnosticId,
             "Test0.cs",
             "MissingTour(42)");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -770,17 +770,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.CreateWithGlobalUsings(source, globalUsingsSource);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             InvalidRequestArgumentDiagnosticId,
             "Test0.cs",
             "MissingTour(42)");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -810,17 +810,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.CreateWithNullableEnabled(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             InvalidRequestArgumentDiagnosticId,
             "Test0.cs",
             "MissingTour(42)");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string?>"), StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -850,12 +850,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.InvalidHandlerSignature);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -889,12 +889,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.InvalidHandlerSignature);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -933,13 +933,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.InvalidHandlerSignature,
             "Test0.cs",
             "ExplicitLookupTourHandler");
 
         // Act
-        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
         Assert.Empty(codeActions);
@@ -966,13 +966,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.GetSingleGeneratorDiagnosticAsync(MediatorDiagnosticIds.InvalidHandlerSignature);
+        var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActionsAsync(provider, diagnostic));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
-        var diagnosticsAfterFix = await workspace.GetGeneratorDiagnosticsAsync();
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
+        var diagnosticsAfterFix = await workspace.GetGeneratorDiagnostics();
 
         // Assert
         Assert.Contains(
@@ -1019,7 +1019,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.CreateWithProjectReference(primarySource, moduleSource);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.InaccessibleRegistrationType,
             "Module.cs",
             "SearchToursHandler",
@@ -1027,12 +1027,12 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.MakeTypePublic, StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedModuleSource = await workspace.GetDocumentTextAsync("Module.cs");
-        var diagnosticsAfterFix = await workspace.GetGeneratorDiagnosticsAsync();
-        var generatedSource = await workspace.GetGeneratedSourceAsync("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedModuleSource = await workspace.GetDocumentText("Module.cs");
+        var diagnosticsAfterFix = await workspace.GetGeneratorDiagnostics();
+        var generatedSource = await workspace.GetGeneratedSource("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
         Assert.Contains("public sealed class SearchToursHandler", updatedModuleSource, StringComparison.Ordinal);
@@ -1066,17 +1066,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.MissingCancellationToken,
             "Test0.cs",
             "Handle(LookupTour request)");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddCancellationTokenParameter, StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -1107,17 +1107,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MissingArgumentDiagnosticId,
             "Test0.cs",
             "sender.Send(new SearchTour(request.Code))");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -1148,17 +1148,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.MissingEnumeratorCancellation,
             "Test0.cs",
             "CancellationToken ct");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -1192,17 +1192,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.MissingEnumeratorCancellation,
             "Test0.cs",
             "CancellationToken ct");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -1233,17 +1233,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.MissingCancellationForwarding,
             "Test0.cs",
             "CancellationToken.None");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -1284,7 +1284,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.CreateWithProjectReference(primarySource, moduleSource);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.InaccessibleRegistrationType,
             "Module.cs",
             "SearchToursHandler",
@@ -1292,13 +1292,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => candidate.Title.Contains("InternalsVisibleTo", StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var friendAssemblySource = await workspace.GetDocumentTextAsync(
+        await workspace.ApplyCodeAction(codeAction);
+        var friendAssemblySource = await workspace.GetDocumentText(
             "MediatorInternalsVisibleTo.SharedKernel.Mediator.CodeFixes.Tests.Primary.cs");
-        var diagnosticsAfterFix = await workspace.GetGeneratorDiagnosticsAsync();
-        var generatedSource = await workspace.GetGeneratedSourceAsync("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+        var diagnosticsAfterFix = await workspace.GetGeneratorDiagnostics();
+        var generatedSource = await workspace.GetGeneratedSource("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
         Assert.Contains(
@@ -1339,19 +1339,19 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.CreateWithProjectReference(primarySource, moduleSource);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.MissingModuleMarker,
             "Module.cs",
             "SearchTours");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddMediatorModuleAttribute, StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var markerSource = await workspace.GetDocumentTextAsync("MediatorModuleAssemblyInfo.cs");
-        var diagnosticsAfterFix = await workspace.GetGeneratorDiagnosticsAsync();
-        var generatedSource = await workspace.GetGeneratedSourceAsync("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
+        await workspace.ApplyCodeAction(codeAction);
+        var markerSource = await workspace.GetDocumentText("MediatorModuleAssemblyInfo.cs");
+        var diagnosticsAfterFix = await workspace.GetGeneratorDiagnostics();
+        var generatedSource = await workspace.GetGeneratedSource("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
         Assert.Contains("[assembly: global::SharedKernel.Mediator.MediatorModuleAttribute]", markerSource, StringComparison.Ordinal);
@@ -1381,17 +1381,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MissingArgumentDiagnosticId,
             "Test0.cs",
             "sender.Send(new SearchTour(request.Code))");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("cancellationToken"), StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -1427,13 +1427,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MissingArgumentDiagnosticId,
             "Test0.cs",
             "sender.Send(new SearchTour(\"x\"))");
 
         // Act
-        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
         Assert.Empty(codeActions);
@@ -1461,17 +1461,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.MissingEnumeratorCancellation,
             "Test0.cs",
             "CancellationToken cancellationToken");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -1506,17 +1506,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.MissingCancellationToken,
             "Test0.cs",
             "Handle(ArchiveTour request)");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.AddCancellationTokenParameter, StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -1551,13 +1551,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MediatorDiagnosticIds.MissingCancellationToken,
             "Test0.cs",
             "Execute(ArchiveTour request)");
 
         // Act
-        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
         Assert.Empty(codeActions);
@@ -1586,17 +1586,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             MissingArgumentDiagnosticId,
             "Test0.cs",
             "publisher.Publish(new TourArchived(request.Code))");
 
         // Act
         var codeAction = Assert.Single(
-            await workspace.GetCodeActionsAsync(provider, diagnostic),
+            await workspace.GetCodeActions(provider, diagnostic),
             static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
-        await workspace.ApplyCodeActionAsync(codeAction);
-        var updatedDocumentText = await workspace.GetDocumentTextAsync();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
         Assert.Contains(
@@ -1626,13 +1626,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelMediatorCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnosticAsync(
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
             InvalidRequestArgumentDiagnosticId,
             "Test0.cs",
             "CreateTour(\"Rome\")");
 
         // Act
-        var codeActions = await workspace.GetCodeActionsAsync(provider, diagnostic);
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
         Assert.Empty(codeActions);

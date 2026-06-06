@@ -57,7 +57,7 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
     private async Task Pack(string relativeProjectPath)
     {
         var projectPath = Path.Combine(RepositoryRoot, relativeProjectPath);
-        await DotNetCli.RunAsync(
+        await DotNetCli.Run(
                 RepositoryRoot,
                 "pack",
                 projectPath,

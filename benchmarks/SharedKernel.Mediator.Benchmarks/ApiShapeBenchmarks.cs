@@ -112,125 +112,125 @@ public class ApiShapeBenchmarks
 
     private static ValueTask<int> Handle(ClassRequest request, bool completesSynchronously, CancellationToken ct)
     {
-        return completesSynchronously ? ValueTask.FromResult(request.Id) : HandleAsync(request, ct);
+        return completesSynchronously ? ValueTask.FromResult(request.Id) : Handle(request, ct);
     }
 
     private static ValueTask<int> Handle(RecordClassRequest request, bool completesSynchronously, CancellationToken ct)
     {
-        return completesSynchronously ? ValueTask.FromResult(request.Id) : HandleAsync(request, ct);
+        return completesSynchronously ? ValueTask.FromResult(request.Id) : Handle(request, ct);
     }
 
     private static ValueTask<int> Handle(StructRequest request, bool completesSynchronously, CancellationToken ct)
     {
-        return completesSynchronously ? ValueTask.FromResult(request.Id) : HandleAsync(request, ct);
+        return completesSynchronously ? ValueTask.FromResult(request.Id) : Handle(request, ct);
     }
 
     private static ValueTask<int> Handle(ReadonlyRecordStructRequest request, bool completesSynchronously, CancellationToken ct)
     {
-        return completesSynchronously ? ValueTask.FromResult(request.Id) : HandleAsync(request, ct);
+        return completesSynchronously ? ValueTask.FromResult(request.Id) : Handle(request, ct);
+    }
+
+    private static async ValueTask<int> Handle(ClassRequest request, CancellationToken ct)
+    {
+        await Task.Yield();
+        ct.ThrowIfCancellationRequested();
+        return request.Id;
+    }
+
+    private static async ValueTask<int> Handle(RecordClassRequest request, CancellationToken ct)
+    {
+        await Task.Yield();
+        ct.ThrowIfCancellationRequested();
+        return request.Id;
+    }
+
+    private static async ValueTask<int> Handle(StructRequest request, CancellationToken ct)
+    {
+        await Task.Yield();
+        ct.ThrowIfCancellationRequested();
+        return request.Id;
+    }
+
+    private static async ValueTask<int> Handle(ReadonlyRecordStructRequest request, CancellationToken ct)
+    {
+        await Task.Yield();
+        ct.ThrowIfCancellationRequested();
+        return request.Id;
     }
 
     private static Task<int> HandleWithTask(ClassRequest request, bool completesSynchronously, CancellationToken ct)
     {
-        return completesSynchronously ? Task.FromResult(request.Id) : HandleWithTaskAsync(request, ct);
+        return completesSynchronously ? Task.FromResult(request.Id) : HandleWithTask(request, ct);
     }
 
     private static Task<int> HandleWithTask(RecordClassRequest request, bool completesSynchronously, CancellationToken ct)
     {
-        return completesSynchronously ? Task.FromResult(request.Id) : HandleWithTaskAsync(request, ct);
+        return completesSynchronously ? Task.FromResult(request.Id) : HandleWithTask(request, ct);
     }
 
     private static Task<int> HandleWithTask(StructRequest request, bool completesSynchronously, CancellationToken ct)
     {
-        return completesSynchronously ? Task.FromResult(request.Id) : HandleWithTaskAsync(request, ct);
+        return completesSynchronously ? Task.FromResult(request.Id) : HandleWithTask(request, ct);
     }
 
     private static Task<int> HandleWithTask(ReadonlyRecordStructRequest request, bool completesSynchronously, CancellationToken ct)
     {
-        return completesSynchronously ? Task.FromResult(request.Id) : HandleWithTaskAsync(request, ct);
+        return completesSynchronously ? Task.FromResult(request.Id) : HandleWithTask(request, ct);
+    }
+
+    private static async Task<int> HandleWithTask(ClassRequest request, CancellationToken ct)
+    {
+        await Task.Yield();
+        ct.ThrowIfCancellationRequested();
+        return request.Id;
+    }
+
+    private static async Task<int> HandleWithTask(RecordClassRequest request, CancellationToken ct)
+    {
+        await Task.Yield();
+        ct.ThrowIfCancellationRequested();
+        return request.Id;
+    }
+
+    private static async Task<int> HandleWithTask(StructRequest request, CancellationToken ct)
+    {
+        await Task.Yield();
+        ct.ThrowIfCancellationRequested();
+        return request.Id;
+    }
+
+    private static async Task<int> HandleWithTask(ReadonlyRecordStructRequest request, CancellationToken ct)
+    {
+        await Task.Yield();
+        ct.ThrowIfCancellationRequested();
+        return request.Id;
     }
 
     private static ValueTask<Unit> HandleUnit(ClassCommandRequest request, bool completesSynchronously, CancellationToken ct)
     {
         _ = request;
-        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnitAsync(ct);
+        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnit(ct);
     }
 
     private static ValueTask<Unit> HandleUnit(RecordClassCommandRequest request, bool completesSynchronously, CancellationToken ct)
     {
         _ = request;
-        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnitAsync(ct);
+        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnit(ct);
     }
 
     private static ValueTask<Unit> HandleUnit(StructCommandRequest request, bool completesSynchronously, CancellationToken ct)
     {
         _ = request;
-        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnitAsync(ct);
+        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnit(ct);
     }
 
     private static ValueTask<Unit> HandleUnit(ReadonlyRecordStructCommandRequest request, bool completesSynchronously, CancellationToken ct)
     {
         _ = request;
-        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnitAsync(ct);
+        return completesSynchronously ? ValueTask.FromResult(Unit.Value) : HandleUnit(ct);
     }
 
-    private static async ValueTask<int> HandleAsync(ClassRequest request, CancellationToken ct)
-    {
-        await Task.Yield();
-        ct.ThrowIfCancellationRequested();
-        return request.Id;
-    }
-
-    private static async ValueTask<int> HandleAsync(RecordClassRequest request, CancellationToken ct)
-    {
-        await Task.Yield();
-        ct.ThrowIfCancellationRequested();
-        return request.Id;
-    }
-
-    private static async ValueTask<int> HandleAsync(StructRequest request, CancellationToken ct)
-    {
-        await Task.Yield();
-        ct.ThrowIfCancellationRequested();
-        return request.Id;
-    }
-
-    private static async ValueTask<int> HandleAsync(ReadonlyRecordStructRequest request, CancellationToken ct)
-    {
-        await Task.Yield();
-        ct.ThrowIfCancellationRequested();
-        return request.Id;
-    }
-
-    private static async Task<int> HandleWithTaskAsync(ClassRequest request, CancellationToken ct)
-    {
-        await Task.Yield();
-        ct.ThrowIfCancellationRequested();
-        return request.Id;
-    }
-
-    private static async Task<int> HandleWithTaskAsync(RecordClassRequest request, CancellationToken ct)
-    {
-        await Task.Yield();
-        ct.ThrowIfCancellationRequested();
-        return request.Id;
-    }
-
-    private static async Task<int> HandleWithTaskAsync(StructRequest request, CancellationToken ct)
-    {
-        await Task.Yield();
-        ct.ThrowIfCancellationRequested();
-        return request.Id;
-    }
-
-    private static async Task<int> HandleWithTaskAsync(ReadonlyRecordStructRequest request, CancellationToken ct)
-    {
-        await Task.Yield();
-        ct.ThrowIfCancellationRequested();
-        return request.Id;
-    }
-
-    private static async ValueTask<Unit> HandleUnitAsync(CancellationToken ct)
+    private static async ValueTask<Unit> HandleUnit(CancellationToken ct)
     {
         await Task.Yield();
         ct.ThrowIfCancellationRequested();
