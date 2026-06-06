@@ -56,18 +56,30 @@ internal static class RemoveAsyncSuffixCodeFix
         context.RegisterCodeFix(
             CodeAction.Create(
                 title: $"Rename to '{updatedName}'",
-                createChangedSolution: cancellationToken => RenameMethod(context.Document.Project.Solution, methodSymbol, updatedName, cancellationToken),
+                createChangedSolution: cancellationToken => RenameMethod(context.Document, methodSymbol, updatedName, cancellationToken),
                 equivalenceKey: $"RenameMethod:{updatedName}"),
             diagnostic);
     }
 
-    private static Task<Solution> RenameMethod(
-        Solution solution,
+    private static async Task<Solution> RenameMethod(
+        Document document,
         ISymbol methodSymbol,
         string updatedName,
         CancellationToken cancellationToken)
     {
-        return Renamer.RenameSymbolAsync(solution, methodSymbol, new SymbolRenameOptions(), updatedName, cancellationToken);
+        var renamedSolution = await Renamer.RenameSymbolAsync(
+            document.Project.Solution,
+            methodSymbol,
+            new SymbolRenameOptions(),
+            updatedName,
+            cancellationToken).ConfigureAwait(false);
+
+        return await MethodOverloadGroupOrganizer.Organize(
+            renamedSolution,
+            document.Id,
+            diagnosticSpanStart: methodSymbol.Locations[0].SourceSpan.Start,
+            updatedName,
+            cancellationToken).ConfigureAwait(false);
     }
 
     private static bool HasRenameConflict(IMethodSymbol methodSymbol, string updatedName)

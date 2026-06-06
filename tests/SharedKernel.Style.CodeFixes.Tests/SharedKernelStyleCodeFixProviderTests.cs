@@ -26,7 +26,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -62,7 +62,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -97,13 +97,110 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
         Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Async_Suffix_Fix_Regroups_Overloads_When_Rename_Would_Split_Overload_Group()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(string route, CancellationToken ct)
+                {
+                    return Task.FromResult(route);
+                }
+
+                public Task<string> Execute(CancellationToken ct)
+                {
+                    return LoadAsync(ct);
+                }
+
+                public async Task<string> LoadAsync(CancellationToken ct)
+                {
+                    await Task.Yield();
+                    return "VT-42";
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains("public async Task<string> Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
+        Assert.Contains("public Task<string> Load(string route, CancellationToken ct)", updatedText, StringComparison.Ordinal);
+        Assert.Contains("return Load(ct);", updatedText, StringComparison.Ordinal);
+        var executeIndex = updatedText.IndexOf("public Task<string> Execute", StringComparison.Ordinal);
+        var renamedOverloadIndex = updatedText.IndexOf("public async Task<string> Load(CancellationToken ct)", StringComparison.Ordinal);
+        var existingOverloadIndex = updatedText.IndexOf("public Task<string> Load(string route, CancellationToken ct)", StringComparison.Ordinal);
+        Assert.True(renamedOverloadIndex < existingOverloadIndex);
+        Assert.True(existingOverloadIndex < executeIndex);
+    }
+
+    [Fact]
+    public async Task Async_Suffix_Fix_Orders_Overloads_By_Signature_Shape()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(string route, CancellationToken ct)
+                {
+                    return Task.FromResult(route);
+                }
+
+                public Task<string> Load()
+                {
+                    return Task.FromResult("default");
+                }
+
+                public async Task<string> LoadAsync(CancellationToken ct)
+                {
+                    await Task.Yield();
+                    return "VT-42";
+                }
+
+                public Task<string> Execute(CancellationToken ct)
+                {
+                    return LoadAsync(ct);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        var loadWithoutParametersIndex = updatedText.IndexOf("public Task<string> Load()", StringComparison.Ordinal);
+        var loadWithCancellationTokenIndex = updatedText.IndexOf("public async Task<string> Load(CancellationToken ct)", StringComparison.Ordinal);
+        var loadWithTwoParametersIndex = updatedText.IndexOf("public Task<string> Load(string route, CancellationToken ct)", StringComparison.Ordinal);
+        Assert.Contains("Load(string route, CancellationToken ct)", updatedText, StringComparison.Ordinal);
+        Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
+        Assert.Contains("return Load(ct);", updatedText, StringComparison.Ordinal);
+        Assert.True(loadWithoutParametersIndex < loadWithCancellationTokenIndex);
+        Assert.True(loadWithCancellationTokenIndex < loadWithTwoParametersIndex);
     }
 
     [Fact]
