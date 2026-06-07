@@ -127,7 +127,7 @@ internal static class MethodOverloadGroupOrganizer
 
         private static int CompareParameter(ParameterSyntax left, ParameterSyntax right)
         {
-            var paramsComparison = HasParamsModifier(left).CompareTo(HasParamsModifier(right));
+            var paramsComparison = HasParamsModifier(right).CompareTo(HasParamsModifier(left));
             if (paramsComparison != 0)
             {
                 return paramsComparison;
