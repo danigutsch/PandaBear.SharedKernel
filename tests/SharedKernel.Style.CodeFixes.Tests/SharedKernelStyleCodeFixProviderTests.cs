@@ -394,7 +394,8 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var project = CreateProject(workspace, source, out var documentId);
         var document = Assert.IsType<Document>(project.GetDocument(documentId));
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
-        var targetMethod = Assert.Single(root!.DescendantNodes().OfType<MethodDeclarationSyntax>());
+        Assert.NotNull(root);
+        var targetMethod = Assert.Single(root.DescendantNodes().OfType<MethodDeclarationSyntax>());
 
         // Act
         var organizedSolution = await OrganizeOverloads(
@@ -438,7 +439,8 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             assemblyName: "SharedKernel.Style.CodeFixes.Tests.Other");
         var sourceDocument = Assert.IsType<Document>(sourceProject.GetDocument(sourceDocumentId));
         var sourceRoot = await sourceDocument.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
-        var targetMethod = Assert.Single(sourceRoot!.DescendantNodes().OfType<MethodDeclarationSyntax>());
+        Assert.NotNull(sourceRoot);
+        var targetMethod = Assert.Single(sourceRoot.DescendantNodes().OfType<MethodDeclarationSyntax>());
 
         // Act
         var organizedSolution = await OrganizeOverloads(
@@ -471,7 +473,8 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var project = CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.Params");
         var document = Assert.IsType<Document>(project.GetDocument(documentId));
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
-        var methods = root!.DescendantNodes().OfType<MethodDeclarationSyntax>().ToArray();
+        Assert.NotNull(root);
+        var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>().ToArray();
         var targetMethod = methods.Single(method => method.Identifier.ValueText == "Load" && method.ParameterList.Parameters[0].Modifiers.Count > 0);
 
         // Act
@@ -511,7 +514,8 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var project = CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.RefKinds");
         var document = Assert.IsType<Document>(project.GetDocument(documentId));
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
-        var targetMethod = root!.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+        Assert.NotNull(root);
+        var targetMethod = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
 
         // Act
         var organizedSolution = await OrganizeOverloads(
@@ -554,7 +558,8 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var project = CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.Generic");
         var document = Assert.IsType<Document>(project.GetDocument(documentId));
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
-        var targetMethod = root!.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
+        Assert.NotNull(root);
+        var targetMethod = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
 
         // Act
         var organizedSolution = await OrganizeOverloads(

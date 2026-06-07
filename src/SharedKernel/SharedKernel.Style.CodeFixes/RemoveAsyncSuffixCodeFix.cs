@@ -63,7 +63,7 @@ internal static class RemoveAsyncSuffixCodeFix
 
     private static async Task<Solution> RenameMethod(
         Document document,
-        ISymbol methodSymbol,
+        IMethodSymbol methodSymbol,
         string updatedName,
         CancellationToken cancellationToken)
     {
@@ -107,7 +107,10 @@ internal static class RemoveAsyncSuffixCodeFix
 
     private static bool IsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
     {
-        var originalMethodSymbol = (IMethodSymbol)originalSymbol;
+        if (originalSymbol is not IMethodSymbol originalMethodSymbol)
+        {
+            return false;
+        }
 
         if (!string.Equals(candidateSymbol.Name, updatedName, StringComparison.Ordinal)
             || !string.Equals(GetTypeIdentity(candidateSymbol.ContainingType), GetTypeIdentity(originalMethodSymbol.ContainingType), StringComparison.Ordinal)

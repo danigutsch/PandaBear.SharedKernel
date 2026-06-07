@@ -30,6 +30,11 @@ internal static class MethodOverloadGroupOrganizer
             return solution;
         }
 
+        if (!ReferenceEquals(targetMethod.SyntaxTree, root.SyntaxTree))
+        {
+            return solution;
+        }
+
         if (root.FindNode(targetMethod.Span, getInnermostNodeForTie: true).FirstAncestorOrSelf<MethodDeclarationSyntax>()?.Parent is not TypeDeclarationSyntax containingType)
         {
             return solution;
