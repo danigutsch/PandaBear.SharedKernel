@@ -456,6 +456,51 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Organizer_Returns_Original_Solution_When_Target_Method_SyntaxTree_Differs_From_Document()
+    {
+        // Arrange
+        using var workspace = new AdhocWorkspace();
+        var project = CreateProject(
+            workspace,
+            """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> LoadAsync(CancellationToken ct) => Task.FromResult(string.Empty);
+            }
+            """,
+            out var documentId,
+            assemblyName: "SharedKernel.Style.CodeFixes.Tests.SyntaxTreeMismatch");
+        var document = Assert.IsType<Document>(project.GetDocument(documentId));
+        var detachedTree = CSharpSyntaxTree.ParseText(
+            """
+            namespace Demo;
+
+            public sealed class DetachedLoader
+            {
+                public Task<string> LoadAsync(CancellationToken ct) => Task.FromResult(string.Empty);
+            }
+            """,
+            new CSharpParseOptions(LanguageVersion.Preview),
+            cancellationToken: TestContext.Current.CancellationToken);
+        var detachedRoot = await detachedTree.GetRootAsync(TestContext.Current.CancellationToken);
+        var detachedMethod = Assert.Single(detachedRoot.DescendantNodes().OfType<MethodDeclarationSyntax>());
+
+        // Act
+        var organizedSolution = await OrganizeOverloads(
+            workspace.CurrentSolution,
+            documentId,
+            detachedMethod,
+            updatedName: "Load",
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.Same(workspace.CurrentSolution, organizedSolution);
+        Assert.NotNull(document);
+    }
+
+    [Fact]
     public async Task Organizer_Orders_Overloads_With_Params_Modifier_Before_Non_Params()
     {
         // Arrange
@@ -492,6 +537,47 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         Assert.True(paramsIndex >= 0);
         Assert.True(regularIndex >= 0);
         Assert.True(paramsIndex < regularIndex);
+    }
+
+    [Fact]
+    public async Task Renamed_Method_Match_Returns_False_When_Original_Symbol_Is_Not_A_Method()
+    {
+        // Arrange
+        using var workspace = new AdhocWorkspace();
+        var project = CreateProject(
+            workspace,
+            """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public int Value { get; } = 42;
+
+                public Task<string> Load(CancellationToken ct) => Task.FromResult(string.Empty);
+            }
+            """,
+            out var documentId,
+            assemblyName: "SharedKernel.Style.CodeFixes.Tests.SymbolMatch");
+        var document = Assert.IsType<Document>(project.GetDocument(documentId));
+        var semanticModel = await document.GetSemanticModelAsync(TestContext.Current.CancellationToken);
+        Assert.NotNull(semanticModel);
+        var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
+        Assert.NotNull(root);
+        var candidateMethod = Assert.Single(root.DescendantNodes().OfType<MethodDeclarationSyntax>());
+        var candidateMethodSymbol = semanticModel.GetDeclaredSymbol(candidateMethod, TestContext.Current.CancellationToken);
+        Assert.NotNull(candidateMethodSymbol);
+        var propertyDeclaration = Assert.Single(root.DescendantNodes().OfType<PropertyDeclarationSyntax>());
+        var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration, TestContext.Current.CancellationToken);
+        Assert.NotNull(propertySymbol);
+
+        // Act
+        var isMatch = InvokeIsRenamedMethodMatch(
+            candidateMethodSymbol,
+            propertySymbol,
+            updatedName: "Load");
+
+        // Assert
+        Assert.False(isMatch);
     }
 
     [Fact]
@@ -633,6 +719,15 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         Assert.NotNull(organizeMethod);
         var task = Assert.IsType<Task<Solution>>(organizeMethod.Invoke(null, [solution, documentId, targetMethod, updatedName, cancellationToken]));
         return await task.ConfigureAwait(false);
+    }
+
+    private static bool InvokeIsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
+    {
+        var codeFixType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.RemoveAsyncSuffixCodeFix");
+        Assert.NotNull(codeFixType);
+        var method = codeFixType.GetMethod("IsRenamedMethodMatch", BindingFlags.NonPublic | BindingFlags.Static);
+        Assert.NotNull(method);
+        return Assert.IsType<bool>(method.Invoke(null, [candidateSymbol, originalSymbol, updatedName]));
     }
 
     private static async Task<string> ReadDocumentText(Solution solution, DocumentId documentId)
