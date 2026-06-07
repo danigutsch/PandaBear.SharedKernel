@@ -56,18 +56,77 @@ internal static class RemoveAsyncSuffixCodeFix
         context.RegisterCodeFix(
             CodeAction.Create(
                 title: $"Rename to '{updatedName}'",
-                createChangedSolution: cancellationToken => RenameMethod(context.Document.Project.Solution, methodSymbol, updatedName, cancellationToken),
+                createChangedSolution: cancellationToken => RenameMethod(context.Document, methodSymbol, updatedName, cancellationToken),
                 equivalenceKey: $"RenameMethod:{updatedName}"),
             diagnostic);
     }
 
-    private static Task<Solution> RenameMethod(
-        Solution solution,
-        ISymbol methodSymbol,
+    private static async Task<Solution> RenameMethod(
+        Document document,
+        IMethodSymbol methodSymbol,
         string updatedName,
         CancellationToken cancellationToken)
     {
-        return Renamer.RenameSymbolAsync(solution, methodSymbol, new SymbolRenameOptions(), updatedName, cancellationToken);
+        var renamedSolution = await Renamer.RenameSymbolAsync(
+            document.Project.Solution,
+            methodSymbol,
+            new SymbolRenameOptions(),
+            updatedName,
+            cancellationToken).ConfigureAwait(false);
+
+        var renamedDocument = renamedSolution.GetDocument(document.Id);
+        if (renamedDocument is null)
+        {
+            return renamedSolution;
+        }
+
+        var renamedRoot = await renamedDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+        var renamedSemanticModel = await renamedDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+        if (renamedRoot is null || renamedSemanticModel is null)
+        {
+            return renamedSolution;
+        }
+
+        var renamedMethodDeclaration = renamedRoot.DescendantNodes()
+            .OfType<MethodDeclarationSyntax>()
+            .FirstOrDefault(candidate =>
+                renamedSemanticModel.GetDeclaredSymbol(candidate, cancellationToken) is IMethodSymbol candidateSymbol
+                && IsRenamedMethodMatch(candidateSymbol, methodSymbol, updatedName));
+        if (renamedMethodDeclaration is null)
+        {
+            return renamedSolution;
+        }
+
+        return await MethodOverloadGroupOrganizer.Organize(
+            renamedSolution,
+            document.Id,
+            renamedMethodDeclaration,
+            updatedName,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private static bool IsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
+    {
+        if (originalSymbol is not IMethodSymbol originalMethodSymbol)
+        {
+            return false;
+        }
+
+        if (!string.Equals(candidateSymbol.Name, updatedName, StringComparison.Ordinal)
+            || !string.Equals(GetTypeIdentity(candidateSymbol.ContainingType), GetTypeIdentity(originalMethodSymbol.ContainingType), StringComparison.Ordinal)
+            || candidateSymbol.Parameters.Length != originalMethodSymbol.Parameters.Length
+            || candidateSymbol.Arity != originalMethodSymbol.Arity
+            || candidateSymbol.MethodKind != originalMethodSymbol.MethodKind)
+        {
+            return false;
+        }
+
+        return ParametersMatch(candidateSymbol.Parameters, originalMethodSymbol.Parameters);
+    }
+
+    private static string GetTypeIdentity(INamedTypeSymbol containingType)
+    {
+        return containingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
     }
 
     private static bool HasRenameConflict(IMethodSymbol methodSymbol, string updatedName)
