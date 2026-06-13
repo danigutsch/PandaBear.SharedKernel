@@ -249,6 +249,34 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
+    public async Task Lambda_CancellationToken_Parameter_Name_Reports_SKSTYLE002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Func<CancellationToken, Task<string>> Build()
+                {
+                    return async cancellationToken =>
+                    {
+                        await Task.Yield();
+                        cancellationToken.ThrowIfCancellationRequested();
+                        return "VT-42";
+                    };
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
+    }
+
+    [Fact]
     public void Parse_Uses_SyntaxTree_Options_Before_Global_Options()
     {
         // Arrange
