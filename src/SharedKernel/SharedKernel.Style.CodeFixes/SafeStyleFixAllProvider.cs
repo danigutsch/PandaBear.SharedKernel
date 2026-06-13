@@ -12,7 +12,7 @@ internal sealed class SafeStyleFixAllProvider : FixAllProvider
     private static readonly FixAllProvider BatchFixer = WellKnownFixAllProviders.BatchFixer;
 
     private static readonly ImmutableArray<string> SupportedDiagnosticIds =
-        [StyleDiagnosticIds.AsyncSuffix, StyleDiagnosticIds.CancellationTokenParameterName];
+        [StyleDiagnosticIds.AsyncSuffix];
 
     /// <summary>
     /// Gets the singleton fix-all provider instance for style code fixes.

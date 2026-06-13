@@ -14,7 +14,7 @@ This Roslyn component provides focused, safe code fixes for the diagnostics in
   when the rename does not conflict with an existing `ct` parameter or a `ct`
   declaration in the containing executable scope.
 
-Fix All is limited to the rename-safe diagnostics: `SKSTYLE001` and `SKSTYLE002`.
+Fix All is limited to `SKSTYLE001`.
 
 ## Suppression policy
 
