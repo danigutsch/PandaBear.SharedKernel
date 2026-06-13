@@ -242,9 +242,6 @@
           "xunit.v3.runner.common": "[3.2.2]"
         }
       },
-      "sharedkernel.style.analyzers": {
-        "type": "Project"
-      },
       "sharedkernel.style.codefixes": {
         "type": "Project"
       }
