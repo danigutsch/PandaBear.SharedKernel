@@ -636,8 +636,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         Assert.Equal(
             [
-                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix,
-                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName
+                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix
             ],
             supportedDiagnosticIds);
     }
