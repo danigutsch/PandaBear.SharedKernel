@@ -21,12 +21,15 @@ Use `.editorconfig` to tune analyzer behavior:
 
 ```ini
 dotnet_diagnostic.SKSTYLE001.severity = suggestion
-dotnet_diagnostic.SKSTYLE002.severity = warning
-dotnet_diagnostic.SKSTYLE003.severity = warning
+dotnet_diagnostic.SKSTYLE002.severity = suggestion
+dotnet_diagnostic.SKSTYLE003.severity = suggestion
 
 sharedkernel_style_allow_async_suffix_overrides = true
 sharedkernel_style_allow_async_suffix_interface_implementations = true
 ```
+
+The repository currently stages `SKSTYLE002` and `SKSTYLE003` as suggestions for rollout.
+They can be raised to warning or error after the existing codebase is cleaned up.
 
 ## Intentional diagnostic sample
 
