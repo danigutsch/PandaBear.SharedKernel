@@ -623,7 +623,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public void Fix_All_Is_Advertised_For_SKSTYLE001()
+    public void Fix_All_Is_Advertised_For_Rename_Safe_Style_Diagnostics()
     {
         // Arrange
         var provider = new SharedKernelStyleCodeFixProvider();
