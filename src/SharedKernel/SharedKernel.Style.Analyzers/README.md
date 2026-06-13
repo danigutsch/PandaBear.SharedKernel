@@ -12,6 +12,8 @@ the default .NET analyzer set.
 | ID | Default severity | Purpose |
 | --- | --- | --- |
 | `SKSTYLE001` | Warning | Method names should not end with `Async` unless an override or interface implementation contract requires it. |
+| `SKSTYLE002` | Warning | `CancellationToken` parameters should use the canonical name `ct`. |
+| `SKSTYLE003` | Warning | `CancellationToken` parameters should not declare default values. |
 
 ## Configuration
 
@@ -19,6 +21,8 @@ Use `.editorconfig` to tune analyzer behavior:
 
 ```ini
 dotnet_diagnostic.SKSTYLE001.severity = suggestion
+dotnet_diagnostic.SKSTYLE002.severity = warning
+dotnet_diagnostic.SKSTYLE003.severity = warning
 
 sharedkernel_style_allow_async_suffix_overrides = true
 sharedkernel_style_allow_async_suffix_interface_implementations = true
@@ -29,7 +33,7 @@ sharedkernel_style_allow_async_suffix_interface_implementations = true
 ```csharp
 public sealed class TourLoader
 {
-    public async Task<string> LoadAsync(CancellationToken ct)
+    public async Task<string> LoadAsync(CancellationToken cancellationToken = default)
     {
         await Task.Yield();
         return "VT-42";

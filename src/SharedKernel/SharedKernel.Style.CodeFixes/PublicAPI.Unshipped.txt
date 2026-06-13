@@ -6,3 +6,5 @@ override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.GetFixAll
 override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
 SharedKernel.Style.Analyzers.StyleDiagnosticIds
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue = "SKSTYLE003" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName = "SKSTYLE002" -> string!
