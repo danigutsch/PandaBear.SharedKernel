@@ -5,3 +5,5 @@ override SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer.Initialize(Micro
 override SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
 SharedKernel.Style.Analyzers.StyleDiagnosticIds
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue = "SKSTYLE003" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName = "SKSTYLE002" -> string!

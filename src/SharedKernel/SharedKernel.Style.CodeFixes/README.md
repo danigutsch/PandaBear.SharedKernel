@@ -10,8 +10,9 @@ This Roslyn component provides focused, safe code fixes for the diagnostics in
 ## Current State
 
 - `SKSTYLE001` can rename a method and its references to remove the `Async` suffix safely.
+- `SKSTYLE002` can rename a `CancellationToken` parameter and its references to `ct` when the target name does not already exist in the same parameter list.
 
-Fix All is limited to `SKSTYLE001`.
+Fix All is limited to the rename-safe diagnostics: `SKSTYLE001` and `SKSTYLE002`.
 
 ## Suppression policy
 

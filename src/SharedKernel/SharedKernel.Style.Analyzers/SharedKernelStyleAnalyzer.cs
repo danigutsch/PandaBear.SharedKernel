@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace SharedKernel.Style.Analyzers;
@@ -11,6 +13,7 @@ namespace SharedKernel.Style.Analyzers;
 public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 {
     private const string AsyncSuffix = "Async";
+    private const string CancellationTokenParameterName = "ct";
     private static readonly DiagnosticDescriptor AsyncSuffixRule = new(
         StyleDiagnosticIds.AsyncSuffix,
         title: "Method name should not end with Async",
@@ -19,10 +22,26 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository coding rules prohibit the Async suffix on method names unless an inherited contract requires that name.");
+    private static readonly DiagnosticDescriptor CancellationTokenParameterNameRule = new(
+        StyleDiagnosticIds.CancellationTokenParameterName,
+        title: "CancellationToken parameters should be named ct",
+        messageFormat: "CancellationToken parameter '{0}' should be named 'ct'",
+        category: "Style",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository coding rules standardize CancellationToken parameter names on the short form 'ct'.");
+    private static readonly DiagnosticDescriptor CancellationTokenDefaultValueRule = new(
+        StyleDiagnosticIds.CancellationTokenDefaultValue,
+        title: "CancellationToken parameters should not declare default values",
+        messageFormat: "CancellationToken parameter '{0}' should not declare a default value",
+        category: "Style",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository coding rules require callers to pass cancellation tokens explicitly instead of relying on optional default token parameters.");
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create(AsyncSuffixRule);
+        ImmutableArray.Create(AsyncSuffixRule, CancellationTokenParameterNameRule, CancellationTokenDefaultValueRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -39,6 +58,8 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 
     private static void InitializeCompilation(CompilationStartAnalysisContext context)
     {
+        var cancellationTokenType = context.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken");
+
         context.RegisterSymbolAction(
             symbolContext =>
             {
@@ -50,6 +71,15 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                         sourceLocation?.SourceTree));
             },
             SymbolKind.Method);
+
+        if (cancellationTokenType is null)
+        {
+            return;
+        }
+
+        context.RegisterSyntaxNodeAction(
+            syntaxContext => AnalyzeParameter(syntaxContext, cancellationTokenType),
+            SyntaxKind.Parameter);
     }
 
     private static void AnalyzeMethod(SymbolAnalysisContext context, StyleAnalyzerConfigOptions options)
@@ -115,5 +145,34 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         }
 
         return false;
+    }
+
+    private static void AnalyzeParameter(SyntaxNodeAnalysisContext context, INamedTypeSymbol cancellationTokenType)
+    {
+        if (context.Node is not ParameterSyntax parameterSyntax
+            || context.SemanticModel.GetDeclaredSymbol(parameterSyntax, context.CancellationToken) is not IParameterSymbol parameter
+            || !parameter.Locations.Any(static location => location.IsInSource)
+            || !SymbolEqualityComparer.Default.Equals(parameter.Type, cancellationTokenType))
+        {
+            return;
+        }
+
+        if (!string.Equals(parameter.Name, CancellationTokenParameterName, StringComparison.Ordinal))
+        {
+            context.ReportDiagnostic(
+                Diagnostic.Create(
+                    CancellationTokenParameterNameRule,
+                    parameter.Locations.First(),
+                    parameter.Name));
+        }
+
+        if (parameter.HasExplicitDefaultValue)
+        {
+            context.ReportDiagnostic(
+                Diagnostic.Create(
+                    CancellationTokenDefaultValueRule,
+                    parameter.Locations.First(),
+                    parameter.Name));
+        }
     }
 }

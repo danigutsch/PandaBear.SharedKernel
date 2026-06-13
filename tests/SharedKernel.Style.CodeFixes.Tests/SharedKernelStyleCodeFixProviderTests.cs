@@ -321,6 +321,290 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
+    public async Task CancellationToken_Name_Fix_Renames_Parameter_And_References()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(CancellationToken cancellationToken)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    return Task.FromResult(\"VT-42\");
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
+        Assert.Contains("ct.ThrowIfCancellationRequested();", updatedText, StringComparison.Ordinal);
+        Assert.DoesNotContain("cancellationToken", updatedText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Ct_Already_Exists()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(string ct, CancellationToken cancellationToken)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    return Task.FromResult(ct);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Containing_Method_Declares_Local_Ct()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(CancellationToken cancellationToken)
+                {
+                    var ct = string.Empty;
+                    cancellationToken.ThrowIfCancellationRequested();
+                    return Task.FromResult(ct);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Containing_Method_Declares_Foreach_Ct()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            using System.Collections.Generic;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(CancellationToken cancellationToken)
+                {
+                    foreach (var ct in new[] { "VT-42" })
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        return Task.FromResult(ct);
+                    }
+
+                    return Task.FromResult(string.Empty);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Containing_Method_Declares_Local_Function_Ct()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(CancellationToken cancellationToken)
+                {
+                    Task<string> ct() => Task.FromResult("VT-42");
+                    cancellationToken.ThrowIfCancellationRequested();
+                    return ct();
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task CancellationToken_Name_Fix_Ignores_Ct_Declared_Inside_Nested_Lambda()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(CancellationToken cancellationToken)
+                {
+                    System.Func<string> nested = () =>
+                    {
+                        var ct = "nested";
+                        return ct;
+                    };
+
+                    cancellationToken.ThrowIfCancellationRequested();
+                    return Task.FromResult(nested());
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
+        Assert.Contains("var ct = \"nested\";", updatedText, StringComparison.Ordinal);
+        Assert.Contains("ct.ThrowIfCancellationRequested();", updatedText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Simple_Lambda_Body_Declares_Ct()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public System.Func<CancellationToken, string> Build()
+                {
+                    return cancellationToken =>
+                    {
+                        var ct = "lambda";
+                        cancellationToken.ThrowIfCancellationRequested();
+                        return ct;
+                    };
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "cancellationToken");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Containing_Method_Declares_Catch_Ct()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(CancellationToken cancellationToken)
+                {
+                    try
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
+                    catch (System.Exception ct)
+                    {
+                        return Task.FromResult(ct.Message);
+                    }
+
+                    return Task.FromResult("VT-42");
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Containing_Method_Declares_Pattern_Ct()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(CancellationToken cancellationToken)
+                {
+                    object message = "VT-42";
+                    if (message is string ct)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        return Task.FromResult(ct);
+                    }
+
+                    return Task.FromResult(string.Empty);
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
     public void Fixable_Diagnostic_Ids_Match_Registered_Style_Fixes()
     {
         // Arrange
@@ -330,7 +614,12 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnosticIds = provider.FixableDiagnosticIds.ToArray();
 
         // Assert
-        Assert.Equal([global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix], diagnosticIds);
+        Assert.Equal(
+            [
+                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix,
+                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName
+            ],
+            diagnosticIds);
     }
 
     [Fact]
@@ -345,7 +634,12 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             .ToArray();
 
         // Assert
-        Assert.Equal([global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix], supportedDiagnosticIds);
+        Assert.Equal(
+            [
+                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix,
+                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName
+            ],
+            supportedDiagnosticIds);
     }
 
     [Fact]
@@ -711,13 +1005,13 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         DocumentId documentId,
         MethodDeclarationSyntax targetMethod,
         string updatedName,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var organizerType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.MethodOverloadGroupOrganizer");
         Assert.NotNull(organizerType);
         var organizeMethod = organizerType.GetMethod("Organize", BindingFlags.Public | BindingFlags.Static);
         Assert.NotNull(organizeMethod);
-        var task = Assert.IsType<Task<Solution>>(organizeMethod.Invoke(null, [solution, documentId, targetMethod, updatedName, cancellationToken]));
+        var task = Assert.IsType<Task<Solution>>(organizeMethod.Invoke(null, [solution, documentId, targetMethod, updatedName, ct]));
         return await task.ConfigureAwait(false);
     }
 

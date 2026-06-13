@@ -146,6 +146,137 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
+    public async Task CancellationToken_Parameter_Name_Reports_SKSTYLE002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(CancellationToken cancellationToken)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    return Task.FromResult(\"VT-42\");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
+        Assert.Contains("cancellationToken", diagnostic.GetMessage(global::System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task CancellationToken_Parameter_Named_Ct_Does_Not_Report_SKSTYLE002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(CancellationToken ct)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    return Task.FromResult(\"VT-42\");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
+    }
+
+    [Fact]
+    public async Task CancellationToken_Parameter_Default_Value_Reports_SKSTYLE003()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(CancellationToken ct = default)
+                {
+                    return Task.FromResult(\"VT-42\");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenDefaultValue);
+        Assert.Contains("ct", diagnostic.GetMessage(global::System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Local_Function_CancellationToken_Parameter_Name_Reports_SKSTYLE002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Build()
+                {
+                    return Execute(cancellationToken: default);
+
+                    static async Task<string> Execute(CancellationToken cancellationToken)
+                    {
+                        await Task.Yield();
+                        cancellationToken.ThrowIfCancellationRequested();
+                        return \"VT-42\";
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
+    }
+
+    [Fact]
+    public async Task Lambda_CancellationToken_Parameter_Name_Reports_SKSTYLE002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Func<CancellationToken, Task<string>> Build()
+                {
+                    return async cancellationToken =>
+                    {
+                        await Task.Yield();
+                        cancellationToken.ThrowIfCancellationRequested();
+                        return "VT-42";
+                    };
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
+    }
+
+    [Fact]
     public void Parse_Uses_SyntaxTree_Options_Before_Global_Options()
     {
         // Arrange
