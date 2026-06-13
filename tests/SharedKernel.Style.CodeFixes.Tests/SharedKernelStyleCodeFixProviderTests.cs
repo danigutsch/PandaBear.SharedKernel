@@ -506,6 +506,37 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
+    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Simple_Lambda_Body_Declares_Ct()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public System.Func<CancellationToken, string> Build()
+                {
+                    return cancellationToken =>
+                    {
+                        var ct = "lambda";
+                        cancellationToken.ThrowIfCancellationRequested();
+                        return ct;
+                    };
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "cancellationToken =>");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
     public void Fixable_Diagnostic_Ids_Match_Registered_Style_Fixes()
     {
         // Arrange

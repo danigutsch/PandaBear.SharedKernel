@@ -77,7 +77,13 @@ internal static class RenameCancellationTokenParameterCodeFix
 
     private static SyntaxNode? FindContainingConflictScope(ParameterSyntax parameterSyntax)
     {
-        return parameterSyntax.Parent?.Parent switch
+        var directParent = parameterSyntax.Parent;
+        if (directParent is SimpleLambdaExpressionSyntax simpleLambda)
+        {
+            return simpleLambda.Body;
+        }
+
+        return directParent?.Parent switch
         {
             BaseMethodDeclarationSyntax method => method.Body ?? (SyntaxNode?)method.ExpressionBody,
             LocalFunctionStatementSyntax localFunction => localFunction.Body ?? (SyntaxNode?)localFunction.ExpressionBody,
