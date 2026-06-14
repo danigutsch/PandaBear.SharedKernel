@@ -21,9 +21,6 @@ Use `.editorconfig` to tune analyzer behavior:
 dotnet_diagnostic.SKTEST001.severity = suggestion
 ```
 
-The repository currently stages `SKTEST001` as a suggestion for rollout.
-It can be raised to warning or error after the existing codebase is cleaned up.
-
 ## See Also
 
 - [SharedKernel.Testing.CodeFixes](../SharedKernel.Testing.CodeFixes/README.md)

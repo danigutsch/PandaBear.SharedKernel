@@ -16,11 +16,5 @@
 			PrivateAssets="all"
 			IsAspireProjectResource="false"
 			Condition="Exists('$(MSBuildThisFileDirectory)..\src\SharedKernel\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj')" />
-		<ProjectReference Include="$(MSBuildThisFileDirectory)..\src\SharedKernel\SharedKernel.Testing.CodeFixes\SharedKernel.Testing.CodeFixes.csproj"
-			OutputItemType="Analyzer"
-			ReferenceOutputAssembly="false"
-			PrivateAssets="all"
-			IsAspireProjectResource="false"
-			Condition="Exists('$(MSBuildThisFileDirectory)..\src\SharedKernel\SharedKernel.Testing.CodeFixes\SharedKernel.Testing.CodeFixes.csproj')" />
 	</ItemGroup>
 </Project>
