@@ -220,6 +220,9 @@
           "SharedKernel.Mediator.Abstractions": "[1.0.0, )"
         }
       },
+      "sharedkernel.testing": {
+        "type": "Project"
+      },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
         "type": "CentralTransitive",
         "requested": "[10.0.8, )",
