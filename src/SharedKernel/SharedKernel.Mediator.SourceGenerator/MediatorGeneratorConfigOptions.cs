@@ -5,13 +5,11 @@ namespace SharedKernel.Mediator.SourceGenerator;
 /// <summary>
 /// Reads mediator source-generator options from <c>.editorconfig</c>.
 /// </summary>
-internal sealed class MediatorGeneratorConfigOptions(bool emitCallGraphJson)
+internal sealed record MediatorGeneratorConfigOptions(bool EmitCallGraphJson)
 {
     private const string EmitCallGraphJsonKey = "sharedkernel_mediator_emit_call_graph_json";
 
-    public bool EmitCallGraphJson { get; } = emitCallGraphJson;
-
-    public static MediatorGeneratorConfigOptions Default { get; } = new(emitCallGraphJson: false);
+    public static MediatorGeneratorConfigOptions Default { get; } = new(false);
 
     public static MediatorGeneratorConfigOptions Parse(AnalyzerConfigOptionsProvider optionsProvider)
     {
@@ -22,7 +20,7 @@ internal sealed class MediatorGeneratorConfigOptions(bool emitCallGraphJson)
 
         var globalOptions = optionsProvider.GlobalOptions;
         return new MediatorGeneratorConfigOptions(
-            emitCallGraphJson: TryGetBooleanOption(globalOptions, EmitCallGraphJsonKey, Default.EmitCallGraphJson));
+            TryGetBooleanOption(globalOptions, EmitCallGraphJsonKey, Default.EmitCallGraphJson));
     }
 
     private static bool TryGetBooleanOption(AnalyzerConfigOptions options, string key, bool defaultValue)

@@ -12,6 +12,7 @@ Unit tests for `SharedKernel.Mediator.SourceGenerator`.
 - Generated mediator shell output
 - Generated dispatch behavior compared with the reference dispatcher
 - Deterministic generator behavior across repeated runs
+- Incremental step tracking for cached vs modified generator work
 
 ## Current Traits
 

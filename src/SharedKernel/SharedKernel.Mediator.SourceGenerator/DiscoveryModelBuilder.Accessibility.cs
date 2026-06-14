@@ -209,16 +209,22 @@ internal static partial class DiscoveryModelBuilder
             return;
         }
 
-        if (!discoveryState.DiagnosedDuplicateRegistrationKeys.Add(registrationKey))
+        var duplicateRegistration = new DuplicateRegistrationDiagnostic(
+            serviceType,
+            implementationType,
+            GetMetadataName(type),
+            GetDiagnosticLocation(type, primaryAssembly));
+
+        if (discoveryState.DuplicateRegistrationDiagnostics.TryGetValue(registrationKey, out var existing))
         {
+            if (string.CompareOrdinal(duplicateRegistration.ReportingMetadataName, existing.ReportingMetadataName) < 0)
+            {
+                discoveryState.DuplicateRegistrationDiagnostics[registrationKey] = duplicateRegistration;
+            }
+
             return;
         }
 
-        discoveryState.Diagnostics.Add(
-            Diagnostic.Create(
-                MediatorDiagnosticDescriptors.DuplicateGeneratedRegistration,
-                GetDiagnosticLocation(type, primaryAssembly),
-                serviceType,
-                implementationType));
+        discoveryState.DuplicateRegistrationDiagnostics[registrationKey] = duplicateRegistration;
     }
 }

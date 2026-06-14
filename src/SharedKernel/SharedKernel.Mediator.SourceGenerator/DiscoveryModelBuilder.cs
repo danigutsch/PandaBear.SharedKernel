@@ -63,6 +63,7 @@ internal static partial class DiscoveryModelBuilder
             compilation.Assembly,
             discoveryState);
         ReportStreamRequestHandlerDiagnostics(discoveryState.StreamRequestContracts, discoveryState.StreamHandlers, discoveryState);
+        ReportDuplicateGeneratedRegistrationDiagnostics(discoveryState);
 
         return new DiscoveryModel(
             [.. modules.OrderBy(static module => module.AssemblyName, StringComparer.Ordinal)],

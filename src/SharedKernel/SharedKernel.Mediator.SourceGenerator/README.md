@@ -35,6 +35,34 @@ document compatibility and keep the runtime and abstractions packages marked `Is
 - `Microsoft.CodeAnalysis.Analyzers`
 - `Microsoft.CodeAnalysis.CSharp`
 
+## Build-Time Timing Baseline
+
+Use the sample consumer project when profiling generator execution. Building the generator project itself does not
+exercise `SharedKernelMediatorGenerator` as an analyzer.
+
+### Baseline command
+
+```bash
+dotnet build samples/Mediator/Mediator.Sample/Mediator.Sample.csproj /t:Rebuild /p:ReportAnalyzer=true /bl:mediator-sample.binlog -v:detailed
+```
+
+### How to inspect it
+
+1. Open `mediator-sample.binlog` in MSBuild Structured Log Viewer.
+2. Find the `Csc` task for `Mediator.Sample`.
+3. Record both the `Total analyzer execution time` section and the `Generator` subsection.
+4. Compare future runs against the same sample project, target, and verbosity to keep the baseline meaningful.
+
+### Current baseline snapshot
+
+- Command run on 2026-06-14:
+  `dotnet build samples/Mediator/Mediator.Sample/Mediator.Sample.csproj /t:Rebuild /p:ReportAnalyzer=true /bl:mediator-sample.binlog -v:detailed`
+- Total analyzer execution time: `0.589` seconds
+- `SharedKernel.Mediator.SourceGenerator.SharedKernelMediatorGenerator`: `0.084` seconds (`93%` of generator time)
+
+Treat this as a local reference point rather than a CI budget. Hardware, warm caches, and concurrent analyzer load
+can shift absolute timings, so compare trends more than raw milliseconds.
+
 ## See Also
 
 - [SharedKernel.Mediator.Abstractions](../SharedKernel.Mediator.Abstractions/README.md)

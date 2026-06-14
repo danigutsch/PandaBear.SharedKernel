@@ -61,6 +61,21 @@ internal static partial class DiscoveryModelBuilder
         }
     }
 
+    private static void ReportDuplicateGeneratedRegistrationDiagnostics(DiscoveryState discoveryState)
+    {
+        foreach (var duplicate in discoveryState.DuplicateRegistrationDiagnostics.Values
+                     .OrderBy(static (DuplicateRegistrationDiagnostic duplicate) => duplicate.ServiceType, StringComparer.Ordinal)
+                     .ThenBy(static duplicate => duplicate.ImplementationType, StringComparer.Ordinal))
+        {
+            discoveryState.Diagnostics.Add(
+                Diagnostic.Create(
+                    MediatorDiagnosticDescriptors.DuplicateGeneratedRegistration,
+                    duplicate.Location,
+                    duplicate.ServiceType,
+                    duplicate.ImplementationType));
+        }
+    }
+
     private static void ReportRequestDiagnostic(
         DiagnosticDescriptor descriptor,
         RequestDescriptor request,

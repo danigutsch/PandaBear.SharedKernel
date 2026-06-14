@@ -20,7 +20,7 @@ internal sealed class DiscoveryState
         Diagnostics = [];
         DiagnosedInaccessibleTypes = new HashSet<string>(StringComparer.Ordinal);
         GeneratedRegistrationKeys = new HashSet<string>(StringComparer.Ordinal);
-        DiagnosedDuplicateRegistrationKeys = new HashSet<string>(StringComparer.Ordinal);
+        DuplicateRegistrationDiagnostics = new Dictionary<string, DuplicateRegistrationDiagnostic>(StringComparer.Ordinal);
         DiagnosedInvalidHandlerKeys = new HashSet<string>(StringComparer.Ordinal);
         DiagnosedUnmarkedAssemblies = new HashSet<string>(StringComparer.Ordinal);
     }
@@ -47,7 +47,7 @@ internal sealed class DiscoveryState
 
     public HashSet<string> GeneratedRegistrationKeys { get; }
 
-    public HashSet<string> DiagnosedDuplicateRegistrationKeys { get; }
+    public Dictionary<string, DuplicateRegistrationDiagnostic> DuplicateRegistrationDiagnostics { get; }
 
     public HashSet<string> DiagnosedInvalidHandlerKeys { get; }
 
