@@ -38,12 +38,13 @@ public static Result<Tour> Create(string identifier, string name)
 {
     if (string.IsNullOrWhiteSpace(identifier))
     {
-        return Result<Tour>.Failure(
-            ResultStatus.Invalid,
-            new ResultError("Tour identifier cannot be empty"));
+        return Result.Invalid<Tour>(
+            "Tour identifier cannot be empty",
+            "identifier",
+            "Tour identifier cannot be empty");
     }
 
-    return Result<Tour>.Success(new Tour(identifier, name));
+    return Result.Ok(new Tour(identifier, name));
 }
 ```
 
@@ -54,15 +55,16 @@ public Result UpdateSchedule(DateTime startDate, DateTime endDate)
 {
     if (endDate <= startDate)
     {
-        return Result.Failure(
-            ResultStatus.Invalid,
-            new ResultError("End date must be after start date"));
+        return Result.Invalid(
+            "End date must be after start date",
+            "schedule",
+            "End date must be after start date");
     }
 
     StartDate = startDate;
     EndDate = endDate;
 
-    return Result.Success();
+    return Result.Ok();
 }
 ```
 
@@ -76,6 +78,7 @@ Example:
 
 ```csharp
 public Task<Result<Option<Customer>>> FindByEmail(string email, CancellationToken ct)
+;
 ```
 
 ### Usage Rules
