@@ -6,3 +6,4 @@ override SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.GetFi
 override SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
 SharedKernel.Testing.Analyzers.TestingDiagnosticIds
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.TestMethodWarningSuppression = "SKTEST001" -> string!
+const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming = "SKTEST002" -> string!

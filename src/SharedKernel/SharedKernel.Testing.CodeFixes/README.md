@@ -9,8 +9,8 @@ This Roslyn component is reserved for focused fixes that pair with the diagnosti
 
 ## Current State
 
-- No testing code fixes are implemented yet.
 - `SKTEST001` is diagnostics-only in the current rollout slice.
+- `SKTEST002` offers a conservative rename when an xUnit test method can be converted safely to the underscore naming convention.
 
 ## Suppression policy
 
