@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -12,6 +13,10 @@ namespace SharedKernel.Testing.Analyzers;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 {
+    private static readonly Regex XunitMethodNamingRegex = new(
+        @"^[A-Z][A-Za-z0-9]*(?:_[A-Z0-9][A-Za-z0-9]*)+$",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
     private static readonly DiagnosticDescriptor TestMethodWarningSuppressionRule = new(
         TestingDiagnosticIds.TestMethodWarningSuppression,
         title: "Test methods should not use pragma warning suppressions",
@@ -21,9 +26,18 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true,
         description: "Repository testing rules discourage local pragma warning suppressions inside xUnit test methods; prefer analyzer-compliant test code or broader justified suppression scopes when unavoidable.");
 
+    private static readonly DiagnosticDescriptor XunitTestMethodNamingRule = new(
+        TestingDiagnosticIds.XunitTestMethodNaming,
+        title: "xUnit test methods should follow the underscore naming convention",
+        messageFormat: "xUnit test method '{0}' should follow the underscore naming convention",
+        category: "Testing",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository testing rules require xUnit test methods to use descriptive underscore-separated names such as 'Creates_a_tour_when_the_request_is_valid'.");
+
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule];
+        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -38,6 +52,9 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         context.RegisterSyntaxNodeAction(
             AnalyzePragmaDirective,
             SyntaxKind.PragmaWarningDirectiveTrivia);
+        context.RegisterSyntaxNodeAction(
+            AnalyzeMethodDeclaration,
+            SyntaxKind.MethodDeclaration);
     }
 
     private static void AnalyzePragmaDirective(SyntaxNodeAnalysisContext context)
@@ -67,5 +84,22 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         return methodSymbol.GetAttributes().Any(static attribute =>
             attribute.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) is "global::Xunit.FactAttribute"
                 or "global::Xunit.TheoryAttribute");
+    }
+
+    private static void AnalyzeMethodDeclaration(SyntaxNodeAnalysisContext context)
+    {
+        if (context.Node is not MethodDeclarationSyntax methodDeclaration
+            || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
+            || !IsXunitTestMethod(methodSymbol)
+            || XunitMethodNamingRegex.IsMatch(methodSymbol.Name))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                XunitTestMethodNamingRule,
+                methodDeclaration.Identifier.GetLocation(),
+                methodSymbol.Name));
     }
 }
