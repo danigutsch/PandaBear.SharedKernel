@@ -38,9 +38,17 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository coding rules require callers to pass cancellation tokens explicitly instead of relying on optional default token parameters.");
+    private static readonly DiagnosticDescriptor MultipleTopLevelTypesPerFileRule = new(
+        StyleDiagnosticIds.MultipleTopLevelTypesPerFile,
+        title: "Source files should not declare more than one top-level type",
+        messageFormat: "Source file '{0}' declares multiple top-level types; move '{1}' into its own file",
+        category: "Style",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository coding rules prefer one top-level type per file for new or significantly refactored C# code.");
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create(AsyncSuffixRule, CancellationTokenParameterNameRule, CancellationTokenDefaultValueRule);
+        ImmutableArray.Create(AsyncSuffixRule, CancellationTokenParameterNameRule, CancellationTokenDefaultValueRule, MultipleTopLevelTypesPerFileRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -79,6 +87,8 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         context.RegisterSyntaxNodeAction(
             syntaxContext => AnalyzeParameter(syntaxContext, cancellationTokenType),
             SyntaxKind.Parameter);
+
+        context.RegisterSyntaxTreeAction(AnalyzeSyntaxTree);
 
     }
 
@@ -174,5 +184,70 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                     parameter.Locations.First(),
                     parameter.Name));
         }
+    }
+
+    private static void AnalyzeSyntaxTree(SyntaxTreeAnalysisContext context)
+    {
+        if (context.Tree.GetRoot(context.CancellationToken) is not CompilationUnitSyntax root)
+        {
+            return;
+        }
+
+        var topLevelTypes = GetTopLevelTypes(root).ToArray();
+        if (topLevelTypes.Length <= 1 || topLevelTypes.Any(IsPartialType))
+        {
+            return;
+        }
+
+        var offendingType = topLevelTypes[1];
+        var typeName = GetTypeName(offendingType);
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                MultipleTopLevelTypesPerFileRule,
+                offendingType.GetLocation(),
+                Path.GetFileName(context.Tree.FilePath),
+                typeName));
+    }
+
+    private static IEnumerable<MemberDeclarationSyntax> GetTopLevelTypes(CompilationUnitSyntax compilationUnit)
+    {
+        foreach (var member in compilationUnit.Members)
+        {
+            if (member is BaseNamespaceDeclarationSyntax @namespace)
+            {
+                foreach (var namespacedMember in @namespace.Members.Where(IsTopLevelTypeDeclaration))
+                {
+                    yield return namespacedMember;
+                }
+
+                continue;
+            }
+
+            if (IsTopLevelTypeDeclaration(member))
+            {
+                yield return member;
+            }
+        }
+    }
+
+    private static bool IsTopLevelTypeDeclaration(MemberDeclarationSyntax member)
+    {
+        return member is BaseTypeDeclarationSyntax or DelegateDeclarationSyntax;
+    }
+
+    private static bool IsPartialType(MemberDeclarationSyntax member)
+    {
+        return member is TypeDeclarationSyntax typeDeclaration
+            && typeDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PartialKeyword));
+    }
+
+    private static string GetTypeName(MemberDeclarationSyntax member)
+    {
+        return member switch
+        {
+            BaseTypeDeclarationSyntax baseType => baseType.Identifier.ValueText,
+            DelegateDeclarationSyntax @delegate => @delegate.Identifier.ValueText,
+            _ => "type"
+        };
     }
 }
