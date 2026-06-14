@@ -8,4 +8,13 @@
 		<TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
 		<TestingPlatformCaptureOutput>false</TestingPlatformCaptureOutput>
 	</PropertyGroup>
+
+	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj' and '$(IsRoslynComponent)' != 'true'">
+		<ProjectReference Include="$(MSBuildThisFileDirectory)..\src\SharedKernel\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj"
+			OutputItemType="Analyzer"
+			ReferenceOutputAssembly="false"
+			PrivateAssets="all"
+			IsAspireProjectResource="false"
+			Condition="Exists('$(MSBuildThisFileDirectory)..\src\SharedKernel\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj')" />
+	</ItemGroup>
 </Project>

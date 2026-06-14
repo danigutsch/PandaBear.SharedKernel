@@ -1,0 +1,8 @@
+#nullable enable
+SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider
+SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.SharedKernelTestingCodeFixProvider() -> void
+override SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
+override SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+SharedKernel.Testing.Analyzers.TestingDiagnosticIds
+const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.TestMethodWarningSuppression = "SKTEST001" -> string!

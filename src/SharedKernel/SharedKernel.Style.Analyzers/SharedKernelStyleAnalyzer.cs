@@ -38,7 +38,6 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository coding rules require callers to pass cancellation tokens explicitly instead of relying on optional default token parameters.");
-
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(AsyncSuffixRule, CancellationTokenParameterNameRule, CancellationTokenDefaultValueRule);
@@ -80,6 +79,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         context.RegisterSyntaxNodeAction(
             syntaxContext => AnalyzeParameter(syntaxContext, cancellationTokenType),
             SyntaxKind.Parameter);
+
     }
 
     private static void AnalyzeMethod(SymbolAnalysisContext context, StyleAnalyzerConfigOptions options)

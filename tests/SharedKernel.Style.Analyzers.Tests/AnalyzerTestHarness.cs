@@ -14,6 +14,7 @@ internal static class AnalyzerTestHarness
         using System.IO;
         using System.Threading;
         using System.Threading.Tasks;
+        using Xunit;
 
         """;
 
@@ -62,5 +63,7 @@ internal static class AnalyzerTestHarness
         {
             yield return MetadataReference.CreateFromFile(path);
         }
+
+        yield return MetadataReference.CreateFromFile(typeof(FactAttribute).Assembly.Location);
     }
 }
