@@ -211,11 +211,27 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 
     private static IEnumerable<MemberDeclarationSyntax> GetTopLevelTypes(CompilationUnitSyntax compilationUnit)
     {
-        foreach (var member in compilationUnit.Members)
+        foreach (var member in GetTopLevelTypes(compilationUnit.Members))
+        {
+            yield return member;
+        }
+    }
+
+    private static IEnumerable<MemberDeclarationSyntax> GetTopLevelTypes(BaseNamespaceDeclarationSyntax @namespace)
+    {
+        foreach (var member in GetTopLevelTypes(@namespace.Members))
+        {
+            yield return member;
+        }
+    }
+
+    private static IEnumerable<MemberDeclarationSyntax> GetTopLevelTypes(SyntaxList<MemberDeclarationSyntax> members)
+    {
+        foreach (var member in members)
         {
             if (member is BaseNamespaceDeclarationSyntax @namespace)
             {
-                foreach (var namespacedMember in @namespace.Members.Where(IsTopLevelTypeDeclaration))
+                foreach (var namespacedMember in GetTopLevelTypes(@namespace))
                 {
                     yield return namespacedMember;
                 }

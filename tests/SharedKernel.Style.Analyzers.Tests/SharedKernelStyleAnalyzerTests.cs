@@ -318,7 +318,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Multiple_Top_Level_Types_Per_File_Report_S_K_S_T_Y_L_E004()
+    public async Task Multiple_Top_Level_Types_Per_File_Report_SKSTYLE004()
     {
         // Arrange
         const string source = """
@@ -342,7 +342,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Partial_Types_Are_Excluded_From_S_K_S_T_Y_L_E004()
+    public async Task Partial_Types_Are_Excluded_From_SKSTYLE004()
     {
         // Arrange
         const string source = """
@@ -365,7 +365,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Nested_Types_Do_Not_Report_S_K_S_T_Y_L_E004()
+    public async Task Nested_Types_Do_Not_Report_SKSTYLE004()
     {
         // Arrange
         const string source = """
@@ -384,6 +384,33 @@ public sealed class SharedKernelStyleAnalyzerTests
 
         // Assert
         Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+    }
+
+    [Fact]
+    public async Task Nested_Namespaces_Still_Report_SKSTYLE004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo
+            {
+                namespace Inner
+                {
+                    public sealed class TourLoader
+                    {
+                    }
+
+                    public sealed class TourWriter
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
     }
 
     private sealed class StyleTestAnalyzerConfigOptionsProvider(
