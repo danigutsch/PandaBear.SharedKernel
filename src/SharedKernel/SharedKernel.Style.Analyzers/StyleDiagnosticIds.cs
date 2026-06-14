@@ -20,4 +20,9 @@ public static class StyleDiagnosticIds
     /// </summary>
     public const string CancellationTokenDefaultValue = "SKSTYLE003";
 
+    /// <summary>
+    /// Diagnostic emitted when a source file declares more than one top-level type.
+    /// </summary>
+    public const string MultipleTopLevelTypesPerFile = "SKSTYLE004";
+
 }
