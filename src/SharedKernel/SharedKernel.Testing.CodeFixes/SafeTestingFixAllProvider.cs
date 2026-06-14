@@ -8,9 +8,8 @@ namespace SharedKernel.Testing.CodeFixes;
 /// </summary>
 internal sealed class SafeTestingFixAllProvider : FixAllProvider
 {
-    private static readonly FixAllProvider BatchFixer = WellKnownFixAllProviders.BatchFixer;
-
     private static readonly ImmutableArray<string> SupportedDiagnosticIds = [];
+    private static readonly ImmutableArray<FixAllScope> SupportedScopes = [];
 
     /// <summary>
     /// Gets the singleton fix-all provider instance for testing code fixes.
@@ -29,7 +28,7 @@ internal sealed class SafeTestingFixAllProvider : FixAllProvider
 
     public override IEnumerable<FixAllScope> GetSupportedFixAllScopes()
     {
-        return BatchFixer.GetSupportedFixAllScopes();
+        return SupportedScopes;
     }
 
     public override Task<Microsoft.CodeAnalysis.CodeActions.CodeAction?> GetFixAsync(FixAllContext fixAllContext)

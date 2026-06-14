@@ -34,7 +34,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
-        Assert.Contains("Creates_A_Tour_When_The_Request_Is_Valid()", updatedText, StringComparison.Ordinal);
+        Assert.Contains("Creates_a_tour_when_the_request_is_valid()", updatedText, StringComparison.Ordinal);
         Assert.DoesNotContain("CreatesATourWhenTheRequestIsValid()", updatedText, StringComparison.Ordinal);
     }
 
@@ -51,7 +51,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
                 {
                 }
 
-                public void Creates_A_Tour_When_The_Request_Is_Valid()
+                public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
             }
@@ -79,7 +79,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
                 {
                 }
 
-                public string Creates_A_Tour_When_The_Request_Is_Valid { get; } = string.Empty;
+                public string Creates_a_tour_when_the_request_is_valid { get; } = string.Empty;
             }
             """;
 
@@ -139,7 +139,15 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
-        Assert.Contains("Uses_HTTP2_Timeout_Fallback()", updatedText, StringComparison.Ordinal);
+        Assert.Contains("Uses_http2_timeout_fallback()", updatedText, StringComparison.Ordinal);
         Assert.DoesNotContain("UsesHTTP2TimeoutFallback", updatedText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Fix_All_Is_Not_Advertised_For_Testing_Code_Fixes()
+    {
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        Assert.Empty(provider.GetFixAllProvider().GetSupportedFixAllScopes());
     }
 }

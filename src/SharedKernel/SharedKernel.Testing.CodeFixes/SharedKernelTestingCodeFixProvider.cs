@@ -101,26 +101,35 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return null;
         }
 
-        return string.Join("_", Array.ConvertAll(tokens, NormalizeToken));
+        return string.Join("_", tokens.Select(NormalizeToken));
     }
 
-    private static string NormalizeToken(string token)
+    private static string NormalizeToken(string token, int index)
     {
         if (token.All(char.IsDigit))
         {
             return token;
         }
 
-        if (token.Length == 1)
+        if (index == 0)
         {
-            return token.ToUpperInvariant();
+            var characters = token.ToCharArray();
+            characters[0] = char.ToUpperInvariant(characters[0]);
+
+            for (var i = 1; i < characters.Length; i++)
+            {
+                characters[i] = char.ToLowerInvariant(characters[i]);
+            }
+
+            return new string(characters);
         }
 
-        if (token.All(static ch => char.IsUpper(ch) || char.IsDigit(ch)))
+        var lowercaseCharacters = token.ToCharArray();
+        for (var i = 0; i < lowercaseCharacters.Length; i++)
         {
-            return token;
+            lowercaseCharacters[i] = char.ToLowerInvariant(lowercaseCharacters[i]);
         }
 
-        return char.ToUpperInvariant(token[0]) + token.Substring(1);
+        return new string(lowercaseCharacters);
     }
 }
