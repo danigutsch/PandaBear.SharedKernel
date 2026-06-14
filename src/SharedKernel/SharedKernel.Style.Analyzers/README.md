@@ -14,7 +14,6 @@ the default .NET analyzer set.
 | `SKSTYLE001` | Warning | Method names should not end with `Async` unless an override or interface implementation contract requires it. |
 | `SKSTYLE002` | Warning | `CancellationToken` parameters should use the canonical name `ct`. |
 | `SKSTYLE003` | Warning | `CancellationToken` parameters should not declare default values. |
-| `SKSTYLE004` | Warning | xUnit test methods should not use local `#pragma warning disable`/`restore` directives. |
 
 ## Configuration
 
@@ -24,13 +23,11 @@ Use `.editorconfig` to tune analyzer behavior:
 dotnet_diagnostic.SKSTYLE001.severity = suggestion
 dotnet_diagnostic.SKSTYLE002.severity = suggestion
 dotnet_diagnostic.SKSTYLE003.severity = suggestion
-dotnet_diagnostic.SKSTYLE004.severity = suggestion
-
 sharedkernel_style_allow_async_suffix_overrides = true
 sharedkernel_style_allow_async_suffix_interface_implementations = true
 ```
 
-The repository currently stages `SKSTYLE002`, `SKSTYLE003`, and `SKSTYLE004` as suggestions for rollout.
+The repository currently stages `SKSTYLE002` and `SKSTYLE003` as suggestions for rollout.
 They can be raised to warning or error after the existing codebase is cleaned up.
 
 ## Intentional diagnostic sample

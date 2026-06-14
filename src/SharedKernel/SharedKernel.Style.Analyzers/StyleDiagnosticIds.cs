@@ -20,8 +20,4 @@ public static class StyleDiagnosticIds
     /// </summary>
     public const string CancellationTokenDefaultValue = "SKSTYLE003";
 
-    /// <summary>
-    /// Diagnostic emitted when a test method uses local pragma warning suppression directives.
-    /// </summary>
-    public const string TestMethodWarningSuppression = "SKSTYLE004";
 }

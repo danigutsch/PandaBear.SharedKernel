@@ -38,18 +38,9 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository coding rules require callers to pass cancellation tokens explicitly instead of relying on optional default token parameters.");
-    private static readonly DiagnosticDescriptor TestMethodWarningSuppressionRule = new(
-        StyleDiagnosticIds.TestMethodWarningSuppression,
-        title: "Test methods should not use pragma warning suppressions",
-        messageFormat: "Test method '{0}' should not use '#pragma warning {1}' directives",
-        category: "Style",
-        defaultSeverity: DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        description: "Repository coding rules discourage local pragma warning suppressions inside xUnit test methods; prefer analyzer-compliant test code or broader justified suppression scopes when unavoidable.");
-
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-        ImmutableArray.Create(AsyncSuffixRule, CancellationTokenParameterNameRule, CancellationTokenDefaultValueRule, TestMethodWarningSuppressionRule);
+        ImmutableArray.Create(AsyncSuffixRule, CancellationTokenParameterNameRule, CancellationTokenDefaultValueRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -89,9 +80,6 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             syntaxContext => AnalyzeParameter(syntaxContext, cancellationTokenType),
             SyntaxKind.Parameter);
 
-        context.RegisterSyntaxNodeAction(
-            AnalyzePragmaDirective,
-            SyntaxKind.PragmaWarningDirectiveTrivia);
     }
 
     private static void AnalyzeMethod(SymbolAnalysisContext context, StyleAnalyzerConfigOptions options)
@@ -186,34 +174,5 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                     parameter.Locations.First(),
                     parameter.Name));
         }
-    }
-
-    private static void AnalyzePragmaDirective(SyntaxNodeAnalysisContext context)
-    {
-        if (context.Node is not PragmaWarningDirectiveTriviaSyntax pragmaDirective
-            || pragmaDirective.ParentTrivia.Token.Parent?.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
-            || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
-            || !IsXunitTestMethod(methodSymbol))
-        {
-            return;
-        }
-
-        var action = pragmaDirective.DisableOrRestoreKeyword.IsKind(SyntaxKind.DisableKeyword)
-            ? "disable"
-            : "restore";
-
-        context.ReportDiagnostic(
-            Diagnostic.Create(
-                TestMethodWarningSuppressionRule,
-                pragmaDirective.GetLocation(),
-                methodSymbol.Name,
-                action));
-    }
-
-    private static bool IsXunitTestMethod(IMethodSymbol methodSymbol)
-    {
-        return methodSymbol.GetAttributes().Any(static attribute =>
-            attribute.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) is "global::Xunit.FactAttribute"
-                or "global::Xunit.TheoryAttribute");
     }
 }
