@@ -117,6 +117,9 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         return methodDeclaration.AttributeLists
             .SelectMany(static attributeList => attributeList.Attributes)
             .Select(static attribute => attribute.Name.ToString())
-            .Any(static name => name.EndsWith("Fact", StringComparison.Ordinal) || name.EndsWith("Theory", StringComparison.Ordinal));
-    }
+            .Any(static name =>
+                name.EndsWith("Fact", StringComparison.Ordinal)
+                || name.EndsWith("FactAttribute", StringComparison.Ordinal)
+                || name.EndsWith("Theory", StringComparison.Ordinal)
+                || name.EndsWith("TheoryAttribute", StringComparison.Ordinal));
 }
