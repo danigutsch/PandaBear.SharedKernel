@@ -68,15 +68,26 @@ internal static class GeneratorTestHarness
         CSharpCompilation compilation,
         ImmutableDictionary<string, string>? globalOptions = null)
     {
+        return RunGeneratorDriver(compilation, globalOptions, trackIncrementalGeneratorSteps: false).RunResult;
+    }
+
+    public static (GeneratorDriver Driver, GeneratorDriverRunResult RunResult) RunGeneratorDriver(
+        CSharpCompilation compilation,
+        ImmutableDictionary<string, string>? globalOptions,
+        bool trackIncrementalGeneratorSteps)
+    {
         var generator = new SharedKernelMediatorGenerator();
         GeneratorDriver driver = CSharpGeneratorDriver.Create(
             generators: [generator.AsSourceGenerator()],
             additionalTexts: [],
             parseOptions: (CSharpParseOptions?)compilation.SyntaxTrees.FirstOrDefault()?.Options,
-            optionsProvider: new TestAnalyzerConfigOptionsProvider(globalOptions));
+            optionsProvider: (Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider)new TestAnalyzerConfigOptionsProvider(globalOptions),
+            driverOptions: new GeneratorDriverOptions(
+                disabledOutputs: IncrementalGeneratorOutputKind.None,
+                trackIncrementalGeneratorSteps: trackIncrementalGeneratorSteps));
 
         driver = driver.RunGenerators(compilation);
-        return driver.GetRunResult();
+        return (driver, driver.GetRunResult());
     }
 
     public static GeneratorDriverRunResult RunGeneratorDriver(
@@ -88,6 +99,13 @@ internal static class GeneratorTestHarness
     {
         var compilation = CreateCompilation(source, assemblyName, additionalReferences, includeMediatorReference);
         return RunGeneratorDriver(compilation, globalOptions);
+    }
+
+    public static GeneratorDriverRunResult RunTrackedGeneratorDriver(
+        GeneratorDriver driver,
+        CSharpCompilation compilation)
+    {
+        return driver.RunGenerators(compilation).GetRunResult();
     }
 
     public static (string Source, ImmutableArray<Diagnostic> Diagnostics) RunAndGetResult(
