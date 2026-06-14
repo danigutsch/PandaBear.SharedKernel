@@ -68,5 +68,5 @@
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
 
-.github/workflows/*.lock.yml linguist-generated=true merge=ours
-**/packages.lock.json merge=ours
+.github/workflows/*.lock.yml linguist-generated=true merge=binary
+**/packages.lock.json merge=binary
