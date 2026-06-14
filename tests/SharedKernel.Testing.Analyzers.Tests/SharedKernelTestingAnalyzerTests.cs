@@ -102,14 +102,14 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Xunit_Test_Method_Name_Without_Underscores_Reports_SKTEST002()
+    public async Task Test_Naming_Without_Underscores_Reports_S_K_T_E_S_T002()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [Fact]
+                [global::Xunit.Fact]
                 public void UsesLocalWarningSuppression()
                 {
                 }
@@ -122,14 +122,14 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Xunit_Test_Method_Name_With_Underscores_Does_Not_Report_SKTEST002()
+    public async Task Default_Test_Naming_With_Underscores_Does_Not_Report_S_K_T_E_S_T002()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [Fact]
+                [global::Xunit.Fact]
                 public void Uses_Local_Warning_Suppression()
                 {
                 }

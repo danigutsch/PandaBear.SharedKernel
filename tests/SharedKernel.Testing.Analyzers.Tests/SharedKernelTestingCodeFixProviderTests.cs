@@ -7,14 +7,14 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     private const string XunitMethodNamingDiagnosticId = "SKTEST002";
 
     [Fact]
-    public async Task Xunit_Test_Naming_Fix_Renames_Method_And_Reference()
+    public async Task Test_Naming_Fix_Renames_Method_And_Reference_Correctly()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [Fact]
+                [global::Xunit.Fact]
                 public void CreatesATourWhenTheRequestIsValid()
                 {
                 }
@@ -39,14 +39,14 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Xunit_Test_Naming_Fix_Is_Not_Offered_When_Target_Name_Would_Conflict()
+    public async Task Test_Naming_Fix_Is_Not_Offered_When_Target_Name_Would_Conflict_With_Existing_Method()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [Fact]
+                [global::Xunit.Fact]
                 public void CreatesATourWhenTheRequestIsValid()
                 {
                 }
