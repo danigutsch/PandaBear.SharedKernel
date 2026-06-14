@@ -101,11 +101,12 @@ internal static class GeneratorTestHarness
         return RunGeneratorDriver(compilation, globalOptions);
     }
 
-    public static GeneratorDriverRunResult RunTrackedGeneratorDriver(
+    public static (GeneratorDriver Driver, GeneratorDriverRunResult RunResult) RunTrackedGeneratorDriver(
         GeneratorDriver driver,
         CSharpCompilation compilation)
     {
-        return driver.RunGenerators(compilation).GetRunResult();
+        var updatedDriver = driver.RunGenerators(compilation);
+        return (updatedDriver, updatedDriver.GetRunResult());
     }
 
     public static (string Source, ImmutableArray<Diagnostic> Diagnostics) RunAndGetResult(

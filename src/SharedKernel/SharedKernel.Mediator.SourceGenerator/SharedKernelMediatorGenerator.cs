@@ -23,10 +23,10 @@ public sealed class SharedKernelMediatorGenerator : IIncrementalGenerator
             .WithTrackingName("GenerationInput");
 
         context.RegisterSourceOutput(
-            generationInput,
+            discoveryModel,
             static (productionContext, input) =>
             {
-                foreach (var diagnostic in input.Left.Diagnostics)
+                foreach (var diagnostic in input.Diagnostics)
                 {
                     productionContext.ReportDiagnostic(diagnostic);
                 }

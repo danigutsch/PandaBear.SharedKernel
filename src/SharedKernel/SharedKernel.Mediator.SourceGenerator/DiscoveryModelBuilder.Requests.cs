@@ -476,7 +476,9 @@ internal static partial class DiscoveryModelBuilder
 
         if (!publishInParallel && accessibleHandlers.Length > 1)
         {
-            foreach (var unorderedHandler in accessibleHandlers.Where(static handler => !handler.HasExplicitOrder))
+            foreach (var unorderedHandler in accessibleHandlers
+                         .Where(static handler => !handler.HasExplicitOrder)
+                         .OrderBy(static handler => handler.MetadataName, StringComparer.Ordinal))
             {
                 ReportNotificationHandlersRequireExplicitOrder(notificationMetadataName, unorderedHandler, discoveryState);
             }

@@ -23,7 +23,7 @@ public sealed class GeneratorIncrementalBehaviorTests
                 cancellationToken: TestContext.Current.CancellationToken));
 
         // Act
-        var updatedRun = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
+        var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
 
         // Assert
         AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Cached, IncrementalStepRunReason.Unchanged);
@@ -66,7 +66,7 @@ public sealed class GeneratorIncrementalBehaviorTests
                 cancellationToken: TestContext.Current.CancellationToken));
 
         // Act
-        var updatedRun = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
+        var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
 
         // Assert
         AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Cached, IncrementalStepRunReason.Unchanged);
@@ -86,7 +86,7 @@ public sealed class GeneratorIncrementalBehaviorTests
             TestSources.ModuleHeader + TestSources.CreateTourWithHandler + TestSources.TourCreatedWithHandler);
 
         // Act
-        var updatedRun = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
+        var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
 
         // Assert
         AssertStepHasReason(updatedRun, "DiscoveryModel", IncrementalStepRunReason.Modified);
@@ -115,7 +115,7 @@ public sealed class GeneratorIncrementalBehaviorTests
             """);
 
         // Act
-        var updatedRun = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
+        var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
 
         // Assert
         AssertStepHasReason(updatedRun, "DiscoveryModel", IncrementalStepRunReason.Modified);
@@ -130,6 +130,7 @@ public sealed class GeneratorIncrementalBehaviorTests
         var trackedSteps = runResult.Results.Single().TrackedSteps;
         var step = Assert.Single(trackedSteps[stepName]);
 
-        Assert.Contains(step.Outputs, output => expectedReasons.Contains(output.Reason));
+        Assert.NotEmpty(step.Outputs);
+        Assert.All(step.Outputs, output => Assert.Contains(output.Reason, expectedReasons));
     }
 }

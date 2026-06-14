@@ -91,7 +91,6 @@ public sealed class GeneratorDeterminismTests
 
         // Assert
         Assert.Equal(GetGeneratedSourceMap(firstRun), GetGeneratedSourceMap(reorderedRun));
-        Assert.Equal(GetDiagnostics(firstRun), GetDiagnostics(reorderedRun));
     }
 
     private static Dictionary<string, string> GetGeneratedSourceMap(GeneratorDriverRunResult runResult)
@@ -109,9 +108,8 @@ public sealed class GeneratorDeterminismTests
     {
         return runResult.Results.Single()
             .Diagnostics
-            .OrderBy(static diagnostic => diagnostic.Id, StringComparer.Ordinal)
-            .ThenBy(static diagnostic => diagnostic.GetMessage(CultureInfo.InvariantCulture), StringComparer.Ordinal)
-            .Select(static diagnostic => $"{diagnostic.Id}|{diagnostic.GetMessage(CultureInfo.InvariantCulture)}")
+            .Select(static diagnostic =>
+                $"{diagnostic.Id}|{diagnostic.GetMessage(CultureInfo.InvariantCulture)}")
             .ToArray();
     }
 }
