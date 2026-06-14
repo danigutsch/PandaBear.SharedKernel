@@ -122,4 +122,6 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                 || name.EndsWith("FactAttribute", StringComparison.Ordinal)
                 || name.EndsWith("Theory", StringComparison.Ordinal)
                 || name.EndsWith("TheoryAttribute", StringComparison.Ordinal));
+    }
+
 }
