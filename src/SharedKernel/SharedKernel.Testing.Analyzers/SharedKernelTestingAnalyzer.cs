@@ -36,7 +36,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         category: "Testing",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules require xUnit test methods to use descriptive underscore-separated names such as 'Creates_a_tour_when_the_request_is_valid'.");
+        description: "Repository testing rules require xUnit test methods to use descriptive underscore-separated names such as 'Creates_A_Tour_When_The_Request_Is_Valid'.");
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>

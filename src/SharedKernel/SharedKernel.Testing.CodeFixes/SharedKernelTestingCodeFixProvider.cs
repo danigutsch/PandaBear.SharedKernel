@@ -22,7 +22,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
     {
-        return WellKnownFixAllProviders.BatchFixer;
+        return SafeTestingFixAllProvider.Instance;
     }
 
     /// <inheritdoc />

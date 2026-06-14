@@ -2,8 +2,8 @@ namespace SharedKernel.Testing.Analyzers.Tests;
 
 public sealed class SharedKernelTestingAnalyzerTests
 {
-    private const string WarningSuppressionDiagnosticId = "SKTEST001";
-    private const string XunitMethodNamingDiagnosticId = "SKTEST002";
+    private const string WarningSuppressionDiagnosticId = global::SharedKernel.Testing.Analyzers.TestingDiagnosticIds.TestMethodWarningSuppression;
+    private const string XunitMethodNamingDiagnosticId = global::SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming;
 
     [Fact]
     public async Task Pragma_Warning_Disable_Inside_Fact_Method_Reports_SKTEST001()
@@ -139,5 +139,5 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
-}
+    }
 }

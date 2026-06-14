@@ -1,10 +1,10 @@
-using SharedKernel.Testing.CodeFixes;
+extern alias testingcodefixes;
 
 namespace SharedKernel.Testing.Analyzers.Tests;
 
 public sealed class SharedKernelTestingCodeFixProviderTests
 {
-    private const string XunitMethodNamingDiagnosticId = "SKTEST002";
+    private const string XunitMethodNamingDiagnosticId = global::SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming;
 
     [Fact]
     public async Task Test_Naming_Fix_Renames_Method_And_Reference_Correctly()
@@ -27,7 +27,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -58,7 +58,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -82,7 +82,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Tour()");
 
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -106,7 +106,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "UsesHTTP2TimeoutFallback()");
 
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
