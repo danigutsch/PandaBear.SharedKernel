@@ -2,6 +2,9 @@ namespace SharedKernel.Testing.Analyzers.Tests;
 
 public sealed class SharedKernelTestingAnalyzerTests
 {
+    private const string WarningSuppressionDiagnosticId = TestingDiagnosticIds.TestMethodWarningSuppression;
+    private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
+
     [Fact]
     public async Task Pragma_Warning_Disable_Inside_Fact_Method_Reports_SKTEST001()
     {
@@ -25,7 +28,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         Assert.Equal(
             2,
-            diagnostics.Count(static candidate => candidate.Id == TestingDiagnosticIds.TestMethodWarningSuppression));
+            diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId));
     }
 
     [Fact]
@@ -46,7 +49,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == TestingDiagnosticIds.TestMethodWarningSuppression);
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == WarningSuppressionDiagnosticId);
     }
 
     [Fact]
@@ -69,7 +72,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == TestingDiagnosticIds.TestMethodWarningSuppression);
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == WarningSuppressionDiagnosticId);
     }
 
     [Fact]
@@ -95,6 +98,66 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         Assert.Equal(
             2,
-            diagnostics.Count(static candidate => candidate.Id == TestingDiagnosticIds.TestMethodWarningSuppression));
+            diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId));
+    }
+
+    [Fact]
+    public async Task Test_Naming_Without_Underscores_Reports_S_K_T_E_S_T002()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void UsesLocalWarningSuppression()
+                {
+                }
+            }
+            """;
+
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Default_Test_Naming_With_Underscores_Does_Not_Report_S_K_T_E_S_T002()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Uses_local_warning_suppression()
+                {
+                }
+            }
+            """;
+
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Fact_Attribute_Form_Without_Underscores_Reports_S_K_T_E_S_T002()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.FactAttribute]
+                public void UsesLocalWarningSuppression()
+                {
+                }
+            }
+            """;
+
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 }

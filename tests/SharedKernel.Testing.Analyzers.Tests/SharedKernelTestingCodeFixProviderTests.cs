@@ -1,0 +1,153 @@
+extern alias testingcodefixes;
+
+namespace SharedKernel.Testing.Analyzers.Tests;
+
+public sealed class SharedKernelTestingCodeFixProviderTests
+{
+    private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
+
+    [Fact]
+    public async Task Test_Naming_Fix_Renames_Method_And_Reference_Correctly()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void CreatesATourWhenTheRequestIsValid()
+                {
+                }
+
+                public void Execute()
+                {
+                    CreatesATourWhenTheRequestIsValid();
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
+
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        Assert.Contains("Creates_a_tour_when_the_request_is_valid()", updatedText, StringComparison.Ordinal);
+        Assert.DoesNotContain("CreatesATourWhenTheRequestIsValid()", updatedText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Test_Naming_Fix_Is_Not_Offered_When_Target_Name_Would_Conflict_With_Existing_Method()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void CreatesATourWhenTheRequestIsValid()
+                {
+                }
+
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
+
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Test_Naming_Fix_Is_Not_Offered_When_Target_Name_Would_Conflict_With_Existing_Property()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void CreatesATourWhenTheRequestIsValid()
+                {
+                }
+
+                public string Creates_a_tour_when_the_request_is_valid { get; } = string.Empty;
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
+
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Test_Naming_Fix_Is_Not_Offered_When_Name_Cannot_Be_Safely_Split()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Tour()
+                {
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Tour()");
+
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Test_Naming_Fix_Splits_Acronym_And_Digits_Into_Underscore_Form()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void UsesHTTP2TimeoutFallback()
+                {
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "UsesHTTP2TimeoutFallback()");
+
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        Assert.Contains("Uses_http2_timeout_fallback()", updatedText, StringComparison.Ordinal);
+        Assert.DoesNotContain("UsesHTTP2TimeoutFallback", updatedText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Fix_All_Is_Not_Advertised_For_Testing_Code_Fixes()
+    {
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        Assert.Empty(provider.GetFixAllProvider().GetSupportedFixAllScopes());
+    }
+}

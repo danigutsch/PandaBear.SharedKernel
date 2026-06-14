@@ -5,3 +5,4 @@ override SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer.Initialize(M
 override SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>
 SharedKernel.Testing.Analyzers.TestingDiagnosticIds
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.TestMethodWarningSuppression = "SKTEST001" -> string!
+const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming = "SKTEST002" -> string!

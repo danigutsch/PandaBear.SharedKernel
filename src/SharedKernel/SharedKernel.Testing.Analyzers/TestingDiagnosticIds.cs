@@ -9,4 +9,9 @@ public static class TestingDiagnosticIds
     /// Diagnostic emitted when a test method uses local pragma warning suppression directives.
     /// </summary>
     public const string TestMethodWarningSuppression = "SKTEST001";
+
+    /// <summary>
+    /// Diagnostic emitted when an xUnit test method does not follow the repository underscore naming convention.
+    /// </summary>
+    public const string XunitTestMethodNaming = "SKTEST002";
 }
