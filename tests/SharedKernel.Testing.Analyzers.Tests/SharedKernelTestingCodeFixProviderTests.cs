@@ -113,9 +113,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
-        Assert.Contains("Uses_", updatedText, StringComparison.Ordinal);
-        Assert.Contains("Timeout", updatedText, StringComparison.Ordinal);
-        Assert.Contains("Fallback", updatedText, StringComparison.Ordinal);
+        Assert.Contains("Uses_HTTP2_Timeout_Fallback()", updatedText, StringComparison.Ordinal);
         Assert.DoesNotContain("UsesHTTP2TimeoutFallback", updatedText, StringComparison.Ordinal);
     }
 }

@@ -86,7 +86,11 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return null;
         }
 
-        var tokens = Regex.Matches(methodName, @"[A-Z]+(?=$|[A-Z][a-z0-9])|[A-Z]?[a-z0-9]+", RegexOptions.None, RegexTimeout)
+        var tokens = Regex.Matches(
+                methodName,
+                @"[A-Z]+[0-9]*(?=$|[A-Z][a-z])|[A-Z]?[a-z0-9]+",
+                RegexOptions.CultureInvariant,
+                RegexTimeout)
             .Cast<Match>()
             .Select(static match => match.Value)
             .Where(static value => !string.IsNullOrWhiteSpace(value))

@@ -16,7 +16,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 
     private static readonly Regex XunitMethodNamingRegex = new(
-        @"^[A-Z][A-Za-z0-9]*(?:_[A-Z0-9][A-Za-z0-9]*)+$",
+        @"^[A-Z][A-Za-z0-9]*(?:_[A-Za-z0-9][A-Za-z0-9]*)+$",
         RegexOptions.Compiled | RegexOptions.CultureInvariant,
         RegexTimeout);
 
@@ -36,7 +36,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         category: "Testing",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules require xUnit test methods to use descriptive underscore-separated names such as 'Creates_A_Tour_When_The_Request_Is_Valid'.");
+        description: "Repository testing rules require xUnit test methods to use descriptive underscore-separated names such as 'Creates_a_tour_when_the_request_is_valid'.");
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
@@ -92,6 +92,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static void AnalyzeMethodDeclaration(SyntaxNodeAnalysisContext context)
     {
         if (context.Node is not MethodDeclarationSyntax methodDeclaration
+            || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
             || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
             || !IsXunitTestMethod(methodSymbol)
             || XunitMethodNamingRegex.IsMatch(methodSymbol.Name))
@@ -104,5 +105,18 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                 XunitTestMethodNamingRule,
                 methodDeclaration.Identifier.GetLocation(),
                 methodSymbol.Name));
+    }
+
+    private static bool IsPotentialXunitTestMethodDeclaration(MethodDeclarationSyntax methodDeclaration)
+    {
+        if (methodDeclaration.AttributeLists.Count == 0)
+        {
+            return false;
+        }
+
+        return methodDeclaration.AttributeLists
+            .SelectMany(static attributeList => attributeList.Attributes)
+            .Select(static attribute => attribute.Name.ToString())
+            .Any(static name => name.EndsWith("Fact", StringComparison.Ordinal) || name.EndsWith("Theory", StringComparison.Ordinal));
     }
 }

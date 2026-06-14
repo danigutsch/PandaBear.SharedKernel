@@ -130,7 +130,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             public sealed class TourLoaderTests
             {
                 [global::Xunit.Fact]
-                public void Uses_Local_Warning_Suppression()
+                public void Uses_local_warning_suppression()
                 {
                 }
             }
