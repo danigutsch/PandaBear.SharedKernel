@@ -13,9 +13,12 @@ namespace SharedKernel.Testing.Analyzers;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 {
+    private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
+
     private static readonly Regex XunitMethodNamingRegex = new(
         @"^[A-Z][A-Za-z0-9]*(?:_[A-Z0-9][A-Za-z0-9]*)+$",
-        RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        RegexOptions.Compiled | RegexOptions.CultureInvariant,
+        RegexTimeout);
 
     private static readonly DiagnosticDescriptor TestMethodWarningSuppressionRule = new(
         TestingDiagnosticIds.TestMethodWarningSuppression,

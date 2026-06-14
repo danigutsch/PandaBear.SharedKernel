@@ -14,6 +14,8 @@ namespace SharedKernel.Testing.CodeFixes;
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SharedKernelTestingCodeFixProvider))]
 public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 {
+    private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
+
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds => [global::SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming];
 
@@ -84,7 +86,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return null;
         }
 
-        var tokens = Regex.Matches(methodName, @"[A-Z]+(?=$|[A-Z][a-z0-9])|[A-Z]?[a-z0-9]+")
+        var tokens = Regex.Matches(methodName, @"[A-Z]+(?=$|[A-Z][a-z0-9])|[A-Z]?[a-z0-9]+", RegexOptions.None, RegexTimeout)
             .Cast<Match>()
             .Select(static match => match.Value)
             .Where(static value => !string.IsNullOrWhiteSpace(value))

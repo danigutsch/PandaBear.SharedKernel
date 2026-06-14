@@ -65,4 +65,57 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         Assert.Empty(codeActions);
     }
+
+    [Fact]
+    public async Task Test_Naming_Fix_Is_Not_Offered_When_Name_Cannot_Be_Safely_Split()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Tour()
+                {
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Tour()");
+
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Test_Naming_Fix_Splits_Acronym_And_Digits_Into_Underscore_Form()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void UsesHTTP2TimeoutFallback()
+                {
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "UsesHTTP2TimeoutFallback()");
+
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        Assert.Contains("Uses_", updatedText, StringComparison.Ordinal);
+        Assert.Contains("Timeout", updatedText, StringComparison.Ordinal);
+        Assert.Contains("Fallback", updatedText, StringComparison.Ordinal);
+        Assert.DoesNotContain("UsesHTTP2TimeoutFallback", updatedText, StringComparison.Ordinal);
+    }
 }
