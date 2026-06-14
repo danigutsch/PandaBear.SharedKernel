@@ -409,6 +409,38 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             }
             """));
 
+        var appFiles = new (string FileName, string Content)[]
+        {
+            ("LookupTour.cs", """
+            using System.Threading;
+            using System.Threading.Tasks;
+            using SharedKernel.Mediator;
+
+            namespace MediatorComposedApp;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+
+            public sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
+            {
+                public ValueTask<string> Handle(LookupTour request, CancellationToken ct)
+                    => ValueTask.FromResult(request.Code);
+            }
+            """),
+            ("MediatorHarness.cs", MediatorConsumerSourceTemplates.CreateHarness("MediatorComposedApp")),
+            ("Program.cs", """
+            using MediatorComposedApp;
+            using MediatorModuleA;
+
+            using var harness = MediatorHarness.Create();
+
+            var lookupResult = await harness.Mediator.Send(new LookupTour("VT-42"), CancellationToken.None);
+            var getTourResult = await harness.Mediator.Send(new GetTourName(7), CancellationToken.None);
+
+            Console.WriteLine($"lookup={lookupResult}");
+            Console.WriteLine($"getTour={getTourResult}");
+            """)
+        };
+
         workspace.WriteProject(
             $$"""
             <Project Sdk="Microsoft.NET.Sdk">
@@ -427,41 +459,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
               </ItemGroup>
             </Project>
             """,
-            ("LookupTour.cs", """
-            using System.Threading;
-            using System.Threading.Tasks;
-            using SharedKernel.Mediator;
-
-            namespace MediatorComposedApp;
-
-            public sealed record LookupTour(string Code) : IQuery<string>;
-
-            public sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
-            {
-                public ValueTask<string> Handle(LookupTour request, CancellationToken ct)
-                    => ValueTask.FromResult(request.Code);
-            }
-            """),
-            ("Program.cs", """
-            using MediatorComposedApp;
-            using MediatorModuleA;
-            using Microsoft.Extensions.DependencyInjection;
-            using SharedKernel.Mediator;
-
-            var services = new ServiceCollection();
-            services.AddSharedKernelMediator();
-
-            using var provider = services.BuildServiceProvider();
-            using var scope = provider.CreateScope();
-
-            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
-
-            var lookupResult = await mediator.Send(new LookupTour("VT-42"), CancellationToken.None);
-            var getTourResult = await mediator.Send(new GetTourName(7), CancellationToken.None);
-
-            Console.WriteLine($"lookup={lookupResult}");
-            Console.WriteLine($"getTour={getTourResult}");
-            """));
+            appFiles);
 
         // Act
         var buildOutput = await workspace.Build();
@@ -475,26 +473,8 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
 
     private void WriteGeneratedConsumerProject(PackageConsumptionWorkspace workspace)
     {
-        workspace.WriteProject(
-            $$"""
-            <Project Sdk="Microsoft.NET.Sdk">
-              <PropertyGroup>
-                <TargetFramework>net10.0</TargetFramework>
-                <OutputType>Exe</OutputType>
-                <ImplicitUsings>enable</ImplicitUsings>
-                <Nullable>enable</Nullable>
-                <IsAotCompatible>true</IsAotCompatible>
-                <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-                <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
-              </PropertyGroup>
-              <ItemGroup>
-                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
-                <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="{{packageFeed.DependencyInjectionPackageVersion}}" />
-              </ItemGroup>
-            </Project>
-            """,
+        var consumerFiles = new (string FileName, string Content)[]
+        {
             ("Consumer.cs", """
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
@@ -550,29 +530,22 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
                 }
             }
             """),
+            ("MediatorHarness.cs", MediatorConsumerSourceTemplates.CreateHarness("Consumer")),
             ("Program.cs", """
             using System.Diagnostics;
             using System.Globalization;
             using Consumer;
-            using Microsoft.Extensions.DependencyInjection;
-            using SharedKernel.Mediator;
 
-            var services = new ServiceCollection();
-            services.AddSharedKernelMediator();
-
-            using var provider = services.BuildServiceProvider();
-            using var scope = provider.CreateScope();
-
-            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            using var harness = MediatorHarness.Create();
 
             var firstDispatchStopwatch = Stopwatch.StartNew();
-            var firstDispatchResult = await mediator.Send(new LookupTour("VT-42"), CancellationToken.None);
+            var firstDispatchResult = await harness.Mediator.Send(new LookupTour("VT-42"), CancellationToken.None);
             firstDispatchStopwatch.Stop();
 
-            await mediator.Publish(new TourFound(firstDispatchResult), CancellationToken.None);
+            await harness.Mediator.Publish(new TourFound(firstDispatchResult), CancellationToken.None);
 
             var streamCount = 0;
-            await foreach (var code in mediator.Send(new StreamTourCodes(3), CancellationToken.None))
+            await foreach (var code in harness.Mediator.Send(new StreamTourCodes(3), CancellationToken.None))
             {
                 streamCount++;
                 _ = code;
@@ -585,7 +558,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
 
             for (var iteration = 0; iteration < steadyStateIterations; iteration++)
             {
-                _ = await mediator.Send(new LookupTour("VT-42"), CancellationToken.None);
+                _ = await harness.Mediator.Send(new LookupTour("VT-42"), CancellationToken.None);
             }
 
             steadyStateStopwatch.Stop();
@@ -593,7 +566,30 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             Console.WriteLine($"result={firstDispatchResult}");
             Console.WriteLine(FormattableString.Invariant($"first-dispatch-ms={firstDispatchStopwatch.Elapsed.TotalMilliseconds:F4}"));
             Console.WriteLine(FormattableString.Invariant($"steady-state-dispatch-ms={steadyStateStopwatch.Elapsed.TotalMilliseconds / steadyStateIterations:F4}"));
-            """));
+            """)
+        };
+
+        workspace.WriteProject(
+            $$"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>net10.0</TargetFramework>
+                <OutputType>Exe</OutputType>
+                <ImplicitUsings>enable</ImplicitUsings>
+                <Nullable>enable</Nullable>
+                <IsAotCompatible>true</IsAotCompatible>
+                <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+                <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+              </PropertyGroup>
+              <ItemGroup>
+                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
+                {{workspace.GetPackageReference("SharedKernel.Mediator")}}
+                {{workspace.GetPackageReference("SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+                <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="{{packageFeed.DependencyInjectionPackageVersion}}" />
+              </ItemGroup>
+            </Project>
+            """,
+            consumerFiles);
     }
 
     private static int CountTrimWarnings(string publishOutput)
