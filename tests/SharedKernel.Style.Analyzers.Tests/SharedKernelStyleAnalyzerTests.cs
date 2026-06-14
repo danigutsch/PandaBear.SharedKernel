@@ -317,6 +317,102 @@ public sealed class SharedKernelStyleAnalyzerTests
         Assert.True(options.AllowAsyncSuffixInterfaceImplementations);
     }
 
+    [Fact]
+    public async Task Multiple_Top_Level_Types_Per_File_Report_SKSTYLE004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+            }
+
+            public sealed class TourWriter
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+        Assert.Contains("TourWriter", diagnostic.GetMessage(global::System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Partial_Types_Are_Excluded_From_SKSTYLE004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed partial class TourLoader
+            {
+            }
+
+            public sealed partial class TourLoader
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+    }
+
+    [Fact]
+    public async Task Nested_Types_Do_Not_Report_SKSTYLE004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                private sealed class NestedHelper
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+    }
+
+    [Fact]
+    public async Task Nested_Namespaces_Still_Report_SKSTYLE004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo
+            {
+                namespace Inner
+                {
+                    public sealed class TourLoader
+                    {
+                    }
+
+                    public sealed class TourWriter
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+    }
+
     private sealed class StyleTestAnalyzerConfigOptionsProvider(
         ImmutableDictionary<string, string>? globalOptions = null,
         ImmutableDictionary<SyntaxTree, ImmutableDictionary<string, string>>? syntaxTreeOptions = null)

@@ -110,6 +110,7 @@ dotnet_diagnostic.CA1062.severity = error
 dotnet_diagnostic.SKSTYLE001.severity = suggestion
 dotnet_diagnostic.SKSTYLE002.severity = suggestion
 dotnet_diagnostic.SKSTYLE003.severity = suggestion
+dotnet_diagnostic.SKSTYLE004.severity = suggestion
 
 # Shell scripts
 [*.{sh,bash}]
@@ -183,6 +184,24 @@ dotnet_diagnostic.CA1034.severity = none
 # Keep S107 disabled across the tests tree.
 [tests/**.cs]
 dotnet_diagnostic.S107.severity = none
+dotnet_diagnostic.SKSTYLE004.severity = none
+
+# Staged rollout for one-top-level-type-per-file: keep a small explicit exception list for
+# existing grouped-type files until they are intentionally refactored.
+[src/ViajantesTurismo.Admin.Contracts/ImportResultDto.cs]
+dotnet_diagnostic.SKSTYLE004.severity = none
+
+[src/ViajantesTurismo.Common/Results/Result.cs]
+dotnet_diagnostic.SKSTYLE004.severity = none
+
+[src/ViajantesTurismo.Management.Web/Services/CountryService.cs]
+dotnet_diagnostic.SKSTYLE004.severity = none
+
+[src/ViajantesTurismo.Management.Web/Services/CustomerImportHeaderMatcher.cs]
+dotnet_diagnostic.SKSTYLE004.severity = none
+
+[src/ViajantesTurismo.MigrationService/SeederWorker.cs]
+dotnet_diagnostic.SKSTYLE004.severity = none
 
 # Behavior step definitions intentionally use repeated binding shapes and no-op bridge steps
 # to keep Gherkin wording readable. Keep these Sonar rules scoped to step files only.
