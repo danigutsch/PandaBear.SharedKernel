@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
+using SharedKernel.Testing.Analyzers;
 
 namespace SharedKernel.Testing.CodeFixes;
 
@@ -17,7 +18,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
     private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 
     /// <inheritdoc />
-    public override ImmutableArray<string> FixableDiagnosticIds => [global::SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming];
+    public override ImmutableArray<string> FixableDiagnosticIds => [TestingDiagnosticIds.XunitTestMethodNaming];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -75,7 +76,6 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         string targetName)
     {
         return semanticModel.LookupSymbols(methodDeclaration.Identifier.SpanStart, name: targetName)
-            .OfType<IMethodSymbol>()
             .Any(candidate => !SymbolEqualityComparer.Default.Equals(candidate.OriginalDefinition, methodSymbol.OriginalDefinition));
     }
 

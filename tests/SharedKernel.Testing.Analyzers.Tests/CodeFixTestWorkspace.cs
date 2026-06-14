@@ -67,7 +67,7 @@ internal sealed class CodeFixTestWorkspace
         Assert.True(start >= 0, $"Could not find marker text '{markerText}'.");
 
         var syntaxTree = await Document.GetSyntaxTreeAsync().ConfigureAwait(false);
-        Assert.NotNull(syntaxTree);
+        var nonNullSyntaxTree = Assert.IsAssignableFrom<SyntaxTree>(syntaxTree);
 
         var descriptor = new DiagnosticDescriptor(
             diagnosticId,
@@ -77,7 +77,7 @@ internal sealed class CodeFixTestWorkspace
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
-        return Diagnostic.Create(descriptor, Location.Create(syntaxTree!, new TextSpan(start, markerText.Length)));
+        return Diagnostic.Create(descriptor, Location.Create(nonNullSyntaxTree, new TextSpan(start, markerText.Length)));
     }
 
     public async Task<IReadOnlyList<CodeAction>> GetCodeActions(CodeFixProvider provider, Diagnostic diagnostic)

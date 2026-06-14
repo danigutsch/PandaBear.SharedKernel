@@ -4,7 +4,7 @@ namespace SharedKernel.Testing.Analyzers.Tests;
 
 public sealed class SharedKernelTestingCodeFixProviderTests
 {
-    private const string XunitMethodNamingDiagnosticId = global::SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming;
+    private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
 
     [Fact]
     public async Task Test_Naming_Fix_Renames_Method_And_Reference_Correctly()
@@ -54,6 +54,32 @@ public sealed class SharedKernelTestingCodeFixProviderTests
                 public void Creates_A_Tour_When_The_Request_Is_Valid()
                 {
                 }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
+
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Test_Naming_Fix_Is_Not_Offered_When_Target_Name_Would_Conflict_With_Existing_Property()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void CreatesATourWhenTheRequestIsValid()
+                {
+                }
+
+                public string Creates_A_Tour_When_The_Request_Is_Valid { get; } = string.Empty;
             }
             """;
 
