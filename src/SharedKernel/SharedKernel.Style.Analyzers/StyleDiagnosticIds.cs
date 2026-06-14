@@ -19,4 +19,9 @@ public static class StyleDiagnosticIds
     /// Diagnostic emitted when a <see cref="System.Threading.CancellationToken"/> parameter declares a default value.
     /// </summary>
     public const string CancellationTokenDefaultValue = "SKSTYLE003";
+
+    /// <summary>
+    /// Diagnostic emitted when a test method uses local pragma warning suppression directives.
+    /// </summary>
+    public const string TestMethodWarningSuppression = "SKSTYLE004";
 }

@@ -7,3 +7,4 @@ SharedKernel.Style.Analyzers.StyleDiagnosticIds
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue = "SKSTYLE003" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName = "SKSTYLE002" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.TestMethodWarningSuppression = "SKSTYLE004" -> string!
