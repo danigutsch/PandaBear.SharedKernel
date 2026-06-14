@@ -77,8 +77,7 @@ public Result UpdateSchedule(DateTime startDate, DateTime endDate)
 Example:
 
 ```csharp
-public Task<Result<Option<Customer>>> FindByEmail(string email, CancellationToken ct)
-;
+public Task<Result<Option<Customer>>> FindByEmail(string email, CancellationToken ct);
 ```
 
 ### Usage Rules
