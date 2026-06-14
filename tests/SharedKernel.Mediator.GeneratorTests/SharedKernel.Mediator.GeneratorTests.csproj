@@ -28,6 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Testing\SharedKernel.Testing.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator\SharedKernel.Mediator.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj" />

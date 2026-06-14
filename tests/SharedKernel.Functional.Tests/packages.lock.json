@@ -144,6 +144,9 @@
       },
       "sharedkernel.functional": {
         "type": "Project"
+      },
+      "sharedkernel.testing": {
+        "type": "Project"
       }
     }
   }

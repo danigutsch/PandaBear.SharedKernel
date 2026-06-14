@@ -246,6 +246,9 @@
           "SharedKernel.Mediator.Abstractions": "[1.0.0, )"
         }
       },
+      "sharedkernel.testing": {
+        "type": "Project"
+      },
       "sharedkernel.testing.roslyn": {
         "type": "Project",
         "dependencies": {
