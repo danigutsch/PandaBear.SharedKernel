@@ -57,5 +57,6 @@
     <!-- Other packages -->
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageVersion Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageVersion Include="Npgsql" Version="10.0.1" />
   </ItemGroup>
 </Project>
