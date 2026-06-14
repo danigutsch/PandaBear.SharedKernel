@@ -20,6 +20,71 @@ This project currently provides:
 - `ResultError` and `ResultStatus` for shared error details and status mapping
 - composition helpers such as `Map`, `Bind`, `Match`, `TryGetValue`, `TryGetError`, and `ToResult`
 
+## Usage Guidance
+
+Use the functional primitives to model expected business and application outcomes explicitly.
+
+### When to Use `Result` and `Result<T>`
+
+- Use `Result<T>` for operations that return a value on success and can fail for expected reasons.
+- Use `Result` for operations that only need to report success or failure.
+- Prefer results for validation, conflict, not-found, and other business-visible failures.
+- Do not use exceptions for normal domain or application control flow.
+
+Example factory method:
+
+```csharp
+public static Result<Tour> Create(string identifier, string name)
+{
+    if (string.IsNullOrWhiteSpace(identifier))
+    {
+        return Result<Tour>.Failure(
+            ResultStatus.Invalid,
+            new ResultError("Tour identifier cannot be empty"));
+    }
+
+    return Result<Tour>.Success(new Tour(identifier, name));
+}
+```
+
+Example update method:
+
+```csharp
+public Result UpdateSchedule(DateTime startDate, DateTime endDate)
+{
+    if (endDate <= startDate)
+    {
+        return Result.Failure(
+            ResultStatus.Invalid,
+            new ResultError("End date must be after start date"));
+    }
+
+    StartDate = startDate;
+    EndDate = endDate;
+
+    return Result.Success();
+}
+```
+
+### When to Use `Option<T>`
+
+- Use `Option<T>` for values that may be absent without that absence being an error.
+- Prefer `Option<T>` over null-based APIs when the caller must handle presence explicitly.
+- Typical cases include optional related entities, optional lookup results, and optional workflow inputs.
+
+Example:
+
+```csharp
+public Task<Result<Option<Customer>>> FindByEmail(string email, CancellationToken ct)
+```
+
+### Usage Rules
+
+- Check `IsSuccess` before reading `Value` from `Result<T>`.
+- Read error information from `ErrorDetails`.
+- Keep dedicated error factories close to the domain type or feature that owns the rule.
+- Map results at the API boundary instead of leaking transport concerns into domain logic.
+
 ## Composition Model
 
 The package keeps the core functional operators under the same method names for both synchronous and
