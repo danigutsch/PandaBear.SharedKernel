@@ -1,6 +1,6 @@
 # BasicResults.Sample
 
-Single console sample for `SharedKernel.Functional`.
+Single console sample for `SharedKernel.Results`.
 
 ## Purpose
 

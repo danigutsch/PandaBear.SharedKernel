@@ -22,7 +22,7 @@ Follow-up issues in the same epic cover:
 This initial slice creates the dedicated package project and aligns it with existing
 `SharedKernel.*` conventions.
 
-The primitives still live in `SharedKernel.Functional` until the follow-up migration issues land.
+The primitives still live in `SharedKernel.Results` until the follow-up migration issues land.
 
 ## Package conventions
 

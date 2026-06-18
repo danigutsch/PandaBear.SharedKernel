@@ -1,4 +1,4 @@
-namespace SharedKernel.Functional;
+namespace SharedKernel.Results;
 
 /// <summary>
 /// Extension methods for composing task-based result flows.

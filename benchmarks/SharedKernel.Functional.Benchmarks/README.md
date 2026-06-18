@@ -1,6 +1,6 @@
 # SharedKernel.Functional.Benchmarks
 
-Benchmark harness for `SharedKernel.Functional` creation, conversion, and validation aggregation paths.
+Benchmark harness for `SharedKernel.Results` creation, conversion, and validation aggregation paths.
 
 ## Scope
 
