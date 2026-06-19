@@ -19,10 +19,22 @@ Follow-up issues in the same epic cover:
 
 ## Current state
 
-This initial slice creates the dedicated package project and aligns it with existing
-`SharedKernel.*` conventions.
+This package now owns the repository's shared result primitives.
 
-The primitives still live in `SharedKernel.Results` until the follow-up migration issues land.
+It currently provides:
+
+- `Result`
+- `Result<T>`
+- `Option<T>`
+- `ResultStatus`
+- `ResultError`
+- `ResultErrorCodes`
+- `ValidationErrors`
+- `ResultExtensions`
+- task/value-task composition helpers for result and option flows
+
+Repository consumers have been updated to use `SharedKernel.Results` as the canonical result
+package.
 
 ## Package conventions
 
