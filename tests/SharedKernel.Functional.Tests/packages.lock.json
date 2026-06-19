@@ -142,7 +142,7 @@
           "xunit.v3.runner.common": "[3.2.2]"
         }
       },
-      "sharedkernel.functional": {
+      "sharedkernel.results": {
         "type": "Project"
       },
       "sharedkernel.testing": {

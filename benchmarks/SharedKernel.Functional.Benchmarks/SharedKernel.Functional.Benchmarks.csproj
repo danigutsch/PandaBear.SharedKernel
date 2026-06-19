@@ -7,11 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="SharedKernel.Results" />
         <PackageReference Include="BenchmarkDotNet" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Functional\SharedKernel.Functional.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Results\SharedKernel.Results.csproj" />
     </ItemGroup>
 
 </Project>
