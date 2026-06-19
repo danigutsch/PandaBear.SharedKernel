@@ -1,4 +1,4 @@
-namespace SharedKernel.Functional;
+namespace SharedKernel.Results;
 
 /// <summary>
 /// Represents the status of a result.

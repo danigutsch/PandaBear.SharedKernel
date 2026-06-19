@@ -1,4 +1,4 @@
-using SharedKernel.Functional;
+using SharedKernel.Results;
 
 var bookingResult = CreateBooking("VT-42", "Ada Lovelace");
 var bookingMessage = bookingResult.Match(

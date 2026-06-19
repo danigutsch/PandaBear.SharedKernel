@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace SharedKernel.Functional;
+namespace SharedKernel.Results;
 
 /// <summary>
 /// Represents an optional non-null value that may or may not be present.

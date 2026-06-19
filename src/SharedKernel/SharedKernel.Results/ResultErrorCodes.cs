@@ -1,4 +1,4 @@
-namespace SharedKernel.Functional;
+namespace SharedKernel.Results;
 
 /// <summary>
 /// Stable machine-readable error codes for result failures.

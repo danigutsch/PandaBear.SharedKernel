@@ -10,6 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Using Include="SharedKernel.Results" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -22,7 +23,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.Testing\SharedKernel.Testing.csproj" />
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Functional\SharedKernel.Functional.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Results\SharedKernel.Results.csproj" />
     </ItemGroup>
 
 </Project>
