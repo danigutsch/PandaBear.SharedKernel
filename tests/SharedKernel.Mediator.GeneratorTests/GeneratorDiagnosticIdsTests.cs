@@ -49,24 +49,29 @@ public sealed class GeneratorDiagnosticIdsTests
 
     private static string GetAnalyzerReleasesPath()
     {
+        return FindRepositoryPathContaining(
+            Path.Combine(
+                "src",
+                "SharedKernel",
+                "SharedKernel.Mediator.SourceGenerator",
+                "AnalyzerReleases.Unshipped.md"));
+    }
+
+    private static string FindRepositoryPathContaining(string relativePath)
+    {
         var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
 
         while (currentDirectory is not null)
         {
-            var solutionPath = Path.Combine(currentDirectory.FullName, "ViajantesTurismo.slnx");
-            if (File.Exists(solutionPath))
+            var candidatePath = Path.Combine(currentDirectory.FullName, relativePath);
+            if (File.Exists(candidatePath))
             {
-                return Path.Combine(
-                    currentDirectory.FullName,
-                    "src",
-                    "SharedKernel",
-                    "SharedKernel.Mediator.SourceGenerator",
-                    "AnalyzerReleases.Unshipped.md");
+                return candidatePath;
             }
 
             currentDirectory = currentDirectory.Parent;
         }
 
-        throw new InvalidOperationException("Could not locate the repository root from the test output directory.");
+        throw new InvalidOperationException($"Could not locate repository path for '{relativePath}'.");
     }
 }
