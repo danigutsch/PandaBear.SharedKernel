@@ -460,6 +460,29 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    public static string SendWithCancellation()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record GetTour(int Id) : IRequest<string>;
+
+            public sealed class GetTourHandler : IRequestHandler<GetTour, string>
+            {
+                public ValueTask<string> Handle(GetTour request, CancellationToken ct)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    return ValueTask.FromResult($"tour:{request.Id}");
+                }
+            }
+            """;
+    }
+
     public static string PublishWithCancellation()
     {
         return """
@@ -519,6 +542,93 @@ internal static class GeneratorDispatchBehaviorTestSources
             {
                 public ValueTask Handle(TourCreated notification, CancellationToken ct)
                     => throw new InvalidOperationException("handler boom");
+            }
+            """;
+    }
+
+    public static string SequentialPublishSuccess()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            [NotificationOrder(10)]
+            public sealed class TourCreatedHandlerOne : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                    => ValueTask.CompletedTask;
+            }
+
+            [NotificationOrder(20)]
+            public sealed class TourCreatedHandlerTwo : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                    => ValueTask.CompletedTask;
+            }
+            """;
+    }
+
+    public static string SequentialPublishWithCancellation()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            [NotificationOrder(10)]
+            public sealed class TourCreatedHandlerOne : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    return ValueTask.CompletedTask;
+                }
+            }
+
+            [NotificationOrder(20)]
+            public sealed class TourCreatedHandlerTwo : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                    => ValueTask.CompletedTask;
+            }
+            """;
+    }
+
+    public static string SequentialPublishWithException()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            [NotificationOrder(10)]
+            public sealed class TourCreatedHandlerOne : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                    => throw new InvalidOperationException("handler boom");
+            }
+
+            [NotificationOrder(20)]
+            public sealed class TourCreatedHandlerTwo : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                    => ValueTask.CompletedTask;
             }
             """;
     }
