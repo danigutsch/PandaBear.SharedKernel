@@ -340,6 +340,62 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
+    public async Task Ensures_A_Success_With_A_Task_Delegate()
+    {
+        // Arrange
+        var result = Result.Ok("porto");
+
+        // Act
+        var ensured = await result.Ensure(static value => Task.FromResult(value.Length == 5), new ResultError("Length mismatch"));
+
+        // Assert
+        Assert.True(ensured.IsSuccess);
+        Assert.Equal("porto", ensured.Value);
+    }
+
+    [Fact]
+    public async Task Returns_The_Provided_Error_When_Ensuring_With_A_ValueTask_Delegate_Fails()
+    {
+        // Arrange
+        var failure = new ResultError("Length mismatch", ResultErrorCodes.Invalid);
+        var result = Result.Ok("porto");
+
+        // Act
+        var ensured = await result.Ensure(static value => ValueTask.FromResult(value.Length == 4), failure);
+
+        // Assert
+        Assert.True(ensured.IsFailure);
+        Assert.True(ensured.TryGetError(out var error));
+        Assert.NotNull(error);
+        Assert.Equal(failure, error);
+    }
+
+    [Fact]
+    public async Task Preserves_Invalid_Status_When_Ensuring_Asynchronously_With_A_Validation_Error()
+    {
+        // Arrange
+        var failure = new ResultError(
+            "Validation failed",
+            ResultErrorCodes.Invalid,
+            new Dictionary<string, string[]>
+            {
+                ["Name"] = ["Name is required"],
+            });
+        var result = Result.Ok("porto");
+
+        // Act
+        var ensured = await result.Ensure(static value => Task.FromResult(value.Length == 4), failure);
+
+        // Assert
+        Assert.True(ensured.IsFailure);
+        Assert.Equal(ResultStatus.Invalid, ensured.Status);
+        Assert.True(ensured.TryGetError(out var error));
+        Assert.NotNull(error);
+        Assert.NotNull(error.ValidationErrors);
+        Assert.Equal(["Name is required"], error.ValidationErrors["Name"]);
+    }
+
+    [Fact]
     public async Task Matches_An_Asynchronous_Task_Result_With_A_Task_Delegate()
     {
         // Arrange
@@ -504,6 +560,16 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ResultTaskExtensions.Bind(NullArgumentData.Task<Result<string>>(), static value => Result.Ok(value.Length)));
+
+        // Assert
+        Assert.Equal("source", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task Rejects_A_Null_Task_Result_Source_For_Ensure()
+    {
+        // Arrange
+        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ResultTaskExtensions.Ensure(NullArgumentData.Task<Result<string>>(), static value => value.Length == 5, new ResultError("Length mismatch")));
 
         // Assert
         Assert.Equal("source", exception.ParamName);

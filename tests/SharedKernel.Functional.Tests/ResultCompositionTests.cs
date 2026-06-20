@@ -107,4 +107,76 @@ public sealed class ResultCompositionTests
         Assert.True(bound.TryGetError(out var error));
         Assert.Equal("Unexpected failure", error.Detail);
     }
+
+    [Fact]
+    public void Preserves_A_Success_When_Ensure_Predicate_Passes()
+    {
+        // Arrange
+        var result = Result.Ok("porto");
+
+        // Act
+        var ensured = result.Ensure(static value => value.Length == 5, new ResultError("Length mismatch"));
+
+        // Assert
+        Assert.True(ensured.IsSuccess);
+        Assert.Equal("porto", ensured.Value);
+    }
+
+    [Fact]
+    public void Returns_The_Provided_Error_When_Ensure_Predicate_Fails()
+    {
+        // Arrange
+        var failure = new ResultError("Length mismatch", ResultErrorCodes.Invalid);
+        var result = Result.Ok("porto");
+
+        // Act
+        var ensured = result.Ensure(static value => value.Length == 4, failure);
+
+        // Assert
+        Assert.True(ensured.IsFailure);
+        Assert.True(ensured.TryGetError(out var error));
+        Assert.NotNull(error);
+        Assert.Equal(failure, error);
+    }
+
+    [Fact]
+    public void Preserves_Invalid_Status_And_Validation_Payload_When_Ensure_Fails_With_A_Validation_Error()
+    {
+        // Arrange
+        var failure = new ResultError(
+            "Validation failed",
+            ResultErrorCodes.Invalid,
+            new Dictionary<string, string[]>
+            {
+                ["Name"] = ["Name is required"],
+            });
+        var result = Result.Ok("porto");
+
+        // Act
+        var ensured = result.Ensure(static value => value.Length == 4, failure);
+
+        // Assert
+        Assert.True(ensured.IsFailure);
+        Assert.Equal(ResultStatus.Invalid, ensured.Status);
+        Assert.True(ensured.TryGetError(out var error));
+        Assert.NotNull(error);
+        Assert.NotNull(error.ValidationErrors);
+        Assert.Equal(["Name is required"], error.ValidationErrors["Name"]);
+    }
+
+    [Fact]
+    public void Short_Circuits_Ensure_For_Existing_Failures()
+    {
+        // Arrange
+        var result = Result.Error<string>("Unexpected failure");
+
+        // Act
+        var ensured = result.Ensure(static _ => true, new ResultError("Should not be used"));
+
+        // Assert
+        Assert.True(ensured.IsFailure);
+        Assert.True(ensured.TryGetError(out var error));
+        Assert.NotNull(error);
+        Assert.Equal("Unexpected failure", error.Detail);
+    }
 }

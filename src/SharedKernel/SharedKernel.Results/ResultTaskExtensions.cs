@@ -120,6 +120,57 @@ public static class ResultTaskExtensions
         await (await source.ConfigureAwait(false)).Bind(bind).ConfigureAwait(false);
 
     /// <summary>
+    /// Ensures the successful value of an asynchronous result satisfies the provided predicate.
+    /// </summary>
+    public static async Task<Result<T>> Ensure<T>(this Task<Result<T>> source, Func<T, bool> predicate, ResultError error)
+        where T : notnull =>
+        source is null
+            ? throw new ArgumentNullException(nameof(source))
+            :
+        (await source.ConfigureAwait(false)).Ensure(predicate, error);
+
+    /// <summary>
+    /// Ensures the successful value of an asynchronous result satisfies the provided predicate.
+    /// </summary>
+    public static async Task<Result<T>> Ensure<T>(this Task<Result<T>> source, Func<T, Task<bool>> predicate, ResultError error)
+        where T : notnull =>
+        source is null
+            ? throw new ArgumentNullException(nameof(source))
+            :
+        await (await source.ConfigureAwait(false)).Ensure(predicate, error).ConfigureAwait(false);
+
+    /// <summary>
+    /// Ensures the successful value of an asynchronous result satisfies the provided predicate.
+    /// </summary>
+    public static async Task<Result<T>> Ensure<T>(this Task<Result<T>> source, Func<T, ValueTask<bool>> predicate, ResultError error)
+        where T : notnull =>
+        source is null
+            ? throw new ArgumentNullException(nameof(source))
+            :
+        await (await source.ConfigureAwait(false)).Ensure(predicate, error).ConfigureAwait(false);
+
+    /// <summary>
+    /// Ensures the successful value of an asynchronous result satisfies the provided predicate.
+    /// </summary>
+    public static async ValueTask<Result<T>> Ensure<T>(this ValueTask<Result<T>> source, Func<T, bool> predicate, ResultError error)
+        where T : notnull =>
+        (await source.ConfigureAwait(false)).Ensure(predicate, error);
+
+    /// <summary>
+    /// Ensures the successful value of an asynchronous result satisfies the provided predicate.
+    /// </summary>
+    public static async ValueTask<Result<T>> Ensure<T>(this ValueTask<Result<T>> source, Func<T, Task<bool>> predicate, ResultError error)
+        where T : notnull =>
+        await (await source.ConfigureAwait(false)).Ensure(predicate, error).ConfigureAwait(false);
+
+    /// <summary>
+    /// Ensures the successful value of an asynchronous result satisfies the provided predicate.
+    /// </summary>
+    public static async ValueTask<Result<T>> Ensure<T>(this ValueTask<Result<T>> source, Func<T, ValueTask<bool>> predicate, ResultError error)
+        where T : notnull =>
+        await (await source.ConfigureAwait(false)).Ensure(predicate, error).ConfigureAwait(false);
+
+    /// <summary>
     /// Matches an asynchronous result.
     /// </summary>
     public static async Task<TResult> Match<T, TResult>(this Task<Result<T>> source, Func<T, TResult> whenSuccess, Func<ResultError, TResult> whenFailure)

@@ -1,1 +1,11 @@
 #nullable enable
+
+SharedKernel.Results.Result<T>.Ensure(System.Func<T, bool>! predicate, SharedKernel.Results.ResultError! error) -> SharedKernel.Results.Result<T>
+SharedKernel.Results.Result<T>.Ensure(System.Func<T, System.Threading.Tasks.Task<bool>!>! predicate, SharedKernel.Results.ResultError! error) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<T>>!
+SharedKernel.Results.Result<T>.Ensure(System.Func<T, System.Threading.Tasks.ValueTask<bool>>! predicate, SharedKernel.Results.ResultError! error) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<T>>
+static SharedKernel.Results.ResultTaskExtensions.Ensure<T>(this System.Threading.Tasks.Task<SharedKernel.Results.Result<T>>! source, System.Func<T, bool>! predicate, SharedKernel.Results.ResultError! error) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<T>>!
+static SharedKernel.Results.ResultTaskExtensions.Ensure<T>(this System.Threading.Tasks.Task<SharedKernel.Results.Result<T>>! source, System.Func<T, System.Threading.Tasks.Task<bool>!>! predicate, SharedKernel.Results.ResultError! error) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<T>>!
+static SharedKernel.Results.ResultTaskExtensions.Ensure<T>(this System.Threading.Tasks.Task<SharedKernel.Results.Result<T>>! source, System.Func<T, System.Threading.Tasks.ValueTask<bool>>! predicate, SharedKernel.Results.ResultError! error) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<T>>!
+static SharedKernel.Results.ResultTaskExtensions.Ensure<T>(this System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<T>> source, System.Func<T, bool>! predicate, SharedKernel.Results.ResultError! error) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<T>>
+static SharedKernel.Results.ResultTaskExtensions.Ensure<T>(this System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<T>> source, System.Func<T, System.Threading.Tasks.Task<bool>!>! predicate, SharedKernel.Results.ResultError! error) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<T>>
+static SharedKernel.Results.ResultTaskExtensions.Ensure<T>(this System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<T>> source, System.Func<T, System.Threading.Tasks.ValueTask<bool>>! predicate, SharedKernel.Results.ResultError! error) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<T>>
