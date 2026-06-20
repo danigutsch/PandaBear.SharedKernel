@@ -7,7 +7,6 @@ public sealed class ValidationErrors
 {
     private const string MultipleValidationErrorsDetailMessage = "Multiple validation errors occurred.";
     private const string ValidationErrorsMustIncludeErrorDetailsMessage = "Validation errors must include error details.";
-    private const string ValidationErrorsMustIncludeFieldDetailsMessage = "Validation errors must include field details.";
 
     private readonly List<Result> errors = [];
 
@@ -142,5 +141,5 @@ public sealed class ValidationErrors
         error.ErrorDetails ?? throw new InvalidOperationException(ValidationErrorsMustIncludeErrorDetailsMessage);
 
     private static IReadOnlyDictionary<string, IReadOnlyList<string>> GetRequiredValidationErrors(ResultError error) =>
-        error.ValidationErrors ?? throw new InvalidOperationException(ValidationErrorsMustIncludeFieldDetailsMessage);
+        error.ValidationErrors ?? throw new InvalidOperationException(ResultInvariantMessages.ValidationErrorsMustContainFieldDetails);
 }

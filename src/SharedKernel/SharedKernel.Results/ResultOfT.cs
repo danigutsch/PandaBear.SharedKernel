@@ -185,6 +185,99 @@ public readonly struct Result<T> : IEquatable<Result<T>>
     }
 
     /// <summary>
+    /// Ensures the current success value satisfies the provided predicate.
+    /// </summary>
+    /// <param name="predicate">The predicate to evaluate when the result succeeded.</param>
+    /// <param name="error">The error to return when the predicate fails.</param>
+    /// <returns>The original result when the predicate succeeds, or the provided failure when it fails.</returns>
+    public Result<T> Ensure(Func<T, bool> predicate, ResultError error)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+        ArgumentNullException.ThrowIfNull(error);
+
+        if (TryGetValue(out var currentValue))
+        {
+            return predicate(currentValue)
+                ? this
+                : CreateEnsureFailureResult(error);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Ensures the current success value satisfies the provided predicate.
+    /// </summary>
+    /// <param name="predicate">The predicate to evaluate when the result succeeded.</param>
+    /// <param name="error">The error to return when the predicate fails.</param>
+    /// <returns>The original result when the predicate succeeds, or the provided failure when it fails.</returns>
+    public async Task<Result<T>> Ensure(Func<T, Task<bool>> predicate, ResultError error)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+        ArgumentNullException.ThrowIfNull(error);
+
+        if (TryGetValue(out var currentValue))
+        {
+            return await predicate(currentValue).ConfigureAwait(false)
+                ? this
+                : CreateEnsureFailureResult(error);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Ensures the current success value satisfies the provided predicate.
+    /// </summary>
+    /// <param name="predicate">The predicate to evaluate when the result succeeded.</param>
+    /// <param name="error">The error to return when the predicate fails.</param>
+    /// <returns>The original result when the predicate succeeds, or the provided failure when it fails.</returns>
+    public async ValueTask<Result<T>> Ensure(Func<T, ValueTask<bool>> predicate, ResultError error)
+    {
+        ArgumentNullException.ThrowIfNull(predicate);
+        ArgumentNullException.ThrowIfNull(error);
+
+        if (TryGetValue(out var currentValue))
+        {
+            return await predicate(currentValue).ConfigureAwait(false)
+                ? this
+                : CreateEnsureFailureResult(error);
+        }
+
+        return this;
+    }
+
+    private static Result<T> CreateEnsureFailureResult(ResultError error)
+    {
+        ValidateEnsureFailureError(error);
+        return new Result<T>(GetEnsureFailureStatus(error), default, error);
+    }
+
+    private static void ValidateEnsureFailureError(ResultError error)
+    {
+        if (string.Equals(error.Code, ResultErrorCodes.Invalid, StringComparison.Ordinal)
+            && (error.ValidationErrors is null || error.ValidationErrors.Count == 0))
+        {
+            throw new ArgumentException(ResultInvariantMessages.ValidationErrorsMustContainFieldDetails, nameof(error));
+        }
+    }
+
+    private static ResultStatus GetEnsureFailureStatus(ResultError error)
+    {
+        return error.Code switch
+        {
+            ResultErrorCodes.Invalid => ResultStatus.Invalid,
+            ResultErrorCodes.NotFound => ResultStatus.NotFound,
+            ResultErrorCodes.Unauthorized => ResultStatus.Unauthorized,
+            ResultErrorCodes.Forbidden => ResultStatus.Forbidden,
+            ResultErrorCodes.Conflict => ResultStatus.Conflict,
+            ResultErrorCodes.CriticalError => ResultStatus.CriticalError,
+            ResultErrorCodes.Unavailable => ResultStatus.Unavailable,
+            _ => ResultStatus.Error,
+        };
+    }
+
+    /// <summary>
     /// Returns the current error details when the result failed.
     /// </summary>
     /// <param name="currentError">The current error details when the result failed; otherwise <see langword="null"/>.</param>
