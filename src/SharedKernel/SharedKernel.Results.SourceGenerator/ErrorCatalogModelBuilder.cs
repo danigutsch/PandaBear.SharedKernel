@@ -99,7 +99,7 @@ internal static class ErrorCatalogModelBuilder
         }
 
         var providerTypeName = providerType.ToDisplayString();
-        var identifier = CreateIdentifier(providerTypeName, memberSymbol.Name);
+        var identifier = CreateIdentifier(providerTypeName, memberSymbol);
 
         return new ErrorCatalogEntryModel(
             identifier,
@@ -238,9 +238,9 @@ internal static class ErrorCatalogModelBuilder
         return builder.ToString();
     }
 
-    private static string CreateIdentifier(string providerTypeName, string memberName)
+    private static string CreateIdentifier(string providerTypeName, ISymbol memberSymbol)
     {
-        var raw = providerTypeName + "." + memberName;
+        var raw = providerTypeName + "." + memberSymbol.Name + GetMemberSuffix(memberSymbol);
         var builder = new System.Text.StringBuilder(raw.Length);
         var previousWasSeparator = false;
 
@@ -259,6 +259,23 @@ internal static class ErrorCatalogModelBuilder
         }
 
         return builder.ToString().Trim('-');
+    }
+
+    private static string GetMemberSuffix(ISymbol memberSymbol)
+    {
+        if (memberSymbol is not IMethodSymbol methodSymbol)
+        {
+            return string.Empty;
+        }
+
+        if (methodSymbol.Parameters.Length == 0)
+        {
+            return string.Empty;
+        }
+
+        return "-" + string.Join(
+            "-",
+            methodSymbol.Parameters.Select(static parameter => parameter.Type.Name));
     }
 
     private static string? NormalizeSummary(string xmlDocumentation)
