@@ -24,7 +24,7 @@ internal static class GeneratorTestHarness
         IEnumerable<MetadataReference>? additionalReferences = null,
         bool includeMediatorReference = true)
     {
-        return CreateCompilation([DefaultUsings + source], assemblyName, additionalReferences, includeMediatorReference);
+        return CreateCompilation([source], assemblyName, additionalReferences, includeMediatorReference);
     }
 
     public static CSharpCompilation CreateCompilation(
@@ -34,7 +34,7 @@ internal static class GeneratorTestHarness
         bool includeMediatorReference = true)
     {
         var syntaxTrees = sources
-            .Select(static source => CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.Preview)))
+            .Select(static source => CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview)))
             .ToArray();
         var references = GetMetadataReferences(additionalReferences, includeMediatorReference);
 

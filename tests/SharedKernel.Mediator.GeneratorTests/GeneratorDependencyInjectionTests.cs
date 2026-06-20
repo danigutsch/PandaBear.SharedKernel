@@ -6,6 +6,25 @@ namespace SharedKernel.Mediator.GeneratorTests;
 public sealed class GeneratorDependencyInjectionTests
 {
     [Fact]
+    public void Generate_Service_Registration_Bootstrap_Only_Emits_No_Transient_Registrations()
+    {
+        // Arrange
+        var compilation = GeneratorTestHarness.CreateCompilation(TestSources.ModuleHeader);
+
+        // Act
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        Assert.Empty(diagnostics);
+        Assert.Contains("services.AddMetrics();", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("services.AddSingleton<AppMediatorInstrumentation>();", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("services.AddScoped<AppMediator>();", generatedSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("services.AddTransient<", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Generate_Service_Registration_Single_Project()
     {
         // Arrange
@@ -98,6 +117,60 @@ public sealed class GeneratorDependencyInjectionTests
         Assert.Contains("services.AddTransient<global::Demo.CreateTourHandler>();", generatedSource, StringComparison.Ordinal);
         Assert.Contains("services.AddTransient<global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
         Assert.Contains("services.AddTransient<global::SharedKernel.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_Service_Registration_Notification_Handler_From_A_Separate_Source_File()
+    {
+        // Arrange
+        var compilation = GeneratorTestHarness.CreateCompilation(
+            [
+                TestSources.ModuleHeader + "public sealed record TourCreated(int Id) : INotification;",
+                TestSources.DemoHeader
+                + """
+                public sealed class TourCreatedHandler : INotificationHandler<TourCreated>
+                {
+                    public ValueTask Handle(TourCreated notification, CancellationToken ct) => ValueTask.CompletedTask;
+                }
+                """
+            ]);
+
+        // Act
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        Assert.Empty(diagnostics);
+        Assert.Contains("services.AddTransient<global::Demo.TourCreatedHandler>();", generatedSource, StringComparison.Ordinal);
+        Assert.Contains(
+            "services.AddTransient<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourCreated>, global::Demo.TourCreatedHandler>();",
+            generatedSource,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_Service_Registration_Stream_Handler_From_A_Separate_Source_File()
+    {
+        // Arrange
+        var compilation = GeneratorTestHarness.CreateCompilation(
+            [
+                TestSources.ModuleHeader,
+                TestSources.DemoHeader + TestSources.StreamToursWithHandler
+            ]);
+
+        // Act
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        Assert.Empty(diagnostics);
+        Assert.Contains("services.AddTransient<global::Demo.StreamToursHandler>();", generatedSource, StringComparison.Ordinal);
+        Assert.Contains(
+            "services.AddTransient<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamTours, string>, global::Demo.StreamToursHandler>();",
+            generatedSource,
+            StringComparison.Ordinal);
     }
 
     [Fact]
@@ -262,6 +335,55 @@ public sealed class GeneratorDependencyInjectionTests
             StringComparison.Ordinal);
         Assert.Contains(
             "services.AddTransient<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourUpdated>, global::Demo.TourEventsHandler>();",
+            generatedSource,
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_Service_Registration_Duplicate_Self_Registration_Diagnostic_For_Stream_Handlers()
+    {
+        // Arrange
+        var source = TestSources.ModuleHeader
+            + """
+            public sealed record StreamTours() : IStreamRequest<string>;
+            public sealed record StreamCities() : IStreamRequest<string>;
+
+            public sealed class SearchStreamHandler : IStreamRequestHandler<StreamTours, string>, IStreamRequestHandler<StreamCities, string>
+            {
+                public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
+                {
+                    yield return "tour";
+                    await Task.CompletedTask;
+                }
+
+                public async IAsyncEnumerable<string> Handle(StreamCities request, CancellationToken ct)
+                {
+                    yield return "city";
+                    await Task.CompletedTask;
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
+            compilation,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        Assert.Contains(
+            diagnostics,
+            static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicateGeneratedRegistration
+                                 && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.SearchStreamHandler", StringComparison.Ordinal));
+        Assert.Equal(
+            1,
+            generatedSource.Split("services.AddTransient<global::Demo.SearchStreamHandler>();", StringSplitOptions.None).Length - 1);
+        Assert.Contains(
+            "services.AddTransient<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamTours, string>, global::Demo.SearchStreamHandler>();",
+            generatedSource,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "services.AddTransient<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamCities, string>, global::Demo.SearchStreamHandler>();",
             generatedSource,
             StringComparison.Ordinal);
     }
