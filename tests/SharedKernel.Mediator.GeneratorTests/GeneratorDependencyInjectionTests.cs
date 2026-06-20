@@ -155,8 +155,21 @@ public sealed class GeneratorDependencyInjectionTests
         // Arrange
         var compilation = GeneratorTestHarness.CreateCompilation(
             [
-                TestSources.ModuleHeader,
-                TestSources.DemoHeader + TestSources.StreamToursWithHandler
+                TestSources.ModuleHeader
+                + """
+                public sealed record StreamTours() : IStreamRequest<string>;
+                """,
+                TestSources.DemoHeader
+                + """
+                public sealed class StreamToursHandler : IStreamRequestHandler<StreamTours, string>
+                {
+                    public async IAsyncEnumerable<string> Handle(StreamTours request, CancellationToken ct)
+                    {
+                        yield return "tour";
+                        await Task.CompletedTask;
+                    }
+                }
+                """
             ]);
 
         // Act
