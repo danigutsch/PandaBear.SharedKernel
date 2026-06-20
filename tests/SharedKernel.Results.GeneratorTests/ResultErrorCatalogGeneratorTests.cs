@@ -67,7 +67,9 @@ public sealed class ResultErrorCatalogGeneratorTests
 
         // Assert
         Assert.Contains("ResultStatus.Error", generatedSource, StringComparison.Ordinal);
-        Assert.Contains(", 422, \"error\", \"Save failed.\"", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("HttpStatusCode = 422", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("Code = \"error\"", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("DetailTemplate = \"Save failed.\"", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -23,17 +23,18 @@ internal static class ErrorCatalogEmitter
 
         foreach (var entry in entries)
         {
-            builder.Append("        new ResultErrorCatalogEntry(")
-                .Append(ToLiteral(entry.Identifier)).Append(", ")
-                .Append(ToLiteral(entry.DocumentationPath)).Append(", ")
-                .Append(ToLiteral(entry.ProviderType)).Append(", ")
-                .Append(ToLiteral(entry.MemberName)).Append(", ")
-                .Append("ResultStatus.").Append(entry.Status).Append(", ")
-                .Append(entry.HttpStatusCode.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(", ")
-                .Append(ToLiteral(entry.Code)).Append(", ")
-                .Append(ToLiteral(entry.DetailTemplate)).Append(", ")
-                .Append(entry.Summary is null ? "null" : ToLiteral(entry.Summary))
-                .AppendLine("),");
+            builder.AppendLine("        new ResultErrorCatalogEntry");
+            builder.AppendLine("        {");
+            builder.Append("            Identifier = ").Append(ToLiteral(entry.Identifier)).AppendLine(",");
+            builder.Append("            DocumentationPath = ").Append(ToLiteral(entry.DocumentationPath)).AppendLine(",");
+            builder.Append("            ProviderType = ").Append(ToLiteral(entry.ProviderType)).AppendLine(",");
+            builder.Append("            MemberName = ").Append(ToLiteral(entry.MemberName)).AppendLine(",");
+            builder.Append("            Status = ResultStatus.").Append(entry.Status).AppendLine(",");
+            builder.Append("            HttpStatusCode = ").Append(entry.HttpStatusCode.ToString(System.Globalization.CultureInfo.InvariantCulture)).AppendLine(",");
+            builder.Append("            Code = ").Append(ToLiteral(entry.Code)).AppendLine(",");
+            builder.Append("            DetailTemplate = ").Append(ToLiteral(entry.DetailTemplate)).AppendLine(",");
+            builder.Append("            Summary = ").Append(entry.Summary is null ? "null" : ToLiteral(entry.Summary)).AppendLine();
+            builder.AppendLine("        },");
         }
 
         builder.AppendLine("    ];");

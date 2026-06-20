@@ -48,12 +48,9 @@ internal static class GeneratorTestHarness
         var generatedSource = runResult.Results.Single().GeneratedSources.SingleOrDefault(
             source => string.Equals(source.HintName, GeneratedHintName, StringComparison.Ordinal));
 
-        if (generatedSource.SourceText is null)
-        {
-            throw new InvalidOperationException($"Generated source not found: {GeneratedHintName}");
-        }
-
-        return generatedSource.SourceText.ToString();
+        return generatedSource.SourceText is null
+            ? throw new InvalidOperationException($"Generated source not found: {GeneratedHintName}")
+            : generatedSource.SourceText.ToString();
     }
 
     private static List<MetadataReference> GetMetadataReferences()

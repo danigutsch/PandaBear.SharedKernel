@@ -1,31 +1,22 @@
 namespace SharedKernel.Results.SourceGenerator;
 
-internal sealed class ErrorCatalogEntryModel(
-    string identifier,
-    string documentationPath,
-    string providerType,
-    string memberName,
-    string status,
-    int httpStatusCode,
-    string code,
-    string detailTemplate,
-    string? summary)
+internal sealed class ErrorCatalogEntryModel
 {
-    public string Identifier => identifier;
+    public string Identifier { get; set; } = string.Empty;
 
-    public string DocumentationPath => documentationPath;
+    public string DocumentationPath { get; set; } = string.Empty;
 
-    public string ProviderType => providerType;
+    public string ProviderType { get; set; } = string.Empty;
 
-    public string MemberName => memberName;
+    public string MemberName { get; set; } = string.Empty;
 
-    public string Status => status;
+    public string Status { get; set; } = string.Empty;
 
-    public int HttpStatusCode => httpStatusCode;
+    public int HttpStatusCode { get; set; }
 
-    public string Code => code;
+    public string Code { get; set; } = string.Empty;
 
-    public string DetailTemplate => detailTemplate;
+    public string DetailTemplate { get; set; } = string.Empty;
 
-    public string? Summary => summary;
+    public string? Summary { get; set; }
 }

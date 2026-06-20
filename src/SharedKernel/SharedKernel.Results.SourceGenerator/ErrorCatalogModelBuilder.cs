@@ -7,6 +7,19 @@ namespace SharedKernel.Results.SourceGenerator;
 
 internal static class ErrorCatalogModelBuilder
 {
+    private static readonly Dictionary<string, (string Status, string Code, int HttpStatusCode)> ResultFactoryMap
+        = new Dictionary<string, (string Status, string Code, int HttpStatusCode)>(StringComparer.Ordinal)
+        {
+            ["Invalid"] = ("Invalid", "invalid", 400),
+            ["NotFound"] = ("NotFound", "not_found", 404),
+            ["Unauthorized"] = ("Unauthorized", "unauthorized", 401),
+            ["Forbidden"] = ("Forbidden", "forbidden", 403),
+            ["Conflict"] = ("Conflict", "conflict", 409),
+            ["Error"] = ("Error", "error", 422),
+            ["CriticalError"] = ("CriticalError", "critical_error", 500),
+            ["Unavailable"] = ("Unavailable", "unavailable", 503),
+        };
+
     public static ImmutableArray<ErrorCatalogEntryModel> Build(Compilation compilation, CancellationToken cancellationToken)
     {
         var entries = ImmutableArray.CreateBuilder<ErrorCatalogEntryModel>();
@@ -18,17 +31,9 @@ internal static class ErrorCatalogModelBuilder
             var semanticModel = compilation.GetSemanticModel(syntaxTree);
             var root = syntaxTree.GetRoot(cancellationToken);
 
-            foreach (var classDeclaration in root.DescendantNodes().OfType<ClassDeclarationSyntax>())
+            foreach (var classDeclaration in EnumerateErrorProviderClasses(root, semanticModel, cancellationToken))
             {
-                if (!classDeclaration.Identifier.ValueText.EndsWith("Errors", StringComparison.Ordinal))
-                {
-                    continue;
-                }
-
-                if (semanticModel.GetDeclaredSymbol(classDeclaration, cancellationToken) is not INamedTypeSymbol typeSymbol || !typeSymbol.IsStatic)
-                {
-                    continue;
-                }
+                var typeSymbol = semanticModel.GetDeclaredSymbol(classDeclaration, cancellationToken)!;
 
                 foreach (var member in classDeclaration.Members)
                 {
@@ -41,6 +46,25 @@ internal static class ErrorCatalogModelBuilder
         }
 
         return [.. entries.OrderBy(static entry => entry.Identifier, StringComparer.Ordinal)];
+    }
+
+    private static IEnumerable<ClassDeclarationSyntax> EnumerateErrorProviderClasses(
+        SyntaxNode root,
+        SemanticModel semanticModel,
+        CancellationToken cancellationToken)
+    {
+        foreach (var classDeclaration in root.DescendantNodes().OfType<ClassDeclarationSyntax>())
+        {
+            if (!classDeclaration.Identifier.ValueText.EndsWith("Errors", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (semanticModel.GetDeclaredSymbol(classDeclaration, cancellationToken) is INamedTypeSymbol typeSymbol && typeSymbol.IsStatic)
+            {
+                yield return classDeclaration;
+            }
+        }
     }
 
     private static ErrorCatalogEntryModel? TryBuildEntry(INamedTypeSymbol providerType, MemberDeclarationSyntax member, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -101,16 +125,18 @@ internal static class ErrorCatalogModelBuilder
         var providerTypeName = providerType.ToDisplayString();
         var identifier = CreateIdentifier(providerTypeName, memberSymbol);
 
-        return new ErrorCatalogEntryModel(
-            identifier,
-            "docs/errors/README.md",
-            providerTypeName,
-            memberSymbol.Name,
-            status,
-            httpStatusCode,
-            code,
-            RenderTemplate(detailExpression),
-            NormalizeSummary(memberSymbol.GetDocumentationCommentXml(cancellationToken: cancellationToken) ?? string.Empty));
+        return new ErrorCatalogEntryModel
+        {
+            Identifier = identifier,
+            DocumentationPath = "docs/errors/README.md",
+            ProviderType = providerTypeName,
+            MemberName = memberSymbol.Name,
+            Status = status,
+            HttpStatusCode = httpStatusCode,
+            Code = code,
+            DetailTemplate = RenderTemplate(detailExpression),
+            Summary = NormalizeSummary(memberSymbol.GetDocumentationCommentXml(cancellationToken: cancellationToken) ?? string.Empty),
+        };
     }
 
     private static bool ReturnsResult(ITypeSymbol type)
@@ -137,51 +163,15 @@ internal static class ErrorCatalogModelBuilder
             return false;
         }
 
-        switch (invokedMethod.Name)
+        if (!ResultFactoryMap.TryGetValue(invokedMethod.Name, out var metadata))
         {
-            case "Invalid":
-                status = "Invalid";
-                code = "invalid";
-                httpStatusCode = 400;
-                return true;
-            case "NotFound":
-                status = "NotFound";
-                code = "not_found";
-                httpStatusCode = 404;
-                return true;
-            case "Unauthorized":
-                status = "Unauthorized";
-                code = "unauthorized";
-                httpStatusCode = 401;
-                return true;
-            case "Forbidden":
-                status = "Forbidden";
-                code = "forbidden";
-                httpStatusCode = 403;
-                return true;
-            case "Conflict":
-                status = "Conflict";
-                code = "conflict";
-                httpStatusCode = 409;
-                return true;
-            case "Error":
-                status = "Error";
-                code = "error";
-                httpStatusCode = 422;
-                return true;
-            case "CriticalError":
-                status = "CriticalError";
-                code = "critical_error";
-                httpStatusCode = 500;
-                return true;
-            case "Unavailable":
-                status = "Unavailable";
-                code = "unavailable";
-                httpStatusCode = 503;
-                return true;
-            default:
-                return false;
+            return false;
         }
+
+        status = metadata.Status;
+        code = metadata.Code;
+        httpStatusCode = metadata.HttpStatusCode;
+        return true;
     }
 
     private static ExpressionSyntax? FindArgumentExpression(InvocationExpressionSyntax invocation, IMethodSymbol invokedMethod, string parameterName)
