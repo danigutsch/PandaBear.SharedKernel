@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace SharedKernel.Results;
 
 /// <summary>
@@ -10,7 +12,10 @@ public sealed class ResultErrorCatalogProviderAttribute : Attribute
     /// Initializes a new instance of the <see cref="ResultErrorCatalogProviderAttribute"/> class.
     /// </summary>
     /// <param name="providerType">The generated provider type for the assembly.</param>
-    public ResultErrorCatalogProviderAttribute(Type providerType)
+    public ResultErrorCatalogProviderAttribute(
+        [DynamicallyAccessedMembers(
+            DynamicallyAccessedMemberTypes.PublicParameterlessConstructor |
+            DynamicallyAccessedMemberTypes.PublicProperties)] Type providerType)
     {
         ArgumentNullException.ThrowIfNull(providerType);
 
@@ -20,5 +25,8 @@ public sealed class ResultErrorCatalogProviderAttribute : Attribute
     /// <summary>
     /// Gets the generated provider type for the assembly.
     /// </summary>
+    [DynamicallyAccessedMembers(
+        DynamicallyAccessedMemberTypes.PublicParameterlessConstructor |
+        DynamicallyAccessedMemberTypes.PublicProperties)]
     public Type ProviderType { get; }
 }

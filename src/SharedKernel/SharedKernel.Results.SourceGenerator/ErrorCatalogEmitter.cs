@@ -4,12 +4,14 @@ namespace SharedKernel.Results.SourceGenerator;
 
 internal static class ErrorCatalogEmitter
 {
-    public static string Emit(IReadOnlyList<ErrorCatalogEntryModel> entries)
+    public static string Emit(string providerTypeName, IReadOnlyList<ErrorCatalogEntryModel> entries)
     {
         var builder = new StringBuilder();
 
         builder.AppendLine("#nullable enable");
-        builder.AppendLine("[assembly: SharedKernel.Results.ResultErrorCatalogProviderAttribute(typeof(SharedKernel.Results.GeneratedResultErrorCatalogProvider))]");
+        builder.Append("[assembly: SharedKernel.Results.ResultErrorCatalogProviderAttribute(typeof(SharedKernel.Results.")
+            .Append(providerTypeName)
+            .AppendLine("))]");
         builder.AppendLine();
         builder.AppendLine("namespace SharedKernel.Results;");
         builder.AppendLine();
@@ -36,8 +38,16 @@ internal static class ErrorCatalogEmitter
         builder.AppendLine("    ];");
         builder.AppendLine("}");
         builder.AppendLine();
-        builder.AppendLine("internal sealed class GeneratedResultErrorCatalogProvider");
+        builder.AppendLine("/// <summary>");
+        builder.AppendLine("/// Provides the generated centralized error-catalog entries for this assembly.");
+        builder.AppendLine("/// </summary>");
+        builder.Append("public sealed class ")
+            .Append(providerTypeName)
+            .AppendLine();
         builder.AppendLine("{");
+        builder.AppendLine("    /// <summary>");
+        builder.AppendLine("    /// Gets the generated error-catalog entries for this assembly.");
+        builder.AppendLine("    /// </summary>");
         builder.AppendLine("    public IReadOnlyList<ResultErrorCatalogEntry> Entries => ResultErrorCatalogGenerated.generatedEntries;");
         builder.AppendLine("}");
 

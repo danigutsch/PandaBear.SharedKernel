@@ -28,9 +28,9 @@ public sealed class ResultErrorCatalogGeneratorTests
         var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
 
         // Assert
-        Assert.Contains("[assembly: SharedKernel.Results.ResultErrorCatalogProviderAttribute(typeof(SharedKernel.Results.GeneratedResultErrorCatalogProvider))]", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("[assembly: SharedKernel.Results.ResultErrorCatalogProviderAttribute(typeof(SharedKernel.Results.", generatedSource, StringComparison.Ordinal);
         Assert.Contains("internal static class ResultErrorCatalogGenerated", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("internal sealed class GeneratedResultErrorCatalogProvider", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("public sealed class Generated", generatedSource, StringComparison.Ordinal);
         Assert.Contains("demo-usererrors-notfound", generatedSource, StringComparison.Ordinal);
         Assert.Contains("demo-usererrors-duplicateemail", generatedSource, StringComparison.Ordinal);
         Assert.Contains("demo-usererrors-invalidemail", generatedSource, StringComparison.Ordinal);
@@ -67,12 +67,8 @@ public sealed class ResultErrorCatalogGeneratorTests
 
         // Act
         var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
-        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
-
         // Assert
-        Assert.DoesNotContain("Greeting", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("generatedEntries =", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("GeneratedResultErrorCatalogProvider", generatedSource, StringComparison.Ordinal);
+        Assert.Empty(runResult.Results.Single().GeneratedSources);
     }
 
     [Fact]

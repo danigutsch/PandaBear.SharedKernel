@@ -13,17 +13,40 @@ public sealed class ResultErrorCatalogGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        var providerTypeName = context.CompilationProvider
+            .Select(static (compilation, _) => SanitizeProviderTypeName(compilation.AssemblyName ?? "GeneratedResultErrorCatalogProvider"))
+            .WithTrackingName("ResultErrorCatalogProviderTypeName");
         var entries = context.CompilationProvider
             .Select(static (compilation, cancellationToken) => ErrorCatalogModelBuilder.Build(compilation, cancellationToken))
             .WithTrackingName("ResultErrorCatalogEntries");
+        var generationInput = providerTypeName.Combine(entries)
+            .WithTrackingName("ResultErrorCatalogGenerationInput");
 
         context.RegisterSourceOutput(
-            entries,
-            static (productionContext, generatedEntries) =>
+            generationInput,
+            static (productionContext, input) =>
             {
+                if (input.Right.Length == 0)
+                {
+                    return;
+                }
+
                 productionContext.AddSource(
                     GeneratedHintNames.ResultErrorCatalog,
-                    SourceText.From(ErrorCatalogEmitter.Emit([.. generatedEntries]), Encoding.UTF8));
+                    SourceText.From(ErrorCatalogEmitter.Emit(input.Left, [.. input.Right]), Encoding.UTF8));
             });
+    }
+
+    private static string SanitizeProviderTypeName(string assemblyName)
+    {
+        var builder = new StringBuilder("Generated");
+
+        foreach (var character in assemblyName.Where(char.IsLetterOrDigit))
+        {
+            builder.Append(character);
+        }
+
+        builder.Append("ResultErrorCatalogProvider");
+        return builder.ToString();
     }
 }
