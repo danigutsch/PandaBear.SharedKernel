@@ -396,6 +396,66 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
+    public async Task Ensures_An_Asynchronous_Task_Result_With_A_Sync_Delegate()
+    {
+        // Arrange
+        var resultTask = Task.FromResult(Result.Ok("porto"));
+
+        // Act
+        var ensured = await resultTask.Ensure(static value => value.Length == 5, new ResultError("Length mismatch"));
+
+        // Assert
+        Assert.True(ensured.IsSuccess);
+        Assert.Equal("porto", ensured.Value);
+    }
+
+    [Fact]
+    public async Task Short_Circuits_A_Failed_Asynchronous_Task_Result_When_Ensuring()
+    {
+        // Arrange
+        var resultTask = Task.FromResult(Result.Error<string>("Unexpected failure"));
+
+        // Act
+        var ensured = await resultTask.Ensure(static _ => true, new ResultError("Should not be used"));
+
+        // Assert
+        Assert.True(ensured.IsFailure);
+        Assert.True(ensured.TryGetError(out var error));
+        Assert.NotNull(error);
+        Assert.Equal("Unexpected failure", error.Detail);
+    }
+
+    [Fact]
+    public async Task Ensures_An_Asynchronous_ValueTask_Result_With_A_Sync_Delegate()
+    {
+        // Arrange
+        var resultTask = ValueTask.FromResult(Result.Ok("porto"));
+
+        // Act
+        var ensured = await resultTask.Ensure(static value => value.Length == 5, new ResultError("Length mismatch"));
+
+        // Assert
+        Assert.True(ensured.IsSuccess);
+        Assert.Equal("porto", ensured.Value);
+    }
+
+    [Fact]
+    public async Task Short_Circuits_A_Failed_Asynchronous_ValueTask_Result_When_Ensuring()
+    {
+        // Arrange
+        var resultTask = ValueTask.FromResult(Result.Error<string>("Unexpected failure"));
+
+        // Act
+        var ensured = await resultTask.Ensure(static _ => true, new ResultError("Should not be used"));
+
+        // Assert
+        Assert.True(ensured.IsFailure);
+        Assert.True(ensured.TryGetError(out var error));
+        Assert.NotNull(error);
+        Assert.Equal("Unexpected failure", error.Detail);
+    }
+
+    [Fact]
     public async Task Matches_An_Asynchronous_Task_Result_With_A_Task_Delegate()
     {
         // Arrange
