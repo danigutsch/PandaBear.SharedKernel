@@ -44,7 +44,11 @@ public sealed class GeneratorDiagnosticIdsTests
             .OrderBy(static value => value, StringComparer.Ordinal)
             .ToArray();
 
-        Assert.Equal(diagnosticIds, analyzerReleaseIds.OrderBy(static value => value, StringComparer.Ordinal).ToArray());
+        var orderedAnalyzerReleaseIds = analyzerReleaseIds
+            .OrderBy(static value => value, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.Equal(diagnosticIds, orderedAnalyzerReleaseIds);
     }
 
     private static string GetAnalyzerReleasesPath()

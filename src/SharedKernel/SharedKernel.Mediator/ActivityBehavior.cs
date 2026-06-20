@@ -37,7 +37,7 @@ public sealed class ActivityBehavior<TRequest, TResponse> : IPipelineBehavior<TR
         {
             activity?.SetTag(MediatorTelemetry.TagErrorType, ex.GetType().Name);
             activity?.AddException(ex);
-            activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Error, ex.GetType().Name);
+            activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Error, ex.Message);
             activity?.SetTag(MediatorTelemetry.TagRuntimeOutcome, MediatorTelemetry.OutcomeError);
             throw;
         }

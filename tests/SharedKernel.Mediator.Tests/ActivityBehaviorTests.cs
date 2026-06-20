@@ -109,6 +109,7 @@ public sealed class ActivityBehaviorTests
         // Assert
         var activity = Assert.Single(stoppedActivities);
         Assert.Equal(ActivityStatusCode.Error, activity.Status);
+        Assert.Equal("boom", activity.StatusDescription);
         Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType && tag.Value == "InvalidOperationException");
         Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeError);
 
@@ -140,6 +141,7 @@ public sealed class ActivityBehaviorTests
         // Assert
         var activity = Assert.Single(stoppedActivities);
         Assert.Equal(ActivityStatusCode.Unset, activity.Status);
+        Assert.Null(activity.StatusDescription);
         Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeCancelled);
         Assert.DoesNotContain(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType);
         Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
@@ -174,6 +176,7 @@ public sealed class ActivityBehaviorTests
         Assert.Equal(99, response);
         var activity = Assert.Single(stoppedActivities);
         Assert.Equal(ActivityStatusCode.Ok, activity.Status);
+        Assert.Null(activity.StatusDescription);
         Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeSuccess);
         Assert.DoesNotContain(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType);
         Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");

@@ -58,6 +58,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
         Assert.Equal(ActivityStatusCode.Error, span.Status);
+        Assert.Equal("handler boom", span.StatusDescription);
         Assert.Equal(MediatorTelemetry.OutcomeError, outcome);
         Assert.Equal("InvalidOperationException", errorType);
 
@@ -91,6 +92,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
         Assert.Equal(ActivityStatusCode.Ok, span.Status);
+        Assert.Null(span.StatusDescription);
         Assert.Equal(MediatorTelemetry.OutcomeSuccess, outcome);
         Assert.Null(errorType);
         Assert.DoesNotContain(span.Events, static evt => evt.Name == "exception");
@@ -169,6 +171,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
         Assert.Equal(ActivityStatusCode.Ok, span.Status);
+        Assert.Null(span.StatusDescription);
         Assert.Equal(MediatorTelemetry.OutcomeSuccess, outcome);
         Assert.Null(errorType);
         Assert.DoesNotContain(span.Events, static evt => evt.Name == "exception");
@@ -195,6 +198,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
         Assert.Equal(ActivityStatusCode.Error, span.Status);
+        Assert.Equal("handler boom", span.StatusDescription);
         Assert.Equal(MediatorTelemetry.OutcomeError, outcome);
         Assert.Equal("InvalidOperationException", errorType);
 
@@ -233,6 +237,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
         Assert.Equal(ActivityStatusCode.Error, span.Status);
+        Assert.Equal("boom", span.StatusDescription);
         Assert.Equal(MediatorTelemetry.OutcomeError, outcome);
         Assert.Equal("InvalidOperationException", errorType);
 
@@ -271,6 +276,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var span = Assert.Single(stopped, a => a.OperationName == MediatorTelemetry.ActivityStream);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
+        Assert.Null(span.StatusDescription);
         Assert.Equal(MediatorTelemetry.OutcomeCancelled, outcome);
         Assert.Null(errorType);
         Assert.DoesNotContain(span.Events, static evt => evt.Name == "exception");
@@ -303,6 +309,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var span = Assert.Single(stopped, a => a.OperationName == MediatorTelemetry.ActivityStream);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
+        Assert.Null(span.StatusDescription);
         Assert.Equal(MediatorTelemetry.OutcomeSuccess, outcome);
         Assert.Null(errorType);
         Assert.DoesNotContain(span.Events, static evt => evt.Name == "exception");
