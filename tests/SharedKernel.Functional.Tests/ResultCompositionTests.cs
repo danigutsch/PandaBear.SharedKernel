@@ -164,6 +164,29 @@ public sealed class ResultCompositionTests
         Assert.Equal(["Name is required"], error.ValidationErrors["Name"]);
     }
 
+    [Theory]
+    [InlineData(ResultErrorCodes.NotFound, ResultStatus.NotFound)]
+    [InlineData(ResultErrorCodes.Unauthorized, ResultStatus.Unauthorized)]
+    [InlineData(ResultErrorCodes.Forbidden, ResultStatus.Forbidden)]
+    [InlineData(ResultErrorCodes.Conflict, ResultStatus.Conflict)]
+    [InlineData(ResultErrorCodes.CriticalError, ResultStatus.CriticalError)]
+    [InlineData(ResultErrorCodes.Unavailable, ResultStatus.Unavailable)]
+    [InlineData(ResultErrorCodes.Error, ResultStatus.Error)]
+    [InlineData("custom_error", ResultStatus.Error)]
+    public void Maps_Ensure_Error_Codes_To_The_Expected_Failure_Status(string errorCode, ResultStatus expectedStatus)
+    {
+        // Arrange
+        var result = Result.Ok("porto");
+        var failure = new ResultError("Failure", errorCode);
+
+        // Act
+        var ensured = result.Ensure(static _ => false, failure);
+
+        // Assert
+        Assert.True(ensured.IsFailure);
+        Assert.Equal(expectedStatus, ensured.Status);
+    }
+
     [Fact]
     public void Short_Circuits_Ensure_For_Existing_Failures()
     {

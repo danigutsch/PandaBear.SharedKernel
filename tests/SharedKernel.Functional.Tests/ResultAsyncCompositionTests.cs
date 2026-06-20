@@ -456,6 +456,34 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
+    public async Task Ensures_An_Asynchronous_Task_Result_With_A_Task_Delegate()
+    {
+        // Arrange
+        var resultTask = Task.FromResult(Result.Ok("porto"));
+
+        // Act
+        var ensured = await resultTask.Ensure(static value => Task.FromResult(value.Length == 5), new ResultError("Length mismatch"));
+
+        // Assert
+        Assert.True(ensured.IsSuccess);
+        Assert.Equal("porto", ensured.Value);
+    }
+
+    [Fact]
+    public async Task Ensures_An_Asynchronous_ValueTask_Result_With_A_ValueTask_Delegate()
+    {
+        // Arrange
+        var resultTask = ValueTask.FromResult(Result.Ok("porto"));
+
+        // Act
+        var ensured = await resultTask.Ensure(static value => ValueTask.FromResult(value.Length == 5), new ResultError("Length mismatch"));
+
+        // Assert
+        Assert.True(ensured.IsSuccess);
+        Assert.Equal("porto", ensured.Value);
+    }
+
+    [Fact]
     public async Task Matches_An_Asynchronous_Task_Result_With_A_Task_Delegate()
     {
         // Arrange
