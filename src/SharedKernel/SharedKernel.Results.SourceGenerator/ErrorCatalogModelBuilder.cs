@@ -167,7 +167,7 @@ internal static class ErrorCatalogModelBuilder
             case "Error":
                 status = "Error";
                 code = "error";
-                httpStatusCode = 500;
+                httpStatusCode = 422;
                 return true;
             case "CriticalError":
                 status = "CriticalError";
