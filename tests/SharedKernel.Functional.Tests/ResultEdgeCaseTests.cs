@@ -185,6 +185,51 @@ public sealed class ResultEdgeCaseTests
         Assert.Equal("Failed results must contain error details.", exception.Message);
     }
 
+    [Fact]
+    public void Rejects_Ensure_Invalid_Error_Without_Validation_Details()
+    {
+        // Arrange
+        var result = Result.Ok("porto");
+        var error = new ResultError("Validation failed", ResultErrorCodes.Invalid);
+
+        // Act
+        var exception = Assert.Throws<ArgumentException>(() => result.Ensure(static _ => false, error));
+
+        // Assert
+        Assert.Contains("Validation errors must include field details.", exception.Message, StringComparison.Ordinal);
+        Assert.Equal("error", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task Rejects_Ensure_Invalid_Error_Without_Validation_Details_For_Task_Predicates()
+    {
+        // Arrange
+        var result = Result.Ok("porto");
+        var error = new ResultError("Validation failed", ResultErrorCodes.Invalid);
+
+        // Act
+        var exception = await Assert.ThrowsAsync<ArgumentException>(() => result.Ensure(static _ => Task.FromResult(false), error));
+
+        // Assert
+        Assert.Contains("Validation errors must include field details.", exception.Message, StringComparison.Ordinal);
+        Assert.Equal("error", exception.ParamName);
+    }
+
+    [Fact]
+    public async Task Rejects_Ensure_Invalid_Error_Without_Validation_Details_For_ValueTask_Predicates()
+    {
+        // Arrange
+        var result = Result.Ok("porto");
+        var error = new ResultError("Validation failed", ResultErrorCodes.Invalid);
+
+        // Act
+        var exception = await Assert.ThrowsAsync<ArgumentException>(() => result.Ensure(static _ => ValueTask.FromResult(false), error).AsTask());
+
+        // Assert
+        Assert.Contains("Validation errors must include field details.", exception.Message, StringComparison.Ordinal);
+        Assert.Equal("error", exception.ParamName);
+    }
+
     private sealed class LoggedTourSummary(string code, string title)
     {
         public override string ToString() => $"{code} | {title}";

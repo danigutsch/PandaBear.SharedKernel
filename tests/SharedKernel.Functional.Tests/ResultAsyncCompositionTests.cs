@@ -357,7 +357,7 @@ public sealed class ResultAsyncCompositionTests
     public async Task Returns_The_Provided_Error_When_Ensuring_With_A_ValueTask_Delegate_Fails()
     {
         // Arrange
-        var failure = new ResultError("Length mismatch", ResultErrorCodes.Invalid);
+        var failure = new ResultError("Length mismatch", ResultErrorCodes.Error);
         var result = Result.Ok("porto");
 
         // Act

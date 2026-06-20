@@ -126,7 +126,7 @@ public sealed class ResultCompositionTests
     public void Returns_The_Provided_Error_When_Ensure_Predicate_Fails()
     {
         // Arrange
-        var failure = new ResultError("Length mismatch", ResultErrorCodes.Invalid);
+        var failure = new ResultError("Length mismatch", ResultErrorCodes.Error);
         var result = Result.Ok("porto");
 
         // Act

@@ -16,6 +16,7 @@ public readonly struct Result<T> : IEquatable<Result<T>>
     private const string UninitializedResultMessage = "Result status is not initialized.";
     private const string SuccessfulResultMustContainValueMessage = "Successful results must contain a value.";
     private const string FailedResultMustContainErrorDetailsMessage = "Failed results must contain error details.";
+    private const string ValidationErrorsMustContainFieldDetailsMessage = "Validation errors must include field details.";
 
     internal Result(ResultStatus status, T? value, ResultError? error)
     {
@@ -249,7 +250,17 @@ public readonly struct Result<T> : IEquatable<Result<T>>
 
     private static Result<T> CreateEnsureFailureResult(ResultError error)
     {
+        ValidateEnsureFailureError(error);
         return new Result<T>(GetEnsureFailureStatus(error), default, error);
+    }
+
+    private static void ValidateEnsureFailureError(ResultError error)
+    {
+        if (string.Equals(error.Code, ResultErrorCodes.Invalid, StringComparison.Ordinal)
+            && (error.ValidationErrors is null || error.ValidationErrors.Count == 0))
+        {
+            throw new ArgumentException(ValidationErrorsMustContainFieldDetailsMessage, nameof(error));
+        }
     }
 
     private static ResultStatus GetEnsureFailureStatus(ResultError error)
