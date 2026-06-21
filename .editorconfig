@@ -185,7 +185,9 @@ indent_style = space
 insert_final_newline = true
 
 # EF migrations are generated infrastructure artifacts. Owner: Infrastructure maintainers.
-# Remove these exceptions when EF-generated migrations no longer emit these patterns.
+# CS0612/CS0618 are emitted by EF-generated migration metadata that calls obsolete
+# provider APIs for compatibility. Remove these exceptions when EF/Npgsql tooling
+# no longer generates obsolete API usage in migration designer or snapshot files.
 [**/Migrations/*.cs]
 dotnet_diagnostic.CA1002.severity = none
 dotnet_diagnostic.CA1062.severity = none
@@ -193,6 +195,8 @@ dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1711.severity = none
 dotnet_diagnostic.CA1814.severity = none
 dotnet_diagnostic.CA1852.severity = none
+dotnet_diagnostic.CS0612.severity = none
+dotnet_diagnostic.CS0618.severity = none
 dotnet_diagnostic.IDE0161.severity = none
 generated_code = true
 
