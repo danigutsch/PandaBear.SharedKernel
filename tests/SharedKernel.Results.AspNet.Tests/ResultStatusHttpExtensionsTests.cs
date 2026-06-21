@@ -29,8 +29,11 @@ public sealed class ResultStatusHttpExtensionsTests
     [Fact]
     public void ToHttpStatusCode_Rejects_Unknown_Statuses()
     {
+        // Arrange
+        var unknownStatus = Enum.Parse<ResultStatus>("2147483647");
+
         // Act
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => ((ResultStatus)int.MaxValue).ToHttpStatusCode());
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => unknownStatus.ToHttpStatusCode());
 
         // Assert
         Assert.Equal("status", exception.ParamName);

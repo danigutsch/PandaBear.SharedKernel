@@ -48,7 +48,7 @@ public sealed class ResultErrorCatalogGeneratorTests
     }
 
     [Fact]
-    public void Maps_Result_Error_Factory_To_Http_500()
+    public void Generates_Error_Catalog_For_Result_Error_Factory_Without_Http_Metadata()
     {
         // Arrange
         const string source = """
@@ -123,5 +123,133 @@ public sealed class ResultErrorCatalogGeneratorTests
         Assert.Contains("ResultStatus.Invalid", generatedSource, StringComparison.Ordinal);
         Assert.Contains("\"invalid\"", generatedSource, StringComparison.Ordinal);
         Assert.Contains("Required column '{columnName}' is missing.", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generates_Error_Catalog_For_Static_Properties()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public static class SystemErrors
+            {
+                public static Result DatabaseUnavailable => Result.Unavailable("Database is unavailable.");
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
+
+        // Assert
+        Assert.Contains("demo-systemerrors-databaseunavailable", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("ResultStatus.Unavailable", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("Database is unavailable.", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Adds_Parameter_Type_Suffix_To_Overloaded_Method_Identifiers()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public static class UserErrors
+            {
+                public static Result NotFound(Guid id) => Result.NotFound($"User {id} was not found.");
+
+                public static Result NotFound(string email) => Result.NotFound($"User {email} was not found.");
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
+
+        // Assert
+        Assert.Contains("demo-usererrors-notfound-guid", generatedSource, StringComparison.Ordinal);
+        Assert.Contains("demo-usererrors-notfound-string", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Preserves_Interpolated_Template_Format_Clauses()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public static class TourErrors
+            {
+                public static Result StartDateInPast(DateTime startDate) =>
+                    Result.Invalid($"Start date {startDate:yyyy-MM-dd} cannot be in the past.", "StartDate", "Start date is invalid.");
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
+
+        // Assert
+        Assert.Contains("Start date {startDate:yyyy-MM-dd} cannot be in the past.", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Escapes_Generated_String_Literals()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public static class FileErrors
+            {
+                public static Result InvalidPath() => Result.Invalid(
+                    "Path \"C:\\\\Temp\" is invalid.\nChoose another path.",
+                    "Path",
+                    "Path is invalid.");
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
+
+        // Assert
+        Assert.Contains("Path \\\"C:\\\\\\\\Temp\\\" is invalid.\\nChoose another path.", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Ignores_Unsupported_Result_Member_Shapes()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public static class UserErrors
+            {
+                public static Result MissingExpressionBody()
+                {
+                    var detail = "User was not found.";
+                    return Result.NotFound(detail);
+                }
+
+                public static Result Success() => Result.Success();
+
+                public static Result Wrapped() => CreateNotFound();
+
+                private static Result CreateNotFound() => Result.NotFound("User was not found.");
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+
+        // Assert
+        Assert.Empty(runResult.Results.Single().GeneratedSources);
     }
 }

@@ -30,6 +30,39 @@ public sealed class GeneratorImplementationTests
     }
 
     [Fact]
+    public void Catalog_Models_With_Different_Entries_Are_Not_Equal()
+    {
+        // Arrange
+        var firstEntry = new ErrorCatalogEntryModel(
+            "demo-usererrors-missingname",
+            "docs/errors/README.md",
+            "Demo.UserErrors",
+            "MissingName",
+            "Invalid",
+            "invalid",
+            "Name is required.",
+            "Name is required.");
+        var secondEntry = new ErrorCatalogEntryModel(
+            "demo-usererrors-savefailed",
+            "docs/errors/README.md",
+            "Demo.UserErrors",
+            "SaveFailed",
+            "Error",
+            "error",
+            "Save failed.",
+            null);
+        var first = new ErrorCatalogModel([firstEntry]);
+        var second = new ErrorCatalogModel([secondEntry]);
+
+        // Act
+        var matchesDifferentObject = Equals(first, new object());
+
+        // Assert
+        Assert.NotEqual(first, second);
+        Assert.False(matchesDifferentObject);
+    }
+
+    [Fact]
     public void Build_Discovers_Static_Error_Providers_And_Extracts_Metadata()
     {
         // Arrange
@@ -71,6 +104,38 @@ public sealed class GeneratorImplementationTests
         var errorEntry = Assert.Single(entries, static entry => entry.MemberName == "SaveFailed");
         Assert.Equal("Error", errorEntry.Status);
         Assert.Equal("error", errorEntry.Code);
+    }
+
+    [Fact]
+    public void Build_Ignores_Non_Static_Error_Provider_Classes()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class UserErrors
+            {
+                public static Result MissingName() => Result.Invalid(
+                    detail: "Name is required.",
+                    field: "Name",
+                    message: "Name is required.");
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+        var syntaxTree = compilation.SyntaxTrees.Single();
+        var classDeclaration = syntaxTree.GetRoot(TestContext.Current.CancellationToken)
+            .DescendantNodes()
+            .OfType<ClassDeclarationSyntax>()
+            .Single();
+
+        // Act
+        var entries = ErrorCatalogModelBuilder.Build(
+            classDeclaration,
+            compilation.GetSemanticModel(syntaxTree),
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        Assert.Empty(entries);
     }
 
     [Fact]

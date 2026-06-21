@@ -59,6 +59,7 @@ internal static class ErrorCatalogModelBuilder
     {
         if (semanticModel.GetDeclaredSymbol(method, cancellationToken) is not IMethodSymbol methodSymbol
             || !methodSymbol.IsStatic
+            || !HasCatalogMemberAccessibility(methodSymbol)
             || !ReturnsResult(methodSymbol.ReturnType))
         {
             return null;
@@ -77,6 +78,7 @@ internal static class ErrorCatalogModelBuilder
     {
         if (semanticModel.GetDeclaredSymbol(property, cancellationToken) is not IPropertySymbol propertySymbol
             || !propertySymbol.IsStatic
+            || !HasCatalogMemberAccessibility(propertySymbol)
             || !ReturnsResult(propertySymbol.Type))
         {
             return null;
@@ -122,6 +124,11 @@ internal static class ErrorCatalogModelBuilder
             var displayName when displayName.StartsWith("SharedKernel.Results.Result<", StringComparison.Ordinal) => true,
             _ => false,
         };
+    }
+
+    private static bool HasCatalogMemberAccessibility(ISymbol memberSymbol)
+    {
+        return memberSymbol.DeclaredAccessibility is Accessibility.Public or Accessibility.Internal;
     }
 
     private static bool IsResultFactory(IMethodSymbol invokedMethod, out string status, out string code)
