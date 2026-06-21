@@ -193,8 +193,6 @@ dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1711.severity = none
 dotnet_diagnostic.CA1814.severity = none
 dotnet_diagnostic.CA1852.severity = none
-dotnet_diagnostic.CS0612.severity = none
-dotnet_diagnostic.CS0618.severity = none
 dotnet_diagnostic.IDE0161.severity = none
 generated_code = true
 
