@@ -7,64 +7,42 @@ namespace SharedKernel.Results.SourceGenerator;
 
 internal static class ErrorCatalogModelBuilder
 {
-    private static readonly Dictionary<string, (string Status, string Code, int HttpStatusCode)> ResultFactoryMap
-        = new Dictionary<string, (string Status, string Code, int HttpStatusCode)>(StringComparer.Ordinal)
+    private static readonly Dictionary<string, (string Status, string Code)> ResultFactoryMap
+        = new Dictionary<string, (string Status, string Code)>(StringComparer.Ordinal)
         {
-            ["Invalid"] = ("Invalid", "invalid", 400),
-            ["NotFound"] = ("NotFound", "not_found", 404),
-            ["Unauthorized"] = ("Unauthorized", "unauthorized", 401),
-            ["Forbidden"] = ("Forbidden", "forbidden", 403),
-            ["Conflict"] = ("Conflict", "conflict", 409),
-            ["Error"] = ("Error", "error", 422),
-            ["CriticalError"] = ("CriticalError", "critical_error", 500),
-            ["Unavailable"] = ("Unavailable", "unavailable", 503),
+            ["Invalid"] = ("Invalid", "invalid"),
+            ["NotFound"] = ("NotFound", "not_found"),
+            ["Unauthorized"] = ("Unauthorized", "unauthorized"),
+            ["Forbidden"] = ("Forbidden", "forbidden"),
+            ["Conflict"] = ("Conflict", "conflict"),
+            ["Error"] = ("Error", "error"),
+            ["CriticalError"] = ("CriticalError", "critical_error"),
+            ["Unavailable"] = ("Unavailable", "unavailable"),
         };
 
-    public static ImmutableArray<ErrorCatalogEntryModel> Build(Compilation compilation, CancellationToken cancellationToken)
+    public static ImmutableArray<ErrorCatalogEntryModel> Build(
+        ClassDeclarationSyntax classDeclaration,
+        SemanticModel semanticModel,
+        CancellationToken cancellationToken)
     {
-        var entries = ImmutableArray.CreateBuilder<ErrorCatalogEntryModel>();
+        if (semanticModel.GetDeclaredSymbol(classDeclaration, cancellationToken) is not INamedTypeSymbol typeSymbol
+            || !typeSymbol.IsStatic)
+        {
+            return [];
+        }
 
-        foreach (var syntaxTree in compilation.SyntaxTrees)
+        var entries = ImmutableArray.CreateBuilder<ErrorCatalogEntryModel>();
+        foreach (var member in classDeclaration.Members)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var semanticModel = compilation.GetSemanticModel(syntaxTree);
-            var root = syntaxTree.GetRoot(cancellationToken);
-
-            foreach (var classDeclaration in EnumerateErrorProviderClasses(root, semanticModel, cancellationToken))
+            if (TryBuildEntry(typeSymbol, member, semanticModel, cancellationToken) is { } entry)
             {
-                var typeSymbol = semanticModel.GetDeclaredSymbol(classDeclaration, cancellationToken)!;
-
-                foreach (var member in classDeclaration.Members)
-                {
-                    if (TryBuildEntry(typeSymbol, member, semanticModel, cancellationToken) is { } entry)
-                    {
-                        entries.Add(entry);
-                    }
-                }
+                entries.Add(entry);
             }
         }
 
         return [.. entries.OrderBy(static entry => entry.Identifier, StringComparer.Ordinal)];
-    }
-
-    private static IEnumerable<ClassDeclarationSyntax> EnumerateErrorProviderClasses(
-        SyntaxNode root,
-        SemanticModel semanticModel,
-        CancellationToken cancellationToken)
-    {
-        foreach (var classDeclaration in root.DescendantNodes().OfType<ClassDeclarationSyntax>())
-        {
-            if (!classDeclaration.Identifier.ValueText.EndsWith("Errors", StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            if (semanticModel.GetDeclaredSymbol(classDeclaration, cancellationToken) is INamedTypeSymbol typeSymbol && typeSymbol.IsStatic)
-            {
-                yield return classDeclaration;
-            }
-        }
     }
 
     private static ErrorCatalogEntryModel? TryBuildEntry(INamedTypeSymbol providerType, MemberDeclarationSyntax member, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -111,7 +89,7 @@ internal static class ErrorCatalogModelBuilder
     {
         if (expression is not InvocationExpressionSyntax invocation
             || semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol is not IMethodSymbol invokedMethod
-            || !IsResultFactory(invokedMethod, out var status, out var code, out var httpStatusCode))
+            || !IsResultFactory(invokedMethod, out var status, out var code))
         {
             return null;
         }
@@ -125,18 +103,15 @@ internal static class ErrorCatalogModelBuilder
         var providerTypeName = providerType.ToDisplayString();
         var identifier = CreateIdentifier(providerTypeName, memberSymbol);
 
-        return new ErrorCatalogEntryModel
-        {
-            Identifier = identifier,
-            DocumentationPath = "docs/errors/README.md",
-            ProviderType = providerTypeName,
-            MemberName = memberSymbol.Name,
-            Status = status,
-            HttpStatusCode = httpStatusCode,
-            Code = code,
-            DetailTemplate = RenderTemplate(detailExpression),
-            Summary = NormalizeSummary(memberSymbol.GetDocumentationCommentXml(cancellationToken: cancellationToken) ?? string.Empty),
-        };
+        return new ErrorCatalogEntryModel(
+            identifier,
+            "docs/errors/README.md",
+            providerTypeName,
+            memberSymbol.Name,
+            status,
+            code,
+            RenderTemplate(detailExpression),
+            NormalizeSummary(memberSymbol.GetDocumentationCommentXml(cancellationToken: cancellationToken) ?? string.Empty));
     }
 
     private static bool ReturnsResult(ITypeSymbol type)
@@ -149,11 +124,10 @@ internal static class ErrorCatalogModelBuilder
         };
     }
 
-    private static bool IsResultFactory(IMethodSymbol invokedMethod, out string status, out string code, out int httpStatusCode)
+    private static bool IsResultFactory(IMethodSymbol invokedMethod, out string status, out string code)
     {
         status = string.Empty;
         code = string.Empty;
-        httpStatusCode = 0;
 
         var containingType = invokedMethod.ContainingType.ToDisplayString();
         var containingOriginalType = invokedMethod.ContainingType.OriginalDefinition.ToDisplayString();
@@ -170,7 +144,6 @@ internal static class ErrorCatalogModelBuilder
 
         status = metadata.Status;
         code = metadata.Code;
-        httpStatusCode = metadata.HttpStatusCode;
         return true;
     }
 

@@ -1,0 +1,4 @@
+#nullable enable
+
+SharedKernel.Results.AspNet.ResultStatusHttpExtensions
+static SharedKernel.Results.AspNet.ResultStatusHttpExtensions.ToHttpStatusCode(this SharedKernel.Results.ResultStatus status) -> int

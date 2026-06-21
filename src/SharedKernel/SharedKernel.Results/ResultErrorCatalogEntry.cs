@@ -38,11 +38,6 @@ public sealed class ResultErrorCatalogEntry
     public required ResultStatus Status { get; init; }
 
     /// <summary>
-    /// Gets the HTTP status code conventionally associated with the result status.
-    /// </summary>
-    public required int HttpStatusCode { get; init; }
-
-    /// <summary>
     /// Gets the stable machine-readable result error code.
     /// </summary>
     public required string Code { get; init; }

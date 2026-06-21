@@ -10,8 +10,6 @@ SharedKernel.Results.ResultErrorCatalogEntry.DetailTemplate.get -> string!
 SharedKernel.Results.ResultErrorCatalogEntry.DetailTemplate.init -> void
 SharedKernel.Results.ResultErrorCatalogEntry.DocumentationPath.get -> string!
 SharedKernel.Results.ResultErrorCatalogEntry.DocumentationPath.init -> void
-SharedKernel.Results.ResultErrorCatalogEntry.HttpStatusCode.get -> int
-SharedKernel.Results.ResultErrorCatalogEntry.HttpStatusCode.init -> void
 SharedKernel.Results.ResultErrorCatalogEntry.Identifier.get -> string!
 SharedKernel.Results.ResultErrorCatalogEntry.Identifier.init -> void
 SharedKernel.Results.ResultErrorCatalogEntry.MemberName.get -> string!
@@ -23,7 +21,6 @@ SharedKernel.Results.ResultErrorCatalogEntry.Status.get -> SharedKernel.Results.
 SharedKernel.Results.ResultErrorCatalogEntry.Status.init -> void
 SharedKernel.Results.ResultErrorCatalogEntry.Summary.get -> string?
 SharedKernel.Results.ResultErrorCatalogEntry.Summary.init -> void
-
 SharedKernel.Results.Result<T>.Ensure(System.Func<T, bool>! predicate, SharedKernel.Results.ResultError! error) -> SharedKernel.Results.Result<T>
 SharedKernel.Results.Result<T>.Ensure(System.Func<T, System.Threading.Tasks.Task<bool>!>! predicate, SharedKernel.Results.ResultError! error) -> System.Threading.Tasks.Task<SharedKernel.Results.Result<T>>!
 SharedKernel.Results.Result<T>.Ensure(System.Func<T, System.Threading.Tasks.ValueTask<bool>>! predicate, SharedKernel.Results.ResultError! error) -> System.Threading.Tasks.ValueTask<SharedKernel.Results.Result<T>>

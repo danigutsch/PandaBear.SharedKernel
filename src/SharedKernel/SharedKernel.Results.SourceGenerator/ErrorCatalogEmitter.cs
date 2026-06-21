@@ -30,7 +30,6 @@ internal static class ErrorCatalogEmitter
             builder.Append("            ProviderType = ").Append(ToLiteral(entry.ProviderType)).AppendLine(",");
             builder.Append("            MemberName = ").Append(ToLiteral(entry.MemberName)).AppendLine(",");
             builder.Append("            Status = ResultStatus.").Append(entry.Status).AppendLine(",");
-            builder.Append("            HttpStatusCode = ").Append(entry.HttpStatusCode.ToString(System.Globalization.CultureInfo.InvariantCulture)).AppendLine(",");
             builder.Append("            Code = ").Append(ToLiteral(entry.Code)).AppendLine(",");
             builder.Append("            DetailTemplate = ").Append(ToLiteral(entry.DetailTemplate)).AppendLine(",");
             builder.Append("            Summary = ").Append(entry.Summary is null ? "null" : ToLiteral(entry.Summary)).AppendLine();

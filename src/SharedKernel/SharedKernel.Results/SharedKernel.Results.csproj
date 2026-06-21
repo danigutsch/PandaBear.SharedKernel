@@ -26,6 +26,10 @@
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="..\SharedKernel.Results.SourceGenerator\bin\$(Configuration)\netstandard2.0\SharedKernel.Results.SourceGenerator.dll"
+            Pack="true"
+            PackagePath="analyzers/dotnet/cs"
+            Visible="false" />
     </ItemGroup>
 
 </Project>

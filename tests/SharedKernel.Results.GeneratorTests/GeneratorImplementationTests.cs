@@ -1,9 +1,34 @@
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SharedKernel.Results.SourceGenerator;
 
 namespace SharedKernel.Results.GeneratorTests;
 
 public sealed class GeneratorImplementationTests
 {
+    [Fact]
+    public void Catalog_Models_With_The_Same_Entries_Are_Equal()
+    {
+        // Arrange
+        var entry = new ErrorCatalogEntryModel(
+            "demo-usererrors-missingname",
+            "docs/errors/README.md",
+            "Demo.UserErrors",
+            "MissingName",
+            "Invalid",
+            "invalid",
+            "Name is required.",
+            "Name is required.");
+        var first = new ErrorCatalogModel([entry]);
+        var second = new ErrorCatalogModel([entry]);
+
+        // Act
+        var areEqual = first.Equals(second);
+
+        // Assert
+        Assert.True(areEqual);
+        Assert.Equal(first.GetHashCode(), second.GetHashCode());
+    }
+
     [Fact]
     public void Build_Discovers_Static_Error_Providers_And_Extracts_Metadata()
     {
@@ -22,9 +47,17 @@ public sealed class GeneratorImplementationTests
             }
             """;
         var compilation = GeneratorTestHarness.CreateCompilation(source);
+        var syntaxTree = compilation.SyntaxTrees.Single();
+        var classDeclaration = syntaxTree.GetRoot(TestContext.Current.CancellationToken)
+            .DescendantNodes()
+            .OfType<ClassDeclarationSyntax>()
+            .Single();
 
         // Act
-        var entries = ErrorCatalogModelBuilder.Build(compilation, CancellationToken.None);
+        var entries = ErrorCatalogModelBuilder.Build(
+            classDeclaration,
+            compilation.GetSemanticModel(syntaxTree),
+            TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(2, entries.Length);
@@ -32,13 +65,11 @@ public sealed class GeneratorImplementationTests
         var invalidEntry = Assert.Single(entries, static entry => entry.MemberName == "MissingName");
         Assert.Equal("demo-usererrors-missingname", invalidEntry.Identifier);
         Assert.Equal("Invalid", invalidEntry.Status);
-        Assert.Equal(400, invalidEntry.HttpStatusCode);
         Assert.Equal("invalid", invalidEntry.Code);
         Assert.Equal("Name is required.", invalidEntry.DetailTemplate);
 
         var errorEntry = Assert.Single(entries, static entry => entry.MemberName == "SaveFailed");
         Assert.Equal("Error", errorEntry.Status);
-        Assert.Equal(422, errorEntry.HttpStatusCode);
         Assert.Equal("error", errorEntry.Code);
     }
 
@@ -48,18 +79,15 @@ public sealed class GeneratorImplementationTests
         // Arrange
         var entries = new[]
         {
-            new ErrorCatalogEntryModel
-            {
-                Identifier = "demo-usererrors-missingname",
-                DocumentationPath = "docs/errors/README.md",
-                ProviderType = "Demo.UserErrors",
-                MemberName = "MissingName",
-                Status = "Invalid",
-                HttpStatusCode = 400,
-                Code = "invalid",
-                DetailTemplate = "Name is required.",
-                Summary = "Name is required."
-            }
+            new ErrorCatalogEntryModel(
+                "demo-usererrors-missingname",
+                "docs/errors/README.md",
+                "Demo.UserErrors",
+                "MissingName",
+                "Invalid",
+                "invalid",
+                "Name is required.",
+                "Name is required.")
         };
 
         // Act

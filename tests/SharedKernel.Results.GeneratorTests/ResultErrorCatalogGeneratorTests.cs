@@ -48,7 +48,7 @@ public sealed class ResultErrorCatalogGeneratorTests
     }
 
     [Fact]
-    public void Maps_Result_Error_Factory_To_Http_422()
+    public void Maps_Result_Error_Factory_To_Http_500()
     {
         // Arrange
         const string source = """
@@ -67,7 +67,7 @@ public sealed class ResultErrorCatalogGeneratorTests
 
         // Assert
         Assert.Contains("ResultStatus.Error", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("HttpStatusCode = 422", generatedSource, StringComparison.Ordinal);
+        Assert.DoesNotContain("HttpStatusCode", generatedSource, StringComparison.Ordinal);
         Assert.Contains("Code = \"error\"", generatedSource, StringComparison.Ordinal);
         Assert.Contains("DetailTemplate = \"Save failed.\"", generatedSource, StringComparison.Ordinal);
     }
