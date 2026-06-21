@@ -12,13 +12,13 @@ public interface IEventStore
         StreamId streamId,
         ExpectedStreamRevision expectedRevision,
         IReadOnlyCollection<object> events,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct);
 
     /// <summary>
     /// Loads events from a stream.
     /// </summary>
     ValueTask<IReadOnlyCollection<EventEnvelope>> Load(
         StreamId streamId,
-        StreamRevision? afterRevision = null,
-        CancellationToken cancellationToken = default);
+        CancellationToken ct,
+        StreamRevision? afterRevision = null);
 }

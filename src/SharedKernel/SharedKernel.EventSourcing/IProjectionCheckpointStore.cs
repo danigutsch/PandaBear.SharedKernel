@@ -8,10 +8,10 @@ public interface IProjectionCheckpointStore
     /// <summary>
     /// Gets a projection checkpoint by projection name.
     /// </summary>
-    ValueTask<ProjectionCheckpoint?> Get(string projectionName, CancellationToken cancellationToken = default);
+    ValueTask<ProjectionCheckpoint?> Get(string projectionName, CancellationToken ct);
 
     /// <summary>
     /// Saves a projection checkpoint.
     /// </summary>
-    ValueTask Save(ProjectionCheckpoint checkpoint, CancellationToken cancellationToken = default);
+    ValueTask Save(ProjectionCheckpoint checkpoint, CancellationToken ct);
 }

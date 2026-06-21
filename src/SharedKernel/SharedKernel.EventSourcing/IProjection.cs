@@ -13,5 +13,5 @@ public interface IProjection
     /// <summary>
     /// Applies one event envelope to the projection.
     /// </summary>
-    ValueTask Apply(EventEnvelope envelope, CancellationToken cancellationToken = default);
+    ValueTask Apply(EventEnvelope envelope, CancellationToken ct);
 }
