@@ -7,28 +7,34 @@ namespace SharedKernel.Idempotency;
 /// </summary>
 public readonly partial record struct IdempotencyKey
 {
+    private readonly string? normalizedValue;
+
     private IdempotencyKey(string value)
     {
-        Value = value;
+        normalizedValue = value;
     }
 
     /// <summary>
     /// Gets the normalized key value.
     /// </summary>
-    public string Value { get; }
+    /// <exception cref="InvalidOperationException">Thrown when the key was not created through <see cref="From" />.</exception>
+    public string Value => normalizedValue ?? throw new InvalidOperationException(
+        "IdempotencyKey must be created through IdempotencyKey.From before it can be used.");
 
     /// <summary>
     /// Creates an idempotency key from an opaque, high-entropy value.
     /// </summary>
     /// <param name="value">The key value. UUIDs and random token strings are recommended.</param>
     /// <returns>The created idempotency key.</returns>
-    /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="value" /> is null, empty, whitespace, longer than 255 characters, or contains
-    /// characters outside the supported token format.
-    /// </exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is empty, whitespace, longer than 255 characters, or contains characters outside the supported token format.</exception>
     public static IdempotencyKey From(string? value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value);
+        ArgumentNullException.ThrowIfNull(value);
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException("Idempotency keys cannot be empty or whitespace.", nameof(value));
+        }
 
         var trimmedValue = value.Trim();
         if (!KeyFormatRegex().IsMatch(trimmedValue))

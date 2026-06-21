@@ -26,6 +26,17 @@ public sealed class IdempotencyValueTests
         Assert.Throws<ArgumentNullException>(() => IdempotencyKey.From(value));
     }
 
+    [Fact]
+    public void Key_Default_Instance_Rejects_Value_Access()
+    {
+        // Arrange
+        var key = default(IdempotencyKey);
+
+        // Act, Assert
+        Assert.Throws<InvalidOperationException>(() => key.Value);
+        Assert.Throws<InvalidOperationException>(() => key.ToString());
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -81,6 +92,36 @@ public sealed class IdempotencyValueTests
         // Assert
         Assert.Equal("inbox:tour-created", scope.Value);
         Assert.Equal("inbox:tour-created", scope.ToString());
+    }
+
+    [Fact]
+    public void Scope_From_Rejects_Null_Value()
+    {
+        // Arrange
+        string? value = null;
+
+        // Act, Assert
+        Assert.Throws<ArgumentNullException>(() => IdempotencyScope.From(value));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Scope_From_Rejects_Blank_Values(string value)
+    {
+        // Arrange, Act, Assert
+        Assert.Throws<ArgumentException>(() => IdempotencyScope.From(value));
+    }
+
+    [Fact]
+    public void Scope_Default_Instance_Rejects_Value_Access()
+    {
+        // Arrange
+        var scope = default(IdempotencyScope);
+
+        // Act, Assert
+        Assert.Throws<InvalidOperationException>(() => scope.Value);
+        Assert.Throws<InvalidOperationException>(() => scope.ToString());
     }
 
     [Fact]

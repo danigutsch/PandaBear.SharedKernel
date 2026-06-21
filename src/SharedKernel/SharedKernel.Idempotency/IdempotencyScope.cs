@@ -5,25 +5,34 @@ namespace SharedKernel.Idempotency;
 /// </summary>
 public readonly record struct IdempotencyScope
 {
+    private readonly string? normalizedValue;
+
     private IdempotencyScope(string value)
     {
-        Value = value;
+        normalizedValue = value;
     }
 
     /// <summary>
     /// Gets the normalized scope value.
     /// </summary>
-    public string Value { get; }
+    /// <exception cref="InvalidOperationException">Thrown when the scope was not created through <see cref="From" />.</exception>
+    public string Value => normalizedValue ?? throw new InvalidOperationException(
+        "IdempotencyScope must be created through IdempotencyScope.From before it can be used.");
 
     /// <summary>
     /// Creates an idempotency scope from a non-empty value.
     /// </summary>
     /// <param name="value">The scope value.</param>
     /// <returns>The created idempotency scope.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is null, empty, or whitespace.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="value" /> is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="value" /> is empty or whitespace.</exception>
     public static IdempotencyScope From(string? value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value);
+        ArgumentNullException.ThrowIfNull(value);
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new ArgumentException("Idempotency scopes cannot be empty or whitespace.", nameof(value));
+        }
 
         return new IdempotencyScope(value.Trim());
     }
