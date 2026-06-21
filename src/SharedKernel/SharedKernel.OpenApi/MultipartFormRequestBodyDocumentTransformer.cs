@@ -71,7 +71,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformer : IOpenApiDocume
 
                 if (RequiresMultipartSchemaNormalization(schema))
                 {
-                    await NormalizeMalformedMultipartSchema(schema, formParameters, context, cancellationToken);
+                    await NormalizeMalformedMultipartSchema(schema, formParameters, context, cancellationToken).ConfigureAwait(false);
                     continue;
                 }
 
@@ -100,7 +100,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformer : IOpenApiDocume
                 continue;
             }
 
-            var parameterSchema = await context.GetOrCreateSchemaAsync(parameter.Type, parameter, cancellationToken);
+            var parameterSchema = await context.GetOrCreateSchemaAsync(parameter.Type, parameter, cancellationToken).ConfigureAwait(false);
             var parameterContainer = new OpenApiSchema
             {
                 Type = JsonSchemaType.Object,
