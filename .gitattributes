@@ -1,6 +1,6 @@
-# Repository line-ending policy. Git stores and checks out text as LF for
-# deterministic cross-platform diffs, independent of user autocrlf.
-* text=auto
+# Repository line-ending policy. Git stores and checks out detected text files
+# as LF for deterministic cross-platform diffs, independent of user autocrlf.
+* text=auto eol=lf
 
 # Text source, build, docs, and data files use LF.
 *.cs text eol=lf diff=csharp
