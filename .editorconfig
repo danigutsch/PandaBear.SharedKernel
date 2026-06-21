@@ -110,7 +110,7 @@ csharp_style_prefer_switch_expression = true:warning
 csharp_style_prefer_not_pattern = true:warning
 csharp_style_prefer_extended_property_pattern = true:warning
 dotnet_diagnostic.CA1812.severity = silent
-dotnet_diagnostic.CA1716.severity = none
+dotnet_diagnostic.CA1716.severity = warning
 dotnet_diagnostic.CA1062.severity = error
 dotnet_diagnostic.CA1000.severity = warning
 dotnet_diagnostic.CA1040.severity = warning
@@ -211,9 +211,49 @@ dotnet_diagnostic.CS0618.severity = none
 [tests/ViajantesTurismo.Admin.Tests.Shared/Integration/Helpers/ApiTestExtensions.cs]
 dotnet_diagnostic.CA1034.severity = none
 
-# Test helpers and test cases intentionally favor readable builders/overloads.
-# Keep S107 disabled across the tests tree.
+# CA1716 flags established C# domain terms and package contracts that are expensive to rename
+# across public API consumers. Owner: package/domain maintainers. Revisit on the next major API break.
+[src/SharedKernel/SharedKernel.Idempotency/IIdempotencyStore.cs]
+dotnet_diagnostic.CA1716.severity = none
+
+[src/SharedKernel/SharedKernel.Mediator.Abstractions/IPipelineBehavior.cs]
+dotnet_diagnostic.CA1716.severity = none
+
+[src/SharedKernel/SharedKernel.Mediator.Abstractions/IStreamPipelineBehavior.cs]
+dotnet_diagnostic.CA1716.severity = none
+
+[src/SharedKernel/SharedKernel.Results/Option*.cs]
+dotnet_diagnostic.CA1716.severity = none
+
+[src/ViajantesTurismo.Admin.Domain/Shared/*.cs]
+dotnet_diagnostic.CA1716.severity = none
+
+[src/ViajantesTurismo.Management.Web/Components/Shared/*.cs]
+dotnet_diagnostic.CA1716.severity = none
+
+# Blazor component parameters are public and require public model types. Owner: Management.Web.
+# Remove when these components no longer expose the models through public [Parameter] surfaces.
+[src/ViajantesTurismo.Management.Web/Components/Shared/BookingFormModel.cs]
+dotnet_diagnostic.CA1515.severity = none
+
+[src/ViajantesTurismo.Management.Web/Models/PaymentFormModel.cs]
+dotnet_diagnostic.CA1515.severity = none
+
+[src/ViajantesTurismo.Management.Web/Services/CountryService.cs]
+dotnet_diagnostic.CA1515.severity = none
+
+[src/ViajantesTurismo.Management.Web/Services/CustomerImportHeaderMatcher.cs]
+dotnet_diagnostic.CA1515.severity = none
+
+[src/ViajantesTurismo.Management.Web/Components/Pages/Customers/ImportCustomersDuplicateResolutionItem.cs]
+dotnet_diagnostic.CA1515.severity = none
+
+# Test projects are not public API, and test names/namespaces intentionally use readable terms.
+# Test helpers and test cases also intentionally favor readable builders/overloads.
 [tests/**.cs]
+dotnet_diagnostic.CA1515.severity = none
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1716.severity = none
 dotnet_diagnostic.S107.severity = none
 dotnet_diagnostic.SKSTYLE004.severity = none
 
