@@ -117,8 +117,12 @@ dotnet_diagnostic.CA1040.severity = warning
 dotnet_diagnostic.CA1303.severity = warning
 dotnet_diagnostic.CA1508.severity = warning
 dotnet_diagnostic.CA1515.severity = warning
+dotnet_diagnostic.CA1822.severity = warning
 dotnet_diagnostic.S2326.severity = warning
 dotnet_diagnostic.S2094.severity = warning
+dotnet_diagnostic.S1186.severity = warning
+dotnet_diagnostic.S4136.severity = warning
+dotnet_diagnostic.S4144.severity = warning
 dotnet_diagnostic.S4035.severity = warning
 dotnet_diagnostic.SKSTYLE001.severity = suggestion
 dotnet_diagnostic.SKSTYLE002.severity = suggestion
@@ -218,15 +222,6 @@ dotnet_diagnostic.SKSTYLE004.severity = none
 
 [src/ViajantesTurismo.MigrationService/SeederWorker.cs]
 dotnet_diagnostic.SKSTYLE004.severity = none
-
-# Behavior step definitions intentionally use repeated binding shapes and framework-owned
-# binding entrypoints that would otherwise force low-value null-guard boilerplate. Keep these
-# Sonar rules and the narrow CA1062 exception scoped to step files only.
-[tests/ViajantesTurismo.Admin.BehaviorTests/Steps/**/*.cs]
-dotnet_diagnostic.CA1062.severity = none
-dotnet_diagnostic.S1186.severity = none
-dotnet_diagnostic.S4136.severity = none
-dotnet_diagnostic.S4144.severity = none
 
 # SharedKernel style analyzer defaults
 [*]
