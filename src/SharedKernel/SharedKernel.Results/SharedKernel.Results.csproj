@@ -10,6 +10,8 @@
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageTags>results;shared-kernel;functional;dotnet</PackageTags>
+        <ResultsSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' != 'true'">..\SharedKernel.Results.SourceGenerator\bin\$(Configuration)\netstandard2.0\SharedKernel.Results.SourceGenerator.dll</ResultsSourceGeneratorPackageFile>
+        <ResultsSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' == 'true'">$(MSBuildThisFileDirectory)..\..\..\.build\bin\SharedKernel.Results.SourceGenerator\$(Configuration)\netstandard2.0\SharedKernel.Results.SourceGenerator.dll</ResultsSourceGeneratorPackageFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,7 +19,19 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Results.SourceGenerator\SharedKernel.Results.SourceGenerator.csproj"
+            OutputItemType="Analyzer"
+            ReferenceOutputAssembly="false"
+            PrivateAssets="all"
+            IsAspireProjectResource="false" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
+        <None Include="$(ResultsSourceGeneratorPackageFile)"
+            Pack="true"
+            PackagePath="analyzers/dotnet/cs"
+            Visible="false" />
     </ItemGroup>
 
 </Project>
