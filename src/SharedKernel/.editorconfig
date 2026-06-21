@@ -1,0 +1,37 @@
+# SharedKernel analyzer hardening exceptions.
+#
+# These are intentional public API shapes. Remove these entries only with a
+# breaking API redesign that replaces the established Option<T>/Result<T>
+# factories or mediator marker contracts.
+
+[SharedKernel.Results/OptionOfT.cs]
+dotnet_diagnostic.CA1000.severity = none
+
+[SharedKernel.Results/ResultOfT.cs]
+dotnet_diagnostic.CA1000.severity = none
+
+[SharedKernel.Mediator.Abstractions/ICommand.cs]
+dotnet_diagnostic.CA1040.severity = none
+
+[SharedKernel.Mediator.Abstractions/ICommandOfResponse.cs]
+dotnet_diagnostic.CA1040.severity = none
+
+[SharedKernel.Mediator.Abstractions/INotification.cs]
+dotnet_diagnostic.CA1040.severity = none
+
+[SharedKernel.Mediator.Abstractions/IQuery.cs]
+dotnet_diagnostic.CA1040.severity = none
+
+[SharedKernel.Mediator.Abstractions/IRequest.cs]
+dotnet_diagnostic.CA1040.severity = none
+dotnet_diagnostic.S2326.severity = none
+
+[SharedKernel.Mediator.Abstractions/IStreamCommandOfResponse.cs]
+dotnet_diagnostic.CA1040.severity = none
+
+[SharedKernel.Mediator.Abstractions/IStreamQueryOfResponse.cs]
+dotnet_diagnostic.CA1040.severity = none
+
+[SharedKernel.Mediator.Abstractions/IStreamRequest.cs]
+dotnet_diagnostic.CA1040.severity = none
+dotnet_diagnostic.S2326.severity = none

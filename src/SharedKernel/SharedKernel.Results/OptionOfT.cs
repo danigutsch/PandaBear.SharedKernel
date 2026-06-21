@@ -6,8 +6,6 @@ namespace SharedKernel.Results;
 /// Represents an optional non-null value that may or may not be present.
 /// </summary>
 /// <typeparam name="T">The wrapped non-null type.</typeparam>
-[SuppressMessage("Design", "CA1000:Do not declare static members on generic types",
-    Justification = "Compatibility factories preserve the established Option<T> call shape during migration to SharedKernel.Functional.")]
 public readonly struct Option<T> : IEquatable<Option<T>>
     where T : notnull
 {
