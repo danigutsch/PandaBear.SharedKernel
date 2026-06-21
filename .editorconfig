@@ -279,6 +279,25 @@ dotnet_diagnostic.CA1716.severity = none
 [src/ViajantesTurismo.Management.Web/Components/Shared/*.cs]
 dotnet_diagnostic.CA1716.severity = none
 
+# SharedKernel DDD contracts intentionally use marker interfaces and conventional handler names.
+# Owner: SharedKernel maintainers. Remove if these contracts gain behavior or are renamed in a major version.
+[src/SharedKernel/SharedKernel.Domain/IAggregateRoot.cs]
+dotnet_diagnostic.CA1040.severity = none
+
+[src/SharedKernel/SharedKernel.Domain/IDomainEvent.cs]
+dotnet_diagnostic.CA1040.severity = none
+
+[src/SharedKernel/SharedKernel.DomainEvents/IDomainEventHandler.cs]
+dotnet_diagnostic.CA1711.severity = none
+
+[src/SharedKernel/SharedKernel.IntegrationEvents/IIntegrationEventHandler.cs]
+dotnet_diagnostic.CA1711.severity = none
+
+# ValueObject is an abstract DDD base class for value-based equality.
+# Owner: SharedKernel maintainers. Remove if value objects move to sealed record-style contracts.
+[src/SharedKernel/SharedKernel.BuildingBlocks/ValueObject.cs]
+dotnet_diagnostic.S4035.severity = none
+
 # Blazor component parameters are public and require public model types. Owner: Management.Web.
 # Remove when these components no longer expose the models through public [Parameter] surfaces.
 [src/ViajantesTurismo.Management.Web/Components/Shared/BookingFormModel.cs]
