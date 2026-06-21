@@ -39,6 +39,8 @@ public abstract class EventSourcedAggregateRoot<TId>
 
         foreach (var @event in events)
         {
+            ArgumentNullException.ThrowIfNull(@event);
+
             ApplyEvent(@event);
             Version++;
         }

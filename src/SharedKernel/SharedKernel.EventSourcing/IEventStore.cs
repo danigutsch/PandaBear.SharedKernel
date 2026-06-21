@@ -19,6 +19,6 @@ public interface IEventStore
     /// </summary>
     ValueTask<IReadOnlyCollection<EventEnvelope>> Load(
         StreamId streamId,
-        CancellationToken ct,
-        StreamRevision? afterRevision = null);
+        StreamRevision? afterRevision,
+        CancellationToken ct);
 }

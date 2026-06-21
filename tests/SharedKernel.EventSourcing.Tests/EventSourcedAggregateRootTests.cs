@@ -23,6 +23,19 @@ public sealed class EventSourcedAggregateRootTests
     }
 
     [Fact]
+    public void Replay_Rejects_Null_Event_Without_Advancing_Version()
+    {
+        // Arrange
+        var aggregate = new TestAggregate("tour-1");
+        var events = new object?[] { null }.Cast<object>();
+
+        // Act, Assert
+        Assert.Throws<ArgumentNullException>(() => aggregate.Replay(events));
+        Assert.Equal(0, aggregate.Version);
+        Assert.Empty(aggregate.GetUncommittedEvents());
+    }
+
+    [Fact]
     public void AddEvent_Applies_And_Tracks_Uncommitted_Event()
     {
         // Arrange

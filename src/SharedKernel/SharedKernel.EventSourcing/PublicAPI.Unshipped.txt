@@ -28,7 +28,7 @@ SharedKernel.EventSourcing.ExpectedStreamRevision.RequiresEmptyStream.get -> boo
 SharedKernel.EventSourcing.ExpectedStreamRevision.Value.get -> long?
 SharedKernel.EventSourcing.IEventStore
 SharedKernel.EventSourcing.IEventStore.Append(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.EventSourcing.IEventStore.Load(SharedKernel.EventSourcing.StreamId streamId, System.Threading.CancellationToken ct, SharedKernel.EventSourcing.StreamRevision? afterRevision = null) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
+SharedKernel.EventSourcing.IEventStore.Load(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.StreamRevision? afterRevision, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
 SharedKernel.EventSourcing.IProjection
 SharedKernel.EventSourcing.IProjection.Apply(SharedKernel.EventSourcing.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.EventSourcing.IProjection.Name.get -> string!
