@@ -38,6 +38,21 @@ public sealed class EventSourcedAggregateRootTests
         Assert.Equal(1, aggregate.Version);
     }
 
+    [Fact]
+    public void ClearUncommittedEvents_Removes_Tracked_Events_Without_Changing_Version()
+    {
+        // Arrange
+        var aggregate = new TestAggregate("tour-1");
+        aggregate.ChangeName("Rota Romantica");
+
+        // Act
+        aggregate.ClearUncommittedEvents();
+
+        // Assert
+        Assert.Empty(aggregate.GetUncommittedEvents());
+        Assert.Equal(1, aggregate.Version);
+    }
+
     private sealed record NameChanged(string Name);
 
     private sealed class TestAggregate(string id) : EventSourcedAggregateRoot<string>

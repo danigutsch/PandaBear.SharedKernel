@@ -1,0 +1,55 @@
+#nullable enable
+SharedKernel.EventSourcing.EventEnvelope
+SharedKernel.EventSourcing.EventEnvelope.Data.get -> object!
+SharedKernel.EventSourcing.EventEnvelope.Data.init -> void
+SharedKernel.EventSourcing.EventEnvelope.EventEnvelope(SharedKernel.EventSourcing.StreamId StreamId, SharedKernel.EventSourcing.StreamRevision Revision, System.Guid EventId, string! EventType, object! Data, System.DateTimeOffset RecordedAt) -> void
+SharedKernel.EventSourcing.EventEnvelope.EventId.get -> System.Guid
+SharedKernel.EventSourcing.EventEnvelope.EventId.init -> void
+SharedKernel.EventSourcing.EventEnvelope.EventType.get -> string!
+SharedKernel.EventSourcing.EventEnvelope.EventType.init -> void
+SharedKernel.EventSourcing.EventEnvelope.RecordedAt.get -> System.DateTimeOffset
+SharedKernel.EventSourcing.EventEnvelope.RecordedAt.init -> void
+SharedKernel.EventSourcing.EventEnvelope.Revision.get -> SharedKernel.EventSourcing.StreamRevision
+SharedKernel.EventSourcing.EventEnvelope.Revision.init -> void
+SharedKernel.EventSourcing.EventEnvelope.StreamId.get -> SharedKernel.EventSourcing.StreamId
+SharedKernel.EventSourcing.EventEnvelope.StreamId.init -> void
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.ClearUncommittedEvents() -> void
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.EventSourcedAggregateRoot() -> void
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.GetUncommittedEvents() -> System.Collections.Generic.IReadOnlyCollection<object!>!
+abstract SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.Id.get -> TId
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.Replay(System.Collections.Generic.IEnumerable<object!>! events) -> void
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.Version.get -> long
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.AddEvent(object! event) -> void
+abstract SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.ApplyEvent(object! event) -> void
+SharedKernel.EventSourcing.ExpectedStreamRevision
+SharedKernel.EventSourcing.ExpectedStreamRevision.ExpectedStreamRevision() -> void
+SharedKernel.EventSourcing.ExpectedStreamRevision.RequiresEmptyStream.get -> bool
+SharedKernel.EventSourcing.ExpectedStreamRevision.Value.get -> long?
+SharedKernel.EventSourcing.IEventStore
+SharedKernel.EventSourcing.IEventStore.Append(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.EventSourcing.IEventStore.Load(SharedKernel.EventSourcing.StreamId streamId, System.Threading.CancellationToken ct, SharedKernel.EventSourcing.StreamRevision? afterRevision = null) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
+SharedKernel.EventSourcing.IProjection
+SharedKernel.EventSourcing.IProjection.Apply(SharedKernel.EventSourcing.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.EventSourcing.IProjection.Name.get -> string!
+SharedKernel.EventSourcing.IProjectionCheckpointStore
+SharedKernel.EventSourcing.IProjectionCheckpointStore.Get(string! projectionName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.EventSourcing.ProjectionCheckpoint?>
+SharedKernel.EventSourcing.IProjectionCheckpointStore.Save(SharedKernel.EventSourcing.ProjectionCheckpoint! checkpoint, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.EventSourcing.ProjectionCheckpoint
+SharedKernel.EventSourcing.ProjectionCheckpoint.Position.get -> long
+SharedKernel.EventSourcing.ProjectionCheckpoint.Position.init -> void
+SharedKernel.EventSourcing.ProjectionCheckpoint.ProjectionCheckpoint(string! ProjectionName, long Position) -> void
+SharedKernel.EventSourcing.ProjectionCheckpoint.ProjectionName.get -> string!
+SharedKernel.EventSourcing.ProjectionCheckpoint.ProjectionName.init -> void
+SharedKernel.EventSourcing.StreamId
+static SharedKernel.EventSourcing.StreamId.From(string? value) -> SharedKernel.EventSourcing.StreamId
+SharedKernel.EventSourcing.StreamId.StreamId() -> void
+override SharedKernel.EventSourcing.StreamId.ToString() -> string!
+SharedKernel.EventSourcing.StreamId.Value.get -> string!
+SharedKernel.EventSourcing.StreamRevision
+static SharedKernel.EventSourcing.StreamRevision.From(long value) -> SharedKernel.EventSourcing.StreamRevision
+SharedKernel.EventSourcing.StreamRevision.StreamRevision() -> void
+SharedKernel.EventSourcing.StreamRevision.Value.get -> long
+static SharedKernel.EventSourcing.ExpectedStreamRevision.Any.get -> SharedKernel.EventSourcing.ExpectedStreamRevision
+static SharedKernel.EventSourcing.ExpectedStreamRevision.From(SharedKernel.EventSourcing.StreamRevision value) -> SharedKernel.EventSourcing.ExpectedStreamRevision
+static SharedKernel.EventSourcing.ExpectedStreamRevision.NoStream.get -> SharedKernel.EventSourcing.ExpectedStreamRevision
