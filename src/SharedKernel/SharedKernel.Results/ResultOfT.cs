@@ -6,8 +6,6 @@ namespace SharedKernel.Results;
 /// Represents the result of an operation that can succeed with a value or fail with an error.
 /// </summary>
 /// <typeparam name="T">The success value type.</typeparam>
-[SuppressMessage("Design", "CA1000:Do not declare static members on generic types",
-    Justification = "Compatibility factories preserve the established Result<T> call shape during migration to SharedKernel.Functional.")]
 public readonly struct Result<T> : IEquatable<Result<T>>
     where T : notnull
 {
