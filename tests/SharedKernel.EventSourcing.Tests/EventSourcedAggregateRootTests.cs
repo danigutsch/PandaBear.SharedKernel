@@ -76,9 +76,9 @@ public sealed class EventSourcedAggregateRootTests
 
         public void ChangeName(string name) => AddEvent(new NameChanged(name));
 
-        protected override void ApplyEvent(object @event)
+        protected override void ApplyEvent(object domainEvent)
         {
-            if (@event is NameChanged nameChanged)
+            if (domainEvent is NameChanged nameChanged)
             {
                 Name = nameChanged.Name;
             }

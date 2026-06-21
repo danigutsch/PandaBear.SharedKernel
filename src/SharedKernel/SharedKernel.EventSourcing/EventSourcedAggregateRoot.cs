@@ -37,11 +37,11 @@ public abstract class EventSourcedAggregateRoot<TId>
     {
         ArgumentNullException.ThrowIfNull(events);
 
-        foreach (var @event in events)
+        foreach (var domainEvent in events)
         {
-            ArgumentNullException.ThrowIfNull(@event);
+            ArgumentNullException.ThrowIfNull(domainEvent);
 
-            ApplyEvent(@event);
+            ApplyEvent(domainEvent);
             Version++;
         }
     }
@@ -49,19 +49,19 @@ public abstract class EventSourcedAggregateRoot<TId>
     /// <summary>
     /// Applies and tracks a new event.
     /// </summary>
-    /// <param name="event">The event to apply.</param>
-    protected void AddEvent(object @event)
+    /// <param name="domainEvent">The event to apply.</param>
+    protected void AddEvent(object domainEvent)
     {
-        ArgumentNullException.ThrowIfNull(@event);
+        ArgumentNullException.ThrowIfNull(domainEvent);
 
-        ApplyEvent(@event);
+        ApplyEvent(domainEvent);
         Version++;
-        uncommittedEvents.Add(@event);
+        uncommittedEvents.Add(domainEvent);
     }
 
     /// <summary>
     /// Applies an event to aggregate state.
     /// </summary>
-    /// <param name="event">The event to apply.</param>
-    protected abstract void ApplyEvent(object @event);
+    /// <param name="domainEvent">The event to apply.</param>
+    protected abstract void ApplyEvent(object domainEvent);
 }

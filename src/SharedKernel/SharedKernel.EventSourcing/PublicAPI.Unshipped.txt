@@ -20,8 +20,8 @@ SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.GetUncommittedEvents()
 abstract SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.Id.get -> TId
 SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.Replay(System.Collections.Generic.IEnumerable<object!>! events) -> void
 SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.Version.get -> long
-SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.AddEvent(object! event) -> void
-abstract SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.ApplyEvent(object! event) -> void
+SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.AddEvent(object! domainEvent) -> void
+abstract SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.ApplyEvent(object! domainEvent) -> void
 SharedKernel.EventSourcing.ExpectedStreamRevision
 SharedKernel.EventSourcing.ExpectedStreamRevision.ExpectedStreamRevision() -> void
 SharedKernel.EventSourcing.ExpectedStreamRevision.RequiresEmptyStream.get -> bool
@@ -33,7 +33,7 @@ SharedKernel.EventSourcing.IProjection
 SharedKernel.EventSourcing.IProjection.Apply(SharedKernel.EventSourcing.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.EventSourcing.IProjection.Name.get -> string!
 SharedKernel.EventSourcing.IProjectionCheckpointStore
-SharedKernel.EventSourcing.IProjectionCheckpointStore.Get(string! projectionName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.EventSourcing.ProjectionCheckpoint?>
+SharedKernel.EventSourcing.IProjectionCheckpointStore.GetCheckpoint(string! projectionName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.EventSourcing.ProjectionCheckpoint?>
 SharedKernel.EventSourcing.IProjectionCheckpointStore.Save(SharedKernel.EventSourcing.ProjectionCheckpoint! checkpoint, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.EventSourcing.ProjectionCheckpoint
 SharedKernel.EventSourcing.ProjectionCheckpoint.Position.get -> long
