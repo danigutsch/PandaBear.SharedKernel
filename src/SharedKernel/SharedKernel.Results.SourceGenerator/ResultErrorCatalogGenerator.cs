@@ -37,7 +37,7 @@ public sealed class ResultErrorCatalogGenerator : IIncrementalGenerator
             });
     }
 
-    private static string SanitizeProviderTypeName(string assemblyName)
+    internal static string SanitizeProviderTypeName(string assemblyName)
     {
         var builder = new StringBuilder("Generated");
 
