@@ -50,7 +50,7 @@ internal static class ErrorCatalogEmitter
         builder.AppendLine("    /// <summary>");
         builder.AppendLine("    /// Gets the generated error-catalog entries for this assembly.");
         builder.AppendLine("    /// </summary>");
-        builder.AppendLine("    public IReadOnlyList<ResultErrorCatalogEntry> Entries => ResultErrorCatalogGenerated.generatedEntries;");
+        builder.AppendLine("    public global::System.Collections.Generic.IReadOnlyList<ResultErrorCatalogEntry> Entries => ResultErrorCatalogGenerated.generatedEntries;");
         builder.AppendLine("}");
 
         return builder.ToString();
