@@ -111,6 +111,8 @@ csharp_style_prefer_not_pattern = true:warning
 csharp_style_prefer_extended_property_pattern = true:warning
 dotnet_diagnostic.CA1812.severity = silent
 dotnet_diagnostic.CA1716.severity = warning
+# Public null-guard policy: production public APIs validate caller-provided arguments.
+# Keep exceptions scoped to generated EF artifacts and framework-owned test bindings only.
 dotnet_diagnostic.CA1062.severity = error
 dotnet_diagnostic.CA1000.severity = warning
 dotnet_diagnostic.CA1002.severity = warning
@@ -195,6 +197,7 @@ insert_final_newline = true
 # EF migrations are generated infrastructure artifacts. Owner: Infrastructure maintainers.
 # Keep generated-shape exceptions here instead of editing migration files by hand; remove a rule
 # only when EF tooling stops generating that diagnostic for new migrations and snapshots.
+# CA1062 is included because EF-generated migration operations do not model caller-facing APIs.
 [**/Migrations/*.cs]
 dotnet_diagnostic.CA1002.severity = none
 dotnet_diagnostic.CA1062.severity = none
