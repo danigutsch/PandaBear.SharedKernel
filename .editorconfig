@@ -69,7 +69,7 @@ dotnet_style_prefer_inferred_tuple_names = true:suggestion
 dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
 dotnet_style_prefer_compound_assignment = true:warning
 dotnet_style_prefer_simplified_interpolation = true:warning
-dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA2007.severity = warning
 dotnet_code_quality.CA2000.dispose_ownership_transfer_at_method_call = true
 dotnet_style_predefined_type_for_locals_parameters_members = true:silent
 
@@ -114,6 +114,7 @@ dotnet_diagnostic.CA1716.severity = warning
 dotnet_diagnostic.CA1062.severity = error
 dotnet_diagnostic.CA1000.severity = warning
 dotnet_diagnostic.CA1002.severity = warning
+dotnet_diagnostic.CA1034.severity = warning
 dotnet_diagnostic.CA1040.severity = warning
 dotnet_diagnostic.CA1303.severity = warning
 dotnet_diagnostic.CA1508.severity = warning
@@ -122,6 +123,8 @@ dotnet_diagnostic.CA1711.severity = warning
 dotnet_diagnostic.CA1814.severity = warning
 dotnet_diagnostic.CA1822.severity = warning
 dotnet_diagnostic.CA1852.severity = warning
+dotnet_diagnostic.CA5394.severity = warning
+dotnet_diagnostic.CS1591.severity = warning
 dotnet_diagnostic.IDE0161.severity = warning
 dotnet_diagnostic.S2326.severity = warning
 dotnet_diagnostic.S2094.severity = warning
@@ -218,6 +221,41 @@ dotnet_diagnostic.CS0618.severity = none
 [tests/ViajantesTurismo.Admin.Tests.Shared/Integration/Helpers/ApiTestExtensions.cs]
 dotnet_diagnostic.CA1034.severity = none
 
+# API and Blazor app entry projects expose framework-discovered surfaces that are not package APIs.
+# Owner: API/Web maintainers. Remove when public framework entrypoints are fully documented or internalized.
+[src/ViajantesTurismo.Admin.ApiService/**.cs]
+dotnet_diagnostic.CS1591.severity = none
+
+[src/ViajantesTurismo.Management.Web/**.cs]
+dotnet_diagnostic.CS1591.severity = none
+
+# CA2007 is valuable for reusable libraries, but application/host code intentionally keeps
+# framework-context awaits readable. Owner: application maintainers. Remove scope entries as
+# app layers adopt an explicit ConfigureAwait policy.
+[src/ViajantesTurismo.Admin.Application/**.cs]
+dotnet_diagnostic.CA2007.severity = none
+
+[src/ViajantesTurismo.Admin.Infrastructure/**.cs]
+dotnet_diagnostic.CA2007.severity = none
+
+[src/ViajantesTurismo.Admin.ApiService/**.cs]
+dotnet_diagnostic.CA2007.severity = none
+
+[src/ViajantesTurismo.Management.Web/**.cs]
+dotnet_diagnostic.CA2007.severity = none
+
+[src/ViajantesTurismo.Public.Web/**.cs]
+dotnet_diagnostic.CA2007.severity = none
+
+[src/ViajantesTurismo.MigrationService/**.cs]
+dotnet_diagnostic.CA2007.severity = none
+
+[src/ViajantesTurismo.AppHost/**.cs]
+dotnet_diagnostic.CA2007.severity = none
+
+[samples/**.cs]
+dotnet_diagnostic.CA2007.severity = none
+
 # CA1716 flags established C# domain terms and package contracts that are expensive to rename
 # across public API consumers. Owner: package/domain maintainers. Revisit on the next major API break.
 [src/SharedKernel/SharedKernel.Idempotency/IIdempotencyStore.cs]
@@ -258,14 +296,22 @@ dotnet_diagnostic.CA1515.severity = none
 # Test projects are not public API, and test names/namespaces intentionally use readable terms.
 # Test helpers and test cases also intentionally favor readable builders/overloads.
 [tests/**.cs]
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA5394.severity = none
 dotnet_diagnostic.CA1515.severity = none
 dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1716.severity = none
+dotnet_diagnostic.CS1591.severity = none
 dotnet_diagnostic.S107.severity = none
 dotnet_diagnostic.SKSTYLE004.severity = none
 
-# Staged rollout for one-top-level-type-per-file: keep a small explicit exception list for
-# existing grouped-type files until they are intentionally refactored.
+# Reqnroll discovers binding and generated test support types by reflection.
+# Owner: behavior-test maintainers. Remove when unused binding types can be internalized safely.
+[tests/ViajantesTurismo.Admin.BehaviorTests/**.cs]
+dotnet_diagnostic.CA1812.severity = none
+
+# Staged rollout for one-top-level-type-per-file. Owner: style analyzer maintainers.
+# Keep this allowlist small and remove each entry when the grouped file is split intentionally.
 [src/ViajantesTurismo.Admin.Contracts/ImportResultDto.cs]
 dotnet_diagnostic.SKSTYLE004.severity = none
 
