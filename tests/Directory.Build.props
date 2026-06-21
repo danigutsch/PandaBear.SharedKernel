@@ -3,7 +3,7 @@
 
 	<PropertyGroup>
 		<SonarQubeTestProject>true</SonarQubeTestProject>
-		<NoWarn>$(NoWarn)CA1707;CA1515;CA2007;CA5394;CS1591;S107</NoWarn>
+		<NoWarn>$(NoWarn)CA2007;CA5394;CS1591;S107</NoWarn>
 		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
 		<TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
 		<TestingPlatformCaptureOutput>false</TestingPlatformCaptureOutput>
