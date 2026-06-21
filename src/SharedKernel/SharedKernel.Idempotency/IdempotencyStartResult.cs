@@ -3,15 +3,29 @@ namespace SharedKernel.Idempotency;
 /// <summary>
 /// Describes the result of attempting to start an idempotent operation.
 /// </summary>
-/// <param name="Started">A value indicating whether the caller acquired processing ownership.</param>
-/// <param name="ExistingEntry">The existing entry when processing ownership was not acquired.</param>
-public sealed record IdempotencyStartResult(bool Started, IdempotencyEntry? ExistingEntry)
+public sealed record IdempotencyStartResult
 {
+    private IdempotencyStartResult(bool started, IdempotencyEntry? existingEntry)
+    {
+        Started = started;
+        ExistingEntry = existingEntry;
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether the caller acquired processing ownership.
+    /// </summary>
+    public bool Started { get; }
+
+    /// <summary>
+    /// Gets the existing entry when processing ownership was not acquired.
+    /// </summary>
+    public IdempotencyEntry? ExistingEntry { get; }
+
     /// <summary>
     /// Creates a result for a newly started operation.
     /// </summary>
     /// <returns>The started result.</returns>
-    public static IdempotencyStartResult StartedNew() => new(true, null);
+    public static IdempotencyStartResult StartedNew() => new(started: true, existingEntry: null);
 
     /// <summary>
     /// Creates a result for an operation that already has an entry.
@@ -22,6 +36,6 @@ public sealed record IdempotencyStartResult(bool Started, IdempotencyEntry? Exis
     {
         ArgumentNullException.ThrowIfNull(entry);
 
-        return new IdempotencyStartResult(false, entry);
+        return new IdempotencyStartResult(started: false, existingEntry: entry);
     }
 }

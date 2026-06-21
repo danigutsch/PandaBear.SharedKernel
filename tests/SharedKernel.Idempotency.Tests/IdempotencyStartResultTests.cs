@@ -36,4 +36,17 @@ public sealed class IdempotencyStartResultTests
         Assert.False(result.Started);
         Assert.Same(entry, result.ExistingEntry);
     }
+
+    [Fact]
+    public void AlreadyStarted_Rejects_Null_Entry()
+    {
+        // Arrange
+        dynamic? entry = null;
+
+        // Act, Assert
+        Assert.Throws<ArgumentNullException>(() =>
+        {
+            _ = IdempotencyStartResult.AlreadyStarted(entry);
+        });
+    }
 }

@@ -35,11 +35,8 @@ SharedKernel.Idempotency.IdempotencyScope.Value.get -> string!
 SharedKernel.Idempotency.IdempotencyStartResult
 static SharedKernel.Idempotency.IdempotencyStartResult.AlreadyStarted(SharedKernel.Idempotency.IdempotencyEntry! entry) -> SharedKernel.Idempotency.IdempotencyStartResult!
 SharedKernel.Idempotency.IdempotencyStartResult.ExistingEntry.get -> SharedKernel.Idempotency.IdempotencyEntry?
-SharedKernel.Idempotency.IdempotencyStartResult.ExistingEntry.init -> void
-SharedKernel.Idempotency.IdempotencyStartResult.IdempotencyStartResult(bool Started, SharedKernel.Idempotency.IdempotencyEntry? ExistingEntry) -> void
 static SharedKernel.Idempotency.IdempotencyStartResult.StartedNew() -> SharedKernel.Idempotency.IdempotencyStartResult!
 SharedKernel.Idempotency.IdempotencyStartResult.Started.get -> bool
-SharedKernel.Idempotency.IdempotencyStartResult.Started.init -> void
 static SharedKernel.Idempotency.IdempotencyKey.From(string? value) -> SharedKernel.Idempotency.IdempotencyKey
 override SharedKernel.Idempotency.IdempotencyKey.ToString() -> string!
 static SharedKernel.Idempotency.IdempotencyScope.From(string? value) -> SharedKernel.Idempotency.IdempotencyScope
