@@ -113,11 +113,16 @@ dotnet_diagnostic.CA1812.severity = silent
 dotnet_diagnostic.CA1716.severity = warning
 dotnet_diagnostic.CA1062.severity = error
 dotnet_diagnostic.CA1000.severity = warning
+dotnet_diagnostic.CA1002.severity = warning
 dotnet_diagnostic.CA1040.severity = warning
 dotnet_diagnostic.CA1303.severity = warning
 dotnet_diagnostic.CA1508.severity = warning
 dotnet_diagnostic.CA1515.severity = warning
+dotnet_diagnostic.CA1711.severity = warning
+dotnet_diagnostic.CA1814.severity = warning
 dotnet_diagnostic.CA1822.severity = warning
+dotnet_diagnostic.CA1852.severity = warning
+dotnet_diagnostic.IDE0161.severity = warning
 dotnet_diagnostic.S2326.severity = warning
 dotnet_diagnostic.S2094.severity = warning
 dotnet_diagnostic.S1186.severity = warning
@@ -185,6 +190,8 @@ indent_style = space
 insert_final_newline = true
 
 # EF migrations are generated infrastructure artifacts. Owner: Infrastructure maintainers.
+# Keep generated-shape exceptions here instead of editing migration files by hand; remove a rule
+# only when EF tooling stops generating that diagnostic for new migrations and snapshots.
 [**/Migrations/*.cs]
 dotnet_diagnostic.CA1002.severity = none
 dotnet_diagnostic.CA1062.severity = none
