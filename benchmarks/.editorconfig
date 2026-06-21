@@ -1,4 +1,7 @@
 # BenchmarkDotNet requires public benchmark entry types, so CA1515 is noise in benchmark projects.
+# Benchmark methods intentionally keep instance-shaped entrypoints for consistent BenchmarkDotNet
+# discovery and lifecycle behavior. Owner: benchmark maintainers. Remove CA1822 when benchmark
+# methods can be made static without changing benchmark scenario shape or lifecycle semantics.
 [*.cs]
 dotnet_diagnostic.CA1515.severity = none
 dotnet_diagnostic.CA1822.severity = none
