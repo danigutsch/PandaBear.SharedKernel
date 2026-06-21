@@ -26,6 +26,17 @@ public sealed class EventSourcingValueTests
         Assert.Throws<ArgumentNullException>(() => StreamId.From(value));
     }
 
+    [Fact]
+    public void StreamId_Default_Instance_Rejects_Value_Access()
+    {
+        // Arrange
+        var streamId = default(StreamId);
+
+        // Act, Assert
+        Assert.Throws<InvalidOperationException>(() => streamId.Value);
+        Assert.Throws<InvalidOperationException>(() => streamId.ToString());
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -42,6 +53,16 @@ public sealed class EventSourcingValueTests
     {
         // Arrange, Act, Assert
         Assert.Throws<ArgumentOutOfRangeException>(() => StreamRevision.From(value));
+    }
+
+    [Fact]
+    public void StreamRevision_Default_Instance_Rejects_Value_Access()
+    {
+        // Arrange
+        var revision = default(StreamRevision);
+
+        // Act, Assert
+        Assert.Throws<InvalidOperationException>(() => revision.Value);
     }
 
     [Fact]

@@ -5,12 +5,16 @@ namespace SharedKernel.EventSourcing;
 /// </summary>
 public readonly record struct StreamRevision
 {
-    private StreamRevision(long value) => Value = value;
+    private readonly long? value;
+
+    private StreamRevision(long value) => this.value = value;
 
     /// <summary>
     /// Gets the revision value.
     /// </summary>
-    public long Value { get; }
+    /// <exception cref="InvalidOperationException">Thrown when the revision was not created through <see cref="From" />.</exception>
+    public long Value => value ?? throw new InvalidOperationException(
+        "StreamRevision must be created through StreamRevision.From before it can be used.");
 
     /// <summary>
     /// Creates a stream revision.
