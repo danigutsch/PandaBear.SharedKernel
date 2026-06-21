@@ -68,7 +68,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             "uploads",
             group => group.MapPost("/commit", ([AsParameters] TestCommitImportFormDto form) => TypedResults.Ok())
                 .DisableAntiforgery(),
-            async (_, context, _) =>
+            async (_, context) =>
             {
                 var document = CreateMalformedMultipartDocument("/uploads/commit");
                 var transformer = new MultipartFormRequestBodyDocumentTransformer();
@@ -95,7 +95,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             "uploads",
             group => group.MapPost("/commit", (TestJsonRequest body) => TypedResults.Ok(body))
                 .DisableAntiforgery(),
-            async (_, context, _) =>
+            async (_, context) =>
             {
                 var document = CreateMalformedMultipartDocument("/uploads/commit");
                 var transformer = new MultipartFormRequestBodyDocumentTransformer();
@@ -119,7 +119,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             "uploads",
             group => group.MapPost("/commit", ([AsParameters] TestCommitImportFormDto form) => TypedResults.Ok())
                 .DisableAntiforgery(),
-            async (_, context, _) =>
+            async (_, context) =>
             {
                 var schema = new OpenApiSchema();
                 var invalidParameter = new Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription
@@ -148,7 +148,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             "uploads",
             group => group.MapPost("/optional", ([AsParameters] TestOptionalCommitImportFormDto form) => TypedResults.Ok())
                 .DisableAntiforgery(),
-            async (_, context, _) =>
+            async (_, context) =>
             {
                 var document = CreateMalformedMultipartDocument("/uploads/optional");
                 var transformer = new MultipartFormRequestBodyDocumentTransformer();
@@ -191,7 +191,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             "uploads",
             group => group.MapPost("/commit", ([AsParameters] TestCommitImportFormDto form) => TypedResults.Ok())
                 .DisableAntiforgery(),
-            async (_, context, _) =>
+            async (_, context) =>
             {
                 var malformedDocument = new OpenApiDocument
                 {
@@ -215,9 +215,9 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     {
         var schema = new OpenApiSchema();
 
-        var result = (bool)InvokePrivateStaticMethod(
+        var result = Assert.IsType<bool>(InvokePrivateStaticMethod(
             "RequiresMultipartSchemaNormalization",
-            [schema]);
+            [schema]));
 
         Assert.False(result);
     }
@@ -343,8 +343,6 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         var schema = operation.RequestBody?.Content?["multipart/form-data"].Schema;
 
         Assert.NotNull(schema);
-        Assert.IsType<OpenApiSchema>(schema);
-
-        return (OpenApiSchema)schema;
+        return Assert.IsType<OpenApiSchema>(schema);
     }
 }

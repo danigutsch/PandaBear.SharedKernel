@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Xunit;
@@ -24,7 +22,9 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     [Fact]
     public void Throws_When_Boundary_Names_Are_Null()
     {
-        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(new ServiceCollection(), null));
+        var services = OpenApiTestServiceCollectionFactory.Create();
+
+        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(services, null));
 
         Assert.IsType<ArgumentNullException>(exception.InnerException);
     }
@@ -32,7 +32,9 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     [Fact]
     public void Throws_When_A_Boundary_Name_Is_Whitespace()
     {
-        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(new ServiceCollection(), ["tours", " "]));
+        var services = OpenApiTestServiceCollectionFactory.Create();
+
+        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(services, ["tours", " "]));
 
         Assert.IsType<ArgumentException>(exception.InnerException);
     }
@@ -40,7 +42,9 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     [Fact]
     public void Throws_When_Boundary_Names_Contain_Duplicates()
     {
-        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(new ServiceCollection(), ["tours", "Tours"]));
+        var services = OpenApiTestServiceCollectionFactory.Create();
+
+        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(services, ["tours", "Tours"]));
 
         Assert.IsType<ArgumentException>(exception.InnerException);
     }
@@ -64,29 +68,17 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     public async Task Excludes_Prefix_Like_Paths_From_Named_Document()
     {
         // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
-        var builder = WebApplication.CreateBuilder();
-        builder.WebHost.UseUrls("http://127.0.0.1:0");
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddBoundaryOpenApiDocuments(["tours"]);
-
-        await using var app = builder.Build();
-        app.MapGroup("/tours")
-            .WithGroupName("tours")
-            .WithTags("tours")
-            .MapGet("/", () => TypedResults.Ok());
-        app.MapGroup("/tours-archive")
-            .WithGroupName("tours-archive")
-            .WithTags("tours-archive")
-            .MapGet("/", () => TypedResults.Ok());
-
-        await app.StartAsync(cancellationToken);
-
-        using var scope = app.Services.CreateScope();
-        var provider = scope.ServiceProvider.GetRequiredKeyedService<IOpenApiDocumentProvider>("tours");
-
-        // Act
-        var document = await provider.GetOpenApiDocumentAsync(cancellationToken);
+        var document = await OpenApiDocumentFactory.CreateDocumentFromApplication("tours", app =>
+        {
+            app.MapGroup("/tours")
+                .WithGroupName("tours")
+                .WithTags("tours")
+                .MapGet("/", () => TypedResults.Ok());
+            app.MapGroup("/tours-archive")
+                .WithGroupName("tours-archive")
+                .WithTags("tours-archive")
+                .MapGet("/", () => TypedResults.Ok());
+        });
 
         // Assert
         Assert.Contains("/tours", document.Paths.Keys);

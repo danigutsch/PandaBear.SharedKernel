@@ -24,7 +24,26 @@ internal static class OpenApiDocumentFactory
         return await ExecuteWithCapturedContext(
             documentName,
             configureGroup,
-            static (document, _, _) => Task.FromResult(document));
+            static (document, _) => Task.FromResult(document));
+    }
+
+    /// <summary>
+    /// Builds an app and returns the generated OpenAPI document for a named boundary.
+    /// </summary>
+    /// <param name="documentName">The OpenAPI document name to register and retrieve.</param>
+    /// <param name="configureApp">Configures endpoints on the test app.</param>
+    /// <returns>The generated OpenAPI document.</returns>
+    public static async Task<OpenApiDocument> CreateDocumentFromApplication(
+        string documentName,
+        Action<WebApplication> configureApp)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(documentName);
+        ArgumentNullException.ThrowIfNull(configureApp);
+
+        return await ExecuteWithApplication(
+            documentName,
+            configureApp,
+            static (document, _) => Task.FromResult(document));
     }
 
     /// <summary>
@@ -32,18 +51,36 @@ internal static class OpenApiDocumentFactory
     /// </summary>
     /// <param name="documentName">The OpenAPI document name to register and retrieve.</param>
     /// <param name="configureGroup">Configures endpoints inside the named route group.</param>
-    /// <param name="execute">Runs while the app and scoped services are still alive.</param>
+    /// <param name="execute">Runs while the app and transformer context are still alive.</param>
     /// <typeparam name="TResult">The result type returned by the callback.</typeparam>
     /// <returns>The callback result.</returns>
     public static async Task<TResult> ExecuteWithCapturedContext<TResult>(
         string documentName,
         Action<RouteGroupBuilder> configureGroup,
-        Func<OpenApiDocument, OpenApiDocumentTransformerContext, IServiceProvider, Task<TResult>> execute)
+        Func<OpenApiDocument, OpenApiDocumentTransformerContext, Task<TResult>> execute)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(documentName);
         ArgumentNullException.ThrowIfNull(configureGroup);
         ArgumentNullException.ThrowIfNull(execute);
 
+        return await ExecuteWithApplication(
+            documentName,
+            app =>
+            {
+                var group = app.MapGroup($"/{documentName}")
+                    .WithGroupName(documentName)
+                    .WithTags(documentName);
+
+                configureGroup(group);
+            },
+            execute);
+    }
+
+    private static async Task<TResult> ExecuteWithApplication<TResult>(
+        string documentName,
+        Action<WebApplication> configureApp,
+        Func<OpenApiDocument, OpenApiDocumentTransformerContext, Task<TResult>> execute)
+    {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Services.AddEndpointsApiExplorer();
@@ -53,11 +90,7 @@ internal static class OpenApiDocumentFactory
         builder.Services.AddOpenApi(documentName, options => options.AddDocumentTransformer<CapturingOpenApiDocumentTransformer>());
 
         await using var app = builder.Build();
-        var group = app.MapGroup($"/{documentName}")
-            .WithGroupName(documentName)
-            .WithTags(documentName);
-
-        configureGroup(group);
+        configureApp(app);
 
         await app.StartAsync();
 
@@ -67,7 +100,7 @@ internal static class OpenApiDocumentFactory
         var capture = scope.ServiceProvider.GetRequiredService<OpenApiContextCapture>();
         var context = capture.Context ?? throw new InvalidOperationException("OpenAPI transformer context was not captured.");
 
-        return await execute(document, context, scope.ServiceProvider);
+        return await execute(document, context);
     }
 
     /// <summary>
