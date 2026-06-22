@@ -1,9 +1,9 @@
 #nullable enable
 
 SharedKernel.Idempotency.IIdempotencyStore
-SharedKernel.Idempotency.IIdempotencyStore.Complete(SharedKernel.Idempotency.IdempotencyOperation operation, System.DateTimeOffset completedAt, string? resultFingerprint = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
-SharedKernel.Idempotency.IIdempotencyStore.Get(SharedKernel.Idempotency.IdempotencyOperation operation, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<SharedKernel.Idempotency.IdempotencyEntry?>
-SharedKernel.Idempotency.IIdempotencyStore.TryStart(SharedKernel.Idempotency.IdempotencyOperation operation, System.DateTimeOffset startedAt, System.TimeSpan? lockDuration, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<SharedKernel.Idempotency.IdempotencyStartResult!>
+SharedKernel.Idempotency.IIdempotencyStore.Complete(SharedKernel.Idempotency.IdempotencyOperation operation, System.DateTimeOffset completedAt, string? resultFingerprint, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
+SharedKernel.Idempotency.IIdempotencyStore.Get(SharedKernel.Idempotency.IdempotencyOperation operation, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<SharedKernel.Idempotency.IdempotencyEntry?>
+SharedKernel.Idempotency.IIdempotencyStore.TryStart(SharedKernel.Idempotency.IdempotencyOperation operation, System.DateTimeOffset startedAt, System.TimeSpan? lockDuration, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<SharedKernel.Idempotency.IdempotencyStartResult!>
 SharedKernel.Idempotency.IdempotencyEntry
 SharedKernel.Idempotency.IdempotencyEntry.CompletedAt.get -> System.DateTimeOffset?
 SharedKernel.Idempotency.IdempotencyEntry.CompletedAt.init -> void

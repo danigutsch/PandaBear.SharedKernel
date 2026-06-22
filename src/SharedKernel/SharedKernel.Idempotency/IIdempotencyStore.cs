@@ -17,7 +17,7 @@ public interface IIdempotencyStore
         IdempotencyOperation operation,
         DateTimeOffset startedAt,
         TimeSpan? lockDuration,
-        CancellationToken cancellationToken = default);
+        CancellationToken cancellationToken);
 
     /// <summary>
     /// Marks an idempotent operation as completed.
@@ -30,8 +30,8 @@ public interface IIdempotencyStore
     ValueTask Complete(
         IdempotencyOperation operation,
         DateTimeOffset completedAt,
-        string? resultFingerprint = null,
-        CancellationToken cancellationToken = default);
+        string? resultFingerprint,
+        CancellationToken cancellationToken);
 
     /// <summary>
     /// Gets the stored idempotency entry for an operation, when one exists.
@@ -39,5 +39,5 @@ public interface IIdempotencyStore
     /// <param name="operation">The idempotent operation.</param>
     /// <param name="cancellationToken">A token that can cancel the operation.</param>
     /// <returns>The stored entry, or <see langword="null" /> when none exists.</returns>
-    ValueTask<IdempotencyEntry?> Get(IdempotencyOperation operation, CancellationToken cancellationToken = default);
+    ValueTask<IdempotencyEntry?> Get(IdempotencyOperation operation, CancellationToken cancellationToken);
 }
