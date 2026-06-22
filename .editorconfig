@@ -229,6 +229,9 @@ dotnet_diagnostic.CA1034.severity = none
 [src/ViajantesTurismo.Admin.ApiService/**.cs]
 dotnet_diagnostic.CS1591.severity = none
 
+[src/ViajantesTurismo.Catalog.ApiService/**.cs]
+dotnet_diagnostic.CS1591.severity = none
+
 [src/ViajantesTurismo.Management.Web/**.cs]
 dotnet_diagnostic.CS1591.severity = none
 
@@ -242,6 +245,9 @@ dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA2007.severity = none
 
 [src/ViajantesTurismo.Admin.ApiService/**.cs]
+dotnet_diagnostic.CA2007.severity = none
+
+[src/ViajantesTurismo.Catalog.ApiService/**.cs]
 dotnet_diagnostic.CA2007.severity = none
 
 [src/ViajantesTurismo.Management.Web/**.cs]
