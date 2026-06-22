@@ -1,0 +1,15 @@
+#nullable enable
+SharedKernel.Domain.AggregateRoot<TId>
+SharedKernel.Domain.AggregateRoot<TId>.AggregateRoot() -> void
+SharedKernel.Domain.AggregateRoot<TId>.AggregateRoot(TId id) -> void
+SharedKernel.Domain.AggregateRoot<TId>.AddDomainEvent(SharedKernel.Domain.IDomainEvent! domainEvent) -> void
+SharedKernel.Domain.AggregateRoot<TId>.ClearDomainEvents() -> void
+SharedKernel.Domain.AggregateRoot<TId>.GetDomainEvents() -> System.Collections.Generic.IReadOnlyCollection<SharedKernel.Domain.IDomainEvent!>!
+SharedKernel.Domain.Entity<TId>
+SharedKernel.Domain.Entity<TId>.Entity() -> void
+SharedKernel.Domain.Entity<TId>.Entity(TId id) -> void
+override SharedKernel.Domain.Entity<TId>.Equals(object? obj) -> bool
+override SharedKernel.Domain.Entity<TId>.GetHashCode() -> int
+SharedKernel.Domain.Entity<TId>.Id.get -> TId
+SharedKernel.Domain.IAggregateRoot
+SharedKernel.Domain.IDomainEvent

@@ -1,0 +1,14 @@
+#nullable enable
+SharedKernel.BuildingBlocks.DateRange
+SharedKernel.BuildingBlocks.DateRange.DurationDays.get -> double
+SharedKernel.BuildingBlocks.DateRange.EndDate.get -> System.DateTime
+SharedKernel.BuildingBlocks.DateRange.StartDate.get -> System.DateTime
+SharedKernel.BuildingBlocks.ValueObject
+SharedKernel.BuildingBlocks.ValueObject.Equals(SharedKernel.BuildingBlocks.ValueObject? other) -> bool
+abstract SharedKernel.BuildingBlocks.ValueObject.GetEqualityComponents() -> System.Collections.Generic.IEnumerable<object?>!
+SharedKernel.BuildingBlocks.ValueObject.ValueObject() -> void
+override SharedKernel.BuildingBlocks.ValueObject.Equals(object? obj) -> bool
+override SharedKernel.BuildingBlocks.ValueObject.GetHashCode() -> int
+static SharedKernel.BuildingBlocks.DateRange.Create(System.DateTime startDate, System.DateTime endDate) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.DateRange!>
+static SharedKernel.BuildingBlocks.ValueObject.operator !=(SharedKernel.BuildingBlocks.ValueObject? left, SharedKernel.BuildingBlocks.ValueObject? right) -> bool
+static SharedKernel.BuildingBlocks.ValueObject.operator ==(SharedKernel.BuildingBlocks.ValueObject? left, SharedKernel.BuildingBlocks.ValueObject? right) -> bool

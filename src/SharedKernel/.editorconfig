@@ -35,3 +35,22 @@ dotnet_diagnostic.CA1040.severity = none
 [SharedKernel.Mediator.Abstractions/IStreamRequest.cs]
 dotnet_diagnostic.CA1040.severity = none
 dotnet_diagnostic.S2326.severity = none
+
+# DDD contracts intentionally use marker interfaces and conventional handler names.
+# Owner: SharedKernel maintainers. Remove if these contracts gain behavior or are renamed in a major version.
+[SharedKernel.Domain/IAggregateRoot.cs]
+dotnet_diagnostic.CA1040.severity = none
+
+[SharedKernel.Domain/IDomainEvent.cs]
+dotnet_diagnostic.CA1040.severity = none
+
+[SharedKernel.DomainEvents/IDomainEventHandler.cs]
+dotnet_diagnostic.CA1711.severity = none
+
+[SharedKernel.IntegrationEvents/IIntegrationEventHandler.cs]
+dotnet_diagnostic.CA1711.severity = none
+
+# ValueObject is an abstract DDD base class for value-based equality.
+# Owner: SharedKernel maintainers. Remove if value objects move to sealed record-style contracts.
+[SharedKernel.BuildingBlocks/ValueObject.cs]
+dotnet_diagnostic.S4035.severity = none
