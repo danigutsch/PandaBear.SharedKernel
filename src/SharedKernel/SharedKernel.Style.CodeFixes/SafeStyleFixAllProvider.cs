@@ -5,7 +5,7 @@ using SharedKernel.Style.Analyzers;
 namespace SharedKernel.Style.CodeFixes;
 
 /// <summary>
-/// Restricts Fix All support to the safe bulk-rename style diagnostic set.
+/// Restricts Fix All support to style diagnostics that are safe to apply in bulk.
 /// </summary>
 internal sealed class SafeStyleFixAllProvider : FixAllProvider
 {
