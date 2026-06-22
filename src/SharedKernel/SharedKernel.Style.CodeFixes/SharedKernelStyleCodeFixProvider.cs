@@ -13,11 +13,7 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
 {
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
-        [
-            StyleDiagnosticIds.AsyncSuffix,
-            StyleDiagnosticIds.CancellationTokenParameterName,
-            StyleDiagnosticIds.CancellationTokenDefaultValue
-        ];
+        [StyleDiagnosticIds.AsyncSuffix, StyleDiagnosticIds.CancellationTokenParameterName];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -38,11 +34,6 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             if (diagnostic.Id == StyleDiagnosticIds.CancellationTokenParameterName)
             {
                 await RenameCancellationTokenParameterCodeFix.Register(context, diagnostic).ConfigureAwait(false);
-            }
-
-            if (diagnostic.Id == StyleDiagnosticIds.CancellationTokenDefaultValue)
-            {
-                await RemoveCancellationTokenDefaultValueCodeFix.Register(context, diagnostic).ConfigureAwait(false);
             }
         }
     }

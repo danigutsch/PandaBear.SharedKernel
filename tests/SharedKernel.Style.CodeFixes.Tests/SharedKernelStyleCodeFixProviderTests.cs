@@ -352,90 +352,6 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Default_Value_Fix_Removes_Default_Literal()
-    {
-        // Arrange
-        const string source = """
-            namespace Demo;
-
-            public sealed class TourLoader
-            {
-                public Task<string> Load(CancellationToken ct = default)
-                {
-                    return Task.FromResult("VT-42");
-                }
-            }
-            """;
-        var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
-
-        // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
-        await workspace.ApplyCodeAction(codeAction);
-        var updatedText = await workspace.GetDocumentText();
-
-        // Assert
-        Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("ct = default", updatedText, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task CancellationToken_Default_Value_Fix_Removes_Default_Expression()
-    {
-        // Arrange
-        const string source = """
-            namespace Demo;
-
-            public sealed class TourLoader
-            {
-                public Task<string> Load(CancellationToken ct = default(CancellationToken))
-                {
-                    return Task.FromResult("VT-42");
-                }
-            }
-            """;
-        var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default(CancellationToken)");
-
-        // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
-        await workspace.ApplyCodeAction(codeAction);
-        var updatedText = await workspace.GetDocumentText();
-
-        // Assert
-        Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("default(CancellationToken)", updatedText, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task CancellationToken_Default_Value_Fix_Is_Not_Offered_When_Preceding_Parameter_Is_Optional()
-    {
-        // Arrange
-        const string source = """
-            namespace Demo;
-
-            public sealed class TourLoader
-            {
-                public Task<string> Load(string? route = null, CancellationToken ct = default)
-                {
-                    return Task.FromResult(route ?? "VT-42");
-                }
-            }
-            """;
-        var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
-
-        // Act
-        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
-
-        // Assert
-        Assert.Empty(codeActions);
-    }
-
-    [Fact]
     public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Ct_Already_Exists()
     {
         // Arrange
@@ -701,8 +617,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         Assert.Equal(
             [
                 global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix,
-                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName,
-                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue
+                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName
             ],
             diagnosticIds);
     }
@@ -721,8 +636,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         Assert.Equal(
             [
-                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix,
-                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue
+                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix
             ],
             supportedDiagnosticIds);
     }
