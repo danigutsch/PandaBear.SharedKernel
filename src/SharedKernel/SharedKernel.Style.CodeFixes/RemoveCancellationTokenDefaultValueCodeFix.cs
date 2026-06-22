@@ -66,7 +66,7 @@ internal static class RemoveCancellationTokenDefaultValueCodeFix
     {
         var updatedParameter = parameterSyntax
             .WithDefault(null)
-            .WithIdentifier(parameterSyntax.Identifier.WithTrailingTrivia());
+            .WithIdentifier(parameterSyntax.Identifier.WithTrailingTrivia(SyntaxTriviaList.Empty));
         var updatedRoot = root.ReplaceNode(parameterSyntax, updatedParameter);
 
         return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
