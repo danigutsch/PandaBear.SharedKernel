@@ -43,7 +43,11 @@ public interface IIdempotencyStore
     ValueTask Complete(
         IdempotencyOperation operation,
         DateTimeOffset completedAt,
-        CancellationToken cancellationToken) => Complete(operation, completedAt, resultFingerprint: null, cancellationToken);
+        CancellationToken cancellationToken) => Complete(
+            operation,
+            completedAt,
+            resultFingerprint: null,
+            cancellationToken: cancellationToken);
 
     /// <summary>
     /// Gets the stored idempotency entry for an operation, when one exists.
