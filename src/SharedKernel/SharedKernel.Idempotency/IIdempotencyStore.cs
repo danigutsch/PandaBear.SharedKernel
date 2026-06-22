@@ -34,6 +34,18 @@ public interface IIdempotencyStore
         CancellationToken cancellationToken);
 
     /// <summary>
+    /// Marks an idempotent operation as completed without recording a result fingerprint.
+    /// </summary>
+    /// <param name="operation">The idempotent operation.</param>
+    /// <param name="completedAt">The time at which processing completed.</param>
+    /// <param name="cancellationToken">A token that can cancel the operation.</param>
+    /// <returns>A task that completes when the entry has been updated.</returns>
+    ValueTask Complete(
+        IdempotencyOperation operation,
+        DateTimeOffset completedAt,
+        CancellationToken cancellationToken) => Complete(operation, completedAt, resultFingerprint: null, cancellationToken);
+
+    /// <summary>
     /// Gets the stored idempotency entry for an operation, when one exists.
     /// </summary>
     /// <param name="operation">The idempotent operation.</param>
