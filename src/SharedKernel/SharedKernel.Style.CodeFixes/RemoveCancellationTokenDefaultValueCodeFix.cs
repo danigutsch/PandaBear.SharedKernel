@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace SharedKernel.Style.CodeFixes;
 
@@ -66,7 +67,7 @@ internal static class RemoveCancellationTokenDefaultValueCodeFix
     {
         var updatedParameter = parameterSyntax
             .WithDefault(null)
-            .WithIdentifier(parameterSyntax.Identifier.WithTrailingTrivia(SyntaxTriviaList.Empty));
+            .WithAdditionalAnnotations(Formatter.Annotation);
         var updatedRoot = root.ReplaceNode(parameterSyntax, updatedParameter);
 
         return Task.FromResult(document.WithSyntaxRoot(updatedRoot));

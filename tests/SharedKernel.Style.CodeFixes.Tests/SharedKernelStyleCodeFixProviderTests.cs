@@ -436,6 +436,35 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
+    public async Task CancellationToken_Default_Value_Fix_Preserves_Trailing_Comments()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public Task<string> Load(CancellationToken ct /* preserved */ = default)
+                {
+                    return Task.FromResult("VT-42");
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct /* preserved */ = default");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains("/* preserved */", updatedText, StringComparison.Ordinal);
+        Assert.DoesNotContain("= default", updatedText, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task CancellationToken_Default_Value_Fix_Is_Not_Offered_When_Preceding_Parameter_Is_Optional()
     {
         // Arrange
@@ -731,7 +760,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public void Fix_All_Is_Advertised_For_Rename_Safe_Style_Diagnostics()
+    public void Fix_All_Is_Advertised_For_Safe_Style_Diagnostics()
     {
         // Arrange
         var provider = new SharedKernelStyleCodeFixProvider();
