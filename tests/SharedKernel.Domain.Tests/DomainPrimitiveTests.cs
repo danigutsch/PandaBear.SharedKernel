@@ -22,6 +22,24 @@ public sealed class DomainPrimitiveTests
     }
 
     [Fact]
+    public void Entities_without_persisted_ids_are_not_equal()
+    {
+        var first = new TestEntity(0);
+        var second = new TestEntity(0);
+
+        Assert.NotEqual(first, second);
+    }
+
+    [Fact]
+    public void Entity_equality_handles_reference_and_type_comparisons()
+    {
+        var entity = new TestEntity(42);
+
+        Assert.True(entity.Equals(entity));
+        Assert.False(entity.Equals("tour"));
+    }
+
+    [Fact]
     public void Aggregate_roots_record_and_clear_domain_events()
     {
         var aggregate = new TestAggregate(42);
@@ -34,6 +52,14 @@ public sealed class DomainPrimitiveTests
         Assert.Equal("tour-created", typedEvent.Name);
 
         aggregate.ClearDomainEvents();
+
+        Assert.Empty(aggregate.GetDomainEvents());
+    }
+
+    [Fact]
+    public void Aggregate_roots_without_events_return_an_empty_snapshot()
+    {
+        var aggregate = new TestAggregate(42);
 
         Assert.Empty(aggregate.GetDomainEvents());
     }

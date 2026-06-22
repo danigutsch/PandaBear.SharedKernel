@@ -15,6 +15,24 @@ public sealed class BuildingBlockTests
     }
 
     [Fact]
+    public void Value_object_equality_handles_reference_and_type_comparisons()
+    {
+        var valueObject = new TestValueObject("Lisbon", 3);
+
+        Assert.True(valueObject.Equals(valueObject));
+        Assert.False(valueObject.Equals(new OtherTestValueObject("Lisbon", 3)));
+    }
+
+    [Fact]
+    public void Value_objects_are_not_equal_when_components_differ()
+    {
+        var first = new TestValueObject("Lisbon", 3);
+        var second = new TestValueObject("Porto", 3);
+
+        Assert.NotEqual(first, second);
+    }
+
+    [Fact]
     public void DateRange_create_returns_valid_range_when_end_is_after_start()
     {
         var startDate = new DateTime(2026, 6, 1, 0, 0, 0, DateTimeKind.Utc);
