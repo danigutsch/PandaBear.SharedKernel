@@ -241,6 +241,9 @@ dotnet_diagnostic.CS1591.severity = none
 [src/ViajantesTurismo.Admin.Application/**.cs]
 dotnet_diagnostic.CA2007.severity = none
 
+[src/ViajantesTurismo.Catalog.Application/**.cs]
+dotnet_diagnostic.CA2007.severity = none
+
 [src/ViajantesTurismo.Admin.Infrastructure/**.cs]
 dotnet_diagnostic.CA2007.severity = none
 
