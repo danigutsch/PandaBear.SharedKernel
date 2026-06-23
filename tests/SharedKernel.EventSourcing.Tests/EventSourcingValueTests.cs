@@ -112,10 +112,11 @@ public sealed class EventSourcingValueTests
         var recordedAt = new DateTimeOffset(2026, 6, 21, 17, 30, 0, TimeSpan.Zero);
 
         // Act
-        var envelope = new EventEnvelope(streamId, revision, eventId, "TourPublished", data, recordedAt);
+        var envelope = new EventEnvelope(streamId, 12, revision, eventId, "TourPublished", data, recordedAt);
 
         // Assert
         Assert.Equal(streamId, envelope.StreamId);
+        Assert.Equal(12, envelope.Position);
         Assert.Equal(revision, envelope.Revision);
         Assert.Equal(eventId, envelope.EventId);
         Assert.Equal("TourPublished", envelope.EventType);

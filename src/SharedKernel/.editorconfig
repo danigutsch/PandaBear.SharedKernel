@@ -54,3 +54,15 @@ dotnet_diagnostic.CA1711.severity = none
 # Owner: SharedKernel maintainers. Remove if value objects move to sealed record-style contracts.
 [SharedKernel.BuildingBlocks/ValueObject.cs]
 dotnet_diagnostic.S4035.severity = none
+
+# Exception types need standard constructor overloads, which do not fit primary-constructor style well.
+# Owner: SharedKernel maintainers. Remove if exception guidance changes.
+[SharedKernel.EventSourcing/ExpectedStreamRevisionConflictException.cs]
+csharp_style_prefer_primary_constructors = false:none
+
+# PostgreSQL provider SQL is schema-qualified from validated quoted identifiers. The provider is a
+# low-level library with no synchronization-context dependency.
+# Owner: SharedKernel maintainers. Remove if the provider moves to generated SQL or a query builder.
+[SharedKernel.EventSourcing.PostgreSQL/*.cs]
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA2100.severity = none
