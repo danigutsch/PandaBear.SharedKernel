@@ -2,13 +2,15 @@
 SharedKernel.EventSourcing.EventEnvelope
 SharedKernel.EventSourcing.EventEnvelope.Data.get -> object!
 SharedKernel.EventSourcing.EventEnvelope.Data.init -> void
-SharedKernel.EventSourcing.EventEnvelope.EventEnvelope(SharedKernel.EventSourcing.StreamId StreamId, SharedKernel.EventSourcing.StreamRevision Revision, System.Guid EventId, string! EventType, object! Data, System.DateTimeOffset RecordedAt) -> void
+SharedKernel.EventSourcing.EventEnvelope.EventEnvelope(SharedKernel.EventSourcing.StreamId StreamId, long Position, SharedKernel.EventSourcing.StreamRevision Revision, System.Guid EventId, string! EventType, object! Data, System.DateTimeOffset RecordedAt) -> void
 SharedKernel.EventSourcing.EventEnvelope.EventId.get -> System.Guid
 SharedKernel.EventSourcing.EventEnvelope.EventId.init -> void
 SharedKernel.EventSourcing.EventEnvelope.EventType.get -> string!
 SharedKernel.EventSourcing.EventEnvelope.EventType.init -> void
 SharedKernel.EventSourcing.EventEnvelope.RecordedAt.get -> System.DateTimeOffset
 SharedKernel.EventSourcing.EventEnvelope.RecordedAt.init -> void
+SharedKernel.EventSourcing.EventEnvelope.Position.get -> long
+SharedKernel.EventSourcing.EventEnvelope.Position.init -> void
 SharedKernel.EventSourcing.EventEnvelope.Revision.get -> SharedKernel.EventSourcing.StreamRevision
 SharedKernel.EventSourcing.EventEnvelope.Revision.init -> void
 SharedKernel.EventSourcing.EventEnvelope.StreamId.get -> SharedKernel.EventSourcing.StreamId
@@ -23,12 +25,25 @@ SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.Version.get -> long
 SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.AddEvent(object! domainEvent) -> void
 abstract SharedKernel.EventSourcing.EventSourcedAggregateRoot<TId>.ApplyEvent(object! domainEvent) -> void
 SharedKernel.EventSourcing.ExpectedStreamRevision
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ActualRevision.get -> SharedKernel.EventSourcing.StreamRevision?
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedRevision.get -> SharedKernel.EventSourcing.ExpectedStreamRevision
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException() -> void
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.ExpectedStreamRevision expectedRevision, SharedKernel.EventSourcing.StreamRevision? actualRevision) -> void
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException(string! message) -> void
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.ExpectedStreamRevisionConflictException(string! message, System.Exception! innerException) -> void
+SharedKernel.EventSourcing.ExpectedStreamRevisionConflictException.StreamId.get -> SharedKernel.EventSourcing.StreamId
 SharedKernel.EventSourcing.ExpectedStreamRevision.ExpectedStreamRevision() -> void
 SharedKernel.EventSourcing.ExpectedStreamRevision.RequiresEmptyStream.get -> bool
 SharedKernel.EventSourcing.ExpectedStreamRevision.Value.get -> long?
+SharedKernel.EventSourcing.IEventSerializer
+SharedKernel.EventSourcing.IEventSerializer.Deserialize(string! eventType, string! payloadJson) -> object!
+SharedKernel.EventSourcing.IEventSerializer.GetEventType(object! eventData) -> string!
+SharedKernel.EventSourcing.IEventSerializer.Serialize(object! eventData) -> string!
 SharedKernel.EventSourcing.IEventStore
 SharedKernel.EventSourcing.IEventStore.Append(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.EventSourcing.IEventStore.Load(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.StreamRevision? afterRevision, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
+SharedKernel.EventSourcing.IEventStore.LoadAfter(long position, int maxCount, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
 SharedKernel.EventSourcing.IProjection
 SharedKernel.EventSourcing.IProjection.Apply(SharedKernel.EventSourcing.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.EventSourcing.IProjection.Name.get -> string!

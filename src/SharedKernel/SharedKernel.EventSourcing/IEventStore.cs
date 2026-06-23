@@ -21,4 +21,12 @@ public interface IEventStore
         StreamId streamId,
         StreamRevision? afterRevision,
         CancellationToken ct);
+
+    /// <summary>
+    /// Loads events after a global event-store position.
+    /// </summary>
+    ValueTask<IReadOnlyCollection<EventEnvelope>> LoadAfter(
+        long position,
+        int maxCount,
+        CancellationToken ct);
 }
