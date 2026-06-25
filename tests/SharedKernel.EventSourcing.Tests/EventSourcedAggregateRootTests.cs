@@ -66,7 +66,7 @@ public sealed class EventSourcedAggregateRootTests
         Assert.Equal(1, aggregate.Version);
     }
 
-    private sealed record NameChanged(string Name);
+    internal sealed record NameChanged(string Name);
 
     internal sealed class TestAggregate(string id) : EventSourcedAggregateRoot<string>
     {

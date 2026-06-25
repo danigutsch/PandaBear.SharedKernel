@@ -182,7 +182,7 @@ public sealed class ActivityBehaviorTests
         Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
     }
 
-    private sealed record TestQuery(int Id) : IQuery<int>;
+    internal sealed record TestQuery(int Id) : IQuery<int>;
 
     internal static class ActivityBehaviorTestsHelpers
     {

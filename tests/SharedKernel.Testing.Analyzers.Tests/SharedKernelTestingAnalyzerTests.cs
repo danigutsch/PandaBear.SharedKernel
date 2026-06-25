@@ -503,6 +503,58 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
+    public async Task Implicit_Private_Nested_Helper_Class_In_Xunit_Test_Class_Reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                sealed class TourBuilder
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Single(diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId));
+    }
+
+    [Fact]
+    public async Task Private_Nested_Helper_Record_In_Xunit_Test_Class_Reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                private sealed record TourBuilder(int Id);
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Single(diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId));
+    }
+
+    [Fact]
     public async Task Private_Nested_Class_In_Non_Test_Class_Does_Not_Report_SKTEST004()
     {
         // Arrange

@@ -135,5 +135,5 @@ public sealed class EventSourcingValueTests
         Assert.Equal(42, checkpoint.Position);
     }
 
-    private sealed record TourPublished(string TourId);
+    internal sealed record TourPublished(string TourId);
 }

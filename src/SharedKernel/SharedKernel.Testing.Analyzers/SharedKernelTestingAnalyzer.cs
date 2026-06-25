@@ -85,7 +85,8 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                 SyntaxKind.MethodDeclaration);
             compilationContext.RegisterSyntaxNodeAction(
                 AnalyzeTypeDeclaration,
-                SyntaxKind.ClassDeclaration);
+                SyntaxKind.ClassDeclaration,
+                SyntaxKind.RecordDeclaration);
         });
     }
 
@@ -212,8 +213,8 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static void AnalyzeTypeDeclaration(SyntaxNodeAnalysisContext context)
     {
         if (context.Node is not TypeDeclarationSyntax typeDeclaration
-            || !typeDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PrivateKeyword))
             || context.SemanticModel.GetDeclaredSymbol(typeDeclaration, context.CancellationToken) is not INamedTypeSymbol typeSymbol
+            || typeSymbol.DeclaredAccessibility != Accessibility.Private
             || typeSymbol.TypeKind != TypeKind.Class
             || typeSymbol.ContainingType is null
             || !ContainsXunitTestMethod(typeSymbol.ContainingType))
