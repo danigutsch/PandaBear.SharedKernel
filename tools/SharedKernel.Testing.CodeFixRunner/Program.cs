@@ -40,10 +40,11 @@ internal static class Program
         var targetPath = Path.GetFullPath(args[0]);
         var solution = await OpenSolution(workspace, targetPath).ConfigureAwait(false);
         var fixedCount = 0;
+        var skippedDiagnostics = new HashSet<string>(StringComparer.Ordinal);
 
         while (true)
         {
-            var diagnostic = await FindNextDiagnostic(solution).ConfigureAwait(false);
+            var diagnostic = await FindNextDiagnostic(solution, skippedDiagnostics).ConfigureAwait(false);
             if (diagnostic is null)
             {
                 break;
@@ -53,7 +54,8 @@ internal static class Program
             if (document is null)
             {
                 await Console.Error.WriteLineAsync($"Skipping diagnostic without document: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}").ConfigureAwait(false);
-                break;
+                skippedDiagnostics.Add(GetDiagnosticKey(diagnostic));
+                continue;
             }
 
             var actions = new List<CodeAction>();
@@ -68,7 +70,8 @@ internal static class Program
             if (action is null)
             {
                 await Console.Error.WriteLineAsync($"No code fix available for {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}").ConfigureAwait(false);
-                break;
+                skippedDiagnostics.Add(GetDiagnosticKey(diagnostic));
+                continue;
             }
 
             solution = await ApplyAction(workspace, solution, action).ConfigureAwait(false);
@@ -89,7 +92,7 @@ internal static class Program
         };
     }
 
-    private static async Task<Diagnostic?> FindNextDiagnostic(Solution solution)
+    private static async Task<Diagnostic?> FindNextDiagnostic(Solution solution, HashSet<string> skippedDiagnostics)
     {
         foreach (var project in solution.Projects.Where(static project => project.Language == LanguageNames.CSharp))
         {
@@ -105,6 +108,7 @@ internal static class Program
                 .ConfigureAwait(false);
             var diagnostic = diagnostics
                 .Where(static candidate => string.Equals(candidate.Id, DiagnosticId, StringComparison.Ordinal))
+                .Where(candidate => !skippedDiagnostics.Contains(GetDiagnosticKey(candidate)))
                 .OrderBy(static candidate => candidate.Location.GetLineSpan().Path, StringComparer.Ordinal)
                 .ThenBy(static candidate => candidate.Location.GetLineSpan().StartLinePosition.Line)
                 .FirstOrDefault();
@@ -115,6 +119,12 @@ internal static class Program
         }
 
         return null;
+    }
+
+    private static string GetDiagnosticKey(Diagnostic diagnostic)
+    {
+        var lineSpan = diagnostic.Location.GetLineSpan();
+        return $"{lineSpan.Path}:{lineSpan.StartLinePosition.Line}:{lineSpan.StartLinePosition.Character}";
     }
 
     private static async Task<Solution> ApplyAction(Workspace workspace, Solution solution, CodeAction action)
