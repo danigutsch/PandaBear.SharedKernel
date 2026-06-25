@@ -48,9 +48,18 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true,
         description: "Repository testing rules can require xUnit trait metadata through the sharedkernel_testing_required_traits .editorconfig key so MTP trait filters remain reliable.");
 
+    private static readonly DiagnosticDescriptor XunitTestClassHelperMethodRule = new(
+        TestingDiagnosticIds.XunitTestClassHelperMethod,
+        title: "xUnit test classes should not declare helper methods directly",
+        messageFormat: "xUnit test class helper method '{0}' should be moved to a dedicated helper type when reusable or kept in the test body when local",
+        category: "Testing",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository testing rules keep test behavior visible by discouraging private or internal helper methods declared directly on xUnit test classes.");
+
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule];
+        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -108,9 +117,18 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>> requiredTraitsByTree)
     {
         if (context.Node is not MethodDeclarationSyntax methodDeclaration
-            || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
-            || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
-            || !IsXunitTestMethod(methodSymbol))
+            || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol)
+        {
+            return;
+        }
+
+        if (!IsXunitTestMethod(methodSymbol))
+        {
+            AnalyzeTestClassHelperMethod(context, methodDeclaration, methodSymbol);
+            return;
+        }
+
+        if (!IsPotentialXunitTestMethodDeclaration(methodDeclaration))
         {
             return;
         }
@@ -147,6 +165,52 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                     requiredTrait.Name,
                     requiredTrait.Value));
         }
+    }
+
+    private static void AnalyzeTestClassHelperMethod(
+        SyntaxNodeAnalysisContext context,
+        MethodDeclarationSyntax methodDeclaration,
+        IMethodSymbol methodSymbol)
+    {
+        if (methodSymbol.DeclaredAccessibility is not Accessibility.Private and not Accessibility.Internal
+            || IsDisposeLifecycleMethod(methodSymbol)
+            || !ContainsXunitTestMethod(methodSymbol.ContainingType))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                XunitTestClassHelperMethodRule,
+                methodDeclaration.Identifier.GetLocation(),
+                methodSymbol.Name));
+    }
+
+    private static bool ContainsXunitTestMethod(INamedTypeSymbol typeSymbol)
+    {
+        return typeSymbol.GetMembers()
+            .OfType<IMethodSymbol>()
+            .Any(static method => method.MethodKind == MethodKind.Ordinary && IsXunitTestMethod(method));
+    }
+
+    private static bool IsDisposeLifecycleMethod(IMethodSymbol methodSymbol)
+    {
+        return methodSymbol.Parameters.Length == 0
+            && (methodSymbol.ExplicitInterfaceImplementations.Any(static implementation =>
+                implementation.Name is nameof(IDisposable.Dispose) or "DisposeAsync"
+                && implementation.ContainingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) is "global::System.IDisposable" or "global::System.IAsyncDisposable")
+            || methodSymbol.Name switch
+        {
+            nameof(IDisposable.Dispose) => ImplementsInterface(methodSymbol.ContainingType, "global::System.IDisposable"),
+            "DisposeAsync" => ImplementsInterface(methodSymbol.ContainingType, "global::System.IAsyncDisposable"),
+            _ => false,
+        });
+    }
+
+    private static bool ImplementsInterface(INamedTypeSymbol typeSymbol, string interfaceName)
+    {
+        return typeSymbol.AllInterfaces.Any(candidate =>
+            string.Equals(candidate.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat), interfaceName, StringComparison.Ordinal));
     }
 
     private static bool HasTrait(IMethodSymbol methodSymbol, RequiredTrait requiredTrait)
