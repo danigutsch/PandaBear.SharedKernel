@@ -21,7 +21,7 @@ public static class TestingDiagnosticIds
     public const string XunitTestMethodRequiredTrait = "SKTEST003";
 
     /// <summary>
-    /// Diagnostic emitted when an xUnit test class declares reused private or internal static helper methods directly.
+    /// Diagnostic emitted when an xUnit test class declares private helper members or reused internal static helper methods directly.
     /// </summary>
     public const string XunitTestClassHelperMethod = "SKTEST004";
 }

@@ -52,12 +52,12 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static readonly DiagnosticDescriptor XunitTestClassHelperMethodRule = new(
         TestingDiagnosticIds.XunitTestClassHelperMethod,
-        title: "xUnit test classes should not declare reused static helper methods directly",
-        messageFormat: "xUnit test class static helper method '{0}' should be moved to a dedicated helper type when reusable or kept in the test body when local",
+        title: "xUnit test classes should not declare private helper members directly",
+        messageFormat: "xUnit test class helper member '{0}' should be moved to a dedicated helper type or kept in the test body when local",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules keep test behavior visible by discouraging reused private or internal static helper methods declared directly on xUnit test classes.");
+        description: "Repository testing rules keep test behavior visible by discouraging private helper members and reused internal static helper methods declared directly on xUnit test classes.");
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
@@ -83,6 +83,9 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             compilationContext.RegisterSyntaxNodeAction(
                 context => AnalyzeMethodDeclaration(context, requiredTraitsByTree, helperUsageCountsByType),
                 SyntaxKind.MethodDeclaration);
+            compilationContext.RegisterSyntaxNodeAction(
+                AnalyzeTypeDeclaration,
+                SyntaxKind.ClassDeclaration);
         });
     }
 
@@ -183,11 +186,18 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         IMethodSymbol methodSymbol,
         ConcurrentDictionary<INamedTypeSymbol, ImmutableDictionary<IMethodSymbol, int>> helperUsageCountsByType)
     {
-        if (!methodSymbol.IsStatic
-            || methodSymbol.DeclaredAccessibility is not Accessibility.Private and not Accessibility.Internal
-            || IsDisposeLifecycleMethod(methodSymbol)
-            || !ContainsXunitTestMethod(methodSymbol.ContainingType)
-            || !IsInvokedByMultipleXunitTestMethods(context.SemanticModel, methodDeclaration, methodSymbol, helperUsageCountsByType, context.CancellationToken))
+        if (IsDisposeLifecycleMethod(methodSymbol)
+            || !ContainsXunitTestMethod(methodSymbol.ContainingType))
+        {
+            return;
+        }
+
+        var reportsPrivateHelper = methodSymbol.DeclaredAccessibility == Accessibility.Private;
+        var reportsReusedInternalStaticHelper = methodSymbol.IsStatic
+            && methodSymbol.DeclaredAccessibility == Accessibility.Internal
+            && IsInvokedByMultipleXunitTestMethods(context.SemanticModel, methodDeclaration, methodSymbol, helperUsageCountsByType, context.CancellationToken);
+
+        if (!reportsPrivateHelper && !reportsReusedInternalStaticHelper)
         {
             return;
         }
@@ -197,6 +207,25 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                 XunitTestClassHelperMethodRule,
                 methodDeclaration.Identifier.GetLocation(),
                 methodSymbol.Name));
+    }
+
+    private static void AnalyzeTypeDeclaration(SyntaxNodeAnalysisContext context)
+    {
+        if (context.Node is not TypeDeclarationSyntax typeDeclaration
+            || !typeDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PrivateKeyword))
+            || context.SemanticModel.GetDeclaredSymbol(typeDeclaration, context.CancellationToken) is not INamedTypeSymbol typeSymbol
+            || typeSymbol.TypeKind != TypeKind.Class
+            || typeSymbol.ContainingType is null
+            || !ContainsXunitTestMethod(typeSymbol.ContainingType))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                XunitTestClassHelperMethodRule,
+                typeDeclaration.Identifier.GetLocation(),
+                typeSymbol.Name));
     }
 
     private static bool IsInvokedByMultipleXunitTestMethods(
@@ -265,8 +294,9 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static bool IsPotentialXunitHelperMethodDeclaration(MethodDeclarationSyntax methodDeclaration)
     {
         return methodDeclaration.Parent is TypeDeclarationSyntax
-            && methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.StaticKeyword))
-            && methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PrivateKeyword) || modifier.IsKind(SyntaxKind.InternalKeyword));
+            && (methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PrivateKeyword))
+                || (methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.StaticKeyword))
+                    && methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.InternalKeyword))));
     }
 
     private static bool IsDisposeLifecycleMethod(IMethodSymbol methodSymbol)

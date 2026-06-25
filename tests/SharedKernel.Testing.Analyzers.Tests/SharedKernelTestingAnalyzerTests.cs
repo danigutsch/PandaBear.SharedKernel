@@ -392,7 +392,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Local_Static_Helper_Method_In_Xunit_Test_Class_Does_Not_Report_SKTEST004()
+    public async Task Private_Static_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -417,11 +417,11 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
-    public async Task Instance_Helper_Method_In_Xunit_Test_Class_Does_Not_Report_SKTEST004()
+    public async Task Private_Instance_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -445,7 +445,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -472,7 +472,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Method_In_Nested_Helper_Type_Does_Not_Report_SKTEST004()
+    public async Task Private_Nested_Helper_Class_In_Xunit_Test_Class_Reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -491,6 +491,28 @@ public sealed class SharedKernelTestingAnalyzerTests
                     {
                         return 42;
                     }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Single(diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId));
+    }
+
+    [Fact]
+    public async Task Private_Nested_Class_In_Non_Test_Class_Does_Not_Report_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                private sealed class TourBuilder
+                {
                 }
             }
             """;
