@@ -1,6 +1,7 @@
 extern alias testinganalyzers;
 
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
@@ -13,6 +14,7 @@ using SharedKernel.Testing.CodeFixes;
 
 namespace SharedKernel.Testing.CodeFixRunner;
 
+[ExcludeFromCodeCoverage]
 internal static class Program
 {
     private static readonly ImmutableArray<DiagnosticAnalyzer> Analyzers =
@@ -66,15 +68,14 @@ internal static class Program
                 CancellationToken.None);
             await CodeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
 
-            var action = actions.FirstOrDefault();
-            if (action is null)
+            if (actions.Count == 0)
             {
                 await Console.Error.WriteLineAsync($"No code fix available for {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}").ConfigureAwait(false);
                 skippedDiagnostics.Add(GetDiagnosticKey(diagnostic));
                 continue;
             }
 
-            solution = await ApplyAction(workspace, solution, action).ConfigureAwait(false);
+            solution = await ApplyAction(workspace, solution, actions[0]).ConfigureAwait(false);
             fixedCount++;
         }
 

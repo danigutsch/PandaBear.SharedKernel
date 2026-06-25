@@ -16,6 +16,8 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 {
     private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 
+    private const string TestingCategory = "Testing";
+
     private static readonly Regex XunitMethodNamingRegex = new(
         @"^[A-Z][A-Za-z0-9]*(?:_[A-Za-z0-9][A-Za-z0-9]*)+$",
         RegexOptions.Compiled | RegexOptions.CultureInvariant,
@@ -25,7 +27,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         TestingDiagnosticIds.TestMethodWarningSuppression,
         title: "Test methods should not use pragma warning suppressions",
         messageFormat: "Test method '{0}' should not use '#pragma warning {1}' directives",
-        category: "Testing",
+        category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository testing rules discourage local pragma warning suppressions inside xUnit test methods; prefer analyzer-compliant test code or broader justified suppression scopes when unavoidable.");
@@ -34,7 +36,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         TestingDiagnosticIds.XunitTestMethodNaming,
         title: "xUnit test methods should follow the underscore naming convention",
         messageFormat: "xUnit test method '{0}' should follow the underscore naming convention",
-        category: "Testing",
+        category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository testing rules require xUnit test methods to use descriptive underscore-separated names such as 'Creates_a_tour_when_the_request_is_valid'.");
@@ -43,7 +45,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         TestingDiagnosticIds.XunitTestMethodRequiredTrait,
         title: "xUnit test methods should include required trait metadata",
         messageFormat: "xUnit test method '{0}' should include trait '{1}' with value '{2}' configured by sharedkernel_testing_required_traits",
-        category: "Testing",
+        category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository testing rules can require xUnit trait metadata through the sharedkernel_testing_required_traits .editorconfig key so MTP trait filters remain reliable.");
@@ -52,7 +54,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         TestingDiagnosticIds.XunitTestClassHelperMethod,
         title: "xUnit test classes should not declare reused static helper methods directly",
         messageFormat: "xUnit test class static helper method '{0}' should be moved to a dedicated helper type when reusable or kept in the test body when local",
-        category: "Testing",
+        category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository testing rules keep test behavior visible by discouraging reused private or internal static helper methods declared directly on xUnit test classes.");
