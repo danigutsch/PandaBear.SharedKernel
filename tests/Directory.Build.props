@@ -16,4 +16,10 @@
 			IsAspireProjectResource="false"
 			Condition="Exists('$(MSBuildThisFileDirectory)..\src\SharedKernel\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj')" />
 	</ItemGroup>
+
+	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
+		<Content Include="$(MSBuildThisFileDirectory)xunit.runner.json"
+			Link="xunit.runner.json"
+			CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
 </Project>
