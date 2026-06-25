@@ -239,7 +239,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             var helperSymbol = invokedMethod.OriginalDefinition;
             if (!callersByHelper.TryGetValue(helperSymbol, out var callers))
             {
-                callers = new HashSet<IMethodSymbol>(SymbolEqualityComparer.Default);
+                callers = new(SymbolEqualityComparer.Default);
                 callersByHelper.Add(helperSymbol, callers);
             }
 
