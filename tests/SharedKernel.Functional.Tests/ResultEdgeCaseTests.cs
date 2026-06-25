@@ -230,12 +230,12 @@ public sealed class ResultEdgeCaseTests
         Assert.Equal("error", exception.ParamName);
     }
 
-    private sealed class LoggedTourSummary(string code, string title)
+    internal sealed class LoggedTourSummary(string code, string title)
     {
         public override string ToString() => $"{code} | {title}";
     }
 
-    private static Result<string> CreateMalformedGenericResult(ResultStatus status, string? value, ResultError? error)
+    internal static Result<string> CreateMalformedGenericResult(ResultStatus status, string? value, ResultError? error)
     {
         var constructor = typeof(Result<string>).GetConstructor(
             System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
@@ -247,7 +247,7 @@ public sealed class ResultEdgeCaseTests
         return (Result<string>)constructor.Invoke([status, value, error]);
     }
 
-    private static Result CreateMalformedNonGenericResult(ResultStatus status, ResultError? error)
+    internal static Result CreateMalformedNonGenericResult(ResultStatus status, ResultError? error)
     {
         var constructor = typeof(Result).GetConstructor(
             System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,

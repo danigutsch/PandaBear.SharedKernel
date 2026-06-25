@@ -68,7 +68,7 @@ public sealed class EventSourcedAggregateRootTests
 
     private sealed record NameChanged(string Name);
 
-    private sealed class TestAggregate(string id) : EventSourcedAggregateRoot<string>
+    internal sealed class TestAggregate(string id) : EventSourcedAggregateRoot<string>
     {
         public override string Id { get; } = id;
 

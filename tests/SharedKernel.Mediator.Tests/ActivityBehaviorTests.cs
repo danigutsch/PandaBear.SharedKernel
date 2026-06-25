@@ -184,7 +184,7 @@ public sealed class ActivityBehaviorTests
 
     private sealed record TestQuery(int Id) : IQuery<int>;
 
-    private static class ActivityBehaviorTestsHelpers
+    internal static class ActivityBehaviorTestsHelpers
     {
         public static ActivityListener CreateCapturingListener(List<Activity> stoppedActivities)
         {

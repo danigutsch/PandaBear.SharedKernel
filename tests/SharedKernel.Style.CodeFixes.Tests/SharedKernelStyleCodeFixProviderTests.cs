@@ -1094,7 +1094,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         Assert.True(nonGenericIndex < genericIndex);
     }
 
-    private static bool InvokeIsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
+    internal static bool InvokeIsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
     {
         var codeFixType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.RemoveAsyncSuffixCodeFix");
         Assert.NotNull(codeFixType);
@@ -1103,7 +1103,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         return Assert.IsType<bool>(method.Invoke(null, [candidateSymbol, originalSymbol, updatedName]));
     }
 
-    private static class SharedKernelStyleCodeFixProviderTestsHelpers
+    internal static class SharedKernelStyleCodeFixProviderTestsHelpers
     {
         public static Project CreateProject(AdhocWorkspace workspace, string source, out DocumentId documentId, string assemblyName = "SharedKernel.Style.CodeFixes.Tests.Organizer")
         {

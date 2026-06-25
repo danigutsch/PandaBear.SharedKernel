@@ -263,7 +263,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         Assert.Null(schema.AllOf[0].Required);
     }
 
-    private static object InvokePrivateStaticMethod(string methodName, object?[] arguments)
+    internal static object InvokePrivateStaticMethod(string methodName, object?[] arguments)
     {
         var method = typeof(MultipartFormRequestBodyDocumentTransformer).GetMethod(
             methodName,
@@ -274,7 +274,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             ?? throw new InvalidOperationException($"Private method '{methodName}' returned null.");
     }
 
-    private static async Task InvokePrivateStaticTaskMethod(string methodName, object?[] arguments)
+    internal static async Task InvokePrivateStaticTaskMethod(string methodName, object?[] arguments)
     {
         var method = typeof(MultipartFormRequestBodyDocumentTransformer).GetMethod(
             methodName,
@@ -287,7 +287,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         await task;
     }
 
-    private static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
+    internal static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
     {
         public static OpenApiDocument CreateMalformedMultipartDocument(string path)
         {

@@ -173,7 +173,7 @@ public sealed class ValidationErrorsTests
         Assert.Equal("Validation errors must include field details.", exception.Message);
     }
 
-    private static class ValidationErrorsTestsHelpers
+    internal static class ValidationErrorsTestsHelpers
     {
         public static Result CreateMalformedInvalidResult(ResultError? error)
         {

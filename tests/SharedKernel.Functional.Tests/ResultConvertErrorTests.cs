@@ -122,7 +122,7 @@ public sealed class ResultConvertErrorTests
         Assert.Equal(expectedMessage, exception.Message);
     }
 
-    private static Result<T> CreateMalformedGenericResult<T>(ResultStatus status, T value, ResultError? error)
+    internal static Result<T> CreateMalformedGenericResult<T>(ResultStatus status, T value, ResultError? error)
         where T : notnull
     {
         var constructor = typeof(Result<T>).GetConstructor(
@@ -135,7 +135,7 @@ public sealed class ResultConvertErrorTests
         return (Result<T>)constructor.Invoke([status, value, error]);
     }
 
-    private static class ResultConvertErrorTestsHelpers
+    internal static class ResultConvertErrorTestsHelpers
     {
         public static Result CreateMalformedResult(ResultStatus status, ResultError? error)
         {

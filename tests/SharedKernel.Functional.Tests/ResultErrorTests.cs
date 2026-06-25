@@ -199,7 +199,7 @@ public sealed class ResultErrorTests
         Assert.Equal("messages", argumentException.ParamName);
     }
 
-    private static Dictionary<string, string[]> CreateValidationErrorsWithNullMessageArray() =>
+    internal static Dictionary<string, string[]> CreateValidationErrorsWithNullMessageArray() =>
         new Dictionary<string, string[]>
         {
             ["Name"] = NullArgumentData.StringArray(),

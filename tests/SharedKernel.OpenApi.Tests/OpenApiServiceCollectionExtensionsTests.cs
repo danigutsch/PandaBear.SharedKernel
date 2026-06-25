@@ -85,7 +85,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
         Assert.DoesNotContain("/tours-archive", document.Paths.Keys);
     }
 
-    private static class OpenApiServiceCollectionExtensionsTestsHelpers
+    internal static class OpenApiServiceCollectionExtensionsTestsHelpers
     {
         public static void InvokeAddBoundaryOpenApiDocuments(IServiceCollection? services, IReadOnlyCollection<string>? boundaryNames)
         {

@@ -413,7 +413,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
     }
 
-    private sealed class StyleTestAnalyzerConfigOptionsProvider(
+    internal sealed class StyleTestAnalyzerConfigOptionsProvider(
         ImmutableDictionary<string, string>? globalOptions = null,
         ImmutableDictionary<SyntaxTree, ImmutableDictionary<string, string>>? syntaxTreeOptions = null)
         : AnalyzerConfigOptionsProvider
@@ -434,7 +434,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         public override AnalyzerConfigOptions GetOptions(AdditionalText textFile) => StyleTestAnalyzerConfigOptions.Empty;
     }
 
-    private sealed class StyleTestAnalyzerConfigOptions(ImmutableDictionary<string, string>? values) : AnalyzerConfigOptions
+    internal sealed class StyleTestAnalyzerConfigOptions(ImmutableDictionary<string, string>? values) : AnalyzerConfigOptions
     {
         public static readonly StyleTestAnalyzerConfigOptions Empty = new(null);
 
