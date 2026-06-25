@@ -1,3 +1,5 @@
+extern alias testinganalyzers;
+
 using System.Collections.Immutable;
 using System.Globalization;
 using Microsoft.Build.Locator;
@@ -7,7 +9,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
-using SharedKernel.Testing.Analyzers;
 using SharedKernel.Testing.CodeFixes;
 
 namespace SharedKernel.Testing.CodeFixRunner;
@@ -15,9 +16,9 @@ namespace SharedKernel.Testing.CodeFixRunner;
 internal static class Program
 {
     private static readonly ImmutableArray<DiagnosticAnalyzer> Analyzers =
-        [new SharedKernelTestingAnalyzer()];
+        [new testinganalyzers::SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer()];
 
-    private const string DiagnosticId = "SKTEST004";
+    private const string DiagnosticId = testinganalyzers::SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestClassHelperMethod;
 
     private static readonly SharedKernelTestingCodeFixProvider CodeFixProvider = new();
 

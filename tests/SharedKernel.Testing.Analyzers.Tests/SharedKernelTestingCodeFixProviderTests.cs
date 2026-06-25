@@ -388,4 +388,60 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             -1,
             updatedText.IndexOf("private static class TourLoaderTestsHelpers", firstHelperTypeIndex + 1, StringComparison.Ordinal));
     }
+
+    [Fact]
+    public async Task Helper_Method_Fix_Does_Not_Qualify_Nested_Type_Invocations_With_Same_Name()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTour();
+                }
+
+                [global::Xunit.Fact]
+                public void Updates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTour();
+                }
+
+                private static string CreateTour()
+                {
+                    return "tour";
+                }
+
+                private static class NestedBuilder
+                {
+                    public static string Build()
+                    {
+                        return CreateTour();
+                    }
+
+                    private static string CreateTour()
+                    {
+                        return "nested";
+                    }
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitHelperMethodDiagnosticId, "private static string CreateTour");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains("TourLoaderTestsHelpers.CreateTour();", updatedText, StringComparison.Ordinal);
+        Assert.Contains("return CreateTour();", updatedText, StringComparison.Ordinal);
+        Assert.DoesNotContain("return TourLoaderTestsHelpers.CreateTour();", updatedText, StringComparison.Ordinal);
+    }
 }

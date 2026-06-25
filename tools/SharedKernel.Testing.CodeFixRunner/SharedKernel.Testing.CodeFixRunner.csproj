@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj" Aliases="testinganalyzers" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.CodeFixes\SharedKernel.Testing.CodeFixes.csproj" />
     </ItemGroup>
 

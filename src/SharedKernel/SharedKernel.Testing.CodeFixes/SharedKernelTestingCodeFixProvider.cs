@@ -227,7 +227,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             updatedType = typeWithoutMethod.ReplaceNode(nestedHelper, updatedHelper);
         }
 
-        updatedType = QualifyHelperInvocations(updatedType, methodDeclaration, methodSymbol.Name, helperTypeName);
+        updatedType = QualifyHelperInvocations(updatedType, methodSymbol.Name, helperTypeName);
         var updatedRoot = syntaxRoot.ReplaceNode(typeDeclaration, updatedType);
 
         return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
@@ -272,15 +272,13 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     private static TypeDeclarationSyntax QualifyHelperInvocations(
         TypeDeclarationSyntax typeDeclaration,
-        MethodDeclarationSyntax movedMethod,
         string methodName,
         string helperTypeName)
     {
-        var movedMethodSpan = movedMethod.Span;
         return typeDeclaration.ReplaceNodes(
             typeDeclaration.DescendantNodes()
                 .OfType<InvocationExpressionSyntax>()
-                .Where(invocation => !movedMethodSpan.Contains(invocation.SpanStart)
+                .Where(invocation => invocation.FirstAncestorOrSelf<TypeDeclarationSyntax>() == typeDeclaration
                     && invocation.Expression is IdentifierNameSyntax identifier
                     && string.Equals(identifier.Identifier.ValueText, methodName, StringComparison.Ordinal)),
             (_, invocation) => invocation.WithExpression(

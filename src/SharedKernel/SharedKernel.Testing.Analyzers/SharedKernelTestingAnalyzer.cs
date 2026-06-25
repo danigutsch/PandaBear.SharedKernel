@@ -116,20 +116,26 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         SyntaxNodeAnalysisContext context,
         ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>> requiredTraitsByTree)
     {
-        if (context.Node is not MethodDeclarationSyntax methodDeclaration
-            || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol)
+        if (context.Node is not MethodDeclarationSyntax methodDeclaration)
         {
             return;
         }
 
-        if (!IsXunitTestMethod(methodSymbol))
+        var isPotentialXunitTestMethod = IsPotentialXunitTestMethodDeclaration(methodDeclaration);
+        var isPotentialHelperMethod = IsPotentialXunitHelperMethodDeclaration(methodDeclaration);
+        if (!isPotentialXunitTestMethod && !isPotentialHelperMethod)
+        {
+            return;
+        }
+
+        if (context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol)
+        {
+            return;
+        }
+
+        if (!isPotentialXunitTestMethod || !IsXunitTestMethod(methodSymbol))
         {
             AnalyzeTestClassHelperMethod(context, methodDeclaration, methodSymbol);
-            return;
-        }
-
-        if (!IsPotentialXunitTestMethodDeclaration(methodDeclaration))
-        {
             return;
         }
 
@@ -229,6 +235,13 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         return typeSymbol.GetMembers()
             .OfType<IMethodSymbol>()
             .Any(static method => method.MethodKind == MethodKind.Ordinary && IsXunitTestMethod(method));
+    }
+
+    private static bool IsPotentialXunitHelperMethodDeclaration(MethodDeclarationSyntax methodDeclaration)
+    {
+        return methodDeclaration.Parent is TypeDeclarationSyntax
+            && methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.StaticKeyword))
+            && methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PrivateKeyword) || modifier.IsKind(SyntaxKind.InternalKeyword));
     }
 
     private static bool IsDisposeLifecycleMethod(IMethodSymbol methodSymbol)
