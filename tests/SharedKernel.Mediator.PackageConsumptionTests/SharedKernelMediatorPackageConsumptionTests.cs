@@ -471,7 +471,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         Assert.Contains("getTour=Tour-7", runOutput, StringComparison.Ordinal);
     }
 
-    private void WriteGeneratedConsumerProject(PackageConsumptionWorkspace workspace)
+    internal void WriteGeneratedConsumerProject(PackageConsumptionWorkspace workspace)
     {
         var consumerFiles = new (string FileName, string Content)[]
         {
@@ -592,12 +592,12 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             consumerFiles);
     }
 
-    private static int CountTrimWarnings(string publishOutput)
+    internal static int CountTrimWarnings(string publishOutput)
     {
         return Regex.Count(publishOutput, @"warning IL\d{4}", RegexOptions.CultureInvariant);
     }
 
-    private static long GetGeneratedSourceSize(PackageConsumptionWorkspace workspace)
+    internal static long GetGeneratedSourceSize(PackageConsumptionWorkspace workspace)
     {
         var generatedFiles = new[]
         {
@@ -613,7 +613,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             .Sum(static file => new FileInfo(file).Length);
     }
 
-    private static string GetCurrentRuntimeIdentifier()
+    internal static string GetCurrentRuntimeIdentifier()
     {
         string os;
 
@@ -640,7 +640,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         return $"{os}-{architecture}";
     }
 
-    private static (TimeSpan FirstDispatch, TimeSpan SteadyStateDispatch) ParseRuntimeMetrics(string output)
+    internal static (TimeSpan FirstDispatch, TimeSpan SteadyStateDispatch) ParseRuntimeMetrics(string output)
     {
         double? firstDispatchMilliseconds = null;
         double? steadyStateMilliseconds = null;
@@ -670,7 +670,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         return (TimeSpan.FromMilliseconds(firstDispatchMilliseconds.Value), TimeSpan.FromMilliseconds(steadyStateMilliseconds.Value));
     }
 
-    private static async Task<(string Output, TimeSpan Duration)> RunPublishedExecutable(string publishedExecutable)
+    internal static async Task<(string Output, TimeSpan Duration)> RunPublishedExecutable(string publishedExecutable)
     {
         var startInfo = new ProcessStartInfo
         {
