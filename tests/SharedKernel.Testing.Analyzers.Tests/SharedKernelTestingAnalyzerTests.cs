@@ -531,6 +531,44 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
+    public async Task Private_Dispose_Helper_Method_In_Xunit_Test_Class_Reports_S_K_T_E_S_T004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests : System.IDisposable
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    Dispose();
+                }
+
+                [global::Xunit.Fact]
+                public void Updates_a_tour_when_the_request_is_valid()
+                {
+                    Dispose();
+                }
+
+                private static void Dispose()
+                {
+                }
+
+                void System.IDisposable.Dispose()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
     public async Task Async_Disposable_Lifecycle_Method_Does_Not_Report_S_K_T_E_S_T004()
     {
         // Arrange

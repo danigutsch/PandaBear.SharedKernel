@@ -237,12 +237,13 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             && (methodSymbol.ExplicitInterfaceImplementations.Any(static implementation =>
                 implementation.Name is nameof(IDisposable.Dispose) or "DisposeAsync"
                 && implementation.ContainingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) is "global::System.IDisposable" or "global::System.IAsyncDisposable")
-            || methodSymbol.Name switch
-        {
-            nameof(IDisposable.Dispose) => ImplementsInterface(methodSymbol.ContainingType, "global::System.IDisposable"),
-            "DisposeAsync" => ImplementsInterface(methodSymbol.ContainingType, "global::System.IAsyncDisposable"),
-            _ => false,
-        });
+            || methodSymbol.DeclaredAccessibility == Accessibility.Public
+            && methodSymbol.Name switch
+            {
+                nameof(IDisposable.Dispose) => ImplementsInterface(methodSymbol.ContainingType, "global::System.IDisposable"),
+                "DisposeAsync" => ImplementsInterface(methodSymbol.ContainingType, "global::System.IAsyncDisposable"),
+                _ => false,
+            });
     }
 
     private static bool ImplementsInterface(INamedTypeSymbol typeSymbol, string interfaceName)
