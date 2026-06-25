@@ -50,12 +50,12 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static readonly DiagnosticDescriptor XunitTestClassHelperMethodRule = new(
         TestingDiagnosticIds.XunitTestClassHelperMethod,
-        title: "xUnit test classes should not declare helper methods directly",
-        messageFormat: "xUnit test class helper method '{0}' should be moved to a dedicated helper type when reusable or kept in the test body when local",
+        title: "xUnit test classes should not declare reused static helper methods directly",
+        messageFormat: "xUnit test class static helper method '{0}' should be moved to a dedicated helper type when reusable or kept in the test body when local",
         category: "Testing",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules keep test behavior visible by discouraging private or internal helper methods declared directly on xUnit test classes.");
+        description: "Repository testing rules keep test behavior visible by discouraging reused private or internal static helper methods declared directly on xUnit test classes.");
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>

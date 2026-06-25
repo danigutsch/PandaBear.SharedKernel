@@ -72,7 +72,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
         if (string.Equals(diagnostic.Id, TestingDiagnosticIds.XunitTestClassHelperMethod, StringComparison.Ordinal))
         {
-            RegisterMoveHelperMethodFix(context, document, diagnostic, methodDeclaration, methodSymbol, syntaxRoot);
+            RegisterMoveHelperMethodFix(context, document, diagnostic, methodDeclaration, methodSymbol, syntaxRoot, semanticModel, context.CancellationToken);
             return;
         }
 
@@ -120,10 +120,13 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         Diagnostic diagnostic,
         MethodDeclarationSyntax methodDeclaration,
         IMethodSymbol methodSymbol,
-        SyntaxNode syntaxRoot)
+        SyntaxNode syntaxRoot,
+        SemanticModel semanticModel,
+        CancellationToken ct)
     {
         if (!methodSymbol.IsStatic
-            || methodDeclaration.Parent is not TypeDeclarationSyntax typeDeclaration)
+            || methodDeclaration.Parent is not TypeDeclarationSyntax typeDeclaration
+            || HasUnsupportedHelperInvocation(typeDeclaration, methodDeclaration, methodSymbol, semanticModel, ct))
         {
             return;
         }
@@ -268,6 +271,34 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         return typeDeclaration.Members
             .OfType<MethodDeclarationSyntax>()
             .Any(candidate => string.Equals(candidate.Identifier.ValueText, methodName, StringComparison.Ordinal));
+    }
+
+    private static bool HasUnsupportedHelperInvocation(
+        TypeDeclarationSyntax typeDeclaration,
+        MethodDeclarationSyntax movedMethod,
+        IMethodSymbol methodSymbol,
+        SemanticModel semanticModel,
+        CancellationToken ct)
+    {
+        foreach (var invocation in typeDeclaration.DescendantNodes().OfType<InvocationExpressionSyntax>())
+        {
+            ct.ThrowIfCancellationRequested();
+
+            if (movedMethod.Span.Contains(invocation.SpanStart)
+                || semanticModel.GetSymbolInfo(invocation, ct).Symbol is not IMethodSymbol invokedMethod
+                || !SymbolEqualityComparer.Default.Equals(invokedMethod.OriginalDefinition, methodSymbol.OriginalDefinition))
+            {
+                continue;
+            }
+
+            if (invocation.FirstAncestorOrSelf<TypeDeclarationSyntax>() != typeDeclaration
+                || invocation.Expression is not IdentifierNameSyntax)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static TypeDeclarationSyntax QualifyHelperInvocations(

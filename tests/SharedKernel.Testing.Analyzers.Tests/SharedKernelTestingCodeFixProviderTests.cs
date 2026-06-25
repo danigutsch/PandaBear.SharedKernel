@@ -340,6 +340,92 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Helper_Method_Fix_Is_Not_Offered_When_Qualified_Call_Would_Remain()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    TourLoaderTests.CreateTour();
+                }
+
+                [global::Xunit.Fact]
+                public void Updates_a_tour_when_the_request_is_valid()
+                {
+                    TourLoaderTests.CreateTour();
+                }
+
+                private static string CreateTour()
+                {
+                    return "tour";
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitHelperMethodDiagnosticId, "private static string CreateTour");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Helper_Method_Fix_Is_Not_Offered_When_Nested_Type_Call_Would_Remain()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTour();
+                }
+
+                [global::Xunit.Fact]
+                public void Updates_a_tour_when_the_request_is_valid()
+                {
+                    NestedBuilder.Build();
+                }
+
+                private static string CreateTour()
+                {
+                    return "tour";
+                }
+
+                private static class NestedBuilder
+                {
+                    public static string Build()
+                    {
+                        return CreateTour();
+                    }
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitHelperMethodDiagnosticId, "private static string CreateTour");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
     public async Task Helper_Method_Fix_Reuses_Existing_Nested_Helper_Type()
     {
         // Arrange

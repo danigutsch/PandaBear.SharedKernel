@@ -17,14 +17,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
+        <ProjectReference Include="..\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" OutputItemType="_TestingAnalyzerPackFile" Targets="GetTargetPath" />
         <Compile Include="..\SharedKernel.Testing.Analyzers\TestingDiagnosticIds.cs" Link="TestingDiagnosticIds.cs" />
     </ItemGroup>
 
     <ItemGroup>
         <AdditionalFiles Include="..\SharedKernel.Testing.Analyzers\AnalyzerReleases.Unshipped.md" Link="AnalyzerReleases.Unshipped.md" />
         <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
-        <None Include="..\SharedKernel.Testing.Analyzers\bin\$(Configuration)\netstandard2.0\SharedKernel.Testing.Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" CopyToOutputDirectory="PreserveNewest" Link="SharedKernel.Testing.Analyzers.dll" Visible="false" />
+        <None Include="@(_TestingAnalyzerPackFile)" Pack="true" PackagePath="analyzers/dotnet/cs" CopyToOutputDirectory="PreserveNewest" Link="SharedKernel.Testing.Analyzers.dll" Visible="false" />
         <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
 

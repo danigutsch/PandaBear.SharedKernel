@@ -295,7 +295,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Reused_Private_Helper_Method_In_Xunit_Test_Class_Reports_S_K_T_E_S_T004()
+    public async Task Reused_Private_Static_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -330,7 +330,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Reused_Internal_Helper_Method_In_Xunit_Test_Class_Reports_S_K_T_E_S_T004()
+    public async Task Reused_Internal_Static_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -365,7 +365,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Public_Method_In_Xunit_Test_Class_Does_Not_Report_S_K_T_E_S_T004()
+    public async Task Public_Method_In_Xunit_Test_Class_Does_Not_Report_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -393,7 +393,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Local_Static_Helper_Method_In_Xunit_Test_Class_Does_Not_Report_S_K_T_E_S_T004()
+    public async Task Local_Static_Helper_Method_In_Xunit_Test_Class_Does_Not_Report_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -422,7 +422,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Instance_Helper_Method_In_Xunit_Test_Class_Does_Not_Report_S_K_T_E_S_T004()
+    public async Task Instance_Helper_Method_In_Xunit_Test_Class_Does_Not_Report_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -450,7 +450,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Method_In_Non_Test_Class_Does_Not_Report_S_K_T_E_S_T004()
+    public async Task Private_Method_In_Non_Test_Class_Does_Not_Report_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -473,7 +473,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Method_In_Nested_Helper_Type_Does_Not_Report_S_K_T_E_S_T004()
+    public async Task Private_Method_In_Nested_Helper_Type_Does_Not_Report_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -504,7 +504,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Disposable_Lifecycle_Method_Does_Not_Report_S_K_T_E_S_T004()
+    public async Task Disposable_Lifecycle_Method_Does_Not_Report_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -531,7 +531,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Dispose_Helper_Method_In_Xunit_Test_Class_Reports_S_K_T_E_S_T004()
+    public async Task Private_Dispose_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -569,7 +569,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Async_Disposable_Lifecycle_Method_Does_Not_Report_S_K_T_E_S_T004()
+    public async Task Async_Disposable_Lifecycle_Method_Does_Not_Report_SKTEST004()
     {
         // Arrange
         const string source = """
