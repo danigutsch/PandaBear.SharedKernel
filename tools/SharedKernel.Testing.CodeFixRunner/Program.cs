@@ -60,22 +60,15 @@ internal static class Program
                 continue;
             }
 
-            var actions = new List<CodeAction>();
-            var context = new CodeFixContext(
-                document,
-                diagnostic,
-                (action, _) => actions.Add(action),
-                CancellationToken.None);
-            await CodeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
-
-            if (actions.Count == 0)
+            var action = await GetFirstCodeAction(document, diagnostic).ConfigureAwait(false);
+            if (action is null)
             {
                 await Console.Error.WriteLineAsync($"No code fix available for {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}").ConfigureAwait(false);
                 skippedDiagnostics.Add(GetDiagnosticKey(diagnostic));
                 continue;
             }
 
-            solution = await ApplyAction(workspace, solution, actions[0]).ConfigureAwait(false);
+            solution = await ApplyAction(workspace, solution, action).ConfigureAwait(false);
             fixedCount++;
         }
 
@@ -122,6 +115,19 @@ internal static class Program
         return null;
     }
 
+    private static async Task<CodeAction?> GetFirstCodeAction(Document document, Diagnostic diagnostic)
+    {
+        var actions = new List<CodeAction>();
+        var context = new CodeFixContext(
+            document,
+            diagnostic,
+            (action, _) => actions.Add(action),
+            CancellationToken.None);
+        await CodeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+
+        return actions.FirstOrDefault();
+    }
+
     private static string GetDiagnosticKey(Diagnostic diagnostic)
     {
         var lineSpan = diagnostic.Location.GetLineSpan();
@@ -134,12 +140,9 @@ internal static class Program
         var applyOperation = operations.OfType<ApplyChangesOperation>().Single();
         var changedSolution = await FormatChangedDocuments(solution, applyOperation.ChangedSolution).ConfigureAwait(false);
 
-        if (!workspace.TryApplyChanges(changedSolution))
-        {
-            throw new InvalidOperationException("Failed to apply code fix changes.");
-        }
-
-        return workspace.CurrentSolution;
+        return workspace.TryApplyChanges(changedSolution)
+            ? workspace.CurrentSolution
+            : throw new InvalidOperationException("Failed to apply code fix changes.");
     }
 
     private static async Task<Solution> FormatChangedDocuments(Solution oldSolution, Solution newSolution)

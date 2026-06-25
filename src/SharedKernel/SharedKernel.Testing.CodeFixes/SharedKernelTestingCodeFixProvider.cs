@@ -72,7 +72,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
         if (string.Equals(diagnostic.Id, TestingDiagnosticIds.XunitTestClassHelperMethod, StringComparison.Ordinal))
         {
-            RegisterMoveHelperMethodFix(context, document, diagnostic, methodDeclaration, methodSymbol, syntaxRoot, semanticModel, context.CancellationToken);
+            RegisterMoveHelperMethodFix(context, document, methodDeclaration, methodSymbol, syntaxRoot, semanticModel, context.CancellationToken);
             return;
         }
 
@@ -117,7 +117,6 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
     private static void RegisterMoveHelperMethodFix(
         CodeFixContext context,
         Document document,
-        Diagnostic diagnostic,
         MethodDeclarationSyntax methodDeclaration,
         IMethodSymbol methodSymbol,
         SyntaxNode syntaxRoot,
@@ -135,9 +134,9 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         context.RegisterCodeFix(
             CodeAction.Create(
                 title: $"Move '{methodSymbol.Name}' to '{helperTypeName}'",
-                createChangedDocument: ct => MoveHelperMethod(document, syntaxRoot, typeDeclaration, methodDeclaration, methodSymbol, helperTypeName, semanticModel, ct),
+                createChangedDocument: ct => MoveHelperMethod(document, syntaxRoot, typeDeclaration, methodDeclaration, methodSymbol, semanticModel, ct),
                 equivalenceKey: $"MoveXunitHelperMethod:{helperTypeName}:{methodSymbol.Name}"),
-            diagnostic);
+            context.Diagnostics[0]);
     }
 
     private static void RegisterRequiredTraitFix(
@@ -201,12 +200,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         TypeDeclarationSyntax typeDeclaration,
         MethodDeclarationSyntax methodDeclaration,
         IMethodSymbol methodSymbol,
-        string helperTypeName,
         SemanticModel semanticModel,
         CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
 
+        var helperTypeName = $"{typeDeclaration.Identifier.ValueText}Helpers";
         var invocations = GetSupportedHelperInvocations(typeDeclaration, methodDeclaration, methodSymbol, semanticModel, ct);
         var trackedType = typeDeclaration.TrackNodes(invocations.Cast<SyntaxNode>().Append(methodDeclaration));
         var trackedInvocations = invocations
