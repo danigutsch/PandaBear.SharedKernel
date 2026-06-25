@@ -42,11 +42,11 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static readonly DiagnosticDescriptor XunitTestMethodRequiredTraitRule = new(
         TestingDiagnosticIds.XunitTestMethodRequiredTrait,
         title: "xUnit test methods should include required trait metadata",
-        messageFormat: "xUnit test method '{0}' should include trait '{1}' with value '{2}'",
+        messageFormat: "xUnit test method '{0}' should include trait '{1}' with value '{2}' configured by sharedkernel_testing_required_traits",
         category: "Testing",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules can require configured xUnit trait metadata so MTP trait filters remain reliable.");
+        description: "Repository testing rules can require xUnit trait metadata through the sharedkernel_testing_required_traits .editorconfig key so MTP trait filters remain reliable.");
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
