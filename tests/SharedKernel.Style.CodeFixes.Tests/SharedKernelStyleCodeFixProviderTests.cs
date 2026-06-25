@@ -821,14 +821,14 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             }
             """;
         using var workspace = new AdhocWorkspace();
-        var project = CreateProject(workspace, source, out var documentId);
+        var project = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(workspace, source, out var documentId);
         var document = Assert.IsType<Document>(project.GetDocument(documentId));
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
         Assert.NotNull(root);
         var targetMethod = Assert.Single(root.DescendantNodes().OfType<MethodDeclarationSyntax>());
 
         // Act
-        var organizedSolution = await OrganizeOverloads(
+        var organizedSolution = await SharedKernelStyleCodeFixProviderTestsHelpers.OrganizeOverloads(
             workspace.CurrentSolution,
             DocumentId.CreateNewId(project.Id),
             targetMethod,
@@ -844,7 +844,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         using var workspace = new AdhocWorkspace();
-        var sourceProject = CreateProject(
+        var sourceProject = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(
             workspace,
             """
             namespace Demo;
@@ -855,7 +855,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             }
             """,
             out var sourceDocumentId);
-        var otherProject = CreateProject(
+        var otherProject = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(
             workspace,
             """
             namespace Demo;
@@ -873,7 +873,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var targetMethod = Assert.Single(sourceRoot.DescendantNodes().OfType<MethodDeclarationSyntax>());
 
         // Act
-        var organizedSolution = await OrganizeOverloads(
+        var organizedSolution = await SharedKernelStyleCodeFixProviderTestsHelpers.OrganizeOverloads(
             workspace.CurrentSolution,
             otherDocumentId,
             targetMethod,
@@ -890,7 +890,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         using var workspace = new AdhocWorkspace();
-        var project = CreateProject(
+        var project = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(
             workspace,
             """
             namespace Demo;
@@ -918,7 +918,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var detachedMethod = Assert.Single(detachedRoot.DescendantNodes().OfType<MethodDeclarationSyntax>());
 
         // Act
-        var organizedSolution = await OrganizeOverloads(
+        var organizedSolution = await SharedKernelStyleCodeFixProviderTestsHelpers.OrganizeOverloads(
             workspace.CurrentSolution,
             documentId,
             detachedMethod,
@@ -945,7 +945,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             }
             """;
         using var workspace = new AdhocWorkspace();
-        var project = CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.Params");
+        var project = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.Params");
         var document = Assert.IsType<Document>(project.GetDocument(documentId));
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
         Assert.NotNull(root);
@@ -953,13 +953,13 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var targetMethod = methods.Single(method => method.Identifier.ValueText == "Load" && method.ParameterList.Parameters[0].Modifiers.Count > 0);
 
         // Act
-        var organizedSolution = await OrganizeOverloads(
+        var organizedSolution = await SharedKernelStyleCodeFixProviderTestsHelpers.OrganizeOverloads(
             workspace.CurrentSolution,
             documentId,
             targetMethod,
             updatedName: "Load",
             TestContext.Current.CancellationToken);
-        var updatedText = await ReadDocumentText(organizedSolution, documentId);
+        var updatedText = await SharedKernelStyleCodeFixProviderTestsHelpers.ReadDocumentText(organizedSolution, documentId);
 
         // Assert
         var paramsIndex = updatedText.IndexOf("Load(params string[] values)", StringComparison.Ordinal);
@@ -974,7 +974,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         using var workspace = new AdhocWorkspace();
-        var project = CreateProject(
+        var project = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(
             workspace,
             """
             namespace Demo;
@@ -1027,20 +1027,20 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             }
             """;
         using var workspace = new AdhocWorkspace();
-        var project = CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.RefKinds");
+        var project = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.RefKinds");
         var document = Assert.IsType<Document>(project.GetDocument(documentId));
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
         Assert.NotNull(root);
         var targetMethod = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
 
         // Act
-        var organizedSolution = await OrganizeOverloads(
+        var organizedSolution = await SharedKernelStyleCodeFixProviderTestsHelpers.OrganizeOverloads(
             workspace.CurrentSolution,
             documentId,
             targetMethod,
             updatedName: "Load",
             TestContext.Current.CancellationToken);
-        var updatedText = await ReadDocumentText(organizedSolution, documentId);
+        var updatedText = await SharedKernelStyleCodeFixProviderTestsHelpers.ReadDocumentText(organizedSolution, documentId);
 
         // Assert
         var valueIndex = updatedText.IndexOf("Load(int value)", StringComparison.Ordinal);
@@ -1071,20 +1071,20 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             }
             """;
         using var workspace = new AdhocWorkspace();
-        var project = CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.Generic");
+        var project = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.Generic");
         var document = Assert.IsType<Document>(project.GetDocument(documentId));
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
         Assert.NotNull(root);
         var targetMethod = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
 
         // Act
-        var organizedSolution = await OrganizeOverloads(
+        var organizedSolution = await SharedKernelStyleCodeFixProviderTestsHelpers.OrganizeOverloads(
             workspace.CurrentSolution,
             documentId,
             targetMethod,
             updatedName: "Load",
             TestContext.Current.CancellationToken);
-        var updatedText = await ReadDocumentText(organizedSolution, documentId);
+        var updatedText = await SharedKernelStyleCodeFixProviderTestsHelpers.ReadDocumentText(organizedSolution, documentId);
 
         // Assert
         var nonGenericIndex = updatedText.IndexOf("Load(string value)", StringComparison.Ordinal);
@@ -1092,63 +1092,6 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         Assert.True(nonGenericIndex >= 0);
         Assert.True(genericIndex >= 0);
         Assert.True(nonGenericIndex < genericIndex);
-    }
-
-    private static Project CreateProject(AdhocWorkspace workspace, string source, out DocumentId documentId, string assemblyName = "SharedKernel.Style.CodeFixes.Tests.Organizer")
-    {
-        var projectId = ProjectId.CreateNewId(assemblyName);
-        var versionStamp = VersionStamp.Create();
-        documentId = DocumentId.CreateNewId(projectId, "Test0.cs");
-        var parseOptions = new CSharpParseOptions(LanguageVersion.Preview);
-        var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-        var projectInfo = ProjectInfo.Create(
-            projectId,
-            versionStamp,
-            name: assemblyName,
-            assemblyName: assemblyName,
-            language: LanguageNames.CSharp,
-            filePath: $"/{assemblyName}.csproj",
-            outputFilePath: $"/{assemblyName}.dll",
-            compilationOptions: compilationOptions,
-            parseOptions: parseOptions,
-            metadataReferences: GetMetadataReferences());
-
-        workspace.AddProject(projectInfo);
-        workspace.AddDocument(
-            DocumentInfo.Create(
-                documentId,
-                "Test0.cs",
-                loader: TextLoader.From(TextAndVersion.Create(SourceText.From(source), versionStamp)),
-                filePath: "/Test0.cs"));
-
-        return Assert.IsType<Project>(workspace.CurrentSolution.GetProject(projectId));
-    }
-
-    private static IEnumerable<MetadataReference> GetMetadataReferences()
-    {
-        var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        Assert.False(string.IsNullOrWhiteSpace(trustedPlatformAssemblies));
-        var trustedAssemblyPaths = Assert.IsType<string>(trustedPlatformAssemblies);
-
-        foreach (var path in trustedAssemblyPaths.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
-        {
-            yield return MetadataReference.CreateFromFile(path);
-        }
-    }
-
-    private static async Task<Solution> OrganizeOverloads(
-        Solution solution,
-        DocumentId documentId,
-        MethodDeclarationSyntax targetMethod,
-        string updatedName,
-        CancellationToken ct)
-    {
-        var organizerType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.MethodOverloadGroupOrganizer");
-        Assert.NotNull(organizerType);
-        var organizeMethod = organizerType.GetMethod("Organize", BindingFlags.Public | BindingFlags.Static);
-        Assert.NotNull(organizeMethod);
-        var task = Assert.IsType<Task<Solution>>(organizeMethod.Invoke(null, [solution, documentId, targetMethod, updatedName, ct]));
-        return await task.ConfigureAwait(false);
     }
 
     private static bool InvokeIsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
@@ -1160,9 +1103,69 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         return Assert.IsType<bool>(method.Invoke(null, [candidateSymbol, originalSymbol, updatedName]));
     }
 
-    private static async Task<string> ReadDocumentText(Solution solution, DocumentId documentId)
+    private static class SharedKernelStyleCodeFixProviderTestsHelpers
     {
-        var document = Assert.IsType<Document>(solution.GetDocument(documentId));
-        return (await document.GetTextAsync().ConfigureAwait(false)).ToString();
+        public static Project CreateProject(AdhocWorkspace workspace, string source, out DocumentId documentId, string assemblyName = "SharedKernel.Style.CodeFixes.Tests.Organizer")
+        {
+            var projectId = ProjectId.CreateNewId(assemblyName);
+            var versionStamp = VersionStamp.Create();
+            documentId = DocumentId.CreateNewId(projectId, "Test0.cs");
+            var parseOptions = new CSharpParseOptions(LanguageVersion.Preview);
+            var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+            var projectInfo = ProjectInfo.Create(
+                projectId,
+                versionStamp,
+                name: assemblyName,
+                assemblyName: assemblyName,
+                language: LanguageNames.CSharp,
+                filePath: $"/{assemblyName}.csproj",
+                outputFilePath: $"/{assemblyName}.dll",
+                compilationOptions: compilationOptions,
+                parseOptions: parseOptions,
+                metadataReferences: GetMetadataReferences());
+
+            workspace.AddProject(projectInfo);
+            workspace.AddDocument(
+                DocumentInfo.Create(
+                    documentId,
+                    "Test0.cs",
+                    loader: TextLoader.From(TextAndVersion.Create(SourceText.From(source), versionStamp)),
+                    filePath: "/Test0.cs"));
+
+            return Assert.IsType<Project>(workspace.CurrentSolution.GetProject(projectId));
+        }
+
+        public static async Task<Solution> OrganizeOverloads(
+                Solution solution,
+                DocumentId documentId,
+                MethodDeclarationSyntax targetMethod,
+                string updatedName,
+                CancellationToken ct)
+        {
+            var organizerType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.MethodOverloadGroupOrganizer");
+            Assert.NotNull(organizerType);
+            var organizeMethod = organizerType.GetMethod("Organize", BindingFlags.Public | BindingFlags.Static);
+            Assert.NotNull(organizeMethod);
+            var task = Assert.IsType<Task<Solution>>(organizeMethod.Invoke(null, [solution, documentId, targetMethod, updatedName, ct]));
+            return await task.ConfigureAwait(false);
+        }
+
+        public static async Task<string> ReadDocumentText(Solution solution, DocumentId documentId)
+        {
+            var document = Assert.IsType<Document>(solution.GetDocument(documentId));
+            return (await document.GetTextAsync().ConfigureAwait(false)).ToString();
+        }
+
+        private static IEnumerable<MetadataReference> GetMetadataReferences()
+        {
+            var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
+            Assert.False(string.IsNullOrWhiteSpace(trustedPlatformAssemblies));
+            var trustedAssemblyPaths = Assert.IsType<string>(trustedPlatformAssemblies);
+
+            foreach (var path in trustedAssemblyPaths.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+            {
+                yield return MetadataReference.CreateFromFile(path);
+            }
+        }
     }
 }

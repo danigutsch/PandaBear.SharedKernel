@@ -20,7 +20,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
                 .DisableAntiforgery());
 
         // Act
-        var schema = GetMultipartSchema(document, "/uploads/commit");
+        var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/commit");
 
         // Assert
         Assert.Equal(JsonSchemaType.Object, schema.Type);
@@ -52,7 +52,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
                 .DisableAntiforgery());
 
         // Act
-        var schema = GetMultipartSchema(document, "/uploads/optional");
+        var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/optional");
 
         // Assert
         Assert.Equal(JsonSchemaType.Object, schema.Type);
@@ -70,7 +70,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
                 .DisableAntiforgery(),
             async (_, context) =>
             {
-                var document = CreateMalformedMultipartDocument("/uploads/commit");
+                var document = MultipartFormRequestBodyDocumentTransformerTestsHelpers.CreateMalformedMultipartDocument("/uploads/commit");
                 var transformer = new MultipartFormRequestBodyDocumentTransformer();
 
                 await transformer.TransformAsync(document, context, TestContext.Current.CancellationToken);
@@ -78,7 +78,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             });
 
         // Assert
-        var schema = GetMultipartSchema(normalizedDocument, "/uploads/commit");
+        var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(normalizedDocument, "/uploads/commit");
         Assert.Equal(JsonSchemaType.Object, schema.Type);
         Assert.NotNull(schema.AllOf);
         Assert.Equal(2, schema.AllOf.Count);
@@ -97,7 +97,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
                 .DisableAntiforgery(),
             async (_, context) =>
             {
-                var document = CreateMalformedMultipartDocument("/uploads/commit");
+                var document = MultipartFormRequestBodyDocumentTransformerTestsHelpers.CreateMalformedMultipartDocument("/uploads/commit");
                 var transformer = new MultipartFormRequestBodyDocumentTransformer();
 
                 await transformer.TransformAsync(document, context, TestContext.Current.CancellationToken);
@@ -105,7 +105,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             });
 
         // Assert
-        var schema = GetMultipartSchema(untouchedDocument, "/uploads/commit");
+        var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(untouchedDocument, "/uploads/commit");
         Assert.NotNull(schema.AllOf);
         Assert.Single(schema.AllOf);
         Assert.Null(schema.Properties);
@@ -150,7 +150,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
                 .DisableAntiforgery(),
             async (_, context) =>
             {
-                var document = CreateMalformedMultipartDocument("/uploads/optional");
+                var document = MultipartFormRequestBodyDocumentTransformerTestsHelpers.CreateMalformedMultipartDocument("/uploads/optional");
                 var transformer = new MultipartFormRequestBodyDocumentTransformer();
 
                 await transformer.TransformAsync(document, context, TestContext.Current.CancellationToken);
@@ -158,7 +158,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             });
 
         // Assert
-        var schema = GetMultipartSchema(normalizedDocument, "/uploads/optional");
+        var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(normalizedDocument, "/uploads/optional");
         Assert.NotNull(schema.AllOf);
         Assert.Null(schema.Required);
     }
@@ -172,7 +172,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
                 .DisableAntiforgery());
 
         // Act
-        var schema = GetMultipartSchema(document, "/uploads/files");
+        var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/files");
 
         // Assert
         Assert.Equal(JsonSchemaType.Object, schema.Type);
@@ -226,8 +226,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     public void Returns_Without_Changing_Requiredness_When_AllOf_Is_Missing()
     {
         var schema = new OpenApiSchema();
-
-        InvokePrivateStaticVoidMethod(
+        MultipartFormRequestBodyDocumentTransformerTestsHelpers.InvokePrivateStaticVoidMethod(
             "PreserveRequirednessOnMultipartAllOfEntries",
             [schema, Array.Empty<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription>()]);
 
@@ -257,45 +256,11 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             Name = "file",
             IsRequired = true
         };
-
-        InvokePrivateStaticVoidMethod(
+        MultipartFormRequestBodyDocumentTransformerTestsHelpers.InvokePrivateStaticVoidMethod(
             "PreserveRequirednessOnMultipartAllOfEntries",
             [schema, new[] { parameter }]);
 
         Assert.Null(schema.AllOf[0].Required);
-    }
-
-    private static OpenApiDocument CreateMalformedMultipartDocument(string path)
-    {
-        return new OpenApiDocument
-        {
-            Paths = new OpenApiPaths
-            {
-                [path] = new OpenApiPathItem
-                {
-                    Operations = new Dictionary<HttpMethod, OpenApiOperation>
-                    {
-                        [HttpMethod.Post] = new OpenApiOperation
-                        {
-                            RequestBody = new OpenApiRequestBody
-                            {
-                                Content = new Dictionary<string, OpenApiMediaType>
-                                {
-                                    ["multipart/form-data"] = new()
-                                    {
-                                        Schema = new OpenApiSchema
-                                        {
-                                            AllOf = [new OpenApiSchema()],
-                                            Properties = null
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        };
     }
 
     private static object InvokePrivateStaticMethod(string methodName, object?[] arguments)
@@ -307,16 +272,6 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
 
         return method.Invoke(null, arguments)
             ?? throw new InvalidOperationException($"Private method '{methodName}' returned null.");
-    }
-
-    private static void InvokePrivateStaticVoidMethod(string methodName, object?[] arguments)
-    {
-        var method = typeof(MultipartFormRequestBodyDocumentTransformer).GetMethod(
-            methodName,
-            BindingFlags.Static | BindingFlags.NonPublic)
-            ?? throw new InvalidOperationException($"Could not locate private method '{methodName}'.");
-
-        _ = method.Invoke(null, arguments);
     }
 
     private static async Task InvokePrivateStaticTaskMethod(string methodName, object?[] arguments)
@@ -332,17 +287,63 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         await task;
     }
 
-    private static OpenApiSchema GetMultipartSchema(OpenApiDocument document, string path)
+    private static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
     {
-        Assert.True(document.Paths.TryGetValue(path, out var pathItem), $"Expected OpenAPI path '{path}' to exist.");
-        Assert.NotNull(pathItem);
-        Assert.NotNull(pathItem.Operations);
-        Assert.True(pathItem.Operations.TryGetValue(HttpMethod.Post, out var operation), $"Expected POST operation for '{path}'.");
-        Assert.NotNull(operation);
+        public static OpenApiDocument CreateMalformedMultipartDocument(string path)
+        {
+            return new OpenApiDocument
+            {
+                Paths = new OpenApiPaths
+                {
+                    [path] = new OpenApiPathItem
+                    {
+                        Operations = new Dictionary<HttpMethod, OpenApiOperation>
+                        {
+                            [HttpMethod.Post] = new OpenApiOperation
+                            {
+                                RequestBody = new OpenApiRequestBody
+                                {
+                                    Content = new Dictionary<string, OpenApiMediaType>
+                                    {
+                                        ["multipart/form-data"] = new()
+                                        {
+                                            Schema = new OpenApiSchema
+                                            {
+                                                AllOf = [new OpenApiSchema()],
+                                                Properties = null
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
 
-        var schema = operation.RequestBody?.Content?["multipart/form-data"].Schema;
+        public static void InvokePrivateStaticVoidMethod(string methodName, object?[] arguments)
+        {
+            var method = typeof(MultipartFormRequestBodyDocumentTransformer).GetMethod(
+                methodName,
+                BindingFlags.Static | BindingFlags.NonPublic)
+                ?? throw new InvalidOperationException($"Could not locate private method '{methodName}'.");
 
-        Assert.NotNull(schema);
-        return Assert.IsType<OpenApiSchema>(schema);
+            _ = method.Invoke(null, arguments);
+        }
+
+        public static OpenApiSchema GetMultipartSchema(OpenApiDocument document, string path)
+        {
+            Assert.True(document.Paths.TryGetValue(path, out var pathItem), $"Expected OpenAPI path '{path}' to exist.");
+            Assert.NotNull(pathItem);
+            Assert.NotNull(pathItem.Operations);
+            Assert.True(pathItem.Operations.TryGetValue(HttpMethod.Post, out var operation), $"Expected POST operation for '{path}'.");
+            Assert.NotNull(operation);
+
+            var schema = operation.RequestBody?.Content?["multipart/form-data"].Schema;
+
+            Assert.NotNull(schema);
+            return Assert.IsType<OpenApiSchema>(schema);
+        }
     }
 }

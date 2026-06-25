@@ -79,7 +79,7 @@ public sealed class ResultConvertErrorTests
     public void Throws_When_Converting_An_Invalid_Result_Without_Validation_Payload()
     {
         // Arrange
-        var malformedResult = CreateMalformedResult(
+        var malformedResult = ResultConvertErrorTestsHelpers.CreateMalformedResult(
             ResultStatus.Invalid,
             new ResultError("Validation failed", ResultErrorCodes.Invalid));
 
@@ -97,7 +97,7 @@ public sealed class ResultConvertErrorTests
     public void Throws_Expected_Exception_For_Malformed_Non_Generic_Status(int statusValue, string expectedMessage)
     {
         // Arrange
-        var malformedResult = CreateMalformedResult((ResultStatus)statusValue, new ResultError("Malformed result status."));
+        var malformedResult = ResultConvertErrorTestsHelpers.CreateMalformedResult((ResultStatus)statusValue, new ResultError("Malformed result status."));
 
         // Act
         var exception = Assert.Throws<InvalidOperationException>(() => malformedResult.ConvertError<string>());
@@ -122,18 +122,6 @@ public sealed class ResultConvertErrorTests
         Assert.Equal(expectedMessage, exception.Message);
     }
 
-    private static Result CreateMalformedResult(ResultStatus status, ResultError? error)
-    {
-        var constructor = typeof(Result).GetConstructor(
-            BindingFlags.Instance | BindingFlags.NonPublic,
-            binder: null,
-            types: [typeof(ResultStatus), typeof(ResultError)],
-            modifiers: null);
-
-        Assert.NotNull(constructor);
-        return (Result)constructor.Invoke([status, error]);
-    }
-
     private static Result<T> CreateMalformedGenericResult<T>(ResultStatus status, T value, ResultError? error)
         where T : notnull
     {
@@ -145,5 +133,20 @@ public sealed class ResultConvertErrorTests
 
         Assert.NotNull(constructor);
         return (Result<T>)constructor.Invoke([status, value, error]);
+    }
+
+    private static class ResultConvertErrorTestsHelpers
+    {
+        public static Result CreateMalformedResult(ResultStatus status, ResultError? error)
+        {
+            var constructor = typeof(Result).GetConstructor(
+                BindingFlags.Instance | BindingFlags.NonPublic,
+                binder: null,
+                types: [typeof(ResultStatus), typeof(ResultError)],
+                modifiers: null);
+
+            Assert.NotNull(constructor);
+            return (Result)constructor.Invoke([status, error]);
+        }
     }
 }

@@ -172,9 +172,11 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         MethodDeclarationSyntax methodDeclaration,
         IMethodSymbol methodSymbol)
     {
-        if (methodSymbol.DeclaredAccessibility is not Accessibility.Private and not Accessibility.Internal
+        if (!methodSymbol.IsStatic
+            || methodSymbol.DeclaredAccessibility is not Accessibility.Private and not Accessibility.Internal
             || IsDisposeLifecycleMethod(methodSymbol)
-            || !ContainsXunitTestMethod(methodSymbol.ContainingType))
+            || !ContainsXunitTestMethod(methodSymbol.ContainingType)
+            || !IsInvokedByMultipleXunitTestMethods(context.SemanticModel, methodDeclaration, methodSymbol, context.CancellationToken))
         {
             return;
         }
@@ -184,6 +186,42 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                 XunitTestClassHelperMethodRule,
                 methodDeclaration.Identifier.GetLocation(),
                 methodSymbol.Name));
+    }
+
+    private static bool IsInvokedByMultipleXunitTestMethods(
+        SemanticModel semanticModel,
+        MethodDeclarationSyntax methodDeclaration,
+        IMethodSymbol methodSymbol,
+        CancellationToken ct)
+    {
+        if (methodDeclaration.Parent is not TypeDeclarationSyntax typeDeclaration)
+        {
+            return false;
+        }
+
+        var callers = new HashSet<IMethodSymbol>(SymbolEqualityComparer.Default);
+        foreach (var invocation in typeDeclaration.DescendantNodes().OfType<InvocationExpressionSyntax>())
+        {
+            ct.ThrowIfCancellationRequested();
+
+            if (methodDeclaration.Span.Contains(invocation.SpanStart)
+                || semanticModel.GetSymbolInfo(invocation, ct).Symbol is not IMethodSymbol invokedMethod
+                || !SymbolEqualityComparer.Default.Equals(invokedMethod.OriginalDefinition, methodSymbol.OriginalDefinition)
+                || invocation.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax callerDeclaration
+                || semanticModel.GetDeclaredSymbol(callerDeclaration, ct) is not IMethodSymbol callerSymbol
+                || !IsXunitTestMethod(callerSymbol))
+            {
+                continue;
+            }
+
+            callers.Add(callerSymbol);
+            if (callers.Count > 1)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool ContainsXunitTestMethod(INamedTypeSymbol typeSymbol)

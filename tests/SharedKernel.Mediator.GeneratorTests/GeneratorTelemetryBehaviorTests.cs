@@ -4,23 +4,6 @@ namespace SharedKernel.Mediator.GeneratorTests;
 
 public sealed class GeneratorTelemetryBehaviorTests
 {
-    private static ActivityListener CreateCapturingListener(List<Activity> stopped, ActivityTraceId traceId)
-    {
-        var listener = new ActivityListener
-        {
-            ShouldListenTo = source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
-            Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-            ActivityStopped = a =>
-            {
-                if (a.TraceId == traceId)
-                {
-                    stopped.Add(a);
-                }
-            },
-        };
-        ActivitySource.AddActivityListener(listener);
-        return listener;
-    }
 
     [Fact]
     public async Task Completes_Send_Safely_When_No_Listener_Is_Registered()
@@ -44,7 +27,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.SendWithException());
         var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.GetTourHandler"));
         var request = ctx.CreateInstance("Demo.GetTour", 1);
@@ -78,7 +61,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.SendSuccess());
         var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.GetTourHandler"));
         var request = ctx.CreateInstance("Demo.GetTour", 7);
@@ -105,7 +88,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.SendWithHandledException());
         var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.GetTourHandler"));
         var request = ctx.CreateInstance("Demo.GetTour", 1);
@@ -131,7 +114,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.SendWithCancellation());
         var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.GetTourHandler"));
         using var cts = new CancellationTokenSource();
@@ -160,7 +143,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.PublishWithCancellation());
         var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.TourCreatedHandler"));
         using var cts = new CancellationTokenSource();
@@ -190,7 +173,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.PublishSuccess());
         var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.TourCreatedHandler"));
         var notification = ctx.CreateInstance("Demo.TourCreated", 1);
@@ -217,7 +200,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.PublishWithException());
         var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.TourCreatedHandler"));
         var notification = ctx.CreateInstance("Demo.TourCreated", 1);
@@ -252,7 +235,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.SequentialPublishSuccess());
         var mediator = ctx.CreateMediator(
             ctx.CreateInstance("Demo.TourCreatedHandlerOne"),
@@ -286,7 +269,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.SequentialPublishWithCancellation());
         var mediator = ctx.CreateMediator(
             ctx.CreateInstance("Demo.TourCreatedHandlerOne"),
@@ -319,7 +302,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.SequentialPublishWithException());
         var mediator = ctx.CreateMediator(
             ctx.CreateInstance("Demo.TourCreatedHandlerOne"),
@@ -357,7 +340,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.StreamDispatchWithExceptionNoPipelines());
         var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.StreamToursHandler"));
         var request = ctx.CreateInstance("Demo.StreamTours", 2);
@@ -396,7 +379,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.StreamDispatchWithCancellationNoPipelines());
         var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.StreamToursHandler"));
         using var cts = new CancellationTokenSource();
@@ -429,7 +412,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stopped = new List<Activity>();
         using var root = new Activity("test-root");
         root.Start();
-        using var listener = CreateCapturingListener(stopped, root.TraceId);
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.StreamDispatchNoPipelines());
         var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.StreamToursHandler"));
         var request = ctx.CreateInstance("Demo.StreamTours", 3);
@@ -453,5 +436,26 @@ public sealed class GeneratorTelemetryBehaviorTests
         Assert.Equal(MediatorTelemetry.OutcomeSuccess, outcome);
         Assert.Null(errorType);
         Assert.DoesNotContain(span.Events, static evt => evt.Name == "exception");
+    }
+
+    private static class GeneratorTelemetryBehaviorTestsHelpers
+    {
+        public static ActivityListener CreateCapturingListener(List<Activity> stopped, ActivityTraceId traceId)
+        {
+            var listener = new ActivityListener
+            {
+                ShouldListenTo = source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
+                Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+                ActivityStopped = a =>
+                {
+                    if (a.TraceId == traceId)
+                    {
+                        stopped.Add(a);
+                    }
+                },
+            };
+            ActivitySource.AddActivityListener(listener);
+            return listener;
+        }
     }
 }

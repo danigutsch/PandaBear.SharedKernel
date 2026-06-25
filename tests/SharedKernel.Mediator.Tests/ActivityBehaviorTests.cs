@@ -56,7 +56,7 @@ public sealed class ActivityBehaviorTests
     {
         // Arrange
         List<Activity> stoppedActivities = [];
-        using var listener = CreateCapturingListener(stoppedActivities);
+        using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(stoppedActivities);
         var behavior = new ActivityBehavior<TestQuery, int>();
         var request = new TestQuery(42);
 
@@ -95,7 +95,7 @@ public sealed class ActivityBehaviorTests
     {
         // Arrange
         List<Activity> stoppedActivities = [];
-        using var listener = CreateCapturingListener(stoppedActivities);
+        using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(stoppedActivities);
         var behavior = new ActivityBehavior<TestQuery, int>();
         var request = new TestQuery(11);
 
@@ -127,7 +127,7 @@ public sealed class ActivityBehaviorTests
     {
         // Arrange
         List<Activity> stoppedActivities = [];
-        using var listener = CreateCapturingListener(stoppedActivities);
+        using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(stoppedActivities);
         var behavior = new ActivityBehavior<TestQuery, int>();
         var request = new TestQuery(12);
 
@@ -152,7 +152,7 @@ public sealed class ActivityBehaviorTests
     {
         // Arrange
         List<Activity> stoppedActivities = [];
-        using var listener = CreateCapturingListener(stoppedActivities);
+        using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(stoppedActivities);
         var behavior = new ActivityBehavior<TestQuery, int>();
         var request = new TestQuery(13);
 
@@ -182,19 +182,22 @@ public sealed class ActivityBehaviorTests
         Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
     }
 
-    private static ActivityListener CreateCapturingListener(List<Activity> stoppedActivities)
-    {
-        var listener = new ActivityListener
-        {
-            ShouldListenTo = static source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
-            Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-            SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllDataAndRecorded,
-            ActivityStopped = stoppedActivities.Add,
-        };
-
-        ActivitySource.AddActivityListener(listener);
-        return listener;
-    }
-
     private sealed record TestQuery(int Id) : IQuery<int>;
+
+    private static class ActivityBehaviorTestsHelpers
+    {
+        public static ActivityListener CreateCapturingListener(List<Activity> stoppedActivities)
+        {
+            var listener = new ActivityListener
+            {
+                ShouldListenTo = static source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
+                Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
+                SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllDataAndRecorded,
+                ActivityStopped = stoppedActivities.Add,
+            };
+
+            ActivitySource.AddActivityListener(listener);
+            return listener;
+        }
+    }
 }

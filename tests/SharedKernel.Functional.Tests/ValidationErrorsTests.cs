@@ -150,7 +150,7 @@ public sealed class ValidationErrorsTests
     {
         // Arrange
         var errors = new ValidationErrors();
-        errors.Add(CreateMalformedInvalidResult(error: null));
+        errors.Add(ValidationErrorsTestsHelpers.CreateMalformedInvalidResult(error: null));
 
         // Act
         var exception = Assert.Throws<InvalidOperationException>(() => errors.ToResult<int>());
@@ -164,7 +164,7 @@ public sealed class ValidationErrorsTests
     {
         // Arrange
         var errors = new ValidationErrors();
-        errors.Add(CreateMalformedInvalidResult(new ResultError("Validation failed", ResultErrorCodes.Invalid)));
+        errors.Add(ValidationErrorsTestsHelpers.CreateMalformedInvalidResult(new ResultError("Validation failed", ResultErrorCodes.Invalid)));
 
         // Act
         var exception = Assert.Throws<InvalidOperationException>(() => errors.ToResult<int>());
@@ -173,15 +173,18 @@ public sealed class ValidationErrorsTests
         Assert.Equal("Validation errors must include field details.", exception.Message);
     }
 
-    private static Result CreateMalformedInvalidResult(ResultError? error)
+    private static class ValidationErrorsTestsHelpers
     {
-        var constructor = typeof(Result).GetConstructor(
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
-            binder: null,
-            types: [typeof(ResultStatus), typeof(ResultError)],
-            modifiers: null);
+        public static Result CreateMalformedInvalidResult(ResultError? error)
+        {
+            var constructor = typeof(Result).GetConstructor(
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+                binder: null,
+                types: [typeof(ResultStatus), typeof(ResultError)],
+                modifiers: null);
 
-        Assert.NotNull(constructor);
-        return (Result)constructor.Invoke([ResultStatus.Invalid, error]);
+            Assert.NotNull(constructor);
+            return (Result)constructor.Invoke([ResultStatus.Invalid, error]);
+        }
     }
 }

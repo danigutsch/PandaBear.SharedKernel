@@ -19,10 +19,14 @@ public sealed class GeneratorDeterminismTests
         // Act
         var firstRun = GeneratorTestHarness.RunGeneratorDriver(compilation);
         var secondRun = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var firstSources = GeneratorDeterminismTestsHelpers.GetGeneratedSourceMap(firstRun);
+        var secondSources = GeneratorDeterminismTestsHelpers.GetGeneratedSourceMap(secondRun);
+        var firstDiagnostics = GeneratorDeterminismTestsHelpers.GetDiagnostics(firstRun);
+        var secondDiagnostics = GeneratorDeterminismTestsHelpers.GetDiagnostics(secondRun);
 
         // Assert
-        Assert.Equal(GetGeneratedSourceMap(firstRun), GetGeneratedSourceMap(secondRun));
-        Assert.Equal(GetDiagnostics(firstRun), GetDiagnostics(secondRun));
+        Assert.Equal(firstSources, secondSources);
+        Assert.Equal(firstDiagnostics, secondDiagnostics);
     }
 
     [Fact]
@@ -48,10 +52,14 @@ public sealed class GeneratorDeterminismTests
         // Act
         var firstRun = GeneratorTestHarness.RunGeneratorDriver(compilation);
         var secondRun = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var firstSources = GeneratorDeterminismTestsHelpers.GetGeneratedSourceMap(firstRun);
+        var secondSources = GeneratorDeterminismTestsHelpers.GetGeneratedSourceMap(secondRun);
+        var firstDiagnostics = GeneratorDeterminismTestsHelpers.GetDiagnostics(firstRun);
+        var secondDiagnostics = GeneratorDeterminismTestsHelpers.GetDiagnostics(secondRun);
 
         // Assert
-        Assert.Equal(GetGeneratedSourceMap(firstRun), GetGeneratedSourceMap(secondRun));
-        Assert.Equal(GetDiagnostics(firstRun), GetDiagnostics(secondRun));
+        Assert.Equal(firstSources, secondSources);
+        Assert.Equal(firstDiagnostics, secondDiagnostics);
     }
 
     [Fact]
@@ -88,28 +96,33 @@ public sealed class GeneratorDeterminismTests
         // Act
         var firstRun = GeneratorTestHarness.RunGeneratorDriver(firstSource);
         var reorderedRun = GeneratorTestHarness.RunGeneratorDriver(reorderedSource);
+        var firstSources = GeneratorDeterminismTestsHelpers.GetGeneratedSourceMap(firstRun);
+        var reorderedSources = GeneratorDeterminismTestsHelpers.GetGeneratedSourceMap(reorderedRun);
 
         // Assert
-        Assert.Equal(GetGeneratedSourceMap(firstRun), GetGeneratedSourceMap(reorderedRun));
+        Assert.Equal(firstSources, reorderedSources);
     }
 
-    private static Dictionary<string, string> GetGeneratedSourceMap(GeneratorDriverRunResult runResult)
+    private static class GeneratorDeterminismTestsHelpers
     {
-        return runResult.Results.Single()
-            .GeneratedSources
-            .OrderBy(static generated => generated.HintName, StringComparer.Ordinal)
-            .ToDictionary(
-                static generated => generated.HintName,
-                static generated => generated.SourceText.ToString(),
-                StringComparer.Ordinal);
-    }
+        public static Dictionary<string, string> GetGeneratedSourceMap(GeneratorDriverRunResult runResult)
+        {
+            return runResult.Results.Single()
+                .GeneratedSources
+                .OrderBy(static generated => generated.HintName, StringComparer.Ordinal)
+                .ToDictionary(
+                    static generated => generated.HintName,
+                    static generated => generated.SourceText.ToString(),
+                    StringComparer.Ordinal);
+        }
 
-    private static string[] GetDiagnostics(GeneratorDriverRunResult runResult)
-    {
-        return runResult.Results.Single()
-            .Diagnostics
-            .Select(static diagnostic =>
-                $"{diagnostic.Id}|{diagnostic.GetMessage(CultureInfo.InvariantCulture)}")
-            .ToArray();
+        public static string[] GetDiagnostics(GeneratorDriverRunResult runResult)
+        {
+            return runResult.Results.Single()
+                .Diagnostics
+                .Select(static diagnostic =>
+                    $"{diagnostic.Id}|{diagnostic.GetMessage(CultureInfo.InvariantCulture)}")
+                .ToArray();
+        }
     }
 }

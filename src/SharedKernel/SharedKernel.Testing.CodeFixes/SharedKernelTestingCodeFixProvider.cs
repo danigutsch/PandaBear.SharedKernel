@@ -23,7 +23,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
-        [TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait];
+        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitTestClassHelperMethod];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -42,7 +42,18 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
         var document = context.Document;
         var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-        if (syntaxRoot?.FindNode(context.Span) is not MethodDeclarationSyntax methodDeclaration)
+        if (syntaxRoot is null)
+        {
+            return;
+        }
+
+        if (string.Equals(diagnostic.Id, TestingDiagnosticIds.TestMethodWarningSuppression, StringComparison.Ordinal))
+        {
+            RegisterRemovePragmaFix(context, document, diagnostic, syntaxRoot);
+            return;
+        }
+
+        if (syntaxRoot.FindNode(context.Span).FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration)
         {
             return;
         }
@@ -59,6 +70,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return;
         }
 
+        if (string.Equals(diagnostic.Id, TestingDiagnosticIds.XunitTestClassHelperMethod, StringComparison.Ordinal))
+        {
+            RegisterMoveHelperMethodFix(context, document, diagnostic, methodDeclaration, methodSymbol, syntaxRoot);
+            return;
+        }
+
         var targetName = TryConvertToUnderscoreName(methodSymbol.Name);
         if (targetName is null
             || string.Equals(targetName, methodSymbol.Name, StringComparison.Ordinal)
@@ -72,6 +89,51 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                 title: $"Rename to '{targetName}'",
                 createChangedSolution: ct => RenameSymbolAsync(document.Project.Solution, methodSymbol, targetName, ct),
                 equivalenceKey: $"RenameXunitTestMethod:{targetName}"),
+            diagnostic);
+    }
+
+    private static void RegisterRemovePragmaFix(
+        CodeFixContext context,
+        Document document,
+        Diagnostic diagnostic,
+        SyntaxNode syntaxRoot)
+    {
+        var trivia = syntaxRoot
+            .DescendantTrivia(descendIntoTrivia: true)
+            .FirstOrDefault(candidate => candidate.Span.IntersectsWith(context.Span) && candidate.GetStructure() is PragmaWarningDirectiveTriviaSyntax);
+        if (trivia.RawKind == 0)
+        {
+            return;
+        }
+
+        context.RegisterCodeFix(
+            CodeAction.Create(
+                title: "Remove pragma warning directive",
+                createChangedDocument: _ => RemovePragmaDirective(document, syntaxRoot, trivia),
+                equivalenceKey: "RemoveTestMethodPragmaWarningDirective"),
+            diagnostic);
+    }
+
+    private static void RegisterMoveHelperMethodFix(
+        CodeFixContext context,
+        Document document,
+        Diagnostic diagnostic,
+        MethodDeclarationSyntax methodDeclaration,
+        IMethodSymbol methodSymbol,
+        SyntaxNode syntaxRoot)
+    {
+        if (!methodSymbol.IsStatic
+            || methodDeclaration.Parent is not TypeDeclarationSyntax typeDeclaration)
+        {
+            return;
+        }
+
+        var helperTypeName = $"{typeDeclaration.Identifier.ValueText}Helpers";
+        context.RegisterCodeFix(
+            CodeAction.Create(
+                title: $"Move '{methodSymbol.Name}' to '{helperTypeName}'",
+                createChangedDocument: ct => MoveHelperMethod(document, syntaxRoot, typeDeclaration, methodDeclaration, methodSymbol, helperTypeName, ct),
+                equivalenceKey: $"MoveXunitHelperMethod:{helperTypeName}:{methodSymbol.Name}"),
             diagnostic);
     }
 
@@ -128,6 +190,104 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         var updatedRoot = syntaxRoot.ReplaceNode(methodDeclaration, updatedMethod);
 
         return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
+    }
+
+    private static Task<Document> MoveHelperMethod(
+        Document document,
+        SyntaxNode syntaxRoot,
+        TypeDeclarationSyntax typeDeclaration,
+        MethodDeclarationSyntax methodDeclaration,
+        IMethodSymbol methodSymbol,
+        string helperTypeName,
+        CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        var movedMethod = methodDeclaration
+            .WithModifiers(MakePublicStaticModifiers(methodDeclaration.Modifiers))
+            .WithAdditionalAnnotations(Formatter.Annotation);
+        var typeWithoutMethod = typeDeclaration.RemoveNode(methodDeclaration, SyntaxRemoveOptions.KeepNoTrivia)!;
+        var nestedHelper = FindNestedHelperType(typeWithoutMethod, helperTypeName);
+
+        TypeDeclarationSyntax updatedType;
+        if (nestedHelper is null)
+        {
+            var helperType = ClassDeclaration(helperTypeName)
+                .WithModifiers(TokenList(Token(SyntaxKind.PrivateKeyword), Token(SyntaxKind.StaticKeyword)))
+                .WithMembers(List<MemberDeclarationSyntax>([movedMethod]))
+                .WithAdditionalAnnotations(Formatter.Annotation);
+
+            updatedType = typeWithoutMethod.AddMembers(helperType);
+        }
+        else
+        {
+            var updatedHelper = ContainsMethodNamed(nestedHelper, methodSymbol.Name)
+                ? nestedHelper
+                : nestedHelper.AddMembers(movedMethod);
+            updatedType = typeWithoutMethod.ReplaceNode(nestedHelper, updatedHelper);
+        }
+
+        updatedType = QualifyHelperInvocations(updatedType, methodDeclaration, methodSymbol.Name, helperTypeName);
+        var updatedRoot = syntaxRoot.ReplaceNode(typeDeclaration, updatedType);
+
+        return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
+    }
+
+    private static Task<Document> RemovePragmaDirective(
+        Document document,
+        SyntaxNode syntaxRoot,
+        SyntaxTrivia trivia)
+    {
+        var updatedRoot = syntaxRoot.ReplaceTrivia(trivia, default(SyntaxTrivia));
+        return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
+    }
+
+    private static SyntaxTokenList MakePublicStaticModifiers(SyntaxTokenList modifiers)
+    {
+        var tokens = modifiers
+            .Where(static token => !token.IsKind(SyntaxKind.PrivateKeyword) && !token.IsKind(SyntaxKind.InternalKeyword))
+            .ToList();
+
+        if (!tokens.Any(static token => token.IsKind(SyntaxKind.PublicKeyword)))
+        {
+            tokens.Insert(0, Token(SyntaxKind.PublicKeyword));
+        }
+
+        return TokenList(tokens);
+    }
+
+    private static ClassDeclarationSyntax? FindNestedHelperType(TypeDeclarationSyntax typeDeclaration, string helperTypeName)
+    {
+        return typeDeclaration.Members
+            .OfType<ClassDeclarationSyntax>()
+            .FirstOrDefault(candidate => string.Equals(candidate.Identifier.ValueText, helperTypeName, StringComparison.Ordinal));
+    }
+
+    private static bool ContainsMethodNamed(ClassDeclarationSyntax typeDeclaration, string methodName)
+    {
+        return typeDeclaration.Members
+            .OfType<MethodDeclarationSyntax>()
+            .Any(candidate => string.Equals(candidate.Identifier.ValueText, methodName, StringComparison.Ordinal));
+    }
+
+    private static TypeDeclarationSyntax QualifyHelperInvocations(
+        TypeDeclarationSyntax typeDeclaration,
+        MethodDeclarationSyntax movedMethod,
+        string methodName,
+        string helperTypeName)
+    {
+        var movedMethodSpan = movedMethod.Span;
+        return typeDeclaration.ReplaceNodes(
+            typeDeclaration.DescendantNodes()
+                .OfType<InvocationExpressionSyntax>()
+                .Where(invocation => !movedMethodSpan.Contains(invocation.SpanStart)
+                    && invocation.Expression is IdentifierNameSyntax identifier
+                    && string.Equals(identifier.Identifier.ValueText, methodName, StringComparison.Ordinal)),
+            (_, invocation) => invocation.WithExpression(
+                MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    IdentifierName(helperTypeName),
+                    IdentifierName(methodName))));
     }
 
     private static Task<Solution> RenameSymbolAsync(Solution solution, IMethodSymbol methodSymbol, string targetName, CancellationToken ct)

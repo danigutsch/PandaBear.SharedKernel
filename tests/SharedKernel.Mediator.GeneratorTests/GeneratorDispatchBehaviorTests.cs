@@ -423,11 +423,11 @@ public sealed class GeneratorDispatchBehaviorTests
         using var scenario = StreamDispatchTestScenario.Create(source, 2);
 
         // Act
-        var (referenceItems, referenceTrace) = await CollectItemsAndTrace(
+        var (referenceItems, referenceTrace) = await GeneratorDispatchBehaviorTestsHelpers.CollectItemsAndTrace(
             scenario.SendReference(TestContext.Current.CancellationToken),
             scenario.ReadTrace);
         scenario.ClearTrace();
-        var (generatedItems, generatedTrace) = await CollectItemsAndTrace(
+        var (generatedItems, generatedTrace) = await GeneratorDispatchBehaviorTestsHelpers.CollectItemsAndTrace(
             scenario.SendGenerated(TestContext.Current.CancellationToken),
             scenario.ReadTrace);
 
@@ -489,11 +489,11 @@ public sealed class GeneratorDispatchBehaviorTests
         using var scenario = StreamDispatchTestScenario.Create(source, 3);
 
         // Act
-        var (referenceItems, referenceTrace) = await CollectItemsAndTrace(
+        var (referenceItems, referenceTrace) = await GeneratorDispatchBehaviorTestsHelpers.CollectItemsAndTrace(
             scenario.SendReference(TestContext.Current.CancellationToken),
             scenario.ReadTrace);
         scenario.ClearTrace();
-        var (generatedItems, generatedTrace) = await CollectItemsAndTrace(
+        var (generatedItems, generatedTrace) = await GeneratorDispatchBehaviorTestsHelpers.CollectItemsAndTrace(
             scenario.SendGenerated(TestContext.Current.CancellationToken),
             scenario.ReadTrace);
 
@@ -984,14 +984,6 @@ public sealed class GeneratorDispatchBehaviorTests
         Assert.Equal(["handler:True"], traceEntries);
     }
 
-    private static async Task<(string[] Items, string[] Trace)> CollectItemsAndTrace(
-        IAsyncEnumerable<string> source,
-        Func<string[]> readTrace)
-    {
-        var items = await AsyncEnumerableTestHelper.Collect(source);
-        return (items, readTrace());
-    }
-
     private static async Task<(string FirstItem, string[] Trace)> ReadFirstItemAndTrace(
         IAsyncEnumerable<string> source,
         Func<string[]> readTrace,
@@ -1061,4 +1053,14 @@ public sealed class GeneratorDispatchBehaviorTests
         return (firstItem, readTrace());
     }
 
+    private static class GeneratorDispatchBehaviorTestsHelpers
+    {
+        public static async Task<(string[] Items, string[] Trace)> CollectItemsAndTrace(
+            IAsyncEnumerable<string> source,
+            Func<string[]> readTrace)
+        {
+            var items = await AsyncEnumerableTestHelper.Collect(source);
+            return (items, readTrace());
+        }
+    }
 }

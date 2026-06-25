@@ -295,7 +295,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Helper_Method_In_Xunit_Test_Class_Reports_S_K_T_E_S_T004()
+    public async Task Reused_Private_Helper_Method_In_Xunit_Test_Class_Reports_S_K_T_E_S_T004()
     {
         // Arrange
         const string source = """
@@ -306,6 +306,13 @@ public sealed class SharedKernelTestingAnalyzerTests
                 [global::Xunit.Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
+                    CreateTourId();
+                }
+
+                [global::Xunit.Fact]
+                public void Updates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
                 }
 
                 private static int CreateTourId()
@@ -323,7 +330,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Internal_Helper_Method_In_Xunit_Test_Class_Reports_S_K_T_E_S_T004()
+    public async Task Reused_Internal_Helper_Method_In_Xunit_Test_Class_Reports_S_K_T_E_S_T004()
     {
         // Arrange
         const string source = """
@@ -334,6 +341,13 @@ public sealed class SharedKernelTestingAnalyzerTests
                 [global::Xunit.Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
+                    CreateTourId();
+                }
+
+                [global::Xunit.Fact]
+                public void Updates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
                 }
 
                 internal static int CreateTourId()
@@ -365,6 +379,63 @@ public sealed class SharedKernelTestingAnalyzerTests
                 }
 
                 public static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Local_Static_Helper_Method_In_Xunit_Test_Class_Does_Not_Report_S_K_T_E_S_T004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
+                }
+
+                private static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Instance_Helper_Method_In_Xunit_Test_Class_Does_Not_Report_S_K_T_E_S_T004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+
+                private int CreateTourId()
                 {
                     return 42;
                 }
