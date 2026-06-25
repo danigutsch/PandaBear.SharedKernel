@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
@@ -64,9 +65,13 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         context.RegisterSyntaxNodeAction(
             AnalyzePragmaDirective,
             SyntaxKind.PragmaWarningDirectiveTrivia);
-        context.RegisterSyntaxNodeAction(
-            AnalyzeMethodDeclaration,
-            SyntaxKind.MethodDeclaration);
+        context.RegisterCompilationStartAction(static compilationContext =>
+        {
+            var requiredTraitsByTree = new ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>>();
+            compilationContext.RegisterSyntaxNodeAction(
+                context => AnalyzeMethodDeclaration(context, requiredTraitsByTree),
+                SyntaxKind.MethodDeclaration);
+        });
     }
 
     private static void AnalyzePragmaDirective(SyntaxNodeAnalysisContext context)
@@ -98,7 +103,9 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                 or "global::Xunit.TheoryAttribute");
     }
 
-    private static void AnalyzeMethodDeclaration(SyntaxNodeAnalysisContext context)
+    private static void AnalyzeMethodDeclaration(
+        SyntaxNodeAnalysisContext context,
+        ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>> requiredTraitsByTree)
     {
         if (context.Node is not MethodDeclarationSyntax methodDeclaration
             || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
@@ -117,8 +124,10 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                     methodSymbol.Name));
         }
 
-        var options = TestingAnalyzerConfigOptions.Parse(context.Options.AnalyzerConfigOptionsProvider, methodDeclaration.SyntaxTree);
-        foreach (var requiredTrait in options.RequiredTraits)
+        var requiredTraits = requiredTraitsByTree.GetOrAdd(
+            methodDeclaration.SyntaxTree,
+            syntaxTree => TestingAnalyzerConfigOptions.Parse(context.Options.AnalyzerConfigOptionsProvider, syntaxTree).RequiredTraits);
+        foreach (var requiredTrait in requiredTraits)
         {
             if (HasTrait(methodSymbol, requiredTrait))
             {

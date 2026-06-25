@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Rename;
 using SharedKernel.Testing.Analyzers;
 
@@ -81,16 +82,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         MethodDeclarationSyntax methodDeclaration,
         SyntaxNode syntaxRoot)
     {
-        if (!diagnostic.Properties.TryGetValue("TraitName", out var traitName)
-            || !diagnostic.Properties.TryGetValue("TraitValue", out var traitValue)
-            || string.IsNullOrWhiteSpace(traitName)
-            || string.IsNullOrWhiteSpace(traitValue))
+        var requiredTraitName = GetNonWhiteSpaceProperty(diagnostic, "TraitName");
+        var requiredTraitValue = GetNonWhiteSpaceProperty(diagnostic, "TraitValue");
+        if (requiredTraitName is null || requiredTraitValue is null)
         {
             return;
         }
-
-        var requiredTraitName = traitName!;
-        var requiredTraitValue = traitValue!;
 
         context.RegisterCodeFix(
             CodeAction.Create(
@@ -98,6 +95,17 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                 createChangedDocument: ct => AddRequiredTrait(document, syntaxRoot, methodDeclaration, requiredTraitName, requiredTraitValue, ct),
                 equivalenceKey: $"AddRequiredTrait:{requiredTraitName}:{requiredTraitValue}"),
             diagnostic);
+    }
+
+    private static string? GetNonWhiteSpaceProperty(Diagnostic diagnostic, string key)
+    {
+        if (diagnostic.Properties.TryGetValue(key, out var value)
+            && !string.IsNullOrWhiteSpace(value))
+        {
+            return value;
+        }
+
+        return null;
     }
 
     private static Task<Document> AddRequiredTrait(
@@ -118,7 +126,8 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                         AttributeArgument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(traitValue))),
                     ])));
         var attributeList = AttributeList(SingletonSeparatedList(traitAttribute))
-            .WithTrailingTrivia(ElasticCarriageReturnLineFeed);
+            .WithTrailingTrivia(ElasticCarriageReturnLineFeed)
+            .WithAdditionalAnnotations(Formatter.Annotation);
         var updatedMethod = methodDeclaration.AddAttributeLists(attributeList);
         var updatedRoot = syntaxRoot.ReplaceNode(methodDeclaration, updatedMethod);
 
