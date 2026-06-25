@@ -3,9 +3,13 @@ using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Rename;
 using SharedKernel.Testing.Analyzers;
+
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace SharedKernel.Testing.CodeFixes;
 
@@ -18,7 +22,8 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
     private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 
     /// <inheritdoc />
-    public override ImmutableArray<string> FixableDiagnosticIds => [TestingDiagnosticIds.XunitTestMethodNaming];
+    public override ImmutableArray<string> FixableDiagnosticIds =>
+        [TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -42,6 +47,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return;
         }
 
+        if (string.Equals(diagnostic.Id, TestingDiagnosticIds.XunitTestMethodRequiredTrait, StringComparison.Ordinal))
+        {
+            RegisterRequiredTraitFix(context, document, diagnostic, methodDeclaration, syntaxRoot);
+            return;
+        }
+
         var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
         if (semanticModel?.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol)
         {
@@ -62,6 +73,61 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                 createChangedSolution: ct => RenameSymbolAsync(document.Project.Solution, methodSymbol, targetName, ct),
                 equivalenceKey: $"RenameXunitTestMethod:{targetName}"),
             diagnostic);
+    }
+
+    private static void RegisterRequiredTraitFix(
+        CodeFixContext context,
+        Document document,
+        Diagnostic diagnostic,
+        MethodDeclarationSyntax methodDeclaration,
+        SyntaxNode syntaxRoot)
+    {
+        var requiredTraitName = GetNonWhiteSpaceProperty(diagnostic, "TraitName");
+        var requiredTraitValue = GetNonWhiteSpaceProperty(diagnostic, "TraitValue");
+        if (requiredTraitName is null || requiredTraitValue is null)
+        {
+            return;
+        }
+
+        context.RegisterCodeFix(
+            CodeAction.Create(
+                title: $"Add Trait(\"{requiredTraitName}\", \"{requiredTraitValue}\")",
+                createChangedDocument: ct => AddRequiredTrait(document, syntaxRoot, methodDeclaration, requiredTraitName, requiredTraitValue, ct),
+                equivalenceKey: $"AddRequiredTrait:{requiredTraitName}:{requiredTraitValue}"),
+            diagnostic);
+    }
+
+    private static string? GetNonWhiteSpaceProperty(Diagnostic diagnostic, string key)
+    {
+        return diagnostic.Properties.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value)
+            ? value
+            : null;
+    }
+
+    private static Task<Document> AddRequiredTrait(
+        Document document,
+        SyntaxNode syntaxRoot,
+        MethodDeclarationSyntax methodDeclaration,
+        string traitName,
+        string traitValue,
+        CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        var traitAttribute = Attribute(ParseName("global::Xunit.Trait"))
+            .WithArgumentList(
+                AttributeArgumentList(
+                    SeparatedList([
+                        AttributeArgument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(traitName))),
+                        AttributeArgument(LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(traitValue))),
+                    ])));
+        var attributeList = AttributeList(SingletonSeparatedList(traitAttribute))
+            .WithTrailingTrivia(ElasticCarriageReturnLineFeed)
+            .WithAdditionalAnnotations(Formatter.Annotation);
+        var updatedMethod = methodDeclaration.AddAttributeLists(attributeList);
+        var updatedRoot = syntaxRoot.ReplaceNode(methodDeclaration, updatedMethod);
+
+        return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
     }
 
     private static Task<Solution> RenameSymbolAsync(Solution solution, IMethodSymbol methodSymbol, string targetName, CancellationToken ct)

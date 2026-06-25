@@ -1,10 +1,13 @@
 extern alias testingcodefixes;
 
+using System.Collections.Immutable;
+
 namespace SharedKernel.Testing.Analyzers.Tests;
 
 public sealed class SharedKernelTestingCodeFixProviderTests
 {
     private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
+    private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
 
     [Fact]
     public async Task Test_Naming_Fix_Renames_Method_And_Reference_Correctly()
@@ -149,5 +152,69 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         Assert.Empty(provider.GetFixAllProvider().GetSupportedFixAllScopes());
+    }
+
+    [Fact]
+    public async Task Required_Trait_Fix_Adds_Configured_Trait_To_Method()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var properties = ImmutableDictionary<string, string?>.Empty
+            .Add("TraitName", "Category")
+            .Add("TraitValue", "Smoke");
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitRequiredTraitDiagnosticId,
+            "Creates_a_tour_when_the_request_is_valid()",
+            properties);
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains("[global::Xunit.Trait(\"Category\", \"Smoke\")]", updatedText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Required_Trait_Fix_Is_Not_Offered_When_Diagnostic_Lacks_Trait_Properties()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitRequiredTraitDiagnosticId,
+            "Creates_a_tour_when_the_request_is_valid()");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
     }
 }

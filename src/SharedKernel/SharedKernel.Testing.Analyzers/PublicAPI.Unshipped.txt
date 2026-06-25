@@ -6,3 +6,4 @@ override SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer.SupportedDia
 SharedKernel.Testing.Analyzers.TestingDiagnosticIds
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.TestMethodWarningSuppression = "SKTEST001" -> string!
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming = "SKTEST002" -> string!
+const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodRequiredTrait = "SKTEST003" -> string!
