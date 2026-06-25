@@ -99,13 +99,9 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     private static string? GetNonWhiteSpaceProperty(Diagnostic diagnostic, string key)
     {
-        if (diagnostic.Properties.TryGetValue(key, out var value)
-            && !string.IsNullOrWhiteSpace(value))
-        {
-            return value;
-        }
-
-        return null;
+        return diagnostic.Properties.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value)
+            ? value
+            : null;
     }
 
     private static Task<Document> AddRequiredTrait(

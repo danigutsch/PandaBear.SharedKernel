@@ -37,12 +37,13 @@ internal sealed class TestingAnalyzerConfigOptions(ImmutableArray<RequiredTrait>
 
     private static string? TryGetOption(AnalyzerConfigOptionsProvider optionsProvider, SyntaxTree? syntaxTree, string key)
     {
-        if (syntaxTree is not null
-            && optionsProvider.GetOptions(syntaxTree).TryGetValue(key, out var syntaxTreeValue))
-        {
-            return syntaxTreeValue;
-        }
+        var syntaxTreeValue = syntaxTree is null ? null : TryGetOptionValue(optionsProvider.GetOptions(syntaxTree), key);
 
-        return optionsProvider.GlobalOptions.TryGetValue(key, out var value) ? value : null;
+        return syntaxTreeValue ?? TryGetOptionValue(optionsProvider.GlobalOptions, key);
+    }
+
+    private static string? TryGetOptionValue(AnalyzerConfigOptions options, string key)
+    {
+        return options.TryGetValue(key, out var value) ? value : null;
     }
 }
