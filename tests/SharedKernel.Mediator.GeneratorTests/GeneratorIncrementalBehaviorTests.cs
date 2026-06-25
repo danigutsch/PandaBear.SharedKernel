@@ -24,9 +24,7 @@ public sealed class GeneratorIncrementalBehaviorTests
 
         // Act
         var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
-
-        // Assert
-        AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Cached, IncrementalStepRunReason.Unchanged);
+        GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Cached, IncrementalStepRunReason.Unchanged);
     }
 
     [Fact]
@@ -67,9 +65,7 @@ public sealed class GeneratorIncrementalBehaviorTests
 
         // Act
         var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
-
-        // Assert
-        AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Cached, IncrementalStepRunReason.Unchanged);
+        GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Cached, IncrementalStepRunReason.Unchanged);
     }
 
     [Fact]
@@ -87,10 +83,8 @@ public sealed class GeneratorIncrementalBehaviorTests
 
         // Act
         var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
-
-        // Assert
-        AssertStepHasReason(updatedRun, "DiscoveryModel", IncrementalStepRunReason.Modified);
-        AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Modified);
+        GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "DiscoveryModel", IncrementalStepRunReason.Modified);
+        GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Modified);
     }
 
     [Fact]
@@ -116,21 +110,22 @@ public sealed class GeneratorIncrementalBehaviorTests
 
         // Act
         var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
-
-        // Assert
-        AssertStepHasReason(updatedRun, "DiscoveryModel", IncrementalStepRunReason.Modified);
-        AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Modified);
+        GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "DiscoveryModel", IncrementalStepRunReason.Modified);
+        GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Modified);
     }
 
-    private static void AssertStepHasReason(
-        GeneratorDriverRunResult runResult,
-        string stepName,
-        params IncrementalStepRunReason[] expectedReasons)
+    private static class GeneratorIncrementalBehaviorTestsHelpers
     {
-        var trackedSteps = runResult.Results.Single().TrackedSteps;
-        var step = Assert.Single(trackedSteps[stepName]);
+        public static void AssertStepHasReason(
+            GeneratorDriverRunResult runResult,
+            string stepName,
+            params IncrementalStepRunReason[] expectedReasons)
+        {
+            var trackedSteps = runResult.Results.Single().TrackedSteps;
+            var step = Assert.Single(trackedSteps[stepName]);
 
-        Assert.NotEmpty(step.Outputs);
-        Assert.All(step.Outputs, output => Assert.Contains(output.Reason, expectedReasons));
+            Assert.NotEmpty(step.Outputs);
+            Assert.All(step.Outputs, output => Assert.Contains(output.Reason, expectedReasons));
+        }
     }
 }

@@ -16,6 +16,8 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 {
     private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 
+    private const string TestingCategory = "Testing";
+
     private static readonly Regex XunitMethodNamingRegex = new(
         @"^[A-Z][A-Za-z0-9]*(?:_[A-Za-z0-9][A-Za-z0-9]*)+$",
         RegexOptions.Compiled | RegexOptions.CultureInvariant,
@@ -25,7 +27,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         TestingDiagnosticIds.TestMethodWarningSuppression,
         title: "Test methods should not use pragma warning suppressions",
         messageFormat: "Test method '{0}' should not use '#pragma warning {1}' directives",
-        category: "Testing",
+        category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository testing rules discourage local pragma warning suppressions inside xUnit test methods; prefer analyzer-compliant test code or broader justified suppression scopes when unavoidable.");
@@ -34,7 +36,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         TestingDiagnosticIds.XunitTestMethodNaming,
         title: "xUnit test methods should follow the underscore naming convention",
         messageFormat: "xUnit test method '{0}' should follow the underscore naming convention",
-        category: "Testing",
+        category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository testing rules require xUnit test methods to use descriptive underscore-separated names such as 'Creates_a_tour_when_the_request_is_valid'.");
@@ -43,14 +45,23 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         TestingDiagnosticIds.XunitTestMethodRequiredTrait,
         title: "xUnit test methods should include required trait metadata",
         messageFormat: "xUnit test method '{0}' should include trait '{1}' with value '{2}' configured by sharedkernel_testing_required_traits",
-        category: "Testing",
+        category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository testing rules can require xUnit trait metadata through the sharedkernel_testing_required_traits .editorconfig key so MTP trait filters remain reliable.");
 
+    private static readonly DiagnosticDescriptor XunitTestClassHelperMethodRule = new(
+        TestingDiagnosticIds.XunitTestClassHelperMethod,
+        title: "xUnit test classes should not declare reused static helper methods directly",
+        messageFormat: "xUnit test class static helper method '{0}' should be moved to a dedicated helper type when reusable or kept in the test body when local",
+        category: TestingCategory,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository testing rules keep test behavior visible by discouraging reused private or internal static helper methods declared directly on xUnit test classes.");
+
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule];
+        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -68,8 +79,9 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         context.RegisterCompilationStartAction(static compilationContext =>
         {
             var requiredTraitsByTree = new ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>>();
+            var helperUsageCountsByType = new ConcurrentDictionary<INamedTypeSymbol, ImmutableDictionary<IMethodSymbol, int>>(SymbolEqualityComparer.Default);
             compilationContext.RegisterSyntaxNodeAction(
-                context => AnalyzeMethodDeclaration(context, requiredTraitsByTree),
+                context => AnalyzeMethodDeclaration(context, requiredTraitsByTree, helperUsageCountsByType),
                 SyntaxKind.MethodDeclaration);
         });
     }
@@ -105,13 +117,29 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeMethodDeclaration(
         SyntaxNodeAnalysisContext context,
-        ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>> requiredTraitsByTree)
+        ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>> requiredTraitsByTree,
+        ConcurrentDictionary<INamedTypeSymbol, ImmutableDictionary<IMethodSymbol, int>> helperUsageCountsByType)
     {
-        if (context.Node is not MethodDeclarationSyntax methodDeclaration
-            || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
-            || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
-            || !IsXunitTestMethod(methodSymbol))
+        if (context.Node is not MethodDeclarationSyntax methodDeclaration)
         {
+            return;
+        }
+
+        var isPotentialXunitTestMethod = IsPotentialXunitTestMethodDeclaration(methodDeclaration);
+        var isPotentialHelperMethod = IsPotentialXunitHelperMethodDeclaration(methodDeclaration);
+        if (!isPotentialXunitTestMethod && !isPotentialHelperMethod)
+        {
+            return;
+        }
+
+        if (context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol)
+        {
+            return;
+        }
+
+        if (!isPotentialXunitTestMethod || !IsXunitTestMethod(methodSymbol))
+        {
+            AnalyzeTestClassHelperMethod(context, methodDeclaration, methodSymbol, helperUsageCountsByType);
             return;
         }
 
@@ -147,6 +175,119 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                     requiredTrait.Name,
                     requiredTrait.Value));
         }
+    }
+
+    private static void AnalyzeTestClassHelperMethod(
+        SyntaxNodeAnalysisContext context,
+        MethodDeclarationSyntax methodDeclaration,
+        IMethodSymbol methodSymbol,
+        ConcurrentDictionary<INamedTypeSymbol, ImmutableDictionary<IMethodSymbol, int>> helperUsageCountsByType)
+    {
+        if (!methodSymbol.IsStatic
+            || methodSymbol.DeclaredAccessibility is not Accessibility.Private and not Accessibility.Internal
+            || IsDisposeLifecycleMethod(methodSymbol)
+            || !ContainsXunitTestMethod(methodSymbol.ContainingType)
+            || !IsInvokedByMultipleXunitTestMethods(context.SemanticModel, methodDeclaration, methodSymbol, helperUsageCountsByType, context.CancellationToken))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                XunitTestClassHelperMethodRule,
+                methodDeclaration.Identifier.GetLocation(),
+                methodSymbol.Name));
+    }
+
+    private static bool IsInvokedByMultipleXunitTestMethods(
+        SemanticModel semanticModel,
+        MethodDeclarationSyntax methodDeclaration,
+        IMethodSymbol methodSymbol,
+        ConcurrentDictionary<INamedTypeSymbol, ImmutableDictionary<IMethodSymbol, int>> helperUsageCountsByType,
+        CancellationToken ct)
+    {
+        if (methodDeclaration.Parent is not TypeDeclarationSyntax typeDeclaration)
+        {
+            return false;
+        }
+
+        var usageCounts = helperUsageCountsByType.GetOrAdd(
+            methodSymbol.ContainingType,
+            _ => GetXunitHelperUsageCounts(semanticModel, typeDeclaration, ct));
+
+        return usageCounts.TryGetValue(methodSymbol.OriginalDefinition, out var usageCount) && usageCount > 1;
+    }
+
+    private static ImmutableDictionary<IMethodSymbol, int> GetXunitHelperUsageCounts(
+        SemanticModel semanticModel,
+        TypeDeclarationSyntax typeDeclaration,
+        CancellationToken ct)
+    {
+        var callersByHelper = new Dictionary<IMethodSymbol, HashSet<IMethodSymbol>>(SymbolEqualityComparer.Default);
+        foreach (var invocation in typeDeclaration.DescendantNodes().OfType<InvocationExpressionSyntax>())
+        {
+            ct.ThrowIfCancellationRequested();
+
+            if (semanticModel.GetSymbolInfo(invocation, ct).Symbol is not IMethodSymbol invokedMethod
+                || invocation.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax callerDeclaration
+                || semanticModel.GetDeclaredSymbol(callerDeclaration, ct) is not IMethodSymbol callerSymbol
+                || !IsXunitTestMethod(callerSymbol))
+            {
+                continue;
+            }
+
+            var helperSymbol = invokedMethod.OriginalDefinition;
+            if (!callersByHelper.TryGetValue(helperSymbol, out var callers))
+            {
+                callers = new(SymbolEqualityComparer.Default);
+                callersByHelper.Add(helperSymbol, callers);
+            }
+
+            callers.Add(callerSymbol);
+        }
+
+        var usageCounts = ImmutableDictionary.CreateBuilder<IMethodSymbol, int>(SymbolEqualityComparer.Default);
+        foreach (var pair in callersByHelper)
+        {
+            usageCounts.Add(pair.Key, pair.Value.Count);
+        }
+
+        return usageCounts.ToImmutable();
+    }
+
+    private static bool ContainsXunitTestMethod(INamedTypeSymbol typeSymbol)
+    {
+        return typeSymbol.GetMembers()
+            .OfType<IMethodSymbol>()
+            .Any(static method => method.MethodKind == MethodKind.Ordinary && IsXunitTestMethod(method));
+    }
+
+    private static bool IsPotentialXunitHelperMethodDeclaration(MethodDeclarationSyntax methodDeclaration)
+    {
+        return methodDeclaration.Parent is TypeDeclarationSyntax
+            && methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.StaticKeyword))
+            && methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PrivateKeyword) || modifier.IsKind(SyntaxKind.InternalKeyword));
+    }
+
+    private static bool IsDisposeLifecycleMethod(IMethodSymbol methodSymbol)
+    {
+        return methodSymbol.Parameters.Length == 0
+            && (methodSymbol.ExplicitInterfaceImplementations.Any(static implementation =>
+                implementation.Name is nameof(IDisposable.Dispose) or "DisposeAsync"
+                && implementation.ContainingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) is "global::System.IDisposable" or "global::System.IAsyncDisposable")
+                || (methodSymbol.DeclaredAccessibility == Accessibility.Public
+                    && methodSymbol.Name switch
+                    {
+                        nameof(IDisposable.Dispose) => ImplementsInterface(methodSymbol.ContainingType, "global::System.IDisposable"),
+                        "DisposeAsync" => ImplementsInterface(methodSymbol.ContainingType, "global::System.IAsyncDisposable"),
+                        _ => false,
+                    }));
+    }
+
+    private static bool ImplementsInterface(INamedTypeSymbol typeSymbol, string interfaceName)
+    {
+        return typeSymbol.AllInterfaces.Any(candidate =>
+            string.Equals(candidate.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat), interfaceName, StringComparison.Ordinal));
     }
 
     private static bool HasTrait(IMethodSymbol methodSymbol, RequiredTrait requiredTrait)

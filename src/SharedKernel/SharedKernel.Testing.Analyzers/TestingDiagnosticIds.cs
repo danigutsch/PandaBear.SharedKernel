@@ -19,4 +19,9 @@ public static class TestingDiagnosticIds
     /// Diagnostic emitted when an xUnit test method is missing configured trait metadata.
     /// </summary>
     public const string XunitTestMethodRequiredTrait = "SKTEST003";
+
+    /// <summary>
+    /// Diagnostic emitted when an xUnit test class declares reused private or internal static helper methods directly.
+    /// </summary>
+    public const string XunitTestClassHelperMethod = "SKTEST004";
 }

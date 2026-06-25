@@ -14,7 +14,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     [Fact]
     public void Throws_When_Services_Are_Null()
     {
-        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(null, ["tours"]));
+        var exception = Assert.Throws<TargetInvocationException>(() => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(null, ["tours"]));
 
         Assert.IsType<ArgumentNullException>(exception.InnerException);
     }
@@ -24,7 +24,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     {
         var services = OpenApiTestServiceCollectionFactory.Create();
 
-        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(services, null));
+        var exception = Assert.Throws<TargetInvocationException>(() => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(services, null));
 
         Assert.IsType<ArgumentNullException>(exception.InnerException);
     }
@@ -34,7 +34,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     {
         var services = OpenApiTestServiceCollectionFactory.Create();
 
-        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(services, ["tours", " "]));
+        var exception = Assert.Throws<TargetInvocationException>(() => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(services, ["tours", " "]));
 
         Assert.IsType<ArgumentException>(exception.InnerException);
     }
@@ -44,7 +44,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     {
         var services = OpenApiTestServiceCollectionFactory.Create();
 
-        var exception = Assert.Throws<TargetInvocationException>(() => InvokeAddBoundaryOpenApiDocuments(services, ["tours", "Tours"]));
+        var exception = Assert.Throws<TargetInvocationException>(() => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(services, ["tours", "Tours"]));
 
         Assert.IsType<ArgumentException>(exception.InnerException);
     }
@@ -85,11 +85,14 @@ public sealed class OpenApiServiceCollectionExtensionsTests
         Assert.DoesNotContain("/tours-archive", document.Paths.Keys);
     }
 
-    private static void InvokeAddBoundaryOpenApiDocuments(IServiceCollection? services, IReadOnlyCollection<string>? boundaryNames)
+    private static class OpenApiServiceCollectionExtensionsTestsHelpers
     {
-        var method = typeof(OpenApiServiceCollectionExtensions).GetMethod(nameof(OpenApiServiceCollectionExtensions.AddBoundaryOpenApiDocuments))
-            ?? throw new InvalidOperationException("Could not locate AddBoundaryOpenApiDocuments.");
+        public static void InvokeAddBoundaryOpenApiDocuments(IServiceCollection? services, IReadOnlyCollection<string>? boundaryNames)
+        {
+            var method = typeof(OpenApiServiceCollectionExtensions).GetMethod(nameof(OpenApiServiceCollectionExtensions.AddBoundaryOpenApiDocuments))
+                ?? throw new InvalidOperationException("Could not locate AddBoundaryOpenApiDocuments.");
 
-        _ = method.Invoke(null, [services, boundaryNames]);
+            _ = method.Invoke(null, [services, boundaryNames]);
+        }
     }
 }
