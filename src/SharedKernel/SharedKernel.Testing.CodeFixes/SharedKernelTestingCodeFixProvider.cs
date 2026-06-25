@@ -131,6 +131,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         }
 
         var helperTypeName = $"{typeDeclaration.Identifier.ValueText}Helpers";
+        var nestedHelper = FindNestedHelperType(typeDeclaration, helperTypeName);
+        if (nestedHelper is not null && ContainsMethodNamed(nestedHelper, methodSymbol.Name))
+        {
+            return;
+        }
+
         context.RegisterCodeFix(
             CodeAction.Create(
                 title: $"Move '{methodSymbol.Name}' to '{helperTypeName}'",
@@ -232,9 +238,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         }
         else
         {
-            var updatedHelper = ContainsMethodNamed(nestedHelper, methodSymbol.Name)
-                ? nestedHelper
-                : nestedHelper.AddMembers(movedMethod);
+            var updatedHelper = nestedHelper.AddMembers(movedMethod);
             updatedType = typeWithoutMethod.ReplaceNode(nestedHelper, updatedHelper);
         }
 

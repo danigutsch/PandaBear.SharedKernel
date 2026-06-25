@@ -79,8 +79,9 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         context.RegisterCompilationStartAction(static compilationContext =>
         {
             var requiredTraitsByTree = new ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>>();
+            var helperUsageCountsByType = new ConcurrentDictionary<INamedTypeSymbol, ImmutableDictionary<IMethodSymbol, int>>(SymbolEqualityComparer.Default);
             compilationContext.RegisterSyntaxNodeAction(
-                context => AnalyzeMethodDeclaration(context, requiredTraitsByTree),
+                context => AnalyzeMethodDeclaration(context, requiredTraitsByTree, helperUsageCountsByType),
                 SyntaxKind.MethodDeclaration);
         });
     }
@@ -116,7 +117,8 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeMethodDeclaration(
         SyntaxNodeAnalysisContext context,
-        ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>> requiredTraitsByTree)
+        ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>> requiredTraitsByTree,
+        ConcurrentDictionary<INamedTypeSymbol, ImmutableDictionary<IMethodSymbol, int>> helperUsageCountsByType)
     {
         if (context.Node is not MethodDeclarationSyntax methodDeclaration)
         {
@@ -137,7 +139,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
         if (!isPotentialXunitTestMethod || !IsXunitTestMethod(methodSymbol))
         {
-            AnalyzeTestClassHelperMethod(context, methodDeclaration, methodSymbol);
+            AnalyzeTestClassHelperMethod(context, methodDeclaration, methodSymbol, helperUsageCountsByType);
             return;
         }
 
@@ -178,13 +180,14 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static void AnalyzeTestClassHelperMethod(
         SyntaxNodeAnalysisContext context,
         MethodDeclarationSyntax methodDeclaration,
-        IMethodSymbol methodSymbol)
+        IMethodSymbol methodSymbol,
+        ConcurrentDictionary<INamedTypeSymbol, ImmutableDictionary<IMethodSymbol, int>> helperUsageCountsByType)
     {
         if (!methodSymbol.IsStatic
             || methodSymbol.DeclaredAccessibility is not Accessibility.Private and not Accessibility.Internal
             || IsDisposeLifecycleMethod(methodSymbol)
             || !ContainsXunitTestMethod(methodSymbol.ContainingType)
-            || !IsInvokedByMultipleXunitTestMethods(context.SemanticModel, methodDeclaration, methodSymbol, context.CancellationToken))
+            || !IsInvokedByMultipleXunitTestMethods(context.SemanticModel, methodDeclaration, methodSymbol, helperUsageCountsByType, context.CancellationToken))
         {
             return;
         }
@@ -200,6 +203,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         SemanticModel semanticModel,
         MethodDeclarationSyntax methodDeclaration,
         IMethodSymbol methodSymbol,
+        ConcurrentDictionary<INamedTypeSymbol, ImmutableDictionary<IMethodSymbol, int>> helperUsageCountsByType,
         CancellationToken ct)
     {
         if (methodDeclaration.Parent is not TypeDeclarationSyntax typeDeclaration)
@@ -207,14 +211,24 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             return false;
         }
 
-        var callers = new HashSet<IMethodSymbol>(SymbolEqualityComparer.Default);
+        var usageCounts = helperUsageCountsByType.GetOrAdd(
+            methodSymbol.ContainingType,
+            _ => GetXunitHelperUsageCounts(semanticModel, typeDeclaration, ct));
+
+        return usageCounts.TryGetValue(methodSymbol.OriginalDefinition, out var usageCount) && usageCount > 1;
+    }
+
+    private static ImmutableDictionary<IMethodSymbol, int> GetXunitHelperUsageCounts(
+        SemanticModel semanticModel,
+        TypeDeclarationSyntax typeDeclaration,
+        CancellationToken ct)
+    {
+        var callersByHelper = new Dictionary<IMethodSymbol, HashSet<IMethodSymbol>>(SymbolEqualityComparer.Default);
         foreach (var invocation in typeDeclaration.DescendantNodes().OfType<InvocationExpressionSyntax>())
         {
             ct.ThrowIfCancellationRequested();
 
-            if (methodDeclaration.Span.Contains(invocation.SpanStart)
-                || semanticModel.GetSymbolInfo(invocation, ct).Symbol is not IMethodSymbol invokedMethod
-                || !SymbolEqualityComparer.Default.Equals(invokedMethod.OriginalDefinition, methodSymbol.OriginalDefinition)
+            if (semanticModel.GetSymbolInfo(invocation, ct).Symbol is not IMethodSymbol invokedMethod
                 || invocation.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax callerDeclaration
                 || semanticModel.GetDeclaredSymbol(callerDeclaration, ct) is not IMethodSymbol callerSymbol
                 || !IsXunitTestMethod(callerSymbol))
@@ -222,14 +236,23 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                 continue;
             }
 
-            callers.Add(callerSymbol);
-            if (callers.Count > 1)
+            var helperSymbol = invokedMethod.OriginalDefinition;
+            if (!callersByHelper.TryGetValue(helperSymbol, out var callers))
             {
-                return true;
+                callers = new HashSet<IMethodSymbol>(SymbolEqualityComparer.Default);
+                callersByHelper.Add(helperSymbol, callers);
             }
+
+            callers.Add(callerSymbol);
         }
 
-        return false;
+        var usageCounts = ImmutableDictionary.CreateBuilder<IMethodSymbol, int>(SymbolEqualityComparer.Default);
+        foreach (var pair in callersByHelper)
+        {
+            usageCounts.Add(pair.Key, pair.Value.Count);
+        }
+
+        return usageCounts.ToImmutable();
     }
 
     private static bool ContainsXunitTestMethod(INamedTypeSymbol typeSymbol)
