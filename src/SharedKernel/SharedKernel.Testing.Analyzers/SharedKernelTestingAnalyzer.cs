@@ -38,9 +38,18 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true,
         description: "Repository testing rules require xUnit test methods to use descriptive underscore-separated names such as 'Creates_a_tour_when_the_request_is_valid'.");
 
+    private static readonly DiagnosticDescriptor XunitTestMethodRequiredTraitRule = new(
+        TestingDiagnosticIds.XunitTestMethodRequiredTrait,
+        title: "xUnit test methods should include required trait metadata",
+        messageFormat: "xUnit test method '{0}' should include trait '{1}' with value '{2}'",
+        category: "Testing",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository testing rules can require configured xUnit trait metadata so MTP trait filters remain reliable.");
+
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule];
+        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -94,17 +103,57 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         if (context.Node is not MethodDeclarationSyntax methodDeclaration
             || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
             || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
-            || !IsXunitTestMethod(methodSymbol)
-            || XunitMethodNamingRegex.IsMatch(methodSymbol.Name))
+            || !IsXunitTestMethod(methodSymbol))
         {
             return;
         }
 
-        context.ReportDiagnostic(
-            Diagnostic.Create(
-                XunitTestMethodNamingRule,
-                methodDeclaration.Identifier.GetLocation(),
-                methodSymbol.Name));
+        if (!XunitMethodNamingRegex.IsMatch(methodSymbol.Name))
+        {
+            context.ReportDiagnostic(
+                Diagnostic.Create(
+                    XunitTestMethodNamingRule,
+                    methodDeclaration.Identifier.GetLocation(),
+                    methodSymbol.Name));
+        }
+
+        var options = TestingAnalyzerConfigOptions.Parse(context.Options.AnalyzerConfigOptionsProvider, methodDeclaration.SyntaxTree);
+        foreach (var requiredTrait in options.RequiredTraits)
+        {
+            if (HasTrait(methodSymbol, requiredTrait))
+            {
+                continue;
+            }
+
+            var properties = ImmutableDictionary<string, string?>.Empty
+                .Add("TraitName", requiredTrait.Name)
+                .Add("TraitValue", requiredTrait.Value);
+
+            context.ReportDiagnostic(
+                Diagnostic.Create(
+                    XunitTestMethodRequiredTraitRule,
+                    methodDeclaration.Identifier.GetLocation(),
+                    properties,
+                    methodSymbol.Name,
+                    requiredTrait.Name,
+                    requiredTrait.Value));
+        }
+    }
+
+    private static bool HasTrait(IMethodSymbol methodSymbol, RequiredTrait requiredTrait)
+    {
+        return HasTrait(methodSymbol.GetAttributes(), requiredTrait)
+            || HasTrait(methodSymbol.ContainingType.GetAttributes(), requiredTrait)
+            || HasTrait(methodSymbol.ContainingAssembly.GetAttributes(), requiredTrait);
+    }
+
+    private static bool HasTrait(ImmutableArray<AttributeData> attributes, RequiredTrait requiredTrait)
+    {
+        return attributes.Any(attribute =>
+            attribute.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) is "global::Xunit.TraitAttribute"
+            && attribute.ConstructorArguments.Length == 2
+            && string.Equals(attribute.ConstructorArguments[0].Value as string, requiredTrait.Name, StringComparison.Ordinal)
+            && string.Equals(attribute.ConstructorArguments[1].Value as string, requiredTrait.Value, StringComparison.Ordinal));
     }
 
     private static bool IsPotentialXunitTestMethodDeclaration(MethodDeclarationSyntax methodDeclaration)

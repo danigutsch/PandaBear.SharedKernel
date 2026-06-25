@@ -1,9 +1,12 @@
+using System.Collections.Immutable;
+
 namespace SharedKernel.Testing.Analyzers.Tests;
 
 public sealed class SharedKernelTestingAnalyzerTests
 {
     private const string WarningSuppressionDiagnosticId = TestingDiagnosticIds.TestMethodWarningSuppression;
     private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
+    private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
 
     [Fact]
     public async Task Pragma_Warning_Disable_Inside_Fact_Method_Reports_SKTEST001()
@@ -159,5 +162,134 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Required_Trait_Config_Missing_From_Test_Method_Reports_S_K_T_E_S_T003()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_required_traits", "Category=Smoke");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Required_Trait_Config_Already_On_Method_Does_Not_Report_S_K_T_E_S_T003()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                [global::Xunit.Trait("Category", "Smoke")]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_required_traits", "Category=Smoke");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Required_Trait_Config_Already_On_Class_Does_Not_Report_S_K_T_E_S_T003()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [global::Xunit.Trait("Category", "Smoke")]
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_required_traits", "Category=Smoke");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Required_Trait_Config_Already_On_Assembly_Does_Not_Report_S_K_T_E_S_T003()
+    {
+        // Arrange
+        const string source = """
+            [assembly: global::Xunit.Trait("Category", "Smoke")]
+
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_required_traits", "Category=Smoke");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Required_Trait_Config_Multiple_Missing_Traits_Reports_Once_Per_Trait()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_required_traits", "Category=Smoke;Scope=Integration");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        Assert.Equal(2, diagnostics.Count(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId));
     }
 }

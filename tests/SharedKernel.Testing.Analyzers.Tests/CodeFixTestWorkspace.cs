@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
@@ -59,7 +60,15 @@ internal sealed class CodeFixTestWorkspace
         return new CodeFixTestWorkspace(workspace, documentId);
     }
 
-    public async Task<Diagnostic> CreateDocumentDiagnostic(string diagnosticId, string markerText)
+    public Task<Diagnostic> CreateDocumentDiagnostic(string diagnosticId, string markerText)
+    {
+        return CreateDocumentDiagnostic(diagnosticId, markerText, properties: null);
+    }
+
+    public async Task<Diagnostic> CreateDocumentDiagnostic(
+        string diagnosticId,
+        string markerText,
+        ImmutableDictionary<string, string?>? properties)
     {
         var text = await Document.GetTextAsync().ConfigureAwait(false);
         var source = text.ToString();
@@ -77,7 +86,11 @@ internal sealed class CodeFixTestWorkspace
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
-        return Diagnostic.Create(descriptor, Location.Create(nonNullSyntaxTree, new TextSpan(start, markerText.Length)));
+        return Diagnostic.Create(
+            descriptor,
+            Location.Create(nonNullSyntaxTree, new TextSpan(start, markerText.Length)),
+            properties,
+            []);
     }
 
     public async Task<IReadOnlyList<CodeAction>> GetCodeActions(CodeFixProvider provider, Diagnostic diagnostic)

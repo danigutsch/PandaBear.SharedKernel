@@ -33,20 +33,21 @@ internal static class AnalyzerTestHarness
 
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
-        string assemblyName = "SharedKernel.Testing.Analyzers.Tests.Dynamic")
+        string assemblyName = "SharedKernel.Testing.Analyzers.Tests.Dynamic",
+        ImmutableDictionary<string, string>? analyzerOptions = null)
     {
         var compilation = CreateCompilation(source, assemblyName);
         var analyzer = new SharedKernelTestingAnalyzer();
-        var optionsProvider = new TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>.Empty);
-        var analyzerOptions = new AnalyzerOptions([]);
+        var optionsProvider = new TestAnalyzerConfigOptionsProvider(analyzerOptions ?? ImmutableDictionary<string, string>.Empty);
+        var options = new AnalyzerOptions([]);
         var compilationOptions = new CompilationWithAnalyzersOptions(
-            analyzerOptions,
+            options,
             onAnalyzerException: null,
             concurrentAnalysis: true,
             logAnalyzerExecutionTime: false,
             reportSuppressedDiagnostics: false,
             analyzerExceptionFilter: null,
-            _ => optionsProvider);
+            _ => (AnalyzerConfigOptionsProvider)optionsProvider);
         var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer], compilationOptions);
 
         return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
