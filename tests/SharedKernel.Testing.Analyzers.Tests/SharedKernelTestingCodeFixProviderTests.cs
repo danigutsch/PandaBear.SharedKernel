@@ -10,7 +10,6 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
     private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
     private const string XunitHelperMethodDiagnosticId = TestingDiagnosticIds.XunitTestClassHelperMethod;
-
     [Fact]
     public async Task Test_Naming_Fix_Renames_Method_And_Reference_Correctly()
     {

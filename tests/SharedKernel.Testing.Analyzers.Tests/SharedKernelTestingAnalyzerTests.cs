@@ -8,7 +8,6 @@ public sealed class SharedKernelTestingAnalyzerTests
     private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
     private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
     private const string XunitHelperMethodDiagnosticId = TestingDiagnosticIds.XunitTestClassHelperMethod;
-
     [Fact]
     public async Task Pragma_Warning_Disable_Inside_Fact_Method_Reports_SKTEST001()
     {
