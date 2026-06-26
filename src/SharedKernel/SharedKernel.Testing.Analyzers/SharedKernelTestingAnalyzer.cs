@@ -52,7 +52,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static readonly DiagnosticDescriptor XunitTestClassHelperMethodRule = new(
         TestingDiagnosticIds.XunitTestClassHelperMethod,
-        title: "xUnit test classes should not declare helper members directly",
+        title: "xUnit test classes should not declare non-public or reused helper members directly",
         messageFormat: "xUnit test class helper member '{0}' should be moved to a dedicated helper type or kept in the test body when local",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
