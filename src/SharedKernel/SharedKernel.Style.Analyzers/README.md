@@ -33,8 +33,9 @@ The repository currently stages `SKSTYLE002` and `SKSTYLE003` as suggestions for
 They can be raised to warning or error after the existing codebase is cleaned up.
 
 `SKSTYLE004` follows the same staged rollout. The first pass excludes generated files,
-partial-type files, all test projects, and a short list of production files that still carry
-intentional grouped top-level types.
+files containing only partial top-level types, and a short list of production files that still carry
+intentional grouped top-level types. Test files are included so extracted helpers move to their own
+named files instead of becoming file-local helper types beside a test class.
 
 ## Intentional diagnostic sample
 

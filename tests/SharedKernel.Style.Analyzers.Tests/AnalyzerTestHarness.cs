@@ -20,9 +20,10 @@ internal static class AnalyzerTestHarness
 
     public static CSharpCompilation CreateCompilation(
         string source,
-        string assemblyName = "SharedKernel.Style.Analyzers.Tests.Dynamic")
+        string assemblyName = "SharedKernel.Style.Analyzers.Tests.Dynamic",
+        string path = "TestSource.cs")
     {
-        var syntaxTree = CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview));
+        var syntaxTree = CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview), path: path);
 
         return CSharpCompilation.Create(
             assemblyName,
@@ -34,9 +35,10 @@ internal static class AnalyzerTestHarness
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
         ImmutableDictionary<string, string>? globalOptions = null,
-        string assemblyName = "SharedKernel.Style.Analyzers.Tests.Dynamic")
+        string assemblyName = "SharedKernel.Style.Analyzers.Tests.Dynamic",
+        string path = "TestSource.cs")
     {
-        var compilation = CreateCompilation(source, assemblyName);
+        var compilation = CreateCompilation(source, assemblyName, path);
         var analyzer = new SharedKernelStyleAnalyzer();
         var optionsProvider = new TestAnalyzerConfigOptionsProvider(globalOptions);
         var analyzerOptions = new AnalyzerOptions([]);
