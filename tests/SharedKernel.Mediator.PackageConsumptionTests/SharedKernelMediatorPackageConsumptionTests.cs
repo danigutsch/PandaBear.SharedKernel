@@ -1,8 +1,3 @@
-using System.Diagnostics;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
-
 namespace SharedKernel.Mediator.PackageConsumptionTests;
 
 public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)
@@ -54,7 +49,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     {
         // Arrange
         using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorGeneratedConsumer");
-        WriteGeneratedConsumerProject(workspace);
+        GeneratedMediatorPackageConsumerProjects.Write(workspace, packageFeed);
 
         // Act
         var buildOutput = await workspace.Build();
@@ -74,7 +69,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     {
         // Arrange
         using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorPublishedConsumer");
-        WriteGeneratedConsumerProject(workspace);
+        GeneratedMediatorPackageConsumerProjects.Write(workspace, packageFeed);
 
         // Act
         var publishOutput = await workspace.Publish("-c", "Release");
@@ -92,8 +87,8 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     {
         // Arrange
         using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorAotMetricsConsumer");
-        WriteGeneratedConsumerProject(workspace);
-        var runtimeIdentifier = GetCurrentRuntimeIdentifier();
+        GeneratedMediatorPackageConsumerProjects.Write(workspace, packageFeed);
+        var runtimeIdentifier = PackageConsumptionMetrics.GetCurrentRuntimeIdentifier();
 
         // Act
         var publishOutput = await workspace.Publish(
@@ -106,10 +101,10 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             "-p:PublishAot=true");
         var publishDirectory = workspace.GetPublishDirectory(runtimeIdentifier: runtimeIdentifier);
         var publishedExecutable = workspace.GetPublishedExecutablePath(runtimeIdentifier);
-        var generatedSourceSize = GetGeneratedSourceSize(workspace);
-        var trimWarningCount = CountTrimWarnings(publishOutput);
-        var coldStartMeasurement = await RunPublishedExecutable(publishedExecutable);
-        var runtimeMetrics = ParseRuntimeMetrics(coldStartMeasurement.Output);
+        var generatedSourceSize = PackageConsumptionMetrics.GetGeneratedSourceSize(workspace);
+        var trimWarningCount = PackageConsumptionMetrics.CountTrimWarnings(publishOutput);
+        var coldStartMeasurement = await PackageConsumptionMetrics.RunPublishedExecutable(publishedExecutable);
+        var runtimeMetrics = PackageConsumptionMetrics.ParseRuntimeMetrics(coldStartMeasurement.Output);
         var nativeBinarySize = new FileInfo(publishedExecutable).Length;
         var publishDirectoryExists = Directory.Exists(publishDirectory);
         var publishedExecutableExists = File.Exists(publishedExecutable);
@@ -471,238 +466,4 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         Assert.Contains("getTour=Tour-7", runOutput, StringComparison.Ordinal);
     }
 
-    internal void WriteGeneratedConsumerProject(PackageConsumptionWorkspace workspace)
-    {
-        var consumerFiles = new (string FileName, string Content)[]
-        {
-            ("Consumer.cs", """
-            using System.Collections.Generic;
-            using System.Runtime.CompilerServices;
-            using Microsoft.Extensions.DependencyInjection;
-            using SharedKernel.Mediator;
-
-            namespace Consumer;
-
-            public sealed record LookupTour(string Code) : IQuery<string>;
-
-            public sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
-            {
-                public ValueTask<string> Handle(LookupTour request, CancellationToken ct)
-                {
-                    return ValueTask.FromResult(request.Code);
-                }
-            }
-
-            public sealed record TourFound(string Code) : INotification;
-
-            public sealed class TourFoundHandler : INotificationHandler<TourFound>
-            {
-                public ValueTask Handle(TourFound notification, CancellationToken ct)
-                {
-                    Console.WriteLine($"notification-handled={notification.Code}");
-                    return ValueTask.CompletedTask;
-                }
-            }
-
-            public sealed record StreamTourCodes(int Count) : IStreamQuery<string>;
-
-            public sealed class StreamTourCodesHandler : IStreamRequestHandler<StreamTourCodes, string>
-            {
-                public async IAsyncEnumerable<string> Handle(StreamTourCodes request, [EnumeratorCancellation] CancellationToken ct)
-                {
-                    for (var i = 0; i < request.Count; i++)
-                    {
-                        yield return $"VT-{i:D4}";
-                        await Task.Yield();
-                    }
-                }
-            }
-
-            public sealed class TimingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-                where TRequest : IRequest<TResponse>
-            {
-                public async ValueTask<TResponse> Handle(TRequest request, RequestHandlerContinuation<TResponse> next, CancellationToken ct)
-                {
-                    Console.WriteLine($"pipeline-before={typeof(TRequest).Name}");
-                    var response = await next();
-                    Console.WriteLine($"pipeline-after={typeof(TRequest).Name}");
-                    return response;
-                }
-            }
-            """),
-            ("MediatorHarness.cs", MediatorConsumerSourceTemplates.CreateHarness("Consumer")),
-            ("Program.cs", """
-            using System.Diagnostics;
-            using System.Globalization;
-            using Consumer;
-
-            using var harness = MediatorHarness.Create();
-
-            var firstDispatchStopwatch = Stopwatch.StartNew();
-            var firstDispatchResult = await harness.Mediator.Send(new LookupTour("VT-42"), CancellationToken.None);
-            firstDispatchStopwatch.Stop();
-
-            await harness.Mediator.Publish(new TourFound(firstDispatchResult), CancellationToken.None);
-
-            var streamCount = 0;
-            await foreach (var code in harness.Mediator.Send(new StreamTourCodes(3), CancellationToken.None))
-            {
-                streamCount++;
-                _ = code;
-            }
-
-            Console.WriteLine($"stream-count={streamCount}");
-
-            const int steadyStateIterations = 200;
-            var steadyStateStopwatch = Stopwatch.StartNew();
-
-            for (var iteration = 0; iteration < steadyStateIterations; iteration++)
-            {
-                _ = await harness.Mediator.Send(new LookupTour("VT-42"), CancellationToken.None);
-            }
-
-            steadyStateStopwatch.Stop();
-
-            Console.WriteLine($"result={firstDispatchResult}");
-            Console.WriteLine(FormattableString.Invariant($"first-dispatch-ms={firstDispatchStopwatch.Elapsed.TotalMilliseconds:F4}"));
-            Console.WriteLine(FormattableString.Invariant($"steady-state-dispatch-ms={steadyStateStopwatch.Elapsed.TotalMilliseconds / steadyStateIterations:F4}"));
-            """)
-        };
-
-        workspace.WriteProject(
-            $$"""
-            <Project Sdk="Microsoft.NET.Sdk">
-              <PropertyGroup>
-                <TargetFramework>net10.0</TargetFramework>
-                <OutputType>Exe</OutputType>
-                <ImplicitUsings>enable</ImplicitUsings>
-                <Nullable>enable</Nullable>
-                <IsAotCompatible>true</IsAotCompatible>
-                <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-                <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
-              </PropertyGroup>
-              <ItemGroup>
-                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
-                <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="{{packageFeed.DependencyInjectionPackageVersion}}" />
-              </ItemGroup>
-            </Project>
-            """,
-            consumerFiles);
-    }
-
-    internal static int CountTrimWarnings(string publishOutput)
-    {
-        return Regex.Count(publishOutput, @"warning IL\d{4}", RegexOptions.CultureInvariant);
-    }
-
-    internal static long GetGeneratedSourceSize(PackageConsumptionWorkspace workspace)
-    {
-        var generatedFiles = new[]
-        {
-            "SharedKernel.Mediator.Generated.AppMediator.g.cs",
-            "SharedKernel.Mediator.Generated.DependencyInjection.g.cs",
-            "SharedKernel.Mediator.Generated.DiscoveryReport.g.cs",
-            "SharedKernel.Mediator.Generated.GeneratedDispatch.g.cs",
-        };
-
-        return generatedFiles
-            .SelectMany(workspace.GetGeneratedFiles)
-            .Distinct(StringComparer.Ordinal)
-            .Sum(static file => new FileInfo(file).Length);
-    }
-
-    internal static string GetCurrentRuntimeIdentifier()
-    {
-        string os;
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            os = "win";
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            os = "osx";
-        }
-        else
-        {
-            os = "linux";
-        }
-        var architecture = RuntimeInformation.ProcessArchitecture switch
-        {
-            Architecture.Arm64 => "arm64",
-            Architecture.X64 => "x64",
-            _ => throw new InvalidOperationException(
-                $"Unsupported architecture for publish validation: {RuntimeInformation.ProcessArchitecture}."),
-        };
-
-        return $"{os}-{architecture}";
-    }
-
-    internal static (TimeSpan FirstDispatch, TimeSpan SteadyStateDispatch) ParseRuntimeMetrics(string output)
-    {
-        double? firstDispatchMilliseconds = null;
-        double? steadyStateMilliseconds = null;
-
-        foreach (var line in output.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
-        {
-            if (line.StartsWith("first-dispatch-ms=", StringComparison.Ordinal))
-            {
-                firstDispatchMilliseconds = double.Parse(
-                    line["first-dispatch-ms=".Length..],
-                    CultureInfo.InvariantCulture);
-            }
-
-            if (line.StartsWith("steady-state-dispatch-ms=", StringComparison.Ordinal))
-            {
-                steadyStateMilliseconds = double.Parse(
-                    line["steady-state-dispatch-ms=".Length..],
-                    CultureInfo.InvariantCulture);
-            }
-        }
-
-        if (firstDispatchMilliseconds is null || steadyStateMilliseconds is null)
-        {
-            throw new InvalidOperationException($"Runtime metrics output was incomplete:{Environment.NewLine}{output}");
-        }
-
-        return (TimeSpan.FromMilliseconds(firstDispatchMilliseconds.Value), TimeSpan.FromMilliseconds(steadyStateMilliseconds.Value));
-    }
-
-    internal static async Task<(string Output, TimeSpan Duration)> RunPublishedExecutable(string publishedExecutable)
-    {
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = publishedExecutable,
-            WorkingDirectory = Path.GetDirectoryName(publishedExecutable)!,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-        };
-
-        using var process = new Process { StartInfo = startInfo };
-        var stopwatch = Stopwatch.StartNew();
-
-        if (!process.Start())
-        {
-            throw new InvalidOperationException($"Failed to start published executable '{publishedExecutable}'.");
-        }
-
-        var stdoutTask = process.StandardOutput.ReadToEndAsync(TestContext.Current.CancellationToken);
-        var stderrTask = process.StandardError.ReadToEndAsync(TestContext.Current.CancellationToken);
-        await Task.WhenAll(stdoutTask, stderrTask);
-        await process.WaitForExitAsync(TestContext.Current.CancellationToken);
-        stopwatch.Stop();
-
-        var output = string.Concat(await stdoutTask, await stderrTask);
-
-        if (process.ExitCode != 0)
-        {
-            throw new InvalidOperationException(
-                $"Published executable '{publishedExecutable}' failed with exit code {process.ExitCode}.{Environment.NewLine}{output}");
-        }
-
-        return (output, stopwatch.Elapsed);
-    }
 }

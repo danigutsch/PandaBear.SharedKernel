@@ -455,12 +455,12 @@ public sealed class GeneratorDispatchBehaviorTests
         using var scenario = StreamDispatchTestScenario.Create(source, 3);
 
         // Act
-        var (referenceFirstItem, referenceTrace) = await ReadFirstItemAndTrace(
+        var (referenceFirstItem, referenceTrace) = await GeneratorDispatchBehaviorTestsHelpers.ReadFirstItemAndTrace(
             scenario.SendReference(TestContext.Current.CancellationToken),
             scenario.ReadTrace,
             TestContext.Current.CancellationToken);
         scenario.ClearTrace();
-        var (generatedFirstItem, generatedTrace) = await ReadFirstItemAndTrace(
+        var (generatedFirstItem, generatedTrace) = await GeneratorDispatchBehaviorTestsHelpers.ReadFirstItemAndTrace(
             scenario.SendGenerated(TestContext.Current.CancellationToken),
             scenario.ReadTrace,
             TestContext.Current.CancellationToken);
@@ -530,12 +530,12 @@ public sealed class GeneratorDispatchBehaviorTests
         using var scenario = StreamDispatchTestScenario.Create(source, 3);
 
         // Act
-        var (referenceFirstItem, referenceTrace) = await CancelAfterFirstItemAndTrace(
+        var (referenceFirstItem, referenceTrace) = await GeneratorDispatchBehaviorTestsHelpers.CancelAfterFirstItemAndTrace(
             scenario.SendReference,
             scenario.ReadTrace,
             TestContext.Current.CancellationToken);
         scenario.ClearTrace();
-        var (generatedFirstItem, generatedTrace) = await CancelAfterFirstItemAndTrace(
+        var (generatedFirstItem, generatedTrace) = await GeneratorDispatchBehaviorTestsHelpers.CancelAfterFirstItemAndTrace(
             scenario.SendGenerated,
             scenario.ReadTrace,
             TestContext.Current.CancellationToken);
@@ -564,12 +564,12 @@ public sealed class GeneratorDispatchBehaviorTests
         using var scenario = StreamDispatchTestScenario.Create(source, 3);
 
         // Act
-        var (referenceFirstItem, referenceTrace) = await ThrowAfterFirstItemAndTrace(
+        var (referenceFirstItem, referenceTrace) = await GeneratorDispatchBehaviorTestsHelpers.ThrowAfterFirstItemAndTrace(
             scenario.SendReference(TestContext.Current.CancellationToken),
             scenario.ReadTrace,
             TestContext.Current.CancellationToken);
         scenario.ClearTrace();
-        var (generatedFirstItem, generatedTrace) = await ThrowAfterFirstItemAndTrace(
+        var (generatedFirstItem, generatedTrace) = await GeneratorDispatchBehaviorTestsHelpers.ThrowAfterFirstItemAndTrace(
             scenario.SendGenerated(TestContext.Current.CancellationToken),
             scenario.ReadTrace,
             TestContext.Current.CancellationToken);
@@ -598,12 +598,12 @@ public sealed class GeneratorDispatchBehaviorTests
         using var scenario = StreamDispatchTestScenario.Create(source, 3);
 
         // Act
-        var (referenceFirstItem, referenceTrace) = await ReadFirstItemThenDisposeAndTrace(
+        var (referenceFirstItem, referenceTrace) = await GeneratorDispatchBehaviorTestsHelpers.ReadFirstItemThenDisposeAndTrace(
             scenario.SendReference(TestContext.Current.CancellationToken),
             scenario.ReadTrace,
             TestContext.Current.CancellationToken);
         scenario.ClearTrace();
-        var (generatedFirstItem, generatedTrace) = await ReadFirstItemThenDisposeAndTrace(
+        var (generatedFirstItem, generatedTrace) = await GeneratorDispatchBehaviorTestsHelpers.ReadFirstItemThenDisposeAndTrace(
             scenario.SendGenerated(TestContext.Current.CancellationToken),
             scenario.ReadTrace,
             TestContext.Current.CancellationToken);
@@ -984,83 +984,4 @@ public sealed class GeneratorDispatchBehaviorTests
         Assert.Equal(["handler:True"], traceEntries);
     }
 
-    private static async Task<(string FirstItem, string[] Trace)> ReadFirstItemAndTrace(
-        IAsyncEnumerable<string> source,
-        Func<string[]> readTrace,
-        CancellationToken cancellationToken)
-    {
-        await using var enumerator = source.GetAsyncEnumerator(cancellationToken);
-        var hasItem = await enumerator.MoveNextAsync();
-        Assert.True(hasItem);
-        return (enumerator.Current, readTrace());
-    }
-
-    private static async Task<(string FirstItem, string[] Trace)> CancelAfterFirstItemAndTrace(
-        Func<CancellationToken, IAsyncEnumerable<string>> createSource,
-        Func<string[]> readTrace,
-        CancellationToken cancellationToken)
-    {
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        await using var enumerator = createSource(cts.Token).GetAsyncEnumerator(cts.Token);
-        var hasItem = await enumerator.MoveNextAsync();
-        Assert.True(hasItem);
-        var firstItem = enumerator.Current;
-        await cts.CancelAsync();
-
-        async Task Act()
-        {
-            await enumerator.MoveNextAsync();
-        }
-
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(Act);
-        return (firstItem, readTrace());
-    }
-
-    private static async Task<(string FirstItem, string[] Trace)> ThrowAfterFirstItemAndTrace(
-        IAsyncEnumerable<string> source,
-        Func<string[]> readTrace,
-        CancellationToken cancellationToken)
-    {
-        await using var enumerator = source.GetAsyncEnumerator(cancellationToken);
-        var hasItem = await enumerator.MoveNextAsync();
-        Assert.True(hasItem);
-        var firstItem = enumerator.Current;
-
-        async Task Act()
-        {
-            await enumerator.MoveNextAsync();
-        }
-
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(Act);
-        Assert.Equal("boom", exception.Message);
-        return (firstItem, readTrace());
-    }
-
-    private static async Task<(string FirstItem, string[] Trace)> ReadFirstItemThenDisposeAndTrace(
-        IAsyncEnumerable<string> source,
-        Func<string[]> readTrace,
-        CancellationToken cancellationToken)
-    {
-        string firstItem;
-
-        await using (var enumerator = source.GetAsyncEnumerator(cancellationToken))
-        {
-            var hasItem = await enumerator.MoveNextAsync();
-            Assert.True(hasItem);
-            firstItem = enumerator.Current;
-        }
-
-        return (firstItem, readTrace());
-    }
-
-    private static class GeneratorDispatchBehaviorTestsHelpers
-    {
-        public static async Task<(string[] Items, string[] Trace)> CollectItemsAndTrace(
-            IAsyncEnumerable<string> source,
-            Func<string[]> readTrace)
-        {
-            var items = await AsyncEnumerableTestHelper.Collect(source);
-            return (items, readTrace());
-        }
-    }
 }

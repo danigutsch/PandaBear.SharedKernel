@@ -57,8 +57,8 @@ public sealed class ActivityBehaviorTests
         // Arrange
         List<Activity> stoppedActivities = [];
         using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(stoppedActivities);
-        var behavior = new ActivityBehavior<TestQuery, int>();
-        var request = new TestQuery(42);
+        var behavior = new ActivityBehavior<ActivityTestQuery, int>();
+        var request = new ActivityTestQuery(42);
 
         // Act
         var response = await behavior.Handle(request, () => ValueTask.FromResult(request.Id + 1), CancellationToken.None);
@@ -66,10 +66,10 @@ public sealed class ActivityBehaviorTests
         // Assert
         Assert.Equal(43, response);
         var activity = Assert.Single(stoppedActivities);
-        Assert.Equal(nameof(TestQuery), activity.OperationName);
+        Assert.Equal(nameof(ActivityTestQuery), activity.OperationName);
         Assert.Equal(SharedKernelMediatorActivitySource.ActivitySourceName, activity.Source.Name);
         Assert.Equal(ActivityStatusCode.Ok, activity.Status);
-        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRequestType && tag.Value == typeof(TestQuery).FullName);
+        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRequestType && tag.Value == typeof(ActivityTestQuery).FullName);
         Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagResponseType && tag.Value == typeof(int).FullName);
         Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeSuccess);
         Assert.DoesNotContain(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType);
@@ -80,8 +80,8 @@ public sealed class ActivityBehaviorTests
     public async Task Activity_Behavior_Completes_When_No_Listener_Is_Registered()
     {
         // Arrange
-        var behavior = new ActivityBehavior<TestQuery, int>();
-        var request = new TestQuery(7);
+        var behavior = new ActivityBehavior<ActivityTestQuery, int>();
+        var request = new ActivityTestQuery(7);
 
         // Act
         var response = await behavior.Handle(request, () => ValueTask.FromResult(request.Id * 2), CancellationToken.None);
@@ -96,8 +96,8 @@ public sealed class ActivityBehaviorTests
         // Arrange
         List<Activity> stoppedActivities = [];
         using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(stoppedActivities);
-        var behavior = new ActivityBehavior<TestQuery, int>();
-        var request = new TestQuery(11);
+        var behavior = new ActivityBehavior<ActivityTestQuery, int>();
+        var request = new ActivityTestQuery(11);
 
         // Act
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
@@ -128,8 +128,8 @@ public sealed class ActivityBehaviorTests
         // Arrange
         List<Activity> stoppedActivities = [];
         using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(stoppedActivities);
-        var behavior = new ActivityBehavior<TestQuery, int>();
-        var request = new TestQuery(12);
+        var behavior = new ActivityBehavior<ActivityTestQuery, int>();
+        var request = new ActivityTestQuery(12);
 
         // Act
         await Assert.ThrowsAsync<OperationCanceledException>(() =>
@@ -153,8 +153,8 @@ public sealed class ActivityBehaviorTests
         // Arrange
         List<Activity> stoppedActivities = [];
         using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(stoppedActivities);
-        var behavior = new ActivityBehavior<TestQuery, int>();
-        var request = new TestQuery(13);
+        var behavior = new ActivityBehavior<ActivityTestQuery, int>();
+        var request = new ActivityTestQuery(13);
 
         // Act
         var response = await behavior.Handle(
@@ -182,22 +182,4 @@ public sealed class ActivityBehaviorTests
         Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
     }
 
-    internal sealed record TestQuery(int Id) : IQuery<int>;
-
-    internal static class ActivityBehaviorTestsHelpers
-    {
-        public static ActivityListener CreateCapturingListener(List<Activity> stoppedActivities)
-        {
-            var listener = new ActivityListener
-            {
-                ShouldListenTo = static source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
-                Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-                SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllDataAndRecorded,
-                ActivityStopped = stoppedActivities.Add,
-            };
-
-            ActivitySource.AddActivityListener(listener);
-            return listener;
-        }
-    }
 }

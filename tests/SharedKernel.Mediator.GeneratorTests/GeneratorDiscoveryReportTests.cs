@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Collections.Immutable;
-using System.Reflection;
 
 namespace SharedKernel.Mediator.GeneratorTests;
 
@@ -58,7 +57,7 @@ public sealed class GeneratorDiscoveryReportTests
         // Act
         var runResult = GeneratorTestHarness.RunGeneratorDriver(source, globalOptions: options);
         var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult, GeneratedHintNames.CallGraph);
-        var json = LoadGeneratedCallGraphJson(source, generatedSource);
+        var json = GeneratorDiscoveryReportTestsHelpers.LoadGeneratedCallGraphJson(source, generatedSource);
 
         // Assert
         GeneratorSnapshotVerifier.Verify(json, extension: "json");
@@ -347,11 +346,11 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
 
         // Assert
-        AssertOrdered(
+        GeneratorDiscoveryReportTestsHelpers.AssertOrdered(
             generatedSource,
             "global::Demo.AlphaCreateTourHandler(CommandWithResponse,Public,Handle)",
             "global::Demo.ZedCreateTourHandler(CommandWithResponse,Public,Handle)");
-        AssertOrdered(
+        GeneratorDiscoveryReportTestsHelpers.AssertOrdered(
             generatedSource,
             "global::Demo.ValidationEarlyBehavior(Stage=-1000,Order=5,Applicability=Closed,OpenGeneric=<none>)",
             "global::Demo.ValidationLateBehavior(Stage=-1000,Order=30,Applicability=Closed,OpenGeneric=<none>)",
@@ -740,19 +739,6 @@ public sealed class GeneratorDiscoveryReportTests
         Assert.DoesNotContain("services.AddTransient<global::Demo.NoCancellationStreamToursHandler>();", generatedSource, StringComparison.Ordinal);
     }
 
-    private static void AssertOrdered(string actual, params string[] expectedSegments)
-    {
-        var currentIndex = -1;
-
-        foreach (var expectedSegment in expectedSegments)
-        {
-            var nextIndex = actual.IndexOf(expectedSegment, currentIndex + 1, StringComparison.Ordinal);
-            Assert.True(nextIndex >= 0, $"Expected segment not found: {expectedSegment}");
-            Assert.True(nextIndex > currentIndex, $"Expected segment out of order: {expectedSegment}");
-            currentIndex = nextIndex;
-        }
-    }
-
     [Fact]
     public void Snapshot_Missing_Handler_Diagnostic_Message()
     {
@@ -858,22 +844,4 @@ public sealed class GeneratorDiscoveryReportTests
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.StreamTours", StringComparison.Ordinal));
     }
 
-    private static string LoadGeneratedCallGraphJson(string source, string generatedCallGraphSource)
-    {
-        const string runtimeUsings = """
-            using System;
-            using System.Collections.Generic;
-            using System.Threading;
-            using System.Threading.Tasks;
-
-            """;
-        var compilation = GeneratorTestHarness.CreateCompilation(
-            [runtimeUsings + source, generatedCallGraphSource],
-            assemblyName: "SharedKernel.Mediator.Tests.GeneratedCallGraphRuntime");
-        var assembly = GeneratorTestHarness.LoadAssembly(compilation);
-        var callGraphType = assembly.GetType("SharedKernel.Mediator.Generated.MediatorCallGraph", throwOnError: true)!;
-        return (string)callGraphType
-            .GetProperty("Json", BindingFlags.Public | BindingFlags.Static)!
-            .GetValue(null)!;
-    }
 }

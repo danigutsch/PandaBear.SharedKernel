@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace SharedKernel.Style.Analyzers.Tests;
 
@@ -29,8 +28,8 @@ public sealed class SharedKernelStyleAnalyzerTests
 
         // Assert
         var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
-        Assert.Contains("LoadAsync", diagnostic.GetMessage(global::System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
-        Assert.Contains("Load", diagnostic.GetMessage(global::System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+        Assert.Contains("LoadAsync", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+        Assert.Contains("Load", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -167,7 +166,7 @@ public sealed class SharedKernelStyleAnalyzerTests
 
         // Assert
         var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
-        Assert.Contains("cancellationToken", diagnostic.GetMessage(global::System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+        Assert.Contains("cancellationToken", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -215,7 +214,7 @@ public sealed class SharedKernelStyleAnalyzerTests
 
         // Assert
         var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenDefaultValue);
-        Assert.Contains("ct", diagnostic.GetMessage(global::System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+        Assert.Contains("ct", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -338,7 +337,7 @@ public sealed class SharedKernelStyleAnalyzerTests
 
         // Assert
         var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
-        Assert.Contains("TourWriter", diagnostic.GetMessage(global::System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+        Assert.Contains("TourWriter", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -411,46 +410,6 @@ public sealed class SharedKernelStyleAnalyzerTests
 
         // Assert
         Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
-    }
-
-    internal sealed class StyleTestAnalyzerConfigOptionsProvider(
-        ImmutableDictionary<string, string>? globalOptions = null,
-        ImmutableDictionary<SyntaxTree, ImmutableDictionary<string, string>>? syntaxTreeOptions = null)
-        : AnalyzerConfigOptionsProvider
-    {
-        private readonly AnalyzerConfigOptions global = new StyleTestAnalyzerConfigOptions(globalOptions);
-        private readonly ImmutableDictionary<SyntaxTree, ImmutableDictionary<string, string>> perTreeOptions = syntaxTreeOptions
-            ?? ImmutableDictionary<SyntaxTree, ImmutableDictionary<string, string>>.Empty;
-
-        public override AnalyzerConfigOptions GlobalOptions => global;
-
-        public override AnalyzerConfigOptions GetOptions(SyntaxTree tree)
-        {
-            return perTreeOptions.TryGetValue(tree, out var values)
-                ? new StyleTestAnalyzerConfigOptions(values)
-                : StyleTestAnalyzerConfigOptions.Empty;
-        }
-
-        public override AnalyzerConfigOptions GetOptions(AdditionalText textFile) => StyleTestAnalyzerConfigOptions.Empty;
-    }
-
-    internal sealed class StyleTestAnalyzerConfigOptions(ImmutableDictionary<string, string>? values) : AnalyzerConfigOptions
-    {
-        public static readonly StyleTestAnalyzerConfigOptions Empty = new(null);
-
-        private readonly ImmutableDictionary<string, string> options = values ?? ImmutableDictionary<string, string>.Empty;
-
-        public override bool TryGetValue(string key, out string value)
-        {
-            if (options.TryGetValue(key, out var candidateValue))
-            {
-                value = candidateValue;
-                return true;
-            }
-
-            value = string.Empty;
-            return false;
-        }
     }
 
 }
