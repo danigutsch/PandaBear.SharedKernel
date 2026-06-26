@@ -5,9 +5,9 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
     public static async Task<(string FirstItem, string[] Trace)> ReadFirstItemAndTrace(
         IAsyncEnumerable<string> source,
         Func<string[]> readTrace,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        await using var enumerator = source.GetAsyncEnumerator(cancellationToken);
+        await using var enumerator = source.GetAsyncEnumerator(ct);
         var hasItem = await enumerator.MoveNextAsync();
         Assert.True(hasItem);
         return (enumerator.Current, readTrace());
@@ -16,9 +16,9 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
     public static async Task<(string FirstItem, string[] Trace)> CancelAfterFirstItemAndTrace(
         Func<CancellationToken, IAsyncEnumerable<string>> createSource,
         Func<string[]> readTrace,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         await using var enumerator = createSource(cts.Token).GetAsyncEnumerator(cts.Token);
         var hasItem = await enumerator.MoveNextAsync();
         Assert.True(hasItem);
@@ -37,9 +37,9 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
     public static async Task<(string FirstItem, string[] Trace)> ThrowAfterFirstItemAndTrace(
         IAsyncEnumerable<string> source,
         Func<string[]> readTrace,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        await using var enumerator = source.GetAsyncEnumerator(cancellationToken);
+        await using var enumerator = source.GetAsyncEnumerator(ct);
         var hasItem = await enumerator.MoveNextAsync();
         Assert.True(hasItem);
         var firstItem = enumerator.Current;
@@ -57,11 +57,11 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
     public static async Task<(string FirstItem, string[] Trace)> ReadFirstItemThenDisposeAndTrace(
         IAsyncEnumerable<string> source,
         Func<string[]> readTrace,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         string firstItem;
 
-        await using (var enumerator = source.GetAsyncEnumerator(cancellationToken))
+        await using (var enumerator = source.GetAsyncEnumerator(ct))
         {
             var hasItem = await enumerator.MoveNextAsync();
             Assert.True(hasItem);

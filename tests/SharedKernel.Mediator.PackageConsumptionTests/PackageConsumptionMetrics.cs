@@ -5,11 +5,11 @@ using System.Text.RegularExpressions;
 
 namespace SharedKernel.Mediator.PackageConsumptionTests;
 
-internal static class PackageConsumptionMetrics
+internal static partial class PackageConsumptionMetrics
 {
     public static int CountTrimWarnings(string publishOutput)
     {
-        return Regex.Count(publishOutput, @"warning IL\d{4}", RegexOptions.CultureInvariant);
+        return TrimWarningRegex().Count(publishOutput);
     }
 
     public static long GetGeneratedSourceSize(PackageConsumptionWorkspace workspace)
@@ -30,20 +30,12 @@ internal static class PackageConsumptionMetrics
 
     public static string GetCurrentRuntimeIdentifier()
     {
-        string os;
-
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        var os = (RuntimeInformation.IsOSPlatform(OSPlatform.Windows), RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) switch
         {
-            os = "win";
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            os = "osx";
-        }
-        else
-        {
-            os = "linux";
-        }
+            (true, _) => "win",
+            (_, true) => "osx",
+            _ => "linux",
+        };
         var architecture = RuntimeInformation.ProcessArchitecture switch
         {
             Architecture.Arm64 => "arm64",
@@ -77,12 +69,9 @@ internal static class PackageConsumptionMetrics
             }
         }
 
-        if (firstDispatchMilliseconds is null || steadyStateMilliseconds is null)
-        {
-            throw new InvalidOperationException($"Runtime metrics output was incomplete:{Environment.NewLine}{output}");
-        }
-
-        return (TimeSpan.FromMilliseconds(firstDispatchMilliseconds.Value), TimeSpan.FromMilliseconds(steadyStateMilliseconds.Value));
+        return firstDispatchMilliseconds is null || steadyStateMilliseconds is null
+            ? throw new InvalidOperationException($"Runtime metrics output was incomplete:{Environment.NewLine}{output}")
+            : (TimeSpan.FromMilliseconds(firstDispatchMilliseconds.Value), TimeSpan.FromMilliseconds(steadyStateMilliseconds.Value));
     }
 
     public static async Task<(string Output, TimeSpan Duration)> RunPublishedExecutable(string publishedExecutable)
@@ -115,12 +104,12 @@ internal static class PackageConsumptionMetrics
 
         var output = string.Concat(await stdoutTask, await stderrTask);
 
-        if (process.ExitCode != 0)
-        {
-            throw new InvalidOperationException(
-                $"Published executable '{publishedExecutable}' failed with exit code {process.ExitCode}.{Environment.NewLine}{output}");
-        }
-
-        return (output, stopwatch.Elapsed);
+        return process.ExitCode != 0
+            ? throw new InvalidOperationException(
+                $"Published executable '{publishedExecutable}' failed with exit code {process.ExitCode}.{Environment.NewLine}{output}")
+            : (output, stopwatch.Elapsed);
     }
+
+    [GeneratedRegex(@"warning IL\d{4}", RegexOptions.CultureInvariant)]
+    private static partial Regex TrimWarningRegex();
 }
