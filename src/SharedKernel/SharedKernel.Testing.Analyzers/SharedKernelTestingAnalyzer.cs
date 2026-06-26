@@ -193,11 +193,11 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        var reportsNonPublicHelper = methodSymbol.DeclaredAccessibility != Accessibility.Public;
+        var reportsPrivateHelper = methodSymbol.DeclaredAccessibility == Accessibility.Private;
         var reportsReusedStaticHelper = methodSymbol.IsStatic
             && IsInvokedByMultipleXunitTestMethods(context.SemanticModel, methodDeclaration, methodSymbol, helperUsageCountsByType, context.CancellationToken);
 
-        if (!reportsNonPublicHelper && !reportsReusedStaticHelper)
+        if (!reportsPrivateHelper && !reportsReusedStaticHelper)
         {
             return;
         }
@@ -294,7 +294,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static bool IsPotentialXunitHelperMethodDeclaration(MethodDeclarationSyntax methodDeclaration)
     {
         return methodDeclaration.Parent is TypeDeclarationSyntax
-            && (methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PrivateKeyword))
+            && (!methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PublicKeyword) || modifier.IsKind(SyntaxKind.InternalKeyword) || modifier.IsKind(SyntaxKind.ProtectedKeyword))
                 || (methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.StaticKeyword))
                     && methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.InternalKeyword))));
     }

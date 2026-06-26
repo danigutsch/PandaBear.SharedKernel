@@ -364,6 +364,35 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
+    public async Task Single_Use_Internal_Static_Helper_Method_In_Xunit_Test_Class_Does_Not_Report_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
+                }
+
+                internal static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
     public async Task Public_Method_In_Xunit_Test_Class_Does_Not_Report_SKTEST004()
     {
         // Arrange
@@ -435,6 +464,35 @@ public sealed class SharedKernelTestingAnalyzerTests
                 }
 
                 private int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Implicit_Private_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CreateTourId();
+                }
+
+                static int CreateTourId()
                 {
                     return 42;
                 }

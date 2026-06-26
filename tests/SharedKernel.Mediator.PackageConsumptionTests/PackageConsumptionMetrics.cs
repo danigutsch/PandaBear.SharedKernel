@@ -87,10 +87,13 @@ internal static class PackageConsumptionMetrics
 
     public static async Task<(string Output, TimeSpan Duration)> RunPublishedExecutable(string publishedExecutable)
     {
+        var workingDirectory = Path.GetDirectoryName(publishedExecutable)
+            ?? throw new InvalidOperationException($"Could not determine directory for '{publishedExecutable}'.");
+
         var startInfo = new ProcessStartInfo
         {
             FileName = publishedExecutable,
-            WorkingDirectory = Path.GetDirectoryName(publishedExecutable)!,
+            WorkingDirectory = workingDirectory,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
             UseShellExecute = false,
