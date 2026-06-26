@@ -1,9 +1,7 @@
-using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 namespace SharedKernel.Style.CodeFixes.Tests;
 
 public sealed class SharedKernelStyleCodeFixProviderTests
@@ -31,7 +29,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -67,7 +65,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -102,7 +100,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -139,7 +137,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -190,7 +188,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -243,7 +241,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -285,7 +283,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "ReadLineAsync");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "ReadLineAsync");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -311,7 +309,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix, "DisposeAsync");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "DisposeAsync");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -338,7 +336,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -368,7 +366,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -397,7 +395,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default(CancellationToken)");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default(CancellationToken)");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -423,7 +421,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -452,7 +450,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct /* preserved */ = default");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct /* preserved */ = default");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -478,7 +476,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -505,7 +503,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -533,7 +531,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -567,7 +565,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -595,7 +593,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -628,7 +626,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
         // Act
         var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
@@ -663,7 +661,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "cancellationToken");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "cancellationToken");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -698,7 +696,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -731,7 +729,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -752,9 +750,9 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         Assert.Equal(
             [
-                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix,
-                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName,
-                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue
+                Analyzers.StyleDiagnosticIds.AsyncSuffix,
+                Analyzers.StyleDiagnosticIds.CancellationTokenParameterName,
+                Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue
             ],
             diagnosticIds);
     }
@@ -773,7 +771,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         Assert.Equal(
             [
-                global::SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix
+                Analyzers.StyleDiagnosticIds.AsyncSuffix
             ],
             supportedDiagnosticIds);
     }
@@ -1001,7 +999,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         Assert.NotNull(propertySymbol);
 
         // Act
-        var isMatch = InvokeIsRenamedMethodMatch(
+        var isMatch = SharedKernelStyleCodeFixProviderTestsHelpers.InvokeIsRenamedMethodMatch(
             candidateMethodSymbol,
             propertySymbol,
             updatedName: "Load");
@@ -1094,78 +1092,4 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         Assert.True(nonGenericIndex < genericIndex);
     }
 
-    private static bool InvokeIsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
-    {
-        var codeFixType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.RemoveAsyncSuffixCodeFix");
-        Assert.NotNull(codeFixType);
-        var method = codeFixType.GetMethod("IsRenamedMethodMatch", BindingFlags.NonPublic | BindingFlags.Static);
-        Assert.NotNull(method);
-        return Assert.IsType<bool>(method.Invoke(null, [candidateSymbol, originalSymbol, updatedName]));
-    }
-
-    private static class SharedKernelStyleCodeFixProviderTestsHelpers
-    {
-        public static Project CreateProject(AdhocWorkspace workspace, string source, out DocumentId documentId, string assemblyName = "SharedKernel.Style.CodeFixes.Tests.Organizer")
-        {
-            var projectId = ProjectId.CreateNewId(assemblyName);
-            var versionStamp = VersionStamp.Create();
-            documentId = DocumentId.CreateNewId(projectId, "Test0.cs");
-            var parseOptions = new CSharpParseOptions(LanguageVersion.Preview);
-            var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
-            var projectInfo = ProjectInfo.Create(
-                projectId,
-                versionStamp,
-                name: assemblyName,
-                assemblyName: assemblyName,
-                language: LanguageNames.CSharp,
-                filePath: $"/{assemblyName}.csproj",
-                outputFilePath: $"/{assemblyName}.dll",
-                compilationOptions: compilationOptions,
-                parseOptions: parseOptions,
-                metadataReferences: GetMetadataReferences());
-
-            workspace.AddProject(projectInfo);
-            workspace.AddDocument(
-                DocumentInfo.Create(
-                    documentId,
-                    "Test0.cs",
-                    loader: TextLoader.From(TextAndVersion.Create(SourceText.From(source), versionStamp)),
-                    filePath: "/Test0.cs"));
-
-            return Assert.IsType<Project>(workspace.CurrentSolution.GetProject(projectId));
-        }
-
-        public static async Task<Solution> OrganizeOverloads(
-                Solution solution,
-                DocumentId documentId,
-                MethodDeclarationSyntax targetMethod,
-                string updatedName,
-                CancellationToken ct)
-        {
-            var organizerType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.MethodOverloadGroupOrganizer");
-            Assert.NotNull(organizerType);
-            var organizeMethod = organizerType.GetMethod("Organize", BindingFlags.Public | BindingFlags.Static);
-            Assert.NotNull(organizeMethod);
-            var task = Assert.IsType<Task<Solution>>(organizeMethod.Invoke(null, [solution, documentId, targetMethod, updatedName, ct]));
-            return await task.ConfigureAwait(false);
-        }
-
-        public static async Task<string> ReadDocumentText(Solution solution, DocumentId documentId)
-        {
-            var document = Assert.IsType<Document>(solution.GetDocument(documentId));
-            return (await document.GetTextAsync().ConfigureAwait(false)).ToString();
-        }
-
-        private static IEnumerable<MetadataReference> GetMetadataReferences()
-        {
-            var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-            Assert.False(string.IsNullOrWhiteSpace(trustedPlatformAssemblies));
-            var trustedAssemblyPaths = Assert.IsType<string>(trustedPlatformAssemblies);
-
-            foreach (var path in trustedAssemblyPaths.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
-            {
-                yield return MetadataReference.CreateFromFile(path);
-            }
-        }
-    }
 }

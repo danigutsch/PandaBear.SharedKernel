@@ -163,7 +163,7 @@ public sealed class ResultEdgeCaseTests
     public void Throws_When_A_Malformed_Successful_Result_Lacks_A_Value()
     {
         // Arrange
-        var result = CreateMalformedGenericResult(ResultStatus.Ok, value: null, error: null);
+        var result = ResultEdgeCaseTestsHelpers.CreateMalformedGenericResult(ResultStatus.Ok, value: null, error: null);
 
         // Act
         var exception = Assert.Throws<InvalidOperationException>(() => result.TryGetValue(out _));
@@ -176,7 +176,7 @@ public sealed class ResultEdgeCaseTests
     public void Throws_When_A_Malformed_Failed_Result_Lacks_Error_Details()
     {
         // Arrange
-        var result = CreateMalformedNonGenericResult(ResultStatus.Error, error: null);
+        var result = ResultEdgeCaseTestsHelpers.CreateMalformedNonGenericResult(ResultStatus.Error, error: null);
 
         // Act
         var exception = Assert.Throws<InvalidOperationException>(() => result.TryGetError(out _));
@@ -230,32 +230,4 @@ public sealed class ResultEdgeCaseTests
         Assert.Equal("error", exception.ParamName);
     }
 
-    private sealed class LoggedTourSummary(string code, string title)
-    {
-        public override string ToString() => $"{code} | {title}";
-    }
-
-    private static Result<string> CreateMalformedGenericResult(ResultStatus status, string? value, ResultError? error)
-    {
-        var constructor = typeof(Result<string>).GetConstructor(
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
-            binder: null,
-            types: [typeof(ResultStatus), typeof(string), typeof(ResultError)],
-            modifiers: null);
-
-        Assert.NotNull(constructor);
-        return (Result<string>)constructor.Invoke([status, value, error]);
-    }
-
-    private static Result CreateMalformedNonGenericResult(ResultStatus status, ResultError? error)
-    {
-        var constructor = typeof(Result).GetConstructor(
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
-            binder: null,
-            types: [typeof(ResultStatus), typeof(ResultError)],
-            modifiers: null);
-
-        Assert.NotNull(constructor);
-        return (Result)constructor.Invoke([status, error]);
-    }
 }

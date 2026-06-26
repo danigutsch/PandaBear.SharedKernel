@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Xunit;
 
@@ -85,14 +84,4 @@ public sealed class OpenApiServiceCollectionExtensionsTests
         Assert.DoesNotContain("/tours-archive", document.Paths.Keys);
     }
 
-    private static class OpenApiServiceCollectionExtensionsTestsHelpers
-    {
-        public static void InvokeAddBoundaryOpenApiDocuments(IServiceCollection? services, IReadOnlyCollection<string>? boundaryNames)
-        {
-            var method = typeof(OpenApiServiceCollectionExtensions).GetMethod(nameof(OpenApiServiceCollectionExtensions.AddBoundaryOpenApiDocuments))
-                ?? throw new InvalidOperationException("Could not locate AddBoundaryOpenApiDocuments.");
-
-            _ = method.Invoke(null, [services, boundaryNames]);
-        }
-    }
 }

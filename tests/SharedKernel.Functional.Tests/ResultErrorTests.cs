@@ -188,7 +188,7 @@ public sealed class ResultErrorTests
     public void Rejects_Validation_Dictionaries_With_Null_Message_Arrays()
     {
         // Arrange
-        var validationErrors = CreateValidationErrorsWithNullMessageArray();
+        var validationErrors = ResultErrorTestsHelpers.CreateValidationErrorsWithNullMessageArray();
 
         // Act
         var exception = Record.Exception(() => new ResultError("Validation failed", ResultErrorCodes.Invalid, validationErrors));
@@ -199,9 +199,4 @@ public sealed class ResultErrorTests
         Assert.Equal("messages", argumentException.ParamName);
     }
 
-    private static Dictionary<string, string[]> CreateValidationErrorsWithNullMessageArray() =>
-        new Dictionary<string, string[]>
-        {
-            ["Name"] = NullArgumentData.StringArray(),
-        };
 }

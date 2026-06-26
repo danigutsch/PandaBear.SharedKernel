@@ -30,7 +30,7 @@ public sealed class GeneratorDiagnosticIdsTests
     [Fact]
     public void Analyzer_Releases_Unshipped_Lists_The_Current_Mediator_Diagnostic_Ids()
     {
-        var analyzerReleaseIds = File.ReadAllLines(GetAnalyzerReleasesPath())
+        var analyzerReleaseIds = File.ReadAllLines(GeneratorDiagnosticIdsTestsHelpers.GetAnalyzerReleasesPath())
             .Select(static line => line.Trim())
             .Where(static line => line.StartsWith("SKMED", StringComparison.Ordinal))
             .Select(static line => line.Split('|', StringSplitOptions.TrimEntries)[0])
@@ -51,31 +51,4 @@ public sealed class GeneratorDiagnosticIdsTests
         Assert.Equal(diagnosticIds, orderedAnalyzerReleaseIds);
     }
 
-    private static string GetAnalyzerReleasesPath()
-    {
-        return FindRepositoryPathContaining(
-            Path.Combine(
-                "src",
-                "SharedKernel",
-                "SharedKernel.Mediator.SourceGenerator",
-                "AnalyzerReleases.Unshipped.md"));
-    }
-
-    private static string FindRepositoryPathContaining(string relativePath)
-    {
-        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
-
-        while (currentDirectory is not null)
-        {
-            var candidatePath = Path.Combine(currentDirectory.FullName, relativePath);
-            if (File.Exists(candidatePath))
-            {
-                return candidatePath;
-            }
-
-            currentDirectory = currentDirectory.Parent;
-        }
-
-        throw new InvalidOperationException($"Could not locate repository path for '{relativePath}'.");
-    }
 }

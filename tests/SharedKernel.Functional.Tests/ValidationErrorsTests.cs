@@ -173,18 +173,4 @@ public sealed class ValidationErrorsTests
         Assert.Equal("Validation errors must include field details.", exception.Message);
     }
 
-    private static class ValidationErrorsTestsHelpers
-    {
-        public static Result CreateMalformedInvalidResult(ResultError? error)
-        {
-            var constructor = typeof(Result).GetConstructor(
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
-                binder: null,
-                types: [typeof(ResultStatus), typeof(ResultError)],
-                modifiers: null);
-
-            Assert.NotNull(constructor);
-            return (Result)constructor.Invoke([ResultStatus.Invalid, error]);
-        }
-    }
 }
