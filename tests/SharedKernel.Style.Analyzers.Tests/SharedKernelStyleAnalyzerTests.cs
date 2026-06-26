@@ -341,6 +341,49 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
+    public async Task Single_Top_Level_Type_Per_File_Does_Not_Report_SKSTYLE004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+    }
+
+    [Fact]
+    public async Task File_Local_Helper_Type_With_Top_Level_Type_Reports_SKSTYLE004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+            }
+
+            file static class MappingInputs
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+        Assert.Contains("MappingInputs", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Partial_Types_Are_Excluded_From_SKSTYLE004()
     {
         // Arrange
@@ -358,6 +401,53 @@ public sealed class SharedKernelStyleAnalyzerTests
 
         // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+    }
+
+    [Fact]
+    public async Task Partial_Type_With_Non_Partial_Helper_Still_Reports_SKSTYLE004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed partial class TourLoader
+            {
+            }
+
+            file static class TourLoaderHelpers
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+        Assert.Contains("TourLoaderHelpers", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Generated_Files_Do_Not_Report_SKSTYLE004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class GeneratedOne
+            {
+            }
+
+            public sealed class GeneratedTwo
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, path: "GeneratedModels.g.cs");
 
         // Assert
         Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);

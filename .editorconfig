@@ -315,7 +315,7 @@ dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1716.severity = none
 dotnet_diagnostic.CS1591.severity = none
 dotnet_diagnostic.S107.severity = none
-dotnet_diagnostic.SKSTYLE004.severity = none
+dotnet_diagnostic.SKSTYLE004.severity = suggestion
 
 # Reqnroll discovers binding and generated test support types by reflection.
 # Owner: behavior-test maintainers. Remove when unused binding types can be internalized safely.

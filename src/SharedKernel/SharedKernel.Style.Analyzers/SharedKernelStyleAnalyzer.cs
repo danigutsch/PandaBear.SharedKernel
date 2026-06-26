@@ -194,12 +194,12 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         }
 
         var topLevelTypes = GetTopLevelTypes(root).ToArray();
-        if (topLevelTypes.Length <= 1 || topLevelTypes.Any(IsPartialType))
+        if (topLevelTypes.Length <= 1 || topLevelTypes.All(IsPartialType))
         {
             return;
         }
 
-        var offendingType = topLevelTypes[1];
+        var offendingType = topLevelTypes.Skip(1).FirstOrDefault(static type => !IsPartialType(type)) ?? topLevelTypes[1];
         var typeName = GetTypeName(offendingType);
         context.ReportDiagnostic(
             Diagnostic.Create(
