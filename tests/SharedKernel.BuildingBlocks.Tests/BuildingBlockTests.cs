@@ -47,35 +47,55 @@ public sealed class BuildingBlockTests
         Assert.NotEqual(first, second);
     }
 
-    [Theory]
-    [InlineData("null", "null", true)]
-    [InlineData("value", "null", false)]
-    [InlineData("null", "value", false)]
-    public void Value_object_operators_handle_null_values(string leftCase, string rightCase, bool expectedEqual)
+    [Fact]
+    public void Value_object_operators_treat_two_null_values_as_equal()
     {
         // Arrange
-        var left = CreateValueObject(leftCase);
-        var right = CreateValueObject(rightCase);
+        ValueObject?[] operands = [null, null];
+        var left = operands[0];
+        var right = operands[1];
 
         // Act
-        var areEqual = AreEqual(left, right);
-        var areNotEqual = AreNotEqual(left, right);
+        var areEqual = left == right;
+        var areNotEqual = left != right;
 
         // Assert
-        if (expectedEqual)
-        {
-            Assert.True(areEqual);
-            Assert.False(areNotEqual);
-        }
-        else
-        {
-            Assert.False(areEqual);
-            Assert.True(areNotEqual);
-        }
+        Assert.True(areEqual);
+        Assert.False(areNotEqual);
+    }
 
-        static bool AreEqual(ValueObject? first, ValueObject? second) => first == second;
-        static bool AreNotEqual(ValueObject? first, ValueObject? second) => first != second;
-        static ValueObject? CreateValueObject(string valueCase) => valueCase == "null" ? null : new TestValueObject("Lisbon", 3);
+    [Fact]
+    public void Value_object_operators_treat_left_value_and_right_null_as_not_equal()
+    {
+        // Arrange
+        ValueObject?[] operands = [new TestValueObject("Lisbon", 3), null];
+        var left = operands[0];
+        var right = operands[1];
+
+        // Act
+        var areEqual = left == right;
+        var areNotEqual = left != right;
+
+        // Assert
+        Assert.False(areEqual);
+        Assert.True(areNotEqual);
+    }
+
+    [Fact]
+    public void Value_object_operators_treat_left_null_and_right_value_as_not_equal()
+    {
+        // Arrange
+        ValueObject?[] operands = [null, new TestValueObject("Lisbon", 3)];
+        var left = operands[0];
+        var right = operands[1];
+
+        // Act
+        var areEqual = left == right;
+        var areNotEqual = left != right;
+
+        // Assert
+        Assert.False(areEqual);
+        Assert.True(areNotEqual);
     }
 
     [Fact]
