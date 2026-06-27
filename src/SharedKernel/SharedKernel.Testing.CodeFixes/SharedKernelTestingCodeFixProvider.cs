@@ -172,7 +172,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
     {
         ct.ThrowIfCancellationRequested();
 
-        var traitAttribute = Attribute(ParseName("global::Xunit.Trait"))
+        var traitAttribute = Attribute(ParseName("Trait"))
             .WithArgumentList(
                 AttributeArgumentList(
                     SeparatedList([

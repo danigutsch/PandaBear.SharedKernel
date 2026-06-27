@@ -23,9 +23,9 @@ internal sealed class TestingAnalyzerConfigOptions(ImmutableArray<RequiredTrait>
             throw new ArgumentNullException(nameof(optionsProvider));
         }
 
-        var strictTestMethodCasing = string.Equals(
+        var strictTestMethodCasing = !string.Equals(
             TryGetOption(optionsProvider, syntaxTree, StrictTestMethodCasingKey),
-            "true",
+            "false",
             StringComparison.OrdinalIgnoreCase);
         var value = TryGetOption(optionsProvider, syntaxTree, RequiredTraitsKey);
         if (value is not { } configuredTraits || string.IsNullOrWhiteSpace(configuredTraits))
