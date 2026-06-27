@@ -1,2 +1,2 @@
-[assembly: Trait(SharedKernel.Functional.Tests.TestTraits.ScopeName, SharedKernel.Functional.Tests.TestTraits.UnitScope)]
-[assembly: Trait(SharedKernel.Functional.Tests.TestTraits.ComponentName, SharedKernel.Functional.Tests.TestTraits.ResultsComponent)]
+[assembly: Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.ScopeName, global::SharedKernel.Testing.SharedKernelTestTraitNames.UnitScope)]
+[assembly: Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.ComponentName, SharedKernel.Functional.Tests.TestTraits.ResultsComponent)]

@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace SharedKernel.Mediator.GeneratorTests;
 
-[Trait(TestTraits.CapabilityName, TestTraits.DependencyInjectionCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DependencyInjectionCapability)]
 public sealed class GeneratorDependencyInjectionTests
 {
     [Fact]

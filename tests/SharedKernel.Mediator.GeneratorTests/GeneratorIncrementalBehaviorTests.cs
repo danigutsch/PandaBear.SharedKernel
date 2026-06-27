@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace SharedKernel.Mediator.GeneratorTests;
 
-[Trait(TestTraits.CapabilityName, TestTraits.DispatchCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
 public sealed class GeneratorIncrementalBehaviorTests
 {
     [Fact]
