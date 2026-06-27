@@ -48,9 +48,15 @@ public sealed class BuildingBlockTests
     }
 
     [Theory]
-    [MemberData(nameof(NullOperatorCases))]
-    public void Value_object_operators_handle_null_values(ValueObject? left, ValueObject? right, bool expectedEqual)
+    [InlineData("null", "null", true)]
+    [InlineData("value", "null", false)]
+    [InlineData("null", "value", false)]
+    public void Value_object_operators_handle_null_values(string leftCase, string rightCase, bool expectedEqual)
     {
+        // Arrange
+        var left = CreateValueObject(leftCase);
+        var right = CreateValueObject(rightCase);
+
         // Act
         var areEqual = AreEqual(left, right);
         var areNotEqual = AreNotEqual(left, right);
@@ -69,14 +75,8 @@ public sealed class BuildingBlockTests
 
         static bool AreEqual(ValueObject? first, ValueObject? second) => first == second;
         static bool AreNotEqual(ValueObject? first, ValueObject? second) => first != second;
+        static ValueObject? CreateValueObject(string valueCase) => valueCase == "null" ? null : new TestValueObject("Lisbon", 3);
     }
-
-    public static TheoryData<ValueObject?, ValueObject?, bool> NullOperatorCases => new()
-    {
-        { null, null, true },
-        { new TestValueObject("Lisbon", 3), null, false },
-        { null, new TestValueObject("Lisbon", 3), false },
-    };
 
     [Fact]
     public void DateRange_create_returns_valid_range_when_end_is_after_start()
