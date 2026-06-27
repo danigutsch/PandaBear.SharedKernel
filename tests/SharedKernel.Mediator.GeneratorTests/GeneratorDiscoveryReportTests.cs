@@ -29,7 +29,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_call_graph_json_artifact_is_not_emitted_by_default()
+    public void Generate_call_graph_Json_artifact_is_not_emitted_by_default()
     {
         // Arrange
         var source = TestSources.DemoHeader + TestSources.GetTourWithHandler;
@@ -44,7 +44,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_call_graph_json_artifact_when_enabled()
+    public void Generate_call_graph_Json_artifact_when_enabled()
     {
         // Arrange
         var source = TestSources.ModuleHeader

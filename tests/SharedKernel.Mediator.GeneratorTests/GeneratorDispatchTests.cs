@@ -185,7 +185,7 @@ public sealed class GeneratorDispatchTests
     }
 
     [Fact]
-    public void Generate_appMediator_uses_task_when_all_for_parallel_notification_strategy()
+    public void Generate_appMediator_uses_Task_when_all_for_parallel_notification_strategy()
     {
         // Arrange
         var source = TestSources.ModuleHeader

@@ -201,7 +201,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public async Task Rejects_ensure_invalid_error_without_validation_details_for_task_predicates()
+    public async Task Rejects_ensure_invalid_error_without_validation_details_for_Task_predicates()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -216,7 +216,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public async Task Rejects_ensure_invalid_error_without_validation_details_for_valueTask_predicates()
+    public async Task Rejects_ensure_invalid_error_without_validation_details_for_ValueTask_predicates()
     {
         // Arrange
         var result = Result.Ok("porto");
