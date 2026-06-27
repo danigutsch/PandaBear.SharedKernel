@@ -23,7 +23,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
-        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait];
+        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitSerialCollectionJustification];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -50,6 +50,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         if (string.Equals(diagnostic.Id, TestingDiagnosticIds.TestMethodWarningSuppression, StringComparison.Ordinal))
         {
             RegisterRemovePragmaFix(context, document, diagnostic, syntaxRoot);
+            return;
+        }
+
+        if (string.Equals(diagnostic.Id, TestingDiagnosticIds.XunitSerialCollectionJustification, StringComparison.Ordinal))
+        {
+            RegisterSerialJustificationFix(context, document, diagnostic, syntaxRoot);
             return;
         }
 
@@ -83,6 +89,25 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                 title: $"Rename to '{targetName}'",
                 createChangedSolution: ct => RenameSymbolAsync(document.Project.Solution, methodSymbol, targetName, ct),
                 equivalenceKey: $"RenameXunitTestMethod:{targetName}"),
+            diagnostic);
+    }
+
+    private static void RegisterSerialJustificationFix(
+        CodeFixContext context,
+        Document document,
+        Diagnostic diagnostic,
+        SyntaxNode syntaxRoot)
+    {
+        if (syntaxRoot.FindNode(context.Span).FirstAncestorOrSelf<TypeDeclarationSyntax>() is not TypeDeclarationSyntax typeDeclaration)
+        {
+            return;
+        }
+
+        context.RegisterCodeFix(
+            CodeAction.Create(
+                title: "Add SerialTestJustification attribute",
+                createChangedDocument: ct => AddSerialJustification(document, syntaxRoot, typeDeclaration, ct),
+                equivalenceKey: "AddSerialTestJustification"),
             diagnostic);
     }
 
@@ -169,6 +194,45 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         SyntaxTrivia trivia)
     {
         var updatedRoot = syntaxRoot.ReplaceTrivia(trivia, default(SyntaxTrivia));
+        return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
+    }
+
+    private static Task<Document> AddSerialJustification(
+        Document document,
+        SyntaxNode syntaxRoot,
+        TypeDeclarationSyntax typeDeclaration,
+        CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        var justificationAttribute = Attribute(ParseName("global::SharedKernel.Testing.SerialTestJustification"))
+            .WithArgumentList(
+                AttributeArgumentList(
+                    SingletonSeparatedList(
+                        AttributeArgument(
+                            LiteralExpression(
+                                SyntaxKind.StringLiteralExpression,
+                                Literal("TODO: explain why this collection must run serially."))))));
+        var attributeList = AttributeList(SingletonSeparatedList(justificationAttribute))
+            .WithTrailingTrivia(ElasticCarriageReturnLineFeed)
+            .WithAdditionalAnnotations(Formatter.Annotation);
+
+        var collectionDefinitionIndex = typeDeclaration.AttributeLists.IndexOf(
+            typeDeclaration.AttributeLists.FirstOrDefault(attributeList => attributeList.ToString().Contains("CollectionDefinition", StringComparison.Ordinal)));
+        if (collectionDefinitionIndex < 0)
+        {
+            return Task.FromResult(document);
+        }
+
+        var collectionDefinitionAttributeList = typeDeclaration.AttributeLists[collectionDefinitionIndex];
+        var updatedAttributeList = attributeList.WithLeadingTrivia(collectionDefinitionAttributeList.GetLeadingTrivia());
+        var updatedCollectionDefinitionAttributeList = collectionDefinitionAttributeList.WithLeadingTrivia();
+        var updatedAttributeLists = typeDeclaration.AttributeLists
+            .Replace(collectionDefinitionAttributeList, updatedCollectionDefinitionAttributeList)
+            .Insert(collectionDefinitionIndex, updatedAttributeList);
+        var updatedType = typeDeclaration.WithAttributeLists(updatedAttributeLists);
+        var updatedRoot = syntaxRoot.ReplaceNode(typeDeclaration, updatedType);
+
         return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
     }
 

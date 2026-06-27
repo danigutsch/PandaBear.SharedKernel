@@ -59,9 +59,18 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true,
         description: "Repository testing rules keep test behavior visible by requiring helper methods and nested helper types to live in dedicated helper types or local functions instead of directly on xUnit test classes.");
 
+    private static readonly DiagnosticDescriptor XunitSerialCollectionJustificationRule = new(
+        TestingDiagnosticIds.XunitSerialCollectionJustification,
+        title: "Serial xUnit collections should include a justification",
+        messageFormat: "Serial xUnit collection '{0}' should declare a non-empty SerialTestJustification attribute",
+        category: TestingCategory,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository testing rules require collection definitions with DisableParallelization = true to explain why serial execution is necessary.");
+
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule];
+        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -201,9 +210,14 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     {
         if (context.Node is not TypeDeclarationSyntax typeDeclaration
             || context.SemanticModel.GetDeclaredSymbol(typeDeclaration, context.CancellationToken) is not INamedTypeSymbol typeSymbol
-            || typeSymbol.TypeKind != TypeKind.Class
-            || typeSymbol.ContainingType is null
-            || !ContainsXunitTestMethod(typeSymbol.ContainingType))
+            || typeSymbol.TypeKind != TypeKind.Class)
+        {
+            return;
+        }
+
+        AnalyzeSerialCollectionJustification(context, typeDeclaration, typeSymbol);
+
+        if (typeSymbol.ContainingType is null || !ContainsXunitTestMethod(typeSymbol.ContainingType))
         {
             return;
         }
@@ -213,6 +227,41 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                 XunitTestClassHelperMethodRule,
                 typeDeclaration.Identifier.GetLocation(),
                 typeSymbol.Name));
+    }
+
+    private static void AnalyzeSerialCollectionJustification(
+        SyntaxNodeAnalysisContext context,
+        TypeDeclarationSyntax typeDeclaration,
+        INamedTypeSymbol typeSymbol)
+    {
+        if (!HasSerialCollectionDefinition(typeSymbol) || HasSerialTestJustification(typeSymbol))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                XunitSerialCollectionJustificationRule,
+                typeDeclaration.Identifier.GetLocation(),
+                typeSymbol.Name));
+    }
+
+    private static bool HasSerialCollectionDefinition(INamedTypeSymbol typeSymbol)
+    {
+        return typeSymbol.GetAttributes().Any(static attribute =>
+            attribute.AttributeClass?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) is "global::Xunit.CollectionDefinitionAttribute"
+            && attribute.NamedArguments.Any(static argument =>
+                string.Equals(argument.Key, "DisableParallelization", StringComparison.Ordinal)
+                && argument.Value.Value is true));
+    }
+
+    private static bool HasSerialTestJustification(INamedTypeSymbol typeSymbol)
+    {
+        return typeSymbol.GetAttributes().Any(static attribute =>
+            attribute.AttributeClass?.Name is "SerialTestJustificationAttribute"
+            && attribute.ConstructorArguments.Length > 0
+            && attribute.ConstructorArguments[0].Value is string reason
+            && !string.IsNullOrWhiteSpace(reason));
     }
 
     private static bool ContainsXunitTestMethod(INamedTypeSymbol typeSymbol)

@@ -8,6 +8,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
     private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
     private const string XunitHelperMethodDiagnosticId = TestingDiagnosticIds.XunitTestClassHelperMethod;
+    private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
     [Fact]
     public async Task Pragma_Warning_Disable_Inside_Fact_Method_Reports_SKTEST001()
     {
@@ -785,5 +786,99 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         // Assert
         Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Serial_Collection_Without_Justification_Reports_SKTEST005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [global::Xunit.CollectionDefinition("Serial database", DisableParallelization = true)]
+            public sealed class SerialDatabaseCollection
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Serial_Collection_With_Justification_Does_Not_Report_SKTEST005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [SerialTestJustification("Shared database reset must not overlap with other tests.")]
+            [global::Xunit.CollectionDefinition("Serial database", DisableParallelization = true)]
+            public sealed class SerialDatabaseCollection
+            {
+            }
+
+            [System.AttributeUsage(System.AttributeTargets.Class)]
+            internal sealed class SerialTestJustificationAttribute(string reason) : System.Attribute
+            {
+                public string Reason { get; } = reason;
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Serial_Collection_With_Whitespace_Justification_Reports_SKTEST005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [SerialTestJustification("   ")]
+            [global::Xunit.CollectionDefinition("Serial database", DisableParallelization = true)]
+            public sealed class SerialDatabaseCollection
+            {
+            }
+
+            [System.AttributeUsage(System.AttributeTargets.Class)]
+            internal sealed class SerialTestJustificationAttribute(string reason) : System.Attribute
+            {
+                public string Reason { get; } = reason;
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Parallel_Collection_Without_Justification_Does_Not_Report_SKTEST005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [global::Xunit.CollectionDefinition("Parallel database")]
+            public sealed class ParallelDatabaseCollection
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
     }
 }

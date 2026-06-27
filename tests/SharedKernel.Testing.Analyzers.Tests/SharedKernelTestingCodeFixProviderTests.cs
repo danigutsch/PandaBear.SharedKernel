@@ -9,6 +9,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     private const string WarningSuppressionDiagnosticId = TestingDiagnosticIds.TestMethodWarningSuppression;
     private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
     private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
+    private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
     [Fact]
     public async Task Test_Naming_Fix_Renames_Method_And_Reference_Correctly()
     {
@@ -257,6 +258,76 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         // Assert
         Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public void Provider_Advertises_Serial_Justification_Diagnostic()
+    {
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        Assert.Contains(XunitSerialJustificationDiagnosticId, provider.FixableDiagnosticIds);
+    }
+
+    [Fact]
+    public async Task Serial_Justification_Fix_Adds_Placeholder_Attribute_To_Collection_Class()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [global::Xunit.CollectionDefinition("Serial database", DisableParallelization = true)]
+            public sealed class SerialDatabaseCollection
+            {
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitSerialJustificationDiagnosticId,
+            "SerialDatabaseCollection");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", updatedText, StringComparison.Ordinal);
+        Assert.Contains("[global::Xunit.CollectionDefinition(\"Serial database\", DisableParallelization = true)]", updatedText, StringComparison.Ordinal);
+        Assert.True(
+            updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) < updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal),
+            "Expected serial justification to be inserted before the collection definition.");
+    }
+
+    [Fact]
+    public async Task Serial_Justification_Fix_Adds_Placeholder_Attribute_To_Collection_Record()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [global::Xunit.CollectionDefinition("Serial database", DisableParallelization = true)]
+            public sealed record SerialDatabaseCollection;
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitSerialJustificationDiagnosticId,
+            "SerialDatabaseCollection");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", updatedText, StringComparison.Ordinal);
+        Assert.Contains("public sealed record SerialDatabaseCollection;", updatedText, StringComparison.Ordinal);
+        Assert.True(
+            updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) < updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal),
+            "Expected serial justification to be inserted before the collection definition.");
     }
 
 }
