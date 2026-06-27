@@ -295,6 +295,9 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         // Assert
         Assert.Contains("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", updatedText, StringComparison.Ordinal);
         Assert.Contains("[global::Xunit.CollectionDefinition(\"Serial database\", DisableParallelization = true)]", updatedText, StringComparison.Ordinal);
+        Assert.True(
+            updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) < updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal),
+            "Expected serial justification to be inserted before the collection definition.");
     }
 
     [Fact]
@@ -322,6 +325,9 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         // Assert
         Assert.Contains("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", updatedText, StringComparison.Ordinal);
         Assert.Contains("public sealed record SerialDatabaseCollection;", updatedText, StringComparison.Ordinal);
+        Assert.True(
+            updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) < updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal),
+            "Expected serial justification to be inserted before the collection definition.");
     }
 
 }

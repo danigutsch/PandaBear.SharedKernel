@@ -216,7 +216,16 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         var attributeList = AttributeList(SingletonSeparatedList(justificationAttribute))
             .WithTrailingTrivia(ElasticCarriageReturnLineFeed)
             .WithAdditionalAnnotations(Formatter.Annotation);
-        var updatedType = typeDeclaration.AddAttributeLists(attributeList);
+
+        var collectionDefinitionIndex = typeDeclaration.AttributeLists.IndexOf(
+            typeDeclaration.AttributeLists.First(attributeList => attributeList.ToString().Contains("CollectionDefinition", StringComparison.Ordinal)));
+        var collectionDefinitionAttributeList = typeDeclaration.AttributeLists[collectionDefinitionIndex];
+        var updatedAttributeList = attributeList.WithLeadingTrivia(collectionDefinitionAttributeList.GetLeadingTrivia());
+        var updatedCollectionDefinitionAttributeList = collectionDefinitionAttributeList.WithLeadingTrivia();
+        var updatedAttributeLists = typeDeclaration.AttributeLists
+            .Replace(collectionDefinitionAttributeList, updatedCollectionDefinitionAttributeList)
+            .Insert(collectionDefinitionIndex, updatedAttributeList);
+        var updatedType = typeDeclaration.WithAttributeLists(updatedAttributeLists);
         var updatedRoot = syntaxRoot.ReplaceNode(typeDeclaration, updatedType);
 
         return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
