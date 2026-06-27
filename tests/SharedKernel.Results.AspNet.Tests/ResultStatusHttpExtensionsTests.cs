@@ -40,7 +40,7 @@ public sealed class ResultStatusHttpExtensionsTests
     }
 
     [Fact]
-    public void ToHttpStatusCode_rejects_the_defined_unknown_status()
+    public void ToHttpStatusCode_Rejects_The_Defined_Unknown_Status()
     {
         // Arrange
         var status = ResultStatus.Unknown;

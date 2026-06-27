@@ -129,6 +129,7 @@ public sealed class BuildingBlockTests
         var error = result.ErrorDetails;
         Assert.NotNull(error);
         Assert.NotNull(error.ValidationErrors);
+        Assert.True(error.ValidationErrors.ContainsKey("schedule"));
         Assert.Equal(["End date must be after start date."], error.ValidationErrors["schedule"]);
     }
 
@@ -147,6 +148,7 @@ public sealed class BuildingBlockTests
         var error = result.ErrorDetails;
         Assert.NotNull(error);
         Assert.NotNull(error.ValidationErrors);
+        Assert.True(error.ValidationErrors.ContainsKey("schedule"));
         Assert.Equal(["End date must be after start date."], error.ValidationErrors["schedule"]);
     }
 }
