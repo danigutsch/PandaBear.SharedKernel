@@ -31,6 +31,36 @@ public sealed class DomainPrimitiveTests
     }
 
     [Fact]
+    public void Entities_with_different_ids_are_not_equal()
+    {
+        // Arrange
+        var first = new TestEntity(42);
+        var second = new TestEntity(43);
+
+        // Act
+        var areEqual = first.Equals(second);
+
+        // Assert
+        Assert.False(areEqual);
+        Assert.NotEqual(first, second);
+    }
+
+    [Fact]
+    public void Entities_with_default_and_persisted_ids_are_not_equal()
+    {
+        // Arrange
+        var first = new TestEntity(0);
+        var second = new TestEntity(42);
+
+        // Act
+        var areEqual = first.Equals(second);
+
+        // Assert
+        Assert.False(areEqual);
+        Assert.NotEqual(first, second);
+    }
+
+    [Fact]
     public void Entity_equality_handles_reference_and_type_comparisons()
     {
         var entity = new TestEntity(42);

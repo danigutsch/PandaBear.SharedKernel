@@ -38,4 +38,18 @@ public sealed class ResultStatusHttpExtensionsTests
         // Assert
         Assert.Equal("status", exception.ParamName);
     }
+
+    [Fact]
+    public void ToHttpStatusCode_rejects_the_defined_unknown_status()
+    {
+        // Arrange
+        var status = ResultStatus.Unknown;
+
+        // Act
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => status.ToHttpStatusCode());
+
+        // Assert
+        Assert.Equal("status", exception.ParamName);
+        Assert.Equal(status, exception.ActualValue);
+    }
 }
