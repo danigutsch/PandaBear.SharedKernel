@@ -67,6 +67,7 @@ tests/performance/results/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+StrykerOutput/
 
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
