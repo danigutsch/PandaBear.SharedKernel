@@ -24,7 +24,7 @@ internal sealed class TestingAnalyzerConfigOptions(ImmutableArray<RequiredTrait>
         }
 
         var strictTestMethodCasing = !string.Equals(
-            TryGetOption(optionsProvider, syntaxTree, StrictTestMethodCasingKey),
+            TryGetOption(optionsProvider, syntaxTree, StrictTestMethodCasingKey)?.Trim(),
             "false",
             StringComparison.OrdinalIgnoreCase);
         var value = TryGetOption(optionsProvider, syntaxTree, RequiredTraitsKey);

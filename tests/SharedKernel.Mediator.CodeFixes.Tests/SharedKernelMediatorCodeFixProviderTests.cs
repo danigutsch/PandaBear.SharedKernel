@@ -131,7 +131,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_request_interface_adds_iRequest_response_type()
+    public async Task Missing_request_interface_adds_irequest_response_type()
     {
         // Arrange
         const string source = """
@@ -171,7 +171,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_request_interface_adds_iQuery_response_type_when_query_handler_exists()
+    public async Task Missing_request_interface_adds_iquery_response_type_when_query_handler_exists()
     {
         // Arrange
         const string source = """
@@ -219,7 +219,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_request_interface_adds_iCommand_response_type_when_command_handler_exists()
+    public async Task Missing_request_interface_adds_icommand_response_type_when_command_handler_exists()
     {
         // Arrange
         const string source = """
@@ -267,7 +267,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_request_interface_adds_iCommand_when_void_command_handler_exists()
+    public async Task Missing_request_interface_adds_icommand_when_void_command_handler_exists()
     {
         // Arrange
         const string source = """
@@ -465,7 +465,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_request_generates_iRequest_handler_file()
+    public async Task Missing_request_generates_irequest_handler_file()
     {
         // Arrange
         const string source = """
@@ -493,7 +493,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_request_generates_iCommand_response_handler_file()
+    public async Task Missing_request_generates_icommand_response_handler_file()
     {
         // Arrange
         const string source = """
@@ -521,7 +521,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_request_generates_iCommand_handler_file()
+    public async Task Missing_request_generates_icommand_handler_file()
     {
         // Arrange
         const string source = """
@@ -706,7 +706,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_request_interface_in_block_scoped_namespace_adds_iRequest_response_type()
+    public async Task Missing_request_interface_in_block_scoped_namespace_adds_irequest_response_type()
     {
         // Arrange
         const string source = """
@@ -747,7 +747,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_request_interface_with_global_usings_adds_iRequest_response_type()
+    public async Task Missing_request_interface_with_global_usings_adds_irequest_response_type()
     {
         // Arrange
         const string globalUsingsSource = """
@@ -790,7 +790,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_request_interface_with_nullable_response_type_adds_iRequest_response_type()
+    public async Task Missing_request_interface_with_nullable_response_type_adds_irequest_response_type()
     {
         // Arrange
         const string source = """
@@ -1041,7 +1041,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationToken_adds_parameter_to_public_handle_method()
+    public async Task Missing_cancellationtoken_adds_parameter_to_public_handle_method()
     {
         // Arrange
         const string source = """
@@ -1086,7 +1086,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationToken_forwarding_adds_ct_argument()
+    public async Task Missing_cancellationtoken_forwarding_adds_ct_argument()
     {
         // Arrange
         const string source = """
@@ -1127,7 +1127,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_enumeratorCancellation_adds_attribute_to_stream_handler()
+    public async Task Missing_enumeratorcancellation_adds_attribute_to_stream_handler()
     {
         // Arrange
         const string source = """
@@ -1168,7 +1168,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_enumeratorCancellation_adds_attribute_to_stream_pipeline()
+    public async Task Missing_enumeratorcancellation_adds_attribute_to_stream_pipeline()
     {
         // Arrange
         const string source = """
@@ -1212,7 +1212,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Wrong_cancellationToken_forwarding_replaces_argument_with_ct()
+    public async Task Wrong_cancellationtoken_forwarding_replaces_argument_with_ct()
     {
         // Arrange
         const string source = """
@@ -1253,7 +1253,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Inaccessible_module_handler_can_add_internalsVisibleTo()
+    public async Task Inaccessible_module_handler_can_add_internalsvisibleto()
     {
         // Arrange
         const string moduleSource = """
@@ -1360,7 +1360,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationToken_forwarding_title_uses_actual_parameter_name()
+    public async Task Missing_cancellationtoken_forwarding_title_uses_actual_parameter_name()
     {
         // Arrange
         const string source = """
@@ -1401,7 +1401,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationToken_forwarding_does_not_register_when_no_cancellationToken_in_scope()
+    public async Task Missing_cancellationtoken_forwarding_does_not_register_when_no_cancellationtoken_in_scope()
     {
         // Arrange
         const string source = """
@@ -1440,7 +1440,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_enumeratorCancellation_adds_attribute_with_non_ct_parameter_name()
+    public async Task Missing_enumeratorcancellation_adds_attribute_with_non_ct_parameter_name()
     {
         // Arrange
         const string source = """
@@ -1481,7 +1481,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationToken_adds_parameter_to_void_command_handler()
+    public async Task Missing_cancellationtoken_adds_parameter_to_void_command_handler()
     {
         // Arrange
         const string source = """
@@ -1526,7 +1526,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationToken_does_not_register_when_method_name_is_not_handle()
+    public async Task Missing_cancellationtoken_does_not_register_when_method_name_is_not_handle()
     {
         // Arrange
         const string source = """
@@ -1564,7 +1564,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_cancellationToken_forwarding_adds_ct_argument_for_publish()
+    public async Task Missing_cancellationtoken_forwarding_adds_ct_argument_for_publish()
     {
         // Arrange
         const string source = """
@@ -1606,7 +1606,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Missing_request_interface_does_not_register_when_request_implements_iCommand_of_response()
+    public async Task Missing_request_interface_does_not_register_when_request_implements_icommand_of_response()
     {
         // Arrange
         const string source = """

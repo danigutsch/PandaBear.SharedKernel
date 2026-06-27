@@ -7,7 +7,7 @@ namespace SharedKernel.Style.Analyzers.Tests;
 public sealed class SharedKernelStyleAnalyzerTests
 {
     [Fact]
-    public async Task Method_ending_with_async_reports_sKSTYLE001()
+    public async Task Method_ending_with_async_reports_skstyle001()
     {
         // Arrange
         const string source = """
@@ -145,7 +145,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task CancellationToken_parameter_name_reports_sKSTYLE002()
+    public async Task CancellationToken_parameter_name_reports_skstyle002()
     {
         // Arrange
         const string source = """
@@ -170,7 +170,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task CancellationToken_parameter_named_ct_does_not_report_sKSTYLE002()
+    public async Task CancellationToken_parameter_named_ct_does_not_report_skstyle002()
     {
         // Arrange
         const string source = """
@@ -194,7 +194,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task CancellationToken_parameter_default_value_reports_sKSTYLE003()
+    public async Task CancellationToken_parameter_default_value_reports_skstyle003()
     {
         // Arrange
         const string source = """
@@ -218,7 +218,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Local_function_cancellationToken_parameter_name_reports_sKSTYLE002()
+    public async Task Local_function_cancellationtoken_parameter_name_reports_skstyle002()
     {
         // Arrange
         const string source = """
@@ -248,7 +248,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Lambda_cancellationToken_parameter_name_reports_sKSTYLE002()
+    public async Task Lambda_cancellationtoken_parameter_name_reports_skstyle002()
     {
         // Arrange
         const string source = """
@@ -276,7 +276,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public void Parse_uses_syntaxTree_options_before_global_options()
+    public void Parse_uses_syntaxtree_options_before_global_options()
     {
         // Arrange
         var syntaxTree = CSharpSyntaxTree.ParseText(
@@ -317,7 +317,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Multiple_top_level_types_per_file_report_sKSTYLE004()
+    public async Task Multiple_top_level_types_per_file_report_skstyle004()
     {
         // Arrange
         const string source = """
@@ -341,7 +341,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Single_top_level_type_per_file_does_not_report_sKSTYLE004()
+    public async Task Single_top_level_type_per_file_does_not_report_skstyle004()
     {
         // Arrange
         const string source = """
@@ -360,7 +360,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task File_local_helper_type_with_top_level_type_reports_sKSTYLE004()
+    public async Task File_local_helper_type_with_top_level_type_reports_skstyle004()
     {
         // Arrange
         const string source = """
@@ -384,7 +384,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Partial_types_are_excluded_from_sKSTYLE004()
+    public async Task Partial_types_are_excluded_from_skstyle004()
     {
         // Arrange
         const string source = """
@@ -407,7 +407,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Partial_type_with_non_partial_helper_still_reports_sKSTYLE004()
+    public async Task Partial_type_with_non_partial_helper_still_reports_skstyle004()
     {
         // Arrange
         const string source = """
@@ -431,7 +431,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Generated_files_do_not_report_sKSTYLE004()
+    public async Task Generated_files_do_not_report_skstyle004()
     {
         // Arrange
         const string source = """
@@ -454,7 +454,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Nested_types_do_not_report_sKSTYLE004()
+    public async Task Nested_types_do_not_report_skstyle004()
     {
         // Arrange
         const string source = """
@@ -476,7 +476,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Nested_namespaces_still_report_sKSTYLE004()
+    public async Task Nested_namespaces_still_report_skstyle004()
     {
         // Arrange
         const string source = """

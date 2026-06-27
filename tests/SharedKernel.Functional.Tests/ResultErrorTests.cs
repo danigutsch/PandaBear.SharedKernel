@@ -71,7 +71,7 @@ public sealed class ResultErrorTests
     }
 
     [Fact]
-    public void Uses_code_and_detail_in_toString()
+    public void Uses_code_and_detail_in_tostring()
     {
         // Arrange
         var error = new ResultError("Tour not found", ResultErrorCodes.NotFound);

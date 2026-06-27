@@ -264,7 +264,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     }
 
     [Fact]
-    public async Task Source_generator_privateAssets_prevents_transitive_generation()
+    public async Task Source_generator_privateassets_prevents_transitive_generation()
     {
         // Arrange
         const string libraryName = "MediatorLibraryModule";

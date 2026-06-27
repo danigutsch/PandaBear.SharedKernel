@@ -251,7 +251,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_service_registration_internal_handler_from_marked_module_with_internalsVisibleTo()
+    public void Generate_service_registration_internal_handler_from_marked_module_with_internalsvisibleto()
     {
         // Arrange
         const string moduleSource = """

@@ -358,8 +358,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static bool IsStrictSentenceStyleSegment(string segment)
     {
         return segment.All(char.IsLetterOrDigit)
-            && (char.IsLower(segment[0])
-                || char.IsDigit(segment[0])
+            && (segment.All(static character => char.IsLower(character) || char.IsDigit(character))
                 || IsAllowedStrictNameSegment(segment));
     }
 

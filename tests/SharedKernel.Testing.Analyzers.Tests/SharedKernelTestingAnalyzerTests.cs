@@ -190,6 +190,29 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
+    public async Task Strict_test_naming_with_mixed_case_later_segment_reports_s_k_t_e_s_t002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Some_titleCase()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
     public async Task Strict_test_naming_with_sentence_style_segments_does_not_report_s_k_t_e_s_t002()
     {
         // Arrange
@@ -271,14 +294,14 @@ public sealed class SharedKernelTestingAnalyzerTests
             public sealed class TourLoaderTests
             {
                 [Fact]
-                public void Some_title()
+                public void Some_Title()
                 {
                 }
             }
             """;
 
         var options = ImmutableDictionary<string, string>.Empty
-            .Add("sharedkernel_testing_strict_test_method_casing", "false");
+            .Add("sharedkernel_testing_strict_test_method_casing", " false ");
 
         // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);

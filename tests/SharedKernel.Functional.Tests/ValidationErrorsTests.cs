@@ -5,7 +5,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class ValidationErrorsTests
 {
     [Fact]
-    public void Adds_invalid_results_and_reports_hasErrors()
+    public void Adds_invalid_results_and_reports_haserrors()
     {
         // Arrange
         var errors = new ValidationErrors();
@@ -18,7 +18,7 @@ public sealed class ValidationErrorsTests
     }
 
     [Fact]
-    public void Adds_generic_invalid_results_and_reports_hasErrors()
+    public void Adds_generic_invalid_results_and_reports_haserrors()
     {
         // Arrange
         var errors = new ValidationErrors();

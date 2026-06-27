@@ -4,7 +4,7 @@ namespace SharedKernel.Mediator.Tests;
 public sealed class MediatorContractsTests
 {
     [Fact]
-    public void ICommand_is_assignable_to_iRequest_unit()
+    public void ICommand_is_assignable_to_irequest_unit()
     {
         // Arrange
         var commandType = typeof(TestCommand);
@@ -17,7 +17,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void IQuery_of_t_is_assignable_to_iRequest_of_t()
+    public void IQuery_of_t_is_assignable_to_irequest_of_t()
     {
         // Arrange
         var queryType = typeof(TestQuery);
@@ -30,7 +30,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void ICommand_of_t_is_assignable_to_iRequest_of_t()
+    public void ICommand_of_t_is_assignable_to_irequest_of_t()
     {
         // Arrange
         var commandType = typeof(TestCommandWithResponse);

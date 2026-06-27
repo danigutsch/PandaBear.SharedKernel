@@ -4,7 +4,7 @@ namespace SharedKernel.Mediator.GeneratorTests;
 public sealed class GeneratorDispatchTests
 {
     [Fact]
-    public void Generate_appMediator_shell()
+    public void Generate_appmediator_shell()
     {
         // Arrange
         const string source = """
@@ -121,7 +121,7 @@ public sealed class GeneratorDispatchTests
     }
 
     [Fact]
-    public void Generate_appMediator_uses_generated_pipeline_helper_when_pipelines_exist()
+    public void Generate_appmediator_uses_generated_pipeline_helper_when_pipelines_exist()
     {
         // Arrange
         var source = TestSources.ModuleHeader
@@ -153,7 +153,7 @@ public sealed class GeneratorDispatchTests
     }
 
     [Fact]
-    public void Generate_appMediator_uses_generated_stream_pipeline_helper_when_stream_pipelines_exist()
+    public void Generate_appmediator_uses_generated_stream_pipeline_helper_when_stream_pipelines_exist()
     {
         // Arrange
         var source = TestSources.ModuleHeader
@@ -185,7 +185,7 @@ public sealed class GeneratorDispatchTests
     }
 
     [Fact]
-    public void Generate_appMediator_uses_Task_when_all_for_parallel_notification_strategy()
+    public void Generate_appmediator_uses_Task_when_all_for_parallel_notification_strategy()
     {
         // Arrange
         var source = TestSources.ModuleHeader

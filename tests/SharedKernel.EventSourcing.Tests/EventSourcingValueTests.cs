@@ -91,7 +91,7 @@ public sealed class EventSourcingValueTests
     }
 
     [Fact]
-    public void ExpectedStreamRevision_noStream_requires_empty_stream()
+    public void ExpectedStreamRevision_nostream_requires_empty_stream()
     {
         // Arrange, Act
         var expectedRevision = ExpectedStreamRevision.NoStream;

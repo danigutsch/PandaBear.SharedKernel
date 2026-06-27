@@ -710,7 +710,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_discovery_report_stream_handler_missing_cancellationToken_invalid_signature_diagnostic()
+    public void Generate_discovery_report_stream_handler_missing_cancellationtoken_invalid_signature_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """

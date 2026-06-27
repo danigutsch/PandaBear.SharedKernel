@@ -255,7 +255,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("[Trait(\"Category\", \"Smoke\")]", updatedText, StringComparison.Ordinal);
+        Assert.Contains("[global::Xunit.Trait(\"Category\", \"Smoke\")]", updatedText, StringComparison.Ordinal);
     }
 
     [Fact]

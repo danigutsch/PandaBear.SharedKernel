@@ -884,7 +884,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Organizer_returns_original_solution_when_target_method_syntaxTree_differs_from_document()
+    public async Task Organizer_returns_original_solution_when_target_method_syntaxtree_differs_from_document()
     {
         // Arrange
         using var workspace = new AdhocWorkspace();

@@ -11,7 +11,7 @@ namespace SharedKernel.OpenApi.Tests;
 public sealed class MultipartFormRequestBodyDocumentTransformerTests
 {
     [Fact]
-    public async Task Normalizes_malformed_multipart_form_allOf_entries()
+    public async Task Normalizes_malformed_multipart_form_allof_entries()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.CreateUploadsDocument(group =>
@@ -163,7 +163,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public async Task Preserves_valid_multipart_form_allOf_entries()
+    public async Task Preserves_valid_multipart_form_allof_entries()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.CreateUploadsDocument(group =>
@@ -210,7 +210,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public void Returns_false_when_multipart_normalization_has_no_allOf_entries()
+    public void Returns_false_when_multipart_normalization_has_no_allof_entries()
     {
         var schema = new OpenApiSchema();
 
@@ -222,7 +222,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public void Returns_without_changing_requiredness_when_allOf_is_missing()
+    public void Returns_without_changing_requiredness_when_allof_is_missing()
     {
         var schema = new OpenApiSchema();
         MultipartFormRequestBodyDocumentTransformerTestsHelpers.InvokePrivateStaticVoidMethod(
