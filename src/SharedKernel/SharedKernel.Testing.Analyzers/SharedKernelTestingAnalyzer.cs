@@ -348,15 +348,12 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static bool HasStrictSentenceStyleXunitMethodName(string methodName)
     {
         var segments = methodName.Split('_');
-        if (segments.Length < 2
-            || segments.Any(static segment => segment.Length == 0)
-            || !char.IsUpper(segments[0][0])
-            || !segments[0].All(char.IsLetterOrDigit))
-        {
-            return false;
-        }
 
-        return segments.Skip(1).All(IsStrictSentenceStyleSegment);
+        return segments.Length >= 2
+            && segments.All(static segment => segment.Length != 0)
+            && char.IsUpper(segments[0][0])
+            && segments[0].All(char.IsLetterOrDigit)
+            && segments.Skip(1).All(IsStrictSentenceStyleSegment);
     }
 
     private static bool IsStrictSentenceStyleSegment(string segment)
