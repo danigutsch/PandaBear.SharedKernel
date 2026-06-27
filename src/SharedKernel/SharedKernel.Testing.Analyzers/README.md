@@ -36,7 +36,8 @@ the build without changing analyzer descriptor severity.
 
 `sharedkernel_testing_strict_test_method_casing` defaults to `true` and requires sentence-style
 underscore names like `Creates_a_tour_when_the_request_is_valid` while allowing known terms such as
-`SKTEST004`, `xUnit`, and `IDs`. Set it to `false` only for temporary migration windows.
+`SKTEST004`, `xUnit`, `IDs`, `Task`, `ValueTask`, `HttpClient`, `OpenApi`, and
+`DataAnnotationsValidator`. Set it to `false` only for temporary migration windows.
 
 ## See Also
 

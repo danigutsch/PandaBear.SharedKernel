@@ -155,7 +155,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             public sealed class TourLoaderTests
             {
                 [Fact]
-                public void Some_title()
+                public void Some_Title()
                 {
                 }
             }
@@ -177,7 +177,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             public sealed class TourLoaderTests
             {
                 [Fact]
-                public void Some_tITLE()
+                public void Some_TITLE()
                 {
                 }
             }
@@ -226,6 +226,34 @@ public sealed class SharedKernelTestingAnalyzerTests
                 }
             }
             """;
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_allows_known_type_and_framework_segments()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Returns_ValueTask_from_HttpClient_with_OpenApi_ProblemDetails()
+                {
+                }
+
+                [Fact]
+                public void Renders_QuickGrid_with_EditContext_and_DataAnnotationsValidator()
+                {
+                }
+            }
+            """;
+
         // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 

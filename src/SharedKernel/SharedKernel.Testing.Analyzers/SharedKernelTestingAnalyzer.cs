@@ -23,7 +23,41 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         RegexOptions.Compiled | RegexOptions.CultureInvariant,
         RegexTimeout);
 
-    private static readonly string[] AllowedStrictNameSegments = ["API", "CSV", "DTO", "EF", "GUID", "HTTP", "ID", "IDs", "JSON", "SKTEST", "URI", "URL", "UTC", "xUnit"];
+    private static readonly string[] AllowedStrictNameSegments = [
+        "API",
+        "CSV",
+        "DTO",
+        "DataAnnotationsValidator",
+        "DateOnly",
+        "DateTime",
+        "EF",
+        "EditContext",
+        "GUID",
+        "Guid",
+        "HTTP",
+        "HttpClient",
+        "HttpContext",
+        "HttpRequest",
+        "HttpResponse",
+        "HttpStatusCode",
+        "ID",
+        "IDs",
+        "JSON",
+        "Json",
+        "OpenApi",
+        "ProblemDetails",
+        "QuickGrid",
+        "SKTEST",
+        "Task",
+        "TimeOnly",
+        "TimeSpan",
+        "URI",
+        "URL",
+        "UTC",
+        "ValidationMessage",
+        "ValueTask",
+        "xUnit",
+    ];
 
     private static readonly DiagnosticDescriptor TestMethodWarningSuppressionRule = new(
         TestingDiagnosticIds.TestMethodWarningSuppression,
