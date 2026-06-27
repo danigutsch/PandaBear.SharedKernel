@@ -288,7 +288,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public void Provider_Advertises_Serial_Justification_Diagnostic()
+    public void Provider_advertises_serial_justification_diagnostic()
     {
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
@@ -296,7 +296,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Serial_Justification_Fix_Adds_Placeholder_Attribute_To_Collection_Class()
+    public async Task Serial_justification_fix_adds_placeholder_attribute_to_collection_class()
     {
         // Arrange
         const string source = """
@@ -328,7 +328,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Serial_Justification_Fix_Adds_Placeholder_Attribute_To_Collection_Record()
+    public async Task Serial_justification_fix_adds_placeholder_attribute_to_collection_record()
     {
         // Arrange
         const string source = """

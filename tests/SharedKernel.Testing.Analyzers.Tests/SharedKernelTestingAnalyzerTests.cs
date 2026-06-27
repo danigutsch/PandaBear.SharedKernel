@@ -243,7 +243,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             public sealed class TourLoaderTests
             {
                 [Fact]
-                public void Some_Title()
+                public void Some_title()
                 {
                 }
             }
@@ -986,7 +986,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Serial_Collection_Without_Justification_Reports_SKTEST005()
+    public async Task Serial_collection_without_justification_reports_SKTEST005()
     {
         // Arrange
         const string source = """
@@ -1006,7 +1006,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Serial_Collection_With_Justification_Does_Not_Report_SKTEST005()
+    public async Task Serial_collection_with_justification_does_not_report_SKTEST005()
     {
         // Arrange
         const string source = """
@@ -1033,7 +1033,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Serial_Collection_With_Whitespace_Justification_Reports_SKTEST005()
+    public async Task Serial_collection_with_whitespace_justification_reports_SKTEST005()
     {
         // Arrange
         const string source = """
@@ -1060,7 +1060,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Parallel_Collection_Without_Justification_Does_Not_Report_SKTEST005()
+    public async Task Parallel_collection_without_justification_does_not_report_SKTEST005()
     {
         // Arrange
         const string source = """
