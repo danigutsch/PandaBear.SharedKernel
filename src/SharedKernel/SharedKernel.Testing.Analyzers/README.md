@@ -22,12 +22,17 @@ This Roslyn component reports diagnostics for rules that only make sense in test
 Use `.editorconfig` to tune analyzer behavior:
 
 ```ini
-dotnet_diagnostic.SKTEST001.severity = suggestion
-dotnet_diagnostic.SKTEST002.severity = suggestion
+dotnet_diagnostic.SKTEST001.severity = warning
+dotnet_diagnostic.SKTEST002.severity = warning
+dotnet_diagnostic.SKTEST003.severity = warning
+dotnet_diagnostic.SKTEST004.severity = warning
 dotnet_diagnostic.SKTEST005.severity = warning
 sharedkernel_testing_required_traits = Category=Smoke
 sharedkernel_testing_strict_test_method_casing = false
 ```
+
+Keep `SKTEST*` diagnostics at `warning`; repository warning-as-error settings make violations fail
+the build without changing analyzer descriptor severity.
 
 `sharedkernel_testing_strict_test_method_casing` defaults to `true` and requires sentence-style
 underscore names like `Creates_a_tour_when_the_request_is_valid` while allowing known terms such as
