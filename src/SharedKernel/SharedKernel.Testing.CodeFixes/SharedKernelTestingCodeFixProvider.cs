@@ -98,7 +98,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         Diagnostic diagnostic,
         SyntaxNode syntaxRoot)
     {
-        if (syntaxRoot.FindNode(context.Span).FirstAncestorOrSelf<ClassDeclarationSyntax>() is not ClassDeclarationSyntax classDeclaration)
+        if (syntaxRoot.FindNode(context.Span).FirstAncestorOrSelf<TypeDeclarationSyntax>() is not TypeDeclarationSyntax typeDeclaration)
         {
             return;
         }
@@ -106,7 +106,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         context.RegisterCodeFix(
             CodeAction.Create(
                 title: "Add SerialTestJustification attribute",
-                createChangedDocument: ct => AddSerialJustification(document, syntaxRoot, classDeclaration, ct),
+                createChangedDocument: ct => AddSerialJustification(document, syntaxRoot, typeDeclaration, ct),
                 equivalenceKey: "AddSerialTestJustification"),
             diagnostic);
     }
@@ -200,7 +200,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
     private static Task<Document> AddSerialJustification(
         Document document,
         SyntaxNode syntaxRoot,
-        ClassDeclarationSyntax classDeclaration,
+        TypeDeclarationSyntax typeDeclaration,
         CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
@@ -216,8 +216,8 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         var attributeList = AttributeList(SingletonSeparatedList(justificationAttribute))
             .WithTrailingTrivia(ElasticCarriageReturnLineFeed)
             .WithAdditionalAnnotations(Formatter.Annotation);
-        var updatedClass = classDeclaration.AddAttributeLists(attributeList);
-        var updatedRoot = syntaxRoot.ReplaceNode(classDeclaration, updatedClass);
+        var updatedType = typeDeclaration.AddAttributeLists(attributeList);
+        var updatedRoot = syntaxRoot.ReplaceNode(typeDeclaration, updatedType);
 
         return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
     }

@@ -297,4 +297,31 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         Assert.Contains("[global::Xunit.CollectionDefinition(\"Serial database\", DisableParallelization = true)]", updatedText, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task Serial_Justification_Fix_Adds_Placeholder_Attribute_To_Collection_Record()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [global::Xunit.CollectionDefinition("Serial database", DisableParallelization = true)]
+            public sealed record SerialDatabaseCollection;
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitSerialJustificationDiagnosticId,
+            "SerialDatabaseCollection");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", updatedText, StringComparison.Ordinal);
+        Assert.Contains("public sealed record SerialDatabaseCollection;", updatedText, StringComparison.Ordinal);
+    }
+
 }
