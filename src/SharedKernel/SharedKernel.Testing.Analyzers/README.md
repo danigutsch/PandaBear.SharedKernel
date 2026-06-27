@@ -14,7 +14,7 @@ This Roslyn component reports diagnostics for rules that only make sense in test
 | `SKTEST001` | Warning | xUnit test methods should not use local `#pragma warning disable`/`restore` directives. |
 | `SKTEST002` | Warning | xUnit test methods should follow the repository underscore naming convention. |
 | `SKTEST003` | Warning | xUnit test methods should include configured required trait metadata. |
-| `SKTEST004` | Warning | xUnit test classes should move helper members into dedicated helper types or local functions. |
+| `SKTEST004` | Warning | xUnit tests should not hide helper declarations inside test classes or test methods. |
 | `SKTEST005` | Warning | Serial xUnit collection definitions should declare a justification. |
 
 ## Configuration
@@ -25,7 +25,13 @@ Use `.editorconfig` to tune analyzer behavior:
 dotnet_diagnostic.SKTEST001.severity = suggestion
 dotnet_diagnostic.SKTEST002.severity = suggestion
 dotnet_diagnostic.SKTEST005.severity = warning
+sharedkernel_testing_required_traits = Category=Smoke
+sharedkernel_testing_strict_test_method_casing = false
 ```
+
+`sharedkernel_testing_strict_test_method_casing` defaults to `true` and requires sentence-style
+underscore names like `Creates_a_tour_when_the_request_is_valid` while allowing known terms such as
+`SKTEST004`, `xUnit`, and `IDs`. Set it to `false` only for temporary migration windows.
 
 ## See Also
 

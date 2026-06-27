@@ -146,6 +146,129 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
+    public async Task Strict_Test_Naming_With_Title_Cased_Later_Segment_Reports_S_K_T_E_S_T002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Some_Title()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_strict_test_method_casing", "true");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_Test_Naming_With_Uppercase_Later_Segment_Reports_S_K_T_E_S_T002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Some_TITLE()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_strict_test_method_casing", "true");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_Test_Naming_With_Sentence_Style_Segments_Does_Not_Report_S_K_T_E_S_T002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Some_title()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_strict_test_method_casing", "true");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_Test_Naming_Allows_Configured_Acronym_And_Xunit_Segments()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Reports_SKTEST004_for_xUnit_helper()
+                {
+                }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_strict_test_method_casing", "true");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Default_Test_Naming_Still_Allows_Title_Cased_Later_Segments_During_Migration()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [global::Xunit.Fact]
+                public void Some_Title()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
     public async Task Fact_Attribute_Form_Without_Underscores_Reports_S_K_T_E_S_T002()
     {
         const string source = """
