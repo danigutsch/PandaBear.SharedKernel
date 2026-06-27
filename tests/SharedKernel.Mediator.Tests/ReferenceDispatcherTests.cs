@@ -2,7 +2,7 @@ using SharedKernel.Mediator.Testing.ReferenceDispatcher;
 
 namespace SharedKernel.Mediator.Tests;
 
-[Trait(TestTraits.CapabilityName, TestTraits.ReferenceDispatcherCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ReferenceDispatcherCapability)]
 public sealed class ReferenceDispatcherTests
 {
     [Fact]

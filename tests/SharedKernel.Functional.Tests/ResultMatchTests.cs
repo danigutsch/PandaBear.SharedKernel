@@ -1,8 +1,8 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(TestTraits.CapabilityName, TestTraits.ResultCapability)]
-[Trait(TestTraits.CategoryName, TestTraits.CompositionCategory)]
-[Trait(TestTraits.TheoryName, TestTraits.MatchSemanticsTheory)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MatchSemanticsTheory)]
 public sealed class ResultMatchTests
 {
     [Fact]

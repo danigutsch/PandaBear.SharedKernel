@@ -1,6 +1,6 @@
 namespace SharedKernel.Mediator.GeneratorTests;
 
-[Trait(TestTraits.CapabilityName, TestTraits.DiscoveryCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DiscoveryCapability)]
 public sealed class GeneratorDiagnosticIdsTests
 {
     [Fact]

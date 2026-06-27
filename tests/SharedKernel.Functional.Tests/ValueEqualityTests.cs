@@ -1,6 +1,6 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(TestTraits.CategoryName, TestTraits.EdgeCaseCategory)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
 public sealed class ValueEqualityTests
 {
     [Fact]

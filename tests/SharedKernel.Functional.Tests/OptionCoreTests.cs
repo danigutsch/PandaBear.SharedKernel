@@ -1,7 +1,7 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(TestTraits.CapabilityName, TestTraits.OptionCapability)]
-[Trait(TestTraits.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class OptionCoreTests
 {
     [Fact]

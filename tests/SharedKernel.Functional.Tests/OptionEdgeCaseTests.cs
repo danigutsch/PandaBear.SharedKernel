@@ -1,7 +1,7 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(TestTraits.CapabilityName, TestTraits.OptionCapability)]
-[Trait(TestTraits.CategoryName, TestTraits.EdgeCaseCategory)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
 public sealed class OptionEdgeCaseTests
 {
     [Fact]

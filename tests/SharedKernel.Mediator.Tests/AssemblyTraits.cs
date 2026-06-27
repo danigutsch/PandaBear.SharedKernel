@@ -1,2 +1,2 @@
-[assembly: Trait(SharedKernel.Mediator.Tests.TestTraits.ScopeName, SharedKernel.Mediator.Tests.TestTraits.UnitScope)]
-[assembly: Trait(SharedKernel.Mediator.Tests.TestTraits.ComponentName, SharedKernel.Mediator.Tests.TestTraits.AbstractionsComponent)]
+[assembly: Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.ScopeName, global::SharedKernel.Testing.SharedKernelTestTraitNames.UnitScope)]
+[assembly: Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.ComponentName, SharedKernel.Mediator.Tests.TestTraits.AbstractionsComponent)]
