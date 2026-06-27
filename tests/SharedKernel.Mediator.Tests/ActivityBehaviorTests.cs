@@ -6,7 +6,7 @@ namespace SharedKernel.Mediator.Tests;
 public sealed class ActivityBehaviorTests
 {
     [Fact]
-    public void SharedKernel_Mediator_Activity_Source_Uses_Stable_Package_Name()
+    public void SharedKernel_mediator_activity_source_uses_stable_package_name()
     {
         // Arrange
         var expectedName = MediatorTelemetry.Name;
@@ -21,7 +21,7 @@ public sealed class ActivityBehaviorTests
     }
 
     [Fact]
-    public void Mediator_Telemetry_Contract_Uses_Stable_Names()
+    public void Mediator_telemetry_contract_uses_stable_names()
     {
         // Assert
         Assert.Equal("SharedKernel.Mediator", MediatorTelemetry.Name);
@@ -52,7 +52,7 @@ public sealed class ActivityBehaviorTests
     }
 
     [Fact]
-    public async Task Activity_Behavior_Starts_Request_Activity_When_A_Listener_Is_Registered()
+    public async Task Activity_behavior_starts_request_activity_when_a_listener_is_registered()
     {
         // Arrange
         List<Activity> stoppedActivities = [];
@@ -77,7 +77,7 @@ public sealed class ActivityBehaviorTests
     }
 
     [Fact]
-    public async Task Activity_Behavior_Completes_When_No_Listener_Is_Registered()
+    public async Task Activity_behavior_completes_when_no_listener_is_registered()
     {
         // Arrange
         var behavior = new ActivityBehavior<ActivityTestQuery, int>();
@@ -91,7 +91,7 @@ public sealed class ActivityBehaviorTests
     }
 
     [Fact]
-    public async Task Activity_Behavior_Records_Exception_Event_When_The_Handler_Fails()
+    public async Task Activity_behavior_records_exception_event_when_the_handler_fails()
     {
         // Arrange
         List<Activity> stoppedActivities = [];
@@ -123,7 +123,7 @@ public sealed class ActivityBehaviorTests
     }
 
     [Fact]
-    public async Task Activity_Behavior_Does_Not_Record_Exception_Event_When_The_Handler_Is_Cancelled()
+    public async Task Activity_behavior_does_not_record_exception_event_when_the_handler_is_cancelled()
     {
         // Arrange
         List<Activity> stoppedActivities = [];
@@ -148,7 +148,7 @@ public sealed class ActivityBehaviorTests
     }
 
     [Fact]
-    public async Task Activity_Behavior_Does_Not_Record_An_Error_When_The_Handler_Handles_The_Exception_Internally()
+    public async Task Activity_behavior_does_not_record_an_error_when_the_handler_handles_the_exception_internally()
     {
         // Arrange
         List<Activity> stoppedActivities = [];

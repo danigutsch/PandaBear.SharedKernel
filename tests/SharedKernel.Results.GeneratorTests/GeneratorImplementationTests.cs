@@ -6,7 +6,7 @@ namespace SharedKernel.Results.GeneratorTests;
 public sealed class GeneratorImplementationTests
 {
     [Fact]
-    public void Catalog_Models_With_The_Same_Entries_Are_Equal()
+    public void Catalog_models_with_the_same_entries_are_equal()
     {
         // Arrange
         var entry = new ErrorCatalogEntryModel(
@@ -30,7 +30,7 @@ public sealed class GeneratorImplementationTests
     }
 
     [Fact]
-    public void Catalog_Models_With_Different_Entries_Are_Not_Equal()
+    public void Catalog_models_with_different_entries_are_not_equal()
     {
         // Arrange
         var firstEntry = new ErrorCatalogEntryModel(
@@ -63,7 +63,7 @@ public sealed class GeneratorImplementationTests
     }
 
     [Fact]
-    public void Build_Discovers_Static_Error_Providers_And_Extracts_Metadata()
+    public void Build_discovers_static_error_providers_and_extracts_metadata()
     {
         // Arrange
         const string source = """
@@ -107,7 +107,7 @@ public sealed class GeneratorImplementationTests
     }
 
     [Fact]
-    public void Build_Ignores_Non_Static_Error_Provider_Classes()
+    public void Build_ignores_non_static_error_provider_classes()
     {
         // Arrange
         const string source = """
@@ -139,7 +139,7 @@ public sealed class GeneratorImplementationTests
     }
 
     [Fact]
-    public void Emit_Writes_Auto_Generated_Header_And_Provider_Class()
+    public void Emit_writes_auto_generated_header_and_provider_class()
     {
         // Arrange
         var entries = new[]
@@ -167,7 +167,7 @@ public sealed class GeneratorImplementationTests
     [Theory]
     [InlineData("Demo.Admin.Domain", "GeneratedDemoAdminDomainResultErrorCatalogProvider")]
     [InlineData("demo-admin.domain", "GenerateddemoadmindomainResultErrorCatalogProvider")]
-    public void SanitizeProviderTypeName_Removes_Non_Alphanumeric_Characters(string assemblyName, string expected)
+    public void SanitizeProviderTypeName_removes_non_alphanumeric_characters(string assemblyName, string expected)
     {
         var actual = ResultErrorCatalogGenerator.SanitizeProviderTypeName(assemblyName);
 

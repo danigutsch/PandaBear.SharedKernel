@@ -5,7 +5,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class OptionEdgeCaseTests
 {
     [Fact]
-    public void Rejects_Null_Values()
+    public void Rejects_null_values()
     {
         // Act
         var exception = Assert.Throws<ArgumentNullException>(() => Option.Some(NullArgumentData.String()));
@@ -15,7 +15,7 @@ public sealed class OptionEdgeCaseTests
     }
 
     [Fact]
-    public void Returns_A_Useful_String_For_Some()
+    public void Returns_a_useful_string_for_some()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -28,7 +28,7 @@ public sealed class OptionEdgeCaseTests
     }
 
     [Fact]
-    public void Returns_A_Useful_String_For_None()
+    public void Returns_a_useful_string_for_none()
     {
         // Arrange
         var option = Option.None<string>();

@@ -11,7 +11,7 @@ namespace SharedKernel.OpenApi.Tests;
 public sealed class OpenApiServiceCollectionExtensionsTests
 {
     [Fact]
-    public void Throws_When_Services_Are_Null()
+    public void Throws_when_services_are_null()
     {
         var exception = Assert.Throws<TargetInvocationException>(() => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(null, ["tours"]));
 
@@ -19,7 +19,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void Throws_When_Boundary_Names_Are_Null()
+    public void Throws_when_boundary_names_are_null()
     {
         var services = OpenApiTestServiceCollectionFactory.Create();
 
@@ -29,7 +29,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void Throws_When_A_Boundary_Name_Is_Whitespace()
+    public void Throws_when_a_boundary_name_is_whitespace()
     {
         var services = OpenApiTestServiceCollectionFactory.Create();
 
@@ -39,7 +39,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void Throws_When_Boundary_Names_Contain_Duplicates()
+    public void Throws_when_boundary_names_contain_duplicates()
     {
         var services = OpenApiTestServiceCollectionFactory.Create();
 
@@ -49,7 +49,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public async Task Includes_Exact_Boundary_And_Nested_Paths_Only()
+    public async Task Includes_exact_boundary_and_nested_paths_only()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.CreateDocument("tours", group =>
@@ -64,7 +64,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public async Task Excludes_Prefix_Like_Paths_From_Named_Document()
+    public async Task Excludes_prefix_like_paths_from_named_document()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.CreateDocumentFromApplication("tours", app =>

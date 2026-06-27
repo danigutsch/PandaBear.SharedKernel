@@ -4,7 +4,7 @@ namespace SharedKernel.Mediator.GeneratorTests;
 public sealed class GeneratorDiagnosticIdsTests
 {
     [Fact]
-    public void Mediator_Diagnostic_Ids_Remain_Stable()
+    public void Mediator_diagnostic_ids_remain_stable()
     {
         Assert.Equal("SKMED001", MediatorDiagnosticIds.MissingHandler);
         Assert.Equal("SKMED002", MediatorDiagnosticIds.MultipleHandlers);
@@ -28,7 +28,7 @@ public sealed class GeneratorDiagnosticIdsTests
     }
 
     [Fact]
-    public void Analyzer_Releases_Unshipped_Lists_The_Current_Mediator_Diagnostic_Ids()
+    public void Analyzer_releases_unshipped_lists_the_current_mediator_diagnostic_ids()
     {
         var analyzerReleaseIds = File.ReadAllLines(GeneratorDiagnosticIdsTestsHelpers.GetAnalyzerReleasesPath())
             .Select(static line => line.Trim())

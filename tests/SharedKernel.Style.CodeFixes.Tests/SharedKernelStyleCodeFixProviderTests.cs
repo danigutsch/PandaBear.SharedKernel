@@ -7,7 +7,7 @@ namespace SharedKernel.Style.CodeFixes.Tests;
 public sealed class SharedKernelStyleCodeFixProviderTests
 {
     [Fact]
-    public async Task Async_Suffix_Fix_Renames_Method_And_Reference()
+    public async Task Async_suffix_fix_renames_method_and_reference()
     {
         // Arrange
         const string source = """
@@ -43,7 +43,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Async_Suffix_Fix_Is_Not_Offered_When_Target_Name_Would_Conflict()
+    public async Task Async_suffix_fix_is_not_offered_when_target_name_would_conflict()
     {
         // Arrange
         const string source = """
@@ -75,7 +75,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Async_Suffix_Fix_Is_Not_Offered_When_Base_Type_Already_Defines_Target_Name()
+    public async Task Async_suffix_fix_is_not_offered_when_base_type_already_defines_target_name()
     {
         // Arrange
         const string source = """
@@ -110,7 +110,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Async_Suffix_Fix_Regroups_Overloads_When_Rename_Would_Split_Overload_Group()
+    public async Task Async_suffix_fix_regroups_overloads_when_rename_would_split_overload_group()
     {
         // Arrange
         const string source = """
@@ -159,7 +159,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Async_Suffix_Fix_Regroups_Overloads_When_Earlier_References_Shift_Declaration_Position()
+    public async Task Async_suffix_fix_regroups_overloads_when_earlier_references_shift_declaration_position()
     {
         // Arrange
         const string source = """
@@ -209,7 +209,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Async_Suffix_Fix_Orders_Overloads_By_Signature_Shape()
+    public async Task Async_suffix_fix_orders_overloads_by_signature_shape()
     {
         // Arrange
         const string source = """
@@ -263,7 +263,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Async_Suffix_Fix_Is_Not_Offered_For_Override_Methods()
+    public async Task Async_suffix_fix_is_not_offered_for_override_methods()
     {
         // Arrange
         const string source = """
@@ -293,7 +293,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Async_Suffix_Fix_Is_Not_Offered_For_Interface_Implementations()
+    public async Task Async_suffix_fix_is_not_offered_for_interface_implementations()
     {
         // Arrange
         const string source = """
@@ -319,7 +319,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Name_Fix_Renames_Parameter_And_References()
+    public async Task CancellationToken_name_fix_renames_parameter_and_references()
     {
         // Arrange
         const string source = """
@@ -350,7 +350,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Default_Value_Fix_Removes_Default_Literal()
+    public async Task CancellationToken_default_value_fix_removes_default_literal()
     {
         // Arrange
         const string source = """
@@ -379,7 +379,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Default_Value_Fix_Removes_Default_Expression()
+    public async Task CancellationToken_default_value_fix_removes_default_expression()
     {
         // Arrange
         const string source = """
@@ -408,7 +408,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Default_Value_Fix_Removes_Interface_Default_Literal()
+    public async Task CancellationToken_default_value_fix_removes_interface_default_literal()
     {
         // Arrange
         const string source = """
@@ -434,7 +434,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Default_Value_Fix_Preserves_Trailing_Comments()
+    public async Task CancellationToken_default_value_fix_preserves_trailing_comments()
     {
         // Arrange
         const string source = """
@@ -463,7 +463,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Default_Value_Fix_Is_Not_Offered_When_Preceding_Parameter_Is_Optional()
+    public async Task CancellationToken_default_value_fix_is_not_offered_when_preceding_parameter_is_optional()
     {
         // Arrange
         const string source = """
@@ -486,7 +486,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Ct_Already_Exists()
+    public async Task CancellationToken_name_fix_is_not_offered_when_ct_already_exists()
     {
         // Arrange
         const string source = """
@@ -513,7 +513,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Containing_Method_Declares_Local_Ct()
+    public async Task CancellationToken_name_fix_is_not_offered_when_containing_method_declares_local_ct()
     {
         // Arrange
         const string source = """
@@ -541,7 +541,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Containing_Method_Declares_Foreach_Ct()
+    public async Task CancellationToken_name_fix_is_not_offered_when_containing_method_declares_foreach_ct()
     {
         // Arrange
         const string source = """
@@ -575,7 +575,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Containing_Method_Declares_Local_Function_Ct()
+    public async Task CancellationToken_name_fix_is_not_offered_when_containing_method_declares_local_function_ct()
     {
         // Arrange
         const string source = """
@@ -603,7 +603,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Name_Fix_Ignores_Ct_Declared_Inside_Nested_Lambda()
+    public async Task CancellationToken_name_fix_ignores_ct_declared_inside_nested_lambda()
     {
         // Arrange
         const string source = """
@@ -640,7 +640,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Simple_Lambda_Body_Declares_Ct()
+    public async Task CancellationToken_name_fix_is_not_offered_when_simple_lambda_body_declares_ct()
     {
         // Arrange
         const string source = """
@@ -671,7 +671,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Containing_Method_Declares_Catch_Ct()
+    public async Task CancellationToken_name_fix_is_not_offered_when_containing_method_declares_catch_ct()
     {
         // Arrange
         const string source = """
@@ -706,7 +706,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task CancellationToken_Name_Fix_Is_Not_Offered_When_Containing_Method_Declares_Pattern_Ct()
+    public async Task CancellationToken_name_fix_is_not_offered_when_containing_method_declares_pattern_ct()
     {
         // Arrange
         const string source = """
@@ -739,7 +739,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public void Fixable_Diagnostic_Ids_Match_Registered_Style_Fixes()
+    public void Fixable_diagnostic_ids_match_registered_style_fixes()
     {
         // Arrange
         CodeFixProvider provider = new SharedKernelStyleCodeFixProvider();
@@ -758,7 +758,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public void Fix_All_Is_Advertised_For_Safe_Style_Diagnostics()
+    public void Fix_all_is_advertised_for_safe_style_diagnostics()
     {
         // Arrange
         var provider = new SharedKernelStyleCodeFixProvider();
@@ -777,7 +777,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public void Fix_All_Provider_Throws_When_Original_Provider_Is_Null()
+    public void Fix_all_provider_throws_when_original_provider_is_null()
     {
         // Arrange
         var fixAllProvider = new SharedKernelStyleCodeFixProvider().GetFixAllProvider();
@@ -788,7 +788,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public void Fix_All_Provider_Exposes_The_Batch_Fixer_Scopes()
+    public void Fix_all_provider_exposes_the_batch_fixer_scopes()
     {
         // Arrange
         var fixAllProvider = new SharedKernelStyleCodeFixProvider().GetFixAllProvider();
@@ -807,7 +807,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Organizer_Returns_Original_Solution_When_Document_Is_Missing()
+    public async Task Organizer_returns_original_solution_when_document_is_missing()
     {
         // Arrange
         const string source = """
@@ -838,7 +838,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Organizer_Returns_Original_Solution_When_Target_Method_Is_Not_Found_In_Document()
+    public async Task Organizer_returns_original_solution_when_target_method_is_not_found_in_document()
     {
         // Arrange
         using var workspace = new AdhocWorkspace();
@@ -884,7 +884,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Organizer_Returns_Original_Solution_When_Target_Method_SyntaxTree_Differs_From_Document()
+    public async Task Organizer_returns_original_solution_when_target_method_syntaxTree_differs_from_document()
     {
         // Arrange
         using var workspace = new AdhocWorkspace();
@@ -929,7 +929,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Organizer_Orders_Overloads_With_Params_Modifier_Before_Non_Params()
+    public async Task Organizer_orders_overloads_with_params_modifier_before_non_params()
     {
         // Arrange
         const string source = """
@@ -968,7 +968,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Renamed_Method_Match_Returns_False_When_Original_Symbol_Is_Not_A_Method()
+    public async Task Renamed_method_match_returns_false_when_original_symbol_is_not_a_method()
     {
         // Arrange
         using var workspace = new AdhocWorkspace();
@@ -1009,7 +1009,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Organizer_Orders_Overloads_By_Ref_Kind_When_Parameter_Count_And_Type_Match()
+    public async Task Organizer_orders_overloads_by_ref_kind_when_parameter_count_and_type_match()
     {
         // Arrange
         const string source = """
@@ -1055,7 +1055,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Organizer_Orders_Generic_Overloads_After_Non_Generic_Overloads_With_Same_Parameter_Count()
+    public async Task Organizer_orders_generic_overloads_after_non_generic_overloads_with_same_parameter_count()
     {
         // Arrange
         const string source = """

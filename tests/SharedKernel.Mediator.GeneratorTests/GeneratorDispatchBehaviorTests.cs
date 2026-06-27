@@ -1,12 +1,13 @@
 using SharedKernel.Mediator.Testing.ReferenceDispatcher;
+using SharedKernel.Testing;
 
 namespace SharedKernel.Mediator.GeneratorTests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
 public sealed class GeneratorDispatchBehaviorTests
 {
     [Fact]
-    public async Task Generated_Request_Dispatch_Matches_Reference_Dispatcher()
+    public async Task Generated_request_dispatch_matches_reference_dispatcher()
     {
         // Arrange
         const string source = """
@@ -50,7 +51,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Request_Dispatch_Executes_Pipelines_In_Stage_And_Order_Sequence()
+    public async Task Generated_request_dispatch_executes_pipelines_in_stage_and_order_sequence()
     {
         // Arrange
         const string source = """
@@ -143,7 +144,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Request_Dispatch_Propagates_Pipeline_Exceptions()
+    public async Task Generated_request_dispatch_propagates_pipeline_exceptions()
     {
         // Arrange
         const string source = """
@@ -177,18 +178,15 @@ public sealed class GeneratorDispatchBehaviorTests
         var request = (IRequest<int>)Activator.CreateInstance(requestType, "Tour")!;
 
         // Act
-        async Task Act()
-        {
-            await mediator.Send(request, CancellationToken.None);
-        }
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            mediator.Send(request, CancellationToken.None).AsTask());
 
         // Assert
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(Act);
         Assert.Equal("boom", exception.Message);
     }
 
     [Fact]
-    public async Task Generated_Request_Dispatch_Propagates_Cancellation_Token_To_Pipelines_And_Handler()
+    public async Task Generated_request_dispatch_propagates_cancellation_token_to_pipelines_and_handler()
     {
         // Arrange
         const string source = """
@@ -248,7 +246,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Stream_Dispatch_Matches_Reference_Dispatcher()
+    public async Task Generated_stream_dispatch_matches_reference_dispatcher()
     {
         // Arrange
         const string source = """
@@ -295,7 +293,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Client_Stream_Request_Dispatch_Matches_Reference_Dispatcher()
+    public async Task Generated_client_stream_request_dispatch_matches_reference_dispatcher()
     {
         // Arrange
         const string source = """
@@ -356,7 +354,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Duplex_Stream_Request_Dispatch_Matches_Reference_Dispatcher()
+    public async Task Generated_duplex_stream_request_dispatch_matches_reference_dispatcher()
     {
         // Arrange
         const string source = """
@@ -416,7 +414,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Stream_Dispatch_Executes_Stream_Pipelines_In_Stage_And_Order_Sequence()
+    public async Task Generated_stream_dispatch_executes_stream_pipelines_in_stage_and_order_sequence()
     {
         // Arrange
         var source = GeneratorDispatchBehaviorTestSources.StreamDispatchWithoutYieldTracing();
@@ -448,7 +446,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Stream_Dispatch_Yields_First_Item_Without_Full_Enumeration()
+    public async Task Generated_stream_dispatch_yields_first_item_without_full_enumeration()
     {
         // Arrange
         var source = GeneratorDispatchBehaviorTestSources.StreamDispatchWithYieldTracing();
@@ -482,7 +480,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Stream_Dispatch_Completes_Full_Enumeration_And_Finalization()
+    public async Task Generated_stream_dispatch_completes_full_enumeration_and_finalization()
     {
         // Arrange
         var source = GeneratorDispatchBehaviorTestSources.StreamDispatchWithYieldTracing();
@@ -523,7 +521,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Stream_Dispatch_Propagates_Cancellation_During_Enumeration()
+    public async Task Generated_stream_dispatch_propagates_cancellation_during_enumeration()
     {
         // Arrange
         var source = GeneratorDispatchBehaviorTestSources.StreamDispatchWithCancellationDuringEnumeration();
@@ -557,7 +555,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Stream_Dispatch_Propagates_Exceptions_During_Enumeration()
+    public async Task Generated_stream_dispatch_propagates_exceptions_during_enumeration()
     {
         // Arrange
         var source = GeneratorDispatchBehaviorTestSources.StreamDispatchWithEnumerationException();
@@ -591,7 +589,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Stream_Dispatch_Disposes_Pipeline_And_Handler_When_Enumeration_Stops_Early()
+    public async Task Generated_stream_dispatch_disposes_pipeline_and_handler_when_enumeration_stops_early()
     {
         // Arrange
         var source = GeneratorDispatchBehaviorTestSources.StreamDispatchWithEarlyDisposal();
@@ -628,7 +626,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Notification_Dispatch_Matches_Reference_Dispatcher_With_Exact_Type_Matching()
+    public async Task Generated_notification_dispatch_matches_reference_dispatcher_with_exact_type_matching()
     {
         // Arrange
         const string source = """
@@ -707,7 +705,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Notification_Dispatch_With_Zero_Handlers_Completes_Without_Effects()
+    public async Task Generated_notification_dispatch_with_zero_handlers_completes_without_effects()
     {
         // Arrange
         const string source = """
@@ -737,7 +735,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Notification_Dispatch_With_One_Handler_Invokes_Handler()
+    public async Task Generated_notification_dispatch_with_one_handler_invokes_handler()
     {
         // Arrange
         const string source = """
@@ -778,7 +776,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Notification_Dispatch_Uses_Per_Notification_Strategy()
+    public async Task Generated_notification_dispatch_uses_per_notification_strategy()
     {
         // Arrange
         const string source = """
@@ -888,7 +886,7 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
-    public async Task Generated_Notification_Dispatch_Stops_On_First_Exception()
+    public async Task Generated_notification_dispatch_stops_on_first_exception()
     {
         // Arrange
         const string source = """
@@ -931,20 +929,17 @@ public sealed class GeneratorDispatchBehaviorTests
         var notification = (INotification)Activator.CreateInstance(runtime.GetRequiredType("Demo.TourCreated"), 42)!;
 
         // Act
-        async Task Act()
-        {
-            await mediator.Publish(notification, CancellationToken.None);
-        }
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            mediator.Publish(notification, CancellationToken.None).AsTask());
 
         // Assert
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(Act);
         var traceEntries = runtime.ReadTraceEntries("Demo.TraceLog");
         Assert.Equal("boom", exception.Message);
         Assert.Equal(["before-fail"], traceEntries);
     }
 
     [Fact]
-    public async Task Generated_Notification_Dispatch_Propagates_Cancellation_Token_To_Handlers()
+    public async Task Generated_notification_dispatch_propagates_cancellation_token_to_handlers()
     {
         // Arrange
         const string source = """

@@ -6,7 +6,7 @@ namespace SharedKernel.Mediator.GeneratorTests;
 public sealed class GeneratorDependencyInjectionTests
 {
     [Fact]
-    public void Generate_Service_Registration_Bootstrap_Only_Emits_No_Transient_Registrations()
+    public void Generate_service_registration_bootstrap_only_emits_no_transient_registrations()
     {
         // Arrange
         var compilation = GeneratorTestHarness.CreateCompilation(TestSources.ModuleHeader);
@@ -25,7 +25,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Single_Project()
+    public void Generate_service_registration_single_project()
     {
         // Arrange
         var source = TestSources.ModuleHeader
@@ -54,7 +54,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Open_Generic_Pipeline_Is_Closed_Per_Request()
+    public void Generate_service_registration_open_generic_pipeline_is_closed_per_request()
     {
         // Arrange
         var source = TestSources.ModuleHeader
@@ -78,7 +78,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Stream_Pipeline_Is_Closed_Per_Stream_Request()
+    public void Generate_service_registration_stream_pipeline_is_closed_per_stream_request()
     {
         // Arrange
         var source = TestSources.ModuleHeader
@@ -102,7 +102,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Marked_Module_Assembly_Included()
+    public void Generate_service_registration_marked_module_assembly_included()
     {
         // Arrange
         var moduleReference = GeneratorTestHarness.CreateMetadataReference(TestSources.ModuleAMarkedSource, "SharedKernel.Mediator.Tests.ModuleA");
@@ -120,7 +120,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Notification_Handler_From_A_Separate_Source_File()
+    public void Generate_service_registration_notification_handler_from_a_separate_source_file()
     {
         // Arrange
         var compilation = GeneratorTestHarness.CreateCompilation(
@@ -150,7 +150,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Stream_Handler_From_A_Separate_Source_File()
+    public void Generate_service_registration_stream_handler_from_a_separate_source_file()
     {
         // Arrange
         var compilation = GeneratorTestHarness.CreateCompilation(
@@ -187,7 +187,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Internal_Handler_In_Primary_Assembly()
+    public void Generate_service_registration_internal_handler_in_primary_assembly()
     {
         // Arrange
         var source = TestSources.ModuleHeader
@@ -212,7 +212,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Internal_Handler_From_Marked_Module_Diagnostic()
+    public void Generate_service_registration_internal_handler_from_marked_module_diagnostic()
     {
         // Arrange
         const string moduleSource = """
@@ -251,7 +251,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Internal_Handler_From_Marked_Module_With_InternalsVisibleTo()
+    public void Generate_service_registration_internal_handler_from_marked_module_with_internalsVisibleTo()
     {
         // Arrange
         const string moduleSource = """
@@ -289,7 +289,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Unmarked_Module_Diagnostic()
+    public void Generate_service_registration_unmarked_module_diagnostic()
     {
         // Arrange
         var moduleReference = GeneratorTestHarness.CreateMetadataReference(TestSources.ModuleAUnmarkedSource, "SharedKernel.Mediator.Tests.ModuleA.Unmarked");
@@ -312,7 +312,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Duplicate_Self_Registration_Diagnostic()
+    public void Generate_service_registration_duplicate_self_registration_diagnostic()
     {
         // Arrange
         var source = TestSources.ModuleHeader
@@ -353,7 +353,7 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
-    public void Generate_Service_Registration_Duplicate_Self_Registration_Diagnostic_For_Stream_Handlers()
+    public void Generate_service_registration_duplicate_self_registration_diagnostic_for_stream_handlers()
     {
         // Arrange
         var source = TestSources.ModuleHeader

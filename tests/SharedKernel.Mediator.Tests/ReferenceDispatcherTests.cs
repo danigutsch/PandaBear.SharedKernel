@@ -1,12 +1,13 @@
 using SharedKernel.Mediator.Testing.ReferenceDispatcher;
+using SharedKernel.Testing;
 
 namespace SharedKernel.Mediator.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ReferenceDispatcherCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ReferenceDispatcherCapability)]
 public sealed class ReferenceDispatcherTests
 {
     [Fact]
-    public async Task Reference_Dispatcher_Handles_Request_Response()
+    public async Task Reference_dispatcher_handles_request_response()
     {
         // Arrange
         List<string> events = [];
@@ -23,7 +24,7 @@ public sealed class ReferenceDispatcherTests
     }
 
     [Fact]
-    public async Task Reference_Dispatcher_Handles_Command_Returning_Unit()
+    public async Task Reference_dispatcher_handles_command_returning_unit()
     {
         // Arrange
         List<string> events = [];
@@ -40,25 +41,22 @@ public sealed class ReferenceDispatcherTests
     }
 
     [Fact]
-    public async Task Reference_Dispatcher_Throws_When_Request_Handler_Is_Missing()
+    public async Task Reference_dispatcher_throws_when_request_handler_is_missing()
     {
         // Arrange
         var dispatcher = new ReferenceDispatcherBuilder()
             .Build();
 
         // Act
-        async Task Act()
-        {
-            await dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("missing"), CancellationToken.None);
-        }
+        var exception = await Assert.ThrowsAsync<NotSupportedException>(() =>
+            dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("missing"), CancellationToken.None).AsTask());
 
         // Assert
-        var exception = await Assert.ThrowsAsync<NotSupportedException>(Act);
         Assert.Contains(typeof(ReferenceDispatcherTestTypes.LookupTour).FullName!, exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
-    public async Task Reference_Dispatcher_Throws_When_Request_Handlers_Are_Ambiguous()
+    public async Task Reference_dispatcher_throws_when_request_handlers_are_ambiguous()
     {
         // Arrange
         List<string> events = [];
@@ -68,20 +66,17 @@ public sealed class ReferenceDispatcherTests
             .Build();
 
         // Act
-        async Task Act()
-        {
-            await dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("duplicate"), CancellationToken.None);
-        }
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("duplicate"), CancellationToken.None).AsTask());
 
         // Assert
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(Act);
         Assert.Contains("found 2 registered handlers", exception.Message, StringComparison.Ordinal);
         Assert.Contains(typeof(ReferenceDispatcherTestTypes.LookupTour).FullName!, exception.Message, StringComparison.Ordinal);
         Assert.Empty(events);
     }
 
     [Fact]
-    public async Task Reference_Dispatcher_Executes_Pipelines_In_Deterministic_Order()
+    public async Task Reference_dispatcher_executes_pipelines_in_deterministic_order()
     {
         // Arrange
         List<string> events = [];
@@ -108,7 +103,7 @@ public sealed class ReferenceDispatcherTests
     }
 
     [Fact]
-    public async Task Reference_Dispatcher_Ignores_Notifications_Without_Handlers()
+    public async Task Reference_dispatcher_ignores_notifications_without_handlers()
     {
         // Arrange
         List<string> events = [];
@@ -123,7 +118,7 @@ public sealed class ReferenceDispatcherTests
     }
 
     [Fact]
-    public async Task Reference_Dispatcher_Publishes_Notifications_Sequentially_With_Exact_Type_Matching()
+    public async Task Reference_dispatcher_publishes_notifications_sequentially_with_exact_type_matching()
     {
         // Arrange
         List<string> events = [];
@@ -147,7 +142,7 @@ public sealed class ReferenceDispatcherTests
     }
 
     [Fact]
-    public async Task Reference_Dispatcher_Sends_Streams()
+    public async Task Reference_dispatcher_sends_streams()
     {
         // Arrange
         List<string> items = [];
@@ -166,28 +161,27 @@ public sealed class ReferenceDispatcherTests
     }
 
     [Fact]
-    public async Task Reference_Dispatcher_Throws_When_Stream_Handler_Is_Missing()
+    public async Task Reference_dispatcher_throws_when_stream_handler_is_missing()
     {
         // Arrange
         var dispatcher = new ReferenceDispatcherBuilder()
             .Build();
 
         // Act
-        async Task Act()
+        var exception = await Assert.ThrowsAsync<NotSupportedException>(async () =>
         {
             await using var enumerator =
                 dispatcher.Send(new ReferenceDispatcherTestTypes.StreamTours(1), CancellationToken.None)
                     .GetAsyncEnumerator(CancellationToken.None);
             await enumerator.MoveNextAsync();
-        }
+        });
 
         // Assert
-        var exception = await Assert.ThrowsAsync<NotSupportedException>(Act);
         Assert.Contains(typeof(ReferenceDispatcherTestTypes.StreamTours).FullName!, exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
-    public async Task Reference_Dispatcher_Throws_When_Stream_Handlers_Are_Ambiguous()
+    public async Task Reference_dispatcher_throws_when_stream_handlers_are_ambiguous()
     {
         // Arrange
         var dispatcher = new ReferenceDispatcherBuilder()
@@ -196,22 +190,21 @@ public sealed class ReferenceDispatcherTests
             .Build();
 
         // Act
-        async Task Act()
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
             await using var enumerator =
                 dispatcher.Send(new ReferenceDispatcherTestTypes.StreamTours(1), CancellationToken.None)
                     .GetAsyncEnumerator(CancellationToken.None);
             await enumerator.MoveNextAsync();
-        }
+        });
 
         // Assert
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(Act);
         Assert.Contains("found 2 registered handlers", exception.Message, StringComparison.Ordinal);
         Assert.Contains(typeof(ReferenceDispatcherTestTypes.StreamTours).FullName!, exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
-    public async Task Reference_Dispatcher_Executes_Stream_Pipelines_In_Deterministic_Order()
+    public async Task Reference_dispatcher_executes_stream_pipelines_in_deterministic_order()
     {
         // Arrange
         List<string> events = [];

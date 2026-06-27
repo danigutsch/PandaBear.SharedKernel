@@ -5,7 +5,7 @@ namespace SharedKernel.Observability.Tests;
 public sealed class ObservabilityBuilderExtensionsTests
 {
     [Fact]
-    public void Configure_OpenTelemetry_Can_Be_Called_And_Returns_Builder()
+    public void Configure_openTelemetry_can_be_called_and_returns_builder()
     {
         var builder = new HostApplicationBuilder();
         var result = builder.ConfigureOpenTelemetry();

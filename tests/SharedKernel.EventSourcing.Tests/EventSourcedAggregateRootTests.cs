@@ -3,7 +3,7 @@ namespace SharedKernel.EventSourcing.Tests;
 public sealed class EventSourcedAggregateRootTests
 {
     [Fact]
-    public void Replay_Applies_Events_Without_Tracking_Uncommitted_Events()
+    public void Replay_applies_events_without_tracking_uncommitted_events()
     {
         // Arrange
         var aggregate = new TestAggregate("tour-1");
@@ -23,7 +23,7 @@ public sealed class EventSourcedAggregateRootTests
     }
 
     [Fact]
-    public void Replay_Rejects_Null_Event_Without_Advancing_Version()
+    public void Replay_rejects_null_event_without_advancing_version()
     {
         // Arrange
         var aggregate = new TestAggregate("tour-1");
@@ -36,7 +36,7 @@ public sealed class EventSourcedAggregateRootTests
     }
 
     [Fact]
-    public void AddEvent_Applies_And_Tracks_Uncommitted_Event()
+    public void AddEvent_applies_and_tracks_uncommitted_event()
     {
         // Arrange
         var aggregate = new TestAggregate("tour-1");
@@ -52,7 +52,7 @@ public sealed class EventSourcedAggregateRootTests
     }
 
     [Fact]
-    public void ClearUncommittedEvents_Removes_Tracked_Events_Without_Changing_Version()
+    public void ClearUncommittedEvents_removes_tracked_events_without_changing_version()
     {
         // Arrange
         var aggregate = new TestAggregate("tour-1");

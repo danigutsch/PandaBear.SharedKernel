@@ -5,7 +5,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class ResultConvertErrorTests
 {
     [Fact]
-    public void Converts_A_Non_Generic_Failure_To_A_Generic_Failure()
+    public void Converts_a_non_generic_failure_to_a_generic_failure()
     {
         // Arrange
         var source = Result.NotFound("Tour not found");
@@ -22,7 +22,7 @@ public sealed class ResultConvertErrorTests
     }
 
     [Fact]
-    public void Converts_A_Generic_Failure_To_A_Non_Generic_Failure()
+    public void Converts_a_generic_failure_to_a_non_generic_failure()
     {
         // Arrange
         var source = Result.Conflict<string>("Tour already exists");
@@ -39,7 +39,7 @@ public sealed class ResultConvertErrorTests
     }
 
     [Fact]
-    public void Converts_A_Generic_Failure_To_Another_Generic_Failure()
+    public void Converts_a_generic_failure_to_another_generic_failure()
     {
         // Arrange
         var source = Result.Error<string>("Unexpected failure");
@@ -56,7 +56,7 @@ public sealed class ResultConvertErrorTests
     }
 
     [Fact]
-    public void Preserves_Validation_Errors_When_Converting_Invalid_Results()
+    public void Preserves_validation_errors_when_converting_invalid_results()
     {
         // Arrange
         var source = Result.Invalid("Validation failed", "Name", "Name is required");
@@ -74,7 +74,7 @@ public sealed class ResultConvertErrorTests
     }
 
     [Fact]
-    public void Throws_When_Converting_An_Invalid_Result_Without_Validation_Payload()
+    public void Throws_when_converting_an_invalid_result_without_validation_payload()
     {
         // Arrange
         var malformedResult = ResultConvertErrorTestsHelpers.CreateMalformedResult(
@@ -92,7 +92,7 @@ public sealed class ResultConvertErrorTests
     [InlineData((int)ResultStatus.Created, "Cannot convert a successful result. Only failed results can be converted.")]
     [InlineData((int)ResultStatus.Unknown, "Unsupported result status: Unknown")]
     [InlineData(999, "Unsupported result status: 999")]
-    public void Throws_Expected_Exception_For_Malformed_Non_Generic_Status(int statusValue, string expectedMessage)
+    public void Throws_expected_exception_for_malformed_non_generic_status(int statusValue, string expectedMessage)
     {
         // Arrange
         var malformedResult = ResultConvertErrorTestsHelpers.CreateMalformedResult((ResultStatus)statusValue, new ResultError("Malformed result status."));
@@ -108,7 +108,7 @@ public sealed class ResultConvertErrorTests
     [InlineData((int)ResultStatus.NoContent, "Cannot convert a successful result. Only failed results can be converted.")]
     [InlineData((int)ResultStatus.Unknown, "Unsupported result status: Unknown")]
     [InlineData(999, "Unsupported result status: 999")]
-    public void Throws_Expected_Exception_For_Malformed_Generic_Status(int statusValue, string expectedMessage)
+    public void Throws_expected_exception_for_malformed_generic_status(int statusValue, string expectedMessage)
     {
         // Arrange
         var malformedResult = ResultConvertErrorTestsHelpers.CreateMalformedGenericResult((ResultStatus)statusValue, "payload", new ResultError("Malformed result status."));

@@ -3,7 +3,7 @@ namespace SharedKernel.Observability.Tests;
 public class ExplicitServiceNameDetectorTests
 {
     [Fact]
-    public void Detect_Sets_Service_Name_Attribute()
+    public void Detect_sets_service_name_attribute()
     {
         var detector = new SharedKernel.Observability.ExplicitServiceNameDetector("observable-app");
         var resource = detector.Detect();
@@ -13,7 +13,7 @@ public class ExplicitServiceNameDetectorTests
     }
 
     [Fact]
-    public void Detect_Sets_Service_Version_When_Provided()
+    public void Detect_sets_service_version_when_provided()
     {
         var detector = new SharedKernel.Observability.ExplicitServiceNameDetector("observable-app", "1.2.3");
         var resource = detector.Detect();
@@ -23,7 +23,7 @@ public class ExplicitServiceNameDetectorTests
     }
 
     [Fact]
-    public void Detect_Does_Not_Set_Service_Version_When_Whitespace()
+    public void Detect_does_not_set_service_version_when_whitespace()
     {
         var detector = new SharedKernel.Observability.ExplicitServiceNameDetector("observable-app", "  ");
         var resource = detector.Detect();

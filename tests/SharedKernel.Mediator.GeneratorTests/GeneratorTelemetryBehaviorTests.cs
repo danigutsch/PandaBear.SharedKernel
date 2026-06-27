@@ -6,7 +6,7 @@ public sealed class GeneratorTelemetryBehaviorTests
 {
 
     [Fact]
-    public async Task Completes_Send_Safely_When_No_Listener_Is_Registered()
+    public async Task Completes_send_safely_when_no_listener_is_registered()
     {
         // Arrange
         using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.SendSuccess());
@@ -21,7 +21,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Records_Error_Outcome_And_Error_Type_Tag_For_A_Send_Exception()
+    public async Task Records_error_outcome_and_error_type_tag_for_a_send_exception()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -55,7 +55,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Does_Not_Record_An_Error_For_A_Successful_Send()
+    public async Task Does_not_record_an_error_for_a_successful_send()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -82,7 +82,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Does_Not_Record_An_Error_When_A_Send_Handler_Handles_The_Exception_Internally()
+    public async Task Does_not_record_an_error_when_a_send_handler_handles_the_exception_internally()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -108,7 +108,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Records_A_Cancelled_Outcome_For_Send_Cancellation()
+    public async Task Records_a_cancelled_outcome_for_send_cancellation()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -137,7 +137,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Records_A_Cancelled_Outcome_For_Publish_Cancellation()
+    public async Task Records_a_cancelled_outcome_for_publish_cancellation()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -167,7 +167,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Does_Not_Record_An_Error_For_A_Successful_Publish()
+    public async Task Does_not_record_an_error_for_a_successful_publish()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -194,7 +194,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Records_A_Single_Exception_Event_For_A_Publish_Exception()
+    public async Task Records_a_single_exception_event_for_a_publish_exception()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -229,7 +229,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Records_A_Successful_Notification_Handler_Span_For_Sequential_Publish()
+    public async Task Records_a_successful_notification_handler_span_for_sequential_publish()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -263,7 +263,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Records_A_Cancelled_Notification_Handler_Span_For_Sequential_Publish()
+    public async Task Records_a_cancelled_notification_handler_span_for_sequential_publish()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -296,7 +296,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Records_A_Failed_Notification_Handler_Span_For_Sequential_Publish()
+    public async Task Records_a_failed_notification_handler_span_for_sequential_publish()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -334,7 +334,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Captures_A_Stream_Enumeration_Exception_On_The_Span()
+    public async Task Captures_a_stream_enumeration_exception_on_the_span()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -373,7 +373,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Records_A_Cancelled_Outcome_For_Stream_Cancellation_During_Enumeration()
+    public async Task Records_a_cancelled_outcome_for_stream_cancellation_during_enumeration()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -406,7 +406,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Closes_The_Stream_Span_After_Enumeration_Instead_Of_After_Send()
+    public async Task Closes_the_stream_span_after_enumeration_instead_of_after_send()
     {
         // Arrange
         var stopped = new List<Activity>();

@@ -5,7 +5,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class ResultAsyncCompositionTests
 {
     [Fact]
-    public async Task Maps_A_Success_With_A_Task_Delegate()
+    public async Task Maps_a_success_with_a_task_delegate()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -19,7 +19,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Preserves_A_Failure_When_Mapping_With_A_ValueTask_Delegate()
+    public async Task Preserves_a_failure_when_mapping_with_a_valueTask_delegate()
     {
         // Arrange
         var result = Result.Error<string>("Unexpected failure");
@@ -35,7 +35,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Preserves_A_Failure_When_Mapping_With_A_Task_Delegate()
+    public async Task Preserves_a_failure_when_mapping_with_a_task_delegate()
     {
         // Arrange
         var result = Result.Error<string>("Unexpected failure");
@@ -51,7 +51,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_A_Success_With_A_Task_Delegate()
+    public async Task Binds_a_success_with_a_task_delegate()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -65,7 +65,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_A_Success_With_A_ValueTask_Delegate()
+    public async Task Binds_a_success_with_a_valueTask_delegate()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -79,7 +79,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_A_Generic_Result_With_Asynchronous_Delegates()
+    public async Task Matches_a_generic_result_with_asynchronous_delegates()
     {
         // Arrange
         var result = Result.Error<string>("Unexpected failure");
@@ -94,7 +94,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_A_Generic_Success_Result_With_A_Task_Delegate()
+    public async Task Matches_a_generic_success_result_with_a_task_delegate()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -109,7 +109,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_A_Generic_Success_Result_With_A_ValueTask_Delegate()
+    public async Task Matches_a_generic_success_result_with_a_valueTask_delegate()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -124,7 +124,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_A_Non_Generic_Result_With_Asynchronous_Delegates()
+    public async Task Matches_a_non_generic_result_with_asynchronous_delegates()
     {
         // Arrange
         var result = Result.Ok();
@@ -139,7 +139,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_A_Non_Generic_Failure_Result_With_A_Task_Delegate()
+    public async Task Matches_a_non_generic_failure_result_with_a_task_delegate()
     {
         // Arrange
         var result = Result.Error("Unexpected failure");
@@ -154,7 +154,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_A_Non_Generic_Failure_Result_With_A_ValueTask_Delegate()
+    public async Task Matches_a_non_generic_failure_result_with_a_valueTask_delegate()
     {
         // Arrange
         var result = Result.Error("Unexpected failure");
@@ -169,7 +169,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_An_Asynchronous_Task_Result()
+    public async Task Maps_an_asynchronous_task_result()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Ok("porto"));
@@ -183,7 +183,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_An_Asynchronous_ValueTask_Result()
+    public async Task Binds_an_asynchronous_valueTask_result()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Ok("porto"));
@@ -197,7 +197,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_Task_Result()
+    public async Task Matches_an_asynchronous_task_result()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Error<string>("Unexpected failure"));
@@ -212,7 +212,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_An_Asynchronous_Task_Result_With_A_Task_Delegate()
+    public async Task Maps_an_asynchronous_task_result_with_a_task_delegate()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Ok("porto"));
@@ -226,7 +226,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_A_Failed_Asynchronous_Task_Result_With_A_ValueTask_Delegate()
+    public async Task Maps_a_failed_asynchronous_task_result_with_a_valueTask_delegate()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Error<string>("Unexpected failure"));
@@ -242,7 +242,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_An_Asynchronous_ValueTask_Result_With_A_ValueTask_Delegate()
+    public async Task Maps_an_asynchronous_valueTask_result_with_a_valueTask_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Ok("porto"));
@@ -256,7 +256,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_An_Asynchronous_Task_Result_With_A_Task_Delegate()
+    public async Task Binds_an_asynchronous_task_result_with_a_task_delegate()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Ok("porto"));
@@ -270,7 +270,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_An_Asynchronous_ValueTask_Result_With_A_Sync_Delegate()
+    public async Task Maps_an_asynchronous_valueTask_result_with_a_sync_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Ok("porto"));
@@ -284,7 +284,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_An_Asynchronous_ValueTask_Result_With_A_Task_Delegate()
+    public async Task Maps_an_asynchronous_valueTask_result_with_a_task_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Ok("porto"));
@@ -298,7 +298,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_An_Asynchronous_Task_Result_With_A_ValueTask_Delegate()
+    public async Task Binds_an_asynchronous_task_result_with_a_valueTask_delegate()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Ok("porto"));
@@ -312,7 +312,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_An_Asynchronous_ValueTask_Result_With_A_Sync_Delegate()
+    public async Task Binds_an_asynchronous_valueTask_result_with_a_sync_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Ok("porto"));
@@ -326,7 +326,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_An_Asynchronous_ValueTask_Result_With_A_Task_Delegate()
+    public async Task Binds_an_asynchronous_valueTask_result_with_a_task_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Ok("porto"));
@@ -340,7 +340,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Ensures_A_Success_With_A_Task_Delegate()
+    public async Task Ensures_a_success_with_a_task_delegate()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -354,7 +354,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Returns_The_Provided_Error_When_Ensuring_With_A_ValueTask_Delegate_Fails()
+    public async Task Returns_the_provided_error_when_ensuring_with_a_valueTask_delegate_fails()
     {
         // Arrange
         var failure = new ResultError("Length mismatch", ResultErrorCodes.Error);
@@ -371,7 +371,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Preserves_Invalid_Status_When_Ensuring_Asynchronously_With_A_Validation_Error()
+    public async Task Preserves_invalid_status_when_ensuring_asynchronously_with_a_validation_error()
     {
         // Arrange
         var failure = new ResultError(
@@ -396,7 +396,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Ensures_An_Asynchronous_Task_Result_With_A_Sync_Delegate()
+    public async Task Ensures_an_asynchronous_task_result_with_a_sync_delegate()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Ok("porto"));
@@ -410,7 +410,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Short_Circuits_A_Failed_Asynchronous_Task_Result_When_Ensuring()
+    public async Task Short_circuits_a_failed_asynchronous_task_result_when_ensuring()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Error<string>("Unexpected failure"));
@@ -426,7 +426,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Ensures_An_Asynchronous_ValueTask_Result_With_A_Sync_Delegate()
+    public async Task Ensures_an_asynchronous_valueTask_result_with_a_sync_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Ok("porto"));
@@ -440,7 +440,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Short_Circuits_A_Failed_Asynchronous_ValueTask_Result_When_Ensuring()
+    public async Task Short_circuits_a_failed_asynchronous_valueTask_result_when_ensuring()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Error<string>("Unexpected failure"));
@@ -456,7 +456,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Ensures_An_Asynchronous_Task_Result_With_A_Task_Delegate()
+    public async Task Ensures_an_asynchronous_task_result_with_a_task_delegate()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Ok("porto"));
@@ -470,7 +470,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Ensures_An_Asynchronous_ValueTask_Result_With_A_ValueTask_Delegate()
+    public async Task Ensures_an_asynchronous_valueTask_result_with_a_valueTask_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Ok("porto"));
@@ -484,7 +484,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_Task_Result_With_A_Task_Delegate()
+    public async Task Matches_an_asynchronous_task_result_with_a_task_delegate()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Error<string>("Unexpected failure"));
@@ -499,7 +499,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_ValueTask_Result_With_A_Sync_Delegate()
+    public async Task Matches_an_asynchronous_valueTask_result_with_a_sync_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Error<string>("Unexpected failure"));
@@ -514,7 +514,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_ValueTask_Result_With_A_ValueTask_Delegate()
+    public async Task Matches_an_asynchronous_valueTask_result_with_a_valueTask_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Error<string>("Unexpected failure"));
@@ -529,7 +529,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_ValueTask_Result_With_A_Task_Delegate()
+    public async Task Matches_an_asynchronous_valueTask_result_with_a_task_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Error<string>("Unexpected failure"));
@@ -544,7 +544,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_Task_Non_Generic_Result()
+    public async Task Matches_an_asynchronous_task_non_generic_result()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Error("Unexpected failure"));
@@ -559,7 +559,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_ValueTask_Non_Generic_Result_With_A_Task_Delegate()
+    public async Task Matches_an_asynchronous_valueTask_non_generic_result_with_a_task_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Ok());
@@ -574,7 +574,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_Task_Non_Generic_Result_With_A_Task_Delegate()
+    public async Task Matches_an_asynchronous_task_non_generic_result_with_a_task_delegate()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Ok());
@@ -589,7 +589,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_Task_Non_Generic_Result_With_A_ValueTask_Delegate()
+    public async Task Matches_an_asynchronous_task_non_generic_result_with_a_valueTask_delegate()
     {
         // Arrange
         var resultTask = Task.FromResult(Result.Ok());
@@ -604,7 +604,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_ValueTask_Non_Generic_Result_With_A_Sync_Delegate()
+    public async Task Matches_an_asynchronous_valueTask_non_generic_result_with_a_sync_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Error("Unexpected failure"));
@@ -619,7 +619,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_ValueTask_Non_Generic_Result_With_A_ValueTask_Delegate()
+    public async Task Matches_an_asynchronous_valueTask_non_generic_result_with_a_valueTask_delegate()
     {
         // Arrange
         var resultTask = ValueTask.FromResult(Result.Ok());
@@ -634,7 +634,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Result_Source_For_Map()
+    public async Task Rejects_a_null_task_result_source_for_map()
     {
         // Arrange
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ResultTaskExtensions.Map(NullArgumentData.Task<Result<string>>(), static value => value.Length));
@@ -644,7 +644,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Result_Source_For_Bind()
+    public async Task Rejects_a_null_task_result_source_for_bind()
     {
         // Arrange
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ResultTaskExtensions.Bind(NullArgumentData.Task<Result<string>>(), static value => Result.Ok(value.Length)));
@@ -654,7 +654,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Result_Source_For_Ensure()
+    public async Task Rejects_a_null_task_result_source_for_ensure()
     {
         // Arrange
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ResultTaskExtensions.Ensure(NullArgumentData.Task<Result<string>>(), static value => value.Length == 5, new ResultError("Length mismatch")));
@@ -664,7 +664,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Result_Source_For_Match()
+    public async Task Rejects_a_null_task_result_source_for_match()
     {
         // Arrange
         var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ResultTaskExtensions.Match(NullArgumentData.Task<Result<string>>(), static value => value.Length, static error => error.Detail.Length));
@@ -674,7 +674,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Map_Delegate()
+    public async Task Rejects_a_null_task_map_delegate()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -685,7 +685,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_ValueTask_Map_Delegate()
+    public async Task Rejects_a_null_valueTask_map_delegate()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -696,7 +696,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Bind_Delegate()
+    public async Task Rejects_a_null_task_bind_delegate()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -707,7 +707,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_ValueTask_Bind_Delegate()
+    public async Task Rejects_a_null_valueTask_bind_delegate()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -718,7 +718,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Match_Delegate_For_Generic_Result()
+    public async Task Rejects_a_null_task_match_delegate_for_generic_result()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -729,7 +729,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_ValueTask_Match_Delegate_For_Generic_Result()
+    public async Task Rejects_a_null_valueTask_match_delegate_for_generic_result()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -740,7 +740,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Match_Delegate_For_Non_Generic_Result()
+    public async Task Rejects_a_null_task_match_delegate_for_non_generic_result()
     {
         // Arrange
         var result = Result.Ok();
@@ -751,7 +751,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_ValueTask_Match_Delegate_For_Non_Generic_Result()
+    public async Task Rejects_a_null_valueTask_match_delegate_for_non_generic_result()
     {
         // Arrange
         var result = Result.Ok();
@@ -762,7 +762,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Throws_For_An_Uninitialized_Non_Generic_Result_With_Task_Match()
+    public async Task Throws_for_an_uninitialized_non_generic_result_with_task_match()
     {
         // Arrange
         var result = default(Result);
@@ -775,7 +775,7 @@ public sealed class ResultAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Throws_For_An_Uninitialized_Generic_Result_With_ValueTask_Match()
+    public async Task Throws_for_an_uninitialized_generic_result_with_valueTask_match()
     {
         // Arrange
         var result = default(Result<string>);

@@ -5,7 +5,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class OptionAsyncCompositionTests
 {
     [Fact]
-    public async Task Maps_A_Value_With_A_Task_Delegate()
+    public async Task Maps_a_value_with_a_task_delegate()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -18,7 +18,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_A_Value_With_A_ValueTask_Delegate()
+    public async Task Maps_a_value_with_a_valueTask_delegate()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -31,7 +31,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_A_Value_With_A_ValueTask_Delegate()
+    public async Task Binds_a_value_with_a_valueTask_delegate()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -44,7 +44,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_A_None_With_Asynchronous_Delegates()
+    public async Task Matches_a_none_with_asynchronous_delegates()
     {
         // Arrange
         var option = Option.None<string>();
@@ -59,7 +59,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_An_Asynchronous_Task_Option()
+    public async Task Maps_an_asynchronous_task_option()
     {
         // Arrange
         var optionTask = Task.FromResult(Option.Some("porto"));
@@ -72,7 +72,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_An_Asynchronous_ValueTask_Option()
+    public async Task Binds_an_asynchronous_valueTask_option()
     {
         // Arrange
         var optionTask = ValueTask.FromResult(Option.Some("porto"));
@@ -85,7 +85,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_Task_Option()
+    public async Task Matches_an_asynchronous_task_option()
     {
         // Arrange
         var optionTask = Task.FromResult(Option.Some("porto"));
@@ -100,7 +100,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_An_Asynchronous_Task_Option_With_A_Task_Delegate()
+    public async Task Maps_an_asynchronous_task_option_with_a_task_delegate()
     {
         // Arrange
         var optionTask = Task.FromResult(Option.Some("porto"));
@@ -113,7 +113,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_An_Asynchronous_ValueTask_Option_With_A_ValueTask_Delegate()
+    public async Task Maps_an_asynchronous_valueTask_option_with_a_valueTask_delegate()
     {
         // Arrange
         var optionTask = ValueTask.FromResult(Option.Some("porto"));
@@ -126,7 +126,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_An_Asynchronous_Task_Option_With_A_Task_Delegate()
+    public async Task Binds_an_asynchronous_task_option_with_a_task_delegate()
     {
         // Arrange
         var optionTask = Task.FromResult(Option.Some("porto"));
@@ -139,7 +139,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_An_Asynchronous_ValueTask_Option_With_A_Sync_Delegate()
+    public async Task Maps_an_asynchronous_valueTask_option_with_a_sync_delegate()
     {
         // Arrange
         var optionTask = ValueTask.FromResult(Option.Some("porto"));
@@ -152,7 +152,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Maps_An_Asynchronous_ValueTask_Option_With_A_Task_Delegate()
+    public async Task Maps_an_asynchronous_valueTask_option_with_a_task_delegate()
     {
         // Arrange
         var optionTask = ValueTask.FromResult(Option.Some("porto"));
@@ -165,7 +165,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_An_Asynchronous_Task_Option_With_A_ValueTask_Delegate()
+    public async Task Binds_an_asynchronous_task_option_with_a_valueTask_delegate()
     {
         // Arrange
         var optionTask = Task.FromResult(Option.Some("porto"));
@@ -178,7 +178,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_An_Asynchronous_ValueTask_Option_With_A_Sync_Delegate()
+    public async Task Binds_an_asynchronous_valueTask_option_with_a_sync_delegate()
     {
         // Arrange
         var optionTask = ValueTask.FromResult(Option.Some("porto"));
@@ -191,7 +191,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Binds_An_Asynchronous_ValueTask_Option_With_A_ValueTask_Delegate()
+    public async Task Binds_an_asynchronous_valueTask_option_with_a_valueTask_delegate()
     {
         // Arrange
         var optionTask = ValueTask.FromResult(Option.Some("porto"));
@@ -204,7 +204,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_Task_Option_With_A_Task_Delegate()
+    public async Task Matches_an_asynchronous_task_option_with_a_task_delegate()
     {
         // Arrange
         var optionTask = Task.FromResult(Option.Some("porto"));
@@ -219,7 +219,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_ValueTask_Option_With_A_Sync_Delegate()
+    public async Task Matches_an_asynchronous_valueTask_option_with_a_sync_delegate()
     {
         // Arrange
         var optionTask = ValueTask.FromResult(Option.Some("porto"));
@@ -234,7 +234,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_ValueTask_Option_With_A_ValueTask_Delegate()
+    public async Task Matches_an_asynchronous_valueTask_option_with_a_valueTask_delegate()
     {
         // Arrange
         var optionTask = ValueTask.FromResult(Option.Some("porto"));
@@ -249,7 +249,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Matches_An_Asynchronous_ValueTask_Option_With_A_Task_Delegate()
+    public async Task Matches_an_asynchronous_valueTask_option_with_a_task_delegate()
     {
         // Arrange
         var optionTask = ValueTask.FromResult(Option.Some("porto"));
@@ -264,7 +264,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Option_Source_For_Map()
+    public async Task Rejects_a_null_task_option_source_for_map()
     {
         // Arrange
         var source = NullArgumentData.Task<Option<string>>();
@@ -277,7 +277,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Option_Source_For_Bind()
+    public async Task Rejects_a_null_task_option_source_for_bind()
     {
         // Arrange
         var source = NullArgumentData.Task<Option<string>>();
@@ -290,7 +290,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Option_Source_For_Match()
+    public async Task Rejects_a_null_task_option_source_for_match()
     {
         // Arrange
         var source = NullArgumentData.Task<Option<string>>();
@@ -303,7 +303,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Map_Delegate()
+    public async Task Rejects_a_null_task_map_delegate()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -317,7 +317,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_ValueTask_Map_Delegate()
+    public async Task Rejects_a_null_valueTask_map_delegate()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -331,7 +331,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Bind_Delegate()
+    public async Task Rejects_a_null_task_bind_delegate()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -345,7 +345,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_ValueTask_Bind_Delegate()
+    public async Task Rejects_a_null_valueTask_bind_delegate()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -359,7 +359,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_Task_Match_Delegate()
+    public async Task Rejects_a_null_task_match_delegate()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -373,7 +373,7 @@ public sealed class OptionAsyncCompositionTests
     }
 
     [Fact]
-    public async Task Rejects_A_Null_ValueTask_Match_Delegate()
+    public async Task Rejects_a_null_valueTask_match_delegate()
     {
         // Arrange
         var option = Option.Some("porto");

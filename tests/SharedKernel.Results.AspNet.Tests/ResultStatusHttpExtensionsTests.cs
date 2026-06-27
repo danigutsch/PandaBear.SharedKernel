@@ -17,7 +17,7 @@ public sealed class ResultStatusHttpExtensionsTests
     [InlineData(ResultStatus.Error, StatusCodes.Status500InternalServerError)]
     [InlineData(ResultStatus.CriticalError, StatusCodes.Status500InternalServerError)]
     [InlineData(ResultStatus.Unavailable, StatusCodes.Status503ServiceUnavailable)]
-    public void ToHttpStatusCode_Returns_Expected_Code_For_Defined_Statuses(ResultStatus status, int expectedStatusCode)
+    public void ToHttpStatusCode_returns_expected_code_for_defined_statuses(ResultStatus status, int expectedStatusCode)
     {
         // Act
         var actual = status.ToHttpStatusCode();
@@ -27,7 +27,7 @@ public sealed class ResultStatusHttpExtensionsTests
     }
 
     [Fact]
-    public void ToHttpStatusCode_Rejects_Unknown_Statuses()
+    public void ToHttpStatusCode_rejects_unknown_statuses()
     {
         // Arrange
         var unknownStatus = Enum.Parse<ResultStatus>("2147483647");
@@ -40,7 +40,7 @@ public sealed class ResultStatusHttpExtensionsTests
     }
 
     [Fact]
-    public void ToHttpStatusCode_Rejects_The_Defined_Unknown_Status()
+    public void ToHttpStatusCode_rejects_the_defined_unknown_status()
     {
         // Arrange
         var status = ResultStatus.Unknown;

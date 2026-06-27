@@ -7,7 +7,7 @@ namespace SharedKernel.Mediator.GeneratorTests;
 public sealed class GeneratorIncrementalBehaviorTests
 {
     [Fact]
-    public void Unrelated_Edit_Keeps_Generated_Source_Step_Cached()
+    public void Unrelated_edit_keeps_generated_source_step_cached()
     {
         // Arrange
         var initialCompilation = GeneratorTestHarness.CreateCompilation(
@@ -28,7 +28,7 @@ public sealed class GeneratorIncrementalBehaviorTests
     }
 
     [Fact]
-    public void Whitespace_Only_Edit_Keeps_Generated_Source_Step_Cached()
+    public void Whitespace_only_edit_keeps_generated_source_step_cached()
     {
         // Arrange
         var initialSource = TestSources.ModuleHeader + TestSources.CreateTourWithHandler;
@@ -69,7 +69,7 @@ public sealed class GeneratorIncrementalBehaviorTests
     }
 
     [Fact]
-    public void Adding_A_New_Registration_Invalidates_Discovery_And_Generated_Source_Steps()
+    public void Adding_a_new_registration_invalidates_discovery_and_generated_source_steps()
     {
         // Arrange
         var initialCompilation = GeneratorTestHarness.CreateCompilation(
@@ -88,7 +88,7 @@ public sealed class GeneratorIncrementalBehaviorTests
     }
 
     [Fact]
-    public void Changing_A_Request_Response_Type_Invalidates_Discovery_And_Generated_Source_Steps()
+    public void Changing_a_request_response_type_invalidates_discovery_and_generated_source_steps()
     {
         // Arrange
         var initialCompilation = GeneratorTestHarness.CreateCompilation(

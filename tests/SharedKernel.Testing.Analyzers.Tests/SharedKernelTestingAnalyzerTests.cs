@@ -155,7 +155,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             public sealed class TourLoaderTests
             {
                 [Fact]
-                public void Some_Title()
+                public void Some_title()
                 {
                 }
             }
@@ -177,7 +177,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             public sealed class TourLoaderTests
             {
                 [Fact]
-                public void Some_TITLE()
+                public void Some_tITLE()
                 {
                 }
             }

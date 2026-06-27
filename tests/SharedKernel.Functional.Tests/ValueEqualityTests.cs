@@ -4,7 +4,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class ValueEqualityTests
 {
     [Fact]
-    public void Supports_Option_Operators_And_Object_Equality()
+    public void Supports_option_operators_and_object_equality()
     {
         // Arrange
         var left = Option.Some("porto");
@@ -23,7 +23,7 @@ public sealed class ValueEqualityTests
     }
 
     [Fact]
-    public void Distinguishes_Different_Option_Values()
+    public void Distinguishes_different_option_values()
     {
         // Arrange
         var left = Option.Some("porto");
@@ -37,7 +37,7 @@ public sealed class ValueEqualityTests
     }
 
     [Fact]
-    public void Supports_Non_Generic_Result_Operators_And_Object_Equality()
+    public void Supports_non_generic_result_operators_and_object_equality()
     {
         // Arrange
         var left = Result.Error("Unexpected failure");
@@ -56,7 +56,7 @@ public sealed class ValueEqualityTests
     }
 
     [Fact]
-    public void Distinguishes_Different_Non_Generic_Result_States()
+    public void Distinguishes_different_non_generic_result_states()
     {
         // Arrange
         var left = Result.Ok();
@@ -70,7 +70,7 @@ public sealed class ValueEqualityTests
     }
 
     [Fact]
-    public void Supports_Generic_Result_Operators_And_Object_Equality()
+    public void Supports_generic_result_operators_and_object_equality()
     {
         // Arrange
         var left = Result.Ok("porto");
@@ -89,7 +89,7 @@ public sealed class ValueEqualityTests
     }
 
     [Fact]
-    public void Distinguishes_Different_Generic_Result_Values()
+    public void Distinguishes_different_generic_result_values()
     {
         // Arrange
         var left = Result.Ok("porto");

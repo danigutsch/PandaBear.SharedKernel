@@ -6,7 +6,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class OptionFunctorLawTests
 {
     [Fact]
-    public void Satisfies_The_Functor_Identity_Law()
+    public void Satisfies_the_functor_identity_law()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -19,7 +19,7 @@ public sealed class OptionFunctorLawTests
     }
 
     [Fact]
-    public void Satisfies_The_Functor_Composition_Law()
+    public void Satisfies_the_functor_composition_law()
     {
         // Arrange
         var option = Option.Some("porto");

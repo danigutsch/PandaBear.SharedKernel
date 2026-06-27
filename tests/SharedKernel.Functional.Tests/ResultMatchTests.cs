@@ -6,7 +6,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class ResultMatchTests
 {
     [Fact]
-    public void Returns_The_Success_Branch_Value_For_Generic_Results()
+    public void Returns_the_success_branch_value_for_generic_results()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -21,7 +21,7 @@ public sealed class ResultMatchTests
     }
 
     [Fact]
-    public void Returns_The_Failure_Branch_Value_For_Generic_Results()
+    public void Returns_the_failure_branch_value_for_generic_results()
     {
         // Arrange
         var result = Result.Error<string>("Unexpected failure");
@@ -36,7 +36,7 @@ public sealed class ResultMatchTests
     }
 
     [Fact]
-    public void Returns_The_Success_Branch_Value_For_Non_Generic_Results()
+    public void Returns_the_success_branch_value_for_non_generic_results()
     {
         // Arrange
         var result = Result.Ok();
@@ -51,7 +51,7 @@ public sealed class ResultMatchTests
     }
 
     [Fact]
-    public void Returns_The_Failure_Branch_Value_For_Non_Generic_Results()
+    public void Returns_the_failure_branch_value_for_non_generic_results()
     {
         // Arrange
         var result = Result.Error("Unexpected failure");
@@ -66,7 +66,7 @@ public sealed class ResultMatchTests
     }
 
     [Fact]
-    public void Throws_For_An_Uninitialized_Non_Generic_Result()
+    public void Throws_for_an_uninitialized_non_generic_result()
     {
         // Arrange
         var result = default(Result);
@@ -80,7 +80,7 @@ public sealed class ResultMatchTests
     }
 
     [Fact]
-    public void Throws_For_An_Uninitialized_Generic_Result()
+    public void Throws_for_an_uninitialized_generic_result()
     {
         // Arrange
         var result = default(Result<string>);

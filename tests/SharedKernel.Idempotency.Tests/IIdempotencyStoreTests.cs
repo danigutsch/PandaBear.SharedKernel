@@ -3,7 +3,7 @@ namespace SharedKernel.Idempotency.Tests;
 public sealed class IIdempotencyStoreTests
 {
     [Fact]
-    public async Task Complete_Without_Result_Fingerprint_Forwards_Null_Fingerprint()
+    public async Task Complete_without_result_fingerprint_forwards_null_fingerprint()
     {
         // Arrange
         var store = new RecordingIdempotencyStore();
@@ -26,7 +26,7 @@ public sealed class IIdempotencyStoreTests
     }
 
     [Fact]
-    public async Task Complete_With_Result_Fingerprint_Forwards_Fingerprint()
+    public async Task Complete_with_result_fingerprint_forwards_fingerprint()
     {
         // Arrange
         var store = new RecordingIdempotencyStore();
@@ -48,7 +48,7 @@ public sealed class IIdempotencyStoreTests
     }
 
     [Fact]
-    public async Task Complete_With_Null_Result_Fingerprint_Preserves_Null_Fingerprint()
+    public async Task Complete_with_null_result_fingerprint_preserves_null_fingerprint()
     {
         // Arrange
         var store = new RecordingIdempotencyStore();
@@ -69,7 +69,7 @@ public sealed class IIdempotencyStoreTests
     }
 
     [Fact]
-    public async Task TryStart_Remains_Implemented_By_Store()
+    public async Task TryStart_remains_implemented_by_store()
     {
         // Arrange
         var store = new RecordingIdempotencyStore();
@@ -86,7 +86,7 @@ public sealed class IIdempotencyStoreTests
     }
 
     [Fact]
-    public async Task Get_Remains_Implemented_By_Store()
+    public async Task Get_remains_implemented_by_store()
     {
         // Arrange
         var store = new RecordingIdempotencyStore();

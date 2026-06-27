@@ -5,7 +5,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class ResultEdgeCaseTests
 {
     [Fact]
-    public void Throws_When_The_Value_Is_Accessed_On_A_Failed_Result()
+    public void Throws_when_the_value_is_accessed_on_a_failed_result()
     {
         // Arrange
         var result = Result.Error<string>("Unexpected failure");
@@ -22,7 +22,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Returns_False_For_Failed_Generic_Results()
+    public void Returns_false_for_failed_generic_results()
     {
         // Arrange
         var result = Result.Error<string>("Unexpected failure");
@@ -36,7 +36,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Throws_When_Ok_Gets_A_Null_Reference()
+    public void Throws_when_ok_gets_a_null_reference()
     {
         // Arrange
         // Act
@@ -47,7 +47,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Throws_When_Created_Gets_A_Null_Reference()
+    public void Throws_when_created_gets_a_null_reference()
     {
         // Arrange
         // Act
@@ -58,7 +58,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Throws_When_Accepted_Gets_A_Null_Reference()
+    public void Throws_when_accepted_gets_a_null_reference()
     {
         // Arrange
         // Act
@@ -69,7 +69,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Returns_A_Useful_String_For_A_Successful_Non_Generic_Result()
+    public void Returns_a_useful_string_for_a_successful_non_generic_result()
     {
         // Arrange
         var result = Result.Accepted();
@@ -82,7 +82,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Returns_A_Useful_String_For_A_Failed_Non_Generic_Result()
+    public void Returns_a_useful_string_for_a_failed_non_generic_result()
     {
         // Arrange
         var result = Result.Error("Unexpected failure");
@@ -95,7 +95,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Returns_A_Useful_String_For_A_Successful_Generic_Result()
+    public void Returns_a_useful_string_for_a_successful_generic_result()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -108,7 +108,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Returns_A_Useful_String_For_A_Failed_Generic_Result()
+    public void Returns_a_useful_string_for_a_failed_generic_result()
     {
         // Arrange
         var result = Result.NotFound<string>("Tour not found");
@@ -121,7 +121,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Returns_An_Unknown_String_For_An_Uninitialized_Non_Generic_Result()
+    public void Returns_an_unknown_string_for_an_uninitialized_non_generic_result()
     {
         // Arrange
         var result = default(Result);
@@ -134,7 +134,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Returns_An_Unknown_String_For_An_Uninitialized_Generic_Result()
+    public void Returns_an_unknown_string_for_an_uninitialized_generic_result()
     {
         // Arrange
         var result = default(Result<string>);
@@ -147,7 +147,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Returns_A_Useful_String_For_A_Successful_Generic_Result_With_A_Reference_Type_Value()
+    public void Returns_a_useful_string_for_a_successful_generic_result_with_a_reference_type_value()
     {
         // Arrange
         var result = Result.Ok(new LoggedTourSummary("VT-42", "Porto river ride"));
@@ -160,7 +160,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Throws_When_A_Malformed_Successful_Result_Lacks_A_Value()
+    public void Throws_when_a_malformed_successful_result_lacks_a_value()
     {
         // Arrange
         var result = ResultEdgeCaseTestsHelpers.CreateMalformedGenericResult(ResultStatus.Ok, value: null, error: null);
@@ -173,7 +173,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Throws_When_A_Malformed_Failed_Result_Lacks_Error_Details()
+    public void Throws_when_a_malformed_failed_result_lacks_error_details()
     {
         // Arrange
         var result = ResultEdgeCaseTestsHelpers.CreateMalformedNonGenericResult(ResultStatus.Error, error: null);
@@ -186,7 +186,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public void Rejects_Ensure_Invalid_Error_Without_Validation_Details()
+    public void Rejects_ensure_invalid_error_without_validation_details()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -201,7 +201,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public async Task Rejects_Ensure_Invalid_Error_Without_Validation_Details_For_Task_Predicates()
+    public async Task Rejects_ensure_invalid_error_without_validation_details_for_task_predicates()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -216,7 +216,7 @@ public sealed class ResultEdgeCaseTests
     }
 
     [Fact]
-    public async Task Rejects_Ensure_Invalid_Error_Without_Validation_Details_For_ValueTask_Predicates()
+    public async Task Rejects_ensure_invalid_error_without_validation_details_for_valueTask_predicates()
     {
         // Arrange
         var result = Result.Ok("porto");

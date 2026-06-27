@@ -4,7 +4,7 @@ namespace SharedKernel.Mediator.GeneratorTests;
 public sealed class GeneratorDeterminismTests
 {
     [Fact]
-    public void Repeat_Run_Keeps_Generated_Sources_And_Diagnostics_Stable_For_Notification_Handlers()
+    public void Repeat_run_keeps_generated_sources_and_diagnostics_stable_for_notification_handlers()
     {
         // Arrange
         var compilation = GeneratorTestHarness.CreateCompilation(
@@ -27,7 +27,7 @@ public sealed class GeneratorDeterminismTests
     }
 
     [Fact]
-    public void Repeat_Run_Keeps_Generated_Sources_And_Diagnostics_Stable_For_Multi_Handler_Notifications()
+    public void Repeat_run_keeps_generated_sources_and_diagnostics_stable_for_multi_handler_notifications()
     {
         // Arrange
         var compilation = GeneratorTestHarness.CreateCompilation(
@@ -60,7 +60,7 @@ public sealed class GeneratorDeterminismTests
     }
 
     [Fact]
-    public void Reordered_But_Equivalent_Handler_Declarations_Keep_Generated_Output_Stable()
+    public void Reordered_but_equivalent_handler_declarations_keep_generated_output_stable()
     {
         // Arrange
         var firstSource = TestSources.ModuleHeader + """

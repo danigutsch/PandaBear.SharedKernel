@@ -5,7 +5,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class ResultCompositionTests
 {
     [Fact]
-    public void Discards_The_Value_And_Preserves_Success_Status()
+    public void Discards_the_value_and_preserves_success_status()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -20,7 +20,7 @@ public sealed class ResultCompositionTests
     }
 
     [Fact]
-    public void Preserves_Created_Status_As_Success()
+    public void Preserves_created_status_as_success()
     {
         // Arrange
         var result = Result.Created("porto");
@@ -35,7 +35,7 @@ public sealed class ResultCompositionTests
     }
 
     [Fact]
-    public void Discards_The_Value_And_Preserves_Failure_Error()
+    public void Discards_the_value_and_preserves_failure_error()
     {
         // Arrange
         var result = Result.Conflict<string>("Tour is already published");
@@ -51,7 +51,7 @@ public sealed class ResultCompositionTests
     }
 
     [Fact]
-    public void Transforms_The_Success_Value()
+    public void Transforms_the_success_value()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -65,7 +65,7 @@ public sealed class ResultCompositionTests
     }
 
     [Fact]
-    public void Preserves_Failure_Details()
+    public void Preserves_failure_details()
     {
         // Arrange
         var result = Result.Error<string>("Unexpected failure");
@@ -80,7 +80,7 @@ public sealed class ResultCompositionTests
     }
 
     [Fact]
-    public void Flattens_Successful_Results()
+    public void Flattens_successful_results()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -94,7 +94,7 @@ public sealed class ResultCompositionTests
     }
 
     [Fact]
-    public void Short_Circuits_Failures()
+    public void Short_circuits_failures()
     {
         // Arrange
         var result = Result.Error<string>("Unexpected failure");
@@ -109,7 +109,7 @@ public sealed class ResultCompositionTests
     }
 
     [Fact]
-    public void Preserves_A_Success_When_Ensure_Predicate_Passes()
+    public void Preserves_a_success_when_ensure_predicate_passes()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -123,7 +123,7 @@ public sealed class ResultCompositionTests
     }
 
     [Fact]
-    public void Returns_The_Provided_Error_When_Ensure_Predicate_Fails()
+    public void Returns_the_provided_error_when_ensure_predicate_fails()
     {
         // Arrange
         var failure = new ResultError("Length mismatch", ResultErrorCodes.Error);
@@ -140,7 +140,7 @@ public sealed class ResultCompositionTests
     }
 
     [Fact]
-    public void Preserves_Invalid_Status_And_Validation_Payload_When_Ensure_Fails_With_A_Validation_Error()
+    public void Preserves_invalid_status_and_validation_payload_when_ensure_fails_with_a_validation_error()
     {
         // Arrange
         var failure = new ResultError(
@@ -173,7 +173,7 @@ public sealed class ResultCompositionTests
     [InlineData(ResultErrorCodes.Unavailable, ResultStatus.Unavailable)]
     [InlineData(ResultErrorCodes.Error, ResultStatus.Error)]
     [InlineData("custom_error", ResultStatus.Error)]
-    public void Maps_Ensure_Error_Codes_To_The_Expected_Failure_Status(string errorCode, ResultStatus expectedStatus)
+    public void Maps_ensure_error_codes_to_the_expected_failure_status(string errorCode, ResultStatus expectedStatus)
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -188,7 +188,7 @@ public sealed class ResultCompositionTests
     }
 
     [Fact]
-    public void Short_Circuits_Ensure_For_Existing_Failures()
+    public void Short_circuits_ensure_for_existing_failures()
     {
         // Arrange
         var result = Result.Error<string>("Unexpected failure");

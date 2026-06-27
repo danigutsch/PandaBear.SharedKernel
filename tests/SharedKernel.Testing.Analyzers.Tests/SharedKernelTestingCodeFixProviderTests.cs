@@ -51,7 +51,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             public sealed class TourLoaderTests
             {
                 [Fact]
-                public void Some_Title()
+                public void Some_title()
                 {
                 }
             }
