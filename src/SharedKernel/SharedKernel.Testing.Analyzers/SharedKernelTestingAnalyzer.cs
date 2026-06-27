@@ -52,8 +52,8 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static readonly DiagnosticDescriptor XunitTestClassHelperMethodRule = new(
         TestingDiagnosticIds.XunitTestClassHelperMethod,
-        title: "xUnit test classes should not declare helper members directly",
-        messageFormat: "xUnit test class helper member '{0}' should be moved to a dedicated helper type or kept in the test body when local",
+        title: "xUnit tests should not declare helper methods inside test classes or test methods",
+        messageFormat: "xUnit test helper '{0}' should be kept visible in the test body or moved to a dedicated helper type",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
@@ -271,6 +271,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     {
         if (context.Node is not LocalFunctionStatementSyntax localFunction
             || localFunction.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
+            || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
             || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
             || !IsXunitTestMethod(methodSymbol))
         {
