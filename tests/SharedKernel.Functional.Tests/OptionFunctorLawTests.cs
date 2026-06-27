@@ -23,12 +23,10 @@ public sealed class OptionFunctorLawTests
     {
         // Arrange
         var option = Option.Some("porto");
-        static string first(string value) => value.Trim();
-        static string second(string value) => value.ToUpperInvariant();
 
         // Act
-        var composed = option.Map(value => second(first(value)));
-        var chained = option.Map(first).Map(second);
+        var composed = option.Map(static value => value.Trim().ToUpperInvariant());
+        var chained = option.Map(static value => value.Trim()).Map(static value => value.ToUpperInvariant());
 
         // Assert
         Assert.Equal(composed, chained);

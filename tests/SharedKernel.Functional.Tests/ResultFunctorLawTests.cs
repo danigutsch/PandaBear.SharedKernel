@@ -23,12 +23,10 @@ public sealed class ResultFunctorLawTests
     {
         // Arrange
         var result = Result.Ok(" porto ");
-        static string first(string value) => value.Trim();
-        static string second(string value) => value.ToUpperInvariant();
 
         // Act
-        var composed = result.Map(value => second(first(value)));
-        var chained = result.Map(first).Map(second);
+        var composed = result.Map(static value => value.Trim().ToUpperInvariant());
+        var chained = result.Map(static value => value.Trim()).Map(static value => value.ToUpperInvariant());
 
         // Assert
         Assert.Equal(composed, chained);
