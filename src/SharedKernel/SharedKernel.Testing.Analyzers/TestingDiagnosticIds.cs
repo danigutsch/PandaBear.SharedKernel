@@ -24,4 +24,9 @@ public static class TestingDiagnosticIds
     /// Diagnostic emitted when an xUnit test class declares helper members directly.
     /// </summary>
     public const string XunitTestClassHelperMethod = "SKTEST004";
+
+    /// <summary>
+    /// Diagnostic emitted when a serial xUnit collection definition is missing a justification.
+    /// </summary>
+    public const string XunitSerialCollectionJustification = "SKTEST005";
 }

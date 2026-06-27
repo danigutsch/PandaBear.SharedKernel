@@ -11,6 +11,8 @@ This Roslyn component is reserved for focused fixes that pair with the diagnosti
 
 - `SKTEST001` is diagnostics-only in the current rollout slice.
 - `SKTEST002` offers a conservative rename when an xUnit test method can be converted safely to the underscore naming convention.
+- `SKTEST003` adds configured required trait metadata to a test method.
+- `SKTEST005` adds a placeholder serial collection justification attribute.
 
 ## Suppression policy
 

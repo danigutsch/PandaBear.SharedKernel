@@ -8,3 +8,4 @@ const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.TestMethodWarningSuppr
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming = "SKTEST002" -> string!
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodRequiredTrait = "SKTEST003" -> string!
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestClassHelperMethod = "SKTEST004" -> string!
+const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitSerialCollectionJustification = "SKTEST005" -> string!

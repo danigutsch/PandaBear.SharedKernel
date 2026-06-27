@@ -23,7 +23,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
-        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait];
+        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitSerialCollectionJustification];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -50,6 +50,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         if (string.Equals(diagnostic.Id, TestingDiagnosticIds.TestMethodWarningSuppression, StringComparison.Ordinal))
         {
             RegisterRemovePragmaFix(context, document, diagnostic, syntaxRoot);
+            return;
+        }
+
+        if (string.Equals(diagnostic.Id, TestingDiagnosticIds.XunitSerialCollectionJustification, StringComparison.Ordinal))
+        {
+            RegisterSerialJustificationFix(context, document, diagnostic, syntaxRoot);
             return;
         }
 
@@ -83,6 +89,25 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                 title: $"Rename to '{targetName}'",
                 createChangedSolution: ct => RenameSymbolAsync(document.Project.Solution, methodSymbol, targetName, ct),
                 equivalenceKey: $"RenameXunitTestMethod:{targetName}"),
+            diagnostic);
+    }
+
+    private static void RegisterSerialJustificationFix(
+        CodeFixContext context,
+        Document document,
+        Diagnostic diagnostic,
+        SyntaxNode syntaxRoot)
+    {
+        if (syntaxRoot.FindNode(context.Span).FirstAncestorOrSelf<ClassDeclarationSyntax>() is not ClassDeclarationSyntax classDeclaration)
+        {
+            return;
+        }
+
+        context.RegisterCodeFix(
+            CodeAction.Create(
+                title: "Add SerialTestJustification attribute",
+                createChangedDocument: ct => AddSerialJustification(document, syntaxRoot, classDeclaration, ct),
+                equivalenceKey: "AddSerialTestJustification"),
             diagnostic);
     }
 
@@ -169,6 +194,31 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         SyntaxTrivia trivia)
     {
         var updatedRoot = syntaxRoot.ReplaceTrivia(trivia, default(SyntaxTrivia));
+        return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
+    }
+
+    private static Task<Document> AddSerialJustification(
+        Document document,
+        SyntaxNode syntaxRoot,
+        ClassDeclarationSyntax classDeclaration,
+        CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        var justificationAttribute = Attribute(ParseName("global::SharedKernel.Testing.SerialTestJustification"))
+            .WithArgumentList(
+                AttributeArgumentList(
+                    SingletonSeparatedList(
+                        AttributeArgument(
+                            LiteralExpression(
+                                SyntaxKind.StringLiteralExpression,
+                                Literal("TODO: explain why this collection must run serially."))))));
+        var attributeList = AttributeList(SingletonSeparatedList(justificationAttribute))
+            .WithTrailingTrivia(ElasticCarriageReturnLineFeed)
+            .WithAdditionalAnnotations(Formatter.Annotation);
+        var updatedClass = classDeclaration.AddAttributeLists(attributeList);
+        var updatedRoot = syntaxRoot.ReplaceNode(classDeclaration, updatedClass);
+
         return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
     }
 
