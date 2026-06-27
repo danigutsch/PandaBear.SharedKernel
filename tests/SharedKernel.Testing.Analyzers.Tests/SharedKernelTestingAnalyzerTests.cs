@@ -274,6 +274,11 @@ public sealed class SharedKernelTestingAnalyzerTests
                 public void Renders_QuickGrid_with_EditContext_and_DataAnnotationsValidator()
                 {
                 }
+
+                [Fact]
+                public void Renders_NavMenu_with_NavLinks_and_error_UI()
+                {
+                }
             }
             """;
 
