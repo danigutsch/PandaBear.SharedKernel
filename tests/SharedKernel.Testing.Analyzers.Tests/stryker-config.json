@@ -1,0 +1,20 @@
+{
+  "stryker-config": {
+    "test-runner": "mtp",
+    "project": "SharedKernel.Testing.Analyzers.csproj",
+    "mutate": [
+      "**/*.cs",
+      "!**/AssemblyInfo.cs"
+    ],
+    "reporters": [
+      "ClearText",
+      "Json"
+    ],
+    "concurrency": 2,
+    "thresholds": {
+      "high": 80,
+      "low": 60,
+      "break": 0
+    }
+  }
+}
