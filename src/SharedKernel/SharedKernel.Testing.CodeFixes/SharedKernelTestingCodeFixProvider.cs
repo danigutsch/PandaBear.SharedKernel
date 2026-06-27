@@ -218,7 +218,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             .WithAdditionalAnnotations(Formatter.Annotation);
 
         var collectionDefinitionIndex = typeDeclaration.AttributeLists.IndexOf(
-            typeDeclaration.AttributeLists.First(attributeList => attributeList.ToString().Contains("CollectionDefinition", StringComparison.Ordinal)));
+            typeDeclaration.AttributeLists.FirstOrDefault(attributeList => attributeList.ToString().Contains("CollectionDefinition", StringComparison.Ordinal)));
+        if (collectionDefinitionIndex < 0)
+        {
+            return Task.FromResult(document);
+        }
+
         var collectionDefinitionAttributeList = typeDeclaration.AttributeLists[collectionDefinitionIndex];
         var updatedAttributeList = attributeList.WithLeadingTrivia(collectionDefinitionAttributeList.GetLeadingTrivia());
         var updatedCollectionDefinitionAttributeList = collectionDefinitionAttributeList.WithLeadingTrivia();
