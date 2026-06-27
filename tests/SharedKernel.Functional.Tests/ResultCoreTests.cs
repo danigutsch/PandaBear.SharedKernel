@@ -5,7 +5,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class ResultCoreTests
 {
     [Fact]
-    public void Creates_A_Successful_Result()
+    public void Creates_a_successful_result()
     {
         // Arrange
         // Act
@@ -19,7 +19,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Creates_A_Failed_Result_With_Error_Details()
+    public void Creates_a_failed_result_with_error_details()
     {
         // Arrange
         // Act
@@ -38,7 +38,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Creates_A_Failed_Result_With_Multiple_Validation_Errors()
+    public void Creates_a_failed_result_with_multiple_validation_errors()
     {
         // Arrange
         var validationErrors = new Dictionary<string, string[]>
@@ -61,7 +61,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Creates_A_Successful_Result_With_A_Value()
+    public void Creates_a_successful_result_with_a_value()
     {
         // Arrange
         // Act
@@ -75,7 +75,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Creates_A_Successful_Non_Generic_Result()
+    public void Creates_a_successful_non_generic_result()
     {
         // Arrange
         // Act
@@ -89,7 +89,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Returns_True_For_Successful_Generic_Results()
+    public void Returns_true_for_successful_generic_results()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -103,7 +103,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Creates_A_Failed_Result_Without_A_Value()
+    public void Creates_a_failed_result_without_a_value()
     {
         // Arrange
         // Act
@@ -119,7 +119,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Returns_False_For_Successful_Results()
+    public void Returns_false_for_successful_results()
     {
         // Arrange
         var result = Result.Ok();
@@ -133,7 +133,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Returns_True_For_Failed_Generic_Results()
+    public void Returns_true_for_failed_generic_results()
     {
         // Arrange
         var result = Result.Error<string>("Unexpected failure");
@@ -149,7 +149,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Returns_False_For_An_Uninitialized_Non_Generic_Result()
+    public void Returns_false_for_an_uninitialized_non_generic_result()
     {
         // Arrange
         var result = default(Result);
@@ -165,7 +165,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Returns_False_For_An_Uninitialized_Generic_Result()
+    public void Returns_false_for_an_uninitialized_generic_result()
     {
         // Arrange
         var result = default(Result<string>);
@@ -184,7 +184,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Rejects_Empty_Validation_Error_Dictionaries()
+    public void Rejects_empty_validation_error_dictionaries()
     {
         // Arrange
         var validationErrors = new Dictionary<string, string[]>();
@@ -197,7 +197,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Rejects_Validation_Dictionaries_With_Empty_Field_Names()
+    public void Rejects_validation_dictionaries_with_empty_field_names()
     {
         // Arrange
         var validationErrors = new Dictionary<string, string[]>
@@ -213,7 +213,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Rejects_Validation_Dictionaries_With_Empty_Message_Arrays()
+    public void Rejects_validation_dictionaries_with_empty_message_arrays()
     {
         // Arrange
         var validationErrors = new Dictionary<string, string[]>
@@ -229,7 +229,7 @@ public sealed class ResultCoreTests
     }
 
     [Fact]
-    public void Rejects_Validation_Dictionaries_With_Null_Message_Entries()
+    public void Rejects_validation_dictionaries_with_null_message_entries()
     {
         // Arrange
         var validationErrors = new Dictionary<string, string[]>
@@ -248,7 +248,7 @@ public sealed class ResultCoreTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Rejects_Null_Or_Whitespace_Error_Detail(string? detail)
+    public void Rejects_null_or_whitespace_error_detail(string? detail)
     {
         // Arrange
         // Act
@@ -264,7 +264,7 @@ public sealed class ResultCoreTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Rejects_Null_Or_Whitespace_Validation_Field(string? field)
+    public void Rejects_null_or_whitespace_validation_field(string? field)
     {
         // Arrange
         // Act
@@ -280,7 +280,7 @@ public sealed class ResultCoreTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Rejects_Null_Or_Whitespace_Validation_Message(string? message)
+    public void Rejects_null_or_whitespace_validation_message(string? message)
     {
         // Arrange
         // Act

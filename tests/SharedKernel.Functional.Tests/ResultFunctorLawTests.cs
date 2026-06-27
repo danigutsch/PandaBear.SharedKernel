@@ -6,7 +6,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class ResultFunctorLawTests
 {
     [Fact]
-    public void Satisfies_The_Functor_Identity_Law_For_Success()
+    public void Satisfies_the_functor_identity_law_for_success()
     {
         // Arrange
         var result = Result.Ok("porto");
@@ -19,23 +19,21 @@ public sealed class ResultFunctorLawTests
     }
 
     [Fact]
-    public void Satisfies_The_Functor_Composition_Law_For_Success()
+    public void Satisfies_the_functor_composition_law_for_success()
     {
         // Arrange
         var result = Result.Ok(" porto ");
-        static string first(string value) => value.Trim();
-        static string second(string value) => value.ToUpperInvariant();
 
         // Act
-        var composed = result.Map(value => second(first(value)));
-        var chained = result.Map(first).Map(second);
+        var composed = result.Map(static value => value.Trim().ToUpperInvariant());
+        var chained = result.Map(static value => value.Trim()).Map(static value => value.ToUpperInvariant());
 
         // Assert
         Assert.Equal(composed, chained);
     }
 
     [Fact]
-    public void Preserves_Failure_Through_Functor_Mapping()
+    public void Preserves_failure_through_functor_mapping()
     {
         // Arrange
         var result = Result.Error<string>("Unexpected failure");

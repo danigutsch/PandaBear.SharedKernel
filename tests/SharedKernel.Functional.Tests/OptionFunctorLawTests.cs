@@ -6,7 +6,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class OptionFunctorLawTests
 {
     [Fact]
-    public void Satisfies_The_Functor_Identity_Law()
+    public void Satisfies_the_functor_identity_law()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -19,16 +19,14 @@ public sealed class OptionFunctorLawTests
     }
 
     [Fact]
-    public void Satisfies_The_Functor_Composition_Law()
+    public void Satisfies_the_functor_composition_law()
     {
         // Arrange
         var option = Option.Some("porto");
-        static string first(string value) => value.Trim();
-        static string second(string value) => value.ToUpperInvariant();
 
         // Act
-        var composed = option.Map(value => second(first(value)));
-        var chained = option.Map(first).Map(second);
+        var composed = option.Map(static value => value.Trim().ToUpperInvariant());
+        var chained = option.Map(static value => value.Trim()).Map(static value => value.ToUpperInvariant());
 
         // Assert
         Assert.Equal(composed, chained);

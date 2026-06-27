@@ -11,14 +11,14 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
     private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
     [Fact]
-    public async Task Test_Naming_Fix_Renames_Method_And_Reference_Correctly()
+    public async Task Test_naming_fix_renames_method_and_reference_correctly()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void CreatesATourWhenTheRequestIsValid()
                 {
                 }
@@ -43,14 +43,41 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Test_Naming_Fix_Is_Not_Offered_When_Target_Name_Would_Conflict_With_Existing_Method()
+    public async Task Test_naming_fix_converts_title_cased_segments_to_sentence_style()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
+                public void Some_Title()
+                {
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Some_Title()");
+
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        Assert.Contains("Some_title()", updatedText, StringComparison.Ordinal);
+        Assert.DoesNotContain("Some_Title()", updatedText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Test_naming_fix_is_not_offered_when_target_name_would_conflict_with_existing_method()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
                 public void CreatesATourWhenTheRequestIsValid()
                 {
                 }
@@ -71,14 +98,14 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Test_Naming_Fix_Is_Not_Offered_When_Target_Name_Would_Conflict_With_Existing_Property()
+    public async Task Test_naming_fix_is_not_offered_when_target_name_would_conflict_with_existing_property()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void CreatesATourWhenTheRequestIsValid()
                 {
                 }
@@ -97,14 +124,14 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Test_Naming_Fix_Is_Not_Offered_When_Name_Cannot_Be_Safely_Split()
+    public async Task Test_naming_fix_is_not_offered_when_name_cannot_be_safely_split()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Tour()
                 {
                 }
@@ -121,14 +148,14 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Test_Naming_Fix_Splits_Acronym_And_Digits_Into_Underscore_Form()
+    public async Task Test_naming_fix_splits_acronym_and_digits_into_underscore_form()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void UsesHTTP2TimeoutFallback()
                 {
                 }
@@ -148,7 +175,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public void Fix_All_Is_Not_Advertised_For_Testing_Code_Fixes()
+    public void Fix_all_is_not_advertised_for_testing_code_fixes()
     {
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
@@ -156,7 +183,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public void Provider_Advertises_Warning_Suppression_Diagnostic()
+    public void Provider_advertises_warning_suppression_diagnostic()
     {
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
@@ -164,7 +191,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Warning_Suppression_Fix_Removes_Pragma_Directive()
+    public async Task Warning_suppression_fix_removes_pragma_directive()
     {
         // Arrange
         const string source = """
@@ -172,8 +199,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
-                public void Uses_Local_Warning_Suppression()
+                [Fact]
+                public void Uses_local_warning_suppression()
                 {
                     #pragma warning disable CA1822
                     var value = 42;
@@ -197,7 +224,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Required_Trait_Fix_Adds_Configured_Trait_To_Method()
+    public async Task Required_trait_fix_adds_configured_trait_to_method()
     {
         // Arrange
         const string source = """
@@ -205,7 +232,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -232,7 +259,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Required_Trait_Fix_Is_Not_Offered_When_Diagnostic_Lacks_Trait_Properties()
+    public async Task Required_trait_fix_is_not_offered_when_diagnostic_lacks_trait_properties()
     {
         // Arrange
         const string source = """
@@ -240,7 +267,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -261,7 +288,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public void Provider_Advertises_Serial_Justification_Diagnostic()
+    public void Provider_advertises_serial_justification_diagnostic()
     {
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
@@ -269,7 +296,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Serial_Justification_Fix_Adds_Placeholder_Attribute_To_Collection_Class()
+    public async Task Serial_justification_fix_adds_placeholder_attribute_to_collection_class()
     {
         // Arrange
         const string source = """
@@ -301,7 +328,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
-    public async Task Serial_Justification_Fix_Adds_Placeholder_Attribute_To_Collection_Record()
+    public async Task Serial_justification_fix_adds_placeholder_attribute_to_collection_record()
     {
         // Arrange
         const string source = """

@@ -5,7 +5,7 @@ namespace SharedKernel.Idempotency.Tests;
 public sealed class IdempotencyStartResultTests
 {
     [Fact]
-    public void StartedNew_Creates_Ownership_Result()
+    public void StartedNew_creates_ownership_result()
     {
         // Arrange, Act
         var result = IdempotencyStartResult.StartedNew();
@@ -16,7 +16,7 @@ public sealed class IdempotencyStartResultTests
     }
 
     [Fact]
-    public void AlreadyStarted_Carries_Existing_Entry()
+    public void AlreadyStarted_carries_existing_entry()
     {
         // Arrange
         var operation = new IdempotencyOperation(
@@ -38,7 +38,7 @@ public sealed class IdempotencyStartResultTests
     }
 
     [Fact]
-    public void AlreadyStarted_Rejects_Null_Entry()
+    public void AlreadyStarted_rejects_null_entry()
     {
         // Arrange
         dynamic? entry = null;

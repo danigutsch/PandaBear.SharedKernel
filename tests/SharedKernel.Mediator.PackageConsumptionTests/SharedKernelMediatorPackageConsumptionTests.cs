@@ -4,7 +4,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     : IClassFixture<MediatorPackageFeedFixture>
 {
     [Fact]
-    public async Task Abstractions_Package_Can_Be_Consumed_By_A_Fresh_Project()
+    public async Task Abstractions_package_can_be_consumed_by_a_fresh_project()
     {
         // Arrange
         using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorAbstractionsConsumer");
@@ -45,7 +45,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     }
 
     [Fact]
-    public async Task Runtime_And_Source_Generator_Packages_Can_Be_Consumed_By_A_Fresh_Project()
+    public async Task Runtime_and_source_generator_packages_can_be_consumed_by_a_fresh_project()
     {
         // Arrange
         using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorGeneratedConsumer");
@@ -65,7 +65,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     }
 
     [Fact]
-    public async Task Runtime_And_Source_Generator_Packages_Can_Be_Published_By_A_Fresh_Project()
+    public async Task Runtime_and_source_generator_packages_can_be_published_by_a_fresh_project()
     {
         // Arrange
         using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorPublishedConsumer");
@@ -83,7 +83,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     }
 
     [Fact]
-    public async Task Runtime_And_Source_Generator_Packages_Report_Aot_Publish_Metrics()
+    public async Task Runtime_and_source_generator_packages_report_aot_publish_metrics()
     {
         // Arrange
         using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorAotMetricsConsumer");
@@ -126,7 +126,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     }
 
     [Fact]
-    public async Task Analyzer_Package_Produces_Diagnostics_For_Missing_Cancellation_Forwarding()
+    public async Task Analyzer_package_produces_diagnostics_for_missing_cancellation_forwarding()
     {
         // Arrange
         using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorAnalyzerConsumer");
@@ -171,7 +171,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     }
 
     [Fact]
-    public async Task Code_Fix_Package_Forwards_Available_Cancellation_Token()
+    public async Task Code_fix_package_forwards_available_cancellation_token()
     {
         // Arrange
         using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorCodeFixConsumer");
@@ -222,7 +222,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     }
 
     [Fact]
-    public async Task Abstractions_Are_Available_Transitively_Through_Runtime_Package()
+    public async Task Abstractions_are_available_transitively_through_runtime_package()
     {
         // Arrange
         using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorTransitiveConsumer");
@@ -264,7 +264,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     }
 
     [Fact]
-    public async Task Source_Generator_PrivateAssets_Prevents_Transitive_Generation()
+    public async Task Source_generator_privateassets_prevents_transitive_generation()
     {
         // Arrange
         const string libraryName = "MediatorLibraryModule";
@@ -361,7 +361,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     }
 
     [Fact]
-    public async Task Multi_Project_Module_Composition_Registers_All_Handlers()
+    public async Task Multi_project_module_composition_registers_all_handlers()
     {
         // Arrange
         const string moduleName = "MediatorModuleA";

@@ -23,6 +23,46 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         RegexOptions.Compiled | RegexOptions.CultureInvariant,
         RegexTimeout);
 
+    private static readonly string[] AllowedStrictNameSegments = [
+        "API",
+        "CSV",
+        "DTO",
+        "DataAnnotationsValidator",
+        "DateOnly",
+        "DateTime",
+        "EF",
+        "EditContext",
+        "GUID",
+        "Guid",
+        "HTTP",
+        "HttpClient",
+        "HttpContext",
+        "HttpRequest",
+        "HttpResponse",
+        "HttpStatusCode",
+        "ID",
+        "IDs",
+        "JSON",
+        "Json",
+        "NavLink",
+        "NavLinks",
+        "NavMenu",
+        "OpenApi",
+        "ProblemDetails",
+        "QuickGrid",
+        "SKTEST",
+        "Task",
+        "TimeOnly",
+        "TimeSpan",
+        "URI",
+        "URL",
+        "UI",
+        "UTC",
+        "ValidationMessage",
+        "ValueTask",
+        "xUnit",
+    ];
+
     private static readonly DiagnosticDescriptor TestMethodWarningSuppressionRule = new(
         TestingDiagnosticIds.TestMethodWarningSuppression,
         title: "Test methods should not use pragma warning suppressions",
@@ -52,12 +92,12 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static readonly DiagnosticDescriptor XunitTestClassHelperMethodRule = new(
         TestingDiagnosticIds.XunitTestClassHelperMethod,
-        title: "xUnit test classes should not declare helper members directly",
-        messageFormat: "xUnit test class helper member '{0}' should be moved to a dedicated helper type or kept in the test body when local",
+        title: "xUnit tests should not hide helper declarations inside test classes or test methods",
+        messageFormat: "xUnit test helper '{0}' should be kept visible in the test body or moved to a dedicated helper type",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules keep test behavior visible by requiring helper methods and nested helper types to live in dedicated helper types or local functions instead of directly on xUnit test classes.");
+        description: "Repository testing rules keep test behavior visible by requiring helper methods, nested helper types, and local helper functions to live outside xUnit test classes and methods.");
 
     private static readonly DiagnosticDescriptor XunitSerialCollectionJustificationRule = new(
         TestingDiagnosticIds.XunitSerialCollectionJustification,
@@ -87,14 +127,17 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             SyntaxKind.PragmaWarningDirectiveTrivia);
         context.RegisterCompilationStartAction(static compilationContext =>
         {
-            var requiredTraitsByTree = new ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>>();
+            var optionsByTree = new ConcurrentDictionary<SyntaxTree, TestingAnalyzerConfigOptions>();
             compilationContext.RegisterSyntaxNodeAction(
-                context => AnalyzeMethodDeclaration(context, requiredTraitsByTree),
+                context => AnalyzeMethodDeclaration(context, optionsByTree),
                 SyntaxKind.MethodDeclaration);
             compilationContext.RegisterSyntaxNodeAction(
                 AnalyzeTypeDeclaration,
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.RecordDeclaration);
+            compilationContext.RegisterSyntaxNodeAction(
+                AnalyzeLocalFunctionStatement,
+                SyntaxKind.LocalFunctionStatement);
         });
     }
 
@@ -129,7 +172,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeMethodDeclaration(
         SyntaxNodeAnalysisContext context,
-        ConcurrentDictionary<SyntaxTree, ImmutableArray<RequiredTrait>> requiredTraitsByTree)
+        ConcurrentDictionary<SyntaxTree, TestingAnalyzerConfigOptions> optionsByTree)
     {
         if (context.Node is not MethodDeclarationSyntax methodDeclaration)
         {
@@ -154,7 +197,11 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        if (!XunitMethodNamingRegex.IsMatch(methodSymbol.Name))
+        var options = optionsByTree.GetOrAdd(
+            methodDeclaration.SyntaxTree,
+            syntaxTree => TestingAnalyzerConfigOptions.Parse(context.Options.AnalyzerConfigOptionsProvider, syntaxTree));
+
+        if (!HasValidXunitMethodName(methodSymbol.Name, options.StrictTestMethodCasing))
         {
             context.ReportDiagnostic(
                 Diagnostic.Create(
@@ -163,10 +210,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                     methodSymbol.Name));
         }
 
-        var requiredTraits = requiredTraitsByTree.GetOrAdd(
-            methodDeclaration.SyntaxTree,
-            syntaxTree => TestingAnalyzerConfigOptions.Parse(context.Options.AnalyzerConfigOptionsProvider, syntaxTree).RequiredTraits);
-        foreach (var requiredTrait in requiredTraits)
+        foreach (var requiredTrait in options.RequiredTraits)
         {
             if (HasTrait(methodSymbol, requiredTrait))
             {
@@ -264,6 +308,24 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             && !string.IsNullOrWhiteSpace(reason));
     }
 
+    private static void AnalyzeLocalFunctionStatement(SyntaxNodeAnalysisContext context)
+    {
+        if (context.Node is not LocalFunctionStatementSyntax localFunction
+            || localFunction.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
+            || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
+            || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
+            || !IsXunitTestMethod(methodSymbol))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                XunitTestClassHelperMethodRule,
+                localFunction.Identifier.GetLocation(),
+                localFunction.Identifier.ValueText));
+    }
+
     private static bool ContainsXunitTestMethod(INamedTypeSymbol typeSymbol)
     {
         return typeSymbol.GetMembers()
@@ -274,6 +336,39 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static bool IsPotentialXunitHelperMethodDeclaration(MethodDeclarationSyntax methodDeclaration)
     {
         return methodDeclaration.Parent is TypeDeclarationSyntax;
+    }
+
+    private static bool HasValidXunitMethodName(string methodName, bool strictTestMethodCasing)
+    {
+        return strictTestMethodCasing
+            ? HasStrictSentenceStyleXunitMethodName(methodName)
+            : XunitMethodNamingRegex.IsMatch(methodName);
+    }
+
+    private static bool HasStrictSentenceStyleXunitMethodName(string methodName)
+    {
+        var segments = methodName.Split('_');
+
+        return segments.Length >= 2
+            && segments.All(static segment => segment.Length != 0)
+            && char.IsUpper(segments[0][0])
+            && segments[0].All(char.IsLetterOrDigit)
+            && segments.Skip(1).All(IsStrictSentenceStyleSegment);
+    }
+
+    private static bool IsStrictSentenceStyleSegment(string segment)
+    {
+        return segment.All(char.IsLetterOrDigit)
+            && (segment.All(static character => char.IsLower(character) || char.IsDigit(character))
+                || IsAllowedStrictNameSegment(segment));
+    }
+
+    private static bool IsAllowedStrictNameSegment(string segment)
+    {
+        return Array.Exists(AllowedStrictNameSegments, allowedSegment => string.Equals(segment, allowedSegment, StringComparison.Ordinal))
+            || (segment.StartsWith("SKTEST", StringComparison.Ordinal)
+                && segment.Length > "SKTEST".Length
+                && segment.Substring("SKTEST".Length).All(char.IsDigit));
     }
 
     private static bool IsXunitLifecycleMethod(IMethodSymbol methodSymbol)

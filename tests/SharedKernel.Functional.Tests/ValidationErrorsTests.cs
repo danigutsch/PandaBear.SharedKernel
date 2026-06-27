@@ -5,7 +5,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class ValidationErrorsTests
 {
     [Fact]
-    public void Adds_Invalid_Results_And_Reports_HasErrors()
+    public void Adds_invalid_results_and_reports_haserrors()
     {
         // Arrange
         var errors = new ValidationErrors();
@@ -18,7 +18,7 @@ public sealed class ValidationErrorsTests
     }
 
     [Fact]
-    public void Adds_Generic_Invalid_Results_And_Reports_HasErrors()
+    public void Adds_generic_invalid_results_and_reports_haserrors()
     {
         // Arrange
         var errors = new ValidationErrors();
@@ -31,7 +31,7 @@ public sealed class ValidationErrorsTests
     }
 
     [Fact]
-    public void Merges_Multiple_Errors_Into_A_Single_Result()
+    public void Merges_multiple_errors_into_a_single_result()
     {
         // Arrange
         var errors = new ValidationErrors();
@@ -53,7 +53,7 @@ public sealed class ValidationErrorsTests
     }
 
     [Fact]
-    public void Merges_Multiple_Errors_For_The_Same_Field()
+    public void Merges_multiple_errors_for_the_same_field()
     {
         // Arrange
         var errors = new ValidationErrors();
@@ -73,7 +73,7 @@ public sealed class ValidationErrorsTests
     }
 
     [Fact]
-    public void Converts_A_Single_Error_To_A_Generic_Result()
+    public void Converts_a_single_error_to_a_generic_result()
     {
         // Arrange
         var errors = new ValidationErrors();
@@ -92,7 +92,7 @@ public sealed class ValidationErrorsTests
     }
 
     [Fact]
-    public void Throws_When_Converting_An_Empty_Collection()
+    public void Throws_when_converting_an_empty_collection()
     {
         // Arrange
         var errors = new ValidationErrors();
@@ -105,7 +105,7 @@ public sealed class ValidationErrorsTests
     }
 
     [Fact]
-    public void Rejects_Non_Invalid_Results()
+    public void Rejects_non_invalid_results()
     {
         // Arrange
         var errors = new ValidationErrors();
@@ -118,7 +118,7 @@ public sealed class ValidationErrorsTests
     }
 
     [Fact]
-    public void Rejects_Non_Invalid_Generic_Results()
+    public void Rejects_non_invalid_generic_results()
     {
         // Arrange
         var errors = new ValidationErrors();
@@ -131,7 +131,7 @@ public sealed class ValidationErrorsTests
     }
 
     [Fact]
-    public void Returns_A_Single_Non_Generic_Result_Unchanged()
+    public void Returns_a_single_non_generic_result_unchanged()
     {
         // Arrange
         var errors = new ValidationErrors();
@@ -146,7 +146,7 @@ public sealed class ValidationErrorsTests
     }
 
     [Fact]
-    public void Throws_When_A_Single_Invalid_Result_Lacks_Error_Details()
+    public void Throws_when_a_single_invalid_result_lacks_error_details()
     {
         // Arrange
         var errors = new ValidationErrors();
@@ -160,7 +160,7 @@ public sealed class ValidationErrorsTests
     }
 
     [Fact]
-    public void Throws_When_A_Single_Invalid_Result_Lacks_Validation_Details()
+    public void Throws_when_a_single_invalid_result_lacks_validation_details()
     {
         // Arrange
         var errors = new ValidationErrors();

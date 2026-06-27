@@ -11,7 +11,7 @@ namespace SharedKernel.OpenApi.Tests;
 public sealed class MultipartFormRequestBodyDocumentTransformerTests
 {
     [Fact]
-    public async Task Normalizes_Malformed_Multipart_Form_AllOf_Entries()
+    public async Task Normalizes_malformed_multipart_form_allof_entries()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.CreateUploadsDocument(group =>
@@ -43,7 +43,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public async Task Leaves_Root_Required_Null_When_No_Form_Fields_Are_Required()
+    public async Task Leaves_root_required_null_when_no_form_fields_are_required()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.CreateUploadsDocument(group =>
@@ -60,7 +60,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public async Task Normalizes_Already_Malformed_Multipart_Schemas_Using_Runtime_Context()
+    public async Task Normalizes_already_malformed_multipart_schemas_using_runtime_context()
     {
         // Arrange
         var normalizedDocument = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
@@ -87,7 +87,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public async Task Ignores_Malformed_Multipart_Schemas_When_No_Form_Parameters_Exist()
+    public async Task Ignores_malformed_multipart_schemas_when_no_form_parameters_exist()
     {
         // Arrange
         var untouchedDocument = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
@@ -111,7 +111,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public async Task Skips_Invalid_Form_Parameters_During_Malformed_Normalization()
+    public async Task Skips_invalid_form_parameters_during_malformed_normalization()
     {
         // Arrange
         var normalizedSchema = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
@@ -140,7 +140,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public async Task Clears_Root_Required_When_Malformed_Normalization_Uses_Only_Optional_Form_Fields()
+    public async Task Clears_root_required_when_malformed_normalization_uses_only_optional_form_fields()
     {
         // Arrange
         var normalizedDocument = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
@@ -163,7 +163,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public async Task Preserves_Valid_Multipart_Form_AllOf_Entries()
+    public async Task Preserves_valid_multipart_form_allof_entries()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.CreateUploadsDocument(group =>
@@ -183,7 +183,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public async Task Ignores_Paths_Without_Operations()
+    public async Task Ignores_paths_without_operations()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
@@ -210,7 +210,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public void Returns_False_When_Multipart_Normalization_Has_No_AllOf_Entries()
+    public void Returns_false_when_multipart_normalization_has_no_allof_entries()
     {
         var schema = new OpenApiSchema();
 
@@ -222,7 +222,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public void Returns_Without_Changing_Requiredness_When_AllOf_Is_Missing()
+    public void Returns_without_changing_requiredness_when_allof_is_missing()
     {
         var schema = new OpenApiSchema();
         MultipartFormRequestBodyDocumentTransformerTestsHelpers.InvokePrivateStaticVoidMethod(
@@ -233,7 +233,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public void Skips_Requiredness_When_No_Container_Matches_The_Required_Parameter()
+    public void Skips_requiredness_when_no_container_matches_the_required_parameter()
     {
         var schema = new OpenApiSchema
         {

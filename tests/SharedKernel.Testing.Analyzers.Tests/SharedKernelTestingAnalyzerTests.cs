@@ -10,7 +10,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     private const string XunitHelperMethodDiagnosticId = TestingDiagnosticIds.XunitTestClassHelperMethod;
     private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
     [Fact]
-    public async Task Pragma_Warning_Disable_Inside_Fact_Method_Reports_SKTEST001()
+    public async Task Pragma_warning_disable_inside_fact_method_reports_SKTEST001()
     {
         const string source = """
             namespace Demo;
@@ -18,7 +18,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             public sealed class TourLoaderTests
             {
                 [Fact]
-                public void Uses_Local_Warning_Suppression()
+                public void Uses_local_warning_suppression()
                 {
                     #pragma warning disable CA1822
                     var value = 42;
@@ -36,7 +36,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Pragma_Warning_Disable_Outside_Test_Method_Does_Not_Report_SKTEST001()
+    public async Task Pragma_warning_disable_outside_test_method_does_not_report_SKTEST001()
     {
         const string source = """
             namespace Demo;
@@ -57,7 +57,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Pragma_Warning_Disable_Inside_Non_Test_Method_Does_Not_Report_SKTEST001()
+    public async Task Pragma_warning_disable_inside_non_test_method_does_not_report_SKTEST001()
     {
         const string source = """
             namespace Demo;
@@ -80,7 +80,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Pragma_Warning_Disable_Inside_Theory_Method_Reports_SKTEST001()
+    public async Task Pragma_warning_disable_inside_theory_method_reports_SKTEST001()
     {
         const string source = """
             namespace Demo;
@@ -89,7 +89,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             {
                 [Theory]
                 [InlineData(42)]
-                public void Uses_Local_Warning_Suppression(int value)
+                public void Uses_local_warning_suppression(int value)
                 {
                     #pragma warning disable CA1822
                     Assert.Equal(42, value);
@@ -106,14 +106,14 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Test_Naming_Without_Underscores_Reports_S_K_T_E_S_T002()
+    public async Task Test_naming_without_underscores_reports_s_k_t_e_s_t002()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void UsesLocalWarningSuppression()
                 {
                 }
@@ -126,14 +126,14 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Default_Test_Naming_With_Underscores_Does_Not_Report_S_K_T_E_S_T002()
+    public async Task Default_test_naming_with_underscores_does_not_report_s_k_t_e_s_t002()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Uses_local_warning_suppression()
                 {
                 }
@@ -146,14 +146,184 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Fact_Attribute_Form_Without_Underscores_Reports_S_K_T_E_S_T002()
+    public async Task Strict_test_naming_with_title_cased_later_segment_reports_s_k_t_e_s_t002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Some_Title()
+                {
+                }
+            }
+            """;
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_with_uppercase_later_segment_reports_s_k_t_e_s_t002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Some_TITLE()
+                {
+                }
+            }
+            """;
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_with_mixed_case_later_segment_reports_s_k_t_e_s_t002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Some_titleCase()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_with_sentence_style_segments_does_not_report_s_k_t_e_s_t002()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Some_title()
+                {
+                }
+            }
+            """;
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_allows_configured_acronym_and_xunit_segments()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Reports_SKTEST004_for_xUnit_helper()
+                {
+                }
+            }
+            """;
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Strict_test_naming_allows_known_type_and_framework_segments()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Returns_ValueTask_from_HttpClient_with_OpenApi_ProblemDetails()
+                {
+                }
+
+                [Fact]
+                public void Renders_QuickGrid_with_EditContext_and_DataAnnotationsValidator()
+                {
+                }
+
+                [Fact]
+                public void Renders_NavMenu_with_NavLinks_and_error_UI()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Test_naming_with_strict_casing_disabled_allows_title_cased_later_segments_during_migration()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Some_Title()
+                {
+                }
+            }
+            """;
+
+        var options = ImmutableDictionary<string, string>.Empty
+            .Add("sharedkernel_testing_strict_test_method_casing", " false ");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Fact_attribute_form_without_underscores_reports_s_k_t_e_s_t002()
     {
         const string source = """
             namespace Demo;
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.FactAttribute]
+                [FactAttribute]
                 public void UsesLocalWarningSuppression()
                 {
                 }
@@ -166,7 +336,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Required_Trait_Config_Missing_From_Test_Method_Reports_S_K_T_E_S_T003()
+    public async Task Required_trait_config_missing_from_test_method_reports_s_k_t_e_s_t003()
     {
         // Arrange
         const string source = """
@@ -174,7 +344,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -191,7 +361,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Required_Trait_Config_Already_On_Method_Does_Not_Report_S_K_T_E_S_T003()
+    public async Task Required_trait_config_already_on_method_does_not_report_s_k_t_e_s_t003()
     {
         // Arrange
         const string source = """
@@ -199,8 +369,8 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
-                [global::Xunit.Trait("Category", "Smoke")]
+                [Fact]
+                [Trait("Category", "Smoke")]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -217,16 +387,16 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Required_Trait_Config_Already_On_Class_Does_Not_Report_S_K_T_E_S_T003()
+    public async Task Required_trait_config_already_on_class_does_not_report_s_k_t_e_s_t003()
     {
         // Arrange
         const string source = """
             namespace Demo;
 
-            [global::Xunit.Trait("Category", "Smoke")]
+            [Trait("Category", "Smoke")]
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -243,7 +413,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Required_Trait_Config_Already_On_Assembly_Does_Not_Report_S_K_T_E_S_T003()
+    public async Task Required_trait_config_already_on_assembly_does_not_report_s_k_t_e_s_t003()
     {
         // Arrange
         const string source = """
@@ -253,7 +423,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -270,7 +440,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Required_Trait_Config_Multiple_Missing_Traits_Reports_Once_Per_Trait()
+    public async Task Required_trait_config_multiple_missing_traits_reports_once_per_trait()
     {
         // Arrange
         const string source = """
@@ -278,7 +448,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -295,7 +465,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Reused_Private_Static_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Reused_private_static_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -303,13 +473,13 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                     CreateTourId();
                 }
 
-                [global::Xunit.Fact]
+                [Fact]
                 public void Updates_a_tour_when_the_request_is_valid()
                 {
                     CreateTourId();
@@ -330,7 +500,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Reused_Internal_Static_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Reused_internal_static_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -338,13 +508,13 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                     CreateTourId();
                 }
 
-                [global::Xunit.Fact]
+                [Fact]
                 public void Updates_a_tour_when_the_request_is_valid()
                 {
                     CreateTourId();
@@ -365,7 +535,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Single_Use_Internal_Static_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Single_use_internal_static_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -373,7 +543,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                     CreateTourId();
@@ -394,7 +564,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Public_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Public_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -402,7 +572,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -422,7 +592,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Static_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Private_static_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -430,7 +600,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                     CreateTourId();
@@ -451,7 +621,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Instance_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Private_instance_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -459,7 +629,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -479,7 +649,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Implicit_Private_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Implicit_private_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -487,7 +657,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                     CreateTourId();
@@ -508,7 +678,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Method_In_Non_Test_Class_Does_Not_Report_SKTEST004()
+    public async Task Private_method_in_non_test_class_does_not_report_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -531,7 +701,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Nested_Helper_Class_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Expression_bodied_local_helper_function_in_xunit_test_method_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -539,7 +709,90 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var id = CreateTourId();
+
+                    static int CreateTourId() => 42;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Block_bodied_local_helper_function_in_xunit_test_method_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var id = CreateTourId();
+
+                    static int CreateTourId()
+                    {
+                        return 42;
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Local_function_in_non_test_method_does_not_report_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public int CreateTour()
+                {
+                    return CreateTourId();
+
+                    static int CreateTourId()
+                    {
+                        return 42;
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Private_nested_helper_class_in_xunit_test_class_reports_SKTEST004()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -562,7 +815,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Implicit_Private_Nested_Helper_Class_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Implicit_private_nested_helper_class_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -570,7 +823,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -589,7 +842,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Nested_Helper_Record_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Private_nested_helper_record_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -597,7 +850,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -614,7 +867,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Public_Nested_Helper_Class_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Public_nested_helper_class_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -622,7 +875,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -641,7 +894,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Nested_Class_In_Non_Test_Class_Does_Not_Report_SKTEST004()
+    public async Task Private_nested_class_in_non_test_class_does_not_report_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -663,7 +916,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Disposable_Lifecycle_Method_Does_Not_Report_SKTEST004()
+    public async Task Disposable_lifecycle_method_does_not_report_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -671,7 +924,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests : System.IDisposable
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -690,15 +943,15 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Async_Lifetime_Initialize_Method_Does_Not_Report_SKTEST004()
+    public async Task Async_lifetime_initialize_method_does_not_report_SKTEST004()
     {
         // Arrange
         const string source = """
             namespace Demo;
 
-            public sealed class TourLoaderTests : global::Xunit.IAsyncLifetime
+            public sealed class TourLoaderTests : IAsyncLifetime
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -723,7 +976,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Private_Dispose_Helper_Method_In_Xunit_Test_Class_Reports_SKTEST004()
+    public async Task Private_dispose_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -731,13 +984,13 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests : System.IDisposable
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                     Dispose();
                 }
 
-                [global::Xunit.Fact]
+                [Fact]
                 public void Updates_a_tour_when_the_request_is_valid()
                 {
                     Dispose();
@@ -761,7 +1014,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Async_Disposable_Lifecycle_Method_Does_Not_Report_SKTEST004()
+    public async Task Async_disposable_lifecycle_method_does_not_report_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -769,7 +1022,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
             public sealed class TourLoaderTests : System.IAsyncDisposable
             {
-                [global::Xunit.Fact]
+                [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
                 }
@@ -789,7 +1042,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Serial_Collection_Without_Justification_Reports_SKTEST005()
+    public async Task Serial_collection_without_justification_reports_SKTEST005()
     {
         // Arrange
         const string source = """
@@ -809,7 +1062,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Serial_Collection_With_Justification_Does_Not_Report_SKTEST005()
+    public async Task Serial_collection_with_justification_does_not_report_SKTEST005()
     {
         // Arrange
         const string source = """
@@ -836,7 +1089,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Serial_Collection_With_Whitespace_Justification_Reports_SKTEST005()
+    public async Task Serial_collection_with_whitespace_justification_reports_SKTEST005()
     {
         // Arrange
         const string source = """
@@ -863,7 +1116,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Parallel_Collection_Without_Justification_Does_Not_Report_SKTEST005()
+    public async Task Parallel_collection_without_justification_does_not_report_SKTEST005()
     {
         // Arrange
         const string source = """

@@ -5,7 +5,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class ResultErrorTests
 {
     [Fact]
-    public void Creates_An_Error_With_Detail_And_Default_Code()
+    public void Creates_an_error_with_detail_and_default_code()
     {
         // Arrange
         // Act
@@ -18,7 +18,7 @@ public sealed class ResultErrorTests
     }
 
     [Fact]
-    public void Creates_An_Error_With_A_Specific_Code()
+    public void Creates_an_error_with_a_specific_code()
     {
         // Arrange
         // Act
@@ -30,7 +30,7 @@ public sealed class ResultErrorTests
     }
 
     [Fact]
-    public void Defensively_Copies_Validation_Errors()
+    public void Defensively_copies_validation_errors()
     {
         // Arrange
         var source = new Dictionary<string, string[]>
@@ -48,7 +48,7 @@ public sealed class ResultErrorTests
     }
 
     [Fact]
-    public void Exposes_Read_Only_Validation_Error_Collections()
+    public void Exposes_read_only_validation_error_collections()
     {
         // Arrange
         var error = new ResultError(
@@ -71,7 +71,7 @@ public sealed class ResultErrorTests
     }
 
     [Fact]
-    public void Uses_Code_And_Detail_In_ToString()
+    public void Uses_code_and_detail_in_tostring()
     {
         // Arrange
         var error = new ResultError("Tour not found", ResultErrorCodes.NotFound);
@@ -84,7 +84,7 @@ public sealed class ResultErrorTests
     }
 
     [Fact]
-    public void Supports_Value_Equality_For_Identical_Errors()
+    public void Supports_value_equality_for_identical_errors()
     {
         // Arrange
         var left = new ResultError(
@@ -113,7 +113,7 @@ public sealed class ResultErrorTests
     }
 
     [Fact]
-    public void Detects_Different_Error_Details()
+    public void Detects_different_error_details()
     {
         // Arrange
         var left = new ResultError("Validation failed", ResultErrorCodes.Invalid);
@@ -127,7 +127,7 @@ public sealed class ResultErrorTests
     }
 
     [Fact]
-    public void Detects_Different_Validation_Payloads()
+    public void Detects_different_validation_payloads()
     {
         // Arrange
         var left = new ResultError(
@@ -156,7 +156,7 @@ public sealed class ResultErrorTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Rejects_Null_Or_Whitespace_Detail(string? detail)
+    public void Rejects_null_or_whitespace_detail(string? detail)
     {
         // Arrange
         // Act
@@ -172,7 +172,7 @@ public sealed class ResultErrorTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Rejects_Null_Or_Whitespace_Code(string? code)
+    public void Rejects_null_or_whitespace_code(string? code)
     {
         // Arrange
         // Act
@@ -185,7 +185,7 @@ public sealed class ResultErrorTests
     }
 
     [Fact]
-    public void Rejects_Validation_Dictionaries_With_Null_Message_Arrays()
+    public void Rejects_validation_dictionaries_with_null_message_arrays()
     {
         // Arrange
         var validationErrors = ResultErrorTestsHelpers.CreateValidationErrorsWithNullMessageArray();

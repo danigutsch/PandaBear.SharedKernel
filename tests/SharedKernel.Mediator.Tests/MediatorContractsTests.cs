@@ -4,7 +4,7 @@ namespace SharedKernel.Mediator.Tests;
 public sealed class MediatorContractsTests
 {
     [Fact]
-    public void ICommand_Is_Assignable_To_IRequest_Unit()
+    public void ICommand_is_assignable_to_irequest_unit()
     {
         // Arrange
         var commandType = typeof(TestCommand);
@@ -17,7 +17,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void IQuery_Of_T_Is_Assignable_To_IRequest_Of_T()
+    public void IQuery_of_t_is_assignable_to_irequest_of_t()
     {
         // Arrange
         var queryType = typeof(TestQuery);
@@ -30,7 +30,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void ICommand_Of_T_Is_Assignable_To_IRequest_Of_T()
+    public void ICommand_of_t_is_assignable_to_irequest_of_t()
     {
         // Arrange
         var commandType = typeof(TestCommandWithResponse);
@@ -43,7 +43,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void Handler_Variance_Works_Where_Expected()
+    public void Handler_variance_works_where_expected()
     {
         // Arrange
         var handlerContractType = typeof(IQueryHandler<DerivedQuery, string>);
@@ -56,7 +56,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void Notification_Contracts_Allow_Class_And_Struct()
+    public void Notification_contracts_allow_class_and_struct()
     {
         // Arrange
         var classNotificationType = typeof(INotificationHandler<ClassNotification>);
@@ -72,7 +72,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void Notification_Order_Attribute_Exposes_Configured_Order()
+    public void Notification_order_attribute_exposes_configured_order()
     {
         // Arrange
         var attribute = typeof(OrderedClassNotificationHandler)
@@ -88,7 +88,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void Notification_Dispatch_Attribute_Exposes_Configured_Strategy()
+    public void Notification_dispatch_attribute_exposes_configured_strategy()
     {
         // Arrange
         var attribute = typeof(ParallelClassNotification)
@@ -104,7 +104,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void Stream_And_Pipeline_Contracts_Compile()
+    public void Stream_and_pipeline_contracts_compile()
     {
         // Arrange
         var streamHandlerType = typeof(IStreamRequestHandler<TestStreamRequest, string>);
@@ -129,7 +129,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void Semantic_Stream_Contracts_Distinguish_Unary_Stream_Input_And_Duplex_Stream_Shapes()
+    public void Semantic_stream_contracts_distinguish_unary_stream_input_and_duplex_stream_shapes()
     {
         // Arrange
         var streamCommandType = typeof(TestStreamCommand);
@@ -162,7 +162,7 @@ public sealed class MediatorContractsTests
     }
 
     [Fact]
-    public void ISender_Exposes_Stream_Send_Generic_Method()
+    public void ISender_exposes_stream_send_generic_method()
     {
         // Arrange
         var method = typeof(ISender)

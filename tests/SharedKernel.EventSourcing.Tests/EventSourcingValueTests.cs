@@ -3,7 +3,7 @@ namespace SharedKernel.EventSourcing.Tests;
 public sealed class EventSourcingValueTests
 {
     [Fact]
-    public void StreamId_From_Trims_Value()
+    public void StreamId_from_trims_value()
     {
         // Arrange
         const string value = " catalog-tour-tour-1 ";
@@ -17,7 +17,7 @@ public sealed class EventSourcingValueTests
     }
 
     [Fact]
-    public void StreamId_From_Rejects_Null_Value()
+    public void StreamId_from_rejects_null_value()
     {
         // Arrange
         string? value = null;
@@ -27,7 +27,7 @@ public sealed class EventSourcingValueTests
     }
 
     [Fact]
-    public void StreamId_Default_Instance_Rejects_Value_Access()
+    public void StreamId_default_instance_rejects_value_access()
     {
         // Arrange
         var streamId = default(StreamId);
@@ -40,7 +40,7 @@ public sealed class EventSourcingValueTests
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    public void StreamId_From_Rejects_Blank_Values(string value)
+    public void StreamId_from_rejects_blank_values(string value)
     {
         // Arrange, Act, Assert
         Assert.Throws<ArgumentException>(() => StreamId.From(value));
@@ -49,14 +49,14 @@ public sealed class EventSourcingValueTests
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    public void StreamRevision_From_Rejects_Non_Positive_Values(long value)
+    public void StreamRevision_from_rejects_non_positive_values(long value)
     {
         // Arrange, Act, Assert
         Assert.Throws<ArgumentOutOfRangeException>(() => StreamRevision.From(value));
     }
 
     [Fact]
-    public void StreamRevision_Default_Instance_Rejects_Value_Access()
+    public void StreamRevision_default_instance_rejects_value_access()
     {
         // Arrange
         var revision = default(StreamRevision);
@@ -66,7 +66,7 @@ public sealed class EventSourcingValueTests
     }
 
     [Fact]
-    public void ExpectedStreamRevision_From_Represents_Specific_Revision()
+    public void ExpectedStreamRevision_from_represents_specific_revision()
     {
         // Arrange
         var revision = StreamRevision.From(3);
@@ -80,7 +80,7 @@ public sealed class EventSourcingValueTests
     }
 
     [Fact]
-    public void ExpectedStreamRevision_Any_Accepts_Any_Current_Revision()
+    public void ExpectedStreamRevision_any_accepts_any_current_revision()
     {
         // Arrange, Act
         var expectedRevision = ExpectedStreamRevision.Any;
@@ -91,7 +91,7 @@ public sealed class EventSourcingValueTests
     }
 
     [Fact]
-    public void ExpectedStreamRevision_NoStream_Requires_Empty_Stream()
+    public void ExpectedStreamRevision_nostream_requires_empty_stream()
     {
         // Arrange, Act
         var expectedRevision = ExpectedStreamRevision.NoStream;
@@ -102,7 +102,7 @@ public sealed class EventSourcingValueTests
     }
 
     [Fact]
-    public void EventEnvelope_Stores_Stream_Event_Metadata()
+    public void EventEnvelope_stores_stream_event_metadata()
     {
         // Arrange
         var streamId = StreamId.From("catalog-tour-tour-1");
@@ -125,7 +125,7 @@ public sealed class EventSourcingValueTests
     }
 
     [Fact]
-    public void ProjectionCheckpoint_Stores_Projection_Position()
+    public void ProjectionCheckpoint_stores_projection_position()
     {
         // Arrange, Act
         var checkpoint = new ProjectionCheckpoint("catalog-tour-projection", 42);

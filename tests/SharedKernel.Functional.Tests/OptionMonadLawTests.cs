@@ -6,7 +6,7 @@ namespace SharedKernel.Functional.Tests;
 public sealed class OptionMonadLawTests
 {
     [Fact]
-    public void Satisfies_The_Monad_Left_Identity_Law()
+    public void Satisfies_the_monad_left_identity_law()
     {
         // Arrange
         const string value = "porto";
@@ -20,7 +20,7 @@ public sealed class OptionMonadLawTests
     }
 
     [Fact]
-    public void Satisfies_The_Monad_Right_Identity_Law()
+    public void Satisfies_the_monad_right_identity_law()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -33,7 +33,7 @@ public sealed class OptionMonadLawTests
     }
 
     [Fact]
-    public void Satisfies_The_Monad_Associativity_Law()
+    public void Satisfies_the_monad_associativity_law()
     {
         // Arrange
         var option = Option.Some("porto");

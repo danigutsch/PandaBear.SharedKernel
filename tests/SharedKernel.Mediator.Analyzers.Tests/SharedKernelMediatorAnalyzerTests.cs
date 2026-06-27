@@ -6,7 +6,7 @@ namespace SharedKernel.Mediator.Analyzers.Tests;
 public sealed class SharedKernelMediatorAnalyzerTests
 {
     [Fact]
-    public async Task Explicit_Interface_Handler_Reports_Invalid_Handler_Signature()
+    public async Task Explicit_interface_handler_reports_invalid_handler_signature()
     {
         // Arrange
         const string source = """
@@ -33,7 +33,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Handler_Without_CancellationToken_Reports_Missing_CancellationToken()
+    public async Task Handler_without_cancellationtoken_reports_missing_cancellationtoken()
     {
         // Arrange
         const string source = """
@@ -65,7 +65,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Handler_With_Wrong_Return_Type_Reports_Return_Type_Mismatch()
+    public async Task Handler_with_wrong_return_type_reports_return_type_mismatch()
     {
         // Arrange
         const string source = """
@@ -97,7 +97,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Pipeline_With_Invalid_Generic_Arity_Reports_Diagnostic()
+    public async Task Pipeline_with_invalid_generic_arity_reports_diagnostic()
     {
         // Arrange
         const string source = """
@@ -127,7 +127,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Mediator_Call_Without_Available_CancellationToken_Forwarding_Reports_Diagnostic()
+    public async Task Mediator_call_without_available_cancellationtoken_forwarding_reports_diagnostic()
     {
         // Arrange
         const string source = """
@@ -155,7 +155,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Async_Stream_Handler_Without_EnumeratorCancellation_Reports_Diagnostic()
+    public async Task Async_stream_handler_without_enumeratorcancellation_reports_diagnostic()
     {
         // Arrange
         const string source = """
@@ -183,7 +183,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Async_Stream_Pipeline_Without_EnumeratorCancellation_Reports_Diagnostic()
+    public async Task Async_stream_pipeline_without_enumeratorcancellation_reports_diagnostic()
     {
         // Arrange
         const string source = """
@@ -214,7 +214,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Async_Stream_Handler_With_EnumeratorCancellation_Does_Not_Report_Diagnostic()
+    public async Task Async_stream_handler_with_enumeratorcancellation_does_not_report_diagnostic()
     {
         // Arrange
         const string source = """
@@ -244,7 +244,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Non_Iterator_Stream_Handler_Reports_SKMED008_Diagnostic()
+    public async Task Non_iterator_stream_handler_reports_skmed008_diagnostic()
     {
         // Arrange
         const string source = """
@@ -275,7 +275,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Non_Iterator_Stream_Pipeline_Does_Not_Report_EnumeratorCancellation_Diagnostic()
+    public async Task Non_iterator_stream_pipeline_does_not_report_enumeratorcancellation_diagnostic()
     {
         // Arrange
         const string source = """
@@ -303,7 +303,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Cancellation_Analysis_Can_Be_Disabled_From_Editorconfig()
+    public async Task Cancellation_analysis_can_be_disabled_from_editorconfig()
     {
         // Arrange
         const string source = """
@@ -333,7 +333,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Strict_Mode_Reports_Handler_To_Handler_Send_Calls()
+    public async Task Strict_mode_reports_handler_to_handler_send_calls()
     {
         // Arrange
         const string source = """
@@ -361,7 +361,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Strict_Mode_Can_Allow_Handler_To_Handler_Send_Calls()
+    public async Task Strict_mode_can_allow_handler_to_handler_send_calls()
     {
         // Arrange
         const string source = """
@@ -391,7 +391,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public void Editorconfig_Options_Use_Documented_Defaults()
+    public void Editorconfig_options_use_documented_defaults()
     {
         // Arrange
         var provider = new TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>.Empty);
@@ -406,7 +406,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Explicit_Interface_Stream_Handler_Reports_Invalid_Handler_Signature()
+    public async Task Explicit_interface_stream_handler_reports_invalid_handler_signature()
     {
         // Arrange
         const string source = """
@@ -438,7 +438,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Stream_Handler_Without_CancellationToken_Reports_Missing_CancellationToken()
+    public async Task Stream_handler_without_cancellationtoken_reports_missing_cancellationtoken()
     {
         // Arrange
         const string source = """
@@ -476,7 +476,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Stream_Handler_With_Wrong_Return_Type_Reports_Return_Type_Mismatch()
+    public async Task Stream_handler_with_wrong_return_type_reports_return_type_mismatch()
     {
         // Arrange
         const string source = """
@@ -513,7 +513,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Stream_Handler_Calling_Sender_Reports_Handler_Should_Not_Call_Sender()
+    public async Task Stream_handler_calling_sender_reports_handler_should_not_call_sender()
     {
         // Arrange
         const string source = """
@@ -546,7 +546,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Non_Iterator_Stream_Handler_With_CancellationToken_Reports_NonIterator_Diagnostic()
+    public async Task Non_iterator_stream_handler_with_cancellationtoken_reports_noniterator_diagnostic()
     {
         // Arrange
         const string source = """
@@ -579,7 +579,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Non_Iterator_Stream_Pipeline_With_CancellationToken_Reports_NonIterator_Diagnostic()
+    public async Task Non_iterator_stream_pipeline_with_cancellationtoken_reports_noniterator_diagnostic()
     {
         // Arrange
         const string source = """
@@ -610,7 +610,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Iterator_Stream_Handler_Does_Not_Report_NonIterator_Diagnostic()
+    public async Task Iterator_stream_handler_does_not_report_noniterator_diagnostic()
     {
         // Arrange
         const string source = """
@@ -640,7 +640,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Non_Iterator_Stream_Handler_Without_CancellationToken_Does_Not_Report_NonIterator_Diagnostic()
+    public async Task Non_iterator_stream_handler_without_cancellationtoken_does_not_report_noniterator_diagnostic()
     {
         // Arrange — [EnumeratorCancellation] present suppresses both SKMED007 and SKMED008
         const string source = """
@@ -677,7 +677,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
     }
 
     [Fact]
-    public async Task Non_Iterator_Stream_Handler_That_Forwards_CancellationToken_Does_Not_Report_NonIterator_Diagnostic()
+    public async Task Non_iterator_stream_handler_that_forwards_cancellationtoken_does_not_report_noniterator_diagnostic()
     {
         // Arrange
         const string source = """

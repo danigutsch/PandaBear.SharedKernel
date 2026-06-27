@@ -3,7 +3,7 @@ namespace SharedKernel.Results.GeneratorTests;
 public sealed class ResultErrorCatalogGeneratorTests
 {
     [Fact]
-    public void Generates_Error_Catalog_For_Static_Error_Provider_Methods()
+    public void Generates_error_catalog_for_static_error_provider_methods()
     {
         // Arrange
         const string source = """
@@ -48,7 +48,7 @@ public sealed class ResultErrorCatalogGeneratorTests
     }
 
     [Fact]
-    public void Generates_Error_Catalog_For_Result_Error_Factory_Without_Http_Metadata()
+    public void Generates_error_catalog_for_result_error_factory_without_http_metadata()
     {
         // Arrange
         const string source = """
@@ -73,7 +73,7 @@ public sealed class ResultErrorCatalogGeneratorTests
     }
 
     [Fact]
-    public void Ignores_Non_Error_Classes_And_Non_Result_Members()
+    public void Ignores_non_error_classes_and_non_result_members()
     {
         // Arrange
         const string source = """
@@ -98,7 +98,7 @@ public sealed class ResultErrorCatalogGeneratorTests
     }
 
     [Fact]
-    public void Generates_Error_Catalog_For_Internal_Error_Providers_Returning_Generic_Results()
+    public void Generates_error_catalog_for_internal_error_providers_returning_generic_results()
     {
         // Arrange
         const string source = """
@@ -126,7 +126,7 @@ public sealed class ResultErrorCatalogGeneratorTests
     }
 
     [Fact]
-    public void Generates_Error_Catalog_For_Static_Properties()
+    public void Generates_error_catalog_for_static_properties()
     {
         // Arrange
         const string source = """
@@ -150,7 +150,7 @@ public sealed class ResultErrorCatalogGeneratorTests
     }
 
     [Fact]
-    public void Adds_Parameter_Type_Suffix_To_Overloaded_Method_Identifiers()
+    public void Adds_parameter_type_suffix_to_overloaded_method_identifiers()
     {
         // Arrange
         const string source = """
@@ -175,7 +175,7 @@ public sealed class ResultErrorCatalogGeneratorTests
     }
 
     [Fact]
-    public void Preserves_Interpolated_Template_Format_Clauses()
+    public void Preserves_interpolated_template_format_clauses()
     {
         // Arrange
         const string source = """
@@ -198,7 +198,7 @@ public sealed class ResultErrorCatalogGeneratorTests
     }
 
     [Fact]
-    public void Escapes_Generated_String_Literals()
+    public void Escapes_generated_string_literals()
     {
         // Arrange
         const string source = """
@@ -223,7 +223,7 @@ public sealed class ResultErrorCatalogGeneratorTests
     }
 
     [Fact]
-    public void Ignores_Unsupported_Result_Member_Shapes()
+    public void Ignores_unsupported_result_member_shapes()
     {
         // Arrange
         const string source = """

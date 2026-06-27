@@ -7,11 +7,14 @@ namespace SharedKernel.Testing.Analyzers;
 /// <summary>
 /// Reads repository testing analyzer options from <c>.editorconfig</c>.
 /// </summary>
-internal sealed class TestingAnalyzerConfigOptions(ImmutableArray<RequiredTrait> requiredTraits)
+internal sealed class TestingAnalyzerConfigOptions(ImmutableArray<RequiredTrait> requiredTraits, bool strictTestMethodCasing)
 {
     private const string RequiredTraitsKey = "sharedkernel_testing_required_traits";
+    private const string StrictTestMethodCasingKey = "sharedkernel_testing_strict_test_method_casing";
 
     public ImmutableArray<RequiredTrait> RequiredTraits { get; } = requiredTraits;
+
+    public bool StrictTestMethodCasing { get; } = strictTestMethodCasing;
 
     public static TestingAnalyzerConfigOptions Parse(AnalyzerConfigOptionsProvider optionsProvider, SyntaxTree? syntaxTree)
     {
@@ -20,10 +23,14 @@ internal sealed class TestingAnalyzerConfigOptions(ImmutableArray<RequiredTrait>
             throw new ArgumentNullException(nameof(optionsProvider));
         }
 
+        var strictTestMethodCasing = !string.Equals(
+            TryGetOption(optionsProvider, syntaxTree, StrictTestMethodCasingKey)?.Trim(),
+            "false",
+            StringComparison.OrdinalIgnoreCase);
         var value = TryGetOption(optionsProvider, syntaxTree, RequiredTraitsKey);
         if (value is not { } configuredTraits || string.IsNullOrWhiteSpace(configuredTraits))
         {
-            return new TestingAnalyzerConfigOptions([]);
+            return new TestingAnalyzerConfigOptions([], strictTestMethodCasing);
         }
 
         var traits = configuredTraits.Split([';'], StringSplitOptions.RemoveEmptyEntries)
@@ -32,7 +39,7 @@ internal sealed class TestingAnalyzerConfigOptions(ImmutableArray<RequiredTrait>
             .Select(static parts => new RequiredTrait(parts[0].Trim(), parts[1].Trim()))
             .ToImmutableArray();
 
-        return new TestingAnalyzerConfigOptions(traits);
+        return new TestingAnalyzerConfigOptions(traits, strictTestMethodCasing);
     }
 
     private static string? TryGetOption(AnalyzerConfigOptionsProvider optionsProvider, SyntaxTree? syntaxTree, string key)

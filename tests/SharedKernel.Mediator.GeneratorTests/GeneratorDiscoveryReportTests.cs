@@ -7,7 +7,7 @@ namespace SharedKernel.Mediator.GeneratorTests;
 public sealed class GeneratorDiscoveryReportTests
 {
     [Fact]
-    public void Generate_Discovery_Report_Single_Project_Counts()
+    public void Generate_discovery_report_single_project_counts()
     {
         // Arrange
         var source = TestSources.ModuleHeader
@@ -29,7 +29,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Call_Graph_Json_Artifact_Is_Not_Emitted_By_Default()
+    public void Generate_call_graph_Json_artifact_is_not_emitted_by_default()
     {
         // Arrange
         var source = TestSources.DemoHeader + TestSources.GetTourWithHandler;
@@ -44,7 +44,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Call_Graph_Json_Artifact_When_Enabled()
+    public void Generate_call_graph_Json_artifact_when_enabled()
     {
         // Arrange
         var source = TestSources.ModuleHeader
@@ -67,7 +67,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Repeated_Runs_Are_Deterministic()
+    public void Generate_discovery_report_repeated_runs_are_deterministic()
     {
         // Arrange
         var source = TestSources.DemoHeader + TestSources.GetTourWithHandler;
@@ -83,7 +83,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Marked_Module_Assembly_Included()
+    public void Generate_discovery_report_marked_module_assembly_included()
     {
         // Arrange
         var moduleReference = GeneratorTestHarness.CreateMetadataReference(TestSources.ModuleAMarkedSource, "SharedKernel.Mediator.Tests.ModuleA");
@@ -100,7 +100,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Unmarked_Module_Assembly_Ignored()
+    public void Generate_discovery_report_unmarked_module_assembly_ignored()
     {
         // Arrange
         var moduleReference = GeneratorTestHarness.CreateMetadataReference(TestSources.ModuleAUnmarkedSource, "SharedKernel.Mediator.Tests.ModuleA.Unmarked");
@@ -115,7 +115,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Response_Metadata_Captured()
+    public void Generate_discovery_report_response_metadata_captured()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -141,7 +141,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Result_Like_Wrapper_Shape_Captured()
+    public void Generate_discovery_report_result_like_wrapper_shape_captured()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -169,7 +169,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Without_Mediator_References_Returns_Empty_Model()
+    public void Generate_discovery_report_without_mediator_references_returns_empty_model()
     {
         // Arrange
         const string source = """
@@ -192,7 +192,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Nested_Plain_Request_Discovered()
+    public void Generate_discovery_report_nested_plain_request_discovered()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -222,7 +222,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Command_Without_Response_Uses_Unit()
+    public void Generate_discovery_report_command_without_response_uses_unit()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -242,7 +242,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Abstract_And_Interface_Shapes_Are_Ignored()
+    public void Generate_discovery_report_abstract_and_interface_shapes_are_ignored()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -306,7 +306,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Pipeline_And_Handler_Order_Is_Deterministic()
+    public void Generate_discovery_report_pipeline_and_handler_order_is_deterministic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -358,7 +358,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Open_Generic_Pipeline_Is_Bound_To_Request_Response_Pair()
+    public void Generate_discovery_report_open_generic_pipeline_is_bound_to_request_response_pair()
     {
         // Arrange
         const string source = TestSources.DemoHeader + TestSources.CreateTourWithHandler + """
@@ -382,7 +382,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Pipeline_Duplicate_Order_Diagnostic()
+    public void Generate_discovery_report_pipeline_duplicate_order_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + TestSources.CreateTourWithHandler + """
@@ -411,7 +411,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Pipeline_Never_Applies_Diagnostic()
+    public void Generate_discovery_report_pipeline_never_applies_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -435,7 +435,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Pipeline_Invalid_Generic_Arity_Diagnostic()
+    public void Generate_discovery_report_pipeline_invalid_generic_arity_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + TestSources.CreateTourWithHandler + """
@@ -458,7 +458,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Pipeline_Unbound_Constraints_Diagnostic()
+    public void Generate_discovery_report_pipeline_unbound_constraints_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + TestSources.CreateTourWithHandler + """
@@ -481,7 +481,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Notification_Handlers_Without_Explicit_Order_Diagnostic()
+    public void Generate_discovery_report_notification_handlers_without_explicit_order_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -515,7 +515,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Duplicate_Notification_Order_Diagnostic()
+    public void Generate_discovery_report_duplicate_notification_order_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -547,7 +547,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Request_With_No_Handler_Diagnostic()
+    public void Generate_discovery_report_request_with_no_handler_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -567,7 +567,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Request_With_Multiple_Handlers_Diagnostic()
+    public void Generate_discovery_report_request_with_multiple_handlers_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -597,7 +597,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Unmarked_Module_Object_Dispatch_Coverage_Diagnostic()
+    public void Generate_discovery_report_unmarked_module_object_dispatch_coverage_diagnostic()
     {
         // Arrange
         var moduleReference = GeneratorTestHarness.CreateMetadataReference(TestSources.ModuleAUnmarkedSource, "SharedKernel.Mediator.Tests.ModuleA.Unmarked");
@@ -618,7 +618,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Explicit_Interface_Handler_Invalid_Signature_Diagnostic()
+    public void Generate_discovery_report_explicit_interface_handler_invalid_signature_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -652,7 +652,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Explicit_Interface_Stream_Handler_Invalid_Signature_Diagnostic()
+    public void Generate_discovery_report_explicit_interface_stream_handler_invalid_signature_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -682,7 +682,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Stream_Handler_Wrong_Return_Type_Invalid_Signature_Diagnostic()
+    public void Generate_discovery_report_stream_handler_wrong_return_type_invalid_signature_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -710,7 +710,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Stream_Handler_Missing_CancellationToken_Invalid_Signature_Diagnostic()
+    public void Generate_discovery_report_stream_handler_missing_cancellationtoken_invalid_signature_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -740,7 +740,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Snapshot_Missing_Handler_Diagnostic_Message()
+    public void Snapshot_missing_handler_diagnostic_message()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -758,7 +758,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Snapshot_Duplicate_Pipeline_Order_Diagnostic_Message()
+    public void Snapshot_duplicate_pipeline_order_diagnostic_message()
     {
         // Arrange
         const string source = TestSources.DemoHeader + TestSources.CreateTourWithHandler + """
@@ -789,7 +789,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Stream_Request_With_No_Handler_Diagnostic()
+    public void Generate_discovery_report_stream_request_with_no_handler_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
@@ -808,7 +808,7 @@ public sealed class GeneratorDiscoveryReportTests
     }
 
     [Fact]
-    public void Generate_Discovery_Report_Stream_Request_With_Multiple_Handlers_Diagnostic()
+    public void Generate_discovery_report_stream_request_with_multiple_handlers_diagnostic()
     {
         // Arrange
         const string source = TestSources.DemoHeader + """
