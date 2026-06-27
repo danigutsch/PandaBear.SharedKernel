@@ -57,7 +57,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules keep test behavior visible by requiring helper methods and nested helper types to live in dedicated helper types or local functions instead of directly on xUnit test classes.");
+        description: "Repository testing rules keep test behavior visible by requiring helper methods and nested helper types to live in dedicated helper types instead of directly on xUnit test classes or inside test methods.");
 
     private static readonly DiagnosticDescriptor XunitSerialCollectionJustificationRule = new(
         TestingDiagnosticIds.XunitSerialCollectionJustification,
@@ -95,6 +95,9 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                 AnalyzeTypeDeclaration,
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.RecordDeclaration);
+            compilationContext.RegisterSyntaxNodeAction(
+                AnalyzeLocalFunctionStatement,
+                SyntaxKind.LocalFunctionStatement);
         });
     }
 
@@ -262,6 +265,23 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             && attribute.ConstructorArguments.Length > 0
             && attribute.ConstructorArguments[0].Value is string reason
             && !string.IsNullOrWhiteSpace(reason));
+    }
+
+    private static void AnalyzeLocalFunctionStatement(SyntaxNodeAnalysisContext context)
+    {
+        if (context.Node is not LocalFunctionStatementSyntax localFunction
+            || localFunction.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
+            || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
+            || !IsXunitTestMethod(methodSymbol))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                XunitTestClassHelperMethodRule,
+                localFunction.Identifier.GetLocation(),
+                localFunction.Identifier.ValueText));
     }
 
     private static bool ContainsXunitTestMethod(INamedTypeSymbol typeSymbol)
