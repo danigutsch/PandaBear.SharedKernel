@@ -11,12 +11,12 @@ public static class StyleDiagnosticIds
     public const string AsyncSuffix = "SKSTYLE001";
 
     /// <summary>
-    /// Diagnostic emitted when a <see cref="System.Threading.CancellationToken"/> parameter is not named <c>ct</c>.
+    /// Diagnostic emitted when a <see cref="CancellationToken"/> parameter is not named <c>ct</c>.
     /// </summary>
     public const string CancellationTokenParameterName = "SKSTYLE002";
 
     /// <summary>
-    /// Diagnostic emitted when a <see cref="System.Threading.CancellationToken"/> parameter declares a default value.
+    /// Diagnostic emitted when a <see cref="CancellationToken"/> parameter declares a default value.
     /// </summary>
     public const string CancellationTokenDefaultValue = "SKSTYLE003";
 
@@ -24,5 +24,10 @@ public static class StyleDiagnosticIds
     /// Diagnostic emitted when a source file declares more than one top-level type.
     /// </summary>
     public const string MultipleTopLevelTypesPerFile = "SKSTYLE004";
+
+    /// <summary>
+    /// Diagnostic emitted when Aspire container image tags and digests are not pinned together.
+    /// </summary>
+    public const string AspireImageTagAndDigest = "SKSTYLE005";
 
 }
