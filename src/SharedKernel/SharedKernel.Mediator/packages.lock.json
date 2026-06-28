@@ -72,8 +72,17 @@
           "Microsoft.Extensions.Options": "10.0.8"
         }
       },
-      "Microsoft.Extensions.Options": {
+      "Microsoft.Extensions.Primitives": {
         "type": "Transitive",
+        "resolved": "10.0.8",
+        "contentHash": "OBPo4nYhMyIbtueoC10CBm6AGAbo/A9IV8QQ/6ryZS7VvmqpGT7hunazeHLxFawRzn3oLOq4jhqhpBX4tfswWQ=="
+      },
+      "sharedkernel.mediator.abstractions": {
+        "type": "Project"
+      },
+      "Microsoft.Extensions.Options": {
+        "type": "CentralTransitive",
+        "requested": "[10.0.8, )",
         "resolved": "10.0.8",
         "contentHash": "VBD+131DpTNCNDfA4kIyKTiCySvJGNhwibdWBSdFRu7GMfXLXcXODkgA+KStKbbhzraLglZWUN4nXyHgW4JIRA==",
         "dependencies": {
@@ -82,7 +91,8 @@
         }
       },
       "Microsoft.Extensions.Options.ConfigurationExtensions": {
-        "type": "Transitive",
+        "type": "CentralTransitive",
+        "requested": "[10.0.8, )",
         "resolved": "10.0.8",
         "contentHash": "VOapXeO3lhBH0zYoyAH7tjapuo4V5pTHlevPpiSHueEquAajqd5nF0mttm+h/uE/exwAEuM5s26SzOJtletE3w==",
         "dependencies": {
@@ -92,14 +102,6 @@
           "Microsoft.Extensions.Options": "10.0.8",
           "Microsoft.Extensions.Primitives": "10.0.8"
         }
-      },
-      "Microsoft.Extensions.Primitives": {
-        "type": "Transitive",
-        "resolved": "10.0.8",
-        "contentHash": "OBPo4nYhMyIbtueoC10CBm6AGAbo/A9IV8QQ/6ryZS7VvmqpGT7hunazeHLxFawRzn3oLOq4jhqhpBX4tfswWQ=="
-      },
-      "sharedkernel.mediator.abstractions": {
-        "type": "Project"
       }
     }
   }
