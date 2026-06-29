@@ -329,50 +329,9 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     private static bool ContainsBroadOperationCanceledExceptionExclusion(SyntaxNode node)
     {
         var expressionText = node.ToString();
-        if (expressionText.Contains(OperationCanceledExceptionTypeName, StringComparison.Ordinal)
+        return expressionText.Contains(OperationCanceledExceptionTypeName, StringComparison.Ordinal)
             && (expressionText.Contains("is not", StringComparison.Ordinal)
-                || expressionText.Contains("!", StringComparison.Ordinal)))
-        {
-            return true;
-        }
-
-        foreach (var pattern in node.DescendantNodesAndSelf().OfType<IsPatternExpressionSyntax>())
-        {
-            if (pattern.Pattern is UnaryPatternSyntax { Pattern: TypePatternSyntax typePattern }
-                && IsOperationCanceledExceptionType(typePattern.Type))
-            {
-                return true;
-            }
-        }
-
-        foreach (var prefixUnary in node.DescendantNodesAndSelf().OfType<PrefixUnaryExpressionSyntax>())
-        {
-            if (prefixUnary.IsKind(SyntaxKind.LogicalNotExpression)
-                && prefixUnary.Operand is ParenthesizedExpressionSyntax { Expression: IsPatternExpressionSyntax pattern }
-                && pattern.Pattern is TypePatternSyntax typePattern
-                && IsOperationCanceledExceptionType(typePattern.Type))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static bool IsOperationCanceledExceptionType(TypeSyntax type)
-    {
-        return string.Equals(GetRightmostName(type), OperationCanceledExceptionTypeName, StringComparison.Ordinal);
-    }
-
-    private static string? GetRightmostName(TypeSyntax type)
-    {
-        return type switch
-        {
-            IdentifierNameSyntax identifier => identifier.Identifier.ValueText,
-            QualifiedNameSyntax qualifiedName => qualifiedName.Right.Identifier.ValueText,
-            AliasQualifiedNameSyntax aliasQualifiedName => aliasQualifiedName.Name.Identifier.ValueText,
-            _ => null
-        };
+                || expressionText.Contains("!", StringComparison.Ordinal));
     }
 
     private static bool HasCancellationTokenNamedCtInScope(SyntaxNode node)
@@ -382,7 +341,11 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             || node.Ancestors().OfType<LocalFunctionStatementSyntax>().FirstOrDefault()?.ParameterList.Parameters.Any(static parameter =>
                 string.Equals(parameter.Identifier.ValueText, CancellationTokenParameterName, StringComparison.Ordinal)) == true
             || node.Ancestors().OfType<ParenthesizedLambdaExpressionSyntax>().FirstOrDefault()?.ParameterList.Parameters.Any(static parameter =>
-                string.Equals(parameter.Identifier.ValueText, CancellationTokenParameterName, StringComparison.Ordinal)) == true;
+                string.Equals(parameter.Identifier.ValueText, CancellationTokenParameterName, StringComparison.Ordinal)) == true
+            || string.Equals(
+                node.Ancestors().OfType<SimpleLambdaExpressionSyntax>().FirstOrDefault()?.Parameter.Identifier.ValueText,
+                CancellationTokenParameterName,
+                StringComparison.Ordinal);
     }
 
     private static IEnumerable<MemberDeclarationSyntax> GetTopLevelTypes(CompilationUnitSyntax compilationUnit)

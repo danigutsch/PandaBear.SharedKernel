@@ -805,6 +805,68 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
+    public async Task Operation_cancelled_exception_filter_inside_local_function_reports_skstyle006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle()
+                {
+                    void Run(CancellationToken ct)
+                    {
+                        try
+                        {
+                        }
+                        catch (Exception ex) when (ex is not OperationCanceledException)
+                        {
+                        }
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+    }
+
+    [Fact]
+    public async Task Operation_cancelled_exception_filter_inside_lambda_reports_skstyle006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle()
+                {
+                    Action<CancellationToken> run = ct =>
+                    {
+                        try
+                        {
+                        }
+                        catch (Exception ex) when (ex is not OperationCanceledException)
+                        {
+                        }
+                    };
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+    }
+
+    [Fact]
     public async Task Operation_cancelled_exception_filter_with_helper_does_not_report_skstyle006()
     {
         // Arrange

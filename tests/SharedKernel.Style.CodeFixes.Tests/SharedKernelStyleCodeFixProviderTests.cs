@@ -1257,4 +1257,44 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         Assert.DoesNotContain("ex is not OperationCanceledException", updatedText, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task Broad_operation_cancelled_exception_filter_fix_does_not_duplicate_existing_using()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.BuildingBlocks;
+
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle(CancellationToken ct)
+                {
+                    try
+                    {
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException)
+                    {
+                    }
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
+            "ex is not OperationCanceledException");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Equal(
+            updatedText.IndexOf("using SharedKernel.BuildingBlocks;", StringComparison.Ordinal),
+            updatedText.LastIndexOf("using SharedKernel.BuildingBlocks;", StringComparison.Ordinal));
+        Assert.Contains("catch (Exception ex) when (ex.ShouldHandleAsFailure(ct))", updatedText, StringComparison.Ordinal);
+    }
+
 }
