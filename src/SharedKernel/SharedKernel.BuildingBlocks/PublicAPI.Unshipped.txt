@@ -3,6 +3,9 @@ SharedKernel.BuildingBlocks.DateRange
 SharedKernel.BuildingBlocks.DateRange.DurationDays.get -> double
 SharedKernel.BuildingBlocks.DateRange.EndDate.get -> System.DateTime
 SharedKernel.BuildingBlocks.DateRange.StartDate.get -> System.DateTime
+SharedKernel.BuildingBlocks.ExceptionCancellationExtensions
+SharedKernel.BuildingBlocks.ExceptionCancellationExtensions.extension(System.Exception!)
+SharedKernel.BuildingBlocks.ExceptionCancellationExtensions.extension(System.Exception!).ShouldHandleAsFailure(System.Threading.CancellationToken ct) -> bool
 SharedKernel.BuildingBlocks.ValueObject
 SharedKernel.BuildingBlocks.ValueObject.Equals(SharedKernel.BuildingBlocks.ValueObject? other) -> bool
 abstract SharedKernel.BuildingBlocks.ValueObject.GetEqualityComponents() -> System.Collections.Generic.IEnumerable<object?>!

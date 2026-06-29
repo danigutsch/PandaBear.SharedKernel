@@ -30,4 +30,9 @@ public static class StyleDiagnosticIds
     /// </summary>
     public const string AspireImageTagAndDigest = "SKSTYLE005";
 
+    /// <summary>
+    /// Diagnostic emitted when a catch filter suppresses all <see cref="OperationCanceledException" /> values.
+    /// </summary>
+    public const string BroadOperationCanceledExceptionFilter = "SKSTYLE006";
+
 }

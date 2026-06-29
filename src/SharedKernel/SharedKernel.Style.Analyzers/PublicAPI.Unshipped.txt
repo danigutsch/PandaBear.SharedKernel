@@ -1,4 +1,5 @@
 #nullable enable
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter = "SKSTYLE006" -> string!
 SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer
 SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer.SharedKernelStyleAnalyzer() -> void
 override SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
