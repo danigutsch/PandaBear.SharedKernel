@@ -13,6 +13,8 @@ This Roslyn component provides focused, safe code fixes for the diagnostics in
 - `SKSTYLE002` can rename a `CancellationToken` parameter and its references to `ct`
   when the rename does not conflict with an existing `ct` parameter or a `ct`
   declaration in the containing executable scope.
+- `SKSTYLE005` can add or replace image pin calls with uncompilable placeholders so the developer must
+  fill in a verified tag or bare SHA-256 digest before the code builds.
 
 Fix All is limited to `SKSTYLE001`.
 

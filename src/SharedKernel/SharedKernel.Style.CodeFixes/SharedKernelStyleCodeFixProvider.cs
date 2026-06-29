@@ -6,7 +6,7 @@ using SharedKernel.Style.Analyzers;
 namespace SharedKernel.Style.CodeFixes;
 
 /// <summary>
-/// Provides safe code fixes for implemented SharedKernel style diagnostics.
+/// Provides repository style code fixes, including placeholders that intentionally require manual completion.
 /// </summary>
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SharedKernelStyleCodeFixProvider))]
 public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
@@ -16,7 +16,8 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
         [
             StyleDiagnosticIds.AsyncSuffix,
             StyleDiagnosticIds.CancellationTokenParameterName,
-            StyleDiagnosticIds.CancellationTokenDefaultValue
+            StyleDiagnosticIds.CancellationTokenDefaultValue,
+            StyleDiagnosticIds.AspireImageTagAndDigest
         ];
 
     /// <inheritdoc />
@@ -43,6 +44,11 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             if (diagnostic.Id == StyleDiagnosticIds.CancellationTokenDefaultValue)
             {
                 await RemoveCancellationTokenDefaultValueCodeFix.Register(context, diagnostic).ConfigureAwait(false);
+            }
+
+            if (diagnostic.Id == StyleDiagnosticIds.AspireImageTagAndDigest)
+            {
+                await AddAspireImagePinPlaceholderCodeFix.Register(context, diagnostic).ConfigureAwait(false);
             }
         }
     }
