@@ -294,7 +294,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         }
 
         if (ContainsShouldHandleAsFailure(filter.FilterExpression)
-            || ContainsCancellationRequestedCheck(filter.FilterExpression)
+            || ContainsCooperativeCancellationGuard(filter.FilterExpression)
             || !ContainsBroadOperationCanceledExceptionExclusion(filter.FilterExpression))
         {
             return;
@@ -317,10 +317,13 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             string.Equals(GetInvocationName(invocation), ShouldHandleAsFailureMethodName, StringComparison.Ordinal));
     }
 
-    private static bool ContainsCancellationRequestedCheck(SyntaxNode node)
+    private static bool ContainsCooperativeCancellationGuard(SyntaxNode node)
     {
-        return node.DescendantNodesAndSelf().OfType<MemberAccessExpressionSyntax>().Any(static memberAccess =>
-            string.Equals(memberAccess.Name.Identifier.ValueText, nameof(CancellationToken.IsCancellationRequested), StringComparison.Ordinal));
+        return node.DescendantNodesAndSelf().OfType<PrefixUnaryExpressionSyntax>().Any(static prefixUnary =>
+            prefixUnary.IsKind(SyntaxKind.LogicalNotExpression)
+            && prefixUnary.Operand is MemberAccessExpressionSyntax memberAccess
+            && memberAccess.Expression is IdentifierNameSyntax { Identifier.ValueText: "ct" }
+            && string.Equals(memberAccess.Name.Identifier.ValueText, nameof(CancellationToken.IsCancellationRequested), StringComparison.Ordinal));
     }
 
     private static bool ContainsBroadOperationCanceledExceptionExclusion(SyntaxNode node)
