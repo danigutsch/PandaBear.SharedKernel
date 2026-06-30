@@ -191,8 +191,8 @@ public static class GrafanaLgtmStackResourceExtensions
             .ExcludeFromManifest();
 
         var prometheus = builder.AddPrometheus(
-                resourceNames.Prometheus,
-                Path.Combine(fullConfigurationRoot, "prometheus", "prometheus.yml"))
+            resourceNames.Prometheus,
+            Path.Combine(fullConfigurationRoot, "prometheus", "prometheus.yml"))
             .WaitFor(collector);
 
         return builder.AddGrafana(resourceNames.Grafana, Path.Combine(fullConfigurationRoot, "grafana"))
