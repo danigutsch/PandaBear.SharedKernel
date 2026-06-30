@@ -172,23 +172,23 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
         }
 
         var idType = identifiedInterface.TypeArguments[0];
-        if (!SymbolEqualityComparer.Default.Equals(idProperty.Type, idType))
+        if (SymbolEqualityComparer.Default.Equals(idProperty.Type, idType))
         {
-            return DiagnosticOnly(Diagnostic.Create(
-                MismatchedId,
-                location,
+            return (
+                type.ContainingNamespace.IsGlobalNamespace ? null : type.ContainingNamespace.ToDisplayString(),
                 type.Name,
-                idProperty.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                idType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+                GetAccessibility(type.DeclaredAccessibility),
+                idType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                GetHintName(type),
+                null);
         }
 
-        return (
-            type.ContainingNamespace.IsGlobalNamespace ? null : type.ContainingNamespace.ToDisplayString(),
+        return DiagnosticOnly(Diagnostic.Create(
+            MismatchedId,
+            location,
             type.Name,
-            GetAccessibility(type.DeclaredAccessibility),
-            idType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-            GetHintName(type),
-            null);
+            idProperty.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+            idType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
     }
 
     private static (string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic) DiagnosticOnly(Diagnostic diagnostic)
@@ -205,12 +205,8 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
 
     private static bool IsSupportedIdShape(IPropertySymbol idProperty)
     {
-        if (idProperty.IsStatic)
-        {
-            return false;
-        }
-
-        return idProperty.SetMethod is null || idProperty.SetMethod.DeclaredAccessibility == Accessibility.Private;
+        return !idProperty.IsStatic &&
+            (idProperty.SetMethod is null || idProperty.SetMethod.DeclaredAccessibility == Accessibility.Private);
     }
 
     private static string GetHintName(INamedTypeSymbol type)
