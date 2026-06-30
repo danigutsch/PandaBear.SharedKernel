@@ -1297,4 +1297,37 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         Assert.Contains("catch (Exception ex) when (ex.ShouldHandleAsFailure(ct))", updatedText, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task Broad_operation_cancelled_exception_filter_without_ct_has_no_code_fix()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle(CancellationToken cancellationToken)
+                {
+                    try
+                    {
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException)
+                    {
+                    }
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
+            "ex is not OperationCanceledException");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
 }

@@ -12,6 +12,7 @@ namespace SharedKernel.Style.CodeFixes;
 internal static class UseShouldHandleAsFailureCodeFix
 {
     private const string SharedKernelBuildingBlocksNamespace = "SharedKernel.BuildingBlocks";
+    private const string CancellationTokenParameterName = "ct";
 
     /// <summary>
     /// Registers a code action when the diagnostic targets a catch filter expression.
@@ -27,6 +28,11 @@ internal static class UseShouldHandleAsFailureCodeFix
         var filter = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true)
             .FirstAncestorOrSelf<CatchFilterClauseSyntax>();
         if (filter?.Parent is not CatchClauseSyntax { Declaration.Identifier.ValueText: { Length: > 0 } exceptionName })
+        {
+            return;
+        }
+
+        if (!HasCancellationTokenNamedCtInScope(filter))
         {
             return;
         }
@@ -66,5 +72,19 @@ internal static class UseShouldHandleAsFailureCodeFix
             .WithTrailingTrivia(SyntaxFactory.ElasticCarriageReturnLineFeed);
 
         return compilationUnit.WithUsings(compilationUnit.Usings.Add(usingDirective));
+    }
+
+    private static bool HasCancellationTokenNamedCtInScope(SyntaxNode node)
+    {
+        return node.Ancestors().OfType<BaseMethodDeclarationSyntax>().FirstOrDefault()?.ParameterList.Parameters.Any(static parameter =>
+                string.Equals(parameter.Identifier.ValueText, CancellationTokenParameterName, StringComparison.Ordinal)) == true
+            || node.Ancestors().OfType<LocalFunctionStatementSyntax>().FirstOrDefault()?.ParameterList.Parameters.Any(static parameter =>
+                string.Equals(parameter.Identifier.ValueText, CancellationTokenParameterName, StringComparison.Ordinal)) == true
+            || node.Ancestors().OfType<ParenthesizedLambdaExpressionSyntax>().FirstOrDefault()?.ParameterList.Parameters.Any(static parameter =>
+                string.Equals(parameter.Identifier.ValueText, CancellationTokenParameterName, StringComparison.Ordinal)) == true
+            || string.Equals(
+                node.Ancestors().OfType<SimpleLambdaExpressionSyntax>().FirstOrDefault()?.Parameter.Identifier.ValueText,
+                CancellationTokenParameterName,
+                StringComparison.Ordinal);
     }
 }

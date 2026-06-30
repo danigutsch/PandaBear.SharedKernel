@@ -895,7 +895,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
-    public async Task Broad_operation_cancelled_exception_filter_without_ct_does_not_report_skstyle006()
+    public async Task Broad_operation_cancelled_exception_filter_without_ct_reports_skstyle006()
     {
         // Arrange
         const string source = """
@@ -919,7 +919,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
     }
 
 }

@@ -300,11 +300,6 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             return;
         }
 
-        if (!HasCancellationTokenNamedCtInScope(filter))
-        {
-            return;
-        }
-
         context.ReportDiagnostic(Diagnostic.Create(
             BroadOperationCanceledExceptionFilterRule,
             filter.FilterExpression.GetLocation(),
@@ -332,20 +327,6 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         return expressionText.Contains(OperationCanceledExceptionTypeName, StringComparison.Ordinal)
             && (expressionText.Contains("is not", StringComparison.Ordinal)
                 || expressionText.Contains("!", StringComparison.Ordinal));
-    }
-
-    private static bool HasCancellationTokenNamedCtInScope(SyntaxNode node)
-    {
-        return node.Ancestors().OfType<BaseMethodDeclarationSyntax>().FirstOrDefault()?.ParameterList.Parameters.Any(static parameter =>
-                string.Equals(parameter.Identifier.ValueText, CancellationTokenParameterName, StringComparison.Ordinal)) == true
-            || node.Ancestors().OfType<LocalFunctionStatementSyntax>().FirstOrDefault()?.ParameterList.Parameters.Any(static parameter =>
-                string.Equals(parameter.Identifier.ValueText, CancellationTokenParameterName, StringComparison.Ordinal)) == true
-            || node.Ancestors().OfType<ParenthesizedLambdaExpressionSyntax>().FirstOrDefault()?.ParameterList.Parameters.Any(static parameter =>
-                string.Equals(parameter.Identifier.ValueText, CancellationTokenParameterName, StringComparison.Ordinal)) == true
-            || string.Equals(
-                node.Ancestors().OfType<SimpleLambdaExpressionSyntax>().FirstOrDefault()?.Parameter.Identifier.ValueText,
-                CancellationTokenParameterName,
-                StringComparison.Ordinal);
     }
 
     private static IEnumerable<MemberDeclarationSyntax> GetTopLevelTypes(CompilationUnitSyntax compilationUnit)
