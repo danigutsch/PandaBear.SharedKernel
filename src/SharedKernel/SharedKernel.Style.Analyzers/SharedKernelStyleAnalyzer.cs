@@ -14,11 +14,8 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 {
     private const string AsyncSuffix = "Async";
     private const string CancellationTokenParameterName = "ct";
-    private const string WithImageTagMethodName = "WithImageTag";
-    private const string WithImageSha256MethodName = "WithImageSHA256";
     private const string OperationCanceledExceptionTypeName = "OperationCanceledException";
     private const string ShouldHandleAsFailureMethodName = "ShouldHandleAsFailure";
-    private const string Sha256Prefix = "sha256:";
     private static readonly DiagnosticDescriptor AsyncSuffixRule = new(
         StyleDiagnosticIds.AsyncSuffix,
         title: "Method name should not end with Async",
@@ -51,14 +48,6 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository coding rules prefer one top-level type per file for new or significantly refactored C# code.");
-    private static readonly DiagnosticDescriptor AspireImageTagAndDigestRule = new(
-        StyleDiagnosticIds.AspireImageTagAndDigest,
-        title: "Aspire container images should pin tag and digest together",
-        messageFormat: "Aspire container image call '{0}' should pair WithImageTag with WithImageSHA256 using a verified bare 64-character digest without the sha256: prefix",
-        category: "Style",
-        defaultSeverity: DiagnosticSeverity.Warning,
-        isEnabledByDefault: true,
-        description: "Repository Aspire resources must pin both a human-readable image tag and a verified SHA-256 digest. Do not commit placeholder digests or include the sha256: prefix in WithImageSHA256.");
     private static readonly DiagnosticDescriptor BroadOperationCanceledExceptionFilterRule = new(
         StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
         title: "Catch filters should preserve unexpected OperationCanceledException telemetry",
@@ -74,7 +63,6 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             CancellationTokenParameterNameRule,
             CancellationTokenDefaultValueRule,
             MultipleTopLevelTypesPerFileRule,
-            AspireImageTagAndDigestRule,
             BroadOperationCanceledExceptionFilterRule);
 
     /// <inheritdoc />
@@ -107,10 +95,6 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             SymbolKind.Method);
 
         context.RegisterSyntaxTreeAction(AnalyzeSyntaxTree);
-
-        context.RegisterSyntaxNodeAction(
-            AnalyzeAspireImageInvocation,
-            SyntaxKind.InvocationExpression);
 
         context.RegisterSyntaxNodeAction(
             AnalyzeCatchFilter,
@@ -243,48 +227,6 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                 typeName));
     }
 
-    private static void AnalyzeAspireImageInvocation(SyntaxNodeAnalysisContext context)
-    {
-        if (context.Node is not InvocationExpressionSyntax invocation)
-        {
-            return;
-        }
-
-        var methodName = GetInvocationName(invocation);
-        if (!IsImagePinMethod(methodName))
-        {
-            return;
-        }
-
-        if (string.Equals(methodName, WithImageSha256MethodName, StringComparison.Ordinal)
-            && HasSha256Prefix(invocation))
-        {
-            context.ReportDiagnostic(
-                Diagnostic.Create(
-                    AspireImageTagAndDigestRule,
-                    invocation.ArgumentList.Arguments.First().GetLocation(),
-                    methodName));
-            return;
-        }
-
-        var chain = GetImageInvocationChain(GetOutermostInvocation(invocation)).ToArray();
-        var hasImageTag = chain.Any(static candidate =>
-            string.Equals(GetInvocationName(candidate), WithImageTagMethodName, StringComparison.Ordinal));
-        var hasImageSha256 = chain.Any(static candidate =>
-            string.Equals(GetInvocationName(candidate), WithImageSha256MethodName, StringComparison.Ordinal));
-
-        if (hasImageTag && hasImageSha256)
-        {
-            return;
-        }
-
-        context.ReportDiagnostic(
-            Diagnostic.Create(
-                AspireImageTagAndDigestRule,
-                invocation.GetLocation(),
-                methodName));
-    }
-
     private static void AnalyzeCatchFilter(SyntaxNodeAnalysisContext context)
     {
         if (context.Node is not CatchFilterClauseSyntax filter
@@ -385,46 +327,6 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             DelegateDeclarationSyntax @delegate => @delegate.Identifier.ValueText,
             _ => "type"
         };
-    }
-
-    private static bool IsImagePinMethod(string? methodName)
-    {
-        return string.Equals(methodName, WithImageTagMethodName, StringComparison.Ordinal)
-            || string.Equals(methodName, WithImageSha256MethodName, StringComparison.Ordinal);
-    }
-
-    private static bool HasSha256Prefix(InvocationExpressionSyntax invocation)
-    {
-        return invocation.ArgumentList.Arguments.FirstOrDefault()?.Expression is LiteralExpressionSyntax literal
-            && literal.IsKind(SyntaxKind.StringLiteralExpression)
-            && literal.Token.ValueText.StartsWith(Sha256Prefix, StringComparison.Ordinal);
-    }
-
-    private static InvocationExpressionSyntax GetOutermostInvocation(InvocationExpressionSyntax invocation)
-    {
-        var current = invocation;
-        while (current.Parent is MemberAccessExpressionSyntax memberAccess
-            && ReferenceEquals(memberAccess.Expression, current)
-            && memberAccess.Parent is InvocationExpressionSyntax parentInvocation)
-        {
-            current = parentInvocation;
-        }
-
-        return current;
-    }
-
-    private static IEnumerable<InvocationExpressionSyntax> GetImageInvocationChain(InvocationExpressionSyntax invocation)
-    {
-        if (invocation.Expression is MemberAccessExpressionSyntax memberAccess
-            && memberAccess.Expression is InvocationExpressionSyntax receiverInvocation)
-        {
-            foreach (var candidate in GetImageInvocationChain(receiverInvocation))
-            {
-                yield return candidate;
-            }
-        }
-
-        yield return invocation;
     }
 
     private static string? GetInvocationName(InvocationExpressionSyntax invocation)

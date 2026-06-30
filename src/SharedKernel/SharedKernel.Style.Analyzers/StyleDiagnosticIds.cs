@@ -26,11 +26,6 @@ public static class StyleDiagnosticIds
     public const string MultipleTopLevelTypesPerFile = "SKSTYLE004";
 
     /// <summary>
-    /// Diagnostic emitted when Aspire container image tags and digests are not pinned together.
-    /// </summary>
-    public const string AspireImageTagAndDigest = "SKSTYLE005";
-
-    /// <summary>
     /// Diagnostic emitted when a catch filter suppresses all <see cref="OperationCanceledException" /> values.
     /// </summary>
     public const string BroadOperationCanceledExceptionFilter = "SKSTYLE006";

@@ -21,6 +21,11 @@ This Roslyn component is reserved for focused fixes that pair with the diagnosti
   smallest possible block and document why that bridge is still required.
 - Do not hide broad analyzer or compiler warnings at the project level just to make a code fix build.
 
+## Package boundary
+
+This package owns fixes for `SharedKernel.Testing.Analyzers` diagnostics only. Keep fixes local,
+deterministic, and safe for test source. Do not add production or optional-technology fixes here.
+
 ## See Also
 
 - [SharedKernel.Testing.Analyzers](../SharedKernel.Testing.Analyzers/README.md)

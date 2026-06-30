@@ -139,6 +139,12 @@ implementation and package documentation instead of adding speculative analyzer 
 - `Microsoft.CodeAnalysis.Analyzers`
 - `Microsoft.CodeAnalysis.CSharp`
 
+## Package boundary
+
+This package owns mediator contract and generated-dispatch diagnostics. Keep rules tied to
+`SharedKernel.Mediator` APIs and source-generator behavior. Do not duplicate repository-wide style
+rules or test-only rules here.
+
 ## See Also
 
 - [SharedKernel.Mediator.CodeFixes](../SharedKernel.Mediator.CodeFixes/README.md)

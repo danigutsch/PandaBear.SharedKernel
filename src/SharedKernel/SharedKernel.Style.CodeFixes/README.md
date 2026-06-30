@@ -13,9 +13,6 @@ This Roslyn component provides focused, safe code fixes for the diagnostics in
 - `SKSTYLE002` can rename a `CancellationToken` parameter and its references to `ct`
   when the rename does not conflict with an existing `ct` parameter or a `ct`
   declaration in the containing executable scope.
-- `SKSTYLE005` can add or replace image pin calls with uncompilable placeholders so the developer must
-  fill in a verified tag or bare SHA-256 digest before the code builds.
-
 Fix All is limited to `SKSTYLE001`.
 
 ## Suppression policy
@@ -24,6 +21,12 @@ Fix All is limited to `SKSTYLE001`.
 - If a Roslyn package/version gap forces an obsolete API bridge, keep the suppression scoped to the
   smallest possible block and document why that bridge is still required.
 - Do not hide broad analyzer or compiler warnings at the project level just to make a code fix build.
+
+## Package boundary
+
+This package owns fixes for `SharedKernel.Style.Analyzers` diagnostics only. It should not become a
+catch-all fix package for testing, mediator, or optional-technology diagnostics. Add a fix here only
+when the matching style diagnostic has a local, deterministic, safe remediation.
 
 ## See Also
 
