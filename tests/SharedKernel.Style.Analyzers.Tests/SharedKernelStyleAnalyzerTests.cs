@@ -664,4 +664,262 @@ public sealed class SharedKernelStyleAnalyzerTests
         Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.AspireImageTagAndDigest);
     }
 
+    [Fact]
+    public async Task Broad_operation_cancelled_exception_filter_reports_skstyle006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle(CancellationToken ct)
+                {
+                    try
+                    {
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException)
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+    }
+
+    [Fact]
+    public async Task Negated_operation_cancelled_exception_filter_reports_skstyle006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle(CancellationToken ct)
+                {
+                    try
+                    {
+                    }
+                    catch (Exception ex) when (!(ex is System.OperationCanceledException))
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+    }
+
+    [Fact]
+    public async Task Operation_cancelled_exception_filter_with_token_check_does_not_report_skstyle006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle(CancellationToken ct)
+                {
+                    try
+                    {
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException || !ct.IsCancellationRequested)
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+    }
+
+    [Fact]
+    public async Task Operation_cancelled_exception_filter_with_different_token_check_reports_skstyle006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle(CancellationToken ct, CancellationToken otherToken)
+                {
+                    try
+                    {
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException || !otherToken.IsCancellationRequested)
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+    }
+
+    [Fact]
+    public async Task Operation_cancelled_exception_filter_with_positive_token_check_reports_skstyle006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle(CancellationToken ct)
+                {
+                    try
+                    {
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException || ct.IsCancellationRequested)
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+    }
+
+    [Fact]
+    public async Task Operation_cancelled_exception_filter_inside_local_function_reports_skstyle006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle()
+                {
+                    void Run(CancellationToken ct)
+                    {
+                        try
+                        {
+                        }
+                        catch (Exception ex) when (ex is not OperationCanceledException)
+                        {
+                        }
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+    }
+
+    [Fact]
+    public async Task Operation_cancelled_exception_filter_inside_lambda_reports_skstyle006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle()
+                {
+                    Action<CancellationToken> run = ct =>
+                    {
+                        try
+                        {
+                        }
+                        catch (Exception ex) when (ex is not OperationCanceledException)
+                        {
+                        }
+                    };
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+    }
+
+    [Fact]
+    public async Task Operation_cancelled_exception_filter_with_helper_does_not_report_skstyle006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle(CancellationToken ct)
+                {
+                    try
+                    {
+                    }
+                    catch (Exception ex) when (ex.ShouldHandleAsFailure(ct))
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+    }
+
+    [Fact]
+    public async Task Broad_operation_cancelled_exception_filter_without_ct_reports_skstyle006()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Consumer
+            {
+                public void Handle(CancellationToken cancellationToken)
+                {
+                    try
+                    {
+                    }
+                    catch (Exception ex) when (ex is not OperationCanceledException)
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+    }
+
 }

@@ -16,6 +16,8 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     private const string CancellationTokenParameterName = "ct";
     private const string WithImageTagMethodName = "WithImageTag";
     private const string WithImageSha256MethodName = "WithImageSHA256";
+    private const string OperationCanceledExceptionTypeName = "OperationCanceledException";
+    private const string ShouldHandleAsFailureMethodName = "ShouldHandleAsFailure";
     private const string Sha256Prefix = "sha256:";
     private static readonly DiagnosticDescriptor AsyncSuffixRule = new(
         StyleDiagnosticIds.AsyncSuffix,
@@ -57,6 +59,14 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository Aspire resources must pin both a human-readable image tag and a verified SHA-256 digest. Do not commit placeholder digests or include the sha256: prefix in WithImageSHA256.");
+    private static readonly DiagnosticDescriptor BroadOperationCanceledExceptionFilterRule = new(
+        StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
+        title: "Catch filters should preserve unexpected OperationCanceledException telemetry",
+        messageFormat: "Catch filter for '{0}' should use ShouldHandleAsFailure(ct) so only cooperative cancellation is excluded",
+        category: "Style",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Catch filters must not exclude every OperationCanceledException from error handling; only cancellation tied to the operation token is cooperative.");
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
@@ -64,7 +74,8 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             CancellationTokenParameterNameRule,
             CancellationTokenDefaultValueRule,
             MultipleTopLevelTypesPerFileRule,
-            AspireImageTagAndDigestRule);
+            AspireImageTagAndDigestRule,
+            BroadOperationCanceledExceptionFilterRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -100,6 +111,10 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         context.RegisterSyntaxNodeAction(
             AnalyzeAspireImageInvocation,
             SyntaxKind.InvocationExpression);
+
+        context.RegisterSyntaxNodeAction(
+            AnalyzeCatchFilter,
+            SyntaxKind.CatchFilterClause);
 
         if (cancellationTokenType is null)
         {
@@ -268,6 +283,50 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                 AspireImageTagAndDigestRule,
                 invocation.GetLocation(),
                 methodName));
+    }
+
+    private static void AnalyzeCatchFilter(SyntaxNodeAnalysisContext context)
+    {
+        if (context.Node is not CatchFilterClauseSyntax filter
+            || filter.Parent is not CatchClauseSyntax { Declaration.Identifier.ValueText: { Length: > 0 } exceptionName })
+        {
+            return;
+        }
+
+        if (ContainsShouldHandleAsFailure(filter.FilterExpression)
+            || ContainsCooperativeCancellationGuard(filter.FilterExpression)
+            || !ContainsBroadOperationCanceledExceptionExclusion(filter.FilterExpression))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            BroadOperationCanceledExceptionFilterRule,
+            filter.FilterExpression.GetLocation(),
+            exceptionName));
+    }
+
+    private static bool ContainsShouldHandleAsFailure(SyntaxNode node)
+    {
+        return node.DescendantNodesAndSelf().OfType<InvocationExpressionSyntax>().Any(static invocation =>
+            string.Equals(GetInvocationName(invocation), ShouldHandleAsFailureMethodName, StringComparison.Ordinal));
+    }
+
+    private static bool ContainsCooperativeCancellationGuard(SyntaxNode node)
+    {
+        return node.DescendantNodesAndSelf().OfType<PrefixUnaryExpressionSyntax>().Any(static prefixUnary =>
+            prefixUnary.IsKind(SyntaxKind.LogicalNotExpression)
+            && prefixUnary.Operand is MemberAccessExpressionSyntax memberAccess
+            && memberAccess.Expression is IdentifierNameSyntax { Identifier.ValueText: "ct" }
+            && string.Equals(memberAccess.Name.Identifier.ValueText, nameof(CancellationToken.IsCancellationRequested), StringComparison.Ordinal));
+    }
+
+    private static bool ContainsBroadOperationCanceledExceptionExclusion(SyntaxNode node)
+    {
+        var expressionText = node.ToString();
+        return expressionText.Contains(OperationCanceledExceptionTypeName, StringComparison.Ordinal)
+            && (expressionText.Contains("is not", StringComparison.Ordinal)
+                || expressionText.Contains("!", StringComparison.Ordinal));
     }
 
     private static IEnumerable<MemberDeclarationSyntax> GetTopLevelTypes(CompilationUnitSyntax compilationUnit)

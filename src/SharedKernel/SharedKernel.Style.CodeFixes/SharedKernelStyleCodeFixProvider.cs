@@ -17,7 +17,8 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             StyleDiagnosticIds.AsyncSuffix,
             StyleDiagnosticIds.CancellationTokenParameterName,
             StyleDiagnosticIds.CancellationTokenDefaultValue,
-            StyleDiagnosticIds.AspireImageTagAndDigest
+            StyleDiagnosticIds.AspireImageTagAndDigest,
+            StyleDiagnosticIds.BroadOperationCanceledExceptionFilter
         ];
 
     /// <inheritdoc />
@@ -49,6 +50,11 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             if (diagnostic.Id == StyleDiagnosticIds.AspireImageTagAndDigest)
             {
                 await AddAspireImagePinPlaceholderCodeFix.Register(context, diagnostic).ConfigureAwait(false);
+            }
+
+            if (diagnostic.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter)
+            {
+                await UseShouldHandleAsFailureCodeFix.Register(context, diagnostic).ConfigureAwait(false);
             }
         }
     }
