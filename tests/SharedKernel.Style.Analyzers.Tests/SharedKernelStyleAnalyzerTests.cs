@@ -760,4 +760,175 @@ public sealed class SharedKernelStyleAnalyzerTests
         Assert.Contains(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
     }
 
+    [Fact]
+    public async Task Direct_logger_extension_call_reports_skstyle007()
+    {
+        // Arrange
+        const string source = """
+            namespace Microsoft.Extensions.Logging
+            {
+                public interface ILogger
+                {
+                }
+
+                public static class LoggerExtensions
+                {
+                    public static void LogInformation(this ILogger logger, string message)
+                    {
+                    }
+                }
+            }
+
+            namespace Demo
+            {
+                using Microsoft.Extensions.Logging;
+
+                public sealed class Consumer(Microsoft.Extensions.Logging.ILogger logger)
+                {
+                    public void Handle()
+                    {
+                        logger.LogInformation("Handled item");
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(
+            diagnostics,
+            static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
+        Assert.Contains(
+            "LogInformation",
+            diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture),
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Direct_logger_interface_call_reports_skstyle007()
+    {
+        // Arrange
+        const string source = """
+            namespace Microsoft.Extensions.Logging
+            {
+                public enum LogLevel
+                {
+                    Information
+                }
+
+                public readonly struct EventId
+                {
+                }
+
+                public interface ILogger
+                {
+                    void Log<TState>(
+                        LogLevel logLevel,
+                        EventId eventId,
+                        TState state,
+                        Exception? exception,
+                        Func<TState, Exception?, string> formatter);
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed class Consumer(Microsoft.Extensions.Logging.ILogger logger)
+                {
+                    public void Handle()
+                    {
+                        logger.Log(
+                            Microsoft.Extensions.Logging.LogLevel.Information,
+                            default,
+                            "Handled item",
+                            null,
+                            static (state, _) => state);
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(
+            diagnostics,
+            static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
+        Assert.Contains(
+            "Log",
+            diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture),
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Source_generated_logger_method_call_does_not_report_skstyle007()
+    {
+        // Arrange
+        const string source = """
+            namespace Microsoft.Extensions.Logging
+            {
+                public interface ILogger
+                {
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed class Consumer(Microsoft.Extensions.Logging.ILogger logger)
+                {
+                    public void Handle()
+                    {
+                        logger.ItemHandled();
+                    }
+                }
+
+                public static class ConsumerLog
+                {
+                    public static void ItemHandled(this Microsoft.Extensions.Logging.ILogger logger)
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
+    }
+
+    [Fact]
+    public async Task Non_logger_method_named_like_logging_does_not_report_skstyle007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AuditSink
+            {
+                public void LogInformation(string message)
+                {
+                }
+            }
+
+            public sealed class Consumer(AuditSink sink)
+            {
+                public void Handle()
+                {
+                    sink.LogInformation("Handled item");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
+    }
+
 }

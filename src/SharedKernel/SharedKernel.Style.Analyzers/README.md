@@ -15,6 +15,8 @@ the default .NET analyzer set.
 | `SKSTYLE002` | Warning | `CancellationToken` parameters should use the canonical name `ct`. |
 | `SKSTYLE003` | Warning | `CancellationToken` parameters should not declare default values. |
 | `SKSTYLE004` | Warning | Source files should not declare more than one top-level type unless they fall under a documented rollout exception. |
+| `SKSTYLE006` | Warning | Catch filters should not suppress every `OperationCanceledException` without checking the operation token. |
+| `SKSTYLE007` | Warning | Production logging should use source-generated `LoggerMessage` methods instead of direct `ILogger.Log*` calls. |
 
 ## Configuration
 
@@ -25,6 +27,8 @@ dotnet_diagnostic.SKSTYLE001.severity = suggestion
 dotnet_diagnostic.SKSTYLE002.severity = suggestion
 dotnet_diagnostic.SKSTYLE003.severity = suggestion
 dotnet_diagnostic.SKSTYLE004.severity = suggestion
+dotnet_diagnostic.SKSTYLE006.severity = suggestion
+dotnet_diagnostic.SKSTYLE007.severity = suggestion
 sharedkernel_style_allow_async_suffix_overrides = true
 sharedkernel_style_allow_async_suffix_interface_implementations = true
 ```
