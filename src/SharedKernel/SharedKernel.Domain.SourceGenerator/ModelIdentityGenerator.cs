@@ -56,13 +56,37 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
+    private static readonly DiagnosticDescriptor UnsupportedNestedType = new(
+        "SKMDL006",
+        "Identity generation does not support nested models",
+        "Identity generation requested for '{0}', but nested types are not supported",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor UnsupportedIdShape = new(
+        "SKMDL007",
+        "Identity generation requires a stable Id property",
+        "Identity generation requested for '{0}', but Id must be an instance property with no setter or a private setter/init-only setter",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor UnsupportedDeclaration = new(
+        "SKMDL008",
+        "Identity generation supports class declarations only",
+        "Identity generation requested for '{0}', but only class declarations are supported",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var models = context.SyntaxProvider
             .ForAttributeWithMetadataName(
                 AttributeName,
-                static (node, _) => node is ClassDeclarationSyntax,
+                static (node, _) => node is TypeDeclarationSyntax,
                 static (attributeContext, cancellationToken) => BuildModel(attributeContext, cancellationToken))
             .Where(static model => model.TypeName is not null || model.Diagnostic is not null)
             .Collect()
@@ -72,6 +96,8 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
             models,
             static (productionContext, models) =>
             {
+                var generatedHintNames = new HashSet<string>(StringComparer.Ordinal);
+
                 foreach (var model in models)
                 {
                     if (model.Diagnostic is not null)
@@ -80,20 +106,25 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
                         continue;
                     }
 
+                    if (!generatedHintNames.Add(model.HintName!))
+                    {
+                        continue;
+                    }
+
                     productionContext.AddSource(
-                        $"{model.TypeName}.ModelSupport.g.cs",
+                        model.HintName!,
                         SourceText.From(EmitModelSupport(model), Encoding.UTF8));
                 }
             });
     }
 
-    private static (string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, Diagnostic? Diagnostic) BuildModel(
+    private static (string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic) BuildModel(
         GeneratorAttributeSyntaxContext context,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var classDeclaration = (ClassDeclarationSyntax)context.TargetNode;
+        var typeDeclaration = (TypeDeclarationSyntax)context.TargetNode;
         var type = (INamedTypeSymbol)context.TargetSymbol;
 
         if (!RequestsIdentity(context.Attributes))
@@ -101,8 +132,18 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
             return default;
         }
 
-        var location = classDeclaration.Identifier.GetLocation();
-        if (!classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+        var location = typeDeclaration.Identifier.GetLocation();
+        if (typeDeclaration is not ClassDeclarationSyntax)
+        {
+            return DiagnosticOnly(Diagnostic.Create(UnsupportedDeclaration, location, type.Name));
+        }
+
+        if (type.ContainingType is not null)
+        {
+            return DiagnosticOnly(Diagnostic.Create(UnsupportedNestedType, location, type.Name));
+        }
+
+        if (!typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
         {
             return DiagnosticOnly(Diagnostic.Create(MissingPartial, location, type.Name));
         }
@@ -125,6 +166,11 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
             return DiagnosticOnly(Diagnostic.Create(MissingId, location, type.Name));
         }
 
+        if (!IsSupportedIdShape(idProperty))
+        {
+            return DiagnosticOnly(Diagnostic.Create(UnsupportedIdShape, location, type.Name));
+        }
+
         var idType = identifiedInterface.TypeArguments[0];
         if (!SymbolEqualityComparer.Default.Equals(idProperty.Type, idType))
         {
@@ -141,12 +187,13 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
             type.Name,
             GetAccessibility(type.DeclaredAccessibility),
             idType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            GetHintName(type),
             null);
     }
 
-    private static (string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, Diagnostic? Diagnostic) DiagnosticOnly(Diagnostic diagnostic)
+    private static (string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic) DiagnosticOnly(Diagnostic diagnostic)
     {
-        return (null, null, null, null, diagnostic);
+        return (null, null, null, null, null, diagnostic);
     }
 
     private static bool RequestsIdentity(ImmutableArray<AttributeData> attributes)
@@ -156,7 +203,33 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
             argument.Value.Value is true));
     }
 
-    private static string EmitModelSupport((string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, Diagnostic? Diagnostic) model)
+    private static bool IsSupportedIdShape(IPropertySymbol idProperty)
+    {
+        if (idProperty.IsStatic)
+        {
+            return false;
+        }
+
+        return idProperty.SetMethod is null || idProperty.SetMethod.DeclaredAccessibility == Accessibility.Private;
+    }
+
+    private static string GetHintName(INamedTypeSymbol type)
+    {
+        var metadataName = type.ContainingNamespace.IsGlobalNamespace
+            ? type.Name
+            : $"{type.ContainingNamespace}.{type.Name}";
+        var builder = new StringBuilder(metadataName.Length + ".ModelSupport.g.cs".Length);
+
+        foreach (var character in metadataName)
+        {
+            builder.Append(char.IsLetterOrDigit(character) ? character : '.');
+        }
+
+        builder.Append(".ModelSupport.g.cs");
+        return builder.ToString();
+    }
+
+    private static string EmitModelSupport((string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic) model)
     {
         var builder = new StringBuilder("""
             // <auto-generated />
