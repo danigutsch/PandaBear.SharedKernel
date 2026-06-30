@@ -7,9 +7,9 @@ Core result primitives for shared-kernel workflows.
 This project is the package-style home for shared result-oriented primitives that should not remain
 under an app-specific project boundary.
 
-Issue `#75` establishes the core project only.
+The first slice established the core project only.
 
-Follow-up issues in the same epic cover:
+Follow-up slices cover:
 
 - moving the existing `Result` and `Option` primitives into this package
 - improving the structured error model
@@ -53,13 +53,12 @@ The intended long-term scope for this package is:
 - shared result error/status types
 - small composition helpers appropriate to the repository's current patterns
 
-## Related issues
+## Related work
 
-- `#74` Epic: introduce SharedKernel.Results
-- `#75` Create SharedKernel.Results core project
-- `#76` Move Result and Option primitives to SharedKernel.Results
-- `#77` Improve SharedKernel.Results error model for structured failures
-- `#78` Add composition API to SharedKernel.Results
-- `#79` Update consuming projects and architecture tests for SharedKernel.Results
-- `#80` Add SharedKernel.Results sample project
-- `#81` Add SharedKernel.Results benchmarks
+- introduce SharedKernel.Results
+- create the SharedKernel.Results core project
+- move Result and Option primitives to SharedKernel.Results
+- improve the SharedKernel.Results error model for structured failures
+- add composition APIs to SharedKernel.Results
+- update consuming projects and architecture tests for SharedKernel.Results
+- add SharedKernel.Results samples and benchmarks
