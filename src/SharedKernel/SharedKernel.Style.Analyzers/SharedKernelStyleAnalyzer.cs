@@ -314,13 +314,10 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         InvocationExpressionSyntax invocation,
         string invocationName)
     {
-        if (DirectLoggerExtensionMethodNames.Contains(invocationName))
-        {
-            return IsLoggerExtensionsCall(context, invocation);
-        }
-
-        return string.Equals(invocationName, "Log", StringComparison.Ordinal)
-            && IsLoggerInterfaceCall(context, invocation);
+        return DirectLoggerExtensionMethodNames.Contains(invocationName)
+            ? IsLoggerExtensionsCall(context, invocation)
+            : string.Equals(invocationName, "Log", StringComparison.Ordinal)
+                && IsLoggerInterfaceCall(context, invocation);
     }
 
     private static bool IsLoggerExtensionsCall(SyntaxNodeAnalysisContext context, InvocationExpressionSyntax invocation)
