@@ -6,8 +6,7 @@ Transition package during the `SharedKernel.Results` extraction.
 
 `SharedKernel.Functional` previously owned the repository's `Result` and `Option` primitives.
 
-Those primitives now live in `SharedKernel.Results` as part of issues `#76` and `#79` under epic
-`#74`.
+Those primitives now live in `SharedKernel.Results` as part of the shared results extraction.
 
 ## Current state
 
