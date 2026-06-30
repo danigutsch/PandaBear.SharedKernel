@@ -30,4 +30,9 @@ public static class StyleDiagnosticIds
     /// </summary>
     public const string BroadOperationCanceledExceptionFilter = "SKSTYLE006";
 
+    /// <summary>
+    /// Diagnostic emitted when production code uses direct logger calls instead of source-generated logging methods.
+    /// </summary>
+    public const string NonSourceGeneratedLogging = "SKSTYLE007";
+
 }

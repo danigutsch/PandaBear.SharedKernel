@@ -10,3 +10,4 @@ const SharedKernel.Style.Analyzers.StyleDiagnosticIds.BroadOperationCanceledExce
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue = "SKSTYLE003" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName = "SKSTYLE002" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.MultipleTopLevelTypesPerFile = "SKSTYLE004" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.NonSourceGeneratedLogging = "SKSTYLE007" -> string!

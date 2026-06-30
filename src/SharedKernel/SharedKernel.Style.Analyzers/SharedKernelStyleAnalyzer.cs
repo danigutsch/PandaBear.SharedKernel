@@ -16,6 +16,16 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     private const string CancellationTokenParameterName = "ct";
     private const string OperationCanceledExceptionTypeName = "OperationCanceledException";
     private const string ShouldHandleAsFailureMethodName = "ShouldHandleAsFailure";
+    private const string LoggerExtensionsTypeName = "Microsoft.Extensions.Logging.LoggerExtensions";
+    private const string LoggerInterfaceTypeName = "Microsoft.Extensions.Logging.ILogger";
+    private static readonly ImmutableHashSet<string> DirectLoggerExtensionMethodNames = ImmutableHashSet.Create(
+        StringComparer.Ordinal,
+        "LogTrace",
+        "LogDebug",
+        "LogInformation",
+        "LogWarning",
+        "LogError",
+        "LogCritical");
     private static readonly DiagnosticDescriptor AsyncSuffixRule = new(
         StyleDiagnosticIds.AsyncSuffix,
         title: "Method name should not end with Async",
@@ -56,6 +66,14 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Catch filters must not exclude every OperationCanceledException from error handling; only cancellation tied to the operation token is cooperative.");
+    private static readonly DiagnosticDescriptor NonSourceGeneratedLoggingRule = new(
+        StyleDiagnosticIds.NonSourceGeneratedLogging,
+        title: "Production logging should use source-generated LoggerMessage methods",
+        messageFormat: "Logger call '{0}' should be replaced with a source-generated LoggerMessage method or documented exception",
+        category: "Style",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository observability rules require stable source-generated logging contracts for production logging.");
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
@@ -63,7 +81,8 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             CancellationTokenParameterNameRule,
             CancellationTokenDefaultValueRule,
             MultipleTopLevelTypesPerFileRule,
-            BroadOperationCanceledExceptionFilterRule);
+            BroadOperationCanceledExceptionFilterRule,
+            NonSourceGeneratedLoggingRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -99,6 +118,10 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         context.RegisterSyntaxNodeAction(
             AnalyzeCatchFilter,
             SyntaxKind.CatchFilterClause);
+
+        context.RegisterSyntaxNodeAction(
+            AnalyzeLoggerInvocation,
+            SyntaxKind.InvocationExpression);
 
         if (cancellationTokenType is null)
         {
@@ -269,6 +292,44 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         return expressionText.Contains(OperationCanceledExceptionTypeName, StringComparison.Ordinal)
             && (expressionText.Contains("is not", StringComparison.Ordinal)
                 || expressionText.Contains("!", StringComparison.Ordinal));
+    }
+
+    private static void AnalyzeLoggerInvocation(SyntaxNodeAnalysisContext context)
+    {
+        if (context.Node is not InvocationExpressionSyntax invocation
+            || GetInvocationName(invocation) is not { Length: > 0 } invocationName
+            || !IsDirectLoggerCall(context, invocation, invocationName))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            NonSourceGeneratedLoggingRule,
+            invocation.GetLocation(),
+            invocationName));
+    }
+
+    private static bool IsDirectLoggerCall(
+        SyntaxNodeAnalysisContext context,
+        InvocationExpressionSyntax invocation,
+        string invocationName)
+    {
+        return DirectLoggerExtensionMethodNames.Contains(invocationName)
+            ? IsLoggerExtensionsCall(context, invocation)
+            : string.Equals(invocationName, "Log", StringComparison.Ordinal)
+                && IsLoggerInterfaceCall(context, invocation);
+    }
+
+    private static bool IsLoggerExtensionsCall(SyntaxNodeAnalysisContext context, InvocationExpressionSyntax invocation)
+    {
+        return context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol is IMethodSymbol method
+            && string.Equals(method.ContainingType.ToDisplayString(), LoggerExtensionsTypeName, StringComparison.Ordinal);
+    }
+
+    private static bool IsLoggerInterfaceCall(SyntaxNodeAnalysisContext context, InvocationExpressionSyntax invocation)
+    {
+        return context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol is IMethodSymbol method
+            && string.Equals(method.ContainingType.ToDisplayString(), LoggerInterfaceTypeName, StringComparison.Ordinal);
     }
 
     private static IEnumerable<MemberDeclarationSyntax> GetTopLevelTypes(CompilationUnitSyntax compilationUnit)
