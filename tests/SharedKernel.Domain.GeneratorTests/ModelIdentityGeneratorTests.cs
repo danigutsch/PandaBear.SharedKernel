@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace SharedKernel.Domain.GeneratorTests;
 
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
 public sealed class ModelIdentityGeneratorTests
 {
     [Fact]
@@ -336,5 +336,28 @@ public sealed class ModelIdentityGeneratorTests
 
         // Assert
         Assert.Equal("SKMDL008", diagnostic.Id);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_model_is_generic()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateModelSupport(Identity = true)]
+            public sealed partial class Customer<TId> : IIdentified<TId>
+            {
+                public TId Id { get; private init; } = default!;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnostic = Assert.Single(runResult.Diagnostics);
+
+        // Assert
+        Assert.Equal("SKMDL009", diagnostic.Id);
     }
 }

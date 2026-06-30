@@ -1,7 +1,7 @@
 namespace SharedKernel.Domain.Tests;
 
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.EntityCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.EntityCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class EntityIdentityTests
 {
     [Fact]

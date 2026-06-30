@@ -80,6 +80,14 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
+    private static readonly DiagnosticDescriptor UnsupportedGenericType = new(
+        "SKMDL009",
+        "Identity generation does not support generic models",
+        "Identity generation requested for '{0}', but generic types are not supported",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -143,6 +151,11 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
             return DiagnosticOnly(Diagnostic.Create(UnsupportedNestedType, location, type.Name));
         }
 
+        if (type.TypeParameters.Length > 0)
+        {
+            return DiagnosticOnly(Diagnostic.Create(UnsupportedGenericType, location, type.Name));
+        }
+
         if (!typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
         {
             return DiagnosticOnly(Diagnostic.Create(MissingPartial, location, type.Name));
@@ -172,23 +185,22 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
         }
 
         var idType = identifiedInterface.TypeArguments[0];
-        if (SymbolEqualityComparer.Default.Equals(idProperty.Type, idType))
-        {
-            return (
-                type.ContainingNamespace.IsGlobalNamespace ? null : type.ContainingNamespace.ToDisplayString(),
+        var namespaceName = type.ContainingNamespace.IsGlobalNamespace ? null : type.ContainingNamespace.ToDisplayString();
+
+        return !SymbolEqualityComparer.Default.Equals(idProperty.Type, idType)
+            ? DiagnosticOnly(Diagnostic.Create(
+                MismatchedId,
+                location,
+                type.Name,
+                idProperty.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
+                idType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)))
+            : (
+                namespaceName,
                 type.Name,
                 GetAccessibility(type.DeclaredAccessibility),
                 idType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                 GetHintName(type),
                 null);
-        }
-
-        return DiagnosticOnly(Diagnostic.Create(
-            MismatchedId,
-            location,
-            type.Name,
-            idProperty.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-            idType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
     }
 
     private static (string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic) DiagnosticOnly(Diagnostic diagnostic)

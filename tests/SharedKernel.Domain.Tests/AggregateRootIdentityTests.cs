@@ -1,7 +1,7 @@
 namespace SharedKernel.Domain.Tests;
 
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.AggregateRootCapability)]
-[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.AggregateRootCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class AggregateRootIdentityTests
 {
     [Fact]

@@ -10,3 +10,4 @@ SKMDL005 | SharedKernel.Domain.ModelSupport | Error | Identity generation does n
 SKMDL006 | SharedKernel.Domain.ModelSupport | Error | Identity generation does not support nested models
 SKMDL007 | SharedKernel.Domain.ModelSupport | Error | Identity generation requires a stable Id property
 SKMDL008 | SharedKernel.Domain.ModelSupport | Error | Identity generation supports class declarations only
+SKMDL009 | SharedKernel.Domain.ModelSupport | Error | Identity generation does not support generic models
