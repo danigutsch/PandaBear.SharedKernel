@@ -4,7 +4,7 @@ namespace SharedKernel.Domain;
 /// Base class for domain entities identified by a stable identifier.
 /// </summary>
 /// <typeparam name="TId">The entity identifier type.</typeparam>
-public abstract class Entity<TId>
+public abstract class Entity<TId> : IEntity<TId>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Entity{TId}"/> class.

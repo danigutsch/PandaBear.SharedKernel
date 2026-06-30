@@ -4,7 +4,7 @@ namespace SharedKernel.Domain;
 /// Base class for aggregate roots that record domain events.
 /// </summary>
 /// <typeparam name="TId">The aggregate root identifier type.</typeparam>
-public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot<TId>
 {
     private readonly List<IDomainEvent> domainEvents = [];
 

@@ -11,5 +11,15 @@ SharedKernel.Domain.Entity<TId>.Entity(TId id) -> void
 override SharedKernel.Domain.Entity<TId>.Equals(object? obj) -> bool
 override SharedKernel.Domain.Entity<TId>.GetHashCode() -> int
 SharedKernel.Domain.Entity<TId>.Id.get -> TId
+SharedKernel.Domain.GenerateModelSupportAttribute
+SharedKernel.Domain.GenerateModelSupportAttribute.GenerateModelSupportAttribute() -> void
+SharedKernel.Domain.GenerateModelSupportAttribute.Identity.get -> bool
+SharedKernel.Domain.GenerateModelSupportAttribute.Identity.set -> void
 SharedKernel.Domain.IAggregateRoot
+SharedKernel.Domain.IAggregateRoot<TId>
+SharedKernel.Domain.IAggregateRoot<TId>.ClearDomainEvents() -> void
+SharedKernel.Domain.IAggregateRoot<TId>.GetDomainEvents() -> System.Collections.Generic.IReadOnlyCollection<SharedKernel.Domain.IDomainEvent!>!
 SharedKernel.Domain.IDomainEvent
+SharedKernel.Domain.IEntity<TId>
+SharedKernel.Domain.IIdentified<TId>
+SharedKernel.Domain.IIdentified<TId>.Id.get -> TId

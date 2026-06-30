@@ -144,6 +144,9 @@
       },
       "sharedkernel.domain": {
         "type": "Project"
+      },
+      "sharedkernel.testing": {
+        "type": "Project"
       }
     }
   }
