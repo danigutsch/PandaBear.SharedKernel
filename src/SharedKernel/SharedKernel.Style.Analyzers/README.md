@@ -15,7 +15,6 @@ the default .NET analyzer set.
 | `SKSTYLE002` | Warning | `CancellationToken` parameters should use the canonical name `ct`. |
 | `SKSTYLE003` | Warning | `CancellationToken` parameters should not declare default values. |
 | `SKSTYLE004` | Warning | Source files should not declare more than one top-level type unless they fall under a documented rollout exception. |
-| `SKSTYLE005` | Warning | Aspire container image pins should pair `WithImageTag(...)` with `WithImageSHA256(...)` and use bare verified digests. |
 
 ## Configuration
 
@@ -26,7 +25,6 @@ dotnet_diagnostic.SKSTYLE001.severity = suggestion
 dotnet_diagnostic.SKSTYLE002.severity = suggestion
 dotnet_diagnostic.SKSTYLE003.severity = suggestion
 dotnet_diagnostic.SKSTYLE004.severity = suggestion
-dotnet_diagnostic.SKSTYLE005.severity = suggestion
 sharedkernel_style_allow_async_suffix_overrides = true
 sharedkernel_style_allow_async_suffix_interface_implementations = true
 ```
@@ -38,10 +36,6 @@ They can be raised to warning or error after the existing codebase is cleaned up
 files containing only partial top-level types, and a short list of production files that still carry
 intentional grouped top-level types. Test files are included so extracted helpers move to their own
 named files instead of becoming file-local helper types beside a test class.
-
-`SKSTYLE005` has a code fix that inserts uncompilable placeholders. This keeps the fix discoverable
-without creating a false supply-chain control. Replace the placeholders with verified registry values,
-and pass the bare 64-character value to `WithImageSHA256(...)`.
 
 ## Intentional diagnostic sample
 
@@ -61,7 +55,13 @@ public sealed class TourLoader
 - overrides that must keep an inherited method name such as `ExecuteAsync`
 - interface implementations that must keep an existing contract name such as `DisposeAsync`
 
+## Package boundary
+
+This package owns repository-wide style diagnostics. Keep optional technology rules such as Aspire,
+EF Core, Dapper, Azure SDKs, browser tooling, and test-only rules in narrower capability packages.
+
 ## See Also
 
 - [SharedKernel.Style.CodeFixes](../SharedKernel.Style.CodeFixes/README.md)
+- [SharedKernel.Aspire.Analyzers](../SharedKernel.Aspire.Analyzers/README.md)
 - `docs/CODING_GUIDELINES.md`

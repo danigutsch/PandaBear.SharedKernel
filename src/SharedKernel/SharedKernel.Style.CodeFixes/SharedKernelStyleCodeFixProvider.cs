@@ -17,7 +17,6 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             StyleDiagnosticIds.AsyncSuffix,
             StyleDiagnosticIds.CancellationTokenParameterName,
             StyleDiagnosticIds.CancellationTokenDefaultValue,
-            StyleDiagnosticIds.AspireImageTagAndDigest,
             StyleDiagnosticIds.BroadOperationCanceledExceptionFilter
         ];
 
@@ -45,11 +44,6 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             if (diagnostic.Id == StyleDiagnosticIds.CancellationTokenDefaultValue)
             {
                 await RemoveCancellationTokenDefaultValueCodeFix.Register(context, diagnostic).ConfigureAwait(false);
-            }
-
-            if (diagnostic.Id == StyleDiagnosticIds.AspireImageTagAndDigest)
-            {
-                await AddAspireImagePinPlaceholderCodeFix.Register(context, diagnostic).ConfigureAwait(false);
             }
 
             if (diagnostic.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter)

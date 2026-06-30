@@ -5,10 +5,10 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 
-namespace SharedKernel.Style.CodeFixes;
+namespace SharedKernel.Aspire.CodeFixes;
 
 /// <summary>
-/// Registers placeholder fixes for <c>SKSTYLE005</c> diagnostics.
+/// Registers placeholder fixes for <c>SKASPIRE001</c> diagnostics.
 /// </summary>
 internal static class AddAspireImagePinPlaceholderCodeFix
 {

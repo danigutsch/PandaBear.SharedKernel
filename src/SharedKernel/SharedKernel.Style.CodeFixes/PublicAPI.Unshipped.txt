@@ -5,7 +5,6 @@ override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.FixableDi
 override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
 override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
 SharedKernel.Style.Analyzers.StyleDiagnosticIds
-const SharedKernel.Style.Analyzers.StyleDiagnosticIds.AspireImageTagAndDigest = "SKSTYLE005" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter = "SKSTYLE006" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue = "SKSTYLE003" -> string!

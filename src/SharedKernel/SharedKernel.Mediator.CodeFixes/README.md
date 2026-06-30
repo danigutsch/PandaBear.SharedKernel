@@ -37,8 +37,8 @@ Fix All is intentionally limited to the safe bulk-fix set:
 - `SKMED007`
 - `SKMED011`
 
-Fix All stays out of behavioral or ordering changes, even when a future local code action might
-exist. Those categories remain intentionally manual by default:
+Fix All stays out of behavioral or ordering changes. Those categories remain intentionally manual by
+default:
 
 - exception-to-`Result<T>` conversions, which would change error-shaping semantics and belong with
   later result-integration work
@@ -47,19 +47,19 @@ exist. Those categories remain intentionally manual by default:
   `SKMED023`
 - architecture-rule changes such as `SKMED500`
 
-Unsafe or cross-assembly diagnostics remain intentionally unfixed until a safe local repair exists.
-
-## Planned Scope
-
-- Add or repair missing mediator declarations
-- Correct invalid registration shapes where a safe fix is possible
-- Keep analyzer and code-fix rollout aligned by diagnostic family
+Unsafe or cross-assembly diagnostics are outside this package's current fix set.
 
 ## Dependencies
 
 - `Microsoft.CodeAnalysis.Analyzers`
 - `Microsoft.CodeAnalysis.CSharp`
 - `Microsoft.CodeAnalysis.CSharp.Workspaces`
+
+## Package boundary
+
+This package owns fixes for mediator diagnostics and closely related compiler diagnostics produced by
+mediator usage. Keep fixes local, deterministic, and safe. Do not add repository-wide style fixes,
+test-only fixes, or optional-technology fixes here.
 
 ## See Also
 

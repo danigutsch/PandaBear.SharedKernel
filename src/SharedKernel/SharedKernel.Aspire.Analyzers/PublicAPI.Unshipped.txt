@@ -1,0 +1,7 @@
+#nullable enable
+SharedKernel.Aspire.Analyzers.AspireDiagnosticIds
+const SharedKernel.Aspire.Analyzers.AspireDiagnosticIds.ImageTagAndDigest = "SKASPIRE001" -> string!
+SharedKernel.Aspire.Analyzers.SharedKernelAspireAnalyzer
+SharedKernel.Aspire.Analyzers.SharedKernelAspireAnalyzer.SharedKernelAspireAnalyzer() -> void
+override SharedKernel.Aspire.Analyzers.SharedKernelAspireAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void
+override SharedKernel.Aspire.Analyzers.SharedKernelAspireAnalyzer.SupportedDiagnostics.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor!>

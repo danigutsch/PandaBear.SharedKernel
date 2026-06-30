@@ -1,0 +1,8 @@
+#nullable enable
+SharedKernel.Aspire.CodeFixes.SharedKernelAspireCodeFixProvider
+SharedKernel.Aspire.CodeFixes.SharedKernelAspireCodeFixProvider.SharedKernelAspireCodeFixProvider() -> void
+override SharedKernel.Aspire.CodeFixes.SharedKernelAspireCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override SharedKernel.Aspire.CodeFixes.SharedKernelAspireCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider?
+override SharedKernel.Aspire.CodeFixes.SharedKernelAspireCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+const SharedKernel.Aspire.Analyzers.AspireDiagnosticIds.ImageTagAndDigest = "SKASPIRE001" -> string!
+SharedKernel.Aspire.Analyzers.AspireDiagnosticIds

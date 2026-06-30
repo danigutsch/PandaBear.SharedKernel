@@ -40,6 +40,12 @@ underscore names like `Creates_a_tour_when_the_request_is_valid` while allowing 
 `NavMenu`, `NavLink`, and `DataAnnotationsValidator`. Set it to `false` only for temporary
 migration windows.
 
+## Package boundary
+
+This package owns test-only diagnostics. Do not move `SKTEST*` rules into production analyzer
+packages, and do not add production-source conventions here. Consumers that do not build test
+projects should not need this package.
+
 ## See Also
 
 - [SharedKernel.Testing.CodeFixes](../SharedKernel.Testing.CodeFixes/README.md)
