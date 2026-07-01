@@ -100,8 +100,8 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
 
         var constantValue = context.SemanticModel.GetConstantValue(expression, context.CancellationToken);
         return constantValue.HasValue
-            && constantValue.Value is string digest
-            && !IsBareSha256Digest(digest);
+            && (constantValue.Value is not string digest
+                || !IsBareSha256Digest(digest));
     }
 
     private static bool IsBareSha256Digest(string digest)

@@ -158,6 +158,31 @@ public sealed class SharedKernelAspireAnalyzerTests
     }
 
     [Fact]
+    public async Task With_image_sha256_null_value_reports_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddRedis("cache")
+                        .WithImageTag("8.8")
+                        .WithImageSHA256(null);
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Single(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
     public async Task With_image_sha256_uppercase_hex_value_does_not_report_ska_spire001()
     {
         // Arrange
