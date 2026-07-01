@@ -56,7 +56,7 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
         }
 
         if (string.Equals(methodName, WithImageSha256MethodName, StringComparison.Ordinal)
-            && HasSha256Prefix(invocation))
+            && HasInvalidDigest(context, invocation))
         {
             context.ReportDiagnostic(
                 Diagnostic.Create(
@@ -90,11 +90,28 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
             || string.Equals(methodName, WithImageSha256MethodName, StringComparison.Ordinal);
     }
 
-    private static bool HasSha256Prefix(InvocationExpressionSyntax invocation)
+    private static bool HasInvalidDigest(SyntaxNodeAnalysisContext context, InvocationExpressionSyntax invocation)
     {
-        return invocation.ArgumentList.Arguments.FirstOrDefault()?.Expression is LiteralExpressionSyntax literal
-            && literal.IsKind(SyntaxKind.StringLiteralExpression)
-            && literal.Token.ValueText.StartsWith(Sha256Prefix, StringComparison.Ordinal);
+        var expression = invocation.ArgumentList.Arguments.FirstOrDefault()?.Expression;
+        if (expression is null)
+        {
+            return false;
+        }
+
+        var constantValue = context.SemanticModel.GetConstantValue(expression, context.CancellationToken);
+        return constantValue.HasValue
+            && (constantValue.Value is not string digest
+                || !IsBareSha256Digest(digest));
+    }
+
+    private static bool IsBareSha256Digest(string digest)
+    {
+        return digest.Length == 64
+            && !digest.StartsWith(Sha256Prefix, StringComparison.Ordinal)
+            && digest.All(static character =>
+                character is (>= '0' and <= '9')
+                    or (>= 'a' and <= 'f')
+                    or (>= 'A' and <= 'F'));
     }
 
     private static InvocationExpressionSyntax GetOutermostInvocation(InvocationExpressionSyntax invocation)
