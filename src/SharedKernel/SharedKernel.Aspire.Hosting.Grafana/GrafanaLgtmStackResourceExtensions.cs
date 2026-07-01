@@ -158,6 +158,9 @@ public static class GrafanaLgtmStackResourceExtensions
         this IDistributedApplicationBuilder builder,
         string configurationRoot)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(configurationRoot);
+
         return builder.AddGrafanaLgtmStack(GrafanaLgtmStackDefaults.ResourceNames, configurationRoot);
     }
 
