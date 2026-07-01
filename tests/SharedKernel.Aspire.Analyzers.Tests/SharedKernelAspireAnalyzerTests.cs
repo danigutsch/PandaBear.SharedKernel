@@ -127,7 +127,8 @@ public sealed class SharedKernelAspireAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Single(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        Assert.Contains("bare 64-character digest", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -154,7 +155,8 @@ public sealed class SharedKernelAspireAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Single(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        Assert.Contains("bare 64-character digest", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -179,7 +181,8 @@ public sealed class SharedKernelAspireAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Single(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        Assert.Contains("bare 64-character digest", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
     }
 
     [Fact]
