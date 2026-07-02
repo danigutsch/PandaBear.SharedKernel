@@ -323,9 +323,9 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [InlineData("Assert.Null(default(object))", "(default(object)).ShouldBeNull()")]
     [InlineData("Assert.Same(new object(), new object())", "(new object()).ShouldBeSameAs(new object())")]
     [InlineData("Assert.Single(new[] { 1 })", "(new[] { 1 }).ShouldHaveSingleItem()")]
-    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: true)", "(\"A\").ShouldBe(\"a\", StringComparer.OrdinalIgnoreCase)")]
-    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: false)", "(\"A\").ShouldBe(\"a\", StringComparer.Ordinal)")]
-    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: compareCase)", "(\"A\").ShouldBe(\"a\", (compareCase) ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal)")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: true)", "(\"A\").ShouldBe(\"a\", System.StringComparer.OrdinalIgnoreCase)")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: false)", "(\"A\").ShouldBe(\"a\", System.StringComparer.Ordinal)")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: compareCase)", "(\"A\").ShouldBe(\"a\", (compareCase) ? System.StringComparer.OrdinalIgnoreCase : System.StringComparer.Ordinal)")]
     public async Task Assertion_wrapper_fix_rewrites_supported_assertions(string assertion, string expectedRewrite)
     {
         // Arrange

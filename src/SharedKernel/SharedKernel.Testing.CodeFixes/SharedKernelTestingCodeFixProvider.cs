@@ -251,7 +251,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
     private static bool TryGetIgnoreCaseComparer(SeparatedSyntaxList<ArgumentSyntax> arguments, out string comparerExpression)
     {
         var ignoreCaseArgument = arguments.FirstOrDefault(IsIgnoreCaseArgument);
-        comparerExpression = "StringComparer.Ordinal";
+        comparerExpression = "System.StringComparer.Ordinal";
         if (ignoreCaseArgument is not { RawKind: not 0 })
         {
             return false;
@@ -259,9 +259,9 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
         comparerExpression = ignoreCaseArgument.Expression switch
         {
-            LiteralExpressionSyntax literalExpression when literalExpression.IsKind(SyntaxKind.TrueLiteralExpression) => "StringComparer.OrdinalIgnoreCase",
-            LiteralExpressionSyntax literalExpression when literalExpression.IsKind(SyntaxKind.FalseLiteralExpression) => "StringComparer.Ordinal",
-            _ => $"({ignoreCaseArgument.Expression}) ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal",
+            LiteralExpressionSyntax literalExpression when literalExpression.IsKind(SyntaxKind.TrueLiteralExpression) => "System.StringComparer.OrdinalIgnoreCase",
+            LiteralExpressionSyntax literalExpression when literalExpression.IsKind(SyntaxKind.FalseLiteralExpression) => "System.StringComparer.Ordinal",
+            _ => $"({ignoreCaseArgument.Expression}) ? System.StringComparer.OrdinalIgnoreCase : System.StringComparer.Ordinal",
         };
         return true;
     }
