@@ -294,7 +294,7 @@ public sealed class MagickImageProcessorTests
 
         // Assert
         var exception = act.ShouldThrow<ArgumentOutOfRangeException>();
-        exception.Message.ShouldContain("quality", StringComparison.Ordinal);
+        exception.Message.ShouldContain("Quality", StringComparison.Ordinal);
     }
 
     [Fact]

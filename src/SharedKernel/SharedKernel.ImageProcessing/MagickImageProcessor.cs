@@ -109,7 +109,8 @@ public static class MagickImageProcessor
 
         if (request.Quality is < 1 or > 100)
         {
-            throw new ArgumentOutOfRangeException(nameof(request), "Image variant quality must be between 1 and 100.");
+            ArgumentOutOfRangeException.ThrowIfLessThan(request.Quality, 1);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(request.Quality, 100);
         }
 
         using var image = source.Clone();
