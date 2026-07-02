@@ -11,7 +11,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
     private const string XunitAssertionWrapperDiagnosticId = TestingDiagnosticIds.XunitAssertionWrapper;
     private const string XunitArrangeActAssertDiagnosticId = TestingDiagnosticIds.XunitArrangeActAssertMarkers;
-    private const string XunitCleanupFinallyDiagnosticId = TestingDiagnosticIds.XunitCleanupInvocationFinally;
+    private const string XunitCleanupFinallyDiagnosticId = TestingDiagnosticIds.XunitTryFinallyCleanup;
 
     [Fact]
     public async Task Direct_xunit_assertion_reports_s_k_t_e_s_t006()
@@ -1282,6 +1282,37 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
+    public async Task Incomplete_three_marker_set_does_not_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    // Act
+                    var value = 42;
+
+                    // Arrange
+                    _ = value;
+
+                    // Arrange
+                    var actual = value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
     public async Task Out_of_order_arrange_act_assert_markers_report_SKTEST007()
     {
         // Arrange
@@ -1338,63 +1369,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Cleanup_invocation_outside_finally_reports_SKTEST008()
-    {
-        // Arrange
-        const string source = """
-            namespace Demo;
-
-            public sealed class TourLoaderTests
-            {
-                [Fact]
-                public void Creates_a_tour_when_the_request_is_valid()
-                {
-                    CleanupDatabase();
-                }
-
-                private static void CleanupDatabase()
-                {
-                }
-            }
-            """;
-
-        // Act
-        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
-
-        // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
-    }
-
-    [Fact]
-    public async Task Alternate_cleanup_casing_outside_finally_reports_SKTEST008()
-    {
-        // Arrange
-        const string source = """
-            namespace Demo;
-
-            public sealed class TourLoaderTests
-            {
-                [Fact]
-                public void Creates_a_tour_when_the_request_is_valid()
-                {
-                    CleanUpDatabase();
-                }
-
-                private static void CleanUpDatabase()
-                {
-                }
-            }
-            """;
-
-        // Act
-        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
-
-        // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
-    }
-
-    [Fact]
-    public async Task Cleanup_invocation_inside_finally_does_not_report_SKTEST008()
+    public async Task Try_finally_inside_fact_method_reports_SKTEST008()
     {
         // Arrange
         const string source = """
@@ -1412,12 +1387,7 @@ public sealed class SharedKernelTestingAnalyzerTests
                     }
                     finally
                     {
-                        CleanupDatabase();
                     }
-                }
-
-                private static void CleanupDatabase()
-                {
                 }
             }
             """;
@@ -1426,11 +1396,42 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
     }
 
     [Fact]
-    public async Task Delete_and_reset_invocations_do_not_report_SKTEST008()
+    public async Task Try_finally_inside_theory_method_reports_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Theory]
+                [InlineData(42)]
+                public void Creates_a_tour_when_the_request_is_valid(int value)
+                {
+                    try
+                    {
+                        _ = value;
+                    }
+                    finally
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Try_without_finally_does_not_report_SKTEST008()
     {
         // Arrange
         const string source = """
@@ -1441,16 +1442,14 @@ public sealed class SharedKernelTestingAnalyzerTests
                 [Fact]
                 public void Creates_a_tour_when_the_request_is_valid()
                 {
-                    DeleteDatabase();
-                    ResetDatabase();
-                }
-
-                private static void DeleteDatabase()
-                {
-                }
-
-                private static void ResetDatabase()
-                {
+                    try
+                    {
+                        var value = 42;
+                        _ = value;
+                    }
+                    catch (System.InvalidOperationException)
+                    {
+                    }
                 }
             }
             """;
@@ -1463,7 +1462,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Cleanup_invocation_outside_xunit_test_method_does_not_report_SKTEST008()
+    public async Task Try_finally_inside_non_test_method_does_not_report_SKTEST008()
     {
         // Arrange
         const string source = """
@@ -1473,11 +1472,44 @@ public sealed class SharedKernelTestingAnalyzerTests
             {
                 public void Execute()
                 {
-                    CleanupDatabase();
+                    try
+                    {
+                        var value = 42;
+                        _ = value;
+                    }
+                    finally
+                    {
+                    }
                 }
+            }
+            """;
 
-                private static void CleanupDatabase()
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Try_finally_inside_xunit_helper_method_does_not_report_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                public void Execute()
                 {
+                    try
+                    {
+                        var value = 42;
+                        _ = value;
+                    }
+                    finally
+                    {
+                    }
                 }
             }
             """;

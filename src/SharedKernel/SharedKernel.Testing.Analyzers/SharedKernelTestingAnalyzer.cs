@@ -122,25 +122,25 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static readonly DiagnosticDescriptor XunitArrangeActAssertMarkersRule = new(
         TestingDiagnosticIds.XunitArrangeActAssertMarkers,
-        title: "Explicit Arrange/Act/Assert markers should be complete and ordered",
-        messageFormat: "xUnit test method '{0}' has incomplete or out-of-order Arrange/Act/Assert markers",
+        title: "Explicit Arrange/Act/Assert markers should stay ordered",
+        messageFormat: "xUnit test method '{0}' has out-of-order Arrange/Act/Assert markers",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules allow tests without Arrange/Act/Assert comments, but explicit markers should appear as Arrange, Act, and Assert in that order when used.");
+        description: "Repository testing rules allow tests without Arrange/Act/Assert comments, but a complete explicit marker set should appear as Arrange, Act, and Assert in that order when used.");
 
-    private static readonly DiagnosticDescriptor XunitCleanupInvocationFinallyRule = new(
-        TestingDiagnosticIds.XunitCleanupInvocationFinally,
-        title: "Explicit test cleanup calls should run from finally blocks",
-        messageFormat: "xUnit test method '{0}' should invoke cleanup method '{1}' from a finally block",
+    private static readonly DiagnosticDescriptor XunitTryFinallyCleanupRule = new(
+        TestingDiagnosticIds.XunitTryFinallyCleanup,
+        title: "xUnit test methods should not use try/finally cleanup blocks",
+        messageFormat: "xUnit test method '{0}' should move try/finally cleanup to a fixture, disposable helper, or dedicated helper type",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules require explicit Cleanup*/CleanUp* calls inside xUnit test methods to run from finally blocks so cleanup still runs after assertion or act failures.");
+        description: "Repository testing rules discourage manual try/finally cleanup inside xUnit test methods because cleanup plumbing can hide behavior and assertions.");
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitCleanupInvocationFinallyRule];
+        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryFinallyCleanupRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -171,6 +171,9 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             compilationContext.RegisterSyntaxNodeAction(
                 AnalyzeInvocationExpression,
                 SyntaxKind.InvocationExpression);
+            compilationContext.RegisterSyntaxNodeAction(
+                AnalyzeTryStatement,
+                SyntaxKind.TryStatement);
         });
     }
 
@@ -182,7 +185,6 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         }
 
         AnalyzeAssertionInvocation(context, invocationExpression);
-        AnalyzeCleanupInvocation(context, invocationExpression);
     }
 
     private static void AnalyzeAssertionInvocation(
@@ -202,14 +204,10 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                 methodSymbol.Name));
     }
 
-    private static void AnalyzeCleanupInvocation(
-        SyntaxNodeAnalysisContext context,
-        InvocationExpressionSyntax invocationExpression)
+    private static void AnalyzeTryStatement(SyntaxNodeAnalysisContext context)
     {
-        if (IsInsideFinallyClause(invocationExpression)
-            || GetInvocationMethodName(invocationExpression) is not string cleanupMethodName
-            || !IsExplicitCleanupMethodName(cleanupMethodName)
-            || invocationExpression.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
+        if (context.Node is not TryStatementSyntax { Finally: not null } tryStatement
+            || tryStatement.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
             || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
             || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
             || !IsXunitTestMethod(methodSymbol))
@@ -219,44 +217,9 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
         context.ReportDiagnostic(
             Diagnostic.Create(
-                XunitCleanupInvocationFinallyRule,
-                invocationExpression.GetLocation(),
-                methodSymbol.Name,
-                cleanupMethodName));
-    }
-
-    private static bool IsInsideFinallyClause(SyntaxNode node)
-    {
-        foreach (var ancestor in node.Ancestors())
-        {
-            if (ancestor is MethodDeclarationSyntax)
-            {
-                return false;
-            }
-
-            if (ancestor is FinallyClauseSyntax)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static string? GetInvocationMethodName(InvocationExpressionSyntax invocationExpression)
-    {
-        return invocationExpression.Expression switch
-        {
-            IdentifierNameSyntax identifierName => identifierName.Identifier.ValueText,
-            MemberAccessExpressionSyntax memberAccess => memberAccess.Name.Identifier.ValueText,
-            _ => null,
-        };
-    }
-
-    private static bool IsExplicitCleanupMethodName(string methodName)
-    {
-        return methodName.StartsWith("Cleanup", StringComparison.Ordinal)
-            || methodName.StartsWith("CleanUp", StringComparison.Ordinal);
+                XunitTryFinallyCleanupRule,
+                tryStatement.TryKeyword.GetLocation(),
+                methodSymbol.Name));
     }
 
     private static void AnalyzePragmaDirective(SyntaxNodeAnalysisContext context)
@@ -358,7 +321,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         IMethodSymbol methodSymbol)
     {
         var markers = GetArrangeActAssertMarkers(methodDeclaration);
-        if (markers.Length != 3 || HasOrderedArrangeActAssertMarkers(markers))
+        if (!HasSingleCompleteArrangeActAssertMarkerSet(markers) || HasOrderedArrangeActAssertMarkers(markers))
         {
             return;
         }
@@ -413,6 +376,14 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         }
 
         return true;
+    }
+
+    private static bool HasSingleCompleteArrangeActAssertMarkerSet(ImmutableArray<string> markers)
+    {
+        return markers.Length == 3
+            && markers.Contains(ArrangeMarker, StringComparer.Ordinal)
+            && markers.Contains(ActMarker, StringComparer.Ordinal)
+            && markers.Contains(AssertMarker, StringComparer.Ordinal);
     }
 
     private static void AnalyzeTestClassHelperMethod(

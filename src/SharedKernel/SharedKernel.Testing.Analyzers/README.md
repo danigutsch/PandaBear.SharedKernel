@@ -18,7 +18,7 @@ This Roslyn component reports diagnostics for rules that only make sense in test
 | `SKTEST005` | Warning | Serial xUnit collection definitions should declare a justification. |
 | `SKTEST006` | Warning | Test code should use repository assertion wrappers instead of direct xUnit assertions. |
 | `SKTEST007` | Warning | Complete explicit Arrange/Act/Assert marker sets in xUnit test methods should stay ordered. |
-| `SKTEST008` | Warning | Explicit `Cleanup*`/`CleanUp*` calls in xUnit test methods should run from `finally` blocks. |
+| `SKTEST008` | Warning | xUnit test methods should not use manual `try`/`finally` cleanup blocks. |
 
 ## Configuration
 
@@ -39,11 +39,10 @@ sharedkernel_testing_strict_test_method_casing = false
 
 `SKTEST007` is intentionally opt-in by syntax: it only checks methods that already contain exact
 single `// Arrange`, `// Act`, and `// Assert` comments. Tests without that exact marker set are not reported.
-Repeated markers are not reported because multi-act tests often need local judgment before cleanup.
+Repeated markers are not reported because multi-act tests often need local judgment before restructuring.
 
-`SKTEST008` is intentionally narrow: it only checks invocation names beginning with `Cleanup` or
-`CleanUp` inside xUnit test methods. It does not infer cleanup semantics from broader names such as
-`Dispose`, `Delete`, or `Reset`.
+`SKTEST008` is intentionally syntax-bound: it only reports `try` statements with `finally` blocks
+inside xUnit test methods. It does not report production code or non-test helper methods.
 
 Keep `SKTEST*` diagnostics at `warning`; repository warning-as-error settings make violations fail
 the build without changing analyzer descriptor severity.
