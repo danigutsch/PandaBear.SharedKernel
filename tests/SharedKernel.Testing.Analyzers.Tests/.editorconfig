@@ -1,0 +1,5 @@
+root = false
+
+[*.cs]
+# Analyzer self-tests intentionally compile direct xUnit Assert samples.
+dotnet_diagnostic.SKTEST006.severity = none

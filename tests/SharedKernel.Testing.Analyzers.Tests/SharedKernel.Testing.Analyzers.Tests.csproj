@@ -3,7 +3,6 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <RootNamespace>SharedKernel.Testing.Analyzers.Tests</RootNamespace>
-        <EnableSharedKernelTestingAnalyzers>false</EnableSharedKernelTestingAnalyzers>
     </PropertyGroup>
 
     <ItemGroup>

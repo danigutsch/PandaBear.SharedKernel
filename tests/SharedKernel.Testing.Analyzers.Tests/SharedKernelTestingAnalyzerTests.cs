@@ -50,7 +50,7 @@ public sealed class SharedKernelTestingAnalyzerTests
                 [Fact]
                 public void Uses_repository_assertion_wrapper()
                 {
-                    TestAssert.True(true);
+                    (true).ShouldBeTrue();
                 }
             }
             """;

@@ -10,6 +10,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
     private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
     private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
+    private const string XunitAssertionWrapperDiagnosticId = TestingDiagnosticIds.XunitAssertionWrapper;
     [Fact]
     public async Task Test_naming_fix_renames_method_and_reference_correctly()
     {
@@ -293,6 +294,147 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         Assert.Contains(XunitSerialJustificationDiagnosticId, provider.FixableDiagnosticIds);
+    }
+
+    [Fact]
+    public void Provider_advertises_assertion_wrapper_diagnostic()
+    {
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        Assert.Contains(XunitAssertionWrapperDiagnosticId, provider.FixableDiagnosticIds);
+    }
+
+    [Theory]
+    [InlineData("Assert.All(new[] { 1 }, value => Assert.True(value > 0))", "(new[] { 1 }).ShouldAllSatisfy(value => Assert.True(value > 0))")]
+    [InlineData("Assert.Contains(new[] { 1 }, value => value > 0)", "(new[] { 1 }).ShouldContain(value => value > 0)")]
+    [InlineData("Assert.Contains(1, new[] { 1 })", "(new[] { 1 }).ShouldContain(1)")]
+    [InlineData("Assert.Contains(\"a\", new[] { \"A\" }, StringComparer.OrdinalIgnoreCase)", "(new[] { \"A\" }).ShouldContain(\"a\", StringComparer.OrdinalIgnoreCase)")]
+    [InlineData("Assert.DoesNotContain(2, new[] { 1 })", "(new[] { 1 }).ShouldNotContain(2)")]
+    [InlineData("Assert.Empty(Array.Empty<int>())", "Array.Empty<int>().ShouldBeEmpty()")]
+    [InlineData("Assert.True(true)", "(true).ShouldBeTrue()")]
+    [InlineData("Assert.True(true, \"message\")", "(true).ShouldBeTrue(\"message\")")]
+    [InlineData("Assert.False(false)", "(false).ShouldBeFalse()")]
+    [InlineData("Assert.False(false, \"message\")", "(false).ShouldBeFalse(\"message\")")]
+    [InlineData("Assert.InRange(2, 1, 3)", "(2).ShouldBeInRange(1, 3)")]
+    [InlineData("Assert.NotEmpty(new[] { 1 })", "(new[] { 1 }).ShouldNotBeEmpty()")]
+    [InlineData("Assert.NotEqual(1, 2)", "(2).ShouldNotBe(1)")]
+    [InlineData("Assert.NotEqual(\"a\", \"b\", StringComparer.Ordinal)", "(\"b\").ShouldNotBe(\"a\", StringComparer.Ordinal)")]
+    [InlineData("Assert.NotNull(new object())", "(new object()).ShouldNotBeNull()")]
+    [InlineData("Assert.Null(default(object))", "(default(object)).ShouldBeNull()")]
+    [InlineData("Assert.Same(new object(), new object())", "(new object()).ShouldBeSameAs(new object())")]
+    [InlineData("Assert.Single(new[] { 1 })", "(new[] { 1 }).ShouldHaveSingleItem()")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: true)", "(\"A\").ShouldBe(\"a\", System.StringComparer.OrdinalIgnoreCase)")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: false)", "(\"A\").ShouldBe(\"a\", System.StringComparer.Ordinal)")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: compareCase)", "(\"A\").ShouldBe(\"a\", (compareCase) ? System.StringComparer.OrdinalIgnoreCase : System.StringComparer.Ordinal)")]
+    [InlineData("Assert.Equal(true, compareCase)", "compareCase.ShouldBe(true)")]
+    public async Task Assertion_wrapper_fix_rewrites_supported_assertions(string assertion, string expectedRewrite)
+    {
+        // Arrange
+        var source = $$"""
+            namespace Demo;
+
+            public sealed class AssertionWrapperTests
+            {
+                public void Execute(bool compareCase)
+                {
+                    {{assertion}};
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, assertion);
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains("using SharedKernel.Testing.Assertions;", updatedText, StringComparison.Ordinal);
+        Assert.Contains(expectedRewrite, updatedText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Assertion_wrapper_fix_is_not_offered_for_unsupported_assertions()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AssertionWrapperTests
+            {
+                public void Execute()
+                {
+                    Assert.Multiple(() => Assert.True(true));
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, "Assert.Multiple");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Assertion_wrapper_fix_is_not_offered_for_positional_equal_ignore_case()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AssertionWrapperTests
+            {
+                public void Execute()
+                {
+                    Assert.Equal("a", "A", true);
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, "Assert.Equal");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
+    public async Task Assertion_wrapper_fix_is_not_offered_for_single_predicate_overload()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AssertionWrapperTests
+            {
+                public void Execute()
+                {
+                    Assert.Single(new[] { 1 }, value => value > 0);
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, "Assert.Single");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
     }
 
     [Fact]
