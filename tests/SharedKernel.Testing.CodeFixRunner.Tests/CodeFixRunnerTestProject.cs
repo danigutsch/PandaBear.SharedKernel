@@ -33,6 +33,29 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    public const string CleanSourceFile = """
+        namespace Sample.Tests;
+
+        public sealed class SampleTests
+        {
+            public void Execute()
+            {
+            }
+        }
+        """;
+
+    public const string UnsupportedAssertSourceFile = """
+        namespace Sample.Tests;
+
+        public sealed class SampleTests
+        {
+            public void Execute()
+            {
+                Xunit.Assert.Multiple(() => { });
+            }
+        }
+        """;
+
     public static string CreateTemporaryProject()
     {
         var projectDirectory = Path.Combine(Path.GetTempPath(), "sk-codefix-runner-" + Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture));

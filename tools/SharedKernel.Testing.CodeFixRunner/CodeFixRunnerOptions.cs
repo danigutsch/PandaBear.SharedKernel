@@ -8,7 +8,7 @@ internal sealed record CodeFixRunnerOptions(string TargetPath, string Diagnostic
 
     public static CodeFixRunnerOptions? Parse(string[] args)
     {
-        if (args.Length == 1)
+        if (args.Length == 1 && !args[0].StartsWith("--", StringComparison.Ordinal))
         {
             return new CodeFixRunnerOptions(
                 Path.GetFullPath(args[0]),
