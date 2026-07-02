@@ -16,6 +16,9 @@ This Roslyn component reports diagnostics for rules that only make sense in test
 | `SKTEST003` | Warning | xUnit test methods should include configured required trait metadata. |
 | `SKTEST004` | Warning | xUnit tests should not hide helper declarations inside test classes or test methods. |
 | `SKTEST005` | Warning | Serial xUnit collection definitions should declare a justification. |
+| `SKTEST006` | Warning | Test code should use repository assertion wrappers instead of direct xUnit assertions. |
+| `SKTEST007` | Warning | Complete explicit Arrange/Act/Assert marker sets in xUnit test methods should stay ordered. |
+| `SKTEST008` | Warning | xUnit test methods should not use manual `try`/`finally` cleanup blocks. |
 
 ## Configuration
 
@@ -27,9 +30,20 @@ dotnet_diagnostic.SKTEST002.severity = warning
 dotnet_diagnostic.SKTEST003.severity = warning
 dotnet_diagnostic.SKTEST004.severity = warning
 dotnet_diagnostic.SKTEST005.severity = warning
+dotnet_diagnostic.SKTEST006.severity = warning
+dotnet_diagnostic.SKTEST007.severity = warning
+dotnet_diagnostic.SKTEST008.severity = warning
 sharedkernel_testing_required_traits = Category=Smoke
 sharedkernel_testing_strict_test_method_casing = false
 ```
+
+`SKTEST007` is intentionally opt-in by syntax: it only checks methods that already contain a single
+complete Arrange/Act/Assert marker set in line comments, with optional whitespace after `//`.
+Tests without that exact marker set are not reported.
+Repeated markers are not reported because multi-act tests often need local judgment before restructuring.
+
+`SKTEST008` is intentionally syntax-bound: it only reports `try` statements with `finally` blocks
+inside xUnit test methods. It does not report production code or non-test helper methods.
 
 Keep `SKTEST*` diagnostics at `warning`; repository warning-as-error settings make violations fail
 the build without changing analyzer descriptor severity.

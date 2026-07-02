@@ -8,3 +8,5 @@ SKTEST003 | Testing | Warning | xUnit test methods should include configured req
 SKTEST004 | Testing | Warning | xUnit tests should keep helper methods, nested helper types, and local helper functions out of test classes and test methods
 SKTEST005 | Testing | Warning | Serial xUnit collection definitions should declare a justification
 SKTEST006 | Testing | Warning | Test code should use repository assertion wrappers instead of direct xUnit assertions
+SKTEST007 | Testing | Warning | Complete explicit Arrange/Act/Assert marker sets in xUnit test methods should stay ordered
+SKTEST008 | Testing | Warning | xUnit test methods should not use manual try/finally cleanup blocks

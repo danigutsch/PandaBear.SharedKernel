@@ -7,27 +7,20 @@ public sealed class ProgramEntryPointTests
     [Fact]
     public async Task Run_writes_fixed_count_and_returns_zero_when_arguments_are_valid()
     {
-        var projectDirectory = CodeFixRunnerTestProject.CreateTemporaryProject();
+        using var projectDirectory = TemporaryProjectDirectory.Create();
 
-        try
-        {
-            var projectPath = Path.Combine(projectDirectory, "Sample.Tests.csproj");
-            var sourcePath = Path.Combine(projectDirectory, "SampleTests.cs");
-            await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.ProjectFile, TestContext.Current.CancellationToken);
-            await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.SourceFile, TestContext.Current.CancellationToken);
-            using var output = new StringWriter(CultureInfo.InvariantCulture);
-            using var error = new StringWriter(CultureInfo.InvariantCulture);
+        var projectPath = Path.Combine(projectDirectory.Path, "Sample.Tests.csproj");
+        var sourcePath = Path.Combine(projectDirectory.Path, "SampleTests.cs");
+        await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.ProjectFile, TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.SourceFile, TestContext.Current.CancellationToken);
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
 
-            var exitCode = await ProgramEntryPoint.Run(["--diagnostic", "SKTEST006", projectPath], output, error);
+        var exitCode = await ProgramEntryPoint.Run(["--diagnostic", "SKTEST006", projectPath], output, error);
 
-            (exitCode).ShouldBe(0);
-            (output.ToString()).ShouldContain("Fixed 1 SKTEST006 diagnostic(s).", StringComparison.Ordinal);
-            (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
-        }
-        finally
-        {
-            Directory.Delete(projectDirectory, recursive: true);
-        }
+        (exitCode).ShouldBe(0);
+        (output.ToString()).ShouldContain("Fixed 1 SKTEST006 diagnostic(s).", StringComparison.Ordinal);
+        (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
     }
 
     [Fact]
