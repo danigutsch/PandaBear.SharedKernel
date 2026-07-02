@@ -3,6 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <RootNamespace>SharedKernel.Testing.Analyzers.Tests</RootNamespace>
+        <!-- Analyzer self-tests intentionally compile direct xUnit Assert samples. -->
         <EnableSharedKernelTestingAnalyzers>false</EnableSharedKernelTestingAnalyzers>
     </PropertyGroup>
 

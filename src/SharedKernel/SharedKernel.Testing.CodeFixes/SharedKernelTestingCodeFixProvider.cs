@@ -23,7 +23,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
-        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitSerialCollectionJustification];
+        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitSerialCollectionJustification, TestingDiagnosticIds.XunitAssertionWrapper];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -59,6 +59,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return;
         }
 
+        if (string.Equals(diagnostic.Id, TestingDiagnosticIds.XunitAssertionWrapper, StringComparison.Ordinal))
+        {
+            RegisterXunitAssertionWrapperFix(context, document, diagnostic, syntaxRoot);
+            return;
+        }
+
         if (syntaxRoot.FindNode(context.Span).FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration)
         {
             return;
@@ -90,6 +96,121 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                 createChangedSolution: ct => RenameSymbolAsync(document.Project.Solution, methodSymbol, targetName, ct),
                 equivalenceKey: $"RenameXunitTestMethod:{targetName}"),
             diagnostic);
+    }
+
+    private static void RegisterXunitAssertionWrapperFix(
+        CodeFixContext context,
+        Document document,
+        Diagnostic diagnostic,
+        SyntaxNode syntaxRoot)
+    {
+        if (syntaxRoot.FindNode(context.Span).FirstAncestorOrSelf<InvocationExpressionSyntax>() is not { Expression: MemberAccessExpressionSyntax memberAccess })
+        {
+            return;
+        }
+
+        if (!CanRewriteXunitAssertion(memberAccess, out var equivalenceKey))
+        {
+            return;
+        }
+
+        context.RegisterCodeFix(
+            CodeAction.Create(
+                title: "Use TestAssert wrapper",
+                createChangedDocument: _ => UseTestAssertWrapper(document, syntaxRoot, memberAccess),
+                equivalenceKey: equivalenceKey),
+            diagnostic);
+    }
+
+    private static bool CanRewriteXunitAssertion(MemberAccessExpressionSyntax memberAccess, out string equivalenceKey)
+    {
+        var name = memberAccess.Name.Identifier.ValueText;
+        equivalenceKey = $"UseTestAssertWrapper:{name}";
+
+        return name is "All"
+            or "Collection"
+            or "Contains"
+            or "DoesNotContain"
+            or "Empty"
+            or "Equal"
+            or "False"
+            or "InRange"
+            or "IsAssignableFrom"
+            or "IsNotAssignableFrom"
+            or "IsNotType"
+            or "IsType"
+            or "NotEmpty"
+            or "NotEqual"
+            or "NotInRange"
+            or "NotNull"
+            or "Null"
+            or "Same"
+            or "Single"
+            or "Throws"
+            or "True";
+    }
+
+    private static Task<Document> UseTestAssertWrapper(
+        Document document,
+        SyntaxNode syntaxRoot,
+        MemberAccessExpressionSyntax memberAccess)
+    {
+        var invocation = memberAccess.FirstAncestorOrSelf<InvocationExpressionSyntax>();
+        var targetName = memberAccess.Name.Identifier.ValueText is "Single"
+            ? "ExactlyOne"
+            : memberAccess.Name.Identifier.ValueText;
+        var testAssert = ParseExpression("global::SharedKernel.Testing.Assertions.TestAssert")
+            .WithTriviaFrom(memberAccess.Expression)
+            .WithAdditionalAnnotations(Formatter.Annotation);
+        var updatedMemberAccess = memberAccess
+            .WithExpression(testAssert)
+            .WithName(IdentifierName(targetName).WithTriviaFrom(memberAccess.Name));
+
+        var updatedRoot = invocation is { ArgumentList.Arguments: var arguments }
+            && string.Equals(targetName, "Equal", StringComparison.Ordinal)
+            && TryGetIgnoreCaseComparer(arguments, out _)
+            ? ReplaceEqualIgnoreCaseInvocation(syntaxRoot, invocation, updatedMemberAccess)
+            : syntaxRoot.ReplaceNode(memberAccess, updatedMemberAccess);
+
+        return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
+    }
+
+    private static SyntaxNode ReplaceEqualIgnoreCaseInvocation(
+        SyntaxNode syntaxRoot,
+        InvocationExpressionSyntax invocation,
+        MemberAccessExpressionSyntax updatedMemberAccess)
+    {
+        _ = TryGetIgnoreCaseComparer(invocation.ArgumentList.Arguments, out var comparerExpression);
+        var comparerArgument = Argument(ParseExpression(comparerExpression));
+        var updatedArguments = SeparatedList(invocation.ArgumentList.Arguments
+            .Where(static argument => !IsIgnoreCaseArgument(argument))
+            .Append(comparerArgument));
+        var updatedInvocation = invocation
+            .WithExpression(updatedMemberAccess)
+            .WithArgumentList(invocation.ArgumentList.WithArguments(updatedArguments));
+
+        return syntaxRoot.ReplaceNode(invocation, updatedInvocation);
+    }
+
+    private static bool TryGetIgnoreCaseComparer(SeparatedSyntaxList<ArgumentSyntax> arguments, out string comparerExpression)
+    {
+        var ignoreCaseArgument = arguments.FirstOrDefault(IsIgnoreCaseArgument);
+        comparerExpression = "StringComparer.Ordinal";
+        if (ignoreCaseArgument is not { RawKind: not 0 })
+        {
+            return false;
+        }
+
+        comparerExpression = ignoreCaseArgument.Expression is LiteralExpressionSyntax literalExpression
+            && literalExpression.IsKind(SyntaxKind.TrueLiteralExpression)
+            ? "StringComparer.OrdinalIgnoreCase"
+            : "StringComparer.Ordinal";
+        return true;
+    }
+
+    private static bool IsIgnoreCaseArgument(ArgumentSyntax argument)
+    {
+        return string.Equals(argument.NameColon?.Name.Identifier.ValueText, "ignoreCase", StringComparison.Ordinal);
     }
 
     private static void RegisterSerialJustificationFix(
