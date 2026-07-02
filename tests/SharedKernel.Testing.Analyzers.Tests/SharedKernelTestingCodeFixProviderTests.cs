@@ -310,7 +310,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [InlineData("Assert.Contains(1, new[] { 1 })", "(new[] { 1 }).ShouldContain(1)")]
     [InlineData("Assert.Contains(\"a\", new[] { \"A\" }, StringComparer.OrdinalIgnoreCase)", "(new[] { \"A\" }).ShouldContain(\"a\", StringComparer.OrdinalIgnoreCase)")]
     [InlineData("Assert.DoesNotContain(2, new[] { 1 })", "(new[] { 1 }).ShouldNotContain(2)")]
-    [InlineData("Assert.Empty(Array.Empty<int>())", "(Array.Empty<int>()).ShouldBeEmpty()")]
+    [InlineData("Assert.Empty(Array.Empty<int>())", "Array.Empty<int>().ShouldBeEmpty()")]
     [InlineData("Assert.True(true)", "(true).ShouldBeTrue()")]
     [InlineData("Assert.True(true, \"message\")", "(true).ShouldBeTrue(\"message\")")]
     [InlineData("Assert.False(false)", "(false).ShouldBeFalse()")]
@@ -326,6 +326,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: true)", "(\"A\").ShouldBe(\"a\", System.StringComparer.OrdinalIgnoreCase)")]
     [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: false)", "(\"A\").ShouldBe(\"a\", System.StringComparer.Ordinal)")]
     [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: compareCase)", "(\"A\").ShouldBe(\"a\", (compareCase) ? System.StringComparer.OrdinalIgnoreCase : System.StringComparer.Ordinal)")]
+    [InlineData("Assert.Equal(true, compareCase)", "compareCase.ShouldBe(true)")]
     public async Task Assertion_wrapper_fix_rewrites_supported_assertions(string assertion, string expectedRewrite)
     {
         // Arrange

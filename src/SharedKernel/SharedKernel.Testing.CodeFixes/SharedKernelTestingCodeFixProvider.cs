@@ -223,13 +223,28 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         invocation = InvocationExpression(
                 MemberAccessExpression(
                     SyntaxKind.SimpleMemberAccessExpression,
-                    ParenthesizedExpression(receiverArgument.Expression.WithoutTrivia()),
+                    CreateShouldReceiver(receiverArgument.Expression),
                     IdentifierName(shouldMethodName)))
             .WithArgumentList(ArgumentList(SeparatedList(arguments.Select(static argument => argument.WithNameColon(null)))))
             .WithTriviaFrom(receiverArgument.Expression)
             .WithAdditionalAnnotations(Formatter.Annotation);
 
         return true;
+    }
+
+    private static ExpressionSyntax CreateShouldReceiver(ExpressionSyntax expression)
+    {
+        var receiver = expression.WithoutTrivia();
+        return receiver switch
+        {
+            IdentifierNameSyntax
+            or MemberAccessExpressionSyntax
+            or InvocationExpressionSyntax
+            or ElementAccessExpressionSyntax
+            or ThisExpressionSyntax
+            or BaseExpressionSyntax => receiver,
+            _ => ParenthesizedExpression(receiver),
+        };
     }
 
     private static SyntaxNode AddAssertionUsing(SyntaxNode syntaxRoot)
