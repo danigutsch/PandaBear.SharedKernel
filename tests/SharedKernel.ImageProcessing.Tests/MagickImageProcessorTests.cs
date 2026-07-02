@@ -90,6 +90,25 @@ public sealed class MagickImageProcessorTests
     }
 
     [Fact]
+    public void Process_transforms_non_srgb_sources_before_stripping_profiles()
+    {
+        // Arrange
+        using var content = TestImages.CreateCmykJpeg(64, 32);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("srgb", ImageOutputFormat.Jpeg, 64, 85)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        var result = MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var variant = result.Variants[0];
+        TestImages.ReadColorSpace(variant.Content).ShouldBe(ColorSpace.sRGB);
+        TestImages.HasProfile(variant.Content).ShouldBe(false);
+    }
+
+    [Fact]
     public void Process_creates_bounded_thumbnails_and_icon_variants()
     {
         // Arrange
@@ -294,7 +313,25 @@ public sealed class MagickImageProcessorTests
 
         // Assert
         var exception = act.ShouldThrow<ArgumentOutOfRangeException>();
-        exception.Message.ShouldContain("Quality", StringComparison.Ordinal);
+        exception.ParamName.ShouldBe("quality");
+    }
+
+    [Fact]
+    public void Process_rejects_variant_quality_above_supported_range()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 101)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ArgumentOutOfRangeException>();
+        exception.ParamName.ShouldBe("quality");
     }
 
     [Fact]
@@ -312,7 +349,27 @@ public sealed class MagickImageProcessorTests
 
         // Assert
         var exception = act.ShouldThrow<ArgumentOutOfRangeException>();
-        exception.Message.ShouldContain("Unsupported", StringComparison.Ordinal);
+        exception.ParamName.ShouldBe("format");
+        exception.ActualValue.ShouldBe((ImageOutputFormat)999);
+    }
+
+    [Fact]
+    public void Process_honors_cancellation_before_generating_variants()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 85)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, cts.Token);
+
+        // Assert
+        act.ShouldThrow<OperationCanceledException>();
     }
 
     [Fact]

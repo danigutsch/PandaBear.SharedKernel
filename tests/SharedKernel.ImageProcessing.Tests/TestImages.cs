@@ -31,6 +31,19 @@ internal static class TestImages
         return stream;
     }
 
+    public static MemoryStream CreateCmykJpeg(uint width, uint height)
+    {
+        using var image = new MagickImage(MagickColors.Cyan, width, height);
+        image.Format = MagickFormat.Jpeg;
+        image.TransformColorSpace(ColorProfiles.SRGB, ColorProfiles.USWebCoatedSWOP);
+
+        var stream = new MemoryStream();
+        image.Write(stream);
+        stream.Position = 0;
+
+        return stream;
+    }
+
     private static ExifProfile CreateOrientationProfile()
     {
         var profile = new ExifProfile();
@@ -51,6 +64,13 @@ internal static class TestImages
         using var image = new MagickImage(content.ToArray());
 
         return image.ProfileNames.Any();
+    }
+
+    public static ColorSpace ReadColorSpace(ReadOnlyMemory<byte> content)
+    {
+        using var image = new MagickImage(content.ToArray());
+
+        return image.ColorSpace;
     }
 
     public static bool HasIcoHeader(ReadOnlyMemory<byte> content)

@@ -107,15 +107,16 @@ public static class MagickImageProcessor
             throw new ArgumentException("Image variant maximum dimensions must be greater than zero.", nameof(request));
         }
 
-        if (request.Quality is < 1 or > 100)
+        var quality = request.Quality;
+        if (quality is < 1 or > 100)
         {
-            ArgumentOutOfRangeException.ThrowIfLessThan(request.Quality, 1);
-            ArgumentOutOfRangeException.ThrowIfGreaterThan(request.Quality, 100);
+            ArgumentOutOfRangeException.ThrowIfLessThan(quality, 1);
+            ArgumentOutOfRangeException.ThrowIfGreaterThan(quality, 100);
         }
 
         using var image = source.Clone();
+        NormalizeColorSpace((MagickImage)image);
         image.Strip();
-        image.ColorSpace = ColorSpace.sRGB;
         var maxHeight = request.MaxHeight is null ? 0 : (uint)request.MaxHeight.Value;
         image.Resize(new MagickGeometry((uint)request.MaxWidth, maxHeight) { Greater = true });
         if (request.Format == ImageOutputFormat.Ico)
@@ -124,7 +125,7 @@ public static class MagickImageProcessor
         }
 
         image.Format = ToMagickFormat(request.Format);
-        image.Quality = (uint)request.Quality;
+        image.Quality = (uint)quality;
 
         using var output = new MemoryStream();
         image.Write(output);
@@ -135,6 +136,19 @@ public static class MagickImageProcessor
             (int)image.Width,
             (int)image.Height,
             output.ToArray().AsMemory());
+    }
+
+    private static void NormalizeColorSpace(MagickImage image)
+    {
+        if (image.ColorSpace == ColorSpace.sRGB)
+        {
+            return;
+        }
+
+        if (!image.TransformColorSpace(ColorProfiles.SRGB))
+        {
+            image.ColorSpace = ColorSpace.sRGB;
+        }
     }
 
     private static void PadToSquareIcon(MagickImage image, uint maxWidth, uint maxHeight)
