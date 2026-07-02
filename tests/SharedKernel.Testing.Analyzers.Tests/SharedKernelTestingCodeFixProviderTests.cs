@@ -394,6 +394,33 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Assertion_wrapper_fix_is_not_offered_for_single_predicate_overload()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AssertionWrapperTests
+            {
+                public void Execute()
+                {
+                    Assert.Single(new[] { 1 }, value => value > 0);
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, "Assert.Single");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
     public async Task Serial_justification_fix_adds_placeholder_attribute_to_collection_class()
     {
         // Arrange

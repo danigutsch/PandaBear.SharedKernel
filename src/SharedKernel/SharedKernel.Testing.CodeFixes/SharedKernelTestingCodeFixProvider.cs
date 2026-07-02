@@ -133,6 +133,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return false;
         }
 
+        if (string.Equals(name, "Single", StringComparison.Ordinal)
+            && !CanRewriteSingleInvocation(memberAccess))
+        {
+            return false;
+        }
+
         return name is "All"
             or "Collection"
             or "Contains"
@@ -165,6 +171,11 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
         return arguments.Count == 2
             || (arguments.Count == 3 && arguments.Any(IsIgnoreCaseArgument));
+    }
+
+    private static bool CanRewriteSingleInvocation(MemberAccessExpressionSyntax memberAccess)
+    {
+        return memberAccess.FirstAncestorOrSelf<InvocationExpressionSyntax>() is { ArgumentList.Arguments.Count: 1 };
     }
 
     private static Task<Document> UseTestAssertWrapper(
