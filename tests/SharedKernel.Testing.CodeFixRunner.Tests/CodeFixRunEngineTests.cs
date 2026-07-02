@@ -18,7 +18,7 @@ public sealed class CodeFixRunEngineTests
             await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.SourceFile, TestContext.Current.CancellationToken);
 
             var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
-            var error = new StringWriter(CultureInfo.InvariantCulture);
+            using var error = new StringWriter(CultureInfo.InvariantCulture);
 
             // Act
             var fixedCount = await CodeFixRunEngine.Run(options, error);
@@ -49,7 +49,7 @@ public sealed class CodeFixRunEngineTests
             await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.CleanSourceFile, TestContext.Current.CancellationToken);
 
             var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
-            var error = new StringWriter(CultureInfo.InvariantCulture);
+            using var error = new StringWriter(CultureInfo.InvariantCulture);
 
             // Act
             var fixedCount = await CodeFixRunEngine.Run(options, error);

@@ -190,31 +190,32 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
         return assertionName switch
         {
-            "All" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[0], "ShouldAllSatisfy", [arguments[1]], out updatedInvocation),
-            ContainsAssertionName when arguments.Count == 2 && arguments[1].Expression is ParenthesizedLambdaExpressionSyntax or SimpleLambdaExpressionSyntax => TryCreateShouldInvocation(arguments[0], "ShouldContain", [arguments[1]], out updatedInvocation),
-            ContainsAssertionName when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldContain", [arguments[0]], out updatedInvocation),
-            ContainsAssertionName when arguments.Count == 3 => TryCreateShouldInvocation(arguments[1], "ShouldContain", [arguments[0], arguments[2]], out updatedInvocation),
-            "DoesNotContain" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldNotContain", [arguments[0]], out updatedInvocation),
-            "Empty" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldBeEmpty", [], out updatedInvocation),
-            EqualAssertionName when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldBe", [arguments[0]], out updatedInvocation),
-            EqualAssertionName when arguments.Count == 3 && TryGetIgnoreCaseComparer(arguments, out var comparerExpression) => TryCreateShouldInvocation(arguments[1], "ShouldBe", [arguments[0], Argument(ParseExpression(comparerExpression))], out updatedInvocation),
-            "False" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldBeFalse", [], out updatedInvocation),
-            "False" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[0], "ShouldBeFalse", [arguments[1]], out updatedInvocation),
-            "InRange" when arguments.Count == 3 => TryCreateShouldInvocation(arguments[0], "ShouldBeInRange", [arguments[1], arguments[2]], out updatedInvocation),
-            "NotEmpty" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldNotBeEmpty", [], out updatedInvocation),
-            "NotEqual" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldNotBe", [arguments[0]], out updatedInvocation),
-            "NotEqual" when arguments.Count == 3 => TryCreateShouldInvocation(arguments[1], "ShouldNotBe", [arguments[0], arguments[2]], out updatedInvocation),
-            "NotNull" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldNotBeNull", [], out updatedInvocation),
-            "Null" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldBeNull", [], out updatedInvocation),
-            "Same" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldBeSameAs", [arguments[0]], out updatedInvocation),
-            "Single" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldHaveSingleItem", [], out updatedInvocation),
-            "True" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldBeTrue", [], out updatedInvocation),
-            "True" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[0], "ShouldBeTrue", [arguments[1]], out updatedInvocation),
+            "All" when arguments.Count == 2 => TryCreateShouldInvocation(invocation, arguments[0], "ShouldAllSatisfy", [arguments[1]], out updatedInvocation),
+            ContainsAssertionName when arguments.Count == 2 && arguments[1].Expression is ParenthesizedLambdaExpressionSyntax or SimpleLambdaExpressionSyntax => TryCreateShouldInvocation(invocation, arguments[0], "ShouldContain", [arguments[1]], out updatedInvocation),
+            ContainsAssertionName when arguments.Count == 2 => TryCreateShouldInvocation(invocation, arguments[1], "ShouldContain", [arguments[0]], out updatedInvocation),
+            ContainsAssertionName when arguments.Count == 3 => TryCreateShouldInvocation(invocation, arguments[1], "ShouldContain", [arguments[0], arguments[2]], out updatedInvocation),
+            "DoesNotContain" when arguments.Count == 2 => TryCreateShouldInvocation(invocation, arguments[1], "ShouldNotContain", [arguments[0]], out updatedInvocation),
+            "Empty" when arguments.Count == 1 => TryCreateShouldInvocation(invocation, arguments[0], "ShouldBeEmpty", [], out updatedInvocation),
+            EqualAssertionName when arguments.Count == 2 => TryCreateShouldInvocation(invocation, arguments[1], "ShouldBe", [arguments[0]], out updatedInvocation),
+            EqualAssertionName when arguments.Count == 3 && TryGetIgnoreCaseComparer(arguments, out var comparerExpression) => TryCreateShouldInvocation(invocation, arguments[1], "ShouldBe", [arguments[0], Argument(ParseExpression(comparerExpression))], out updatedInvocation),
+            "False" when arguments.Count == 1 => TryCreateShouldInvocation(invocation, arguments[0], "ShouldBeFalse", [], out updatedInvocation),
+            "False" when arguments.Count == 2 => TryCreateShouldInvocation(invocation, arguments[0], "ShouldBeFalse", [arguments[1]], out updatedInvocation),
+            "InRange" when arguments.Count == 3 => TryCreateShouldInvocation(invocation, arguments[0], "ShouldBeInRange", [arguments[1], arguments[2]], out updatedInvocation),
+            "NotEmpty" when arguments.Count == 1 => TryCreateShouldInvocation(invocation, arguments[0], "ShouldNotBeEmpty", [], out updatedInvocation),
+            "NotEqual" when arguments.Count == 2 => TryCreateShouldInvocation(invocation, arguments[1], "ShouldNotBe", [arguments[0]], out updatedInvocation),
+            "NotEqual" when arguments.Count == 3 => TryCreateShouldInvocation(invocation, arguments[1], "ShouldNotBe", [arguments[0], arguments[2]], out updatedInvocation),
+            "NotNull" when arguments.Count == 1 => TryCreateShouldInvocation(invocation, arguments[0], "ShouldNotBeNull", [], out updatedInvocation),
+            "Null" when arguments.Count == 1 => TryCreateShouldInvocation(invocation, arguments[0], "ShouldBeNull", [], out updatedInvocation),
+            "Same" when arguments.Count == 2 => TryCreateShouldInvocation(invocation, arguments[1], "ShouldBeSameAs", [arguments[0]], out updatedInvocation),
+            "Single" when arguments.Count == 1 => TryCreateShouldInvocation(invocation, arguments[0], "ShouldHaveSingleItem", [], out updatedInvocation),
+            "True" when arguments.Count == 1 => TryCreateShouldInvocation(invocation, arguments[0], "ShouldBeTrue", [], out updatedInvocation),
+            "True" when arguments.Count == 2 => TryCreateShouldInvocation(invocation, arguments[0], "ShouldBeTrue", [arguments[1]], out updatedInvocation),
             _ => false,
         };
     }
 
     private static bool TryCreateShouldInvocation(
+        InvocationExpressionSyntax originalInvocation,
         ArgumentSyntax receiverArgument,
         string shouldMethodName,
         IEnumerable<ArgumentSyntax> arguments,
@@ -226,7 +227,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                     CreateShouldReceiver(receiverArgument.Expression),
                     IdentifierName(shouldMethodName)))
             .WithArgumentList(ArgumentList(SeparatedList(arguments.Select(static argument => argument.WithNameColon(null)))))
-            .WithTriviaFrom(receiverArgument.Expression)
+            .WithTriviaFrom(originalInvocation)
             .WithAdditionalAnnotations(Formatter.Annotation);
 
         return true;
@@ -234,7 +235,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     private static ExpressionSyntax CreateShouldReceiver(ExpressionSyntax expression)
     {
-        var receiver = expression.WithoutTrivia();
+        var receiver = expression;
         return receiver switch
         {
             IdentifierNameSyntax
