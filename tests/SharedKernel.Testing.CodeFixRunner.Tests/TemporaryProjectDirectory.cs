@@ -16,6 +16,9 @@ internal sealed class TemporaryProjectDirectory : IDisposable
 
     public void Dispose()
     {
-        Directory.Delete(Path, recursive: true);
+        if (Directory.Exists(Path))
+        {
+            Directory.Delete(Path, recursive: true);
+        }
     }
 }

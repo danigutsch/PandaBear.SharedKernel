@@ -37,8 +37,9 @@ sharedkernel_testing_required_traits = Category=Smoke
 sharedkernel_testing_strict_test_method_casing = false
 ```
 
-`SKTEST007` is intentionally opt-in by syntax: it only checks methods that already contain exact
-single `// Arrange`, `// Act`, and `// Assert` comments. Tests without that exact marker set are not reported.
+`SKTEST007` is intentionally opt-in by syntax: it only checks methods that already contain a single
+complete Arrange/Act/Assert marker set in line comments, with optional whitespace after `//`.
+Tests without that exact marker set are not reported.
 Repeated markers are not reported because multi-act tests often need local judgment before restructuring.
 
 `SKTEST008` is intentionally syntax-bound: it only reports `try` statements with `finally` blocks
