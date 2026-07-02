@@ -10,6 +10,8 @@ public sealed class SharedKernelTestingAnalyzerTests
     private const string XunitHelperMethodDiagnosticId = TestingDiagnosticIds.XunitTestClassHelperMethod;
     private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
     private const string XunitAssertionWrapperDiagnosticId = TestingDiagnosticIds.XunitAssertionWrapper;
+    private const string XunitArrangeActAssertDiagnosticId = TestingDiagnosticIds.XunitArrangeActAssertMarkers;
+    private const string XunitCleanupFinallyDiagnosticId = TestingDiagnosticIds.XunitCleanupInvocationFinally;
 
     [Fact]
     public async Task Direct_xunit_assertion_reports_s_k_t_e_s_t006()
@@ -1184,5 +1186,306 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         // Assert
         Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Complete_arrange_act_assert_markers_do_not_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    // Arrange
+                    var value = 42;
+
+                    // Act
+                    var actual = value;
+
+                    // Assert
+                    _ = actual;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Repeated_ordered_arrange_act_assert_markers_do_not_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    // Arrange
+                    var value = 42;
+
+                    // Act
+                    var actual = value;
+
+                    // Assert
+                    _ = actual;
+
+                    // Assert
+                    _ = value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Partial_arrange_act_assert_markers_do_not_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    // Arrange
+                    var value = 42;
+
+                    // Assert
+                    _ = value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Out_of_order_arrange_act_assert_markers_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    // Arrange
+                    var value = 42;
+
+                    // Assert
+                    _ = value;
+
+                    // Act
+                    var actual = value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Tests_without_arrange_act_assert_markers_do_not_report_SKTEST007()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var value = 42;
+                    _ = value;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Cleanup_invocation_outside_finally_reports_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CleanupDatabase();
+                }
+
+                private static void CleanupDatabase()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Alternate_cleanup_casing_outside_finally_reports_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    CleanUpDatabase();
+                }
+
+                private static void CleanUpDatabase()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Cleanup_invocation_inside_finally_does_not_report_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    try
+                    {
+                        var value = 42;
+                        _ = value;
+                    }
+                    finally
+                    {
+                        CleanupDatabase();
+                    }
+                }
+
+                private static void CleanupDatabase()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Delete_and_reset_invocations_do_not_report_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    DeleteDatabase();
+                    ResetDatabase();
+                }
+
+                private static void DeleteDatabase()
+                {
+                }
+
+                private static void ResetDatabase()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Cleanup_invocation_outside_xunit_test_method_does_not_report_SKTEST008()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoader
+            {
+                public void Execute()
+                {
+                    CleanupDatabase();
+                }
+
+                private static void CleanupDatabase()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
     }
 }

@@ -1,5 +1,7 @@
 #nullable enable
+const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitArrangeActAssertMarkers = "SKTEST007" -> string!
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitAssertionWrapper = "SKTEST006" -> string!
+const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitCleanupInvocationFinally = "SKTEST008" -> string!
 SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer
 SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer.SharedKernelTestingAnalyzer() -> void
 override SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void

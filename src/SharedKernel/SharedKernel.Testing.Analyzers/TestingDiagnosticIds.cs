@@ -34,4 +34,14 @@ public static class TestingDiagnosticIds
     /// Diagnostic emitted when test code calls xUnit assertions directly.
     /// </summary>
     public const string XunitAssertionWrapper = "SKTEST006";
+
+    /// <summary>
+    /// Diagnostic emitted when explicit Arrange/Act/Assert markers in an xUnit test method are incomplete or out of order.
+    /// </summary>
+    public const string XunitArrangeActAssertMarkers = "SKTEST007";
+
+    /// <summary>
+    /// Diagnostic emitted when an xUnit test method invokes an explicit cleanup method outside a finally block.
+    /// </summary>
+    public const string XunitCleanupInvocationFinally = "SKTEST008";
 }
