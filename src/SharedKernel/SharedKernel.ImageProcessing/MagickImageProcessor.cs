@@ -145,10 +145,10 @@ public static class MagickImageProcessor
         }
     }
 
-    private static int ValidateQuality(int Quality)
-        => Quality is < 1 or > 100
-            ? throw new ArgumentOutOfRangeException(nameof(Quality), Quality, "Image variant quality must be between 1 and 100.")
-            : Quality;
+    private static int ValidateQuality(int quality)
+        => quality is < 1 or > 100
+            ? throw new ArgumentOutOfRangeException(nameof(quality), quality, "Image variant quality must be between 1 and 100.")
+            : quality;
 
     private static void PadToSquareIcon(MagickImage image, uint maxWidth, uint maxHeight)
     {
@@ -182,6 +182,13 @@ public static class MagickImageProcessor
         if (limits.MaxWidth <= 0 || limits.MaxHeight <= 0 || limits.MaxPixelCount <= 0)
         {
             throw new ArgumentException("Image processing limits must be greater than zero.", nameof(limits));
+        }
+
+        if (limits.MaxWidth > ImageProcessingLimits.WebDefault.MaxWidth
+            || limits.MaxHeight > ImageProcessingLimits.WebDefault.MaxHeight
+            || limits.MaxPixelCount > ImageProcessingLimits.WebDefault.MaxPixelCount)
+        {
+            throw new ArgumentException("Image processing limits must not exceed the web default maximums.", nameof(limits));
         }
     }
 

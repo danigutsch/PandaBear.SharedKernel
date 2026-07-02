@@ -209,6 +209,24 @@ public sealed class MagickImageProcessorTests
     }
 
     [Fact]
+    public void Process_rejects_limits_that_exceed_process_resource_limits()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 85)],
+            new ImageProcessingLimits(8_001, 8_000, 40_000_000));
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldContain("exceed", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Process_rejects_images_that_exceed_decoded_limits()
     {
         // Arrange
@@ -313,7 +331,7 @@ public sealed class MagickImageProcessorTests
 
         // Assert
         var exception = act.ShouldThrow<ArgumentOutOfRangeException>();
-        exception.ParamName.ShouldBe("Quality");
+        exception.ParamName.ShouldBe("quality");
     }
 
     [Fact]
@@ -331,7 +349,7 @@ public sealed class MagickImageProcessorTests
 
         // Assert
         var exception = act.ShouldThrow<ArgumentOutOfRangeException>();
-        exception.ParamName.ShouldBe("Quality");
+        exception.ParamName.ShouldBe("quality");
     }
 
     [Fact]
