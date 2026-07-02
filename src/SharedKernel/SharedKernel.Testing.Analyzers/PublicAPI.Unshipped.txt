@@ -1,4 +1,5 @@
 #nullable enable
+const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitAssertionWrapper = "SKTEST006" -> string!
 SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer
 SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer.SharedKernelTestingAnalyzer() -> void
 override SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer.Initialize(Microsoft.CodeAnalysis.Diagnostics.AnalysisContext! context) -> void

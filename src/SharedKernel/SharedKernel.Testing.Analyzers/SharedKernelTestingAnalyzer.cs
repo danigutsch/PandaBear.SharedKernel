@@ -108,9 +108,18 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true,
         description: "Repository testing rules require collection definitions with DisableParallelization = true to explain why serial execution is necessary.");
 
+    private static readonly DiagnosticDescriptor XunitAssertionWrapperRule = new(
+        TestingDiagnosticIds.XunitAssertionWrapper,
+        title: "Test code should use repository assertion wrappers",
+        messageFormat: "Use SharedKernel.Testing.Assertions instead of direct xUnit assertion '{0}'",
+        category: TestingCategory,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository testing rules require assertion calls to go through SharedKernel.Testing.Assertions so test diagnostics and nullability behavior stay consistent.");
+
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule];
+        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -138,7 +147,26 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             compilationContext.RegisterSyntaxNodeAction(
                 AnalyzeLocalFunctionStatement,
                 SyntaxKind.LocalFunctionStatement);
+            compilationContext.RegisterSyntaxNodeAction(
+                AnalyzeInvocationExpression,
+                SyntaxKind.InvocationExpression);
         });
+    }
+
+    private static void AnalyzeInvocationExpression(SyntaxNodeAnalysisContext context)
+    {
+        if (context.Node is not InvocationExpressionSyntax invocationExpression
+            || context.SemanticModel.GetSymbolInfo(invocationExpression, context.CancellationToken).Symbol is not IMethodSymbol methodSymbol
+            || methodSymbol.ContainingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) is not "global::Xunit.Assert")
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                XunitAssertionWrapperRule,
+                invocationExpression.GetLocation(),
+                methodSymbol.Name));
     }
 
     private static void AnalyzePragmaDirective(SyntaxNodeAnalysisContext context)

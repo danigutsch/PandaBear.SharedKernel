@@ -5,6 +5,7 @@ override SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.Fixab
 override SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
 override SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
 SharedKernel.Testing.Analyzers.TestingDiagnosticIds
+const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitAssertionWrapper = "SKTEST006" -> string!
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.TestMethodWarningSuppression = "SKTEST001" -> string!
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming = "SKTEST002" -> string!
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodRequiredTrait = "SKTEST003" -> string!
