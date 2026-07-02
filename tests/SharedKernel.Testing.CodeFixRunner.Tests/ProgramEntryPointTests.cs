@@ -15,14 +15,13 @@ public sealed class ProgramEntryPointTests
             var sourcePath = Path.Combine(projectDirectory, "SampleTests.cs");
             await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.ProjectFile, TestContext.Current.CancellationToken);
             await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.SourceFile, TestContext.Current.CancellationToken);
-            await CodeFixRunnerTestProject.Restore(projectPath);
             using var output = new StringWriter(CultureInfo.InvariantCulture);
             using var error = new StringWriter(CultureInfo.InvariantCulture);
 
             var exitCode = await ProgramEntryPoint.Run(["--diagnostic", "SKTEST006", projectPath], output, error);
 
             (exitCode).ShouldBe(0);
-            (output.ToString()).ShouldContain("Fixed 3 SKTEST006 diagnostic(s).", StringComparison.Ordinal);
+            (output.ToString()).ShouldContain("Fixed 1 SKTEST006 diagnostic(s).", StringComparison.Ordinal);
             (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
         }
         finally

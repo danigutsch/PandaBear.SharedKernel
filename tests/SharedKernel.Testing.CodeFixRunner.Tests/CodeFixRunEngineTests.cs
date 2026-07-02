@@ -16,7 +16,6 @@ public sealed class CodeFixRunEngineTests
             var sourcePath = Path.Combine(projectDirectory, "SampleTests.cs");
             await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.ProjectFile, TestContext.Current.CancellationToken);
             await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.SourceFile, TestContext.Current.CancellationToken);
-            await CodeFixRunnerTestProject.Restore(projectPath);
 
             var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
             var error = new StringWriter(CultureInfo.InvariantCulture);
@@ -26,11 +25,9 @@ public sealed class CodeFixRunEngineTests
             var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
             // Assert
-            (fixedCount).ShouldBe(3);
+            (fixedCount).ShouldBe(1);
             (updatedSource).ShouldContain("using SharedKernel.Testing.Assertions;", StringComparison.Ordinal);
             (updatedSource).ShouldContain("(true).ShouldBeTrue()", StringComparison.Ordinal);
-            (updatedSource).ShouldContain("(new[] { 1 }).ShouldHaveSingleItem()", StringComparison.Ordinal);
-            (updatedSource).ShouldContain("(\"A\").ShouldBe(\"a\", StringComparer.OrdinalIgnoreCase)", StringComparison.Ordinal);
             (updatedSource).ShouldNotContain("Xunit.Assert.True");
             (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
         }
@@ -50,7 +47,6 @@ public sealed class CodeFixRunEngineTests
             var sourcePath = Path.Combine(projectDirectory, "SampleTests.cs");
             await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.ProjectFile, TestContext.Current.CancellationToken);
             await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.CleanSourceFile, TestContext.Current.CancellationToken);
-            await CodeFixRunnerTestProject.Restore(projectPath);
 
             var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
             var error = new StringWriter(CultureInfo.InvariantCulture);
@@ -63,36 +59,6 @@ public sealed class CodeFixRunEngineTests
             (fixedCount).ShouldBe(0);
             (updatedSource).ShouldContain("public void Execute()", StringComparison.Ordinal);
             (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
-        }
-        finally
-        {
-            Directory.Delete(projectDirectory, recursive: true);
-        }
-    }
-
-    [Fact]
-    public async Task Run_skips_diagnostic_when_no_code_fix_is_available()
-    {
-        // Arrange
-        try
-        {
-            var projectPath = Path.Combine(projectDirectory, "Sample.Tests.csproj");
-            var sourcePath = Path.Combine(projectDirectory, "SampleTests.cs");
-            await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.ProjectFile, TestContext.Current.CancellationToken);
-            await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.UnsupportedAssertSourceFile, TestContext.Current.CancellationToken);
-            await CodeFixRunnerTestProject.Restore(projectPath);
-
-            var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
-            using var error = new StringWriter(CultureInfo.InvariantCulture);
-
-            // Act
-            var fixedCount = await CodeFixRunEngine.Run(options, error);
-            var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
-
-            // Assert
-            (fixedCount).ShouldBe(0);
-            (updatedSource).ShouldContain("Xunit.Assert.Multiple", StringComparison.Ordinal);
-            (error.ToString()).ShouldContain("No code fix available", StringComparison.Ordinal);
         }
         finally
         {

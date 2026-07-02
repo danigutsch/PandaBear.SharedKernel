@@ -25,10 +25,7 @@ internal static class CodeFixRunEngine
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(error);
 
-        if (!MSBuildLocator.IsRegistered)
-        {
-            MSBuildLocator.RegisterDefaults();
-        }
+        EnsureMSBuildRegistered();
 
         using var workspace = MSBuildWorkspace.Create();
         var solution = await OpenSolution(workspace, options.TargetPath).ConfigureAwait(false);
@@ -61,6 +58,23 @@ internal static class CodeFixRunEngine
 
             solution = await ApplyAction(workspace, solution, action).ConfigureAwait(false);
             fixedCount++;
+        }
+    }
+
+    private static void EnsureMSBuildRegistered()
+    {
+        if (MSBuildLocator.IsRegistered)
+        {
+            return;
+        }
+
+        try
+        {
+            MSBuildLocator.RegisterDefaults();
+        }
+        catch (InvalidOperationException)
+        {
+            // MSBuild can already be loaded by the test host when solution-wide tests run in parallel.
         }
     }
 
