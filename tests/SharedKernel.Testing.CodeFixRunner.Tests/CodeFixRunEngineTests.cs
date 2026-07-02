@@ -1,5 +1,4 @@
 using System.Globalization;
-using SharedKernel.Testing.Assertions;
 
 namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
@@ -28,16 +27,17 @@ public sealed class CodeFixRunEngineTests
 
             // Assert
             TestAssert.Equal(3, fixedCount);
+            TestAssert.Contains("using SharedKernel.Testing.Assertions;", updatedSource, StringComparison.Ordinal);
             TestAssert.Contains(
-                "global::SharedKernel.Testing.Assertions.TestAssert.True(true)",
+                "TestAssert.True(true)",
                 updatedSource,
                 StringComparison.Ordinal);
             TestAssert.Contains(
-                "global::SharedKernel.Testing.Assertions.TestAssert.ExactlyOne(new[] { 1 })",
+                "TestAssert.ExactlyOne(new[] { 1 })",
                 updatedSource,
                 StringComparison.Ordinal);
             TestAssert.Contains(
-                "global::SharedKernel.Testing.Assertions.TestAssert.Equal(\"a\", \"A\", StringComparer.OrdinalIgnoreCase)",
+                "TestAssert.Equal(\"a\", \"A\", StringComparer.OrdinalIgnoreCase)",
                 updatedSource,
                 StringComparison.Ordinal);
             TestAssert.DoesNotContain("Xunit.Assert.True", updatedSource, StringComparison.Ordinal);

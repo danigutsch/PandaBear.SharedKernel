@@ -1,5 +1,4 @@
 using System.Globalization;
-using SharedKernel.Testing.Assertions;
 
 namespace SharedKernel.Testing.CodeFixRunner.Tests;
 

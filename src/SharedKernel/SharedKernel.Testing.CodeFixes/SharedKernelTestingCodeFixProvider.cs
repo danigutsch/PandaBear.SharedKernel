@@ -159,7 +159,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         var targetName = memberAccess.Name.Identifier.ValueText is "Single"
             ? "ExactlyOne"
             : memberAccess.Name.Identifier.ValueText;
-        var testAssert = ParseExpression("global::SharedKernel.Testing.Assertions.TestAssert")
+        var testAssert = IdentifierName("TestAssert")
             .WithTriviaFrom(memberAccess.Expression)
             .WithAdditionalAnnotations(Formatter.Annotation);
         var updatedMemberAccess = memberAccess
@@ -172,7 +172,23 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             ? ReplaceEqualIgnoreCaseInvocation(syntaxRoot, invocation, updatedMemberAccess)
             : syntaxRoot.ReplaceNode(memberAccess, updatedMemberAccess);
 
-        return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
+        return Task.FromResult(document.WithSyntaxRoot(AddTestAssertUsing(updatedRoot)));
+    }
+
+    private static SyntaxNode AddTestAssertUsing(SyntaxNode syntaxRoot)
+    {
+        if (syntaxRoot is not CompilationUnitSyntax compilationUnit
+            || compilationUnit.Usings.Any(static usingDirective => string.Equals(
+                usingDirective.Name?.ToString(),
+                "SharedKernel.Testing.Assertions",
+                StringComparison.Ordinal)))
+        {
+            return syntaxRoot;
+        }
+
+        var usingDirective = UsingDirective(ParseName("SharedKernel.Testing.Assertions"));
+        return compilationUnit.AddUsings(usingDirective)
+            .WithAdditionalAnnotations(Formatter.Annotation);
     }
 
     private static SyntaxNode ReplaceEqualIgnoreCaseInvocation(
