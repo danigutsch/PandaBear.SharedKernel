@@ -19,6 +19,10 @@ namespace SharedKernel.Testing.CodeFixes;
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SharedKernelTestingCodeFixProvider))]
 public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 {
+    private const string ContainsAssertionName = "Contains";
+    private const string EqualAssertionName = "Equal";
+    private const string SingleAssertionName = "Single";
+
     private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 
     /// <inheritdoc />
@@ -127,23 +131,14 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         var name = memberAccess.Name.Identifier.ValueText;
         equivalenceKey = $"UseTestAssertWrapper:{name}";
 
-        if (string.Equals(name, "Equal", StringComparison.Ordinal)
-            && !CanRewriteEqualInvocation(memberAccess))
+        return name switch
         {
-            return false;
-        }
-
-        if (string.Equals(name, "Single", StringComparison.Ordinal)
-            && !CanRewriteSingleInvocation(memberAccess))
-        {
-            return false;
-        }
-
-        return name is "All"
-            or "Contains"
+            EqualAssertionName => CanRewriteEqualInvocation(memberAccess),
+            SingleAssertionName => CanRewriteSingleInvocation(memberAccess),
+            "All"
+            or ContainsAssertionName
             or "DoesNotContain"
             or "Empty"
-            or "Equal"
             or "False"
             or "InRange"
             or "NotEmpty"
@@ -151,19 +146,16 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             or "NotNull"
             or "Null"
             or "Same"
-            or "Single"
-            or "True";
+            or "True" => true,
+            _ => false,
+        };
     }
 
     private static bool CanRewriteEqualInvocation(MemberAccessExpressionSyntax memberAccess)
     {
-        if (memberAccess.FirstAncestorOrSelf<InvocationExpressionSyntax>() is not { ArgumentList.Arguments: var arguments })
-        {
-            return false;
-        }
-
-        return arguments.Count == 2
-            || (arguments.Count == 3 && arguments.Any(IsIgnoreCaseArgument));
+        return memberAccess.FirstAncestorOrSelf<InvocationExpressionSyntax>() is { ArgumentList.Arguments: var arguments }
+            && (arguments.Count == 2
+                || (arguments.Count == 3 && arguments.Any(IsIgnoreCaseArgument)));
     }
 
     private static bool CanRewriteSingleInvocation(MemberAccessExpressionSyntax memberAccess)
@@ -199,13 +191,13 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         return assertionName switch
         {
             "All" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[0], "ShouldAllSatisfy", [arguments[1]], out updatedInvocation),
-            "Contains" when arguments.Count == 2 && arguments[1].Expression is ParenthesizedLambdaExpressionSyntax or SimpleLambdaExpressionSyntax => TryCreateShouldInvocation(arguments[0], "ShouldContain", [arguments[1]], out updatedInvocation),
-            "Contains" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldContain", [arguments[0]], out updatedInvocation),
-            "Contains" when arguments.Count == 3 => TryCreateShouldInvocation(arguments[1], "ShouldContain", [arguments[0], arguments[2]], out updatedInvocation),
+            ContainsAssertionName when arguments.Count == 2 && arguments[1].Expression is ParenthesizedLambdaExpressionSyntax or SimpleLambdaExpressionSyntax => TryCreateShouldInvocation(arguments[0], "ShouldContain", [arguments[1]], out updatedInvocation),
+            ContainsAssertionName when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldContain", [arguments[0]], out updatedInvocation),
+            ContainsAssertionName when arguments.Count == 3 => TryCreateShouldInvocation(arguments[1], "ShouldContain", [arguments[0], arguments[2]], out updatedInvocation),
             "DoesNotContain" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldNotContain", [arguments[0]], out updatedInvocation),
             "Empty" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldBeEmpty", [], out updatedInvocation),
-            "Equal" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldBe", [arguments[0]], out updatedInvocation),
-            "Equal" when arguments.Count == 3 && TryGetIgnoreCaseComparer(arguments, out var comparerExpression) => TryCreateShouldInvocation(arguments[1], "ShouldBe", [arguments[0], Argument(ParseExpression(comparerExpression))], out updatedInvocation),
+            EqualAssertionName when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldBe", [arguments[0]], out updatedInvocation),
+            EqualAssertionName when arguments.Count == 3 && TryGetIgnoreCaseComparer(arguments, out var comparerExpression) => TryCreateShouldInvocation(arguments[1], "ShouldBe", [arguments[0], Argument(ParseExpression(comparerExpression))], out updatedInvocation),
             "False" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldBeFalse", [], out updatedInvocation),
             "False" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[0], "ShouldBeFalse", [arguments[1]], out updatedInvocation),
             "InRange" when arguments.Count == 3 => TryCreateShouldInvocation(arguments[0], "ShouldBeInRange", [arguments[1], arguments[2]], out updatedInvocation),
