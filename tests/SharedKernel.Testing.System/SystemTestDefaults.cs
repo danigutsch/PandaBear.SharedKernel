@@ -1,4 +1,4 @@
-namespace SharedKernel.Testing.SystemTests;
+namespace SharedKernel.Testing.System;
 
 /// <summary>
 /// Shared constants for full-system browser tests.
