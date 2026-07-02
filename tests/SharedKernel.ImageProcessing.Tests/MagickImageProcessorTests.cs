@@ -116,6 +116,25 @@ public sealed class MagickImageProcessorTests
     }
 
     [Fact]
+    public void Process_requires_streams_positioned_at_the_beginning()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        content.Position = 1;
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 85)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldContain("beginning");
+    }
+
+    [Fact]
     public void Process_rejects_images_that_exceed_decoded_limits()
     {
         // Arrange

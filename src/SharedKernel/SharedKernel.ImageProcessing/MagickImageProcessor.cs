@@ -56,6 +56,11 @@ public static class MagickImageProcessor
         {
             throw new ArgumentException("Image content stream must be seekable so decoded dimensions can be probed before decoding.", nameof(content));
         }
+
+        if (content.Position != 0)
+        {
+            throw new ArgumentException("Image content stream must be positioned at the beginning before processing.", nameof(content));
+        }
     }
 
     private static MagickImageInfo ProbeImage(Stream content)
@@ -78,7 +83,12 @@ public static class MagickImageProcessor
             throw new ArgumentException("Image processing limits must be greater than zero.", nameof(limits));
         }
 
-        var pixelCount = checked((long)width * height);
+        if (height != 0 && width > long.MaxValue / height)
+        {
+            throw new ImageProcessingException("Decoded image exceeds the configured processing limits.");
+        }
+
+        var pixelCount = (long)width * height;
         if (width > limits.MaxWidth || height > limits.MaxHeight || pixelCount > limits.MaxPixelCount)
         {
             throw new ImageProcessingException("Decoded image exceeds the configured processing limits.");
