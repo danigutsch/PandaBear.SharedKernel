@@ -28,11 +28,11 @@ public sealed class ScenarioValue<T>
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
-        if (!_hasValue)
+        if (_hasValue)
         {
-            throw new InvalidOperationException($"Scenario value '{name}' was read before setup.");
+            return _value!;
         }
 
-        return _value!;
+        throw new InvalidOperationException($"Scenario value '{name}' was read before setup.");
     }
 }
