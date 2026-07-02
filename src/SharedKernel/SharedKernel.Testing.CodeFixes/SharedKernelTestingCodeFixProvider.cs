@@ -201,10 +201,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return false;
         }
 
-        comparerExpression = ignoreCaseArgument.Expression is LiteralExpressionSyntax literalExpression
-            && literalExpression.IsKind(SyntaxKind.TrueLiteralExpression)
-            ? "StringComparer.OrdinalIgnoreCase"
-            : "StringComparer.Ordinal";
+        comparerExpression = ignoreCaseArgument.Expression switch
+        {
+            LiteralExpressionSyntax literalExpression when literalExpression.IsKind(SyntaxKind.TrueLiteralExpression) => "StringComparer.OrdinalIgnoreCase",
+            LiteralExpressionSyntax literalExpression when literalExpression.IsKind(SyntaxKind.FalseLiteralExpression) => "StringComparer.Ordinal",
+            _ => $"({ignoreCaseArgument.Expression}) ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal",
+        };
         return true;
     }
 

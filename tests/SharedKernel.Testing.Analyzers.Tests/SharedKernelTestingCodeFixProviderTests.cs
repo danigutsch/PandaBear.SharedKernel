@@ -10,6 +10,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
     private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
     private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
+    private const string XunitAssertionWrapperDiagnosticId = TestingDiagnosticIds.XunitAssertionWrapper;
     [Fact]
     public async Task Test_naming_fix_renames_method_and_reference_correctly()
     {
@@ -293,6 +294,75 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         Assert.Contains(XunitSerialJustificationDiagnosticId, provider.FixableDiagnosticIds);
+    }
+
+    [Fact]
+    public void Provider_advertises_assertion_wrapper_diagnostic()
+    {
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        Assert.Contains(XunitAssertionWrapperDiagnosticId, provider.FixableDiagnosticIds);
+    }
+
+    [Theory]
+    [InlineData("Assert.True(true)", "global::SharedKernel.Testing.Assertions.TestAssert.True(true)")]
+    [InlineData("Assert.Single(new[] { 1 })", "global::SharedKernel.Testing.Assertions.TestAssert.ExactlyOne(new[] { 1 })")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: true)", "global::SharedKernel.Testing.Assertions.TestAssert.Equal(\"a\", \"A\", StringComparer.OrdinalIgnoreCase)")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: false)", "global::SharedKernel.Testing.Assertions.TestAssert.Equal(\"a\", \"A\", StringComparer.Ordinal)")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: compareCase)", "global::SharedKernel.Testing.Assertions.TestAssert.Equal(\"a\", \"A\", (compareCase) ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal)")]
+    public async Task Assertion_wrapper_fix_rewrites_supported_assertions(string assertion, string expectedRewrite)
+    {
+        // Arrange
+        var source = $$"""
+            namespace Demo;
+
+            public sealed class AssertionWrapperTests
+            {
+                public void Execute(bool compareCase)
+                {
+                    {{assertion}};
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, assertion);
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains(expectedRewrite, updatedText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Assertion_wrapper_fix_is_not_offered_for_unsupported_assertions()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AssertionWrapperTests
+            {
+                public void Execute()
+                {
+                    Assert.Multiple(() => Assert.True(true));
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, "Assert.Multiple");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
     }
 
     [Fact]
