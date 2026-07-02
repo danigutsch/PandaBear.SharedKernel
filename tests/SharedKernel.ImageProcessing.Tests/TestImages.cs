@@ -56,6 +56,26 @@ internal static class TestImages
         return stream;
     }
 
+    public static MemoryStream CreateAvifWithMajorBrand(string majorBrand)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(majorBrand);
+
+        if (majorBrand.Length != 4)
+        {
+            throw new ArgumentException("AVIF major brand must be four bytes.", nameof(majorBrand));
+        }
+
+        var stream = CreateImage(64, 32, MagickFormat.Avif);
+        var buffer = stream.GetBuffer();
+        buffer[8] = (byte)majorBrand[0];
+        buffer[9] = (byte)majorBrand[1];
+        buffer[10] = (byte)majorBrand[2];
+        buffer[11] = (byte)majorBrand[3];
+        stream.Position = 0;
+
+        return stream;
+    }
+
     private static ExifProfile CreateOrientationProfile()
     {
         var profile = new ExifProfile();

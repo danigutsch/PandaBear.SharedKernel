@@ -7,6 +7,8 @@ namespace SharedKernel.ImageProcessing;
 /// </summary>
 public static class MagickImageProcessor
 {
+    private static readonly Lock ResourceLimitsLock = new();
+
     /// <summary>
     /// Processes an image into the requested output variants.
     /// </summary>
@@ -25,32 +27,39 @@ public static class MagickImageProcessor
             throw new ArgumentException("At least one image variant must be requested.", nameof(request));
         }
 
-        try
+        lock (ResourceLimitsLock)
         {
-            EnsureStreamCanBeProbed(request.Content);
-            EnsureSupportedInputSignature(request.Content);
-            EnsureLimitValues(request.Limits);
-            ApplyResourceLimits();
-
-            var imageInfo = ProbeImage(request.Content);
-            EnsureWithinLimits(imageInfo.Width, imageInfo.Height, request.Limits);
-
-            using var image = new MagickImage(request.Content);
-            image.AutoOrient();
-            EnsureWithinLimits(image.Width, image.Height, request.Limits);
-
-            var variants = new List<ProcessedImageVariant>(request.Variants.Count);
-            foreach (var variant in request.Variants)
+            try
             {
-                ct.ThrowIfCancellationRequested();
-                variants.Add(CreateVariant(image, variant));
-            }
+                EnsureStreamCanBeProbed(request.Content);
+                EnsureSupportedInputSignature(request.Content);
+                EnsureLimitValues(request.Limits);
+                ApplyResourceLimits(request.Limits);
 
-            return new ImageProcessingResult((int)image.Width, (int)image.Height, variants);
-        }
-        catch (MagickException exception)
-        {
-            throw new ImageProcessingException("Image data could not be decoded or encoded.", exception);
+                var imageInfo = ProbeImage(request.Content);
+                EnsureWithinLimits(imageInfo.Width, imageInfo.Height, request.Limits);
+
+                using var image = new MagickImage(request.Content);
+                image.AutoOrient();
+                EnsureWithinLimits(image.Width, image.Height, request.Limits);
+
+                var variants = new List<ProcessedImageVariant>(request.Variants.Count);
+                foreach (var variant in request.Variants)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    variants.Add(CreateVariant(image, variant));
+                }
+
+                return new ImageProcessingResult((int)image.Width, (int)image.Height, variants);
+            }
+            catch (MagickException exception)
+            {
+                throw new ImageProcessingException("Image data could not be decoded or encoded.", exception);
+            }
+            finally
+            {
+                ApplyResourceLimits(ImageProcessingLimits.WebDefault);
+            }
         }
     }
 
@@ -166,11 +175,11 @@ public static class MagickImageProcessor
         _ => throw new ArgumentOutOfRangeException(nameof(format), format, "Unsupported image output format.")
     };
 
-    private static void ApplyResourceLimits()
+    private static void ApplyResourceLimits(ImageProcessingLimits limits)
     {
-        ResourceLimits.Width = (ulong)ImageProcessingLimits.WebDefault.MaxWidth;
-        ResourceLimits.Height = (ulong)ImageProcessingLimits.WebDefault.MaxHeight;
-        ResourceLimits.Area = (ulong)ImageProcessingLimits.WebDefault.MaxPixelCount;
+        ResourceLimits.Width = (ulong)limits.MaxWidth;
+        ResourceLimits.Height = (ulong)limits.MaxHeight;
+        ResourceLimits.Area = (ulong)limits.MaxPixelCount;
         ResourceLimits.Memory = 256UL * 1024UL * 1024UL;
         ResourceLimits.Disk = 512UL * 1024UL * 1024UL;
         ResourceLimits.Thread = 1;
@@ -205,8 +214,9 @@ public static class MagickImageProcessor
     }
 
     private static bool HasSupportedInputSignature(ReadOnlySpan<byte> header)
-        => header.Length >= 2 && header[0] == 0xFF && header[1] == 0xD8
-            || header.Length >= 8
+    {
+        var isJpeg = header.Length >= 2 && header[0] == 0xFF && header[1] == 0xD8;
+        var isPng = header.Length >= 8
             && header[0] == 0x89
             && header[1] == 0x50
             && header[2] == 0x4E
@@ -214,8 +224,14 @@ public static class MagickImageProcessor
             && header[4] == 0x0D
             && header[5] == 0x0A
             && header[6] == 0x1A
-            && header[7] == 0x0A
-            || header.Length >= 12
-            && (header[..4].SequenceEqual("RIFF"u8) && header[8..12].SequenceEqual("WEBP"u8)
-                || header[4..12].SequenceEqual("ftypavif"u8));
+            && header[7] == 0x0A;
+        var isWebP = header.Length >= 12
+            && header[..4].SequenceEqual("RIFF"u8)
+            && header[8..12].SequenceEqual("WEBP"u8);
+        var isAvif = header.Length >= 12
+            && header[4..8].SequenceEqual("ftyp"u8)
+            && (header[8..12].SequenceEqual("avif"u8) || header[8..12].SequenceEqual("avis"u8));
+
+        return isJpeg || isPng || isWebP || isAvif;
+    }
 }
