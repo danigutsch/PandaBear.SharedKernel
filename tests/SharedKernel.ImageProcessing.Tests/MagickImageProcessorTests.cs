@@ -108,6 +108,29 @@ public sealed class MagickImageProcessorTests
         TestImages.HasProfile(variant.Content).ShouldBe(false);
     }
 
+    [Theory]
+    [InlineData(MagickFormat.Png)]
+    [InlineData(MagickFormat.WebP)]
+    [InlineData(MagickFormat.Avif)]
+    public void Process_accepts_supported_upload_input_signatures(MagickFormat inputFormat)
+    {
+        // Arrange
+        using var content = TestImages.CreateImage(64, 32, inputFormat);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.WebP, 32, 85)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        var result = MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var variant = result.Variants[0];
+        variant.Width.ShouldBe(32);
+        variant.Height.ShouldBe(16);
+        TestImages.ReadFormat(variant.Content).ShouldBe(MagickFormat.WebP);
+    }
+
     [Fact]
     public void Process_creates_bounded_thumbnails_and_icon_variants()
     {

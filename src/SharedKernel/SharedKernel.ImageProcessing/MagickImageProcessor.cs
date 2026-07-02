@@ -205,13 +205,8 @@ public static class MagickImageProcessor
     }
 
     private static bool HasSupportedInputSignature(ReadOnlySpan<byte> header)
-    {
-        if (header.Length >= 2 && header[0] == 0xFF && header[1] == 0xD8)
-        {
-            return true;
-        }
-
-        if (header.Length >= 8
+        => header.Length >= 2 && header[0] == 0xFF && header[1] == 0xD8
+            || header.Length >= 8
             && header[0] == 0x89
             && header[1] == 0x50
             && header[2] == 0x4E
@@ -219,13 +214,8 @@ public static class MagickImageProcessor
             && header[4] == 0x0D
             && header[5] == 0x0A
             && header[6] == 0x1A
-            && header[7] == 0x0A)
-        {
-            return true;
-        }
-
-        return header.Length >= 12
+            && header[7] == 0x0A
+            || header.Length >= 12
             && (header[..4].SequenceEqual("RIFF"u8) && header[8..12].SequenceEqual("WEBP"u8)
                 || header[4..12].SequenceEqual("ftypavif"u8));
-    }
 }

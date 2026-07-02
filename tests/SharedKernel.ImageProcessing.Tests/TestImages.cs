@@ -44,6 +44,18 @@ internal static class TestImages
         return stream;
     }
 
+    public static MemoryStream CreateImage(uint width, uint height, MagickFormat format)
+    {
+        using var image = new MagickImage(MagickColors.Blue, width, height);
+        image.Format = format;
+
+        var stream = new MemoryStream();
+        image.Write(stream);
+        stream.Position = 0;
+
+        return stream;
+    }
+
     private static ExifProfile CreateOrientationProfile()
     {
         var profile = new ExifProfile();
