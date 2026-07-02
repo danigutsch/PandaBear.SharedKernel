@@ -67,6 +67,7 @@
     <!-- Other packages -->
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageVersion Include="JetBrains.Annotations" Version="2026.2.0" />
+    <PackageVersion Include="Magick.NET-Q8-AnyCPU" Version="14.14.0" />
     <PackageVersion Include="Npgsql" Version="10.0.3" />
   </ItemGroup>
 </Project>
