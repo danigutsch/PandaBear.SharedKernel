@@ -13,7 +13,7 @@ public static class MagickImageProcessor
     /// <param name="request">The image processing request.</param>
     /// <param name="ct">A token that can cancel processing before each variant is created.</param>
     /// <returns>The decoded image metadata and generated variants.</returns>
-    public static ImageProcessingResult Process(ImageProcessingRequest request, CancellationToken ct = default)
+    public static ImageProcessingResult Process(ImageProcessingRequest request, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(request.Content);
@@ -146,14 +146,9 @@ public static class MagickImageProcessor
     }
 
     private static int ValidateQuality(int Quality)
-    {
-        if (Quality is < 1 or > 100)
-        {
-            throw new ArgumentOutOfRangeException(nameof(Quality), Quality, "Image variant quality must be between 1 and 100.");
-        }
-
-        return Quality;
-    }
+        => Quality is < 1 or > 100
+            ? throw new ArgumentOutOfRangeException(nameof(Quality), Quality, "Image variant quality must be between 1 and 100.")
+            : Quality;
 
     private static void PadToSquareIcon(MagickImage image, uint maxWidth, uint maxHeight)
     {
@@ -222,11 +217,8 @@ public static class MagickImageProcessor
             return true;
         }
 
-        if (header.Length >= 12 && header[..4].SequenceEqual("RIFF"u8) && header[8..12].SequenceEqual("WEBP"u8))
-        {
-            return true;
-        }
-
-        return header.Length >= 12 && header[4..12].SequenceEqual("ftypavif"u8);
+        return header.Length >= 12
+            && (header[..4].SequenceEqual("RIFF"u8) && header[8..12].SequenceEqual("WEBP"u8)
+                || header[4..12].SequenceEqual("ftypavif"u8));
     }
 }
