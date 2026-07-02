@@ -29,4 +29,9 @@ public static class TestingDiagnosticIds
     /// Diagnostic emitted when a serial xUnit collection definition is missing a justification.
     /// </summary>
     public const string XunitSerialCollectionJustification = "SKTEST005";
+
+    /// <summary>
+    /// Diagnostic emitted when test code calls xUnit assertions directly.
+    /// </summary>
+    public const string XunitAssertionWrapper = "SKTEST006";
 }

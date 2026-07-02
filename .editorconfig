@@ -143,6 +143,7 @@ dotnet_diagnostic.SKTEST002.severity = warning
 dotnet_diagnostic.SKTEST003.severity = warning
 dotnet_diagnostic.SKTEST004.severity = warning
 dotnet_diagnostic.SKTEST005.severity = warning
+dotnet_diagnostic.SKTEST006.severity = suggestion
 
 # Shell scripts
 [*.{sh,bash}]

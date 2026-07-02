@@ -9,6 +9,57 @@ public sealed class SharedKernelTestingAnalyzerTests
     private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
     private const string XunitHelperMethodDiagnosticId = TestingDiagnosticIds.XunitTestClassHelperMethod;
     private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
+    private const string XunitAssertionWrapperDiagnosticId = TestingDiagnosticIds.XunitAssertionWrapper;
+
+    [Fact]
+    public async Task Direct_xunit_assertion_reports_s_k_t_e_s_t006()
+    {
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Uses_direct_xunit_assertion()
+                {
+                    Assert.True(true);
+                }
+            }
+            """;
+
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitAssertionWrapperDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Repository_assertion_wrapper_does_not_report_s_k_t_e_s_t006()
+    {
+        const string source = """
+            namespace Demo;
+
+            public static class TestAssert
+            {
+                public static void True(bool condition)
+                {
+                }
+            }
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Uses_repository_assertion_wrapper()
+                {
+                    TestAssert.True(true);
+                }
+            }
+            """;
+
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitAssertionWrapperDiagnosticId);
+    }
+
     [Fact]
     public async Task Pragma_warning_disable_inside_fact_method_reports_SKTEST001()
     {
