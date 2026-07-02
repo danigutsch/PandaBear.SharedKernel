@@ -3,8 +3,6 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <RootNamespace>SharedKernel.Testing.Analyzers.Tests</RootNamespace>
-        <!-- Analyzer self-tests intentionally compile direct xUnit Assert samples. -->
-        <NoWarn>$(NoWarn);SKTEST006</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
