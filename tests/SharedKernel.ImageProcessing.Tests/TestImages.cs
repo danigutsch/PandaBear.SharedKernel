@@ -17,6 +17,28 @@ internal static class TestImages
         return stream;
     }
 
+    public static MemoryStream CreateOrientedJpeg(uint width, uint height)
+    {
+        using var image = new MagickImage(MagickColors.Blue, width, height);
+        image.Format = MagickFormat.Jpeg;
+        image.Orientation = OrientationType.RightTop;
+        image.SetProfile(CreateOrientationProfile());
+
+        var stream = new MemoryStream();
+        image.Write(stream);
+        stream.Position = 0;
+
+        return stream;
+    }
+
+    private static ExifProfile CreateOrientationProfile()
+    {
+        var profile = new ExifProfile();
+        profile.SetValue(ExifTag.Orientation, (ushort)6);
+
+        return profile;
+    }
+
     public static MagickFormat ReadFormat(ReadOnlyMemory<byte> content)
     {
         using var image = new MagickImage(content.ToArray());

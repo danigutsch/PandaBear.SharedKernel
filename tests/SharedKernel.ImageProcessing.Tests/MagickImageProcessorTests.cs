@@ -68,6 +68,28 @@ public sealed class MagickImageProcessorTests
     }
 
     [Fact]
+    public void Process_applies_exif_orientation_before_generating_variants()
+    {
+        // Arrange
+        using var content = TestImages.CreateOrientedJpeg(40, 20);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("oriented", ImageOutputFormat.Jpeg, 40, 85)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        var result = MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Width.ShouldBe(20);
+        result.Height.ShouldBe(40);
+
+        var variant = result.Variants[0];
+        variant.Width.ShouldBe(20);
+        variant.Height.ShouldBe(40);
+    }
+
+    [Fact]
     public void Process_creates_bounded_thumbnails_and_icon_variants()
     {
         // Arrange
@@ -112,7 +134,7 @@ public sealed class MagickImageProcessorTests
 
         // Assert
         var exception = act.ShouldThrow<ArgumentException>();
-        exception.Message.ShouldContain("seekable");
+        exception.Message.ShouldContain("seekable", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -131,7 +153,40 @@ public sealed class MagickImageProcessorTests
 
         // Assert
         var exception = act.ShouldThrow<ArgumentException>();
-        exception.Message.ShouldContain("beginning");
+        exception.Message.ShouldContain("beginning", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Process_rejects_empty_variant_requests()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        var request = new ImageProcessingRequest(content, [], ImageProcessingLimits.WebDefault);
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldContain("At least one", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Process_rejects_invalid_limits()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 85)],
+            new ImageProcessingLimits(0, 32, 1_024));
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldContain("limits", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -149,7 +204,115 @@ public sealed class MagickImageProcessorTests
 
         // Assert
         var exception = act.ShouldThrow<ImageProcessingException>();
-        exception.Message.ShouldContain("exceeds");
+        exception.Message.ShouldContain("exceeds", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Process_rejects_images_that_exceed_pixel_count_limits()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 85)],
+            new ImageProcessingLimits(32, 32, 1_023));
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ImageProcessingException>();
+        exception.Message.ShouldContain("exceeds", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Process_rejects_variant_without_name()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest(" ", ImageOutputFormat.Jpeg, 16, 85)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldContain("name", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Process_rejects_variant_without_positive_dimensions()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 0, 85)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldContain("dimensions", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Process_rejects_variant_without_positive_height_when_height_is_supplied()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 85, 0)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldContain("dimensions", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Process_rejects_variant_quality_outside_supported_range()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 0)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ArgumentOutOfRangeException>();
+        exception.Message.ShouldContain("quality", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Process_rejects_unsupported_output_formats()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(32, 32);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", (ImageOutputFormat)999, 16, 85)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ArgumentOutOfRangeException>();
+        exception.Message.ShouldContain("Unsupported", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -167,6 +330,6 @@ public sealed class MagickImageProcessorTests
 
         // Assert
         var exception = act.ShouldThrow<ImageProcessingException>();
-        exception.Message.ShouldContain("could not be decoded");
+        exception.Message.ShouldContain("could not be decoded", StringComparison.Ordinal);
     }
 }

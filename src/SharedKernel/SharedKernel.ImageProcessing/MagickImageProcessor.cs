@@ -83,13 +83,13 @@ public static class MagickImageProcessor
             throw new ArgumentException("Image processing limits must be greater than zero.", nameof(limits));
         }
 
-        if (height != 0 && width > long.MaxValue / height)
+        if (width > limits.MaxWidth || height > limits.MaxHeight)
         {
             throw new ImageProcessingException("Decoded image exceeds the configured processing limits.");
         }
 
         var pixelCount = (long)width * height;
-        if (width > limits.MaxWidth || height > limits.MaxHeight || pixelCount > limits.MaxPixelCount)
+        if (pixelCount > limits.MaxPixelCount)
         {
             throw new ImageProcessingException("Decoded image exceeds the configured processing limits.");
         }
