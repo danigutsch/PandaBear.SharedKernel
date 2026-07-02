@@ -313,7 +313,7 @@ public sealed class MagickImageProcessorTests
 
         // Assert
         var exception = act.ShouldThrow<ArgumentOutOfRangeException>();
-        exception.ParamName.ShouldBe("quality");
+        exception.ParamName.ShouldBe("Quality");
     }
 
     [Fact]
@@ -331,7 +331,7 @@ public sealed class MagickImageProcessorTests
 
         // Assert
         var exception = act.ShouldThrow<ArgumentOutOfRangeException>();
-        exception.ParamName.ShouldBe("quality");
+        exception.ParamName.ShouldBe("Quality");
     }
 
     [Fact]
@@ -351,6 +351,24 @@ public sealed class MagickImageProcessorTests
         var exception = act.ShouldThrow<ArgumentOutOfRangeException>();
         exception.ParamName.ShouldBe("format");
         exception.ActualValue.ShouldBe((ImageOutputFormat)999);
+    }
+
+    [Fact]
+    public void Process_rejects_unsupported_input_formats_before_decoding()
+    {
+        // Arrange
+        using var content = new MemoryStream("%PDF-1.7"u8.ToArray());
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 85)],
+            ImageProcessingLimits.WebDefault);
+
+        // Act
+        Action act = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = act.ShouldThrow<ImageProcessingException>();
+        exception.Message.ShouldContain("unsupported", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -376,7 +394,7 @@ public sealed class MagickImageProcessorTests
     public void Process_wraps_decoder_failures()
     {
         // Arrange
-        using var content = new MemoryStream([0x01, 0x02, 0x03]);
+        using var content = new MemoryStream([0xFF, 0xD8, 0x01]);
         var request = new ImageProcessingRequest(
             content,
             [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 85)],
