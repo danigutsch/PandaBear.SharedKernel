@@ -19,29 +19,20 @@ public sealed class CodeFixRunEngineTests
             await CodeFixRunnerTestProject.Restore(projectPath);
 
             var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
-            using var error = new StringWriter(CultureInfo.InvariantCulture);
+            var error = new StringWriter(CultureInfo.InvariantCulture);
 
             // Act
             var fixedCount = await CodeFixRunEngine.Run(options, error);
             var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
             // Assert
-            TestAssert.Equal(3, fixedCount);
-            TestAssert.Contains("using SharedKernel.Testing.Assertions;", updatedSource, StringComparison.Ordinal);
-            TestAssert.Contains(
-                "TestAssert.True(true)",
-                updatedSource,
-                StringComparison.Ordinal);
-            TestAssert.Contains(
-                "TestAssert.ExactlyOne(new[] { 1 })",
-                updatedSource,
-                StringComparison.Ordinal);
-            TestAssert.Contains(
-                "TestAssert.Equal(\"a\", \"A\", StringComparer.OrdinalIgnoreCase)",
-                updatedSource,
-                StringComparison.Ordinal);
-            TestAssert.DoesNotContain("Xunit.Assert.True", updatedSource, StringComparison.Ordinal);
-            TestAssert.True(string.IsNullOrWhiteSpace(error.ToString()), error.ToString());
+            (fixedCount).ShouldBe(3);
+            (updatedSource).ShouldContain("using SharedKernel.Testing.Assertions;", StringComparison.Ordinal);
+            (updatedSource).ShouldContain("(true).ShouldBeTrue()", StringComparison.Ordinal);
+            (updatedSource).ShouldContain("(new[] { 1 }).ShouldHaveSingleItem()", StringComparison.Ordinal);
+            (updatedSource).ShouldContain("(\"A\").ShouldBe(\"a\", StringComparer.OrdinalIgnoreCase)", StringComparison.Ordinal);
+            (updatedSource).ShouldNotContain("Xunit.Assert.True");
+            (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
         }
         finally
         {
@@ -62,16 +53,16 @@ public sealed class CodeFixRunEngineTests
             await CodeFixRunnerTestProject.Restore(projectPath);
 
             var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
-            using var error = new StringWriter(CultureInfo.InvariantCulture);
+            var error = new StringWriter(CultureInfo.InvariantCulture);
 
             // Act
             var fixedCount = await CodeFixRunEngine.Run(options, error);
             var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
             // Assert
-            TestAssert.Equal(0, fixedCount);
-            TestAssert.Contains("public void Execute()", updatedSource, StringComparison.Ordinal);
-            TestAssert.True(string.IsNullOrWhiteSpace(error.ToString()), error.ToString());
+            (fixedCount).ShouldBe(0);
+            (updatedSource).ShouldContain("public void Execute()", StringComparison.Ordinal);
+            (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
         }
         finally
         {
@@ -99,9 +90,9 @@ public sealed class CodeFixRunEngineTests
             var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
             // Assert
-            TestAssert.Equal(0, fixedCount);
-            TestAssert.Contains("Xunit.Assert.Multiple", updatedSource, StringComparison.Ordinal);
-            TestAssert.Contains("No code fix available", error.ToString(), StringComparison.Ordinal);
+            (fixedCount).ShouldBe(0);
+            (updatedSource).ShouldContain("Xunit.Assert.Multiple", StringComparison.Ordinal);
+            (error.ToString()).ShouldContain("No code fix available", StringComparison.Ordinal);
         }
         finally
         {
@@ -116,10 +107,20 @@ public sealed class CodeFixRunEngineTests
         {
             var options = new CodeFixRunnerOptions(Path.Combine(projectDirectory, "sample.txt"), "SKTEST006");
             using var error = new StringWriter(CultureInfo.InvariantCulture);
+            ArgumentException? exception = null;
 
-            var exception = await TestAssert.Throws<ArgumentException>(() => CodeFixRunEngine.Run(options, error));
+            try
+            {
+                await CodeFixRunEngine.Run(options, error);
+            }
+            catch (ArgumentException caught)
+            {
+                exception = caught;
+            }
 
-            TestAssert.Contains("Expected a .csproj, .sln, or .slnx path.", exception.Message, StringComparison.Ordinal);
+            var nonNullException = exception.ShouldNotBeNull();
+
+            (nonNullException.Message).ShouldContain("Expected a .csproj, .sln, or .slnx path.", StringComparison.Ordinal);
         }
         finally
         {

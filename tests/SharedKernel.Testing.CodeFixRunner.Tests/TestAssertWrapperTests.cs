@@ -6,8 +6,10 @@ public sealed class TestAssertWrapperTests
     [Fact]
     public void ExactlyOne_returns_the_only_collection_item()
     {
-        var value = TestAssert.ExactlyOne([42]);
+        int[] values = [42];
 
-        TestAssert.Equal(42, value);
+        var value = values.ShouldHaveSingleItem();
+
+        (value).ShouldBe(42);
     }
 }

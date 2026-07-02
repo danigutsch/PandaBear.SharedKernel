@@ -8,9 +8,9 @@ public sealed class CodeFixRunnerOptionsTests
     {
         var options = CodeFixRunnerOptions.Parse(["sample.csproj"]);
 
-        var parsedOptions = TestAssert.NotNull(options);
-        TestAssert.Equal(Path.GetFullPath("sample.csproj"), parsedOptions.TargetPath);
-        TestAssert.Equal("SKTEST004", parsedOptions.DiagnosticId);
+        var parsedOptions = (options).ShouldNotBeNull();
+        (parsedOptions.TargetPath).ShouldBe(Path.GetFullPath("sample.csproj"));
+        (parsedOptions.DiagnosticId).ShouldBe("SKTEST004");
     }
 
     [Fact]
@@ -18,9 +18,9 @@ public sealed class CodeFixRunnerOptionsTests
     {
         var options = CodeFixRunnerOptions.Parse(["--diagnostic", "SKTEST006", "sample.csproj"]);
 
-        var parsedOptions = TestAssert.NotNull(options);
-        TestAssert.Equal(Path.GetFullPath("sample.csproj"), parsedOptions.TargetPath);
-        TestAssert.Equal("SKTEST006", parsedOptions.DiagnosticId);
+        var parsedOptions = (options).ShouldNotBeNull();
+        (parsedOptions.TargetPath).ShouldBe(Path.GetFullPath("sample.csproj"));
+        (parsedOptions.DiagnosticId).ShouldBe("SKTEST006");
     }
 
     [Theory]
@@ -32,6 +32,6 @@ public sealed class CodeFixRunnerOptionsTests
     {
         var options = CodeFixRunnerOptions.Parse(args);
 
-        TestAssert.Null(options);
+        (options).ShouldBeNull();
     }
 }

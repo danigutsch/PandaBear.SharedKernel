@@ -116,8 +116,8 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
         context.RegisterCodeFix(
             CodeAction.Create(
-                title: "Use TestAssert wrapper",
-                createChangedDocument: _ => UseTestAssertWrapper(document, syntaxRoot, memberAccess),
+                title: "Use Should assertion wrapper",
+                createChangedDocument: _ => UseShouldAssertionWrapper(document, syntaxRoot, memberAccess),
                 equivalenceKey: equivalenceKey),
             diagnostic);
     }
@@ -140,25 +140,18 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         }
 
         return name is "All"
-            or "Collection"
             or "Contains"
             or "DoesNotContain"
             or "Empty"
             or "Equal"
             or "False"
             or "InRange"
-            or "IsAssignableFrom"
-            or "IsNotAssignableFrom"
-            or "IsNotType"
-            or "IsType"
             or "NotEmpty"
             or "NotEqual"
-            or "NotInRange"
             or "NotNull"
             or "Null"
             or "Same"
             or "Single"
-            or "Throws"
             or "True";
     }
 
@@ -178,32 +171,76 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         return memberAccess.FirstAncestorOrSelf<InvocationExpressionSyntax>() is { ArgumentList.Arguments.Count: 1 };
     }
 
-    private static Task<Document> UseTestAssertWrapper(
+    private static Task<Document> UseShouldAssertionWrapper(
         Document document,
         SyntaxNode syntaxRoot,
         MemberAccessExpressionSyntax memberAccess)
     {
         var invocation = memberAccess.FirstAncestorOrSelf<InvocationExpressionSyntax>();
-        var targetName = memberAccess.Name.Identifier.ValueText is "Single"
-            ? "ExactlyOne"
-            : memberAccess.Name.Identifier.ValueText;
-        var testAssert = IdentifierName("TestAssert")
-            .WithTriviaFrom(memberAccess.Expression)
-            .WithAdditionalAnnotations(Formatter.Annotation);
-        var updatedMemberAccess = memberAccess
-            .WithExpression(testAssert)
-            .WithName(IdentifierName(targetName).WithTriviaFrom(memberAccess.Name));
+        if (invocation is null || !TryCreateShouldAssertionInvocation(invocation, memberAccess, out var updatedInvocation))
+        {
+            return Task.FromResult(document);
+        }
 
-        var updatedRoot = invocation is { ArgumentList.Arguments: var arguments }
-            && string.Equals(targetName, "Equal", StringComparison.Ordinal)
-            && TryGetIgnoreCaseComparer(arguments, out _)
-            ? ReplaceEqualIgnoreCaseInvocation(syntaxRoot, invocation, updatedMemberAccess)
-            : syntaxRoot.ReplaceNode(memberAccess, updatedMemberAccess);
+        var updatedRoot = syntaxRoot.ReplaceNode(invocation, updatedInvocation);
 
-        return Task.FromResult(document.WithSyntaxRoot(AddTestAssertUsing(updatedRoot)));
+        return Task.FromResult(document.WithSyntaxRoot(AddAssertionUsing(updatedRoot)));
     }
 
-    private static SyntaxNode AddTestAssertUsing(SyntaxNode syntaxRoot)
+    private static bool TryCreateShouldAssertionInvocation(
+        InvocationExpressionSyntax invocation,
+        MemberAccessExpressionSyntax memberAccess,
+        out InvocationExpressionSyntax updatedInvocation)
+    {
+        var arguments = invocation.ArgumentList.Arguments;
+        var assertionName = memberAccess.Name.Identifier.ValueText;
+        updatedInvocation = invocation;
+
+        return assertionName switch
+        {
+            "All" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[0], "ShouldAllSatisfy", [arguments[1]], out updatedInvocation),
+            "Contains" when arguments.Count == 2 && arguments[1].Expression is ParenthesizedLambdaExpressionSyntax or SimpleLambdaExpressionSyntax => TryCreateShouldInvocation(arguments[0], "ShouldContain", [arguments[1]], out updatedInvocation),
+            "Contains" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldContain", [arguments[0]], out updatedInvocation),
+            "Contains" when arguments.Count == 3 => TryCreateShouldInvocation(arguments[1], "ShouldContain", [arguments[0], arguments[2]], out updatedInvocation),
+            "DoesNotContain" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldNotContain", [arguments[0]], out updatedInvocation),
+            "Empty" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldBeEmpty", [], out updatedInvocation),
+            "Equal" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldBe", [arguments[0]], out updatedInvocation),
+            "Equal" when arguments.Count == 3 && TryGetIgnoreCaseComparer(arguments, out var comparerExpression) => TryCreateShouldInvocation(arguments[1], "ShouldBe", [arguments[0], Argument(ParseExpression(comparerExpression))], out updatedInvocation),
+            "False" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldBeFalse", [], out updatedInvocation),
+            "False" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[0], "ShouldBeFalse", [arguments[1]], out updatedInvocation),
+            "InRange" when arguments.Count == 3 => TryCreateShouldInvocation(arguments[0], "ShouldBeInRange", [arguments[1], arguments[2]], out updatedInvocation),
+            "NotEmpty" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldNotBeEmpty", [], out updatedInvocation),
+            "NotEqual" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldNotBe", [arguments[0]], out updatedInvocation),
+            "NotEqual" when arguments.Count == 3 => TryCreateShouldInvocation(arguments[1], "ShouldNotBe", [arguments[0], arguments[2]], out updatedInvocation),
+            "NotNull" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldNotBeNull", [], out updatedInvocation),
+            "Null" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldBeNull", [], out updatedInvocation),
+            "Same" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[1], "ShouldBeSameAs", [arguments[0]], out updatedInvocation),
+            "Single" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldHaveSingleItem", [], out updatedInvocation),
+            "True" when arguments.Count == 1 => TryCreateShouldInvocation(arguments[0], "ShouldBeTrue", [], out updatedInvocation),
+            "True" when arguments.Count == 2 => TryCreateShouldInvocation(arguments[0], "ShouldBeTrue", [arguments[1]], out updatedInvocation),
+            _ => false,
+        };
+    }
+
+    private static bool TryCreateShouldInvocation(
+        ArgumentSyntax receiverArgument,
+        string shouldMethodName,
+        IEnumerable<ArgumentSyntax> arguments,
+        out InvocationExpressionSyntax invocation)
+    {
+        invocation = InvocationExpression(
+                MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    ParenthesizedExpression(receiverArgument.Expression.WithoutTrivia()),
+                    IdentifierName(shouldMethodName)))
+            .WithArgumentList(ArgumentList(SeparatedList(arguments.Select(static argument => argument.WithNameColon(null)))))
+            .WithTriviaFrom(receiverArgument.Expression)
+            .WithAdditionalAnnotations(Formatter.Annotation);
+
+        return true;
+    }
+
+    private static SyntaxNode AddAssertionUsing(SyntaxNode syntaxRoot)
     {
         if (syntaxRoot is not CompilationUnitSyntax compilationUnit
             || compilationUnit.Usings.Any(static usingDirective => string.Equals(
@@ -217,23 +254,6 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         var usingDirective = UsingDirective(ParseName("SharedKernel.Testing.Assertions"));
         return compilationUnit.AddUsings(usingDirective)
             .WithAdditionalAnnotations(Formatter.Annotation);
-    }
-
-    private static SyntaxNode ReplaceEqualIgnoreCaseInvocation(
-        SyntaxNode syntaxRoot,
-        InvocationExpressionSyntax invocation,
-        MemberAccessExpressionSyntax updatedMemberAccess)
-    {
-        _ = TryGetIgnoreCaseComparer(invocation.ArgumentList.Arguments, out var comparerExpression);
-        var comparerArgument = Argument(ParseExpression(comparerExpression));
-        var updatedArguments = SeparatedList(invocation.ArgumentList.Arguments
-            .Where(static argument => !IsIgnoreCaseArgument(argument))
-            .Append(comparerArgument));
-        var updatedInvocation = invocation
-            .WithExpression(updatedMemberAccess)
-            .WithArgumentList(invocation.ArgumentList.WithArguments(updatedArguments));
-
-        return syntaxRoot.ReplaceNode(invocation, updatedInvocation);
     }
 
     private static bool TryGetIgnoreCaseComparer(SeparatedSyntaxList<ArgumentSyntax> arguments, out string comparerExpression)

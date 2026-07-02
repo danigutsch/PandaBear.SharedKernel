@@ -305,11 +305,11 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Theory]
-    [InlineData("Assert.True(true)", "TestAssert.True(true)")]
-    [InlineData("Assert.Single(new[] { 1 })", "TestAssert.ExactlyOne(new[] { 1 })")]
-    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: true)", "TestAssert.Equal(\"a\", \"A\", StringComparer.OrdinalIgnoreCase)")]
-    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: false)", "TestAssert.Equal(\"a\", \"A\", StringComparer.Ordinal)")]
-    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: compareCase)", "TestAssert.Equal(\"a\", \"A\", (compareCase) ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal)")]
+    [InlineData("Assert.True(true)", "(true).ShouldBeTrue()")]
+    [InlineData("Assert.Single(new[] { 1 })", "(new[] { 1 }).ShouldHaveSingleItem()")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: true)", "(\"A\").ShouldBe(\"a\", StringComparer.OrdinalIgnoreCase)")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: false)", "(\"A\").ShouldBe(\"a\", StringComparer.Ordinal)")]
+    [InlineData("Assert.Equal(\"a\", \"A\", ignoreCase: compareCase)", "(\"A\").ShouldBe(\"a\", (compareCase) ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal)")]
     public async Task Assertion_wrapper_fix_rewrites_supported_assertions(string assertion, string expectedRewrite)
     {
         // Arrange

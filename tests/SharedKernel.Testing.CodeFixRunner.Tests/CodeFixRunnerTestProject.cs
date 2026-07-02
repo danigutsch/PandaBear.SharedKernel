@@ -75,8 +75,6 @@ internal static class CodeFixRunnerTestProject
         var standardError = await process.StandardError.ReadToEndAsync(TestContext.Current.CancellationToken);
         await process.WaitForExitAsync(TestContext.Current.CancellationToken);
 
-        TestAssert.True(
-            process.ExitCode == 0,
-            $"dotnet restore failed with exit code {process.ExitCode}.{Environment.NewLine}{standardOutput}{Environment.NewLine}{standardError}");
+        (process.ExitCode == 0).ShouldBeTrue($"dotnet restore failed with exit code {process.ExitCode}.{Environment.NewLine}{standardOutput}{Environment.NewLine}{standardError}");
     }
 }

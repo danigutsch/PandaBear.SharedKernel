@@ -21,9 +21,9 @@ public sealed class ProgramEntryPointTests
 
             var exitCode = await ProgramEntryPoint.Run(["--diagnostic", "SKTEST006", projectPath], output, error);
 
-            TestAssert.Equal(0, exitCode);
-            TestAssert.Contains("Fixed 3 SKTEST006 diagnostic(s).", output.ToString(), StringComparison.Ordinal);
-            TestAssert.True(string.IsNullOrWhiteSpace(error.ToString()), error.ToString());
+            (exitCode).ShouldBe(0);
+            (output.ToString()).ShouldContain("Fixed 3 SKTEST006 diagnostic(s).", StringComparison.Ordinal);
+            (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
         }
         finally
         {
@@ -39,8 +39,8 @@ public sealed class ProgramEntryPointTests
 
         var exitCode = await ProgramEntryPoint.Run([], output, error);
 
-        TestAssert.Equal(2, exitCode);
-        TestAssert.Contains(CodeFixRunnerOptions.Usage, error.ToString(), StringComparison.Ordinal);
-        TestAssert.True(string.IsNullOrWhiteSpace(output.ToString()), output.ToString());
+        (exitCode).ShouldBe(2);
+        (error.ToString()).ShouldContain(CodeFixRunnerOptions.Usage, StringComparison.Ordinal);
+        (string.IsNullOrWhiteSpace(output.ToString())).ShouldBeTrue(output.ToString());
     }
 }
