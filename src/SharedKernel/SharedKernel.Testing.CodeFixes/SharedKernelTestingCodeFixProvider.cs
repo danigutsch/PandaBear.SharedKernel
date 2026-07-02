@@ -127,6 +127,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         var name = memberAccess.Name.Identifier.ValueText;
         equivalenceKey = $"UseTestAssertWrapper:{name}";
 
+        if (string.Equals(name, "Equal", StringComparison.Ordinal)
+            && !CanRewriteEqualInvocation(memberAccess))
+        {
+            return false;
+        }
+
         return name is "All"
             or "Collection"
             or "Contains"
@@ -148,6 +154,17 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             or "Single"
             or "Throws"
             or "True";
+    }
+
+    private static bool CanRewriteEqualInvocation(MemberAccessExpressionSyntax memberAccess)
+    {
+        if (memberAccess.FirstAncestorOrSelf<InvocationExpressionSyntax>() is not { ArgumentList.Arguments: var arguments })
+        {
+            return false;
+        }
+
+        return arguments.Count == 2
+            || (arguments.Count == 3 && arguments.Any(IsIgnoreCaseArgument));
     }
 
     private static Task<Document> UseTestAssertWrapper(
