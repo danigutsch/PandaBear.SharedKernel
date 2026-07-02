@@ -102,7 +102,7 @@ public static class MagickImageProcessor
             throw new ArgumentException("Image variant name must be provided.", nameof(request));
         }
 
-        if (request.MaxWidth <= 0 || request.MaxHeight <= 0)
+        if (request.MaxWidth <= 0 || request.MaxHeight is <= 0)
         {
             throw new ArgumentException("Image variant maximum dimensions must be greater than zero.", nameof(request));
         }
