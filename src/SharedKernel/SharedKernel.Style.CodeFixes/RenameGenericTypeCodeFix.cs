@@ -61,14 +61,17 @@ internal static class RenameGenericTypeCodeFix
         SyntaxNode targetNode,
         CancellationToken cancellationToken)
     {
-        if (targetNode.FirstAncestorOrSelf<TypeDeclarationSyntax>() is { } typeDeclaration)
+        var typeDeclaration = targetNode.FirstAncestorOrSelf<TypeDeclarationSyntax>();
+        if (typeDeclaration is null)
         {
-            return (INamedTypeSymbol?)semanticModel.GetDeclaredSymbol(typeDeclaration, cancellationToken);
+            var delegateDeclaration = targetNode.FirstAncestorOrSelf<DelegateDeclarationSyntax>();
+
+            return delegateDeclaration is null
+                ? null
+                : (INamedTypeSymbol?)semanticModel.GetDeclaredSymbol(delegateDeclaration, cancellationToken);
         }
 
-        return targetNode.FirstAncestorOrSelf<DelegateDeclarationSyntax>() is { } delegateDeclaration
-            ? (INamedTypeSymbol?)semanticModel.GetDeclaredSymbol(delegateDeclaration, cancellationToken)
-            : null;
+        return (INamedTypeSymbol?)semanticModel.GetDeclaredSymbol(typeDeclaration, cancellationToken);
     }
 
     private static string? GetUpdatedName(string typeName)
