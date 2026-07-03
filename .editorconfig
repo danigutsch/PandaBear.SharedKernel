@@ -333,9 +333,6 @@ dotnet_diagnostic.CA1812.severity = none
 [src/ViajantesTurismo.Admin.Contracts/ImportResultDto.cs]
 dotnet_diagnostic.SKSTYLE004.severity = none
 
-[src/ViajantesTurismo.Common/Results/Result.cs]
-dotnet_diagnostic.SKSTYLE004.severity = none
-
 [src/ViajantesTurismo.Management.Web/Services/CountryService.cs]
 dotnet_diagnostic.SKSTYLE004.severity = none
 
