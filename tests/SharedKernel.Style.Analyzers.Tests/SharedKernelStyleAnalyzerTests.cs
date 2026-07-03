@@ -407,6 +407,111 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
+    public async Task Generic_type_ending_with_generic_reports_skstyle005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Result
+            {
+            }
+
+            public sealed class ResultGeneric<T>
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.GenericTypeNameSuffix);
+        Assert.Contains("ResultGeneric", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+        Assert.Contains("Result", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Generic_type_ending_with_oft_reports_skstyle005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class ResultOfT<T>
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.GenericTypeNameSuffix);
+        Assert.Contains("ResultOfT", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+        Assert.Contains("Result", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Generic_type_ending_with_misspelled_gereric_reports_skstyle005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class ResultGereric<T>
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.GenericTypeNameSuffix);
+        Assert.Contains("ResultGereric", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+        Assert.Contains("Result", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Non_generic_type_ending_with_generic_does_not_report_skstyle005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Generic
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.GenericTypeNameSuffix);
+    }
+
+    [Fact]
+    public async Task Generic_type_without_generic_suffix_does_not_report_skstyle005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Result<T>
+            {
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.GenericTypeNameSuffix);
+    }
+
+    [Fact]
     public async Task Partial_type_with_non_partial_helper_still_reports_skstyle004()
     {
         // Arrange

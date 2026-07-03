@@ -9,5 +9,6 @@ const SharedKernel.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001"
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter = "SKSTYLE006" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue = "SKSTYLE003" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName = "SKSTYLE002" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix = "SKSTYLE005" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.MultipleTopLevelTypesPerFile = "SKSTYLE004" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.NonSourceGeneratedLogging = "SKSTYLE007" -> string!

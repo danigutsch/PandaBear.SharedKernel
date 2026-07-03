@@ -18,6 +18,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     private const string ShouldHandleAsFailureMethodName = "ShouldHandleAsFailure";
     private const string LoggerExtensionsTypeName = "Microsoft.Extensions.Logging.LoggerExtensions";
     private const string LoggerInterfaceTypeName = "Microsoft.Extensions.Logging.ILogger";
+    private static readonly ImmutableArray<string> GenericTypeNameSuffixes = ["Gereric", "Generic", "OfT"];
     private static readonly ImmutableHashSet<string> DirectLoggerExtensionMethodNames = ImmutableHashSet.Create(
         StringComparer.Ordinal,
         "LogTrace",
@@ -58,6 +59,14 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository coding rules prefer one top-level type per file for new or significantly refactored C# code.");
+    private static readonly DiagnosticDescriptor GenericTypeNameSuffixRule = new(
+        StyleDiagnosticIds.GenericTypeNameSuffix,
+        title: "Generic type names should not include generic suffixes",
+        messageFormat: "Generic type '{0}' should be named '{1}' because generic arity is already part of the type identity",
+        category: "Style",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Generic type names should use the same noun phrase as non-generic variants; suffixes such as Generic, Gereric, or OfT repeat information already carried by type parameters.");
     private static readonly DiagnosticDescriptor BroadOperationCanceledExceptionFilterRule = new(
         StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
         title: "Catch filters should preserve unexpected OperationCanceledException telemetry",
@@ -81,6 +90,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             CancellationTokenParameterNameRule,
             CancellationTokenDefaultValueRule,
             MultipleTopLevelTypesPerFileRule,
+            GenericTypeNameSuffixRule,
             BroadOperationCanceledExceptionFilterRule,
             NonSourceGeneratedLoggingRule);
 
@@ -114,6 +124,10 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             SymbolKind.Method);
 
         context.RegisterSyntaxTreeAction(AnalyzeSyntaxTree);
+
+        context.RegisterSymbolAction(
+            AnalyzeNamedType,
+            SymbolKind.NamedType);
 
         context.RegisterSyntaxNodeAction(
             AnalyzeCatchFilter,
@@ -225,6 +239,36 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                     parameter.Locations.First(),
                     parameter.Name));
         }
+    }
+
+    private static void AnalyzeNamedType(SymbolAnalysisContext context)
+    {
+        if (context.Symbol is not INamedTypeSymbol { Arity: > 0 } type
+            || type.TypeKind is not (TypeKind.Class or TypeKind.Struct or TypeKind.Interface or TypeKind.Delegate)
+            || type.Locations.FirstOrDefault(static location => location.IsInSource) is not { } location)
+        {
+            return;
+        }
+
+        var suffix = GenericTypeNameSuffixes.FirstOrDefault(suffix =>
+            type.Name.Length > suffix.Length
+            && type.Name.EndsWith(suffix, StringComparison.Ordinal));
+        if (suffix is null)
+        {
+            return;
+        }
+
+        var suggestedName = type.Name.Substring(0, type.Name.Length - suffix.Length);
+        if (string.IsNullOrWhiteSpace(suggestedName))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            GenericTypeNameSuffixRule,
+            location,
+            type.Name,
+            suggestedName));
     }
 
     private static void AnalyzeSyntaxTree(SyntaxTreeAnalysisContext context)

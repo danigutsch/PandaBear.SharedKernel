@@ -753,9 +753,71 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 Analyzers.StyleDiagnosticIds.AsyncSuffix,
                 Analyzers.StyleDiagnosticIds.CancellationTokenParameterName,
                 Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue,
+                Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix,
                 Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter
             ],
             diagnosticIds);
+    }
+
+    [Fact]
+    public async Task Generic_type_suffix_fix_renames_type_and_references()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Result
+            {
+            }
+
+            public sealed class ResultOfT<T>
+            {
+            }
+
+            public sealed class Consumer
+            {
+                public ResultOfT<string> Load() => new ResultOfT<string>();
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix, "ResultOfT<T>");
+
+        // Act
+        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        Assert.Contains("public sealed class Result<T>", updatedText, StringComparison.Ordinal);
+        Assert.Contains("public Result<string> Load() => new Result<string>();", updatedText, StringComparison.Ordinal);
+        Assert.DoesNotContain("ResultOfT", updatedText, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Generic_type_suffix_fix_is_not_offered_when_same_arity_type_exists()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Result<T>
+            {
+            }
+
+            public sealed class ResultGeneric<T>
+            {
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix, "ResultGeneric<T>");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
     }
 
     [Fact]

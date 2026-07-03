@@ -26,6 +26,11 @@ public static class StyleDiagnosticIds
     public const string MultipleTopLevelTypesPerFile = "SKSTYLE004";
 
     /// <summary>
+    /// Diagnostic emitted when a generic type name includes a suffix that repeats its generic arity.
+    /// </summary>
+    public const string GenericTypeNameSuffix = "SKSTYLE005";
+
+    /// <summary>
     /// Diagnostic emitted when a catch filter suppresses all <see cref="OperationCanceledException" /> values.
     /// </summary>
     public const string BroadOperationCanceledExceptionFilter = "SKSTYLE006";
