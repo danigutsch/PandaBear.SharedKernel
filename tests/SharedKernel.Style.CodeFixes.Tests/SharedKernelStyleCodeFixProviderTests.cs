@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SharedKernel.Testing.Assertions;
 namespace SharedKernel.Style.CodeFixes.Tests;
 
 public sealed class SharedKernelStyleCodeFixProviderTests
@@ -753,9 +754,125 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 Analyzers.StyleDiagnosticIds.AsyncSuffix,
                 Analyzers.StyleDiagnosticIds.CancellationTokenParameterName,
                 Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue,
+                Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix,
                 Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter
             ],
             diagnosticIds);
+    }
+
+    [Fact]
+    public async Task Generic_type_suffix_fix_renames_type_and_references()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Result
+            {
+            }
+
+            public sealed class ResultOfT<T>
+            {
+            }
+
+            public sealed class Consumer
+            {
+                public ResultOfT<string> Load() => new ResultOfT<string>();
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix, "ResultOfT<T>");
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        updatedText.ShouldContain("public sealed class Result<T>", StringComparison.Ordinal);
+        updatedText.ShouldContain("public Result<string> Load() => new Result<string>();", StringComparison.Ordinal);
+        updatedText.ShouldNotContain("ResultOfT");
+    }
+
+    [Fact]
+    public async Task Generic_type_suffix_fix_is_not_offered_when_same_arity_type_exists()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Result<T>
+            {
+            }
+
+            public sealed class ResultGeneric<T>
+            {
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix, "ResultGeneric<T>");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Generic_type_suffix_fix_is_not_offered_for_nested_type()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class ResultFactory
+            {
+                public sealed class ResultOfT<T>
+                {
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix, "ResultOfT<T>");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Generic_delegate_suffix_fix_renames_delegate_and_references()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public delegate void ResultHandlerOfT<T>(T value);
+
+            public sealed class Consumer
+            {
+                public ResultHandlerOfT<string> Handler { get; } = static _ => { };
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix, "ResultHandlerOfT<T>");
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        updatedText.ShouldContain("public delegate void ResultHandler<T>(T value);", StringComparison.Ordinal);
+        updatedText.ShouldContain("public ResultHandler<string> Handler", StringComparison.Ordinal);
+        updatedText.ShouldNotContain("ResultHandlerOfT");
     }
 
     [Fact]
