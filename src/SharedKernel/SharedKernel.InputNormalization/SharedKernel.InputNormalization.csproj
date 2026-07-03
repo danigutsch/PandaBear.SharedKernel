@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.InputNormalization</PackageId>
+        <Description>Reusable input normalization helpers for shared-kernel workflows.</Description>
+        <RootNamespace>SharedKernel.InputNormalization</RootNamespace>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+</Project>

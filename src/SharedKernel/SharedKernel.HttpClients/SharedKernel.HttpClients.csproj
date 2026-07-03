@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.HttpClients</PackageId>
+        <Description>Reusable HTTP client helpers for shared validation responses.</Description>
+        <RootNamespace>SharedKernel.HttpClients</RootNamespace>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+</Project>
