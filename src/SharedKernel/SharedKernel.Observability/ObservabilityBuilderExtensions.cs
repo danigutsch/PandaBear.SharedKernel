@@ -15,7 +15,7 @@ public static class ObservabilityBuilderExtensions
 {
     /// <summary>
     /// Configures standardized OpenTelemetry logging, metrics, and tracing for the supplied builder,
-    /// including cross-service instrumentation and explicit stable service identity.
+    /// including cross-service runtime instrumentation plus explicit stable service identity.
     /// </summary>
     /// <typeparam name="TBuilder">Host builder type, e.g. WebApplicationBuilder, HostApplicationBuilder.</typeparam>
     /// <param name="builder">The host application builder to configure.</param>
