@@ -244,6 +244,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     private static void AnalyzeNamedType(SymbolAnalysisContext context)
     {
         if (context.Symbol is not INamedTypeSymbol { Arity: > 0 } type
+            || type.ContainingType is not null
             || type.TypeKind is not (TypeKind.Class or TypeKind.Struct or TypeKind.Interface or TypeKind.Delegate)
             || type.Locations.FirstOrDefault(static location => location.IsInSource) is not { } location)
         {

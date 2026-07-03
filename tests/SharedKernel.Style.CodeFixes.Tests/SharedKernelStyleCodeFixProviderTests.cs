@@ -821,6 +821,31 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Generic_type_suffix_fix_is_not_offered_for_nested_type()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class ResultFactory
+            {
+                public sealed class ResultOfT<T>
+                {
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix, "ResultOfT<T>");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        Assert.Empty(codeActions);
+    }
+
+    [Fact]
     public void Fix_all_is_advertised_for_safe_style_diagnostics()
     {
         // Arrange

@@ -512,6 +512,28 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
+    public async Task Nested_generic_type_with_generic_suffix_does_not_report_skstyle005()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class ResultFactory
+            {
+                public sealed class ResultOfT<T>
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.GenericTypeNameSuffix);
+    }
+
+    [Fact]
     public async Task Partial_type_with_non_partial_helper_still_reports_skstyle004()
     {
         // Arrange

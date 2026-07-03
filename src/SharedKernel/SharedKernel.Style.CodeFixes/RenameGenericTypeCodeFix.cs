@@ -28,7 +28,9 @@ internal static class RenameGenericTypeCodeFix
 
         var targetNode = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
         var typeSymbol = GetTypeSymbol(semanticModel, targetNode, context.CancellationToken);
-        if (typeSymbol is null || typeSymbol.Arity == 0)
+        if (typeSymbol is null
+            || typeSymbol.Arity == 0
+            || typeSymbol.ContainingType is not null)
         {
             return;
         }
@@ -83,10 +85,7 @@ internal static class RenameGenericTypeCodeFix
 
     private static bool HasRenameConflict(INamedTypeSymbol typeSymbol, string updatedName)
     {
-        return typeSymbol.ContainingType is null
-            ? typeSymbol.ContainingNamespace.GetTypeMembers(updatedName, typeSymbol.Arity)
-                .Any(candidate => !SymbolEqualityComparer.Default.Equals(candidate, typeSymbol))
-            : typeSymbol.ContainingType.GetTypeMembers(updatedName, typeSymbol.Arity)
-                .Any(candidate => !SymbolEqualityComparer.Default.Equals(candidate, typeSymbol));
+        return typeSymbol.ContainingNamespace.GetTypeMembers(updatedName, typeSymbol.Arity)
+            .Any(candidate => !SymbolEqualityComparer.Default.Equals(candidate, typeSymbol));
     }
 }
