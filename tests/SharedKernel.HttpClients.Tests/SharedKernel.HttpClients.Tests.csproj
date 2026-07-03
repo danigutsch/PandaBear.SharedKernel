@@ -6,6 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="Microsoft.Extensions.DependencyInjection" />
+        <Using Include="SharedKernel.HttpClients" />
         <Using Include="SharedKernel.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
