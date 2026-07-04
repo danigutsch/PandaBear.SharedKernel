@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SharedKernel.Mediator.EntityFrameworkCore.Tests;
 
@@ -81,6 +82,20 @@ public sealed class EfCoreCommandTransactionBehaviorTests
         resolveGlobalDbContext.ShouldThrow<InvalidOperationException>();
         commandBehavior.ShouldBeOfType<EfCoreCommandTransactionBehavior<TestDbContext, TestCommand, int>>();
         otherCommandBehavior.ShouldBeOfType<EfCoreCommandTransactionBehavior<OtherTestDbContext, OtherTestCommand, int>>();
+    }
+
+    [Fact]
+    public void Registering_closed_transaction_behavior_rejects_missing_services()
+    {
+        // Arrange
+        IServiceCollection? services = null;
+        Action registerBehavior = () => services!.AddEfCoreCommandTransaction<TestDbContext, TestCommand, int>();
+
+        // Act
+        var exception = registerBehavior.ShouldThrow<ArgumentNullException>();
+
+        // Assert
+        exception.ParamName.ShouldBe("services");
     }
 
     [Fact]

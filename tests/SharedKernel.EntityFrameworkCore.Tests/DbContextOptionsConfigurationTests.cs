@@ -42,6 +42,20 @@ public sealed class DbContextOptionsConfigurationTests
     }
 
     [Fact]
+    public void Add_development_diagnostics_rejects_missing_services()
+    {
+        // Arrange
+        IServiceCollection? services = null;
+        Action addDiagnostics = () => services!.AddDbContextDevelopmentDiagnostics<TestDbContext>();
+
+        // Act
+        var exception = addDiagnostics.ShouldThrow<ArgumentNullException>();
+
+        // Assert
+        exception.ParamName.ShouldBe("services");
+    }
+
+    [Fact]
     public void Add_configuration_rejects_missing_services()
     {
         // Arrange
@@ -71,5 +85,50 @@ public sealed class DbContextOptionsConfigurationTests
 
         // Assert
         exception.ParamName.ShouldBe("configuration");
+    }
+
+    [Fact]
+    public void Apply_configurations_rejects_missing_services()
+    {
+        // Arrange
+        IServiceCollection? services = null;
+        var options = new DbContextOptionsBuilder<TestDbContext>();
+        Action applyConfigurations = () => services!.ApplyDbContextOptionsConfigurations<TestDbContext>(options);
+
+        // Act
+        var exception = applyConfigurations.ShouldThrow<ArgumentNullException>();
+
+        // Assert
+        exception.ParamName.ShouldBe("services");
+    }
+
+    [Fact]
+    public void Apply_configurations_rejects_missing_options()
+    {
+        // Arrange
+        var services = DbContextOptionsConfigurationTestServices.Create();
+        DbContextOptionsBuilder? options = null;
+        Action applyConfigurations = () => services.ApplyDbContextOptionsConfigurations<TestDbContext>(options!);
+
+        // Act
+        var exception = applyConfigurations.ShouldThrow<ArgumentNullException>();
+
+        // Assert
+        exception.ParamName.ShouldBe("options");
+    }
+
+    [Fact]
+    public void Development_diagnostics_configuration_rejects_missing_options()
+    {
+        // Arrange
+        var configuration = new DevelopmentDiagnosticsOptionsConfiguration<TestDbContext>();
+        DbContextOptionsBuilder? options = null;
+        Action configure = () => configuration.Configure(options!);
+
+        // Act
+        var exception = configure.ShouldThrow<ArgumentNullException>();
+
+        // Assert
+        exception.ParamName.ShouldBe("options");
     }
 }

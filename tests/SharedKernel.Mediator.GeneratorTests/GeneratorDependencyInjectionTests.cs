@@ -25,6 +25,22 @@ public sealed class GeneratorDependencyInjectionTests
     }
 
     [Fact]
+    public void Generate_service_registration_without_efcore_package_does_not_emit_transaction_extension()
+    {
+        // Arrange
+        var source = TestSources.ModuleHeader + TestSources.CreateTourWithHandler;
+
+        // Act
+        var generatedSource = GeneratorTestHarness.GenerateSource(
+            source,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        generatedSource.ShouldNotContain("AddSharedKernelMediatorEfCoreCommandTransactions");
+        generatedSource.ShouldNotContain("AddEfCoreCommandTransaction");
+    }
+
+    [Fact]
     public void Generate_service_registration_single_project()
     {
         // Arrange
