@@ -12,7 +12,9 @@ internal sealed class EfCoreMediatorTestScope : IDisposable
     {
         var services = new ServiceCollection();
         services.AddDbContext<TestDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString("N")));
-        services.AddEfCoreCommandTransactions<TestDbContext>();
+        services.AddDbContext<OtherTestDbContext>(options => options.UseInMemoryDatabase(Guid.NewGuid().ToString("N")));
+        services.AddEfCoreCommandTransaction<TestDbContext, TestCommand, int>();
+        services.AddEfCoreCommandTransaction<OtherTestDbContext, OtherTestCommand, int>();
 
         provider = services.BuildServiceProvider();
         scope = provider.CreateScope();
@@ -20,10 +22,13 @@ internal sealed class EfCoreMediatorTestScope : IDisposable
 
     public TestDbContext DbContext => scope.ServiceProvider.GetRequiredService<TestDbContext>();
 
-    public DbContext TransactionBoundary => scope.ServiceProvider.GetRequiredService<DbContext>();
+    public DbContext ResolveGlobalDbContext() => scope.ServiceProvider.GetRequiredService<DbContext>();
 
     public IPipelineBehavior<TestCommand, int> CommandBehavior =>
         scope.ServiceProvider.GetRequiredService<IPipelineBehavior<TestCommand, int>>();
+
+    public IPipelineBehavior<OtherTestCommand, int> OtherCommandBehavior =>
+        scope.ServiceProvider.GetRequiredService<IPipelineBehavior<OtherTestCommand, int>>();
 
     public void Dispose()
     {

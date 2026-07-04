@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="SharedKernel.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -18,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.EntityFrameworkCore\SharedKernel.Mediator.EntityFrameworkCore.csproj" />
     </ItemGroup>
 

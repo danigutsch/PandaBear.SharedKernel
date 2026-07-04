@@ -20,7 +20,7 @@ public sealed class DbContextOptionsConfigurationTests
         services.ApplyDbContextOptionsConfigurations<TestDbContext>(options);
 
         // Assert
-        Assert.Equal(["first", "second"], calls);
+        calls.ShouldBe(["first", "second"]);
     }
 
     [Fact]
@@ -36,9 +36,9 @@ public sealed class DbContextOptionsConfigurationTests
 
         // Assert
         var coreOptions = options.Options.FindExtension<CoreOptionsExtension>();
-        Assert.NotNull(coreOptions);
-        Assert.True(coreOptions.IsSensitiveDataLoggingEnabled);
-        Assert.True(coreOptions.DetailedErrorsEnabled);
+        coreOptions.ShouldNotBeNull();
+        coreOptions.IsSensitiveDataLoggingEnabled.ShouldBeTrue();
+        coreOptions.DetailedErrorsEnabled.ShouldBeTrue();
     }
 
     [Fact]
@@ -48,11 +48,13 @@ public sealed class DbContextOptionsConfigurationTests
         IServiceCollection? services = null;
         var configuration = new RecordingOptionsConfiguration([], "unused");
 
+        Action addConfiguration = () => services!.AddDbContextOptionsConfiguration(configuration);
+
         // Act
-        var exception = Assert.Throws<ArgumentNullException>(() => services!.AddDbContextOptionsConfiguration(configuration));
+        var exception = addConfiguration.ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("services", exception.ParamName);
+        exception.ParamName.ShouldBe("services");
     }
 
     [Fact]
@@ -62,10 +64,12 @@ public sealed class DbContextOptionsConfigurationTests
         var services = DbContextOptionsConfigurationTestServices.Create();
         IDbContextOptionsConfiguration<TestDbContext>? configuration = null;
 
+        Action addConfiguration = () => services.AddDbContextOptionsConfiguration(configuration!);
+
         // Act
-        var exception = Assert.Throws<ArgumentNullException>(() => services.AddDbContextOptionsConfiguration(configuration!));
+        var exception = addConfiguration.ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("configuration", exception.ParamName);
+        exception.ParamName.ShouldBe("configuration");
     }
 }

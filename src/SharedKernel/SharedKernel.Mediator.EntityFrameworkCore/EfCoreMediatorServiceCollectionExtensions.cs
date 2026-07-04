@@ -9,19 +9,19 @@ namespace SharedKernel.Mediator.EntityFrameworkCore;
 public static class EfCoreMediatorServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds the EF Core command transaction behavior for a module DbContext.
+    /// Adds a closed EF Core command transaction behavior registration.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type that owns the transaction boundary.</typeparam>
+    /// <typeparam name="TRequest">The command request type.</typeparam>
+    /// <typeparam name="TResponse">The command response type.</typeparam>
     /// <returns>The configured service collection.</returns>
-    public static IServiceCollection AddEfCoreCommandTransactions<TContext>(this IServiceCollection services)
+    public static IServiceCollection AddEfCoreCommandTransaction<TContext, TRequest, TResponse>(this IServiceCollection services)
         where TContext : DbContext
+        where TRequest : IRequest<TResponse>
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.AddScoped<DbContext>(sp => sp.GetRequiredService<TContext>());
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(EfCoreCommandTransactionBehavior<,>));
-
-        return services;
+        return services.AddScoped<IPipelineBehavior<TRequest, TResponse>, EfCoreCommandTransactionBehavior<TContext, TRequest, TResponse>>();
     }
 }

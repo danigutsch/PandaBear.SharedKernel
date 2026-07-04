@@ -28,15 +28,15 @@ public static class EfCoreCommandTransactionScope
             return await next().ConfigureAwait(false);
         }
 
+        if (dbContext.Database.CurrentTransaction is not null)
+        {
+            return await next().ConfigureAwait(false);
+        }
+
         var strategy = dbContext.Database.CreateExecutionStrategy();
 
         return await strategy.ExecuteAsync(async () =>
         {
-            if (dbContext.Database.CurrentTransaction is not null)
-            {
-                return await next().ConfigureAwait(false);
-            }
-
             var transaction = await dbContext.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
             await using var _ = transaction.ConfigureAwait(false);
             var response = await next().ConfigureAwait(false);

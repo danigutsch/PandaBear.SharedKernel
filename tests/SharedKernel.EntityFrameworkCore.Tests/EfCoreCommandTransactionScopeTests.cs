@@ -60,8 +60,8 @@ public sealed class EfCoreCommandTransactionScopeTests : IAsyncLifetime
             entity => entity.Name == "committed",
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(42, response);
-        Assert.True(persisted);
+        response.ShouldBe(42);
+        persisted.ShouldBeTrue();
     }
 
     [Fact]
@@ -75,8 +75,7 @@ public sealed class EfCoreCommandTransactionScopeTests : IAsyncLifetime
         await using var dbContext = new TestDbContext(options);
         await dbContext.Database.EnsureCreatedAsync(TestContext.Current.CancellationToken);
 
-        // Act
-        await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        Func<Task> execute = async () =>
             await EfCoreCommandTransactionScope.Execute<int>(
                 dbContext,
                 async () =>
@@ -85,14 +84,17 @@ public sealed class EfCoreCommandTransactionScopeTests : IAsyncLifetime
                     await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
                     throw new InvalidOperationException("boom");
                 },
-                TestContext.Current.CancellationToken));
+                TestContext.Current.CancellationToken);
+
+        // Act
+        await execute.ShouldThrow<InvalidOperationException>();
 
         // Assert
         var persisted = await dbContext.Entities.AnyAsync(
             entity => entity.Name == "rolled-back",
             TestContext.Current.CancellationToken);
 
-        Assert.False(persisted);
+        persisted.ShouldBeFalse();
     }
 
     [Fact]
@@ -126,9 +128,9 @@ public sealed class EfCoreCommandTransactionScopeTests : IAsyncLifetime
             entity => entity.Name == "outer-transaction",
             TestContext.Current.CancellationToken);
 
-        Assert.Equal(24, response);
-        Assert.NotNull(activeTransaction);
-        Assert.False(persisted);
+        response.ShouldBe(24);
+        activeTransaction.ShouldNotBeNull();
+        persisted.ShouldBeFalse();
     }
 
     [Fact]
@@ -147,7 +149,7 @@ public sealed class EfCoreCommandTransactionScopeTests : IAsyncLifetime
             TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Equal(12, response);
+        response.ShouldBe(12);
     }
 
     [Fact]
@@ -156,12 +158,14 @@ public sealed class EfCoreCommandTransactionScopeTests : IAsyncLifetime
         // Arrange
         TestDbContext? dbContext = null;
 
+        Func<Task> execute = async () =>
+            await EfCoreCommandTransactionScope.Execute(dbContext!, () => ValueTask.FromResult(1), TestContext.Current.CancellationToken);
+
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await EfCoreCommandTransactionScope.Execute(dbContext!, () => ValueTask.FromResult(1), TestContext.Current.CancellationToken));
+        var exception = await execute.ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("dbContext", exception.ParamName);
+        exception.ParamName.ShouldBe("dbContext");
     }
 
     [Fact]
@@ -174,11 +178,13 @@ public sealed class EfCoreCommandTransactionScopeTests : IAsyncLifetime
         await using var dbContext = new TestDbContext(options);
         Func<ValueTask<int>>? next = null;
 
+        Func<Task> execute = async () =>
+            await EfCoreCommandTransactionScope.Execute(dbContext, next!, TestContext.Current.CancellationToken);
+
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await EfCoreCommandTransactionScope.Execute(dbContext, next!, TestContext.Current.CancellationToken));
+        var exception = await execute.ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("next", exception.ParamName);
+        exception.ParamName.ShouldBe("next");
     }
 }

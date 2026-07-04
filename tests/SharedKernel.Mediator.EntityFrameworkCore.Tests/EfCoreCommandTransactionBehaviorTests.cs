@@ -26,8 +26,8 @@ public sealed class EfCoreCommandTransactionBehaviorTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Equal(42, response);
-        Assert.Equal(1, callCount);
+        response.ShouldBe(42);
+        callCount.ShouldBe(1);
     }
 
     [Fact]
@@ -48,23 +48,39 @@ public sealed class EfCoreCommandTransactionBehaviorTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Equal(42, response);
+        response.ShouldBe(42);
     }
 
     [Fact]
-    public void Registers_the_selected_dbcontext_as_the_transaction_boundary()
+    public void Registers_closed_transaction_behavior_without_global_dbcontext()
     {
         // Arrange
         using var scope = new EfCoreMediatorTestScope();
 
         // Act
-        var dbContext = scope.DbContext;
-        var registeredBoundary = scope.TransactionBoundary;
         var behavior = scope.CommandBehavior;
+        Action resolveGlobalDbContext = () => scope.ResolveGlobalDbContext();
 
         // Assert
-        Assert.Same(dbContext, registeredBoundary);
-        Assert.IsType<EfCoreCommandTransactionBehavior<TestCommand, int>>(behavior);
+        resolveGlobalDbContext.ShouldThrow<InvalidOperationException>();
+        behavior.ShouldBeOfType<EfCoreCommandTransactionBehavior<TestDbContext, TestCommand, int>>();
+    }
+
+    [Fact]
+    public void Registers_closed_transaction_behaviors_for_multiple_dbcontexts()
+    {
+        // Arrange
+        using var scope = new EfCoreMediatorTestScope();
+
+        // Act
+        var commandBehavior = scope.CommandBehavior;
+        var otherCommandBehavior = scope.OtherCommandBehavior;
+        Action resolveGlobalDbContext = () => scope.ResolveGlobalDbContext();
+
+        // Assert
+        resolveGlobalDbContext.ShouldThrow<InvalidOperationException>();
+        commandBehavior.ShouldBeOfType<EfCoreCommandTransactionBehavior<TestDbContext, TestCommand, int>>();
+        otherCommandBehavior.ShouldBeOfType<EfCoreCommandTransactionBehavior<OtherTestDbContext, OtherTestCommand, int>>();
     }
 
     [Fact]
@@ -77,13 +93,14 @@ public sealed class EfCoreCommandTransactionBehaviorTests
         await using var dbContext = new TestDbContext(options);
         var behavior = new TestCommandTransactionBehavior<TestCommand, int>(dbContext);
         TestCommand? command = null;
+        Func<Task> handle = async () =>
+            await behavior.Handle(command!, () => ValueTask.FromResult(1), TestContext.Current.CancellationToken);
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await behavior.Handle(command!, () => ValueTask.FromResult(1), TestContext.Current.CancellationToken));
+        var exception = await handle.ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("request", exception.ParamName);
+        exception.ParamName.ShouldBe("request");
     }
 
     [Fact]
@@ -96,12 +113,13 @@ public sealed class EfCoreCommandTransactionBehaviorTests
         await using var dbContext = new TestDbContext(options);
         var behavior = new TestCommandTransactionBehavior<TestCommand, int>(dbContext);
         RequestHandlerContinuation<int>? next = null;
+        Func<Task> handle = async () =>
+            await behavior.Handle(new TestCommand(), next!, TestContext.Current.CancellationToken);
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await behavior.Handle(new TestCommand(), next!, TestContext.Current.CancellationToken));
+        var exception = await handle.ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("next", exception.ParamName);
+        exception.ParamName.ShouldBe("next");
     }
 }
