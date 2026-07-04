@@ -1,3 +1,5 @@
+using SharedKernel.Testing.Assertions;
+
 namespace SharedKernel.BuildingBlocks.Tests;
 
 public sealed class CompensationTests
@@ -9,18 +11,20 @@ public sealed class CompensationTests
         var compensated = false;
 
         // Act
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () => await Compensation.CompleteOrCompensate(
-            _ => throw new InvalidOperationException("operation failed"),
-            _ =>
+        var action = () => Compensation.CompleteOrCompensate(
+            ct => throw new InvalidOperationException("operation failed"),
+            ct =>
             {
                 compensated = true;
                 return ValueTask.CompletedTask;
             },
-            TestContext.Current.CancellationToken));
+            TestContext.Current.CancellationToken).AsTask();
+
+        var exception = await action.ShouldThrow<InvalidOperationException>();
 
         // Assert
-        Assert.Equal("operation failed", exception.Message);
-        Assert.True(compensated);
+        exception.Message.ShouldBe("operation failed");
+        compensated.ShouldBeTrue();
     }
 
     [Fact]
@@ -31,8 +35,8 @@ public sealed class CompensationTests
 
         // Act
         await Compensation.CompleteOrCompensate(
-            _ => ValueTask.CompletedTask,
-            _ =>
+            ct => ValueTask.CompletedTask,
+            ct =>
             {
                 compensated = true;
                 return ValueTask.CompletedTask;
@@ -40,7 +44,7 @@ public sealed class CompensationTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.False(compensated);
+        compensated.ShouldBeFalse();
     }
 
     [Fact]
@@ -50,13 +54,15 @@ public sealed class CompensationTests
         var operationException = new InvalidOperationException("operation failed");
 
         // Act
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () => await Compensation.CompleteOrCompensate(
-            _ => throw operationException,
-            _ => throw new TimeoutException("compensation failed"),
-            TestContext.Current.CancellationToken));
+        var action = () => Compensation.CompleteOrCompensate(
+            ct => throw operationException,
+            ct => throw new TimeoutException("compensation failed"),
+            TestContext.Current.CancellationToken).AsTask();
+
+        var exception = await action.ShouldThrow<InvalidOperationException>();
 
         // Assert
-        Assert.Same(operationException, exception);
+        exception.ShouldBeSameAs(operationException);
     }
 
     [Fact]
@@ -68,17 +74,19 @@ public sealed class CompensationTests
         var compensated = false;
 
         // Act
-        var exception = await Assert.ThrowsAsync<OperationCanceledException>(async () => await Compensation.CompleteOrCompensate(
-            token => throw new OperationCanceledException(token),
-            _ =>
+        var action = () => Compensation.CompleteOrCompensate(
+            ct => throw new OperationCanceledException(ct),
+            ct =>
             {
                 compensated = true;
                 return ValueTask.CompletedTask;
             },
-            cancellation.Token));
+            cancellation.Token).AsTask();
+
+        var exception = await action.ShouldThrow<OperationCanceledException>();
 
         // Assert
-        Assert.Equal(cancellation.Token, exception.CancellationToken);
-        Assert.False(compensated);
+        exception.CancellationToken.ShouldBe(cancellation.Token);
+        compensated.ShouldBeFalse();
     }
 }
