@@ -10,23 +10,11 @@ public sealed class DevelopmentDiagnosticsOptionsConfiguration<TContext> : IDbCo
     where TContext : DbContext
 {
     /// <inheritdoc />
-    public void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
-    {
-        ArgumentNullException.ThrowIfNull(configurationBuilder);
-    }
-
-    /// <inheritdoc />
     public void ConfigureOptions(DbContextOptionsBuilder optionsBuilder)
     {
         ArgumentNullException.ThrowIfNull(optionsBuilder);
 
         optionsBuilder.EnableDetailedErrors();
         optionsBuilder.EnableSensitiveDataLogging();
-    }
-
-    /// <inheritdoc />
-    public void ConfigureModel(ModelBuilder modelBuilder)
-    {
-        ArgumentNullException.ThrowIfNull(modelBuilder);
     }
 }

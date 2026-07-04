@@ -11,22 +11,10 @@ public sealed class DomainEventDispatchDbContextConfiguration<TContext>(
     where TContext : DbContext
 {
     /// <inheritdoc />
-    public void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
-    {
-        ArgumentNullException.ThrowIfNull(configurationBuilder);
-    }
-
-    /// <inheritdoc />
     public void ConfigureOptions(DbContextOptionsBuilder optionsBuilder)
     {
         ArgumentNullException.ThrowIfNull(optionsBuilder);
 
         optionsBuilder.AddInterceptors(interceptor);
-    }
-
-    /// <inheritdoc />
-    public void ConfigureModel(ModelBuilder modelBuilder)
-    {
-        ArgumentNullException.ThrowIfNull(modelBuilder);
     }
 }

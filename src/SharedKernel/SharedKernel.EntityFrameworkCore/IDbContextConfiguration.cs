@@ -18,17 +18,26 @@ public interface IDbContextConfiguration<TContext>
     /// Configures model conventions before EF Core builds the model.
     /// </summary>
     /// <param name="configurationBuilder">The convention configuration builder.</param>
-    void ConfigureConventions(ModelConfigurationBuilder configurationBuilder);
+    void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(configurationBuilder);
+    }
 
     /// <summary>
     /// Configures context options.
     /// </summary>
     /// <param name="optionsBuilder">The options builder.</param>
-    void ConfigureOptions(DbContextOptionsBuilder optionsBuilder);
+    void ConfigureOptions(DbContextOptionsBuilder optionsBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(optionsBuilder);
+    }
 
     /// <summary>
     /// Configures the model.
     /// </summary>
     /// <param name="modelBuilder">The model builder.</param>
-    void ConfigureModel(ModelBuilder modelBuilder);
+    void ConfigureModel(ModelBuilder modelBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(modelBuilder);
+    }
 }

@@ -121,7 +121,7 @@ public sealed class DbContextConfigurationTests
     [Fact]
     public void Development_diagnostics_configuration_rejects_missing_builders()
     {
-        var configuration = new DevelopmentDiagnosticsOptionsConfiguration<TestDbContext>();
+        IDbContextConfiguration<TestDbContext> configuration = new DevelopmentDiagnosticsOptionsConfiguration<TestDbContext>();
         DbContextOptionsBuilder? options = null;
         ModelConfigurationBuilder? conventions = null;
         ModelBuilder? model = null;
