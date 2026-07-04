@@ -83,25 +83,20 @@ internal static class DependencyInjectionEmitter
         {
             foreach (var handler in request.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod))
             {
-                EmitRegistration(
+                EmitConcreteRegistration(
                     writer,
                     AddTransientMethodName,
                     handler.MetadataName,
-                    MediatorGenerationNames.GetHandlerServiceType(handler),
                     emittedRegistrationKeys);
                 emittedAny = true;
             }
 
             foreach (var pipeline in request.Pipelines.Where(static pipeline => pipeline.IsAccessibleToGeneratedMediator))
             {
-                EmitRegistration(
+                EmitConcreteRegistration(
                     writer,
                     AddTransientMethodName,
                     pipeline.MetadataName,
-                    MediatorGenerationNames.GetPipelineServiceType(
-                        pipeline.IsStream,
-                        request.MetadataName,
-                        request.Response.MetadataName),
                     emittedRegistrationKeys);
                 emittedAny = true;
             }
@@ -127,11 +122,10 @@ internal static class DependencyInjectionEmitter
 
             foreach (var handler in notification.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator))
             {
-                EmitRegistration(
+                EmitConcreteRegistration(
                     writer,
                     AddTransientMethodName,
                     handler.MetadataName,
-                    MediatorGenerationNames.GetNotificationHandlerServiceType(notification.MetadataName),
                     emittedRegistrationKeys);
                 emittedAny = true;
             }
@@ -157,25 +151,20 @@ internal static class DependencyInjectionEmitter
 
             foreach (var handler in streamRequest.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod))
             {
-                EmitRegistration(
+                EmitConcreteRegistration(
                     writer,
                     AddTransientMethodName,
                     handler.MetadataName,
-                    MediatorGenerationNames.GetStreamHandlerServiceType(streamRequest.MetadataName, streamRequest.ItemResponse.MetadataName),
                     emittedRegistrationKeys);
                 emittedAny = true;
             }
 
             foreach (var pipeline in streamRequest.Pipelines.Where(static pipeline => pipeline.IsAccessibleToGeneratedMediator))
             {
-                EmitRegistration(
+                EmitConcreteRegistration(
                     writer,
                     AddTransientMethodName,
                     pipeline.MetadataName,
-                    MediatorGenerationNames.GetPipelineServiceType(
-                        pipeline.IsStream,
-                        streamRequest.MetadataName,
-                        streamRequest.ItemResponse.MetadataName),
                     emittedRegistrationKeys);
                 emittedAny = true;
             }
@@ -184,23 +173,16 @@ internal static class DependencyInjectionEmitter
         return emittedAny;
     }
 
-    private static void EmitRegistration(
+    private static void EmitConcreteRegistration(
         IndentedCodeWriter writer,
         string methodName,
         string implementationType,
-        string serviceType,
         HashSet<string> emittedRegistrationKeys)
     {
         var selfRegistrationKey = $"{implementationType}|{implementationType}";
         if (emittedRegistrationKeys.Add(selfRegistrationKey))
         {
             writer.Line($"services.{methodName}<{implementationType}>();");
-        }
-
-        var serviceRegistrationKey = $"{serviceType}|{implementationType}";
-        if (emittedRegistrationKeys.Add(serviceRegistrationKey))
-        {
-            writer.Line($"services.{methodName}<{serviceType}, {implementationType}>();");
         }
     }
 
