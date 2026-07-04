@@ -146,7 +146,7 @@ public sealed class GeneratorDependencyInjectionTests
             """
             namespace SharedKernel.Mediator.EntityFrameworkCore;
 
-            public sealed class EfCoreCommandTransactionBehavior<TContext, TRequest, TResponse>
+            public sealed class EfCoreCommandTransactionBehavior<TRequest, TResponse>
             {
             }
             """

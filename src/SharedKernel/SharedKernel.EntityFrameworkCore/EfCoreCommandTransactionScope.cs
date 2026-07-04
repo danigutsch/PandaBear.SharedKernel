@@ -35,14 +35,14 @@ public static class EfCoreCommandTransactionScope
 
         var strategy = dbContext.Database.CreateExecutionStrategy();
 
-        return await strategy.ExecuteAsync(async () =>
+        return await strategy.ExecuteAsync(async cancellationToken =>
         {
-            var transaction = await dbContext.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
+            var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
             await using var _ = transaction.ConfigureAwait(false);
             var response = await next().ConfigureAwait(false);
-            await transaction.CommitAsync(ct).ConfigureAwait(false);
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
 
             return response;
-        }).ConfigureAwait(false);
+        }, ct).ConfigureAwait(false);
     }
 }

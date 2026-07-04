@@ -33,5 +33,5 @@ internal static class MetadataNames
     public const string EnumeratorCancellationAttribute = "System.Runtime.CompilerServices.EnumeratorCancellationAttribute";
     public const string InternalsVisibleToAttribute = "System.Runtime.CompilerServices.InternalsVisibleToAttribute";
     public const string DbContext = "Microsoft.EntityFrameworkCore.DbContext";
-    public const string EfCoreTransactionBehavior = "SharedKernel.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior`3";
+    public const string EfCoreTransactionBehavior = "SharedKernel.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior`2";
 }
