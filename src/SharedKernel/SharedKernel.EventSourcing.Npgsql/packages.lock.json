@@ -8,6 +8,12 @@
         "resolved": "3.3.4",
         "contentHash": "kNLTfXtXUWDHVt5iaPkkiPuyHYlMgLI6SOFT4w88bfeI2vqSeGgHunFkdvlaCM8RDfcY0t2+jnesQtidRJJ/DA=="
       },
+      "Microsoft.NET.ILLink.Tasks": {
+        "type": "Direct",
+        "requested": "[10.0.9, )",
+        "resolved": "10.0.9",
+        "contentHash": "4Iw41e2h7I4t70SJcX2GCmbyKJIlA273Cfm9RJMM050/3VBejGAG1KcthP5Z2L6SQcbfbf6BhNWO26+ZG+GzMg=="
+      },
       "Npgsql": {
         "type": "Direct",
         "requested": "[10.0.3, )",
@@ -26,7 +32,7 @@
       "sharedkernel.buildingblocks": {
         "type": "Project",
         "dependencies": {
-          "SharedKernel.Results": "[1.0.0, )"
+          "SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
       "sharedkernel.eventsourcing": {

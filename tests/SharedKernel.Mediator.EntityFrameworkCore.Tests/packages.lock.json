@@ -231,8 +231,8 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.9, )",
-          "SharedKernel.EntityFrameworkCore": "[1.0.0, )",
-          "SharedKernel.Mediator.Abstractions": "[1.0.0, )"
+          "SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
+          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
         }
       },
       "sharedkernel.testing.assertions": {
