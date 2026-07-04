@@ -2,9 +2,9 @@ namespace SharedKernel.Versioning.Tool;
 
 internal static class CommitMessageInput
 {
-    public static async Task<IReadOnlyList<string>> ReadMessages()
+    public static async Task<IReadOnlyList<string>> ReadMessages(TextReader reader)
     {
-        var input = await Console.In.ReadToEndAsync().ConfigureAwait(false);
+        var input = await reader.ReadToEndAsync().ConfigureAwait(false);
         if (string.IsNullOrWhiteSpace(input))
         {
             return [];
