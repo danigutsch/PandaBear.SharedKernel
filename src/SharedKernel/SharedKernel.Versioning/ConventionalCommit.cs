@@ -37,7 +37,7 @@ public sealed record ConventionalCommit(
             return Type switch
             {
                 "feat" => ReleaseImpact.Minor,
-                "fix" or "perf" => ReleaseImpact.Patch,
+                "fix" or "perf" or "refactor" => ReleaseImpact.Patch,
                 _ => ReleaseImpact.None,
             };
         }

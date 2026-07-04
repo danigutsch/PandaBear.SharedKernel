@@ -25,6 +25,7 @@ public static class ConventionalCommitParserTests
     [InlineData("feat: add option", ReleaseImpact.Minor)]
     [InlineData("fix: correct version", ReleaseImpact.Patch)]
     [InlineData("perf: reduce allocations", ReleaseImpact.Patch)]
+    [InlineData("refactor: move shipped parser", ReleaseImpact.Patch)]
     [InlineData("docs: explain releases", ReleaseImpact.None)]
     [InlineData("chore!: drop old output", ReleaseImpact.Major)]
     [InlineData("refactor: move parser\n\nBREAKING CHANGE: parser now rejects invalid headers", ReleaseImpact.Major)]

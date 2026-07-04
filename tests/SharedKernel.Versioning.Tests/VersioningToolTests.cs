@@ -100,4 +100,36 @@ public static class VersioningToolTests
         exitCode.ShouldBe(2);
         error.ToString().ShouldContain("Usage:", StringComparison.Ordinal);
     }
+
+    [Fact]
+    public static async Task Returns_error_for_invalid_commit_impact_message()
+    {
+        // Arrange
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(["commit-impact", "invalid"], input, output, error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("Error:", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Returns_error_for_invalid_compute_options()
+    {
+        // Arrange
+        using var input = new StringReader("feat: add output");
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(["compute", "--base", "not-a-version"], input, output, error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("Error:", StringComparison.Ordinal);
+    }
 }
