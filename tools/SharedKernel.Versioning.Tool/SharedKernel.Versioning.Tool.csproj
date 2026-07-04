@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>SharedKernel.Versioning.Tool</RootNamespace>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>sharedkernel-version</ToolCommandName>
+        <PackageId>SharedKernel.Versioning.Tool</PackageId>
+        <Description>Local and CI versioning automation for SharedKernel release flows.</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <PackageTags>versioning;semver;conventional-commits;dotnet-tool</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Versioning\SharedKernel.Versioning.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
