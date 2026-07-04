@@ -3,6 +3,7 @@
     <PropertyGroup>
         <PackageId>SharedKernel.Observability</PackageId>
         <Description>Reusable observability helpers for shared-kernel service diagnostics.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>observability;opentelemetry;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
@@ -11,6 +12,10 @@
         <PackageReference Include="Microsoft.Extensions.Hosting" />
         <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>
