@@ -1,11 +1,10 @@
 namespace SharedKernel.Versioning.Tool;
 
-internal sealed record VersionToolOptions(string BaseVersion, string? Since, string? Prerelease, string? Sha)
+internal sealed record VersionToolOptions(string BaseVersion, string? Prerelease, string? Sha)
 {
     public static VersionToolOptions Parse(string[] args)
     {
         string? baseVersion = null;
-        string? since = null;
         string? prerelease = null;
         string? sha = null;
 
@@ -22,9 +21,6 @@ internal sealed record VersionToolOptions(string BaseVersion, string? Since, str
                 case "--base":
                     baseVersion = value;
                     break;
-                case "--since":
-                    since = value;
-                    break;
                 case "--prerelease":
                     prerelease = value;
                     break;
@@ -36,6 +32,6 @@ internal sealed record VersionToolOptions(string BaseVersion, string? Since, str
             }
         }
 
-        return new VersionToolOptions(baseVersion ?? throw new ArgumentException("--base is required."), since, prerelease, sha);
+        return new VersionToolOptions(baseVersion ?? throw new ArgumentException("--base is required."), prerelease, sha);
     }
 }

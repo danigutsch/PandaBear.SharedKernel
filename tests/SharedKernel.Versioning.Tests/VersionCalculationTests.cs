@@ -42,4 +42,18 @@ public static class VersionCalculationTests
         output.SemVer.ShouldBe("2.0.0");
         output.AssemblyVersion.ShouldBe("2.0.0.0");
     }
+
+    [Fact]
+    public static void Appends_sha_to_existing_build_metadata()
+    {
+        // Arrange
+        var version = new SemanticVersion(1, 2, 3, BuildMetadata: "build.7");
+
+        // Act
+        var output = VersionOutput.Create(version, ReleaseImpact.Patch, "abc123");
+
+        // Assert
+        output.SemVer.ShouldBe("1.2.3+build.7");
+        output.InformationalVersion.ShouldBe("1.2.3+build.7.sha.abc123");
+    }
 }

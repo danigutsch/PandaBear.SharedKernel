@@ -153,6 +153,12 @@
       },
       "sharedkernel.versioning": {
         "type": "Project"
+      },
+      "sharedkernel.versioning.tool": {
+        "type": "Project",
+        "dependencies": {
+          "SharedKernel.Versioning": "[0.1.0-alpha.0, )"
+        }
       }
     }
   }

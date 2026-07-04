@@ -12,7 +12,7 @@ if (args is ["commit-impact", .. var messageParts])
 if (args is ["compute", .. var computeArgs])
 {
     var options = VersionToolOptions.Parse(computeArgs);
-    var messages = await GitCommitReader.ReadMessages(options.Since).ConfigureAwait(false);
+    var messages = await CommitMessageInput.ReadMessages().ConfigureAwait(false);
     var output = VersionCalculation.Calculate(
         SemanticVersion.Parse(options.BaseVersion),
         messages,
@@ -23,5 +23,5 @@ if (args is ["compute", .. var computeArgs])
     return 0;
 }
 
-await Console.Error.WriteLineAsync("Usage: sharedkernel-version commit-impact <message> | compute --base <version> [--since <ref>] [--prerelease <label>] [--sha <sha>]").ConfigureAwait(false);
+await Console.Error.WriteLineAsync("Usage: sharedkernel-version commit-impact <message> | compute --base <version> [--prerelease <label>] [--sha <sha>] < commit-messages.txt").ConfigureAwait(false);
 return 2;

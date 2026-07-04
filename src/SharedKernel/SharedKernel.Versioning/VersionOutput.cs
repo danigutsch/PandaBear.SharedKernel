@@ -29,7 +29,9 @@ public sealed record VersionOutput(
         ArgumentNullException.ThrowIfNull(version);
 
         var semanticVersion = version.ToString();
-        var informationalVersion = string.IsNullOrWhiteSpace(sha) ? semanticVersion : $"{semanticVersion}+sha.{sha}";
+        var informationalVersion = string.IsNullOrWhiteSpace(sha)
+            ? version
+            : version with { BuildMetadata = AppendBuildMetadata(version.BuildMetadata, $"sha.{sha}") };
 
         return new VersionOutput(
             semanticVersion,
@@ -37,6 +39,9 @@ public sealed record VersionOutput(
             semanticVersion,
             $"{version.Major}.0.0.0",
             $"{version.Major}.{version.Minor}.{version.Patch}.0",
-            informationalVersion);
+            informationalVersion.ToString());
     }
+
+    private static string AppendBuildMetadata(string? existingMetadata, string newMetadata) =>
+        string.IsNullOrWhiteSpace(existingMetadata) ? newMetadata : $"{existingMetadata}.{newMetadata}";
 }

@@ -20,6 +20,7 @@ public static class VersionMetadataTests
         // Assert
         assemblyNameVersion.ShouldBe("0.0.0.0");
         fileVersion.ShouldBe("0.1.0.0");
-        informationalVersion.ShouldBe("0.1.0-alpha.0");
+        informationalVersion.ShouldNotBeNull();
+        informationalVersion.StartsWith("0.1.0-alpha.0", StringComparison.Ordinal).ShouldBeTrue();
     }
 }

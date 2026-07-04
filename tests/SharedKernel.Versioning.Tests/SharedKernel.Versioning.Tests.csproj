@@ -22,6 +22,7 @@
         <ProjectReference Include="..\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\SharedKernel.Testing\SharedKernel.Testing.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Versioning\SharedKernel.Versioning.csproj" />
+        <ProjectReference Include="..\..\tools\SharedKernel.Versioning.Tool\SharedKernel.Versioning.Tool.csproj" />
     </ItemGroup>
 
 </Project>
