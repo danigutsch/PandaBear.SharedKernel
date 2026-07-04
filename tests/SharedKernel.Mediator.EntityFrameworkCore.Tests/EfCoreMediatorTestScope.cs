@@ -30,6 +30,12 @@ internal sealed class EfCoreMediatorTestScope : IDisposable
     public IPipelineBehavior<OtherTestCommand, int> OtherCommandBehavior =>
         scope.ServiceProvider.GetRequiredService<IPipelineBehavior<OtherTestCommand, int>>();
 
+    public static void RegisterQueryTransactionBehavior()
+    {
+        var services = new ServiceCollection();
+        services.AddEfCoreCommandTransaction<TestDbContext, TestQuery, int>();
+    }
+
     public void Dispose()
     {
         scope.Dispose();

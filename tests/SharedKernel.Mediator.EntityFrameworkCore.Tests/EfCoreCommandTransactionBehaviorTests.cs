@@ -148,8 +148,7 @@ public sealed class EfCoreCommandTransactionBehaviorTests
     public void Registering_closed_transaction_behavior_rejects_queries()
     {
         // Arrange
-        var services = new ServiceCollection();
-        Action registerBehavior = () => services.AddEfCoreCommandTransaction<TestDbContext, TestQuery, int>();
+        Action registerBehavior = EfCoreMediatorTestScope.RegisterQueryTransactionBehavior;
 
         // Act
         var exception = registerBehavior.ShouldThrow<InvalidOperationException>();
