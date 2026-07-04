@@ -14,3 +14,5 @@ static SharedKernel.BuildingBlocks.DateRange.Create(System.DateTime startDate, S
 static SharedKernel.BuildingBlocks.ExceptionCancellationExtensions.ShouldHandleAsFailure(this System.Exception! exception, System.Threading.CancellationToken ct) -> bool
 static SharedKernel.BuildingBlocks.ValueObject.operator !=(SharedKernel.BuildingBlocks.ValueObject? left, SharedKernel.BuildingBlocks.ValueObject? right) -> bool
 static SharedKernel.BuildingBlocks.ValueObject.operator ==(SharedKernel.BuildingBlocks.ValueObject? left, SharedKernel.BuildingBlocks.ValueObject? right) -> bool
+SharedKernel.BuildingBlocks.Compensation
+static SharedKernel.BuildingBlocks.Compensation.CompleteOrCompensate(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! operation, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! compensate, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
