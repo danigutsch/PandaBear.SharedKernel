@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -30,8 +29,7 @@ public static class ObservabilityBuilderExtensions
             logging.IncludeScopes = true;
         });
 
-        var entryAssembly = Assembly.GetEntryAssembly();
-        var serviceVersion = entryAssembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        var serviceVersion = ApplicationVersionProvider.GetEntryAssemblyInformationalVersion();
         var resourceBuilder = ResourceBuilder.CreateDefault().AddDetector(new ExplicitServiceNameDetector(builder.Environment.ApplicationName, serviceVersion));
         builder.Services.AddOpenTelemetry()
             .WithMetrics(metrics =>
@@ -43,6 +41,27 @@ public static class ObservabilityBuilderExtensions
             {
                 tracing.SetResourceBuilder(resourceBuilder);
             });
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Adds startup logging for the application name and informational version.
+    /// </summary>
+    /// <typeparam name="TBuilder">Host builder type, e.g. WebApplicationBuilder, HostApplicationBuilder.</typeparam>
+    /// <param name="builder">The host application builder to configure.</param>
+    /// <param name="applicationVersion">The optional application version to log. When omitted, the entry assembly informational version is used.</param>
+    /// <returns>The updated builder instance for chaining.</returns>
+    public static TBuilder AddApplicationVersionLogging<TBuilder>(this TBuilder builder, string? applicationVersion = null) where TBuilder : IHostApplicationBuilder
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        var applicationName = builder.Environment.ApplicationName;
+        var version = applicationVersion ?? ApplicationVersionProvider.GetEntryAssemblyInformationalVersion();
+        builder.Services.AddHostedService(provider => new ApplicationVersionLoggingService(
+            applicationName,
+            version,
+            provider.GetRequiredService<ILogger<ApplicationVersionLoggingService>>()));
 
         return builder;
     }

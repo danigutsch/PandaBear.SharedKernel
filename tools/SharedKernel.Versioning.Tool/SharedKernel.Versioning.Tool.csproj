@@ -12,6 +12,7 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageTags>versioning;semver;conventional-commits;dotnet-tool</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>

@@ -1,16 +1,24 @@
-using System.Text.Json;
-
 namespace SharedKernel.Versioning.Tool;
 
 internal static class VersionOutputJson
 {
     public static string Serialize(VersionOutput output) =>
         "{" +
-        $"\"semVer\":{JsonSerializer.Serialize(output.SemVer)}," +
-        $"\"releaseImpact\":{JsonSerializer.Serialize(ReleaseImpactText.ToOutputValue(output.ReleaseImpact))}," +
-        $"\"packageVersion\":{JsonSerializer.Serialize(output.PackageVersion)}," +
-        $"\"assemblyVersion\":{JsonSerializer.Serialize(output.AssemblyVersion)}," +
-        $"\"fileVersion\":{JsonSerializer.Serialize(output.FileVersion)}," +
-        $"\"informationalVersion\":{JsonSerializer.Serialize(output.InformationalVersion)}" +
+        $"\"semVer\":{Escape(output.SemVer)}," +
+        $"\"releaseImpact\":{Escape(ReleaseImpactText.ToOutputValue(output.ReleaseImpact))}," +
+        $"\"packageVersion\":{Escape(output.PackageVersion)}," +
+        $"\"assemblyVersion\":{Escape(output.AssemblyVersion)}," +
+        $"\"fileVersion\":{Escape(output.FileVersion)}," +
+        $"\"informationalVersion\":{Escape(output.InformationalVersion)}" +
         "}";
+
+    private static string Escape(string value)
+    {
+        return "\"" + value
+            .Replace("\\", "\\\\", StringComparison.Ordinal)
+            .Replace("\"", "\\\"", StringComparison.Ordinal)
+            .Replace("\n", "\\n", StringComparison.Ordinal)
+            .Replace("\r", "\\r", StringComparison.Ordinal)
+            .Replace("\t", "\\t", StringComparison.Ordinal) + "\"";
+    }
 }

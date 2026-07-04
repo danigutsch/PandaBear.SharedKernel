@@ -102,6 +102,38 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Prints_help_for_help_option()
+    {
+        // Arrange
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(["--help"], input, output, error);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        output.ToString().ShouldContain("Usage:", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Prints_version_for_version_option()
+    {
+        // Arrange
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(["--version"], input, output, error);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        output.ToString().ShouldNotBe(string.Empty);
+    }
+
+    [Fact]
     public static async Task Returns_error_for_invalid_commit_impact_message()
     {
         // Arrange
