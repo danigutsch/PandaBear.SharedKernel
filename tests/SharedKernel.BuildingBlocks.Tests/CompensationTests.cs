@@ -66,6 +66,29 @@ public sealed class CompensationTests
     }
 
     [Fact]
+    public async Task CompleteOrCompensate_preserves_operation_failure_when_compensation_observes_cancellation()
+    {
+        // Arrange
+        using var cancellation = new CancellationTokenSource();
+        var operationException = new InvalidOperationException("operation failed");
+
+        // Act
+        var action = () => Compensation.CompleteOrCompensate(
+            async ct =>
+            {
+                await cancellation.CancelAsync().ConfigureAwait(false);
+                throw operationException;
+            },
+            ct => throw new OperationCanceledException(ct),
+            cancellation.Token).AsTask();
+
+        var exception = await action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.ShouldBeSameAs(operationException);
+    }
+
+    [Fact]
     public async Task CompleteOrCompensate_does_not_compensate_cooperative_cancellation()
     {
         // Arrange

@@ -32,7 +32,7 @@ public static class Compensation
             {
                 await compensate(ct).ConfigureAwait(false);
             }
-            catch (Exception compensationException) when (compensationException.ShouldHandleAsFailure(ct))
+            catch (Exception compensationException) when (compensationException is OperationCanceledException || compensationException.ShouldHandleAsFailure(ct))
             {
                 ExceptionDispatchInfo.Capture(exception).Throw();
             }
