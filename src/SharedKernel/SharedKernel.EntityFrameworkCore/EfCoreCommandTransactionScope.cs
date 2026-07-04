@@ -35,14 +35,18 @@ public static class EfCoreCommandTransactionScope
 
         var strategy = dbContext.Database.CreateExecutionStrategy();
 
-        return await strategy.ExecuteAsync(async cancellationToken =>
-        {
-            var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
-            await using var _ = transaction.ConfigureAwait(false);
-            var response = await next().ConfigureAwait(false);
-            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        return await strategy.ExecuteAsync((dbContext, next), ExecuteInTransaction, ct).ConfigureAwait(false);
+    }
 
-            return response;
-        }, ct).ConfigureAwait(false);
+    private static async Task<TResponse> ExecuteInTransaction<TResponse>(
+        (DbContext DbContext, Func<ValueTask<TResponse>> Next) state,
+        CancellationToken ct)
+    {
+        var transaction = await state.DbContext.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
+        await using var _ = transaction.ConfigureAwait(false);
+        var response = await state.Next().ConfigureAwait(false);
+        await transaction.CommitAsync(ct).ConfigureAwait(false);
+
+        return response;
     }
 }
