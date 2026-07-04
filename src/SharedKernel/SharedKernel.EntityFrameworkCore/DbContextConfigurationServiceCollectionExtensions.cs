@@ -4,20 +4,20 @@ using Microsoft.Extensions.DependencyInjection;
 namespace SharedKernel.EntityFrameworkCore;
 
 /// <summary>
-/// Provides registration helpers for composable DbContext option configuration.
+/// Provides registration helpers for composable DbContext configuration.
 /// </summary>
-public static class DbContextOptionsConfigurationServiceCollectionExtensions
+public static class DbContextConfigurationServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds a DbContext options configuration instance.
+    /// Adds a DbContext configuration instance.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
     /// <param name="configuration">The configuration to add.</param>
     /// <typeparam name="TContext">The DbContext type being configured.</typeparam>
     /// <returns>The configured service collection.</returns>
-    public static IServiceCollection AddDbContextOptionsConfiguration<TContext>(
+    public static IServiceCollection AddDbContextConfiguration<TContext>(
         this IServiceCollection services,
-        IDbContextOptionsConfiguration<TContext> configuration)
+        IDbContextConfiguration<TContext> configuration)
         where TContext : DbContext
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -34,7 +34,7 @@ public static class DbContextOptionsConfigurationServiceCollectionExtensions
     /// <param name="services">The service collection containing configuration instances.</param>
     /// <param name="options">The EF Core options builder.</param>
     /// <typeparam name="TContext">The DbContext type being configured.</typeparam>
-    public static void ApplyDbContextOptionsConfigurations<TContext>(
+    public static void ApplyDbContextOptionConfigurations<TContext>(
         this IServiceCollection services,
         DbContextOptionsBuilder options)
         where TContext : DbContext
@@ -44,10 +44,10 @@ public static class DbContextOptionsConfigurationServiceCollectionExtensions
 
         foreach (var descriptor in services)
         {
-            if (descriptor.ServiceType == typeof(IDbContextOptionsConfiguration<TContext>)
-                && descriptor.ImplementationInstance is IDbContextOptionsConfiguration<TContext> configuration)
+            if (descriptor.ServiceType == typeof(IDbContextConfiguration<TContext>)
+                && descriptor.ImplementationInstance is IDbContextConfiguration<TContext> configuration)
             {
-                configuration.Configure(options);
+                configuration.ConfigureOptions(options);
             }
         }
     }

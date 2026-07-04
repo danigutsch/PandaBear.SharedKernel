@@ -11,4 +11,9 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Domain\SharedKernel.Domain.csproj" />
+        <ProjectReference Include="..\SharedKernel.DomainEvents\SharedKernel.DomainEvents.csproj" />
+    </ItemGroup>
+
 </Project>

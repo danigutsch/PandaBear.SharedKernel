@@ -974,11 +974,23 @@
         "resolved": "16.3.0",
         "contentHash": "SgMOdxbz8X65z8hraIs6hOEdnkH6hESTAIUa7viEngHOYaH+6q5XJmwr1+yb9vJpNQ19hCQY69xbFsLtXpobQA=="
       },
+      "sharedkernel.domain": {
+        "type": "Project"
+      },
+      "sharedkernel.domainevents": {
+        "type": "Project",
+        "dependencies": {
+          "SharedKernel.Domain": "[0.1.0-alpha.0, )",
+          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
+        }
+      },
       "sharedkernel.entityframeworkcore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.9, )",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.9, )"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.9, )",
+          "SharedKernel.Domain": "[0.1.0-alpha.0, )",
+          "SharedKernel.DomainEvents": "[0.1.0-alpha.0, )"
         }
       },
       "sharedkernel.integrationtesting": {
@@ -986,6 +998,9 @@
         "dependencies": {
           "Aspire.Hosting.Testing": "[13.4.6, )"
         }
+      },
+      "sharedkernel.mediator.abstractions": {
+        "type": "Project"
       },
       "sharedkernel.testing": {
         "type": "Project"
