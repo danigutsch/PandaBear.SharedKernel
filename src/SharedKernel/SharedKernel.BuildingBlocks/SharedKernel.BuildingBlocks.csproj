@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <PackageId>SharedKernel.BuildingBlocks</PackageId>
-        <Description>Reusable value-object building blocks for shared-kernel workflows.</Description>
+        <Description>Reusable value-object and workflow building blocks for shared-kernel workflows.</Description>
         <RootNamespace>SharedKernel.BuildingBlocks</RootNamespace>
         <IsAotCompatible>true</IsAotCompatible>
         <PackageReadmeFile>README.md</PackageReadmeFile>
