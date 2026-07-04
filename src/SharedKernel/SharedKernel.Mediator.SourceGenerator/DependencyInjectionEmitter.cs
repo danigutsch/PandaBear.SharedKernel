@@ -60,6 +60,12 @@ internal static class DependencyInjectionEmitter
         writer.Line("return services;");
         writer.Unindent();
         writer.Line("}");
+
+        if (model.SupportsEfCoreCommandTransactions)
+        {
+            EmitEfCoreCommandTransactionRegistrations(writer, model.Requests);
+        }
+
         writer.Unindent();
         writer.Line("}");
 
@@ -196,5 +202,31 @@ internal static class DependencyInjectionEmitter
         {
             writer.Line($"services.{methodName}<{serviceType}, {implementationType}>();");
         }
+    }
+
+    private static void EmitEfCoreCommandTransactionRegistrations(
+        IndentedCodeWriter writer,
+        IEnumerable<RequestDescriptor> requests)
+    {
+        writer.Line();
+        GeneratedXmlDocumentationEmitter.AppendSummary(
+            writer,
+            "Adds generated EF Core command transaction registrations for discovered commands.");
+        GeneratedXmlDocumentationEmitter.AppendParam(writer, "services", "The service collection to populate.");
+        GeneratedXmlDocumentationEmitter.AppendReturns(writer, "The same service collection so calls can be chained.");
+        writer.Line("public static global::Microsoft.Extensions.DependencyInjection.IServiceCollection AddSharedKernelMediatorEfCoreCommandTransactions<TContext>(this global::Microsoft.Extensions.DependencyInjection.IServiceCollection services)");
+        writer.Line("    where TContext : global::Microsoft.EntityFrameworkCore.DbContext");
+        writer.Line("{");
+        writer.Indent();
+        writer.Line("global::System.ArgumentNullException.ThrowIfNull(services);");
+
+        foreach (var request in requests.Where(static request => request.Kind is RequestKind.Command or RequestKind.CommandWithResponse))
+        {
+            writer.Line($"global::SharedKernel.Mediator.EntityFrameworkCore.EfCoreMediatorServiceCollectionExtensions.AddEfCoreCommandTransaction<TContext, {request.MetadataName}, {request.Response.MetadataName}>(services);");
+        }
+
+        writer.Line("return services;");
+        writer.Unindent();
+        writer.Line("}");
     }
 }

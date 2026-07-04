@@ -11,7 +11,8 @@ internal sealed record DiscoveryModel(
     ImmutableArray<RequestDescriptor> Requests,
     ImmutableArray<NotificationDescriptor> Notifications,
     ImmutableArray<StreamRequestDescriptor> StreamRequests,
-    ImmutableArray<Diagnostic> Diagnostics)
+    ImmutableArray<Diagnostic> Diagnostics,
+    bool SupportsEfCoreCommandTransactions)
 {
     /// <summary>
     /// Gets the number of discovered request contracts.

@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace SharedKernel.Mediator.GeneratorTests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DependencyInjectionCapability)]
+[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DependencyInjectionCapability)]
 public sealed class GeneratorDependencyInjectionTests
 {
     [Fact]
@@ -22,6 +22,22 @@ public sealed class GeneratorDependencyInjectionTests
         Assert.Contains("services.AddSingleton<AppMediatorInstrumentation>();", generatedSource, StringComparison.Ordinal);
         Assert.Contains("services.AddScoped<AppMediator>();", generatedSource, StringComparison.Ordinal);
         Assert.DoesNotContain("services.AddTransient<", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_service_registration_without_efcore_package_does_not_emit_transaction_extension()
+    {
+        // Arrange
+        var source = TestSources.ModuleHeader + TestSources.CreateTourWithHandler;
+
+        // Act
+        var generatedSource = GeneratorTestHarness.GenerateSource(
+            source,
+            GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        generatedSource.ShouldNotContain("AddSharedKernelMediatorEfCoreCommandTransactions");
+        generatedSource.ShouldNotContain("AddEfCoreCommandTransaction");
     }
 
     [Fact]
@@ -99,6 +115,61 @@ public sealed class GeneratorDependencyInjectionTests
         // Assert
         Assert.Contains("services.AddTransient<global::Demo.ValidationBehavior<global::Demo.StreamTours, string>>();", generatedSource, StringComparison.Ordinal);
         Assert.Contains("services.AddTransient<global::SharedKernel.Mediator.IStreamPipelineBehavior<global::Demo.StreamTours, string>, global::Demo.ValidationBehavior<global::Demo.StreamTours, string>>();", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generate_service_registration_efcore_command_transactions_are_closed_per_command()
+    {
+        // Arrange
+        var source = new[]
+        {
+            TestSources.ModuleHeader
+            + TestSources.CreateTourWithHandler
+            + TestSources.GetTourWithHandler
+            + """
+            public sealed record DeleteTour(int Id) : ICommand;
+
+            public sealed class DeleteTourHandler : ICommandHandler<DeleteTour>
+            {
+                public ValueTask<Unit> Handle(DeleteTour request, CancellationToken ct) => ValueTask.FromResult(Unit.Value);
+            }
+
+            """,
+            """
+            namespace Microsoft.EntityFrameworkCore;
+
+            public abstract class DbContext
+            {
+            }
+
+            """,
+            """
+            namespace SharedKernel.Mediator.EntityFrameworkCore;
+
+            public sealed class EfCoreCommandTransactionBehavior<TRequest, TResponse>
+            {
+            }
+            """
+        };
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var generatedSource = GeneratorTestHarness.RunGenerator(compilation, GeneratedHintNames.DependencyInjection);
+
+        // Assert
+        generatedSource.ShouldContain(
+            "public static global::Microsoft.Extensions.DependencyInjection.IServiceCollection AddSharedKernelMediatorEfCoreCommandTransactions<TContext>",
+            StringComparison.Ordinal);
+        generatedSource.ShouldContain(
+            "where TContext : global::Microsoft.EntityFrameworkCore.DbContext",
+            StringComparison.Ordinal);
+        generatedSource.ShouldContain(
+            "AddEfCoreCommandTransaction<TContext, global::Demo.CreateTour, int>(services);",
+            StringComparison.Ordinal);
+        generatedSource.ShouldContain(
+            "AddEfCoreCommandTransaction<TContext, global::Demo.DeleteTour, global::SharedKernel.Mediator.Unit>(services);",
+            StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("AddEfCoreCommandTransaction<TContext, global::Demo.GetTour");
     }
 
     [Fact]

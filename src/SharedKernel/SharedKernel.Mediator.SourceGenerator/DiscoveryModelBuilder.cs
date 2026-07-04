@@ -24,7 +24,8 @@ internal static partial class DiscoveryModelBuilder
                 [],
                 [],
                 [],
-                []);
+                [],
+                SupportsEfCoreCommandTransactions: false);
         }
 
         var discoveryState = new DiscoveryState();
@@ -70,7 +71,9 @@ internal static partial class DiscoveryModelBuilder
             requests,
             BuildNotificationDescriptors(discoveryState.NotificationContracts, discoveryState.NotificationHandlers, discoveryState),
             streamRequests,
-            [.. discoveryState.Diagnostics.OrderBy(static diagnostic => diagnostic.Location.SourceSpan.Start)]);
+            [.. discoveryState.Diagnostics.OrderBy(static diagnostic => diagnostic.Location.SourceSpan.Start)],
+            SupportsEfCoreCommandTransactions: compilation.GetTypeByMetadataName(MetadataNames.DbContext) is not null
+                && compilation.GetTypeByMetadataName(MetadataNames.EfCoreTransactionBehavior) is not null);
     }
 
     private static IEnumerable<IAssemblySymbol> EnumerateAssemblies(
