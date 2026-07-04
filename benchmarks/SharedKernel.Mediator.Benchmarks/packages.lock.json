@@ -190,7 +190,7 @@
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.9, )",
           "Microsoft.Extensions.Diagnostics": "[10.0.9, )",
-          "SharedKernel.Mediator.Abstractions": "[1.0.0, )"
+          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
         }
       },
       "sharedkernel.mediator.abstractions": {

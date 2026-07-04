@@ -4,7 +4,6 @@
         <PackageId>SharedKernel.Domain</PackageId>
         <Description>Persistence-agnostic DDD domain primitives for shared-kernel workflows.</Description>
         <RootNamespace>SharedKernel.Domain</RootNamespace>
-        <IsAotCompatible>true</IsAotCompatible>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

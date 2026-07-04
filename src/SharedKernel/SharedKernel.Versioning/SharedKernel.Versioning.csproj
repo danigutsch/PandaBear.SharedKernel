@@ -4,7 +4,6 @@
         <PackageId>SharedKernel.Versioning</PackageId>
         <Description>Reusable SemVer and Conventional Commit release-impact primitives.</Description>
         <RootNamespace>SharedKernel.Versioning</RootNamespace>
-        <IsAotCompatible>true</IsAotCompatible>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

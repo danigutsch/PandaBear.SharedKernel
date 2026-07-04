@@ -4,7 +4,6 @@
         <PackageId>SharedKernel.Results.AspNet</PackageId>
         <Description>ASP.NET Core adapters for SharedKernel.Results.</Description>
         <RootNamespace>SharedKernel.Results.AspNet</RootNamespace>
-        <IsAotCompatible>true</IsAotCompatible>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

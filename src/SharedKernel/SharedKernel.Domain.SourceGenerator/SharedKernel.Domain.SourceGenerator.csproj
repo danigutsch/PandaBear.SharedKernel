@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <IsAotCompatible>false</IsAotCompatible>
         <PackageId>SharedKernel.Domain.SourceGenerator</PackageId>
         <Description>Source generator for SharedKernel.Domain model support.</Description>
         <RootNamespace>SharedKernel.Domain.SourceGenerator</RootNamespace>

@@ -4,7 +4,6 @@
         <PackageId>SharedKernel.Mediator</PackageId>
         <Description>Runtime support surface for SharedKernel.Mediator.</Description>
         <RootNamespace>SharedKernel.Mediator</RootNamespace>
-        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>

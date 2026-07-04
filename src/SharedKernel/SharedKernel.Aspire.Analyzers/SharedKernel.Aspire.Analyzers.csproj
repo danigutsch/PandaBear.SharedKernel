@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <IsAotCompatible>false</IsAotCompatible>
         <PackageId>SharedKernel.Aspire.Analyzers</PackageId>
         <Description>Analyzers for SharedKernel Aspire conventions.</Description>
         <RootNamespace>SharedKernel.Aspire.Analyzers</RootNamespace>

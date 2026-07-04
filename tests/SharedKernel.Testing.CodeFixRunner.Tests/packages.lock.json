@@ -258,8 +258,8 @@
           "Microsoft.Build.Locator": "[1.11.2, )",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "[5.3.0, )",
           "Microsoft.CodeAnalysis.Workspaces.MSBuild": "[5.3.0, )",
-          "SharedKernel.Testing.Analyzers": "[1.0.0, )",
-          "SharedKernel.Testing.CodeFixes": "[1.0.0, )"
+          "SharedKernel.Testing.Analyzers": "[0.1.0-alpha.0, )",
+          "SharedKernel.Testing.CodeFixes": "[0.1.0-alpha.0, )"
         }
       },
       "Microsoft.Build.Locator": {
