@@ -1,3 +1,5 @@
+using System.Runtime.ExceptionServices;
+
 namespace SharedKernel.BuildingBlocks;
 
 /// <summary>
@@ -24,9 +26,17 @@ public static class Compensation
         {
             await operation(ct).ConfigureAwait(false);
         }
-        catch
+        catch (Exception exception) when (exception.ShouldHandleAsFailure(ct))
         {
-            await compensate(ct).ConfigureAwait(false);
+            try
+            {
+                await compensate(ct).ConfigureAwait(false);
+            }
+            catch (Exception compensationException) when (compensationException.ShouldHandleAsFailure(ct))
+            {
+                ExceptionDispatchInfo.Capture(exception).Throw();
+            }
+
             throw;
         }
     }
