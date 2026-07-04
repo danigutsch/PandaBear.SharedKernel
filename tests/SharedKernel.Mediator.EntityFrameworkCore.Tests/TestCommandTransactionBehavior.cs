@@ -4,7 +4,7 @@ internal sealed class TestCommandTransactionBehavior<TRequest, TResponse>(TestDb
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
-    private readonly EfCoreCommandTransactionBehavior<TestDbContext, TRequest, TResponse> behavior = new(dbContext);
+    private readonly EfCoreCommandTransactionBehavior<TRequest, TResponse> behavior = new(dbContext);
 
     public ValueTask<TResponse> Handle(
         TRequest request,

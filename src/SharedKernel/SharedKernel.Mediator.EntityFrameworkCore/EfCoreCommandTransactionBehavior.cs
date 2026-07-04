@@ -6,13 +6,11 @@ namespace SharedKernel.Mediator.EntityFrameworkCore;
 /// <summary>
 /// Wraps mediator commands in an EF Core execution-strategy-compatible transaction.
 /// </summary>
-/// <typeparam name="TContext">The EF Core DbContext type.</typeparam>
 /// <typeparam name="TRequest">The mediator request type.</typeparam>
 /// <typeparam name="TResponse">The mediator response type.</typeparam>
-public sealed class EfCoreCommandTransactionBehavior<TContext, TRequest, TResponse>(TContext dbContext)
+public sealed class EfCoreCommandTransactionBehavior<TRequest, TResponse>(DbContext dbContext)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
-    where TContext : DbContext
 {
     /// <inheritdoc />
     public ValueTask<TResponse> Handle(
@@ -23,11 +21,8 @@ public sealed class EfCoreCommandTransactionBehavior<TContext, TRequest, TRespon
         ArgumentNullException.ThrowIfNull(request);
         ArgumentNullException.ThrowIfNull(next);
 
-        if (request is not ICommand and not ICommand<TResponse>)
-        {
-            return next();
-        }
-
-        return EfCoreCommandTransactionScope.Execute(dbContext, () => next(), ct);
+        return request is ICommand or ICommand<TResponse>
+            ? EfCoreCommandTransactionScope.Execute(dbContext, () => next(), ct)
+            : next();
     }
 }

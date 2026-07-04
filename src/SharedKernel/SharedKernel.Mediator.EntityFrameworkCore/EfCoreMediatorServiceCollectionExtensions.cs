@@ -22,6 +22,7 @@ public static class EfCoreMediatorServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        return services.AddScoped<IPipelineBehavior<TRequest, TResponse>, EfCoreCommandTransactionBehavior<TContext, TRequest, TResponse>>();
+        return services.AddScoped<IPipelineBehavior<TRequest, TResponse>>(serviceProvider =>
+            new EfCoreCommandTransactionBehavior<TRequest, TResponse>(serviceProvider.GetRequiredService<TContext>()));
     }
 }

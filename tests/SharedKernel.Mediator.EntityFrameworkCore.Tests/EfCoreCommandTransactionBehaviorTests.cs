@@ -110,7 +110,7 @@ public sealed class EfCoreCommandTransactionBehaviorTests
 
         // Assert
         resolveGlobalDbContext.ShouldThrow<InvalidOperationException>();
-        behavior.ShouldBeOfType<EfCoreCommandTransactionBehavior<TestDbContext, TestCommand, int>>();
+        behavior.ShouldBeOfType<EfCoreCommandTransactionBehavior<TestCommand, int>>();
     }
 
     [Fact]
@@ -126,8 +126,8 @@ public sealed class EfCoreCommandTransactionBehaviorTests
 
         // Assert
         resolveGlobalDbContext.ShouldThrow<InvalidOperationException>();
-        commandBehavior.ShouldBeOfType<EfCoreCommandTransactionBehavior<TestDbContext, TestCommand, int>>();
-        otherCommandBehavior.ShouldBeOfType<EfCoreCommandTransactionBehavior<OtherTestDbContext, OtherTestCommand, int>>();
+        commandBehavior.ShouldBeOfType<EfCoreCommandTransactionBehavior<TestCommand, int>>();
+        otherCommandBehavior.ShouldBeOfType<EfCoreCommandTransactionBehavior<OtherTestCommand, int>>();
     }
 
     [Fact]
