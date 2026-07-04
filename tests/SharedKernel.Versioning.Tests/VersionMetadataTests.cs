@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace SharedKernel.Versioning.Tests;
 
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, "Versioning")]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersionMetadataTests
 {
     [Fact]
