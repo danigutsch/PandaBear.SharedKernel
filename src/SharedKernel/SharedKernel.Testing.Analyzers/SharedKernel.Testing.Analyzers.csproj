@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <IsAotCompatible>false</IsAotCompatible>
         <PackageId>SharedKernel.Testing.Analyzers</PackageId>
         <Description>Analyzers for repository test conventions.</Description>
         <RootNamespace>SharedKernel.Testing.Analyzers</RootNamespace>

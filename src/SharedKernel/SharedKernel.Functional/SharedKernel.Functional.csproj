@@ -4,7 +4,6 @@
         <PackageId>SharedKernel.Functional</PackageId>
         <Description>Core functional result and option primitives for shared-kernel workflows.</Description>
         <RootNamespace>SharedKernel.Functional</RootNamespace>
-        <IsAotCompatible>true</IsAotCompatible>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

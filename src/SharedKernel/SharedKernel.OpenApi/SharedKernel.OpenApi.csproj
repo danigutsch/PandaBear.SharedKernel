@@ -4,7 +4,6 @@
         <PackageId>SharedKernel.OpenApi</PackageId>
         <Description>Reusable OpenAPI helpers for shared-kernel HTTP contract documentation.</Description>
         <RootNamespace>SharedKernel.OpenApi</RootNamespace>
-        <IsAotCompatible>true</IsAotCompatible>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>openapi;http;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

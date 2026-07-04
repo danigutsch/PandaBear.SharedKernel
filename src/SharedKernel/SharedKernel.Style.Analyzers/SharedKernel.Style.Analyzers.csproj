@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <IsAotCompatible>false</IsAotCompatible>
         <PackageId>SharedKernel.Style.Analyzers</PackageId>
         <Description>Analyzers for repository style conventions.</Description>
         <RootNamespace>SharedKernel.Style.Analyzers</RootNamespace>

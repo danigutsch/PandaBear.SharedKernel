@@ -4,7 +4,6 @@
         <PackageId>SharedKernel.HttpClients</PackageId>
         <Description>Reusable HTTP client helpers, validation responses, defaults, and telemetry.</Description>
         <RootNamespace>SharedKernel.HttpClients</RootNamespace>
-        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>

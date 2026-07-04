@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <IsAotCompatible>false</IsAotCompatible>
         <PackageId>SharedKernel.Aspire.CodeFixes</PackageId>
         <Description>Code fixes for SharedKernel Aspire conventions.</Description>
         <RootNamespace>SharedKernel.Aspire.CodeFixes</RootNamespace>

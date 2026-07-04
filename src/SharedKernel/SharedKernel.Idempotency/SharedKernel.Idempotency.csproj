@@ -4,7 +4,6 @@
         <PackageId>SharedKernel.Idempotency</PackageId>
         <Description>Storage-neutral idempotency primitives for shared-kernel workflows.</Description>
         <RootNamespace>SharedKernel.Idempotency</RootNamespace>
-        <IsAotCompatible>true</IsAotCompatible>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
