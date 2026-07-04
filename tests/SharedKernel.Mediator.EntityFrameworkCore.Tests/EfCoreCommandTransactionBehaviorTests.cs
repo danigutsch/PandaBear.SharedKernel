@@ -53,6 +53,52 @@ public sealed class EfCoreCommandTransactionBehaviorTests
     }
 
     [Fact]
+    public async Task Commands_use_the_transaction_path_before_running_the_next_handler()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<TestDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
+            .Options;
+        var dbContext = new TestDbContext(options);
+        await dbContext.DisposeAsync();
+        var behavior = new TestCommandTransactionBehavior<TestCommand, int>(dbContext);
+        Func<Task> handle = async () =>
+            await behavior.Handle(
+                new TestCommand(),
+                () => ValueTask.FromResult(42),
+                TestContext.Current.CancellationToken);
+
+        // Act
+        var exception = await handle.ShouldThrow<ObjectDisposedException>();
+
+        // Assert
+        exception.ObjectName.ShouldBe(nameof(TestDbContext));
+    }
+
+    [Fact]
+    public async Task Commands_without_response_use_the_transaction_path_before_running_the_next_handler()
+    {
+        // Arrange
+        var options = new DbContextOptionsBuilder<TestDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
+            .Options;
+        var dbContext = new TestDbContext(options);
+        await dbContext.DisposeAsync();
+        var behavior = new TestCommandTransactionBehavior<NonGenericTestCommand, Unit>(dbContext);
+        Func<Task> handle = async () =>
+            await behavior.Handle(
+                new NonGenericTestCommand(),
+                () => ValueTask.FromResult(Unit.Value),
+                TestContext.Current.CancellationToken);
+
+        // Act
+        var exception = await handle.ShouldThrow<ObjectDisposedException>();
+
+        // Assert
+        exception.ObjectName.ShouldBe(nameof(TestDbContext));
+    }
+
+    [Fact]
     public void Registers_closed_transaction_behavior_without_global_dbcontext()
     {
         // Arrange

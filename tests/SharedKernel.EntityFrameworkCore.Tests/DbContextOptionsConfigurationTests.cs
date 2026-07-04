@@ -24,6 +24,34 @@ public sealed class DbContextOptionsConfigurationTests
     }
 
     [Fact]
+    public void Configuration_exposes_the_target_context_type()
+    {
+        // Arrange
+        IDbContextOptionsConfiguration<TestDbContext> configuration = new RecordingOptionsConfiguration([], "unused");
+
+        // Act
+        var contextType = configuration.ContextType;
+
+        // Assert
+        contextType.ShouldBe(typeof(TestDbContext));
+    }
+
+    [Fact]
+    public void Apply_configurations_ignores_type_registrations_without_instances()
+    {
+        // Arrange
+        var services = DbContextOptionsConfigurationTestServices.Create();
+        services.AddSingleton<IDbContextOptionsConfiguration<TestDbContext>, ThrowingOptionsConfiguration>();
+        var options = new DbContextOptionsBuilder<TestDbContext>();
+
+        // Act
+        services.ApplyDbContextOptionsConfigurations<TestDbContext>(options);
+
+        // Assert
+        options.Options.Extensions.ShouldBeEmpty();
+    }
+
+    [Fact]
     public void Enables_development_diagnostics_when_registered()
     {
         // Arrange
