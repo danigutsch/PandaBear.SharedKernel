@@ -22,6 +22,12 @@ public static class EfCoreMediatorServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        if (!typeof(ICommand).IsAssignableFrom(typeof(TRequest))
+            && !typeof(ICommand<TResponse>).IsAssignableFrom(typeof(TRequest)))
+        {
+            throw new InvalidOperationException("EF Core command transactions can only be registered for command requests.");
+        }
+
         return services.AddScoped<IPipelineBehavior<TRequest, TResponse>>(serviceProvider =>
             new EfCoreCommandTransactionBehavior<TRequest, TResponse>(serviceProvider.GetRequiredService<TContext>()));
     }

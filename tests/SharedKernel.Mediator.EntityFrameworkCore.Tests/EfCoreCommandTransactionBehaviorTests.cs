@@ -38,7 +38,7 @@ public sealed class EfCoreCommandTransactionBehaviorTests
         var options = new DbContextOptionsBuilder<TestDbContext>()
             .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
             .Options;
-        await using var dbContext = new TestDbContext(options);
+        var dbContext = new TestDbContext(options);
         await dbContext.DisposeAsync();
         var behavior = new TestCommandTransactionBehavior<TestQuery, int>(dbContext);
 
@@ -142,6 +142,20 @@ public sealed class EfCoreCommandTransactionBehaviorTests
 
         // Assert
         exception.ParamName.ShouldBe("services");
+    }
+
+    [Fact]
+    public void Registering_closed_transaction_behavior_rejects_queries()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        Action registerBehavior = () => services.AddEfCoreCommandTransaction<TestDbContext, TestQuery, int>();
+
+        // Act
+        var exception = registerBehavior.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldBe("EF Core command transactions can only be registered for command requests.");
     }
 
     [Fact]
