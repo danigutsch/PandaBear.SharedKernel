@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.Versioning</PackageId>
+        <Description>Reusable SemVer and Conventional Commit release-impact primitives.</Description>
+        <RootNamespace>SharedKernel.Versioning</RootNamespace>
+        <IsAotCompatible>true</IsAotCompatible>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <PackageTags>versioning;semver;conventional-commits;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

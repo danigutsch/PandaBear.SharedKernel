@@ -19,6 +19,21 @@
 		<NuGetAuditLevel>high</NuGetAuditLevel>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<ComputedSemVer Condition="'$(ComputedSemVer)' == ''">0.1.0-alpha.0</ComputedSemVer>
+		<ComputedAssemblyVersion Condition="'$(ComputedAssemblyVersion)' == ''">0.0.0.0</ComputedAssemblyVersion>
+		<ComputedFileVersion Condition="'$(ComputedFileVersion)' == ''">0.1.0.0</ComputedFileVersion>
+		<ComputedInformationalVersion Condition="'$(ComputedInformationalVersion)' == '' and '$(SourceRevisionId)' != ''">$(ComputedSemVer)+sha.$(SourceRevisionId)</ComputedInformationalVersion>
+		<ComputedInformationalVersion Condition="'$(ComputedInformationalVersion)' == ''">$(ComputedSemVer)</ComputedInformationalVersion>
+
+		<Version>$(ComputedSemVer)</Version>
+		<PackageVersion>$(ComputedSemVer)</PackageVersion>
+		<AssemblyVersion>$(ComputedAssemblyVersion)</AssemblyVersion>
+		<FileVersion>$(ComputedFileVersion)</FileVersion>
+		<InformationalVersion>$(ComputedInformationalVersion)</InformationalVersion>
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+	</PropertyGroup>
+
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
 		<PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="all" />
 	</ItemGroup>
