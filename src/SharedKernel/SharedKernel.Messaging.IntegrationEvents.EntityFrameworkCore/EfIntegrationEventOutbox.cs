@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.EntityFrameworkCore;
@@ -45,19 +47,40 @@ internal sealed class EfIntegrationEventOutbox<TContext> : IIntegrationEventOutb
         ArgumentNullException.ThrowIfNull(integrationEvent);
         ct.ThrowIfCancellationRequested();
 
-        var envelope = new EventEnvelope(
-            integrationEvent.EventId,
+        ResolveDbContext().Set<IntegrationEventOutboxMessage>().Add(new IntegrationEventOutboxMessage(
+            Guid.CreateVersion7(),
+            EventEnvelope.CloudEventsSpec,
+            EventEnvelope.CloudEventsSpecVersion,
+            integrationEvent.EventId.ToString("D"),
+            new Uri("urn:sharedkernel:integration-events"),
             TIntegrationEvent.EventType,
             TIntegrationEvent.EventVersion,
             integrationEvent.OccurredAt,
-            serializer.Serialize(integrationEvent));
-
-        ResolveDbContext().Set<IntegrationEventOutboxMessageEntity>().Add(new IntegrationEventOutboxMessageEntity(
-            Guid.CreateVersion7(),
-            envelope,
+            null,
+            "application/json",
+            null,
+            serializer.Serialize(integrationEvent),
+            EventPayloadEncoding.Json,
+            CreateTraceExtensionAttributesJson(),
             timeProvider.GetUtcNow()));
 
         return ValueTask.CompletedTask;
+    }
+
+    private static string? CreateTraceExtensionAttributesJson()
+    {
+        var currentActivity = Activity.Current;
+        if (currentActivity?.Id is null)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(currentActivity.TraceStateString))
+        {
+            return $$"""{"traceparent":"{{JsonEncodedText.Encode(currentActivity.Id)}}","tracestate":"{{JsonEncodedText.Encode(currentActivity.TraceStateString)}}"}""";
+        }
+
+        return $$"""{"traceparent":"{{JsonEncodedText.Encode(currentActivity.Id)}}"}""";
     }
 
     private TContext ResolveDbContext()

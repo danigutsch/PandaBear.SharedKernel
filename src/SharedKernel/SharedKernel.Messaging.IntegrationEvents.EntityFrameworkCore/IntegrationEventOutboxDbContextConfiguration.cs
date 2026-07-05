@@ -15,6 +15,6 @@ internal sealed class IntegrationEventOutboxDbContextConfiguration<TContext> : I
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);
 
-        modelBuilder.ApplyConfiguration(new IntegrationEventOutboxMessageEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new IntegrationEventOutboxMessageConfiguration());
     }
 }

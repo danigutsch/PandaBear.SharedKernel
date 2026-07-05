@@ -1,6 +1,14 @@
 #nullable enable
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventInboxMessage
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventInboxMessage.Id.get -> System.Guid
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventInboxMessage.ProcessedAt.get -> System.DateTimeOffset?
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventInboxMessage.ReceivedAt.get -> System.DateTimeOffset
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutbox
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutbox.Enqueue<TIntegrationEvent>(TIntegrationEvent integrationEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage.EnqueuedAt.get -> System.DateTimeOffset
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage.Id.get -> System.Guid
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage.PublishedAt.get -> System.DateTimeOffset?
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEvent
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEvent.EventId.get -> System.Guid
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEvent.EventType.get -> string!
