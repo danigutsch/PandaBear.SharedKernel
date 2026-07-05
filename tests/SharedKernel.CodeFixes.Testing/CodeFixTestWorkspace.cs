@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
 
-namespace SharedKernel.Style.CodeFixes.Tests;
+namespace SharedKernel.CodeFixes.Testing;
 
-internal sealed class CodeFixTestWorkspace
+public sealed class CodeFixTestWorkspace
 {
     private const string DefaultUsings = """
         using System;
@@ -35,12 +35,15 @@ internal sealed class CodeFixTestWorkspace
         get
         {
             var document = Workspace.CurrentSolution.GetDocument(DocumentId);
-            return Assert.IsType<Document>(document);
+            return document ?? throw new InvalidOperationException("Test document could not be found.");
         }
     }
 
     public static CodeFixTestWorkspace Create(string source, string assemblyName = "SharedKernel.Style.CodeFixes.Tests.Dynamic")
     {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentException.ThrowIfNullOrWhiteSpace(assemblyName);
+
         var workspace = new AdhocWorkspace();
         var projectId = ProjectId.CreateNewId(assemblyName);
         var versionStamp = VersionStamp.Create();
@@ -72,15 +75,18 @@ internal sealed class CodeFixTestWorkspace
 
     public async Task<Diagnostic> CreateDocumentDiagnostic(string diagnosticId, string markerText)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(diagnosticId);
+        ArgumentNullException.ThrowIfNull(markerText);
+
         var text = await Document.GetTextAsync().ConfigureAwait(false);
         var source = text.ToString();
         var start = source.IndexOf(markerText, StringComparison.Ordinal);
-        Assert.True(start >= 0, $"Could not find marker text '{markerText}'.");
+        if (start < 0)
+        {
+            throw new InvalidOperationException($"Could not find marker text '{markerText}'.");
+        }
 
-        var syntaxTree = await Document.GetSyntaxTreeAsync().ConfigureAwait(false);
-        Assert.NotNull(syntaxTree);
-        var nonNullSyntaxTree = syntaxTree;
-
+        var syntaxTree = await Document.GetSyntaxTreeAsync().ConfigureAwait(false) ?? throw new InvalidOperationException("Test document syntax tree could not be loaded.");
         var descriptor = new DiagnosticDescriptor(
             diagnosticId,
             title: diagnosticId,
@@ -89,11 +95,14 @@ internal sealed class CodeFixTestWorkspace
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
-        return Diagnostic.Create(descriptor, Location.Create(nonNullSyntaxTree, new TextSpan(start, markerText.Length)));
+        return Diagnostic.Create(descriptor, Location.Create(syntaxTree, new TextSpan(start, markerText.Length)));
     }
 
     public async Task<IReadOnlyList<CodeAction>> GetCodeActions(CodeFixProvider provider, Diagnostic diagnostic)
     {
+        ArgumentNullException.ThrowIfNull(provider);
+        ArgumentNullException.ThrowIfNull(diagnostic);
+
         var actions = new List<CodeAction>();
         var context = new CodeFixContext(
             Document,
@@ -107,8 +116,10 @@ internal sealed class CodeFixTestWorkspace
 
     public async Task ApplyCodeAction(CodeAction action)
     {
+        ArgumentNullException.ThrowIfNull(action);
+
         var operations = await action.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
-        var applyOperation = Assert.Single(operations.OfType<ApplyChangesOperation>());
+        var applyOperation = operations.OfType<ApplyChangesOperation>().Single();
         Workspace.TryApplyChanges(applyOperation.ChangedSolution);
     }
 
@@ -120,10 +131,12 @@ internal sealed class CodeFixTestWorkspace
     private static IEnumerable<MetadataReference> GetMetadataReferences()
     {
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        Assert.False(string.IsNullOrWhiteSpace(trustedPlatformAssemblies));
-        var trustedAssemblyPaths = Assert.IsType<string>(trustedPlatformAssemblies);
+        if (string.IsNullOrWhiteSpace(trustedPlatformAssemblies))
+        {
+            throw new InvalidOperationException("TRUSTED_PLATFORM_ASSEMBLIES is not available.");
+        }
 
-        foreach (var path in trustedAssemblyPaths.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+        foreach (var path in trustedPlatformAssemblies.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
         {
             yield return MetadataReference.CreateFromFile(path);
         }

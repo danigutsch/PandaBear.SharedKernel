@@ -228,6 +228,12 @@
           "xunit.v3.runner.common": "[3.2.2]"
         }
       },
+      "sharedkernel.codefixes.testing": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[5.3.0, )"
+        }
+      },
       "sharedkernel.style.codefixes": {
         "type": "Project"
       },

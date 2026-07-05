@@ -20,8 +20,8 @@ public static class DomainEventDispatchServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddScoped<DispatchDomainEventsSaveChangesInterceptor>();
-        services.TryAddEnumerable(ServiceDescriptor.Scoped<IDbContextConfiguration<TContext>, DomainEventDispatchDbContextConfiguration<TContext>>());
+        services.TryAddSingleton<DispatchDomainEventsSaveChangesInterceptor>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, DomainEventDispatchDbContextConfiguration<TContext>>());
 
         return services;
     }

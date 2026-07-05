@@ -10,7 +10,7 @@ public sealed class DbContextConfigurationTests
     public void Applies_registered_option_configurations_in_registration_order()
     {
         var calls = new List<string>();
-        var services = new ServiceCollection();
+        var services = DbContextConfigurationTestServices.Create();
         services.AddDbContextConfiguration(new RecordingDbContextConfiguration(calls, "first"));
         services.AddDbContextConfiguration(new RecordingDbContextConfiguration(calls, "second"));
         var options = new DbContextOptionsBuilder<TestDbContext>();
@@ -33,7 +33,7 @@ public sealed class DbContextConfigurationTests
     [Fact]
     public void Apply_option_configurations_ignores_type_registrations_without_instances()
     {
-        var services = new ServiceCollection();
+        var services = DbContextConfigurationTestServices.Create();
         services.AddSingleton<IDbContextConfiguration<TestDbContext>, ThrowingDbContextConfiguration>();
         var options = new DbContextOptionsBuilder<TestDbContext>();
 
@@ -45,7 +45,7 @@ public sealed class DbContextConfigurationTests
     [Fact]
     public void Enables_development_diagnostics_when_registered()
     {
-        var services = new ServiceCollection();
+        var services = DbContextConfigurationTestServices.Create();
         services.AddDbContextDevelopmentDiagnostics<TestDbContext>();
         var options = new DbContextOptionsBuilder<TestDbContext>();
 
@@ -84,7 +84,7 @@ public sealed class DbContextConfigurationTests
     [Fact]
     public void Add_configuration_rejects_missing_configuration()
     {
-        var services = new ServiceCollection();
+        var services = DbContextConfigurationTestServices.Create();
         IDbContextConfiguration<TestDbContext>? configuration = null;
 
         Action addConfiguration = () => services.AddDbContextConfiguration(configuration!);
@@ -109,7 +109,7 @@ public sealed class DbContextConfigurationTests
     [Fact]
     public void Apply_option_configurations_rejects_missing_options()
     {
-        var services = new ServiceCollection();
+        var services = DbContextConfigurationTestServices.Create();
         DbContextOptionsBuilder? options = null;
         Action applyConfigurations = () => services.ApplyDbContextOptionConfigurations<TestDbContext>(options!);
 

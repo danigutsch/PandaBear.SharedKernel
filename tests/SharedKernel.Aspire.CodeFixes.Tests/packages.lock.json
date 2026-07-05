@@ -231,6 +231,12 @@
       "sharedkernel.aspire.codefixes": {
         "type": "Project"
       },
+      "sharedkernel.codefixes.testing": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp.Workspaces": "[5.3.0, )"
+        }
+      },
       "Microsoft.CodeAnalysis.Analyzers": {
         "type": "CentralTransitive",
         "requested": "[5.3.0, )",
