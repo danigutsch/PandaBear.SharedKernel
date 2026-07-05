@@ -51,8 +51,12 @@ internal static class DependencyInjectionEmitter
             model.StreamRequests,
             emittedRequestRegistrations || emittedNotificationRegistrations,
             emittedRegistrationKeys);
+        var emittedDomainEventRegistrations = EmitDomainEventRegistrations(
+            writer,
+            model.DomainEventHandlers,
+            emittedRequestRegistrations || emittedNotificationRegistrations || emittedStreamRegistrations);
 
-        if (emittedRequestRegistrations || emittedNotificationRegistrations || emittedStreamRegistrations)
+        if (emittedRequestRegistrations || emittedNotificationRegistrations || emittedStreamRegistrations || emittedDomainEventRegistrations)
         {
             writer.Line();
         }
@@ -103,6 +107,27 @@ internal static class DependencyInjectionEmitter
         }
 
         return emittedAny;
+    }
+
+    private static bool EmitDomainEventRegistrations(
+        IndentedCodeWriter writer,
+        IEnumerable<DomainEventHandlerDescriptor> domainEventHandlers,
+        bool prependBlankLine)
+    {
+        if (!domainEventHandlers.Any())
+        {
+            return false;
+        }
+
+        if (prependBlankLine)
+        {
+            writer.Line();
+        }
+
+        writer.Line("Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<global::SharedKernel.DomainEvents.IDomainEventNotificationFactory, global::SharedKernel.DomainEvents.Generated.GeneratedDomainEventNotificationFactory>(services);");
+        writer.Line("Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddScoped<global::SharedKernel.DomainEvents.IDomainEventDispatcher, global::SharedKernel.DomainEvents.MediatorDomainEventDispatcher>(services);");
+
+        return true;
     }
 
     private static bool EmitNotificationRegistrations(

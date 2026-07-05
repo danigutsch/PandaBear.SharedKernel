@@ -7,5 +7,6 @@ internal static class GeneratedHintNames
     public const string AppMediator = "SharedKernel.Mediator.Generated.AppMediator.g.cs";
     public const string GeneratedDispatch = "SharedKernel.Mediator.Generated.GeneratedDispatch.g.cs";
     public const string GeneratedPipelines = "SharedKernel.Mediator.Generated.GeneratedPipelines.g.cs";
+    public const string DomainEventNotifications = "SharedKernel.DomainEvents.Generated.DomainEventNotifications.g.cs";
     public const string CallGraph = "SharedKernel.Mediator.Generated.CallGraph.g.cs";
 }

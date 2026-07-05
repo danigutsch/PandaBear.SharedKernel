@@ -10,6 +10,7 @@ internal sealed record DiscoveryModel(
     ImmutableArray<ModuleDescriptor> Modules,
     ImmutableArray<RequestDescriptor> Requests,
     ImmutableArray<NotificationDescriptor> Notifications,
+    ImmutableArray<DomainEventHandlerDescriptor> DomainEventHandlers,
     ImmutableArray<StreamRequestDescriptor> StreamRequests,
     ImmutableArray<Diagnostic> Diagnostics,
     bool SupportsEfCoreCommandTransactions)

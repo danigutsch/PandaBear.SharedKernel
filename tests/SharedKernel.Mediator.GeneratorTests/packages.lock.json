@@ -200,6 +200,16 @@
           "xunit.v3.runner.common": "[3.2.2]"
         }
       },
+      "sharedkernel.domain": {
+        "type": "Project"
+      },
+      "sharedkernel.domainevents": {
+        "type": "Project",
+        "dependencies": {
+          "SharedKernel.Domain": "[0.1.0-alpha.0, )",
+          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
+        }
+      },
       "sharedkernel.mediator": {
         "type": "Project",
         "dependencies": {
