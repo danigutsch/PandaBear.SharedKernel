@@ -6,16 +6,6 @@ namespace SharedKernel.Messaging;
 public class EventEnvelope
 {
     /// <summary>
-    /// The CloudEvents envelope specification name.
-    /// </summary>
-    public const string CloudEventsSpec = "cloudevents";
-
-    /// <summary>
-    /// The supported CloudEvents specification version.
-    /// </summary>
-    public const string CloudEventsSpecVersion = "1.0";
-
-    /// <summary>
     /// The maximum supported event type identifier length.
     /// </summary>
     public const int EventTypeMaxLength = 200;

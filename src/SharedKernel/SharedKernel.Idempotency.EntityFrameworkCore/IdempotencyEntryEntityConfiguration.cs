@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedKernel.EntityFrameworkCore;
 
 namespace SharedKernel.Idempotency.EntityFrameworkCore;
 
@@ -8,14 +9,14 @@ namespace SharedKernel.Idempotency.EntityFrameworkCore;
 /// </summary>
 internal sealed class IdempotencyEntryEntityConfiguration : IEntityTypeConfiguration<IdempotencyEntryEntity>
 {
-    private const string Schema = "messaging";
+    private const string TableName = "idempotency_keys";
 
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<IdempotencyEntryEntity> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.ToTable("idempotency_keys", Schema);
+        builder.ToTable(TableName, SharedKernelSchemas.Messaging);
         builder.HasKey(entry => new { entry.Scope, entry.Key });
         builder.Property(entry => entry.Scope).HasMaxLength(200).IsRequired();
         builder.Property(entry => entry.Key).HasMaxLength(255).IsRequired();

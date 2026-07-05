@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.EntityFrameworkCore;
+using SharedKernel.Messaging.IntegrationEvents.CloudEvents;
 
 namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
@@ -13,6 +14,11 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 internal sealed class EfIntegrationEventOutbox<TContext> : IIntegrationEventOutbox
     where TContext : DbContext
 {
+    private const string JsonContentType = "application/json";
+    private const string Source = "urn:sharedkernel:integration-events";
+    private const string TraceParentExtensionAttribute = "traceparent";
+    private const string TraceStateExtensionAttribute = "tracestate";
+
     private readonly TContext? dbContext;
     private readonly TimeProvider timeProvider;
     private readonly IIntegrationEventSerializer serializer;
@@ -49,15 +55,15 @@ internal sealed class EfIntegrationEventOutbox<TContext> : IIntegrationEventOutb
 
         ResolveDbContext().Set<IntegrationEventOutboxMessage>().Add(new IntegrationEventOutboxMessage(
             Guid.CreateVersion7(),
-            EventEnvelope.CloudEventsSpec,
-            EventEnvelope.CloudEventsSpecVersion,
+            CloudEventConstants.Spec,
+            CloudEventConstants.SpecVersion,
             integrationEvent.EventId.ToString("D"),
-            new Uri("urn:sharedkernel:integration-events"),
+            new Uri(Source),
             TIntegrationEvent.EventType,
             TIntegrationEvent.EventVersion,
             integrationEvent.OccurredAt,
             null,
-            "application/json",
+            JsonContentType,
             null,
             serializer.Serialize(integrationEvent),
             EventPayloadEncoding.Json,
@@ -77,10 +83,10 @@ internal sealed class EfIntegrationEventOutbox<TContext> : IIntegrationEventOutb
 
         if (!string.IsNullOrWhiteSpace(currentActivity.TraceStateString))
         {
-            return $$"""{"traceparent":"{{JsonEncodedText.Encode(currentActivity.Id)}}","tracestate":"{{JsonEncodedText.Encode(currentActivity.TraceStateString)}}"}""";
+            return $$"""{"{{TraceParentExtensionAttribute}}":"{{JsonEncodedText.Encode(currentActivity.Id)}}","{{TraceStateExtensionAttribute}}":"{{JsonEncodedText.Encode(currentActivity.TraceStateString)}}"}""";
         }
 
-        return $$"""{"traceparent":"{{JsonEncodedText.Encode(currentActivity.Id)}}"}""";
+        return $$"""{"{{TraceParentExtensionAttribute}}":"{{JsonEncodedText.Encode(currentActivity.Id)}}"}""";
     }
 
     private TContext ResolveDbContext()

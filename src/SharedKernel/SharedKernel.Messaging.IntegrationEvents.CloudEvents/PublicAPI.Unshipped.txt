@@ -1,4 +1,7 @@
 #nullable enable
+const SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants.Spec = "cloudevents" -> string!
+const SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants.SpecVersion = "1.0" -> string!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants
 SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>
 SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.CloudEventEnvelope(string! Id, System.Uri! Source, string! Type, string! SpecVersion, System.DateTimeOffset Time, string? Subject, string? DataContentType, System.Uri? DataSchema, int Version, TIntegrationEvent Data) -> void
 SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Data.get -> TIntegrationEvent

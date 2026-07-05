@@ -1,6 +1,4 @@
 #nullable enable
-const SharedKernel.Messaging.EventEnvelope.CloudEventsSpec = "cloudevents" -> string!
-const SharedKernel.Messaging.EventEnvelope.CloudEventsSpecVersion = "1.0" -> string!
 const SharedKernel.Messaging.EventEnvelope.EventTypeMaxLength = 200 -> int
 SharedKernel.Messaging.EventEnvelope
 SharedKernel.Messaging.EventEnvelope.DataContentType.get -> string?

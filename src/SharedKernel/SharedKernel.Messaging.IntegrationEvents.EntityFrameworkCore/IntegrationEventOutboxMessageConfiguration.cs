@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SharedKernel.EntityFrameworkCore;
 
 namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
@@ -8,14 +9,14 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// </summary>
 internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeConfiguration<IntegrationEventOutboxMessage>
 {
-    private const string Schema = "messaging";
+    private const string TableName = "outbox_messages";
 
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<IntegrationEventOutboxMessage> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.ToTable("outbox_messages", Schema);
+        builder.ToTable(TableName, SharedKernelSchemas.Messaging);
         builder.HasKey(message => message.Id);
         builder.Property(message => message.Id).ValueGeneratedNever();
         builder.HasIndex(message => new { message.PublishedAt, message.EnqueuedAt });

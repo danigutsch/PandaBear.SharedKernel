@@ -5,8 +5,6 @@ namespace SharedKernel.Messaging.IntegrationEvents.CloudEvents;
 /// </summary>
 public static class CloudEventMapper
 {
-    private const string SpecVersion = "1.0";
-
     /// <summary>
     /// Maps a typed integration event to a CloudEvents metadata envelope.
     /// </summary>
@@ -26,7 +24,7 @@ public static class CloudEventMapper
             integrationEvent.EventId.ToString("D"),
             metadata.Source,
             TIntegrationEvent.EventType,
-            SpecVersion,
+            CloudEventConstants.SpecVersion,
             integrationEvent.OccurredAt,
             metadata.Subject,
             metadata.DataContentType,

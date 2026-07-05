@@ -2,6 +2,10 @@ namespace SharedKernel.Messaging.Tests;
 
 public sealed class EventEnvelopeTests
 {
+    private const string EnvelopeSpec = "test-envelope";
+    private const string EnvelopeSpecVersion = "1.0";
+    private const string JsonContentType = "application/json";
+
     [Fact]
     public void Creates_envelope_when_values_are_valid()
     {
@@ -9,29 +13,29 @@ public sealed class EventEnvelopeTests
         var occurredAt = DateTimeOffset.UtcNow;
 
         var envelope = new EventEnvelope(
-            EventEnvelope.CloudEventsSpec,
-            EventEnvelope.CloudEventsSpecVersion,
+            EnvelopeSpec,
+            EnvelopeSpecVersion,
             "018fff35-7f1b-7d01-bf70-e33f71fcaeca",
             source,
             "catalog.media.original-stored.v1",
             1,
             occurredAt,
             "tour-1",
-            "application/json",
+            JsonContentType,
             new Uri("https://schemas.example/events/tour-created.json"),
             "{}",
             EventPayloadEncoding.Json,
             "{\"traceparent\":\"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-00\"}");
 
-        envelope.EnvelopeSpec.ShouldBe(EventEnvelope.CloudEventsSpec);
-        envelope.EnvelopeSpecVersion.ShouldBe(EventEnvelope.CloudEventsSpecVersion);
+        envelope.EnvelopeSpec.ShouldBe(EnvelopeSpec);
+        envelope.EnvelopeSpecVersion.ShouldBe(EnvelopeSpecVersion);
         envelope.EventId.ShouldBe("018fff35-7f1b-7d01-bf70-e33f71fcaeca");
         envelope.Source.ShouldBe(source);
         envelope.EventType.ShouldBe("catalog.media.original-stored.v1");
         envelope.EventVersion.ShouldBe(1);
         envelope.Time.ShouldBe(occurredAt);
         envelope.Subject.ShouldBe("tour-1");
-        envelope.DataContentType.ShouldBe("application/json");
+        envelope.DataContentType.ShouldBe(JsonContentType);
         envelope.DataSchema.ShouldBe(new Uri("https://schemas.example/events/tour-created.json"));
         envelope.Payload.ShouldBe("{}");
         envelope.PayloadEncoding.ShouldBe(EventPayloadEncoding.Json);
@@ -47,14 +51,14 @@ public sealed class EventEnvelopeTests
         {
             _ = new EventEnvelope(
                 envelopeSpec!,
-                EventEnvelope.CloudEventsSpecVersion,
+                EnvelopeSpecVersion,
                 "event-1",
                 new Uri("urn:test"),
                 "catalog.media.original-stored.v1",
                 1,
                 DateTimeOffset.UtcNow,
                 null,
-                "application/json",
+                JsonContentType,
                 null,
                 "{}",
                 EventPayloadEncoding.Json,
@@ -74,7 +78,7 @@ public sealed class EventEnvelopeTests
         Action create = () =>
         {
             _ = new EventEnvelope(
-                EventEnvelope.CloudEventsSpec,
+                EnvelopeSpec,
                 envelopeSpecVersion!,
                 "event-1",
                 new Uri("urn:test"),
@@ -82,7 +86,7 @@ public sealed class EventEnvelopeTests
                 1,
                 DateTimeOffset.UtcNow,
                 null,
-                "application/json",
+                JsonContentType,
                 null,
                 "{}",
                 EventPayloadEncoding.Json,
@@ -102,15 +106,15 @@ public sealed class EventEnvelopeTests
         Action create = () =>
         {
             _ = new EventEnvelope(
-                EventEnvelope.CloudEventsSpec,
-                EventEnvelope.CloudEventsSpecVersion,
+                EnvelopeSpec,
+                EnvelopeSpecVersion,
                 eventId!,
                 new Uri("urn:test"),
                 "catalog.media.original-stored.v1",
                 1,
                 DateTimeOffset.UtcNow,
                 null,
-                "application/json",
+                JsonContentType,
                 null,
                 "{}",
                 EventPayloadEncoding.Json,
@@ -128,15 +132,15 @@ public sealed class EventEnvelopeTests
         Action create = () =>
         {
             _ = new EventEnvelope(
-                EventEnvelope.CloudEventsSpec,
-                EventEnvelope.CloudEventsSpecVersion,
+                EnvelopeSpec,
+                EnvelopeSpecVersion,
                 "event-1",
                 null!,
                 "catalog.media.original-stored.v1",
                 1,
                 DateTimeOffset.UtcNow,
                 null,
-                "application/json",
+                JsonContentType,
                 null,
                 "{}",
                 EventPayloadEncoding.Json,
@@ -156,15 +160,15 @@ public sealed class EventEnvelopeTests
         Action create = () =>
         {
             _ = new EventEnvelope(
-                EventEnvelope.CloudEventsSpec,
-                EventEnvelope.CloudEventsSpecVersion,
+                EnvelopeSpec,
+                EnvelopeSpecVersion,
                 "event-1",
                 new Uri("urn:test"),
                 eventType!,
                 1,
                 DateTimeOffset.UtcNow,
                 null,
-                "application/json",
+                JsonContentType,
                 null,
                 "{}",
                 EventPayloadEncoding.Json,
@@ -184,15 +188,15 @@ public sealed class EventEnvelopeTests
         Action create = () =>
         {
             _ = new EventEnvelope(
-                EventEnvelope.CloudEventsSpec,
-                EventEnvelope.CloudEventsSpecVersion,
+                EnvelopeSpec,
+                EnvelopeSpecVersion,
                 "event-1",
                 new Uri("urn:test"),
                 eventType,
                 1,
                 DateTimeOffset.UtcNow,
                 null,
-                "application/json",
+                JsonContentType,
                 null,
                 "{}",
                 EventPayloadEncoding.Json,
@@ -212,15 +216,15 @@ public sealed class EventEnvelopeTests
         Action create = () =>
         {
             _ = new EventEnvelope(
-                EventEnvelope.CloudEventsSpec,
-                EventEnvelope.CloudEventsSpecVersion,
+                EnvelopeSpec,
+                EnvelopeSpecVersion,
                 "event-1",
                 new Uri("urn:test"),
                 "catalog.media.original-stored.v1",
                 eventVersion,
                 DateTimeOffset.UtcNow,
                 null,
-                "application/json",
+                JsonContentType,
                 null,
                 "{}",
                 EventPayloadEncoding.Json,
@@ -240,15 +244,15 @@ public sealed class EventEnvelopeTests
         Action create = () =>
         {
             _ = new EventEnvelope(
-                EventEnvelope.CloudEventsSpec,
-                EventEnvelope.CloudEventsSpecVersion,
+                EnvelopeSpec,
+                EnvelopeSpecVersion,
                 "event-1",
                 new Uri("urn:test"),
                 "catalog.media.original-stored.v1",
                 1,
                 DateTimeOffset.UtcNow,
                 null,
-                "application/json",
+                JsonContentType,
                 null,
                 payload,
                 EventPayloadEncoding.Json,
