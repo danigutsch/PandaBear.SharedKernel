@@ -21,6 +21,86 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static void Parses_calculate_release_options()
+    {
+        // Arrange
+        string[] args =
+        [
+            "--repo-root",
+            "/repo",
+            "--version-kind",
+            "stable",
+            "--run-number",
+            "42",
+            "--sha",
+            "abc123",
+            "--github-output",
+            "/tmp/out",
+            "--github-summary",
+            "/tmp/summary",
+        ];
+
+        // Act
+        var options = CalculateReleaseOptions.Parse(args);
+
+        // Assert
+        options.RepoRoot.ShouldBe("/repo");
+        options.VersionKind.ShouldBe("stable");
+        options.RunNumber.ShouldBe("42");
+        options.Sha.ShouldBe("abc123");
+        options.GitHubOutput.ShouldBe("/tmp/out");
+        options.GitHubSummary.ShouldBe("/tmp/summary");
+    }
+
+    [Fact]
+    public static void Parses_pack_sharedkernel_options()
+    {
+        // Arrange
+        string[] args = ["--version", "1.2.3", "--output-root", "artifacts", "--repo-root", "/repo", "--skip-restore-check"];
+
+        // Act
+        var options = PackSharedKernelOptions.Parse(args);
+
+        // Assert
+        options.Version.ShouldBe("1.2.3");
+        options.OutputRoot.ShouldBe("artifacts");
+        options.RepoRoot.ShouldBe("/repo");
+        options.VerifyRestore.ShouldBeFalse();
+    }
+
+    [Fact]
+    public static void Parses_prepare_release_options()
+    {
+        // Arrange
+        string[] args =
+        [
+            "--version",
+            "1.2.3",
+            "--package-dir",
+            "packages",
+            "--output-dir",
+            "release",
+            "--source-tag",
+            "v1.2.2",
+            "--release-impact",
+            "minor",
+            "--sha",
+            "abc123",
+        ];
+
+        // Act
+        var options = PrepareReleaseOptions.Parse(args);
+
+        // Assert
+        options.Version.ShouldBe("1.2.3");
+        options.PackageDirectory.ShouldBe("packages");
+        options.OutputDirectory.ShouldBe("release");
+        options.SourceTag.ShouldBe("v1.2.2");
+        options.ReleaseImpact.ShouldBe("minor");
+        options.Sha.ShouldBe("abc123");
+    }
+
+    [Fact]
     public static void Serializes_version_output_json()
     {
         // Arrange
@@ -83,6 +163,54 @@ public static class VersioningToolTests
         var json = output.ToString();
         json.ShouldContain("\"semVer\":\"0.2.0-alpha.1\"", StringComparison.Ordinal);
         json.ShouldContain("\"informationalVersion\":\"0.2.0-alpha.1", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Runs_calculate_release_command_from_git_history()
+    {
+        // Arrange
+        using var repository = new TemporaryGitRepository();
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        repository.Commit("file.txt", "base", "fix: base release");
+        repository.Tag("v1.2.3");
+        repository.Commit("file.txt", "next", "feat: add public capability");
+
+        var outputPath = Path.Combine(temporaryDirectory.OutputDirectory, "github-output.txt");
+        var summaryPath = Path.Combine(temporaryDirectory.OutputDirectory, "summary.md");
+        Directory.CreateDirectory(temporaryDirectory.OutputDirectory);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+        string[] args =
+        [
+            "calculate-release",
+            "--repo-root",
+            repository.Root,
+            "--version-kind",
+            "prerelease",
+            "--run-number",
+            "7",
+            "--sha",
+            "abc123",
+            "--github-output",
+            outputPath,
+            "--github-summary",
+            summaryPath,
+        ];
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(args, input, output, error);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        var json = output.ToString();
+        var githubOutput = await File.ReadAllTextAsync(outputPath, TestContext.Current.CancellationToken);
+        var summary = await File.ReadAllTextAsync(summaryPath, TestContext.Current.CancellationToken);
+        json.ShouldContain("\"packageVersion\":\"1.3.0-alpha.7\"", StringComparison.Ordinal);
+        githubOutput.ShouldContain("source_tag=v1.2.3", StringComparison.Ordinal);
+        githubOutput.ShouldContain("package_version=1.3.0-alpha.7", StringComparison.Ordinal);
+        githubOutput.ShouldContain("release_impact=minor", StringComparison.Ordinal);
+        summary.ShouldContain("- Base version: `1.2.3`", StringComparison.Ordinal);
     }
 
     [Fact]
