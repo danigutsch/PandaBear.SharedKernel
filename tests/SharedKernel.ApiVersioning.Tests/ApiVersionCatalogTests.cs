@@ -52,4 +52,17 @@ public sealed class ApiVersionCatalogTests
         // Assert
         action.ShouldThrow<ArgumentException>();
     }
+
+    [Fact]
+    public void Rejects_null_version_definitions()
+    {
+        // Arrange
+        ApiVersionDefinition[] versions = [new ApiVersionDefinition(new ApiVersion(1)), null!];
+
+        // Act
+        Action action = () => _ = new ApiVersionCatalog(versions);
+
+        // Assert
+        action.ShouldThrow<ArgumentNullException>();
+    }
 }

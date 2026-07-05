@@ -9,12 +9,24 @@ public sealed class ApiVersionCatalog
     /// Initializes a new instance of the <see cref="ApiVersionCatalog"/> class.
     /// </summary>
     /// <param name="versions">The known API contract versions.</param>
+    /// <exception cref="ArgumentNullException">Thrown when versions or one of its items is null.</exception>
     /// <exception cref="ArgumentException">Thrown when versions are empty or contain duplicates.</exception>
     public ApiVersionCatalog(IEnumerable<ApiVersionDefinition> versions)
     {
         ArgumentNullException.ThrowIfNull(versions);
 
-        Versions = [.. versions.OrderByDescending(static item => item.Version)];
+        var versionDefinitions = new List<ApiVersionDefinition>();
+        foreach (ApiVersionDefinition? version in versions)
+        {
+            if (version is null)
+            {
+                throw new ArgumentNullException(nameof(versions), "API version definitions cannot contain null values.");
+            }
+
+            versionDefinitions.Add(version);
+        }
+
+        Versions = [.. versionDefinitions.OrderByDescending(static item => item.Version)];
         if (Versions.Count == 0)
         {
             throw new ArgumentException("At least one API version is required.", nameof(versions));
