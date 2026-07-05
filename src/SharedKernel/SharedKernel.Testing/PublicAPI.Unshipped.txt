@@ -1,0 +1,49 @@
+#nullable enable
+const SharedKernel.Domain.Tests.TestTraits.AggregateRootCapability = "AggregateRoot" -> string!
+const SharedKernel.Domain.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
+const SharedKernel.Domain.Tests.TestTraits.DomainComponent = "SharedKernel.Domain" -> string!
+const SharedKernel.Domain.Tests.TestTraits.EntityCapability = "Entity" -> string!
+const SharedKernel.EventSourcing.Tests.TestTraits.EventSourcingComponent = "SharedKernel.EventSourcing" -> string!
+const SharedKernel.Functional.Tests.TestTraits.CompositionCategory = "Composition" -> string!
+const SharedKernel.Functional.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
+const SharedKernel.Functional.Tests.TestTraits.EdgeCaseCategory = "EdgeCase" -> string!
+const SharedKernel.Functional.Tests.TestTraits.FunctorLawsTheory = "FunctorLaws" -> string!
+const SharedKernel.Functional.Tests.TestTraits.MatchSemanticsTheory = "MatchSemantics" -> string!
+const SharedKernel.Functional.Tests.TestTraits.MonadLawsTheory = "MonadLaws" -> string!
+const SharedKernel.Functional.Tests.TestTraits.OptionCapability = "Option" -> string!
+const SharedKernel.Functional.Tests.TestTraits.ResultCapability = "Result" -> string!
+const SharedKernel.Functional.Tests.TestTraits.ResultsComponent = "SharedKernel.Results" -> string!
+const SharedKernel.Idempotency.Tests.TestTraits.IdempotencyComponent = "SharedKernel.Idempotency" -> string!
+const SharedKernel.Mediator.GeneratorTests.TestTraits.DependencyInjectionCapability = "DependencyInjection" -> string!
+const SharedKernel.Mediator.GeneratorTests.TestTraits.DiscoveryCapability = "Discovery" -> string!
+const SharedKernel.Mediator.GeneratorTests.TestTraits.DispatchCapability = "Dispatch" -> string!
+const SharedKernel.Mediator.GeneratorTests.TestTraits.SourceGeneratorComponent = "SharedKernel.Mediator.SourceGenerator" -> string!
+const SharedKernel.Mediator.Tests.TestTraits.AbstractionsComponent = "SharedKernel.Mediator.Abstractions" -> string!
+const SharedKernel.Mediator.Tests.TestTraits.ContractsCapability = "Contracts" -> string!
+const SharedKernel.Mediator.Tests.TestTraits.ReferenceDispatcherCapability = "ReferenceDispatcher" -> string!
+const SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName = "TestCapability" -> string!
+const SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName = "TestCategory" -> string!
+const SharedKernel.Testing.SharedKernelTestTraitNames.ComponentName = "TestComponent" -> string!
+const SharedKernel.Testing.SharedKernelTestTraitNames.ScopeName = "TestScope" -> string!
+const SharedKernel.Testing.SharedKernelTestTraitNames.TheoryName = "TestTheory" -> string!
+const SharedKernel.Testing.SharedKernelTestTraitNames.UnitScope = "Unit" -> string!
+const SharedKernel.Testing.TestTraitNames.AreaName = "Area" -> string!
+const SharedKernel.Testing.TestTraitNames.CategoryName = "Category" -> string!
+const SharedKernel.Testing.TestTraitNames.HostName = "Host" -> string!
+const SharedKernel.Testing.TestTraitNames.ScopeName = "Scope" -> string!
+const SharedKernel.Testing.TestTraitNames.SurfaceName = "Surface" -> string!
+const SharedKernel.Testing.TestTraitValues.ApiIntegrationScope = "api-integration" -> string!
+const SharedKernel.Testing.TestTraitValues.EndpointCategory = "endpoint" -> string!
+const SharedKernel.Testing.TestTraitValues.TestServerHost = "test-server" -> string!
+SharedKernel.Domain.Tests.TestTraits
+SharedKernel.EventSourcing.Tests.TestTraits
+SharedKernel.Functional.Tests.TestTraits
+SharedKernel.Idempotency.Tests.TestTraits
+SharedKernel.Mediator.GeneratorTests.TestTraits
+SharedKernel.Mediator.Tests.TestTraits
+SharedKernel.Testing.SerialTestJustificationAttribute
+SharedKernel.Testing.SerialTestJustificationAttribute.Reason.get -> string!
+SharedKernel.Testing.SerialTestJustificationAttribute.SerialTestJustificationAttribute(string! reason) -> void
+SharedKernel.Testing.SharedKernelTestTraitNames
+SharedKernel.Testing.TestTraitNames
+SharedKernel.Testing.TestTraitValues

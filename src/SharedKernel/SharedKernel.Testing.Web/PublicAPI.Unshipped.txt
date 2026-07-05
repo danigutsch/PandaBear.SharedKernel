@@ -1,0 +1,3 @@
+#nullable enable
+SharedKernel.Testing.Web.BunitElementAssertions
+static SharedKernel.Testing.Web.BunitElementAssertions.HasClass(System.Collections.Generic.IEnumerable<string!>! classList, string! className) -> void

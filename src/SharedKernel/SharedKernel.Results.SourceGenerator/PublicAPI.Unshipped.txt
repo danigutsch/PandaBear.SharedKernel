@@ -1,0 +1,4 @@
+#nullable enable
+SharedKernel.Results.SourceGenerator.ResultErrorCatalogGenerator
+SharedKernel.Results.SourceGenerator.ResultErrorCatalogGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void
+SharedKernel.Results.SourceGenerator.ResultErrorCatalogGenerator.ResultErrorCatalogGenerator() -> void

@@ -4,6 +4,11 @@
 # breaking API redesign that replaces the established Option<T>/Result<T>
 # factories or mediator marker contracts.
 
+# Alpha packages keep source public API baseline enforcement, but package compatibility
+# overload guidance is advisory until the SharedKernel packages move beyond 0.y.z.
+[*.cs]
+dotnet_diagnostic.RS0026.severity = none
+
 [SharedKernel.Results/OptionOfT.cs]
 dotnet_diagnostic.CA1000.severity = none
 

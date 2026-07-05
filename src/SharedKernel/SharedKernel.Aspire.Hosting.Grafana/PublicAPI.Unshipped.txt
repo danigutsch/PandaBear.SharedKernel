@@ -1,0 +1,31 @@
+#nullable enable
+Aspire.Hosting.ApplicationModel.GrafanaResource
+Aspire.Hosting.ApplicationModel.GrafanaResource.GrafanaResource(string! name) -> void
+Aspire.Hosting.ApplicationModel.LokiResource
+Aspire.Hosting.ApplicationModel.LokiResource.LokiResource(string! name) -> void
+Aspire.Hosting.ApplicationModel.PrometheusResource
+Aspire.Hosting.ApplicationModel.PrometheusResource.PrometheusResource(string! name) -> void
+Aspire.Hosting.ApplicationModel.TempoResource
+Aspire.Hosting.ApplicationModel.TempoResource.TempoResource(string! name) -> void
+Aspire.Hosting.GrafanaLgtmStackDefaults
+Aspire.Hosting.GrafanaLgtmStackResourceExtensions
+Aspire.Hosting.GrafanaLgtmStackResourceNames
+Aspire.Hosting.GrafanaLgtmStackResourceNames.Grafana.get -> string!
+Aspire.Hosting.GrafanaLgtmStackResourceNames.Grafana.init -> void
+Aspire.Hosting.GrafanaLgtmStackResourceNames.GrafanaLgtmStackResourceNames(string! OpenTelemetryCollector, string! Grafana, string! Loki, string! Tempo, string! Prometheus) -> void
+Aspire.Hosting.GrafanaLgtmStackResourceNames.Loki.get -> string!
+Aspire.Hosting.GrafanaLgtmStackResourceNames.Loki.init -> void
+Aspire.Hosting.GrafanaLgtmStackResourceNames.OpenTelemetryCollector.get -> string!
+Aspire.Hosting.GrafanaLgtmStackResourceNames.OpenTelemetryCollector.init -> void
+Aspire.Hosting.GrafanaLgtmStackResourceNames.Prometheus.get -> string!
+Aspire.Hosting.GrafanaLgtmStackResourceNames.Prometheus.init -> void
+Aspire.Hosting.GrafanaLgtmStackResourceNames.Tempo.get -> string!
+Aspire.Hosting.GrafanaLgtmStackResourceNames.Tempo.init -> void
+const Aspire.Hosting.GrafanaLgtmStackDefaults.EnableObservabilityStackVariable = "ASPIRE_ENABLE_OBSERVABILITY_STACK" -> string!
+static Aspire.Hosting.GrafanaLgtmStackDefaults.ResourceNames.get -> Aspire.Hosting.GrafanaLgtmStackResourceNames!
+static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.AddGrafana(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name, string! configurationRoot) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.GrafanaResource!>!
+static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.AddGrafanaLgtmStack(this Aspire.Hosting.IDistributedApplicationBuilder! builder, Aspire.Hosting.GrafanaLgtmStackResourceNames! resourceNames, string! configurationRoot) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.GrafanaResource!>!
+static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.AddGrafanaLgtmStack(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! configurationRoot) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.GrafanaResource!>!
+static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.AddLoki(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name, string! configurationFile) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.LokiResource!>!
+static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.AddPrometheus(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name, string! configurationFile) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.PrometheusResource!>!
+static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.AddTempo(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name, string! configurationFile) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.TempoResource!>!

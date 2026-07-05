@@ -1,0 +1,6 @@
+#nullable enable
+SharedKernel.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior<TRequest, TResponse>
+SharedKernel.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior<TRequest, TResponse>.EfCoreCommandTransactionBehavior(Microsoft.EntityFrameworkCore.DbContext! dbContext) -> void
+SharedKernel.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior<TRequest, TResponse>.Handle(TRequest request, SharedKernel.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+SharedKernel.Mediator.EntityFrameworkCore.EfCoreMediatorServiceCollectionExtensions
+static SharedKernel.Mediator.EntityFrameworkCore.EfCoreMediatorServiceCollectionExtensions.AddEfCoreCommandTransaction<TContext, TRequest, TResponse>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

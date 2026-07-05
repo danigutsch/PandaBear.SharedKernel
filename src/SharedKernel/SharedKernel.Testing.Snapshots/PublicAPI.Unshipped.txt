@@ -1,0 +1,3 @@
+#nullable enable
+SharedKernel.Testing.Snapshots.SnapshotText
+static SharedKernel.Testing.Snapshots.SnapshotText.Normalize(string! text) -> string!

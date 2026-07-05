@@ -1,0 +1,58 @@
+#nullable enable
+override SharedKernel.Versioning.SemanticVersion.ToString() -> string!
+SharedKernel.Versioning.ConventionalCommit
+SharedKernel.Versioning.ConventionalCommit.Body.get -> string?
+SharedKernel.Versioning.ConventionalCommit.Body.init -> void
+SharedKernel.Versioning.ConventionalCommit.ConventionalCommit(string! Type, string? Scope, bool IsBreakingHeader, string! Description, string? Body, System.Collections.Generic.IReadOnlyList<string!>! Footers) -> void
+SharedKernel.Versioning.ConventionalCommit.Description.get -> string!
+SharedKernel.Versioning.ConventionalCommit.Description.init -> void
+SharedKernel.Versioning.ConventionalCommit.Footers.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Versioning.ConventionalCommit.Footers.init -> void
+SharedKernel.Versioning.ConventionalCommit.Impact.get -> SharedKernel.Versioning.ReleaseImpact
+SharedKernel.Versioning.ConventionalCommit.IsBreakingChange.get -> bool
+SharedKernel.Versioning.ConventionalCommit.IsBreakingHeader.get -> bool
+SharedKernel.Versioning.ConventionalCommit.IsBreakingHeader.init -> void
+SharedKernel.Versioning.ConventionalCommit.Scope.get -> string?
+SharedKernel.Versioning.ConventionalCommit.Scope.init -> void
+SharedKernel.Versioning.ConventionalCommit.Type.get -> string!
+SharedKernel.Versioning.ConventionalCommit.Type.init -> void
+SharedKernel.Versioning.ConventionalCommitParser
+SharedKernel.Versioning.ReleaseImpact
+SharedKernel.Versioning.ReleaseImpact.Major = 3 -> SharedKernel.Versioning.ReleaseImpact
+SharedKernel.Versioning.ReleaseImpact.Minor = 2 -> SharedKernel.Versioning.ReleaseImpact
+SharedKernel.Versioning.ReleaseImpact.None = 0 -> SharedKernel.Versioning.ReleaseImpact
+SharedKernel.Versioning.ReleaseImpact.Patch = 1 -> SharedKernel.Versioning.ReleaseImpact
+SharedKernel.Versioning.SemanticVersion
+SharedKernel.Versioning.SemanticVersion.BuildMetadata.get -> string?
+SharedKernel.Versioning.SemanticVersion.BuildMetadata.init -> void
+SharedKernel.Versioning.SemanticVersion.Bump(SharedKernel.Versioning.ReleaseImpact impact) -> SharedKernel.Versioning.SemanticVersion!
+SharedKernel.Versioning.SemanticVersion.Major.get -> int
+SharedKernel.Versioning.SemanticVersion.Major.init -> void
+SharedKernel.Versioning.SemanticVersion.Minor.get -> int
+SharedKernel.Versioning.SemanticVersion.Minor.init -> void
+SharedKernel.Versioning.SemanticVersion.Patch.get -> int
+SharedKernel.Versioning.SemanticVersion.Patch.init -> void
+SharedKernel.Versioning.SemanticVersion.Prerelease.get -> string?
+SharedKernel.Versioning.SemanticVersion.Prerelease.init -> void
+SharedKernel.Versioning.SemanticVersion.SemanticVersion(int Major, int Minor, int Patch, string? Prerelease = null, string? BuildMetadata = null) -> void
+SharedKernel.Versioning.SemanticVersion.StableCore.get -> SharedKernel.Versioning.SemanticVersion!
+SharedKernel.Versioning.VersionCalculation
+SharedKernel.Versioning.VersionOutput
+SharedKernel.Versioning.VersionOutput.AssemblyVersion.get -> string!
+SharedKernel.Versioning.VersionOutput.AssemblyVersion.init -> void
+SharedKernel.Versioning.VersionOutput.FileVersion.get -> string!
+SharedKernel.Versioning.VersionOutput.FileVersion.init -> void
+SharedKernel.Versioning.VersionOutput.InformationalVersion.get -> string!
+SharedKernel.Versioning.VersionOutput.InformationalVersion.init -> void
+SharedKernel.Versioning.VersionOutput.PackageVersion.get -> string!
+SharedKernel.Versioning.VersionOutput.PackageVersion.init -> void
+SharedKernel.Versioning.VersionOutput.ReleaseImpact.get -> SharedKernel.Versioning.ReleaseImpact
+SharedKernel.Versioning.VersionOutput.ReleaseImpact.init -> void
+SharedKernel.Versioning.VersionOutput.SemVer.get -> string!
+SharedKernel.Versioning.VersionOutput.SemVer.init -> void
+SharedKernel.Versioning.VersionOutput.VersionOutput(string! SemVer, SharedKernel.Versioning.ReleaseImpact ReleaseImpact, string! PackageVersion, string! AssemblyVersion, string! FileVersion, string! InformationalVersion) -> void
+static SharedKernel.Versioning.ConventionalCommitParser.Parse(string! message) -> SharedKernel.Versioning.ConventionalCommit!
+static SharedKernel.Versioning.ConventionalCommitParser.TryParse(string! message, out SharedKernel.Versioning.ConventionalCommit? commit) -> bool
+static SharedKernel.Versioning.SemanticVersion.Parse(string! value) -> SharedKernel.Versioning.SemanticVersion!
+static SharedKernel.Versioning.VersionCalculation.Calculate(SharedKernel.Versioning.SemanticVersion! baseVersion, System.Collections.Generic.IEnumerable<string!>! commitMessages, string? prerelease = null, string? sha = null) -> SharedKernel.Versioning.VersionOutput!
+static SharedKernel.Versioning.VersionOutput.Create(SharedKernel.Versioning.SemanticVersion! version, SharedKernel.Versioning.ReleaseImpact impact, string? sha = null) -> SharedKernel.Versioning.VersionOutput!
