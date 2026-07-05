@@ -22,7 +22,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddScoped<IIntegrationEventOutbox, EfIntegrationEventOutbox<TContext>>();
+        services.TryAddSingleton<IIntegrationEventOutbox, EfIntegrationEventOutbox<TContext>>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventOutboxDbContextConfiguration<TContext>>());
         services.AddIdempotencyStore<TContext>();
 
