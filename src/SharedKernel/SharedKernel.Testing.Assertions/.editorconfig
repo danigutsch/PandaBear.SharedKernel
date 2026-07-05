@@ -1,0 +1,5 @@
+root = false
+
+[*.cs]
+# Assertion wrappers intentionally delegate to Xunit.Assert.
+dotnet_diagnostic.SKTEST006.severity = none

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.Testing;
+using SharedKernel.IntegrationTesting;
 
 namespace SharedKernel.EntityFrameworkCore.Tests;
 

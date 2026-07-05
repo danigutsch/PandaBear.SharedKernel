@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.Testing.Assertions</PackageId>
+        <Description>Reusable assertion extensions for SharedKernel xUnit test suites.</Description>
+        <RootNamespace>SharedKernel.Testing.Assertions</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>testing;assertions;xunit;shared-kernel;dotnet</PackageTags>
+        <IsAotCompatible>false</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="xunit.v3.assert" VersionOverride="3.2.2" />
+    </ItemGroup>
+
+</Project>

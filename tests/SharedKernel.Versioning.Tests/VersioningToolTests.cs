@@ -47,6 +47,57 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static void SharedKernel_testing_helpers_are_packable_source_projects()
+    {
+        // Arrange
+        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
+        string? repositoryRoot = null;
+        while (currentDirectory is not null)
+        {
+            var solutionPath = Path.Combine(currentDirectory.FullName, "ViajantesTurismo.slnx");
+            if (File.Exists(solutionPath))
+            {
+                repositoryRoot = currentDirectory.FullName;
+                break;
+            }
+
+            currentDirectory = currentDirectory.Parent;
+        }
+
+        var root = (repositoryRoot).ShouldNotBeNull();
+        string[] packageIds =
+        [
+            "SharedKernel.Testing",
+            "SharedKernel.Testing.Assertions",
+            "SharedKernel.Testing.Data",
+            "SharedKernel.Testing.Http",
+            "SharedKernel.Testing.Snapshots",
+            "SharedKernel.Testing.Web",
+            "SharedKernel.Testing.Roslyn",
+            "SharedKernel.IntegrationTesting",
+        ];
+
+        foreach (var packageId in packageIds)
+        {
+            var projectPath = Path.Combine(root, "src", "SharedKernel", packageId, packageId + ".csproj");
+
+            // Act
+            var project = System.Xml.Linq.XDocument.Load(projectPath);
+            var properties = project.Descendants().Where(element => element.Parent?.Name.LocalName == "PropertyGroup").ToDictionary(
+                element => element.Name.LocalName,
+                element => element.Value);
+            var readmeItem = project.Descendants("None").SingleOrDefault(element =>
+                string.Equals((string?)element.Attribute("Include"), "README.md", StringComparison.Ordinal));
+
+            // Assert
+            properties["PackageId"].ShouldBe(packageId);
+            properties["PackageReadmeFile"].ShouldBe("README.md");
+            properties["IsAotCompatible"].ShouldBe("false");
+            (readmeItem).ShouldNotBeNull();
+        }
+    }
+
+    [Fact]
     public static void Parses_compute_options()
     {
         // Arrange
