@@ -46,7 +46,7 @@ internal static class SharedKernelPackCommand
             .ToArray();
         if (packages.Length == 0)
         {
-            throw new ArgumentException($"no SharedKernel packages found in {packageDirectory}");
+            throw new ArgumentException($"No SharedKernel packages found in {packageDirectory}");
         }
 
         var packageIds = SharedKernelLocalFeed.ReadPackageIds(packages, version);
