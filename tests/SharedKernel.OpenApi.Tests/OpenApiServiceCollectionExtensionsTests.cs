@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using SharedKernel.ApiVersioning;
 using System.Reflection;
 using Xunit;
 
@@ -82,6 +83,30 @@ public sealed class OpenApiServiceCollectionExtensionsTests
         // Assert
         Assert.Contains("/tours", document.Paths.Keys);
         Assert.DoesNotContain("/tours-archive", document.Paths.Keys);
+    }
+
+    [Fact]
+    public async Task Includes_matching_api_version_paths_only()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateApiVersionDocument(
+            new ApiVersionDefinition(new ApiVersion(1)),
+            app =>
+            {
+                app.MapGroup("/api/v1")
+                    .WithGroupName("v1")
+                    .WithTags("v1")
+                    .MapGet("/status", () => TypedResults.Ok());
+                app.MapGroup("/api/v2")
+                    .WithGroupName("v2")
+                    .WithTags("v2")
+                    .MapGet("/status", () => TypedResults.Ok());
+            });
+
+        // Assert
+        Assert.Equal("1.0", document.Info.Version);
+        Assert.Contains("/api/v1/status", document.Paths.Keys);
+        Assert.DoesNotContain("/api/v2/status", document.Paths.Keys);
     }
 
 }

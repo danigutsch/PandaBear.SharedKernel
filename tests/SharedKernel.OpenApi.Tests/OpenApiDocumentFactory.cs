@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
+using SharedKernel.ApiVersioning;
 
 namespace SharedKernel.OpenApi.Tests;
 
@@ -44,6 +45,34 @@ internal static class OpenApiDocumentFactory
             documentName,
             configureApp,
             static (document, _) => Task.FromResult(document));
+    }
+
+    /// <summary>
+    /// Builds an app and returns the generated OpenAPI document for a versioned API contract.
+    /// </summary>
+    /// <param name="version">The API contract version definition.</param>
+    /// <param name="configureApp">Configures endpoints on the test app.</param>
+    /// <returns>The generated OpenAPI document.</returns>
+    public static async Task<OpenApiDocument> CreateApiVersionDocument(
+        ApiVersionDefinition version,
+        Action<WebApplication> configureApp)
+    {
+        ArgumentNullException.ThrowIfNull(version);
+        ArgumentNullException.ThrowIfNull(configureApp);
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseUrls("http://127.0.0.1:0");
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddApiVersionOpenApiDocuments([version]);
+
+        await using var app = builder.Build();
+        configureApp(app);
+
+        await app.StartAsync();
+
+        using var scope = app.Services.CreateScope();
+        var provider = scope.ServiceProvider.GetRequiredKeyedService<IOpenApiDocumentProvider>(version.OpenApiDocumentName);
+        return await provider.GetOpenApiDocumentAsync();
     }
 
     /// <summary>
