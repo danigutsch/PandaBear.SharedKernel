@@ -12,6 +12,7 @@
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
         <PackageReference Include="Microsoft.OpenApi" />
+        <ProjectReference Include="..\SharedKernel.ApiVersioning\SharedKernel.ApiVersioning.csproj" />
     </ItemGroup>
 
     <ItemGroup>

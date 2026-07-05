@@ -151,11 +151,21 @@
           "xunit.v3.runner.common": "[3.2.2]"
         }
       },
+      "sharedkernel.apiversioning": {
+        "type": "Project"
+      },
       "sharedkernel.openapi": {
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.OpenApi": "[10.0.9, )",
-          "Microsoft.OpenApi": "[2.9.0, )"
+          "Microsoft.OpenApi": "[2.9.0, )",
+          "SharedKernel.ApiVersioning": "[0.1.0-alpha.0, )"
+        }
+      },
+      "sharedkernel.testing.assertions": {
+        "type": "Project",
+        "dependencies": {
+          "xunit.v3.assert": "[3.2.2, )"
         }
       },
       "Microsoft.OpenApi": {

@@ -19,7 +19,13 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Using Include="SharedKernel.Testing.Assertions" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.ApiVersioning\SharedKernel.ApiVersioning.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.OpenApi\SharedKernel.OpenApi.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
     </ItemGroup>
 
 </Project>
