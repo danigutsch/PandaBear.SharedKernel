@@ -69,6 +69,10 @@ internal static class ReleaseArtifactWriter
             .Order(StringComparer.Ordinal)
             .Select(CreatePackageEntry)
             .ToArray();
+        if (packages.Length == 0)
+        {
+            throw new ArgumentException($"No packages found in {options.PackageDirectory}");
+        }
 
         var builder = new StringBuilder();
         builder.AppendLine("{");

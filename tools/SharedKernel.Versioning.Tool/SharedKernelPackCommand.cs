@@ -6,7 +6,7 @@ internal static class SharedKernelPackCommand
 
     public static async Task<string> Run(PackSharedKernelOptions options, TextWriter output)
     {
-        var packageDirectory = Path.Combine(options.OutputRoot, options.Version);
+        var packageDirectory = Path.Combine(ResolveOutputRoot(options), options.Version);
         if (Directory.Exists(packageDirectory) && PackageVersionExists(packageDirectory, options.Version))
         {
             throw new ArgumentException($"Package version already exists in {packageDirectory}: {options.Version}");
@@ -89,6 +89,11 @@ internal static class SharedKernelPackCommand
         fileName.EndsWith("." + version + ".nupkg", StringComparison.Ordinal)
         || fileName.EndsWith("." + version + ".snupkg", StringComparison.Ordinal)
         || fileName.EndsWith("." + version + ".symbols.nupkg", StringComparison.Ordinal);
+
+    private static string ResolveOutputRoot(PackSharedKernelOptions options) =>
+        Path.IsPathRooted(options.OutputRoot)
+            ? options.OutputRoot
+            : Path.Combine(options.RepoRoot, options.OutputRoot);
 
     private static string[] CreatePackArguments(string project, PackSharedKernelOptions options, string packageDirectory)
     {

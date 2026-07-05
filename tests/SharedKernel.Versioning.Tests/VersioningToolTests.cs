@@ -390,6 +390,27 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Returns_error_for_prepare_release_without_packages()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            ["prepare-release", "--version", "1.2.3", "--package-dir", temporaryDirectory.PackageDirectory],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("No packages found", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static async Task Prints_help_for_prepare_release_help_option()
     {
         // Arrange
