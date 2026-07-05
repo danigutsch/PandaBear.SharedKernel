@@ -34,4 +34,5 @@ internal static class MetadataNames
     public const string InternalsVisibleToAttribute = "System.Runtime.CompilerServices.InternalsVisibleToAttribute";
     public const string DbContext = "Microsoft.EntityFrameworkCore.DbContext";
     public const string EfCoreTransactionBehavior = "SharedKernel.Mediator.EntityFrameworkCore.EfCoreCommandTransactionBehavior`2";
+    public const string DomainEventHandler = "SharedKernel.DomainEvents.IDomainEventHandler`1";
 }

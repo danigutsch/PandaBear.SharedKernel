@@ -1,0 +1,38 @@
+#nullable enable
+const SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants.Spec = "cloudevents" -> string!
+const SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants.SpecVersion = "1.0" -> string!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventConstants
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.CloudEventEnvelope(string! Id, System.Uri! Source, string! Type, string! SpecVersion, System.DateTimeOffset Time, string? Subject, string? DataContentType, System.Uri? DataSchema, int Version, TIntegrationEvent Data) -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Data.get -> TIntegrationEvent
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Data.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataContentType.get -> string?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataContentType.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataSchema.get -> System.Uri?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.DataSchema.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Id.get -> string!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Id.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Source.get -> System.Uri!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Source.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.SpecVersion.get -> string!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.SpecVersion.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Subject.get -> string?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Subject.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Time.get -> System.DateTimeOffset
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Time.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Type.get -> string!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Type.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Version.get -> int
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>.Version.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMapper
+static SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMapper.ToCloudEvent<TIntegrationEvent>(TIntegrationEvent integrationEvent, SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata! metadata) -> SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventEnvelope<TIntegrationEvent>!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.CloudEventMetadata(System.Uri! Source, string? Subject = null, string? DataContentType = null, System.Uri? DataSchema = null) -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataContentType.get -> string?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataContentType.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataSchema.get -> System.Uri?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.DataSchema.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Source.get -> System.Uri!
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Source.init -> void
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Subject.get -> string?
+SharedKernel.Messaging.IntegrationEvents.CloudEvents.CloudEventMetadata.Subject.init -> void

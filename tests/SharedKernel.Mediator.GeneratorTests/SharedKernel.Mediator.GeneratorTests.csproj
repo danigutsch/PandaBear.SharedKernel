@@ -27,6 +27,8 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Domain\SharedKernel.Domain.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.DomainEvents\SharedKernel.DomainEvents.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator\SharedKernel.Mediator.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj" />
