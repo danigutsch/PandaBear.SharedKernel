@@ -6,7 +6,7 @@ internal static class VersioningToolApplication
 {
     public static async Task<int> Run(string[] args, TextReader input, TextWriter output, TextWriter error)
     {
-        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"])
+        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"] or ["prepare-release", "--help"] or ["prepare-release", "-h"])
         {
             await output.WriteLineAsync(Usage).ConfigureAwait(false);
             return 0;
@@ -41,6 +41,14 @@ internal static class VersioningToolApplication
                 await output.WriteLineAsync(VersionOutputJson.Serialize(versionOutput)).ConfigureAwait(false);
                 return 0;
             }
+
+            if (args is ["prepare-release", .. var releaseArgs])
+            {
+                var options = PrepareReleaseOptions.Parse(releaseArgs);
+                await ReleaseArtifactWriter.Write(options, input).ConfigureAwait(false);
+                await output.WriteLineAsync($"Release prep artifacts: {options.OutputDirectory}").ConfigureAwait(false);
+                return 0;
+            }
         }
         catch (ArgumentException ex)
         {
@@ -58,15 +66,22 @@ internal static class VersioningToolApplication
           sharedkernel-version --version
           sharedkernel-version commit-impact <message>
           sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha>] < commit-messages.txt
+          sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes.txt
 
         Commands:
           commit-impact   Prints release impact for one Conventional Commit message.
           compute         Prints version output JSON from null-separated commit messages on standard input.
+          prepare-release Writes release notes, changelog, and package manifest artifacts.
 
         Options:
           --base <version>        Base semantic version for compute.
           --prerelease <label>    Optional prerelease label for compute.
           --sha <sha>             Optional source revision for informational version metadata.
+          --version <semver>      Release version for prepare-release.
+          --package-dir <path>    Package artifact directory for prepare-release.
+          --output-dir <path>     Output directory for prepare-release artifacts.
+          --source-tag <tag>      Previous release tag for prepare-release notes.
+          --release-impact <text> Release impact value for prepare-release notes.
           --help, -h              Print help and exit successfully.
           --version               Print version and exit successfully.
 
