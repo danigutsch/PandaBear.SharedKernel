@@ -26,7 +26,7 @@ internal static class CommandRunner
             startInfo.ArgumentList.Add(argument);
         }
 
-        using var process = Process.Start(startInfo) ?? throw new InvalidOperationException($"Failed to start {fileName}.");
+        using var process = StartProcess(startInfo, fileName);
         if (standardInput is not null)
         {
             process.StandardInput.Write(standardInput);
@@ -62,6 +62,18 @@ internal static class CommandRunner
         catch (InvalidOperationException)
         {
             return string.Empty;
+        }
+    }
+
+    private static Process StartProcess(ProcessStartInfo startInfo, string fileName)
+    {
+        try
+        {
+            return Process.Start(startInfo) ?? throw new InvalidOperationException($"Failed to start {fileName}.");
+        }
+        catch (Exception ex) when (ex is not InvalidOperationException)
+        {
+            throw new InvalidOperationException($"Failed to start {fileName}.", ex);
         }
     }
 }

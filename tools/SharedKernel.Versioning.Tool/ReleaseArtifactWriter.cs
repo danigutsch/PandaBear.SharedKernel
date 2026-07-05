@@ -16,7 +16,8 @@ internal static class ReleaseArtifactWriter
 
         Directory.CreateDirectory(options.OutputDirectory);
 
-        var releaseNotes = CreateReleaseNotes(options, await input.ReadToEndAsync().ConfigureAwait(false));
+        var changes = FilterConventionalChanges(await input.ReadToEndAsync().ConfigureAwait(false));
+        var releaseNotes = CreateReleaseNotes(options, changes);
         var changelog = "# Changelog" + Environment.NewLine + Environment.NewLine + releaseNotes;
         var manifest = CreateManifest(options);
 
@@ -93,6 +94,36 @@ internal static class ReleaseArtifactWriter
         builder.Append("  \"sbomNote\": ").Append(Escape(SbomNote)).AppendLine();
         builder.AppendLine("}");
         return builder.ToString();
+    }
+
+    private static string FilterConventionalChanges(string changes)
+    {
+        var lines = changes.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var conventionalLines = lines
+            .Where(IsConventionalChangeLine)
+            .ToArray();
+
+        return string.Join(Environment.NewLine, conventionalLines);
+    }
+
+    private static bool IsConventionalChangeLine(string line)
+    {
+        var subject = line.StartsWith("- ", StringComparison.Ordinal) ? line[2..] : line;
+        return ConventionalCommitParser.TryParse(RemoveShortHashSuffix(subject), out _);
+    }
+
+    private static string RemoveShortHashSuffix(string subject)
+    {
+        var suffixStart = subject.LastIndexOf(" (", StringComparison.Ordinal);
+        if (suffixStart < 0 || !subject.EndsWith(')'))
+        {
+            return subject;
+        }
+
+        var suffix = subject[(suffixStart + 2)..^1];
+        return suffix.Length is >= 7 and <= 12 && suffix.All(Uri.IsHexDigit)
+            ? subject[..suffixStart]
+            : subject;
     }
 
     private static ReleasePackageEntry CreatePackageEntry(string path)

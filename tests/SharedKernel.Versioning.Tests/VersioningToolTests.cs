@@ -260,6 +260,20 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static void Wraps_missing_process_start_failures()
+    {
+        // Arrange
+        var executableName = "missing-sharedkernel-versioning-tool-command";
+
+        // Act
+        Action action = () => CommandRunner.Run(executableName, []);
+
+        // Assert
+        var exception = action.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldContain("Failed to start " + executableName, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static async Task Runs_prepare_release_command_and_writes_artifacts()
     {
         // Arrange
@@ -271,7 +285,7 @@ public static class VersioningToolTests
             "package"u8.ToArray(),
             TestContext.Current.CancellationToken);
 
-        using var input = new StringReader("- feat: add release prep (abc123)");
+        using var input = new StringReader("- feat: add release prep (abc123)" + Environment.NewLine + "- Merge pull request #1 from branch");
         using var output = new StringWriter();
         using var error = new StringWriter();
         string[] args =
@@ -311,6 +325,7 @@ public static class VersioningToolTests
         releaseNotes.ShouldContain("- Previous release tag: `v1.2.2`", StringComparison.Ordinal);
         releaseNotes.ShouldContain("- Release impact: `minor`", StringComparison.Ordinal);
         releaseNotes.ShouldContain("- feat: add release prep (abc123)", StringComparison.Ordinal);
+        releaseNotes.ShouldNotContain("Merge pull request");
         changelog.ShouldContain("# Changelog", StringComparison.Ordinal);
         manifest.ShouldContain("\"fileName\": \"SharedKernel.Results.1.2.3.nupkg\"", StringComparison.Ordinal);
         manifest.ShouldContain("\"sizeBytes\": 7", StringComparison.Ordinal);

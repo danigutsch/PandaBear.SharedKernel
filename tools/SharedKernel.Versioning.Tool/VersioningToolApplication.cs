@@ -99,8 +99,15 @@ internal static class VersioningToolApplication
         Options:
           --base <version>        Base semantic version for compute.
           --prerelease <label>    Optional prerelease label for compute.
+          --repo-root <path>      Repository root for Git-backed release and pack commands.
+          --version-kind <mode>   Release version mode: prerelease or stable.
+          --run-number <number>   CI run number used in prerelease labels.
           --sha <sha>             Optional source revision for informational version metadata.
+          --github-output <path>  GitHub Actions output file for calculate-release.
+          --github-summary <path> GitHub Actions summary file for calculate-release.
           --version <semver>      Release version for prepare-release.
+          --output-root <path>    Package output root for pack-sharedkernel.
+          --skip-restore-check    Skip local feed restore verification for pack-sharedkernel.
           --package-dir <path>    Package artifact directory for prepare-release.
           --output-dir <path>     Output directory for prepare-release artifacts.
           --source-tag <tag>      Previous release tag for prepare-release notes.
