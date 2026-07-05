@@ -7,7 +7,10 @@ namespace SharedKernel.ImageProcessing;
 /// </summary>
 public static class MagickImageProcessor
 {
-    private static readonly Lock ResourceLimitsLock = new();
+    static MagickImageProcessor()
+    {
+        ApplyResourceLimits(ImageProcessingLimits.WebDefault);
+    }
 
     /// <summary>
     /// Processes an image into the requested output variants.
@@ -27,39 +30,31 @@ public static class MagickImageProcessor
             throw new ArgumentException("At least one image variant must be requested.", nameof(request));
         }
 
-        lock (ResourceLimitsLock)
+        try
         {
-            try
+            EnsureStreamCanBeProbed(request.Content);
+            EnsureSupportedInputSignature(request.Content);
+            EnsureLimitValues(request.Limits);
+
+            var imageInfo = ProbeImage(request.Content);
+            EnsureWithinLimits(imageInfo.Width, imageInfo.Height, request.Limits);
+
+            using var image = new MagickImage(request.Content);
+            image.AutoOrient();
+            EnsureWithinLimits(image.Width, image.Height, request.Limits);
+
+            var variants = new List<ProcessedImageVariant>(request.Variants.Count);
+            foreach (var variant in request.Variants)
             {
-                EnsureStreamCanBeProbed(request.Content);
-                EnsureSupportedInputSignature(request.Content);
-                EnsureLimitValues(request.Limits);
-                ApplyResourceLimits(request.Limits);
-
-                var imageInfo = ProbeImage(request.Content);
-                EnsureWithinLimits(imageInfo.Width, imageInfo.Height, request.Limits);
-
-                using var image = new MagickImage(request.Content);
-                image.AutoOrient();
-                EnsureWithinLimits(image.Width, image.Height, request.Limits);
-
-                var variants = new List<ProcessedImageVariant>(request.Variants.Count);
-                foreach (var variant in request.Variants)
-                {
-                    ct.ThrowIfCancellationRequested();
-                    variants.Add(CreateVariant(image, variant));
-                }
-
-                return new ImageProcessingResult((int)image.Width, (int)image.Height, variants);
+                ct.ThrowIfCancellationRequested();
+                variants.Add(CreateVariant(image, variant));
             }
-            catch (MagickException exception)
-            {
-                throw new ImageProcessingException("Image data could not be decoded or encoded.", exception);
-            }
-            finally
-            {
-                ApplyResourceLimits(ImageProcessingLimits.WebDefault);
-            }
+
+            return new ImageProcessingResult((int)image.Width, (int)image.Height, variants);
+        }
+        catch (MagickException exception)
+        {
+            throw new ImageProcessingException("Image data could not be decoded or encoded.", exception);
         }
     }
 
