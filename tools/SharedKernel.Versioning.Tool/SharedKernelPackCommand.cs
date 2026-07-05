@@ -111,6 +111,8 @@ internal static class SharedKernelPackCommand
         AddOptionalProperty(arguments, "ComputedAssemblyVersion", options.AssemblyVersion);
         AddOptionalProperty(arguments, "ComputedFileVersion", options.FileVersion);
         AddOptionalProperty(arguments, "ComputedInformationalVersion", options.InformationalVersion);
+        AddOptionalProperty(arguments, "EnablePackageValidation", Environment.GetEnvironmentVariable("API_COMPAT_ENABLE_PACKAGE_VALIDATION"));
+        AddOptionalProperty(arguments, "PackageValidationBaselineVersion", Environment.GetEnvironmentVariable("API_COMPAT_BASELINE_VERSION"));
         return [.. arguments];
     }
 

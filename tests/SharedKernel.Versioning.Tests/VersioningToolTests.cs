@@ -178,6 +178,73 @@ public static class VersioningToolTests
         options.VerifyRestore.ShouldBeFalse();
     }
 
+    [Fact]
+    public static void Parses_api_compatibility_options()
+    {
+        // Arrange
+        string[] args =
+        [
+            "--version",
+            "1.2.3",
+            "--output-root",
+            "artifacts/api",
+            "--release-phase",
+            "stable",
+            "--repo-root",
+            "/repo",
+            "--baseline-version",
+            "1.2.2",
+            "--breaking-marker",
+        ];
+
+        // Act
+        var options = ApiCompatibilityOptions.Parse(args);
+
+        // Assert
+        options.Version.ShouldBe("1.2.3");
+        options.OutputRoot.ShouldBe("artifacts/api");
+        options.ReleasePhase.ShouldBe("stable");
+        options.RepoRoot.ShouldBe("/repo");
+        options.BaselineVersion.ShouldBe("1.2.2");
+        options.BreakingMarker.ShouldBeTrue();
+    }
+
+    [Fact]
+    public static void Detects_breaking_change_markers()
+    {
+        // Arrange
+        const string messages = "feat(api)!: remove contract\0fix: patch\0docs: update\n\nBREAKING CHANGE: docs contract\0";
+
+        // Act
+        var hasMarker = BreakingChangeMarkerCommand.HasMarker(messages);
+
+        // Assert
+        hasMarker.ShouldBeTrue();
+    }
+
+    [Fact]
+    public static async Task Checks_public_api_baseline_files()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
+            "<Project Sdk=\"Microsoft.NET.Sdk\" />",
+            TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
+
+        using var output = new StringWriter();
+
+        // Act
+        await PublicApiBaselineCommand.Run(temporaryDirectory.Root, output);
+
+        // Assert
+        output.ToString().ShouldContain("Public API baselines", StringComparison.Ordinal);
+    }
+
     [Theory]
     [InlineData("beta")]
     [InlineData("production")]

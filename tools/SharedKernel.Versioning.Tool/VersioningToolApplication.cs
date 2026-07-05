@@ -6,7 +6,7 @@ internal static class VersioningToolApplication
 {
     public static async Task<int> Run(string[] args, TextReader input, TextWriter output, TextWriter error)
     {
-        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"] or ["calculate-release", "--help"] or ["calculate-release", "-h"] or ["pack-sharedkernel", "--help"] or ["pack-sharedkernel", "-h"] or ["prepare-release", "--help"] or ["prepare-release", "-h"])
+        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"] or ["calculate-release", "--help"] or ["calculate-release", "-h"] or ["pack-sharedkernel", "--help"] or ["pack-sharedkernel", "-h"] or ["prepare-release", "--help"] or ["prepare-release", "-h"] or ["check-public-api-baselines", "--help"] or ["check-public-api-baselines", "-h"] or ["has-breaking-change-marker", "--help"] or ["has-breaking-change-marker", "-h"] or ["api-compatibility", "--help"] or ["api-compatibility", "-h"])
         {
             await output.WriteLineAsync(Usage).ConfigureAwait(false);
             return 0;
@@ -63,6 +63,27 @@ internal static class VersioningToolApplication
                 await output.WriteLineAsync($"Release prep artifacts: {options.OutputDirectory}").ConfigureAwait(false);
                 return 0;
             }
+
+            if (args is ["check-public-api-baselines", .. var baselineArgs])
+            {
+                var repoRoot = ParseRepoRoot(baselineArgs);
+                await PublicApiBaselineCommand.Run(repoRoot, output).ConfigureAwait(false);
+                return 0;
+            }
+
+            if (args is ["has-breaking-change-marker", var range, .. var markerArgs])
+            {
+                var repoRoot = ParseRepoRoot(markerArgs);
+                await BreakingChangeMarkerCommand.Run(range, repoRoot, output).ConfigureAwait(false);
+                return 0;
+            }
+
+            if (args is ["api-compatibility", .. var apiCompatibilityArgs])
+            {
+                var options = ApiCompatibilityOptions.Parse(apiCompatibilityArgs);
+                await ApiCompatibilityCommand.Run(options, output).ConfigureAwait(false);
+                return 0;
+            }
         }
         catch (ArgumentException ex)
         {
@@ -88,6 +109,9 @@ internal static class VersioningToolApplication
           sharedkernel-version calculate-release [--repo-root <path>] [--version-kind <prerelease|stable>] [--run-number <number>] [--sha <sha>] [--github-output <path>] [--github-summary <path>]
           sharedkernel-version pack-sharedkernel [--version <semver>] [--assembly-version <version>] [--file-version <version>] [--informational-version <version>] [--output-root <path>] [--repo-root <path>] [--skip-restore-check]
           sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes.txt
+          sharedkernel-version check-public-api-baselines [--repo-root <path>]
+          sharedkernel-version has-breaking-change-marker <git-range> [--repo-root <path>]
+          sharedkernel-version api-compatibility [--version <semver>] [--release-phase <alpha|beta|rc|stable>] [--baseline-version <semver>] [--breaking-marker] [--output-root <path>] [--repo-root <path>]
 
         Commands:
           commit-impact   Prints release impact for one Conventional Commit message.
@@ -95,6 +119,9 @@ internal static class VersioningToolApplication
           calculate-release Calculates release version from Git history and optionally writes GitHub outputs.
           pack-sharedkernel Packs SharedKernel packages and verifies local feed restore.
           prepare-release Writes release notes, changelog, and package manifest artifacts.
+          check-public-api-baselines Checks PublicAPI baselines for SharedKernel projects.
+          has-breaking-change-marker Checks commit history for a breaking-change marker.
+          api-compatibility Writes the SharedKernel package API compatibility report.
 
         Options:
           --base <version>        Base semantic version for compute.
@@ -115,6 +142,9 @@ internal static class VersioningToolApplication
           --output-dir <path>     Output directory for prepare-release artifacts.
           --source-tag <tag>      Previous release tag for prepare-release notes.
           --release-impact <text> Release impact value for prepare-release notes.
+          --release-phase <phase> API gate phase: alpha, beta, rc, or stable.
+          --baseline-version <v>  Previous package version for package validation.
+          --breaking-marker       Acknowledge a breaking API diff for non-alpha phases.
           --help, -h              Print help and exit successfully.
           --version               Print version and exit successfully.
 
@@ -130,5 +160,20 @@ internal static class VersioningToolApplication
             ?.InformationalVersion;
 
         return string.IsNullOrWhiteSpace(version) ? "unknown" : version;
+    }
+
+    private static string ParseRepoRoot(string[] args)
+    {
+        if (args.Length == 0)
+        {
+            return ".";
+        }
+
+        if (args is ["--repo-root", var repoRoot])
+        {
+            return repoRoot;
+        }
+
+        throw new ArgumentException("Unknown option for repo-root command.");
     }
 }
