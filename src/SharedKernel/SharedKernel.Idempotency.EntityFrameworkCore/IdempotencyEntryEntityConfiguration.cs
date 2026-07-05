@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace SharedKernel.EntityFrameworkCore;
+namespace SharedKernel.Idempotency.EntityFrameworkCore;
 
 /// <summary>
 /// Configures persisted idempotency entries.

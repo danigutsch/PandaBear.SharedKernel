@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using SharedKernel.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore;
+namespace SharedKernel.Idempotency.EntityFrameworkCore;
 
 /// <summary>
 /// Adds idempotency model configuration to a DbContext.

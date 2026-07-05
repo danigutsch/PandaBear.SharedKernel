@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.IntegrationEvents;
 
-namespace SharedKernel.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>
 /// Stores integration events in the current EF Core unit of work.
@@ -20,16 +19,17 @@ internal sealed class EfIntegrationEventOutbox<TContext>(
         ArgumentNullException.ThrowIfNull(integrationEvent);
         ct.ThrowIfCancellationRequested();
 
-        dbContext.Set<IntegrationEventOutboxMessage>().Add(new IntegrationEventOutboxMessage
-        {
-            Id = Guid.CreateVersion7(),
-            EventType = TIntegrationEvent.EventType,
-            EventVersion = TIntegrationEvent.EventVersion,
-            EventId = integrationEvent.EventId,
-            OccurredAt = integrationEvent.OccurredAt,
-            PayloadJson = serializer.Serialize(integrationEvent),
-            EnqueuedAt = timeProvider.GetUtcNow(),
-        });
+        var envelope = new EventEnvelope(
+            integrationEvent.EventId,
+            TIntegrationEvent.EventType,
+            TIntegrationEvent.EventVersion,
+            integrationEvent.OccurredAt,
+            serializer.Serialize(integrationEvent));
+
+        dbContext.Set<IntegrationEventOutboxMessageEntity>().Add(new IntegrationEventOutboxMessageEntity(
+            Guid.CreateVersion7(),
+            envelope,
+            timeProvider.GetUtcNow()));
 
         return ValueTask.CompletedTask;
     }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using SharedKernel.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>
 /// Adds durable integration event outbox model configuration to a DbContext.
@@ -14,6 +15,6 @@ internal sealed class IntegrationEventOutboxDbContextConfiguration<TContext> : I
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);
 
-        modelBuilder.ApplyConfiguration(new IntegrationEventOutboxMessageConfiguration());
+        modelBuilder.ApplyConfiguration(new IntegrationEventOutboxMessageEntityConfiguration());
     }
 }

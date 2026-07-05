@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.Idempotency;
 
-namespace SharedKernel.EntityFrameworkCore;
+namespace SharedKernel.Idempotency.EntityFrameworkCore;
 
 /// <summary>
 /// Stores idempotency entries in EF Core.
@@ -20,13 +19,10 @@ internal sealed class EfIdempotencyStore<TContext>(TContext dbContext) : IIdempo
         var existing = await Find(operation, ct).ConfigureAwait(false);
         if (existing is null)
         {
-            var entry = new IdempotencyEntryEntity
-            {
-                Scope = operation.Scope.Value,
-                Key = operation.Key.Value,
-                State = IdempotencyEntryState.Started,
-                StartedAt = startedAt,
-            };
+            var entry = new IdempotencyEntryEntity(
+                operation.Scope.Value,
+                operation.Key.Value,
+                startedAt);
 
             dbContext.Set<IdempotencyEntryEntity>().Add(entry);
             try
@@ -52,10 +48,7 @@ internal sealed class EfIdempotencyStore<TContext>(TContext dbContext) : IIdempo
             return IdempotencyStartResult.AlreadyStarted(ToEntry(existing));
         }
 
-        existing.State = IdempotencyEntryState.Started;
-        existing.StartedAt = startedAt;
-        existing.CompletedAt = null;
-        existing.ResultFingerprint = null;
+        existing.Restart(startedAt);
 
         try
         {
@@ -82,9 +75,7 @@ internal sealed class EfIdempotencyStore<TContext>(TContext dbContext) : IIdempo
         var existing = await Find(operation, ct).ConfigureAwait(false)
             ?? throw new InvalidOperationException("Idempotency operation must be started before it can be completed.");
 
-        existing.State = IdempotencyEntryState.Completed;
-        existing.CompletedAt = completedAt;
-        existing.ResultFingerprint = resultFingerprint;
+        existing.Complete(completedAt, resultFingerprint);
         await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
     }
 

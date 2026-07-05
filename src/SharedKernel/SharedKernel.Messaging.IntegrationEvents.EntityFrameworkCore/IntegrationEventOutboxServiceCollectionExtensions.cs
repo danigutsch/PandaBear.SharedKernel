@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using SharedKernel.IntegrationEvents;
+using SharedKernel.EntityFrameworkCore;
+using SharedKernel.Idempotency.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore;
+namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>
 /// Provides registration helpers for the EF Core integration event outbox.
@@ -27,4 +28,13 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
 
         return services;
     }
+
+    /// <summary>
+    /// Adds an EF Core integration event inbox for the target DbContext.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <typeparam name="TContext">The DbContext type that owns the inbox idempotency table.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection AddIntegrationEventInbox<TContext>(this IServiceCollection services)
+        where TContext : DbContext => services.AddIdempotencyStore<TContext>();
 }

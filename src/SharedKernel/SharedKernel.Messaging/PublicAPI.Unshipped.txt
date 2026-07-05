@@ -1,0 +1,9 @@
+#nullable enable
+const SharedKernel.Messaging.EventEnvelope.EventTypeMaxLength = 200 -> int
+SharedKernel.Messaging.EventEnvelope
+SharedKernel.Messaging.EventEnvelope.EventEnvelope(System.Guid eventId, string! eventType, int eventVersion, System.DateTimeOffset occurredAt, string! payloadJson) -> void
+SharedKernel.Messaging.EventEnvelope.EventId.get -> System.Guid
+SharedKernel.Messaging.EventEnvelope.EventType.get -> string!
+SharedKernel.Messaging.EventEnvelope.EventVersion.get -> int
+SharedKernel.Messaging.EventEnvelope.OccurredAt.get -> System.DateTimeOffset
+SharedKernel.Messaging.EventEnvelope.PayloadJson.get -> string!
