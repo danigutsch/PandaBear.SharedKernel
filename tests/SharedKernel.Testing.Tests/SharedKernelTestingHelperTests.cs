@@ -155,5 +155,46 @@ public sealed class SharedKernelTestingHelperTests
         TestAssert.Throws<InvalidOperationException>((Func<object?>)(() => throw new InvalidOperationException()));
         await TestAssert.Throws<InvalidOperationException>(() => Task.FromException(new InvalidOperationException()));
         await TestAssert.ThrowsAny<ArgumentException>(() => Task.FromException(new ArgumentException("expected")));
+        TestAssert.NotNull("value").ShouldBe("value");
+        TestAssert.NotNull<int>(5).ShouldBe(5);
+        TestAssert.ExactlyOne([42]).ShouldBe(42);
+        TestAssert.Contains(1, [1], EqualityComparer<int>.Default);
+        TestAssert.Contains([1], value => value == 1);
+        TestAssert.Contains("pha", "alphabet", StringComparison.Ordinal);
+        TestAssert.StartsWith("alpha", "alphabet", StringComparison.Ordinal);
+        TestAssert.StartsWith("ALPHA", "alphabet", StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public static async Task Should_extensions_wrap_remaining_xunit_shapes()
+    {
+        "alpha".ShouldBe("ALPHA", StringComparer.OrdinalIgnoreCase);
+        "alpha".ShouldNotBe("beta", StringComparer.Ordinal);
+        "value".ShouldBeOfType<string>().ShouldBe("value");
+        "value".ShouldBeAssignableTo<object>().ShouldBe("value");
+        "value".ShouldNotBeAssignableTo<IDisposable>();
+        ((int?)5).ShouldNotBeNull().ShouldBe(5);
+        false.ShouldBeFalse();
+        ((bool?)false).ShouldBeFalse();
+        var singleValue = new[] { 1 };
+        singleValue.ShouldContain(1, EqualityComparer<int>.Default);
+        singleValue.ShouldContain(value => value == 1);
+        var answer = new[] { 42 };
+        answer.ShouldHaveSingleItem().ShouldBe(42);
+        var values = new[] { 1, 42 };
+        values.ShouldHaveSingleItem(value => value == 42).ShouldBe(42);
+        5.ShouldBeInRange(1, 9);
+        5.ShouldBeGreaterThanOrEqualTo(5);
+        5.ShouldBeLessThan(6);
+        5.ShouldBeLessThanOrEqualTo(5);
+        "alphabet".ShouldEndWith("BET", StringComparison.OrdinalIgnoreCase);
+        "alphabet".ShouldMatch(new Regex("bet$", RegexOptions.None, TimeSpan.FromSeconds(1)));
+        var positiveValues = new[] { 1, 2 };
+        positiveValues.ShouldAllSatisfy(value => value.ShouldBeGreaterThan(0));
+
+        Func<Task> action = () => Task.FromException(new InvalidOperationException("expected"));
+
+        var exception = await action.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldBe("expected");
     }
 }
