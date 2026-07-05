@@ -6,6 +6,47 @@ namespace SharedKernel.Versioning.Tests;
 public static class VersioningToolTests
 {
     [Fact]
+    public static void Tool_project_is_packaged_as_dotnet_tool()
+    {
+        // Arrange
+        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
+        string? repositoryRoot = null;
+        while (currentDirectory is not null)
+        {
+            var solutionPath = Path.Combine(currentDirectory.FullName, "ViajantesTurismo.slnx");
+            if (File.Exists(solutionPath))
+            {
+                repositoryRoot = currentDirectory.FullName;
+                break;
+            }
+
+            currentDirectory = currentDirectory.Parent;
+        }
+
+        var root = (repositoryRoot).ShouldNotBeNull();
+        var projectPath = Path.Combine(
+            root,
+            "tools",
+            "SharedKernel.Versioning.Tool",
+            "SharedKernel.Versioning.Tool.csproj");
+
+        // Act
+        var project = System.Xml.Linq.XDocument.Load(projectPath);
+        var properties = project.Descendants().Where(element => element.Parent?.Name.LocalName == "PropertyGroup").ToDictionary(
+            element => element.Name.LocalName,
+            element => element.Value);
+        var readmeItem = project.Descendants("None").SingleOrDefault(element =>
+            string.Equals((string?)element.Attribute("Include"), "README.md", StringComparison.Ordinal));
+
+        // Assert
+        properties["PackAsTool"].ShouldBe("true");
+        properties["ToolCommandName"].ShouldBe("sharedkernel-version");
+        properties["PackageId"].ShouldBe("SharedKernel.Versioning.Tool");
+        properties["PackageReadmeFile"].ShouldBe("README.md");
+        (readmeItem).ShouldNotBeNull();
+    }
+
+    [Fact]
     public static void Parses_compute_options()
     {
         // Arrange
