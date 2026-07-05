@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis.CSharp;
 using SharedKernel.Testing.Data;
 using SharedKernel.Testing.Http;
 using SharedKernel.Testing.Roslyn;
@@ -91,8 +92,8 @@ public sealed class SharedKernelTestingHelperTests
 
         exists.ShouldBeTrue();
         value.ShouldBe("SharedKernel.Testing.Tests");
-        provider.GetOptions(tree: null!).ShouldBeSameAs(TestAnalyzerConfigOptions.Empty);
-        provider.GetOptions(textFile: null!).ShouldBeSameAs(TestAnalyzerConfigOptions.Empty);
+        var syntaxTree = CSharpSyntaxTree.ParseText(string.Empty, cancellationToken: TestContext.Current.CancellationToken);
+        provider.GetOptions(syntaxTree).ShouldBeSameAs(TestAnalyzerConfigOptions.Empty);
     }
 
     [Fact]
@@ -110,7 +111,9 @@ public sealed class SharedKernelTestingHelperTests
         Action action = () => ExceptionAssertions.ThrowsInner<ArgumentException>(
             () => throw new TargetInvocationException(new InvalidOperationException("expected")));
 
-        action.ShouldThrow<InvalidOperationException>().Message.ShouldContain(typeof(ArgumentException).FullName!, StringComparison.Ordinal);
+        var argumentExceptionName = typeof(ArgumentException).FullName;
+        argumentExceptionName.ShouldNotBeNull();
+        action.ShouldThrow<InvalidOperationException>().Message.ShouldContain(argumentExceptionName, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -118,7 +121,9 @@ public sealed class SharedKernelTestingHelperTests
     {
         Action action = () => ExceptionAssertions.ThrowsInner<InvalidOperationException>(() => { });
 
-        action.ShouldThrow<InvalidOperationException>().Message.ShouldContain(typeof(TargetInvocationException).FullName!, StringComparison.Ordinal);
+        var targetInvocationExceptionName = typeof(TargetInvocationException).FullName;
+        targetInvocationExceptionName.ShouldNotBeNull();
+        action.ShouldThrow<InvalidOperationException>().Message.ShouldContain(targetInvocationExceptionName, StringComparison.Ordinal);
     }
 
     [Fact]
