@@ -6,7 +6,7 @@ namespace SharedKernel.EntityFrameworkCore;
 /// Adds idempotency model configuration to a DbContext.
 /// </summary>
 /// <typeparam name="TContext">The DbContext type.</typeparam>
-public sealed class IdempotencyDbContextConfiguration<TContext> : IDbContextConfiguration<TContext>
+internal sealed class IdempotencyDbContextConfiguration<TContext> : IDbContextConfiguration<TContext>
     where TContext : DbContext
 {
     /// <inheritdoc />

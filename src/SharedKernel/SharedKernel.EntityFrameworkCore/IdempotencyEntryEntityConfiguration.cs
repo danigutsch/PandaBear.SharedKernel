@@ -6,7 +6,7 @@ namespace SharedKernel.EntityFrameworkCore;
 /// <summary>
 /// Configures persisted idempotency entries.
 /// </summary>
-public sealed class IdempotencyEntryEntityConfiguration : IEntityTypeConfiguration<IdempotencyEntryEntity>
+internal sealed class IdempotencyEntryEntityConfiguration : IEntityTypeConfiguration<IdempotencyEntryEntity>
 {
     private const string Schema = "messaging";
 

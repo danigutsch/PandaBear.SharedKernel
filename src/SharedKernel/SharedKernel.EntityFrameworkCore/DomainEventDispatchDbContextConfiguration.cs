@@ -6,7 +6,7 @@ namespace SharedKernel.EntityFrameworkCore;
 /// Adds domain-event dispatch interception to a DbContext.
 /// </summary>
 /// <typeparam name="TContext">The DbContext type.</typeparam>
-public sealed class DomainEventDispatchDbContextConfiguration<TContext>(
+internal sealed class DomainEventDispatchDbContextConfiguration<TContext>(
     DispatchDomainEventsSaveChangesInterceptor interceptor) : IDbContextConfiguration<TContext>
     where TContext : DbContext
 {

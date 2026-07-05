@@ -6,7 +6,7 @@ namespace SharedKernel.EntityFrameworkCore;
 /// <summary>
 /// Configures the durable integration event outbox message table.
 /// </summary>
-public sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeConfiguration<IntegrationEventOutboxMessage>
+internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeConfiguration<IntegrationEventOutboxMessage>
 {
     private const string Schema = "messaging";
 

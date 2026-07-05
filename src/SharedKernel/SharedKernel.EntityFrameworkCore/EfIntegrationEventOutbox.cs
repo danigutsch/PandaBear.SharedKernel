@@ -7,7 +7,7 @@ namespace SharedKernel.EntityFrameworkCore;
 /// Stores integration events in the current EF Core unit of work.
 /// </summary>
 /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
-public sealed class EfIntegrationEventOutbox<TContext>(
+internal sealed class EfIntegrationEventOutbox<TContext>(
     TContext dbContext,
     TimeProvider timeProvider,
     IIntegrationEventSerializer serializer) : IIntegrationEventOutbox

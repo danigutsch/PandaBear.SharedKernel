@@ -11,7 +11,7 @@ namespace SharedKernel.EntityFrameworkCore;
 /// <summary>
 /// Dispatches aggregate domain events before EF Core saves changes and clears them after a successful save.
 /// </summary>
-public sealed class DispatchDomainEventsSaveChangesInterceptor : SaveChangesInterceptor
+internal sealed class DispatchDomainEventsSaveChangesInterceptor : SaveChangesInterceptor
 {
     /// <inheritdoc />
     public override InterceptionResult<int> SavingChanges(

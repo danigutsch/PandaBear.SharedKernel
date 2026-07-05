@@ -3,7 +3,7 @@ namespace SharedKernel.EntityFrameworkCore;
 /// <summary>
 /// Represents a durable integration event waiting for publication.
 /// </summary>
-public sealed class IntegrationEventOutboxMessage
+internal sealed class IntegrationEventOutboxMessage
 {
     /// <summary>
     /// Gets or sets the outbox message identifier.

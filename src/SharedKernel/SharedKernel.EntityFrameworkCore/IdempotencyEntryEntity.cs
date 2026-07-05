@@ -5,7 +5,7 @@ namespace SharedKernel.EntityFrameworkCore;
 /// <summary>
 /// Represents a persisted idempotency entry.
 /// </summary>
-public sealed class IdempotencyEntryEntity
+internal sealed class IdempotencyEntryEntity
 {
     /// <summary>
     /// Gets or sets the operation scope.

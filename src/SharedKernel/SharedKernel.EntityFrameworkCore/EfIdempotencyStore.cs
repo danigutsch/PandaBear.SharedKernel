@@ -7,7 +7,7 @@ namespace SharedKernel.EntityFrameworkCore;
 /// Stores idempotency entries in EF Core.
 /// </summary>
 /// <typeparam name="TContext">The DbContext type that owns the idempotency table.</typeparam>
-public sealed class EfIdempotencyStore<TContext>(TContext dbContext) : IIdempotencyStore
+internal sealed class EfIdempotencyStore<TContext>(TContext dbContext) : IIdempotencyStore
     where TContext : DbContext
 {
     /// <inheritdoc />
