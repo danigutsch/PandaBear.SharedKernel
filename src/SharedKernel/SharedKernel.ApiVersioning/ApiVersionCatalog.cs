@@ -5,8 +5,6 @@ namespace SharedKernel.ApiVersioning;
 /// </summary>
 public sealed class ApiVersionCatalog
 {
-    private readonly IReadOnlyList<ApiVersionDefinition> versions;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ApiVersionCatalog"/> class.
     /// </summary>
@@ -16,13 +14,13 @@ public sealed class ApiVersionCatalog
     {
         ArgumentNullException.ThrowIfNull(versions);
 
-        this.versions = [.. versions.OrderByDescending(static item => item.Version)];
-        if (this.versions.Count == 0)
+        Versions = [.. versions.OrderByDescending(static item => item.Version)];
+        if (Versions.Count == 0)
         {
             throw new ArgumentException("At least one API version is required.", nameof(versions));
         }
 
-        if (this.versions.Select(static item => item.Version).Distinct().Count() != this.versions.Count)
+        if (Versions.Select(static item => item.Version).Distinct().Count() != Versions.Count)
         {
             throw new ArgumentException("Duplicate API versions are not allowed.", nameof(versions));
         }
@@ -31,12 +29,12 @@ public sealed class ApiVersionCatalog
     /// <summary>
     /// Gets the known API contract versions in descending version order.
     /// </summary>
-    public IReadOnlyList<ApiVersionDefinition> Versions => versions;
+    public IReadOnlyList<ApiVersionDefinition> Versions { get; }
 
     /// <summary>
     /// Gets versions that are available for request selection.
     /// </summary>
-    public IReadOnlyList<ApiVersionDefinition> SelectableVersions => [.. versions.Where(static item => item.Status != ApiVersionStatus.Retired)];
+    public IReadOnlyList<ApiVersionDefinition> SelectableVersions => [.. Versions.Where(static item => item.Status != ApiVersionStatus.Retired)];
 
     /// <summary>
     /// Selects the requested API version, or the latest selectable version when no version is requested.
@@ -49,7 +47,7 @@ public sealed class ApiVersionCatalog
     {
         if (requestedVersion is null)
         {
-            foreach (ApiVersionDefinition version in versions)
+            foreach (ApiVersionDefinition version in Versions)
             {
                 if (version.Status != ApiVersionStatus.Retired)
                 {
@@ -60,7 +58,7 @@ public sealed class ApiVersionCatalog
             throw new InvalidOperationException("At least one non-retired API version is required.");
         }
 
-        ApiVersionDefinition? selected = versions.FirstOrDefault(item => item.Version == requestedVersion.Value) ?? throw new ArgumentException($"API version '{requestedVersion}' is not supported.", nameof(requestedVersion));
+        ApiVersionDefinition? selected = Versions.FirstOrDefault(item => item.Version == requestedVersion.Value) ?? throw new ArgumentException($"API version '{requestedVersion}' is not supported.", nameof(requestedVersion));
         return selected.Status == ApiVersionStatus.Retired
             ? throw new ArgumentException($"API version '{requestedVersion}' is retired.", nameof(requestedVersion))
             : selected;

@@ -84,8 +84,10 @@ public static class OpenApiServiceCollectionExtensions
             services.AddOpenApi(documentName, options =>
             {
                 options.AddDocumentTransformer<MultipartFormRequestBodyDocumentTransformer>();
-                options.AddDocumentTransformer((document, _, _) =>
+                options.AddDocumentTransformer((document, context, ct) =>
                 {
+                    _ = context;
+                    _ = ct;
                     document.Info.Version = version.Version.ToString();
                     return Task.CompletedTask;
                 });

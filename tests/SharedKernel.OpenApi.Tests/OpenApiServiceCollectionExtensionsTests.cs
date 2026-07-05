@@ -104,9 +104,9 @@ public sealed class OpenApiServiceCollectionExtensionsTests
             });
 
         // Assert
-        Assert.Equal("1.0", document.Info.Version);
-        Assert.Contains("/api/v1/status", document.Paths.Keys);
-        Assert.DoesNotContain("/api/v2/status", document.Paths.Keys);
+        document.Info.Version.ShouldBe("1.0");
+        document.Paths.Keys.ShouldContain("/api/v1/status");
+        document.Paths.Keys.ShouldNotContain("/api/v2/status");
     }
 
     [Theory]
@@ -117,9 +117,10 @@ public sealed class OpenApiServiceCollectionExtensionsTests
         var services = OpenApiTestServiceCollectionFactory.Create();
         var version = new ApiVersionDefinition(new ApiVersion(1));
 
-        var exception = Assert.Throws<ArgumentException>(() => services.AddApiVersionOpenApiDocuments([version], routePrefix));
+        Action action = () => services.AddApiVersionOpenApiDocuments([version], routePrefix);
 
-        Assert.Equal("routePrefix", exception.ParamName);
+        var exception = action.ShouldThrow<ArgumentException>();
+        exception.ParamName.ShouldBe("routePrefix");
     }
 
 }
