@@ -50,6 +50,11 @@ internal sealed record CalculateReleaseOptions(
             }
         }
 
+        if (versionKind is not ("prerelease" or "stable"))
+        {
+            throw new ArgumentException("--version-kind must be 'prerelease' or 'stable'.");
+        }
+
         return new CalculateReleaseOptions(repoRoot, versionKind, runNumber, sha, githubOutput, githubSummary);
     }
 }

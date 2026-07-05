@@ -9,6 +9,7 @@ internal sealed class TemporaryGitRepository : IDisposable
         Root = Path.Combine(Path.GetTempPath(), $"versioning-git-{Guid.NewGuid():N}");
         Directory.CreateDirectory(Root);
         CommandRunner.Run("git", ["init"], Root);
+        CommandRunner.Run("git", ["config", "commit.gpgsign", "false"], Root);
         CommandRunner.Run("git", ["config", "user.email", "test@example.invalid"], Root);
         CommandRunner.Run("git", ["config", "user.name", "Versioning Test"], Root);
     }

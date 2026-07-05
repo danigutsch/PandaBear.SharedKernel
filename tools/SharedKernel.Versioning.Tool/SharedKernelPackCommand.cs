@@ -7,7 +7,7 @@ internal static class SharedKernelPackCommand
     public static async Task<string> Run(PackSharedKernelOptions options, TextWriter output)
     {
         var packageDirectory = Path.Combine(options.OutputRoot, options.Version);
-        if (Directory.Exists(packageDirectory) && Directory.GetFiles(packageDirectory, "SharedKernel.*." + options.Version + ".nupkg").Length > 0)
+        if (Directory.Exists(packageDirectory) && PackageVersionExists(packageDirectory, options.Version))
         {
             throw new ArgumentException($"Package version already exists in {packageDirectory}: {options.Version}");
         }
@@ -79,5 +79,15 @@ internal static class SharedKernelPackCommand
             throw new ArgumentException("packages not restored from local feed: " + string.Join(", ", missing));
         }
     }
+
+    private static bool PackageVersionExists(string packageDirectory, string version) =>
+        Directory.EnumerateFiles(packageDirectory, "SharedKernel.*")
+            .Select(Path.GetFileName)
+            .Any(fileName => fileName is not null && IsPackageVersionFile(fileName, version));
+
+    private static bool IsPackageVersionFile(string fileName, string version) =>
+        fileName.EndsWith("." + version + ".nupkg", StringComparison.Ordinal)
+        || fileName.EndsWith("." + version + ".snupkg", StringComparison.Ordinal)
+        || fileName.EndsWith("." + version + ".symbols.nupkg", StringComparison.Ordinal);
 
 }

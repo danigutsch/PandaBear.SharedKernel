@@ -151,6 +151,9 @@
           "xunit.v3.assert": "[3.2.2, )"
         }
       },
+      "sharedkernel.testing.packaging": {
+        "type": "Project"
+      },
       "sharedkernel.versioning": {
         "type": "Project"
       },

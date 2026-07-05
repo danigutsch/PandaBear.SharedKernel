@@ -10,12 +10,12 @@ public static class SharedKernelLocalFeedTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var firstPackage = VersioningToolPackageTestHelper.WritePackage(
+        var firstPackage = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.PackageDirectory,
             "SharedKernel.Results",
             "1.2.3",
             ("SharedKernel.Functional", "1.2.3"));
-        var secondPackage = VersioningToolPackageTestHelper.WritePackage(
+        var secondPackage = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.PackageDirectory,
             "SharedKernel.Functional",
             "1.2.3");
@@ -32,7 +32,7 @@ public static class SharedKernelLocalFeedTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var package = VersioningToolPackageTestHelper.WritePackageWithoutNuspec(
+        var package = NuGetPackageBuilder.WritePackageWithoutNuspec(
             temporaryDirectory.PackageDirectory,
             "SharedKernel.Results.1.2.3.nupkg");
 
@@ -48,7 +48,7 @@ public static class SharedKernelLocalFeedTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var package = VersioningToolPackageTestHelper.WritePackage(
+        var package = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.PackageDirectory,
             "SharedKernel.Results",
             "1.2.2");
@@ -65,7 +65,7 @@ public static class SharedKernelLocalFeedTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var package = VersioningToolPackageTestHelper.WritePackage(
+        var package = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.PackageDirectory,
             "SharedKernel.Results",
             "1.2.3",
@@ -83,11 +83,11 @@ public static class SharedKernelLocalFeedTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var firstPackage = VersioningToolPackageTestHelper.WritePackage(
+        var firstPackage = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.PackageDirectory,
             "SharedKernel.Results",
             "1.2.3");
-        var secondPackage = VersioningToolPackageTestHelper.WritePackage(
+        var secondPackage = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.OutputDirectory,
             "SharedKernel.Results",
             "1.2.3");

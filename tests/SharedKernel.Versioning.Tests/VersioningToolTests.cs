@@ -68,6 +68,52 @@ public static class VersioningToolTests
         options.VerifyRestore.ShouldBeFalse();
     }
 
+    [Theory]
+    [InlineData("beta")]
+    [InlineData("production")]
+    public static void Rejects_unknown_release_version_kind(string versionKind)
+    {
+        // Arrange
+        string[] args = ["--version-kind", versionKind];
+
+        // Act
+        Action action = () => CalculateReleaseOptions.Parse(args);
+
+        // Assert
+        action.ShouldThrow<ArgumentException>().Message.ShouldContain("--version-kind", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("SharedKernel.Results.1.2.3.snupkg")]
+    [InlineData("SharedKernel.Results.1.2.3.symbols.nupkg")]
+    public static async Task Rejects_existing_sharedkernel_package_variants(string fileName)
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var packageDirectory = Path.Combine(temporaryDirectory.PackageDirectory, "1.2.3");
+        Directory.CreateDirectory(packageDirectory);
+        await File.WriteAllBytesAsync(
+            Path.Combine(packageDirectory, fileName),
+            "package"u8.ToArray(),
+            TestContext.Current.CancellationToken);
+        var options = new PackSharedKernelOptions("1.2.3", temporaryDirectory.PackageDirectory, VerifyRestore: false, RepoRoot: temporaryDirectory.Root);
+
+        // Act
+        ArgumentException? exception = null;
+        try
+        {
+            await SharedKernelPackCommand.Run(options, TextWriter.Null);
+        }
+        catch (ArgumentException ex)
+        {
+            exception = ex;
+        }
+
+        // Assert
+        exception.ShouldNotBeNull();
+        exception.Message.ShouldContain("Package version already exists", StringComparison.Ordinal);
+    }
+
     [Fact]
     public static void Parses_prepare_release_options()
     {

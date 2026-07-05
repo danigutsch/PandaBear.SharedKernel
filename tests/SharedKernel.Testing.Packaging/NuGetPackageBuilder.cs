@@ -1,9 +1,20 @@
 using System.IO.Compression;
 
-namespace SharedKernel.Versioning.Tests;
+namespace SharedKernel.Testing.Packaging;
 
-internal static class VersioningToolPackageTestHelper
+/// <summary>
+/// Builds lightweight NuGet package files for packaging tests.
+/// </summary>
+public static class NuGetPackageBuilder
 {
+    /// <summary>
+    /// Writes a package with a generated nuspec file.
+    /// </summary>
+    /// <param name="directory">Directory that receives the package.</param>
+    /// <param name="packageId">Package identifier written to the nuspec.</param>
+    /// <param name="version">Package version written to the nuspec and file name.</param>
+    /// <param name="dependencies">Package dependencies written to the nuspec.</param>
+    /// <returns>The created package path.</returns>
     public static string WritePackage(
         string directory,
         string packageId,
@@ -19,6 +30,12 @@ internal static class VersioningToolPackageTestHelper
         return path;
     }
 
+    /// <summary>
+    /// Writes a package archive without a nuspec file.
+    /// </summary>
+    /// <param name="directory">Directory that receives the package.</param>
+    /// <param name="fileName">Package file name.</param>
+    /// <returns>The created package path.</returns>
     public static string WritePackageWithoutNuspec(string directory, string fileName)
     {
         Directory.CreateDirectory(directory);
