@@ -20,6 +20,9 @@ sharedkernel-version --help
 sharedkernel-version --version
 sharedkernel-version commit-impact <message>
 sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha>] < commit-messages.txt
+sharedkernel-version calculate-release [--repo-root <path>] [--version-kind <prerelease|stable>]
+sharedkernel-version pack-sharedkernel [--version <semver>] [--output-root <path>]
+sharedkernel-version prepare-release --version <semver> --package-dir <path> < changes.txt
 ```
 
 ## Restore or install
@@ -38,6 +41,9 @@ dotnet pack tools/SharedKernel.Versioning.Tool/SharedKernel.Versioning.Tool.cspr
 dotnet tool install SharedKernel.Versioning.Tool --tool-path ./.tools --add-source /tmp/opencode/sharedkernel-version-pack
 ./.tools/sharedkernel-version --help
 ```
+
+When installing from this repository, follow the local-feed source-mapping notes in
+`docs/SHAREDKERNEL_PACKAGING.md`.
 
 Install as a global tool only from a trusted package source:
 

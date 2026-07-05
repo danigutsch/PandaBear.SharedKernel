@@ -4,7 +4,21 @@ namespace SharedKernel.Testing.CodeFixRunner;
 
 internal sealed record CodeFixRunnerOptions(string TargetPath, string DiagnosticId)
 {
-    public const string Usage = "Usage: dotnet run --project tools/SharedKernel.Testing.CodeFixRunner -- [--diagnostic <id>] <project-or-solution>";
+    public const string Usage = """
+        Usage:
+          sharedkernel-codefix --help
+          sharedkernel-codefix --version
+          sharedkernel-codefix [--diagnostic <id>] <project-or-solution>
+
+        Options:
+          --diagnostic <id>  Diagnostic ID to fix. Defaults to SKTEST004.
+          --help, -h         Print help and exit successfully.
+          --version          Print version and exit successfully.
+
+        Exit codes:
+          0   Success.
+          2   Invalid command, arguments, or input.
+        """;
 
     public static CodeFixRunnerOptions? Parse(string[] args)
     {
