@@ -288,6 +288,25 @@ public sealed class MagickImageProcessorTests
     }
 
     [Fact]
+    public void Process_does_not_lower_process_resource_limits_for_rejected_requests()
+    {
+        // Arrange
+        using var content = TestImages.CreateJpegWithProfile(320, 160);
+        var request = new ImageProcessingRequest(
+            content,
+            [new ImageVariantRequest("thumb", ImageOutputFormat.Jpeg, 16, 85)],
+            new ImageProcessingLimits(100, 8_000, 40_000_000));
+
+        // Act
+        Action rejectedRequest = () => MagickImageProcessor.Process(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        rejectedRequest.ShouldThrow<ImageProcessingException>();
+        using var subsequentImage = TestImages.CreateJpegWithProfile(640, 320);
+        subsequentImage.Length.ShouldBeGreaterThan(0);
+    }
+
+    [Fact]
     public void Process_rejects_images_that_exceed_pixel_count_limits()
     {
         // Arrange

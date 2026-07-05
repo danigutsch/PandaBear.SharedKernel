@@ -6,7 +6,7 @@ internal static class VersioningToolApplication
 {
     public static async Task<int> Run(string[] args, TextReader input, TextWriter output, TextWriter error)
     {
-        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"])
+        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"] or ["calculate-release", "--help"] or ["calculate-release", "-h"] or ["pack-sharedkernel", "--help"] or ["pack-sharedkernel", "-h"] or ["prepare-release", "--help"] or ["prepare-release", "-h"])
         {
             await output.WriteLineAsync(Usage).ConfigureAwait(false);
             return 0;
@@ -41,8 +41,35 @@ internal static class VersioningToolApplication
                 await output.WriteLineAsync(VersionOutputJson.Serialize(versionOutput)).ConfigureAwait(false);
                 return 0;
             }
+
+            if (args is ["calculate-release", .. var calculateArgs])
+            {
+                var options = CalculateReleaseOptions.Parse(calculateArgs);
+                await ReleaseVersionCommand.Run(options, output).ConfigureAwait(false);
+                return 0;
+            }
+
+            if (args is ["pack-sharedkernel", .. var packArgs])
+            {
+                var options = PackSharedKernelOptions.Parse(packArgs);
+                await SharedKernelPackCommand.Run(options, output).ConfigureAwait(false);
+                return 0;
+            }
+
+            if (args is ["prepare-release", .. var releaseArgs])
+            {
+                var options = PrepareReleaseOptions.Parse(releaseArgs);
+                await ReleaseArtifactWriter.Write(options, input).ConfigureAwait(false);
+                await output.WriteLineAsync($"Release prep artifacts: {options.OutputDirectory}").ConfigureAwait(false);
+                return 0;
+            }
         }
         catch (ArgumentException ex)
+        {
+            await error.WriteLineAsync($"Error: {ex.Message}").ConfigureAwait(false);
+            return 2;
+        }
+        catch (InvalidOperationException ex)
         {
             await error.WriteLineAsync($"Error: {ex.Message}").ConfigureAwait(false);
             return 2;
@@ -58,15 +85,36 @@ internal static class VersioningToolApplication
           sharedkernel-version --version
           sharedkernel-version commit-impact <message>
           sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha>] < commit-messages.txt
+          sharedkernel-version calculate-release [--repo-root <path>] [--version-kind <prerelease|stable>] [--run-number <number>] [--sha <sha>] [--github-output <path>] [--github-summary <path>]
+          sharedkernel-version pack-sharedkernel [--version <semver>] [--assembly-version <version>] [--file-version <version>] [--informational-version <version>] [--output-root <path>] [--repo-root <path>] [--skip-restore-check]
+          sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes.txt
 
         Commands:
           commit-impact   Prints release impact for one Conventional Commit message.
           compute         Prints version output JSON from null-separated commit messages on standard input.
+          calculate-release Calculates release version from Git history and optionally writes GitHub outputs.
+          pack-sharedkernel Packs SharedKernel packages and verifies local feed restore.
+          prepare-release Writes release notes, changelog, and package manifest artifacts.
 
         Options:
           --base <version>        Base semantic version for compute.
           --prerelease <label>    Optional prerelease label for compute.
+          --repo-root <path>      Repository root for Git-backed release and pack commands.
+          --version-kind <mode>   Release version mode: prerelease or stable.
+          --run-number <number>   CI run number used in prerelease labels.
           --sha <sha>             Optional source revision for informational version metadata.
+          --github-output <path>  GitHub Actions output file for calculate-release.
+          --github-summary <path> GitHub Actions summary file for calculate-release.
+          --version <semver>      Release version for prepare-release.
+          --assembly-version <v>  Assembly version for pack-sharedkernel.
+          --file-version <v>      File version for pack-sharedkernel.
+          --informational-version <v> Informational version for pack-sharedkernel.
+          --output-root <path>    Package output root for pack-sharedkernel.
+          --skip-restore-check    Skip local feed restore verification for pack-sharedkernel.
+          --package-dir <path>    Package artifact directory for prepare-release.
+          --output-dir <path>     Output directory for prepare-release artifacts.
+          --source-tag <tag>      Previous release tag for prepare-release notes.
+          --release-impact <text> Release impact value for prepare-release notes.
           --help, -h              Print help and exit successfully.
           --version               Print version and exit successfully.
 
