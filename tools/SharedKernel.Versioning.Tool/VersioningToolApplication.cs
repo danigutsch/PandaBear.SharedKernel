@@ -6,7 +6,7 @@ internal static class VersioningToolApplication
 {
     public static async Task<int> Run(string[] args, TextReader input, TextWriter output, TextWriter error)
     {
-        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"] or ["prepare-release", "--help"] or ["prepare-release", "-h"])
+        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"] or ["calculate-release", "--help"] or ["calculate-release", "-h"] or ["pack-sharedkernel", "--help"] or ["pack-sharedkernel", "-h"] or ["prepare-release", "--help"] or ["prepare-release", "-h"])
         {
             await output.WriteLineAsync(Usage).ConfigureAwait(false);
             return 0;
@@ -42,6 +42,20 @@ internal static class VersioningToolApplication
                 return 0;
             }
 
+            if (args is ["calculate-release", .. var calculateArgs])
+            {
+                var options = CalculateReleaseOptions.Parse(calculateArgs);
+                await ReleaseVersionCommand.Run(options, output).ConfigureAwait(false);
+                return 0;
+            }
+
+            if (args is ["pack-sharedkernel", .. var packArgs])
+            {
+                var options = PackSharedKernelOptions.Parse(packArgs);
+                await SharedKernelPackCommand.Run(options, output).ConfigureAwait(false);
+                return 0;
+            }
+
             if (args is ["prepare-release", .. var releaseArgs])
             {
                 var options = PrepareReleaseOptions.Parse(releaseArgs);
@@ -51,6 +65,11 @@ internal static class VersioningToolApplication
             }
         }
         catch (ArgumentException ex)
+        {
+            await error.WriteLineAsync($"Error: {ex.Message}").ConfigureAwait(false);
+            return 2;
+        }
+        catch (InvalidOperationException ex)
         {
             await error.WriteLineAsync($"Error: {ex.Message}").ConfigureAwait(false);
             return 2;
@@ -66,11 +85,15 @@ internal static class VersioningToolApplication
           sharedkernel-version --version
           sharedkernel-version commit-impact <message>
           sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha>] < commit-messages.txt
+          sharedkernel-version calculate-release [--repo-root <path>] [--version-kind <prerelease|stable>] [--run-number <number>] [--sha <sha>] [--github-output <path>] [--github-summary <path>]
+          sharedkernel-version pack-sharedkernel [--version <semver>] [--output-root <path>] [--repo-root <path>] [--skip-restore-check]
           sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes.txt
 
         Commands:
           commit-impact   Prints release impact for one Conventional Commit message.
           compute         Prints version output JSON from null-separated commit messages on standard input.
+          calculate-release Calculates release version from Git history and optionally writes GitHub outputs.
+          pack-sharedkernel Packs SharedKernel packages and verifies local feed restore.
           prepare-release Writes release notes, changelog, and package manifest artifacts.
 
         Options:
