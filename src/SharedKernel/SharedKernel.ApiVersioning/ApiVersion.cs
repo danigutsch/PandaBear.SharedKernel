@@ -44,7 +44,8 @@ public readonly record struct ApiVersion : IComparable<ApiVersion>
     /// </summary>
     /// <param name="value">The version text.</param>
     /// <returns>The parsed API version.</returns>
-    /// <exception cref="ArgumentException">Thrown when the value is missing or invalid.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the value is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when the value is blank or invalid.</exception>
     public static ApiVersion Parse(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
