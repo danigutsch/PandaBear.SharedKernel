@@ -86,7 +86,7 @@ internal static class VersioningToolApplication
           sharedkernel-version commit-impact <message>
           sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha>] < commit-messages.txt
           sharedkernel-version calculate-release [--repo-root <path>] [--version-kind <prerelease|stable>] [--run-number <number>] [--sha <sha>] [--github-output <path>] [--github-summary <path>]
-          sharedkernel-version pack-sharedkernel [--version <semver>] [--output-root <path>] [--repo-root <path>] [--skip-restore-check]
+          sharedkernel-version pack-sharedkernel [--version <semver>] [--assembly-version <version>] [--file-version <version>] [--informational-version <version>] [--output-root <path>] [--repo-root <path>] [--skip-restore-check]
           sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes.txt
 
         Commands:
@@ -106,6 +106,9 @@ internal static class VersioningToolApplication
           --github-output <path>  GitHub Actions output file for calculate-release.
           --github-summary <path> GitHub Actions summary file for calculate-release.
           --version <semver>      Release version for prepare-release.
+          --assembly-version <v>  Assembly version for pack-sharedkernel.
+          --file-version <v>      File version for pack-sharedkernel.
+          --informational-version <v> Informational version for pack-sharedkernel.
           --output-root <path>    Package output root for pack-sharedkernel.
           --skip-restore-check    Skip local feed restore verification for pack-sharedkernel.
           --package-dir <path>    Package artifact directory for prepare-release.

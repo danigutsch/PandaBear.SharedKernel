@@ -25,7 +25,7 @@ internal static class SharedKernelPackCommand
         {
             CommandRunner.Run(
                 "dotnet",
-                ["pack", project, "-c", "Release", "-p:ComputedSemVer=" + options.Version, "-o", packageDirectory],
+                CreatePackArguments(project, options, packageDirectory),
                 options.RepoRoot);
         }
 
@@ -89,5 +89,32 @@ internal static class SharedKernelPackCommand
         fileName.EndsWith("." + version + ".nupkg", StringComparison.Ordinal)
         || fileName.EndsWith("." + version + ".snupkg", StringComparison.Ordinal)
         || fileName.EndsWith("." + version + ".symbols.nupkg", StringComparison.Ordinal);
+
+    private static string[] CreatePackArguments(string project, PackSharedKernelOptions options, string packageDirectory)
+    {
+        var arguments = new List<string>
+        {
+            "pack",
+            project,
+            "-c",
+            "Release",
+            "-p:ComputedSemVer=" + options.Version,
+            "-o",
+            packageDirectory,
+        };
+
+        AddOptionalProperty(arguments, "ComputedAssemblyVersion", options.AssemblyVersion);
+        AddOptionalProperty(arguments, "ComputedFileVersion", options.FileVersion);
+        AddOptionalProperty(arguments, "ComputedInformationalVersion", options.InformationalVersion);
+        return [.. arguments];
+    }
+
+    private static void AddOptionalProperty(List<string> arguments, string propertyName, string? value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            arguments.Add("-p:" + propertyName + "=" + value);
+        }
+    }
 
 }

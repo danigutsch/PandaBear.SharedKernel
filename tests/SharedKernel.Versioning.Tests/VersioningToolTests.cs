@@ -56,7 +56,22 @@ public static class VersioningToolTests
     public static void Parses_pack_sharedkernel_options()
     {
         // Arrange
-        string[] args = ["--version", "1.2.3", "--output-root", "artifacts", "--repo-root", "/repo", "--skip-restore-check"];
+        string[] args =
+        [
+            "--version",
+            "1.2.3",
+            "--output-root",
+            "artifacts",
+            "--repo-root",
+            "/repo",
+            "--assembly-version",
+            "1.0.0.0",
+            "--file-version",
+            "1.2.3.0",
+            "--informational-version",
+            "1.2.3+sha.abc123",
+            "--skip-restore-check",
+        ];
 
         // Act
         var options = PackSharedKernelOptions.Parse(args);
@@ -65,6 +80,9 @@ public static class VersioningToolTests
         options.Version.ShouldBe("1.2.3");
         options.OutputRoot.ShouldBe("artifacts");
         options.RepoRoot.ShouldBe("/repo");
+        options.AssemblyVersion.ShouldBe("1.0.0.0");
+        options.FileVersion.ShouldBe("1.2.3.0");
+        options.InformationalVersion.ShouldBe("1.2.3+sha.abc123");
         options.VerifyRestore.ShouldBeFalse();
     }
 
