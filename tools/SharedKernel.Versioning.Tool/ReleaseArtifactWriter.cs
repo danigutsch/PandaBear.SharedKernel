@@ -128,12 +128,12 @@ internal static class ReleaseArtifactWriter
 
     private static ReleasePackageEntry CreatePackageEntry(string path)
     {
-        var bytes = File.ReadAllBytes(path);
-        var hash = SHA256.HashData(bytes);
+        using var stream = File.OpenRead(path);
+        var hash = SHA256.HashData(stream);
         return new ReleasePackageEntry(
             Path.GetFileName(path),
             Convert.ToHexString(hash),
-            bytes.LongLength);
+            stream.Length);
     }
 
     private static string NullableEscape(string? value) => string.IsNullOrWhiteSpace(value) ? "null" : Escape(value);
