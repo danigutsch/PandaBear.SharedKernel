@@ -14,6 +14,8 @@
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.Domain\SharedKernel.Domain.csproj" />
         <ProjectReference Include="..\SharedKernel.DomainEvents\SharedKernel.DomainEvents.csproj" />
+        <ProjectReference Include="..\SharedKernel.Idempotency\SharedKernel.Idempotency.csproj" />
+        <ProjectReference Include="..\SharedKernel.IntegrationEvents\SharedKernel.IntegrationEvents.csproj" />
     </ItemGroup>
 
 </Project>

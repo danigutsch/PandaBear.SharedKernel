@@ -106,6 +106,15 @@
           "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
         }
       },
+      "sharedkernel.idempotency": {
+        "type": "Project"
+      },
+      "sharedkernel.integrationevents": {
+        "type": "Project",
+        "dependencies": {
+          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
+        }
+      },
       "sharedkernel.mediator.abstractions": {
         "type": "Project"
       },

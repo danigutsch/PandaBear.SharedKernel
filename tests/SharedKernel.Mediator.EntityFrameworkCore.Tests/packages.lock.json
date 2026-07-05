@@ -233,7 +233,18 @@
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.9, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.9, )",
           "SharedKernel.Domain": "[0.1.0-alpha.0, )",
-          "SharedKernel.DomainEvents": "[0.1.0-alpha.0, )"
+          "SharedKernel.DomainEvents": "[0.1.0-alpha.0, )",
+          "SharedKernel.Idempotency": "[0.1.0-alpha.0, )",
+          "SharedKernel.IntegrationEvents": "[0.1.0-alpha.0, )"
+        }
+      },
+      "sharedkernel.idempotency": {
+        "type": "Project"
+      },
+      "sharedkernel.integrationevents": {
+        "type": "Project",
+        "dependencies": {
+          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
         }
       },
       "sharedkernel.mediator.abstractions": {
