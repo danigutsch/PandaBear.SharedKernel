@@ -36,6 +36,8 @@ public sealed class ApiVersionCatalog
         {
             throw new ArgumentException("Duplicate API versions are not allowed.", nameof(versions));
         }
+
+        SelectableVersions = [.. Versions.Where(static item => item.Status != ApiVersionStatus.Retired)];
     }
 
     /// <summary>
@@ -46,7 +48,7 @@ public sealed class ApiVersionCatalog
     /// <summary>
     /// Gets versions that are available for request selection.
     /// </summary>
-    public IReadOnlyList<ApiVersionDefinition> SelectableVersions => [.. Versions.Where(static item => item.Status != ApiVersionStatus.Retired)];
+    public IReadOnlyList<ApiVersionDefinition> SelectableVersions { get; }
 
     /// <summary>
     /// Selects the requested API version, or the latest selectable version when no version is requested.

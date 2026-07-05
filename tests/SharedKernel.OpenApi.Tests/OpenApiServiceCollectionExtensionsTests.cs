@@ -15,39 +15,54 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     [Fact]
     public void Throws_when_services_are_null()
     {
-        var exception = Assert.Throws<TargetInvocationException>(() => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(null, ["tours"]));
+        // Act
+        Action action = () => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(null, ["tours"]);
 
-        Assert.IsType<ArgumentNullException>(exception.InnerException);
+        // Assert
+        var exception = action.ShouldThrow<TargetInvocationException>();
+        exception.InnerException.ShouldBeOfType<ArgumentNullException>();
     }
 
     [Fact]
     public void Throws_when_boundary_names_are_null()
     {
+        // Arrange
         var services = OpenApiTestServiceCollectionFactory.Create();
 
-        var exception = Assert.Throws<TargetInvocationException>(() => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(services, null));
+        // Act
+        Action action = () => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(services, null);
 
-        Assert.IsType<ArgumentNullException>(exception.InnerException);
+        // Assert
+        var exception = action.ShouldThrow<TargetInvocationException>();
+        exception.InnerException.ShouldBeOfType<ArgumentNullException>();
     }
 
     [Fact]
     public void Throws_when_a_boundary_name_is_whitespace()
     {
+        // Arrange
         var services = OpenApiTestServiceCollectionFactory.Create();
 
-        var exception = Assert.Throws<TargetInvocationException>(() => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(services, ["tours", " "]));
+        // Act
+        Action action = () => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(services, ["tours", " "]);
 
-        Assert.IsType<ArgumentException>(exception.InnerException);
+        // Assert
+        var exception = action.ShouldThrow<TargetInvocationException>();
+        exception.InnerException.ShouldBeOfType<ArgumentException>();
     }
 
     [Fact]
     public void Throws_when_boundary_names_contain_duplicates()
     {
+        // Arrange
         var services = OpenApiTestServiceCollectionFactory.Create();
 
-        var exception = Assert.Throws<TargetInvocationException>(() => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(services, ["tours", "Tours"]));
+        // Act
+        Action action = () => OpenApiServiceCollectionExtensionsTestsHelpers.InvokeAddBoundaryOpenApiDocuments(services, ["tours", "Tours"]);
 
-        Assert.IsType<ArgumentException>(exception.InnerException);
+        // Assert
+        var exception = action.ShouldThrow<TargetInvocationException>();
+        exception.InnerException.ShouldBeOfType<ArgumentException>();
     }
 
     [Fact]
@@ -61,8 +76,8 @@ public sealed class OpenApiServiceCollectionExtensionsTests
         });
 
         // Assert
-        Assert.Contains("/tours", document.Paths.Keys);
-        Assert.Contains("/tours/{id}", document.Paths.Keys);
+        document.Paths.Keys.ShouldContain("/tours");
+        document.Paths.Keys.ShouldContain("/tours/{id}");
     }
 
     [Fact]
@@ -82,8 +97,8 @@ public sealed class OpenApiServiceCollectionExtensionsTests
         });
 
         // Assert
-        Assert.Contains("/tours", document.Paths.Keys);
-        Assert.DoesNotContain("/tours-archive", document.Paths.Keys);
+        document.Paths.Keys.ShouldContain("/tours");
+        document.Paths.Keys.ShouldNotContain("/tours-archive");
     }
 
     [Fact]
@@ -200,11 +215,14 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     [InlineData(" /// ")]
     public void Throws_when_api_version_route_prefix_normalizes_to_empty(string routePrefix)
     {
+        // Arrange
         var services = OpenApiTestServiceCollectionFactory.Create();
         var version = new ApiVersionDefinition(new ApiVersion(1));
 
+        // Act
         Action action = () => services.AddApiVersionOpenApiDocuments([version], routePrefix);
 
+        // Assert
         var exception = action.ShouldThrow<ArgumentException>();
         exception.ParamName.ShouldBe("routePrefix");
     }
