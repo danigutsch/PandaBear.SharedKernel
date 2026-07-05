@@ -80,6 +80,26 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
     /// <inheritdoc />
     public DateTimeOffset? PublishedAt { get; private set; }
 
+    /// <inheritdoc />
+    public int PublishAttempts { get; private set; }
+
+    /// <inheritdoc />
+    public DateTimeOffset? LastPublishAttemptAt { get; private set; }
+
+    /// <inheritdoc />
+    public DateTimeOffset? NextPublishAttemptAt { get; private set; }
+
+    /// <inheritdoc />
+    public string? LastPublishError { get; private set; }
+
+    int IRetryableMessage.Attempts => PublishAttempts;
+
+    DateTimeOffset? IRetryableMessage.LastAttemptAt => LastPublishAttemptAt;
+
+    DateTimeOffset? IRetryableMessage.NextAttemptAt => NextPublishAttemptAt;
+
+    string? IRetryableMessage.LastError => LastPublishError;
+
     /// <summary>
     /// Marks the message as published.
     /// </summary>
@@ -87,5 +107,24 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
     public void MarkPublished(DateTimeOffset publishedAt)
     {
         PublishedAt = publishedAt;
+        LastPublishAttemptAt = publishedAt;
+        NextPublishAttemptAt = null;
+        LastPublishError = null;
+    }
+
+    /// <summary>
+    /// Records a failed publication attempt.
+    /// </summary>
+    /// <param name="attemptedAt">The attempt time.</param>
+    /// <param name="nextAttemptAt">The next retry time.</param>
+    /// <param name="error">The failure description.</param>
+    public void MarkPublishFailed(DateTimeOffset attemptedAt, DateTimeOffset nextAttemptAt, string error)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(error);
+
+        PublishAttempts++;
+        LastPublishAttemptAt = attemptedAt;
+        NextPublishAttemptAt = nextAttemptAt;
+        LastPublishError = error;
     }
 }

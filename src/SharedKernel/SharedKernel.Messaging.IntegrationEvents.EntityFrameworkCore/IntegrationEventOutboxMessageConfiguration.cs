@@ -20,6 +20,7 @@ internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeCo
         builder.HasKey(message => message.Id);
         builder.Property(message => message.Id).ValueGeneratedNever();
         builder.HasIndex(message => new { message.PublishedAt, message.EnqueuedAt });
+        builder.HasIndex(message => new { message.PublishedAt, message.NextPublishAttemptAt, message.EnqueuedAt });
         builder.Property(message => message.EnvelopeSpec).HasMaxLength(100).IsRequired();
         builder.Property(message => message.EnvelopeSpecVersion).HasMaxLength(20).IsRequired();
         builder.Property(message => message.EventId).HasMaxLength(200).IsRequired();
@@ -32,5 +33,6 @@ internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeCo
         builder.Property(message => message.Payload);
         builder.Property(message => message.PayloadEncoding).HasConversion<string>().HasMaxLength(20);
         builder.Property(message => message.ExtensionAttributesJson);
+        builder.Property(message => message.LastPublishError).HasMaxLength(2000);
     }
 }

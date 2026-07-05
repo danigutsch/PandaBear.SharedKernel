@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.EntityFrameworkCore;
 using SharedKernel.Messaging.IntegrationEvents.CloudEvents;
 
@@ -23,7 +22,6 @@ internal sealed class EfIntegrationEventOutbox<TContext> : IIntegrationEventOutb
     private readonly TimeProvider timeProvider;
     private readonly IIntegrationEventSerializer serializer;
 
-    [ActivatorUtilitiesConstructor]
     public EfIntegrationEventOutbox(
         TimeProvider timeProvider,
         IIntegrationEventSerializer serializer)
@@ -35,7 +33,7 @@ internal sealed class EfIntegrationEventOutbox<TContext> : IIntegrationEventOutb
         this.serializer = serializer;
     }
 
-    internal EfIntegrationEventOutbox(
+    public EfIntegrationEventOutbox(
         TContext dbContext,
         TimeProvider timeProvider,
         IIntegrationEventSerializer serializer)
