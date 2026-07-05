@@ -27,6 +27,6 @@ public static class ApiDeprecationPolicyExtensions
     {
         ArgumentNullException.ThrowIfNull(definition);
 
-        return definition.Deprecation?.SunsetOn <= date;
+        return definition.Deprecation?.SunsetOn is DateOnly sunsetOn && sunsetOn <= date;
     }
 }

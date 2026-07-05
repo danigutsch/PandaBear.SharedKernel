@@ -30,4 +30,17 @@ public sealed class ApiDeprecationPolicyExtensionsTests
         // Assert
         hasSunset.ShouldBeTrue();
     }
+
+    [Fact]
+    public void Returns_false_when_sunset_date_is_missing()
+    {
+        // Arrange
+        var definition = new ApiVersionDefinition(new ApiVersion(1), ApiVersionStatus.Deprecated, new ApiDeprecationPolicy());
+
+        // Act
+        bool hasSunset = definition.HasSunsetOnOrBefore(new DateOnly(2026, 1, 2));
+
+        // Assert
+        hasSunset.ShouldBeFalse();
+    }
 }
