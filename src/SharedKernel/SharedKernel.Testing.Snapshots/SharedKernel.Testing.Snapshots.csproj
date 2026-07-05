@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.Testing.Snapshots</PackageId>
+        <Description>Reusable snapshot text helpers for SharedKernel test suites.</Description>
+        <RootNamespace>SharedKernel.Testing.Snapshots</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>testing;snapshots;shared-kernel;dotnet</PackageTags>
+        <IsAotCompatible>false</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

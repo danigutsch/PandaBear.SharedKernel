@@ -19,7 +19,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.Analyzers\SharedKernel.Aspire.Analyzers.csproj" />
-        <ProjectReference Include="..\SharedKernel.Testing.Roslyn\SharedKernel.Testing.Roslyn.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Roslyn\SharedKernel.Testing.Roslyn.csproj" />
     </ItemGroup>
 
 </Project>

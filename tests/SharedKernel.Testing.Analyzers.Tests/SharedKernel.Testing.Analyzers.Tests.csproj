@@ -23,7 +23,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.CodeFixes\SharedKernel.Testing.CodeFixes.csproj">
             <Aliases>testingcodefixes</Aliases>
         </ProjectReference>
-        <ProjectReference Include="..\SharedKernel.Testing.Roslyn\SharedKernel.Testing.Roslyn.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Roslyn\SharedKernel.Testing.Roslyn.csproj" />
     </ItemGroup>
 
 </Project>
