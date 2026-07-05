@@ -1,19 +1,21 @@
 
 namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
-public sealed class CodeFixRunnerOptionsTests
+public sealed class CodeFixRunnerToolTests
 {
     [Theory]
     [InlineData("--help")]
     [InlineData("-h")]
-    public async Task Run_prints_help_for_help_option(string helpOption)
+    [InlineData("--diagnostic", "SKTEST006", "--help", "sample.csproj")]
+    [InlineData("sample.csproj", "-h")]
+    public async Task Run_prints_help_when_help_option_is_present(params string[] args)
     {
         // Arrange
         using var output = new StringWriter();
         using var error = new StringWriter();
 
         // Act
-        var exitCode = await ProgramEntryPoint.Run([helpOption], output, error);
+        var exitCode = await ProgramEntryPoint.Run(args, output, error);
 
         // Assert
         exitCode.ShouldBe(0);
@@ -21,15 +23,17 @@ public sealed class CodeFixRunnerOptionsTests
         error.ToString().ShouldBe(string.Empty);
     }
 
-    [Fact]
-    public async Task Run_prints_version_for_version_option()
+    [Theory]
+    [InlineData("--version")]
+    [InlineData("sample.csproj", "--version")]
+    public async Task Run_prints_version_when_version_option_is_present(params string[] args)
     {
         // Arrange
         using var output = new StringWriter();
         using var error = new StringWriter();
 
         // Act
-        var exitCode = await ProgramEntryPoint.Run(["--version"], output, error);
+        var exitCode = await ProgramEntryPoint.Run(args, output, error);
 
         // Assert
         exitCode.ShouldBe(0);

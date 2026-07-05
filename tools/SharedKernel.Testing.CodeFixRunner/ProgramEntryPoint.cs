@@ -10,13 +10,13 @@ internal static class ProgramEntryPoint
         ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(error);
 
-        if (args is ["--help"] or ["-h"])
+        if (args.Contains("--help", StringComparer.Ordinal) || args.Contains("-h", StringComparer.Ordinal))
         {
             await output.WriteLineAsync(CodeFixRunnerOptions.Usage).ConfigureAwait(false);
             return 0;
         }
 
-        if (args is ["--version"])
+        if (args.Contains("--version", StringComparer.Ordinal))
         {
             await output.WriteLineAsync(GetVersion()).ConfigureAwait(false);
             return 0;
