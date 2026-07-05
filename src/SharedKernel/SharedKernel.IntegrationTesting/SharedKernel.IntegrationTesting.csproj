@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>SharedKernel.IntegrationTesting</PackageId>
         <Description>Reusable Aspire and PostgreSQL integration-test helpers for SharedKernel test suites.</Description>
-        <RootNamespace>SharedKernel.Testing</RootNamespace>
+        <RootNamespace>SharedKernel.IntegrationTesting</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;integration-testing;aspire;postgresql;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using SharedKernel.Testing;
+using SharedKernel.IntegrationTesting;
 
 namespace SharedKernel.EventSourcing.Npgsql.Tests;
 

@@ -2,7 +2,7 @@ using Aspire.Hosting;
 using Aspire.Hosting.Testing;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SharedKernel.Testing;
+namespace SharedKernel.IntegrationTesting;
 
 /// <summary>
 /// Owns an Aspire distributed application lifetime for integration tests.
