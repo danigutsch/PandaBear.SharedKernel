@@ -133,6 +133,80 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Rejects_pack_sharedkernel_when_no_projects_exist()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        Directory.CreateDirectory(Path.Combine(temporaryDirectory.Root, "src", "SharedKernel"));
+        var options = new PackSharedKernelOptions("1.2.3", "artifacts", VerifyRestore: false, RepoRoot: temporaryDirectory.Root);
+
+        // Act
+        ArgumentException? exception = null;
+        try
+        {
+            await SharedKernelPackCommand.Run(options, TextWriter.Null);
+        }
+        catch (ArgumentException ex)
+        {
+            exception = ex;
+        }
+
+        // Assert
+        exception.ShouldNotBeNull();
+        exception.Message.ShouldContain("No SharedKernel projects found.", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Runs_pack_sharedkernel_command_with_relative_output_root()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
+            """
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <TargetFramework>net10.0</TargetFramework>
+                <PackageId>SharedKernel.Sample</PackageId>
+                <PackageVersion>$(ComputedSemVer)</PackageVersion>
+              </PropertyGroup>
+            </Project>
+            """,
+            TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "Sample.cs"),
+            "namespace SharedKernel.Sample; public sealed class Sample;",
+            TestContext.Current.CancellationToken);
+
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+        string[] args =
+        [
+            "pack-sharedkernel",
+            "--repo-root",
+            temporaryDirectory.Root,
+            "--version",
+            "1.2.3",
+            "--output-root",
+            "artifacts/packages",
+            "--skip-restore-check",
+        ];
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(args, input, output, error);
+
+        // Assert
+        var packageDirectory = Path.Combine(temporaryDirectory.Root, "artifacts", "packages", "1.2.3");
+        var packagePath = Path.Combine(packageDirectory, "SharedKernel.Sample.1.2.3.nupkg");
+        exitCode.ShouldBe(0);
+        File.Exists(packagePath).ShouldBeTrue();
+        output.ToString().ShouldContain(packageDirectory, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static void Parses_prepare_release_options()
     {
         // Arrange
