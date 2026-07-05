@@ -62,7 +62,11 @@ public static class OpenApiServiceCollectionExtensions
 
         services.AddOpenApi();
         var registeredDocumentNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var prefix = routePrefix.Trim('/');
+        var prefix = routePrefix.Trim().Trim('/');
+        if (prefix.Length == 0)
+        {
+            throw new ArgumentException("The route prefix must contain at least one non-slash character.", nameof(routePrefix));
+        }
 
         foreach (ApiVersionDefinition version in versions)
         {

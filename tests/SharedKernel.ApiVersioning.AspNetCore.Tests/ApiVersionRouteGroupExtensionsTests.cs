@@ -38,4 +38,21 @@ public sealed class ApiVersionRouteGroupExtensionsTests
         var endpoint = ApiVersionEndpointTestHost.GetSingleEndpoint(app);
         endpoint.Metadata.GetMetadata<ApiVersionDefinition>().ShouldBe(version);
     }
+
+    [Theory]
+    [InlineData("/")]
+    [InlineData(" /// ")]
+    public void Rejects_empty_normalized_route_prefix(string routePrefix)
+    {
+        // Arrange
+        var builder = WebApplication.CreateSlimBuilder();
+        var app = builder.Build();
+        var version = new ApiVersionDefinition(new ApiVersion(1));
+
+        // Act
+        Action action = () => app.MapApiVersionGroup(version, routePrefix);
+
+        // Assert
+        action.ShouldThrow<ArgumentException>();
+    }
 }

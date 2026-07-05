@@ -109,4 +109,17 @@ public sealed class OpenApiServiceCollectionExtensionsTests
         Assert.DoesNotContain("/api/v2/status", document.Paths.Keys);
     }
 
+    [Theory]
+    [InlineData("/")]
+    [InlineData(" /// ")]
+    public void Throws_when_api_version_route_prefix_normalizes_to_empty(string routePrefix)
+    {
+        var services = OpenApiTestServiceCollectionFactory.Create();
+        var version = new ApiVersionDefinition(new ApiVersion(1));
+
+        var exception = Assert.Throws<ArgumentException>(() => services.AddApiVersionOpenApiDocuments([version], routePrefix));
+
+        Assert.Equal("routePrefix", exception.ParamName);
+    }
+
 }

@@ -24,7 +24,12 @@ public static class ApiVersionRouteGroupExtensions
         ArgumentNullException.ThrowIfNull(version);
         ArgumentException.ThrowIfNullOrWhiteSpace(routePrefix);
 
-        var prefix = routePrefix.Trim('/');
+        var prefix = routePrefix.Trim().Trim('/');
+        if (prefix.Length == 0)
+        {
+            throw new ArgumentException("The route prefix must contain at least one non-slash character.", nameof(routePrefix));
+        }
+
         return endpoints.MapGroup($"/{prefix}/{version.RouteSegment}")
             .WithMetadata(version);
     }
