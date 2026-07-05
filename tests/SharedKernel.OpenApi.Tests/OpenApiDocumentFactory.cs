@@ -52,10 +52,12 @@ internal static class OpenApiDocumentFactory
     /// </summary>
     /// <param name="version">The API contract version definition.</param>
     /// <param name="configureApp">Configures endpoints on the test app.</param>
+    /// <param name="routePrefix">The unversioned API route prefix.</param>
     /// <returns>The generated OpenAPI document.</returns>
     public static async Task<OpenApiDocument> CreateApiVersionDocument(
         ApiVersionDefinition version,
-        Action<WebApplication> configureApp)
+        Action<WebApplication> configureApp,
+        string routePrefix = "api")
     {
         ArgumentNullException.ThrowIfNull(version);
         ArgumentNullException.ThrowIfNull(configureApp);
@@ -63,7 +65,7 @@ internal static class OpenApiDocumentFactory
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddApiVersionOpenApiDocuments([version]);
+        builder.Services.AddApiVersionOpenApiDocuments([version], routePrefix);
 
         await using var app = builder.Build();
         configureApp(app);

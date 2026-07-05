@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.ApiVersioning;
 using System.Reflection;
 using Xunit;
@@ -107,6 +108,91 @@ public sealed class OpenApiServiceCollectionExtensionsTests
         document.Info.Version.ShouldBe("1.0");
         document.Paths.Keys.ShouldContain("/api/v1/status");
         document.Paths.Keys.ShouldNotContain("/api/v2/status");
+    }
+
+    [Fact]
+    public async Task Includes_matching_api_version_paths_with_normalized_route_prefix_only()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateApiVersionDocument(
+            new ApiVersionDefinition(new ApiVersion(1, 1)),
+            app =>
+            {
+                app.MapGroup("/admin-api/v1.1")
+                    .WithGroupName("v1.1")
+                    .WithTags("v1.1")
+                    .MapGet("/status", () => TypedResults.Ok());
+                app.MapGroup("/admin-api/v1")
+                    .WithGroupName("v1")
+                    .WithTags("v1")
+                    .MapGet("/status", () => TypedResults.Ok());
+            },
+            " /admin-api/ ");
+
+        // Assert
+        document.Info.Version.ShouldBe("1.1");
+        document.Paths.Keys.ShouldContain("/admin-api/v1.1/status");
+        document.Paths.Keys.ShouldNotContain("/admin-api/v1/status");
+    }
+
+    [Fact]
+    public void Throws_when_api_version_services_are_null()
+    {
+        // Arrange
+        IServiceCollection? services = null;
+        var version = new ApiVersionDefinition(new ApiVersion(1));
+
+        // Act
+        Action action = () => services!.AddApiVersionOpenApiDocuments([version]);
+
+        // Assert
+        action.ShouldThrow<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Throws_when_api_version_collection_is_null()
+    {
+        // Arrange
+        var services = OpenApiTestServiceCollectionFactory.Create();
+        IReadOnlyCollection<ApiVersionDefinition>? versions = null;
+
+        // Act
+        Action action = () => services.AddApiVersionOpenApiDocuments(versions!);
+
+        // Assert
+        action.ShouldThrow<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Throws_when_api_version_collection_contains_null()
+    {
+        // Arrange
+        var services = OpenApiTestServiceCollectionFactory.Create();
+        ApiVersionDefinition[] versions = [new ApiVersionDefinition(new ApiVersion(1)), null!];
+
+        // Act
+        Action action = () => services.AddApiVersionOpenApiDocuments(versions);
+
+        // Assert
+        action.ShouldThrow<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Throws_when_api_version_document_names_contain_duplicates()
+    {
+        // Arrange
+        var services = OpenApiTestServiceCollectionFactory.Create();
+        ApiVersionDefinition[] versions =
+        [
+            new ApiVersionDefinition(new ApiVersion(1)),
+            new ApiVersionDefinition(new ApiVersion(1))
+        ];
+
+        // Act
+        Action action = () => services.AddApiVersionOpenApiDocuments(versions);
+
+        // Assert
+        action.ShouldThrow<ArgumentException>();
     }
 
     [Theory]
