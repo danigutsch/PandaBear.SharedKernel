@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.ApiVersioning.AspNetCore</PackageId>
+        <Description>ASP.NET Core adapters for SharedKernel API contract versioning.</Description>
+        <RootNamespace>SharedKernel.ApiVersioning.AspNetCore</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>api-versioning;aspnetcore;http;contracts;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <ProjectReference Include="..\SharedKernel.ApiVersioning\SharedKernel.ApiVersioning.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

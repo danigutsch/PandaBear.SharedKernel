@@ -4,9 +4,9 @@ SharedKernel.Domain.GenerateModelSupportAttribute.GenerateModelSupportAttribute(
 SharedKernel.Domain.GenerateModelSupportAttribute.Identity.get -> bool
 SharedKernel.Domain.GenerateModelSupportAttribute.Identity.set -> void
 SharedKernel.Domain.IAggregateRoot
+SharedKernel.Domain.IAggregateRoot.ClearDomainEvents() -> void
+SharedKernel.Domain.IAggregateRoot.GetDomainEvents() -> System.Collections.Generic.IReadOnlyCollection<SharedKernel.Domain.IDomainEvent!>!
 SharedKernel.Domain.IAggregateRoot<TId>
-SharedKernel.Domain.IAggregateRoot<TId>.ClearDomainEvents() -> void
-SharedKernel.Domain.IAggregateRoot<TId>.GetDomainEvents() -> System.Collections.Generic.IReadOnlyCollection<SharedKernel.Domain.IDomainEvent!>!
 SharedKernel.Domain.IDomainEvent
 SharedKernel.Domain.IEntity<TId>
 SharedKernel.Domain.IIdentified<TId>

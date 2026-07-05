@@ -6,15 +6,15 @@ namespace SharedKernel.EntityFrameworkCore;
 /// Enables EF Core diagnostics intended for local development only.
 /// </summary>
 /// <typeparam name="TContext">The DbContext type being configured.</typeparam>
-public sealed class DevelopmentDiagnosticsOptionsConfiguration<TContext> : IDbContextOptionsConfiguration<TContext>
+internal sealed class DevelopmentDiagnosticsOptionsConfiguration<TContext> : IDbContextConfiguration<TContext>
     where TContext : DbContext
 {
     /// <inheritdoc />
-    public void Configure(DbContextOptionsBuilder options)
+    public void ConfigureOptions(DbContextOptionsBuilder optionsBuilder)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(optionsBuilder);
 
-        options.EnableDetailedErrors();
-        options.EnableSensitiveDataLogging();
+        optionsBuilder.EnableDetailedErrors();
+        optionsBuilder.EnableSensitiveDataLogging();
     }
 }

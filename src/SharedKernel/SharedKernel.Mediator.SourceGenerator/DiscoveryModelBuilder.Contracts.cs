@@ -295,6 +295,28 @@ internal static partial class DiscoveryModelBuilder
         }
     }
 
+    private static IEnumerable<DomainEventHandlerDescriptor> CreateDomainEventHandlers(
+        INamedTypeSymbol type,
+        DiscoverySymbols discoverySymbols)
+    {
+        if (!IsDiscoverableType(type) || discoverySymbols.DomainEventHandlerInterface is null)
+        {
+            yield break;
+        }
+
+        var domainEventTypeArguments = type.AllInterfaces
+            .Where(
+                candidate => SymbolEqualityComparer.Default.Equals(
+                    candidate.OriginalDefinition,
+                    discoverySymbols.DomainEventHandlerInterface))
+            .Select(static candidate => candidate.TypeArguments);
+
+        foreach (var typeArguments in domainEventTypeArguments)
+        {
+            yield return new DomainEventHandlerDescriptor(GetTypeDisplayString(typeArguments[0]));
+        }
+    }
+
     private static bool TryCreateStreamRequestContract(
         INamedTypeSymbol type,
         DiscoverySymbols discoverySymbols,

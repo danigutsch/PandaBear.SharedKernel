@@ -1,5 +1,5 @@
 using SharedKernel.Aspire.Analyzers;
-using SharedKernel.Style.CodeFixes.Tests;
+using SharedKernel.CodeFixes.Testing;
 
 namespace SharedKernel.Aspire.CodeFixes.Tests;
 

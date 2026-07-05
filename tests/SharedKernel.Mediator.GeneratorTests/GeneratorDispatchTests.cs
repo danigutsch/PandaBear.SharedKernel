@@ -1,8 +1,59 @@
+using Microsoft.CodeAnalysis;
+using SharedKernel.DomainEvents;
+
 namespace SharedKernel.Mediator.GeneratorTests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
+[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
 public sealed class GeneratorDispatchTests
 {
+    [Fact]
+    public void Generate_domain_event_notification_factory_for_domain_event_handlers()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Domain;
+            using SharedKernel.DomainEvents;
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record TourCreated(Guid TourId) : IDomainEvent;
+
+            public sealed class TourCreatedHandler : IDomainEventHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated domainEvent, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+            """;
+        var references = new[]
+        {
+            MetadataReference.CreateFromFile(typeof(Domain.IDomainEvent).Assembly.Location),
+            MetadataReference.CreateFromFile(typeof(IDomainEventHandler<>).Assembly.Location),
+        };
+        var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: references);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            GeneratedHintNames.DomainEventNotifications);
+
+        // Assert
+        generatedSource.ShouldContain("GeneratedDomainEventNotificationFactory", StringComparison.Ordinal);
+        generatedSource.ShouldContain("global::Demo.TourCreated typedDomainEvent => new global::SharedKernel.DomainEvents.DomainEventNotification<global::Demo.TourCreated>(typedDomainEvent)", StringComparison.Ordinal);
+        generatedSource.ShouldContain("AddGeneratedDomainEventNotifications", StringComparison.Ordinal);
+        generatedSource.ShouldContain("TryAddSingleton<global::SharedKernel.DomainEvents.IDomainEventNotificationFactory", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("MakeGenericMethod");
+        generatedSource.ShouldNotContain("dynamic");
+
+        var dependencyInjectionSource = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            GeneratedHintNames.DependencyInjection);
+        dependencyInjectionSource.ShouldContain("TryAddSingleton<global::SharedKernel.DomainEvents.IDomainEventNotificationFactory", StringComparison.Ordinal);
+        dependencyInjectionSource.ShouldContain("TryAddScoped<global::SharedKernel.DomainEvents.IDomainEventDispatcher", StringComparison.Ordinal);
+    }
+
     [Fact]
     public void Generate_appmediator_shell()
     {

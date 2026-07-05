@@ -1,0 +1,4 @@
+#nullable enable
+SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions
+static SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions.AddIntegrationEventInbox<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions.AddIntegrationEventOutbox<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

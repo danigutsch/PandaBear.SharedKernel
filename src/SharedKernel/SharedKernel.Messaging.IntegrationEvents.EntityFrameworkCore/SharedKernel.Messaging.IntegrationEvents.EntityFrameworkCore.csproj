@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore</PackageId>
+        <Description>Entity Framework Core outbox and inbox persistence provider for typed integration-event messaging.</Description>
+        <RootNamespace>SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.EntityFrameworkCore\SharedKernel.EntityFrameworkCore.csproj" />
+        <ProjectReference Include="..\SharedKernel.Idempotency.EntityFrameworkCore\SharedKernel.Idempotency.EntityFrameworkCore.csproj" />
+        <ProjectReference Include="..\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
+        <ProjectReference Include="..\SharedKernel.Messaging.IntegrationEvents\SharedKernel.Messaging.IntegrationEvents.csproj" />
+        <ProjectReference Include="..\SharedKernel.Messaging.IntegrationEvents.CloudEvents\SharedKernel.Messaging.IntegrationEvents.CloudEvents.csproj" />
+    </ItemGroup>
+
+</Project>

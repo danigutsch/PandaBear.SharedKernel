@@ -19,6 +19,6 @@ public static class DbContextDevelopmentDiagnosticsServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        return services.AddDbContextOptionsConfiguration(new DevelopmentDiagnosticsOptionsConfiguration<TContext>());
+        return services.AddDbContextConfiguration(new DevelopmentDiagnosticsOptionsConfiguration<TContext>());
     }
 }

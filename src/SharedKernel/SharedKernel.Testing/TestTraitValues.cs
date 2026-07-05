@@ -11,6 +11,11 @@ public static class TestTraitValues
     public const string EndpointCategory = "endpoint";
 
     /// <summary>
+    /// Category value for dependency-injection composition tests.
+    /// </summary>
+    public const string DependencyInjectionCategory = "dependency-injection";
+
+    /// <summary>
     /// Scope value for API integration tests.
     /// </summary>
     public const string ApiIntegrationScope = "api-integration";

@@ -19,10 +19,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Aspire.CodeFixes\SharedKernel.Aspire.CodeFixes.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Compile Include="..\SharedKernel.Style.CodeFixes.Tests\CodeFixTestWorkspace.cs" Link="CodeFixTestWorkspace.cs" />
+        <ProjectReference Include="..\SharedKernel.CodeFixes.Testing\SharedKernel.CodeFixes.Testing.csproj" />
     </ItemGroup>
 
 </Project>
