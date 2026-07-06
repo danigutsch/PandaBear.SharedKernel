@@ -24,33 +24,14 @@ internal sealed class EfIntegrationEventOutboxRelay<TContext>(
         using var scope = scopeFactory.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<TContext>();
         var publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
+        var claimStrategy = scope.ServiceProvider.GetRequiredService<IIntegrationEventOutboxClaimStrategy<TContext>>();
         var now = timeProvider.GetUtcNow();
         var claimedBy = Guid.CreateVersion7().ToString("N");
         var claimedUntil = now.Add(options.Value.ClaimLeaseDuration);
-        var messages = await dbContext.Set<IntegrationEventOutboxMessage>()
-            .Where(message => message.PublishedAt == null
-                && (message.NextPublishAttemptAt == null || message.NextPublishAttemptAt <= now)
-                && (message.ClaimedUntil == null || message.ClaimedUntil <= now))
-            .OrderBy(message => message.EnqueuedAt)
-            .Take(batchSize)
-            .ToArrayAsync(ct)
+        var messages = await claimStrategy.ClaimPending(dbContext, batchSize, now, claimedBy, claimedUntil, ct)
             .ConfigureAwait(false);
 
         if (messages.Length == 0)
-        {
-            return 0;
-        }
-
-        foreach (var message in messages)
-        {
-            message.MarkClaimed(claimedBy, claimedUntil);
-        }
-
-        try
-        {
-            await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
-        }
-        catch (DbUpdateConcurrencyException)
         {
             return 0;
         }

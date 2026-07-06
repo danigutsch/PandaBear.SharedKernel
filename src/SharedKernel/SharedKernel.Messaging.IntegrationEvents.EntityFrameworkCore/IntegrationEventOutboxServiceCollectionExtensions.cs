@@ -57,8 +57,29 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
                 IValidateOptions<IntegrationEventOutboxRelayOptions>,
                 IntegrationEventOutboxRelayOptionsValidator>());
         services.TryAddSingleton(TimeProvider.System);
+        services.TryAddSingleton<IIntegrationEventOutboxClaimStrategy<TContext>, EfIntegrationEventOutboxClaimStrategy<TContext>>();
         services.AddSingleton<EfIntegrationEventOutboxRelay<TContext>>();
         services.AddHostedService<IntegrationEventOutboxRelayHostedService<TContext>>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Uses PostgreSQL <c>FOR UPDATE SKIP LOCKED</c> atomic claims for the outbox relay.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection AddPostgreSqlIntegrationEventOutboxRelayAtomicClaims<TContext>(
+        this IServiceCollection services)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.Replace(
+            ServiceDescriptor.Singleton<
+                IIntegrationEventOutboxClaimStrategy<TContext>,
+                PostgreSqlIntegrationEventOutboxClaimStrategy<TContext>>());
 
         return services;
     }
