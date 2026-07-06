@@ -1,12 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 internal sealed partial class IntegrationEventOutboxRelayHostedService<TContext>(
     EfIntegrationEventOutboxRelay<TContext> relay,
-    ILogger<IntegrationEventOutboxRelayHostedService<TContext>> logger)
+    ILogger<IntegrationEventOutboxRelayHostedService<TContext>> logger,
+    IOptions<IntegrationEventOutboxRelayOptions> options)
     : IHostedService
     where TContext : DbContext
 {
@@ -52,13 +54,18 @@ internal sealed partial class IntegrationEventOutboxRelayHostedService<TContext>
 
     private async Task Execute(CancellationToken stoppingToken)
     {
-        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
+        using var timer = new PeriodicTimer(options.Value.PollInterval);
 
-        do
+        while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                await relay.PublishPending(stoppingToken).ConfigureAwait(false);
+                int published;
+                do
+                {
+                    published = await relay.PublishPending(stoppingToken).ConfigureAwait(false);
+                }
+                while (published > 0);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
@@ -68,8 +75,9 @@ internal sealed partial class IntegrationEventOutboxRelayHostedService<TContext>
             {
                 LogOutboxRelayFailure(logger, exception, typeof(TContext).Name);
             }
+
+            await timer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false);
         }
-        while (await timer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false));
     }
 
     private static bool ShouldContinueAfterRelayFailure(Exception exception)

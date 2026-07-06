@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
@@ -9,15 +10,14 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
 internal sealed class EfIntegrationEventOutboxRelay<TContext>(
     IServiceScopeFactory scopeFactory,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider,
+    IOptions<IntegrationEventOutboxRelayOptions> options)
     where TContext : DbContext
 {
-    private const int DefaultBatchSize = 20;
+    public async ValueTask<int> PublishPending(CancellationToken ct) =>
+        await PublishPending(options.Value.BatchSize, ct).ConfigureAwait(false);
 
-    public async ValueTask PublishPending(CancellationToken ct) =>
-        await PublishPending(DefaultBatchSize, ct).ConfigureAwait(false);
-
-    internal async ValueTask PublishPending(int batchSize, CancellationToken ct)
+    internal async ValueTask<int> PublishPending(int batchSize, CancellationToken ct)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(batchSize);
 
@@ -25,13 +25,35 @@ internal sealed class EfIntegrationEventOutboxRelay<TContext>(
         var dbContext = scope.ServiceProvider.GetRequiredService<TContext>();
         var publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
         var now = timeProvider.GetUtcNow();
+        var claimedBy = Guid.CreateVersion7().ToString("N");
+        var claimedUntil = now.Add(options.Value.ClaimLeaseDuration);
         var messages = await dbContext.Set<IntegrationEventOutboxMessage>()
             .Where(message => message.PublishedAt == null
-                && (message.NextPublishAttemptAt == null || message.NextPublishAttemptAt <= now))
+                && (message.NextPublishAttemptAt == null || message.NextPublishAttemptAt <= now)
+                && (message.ClaimedUntil == null || message.ClaimedUntil <= now))
             .OrderBy(message => message.EnqueuedAt)
             .Take(batchSize)
             .ToArrayAsync(ct)
             .ConfigureAwait(false);
+
+        if (messages.Length == 0)
+        {
+            return 0;
+        }
+
+        foreach (var message in messages)
+        {
+            message.MarkClaimed(claimedBy, claimedUntil);
+        }
+
+        try
+        {
+            await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            return 0;
+        }
 
         foreach (var message in messages)
         {
@@ -57,6 +79,8 @@ internal sealed class EfIntegrationEventOutboxRelay<TContext>(
 
             await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
         }
+
+        return messages.Length;
     }
 
     private static TimeSpan GetRetryDelay(int failedAttempts)
