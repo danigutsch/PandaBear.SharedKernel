@@ -37,6 +37,7 @@ static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeAssi
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeEmpty<T>(this System.Collections.Generic.IEnumerable<T>! actual) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeNull<T>(this T? actual) -> T
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeNull<T>(this T? actual) -> T!
+static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeSameAs<T>(this T? actual, T? unexpected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain(this string? actual, string! expected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected) -> void
@@ -79,6 +80,7 @@ static SharedKernel.Testing.Assertions.TestAssert.NotEqual<T>(T expected, T actu
 static SharedKernel.Testing.Assertions.TestAssert.NotEqual<T>(T expected, T actual, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
 static SharedKernel.Testing.Assertions.TestAssert.NotNull<T>(T? value) -> T
 static SharedKernel.Testing.Assertions.TestAssert.NotNull<T>(T? value) -> T!
+static SharedKernel.Testing.Assertions.TestAssert.NotSame(object? expected, object? actual) -> void
 static SharedKernel.Testing.Assertions.TestAssert.Null(object? value) -> void
 static SharedKernel.Testing.Assertions.TestAssert.Same(object? expected, object? actual) -> void
 static SharedKernel.Testing.Assertions.TestAssert.StartsWith(string! expectedStartString, string? actualString) -> void
