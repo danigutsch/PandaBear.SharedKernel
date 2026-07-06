@@ -174,6 +174,6 @@ internal static class VersioningToolApplication
             return repoRoot;
         }
 
-        throw new ArgumentException("Unknown option for repo-root command.");
+        throw new ArgumentException("Unknown repo-root option(s): " + string.Join(' ', args) + ". Expected: [--repo-root <path>].");
     }
 }

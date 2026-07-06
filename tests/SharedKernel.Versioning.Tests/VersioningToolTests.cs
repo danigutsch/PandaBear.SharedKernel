@@ -848,7 +848,8 @@ public static class VersioningToolTests
 
         // Assert
         exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Unknown option for repo-root command", StringComparison.Ordinal);
+        error.ToString().ShouldContain("Unknown repo-root option(s): --unknown value", StringComparison.Ordinal);
+        error.ToString().ShouldContain("Expected: [--repo-root <path>]", StringComparison.Ordinal);
     }
 
     [Fact]
