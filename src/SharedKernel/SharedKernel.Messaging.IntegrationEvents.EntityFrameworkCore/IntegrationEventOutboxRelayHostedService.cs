@@ -44,7 +44,18 @@ internal sealed partial class IntegrationEventOutboxRelayHostedService<TContext>
                 return;
             }
 
-            await Task.WhenAny(task, Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken)).ConfigureAwait(false);
+            var completedTask = await Task.WhenAny(task, Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken)).ConfigureAwait(false);
+            if (completedTask == task)
+            {
+                try
+                {
+                    await task.ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (tokenSource.IsCancellationRequested)
+                {
+                    // Normal shutdown cancels the relay loop; observing the task is sufficient.
+                }
+            }
         }
         finally
         {
