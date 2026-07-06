@@ -2,6 +2,13 @@
 SharedKernel.OpenApi.MultipartFormRequestBodyDocumentTransformer
 SharedKernel.OpenApi.MultipartFormRequestBodyDocumentTransformer.MultipartFormRequestBodyDocumentTransformer() -> void
 SharedKernel.OpenApi.MultipartFormRequestBodyDocumentTransformer.TransformAsync(Microsoft.OpenApi.OpenApiDocument! document, Microsoft.AspNetCore.OpenApi.OpenApiDocumentTransformerContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+SharedKernel.OpenApi.OpenApiBoundaryDocument
+SharedKernel.OpenApi.OpenApiBoundaryDocument.DocumentName.get -> string!
+SharedKernel.OpenApi.OpenApiBoundaryDocument.DocumentName.init -> void
+SharedKernel.OpenApi.OpenApiBoundaryDocument.OpenApiBoundaryDocument(string! DocumentName, string! RoutePrefix) -> void
+SharedKernel.OpenApi.OpenApiBoundaryDocument.RoutePrefix.get -> string!
+SharedKernel.OpenApi.OpenApiBoundaryDocument.RoutePrefix.init -> void
 SharedKernel.OpenApi.OpenApiServiceCollectionExtensions
+static SharedKernel.OpenApi.OpenApiServiceCollectionExtensions.AddBoundaryOpenApiDocuments(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyCollection<SharedKernel.OpenApi.OpenApiBoundaryDocument!>! boundaries) -> void
 static SharedKernel.OpenApi.OpenApiServiceCollectionExtensions.AddBoundaryOpenApiDocuments(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyCollection<string!>! boundaryNames) -> void
 static SharedKernel.OpenApi.OpenApiServiceCollectionExtensions.AddApiVersionOpenApiDocuments(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyCollection<SharedKernel.ApiVersioning.ApiVersionDefinition!>! versions, string! routePrefix = "api") -> void

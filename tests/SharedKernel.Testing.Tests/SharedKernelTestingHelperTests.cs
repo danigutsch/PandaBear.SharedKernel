@@ -66,6 +66,32 @@ public sealed class SharedKernelTestingHelperTests
     }
 
     [Fact]
+    public static void Json_snapshot_artifact_set_matches_semantically_equal_json()
+    {
+        using var directory = TemporarySnapshotDirectory.Create();
+        directory.WriteCanonical("catalog.openapi.json", "{\"openapi\":\"3.1.1\",\"info\":{\"title\":\"Catalog\"}}");
+        directory.WriteGenerated("Api_catalog.json", "{\n  \"openapi\": \"3.1.1\",\n  \"info\": {\n    \"title\": \"Catalog\"\n  }\n}");
+        var snapshots = directory.CreateSet();
+
+        snapshots.AssertGeneratedArtifactMatchesCanonicalSnapshot("catalog");
+
+        true.ShouldBeTrue();
+    }
+
+    [Fact]
+    public static void Json_snapshot_artifact_set_rejects_drift()
+    {
+        using var directory = TemporarySnapshotDirectory.Create();
+        directory.WriteCanonical("catalog.openapi.json", "{\"openapi\":\"3.1.1\"}");
+        directory.WriteGenerated("Api_catalog.json", "{\"openapi\":\"3.0.0\"}");
+        var snapshots = directory.CreateSet();
+
+        Action action = () => snapshots.AssertCanonicalArtifactsMatchGeneratedArtifacts();
+
+        action.ShouldThrow<InvalidOperationException>().Message.ShouldContain("snapshot drift", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static void Bunit_element_assertions_accept_expected_class()
     {
         BunitElementAssertions.HasClass(["card", "active"], "active");
@@ -202,4 +228,5 @@ public sealed class SharedKernelTestingHelperTests
         var exception = await action.ShouldThrow<InvalidOperationException>();
         exception.Message.ShouldBe("expected");
     }
+
 }
