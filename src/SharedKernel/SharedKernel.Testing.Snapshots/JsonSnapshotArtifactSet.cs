@@ -109,13 +109,13 @@ public sealed class JsonSnapshotArtifactSet
 
             if (!File.Exists(generatedFilePath))
             {
-                failures.Add($"Missing generated artifact '{generatedFileName}' for canonical snapshot '{Path.GetFileName(canonicalFile)}'.");
+                failures.Add($"Missing generated artifact '{generatedFileName}' for canonical snapshot '{Path.GetFileName(canonicalFile)}'. {refreshHint}");
                 continue;
             }
 
             if (!JsonNode.DeepEquals(ParseJson(canonicalFile), ParseJson(generatedFilePath)))
             {
-                failures.Add($"Canonical snapshot '{Path.GetFileName(canonicalFile)}' drifted from generated artifact '{generatedFileName}'.");
+                failures.Add($"Canonical snapshot '{Path.GetFileName(canonicalFile)}' drifted from generated artifact '{generatedFileName}'. {refreshHint}");
             }
         }
 
@@ -124,7 +124,7 @@ public sealed class JsonSnapshotArtifactSet
             var generatedFileName = Path.GetFileName(generatedFile);
             if (!expectedGeneratedFiles.Contains(generatedFileName))
             {
-                failures.Add($"Generated artifact '{generatedFileName}' has no canonical snapshot counterpart.");
+                failures.Add($"Generated artifact '{generatedFileName}' has no canonical snapshot counterpart. {refreshHint}");
             }
         }
 
