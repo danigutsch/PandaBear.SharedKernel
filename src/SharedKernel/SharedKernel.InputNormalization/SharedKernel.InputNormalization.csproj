@@ -4,6 +4,7 @@
         <PackageId>SharedKernel.InputNormalization</PackageId>
         <Description>Reusable input normalization helpers for shared-kernel workflows.</Description>
         <RootNamespace>SharedKernel.InputNormalization</RootNamespace>
+        <PackageTags>input-normalization;validation;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
 </Project>

@@ -6,6 +6,8 @@
         <PackageId>SharedKernel.Mediator.Analyzers</PackageId>
         <Description>Analyzers for SharedKernel.Mediator.</Description>
         <RootNamespace>SharedKernel.Mediator.Analyzers</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>mediator;analyzers;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -24,6 +26,7 @@
 
     <ItemGroup>
         <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
         <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
         <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>

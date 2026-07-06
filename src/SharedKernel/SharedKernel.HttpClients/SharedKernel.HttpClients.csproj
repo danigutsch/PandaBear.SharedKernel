@@ -4,6 +4,7 @@
         <PackageId>SharedKernel.HttpClients</PackageId>
         <Description>Reusable HTTP client helpers, validation responses, defaults, and telemetry.</Description>
         <RootNamespace>SharedKernel.HttpClients</RootNamespace>
+        <PackageTags>http-clients;resilience;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

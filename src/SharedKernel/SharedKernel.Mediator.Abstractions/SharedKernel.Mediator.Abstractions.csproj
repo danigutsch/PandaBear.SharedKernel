@@ -4,9 +4,15 @@
         <PackageId>SharedKernel.Mediator.Abstractions</PackageId>
         <Description>Core abstractions for SharedKernel.Mediator.</Description>
         <RootNamespace>SharedKernel.Mediator</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>mediator;abstractions;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

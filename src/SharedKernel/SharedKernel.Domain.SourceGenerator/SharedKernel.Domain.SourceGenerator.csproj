@@ -6,6 +6,7 @@
         <PackageId>SharedKernel.Domain.SourceGenerator</PackageId>
         <Description>Source generator for SharedKernel.Domain model support.</Description>
         <RootNamespace>SharedKernel.Domain.SourceGenerator</RootNamespace>
+        <PackageTags>domain-driven-design;source-generator;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IncludeBuildOutput>false</IncludeBuildOutput>

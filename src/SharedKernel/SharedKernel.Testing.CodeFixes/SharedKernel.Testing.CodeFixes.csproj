@@ -6,6 +6,8 @@
         <PackageId>SharedKernel.Testing.CodeFixes</PackageId>
         <Description>Code fixes for repository test conventions.</Description>
         <RootNamespace>SharedKernel.Testing.CodeFixes</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>testing;code-fixes;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
@@ -23,6 +25,7 @@
 
     <ItemGroup>
         <AdditionalFiles Include="..\SharedKernel.Testing.Analyzers\AnalyzerReleases.Unshipped.md" Link="AnalyzerReleases.Unshipped.md" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
         <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
         <None Include="@(_TestingAnalyzerPackFile)" Pack="true" PackagePath="analyzers/dotnet/cs" CopyToOutputDirectory="PreserveNewest" Link="SharedKernel.Testing.Analyzers.dll" Visible="false" />
         <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />

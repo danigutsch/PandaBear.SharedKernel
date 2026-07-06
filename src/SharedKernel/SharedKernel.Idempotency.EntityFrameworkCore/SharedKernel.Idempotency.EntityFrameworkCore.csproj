@@ -4,6 +4,7 @@
         <PackageId>SharedKernel.Idempotency.EntityFrameworkCore</PackageId>
         <Description>Entity Framework Core persistence provider for reusable idempotency stores.</Description>
         <RootNamespace>SharedKernel.Idempotency.EntityFrameworkCore</RootNamespace>
+        <PackageTags>idempotency;entity-framework-core;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

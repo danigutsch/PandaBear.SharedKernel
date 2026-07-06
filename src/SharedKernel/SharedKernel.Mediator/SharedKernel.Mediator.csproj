@@ -4,6 +4,8 @@
         <PackageId>SharedKernel.Mediator</PackageId>
         <Description>Runtime support surface for SharedKernel.Mediator.</Description>
         <RootNamespace>SharedKernel.Mediator</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>mediator;dependency-injection;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,6 +15,10 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

@@ -2,9 +2,11 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
+        <IsAotCompatible>false</IsAotCompatible>
         <PackageId>SharedKernel.Messaging.IntegrationEvents.SourceGenerator</PackageId>
         <Description>Source generator for typed domain-event to integration-event messaging mappings.</Description>
         <RootNamespace>SharedKernel.Messaging.IntegrationEvents.SourceGenerator</RootNamespace>
+        <PackageTags>messaging;integration-events;source-generator;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IncludeBuildOutput>false</IncludeBuildOutput>

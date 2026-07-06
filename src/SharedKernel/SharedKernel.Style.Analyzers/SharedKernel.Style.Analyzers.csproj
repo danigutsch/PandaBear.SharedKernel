@@ -6,6 +6,8 @@
         <PackageId>SharedKernel.Style.Analyzers</PackageId>
         <Description>Analyzers for repository style conventions.</Description>
         <RootNamespace>SharedKernel.Style.Analyzers</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>style;analyzers;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IncludeBuildOutput>false</IncludeBuildOutput>
@@ -18,6 +20,7 @@
 
     <ItemGroup>
         <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
         <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
         <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
