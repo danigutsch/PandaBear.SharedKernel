@@ -4,6 +4,7 @@
         <PackageId>SharedKernel.EntityFrameworkCore</PackageId>
         <Description>Reusable Entity Framework Core composition, registration, and transaction primitives for shared-kernel workflows.</Description>
         <RootNamespace>SharedKernel.EntityFrameworkCore</RootNamespace>
+        <PackageTags>entity-framework-core;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

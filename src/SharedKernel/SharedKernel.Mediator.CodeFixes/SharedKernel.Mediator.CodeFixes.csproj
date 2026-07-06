@@ -6,6 +6,8 @@
         <PackageId>SharedKernel.Mediator.CodeFixes</PackageId>
         <Description>Code fixes for SharedKernel.Mediator.</Description>
         <RootNamespace>SharedKernel.Mediator.CodeFixes</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>mediator;code-fixes;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
@@ -24,6 +26,7 @@
 
     <ItemGroup>
         <AdditionalFiles Include="..\SharedKernel.Mediator.SourceGenerator\AnalyzerReleases.Unshipped.md" Link="AnalyzerReleases.Unshipped.md" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
         <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
         <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>

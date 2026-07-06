@@ -4,6 +4,7 @@
         <PackageId>SharedKernel.Mediator.EntityFrameworkCore</PackageId>
         <Description>Mediator pipeline behaviors and dispatch integrations backed by Entity Framework Core.</Description>
         <RootNamespace>SharedKernel.Mediator.EntityFrameworkCore</RootNamespace>
+        <PackageTags>mediator;entity-framework-core;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

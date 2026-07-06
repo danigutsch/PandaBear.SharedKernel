@@ -6,6 +6,7 @@
         <PackageId>SharedKernel.Results.SourceGenerator</PackageId>
         <Description>Source generator for centralized SharedKernel.Results error catalogs.</Description>
         <RootNamespace>SharedKernel.Results.SourceGenerator</RootNamespace>
+        <PackageTags>results;source-generator;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IncludeBuildOutput>false</IncludeBuildOutput>
