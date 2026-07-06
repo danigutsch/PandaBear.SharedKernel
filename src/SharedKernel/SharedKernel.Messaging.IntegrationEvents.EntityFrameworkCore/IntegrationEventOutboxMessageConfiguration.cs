@@ -33,6 +33,6 @@ internal sealed class IntegrationEventOutboxMessageConfiguration : IEntityTypeCo
         builder.Property(message => message.Payload);
         builder.Property(message => message.PayloadEncoding).HasConversion<string>().HasMaxLength(20);
         builder.Property(message => message.ExtensionAttributesJson);
-        builder.Property(message => message.LastPublishError).HasMaxLength(2000);
+        builder.Property(message => message.LastPublishError).HasMaxLength(IntegrationEventOutboxMessage.LastPublishErrorMaxLength);
     }
 }

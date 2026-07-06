@@ -5,6 +5,8 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// </summary>
 internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegrationEventOutboxMessage
 {
+    internal const int LastPublishErrorMaxLength = 2000;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="IntegrationEventOutboxMessage" /> class.
     /// </summary>

@@ -52,7 +52,7 @@ internal sealed class EfIntegrationEventOutboxRelay<TContext>(
                 message.MarkPublishFailed(
                     attemptedAt,
                     attemptedAt.Add(GetRetryDelay(message.PublishAttempts)),
-                    exception.Message);
+                    FormatPublishError(exception));
             }
 
             await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
@@ -72,5 +72,16 @@ internal sealed class EfIntegrationEventOutboxRelay<TContext>(
             && exception is not StackOverflowException
             && exception is not ThreadAbortException
             && (exception is not OperationCanceledException || !ct.IsCancellationRequested);
+    }
+
+    private static string FormatPublishError(Exception exception)
+    {
+        var message = string.IsNullOrWhiteSpace(exception.Message)
+            ? exception.GetType().FullName ?? exception.GetType().Name
+            : exception.Message;
+
+        return message.Length <= IntegrationEventOutboxMessage.LastPublishErrorMaxLength
+            ? message
+            : message[..IntegrationEventOutboxMessage.LastPublishErrorMaxLength];
     }
 }
