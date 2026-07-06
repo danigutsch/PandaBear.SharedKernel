@@ -1,0 +1,18 @@
+#nullable enable
+SharedKernel.Scheduling.PollingBackgroundService
+SharedKernel.Scheduling.PollingBackgroundService.PollingBackgroundService(Microsoft.Extensions.Logging.ILogger! logger, string! serviceName, System.TimeSpan pollInterval) -> void
+SharedKernel.Scheduling.SchedulingTelemetry
+abstract SharedKernel.Scheduling.PollingBackgroundService.ExecuteBatch(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.ValueTask<int>
+override SharedKernel.Scheduling.PollingBackgroundService.ExecuteAsync(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.Task!
+static SharedKernel.Scheduling.SchedulingTelemetry.ActivityPollingCycle.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.MetricPollingBatches.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.MetricPollingCycleDuration.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.MetricPollingFailures.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.MetricPollingItems.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.Name.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.OutcomeError.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.OutcomeSuccess.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.TagItemCount.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.TagOutcome.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.TagErrorType.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.TagServiceName.get -> string!
