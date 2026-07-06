@@ -347,6 +347,35 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Runs_check_public_api_baselines_command()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
+            "<Project Sdk=\"Microsoft.NET.Sdk\" />",
+            TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            ["check-public-api-baselines", "--repo-root", temporaryDirectory.Root],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        output.ToString().ShouldContain("Public API baselines", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static async Task Rejects_missing_sharedkernel_directory_for_public_api_baselines()
     {
         // Arrange
@@ -406,6 +435,89 @@ public static class VersioningToolTests
         output.ToString().ShouldContain("API compatibility report", StringComparison.Ordinal);
         Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation).ShouldBe(previousPackageValidation);
         Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion).ShouldBe(previousBaselineVersion);
+    }
+
+    [Fact]
+    public static async Task Runs_api_compatibility_command_as_report_only_for_alpha_failures()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
+            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>not-a-tfm</TargetFramework><PackageId>SharedKernel.Sample</PackageId></PropertyGroup></Project>",
+            TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            [
+                "api-compatibility",
+                "--repo-root",
+                temporaryDirectory.Root,
+                "--output-root",
+                temporaryDirectory.OutputDirectory,
+                "--version",
+                "1.2.3-alpha.1",
+                "--release-phase",
+                "alpha",
+                "--baseline-version",
+                "1.2.2",
+            ],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        output.ToString().ShouldContain("API compatibility report", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Returns_error_for_stable_api_compatibility_failure()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
+            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>not-a-tfm</TargetFramework><PackageId>SharedKernel.Sample</PackageId></PropertyGroup></Project>",
+            TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            [
+                "api-compatibility",
+                "--repo-root",
+                temporaryDirectory.Root,
+                "--output-root",
+                temporaryDirectory.OutputDirectory,
+                "--version",
+                "1.2.3",
+                "--release-phase",
+                "stable",
+                "--baseline-version",
+                "1.2.2",
+                "--breaking-marker",
+            ],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("Error:", StringComparison.Ordinal);
     }
 
     [Theory]
@@ -674,6 +786,72 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Runs_has_breaking_change_marker_command_from_git_history()
+    {
+        // Arrange
+        using var repository = new TemporaryGitRepository();
+        repository.Commit("file.txt", "base", "fix: base release");
+        repository.Commit("file.txt", "next", "feat(api)!: remove route");
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            ["has-breaking-change-marker", "HEAD~1..HEAD", "--repo-root", repository.Root],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        output.ToString().ShouldContain("Breaking-change marker found", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Returns_error_when_breaking_change_marker_is_missing()
+    {
+        // Arrange
+        using var repository = new TemporaryGitRepository();
+        repository.Commit("file.txt", "base", "fix: base release");
+        repository.Commit("file.txt", "next", "feat(api): add route");
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            ["has-breaking-change-marker", "HEAD~1..HEAD", "--repo-root", repository.Root],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("No breaking-change marker found", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Returns_error_for_unknown_repo_root_option()
+    {
+        // Arrange
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            ["check-public-api-baselines", "--unknown", "value"],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("Unknown option for repo-root command", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static void Wraps_missing_process_start_failures()
     {
         // Arrange
@@ -900,6 +1078,38 @@ public static class VersioningToolTests
         // Assert
         exitCode.ShouldBe(2);
         error.ToString().ShouldContain("Error:", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Returns_error_for_api_compatibility_option_without_value()
+    {
+        // Arrange
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(["api-compatibility", "--version"], input, output, error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("--version must include a value", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Returns_error_for_unknown_api_compatibility_option()
+    {
+        // Arrange
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(["api-compatibility", "--unknown"], input, output, error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("Unknown option '--unknown'", StringComparison.Ordinal);
     }
 
 }
