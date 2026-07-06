@@ -60,6 +60,15 @@ public static class ShouldAssertionExtensions
         where T : class => TestAssert.Same(expected, actual);
 
     /// <summary>
+    /// Verifies reference inequality with the unexpected value.
+    /// </summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="actual">The actual value.</param>
+    /// <param name="unexpected">The unexpected reference.</param>
+    public static void ShouldNotBeSameAs<T>(this T? actual, T? unexpected)
+        where T : class => TestAssert.NotSame(unexpected, actual);
+
+    /// <summary>
     /// Verifies type equality.
     /// </summary>
     /// <typeparam name="T">The expected type.</typeparam>

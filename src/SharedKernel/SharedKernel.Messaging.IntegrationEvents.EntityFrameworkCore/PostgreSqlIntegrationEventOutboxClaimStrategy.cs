@@ -49,19 +49,23 @@ internal sealed class PostgreSqlIntegrationEventOutboxClaimStrategy<TContext>
         var enqueuedAtColumn = FormatIdentifier(GetColumnName(entityType, nameof(IntegrationEventOutboxMessage.EnqueuedAt), storeObject));
 
         return $$"""
-            UPDATE {{tableName}} AS message
-            SET {{claimedByColumn}} = {0}, {{claimedUntilColumn}} = {1}
-            WHERE message.{{idColumn}} IN (
-                SELECT candidate.{{idColumn}}
-                FROM {{tableName}} AS candidate
-                WHERE candidate.{{publishedAtColumn}} IS NULL
-                    AND (candidate.{{nextAttemptColumn}} IS NULL OR candidate.{{nextAttemptColumn}} <= {2})
-                    AND (candidate.{{claimedUntilColumn}} IS NULL OR candidate.{{claimedUntilColumn}} <= {2})
-                ORDER BY candidate.{{enqueuedAtColumn}}
-                LIMIT {3}
-                FOR UPDATE SKIP LOCKED
+            WITH claimed AS (
+                UPDATE {{tableName}} AS message
+                SET {{claimedByColumn}} = {0}, {{claimedUntilColumn}} = {1}
+                WHERE message.{{idColumn}} IN (
+                    SELECT candidate.{{idColumn}}
+                    FROM {{tableName}} AS candidate
+                    WHERE candidate.{{publishedAtColumn}} IS NULL
+                        AND (candidate.{{nextAttemptColumn}} IS NULL OR candidate.{{nextAttemptColumn}} <= {2})
+                        AND (candidate.{{claimedUntilColumn}} IS NULL OR candidate.{{claimedUntilColumn}} <= {2})
+                    ORDER BY candidate.{{enqueuedAtColumn}}
+                    LIMIT {3}
+                    FOR UPDATE SKIP LOCKED
+                )
+                RETURNING *
             )
-            RETURNING *
+            SELECT *
+            FROM claimed
             """;
     }
 
