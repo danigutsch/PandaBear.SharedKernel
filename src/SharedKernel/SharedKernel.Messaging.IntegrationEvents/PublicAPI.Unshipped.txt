@@ -1,4 +1,6 @@
 #nullable enable
+SharedKernel.Messaging.IntegrationEvents.IDomainEventIntegrationEventOutbox
+SharedKernel.Messaging.IntegrationEvents.IDomainEventIntegrationEventOutbox.Enqueue<TIntegrationEvent>(TIntegrationEvent integrationEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventInboxMessage
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventInboxMessage.Id.get -> System.Guid
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventInboxMessage.ProcessedAt.get -> System.DateTimeOffset?

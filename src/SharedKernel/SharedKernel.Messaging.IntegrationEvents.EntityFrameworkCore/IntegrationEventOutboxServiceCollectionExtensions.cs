@@ -15,40 +15,20 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// Adds an EF Core integration event outbox whose migrations own the shared messaging table.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
-    /// <param name="lifetime">The outbox service lifetime.</param>
     /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
     /// <returns>The configured service collection.</returns>
-    public static IServiceCollection AddIntegrationEventOutbox<TContext>(
-        this IServiceCollection services,
-        ServiceLifetime lifetime = ServiceLifetime.Scoped)
+    public static IServiceCollection AddIntegrationEventOutbox<TContext>(this IServiceCollection services)
         where TContext : DbContext
     {
         ArgumentNullException.ThrowIfNull(services);
 
         services.TryAddSingleton(TimeProvider.System);
-        services.TryAddIntegrationEventOutbox<TContext>(lifetime);
+        services.TryAddScoped<IIntegrationEventOutbox, EfIntegrationEventOutbox<TContext>>();
+        services.TryAddSingleton<IDomainEventIntegrationEventOutbox, EfDomainEventIntegrationEventOutbox<TContext>>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventOutboxDbContextConfiguration<TContext>>());
         services.AddIdempotencyStore<TContext>();
 
         return services;
-    }
-
-    private static void TryAddIntegrationEventOutbox<TContext>(this IServiceCollection services, ServiceLifetime lifetime)
-        where TContext : DbContext
-    {
-        switch (lifetime)
-        {
-            case ServiceLifetime.Singleton:
-                services.TryAddSingleton<IIntegrationEventOutbox>(sp => new EfIntegrationEventOutbox<TContext>(
-                    sp.GetRequiredService<TimeProvider>(),
-                    sp.GetRequiredService<IIntegrationEventSerializer>()));
-                return;
-            case ServiceLifetime.Scoped:
-                services.TryAddScoped<IIntegrationEventOutbox, EfIntegrationEventOutbox<TContext>>();
-                return;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, "Only singleton and scoped outbox lifetimes are supported.");
-        }
     }
 
     /// <summary>
