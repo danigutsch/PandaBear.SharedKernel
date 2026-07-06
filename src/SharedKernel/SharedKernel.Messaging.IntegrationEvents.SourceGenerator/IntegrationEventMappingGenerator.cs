@@ -114,7 +114,7 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
 
         builder.AppendLine($$"""
             internal sealed class GeneratedIntegrationEventDomainEventDispatcher(
-                global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutbox outbox,
+                global::SharedKernel.Messaging.IntegrationEvents.IDomainEventIntegrationEventOutbox outbox,
                 global::System.TimeProvider timeProvider)
                 : global::SharedKernel.DomainEvents.IDomainEventDispatcher
             {

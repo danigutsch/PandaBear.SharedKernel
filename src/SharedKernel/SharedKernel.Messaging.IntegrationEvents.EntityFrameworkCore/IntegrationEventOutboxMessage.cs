@@ -5,6 +5,10 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// </summary>
 internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegrationEventOutboxMessage
 {
+    internal const int LastPublishErrorMaxLength = 2000;
+
+    internal const int ClaimOwnerMaxLength = 100;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="IntegrationEventOutboxMessage" /> class.
     /// </summary>
@@ -80,6 +84,30 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
     /// <inheritdoc />
     public DateTimeOffset? PublishedAt { get; private set; }
 
+    /// <inheritdoc />
+    public int PublishAttempts { get; private set; }
+
+    /// <inheritdoc />
+    public DateTimeOffset? LastPublishAttemptAt { get; private set; }
+
+    /// <inheritdoc />
+    public DateTimeOffset? NextPublishAttemptAt { get; private set; }
+
+    /// <inheritdoc />
+    public string? LastPublishError { get; private set; }
+
+    public string? ClaimedBy { get; private set; }
+
+    public DateTimeOffset? ClaimedUntil { get; private set; }
+
+    int IRetryableMessage.Attempts => PublishAttempts;
+
+    DateTimeOffset? IRetryableMessage.LastAttemptAt => LastPublishAttemptAt;
+
+    DateTimeOffset? IRetryableMessage.NextAttemptAt => NextPublishAttemptAt;
+
+    string? IRetryableMessage.LastError => LastPublishError;
+
     /// <summary>
     /// Marks the message as published.
     /// </summary>
@@ -87,5 +115,38 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
     public void MarkPublished(DateTimeOffset publishedAt)
     {
         PublishedAt = publishedAt;
+        LastPublishAttemptAt = publishedAt;
+        NextPublishAttemptAt = null;
+        LastPublishError = null;
+        ClaimedBy = null;
+        ClaimedUntil = null;
+    }
+
+    public void MarkClaimed(string claimedBy, DateTimeOffset claimedUntil)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(claimedBy);
+
+        ClaimedBy = claimedBy.Length <= ClaimOwnerMaxLength
+            ? claimedBy
+            : claimedBy[..ClaimOwnerMaxLength];
+        ClaimedUntil = claimedUntil;
+    }
+
+    /// <summary>
+    /// Records a failed publication attempt.
+    /// </summary>
+    /// <param name="attemptedAt">The attempt time.</param>
+    /// <param name="nextAttemptAt">The next retry time.</param>
+    /// <param name="error">The failure description.</param>
+    public void MarkPublishFailed(DateTimeOffset attemptedAt, DateTimeOffset nextAttemptAt, string error)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(error);
+
+        PublishAttempts++;
+        LastPublishAttemptAt = attemptedAt;
+        NextPublishAttemptAt = nextAttemptAt;
+        LastPublishError = error;
+        ClaimedBy = null;
+        ClaimedUntil = null;
     }
 }

@@ -19,3 +19,21 @@ SharedKernel.Messaging.EventEnvelope.Time.get -> System.DateTimeOffset?
 SharedKernel.Messaging.EventPayloadEncoding
 SharedKernel.Messaging.EventPayloadEncoding.Base64 = 1 -> SharedKernel.Messaging.EventPayloadEncoding
 SharedKernel.Messaging.EventPayloadEncoding.Json = 0 -> SharedKernel.Messaging.EventPayloadEncoding
+SharedKernel.Messaging.IEventEnvelopePublisher
+SharedKernel.Messaging.IEventEnvelopePublisher.Publish(SharedKernel.Messaging.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Messaging.IEventEnvelope
+SharedKernel.Messaging.IEventEnvelope.EnvelopeSpec.get -> string!
+SharedKernel.Messaging.IEventEnvelope.EnvelopeSpecVersion.get -> string!
+SharedKernel.Messaging.IEventEnvelope.ExtensionAttributesJson.get -> string?
+SharedKernel.Messaging.IEventEnvelopeMetadata
+SharedKernel.Messaging.IEventEnvelopeMetadata.EventId.get -> string!
+SharedKernel.Messaging.IEventEnvelopeMetadata.EventType.get -> string!
+SharedKernel.Messaging.IEventEnvelopeMetadata.EventVersion.get -> int?
+SharedKernel.Messaging.IEventEnvelopeMetadata.Source.get -> System.Uri!
+SharedKernel.Messaging.IEventEnvelopeMetadata.Subject.get -> string?
+SharedKernel.Messaging.IEventEnvelopeMetadata.Time.get -> System.DateTimeOffset?
+SharedKernel.Messaging.IEventEnvelopePayload
+SharedKernel.Messaging.IEventEnvelopePayload.DataContentType.get -> string?
+SharedKernel.Messaging.IEventEnvelopePayload.DataSchema.get -> System.Uri?
+SharedKernel.Messaging.IEventEnvelopePayload.Payload.get -> string?
+SharedKernel.Messaging.IEventEnvelopePayload.PayloadEncoding.get -> SharedKernel.Messaging.EventPayloadEncoding

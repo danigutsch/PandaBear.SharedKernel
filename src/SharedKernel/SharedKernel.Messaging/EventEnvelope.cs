@@ -3,7 +3,7 @@ namespace SharedKernel.Messaging;
 /// <summary>
 /// Carries event envelope metadata, payload content, and extension attributes across messaging boundaries.
 /// </summary>
-public class EventEnvelope
+public class EventEnvelope : IEventEnvelope
 {
     /// <summary>
     /// The maximum supported event type identifier length.

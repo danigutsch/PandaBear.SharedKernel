@@ -1,4 +1,9 @@
 #nullable enable
+SharedKernel.Messaging.IntegrationEvents.IDomainEventIntegrationEventOutbox
+SharedKernel.Messaging.IntegrationEvents.IDomainEventIntegrationEventOutbox.Enqueue<TIntegrationEvent>(TIntegrationEvent integrationEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Messaging.IntegrationEvents.IntegrationEventConsumerServiceCollectionExtensions
+static SharedKernel.Messaging.IntegrationEvents.IntegrationEventConsumerServiceCollectionExtensions.AddIntegrationEventConsumer<TIntegrationEvent>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! eventType, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TIntegrationEvent>! jsonTypeInfo) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static SharedKernel.Messaging.IntegrationEvents.IntegrationEventConsumerServiceCollectionExtensions.AddIntegrationEventContract<TIntegrationEvent>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! eventType, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TIntegrationEvent>! jsonTypeInfo) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventInboxMessage
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventInboxMessage.Id.get -> System.Guid
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventInboxMessage.ProcessedAt.get -> System.DateTimeOffset?
@@ -8,6 +13,10 @@ SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutbox.Enqueue<TIntegr
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage.EnqueuedAt.get -> System.DateTimeOffset
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage.Id.get -> System.Guid
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage.LastPublishAttemptAt.get -> System.DateTimeOffset?
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage.LastPublishError.get -> string?
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage.NextPublishAttemptAt.get -> System.DateTimeOffset?
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage.PublishAttempts.get -> int
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventOutboxMessage.PublishedAt.get -> System.DateTimeOffset?
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEvent
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEvent.EventId.get -> System.Guid
@@ -24,3 +33,8 @@ SharedKernel.Messaging.IntegrationEvents.IntegrationEventMappingAttribute.Integr
 SharedKernel.Messaging.IntegrationEvents.MediatorIntegrationEventDispatcher
 SharedKernel.Messaging.IntegrationEvents.MediatorIntegrationEventDispatcher.Dispatch<TIntegrationEvent>(TIntegrationEvent integrationEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.Messaging.IntegrationEvents.MediatorIntegrationEventDispatcher.MediatorIntegrationEventDispatcher(SharedKernel.Mediator.IPublisher! publisher) -> void
+SharedKernel.Messaging.IntegrationEvents.IRetryableMessage
+SharedKernel.Messaging.IntegrationEvents.IRetryableMessage.Attempts.get -> int
+SharedKernel.Messaging.IntegrationEvents.IRetryableMessage.LastAttemptAt.get -> System.DateTimeOffset?
+SharedKernel.Messaging.IntegrationEvents.IRetryableMessage.LastError.get -> string?
+SharedKernel.Messaging.IntegrationEvents.IRetryableMessage.NextAttemptAt.get -> System.DateTimeOffset?

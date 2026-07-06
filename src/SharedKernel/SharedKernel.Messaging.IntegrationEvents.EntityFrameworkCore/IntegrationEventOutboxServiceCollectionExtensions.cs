@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using SharedKernel.EntityFrameworkCore;
 using SharedKernel.Idempotency.EntityFrameworkCore;
 
@@ -12,7 +13,7 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 public static class IntegrationEventOutboxServiceCollectionExtensions
 {
     /// <summary>
-    /// Adds an EF Core integration event outbox for the target DbContext.
+    /// Adds an EF Core integration event outbox whose migrations own the shared messaging table.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
@@ -22,9 +23,42 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddSingleton<IIntegrationEventOutbox, EfIntegrationEventOutbox<TContext>>();
+        services.TryAddSingleton(TimeProvider.System);
+        services.TryAddScoped<IIntegrationEventOutbox, EfIntegrationEventOutbox<TContext>>();
+        services.TryAddSingleton<IDomainEventIntegrationEventOutbox, EfDomainEventIntegrationEventOutbox<TContext>>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventOutboxDbContextConfiguration<TContext>>());
         services.AddIdempotencyStore<TContext>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds a DB-backed outbox relay for the target DbContext.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="configureOptions"></param>
+    /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection AddIntegrationEventOutboxRelay<TContext>(
+        this IServiceCollection services,
+        Action<IntegrationEventOutboxRelayOptions>? configureOptions = null)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        var optionsBuilder = services.AddOptions<IntegrationEventOutboxRelayOptions>().ValidateOnStart();
+        if (configureOptions is not null)
+        {
+            optionsBuilder.Configure(configureOptions);
+        }
+
+        services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<
+                IValidateOptions<IntegrationEventOutboxRelayOptions>,
+                IntegrationEventOutboxRelayOptionsValidator>());
+        services.TryAddSingleton(TimeProvider.System);
+        services.AddSingleton<EfIntegrationEventOutboxRelay<TContext>>();
+        services.AddHostedService<IntegrationEventOutboxRelayHostedService<TContext>>();
 
         return services;
     }

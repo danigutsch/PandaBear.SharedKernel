@@ -13,10 +13,12 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
+        <ProjectReference Include="..\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
     </ItemGroup>
 
     <ItemGroup>
