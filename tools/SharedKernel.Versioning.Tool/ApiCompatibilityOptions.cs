@@ -30,7 +30,6 @@ internal sealed record ApiCompatibilityOptions(
                 case "--output-root":
                 case "--release-phase":
                 case "--repo-root":
-                case "--baseline-version":
                     if (index == args.Length - 1)
                     {
                         throw new ArgumentException($"{args[index]} must include a value.");
@@ -54,11 +53,16 @@ internal sealed record ApiCompatibilityOptions(
                     {
                         repoRoot = value;
                     }
-                    else
+
+                    index += 2;
+                    break;
+                case "--baseline-version":
+                    if (index == args.Length - 1)
                     {
-                        baselineVersion = value;
+                        throw new ArgumentException($"{args[index]} must include a value.");
                     }
 
+                    baselineVersion = args[index + 1];
                     index += 2;
                     break;
                 default:

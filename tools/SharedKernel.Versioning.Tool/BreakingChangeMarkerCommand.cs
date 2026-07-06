@@ -16,7 +16,11 @@ internal static class BreakingChangeMarkerCommand
     public static bool HasMarker(string messages)
     {
         var commits = messages.Split('\0', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        return commits.Any(static message => message.Contains("\nBREAKING CHANGE:", StringComparison.Ordinal)
+        return commits.Any(static message => HasRawBreakingFooter(message)
             || (ConventionalCommitParser.TryParse(message, out var commit) && commit is not null && commit.Impact == ReleaseImpact.Major));
     }
+
+    private static bool HasRawBreakingFooter(string message) =>
+        message.Contains("\nBREAKING CHANGE:", StringComparison.Ordinal)
+        || message.Contains("\nBREAKING-CHANGE:", StringComparison.Ordinal);
 }

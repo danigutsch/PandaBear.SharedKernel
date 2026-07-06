@@ -249,6 +249,19 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static void Detects_breaking_dash_change_footer_in_non_conventional_commits()
+    {
+        // Arrange
+        const string messages = "Merge pull request #1 from branch\n\nBREAKING-CHANGE: remove route\0";
+
+        // Act
+        var hasMarker = BreakingChangeMarkerCommand.HasMarker(messages);
+
+        // Assert
+        hasMarker.ShouldBeTrue();
+    }
+
+    [Fact]
     public static void Defines_api_compatibility_environment_variable_names()
     {
         // Assert
