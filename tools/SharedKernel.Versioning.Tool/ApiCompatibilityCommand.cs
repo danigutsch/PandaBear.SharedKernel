@@ -53,7 +53,7 @@ internal static class ApiCompatibilityCommand
 
         - Version: `{options.Version}`
         - Phase: `{options.ReleasePhase}`
-        - Policy: alpha is report-only; beta records breaking changes; RC/stable block breaking changes.
+        - Policy: alpha is report-only; beta is report-only only with `--breaking-marker`; RC/stable block breaking changes.
 
         """;
 
