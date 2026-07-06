@@ -1,0 +1,7 @@
+#nullable enable
+SharedKernel.Observability.ExplicitServiceNameDetector
+SharedKernel.Observability.ExplicitServiceNameDetector.Detect() -> OpenTelemetry.Resources.Resource!
+SharedKernel.Observability.ExplicitServiceNameDetector.ExplicitServiceNameDetector(string! serviceName, string? serviceVersion = null) -> void
+SharedKernel.Observability.ObservabilityBuilderExtensions
+static SharedKernel.Observability.ObservabilityBuilderExtensions.AddApplicationVersionLogging<TBuilder>(this TBuilder builder, string? applicationVersion = null) -> TBuilder
+static SharedKernel.Observability.ObservabilityBuilderExtensions.ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) -> TBuilder

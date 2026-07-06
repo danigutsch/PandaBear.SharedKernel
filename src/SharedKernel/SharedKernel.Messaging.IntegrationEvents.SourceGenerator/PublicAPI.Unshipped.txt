@@ -1,0 +1,4 @@
+#nullable enable
+SharedKernel.Messaging.IntegrationEvents.SourceGenerator.IntegrationEventMappingGenerator
+SharedKernel.Messaging.IntegrationEvents.SourceGenerator.IntegrationEventMappingGenerator.IntegrationEventMappingGenerator() -> void
+SharedKernel.Messaging.IntegrationEvents.SourceGenerator.IntegrationEventMappingGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void

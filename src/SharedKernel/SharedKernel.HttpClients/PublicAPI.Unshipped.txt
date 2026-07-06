@@ -1,0 +1,15 @@
+#nullable enable
+SharedKernel.HttpClients.ContractHttpValidation
+SharedKernel.HttpClients.ContractValidationException
+SharedKernel.HttpClients.ContractValidationException.ContractValidationException() -> void
+SharedKernel.HttpClients.ContractValidationException.ContractValidationException(string! message) -> void
+SharedKernel.HttpClients.ContractValidationException.ContractValidationException(string! message, System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>! validationErrors) -> void
+SharedKernel.HttpClients.ContractValidationException.ContractValidationException(string! message, System.Exception! innerException) -> void
+SharedKernel.HttpClients.ContractValidationException.GetAllErrorMessages() -> string!
+SharedKernel.HttpClients.ContractValidationException.ValidationErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>!
+SharedKernel.HttpClients.ContractValidationProblemDto
+SharedKernel.HttpClients.ContractValidationProblemDto.Errors.get -> System.Collections.Generic.Dictionary<string!, string![]!>?
+SharedKernel.HttpClients.ContractValidationProblemDto.Errors.init -> void
+SharedKernel.HttpClients.HttpServiceCollectionExtensions
+static SharedKernel.HttpClients.ContractHttpValidation.EnsureSuccessOrThrowValidationException(System.Net.Http.HttpResponseMessage! response, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! jsonTypeInfo, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static SharedKernel.HttpClients.HttpServiceCollectionExtensions.AddHttpClientDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

@@ -1,0 +1,3 @@
+#nullable enable
+SharedKernel.Testing.Http.HttpResponseFactory
+static SharedKernel.Testing.Http.HttpResponseFactory.Json(string! json, System.Net.HttpStatusCode statusCode = System.Net.HttpStatusCode.OK) -> System.Net.Http.HttpResponseMessage!

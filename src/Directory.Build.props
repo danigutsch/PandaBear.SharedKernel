@@ -2,4 +2,8 @@
 
     <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..'))" />
 
+    <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj' and $([System.String]::Copy('$(MSBuildProjectName)').StartsWith('SharedKernel.'))">
+        <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
+    </ItemGroup>
+
 </Project>

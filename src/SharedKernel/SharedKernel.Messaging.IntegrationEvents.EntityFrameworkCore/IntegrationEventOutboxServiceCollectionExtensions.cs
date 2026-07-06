@@ -36,7 +36,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// Adds a DB-backed outbox relay for the target DbContext.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
-    /// <param name="configureOptions"></param>
+    /// <param name="configureOptions">An optional delegate that configures relay behavior.</param>
     /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
     /// <returns>The configured service collection.</returns>
     public static IServiceCollection AddIntegrationEventOutboxRelay<TContext>(

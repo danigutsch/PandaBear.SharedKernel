@@ -1,0 +1,61 @@
+#nullable enable
+SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageOutputFormat.Avif = 0 -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageOutputFormat.Ico = 3 -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageOutputFormat.Jpeg = 2 -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageOutputFormat.WebP = 1 -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageProcessingException
+SharedKernel.ImageProcessing.ImageProcessingException.ImageProcessingException() -> void
+SharedKernel.ImageProcessing.ImageProcessingException.ImageProcessingException(string! message) -> void
+SharedKernel.ImageProcessing.ImageProcessingException.ImageProcessingException(string! message, System.Exception! innerException) -> void
+SharedKernel.ImageProcessing.ImageProcessingLimits
+SharedKernel.ImageProcessing.ImageProcessingLimits.ImageProcessingLimits(int MaxWidth, int MaxHeight, long MaxPixelCount) -> void
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxHeight.get -> int
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxHeight.init -> void
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxPixelCount.get -> long
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxPixelCount.init -> void
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxWidth.get -> int
+SharedKernel.ImageProcessing.ImageProcessingLimits.MaxWidth.init -> void
+SharedKernel.ImageProcessing.ImageProcessingRequest
+SharedKernel.ImageProcessing.ImageProcessingRequest.Content.get -> System.IO.Stream!
+SharedKernel.ImageProcessing.ImageProcessingRequest.Content.init -> void
+SharedKernel.ImageProcessing.ImageProcessingRequest.ImageProcessingRequest(System.IO.Stream! Content, System.Collections.Generic.IReadOnlyList<SharedKernel.ImageProcessing.ImageVariantRequest!>! Variants, SharedKernel.ImageProcessing.ImageProcessingLimits! Limits) -> void
+SharedKernel.ImageProcessing.ImageProcessingRequest.Limits.get -> SharedKernel.ImageProcessing.ImageProcessingLimits!
+SharedKernel.ImageProcessing.ImageProcessingRequest.Limits.init -> void
+SharedKernel.ImageProcessing.ImageProcessingRequest.Variants.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.ImageProcessing.ImageVariantRequest!>!
+SharedKernel.ImageProcessing.ImageProcessingRequest.Variants.init -> void
+SharedKernel.ImageProcessing.ImageProcessingResult
+SharedKernel.ImageProcessing.ImageProcessingResult.Height.get -> int
+SharedKernel.ImageProcessing.ImageProcessingResult.Height.init -> void
+SharedKernel.ImageProcessing.ImageProcessingResult.ImageProcessingResult(int Width, int Height, System.Collections.Generic.IReadOnlyList<SharedKernel.ImageProcessing.ProcessedImageVariant!>! Variants) -> void
+SharedKernel.ImageProcessing.ImageProcessingResult.Variants.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.ImageProcessing.ProcessedImageVariant!>!
+SharedKernel.ImageProcessing.ImageProcessingResult.Variants.init -> void
+SharedKernel.ImageProcessing.ImageProcessingResult.Width.get -> int
+SharedKernel.ImageProcessing.ImageProcessingResult.Width.init -> void
+SharedKernel.ImageProcessing.ImageVariantRequest
+SharedKernel.ImageProcessing.ImageVariantRequest.Format.get -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ImageVariantRequest.Format.init -> void
+SharedKernel.ImageProcessing.ImageVariantRequest.ImageVariantRequest(string! Name, SharedKernel.ImageProcessing.ImageOutputFormat Format, int MaxWidth, int Quality, int? MaxHeight = null) -> void
+SharedKernel.ImageProcessing.ImageVariantRequest.MaxHeight.get -> int?
+SharedKernel.ImageProcessing.ImageVariantRequest.MaxHeight.init -> void
+SharedKernel.ImageProcessing.ImageVariantRequest.MaxWidth.get -> int
+SharedKernel.ImageProcessing.ImageVariantRequest.MaxWidth.init -> void
+SharedKernel.ImageProcessing.ImageVariantRequest.Name.get -> string!
+SharedKernel.ImageProcessing.ImageVariantRequest.Name.init -> void
+SharedKernel.ImageProcessing.ImageVariantRequest.Quality.get -> int
+SharedKernel.ImageProcessing.ImageVariantRequest.Quality.init -> void
+SharedKernel.ImageProcessing.MagickImageProcessor
+SharedKernel.ImageProcessing.ProcessedImageVariant
+SharedKernel.ImageProcessing.ProcessedImageVariant.Content.get -> System.ReadOnlyMemory<byte>
+SharedKernel.ImageProcessing.ProcessedImageVariant.Content.init -> void
+SharedKernel.ImageProcessing.ProcessedImageVariant.Format.get -> SharedKernel.ImageProcessing.ImageOutputFormat
+SharedKernel.ImageProcessing.ProcessedImageVariant.Format.init -> void
+SharedKernel.ImageProcessing.ProcessedImageVariant.Height.get -> int
+SharedKernel.ImageProcessing.ProcessedImageVariant.Height.init -> void
+SharedKernel.ImageProcessing.ProcessedImageVariant.Name.get -> string!
+SharedKernel.ImageProcessing.ProcessedImageVariant.Name.init -> void
+SharedKernel.ImageProcessing.ProcessedImageVariant.ProcessedImageVariant(string! Name, SharedKernel.ImageProcessing.ImageOutputFormat Format, int Width, int Height, System.ReadOnlyMemory<byte> Content) -> void
+SharedKernel.ImageProcessing.ProcessedImageVariant.Width.get -> int
+SharedKernel.ImageProcessing.ProcessedImageVariant.Width.init -> void
+static SharedKernel.ImageProcessing.ImageProcessingLimits.WebDefault.get -> SharedKernel.ImageProcessing.ImageProcessingLimits!
+static SharedKernel.ImageProcessing.MagickImageProcessor.Process(SharedKernel.ImageProcessing.ImageProcessingRequest! request, System.Threading.CancellationToken ct) -> SharedKernel.ImageProcessing.ImageProcessingResult!

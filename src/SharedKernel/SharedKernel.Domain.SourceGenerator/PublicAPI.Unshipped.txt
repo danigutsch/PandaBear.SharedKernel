@@ -1,0 +1,4 @@
+#nullable enable
+SharedKernel.Domain.SourceGenerator.ModelIdentityGenerator
+SharedKernel.Domain.SourceGenerator.ModelIdentityGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void
+SharedKernel.Domain.SourceGenerator.ModelIdentityGenerator.ModelIdentityGenerator() -> void

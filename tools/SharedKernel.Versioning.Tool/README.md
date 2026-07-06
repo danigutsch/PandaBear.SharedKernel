@@ -21,6 +21,9 @@ sharedkernel-version --version
 sharedkernel-version commit-impact <message>
 sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha>] < commit-messages.txt
 sharedkernel-version calculate-release [--repo-root <path>] [--version-kind <prerelease|stable>]
+sharedkernel-version check-public-api-baselines [--repo-root <path>]
+sharedkernel-version has-breaking-change-marker <git-range> [--repo-root <path>]
+sharedkernel-version api-compatibility [--version <semver>] [--release-phase <alpha|beta|rc|stable>] [--baseline-version <semver>] [--output-root <path>] [--breaking-marker] [--repo-root <path>]
 sharedkernel-version pack-sharedkernel [--version <semver>] [--output-root <path>]
 sharedkernel-version prepare-release --version <semver> --package-dir <path> < changes.txt
 ```
@@ -92,6 +95,35 @@ Output fields:
 The `compute` command reads commit messages from standard input. Non-Conventional merge commits are
 ignored; valid Conventional Commit messages drive the release impact. Use null-separated input when
 feeding raw `git log` messages so multiline commit bodies stay grouped.
+
+Check that every `src/SharedKernel/SharedKernel.*` package project has public API baseline files:
+
+```text
+sharedkernel-version check-public-api-baselines
+```
+
+Detect Conventional Commit breaking-change markers in commit history:
+
+```text
+sharedkernel-version has-breaking-change-marker origin/main..HEAD
+```
+
+Generate the API compatibility report and, when a baseline version is supplied, pass the official .NET
+package validation properties to `dotnet pack`:
+
+```text
+sharedkernel-version api-compatibility --version 0.1.0-alpha.1 --release-phase alpha --output-root artifacts/api-compat
+sharedkernel-version api-compatibility --version 0.2.0-beta.1 --release-phase beta --breaking-marker --baseline-version 0.1.0 --repo-root .
+sharedkernel-version api-compatibility --version 1.0.0 --release-phase stable --baseline-version 0.9.0
+```
+
+The command uses these internal environment variables while invoking `pack-sharedkernel`:
+
+- `API_COMPAT_ENABLE_PACKAGE_VALIDATION` -> `EnablePackageValidation`
+- `API_COMPAT_BASELINE_VERSION` -> `PackageValidationBaselineVersion`
+
+The variables are restored after the command completes or fails. They are an implementation detail for
+sharing options between commands, not a supported contributor interface.
 
 ## Exit codes
 

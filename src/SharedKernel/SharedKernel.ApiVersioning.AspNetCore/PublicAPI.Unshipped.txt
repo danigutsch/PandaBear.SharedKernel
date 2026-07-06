@@ -1,0 +1,4 @@
+#nullable enable
+SharedKernel.ApiVersioning.AspNetCore.ApiVersionRouteGroupExtensions
+static SharedKernel.ApiVersioning.AspNetCore.ApiVersionRouteGroupExtensions.MapApiVersionGroup(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, SharedKernel.ApiVersioning.ApiVersionDefinition! version, string! routePrefix = "api") -> Microsoft.AspNetCore.Routing.RouteGroupBuilder!
+static SharedKernel.ApiVersioning.AspNetCore.ApiVersionRouteGroupExtensions.WithApiVersion<TBuilder>(this TBuilder builder, SharedKernel.ApiVersioning.ApiVersionDefinition! version) -> TBuilder
