@@ -16,11 +16,13 @@ internal static class ApiCompatibilityCommand
             Path.Combine(options.OutputRoot, "packages"),
             VerifyRestore: string.IsNullOrWhiteSpace(options.BaselineVersion),
             RepoRoot: options.RepoRoot);
+        var previousPackageValidation = Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation);
+        var previousBaselineVersion = Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion);
 
         try
         {
-            Environment.SetEnvironmentVariable("API_COMPAT_ENABLE_PACKAGE_VALIDATION", string.IsNullOrWhiteSpace(options.BaselineVersion) ? null : "true");
-            Environment.SetEnvironmentVariable("API_COMPAT_BASELINE_VERSION", options.BaselineVersion);
+            Environment.SetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation, string.IsNullOrWhiteSpace(options.BaselineVersion) ? null : "true");
+            Environment.SetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion, options.BaselineVersion);
             using var writer = new StringWriter();
             await SharedKernelPackCommand.Run(packOptions, writer).ConfigureAwait(false);
             await AppendOutput(reportPath, writer.ToString()).ConfigureAwait(false);
@@ -28,7 +30,7 @@ internal static class ApiCompatibilityCommand
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
         {
             await AppendOutput(reportPath, ex.Message).ConfigureAwait(false);
-            if (string.Equals(options.ReleasePhase, "alpha", StringComparison.OrdinalIgnoreCase) || options.BreakingMarker)
+            if (ShouldTreatFailureAsReportOnly(options))
             {
                 await output.WriteLineAsync($"API compatibility report: {reportPath}").ConfigureAwait(false);
                 return;
@@ -38,8 +40,8 @@ internal static class ApiCompatibilityCommand
         }
         finally
         {
-            Environment.SetEnvironmentVariable("API_COMPAT_ENABLE_PACKAGE_VALIDATION", null);
-            Environment.SetEnvironmentVariable("API_COMPAT_BASELINE_VERSION", null);
+            Environment.SetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation, previousPackageValidation);
+            Environment.SetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion, previousBaselineVersion);
         }
 
         await output.WriteLineAsync($"API compatibility report: {reportPath}").ConfigureAwait(false);
@@ -57,6 +59,10 @@ internal static class ApiCompatibilityCommand
 
     private static Task AppendOutput(string reportPath, string output) =>
         File.AppendAllTextAsync(reportPath, "```text" + Environment.NewLine + output + Environment.NewLine + "```" + Environment.NewLine);
+
+    public static bool ShouldTreatFailureAsReportOnly(ApiCompatibilityOptions options) =>
+        string.Equals(options.ReleasePhase, "alpha", StringComparison.OrdinalIgnoreCase)
+        || (string.Equals(options.ReleasePhase, "beta", StringComparison.OrdinalIgnoreCase) && options.BreakingMarker);
 
     private static string ResolveOutputRoot(ApiCompatibilityOptions options) =>
         Path.IsPathRooted(options.OutputRoot)

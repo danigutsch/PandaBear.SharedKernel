@@ -5,9 +5,20 @@ internal static class PublicApiBaselineCommand
     public static async Task Run(string repoRoot, TextWriter output)
     {
         var sharedKernelDirectory = Path.Combine(repoRoot, "src", "SharedKernel");
+        if (!Directory.Exists(sharedKernelDirectory))
+        {
+            throw new ArgumentException($"SharedKernel directory does not exist: {sharedKernelDirectory}");
+        }
+
         var projects = Directory.GetFiles(sharedKernelDirectory, "*.csproj", SearchOption.AllDirectories)
             .Order(StringComparer.Ordinal)
             .ToArray();
+
+        if (projects.Length == 0)
+        {
+            throw new ArgumentException($"No SharedKernel projects found under {sharedKernelDirectory}.");
+        }
+
         var missing = new List<string>();
 
         foreach (var project in projects)

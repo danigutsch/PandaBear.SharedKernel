@@ -16,6 +16,7 @@ internal static class BreakingChangeMarkerCommand
     public static bool HasMarker(string messages)
     {
         var commits = messages.Split('\0', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        return commits.Any(message => ConventionalCommitParser.Parse(message).Impact == ReleaseImpact.Major || message.Contains("\nBREAKING CHANGE:", StringComparison.Ordinal));
+        return commits.Any(static message => message.Contains("\nBREAKING CHANGE:", StringComparison.Ordinal)
+            || (ConventionalCommitParser.TryParse(message, out var commit) && commit is not null && commit.Impact == ReleaseImpact.Major));
     }
 }
