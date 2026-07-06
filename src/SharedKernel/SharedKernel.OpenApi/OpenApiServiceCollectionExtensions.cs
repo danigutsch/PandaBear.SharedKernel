@@ -20,27 +20,51 @@ public static class OpenApiServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(boundaryNames);
 
+        services.AddBoundaryOpenApiDocuments(
+            [.. boundaryNames.Select(boundaryName => new OpenApiBoundaryDocument(boundaryName, boundaryName))]);
+    }
+
+    /// <summary>
+    /// Registers the default OpenAPI document and one named document per boundary definition.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="boundaries">The boundary documents to register.</param>
+    public static void AddBoundaryOpenApiDocuments(
+        this IServiceCollection services,
+        IReadOnlyCollection<OpenApiBoundaryDocument> boundaries)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(boundaries);
+
         services.AddOpenApi();
-        var registeredBoundaryNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var registeredDocumentNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var boundaryName in boundaryNames)
+        foreach (var boundary in boundaries)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(boundaryName);
+            ArgumentNullException.ThrowIfNull(boundary);
+            ArgumentException.ThrowIfNullOrWhiteSpace(boundary.DocumentName);
+            ArgumentException.ThrowIfNullOrWhiteSpace(boundary.RoutePrefix);
 
-            if (!registeredBoundaryNames.Add(boundaryName))
+            if (!registeredDocumentNames.Add(boundary.DocumentName))
             {
                 throw new ArgumentException(
-                    $"Duplicate boundary name '{boundaryName}' is not allowed.",
-                    nameof(boundaryNames));
+                    $"Duplicate OpenAPI document name '{boundary.DocumentName}' is not allowed.",
+                    nameof(boundaries));
             }
 
-            services.AddOpenApi(boundaryName, options =>
+            var routePrefix = boundary.RoutePrefix.Trim().Trim('/');
+            if (routePrefix.Length == 0)
+            {
+                throw new ArgumentException("Boundary route prefixes must contain at least one non-slash character.", nameof(boundaries));
+            }
+
+            services.AddOpenApi(boundary.DocumentName, options =>
             {
                 options.AddDocumentTransformer<MultipartFormRequestBodyDocumentTransformer>();
                 options.ShouldInclude = description =>
                     description.RelativePath is string relativePath
-                    && (string.Equals(relativePath, boundaryName, StringComparison.OrdinalIgnoreCase)
-                        || relativePath.StartsWith($"{boundaryName}/", StringComparison.OrdinalIgnoreCase));
+                    && (string.Equals(relativePath, routePrefix, StringComparison.OrdinalIgnoreCase)
+                        || relativePath.StartsWith($"{routePrefix}/", StringComparison.OrdinalIgnoreCase));
             });
         }
     }

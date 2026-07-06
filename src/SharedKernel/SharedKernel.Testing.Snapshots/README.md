@@ -1,3 +1,6 @@
 # SharedKernel.Testing.Snapshots
 
-Reusable snapshot text helpers for SharedKernel test suites.
+Reusable snapshot helpers for SharedKernel test suites.
+
+- `SnapshotText` normalizes snapshot text before comparison.
+- `JsonSnapshotArtifactSet` compares generated JSON artifacts with committed canonical snapshots.

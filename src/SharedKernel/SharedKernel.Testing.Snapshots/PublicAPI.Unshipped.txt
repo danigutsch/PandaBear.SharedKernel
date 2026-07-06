@@ -1,3 +1,11 @@
 #nullable enable
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.AssertCanonicalArtifactsMatchGeneratedArtifacts() -> void
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.AssertGeneratedArtifactMatchesCanonicalSnapshot(string! snapshotName) -> void
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.GetArtifactDrift() -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.GetCanonicalSnapshot(string! snapshotName) -> System.Text.Json.Nodes.JsonNode!
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.GetGeneratedArtifact(string! snapshotName) -> System.Text.Json.Nodes.JsonNode!
+SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.JsonSnapshotArtifactSet(string! canonicalDirectory, string! generatedDirectory, string! canonicalArtifactSuffix, string! generatedArtifactPrefix, string! artifactDisplayName, string! refreshHint) -> void
 SharedKernel.Testing.Snapshots.SnapshotText
+static SharedKernel.Testing.Snapshots.JsonSnapshotArtifactSet.Equals(System.Text.Json.Nodes.JsonNode? expected, System.Text.Json.Nodes.JsonNode? actual) -> bool
 static SharedKernel.Testing.Snapshots.SnapshotText.Normalize(string! text) -> string!
