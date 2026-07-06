@@ -92,6 +92,11 @@ public static class TestAssert
     public static void Same(object? expected, object? actual) => Xunit.Assert.Same(expected, actual);
 
     /// <summary>
+    /// Verifies reference inequality.
+    /// </summary>
+    public static void NotSame(object? expected, object? actual) => Xunit.Assert.NotSame(expected, actual);
+
+    /// <summary>
     /// Verifies that a collection is empty.
     /// </summary>
     public static void Empty<T>(IEnumerable<T> collection) => Xunit.Assert.Empty(collection);
