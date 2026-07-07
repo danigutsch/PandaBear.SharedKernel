@@ -1,8 +1,8 @@
 namespace SharedKernel.Aspire.Analyzers.Tests;
 
-[Trait("TestScope", "Unit")]
-[Trait("TestComponent", "SharedKernel.Aspire.Analyzers")]
-[Trait("TestCapability", "AspireImagePinning")]
+[Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
+[Trait(Testing.SharedKernelTestTraitNames.ComponentName, TestTraits.AspireAnalyzersComponent)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.AspireImagePinningCapability)]
 public sealed class SharedKernelAspireAnalyzerTests
 {
     [Fact]
