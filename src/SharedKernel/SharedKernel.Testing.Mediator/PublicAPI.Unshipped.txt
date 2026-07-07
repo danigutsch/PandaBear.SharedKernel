@@ -1,0 +1,18 @@
+#nullable enable
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.AddNotificationHandler(System.Type! notificationType, object! handler) -> SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder!
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.AddNotificationHandler<TNotification>(SharedKernel.Mediator.INotificationHandler<TNotification>! handler) -> SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder!
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.AddPipeline(System.Type! requestType, System.Type! responseType, object! pipeline) -> SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder!
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.AddPipeline<TRequest, TResponse>(SharedKernel.Mediator.IPipelineBehavior<TRequest, TResponse>! pipeline) -> SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder!
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.AddRequestHandler(System.Type! requestType, System.Type! responseType, object! handler) -> SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder!
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.AddRequestHandler<TRequest, TResponse>(SharedKernel.Mediator.IRequestHandler<TRequest, TResponse>! handler) -> SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder!
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.AddStreamHandler(System.Type! requestType, System.Type! responseType, object! handler) -> SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder!
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.AddStreamHandler<TRequest, TResponse>(SharedKernel.Mediator.IStreamRequestHandler<TRequest, TResponse>! handler) -> SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder!
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.AddStreamPipeline(System.Type! requestType, System.Type! responseType, object! pipeline) -> SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder!
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.AddStreamPipeline<TRequest, TResponse>(SharedKernel.Mediator.IStreamPipelineBehavior<TRequest, TResponse>! pipeline) -> SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder!
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.Build() -> SharedKernel.Testing.Mediator.ReferenceMediator!
+SharedKernel.Testing.Mediator.ReferenceDispatcherBuilder.ReferenceDispatcherBuilder() -> void
+SharedKernel.Testing.Mediator.ReferenceMediator
+SharedKernel.Testing.Mediator.ReferenceMediator.Publish<TNotification>(TNotification notification, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Testing.Mediator.ReferenceMediator.Send<TResponse>(SharedKernel.Mediator.IRequest<TResponse>! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+SharedKernel.Testing.Mediator.ReferenceMediator.Send<TResponse>(SharedKernel.Mediator.IStreamRequest<TResponse>! request, System.Threading.CancellationToken ct) -> System.Collections.Generic.IAsyncEnumerable<TResponse>!

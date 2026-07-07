@@ -1,0 +1,3 @@
+#nullable enable
+SharedKernel.Testing.AspNetCore.WebApplicationTestHost
+static SharedKernel.Testing.AspNetCore.WebApplicationTestHost.Create<TEntryPoint>(string? environment = null, System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>? configureTestServices = null) -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!

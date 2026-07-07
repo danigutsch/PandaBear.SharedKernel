@@ -1,4 +1,4 @@
-using SharedKernel.Mediator.Testing.ReferenceDispatcher;
+using SharedKernel.Testing.Mediator;
 using SharedKernel.Testing;
 
 namespace SharedKernel.Mediator.GeneratorTests;
