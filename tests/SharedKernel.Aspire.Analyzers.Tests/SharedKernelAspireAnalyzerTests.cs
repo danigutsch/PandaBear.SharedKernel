@@ -1,6 +1,6 @@
 namespace SharedKernel.Aspire.Analyzers.Tests;
 
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.AspireImagePinningCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.AspireImagePinningCapability)]
 public sealed class SharedKernelAspireAnalyzerTests
 {
     [Fact]
