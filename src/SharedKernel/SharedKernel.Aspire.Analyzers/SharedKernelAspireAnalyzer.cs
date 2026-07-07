@@ -158,8 +158,17 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
             return false;
         }
 
-        return memberAccess.Expression is IdentifierNameSyntax identifierName
-            && string.Equals(identifierName.Identifier.ValueText, parameterName, StringComparison.Ordinal);
+        return IsRootedAtIdentifier(memberAccess.Expression, parameterName);
+    }
+
+    private static bool IsRootedAtIdentifier(ExpressionSyntax expression, string identifier)
+    {
+        return expression switch
+        {
+            IdentifierNameSyntax identifierName => string.Equals(identifierName.Identifier.ValueText, identifier, StringComparison.Ordinal),
+            InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax memberAccess } => IsRootedAtIdentifier(memberAccess.Expression, identifier),
+            _ => false
+        };
     }
 
     private static InvocationExpressionSyntax GetOutermostInvocation(InvocationExpressionSyntax invocation)

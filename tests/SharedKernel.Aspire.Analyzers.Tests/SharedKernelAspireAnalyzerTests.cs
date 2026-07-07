@@ -1,6 +1,6 @@
 namespace SharedKernel.Aspire.Analyzers.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.AspireImagePinningCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.AspireImagePinningCapability)]
 public sealed class SharedKernelAspireAnalyzerTests
 {
     [Fact]
@@ -64,6 +64,31 @@ public sealed class SharedKernelAspireAnalyzerTests
                 public void Configure(dynamic project, string imageTag)
                 {
                     project.PublishAsDockerFile(container => container.WithImageTag(imageTag));
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Publish_as_dockerfile_container_image_tag_chain_does_not_require_static_digest()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic project, string imageTag, string registry)
+                {
+                    project.PublishAsDockerFile(container => container
+                        .WithImageRegistry(registry)
+                        .WithImageTag(imageTag));
                 }
             }
             """;
