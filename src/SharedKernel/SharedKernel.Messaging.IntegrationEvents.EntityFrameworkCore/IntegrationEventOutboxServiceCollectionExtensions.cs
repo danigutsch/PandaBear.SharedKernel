@@ -92,4 +92,68 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <returns>The configured service collection.</returns>
     public static IServiceCollection AddIntegrationEventInbox<TContext>(this IServiceCollection services)
         where TContext : DbContext => services.AddIdempotencyStore<TContext>();
+
+    /// <summary>
+    /// Adds a PostgreSQL-backed integration-event transport producer for one consumer queue.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="consumerName">The durable consumer queue name.</param>
+    /// <typeparam name="TContext">The DbContext type that owns the transport table.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection AddPostgreSqlIntegrationEventTransportProducer<TContext>(
+        this IServiceCollection services,
+        string consumerName)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentException.ThrowIfNullOrWhiteSpace(consumerName);
+
+        services.TryAddSingleton(TimeProvider.System);
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventTransportDbContextConfiguration<TContext>>());
+        services.Replace(ServiceDescriptor.Scoped<IEventEnvelopePublisher>(sp => new PostgreSqlIntegrationEventTransportPublisher<TContext>(
+            sp.GetRequiredService<TContext>(),
+            sp.GetRequiredService<TimeProvider>(),
+            consumerName)));
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds a PostgreSQL-backed integration-event transport consumer for one durable queue.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="consumerName">The durable consumer queue name.</param>
+    /// <param name="configureOptions">An optional delegate that configures polling behavior.</param>
+    /// <typeparam name="TContext">The DbContext type that reads the transport table.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection AddPostgreSqlIntegrationEventTransportConsumer<TContext>(
+        this IServiceCollection services,
+        string consumerName,
+        Action<IntegrationEventOutboxRelayOptions>? configureOptions = null)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentException.ThrowIfNullOrWhiteSpace(consumerName);
+
+        var optionsBuilder = services.AddOptions<IntegrationEventOutboxRelayOptions>().ValidateOnStart();
+        if (configureOptions is not null)
+        {
+            optionsBuilder.Configure(configureOptions);
+        }
+
+        services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<
+                IValidateOptions<IntegrationEventOutboxRelayOptions>,
+                IntegrationEventOutboxRelayOptionsValidator>());
+        services.TryAddSingleton(TimeProvider.System);
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventTransportDbContextConfiguration<TContext>>());
+        services.AddSingleton(sp => new PostgreSqlIntegrationEventTransportConsumer<TContext>(
+            sp.GetRequiredService<IServiceScopeFactory>(),
+            sp.GetRequiredService<TimeProvider>(),
+            sp.GetRequiredService<IOptions<IntegrationEventOutboxRelayOptions>>(),
+            consumerName));
+        services.AddHostedService<PostgreSqlIntegrationEventTransportConsumerHostedService<TContext>>();
+
+        return services;
+    }
 }
