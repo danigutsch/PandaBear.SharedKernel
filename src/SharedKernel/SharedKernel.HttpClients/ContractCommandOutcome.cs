@@ -88,9 +88,9 @@ public static class ContractCommandOutcome
                     ValidationErrors = new Dictionary<string, string[]>(errors, StringComparer.Ordinal)
                 };
         }
-        catch (JsonException exception)
+        catch (JsonException)
         {
-            return Status(ContractCommandOutcomeKind.MalformedBody, response.StatusCode, exception.Message);
+            return Status(ContractCommandOutcomeKind.MalformedBody, response.StatusCode, "Validation problem response body was malformed.");
         }
     }
 
