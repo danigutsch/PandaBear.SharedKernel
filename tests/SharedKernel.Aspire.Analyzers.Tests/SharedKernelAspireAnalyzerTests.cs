@@ -76,6 +76,34 @@ public sealed class SharedKernelAspireAnalyzerTests
     }
 
     [Fact]
+    public async Task Publish_as_dockerfile_exemption_does_not_apply_to_other_resource_builders_in_the_lambda()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic project, dynamic builder, string imageTag)
+                {
+                    project.PublishAsDockerFile(container =>
+                    {
+                        container.WithImageTag(imageTag);
+                        builder.AddRedis("cache").WithImageTag("8.8");
+                    });
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        Assert.Contains("WithImageTag", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task With_image_sha256_without_with_image_tag_reports_ska_spire001()
     {
         // Arrange

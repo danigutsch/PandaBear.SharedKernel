@@ -130,7 +130,8 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
                 && anonymousFunction.Parent is ArgumentSyntax argument
                 && argument.Parent is ArgumentListSyntax argumentList
                 && argumentList.Parent is InvocationExpressionSyntax parentInvocation
-                && string.Equals(GetInvocationName(parentInvocation), PublishAsDockerFileMethodName, StringComparison.Ordinal))
+                && string.Equals(GetInvocationName(parentInvocation), PublishAsDockerFileMethodName, StringComparison.Ordinal)
+                && IsInvokedOnLambdaParameter(invocation, anonymousFunction))
             {
                 return true;
             }
@@ -139,6 +140,26 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
         }
 
         return false;
+    }
+
+    private static bool IsInvokedOnLambdaParameter(InvocationExpressionSyntax invocation, AnonymousFunctionExpressionSyntax anonymousFunction)
+    {
+        var parameterName = anonymousFunction switch
+        {
+            SimpleLambdaExpressionSyntax simpleLambda => simpleLambda.Parameter.Identifier.ValueText,
+            ParenthesizedLambdaExpressionSyntax parenthesizedLambda when parenthesizedLambda.ParameterList.Parameters.Count == 1 =>
+                parenthesizedLambda.ParameterList.Parameters[0].Identifier.ValueText,
+            _ => null
+        };
+
+        if (parameterName is null
+            || invocation.Expression is not MemberAccessExpressionSyntax memberAccess)
+        {
+            return false;
+        }
+
+        return memberAccess.Expression is IdentifierNameSyntax identifierName
+            && string.Equals(identifierName.Identifier.ValueText, parameterName, StringComparison.Ordinal);
     }
 
     private static InvocationExpressionSyntax GetOutermostInvocation(InvocationExpressionSyntax invocation)
