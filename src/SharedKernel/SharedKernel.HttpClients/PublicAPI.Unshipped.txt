@@ -1,4 +1,26 @@
 #nullable enable
+SharedKernel.HttpClients.ContractCommandOutcome
+SharedKernel.HttpClients.ContractCommandOutcomeDto
+SharedKernel.HttpClients.ContractCommandOutcomeDto.Kind.get -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeDto.Kind.init -> void
+SharedKernel.HttpClients.ContractCommandOutcomeDto.Location.get -> System.Uri?
+SharedKernel.HttpClients.ContractCommandOutcomeDto.Location.init -> void
+SharedKernel.HttpClients.ContractCommandOutcomeDto.Message.get -> string?
+SharedKernel.HttpClients.ContractCommandOutcomeDto.Message.init -> void
+SharedKernel.HttpClients.ContractCommandOutcomeDto.StatusCode.get -> System.Net.HttpStatusCode
+SharedKernel.HttpClients.ContractCommandOutcomeDto.StatusCode.init -> void
+SharedKernel.HttpClients.ContractCommandOutcomeDto.ValidationErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
+SharedKernel.HttpClients.ContractCommandOutcomeDto.ValidationErrors.init -> void
+SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.Conflict = 5 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.EmptyBody = 6 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.Forbidden = 4 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.MalformedBody = 7 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.NotFound = 2 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.Succeeded = 0 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.Unauthorized = 3 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.UnexpectedStatus = 8 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.ValidationProblem = 1 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
 SharedKernel.HttpClients.ContractHttpValidation
 SharedKernel.HttpClients.ContractValidationException
 SharedKernel.HttpClients.ContractValidationException.ContractValidationException() -> void
@@ -11,5 +33,8 @@ SharedKernel.HttpClients.ContractValidationProblemDto
 SharedKernel.HttpClients.ContractValidationProblemDto.Errors.get -> System.Collections.Generic.Dictionary<string!, string![]!>?
 SharedKernel.HttpClients.ContractValidationProblemDto.Errors.init -> void
 SharedKernel.HttpClients.HttpServiceCollectionExtensions
+static SharedKernel.HttpClients.ContractCommandOutcome.FromResponse(System.Net.Http.HttpResponseMessage! response, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.HttpClients.ContractCommandOutcomeDto!>!
+static SharedKernel.HttpClients.ContractCommandOutcome.Status(SharedKernel.HttpClients.ContractCommandOutcomeKind kind, System.Net.HttpStatusCode statusCode, string? message = null) -> SharedKernel.HttpClients.ContractCommandOutcomeDto!
+static SharedKernel.HttpClients.ContractCommandOutcome.Succeeded(System.Net.HttpStatusCode statusCode, System.Uri? location) -> SharedKernel.HttpClients.ContractCommandOutcomeDto!
 static SharedKernel.HttpClients.ContractHttpValidation.EnsureSuccessOrThrowValidationException(System.Net.Http.HttpResponseMessage! response, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! jsonTypeInfo, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 static SharedKernel.HttpClients.HttpServiceCollectionExtensions.AddHttpClientDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
