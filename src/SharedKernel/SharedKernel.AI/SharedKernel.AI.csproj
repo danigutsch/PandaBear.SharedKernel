@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.AI</PackageId>
+        <Description>Reusable AI-assisted image text generation contracts and LiteLLM client.</Description>
+        <RootNamespace>SharedKernel.AI</RootNamespace>
+        <PackageTags>ai;litellm;vision;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+</Project>

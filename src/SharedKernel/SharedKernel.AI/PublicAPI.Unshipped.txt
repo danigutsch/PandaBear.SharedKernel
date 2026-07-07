@@ -1,0 +1,39 @@
+#nullable enable
+SharedKernel.AI.IImageTextGenerator
+SharedKernel.AI.IImageTextGenerator.GenerateImageText(SharedKernel.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.AI.ImageTextGenerationResult!>
+SharedKernel.AI.ImageTextGenerationException
+SharedKernel.AI.ImageTextGenerationException.ImageTextGenerationException() -> void
+SharedKernel.AI.ImageTextGenerationException.ImageTextGenerationException(string! message) -> void
+SharedKernel.AI.ImageTextGenerationException.ImageTextGenerationException(string! message, System.Exception! innerException) -> void
+SharedKernel.AI.ImageTextGenerationRequest
+SharedKernel.AI.ImageTextGenerationRequest.ContentType.get -> string!
+SharedKernel.AI.ImageTextGenerationRequest.ContentType.init -> void
+SharedKernel.AI.ImageTextGenerationRequest.Context.get -> string?
+SharedKernel.AI.ImageTextGenerationRequest.Context.init -> void
+SharedKernel.AI.ImageTextGenerationRequest.Image.get -> System.IO.Stream!
+SharedKernel.AI.ImageTextGenerationRequest.Image.init -> void
+SharedKernel.AI.ImageTextGenerationRequest.Language.get -> string!
+SharedKernel.AI.ImageTextGenerationRequest.Language.init -> void
+SharedKernel.AI.ImageTextGenerationRequest.Latitude.get -> decimal?
+SharedKernel.AI.ImageTextGenerationRequest.Latitude.init -> void
+SharedKernel.AI.ImageTextGenerationRequest.Longitude.get -> decimal?
+SharedKernel.AI.ImageTextGenerationRequest.Longitude.init -> void
+SharedKernel.AI.ImageTextGenerationResult
+SharedKernel.AI.ImageTextGenerationResult.AltText.get -> string!
+SharedKernel.AI.ImageTextGenerationResult.AltText.init -> void
+SharedKernel.AI.ImageTextGenerationResult.Caption.get -> string?
+SharedKernel.AI.ImageTextGenerationResult.Caption.init -> void
+SharedKernel.AI.ImageTextGenerationResult.ImageTextGenerationResult(string! AltText, string? Caption) -> void
+SharedKernel.AI.LiteLlmImageTextGenerator
+SharedKernel.AI.LiteLlmImageTextGenerator.GenerateImageText(SharedKernel.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.AI.ImageTextGenerationResult!>
+SharedKernel.AI.LiteLlmImageTextGenerator.LiteLlmImageTextGenerator(System.Net.Http.HttpClient! httpClient, SharedKernel.AI.LiteLlmImageTextGeneratorOptions! options) -> void
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ApiKey.get -> string?
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ApiKey.init -> void
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ChatCompletionsPath.get -> string!
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ChatCompletionsPath.init -> void
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Endpoint.get -> System.Uri?
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Endpoint.init -> void
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Model.get -> string?
+SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Model.init -> void
+const SharedKernel.AI.LiteLlmImageTextGeneratorOptions.SectionName = "AI:ImageText:LiteLlm" -> string!
