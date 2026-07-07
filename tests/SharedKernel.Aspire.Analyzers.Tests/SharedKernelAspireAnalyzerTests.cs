@@ -1,5 +1,8 @@
 namespace SharedKernel.Aspire.Analyzers.Tests;
 
+[Trait("TestScope", "Unit")]
+[Trait("TestComponent", "SharedKernel.Aspire.Analyzers")]
+[Trait("TestCapability", "AspireImagePinning")]
 public sealed class SharedKernelAspireAnalyzerTests
 {
     [Fact]
@@ -40,6 +43,29 @@ public sealed class SharedKernelAspireAnalyzerTests
                     builder.AddPostgres("database")
                         .WithImageTag("18.4")
                         .WithImageSHA256("4aabea78cf39b90e834caf3af7d602a18565f6fe2508705c8d01aa63245c2e20");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Publish_as_dockerfile_container_image_tag_does_not_require_static_digest()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic project, string imageTag)
+                {
+                    project.PublishAsDockerFile(container => container.WithImageTag(imageTag));
                 }
             }
             """;
