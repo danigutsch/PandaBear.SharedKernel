@@ -163,6 +163,9 @@
       "sharedkernel.aspire.analyzers": {
         "type": "Project"
       },
+      "sharedkernel.testing": {
+        "type": "Project"
+      },
       "sharedkernel.testing.roslyn": {
         "type": "Project",
         "dependencies": {
