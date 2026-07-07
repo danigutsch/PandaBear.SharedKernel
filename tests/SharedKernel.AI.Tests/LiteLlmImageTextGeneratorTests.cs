@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 
 namespace SharedKernel.AI.Tests;
 
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ImageTextGenerationCapability)]
 public sealed class LiteLlmImageTextGeneratorTests
 {
     [Fact]

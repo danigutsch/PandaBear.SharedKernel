@@ -145,6 +145,9 @@
       "sharedkernel.ai": {
         "type": "Project"
       },
+      "sharedkernel.testing": {
+        "type": "Project"
+      },
       "sharedkernel.testing.assertions": {
         "type": "Project",
         "dependencies": {
