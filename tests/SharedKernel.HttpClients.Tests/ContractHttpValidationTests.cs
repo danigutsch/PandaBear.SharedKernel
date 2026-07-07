@@ -162,4 +162,23 @@ public sealed class ContractHttpValidationTests
         exception.ValidationErrors.ShouldBeEmpty();
         exception.Message.ShouldBe("Validation problem response body did not contain errors.");
     }
+
+    [Fact]
+    public async Task FromResponse_returns_generic_malformed_body_message_for_invalid_validation_problem_json()
+    {
+        using var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
+        {
+            Content = new StringContent("not json alice@example.test")
+        };
+
+        var outcome = await ContractCommandOutcome.FromResponse(
+            response,
+            ContractHttpValidationTestsJsonContext.Default.ContractValidationProblemDto,
+            TestContext.Current.CancellationToken);
+
+        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.MalformedBody);
+        outcome.Message.ShouldBe("Validation problem response body was malformed.");
+        outcome.Message.ShouldNotBeNull();
+        outcome.Message.Contains("alice@example.test", StringComparison.Ordinal).ShouldBeFalse();
+    }
 }
