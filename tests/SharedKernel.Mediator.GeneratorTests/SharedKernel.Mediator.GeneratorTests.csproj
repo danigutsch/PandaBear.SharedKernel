@@ -32,7 +32,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator\SharedKernel.Mediator.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj" />
-        <ProjectReference Include="..\SharedKernel.Mediator.Testing.ReferenceDispatcher\SharedKernel.Mediator.Testing.ReferenceDispatcher.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Mediator\SharedKernel.Testing.Mediator.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Roslyn\SharedKernel.Testing.Roslyn.csproj" />
     </ItemGroup>
 

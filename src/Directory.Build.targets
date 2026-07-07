@@ -4,4 +4,9 @@
         <IsAotCompatible Condition="'$(IsAotCompatible)' == '' and $([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">true</IsAotCompatible>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj' and $([System.String]::Copy('$(MSBuildProjectName)').StartsWith('SharedKernel.')) and '$(IsRoslynComponent)' != 'true'">
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
 </Project>

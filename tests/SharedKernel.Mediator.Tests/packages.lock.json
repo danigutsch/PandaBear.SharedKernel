@@ -193,14 +193,14 @@
       "sharedkernel.mediator.abstractions": {
         "type": "Project"
       },
-      "sharedkernel.mediator.testing.referencedispatcher": {
+      "sharedkernel.testing": {
+        "type": "Project"
+      },
+      "sharedkernel.testing.mediator": {
         "type": "Project",
         "dependencies": {
           "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
         }
-      },
-      "sharedkernel.testing": {
-        "type": "Project"
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
         "type": "CentralTransitive",

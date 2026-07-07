@@ -224,12 +224,6 @@
       "sharedkernel.mediator.sourcegenerator": {
         "type": "Project"
       },
-      "sharedkernel.mediator.testing.referencedispatcher": {
-        "type": "Project",
-        "dependencies": {
-          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
-        }
-      },
       "sharedkernel.testing": {
         "type": "Project"
       },
@@ -237,6 +231,12 @@
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[3.2.2, )"
+        }
+      },
+      "sharedkernel.testing.mediator": {
+        "type": "Project",
+        "dependencies": {
+          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
         }
       },
       "sharedkernel.testing.roslyn": {
