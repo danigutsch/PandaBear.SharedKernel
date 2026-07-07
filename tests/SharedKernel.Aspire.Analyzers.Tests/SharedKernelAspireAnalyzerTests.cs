@@ -1,5 +1,6 @@
 namespace SharedKernel.Aspire.Analyzers.Tests;
 
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.AspireImagePinningCapability)]
 public sealed class SharedKernelAspireAnalyzerTests
 {
     [Fact]
@@ -49,6 +50,82 @@ public sealed class SharedKernelAspireAnalyzerTests
 
         // Assert
         Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Publish_as_dockerfile_container_image_tag_does_not_require_static_digest()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic project, string imageTag)
+                {
+                    project.PublishAsDockerFile(container => container.WithImageTag(imageTag));
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Publish_as_dockerfile_container_image_tag_chain_does_not_require_static_digest()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic project, string imageTag, string registry)
+                {
+                    project.PublishAsDockerFile(container => container
+                        .WithImageRegistry(registry)
+                        .WithImageTag(imageTag));
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Publish_as_dockerfile_exemption_does_not_apply_to_other_resource_builders_in_the_lambda()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic project, dynamic builder, string imageTag)
+                {
+                    project.PublishAsDockerFile(container =>
+                    {
+                        container.WithImageTag(imageTag);
+                        builder.AddRedis("cache").WithImageTag("8.8");
+                    });
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = Assert.Single(diagnostics, static candidate => candidate.Id == AspireDiagnosticIds.ImageTagAndDigest);
+        Assert.Contains("WithImageTag", diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture), StringComparison.Ordinal);
     }
 
     [Fact]

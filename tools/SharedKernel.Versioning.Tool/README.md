@@ -92,6 +92,11 @@ Output fields:
 - `fileVersion`
 - `informationalVersion`
 
+GitHub Actions output names use snake case: `sem_ver`, `release_impact`, `package_version`,
+`assembly_version`, `file_version`, `informational_version`, and `source_tag`. Release workflows pass
+`package_version` to Aspire as the application container image tag and pass `informational_version` to
+MSBuild so deployed diagnostics report the same release identity.
+
 The `compute` command reads commit messages from standard input. Non-Conventional merge commits are
 ignored; valid Conventional Commit messages drive the release impact. Use null-separated input when
 feeding raw `git log` messages so multiline commit bodies stay grouped.

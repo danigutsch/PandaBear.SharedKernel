@@ -14,6 +14,7 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
 {
     private const string WithImageTagMethodName = "WithImageTag";
     private const string WithImageSha256MethodName = "WithImageSHA256";
+    private const string PublishAsDockerFileMethodName = "PublishAsDockerFile";
     private const string Sha256Prefix = "sha256:";
 
     private static readonly DiagnosticDescriptor ImageTagAndDigestRule = new(
@@ -51,6 +52,12 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
 
         var methodName = GetInvocationName(invocation);
         if (!IsImagePinMethod(methodName))
+        {
+            return;
+        }
+
+        if (string.Equals(methodName, WithImageTagMethodName, StringComparison.Ordinal)
+            && IsInsidePublishAsDockerFileContainerConfiguration(invocation))
         {
             return;
         }
@@ -112,6 +119,56 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
                 character is (>= '0' and <= '9')
                     or (>= 'a' and <= 'f')
                     or (>= 'A' and <= 'F'));
+    }
+
+    private static bool IsInsidePublishAsDockerFileContainerConfiguration(InvocationExpressionSyntax invocation)
+    {
+        var current = invocation.Parent;
+        while (current is not null)
+        {
+            if (current is AnonymousFunctionExpressionSyntax anonymousFunction
+                && anonymousFunction.Parent is ArgumentSyntax argument
+                && argument.Parent is ArgumentListSyntax argumentList
+                && argumentList.Parent is InvocationExpressionSyntax parentInvocation
+                && string.Equals(GetInvocationName(parentInvocation), PublishAsDockerFileMethodName, StringComparison.Ordinal)
+                && IsInvokedOnLambdaParameter(invocation, anonymousFunction))
+            {
+                return true;
+            }
+
+            current = current.Parent;
+        }
+
+        return false;
+    }
+
+    private static bool IsInvokedOnLambdaParameter(InvocationExpressionSyntax invocation, AnonymousFunctionExpressionSyntax anonymousFunction)
+    {
+        var parameterName = anonymousFunction switch
+        {
+            SimpleLambdaExpressionSyntax simpleLambda => simpleLambda.Parameter.Identifier.ValueText,
+            ParenthesizedLambdaExpressionSyntax parenthesizedLambda when parenthesizedLambda.ParameterList.Parameters.Count == 1 =>
+                parenthesizedLambda.ParameterList.Parameters[0].Identifier.ValueText,
+            _ => null
+        };
+
+        if (parameterName is null
+            || invocation.Expression is not MemberAccessExpressionSyntax memberAccess)
+        {
+            return false;
+        }
+
+        return IsRootedAtIdentifier(memberAccess.Expression, parameterName);
+    }
+
+    private static bool IsRootedAtIdentifier(ExpressionSyntax expression, string identifier)
+    {
+        return expression switch
+        {
+            IdentifierNameSyntax identifierName => string.Equals(identifierName.Identifier.ValueText, identifier, StringComparison.Ordinal),
+            InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax memberAccess } => IsRootedAtIdentifier(memberAccess.Expression, identifier),
+            _ => false
+        };
     }
 
     private static InvocationExpressionSyntax GetOutermostInvocation(InvocationExpressionSyntax invocation)
