@@ -5,7 +5,7 @@ namespace SharedKernel.Versioning.Tool;
 
 internal static class ReleaseArtifactWriter
 {
-    private const string SbomNote = "No repository SBOM generator is currently wired into release prep.";
+    private const string SbomNote = "Generated from resolved packages.lock.json files; license fields use NOASSERTION until reviewed against NuGet and dependency-review metadata.";
 
     public static async Task Write(PrepareReleaseOptions options, TextReader input)
     {
@@ -19,7 +19,8 @@ internal static class ReleaseArtifactWriter
         var changes = FilterConventionalChanges(await input.ReadToEndAsync().ConfigureAwait(false));
         var releaseNotes = CreateReleaseNotes(options, changes);
         var changelog = "# Changelog" + Environment.NewLine + Environment.NewLine + releaseNotes;
-        var manifest = CreateManifest(options);
+        var inventory = PackageLockInventory.Read(options.RepositoryRoot);
+        var manifest = CreateManifest(options, inventory);
 
         await File.WriteAllTextAsync(
             Path.Combine(options.OutputDirectory, "release-notes.md"),
@@ -32,6 +33,18 @@ internal static class ReleaseArtifactWriter
         await File.WriteAllTextAsync(
             Path.Combine(options.OutputDirectory, "release-manifest.json"),
             manifest,
+            Encoding.UTF8).ConfigureAwait(false);
+        await File.WriteAllTextAsync(
+            Path.Combine(options.OutputDirectory, "third-party-attributions.json"),
+            PackageLockInventory.WriteAttributionJson(inventory),
+            Encoding.UTF8).ConfigureAwait(false);
+        await File.WriteAllTextAsync(
+            Path.Combine(options.OutputDirectory, "third-party-notices.md"),
+            PackageLockInventory.WriteNoticesMarkdown(inventory),
+            Encoding.UTF8).ConfigureAwait(false);
+        await File.WriteAllTextAsync(
+            Path.Combine(options.OutputDirectory, "sbom.spdx.json"),
+            PackageLockInventory.WriteSpdxJson(options, inventory),
             Encoding.UTF8).ConfigureAwait(false);
     }
 
@@ -63,7 +76,7 @@ internal static class ReleaseArtifactWriter
         return builder.ToString();
     }
 
-    private static string CreateManifest(PrepareReleaseOptions options)
+    private static string CreateManifest(PrepareReleaseOptions options, ResolvedNuGetPackage[] inventory)
     {
         var packages = Directory.GetFiles(options.PackageDirectory, "*.nupkg")
             .Order(StringComparer.Ordinal)
@@ -94,8 +107,16 @@ internal static class ReleaseArtifactWriter
         }
 
         builder.AppendLine("  ],");
-        builder.AppendLine("  \"sbom\": null,");
-        builder.Append("  \"sbomNote\": ").Append(Escape(SbomNote)).AppendLine();
+        builder.AppendLine("  \"sbom\": {");
+        builder.AppendLine("    \"format\": \"SPDX-2.3\",");
+        builder.AppendLine("    \"path\": \"artifacts/release-prep/sbom.spdx.json\"");
+        builder.AppendLine("  },");
+        builder.AppendLine("  \"thirdPartyAttributions\": {");
+        builder.AppendLine("    \"jsonPath\": \"artifacts/release-prep/third-party-attributions.json\",");
+        builder.AppendLine("    \"noticePath\": \"artifacts/release-prep/third-party-notices.md\",");
+        builder.Append("    \"packageCount\": ").Append(inventory.Length).AppendLine();
+        builder.AppendLine("  },");
+        builder.Append("  \"licenseEvidenceNote\": ").Append(Escape(SbomNote)).AppendLine();
         builder.AppendLine("}");
         return builder.ToString();
     }

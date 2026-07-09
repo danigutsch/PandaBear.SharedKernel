@@ -6,7 +6,7 @@ internal static class VersioningToolApplication
 {
     public static async Task<int> Run(string[] args, TextReader input, TextWriter output, TextWriter error)
     {
-        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"] or ["calculate-release", "--help"] or ["calculate-release", "-h"] or ["pack-sharedkernel", "--help"] or ["pack-sharedkernel", "-h"] or ["prepare-release", "--help"] or ["prepare-release", "-h"] or ["check-public-api-baselines", "--help"] or ["check-public-api-baselines", "-h"] or ["has-breaking-change-marker", "--help"] or ["has-breaking-change-marker", "-h"] or ["api-compatibility", "--help"] or ["api-compatibility", "-h"])
+        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"] or ["calculate-release", "--help"] or ["calculate-release", "-h"] or ["pack-sharedkernel", "--help"] or ["pack-sharedkernel", "-h"] or ["prepare-release", "--help"] or ["prepare-release", "-h"] or ["check-public-api-baselines", "--help"] or ["check-public-api-baselines", "-h"] or ["validate-package-metadata", "--help"] or ["validate-package-metadata", "-h"] or ["has-breaking-change-marker", "--help"] or ["has-breaking-change-marker", "-h"] or ["api-compatibility", "--help"] or ["api-compatibility", "-h"])
         {
             await output.WriteLineAsync(Usage).ConfigureAwait(false);
             return 0;
@@ -71,6 +71,13 @@ internal static class VersioningToolApplication
                 return 0;
             }
 
+            if (args is ["validate-package-metadata", .. var metadataArgs])
+            {
+                var repoRoot = ParseRepoRoot(metadataArgs);
+                PackageMetadataValidationCommand.Run(repoRoot, output);
+                return 0;
+            }
+
             if (args is ["has-breaking-change-marker", var range, .. var markerArgs])
             {
                 var repoRoot = ParseRepoRoot(markerArgs);
@@ -110,6 +117,7 @@ internal static class VersioningToolApplication
           sharedkernel-version pack-sharedkernel [--version <semver>] [--assembly-version <version>] [--file-version <version>] [--informational-version <version>] [--output-root <path>] [--repo-root <path>] [--skip-restore-check]
           sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes.txt
           sharedkernel-version check-public-api-baselines [--repo-root <path>]
+          sharedkernel-version validate-package-metadata [--repo-root <path>]
           sharedkernel-version has-breaking-change-marker <git-range> [--repo-root <path>]
           sharedkernel-version api-compatibility [--version <semver>] [--release-phase <alpha|beta|rc|stable>] [--baseline-version <semver>] [--breaking-marker] [--output-root <path>] [--repo-root <path>]
 
@@ -120,6 +128,7 @@ internal static class VersioningToolApplication
           pack-sharedkernel Packs SharedKernel packages and verifies local feed restore.
           prepare-release Writes release notes, changelog, and package manifest artifacts.
           check-public-api-baselines Checks PublicAPI baselines for SharedKernel projects.
+          validate-package-metadata Validates required SharedKernel package metadata.
           has-breaking-change-marker Checks commit history for a breaking-change marker.
           api-compatibility Writes the SharedKernel package API compatibility report.
 

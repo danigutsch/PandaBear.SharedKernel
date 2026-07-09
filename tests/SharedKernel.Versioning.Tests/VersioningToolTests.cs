@@ -884,6 +884,26 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "Example.Package": {
+                    "type": "Direct",
+                    "requested": "[1.2.3, )",
+                    "resolved": "1.2.3",
+                    "contentHash": "abc"
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
 
         var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
         await File.WriteAllBytesAsync(
@@ -903,6 +923,8 @@ public static class VersioningToolTests
             temporaryDirectory.PackageDirectory,
             "--output-dir",
             temporaryDirectory.OutputDirectory,
+            "--repo-root",
+            temporaryDirectory.Root,
             "--source-tag",
             "v1.2.2",
             "--release-impact",
@@ -925,6 +947,15 @@ public static class VersioningToolTests
         var manifest = await File.ReadAllTextAsync(
             Path.Combine(temporaryDirectory.OutputDirectory, "release-manifest.json"),
             TestContext.Current.CancellationToken);
+        var attributions = await File.ReadAllTextAsync(
+            Path.Combine(temporaryDirectory.OutputDirectory, "third-party-attributions.json"),
+            TestContext.Current.CancellationToken);
+        var notices = await File.ReadAllTextAsync(
+            Path.Combine(temporaryDirectory.OutputDirectory, "third-party-notices.md"),
+            TestContext.Current.CancellationToken);
+        var sbom = await File.ReadAllTextAsync(
+            Path.Combine(temporaryDirectory.OutputDirectory, "sbom.spdx.json"),
+            TestContext.Current.CancellationToken);
 
         releaseNotes.ShouldContain("# Release 1.2.3", StringComparison.Ordinal);
         releaseNotes.ShouldContain("- Commit: `abc123`", StringComparison.Ordinal);
@@ -938,7 +969,108 @@ public static class VersioningToolTests
         manifest.ShouldContain(
             "\"sha256\": \"BC4A71180870F7945155FBB02F4B0A2E3FAA2A62D6D31B7039013055ED19869A\"",
             StringComparison.Ordinal);
-        manifest.ShouldContain("\"sbom\": null", StringComparison.Ordinal);
+        manifest.ShouldContain("\"path\": \"artifacts/release-prep/sbom.spdx.json\"", StringComparison.Ordinal);
+        manifest.ShouldContain("\"packageCount\": 1", StringComparison.Ordinal);
+        attributions.ShouldContain("\"id\": \"Example.Package\"", StringComparison.Ordinal);
+        attributions.ShouldContain("\"licenseExpression\": \"NOASSERTION\"", StringComparison.Ordinal);
+        notices.ShouldContain("| `Example.Package` | `1.2.3` | `NOASSERTION` | yes |", StringComparison.Ordinal);
+        sbom.ShouldContain("\"spdxVersion\": \"SPDX-2.3\"", StringComparison.Ordinal);
+        sbom.ShouldContain("\"name\": \"Example.Package\"", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Validates_package_metadata_for_packable_sharedkernel_projects()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await File.WriteAllTextAsync(
+            Path.Combine(temporaryDirectory.Root, "Directory.Build.props"),
+            """
+            <Project>
+              <PropertyGroup>
+                <Authors>ViajantesTurismo contributors</Authors>
+                <Company>ViajantesTurismo</Company>
+                <Copyright>Copyright (c) 2025 ViajantesTurismo contributors</Copyright>
+                <PackageLicenseExpression>MIT</PackageLicenseExpression>
+                <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
+                <PublishRepositoryUrl>true</PublishRepositoryUrl>
+              </PropertyGroup>
+            </Project>
+            """,
+            TestContext.Current.CancellationToken);
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
+            """
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <PackageId>SharedKernel.Sample</PackageId>
+                <Description>Sample package.</Description>
+                <PackageTags>sample;shared-kernel;dotnet</PackageTags>
+              </PropertyGroup>
+            </Project>
+            """,
+            TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            ["validate-package-metadata", "--repo-root", temporaryDirectory.Root],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        output.ToString().ShouldContain("Package metadata validation passed.", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Returns_error_for_missing_package_metadata()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await File.WriteAllTextAsync(
+            Path.Combine(temporaryDirectory.Root, "Directory.Build.props"),
+            """
+            <Project>
+              <PropertyGroup>
+                <Authors>ViajantesTurismo contributors</Authors>
+              </PropertyGroup>
+            </Project>
+            """,
+            TestContext.Current.CancellationToken);
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
+            """
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <PackageId>SharedKernel.Sample</PackageId>
+              </PropertyGroup>
+            </Project>
+            """,
+            TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            ["validate-package-metadata", "--repo-root", temporaryDirectory.Root],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("Package metadata validation failed:", StringComparison.Ordinal);
+        error.ToString().ShouldContain("Directory.Build.props missing Company", StringComparison.Ordinal);
+        error.ToString().ShouldContain("SharedKernel.Sample.csproj missing Description", StringComparison.Ordinal);
     }
 
     [Fact]
