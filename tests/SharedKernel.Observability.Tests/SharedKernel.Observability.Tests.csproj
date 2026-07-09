@@ -12,10 +12,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Observability\SharedKernel.Observability.csproj" />
+    <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="xunit.v3.mtp-v2" />
+    <PackageReference Include="Microsoft.Extensions.Compliance.Abstractions" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

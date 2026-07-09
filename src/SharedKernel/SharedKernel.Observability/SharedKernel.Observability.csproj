@@ -9,7 +9,9 @@
 
     <ItemGroup>
         <PackageReference Include="OpenTelemetry" />
+        <PackageReference Include="Microsoft.Extensions.Compliance.Redaction" />
         <PackageReference Include="Microsoft.Extensions.Hosting" />
+        <PackageReference Include="Microsoft.Extensions.Telemetry" />
         <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
     </ItemGroup>

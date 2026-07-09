@@ -23,6 +23,8 @@ public static class ObservabilityBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
+        builder.Services.AddRedaction();
+        builder.Logging.EnableRedaction();
         builder.Logging.AddOpenTelemetry(logging =>
         {
             logging.IncludeFormattedMessage = true;
