@@ -8,6 +8,15 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
         PackageDirectory = Path.Combine(Root, "packages");
         OutputDirectory = Path.Combine(Root, "release-prep");
         Directory.CreateDirectory(PackageDirectory);
+        File.WriteAllText(
+            Path.Combine(Root, "Directory.Build.props"),
+            """
+            <Project>
+              <PropertyGroup>
+                <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
+              </PropertyGroup>
+            </Project>
+            """ + Environment.NewLine);
     }
 
     public string Root { get; }

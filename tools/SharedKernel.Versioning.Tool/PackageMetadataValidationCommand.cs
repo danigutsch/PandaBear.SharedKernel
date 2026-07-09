@@ -1,5 +1,3 @@
-using System.Xml.Linq;
-
 namespace SharedKernel.Versioning.Tool;
 
 internal static class PackageMetadataValidationCommand
@@ -64,13 +62,5 @@ internal static class PackageMetadataValidationCommand
 
     private static bool IsNonPackable(string project) => string.Equals(ReadProperty(project, "IsPackable"), "false", StringComparison.OrdinalIgnoreCase);
 
-    private static string? ReadProperty(string project, string propertyName)
-    {
-        var document = XDocument.Load(project);
-        var value = document.Descendants()
-            .FirstOrDefault(element => string.Equals(element.Name.LocalName, propertyName, StringComparison.Ordinal))
-            ?.Value
-            .Trim();
-        return string.IsNullOrWhiteSpace(value) ? null : value;
-    }
+    private static string? ReadProperty(string project, string propertyName) => ProjectPropertyReader.Read(project, propertyName);
 }

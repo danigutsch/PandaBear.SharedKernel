@@ -884,6 +884,16 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await File.WriteAllTextAsync(
+            Path.Combine(temporaryDirectory.Root, "Directory.Build.props"),
+            """
+            <Project>
+              <PropertyGroup>
+                <RepositoryUrl>https://example.invalid/custom-repo</RepositoryUrl>
+              </PropertyGroup>
+            </Project>
+            """,
+            TestContext.Current.CancellationToken);
         var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
@@ -975,7 +985,30 @@ public static class VersioningToolTests
         attributions.ShouldContain("\"licenseExpression\": \"NOASSERTION\"", StringComparison.Ordinal);
         notices.ShouldContain("| `Example.Package` | `1.2.3` | `NOASSERTION` | yes |", StringComparison.Ordinal);
         sbom.ShouldContain("\"spdxVersion\": \"SPDX-2.3\"", StringComparison.Ordinal);
+        sbom.ShouldContain("\"documentNamespace\": \"https://example.invalid/custom-repo/sbom/1.2.3\"", StringComparison.Ordinal);
         sbom.ShouldContain("\"name\": \"Example.Package\"", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static void Writes_reproducible_spdx_created_timestamp_from_source_date_epoch()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        using var sourceDateEpochScope = new EnvironmentVariableScope("SOURCE_DATE_EPOCH", "946684800");
+        var options = new PrepareReleaseOptions(
+            "1.2.3",
+            temporaryDirectory.PackageDirectory,
+            temporaryDirectory.OutputDirectory,
+            temporaryDirectory.Root,
+            SourceTag: null,
+            ReleaseImpact: null,
+            Sha: null);
+
+        // Act
+        var sbom = PackageLockInventory.WriteSpdxJson(options, []);
+
+        // Assert
+        sbom.ShouldContain("\"created\": \"2000-01-01T00:00:00Z\"", StringComparison.Ordinal);
     }
 
     [Fact]

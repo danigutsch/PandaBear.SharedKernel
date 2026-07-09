@@ -6,6 +6,8 @@ namespace SharedKernel.Versioning.Tool;
 
 internal static class PackageLockInventory
 {
+    private const string SourceDateEpochVariableName = "SOURCE_DATE_EPOCH";
+
     public static ResolvedNuGetPackage[] Read(string repositoryRoot)
     {
         if (!Directory.Exists(repositoryRoot))
@@ -118,16 +120,18 @@ internal static class PackageLockInventory
 
     public static string WriteSpdxJson(PrepareReleaseOptions options, IReadOnlyCollection<ResolvedNuGetPackage> packages)
     {
+        var created = GetCreatedTimestamp().ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture);
+        var documentNamespace = ReadRepositoryUrl(options.RepositoryRoot).TrimEnd('/') + "/sbom/" + options.Version;
         var builder = new StringBuilder();
         builder.AppendLine("{");
         builder.AppendLine("  \"spdxVersion\": \"SPDX-2.3\",");
         builder.AppendLine("  \"dataLicense\": \"CC0-1.0\",");
         builder.Append("  \"SPDXID\": ").Append(Escape("SPDXRef-DOCUMENT")).AppendLine(",");
         builder.Append("  \"name\": ").Append(Escape("ViajantesTurismo " + options.Version)).AppendLine(",");
-        builder.Append("  \"documentNamespace\": ").Append(Escape("https://github.com/danigutsch/ViajantesTurismo/sbom/" + options.Version)).AppendLine(",");
+        builder.Append("  \"documentNamespace\": ").Append(Escape(documentNamespace)).AppendLine(",");
         builder.AppendLine("  \"creationInfo\": {");
         builder.AppendLine("    \"creators\": [\"Tool: SharedKernel.Versioning.Tool\"],");
-        builder.Append("    \"created\": ").Append(Escape(DateTimeOffset.UtcNow.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture))).AppendLine();
+        builder.Append("    \"created\": ").Append(Escape(created)).AppendLine();
         builder.AppendLine("  },");
         builder.AppendLine("  \"packages\": [");
         var index = 0;
@@ -167,6 +171,41 @@ internal static class PackageLockInventory
         {
             throw new ArgumentException($"Invalid packages.lock.json: {lockFile}", ex);
         }
+    }
+
+    private static DateTimeOffset GetCreatedTimestamp()
+    {
+        var sourceDateEpoch = Environment.GetEnvironmentVariable(SourceDateEpochVariableName);
+        if (string.IsNullOrWhiteSpace(sourceDateEpoch))
+        {
+            return DateTimeOffset.UtcNow;
+        }
+
+        if (!long.TryParse(sourceDateEpoch, NumberStyles.Integer, CultureInfo.InvariantCulture, out var seconds))
+        {
+            throw new ArgumentException($"{SourceDateEpochVariableName} must be a Unix timestamp in seconds.");
+        }
+
+        try
+        {
+            return DateTimeOffset.FromUnixTimeSeconds(seconds);
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            throw new ArgumentException($"{SourceDateEpochVariableName} is outside the supported Unix timestamp range.", ex);
+        }
+    }
+
+    private static string ReadRepositoryUrl(string repositoryRoot)
+    {
+        var rootProps = Path.Combine(repositoryRoot, "Directory.Build.props");
+        if (!File.Exists(rootProps))
+        {
+            throw new ArgumentException($"Directory.Build.props does not exist: {rootProps}");
+        }
+
+        return ProjectPropertyReader.Read(rootProps, "RepositoryUrl")
+            ?? throw new ArgumentException("Directory.Build.props missing RepositoryUrl.");
     }
 
     private static string SanitizeSpdxId(string value) => new(value.Select(character => char.IsLetterOrDigit(character) ? character : '-').ToArray());
