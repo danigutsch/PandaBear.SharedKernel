@@ -1253,6 +1253,41 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Returns_error_when_no_source_package_locks_are_found()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        Directory.CreateDirectory(Path.Combine(temporaryDirectory.Root, "src"));
+        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
+        await File.WriteAllBytesAsync(
+            packagePath,
+            "package"u8.ToArray(),
+            TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            [
+                "prepare-release",
+                "--version",
+                "1.2.3",
+                "--package-dir",
+                temporaryDirectory.PackageDirectory,
+                "--repo-root",
+                temporaryDirectory.Root,
+            ],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("No packages.lock.json files found under source directory:", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static async Task Returns_error_for_package_lock_without_resolved_version()
     {
         // Arrange
@@ -1348,13 +1383,40 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "Example.Package": {
+                    "type": "Direct",
+                    "requested": "[1.2.3, )",
+                    "resolved": "1.2.3"
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
         using var input = new StringReader(string.Empty);
         using var output = new StringWriter();
         using var error = new StringWriter();
 
         // Act
         var exitCode = await VersioningToolApplication.Run(
-            ["prepare-release", "--version", "1.2.3", "--package-dir", temporaryDirectory.PackageDirectory],
+            [
+                "prepare-release",
+                "--version",
+                "1.2.3",
+                "--package-dir",
+                temporaryDirectory.PackageDirectory,
+                "--repo-root",
+                temporaryDirectory.Root,
+            ],
             input,
             output,
             error);

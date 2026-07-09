@@ -16,12 +16,19 @@ internal static class PackageLockInventory
         var sourceRoot = Path.Combine(repositoryRoot, "src");
         if (!Directory.Exists(sourceRoot))
         {
-            return [];
+            throw new ArgumentException($"Source directory does not exist: {sourceRoot}");
+        }
+
+        var packageLockFiles = Directory.EnumerateFiles(sourceRoot, "packages.lock.json", SearchOption.AllDirectories)
+            .Where(IsMaintainedLockFile)
+            .ToArray();
+        if (packageLockFiles.Length == 0)
+        {
+            throw new ArgumentException($"No packages.lock.json files found under source directory: {sourceRoot}");
         }
 
         var packages = new Dictionary<string, SortedSet<string>>(StringComparer.OrdinalIgnoreCase);
-        foreach (var lockFile in Directory.EnumerateFiles(sourceRoot, "packages.lock.json", SearchOption.AllDirectories)
-            .Where(IsMaintainedLockFile))
+        foreach (var lockFile in packageLockFiles)
         {
             using var document = ReadLockFile(lockFile);
             if (!document.RootElement.TryGetProperty("dependencies", out var frameworks))
