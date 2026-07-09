@@ -8,6 +8,16 @@
         "resolved": "3.3.4",
         "contentHash": "kNLTfXtXUWDHVt5iaPkkiPuyHYlMgLI6SOFT4w88bfeI2vqSeGgHunFkdvlaCM8RDfcY0t2+jnesQtidRJJ/DA=="
       },
+      "Microsoft.Extensions.Compliance.Redaction": {
+        "type": "Direct",
+        "requested": "[10.1.0, )",
+        "resolved": "10.1.0",
+        "contentHash": "hr34RoU4bGHINca44zlvyG3KGg+R0Wmna7Lzic6IcCBP3EwdUgCHpIIhzENMrq9e6wmw5Fs1kwweig1AFnmgJw==",
+        "dependencies": {
+          "Microsoft.Extensions.Compliance.Abstractions": "10.1.0",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "10.0.1"
+        }
+      },
       "Microsoft.Extensions.Hosting": {
         "type": "Direct",
         "requested": "[10.0.9, )",
@@ -36,6 +46,19 @@
           "Microsoft.Extensions.Logging.EventLog": "10.0.9",
           "Microsoft.Extensions.Logging.EventSource": "10.0.9",
           "Microsoft.Extensions.Options": "10.0.9"
+        }
+      },
+      "Microsoft.Extensions.Telemetry": {
+        "type": "Direct",
+        "requested": "[10.7.0, )",
+        "resolved": "10.7.0",
+        "contentHash": "vZFNVvkz+7IABEv4klzPX/ZdmZQ6TrcReKUfeYIrQ2bbnvEcgZtG1RmOGeWkc1hFg8cq9sAgUc2lHCqlXSqf5A==",
+        "dependencies": {
+          "Microsoft.Extensions.AmbientMetadata.Application": "10.7.0",
+          "Microsoft.Extensions.DependencyInjection.AutoActivation": "10.7.0",
+          "Microsoft.Extensions.Logging.Configuration": "10.0.9",
+          "Microsoft.Extensions.ObjectPool": "10.0.9",
+          "Microsoft.Extensions.Telemetry.Abstractions": "10.7.0"
         }
       },
       "Microsoft.NET.ILLink.Tasks": {
@@ -79,6 +102,16 @@
         "requested": "[10.27.0.140913, )",
         "resolved": "10.27.0.140913",
         "contentHash": "cxk12QjN9io1SjN36B1QO+9dRf+ek2CGfQGsOWtHBojE35cKchKJod48raxZwe47jHhzmAUO4AJSh7+hF0GS4g=="
+      },
+      "Microsoft.Extensions.AmbientMetadata.Application": {
+        "type": "Transitive",
+        "resolved": "10.7.0",
+        "contentHash": "yZ0818pVYQvUFW/1m+f8A1+lIAeSeQxEOdUCMIC+tqcRRKlqNjKPRKvGHPp8xLRbZBLaHfBtDslJa/sofn7J/Q==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "10.0.9",
+          "Microsoft.Extensions.Hosting.Abstractions": "10.0.9",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "10.0.9"
+        }
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
@@ -156,6 +189,14 @@
           "Microsoft.Extensions.Configuration.Json": "10.0.9",
           "Microsoft.Extensions.FileProviders.Abstractions": "10.0.9",
           "Microsoft.Extensions.FileProviders.Physical": "10.0.9"
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.AutoActivation": {
+        "type": "Transitive",
+        "resolved": "10.7.0",
+        "contentHash": "WrSK0FGHSjSY4Pg4kd9Du8CUDwrgFTwHH1Y+N7sjyT6RFMU+G3coQ/Uq9PMGdQcy+DVKSMGHjfmWY47ZoYvhNA==",
+        "dependencies": {
+          "Microsoft.Extensions.Hosting.Abstractions": "10.0.9"
         }
       },
       "Microsoft.Extensions.Diagnostics.Abstractions": {
@@ -261,10 +302,26 @@
           "Microsoft.Extensions.Primitives": "10.0.9"
         }
       },
+      "Microsoft.Extensions.ObjectPool": {
+        "type": "Transitive",
+        "resolved": "10.0.9",
+        "contentHash": "KZENCkfqO7Ciax6goUWQHDSxKH+x763hkBWMz9KpE87EyKW+EKEas9EFe9i1KgtQShG8KwKxaeJ5gd9sj6TuTQ=="
+      },
       "Microsoft.Extensions.Primitives": {
         "type": "Transitive",
         "resolved": "10.0.9",
         "contentHash": "fmEbAUFsaIKirgLt/lYhuFRBwhcSJN31jjHgCdbQxJiWOum6EdLjkbgGuukSP9z/a+9LibaxII/kF+GwOXgC4g=="
+      },
+      "Microsoft.Extensions.Telemetry.Abstractions": {
+        "type": "Transitive",
+        "resolved": "10.7.0",
+        "contentHash": "ir1QKShZzfEmqO9LUWESVMUDZdnxYBSKQyulYPMeaye531lAuT8YTotthx+htrrS8hZY52HANeqowLQyCYBCZg==",
+        "dependencies": {
+          "Microsoft.Extensions.Compliance.Abstractions": "10.7.0",
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.9",
+          "Microsoft.Extensions.ObjectPool": "10.0.9",
+          "Microsoft.Extensions.Options": "10.0.9"
+        }
       },
       "OpenTelemetry.Api": {
         "type": "Transitive",
@@ -284,6 +341,16 @@
         "type": "Transitive",
         "resolved": "10.0.9",
         "contentHash": "s2PcxHK4IYQ6gmD3VSBkym9tWGkFisKjcjWBdl7a+n4Yy66ae4beJ1ZdjDp060SSll4W3Rt4H2LW87dWckv+QQ=="
+      },
+      "Microsoft.Extensions.Compliance.Abstractions": {
+        "type": "CentralTransitive",
+        "requested": "[10.7.0, )",
+        "resolved": "10.7.0",
+        "contentHash": "qbi6lg6dyvydBvpjXeBx3wLPvmgXWn3nwkKBOsgEck6w++BEsBcv8YhdcczME16Oq+a6wkdtna9/qCEkxsNw5A==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.9",
+          "Microsoft.Extensions.ObjectPool": "10.0.9"
+        }
       },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "CentralTransitive",
