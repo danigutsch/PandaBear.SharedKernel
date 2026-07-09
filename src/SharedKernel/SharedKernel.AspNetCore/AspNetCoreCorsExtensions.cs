@@ -52,7 +52,8 @@ public static class AspNetCoreCorsExtensions
         return configuration.GetChildren()
             .Select(section => section.Value)
             .OfType<string>()
-            .Where(origin => !string.IsNullOrWhiteSpace(origin))
+            .Select(static origin => origin.Trim())
+            .Where(static origin => origin.Length > 0)
             .ToArray();
     }
 }

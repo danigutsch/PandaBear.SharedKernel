@@ -1,3 +1,4 @@
+using System.Net;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.RateLimiting;
@@ -12,6 +13,10 @@ public static class AspNetCoreRateLimitingExtensions
     /// <summary>
     /// Adds a fixed-window rate-limit policy partitioned by remote IP address.
     /// </summary>
+    /// <remarks>
+    /// Applications behind reverse proxies must configure and trust forwarded headers before this policy runs.
+    /// Otherwise, the remote IP address may be the proxy address rather than the original client address.
+    /// </remarks>
     /// <param name="options">The rate limiter options to configure.</param>
     /// <param name="policyName">The application-owned policy name.</param>
     /// <param name="permitLimit">The maximum number of permitted requests per window.</param>
@@ -30,7 +35,7 @@ public static class AspNetCoreRateLimitingExtensions
 
         options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
         options.AddPolicy(policyName, httpContext => RateLimitPartition.GetFixedWindowLimiter(
-            httpContext.Connection.RemoteIpAddress?.ToString() ?? "local",
+            RemoteIpPartitionKey(httpContext.Connection.RemoteIpAddress),
             _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = permitLimit,
@@ -40,6 +45,18 @@ public static class AspNetCoreRateLimitingExtensions
             }));
 
         return options;
+    }
+
+    private static string RemoteIpPartitionKey(IPAddress? remoteIpAddress)
+    {
+        if (remoteIpAddress is null)
+        {
+            return "local";
+        }
+
+        return remoteIpAddress.IsIPv4MappedToIPv6
+            ? remoteIpAddress.MapToIPv4().ToString()
+            : remoteIpAddress.ToString();
     }
 
     /// <summary>
