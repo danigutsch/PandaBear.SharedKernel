@@ -23,13 +23,13 @@ public static class ObservabilityBuilderExtensions
     {
         ArgumentNullException.ThrowIfNull(builder);
 
+        builder.Services.AddRedaction();
+        builder.Logging.EnableRedaction();
         builder.Logging.AddOpenTelemetry(logging =>
         {
             logging.IncludeFormattedMessage = true;
             logging.IncludeScopes = true;
         });
-        builder.Logging.EnableRedaction();
-        builder.Services.AddRedaction();
 
         var serviceVersion = ApplicationVersionProvider.GetEntryAssemblyInformationalVersion();
         var resourceBuilder = ResourceBuilder.CreateDefault().AddDetector(new ExplicitServiceNameDetector(builder.Environment.ApplicationName, serviceVersion));
