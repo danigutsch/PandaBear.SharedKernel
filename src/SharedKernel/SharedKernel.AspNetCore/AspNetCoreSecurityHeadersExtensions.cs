@@ -56,7 +56,7 @@ public static class AspNetCoreSecurityHeadersExtensions
                 return Task.CompletedTask;
             }, (httpContext, contentSecurityPolicy, permissionsPolicy));
 
-            await next(httpContext).ConfigureAwait(false);
+            await next().ConfigureAwait(false);
         });
     }
 
