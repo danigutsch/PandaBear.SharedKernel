@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Configuration;
+using SharedKernel.InputNormalization;
 
 namespace SharedKernel.AspNetCore;
 
@@ -49,11 +50,8 @@ public static class AspNetCoreCorsExtensions
 
     private static string[] GetAllowedOrigins(IConfiguration configuration)
     {
-        return configuration.GetChildren()
-            .Select(section => section.Value)
-            .OfType<string>()
-            .Select(static origin => origin.Trim())
-            .Where(static origin => origin.Length > 0)
-            .ToArray();
+        return StringSanitizer.SanitizeCollection(configuration.GetChildren()
+            .Select(static section => section.Value)
+            .OfType<string>());
     }
 }

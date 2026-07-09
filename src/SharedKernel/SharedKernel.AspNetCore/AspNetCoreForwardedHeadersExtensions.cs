@@ -99,9 +99,25 @@ public static class AspNetCoreForwardedHeadersExtensions
             && IPAddress.TryParse(parts[0], out var prefix)
             && int.TryParse(parts[1], out var prefixLength))
         {
-            return new System.Net.IPNetwork(prefix, prefixLength);
+            var maxPrefixLength = prefix.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork ? 32 : 128;
+            if (prefixLength >= 0 && prefixLength <= maxPrefixLength)
+            {
+                try
+                {
+                    return new System.Net.IPNetwork(prefix, prefixLength);
+                }
+                catch (ArgumentException ex)
+                {
+                    throw CreateInvalidNetworkException(value, ex);
+                }
+            }
         }
 
-        throw new InvalidOperationException($"Security:ForwardedHeaders:{KnownNetworksSectionName} contains an invalid CIDR network: {value}");
+        throw CreateInvalidNetworkException(value);
+    }
+
+    private static InvalidOperationException CreateInvalidNetworkException(string value, Exception? innerException = null)
+    {
+        return new InvalidOperationException($"Security:ForwardedHeaders:{KnownNetworksSectionName} contains an invalid CIDR network: {value}", innerException);
     }
 }
