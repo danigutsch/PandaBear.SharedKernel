@@ -8,6 +8,12 @@ namespace SharedKernel.AspNetCore;
 /// </summary>
 public static class AspNetCoreSecurityHeadersExtensions
 {
+    private const string ContentSecurityPolicyHeaderName = "Content-Security-Policy";
+
+    private const string XFrameOptionsHeaderName = "X-Frame-Options";
+
+    private const string XContentTypeOptionsHeaderName = "X-Content-Type-Options";
+
     private const string ReferrerPolicyHeaderName = "Referrer-Policy";
 
     private const string PermissionsPolicyHeaderName = "Permissions-Policy";
@@ -43,17 +49,23 @@ public static class AspNetCoreSecurityHeadersExtensions
 
         return app.Use(async (httpContext, next) =>
         {
-            SetSecurityHeaders(httpContext, contentSecurityPolicy, permissionsPolicy);
+            httpContext.Response.OnStarting(static state =>
+            {
+                var (context, csp, permissions) = ((HttpContext Context, string Csp, string Permissions))state;
+                SetSecurityHeaders(context, csp, permissions);
+                return Task.CompletedTask;
+            }, (httpContext, contentSecurityPolicy, permissionsPolicy));
+
             await next(httpContext).ConfigureAwait(false);
         });
     }
 
     private static void SetSecurityHeaders(HttpContext httpContext, string contentSecurityPolicy, string permissionsPolicy)
     {
-        httpContext.Response.Headers.ContentSecurityPolicy = contentSecurityPolicy;
-        httpContext.Response.Headers.XFrameOptions = "DENY";
+        httpContext.Response.Headers[ContentSecurityPolicyHeaderName] = contentSecurityPolicy;
+        httpContext.Response.Headers[XFrameOptionsHeaderName] = "DENY";
         httpContext.Response.Headers[ReferrerPolicyHeaderName] = "no-referrer";
-        httpContext.Response.Headers.XContentTypeOptions = "nosniff";
+        httpContext.Response.Headers[XContentTypeOptionsHeaderName] = "nosniff";
         httpContext.Response.Headers[PermissionsPolicyHeaderName] = permissionsPolicy;
     }
 }
