@@ -135,7 +135,7 @@ internal static class VersioningToolApplication
         Options:
           --base <version>        Base semantic version for compute.
           --prerelease <label>    Optional prerelease label for compute.
-          --repo-root <path>      Repository root for Git-backed release and pack commands.
+          --repo-root <path>      Repository root for Git-backed release, pack, metadata, and SBOM commands.
           --version-kind <mode>   Release version mode: prerelease or stable.
           --run-number <number>   CI run number used in prerelease labels.
           --sha <sha>             Optional source revision for informational version metadata.
