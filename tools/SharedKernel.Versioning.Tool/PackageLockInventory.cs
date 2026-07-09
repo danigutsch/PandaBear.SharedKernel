@@ -184,9 +184,10 @@ internal static class PackageLockInventory
     {
         try
         {
-            return JsonDocument.Parse(File.ReadAllText(lockFile));
+            using var stream = File.OpenRead(lockFile);
+            return JsonDocument.Parse(stream);
         }
-        catch (JsonException ex)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException)
         {
             throw new ArgumentException($"Invalid packages.lock.json: {lockFile}", ex);
         }
