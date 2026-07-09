@@ -6,7 +6,7 @@ internal static class VersioningToolApplication
 {
     public static async Task<int> Run(string[] args, TextReader input, TextWriter output, TextWriter error)
     {
-        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"] or ["calculate-release", "--help"] or ["calculate-release", "-h"] or ["pack-sharedkernel", "--help"] or ["pack-sharedkernel", "-h"] or ["prepare-release", "--help"] or ["prepare-release", "-h"] or ["check-public-api-baselines", "--help"] or ["check-public-api-baselines", "-h"] or ["has-breaking-change-marker", "--help"] or ["has-breaking-change-marker", "-h"] or ["api-compatibility", "--help"] or ["api-compatibility", "-h"])
+        if (IsHelpRequest(args))
         {
             await output.WriteLineAsync(Usage).ConfigureAwait(false);
             return 0;
@@ -20,69 +20,10 @@ internal static class VersioningToolApplication
 
         try
         {
-            if (args is ["commit-impact", .. var messageParts])
+            var exitCode = await RunCommand(args, input, output).ConfigureAwait(false);
+            if (exitCode is not null)
             {
-                var message = string.Join(' ', messageParts);
-                var commit = ConventionalCommitParser.Parse(message);
-                await output.WriteLineAsync(ReleaseImpactText.ToOutputValue(commit.Impact)).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["compute", .. var computeArgs])
-            {
-                var options = VersionToolOptions.Parse(computeArgs);
-                var messages = await CommitMessageInput.ReadMessages(input).ConfigureAwait(false);
-                var versionOutput = VersionCalculation.Calculate(
-                    SemanticVersion.Parse(options.BaseVersion),
-                    messages,
-                    options.Prerelease,
-                    options.Sha);
-
-                await output.WriteLineAsync(VersionOutputJson.Serialize(versionOutput)).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["calculate-release", .. var calculateArgs])
-            {
-                var options = CalculateReleaseOptions.Parse(calculateArgs);
-                await ReleaseVersionCommand.Run(options, output).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["pack-sharedkernel", .. var packArgs])
-            {
-                var options = PackSharedKernelOptions.Parse(packArgs);
-                await SharedKernelPackCommand.Run(options, output).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["prepare-release", .. var releaseArgs])
-            {
-                var options = PrepareReleaseOptions.Parse(releaseArgs);
-                await ReleaseArtifactWriter.Write(options, input).ConfigureAwait(false);
-                await output.WriteLineAsync($"Release prep artifacts: {options.OutputDirectory}").ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["check-public-api-baselines", .. var baselineArgs])
-            {
-                var repoRoot = ParseRepoRoot(baselineArgs);
-                await PublicApiBaselineCommand.Run(repoRoot, output).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["has-breaking-change-marker", var range, .. var markerArgs])
-            {
-                var repoRoot = ParseRepoRoot(markerArgs);
-                await BreakingChangeMarkerCommand.Run(range, repoRoot, output).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["api-compatibility", .. var apiCompatibilityArgs])
-            {
-                var options = ApiCompatibilityOptions.Parse(apiCompatibilityArgs);
-                await ApiCompatibilityCommand.Run(options, output).ConfigureAwait(false);
-                return 0;
+                return exitCode.Value;
             }
         }
         catch (ArgumentException ex)
@@ -100,6 +41,59 @@ internal static class VersioningToolApplication
         return 2;
     }
 
+    private static bool IsHelpRequest(string[] args) =>
+        args.Length == 0
+        || args is ["--help"] or ["-h"]
+        || (args.Length == 2 && args[1] is "--help" or "-h");
+
+    private static async Task<int?> RunCommand(string[] args, TextReader input, TextWriter output)
+    {
+        switch (args)
+        {
+            case ["commit-impact", .. var messageParts]:
+                var message = string.Join(' ', messageParts);
+                var commit = ConventionalCommitParser.Parse(message);
+                await output.WriteLineAsync(ReleaseImpactText.ToOutputValue(commit.Impact)).ConfigureAwait(false);
+                return 0;
+            case ["compute", .. var computeArgs]:
+                var options = VersionToolOptions.Parse(computeArgs);
+                var messages = await CommitMessageInput.ReadMessages(input).ConfigureAwait(false);
+                var versionOutput = VersionCalculation.Calculate(
+                    SemanticVersion.Parse(options.BaseVersion),
+                    messages,
+                    options.Prerelease,
+                    options.Sha);
+
+                await output.WriteLineAsync(VersionOutputJson.Serialize(versionOutput)).ConfigureAwait(false);
+                return 0;
+            case ["calculate-release", .. var calculateArgs]:
+                await ReleaseVersionCommand.Run(CalculateReleaseOptions.Parse(calculateArgs), output).ConfigureAwait(false);
+                return 0;
+            case ["pack-sharedkernel", .. var packArgs]:
+                await SharedKernelPackCommand.Run(PackSharedKernelOptions.Parse(packArgs), output).ConfigureAwait(false);
+                return 0;
+            case ["prepare-release", .. var releaseArgs]:
+                var releaseOptions = PrepareReleaseOptions.Parse(releaseArgs);
+                await ReleaseArtifactWriter.Write(releaseOptions, input).ConfigureAwait(false);
+                await output.WriteLineAsync($"Release prep artifacts: {releaseOptions.OutputDirectory}").ConfigureAwait(false);
+                return 0;
+            case ["check-public-api-baselines", .. var baselineArgs]:
+                await PublicApiBaselineCommand.Run(ParseRepoRoot(baselineArgs), output).ConfigureAwait(false);
+                return 0;
+            case ["validate-package-metadata", .. var metadataArgs]:
+                PackageMetadataValidationCommand.Run(ParseRepoRoot(metadataArgs), output);
+                return 0;
+            case ["has-breaking-change-marker", var range, .. var markerArgs]:
+                await BreakingChangeMarkerCommand.Run(range, ParseRepoRoot(markerArgs), output).ConfigureAwait(false);
+                return 0;
+            case ["api-compatibility", .. var apiCompatibilityArgs]:
+                await ApiCompatibilityCommand.Run(ApiCompatibilityOptions.Parse(apiCompatibilityArgs), output).ConfigureAwait(false);
+                return 0;
+            default:
+                return null;
+        }
+    }
+
     private const string Usage = """
         Usage:
           sharedkernel-version --help
@@ -108,8 +102,9 @@ internal static class VersioningToolApplication
           sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha>] < commit-messages.txt
           sharedkernel-version calculate-release [--repo-root <path>] [--version-kind <prerelease|stable>] [--run-number <number>] [--sha <sha>] [--github-output <path>] [--github-summary <path>]
           sharedkernel-version pack-sharedkernel [--version <semver>] [--assembly-version <version>] [--file-version <version>] [--informational-version <version>] [--output-root <path>] [--repo-root <path>] [--skip-restore-check]
-          sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes.txt
+          sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--repo-root <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes.txt
           sharedkernel-version check-public-api-baselines [--repo-root <path>]
+          sharedkernel-version validate-package-metadata [--repo-root <path>]
           sharedkernel-version has-breaking-change-marker <git-range> [--repo-root <path>]
           sharedkernel-version api-compatibility [--version <semver>] [--release-phase <alpha|beta|rc|stable>] [--baseline-version <semver>] [--breaking-marker] [--output-root <path>] [--repo-root <path>]
 
@@ -120,13 +115,14 @@ internal static class VersioningToolApplication
           pack-sharedkernel Packs SharedKernel packages and verifies local feed restore.
           prepare-release Writes release notes, changelog, and package manifest artifacts.
           check-public-api-baselines Checks PublicAPI baselines for SharedKernel projects.
+          validate-package-metadata Validates required SharedKernel package metadata.
           has-breaking-change-marker Checks commit history for a breaking-change marker.
           api-compatibility Writes the SharedKernel package API compatibility report.
 
         Options:
           --base <version>        Base semantic version for compute.
           --prerelease <label>    Optional prerelease label for compute.
-          --repo-root <path>      Repository root for Git-backed release and pack commands.
+          --repo-root <path>      Repository root for Git-backed release, pack, metadata, and SBOM commands.
           --version-kind <mode>   Release version mode: prerelease or stable.
           --run-number <number>   CI run number used in prerelease labels.
           --sha <sha>             Optional source revision for informational version metadata.

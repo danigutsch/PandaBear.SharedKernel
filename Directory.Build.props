@@ -37,6 +37,7 @@
 	<PropertyGroup>
 		<Authors Condition="'$(Authors)' == ''">ViajantesTurismo contributors</Authors>
 		<Company Condition="'$(Company)' == ''">ViajantesTurismo</Company>
+		<Copyright Condition="'$(Copyright)' == ''">Copyright (c) 2025 ViajantesTurismo contributors</Copyright>
 		<PackageLicenseExpression Condition="'$(PackageLicenseExpression)' == ''">MIT</PackageLicenseExpression>
 		<RepositoryUrl Condition="'$(RepositoryUrl)' == ''">https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
 		<PublishRepositoryUrl Condition="'$(PublishRepositoryUrl)' == ''">true</PublishRepositoryUrl>

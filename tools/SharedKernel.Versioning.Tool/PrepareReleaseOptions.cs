@@ -4,6 +4,7 @@ internal sealed record PrepareReleaseOptions(
     string Version,
     string PackageDirectory,
     string OutputDirectory,
+    string RepositoryRoot,
     string? SourceTag,
     string? ReleaseImpact,
     string? Sha)
@@ -13,6 +14,7 @@ internal sealed record PrepareReleaseOptions(
         string? version = null;
         string? packageDirectory = null;
         var outputDirectory = "artifacts/release-prep";
+        var repositoryRoot = ".";
         string? sourceTag = null;
         string? releaseImpact = null;
         string? sha = null;
@@ -36,6 +38,9 @@ internal sealed record PrepareReleaseOptions(
                 case "--output-dir":
                     outputDirectory = value;
                     break;
+                case "--repo-root":
+                    repositoryRoot = value;
+                    break;
                 case "--source-tag":
                     sourceTag = value;
                     break;
@@ -54,6 +59,7 @@ internal sealed record PrepareReleaseOptions(
             version ?? throw new ArgumentException("--version is required."),
             packageDirectory ?? throw new ArgumentException("--package-dir is required."),
             outputDirectory,
+            repositoryRoot,
             sourceTag,
             releaseImpact,
             sha);
