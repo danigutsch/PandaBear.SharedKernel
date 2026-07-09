@@ -13,8 +13,14 @@ internal static class PackageLockInventory
             throw new ArgumentException($"Repository root does not exist: {repositoryRoot}");
         }
 
+        var sourceRoot = Path.Combine(repositoryRoot, "src");
+        if (!Directory.Exists(sourceRoot))
+        {
+            return [];
+        }
+
         var packages = new Dictionary<string, SortedSet<string>>(StringComparer.OrdinalIgnoreCase);
-        foreach (var lockFile in Directory.EnumerateFiles(repositoryRoot, "packages.lock.json", SearchOption.AllDirectories)
+        foreach (var lockFile in Directory.EnumerateFiles(sourceRoot, "packages.lock.json", SearchOption.AllDirectories)
             .Where(IsMaintainedLockFile))
         {
             using var document = ReadLockFile(lockFile);

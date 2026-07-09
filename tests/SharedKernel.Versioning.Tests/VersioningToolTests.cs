@@ -979,6 +979,61 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Reads_package_lock_inventory_from_src_only()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var sourceProjectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample");
+        var testProjectDirectory = Path.Combine(temporaryDirectory.Root, "tests", "Sample.Tests");
+        Directory.CreateDirectory(sourceProjectDirectory);
+        Directory.CreateDirectory(testProjectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(sourceProjectDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "Example.Package": {
+                    "type": "Direct",
+                    "requested": "[1.2.3, )",
+                    "resolved": "1.2.3"
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(
+            Path.Combine(testProjectDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "TestOnly.Package": {
+                    "type": "Direct",
+                    "requested": "[9.9.9, )",
+                    "resolved": "9.9.9"
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
+
+        // Act
+        var packages = PackageLockInventory.Read(temporaryDirectory.Root);
+
+        // Assert
+        var package = packages.ShouldHaveSingleItem();
+        package.Id.ShouldBe("Example.Package");
+        package.Version.ShouldBe("1.2.3");
+        package.LockFiles.ShouldContain("src/Sample/packages.lock.json");
+        package.LockFiles.ShouldNotContain("tests/Sample.Tests/packages.lock.json");
+    }
+
+    [Fact]
     public static async Task Validates_package_metadata_for_packable_sharedkernel_projects()
     {
         // Arrange
