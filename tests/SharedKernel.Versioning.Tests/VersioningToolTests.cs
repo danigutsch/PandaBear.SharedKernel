@@ -1163,6 +1163,32 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Returns_error_for_invalid_project_property_file()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await File.WriteAllTextAsync(
+            Path.Combine(temporaryDirectory.Root, "Directory.Build.props"),
+            "<Project><PropertyGroup>",
+            TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            ["validate-package-metadata", "--repo-root", temporaryDirectory.Root],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("Invalid project property file:", StringComparison.Ordinal);
+        error.ToString().ShouldContain("Directory.Build.props", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static async Task Returns_error_when_sharedkernel_source_directory_is_missing_for_package_metadata()
     {
         // Arrange
