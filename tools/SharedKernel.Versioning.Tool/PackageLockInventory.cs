@@ -230,5 +230,10 @@ internal static class PackageLockInventory
 
     private static string SanitizeSpdxId(string value) => new(value.Select(character => char.IsLetterOrDigit(character) ? character : '-').ToArray());
 
-    private static string Escape(string value) => "\"" + value.Replace("\\", "\\\\", StringComparison.Ordinal).Replace("\"", "\\\"", StringComparison.Ordinal) + "\"";
+    private static string Escape(string value) => "\"" + value
+        .Replace("\\", "\\\\", StringComparison.Ordinal)
+        .Replace("\"", "\\\"", StringComparison.Ordinal)
+        .Replace("\n", "\\n", StringComparison.Ordinal)
+        .Replace("\r", "\\r", StringComparison.Ordinal)
+        .Replace("\t", "\\t", StringComparison.Ordinal) + "\"";
 }
