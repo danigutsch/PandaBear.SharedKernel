@@ -1075,6 +1075,138 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Returns_error_when_sharedkernel_source_directory_is_missing_for_package_metadata()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await File.WriteAllTextAsync(
+            Path.Combine(temporaryDirectory.Root, "Directory.Build.props"),
+            """
+            <Project>
+              <PropertyGroup>
+                <Authors>ViajantesTurismo contributors</Authors>
+                <Company>ViajantesTurismo</Company>
+                <Copyright>Copyright (c) 2025 ViajantesTurismo contributors</Copyright>
+                <PackageLicenseExpression>MIT</PackageLicenseExpression>
+                <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
+                <PublishRepositoryUrl>true</PublishRepositoryUrl>
+              </PropertyGroup>
+            </Project>
+            """,
+            TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            ["validate-package-metadata", "--repo-root", temporaryDirectory.Root],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("SharedKernel source directory does not exist:", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Returns_error_for_invalid_package_lock_inventory()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "packages.lock.json"),
+            "{ invalid json",
+            TestContext.Current.CancellationToken);
+
+        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
+        await File.WriteAllBytesAsync(
+            packagePath,
+            "package"u8.ToArray(),
+            TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            [
+                "prepare-release",
+                "--version",
+                "1.2.3",
+                "--package-dir",
+                temporaryDirectory.PackageDirectory,
+                "--repo-root",
+                temporaryDirectory.Root,
+            ],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("Invalid packages.lock.json:", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Returns_error_for_package_lock_without_resolved_version()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "Example.Package": {
+                    "type": "Direct",
+                    "requested": "[1.2.3, )",
+                    "resolved": " "
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
+
+        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
+        await File.WriteAllBytesAsync(
+            packagePath,
+            "package"u8.ToArray(),
+            TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            [
+                "prepare-release",
+                "--version",
+                "1.2.3",
+                "--package-dir",
+                temporaryDirectory.PackageDirectory,
+                "--repo-root",
+                temporaryDirectory.Root,
+            ],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("Package Example.Package", StringComparison.Ordinal);
+        error.ToString().ShouldContain("has no resolved version.", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static async Task Returns_error_for_missing_prepare_release_options()
     {
         // Arrange

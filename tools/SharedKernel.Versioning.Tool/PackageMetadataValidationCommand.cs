@@ -21,6 +21,11 @@ internal static class PackageMetadataValidationCommand
         RequireCentralProperty(rootProps, "PublishRepositoryUrl", failures);
 
         var sharedKernelRoot = Path.Combine(repositoryRoot, "src", "SharedKernel");
+        if (!Directory.Exists(sharedKernelRoot))
+        {
+            throw new ArgumentException($"SharedKernel source directory does not exist: {sharedKernelRoot}");
+        }
+
         foreach (var project in Directory.EnumerateFiles(sharedKernelRoot, "*.csproj", SearchOption.AllDirectories).Order(StringComparer.Ordinal))
         {
             if (IsNonPackable(project))

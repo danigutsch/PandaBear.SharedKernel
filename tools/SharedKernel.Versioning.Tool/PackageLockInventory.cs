@@ -1,6 +1,6 @@
+using System.Globalization;
 using System.Text;
 using System.Text.Json;
-using System.Globalization;
 
 namespace SharedKernel.Versioning.Tool;
 
@@ -17,7 +17,7 @@ internal static class PackageLockInventory
         foreach (var lockFile in Directory.EnumerateFiles(repositoryRoot, "packages.lock.json", SearchOption.AllDirectories)
             .Where(IsMaintainedLockFile))
         {
-            using var document = JsonDocument.Parse(File.ReadAllText(lockFile));
+            using var document = ReadLockFile(lockFile);
             if (!document.RootElement.TryGetProperty("dependencies", out var frameworks))
             {
                 continue;
@@ -32,7 +32,13 @@ internal static class PackageLockInventory
                         continue;
                     }
 
-                    var key = package.Name + "@" + resolved.GetString();
+                    var version = resolved.GetString();
+                    if (string.IsNullOrWhiteSpace(version))
+                    {
+                        throw new ArgumentException($"Package {package.Name} in {lockFile} has no resolved version.");
+                    }
+
+                    var key = package.Name + "@" + version;
                     if (!packages.TryGetValue(key, out var lockFiles))
                     {
                         lockFiles = new SortedSet<string>(StringComparer.Ordinal);
@@ -137,6 +143,18 @@ internal static class PackageLockInventory
         && !path.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
         && !path.Contains(Path.DirectorySeparatorChar + ".worktrees" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
         && !path.Contains(Path.DirectorySeparatorChar + "artifacts" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+
+    private static JsonDocument ReadLockFile(string lockFile)
+    {
+        try
+        {
+            return JsonDocument.Parse(File.ReadAllText(lockFile));
+        }
+        catch (JsonException ex)
+        {
+            throw new ArgumentException($"Invalid packages.lock.json: {lockFile}", ex);
+        }
+    }
 
     private static string SanitizeSpdxId(string value) => new(value.Select(character => char.IsLetterOrDigit(character) ? character : '-').ToArray());
 
