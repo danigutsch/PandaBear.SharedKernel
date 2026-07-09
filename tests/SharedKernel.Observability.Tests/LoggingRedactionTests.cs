@@ -5,7 +5,7 @@ using SharedKernel.Testing.Assertions;
 
 namespace SharedKernel.Observability.Tests;
 
-public sealed partial class LoggingRedactionTests
+public sealed class LoggingRedactionTests
 {
     [Fact]
     public void Configure_opentelemetry_redacts_classified_log_parameters()
@@ -20,14 +20,11 @@ public sealed partial class LoggingRedactionTests
         var logger = host.Services.GetRequiredService<ILogger<LoggingRedactionTests>>();
 
         // Act
-        LogImportedCustomer(logger, "traveler@example.com");
+        TestCustomerLogger.LogImportedCustomer(logger, "traveler@example.com");
 
         // Assert
         var message = provider.Messages.ShouldHaveSingleItem();
         message.ShouldContain("Imported customer", StringComparison.Ordinal);
         message.ShouldNotContain("traveler@example.com");
     }
-
-    [LoggerMessage(1, LogLevel.Information, "Imported customer {Email}.")]
-    private static partial void LogImportedCustomer(ILogger logger, [TestPersonalData] string email);
 }
