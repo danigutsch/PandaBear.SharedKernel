@@ -969,7 +969,7 @@ public static class VersioningToolTests
         manifest.ShouldContain(
             "\"sha256\": \"BC4A71180870F7945155FBB02F4B0A2E3FAA2A62D6D31B7039013055ED19869A\"",
             StringComparison.Ordinal);
-        manifest.ShouldContain("\"path\": \"artifacts/release-prep/sbom.spdx.json\"", StringComparison.Ordinal);
+        manifest.ShouldContain("\"path\": \"" + temporaryDirectory.OutputDirectory.Replace('\\', '/') + "/sbom.spdx.json\"", StringComparison.Ordinal);
         manifest.ShouldContain("\"packageCount\": 1", StringComparison.Ordinal);
         attributions.ShouldContain("\"id\": \"Example.Package\"", StringComparison.Ordinal);
         attributions.ShouldContain("\"licenseExpression\": \"NOASSERTION\"", StringComparison.Ordinal);
@@ -1039,6 +1039,7 @@ public static class VersioningToolTests
             <Project>
               <PropertyGroup>
                 <Authors>ViajantesTurismo contributors</Authors>
+                <Company />
               </PropertyGroup>
             </Project>
             """,

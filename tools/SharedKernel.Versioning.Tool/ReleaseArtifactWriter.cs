@@ -109,11 +109,11 @@ internal static class ReleaseArtifactWriter
         builder.AppendLine("  ],");
         builder.AppendLine("  \"sbom\": {");
         builder.AppendLine("    \"format\": \"SPDX-2.3\",");
-        builder.AppendLine("    \"path\": \"artifacts/release-prep/sbom.spdx.json\"");
+        builder.Append("    \"path\": ").Append(Escape(ReleaseArtifactPath(options, "sbom.spdx.json"))).AppendLine();
         builder.AppendLine("  },");
         builder.AppendLine("  \"thirdPartyAttributions\": {");
-        builder.AppendLine("    \"jsonPath\": \"artifacts/release-prep/third-party-attributions.json\",");
-        builder.AppendLine("    \"noticePath\": \"artifacts/release-prep/third-party-notices.md\",");
+        builder.Append("    \"jsonPath\": ").Append(Escape(ReleaseArtifactPath(options, "third-party-attributions.json"))).AppendLine(",");
+        builder.Append("    \"noticePath\": ").Append(Escape(ReleaseArtifactPath(options, "third-party-notices.md"))).AppendLine(",");
         builder.Append("    \"packageCount\": ").Append(inventory.Length).AppendLine();
         builder.AppendLine("  },");
         builder.Append("  \"licenseEvidenceNote\": ").Append(Escape(SbomNote)).AppendLine();
@@ -163,6 +163,9 @@ internal static class ReleaseArtifactWriter
     }
 
     private static string NullableEscape(string? value) => string.IsNullOrWhiteSpace(value) ? "null" : Escape(value);
+
+    private static string ReleaseArtifactPath(PrepareReleaseOptions options, string fileName) =>
+        Path.Combine(options.OutputDirectory, fileName).Replace('\\', '/');
 
     private static string Escape(string value)
     {

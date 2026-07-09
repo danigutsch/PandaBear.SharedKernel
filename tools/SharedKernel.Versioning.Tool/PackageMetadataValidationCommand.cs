@@ -62,9 +62,10 @@ internal static class PackageMetadataValidationCommand
     private static string? ReadProperty(string project, string propertyName)
     {
         var document = XDocument.Load(project);
-        return document.Descendants()
+        var value = document.Descendants()
             .FirstOrDefault(element => string.Equals(element.Name.LocalName, propertyName, StringComparison.Ordinal))
             ?.Value
             .Trim();
+        return string.IsNullOrWhiteSpace(value) ? null : value;
     }
 }

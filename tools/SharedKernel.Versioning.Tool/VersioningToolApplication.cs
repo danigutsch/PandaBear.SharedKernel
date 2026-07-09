@@ -115,7 +115,7 @@ internal static class VersioningToolApplication
           sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha>] < commit-messages.txt
           sharedkernel-version calculate-release [--repo-root <path>] [--version-kind <prerelease|stable>] [--run-number <number>] [--sha <sha>] [--github-output <path>] [--github-summary <path>]
           sharedkernel-version pack-sharedkernel [--version <semver>] [--assembly-version <version>] [--file-version <version>] [--informational-version <version>] [--output-root <path>] [--repo-root <path>] [--skip-restore-check]
-          sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes.txt
+          sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--repo-root <path>] [--source-tag <tag>] [--release-impact <impact>] [--sha <sha>] < changes.txt
           sharedkernel-version check-public-api-baselines [--repo-root <path>]
           sharedkernel-version validate-package-metadata [--repo-root <path>]
           sharedkernel-version has-breaking-change-marker <git-range> [--repo-root <path>]
