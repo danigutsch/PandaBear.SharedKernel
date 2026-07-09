@@ -10,70 +10,14 @@ internal static class PackageLockInventory
 
     public static ResolvedNuGetPackage[] Read(string repositoryRoot)
     {
-        if (!Directory.Exists(repositoryRoot))
-        {
-            throw new ArgumentException($"Repository root does not exist: {repositoryRoot}");
-        }
-
-        var sourceRoot = Path.Combine(repositoryRoot, "src");
-        if (!Directory.Exists(sourceRoot))
-        {
-            throw new ArgumentException($"Source directory does not exist: {sourceRoot}");
-        }
-
-        var packageLockFiles = Directory.EnumerateFiles(sourceRoot, "packages.lock.json", SearchOption.AllDirectories)
-            .Where(IsMaintainedLockFile)
-            .ToArray();
-        if (packageLockFiles.Length == 0)
-        {
-            throw new ArgumentException($"No packages.lock.json files found under source directory: {sourceRoot}");
-        }
-
+        var packageLockFiles = GetPackageLockFiles(repositoryRoot);
         var packages = new Dictionary<string, SortedSet<string>>(StringComparer.OrdinalIgnoreCase);
         foreach (var lockFile in packageLockFiles)
         {
-            using var document = ReadLockFile(lockFile);
-            if (!document.RootElement.TryGetProperty("dependencies", out var frameworks))
-            {
-                throw new ArgumentException($"Unexpected packages.lock.json schema: {lockFile}. Missing top-level dependencies section.");
-            }
-
-            foreach (var framework in frameworks.EnumerateObject())
-            {
-                foreach (var package in framework.Value.EnumerateObject())
-                {
-                    if (!package.Value.TryGetProperty("resolved", out var resolved))
-                    {
-                        continue;
-                    }
-
-                    var version = resolved.GetString();
-                    if (string.IsNullOrWhiteSpace(version))
-                    {
-                        throw new ArgumentException($"Package {package.Name} in {lockFile} has no resolved version.");
-                    }
-
-                    var key = package.Name + "@" + version;
-                    if (!packages.TryGetValue(key, out var lockFiles))
-                    {
-                        lockFiles = new SortedSet<string>(StringComparer.Ordinal);
-                        packages.Add(key, lockFiles);
-                    }
-
-                    lockFiles.Add(Path.GetRelativePath(repositoryRoot, lockFile).Replace('\\', '/'));
-                }
-            }
+            AddLockFilePackages(repositoryRoot, lockFile, packages);
         }
 
-        return packages
-            .Select(entry =>
-            {
-                var separator = entry.Key.LastIndexOf('@');
-                return new ResolvedNuGetPackage(entry.Key[..separator], entry.Key[(separator + 1)..], entry.Value.ToArray());
-            })
-            .OrderBy(package => package.Id, StringComparer.OrdinalIgnoreCase)
-            .ThenBy(package => package.Version, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+        return ToResolvedPackages(packages);
     }
 
     public static string WriteAttributionJson(IReadOnlyCollection<ResolvedNuGetPackage> packages)
@@ -160,6 +104,81 @@ internal static class PackageLockInventory
         && !path.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
         && !path.Contains(Path.DirectorySeparatorChar + ".worktrees" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
         && !path.Contains(Path.DirectorySeparatorChar + "artifacts" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+
+    private static string[] GetPackageLockFiles(string repositoryRoot)
+    {
+        if (!Directory.Exists(repositoryRoot))
+        {
+            throw new ArgumentException($"Repository root does not exist: {repositoryRoot}");
+        }
+
+        var sourceRoot = Path.Combine(repositoryRoot, "src");
+        if (!Directory.Exists(sourceRoot))
+        {
+            throw new ArgumentException($"Source directory does not exist: {sourceRoot}");
+        }
+
+        var packageLockFiles = Directory.EnumerateFiles(sourceRoot, "packages.lock.json", SearchOption.AllDirectories)
+            .Where(IsMaintainedLockFile)
+            .ToArray();
+        if (packageLockFiles.Length == 0)
+        {
+            throw new ArgumentException($"No packages.lock.json files found under source directory: {sourceRoot}");
+        }
+
+        return packageLockFiles;
+    }
+
+    private static void AddLockFilePackages(string repositoryRoot, string lockFile, Dictionary<string, SortedSet<string>> packages)
+    {
+        using var document = ReadLockFile(lockFile);
+        if (!document.RootElement.TryGetProperty("dependencies", out var frameworks))
+        {
+            throw new ArgumentException($"Unexpected packages.lock.json schema: {lockFile}. Missing top-level dependencies section.");
+        }
+
+        foreach (var framework in frameworks.EnumerateObject())
+        {
+            foreach (var package in framework.Value.EnumerateObject())
+            {
+                AddPackage(packages, package, repositoryRoot, lockFile);
+            }
+        }
+    }
+
+    private static void AddPackage(Dictionary<string, SortedSet<string>> packages, JsonProperty package, string repositoryRoot, string lockFile)
+    {
+        if (!package.Value.TryGetProperty("resolved", out var resolved))
+        {
+            return;
+        }
+
+        var version = resolved.GetString();
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            throw new ArgumentException($"Package {package.Name} in {lockFile} has no resolved version.");
+        }
+
+        var key = package.Name + "@" + version;
+        if (!packages.TryGetValue(key, out var lockFiles))
+        {
+            lockFiles = new SortedSet<string>(StringComparer.Ordinal);
+            packages.Add(key, lockFiles);
+        }
+
+        lockFiles.Add(Path.GetRelativePath(repositoryRoot, lockFile).Replace('\\', '/'));
+    }
+
+    private static ResolvedNuGetPackage[] ToResolvedPackages(Dictionary<string, SortedSet<string>> packages) =>
+        packages
+            .Select(entry =>
+            {
+                var separator = entry.Key.LastIndexOf('@');
+                return new ResolvedNuGetPackage(entry.Key[..separator], entry.Key[(separator + 1)..], entry.Value.ToArray());
+            })
+            .OrderBy(package => package.Id, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(package => package.Version, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
 
     private static JsonDocument ReadLockFile(string lockFile)
     {

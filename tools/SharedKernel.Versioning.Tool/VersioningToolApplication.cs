@@ -6,9 +6,7 @@ internal static class VersioningToolApplication
 {
     public static async Task<int> Run(string[] args, TextReader input, TextWriter output, TextWriter error)
     {
-        if (args.Length == 0
-            || args is ["--help"] or ["-h"]
-            || (args.Length == 2 && args[1] is "--help" or "-h"))
+        if (IsHelpRequest(args))
         {
             await output.WriteLineAsync(Usage).ConfigureAwait(false);
             return 0;
@@ -22,76 +20,10 @@ internal static class VersioningToolApplication
 
         try
         {
-            if (args is ["commit-impact", .. var messageParts])
+            var exitCode = await RunCommand(args, input, output).ConfigureAwait(false);
+            if (exitCode is not null)
             {
-                var message = string.Join(' ', messageParts);
-                var commit = ConventionalCommitParser.Parse(message);
-                await output.WriteLineAsync(ReleaseImpactText.ToOutputValue(commit.Impact)).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["compute", .. var computeArgs])
-            {
-                var options = VersionToolOptions.Parse(computeArgs);
-                var messages = await CommitMessageInput.ReadMessages(input).ConfigureAwait(false);
-                var versionOutput = VersionCalculation.Calculate(
-                    SemanticVersion.Parse(options.BaseVersion),
-                    messages,
-                    options.Prerelease,
-                    options.Sha);
-
-                await output.WriteLineAsync(VersionOutputJson.Serialize(versionOutput)).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["calculate-release", .. var calculateArgs])
-            {
-                var options = CalculateReleaseOptions.Parse(calculateArgs);
-                await ReleaseVersionCommand.Run(options, output).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["pack-sharedkernel", .. var packArgs])
-            {
-                var options = PackSharedKernelOptions.Parse(packArgs);
-                await SharedKernelPackCommand.Run(options, output).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["prepare-release", .. var releaseArgs])
-            {
-                var options = PrepareReleaseOptions.Parse(releaseArgs);
-                await ReleaseArtifactWriter.Write(options, input).ConfigureAwait(false);
-                await output.WriteLineAsync($"Release prep artifacts: {options.OutputDirectory}").ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["check-public-api-baselines", .. var baselineArgs])
-            {
-                var repoRoot = ParseRepoRoot(baselineArgs);
-                await PublicApiBaselineCommand.Run(repoRoot, output).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["validate-package-metadata", .. var metadataArgs])
-            {
-                var repoRoot = ParseRepoRoot(metadataArgs);
-                PackageMetadataValidationCommand.Run(repoRoot, output);
-                return 0;
-            }
-
-            if (args is ["has-breaking-change-marker", var range, .. var markerArgs])
-            {
-                var repoRoot = ParseRepoRoot(markerArgs);
-                await BreakingChangeMarkerCommand.Run(range, repoRoot, output).ConfigureAwait(false);
-                return 0;
-            }
-
-            if (args is ["api-compatibility", .. var apiCompatibilityArgs])
-            {
-                var options = ApiCompatibilityOptions.Parse(apiCompatibilityArgs);
-                await ApiCompatibilityCommand.Run(options, output).ConfigureAwait(false);
-                return 0;
+                return exitCode.Value;
             }
         }
         catch (ArgumentException ex)
@@ -107,6 +39,59 @@ internal static class VersioningToolApplication
 
         await error.WriteLineAsync(Usage).ConfigureAwait(false);
         return 2;
+    }
+
+    private static bool IsHelpRequest(string[] args) =>
+        args.Length == 0
+        || args is ["--help"] or ["-h"]
+        || (args.Length == 2 && args[1] is "--help" or "-h");
+
+    private static async Task<int?> RunCommand(string[] args, TextReader input, TextWriter output)
+    {
+        switch (args)
+        {
+            case ["commit-impact", .. var messageParts]:
+                var message = string.Join(' ', messageParts);
+                var commit = ConventionalCommitParser.Parse(message);
+                await output.WriteLineAsync(ReleaseImpactText.ToOutputValue(commit.Impact)).ConfigureAwait(false);
+                return 0;
+            case ["compute", .. var computeArgs]:
+                var options = VersionToolOptions.Parse(computeArgs);
+                var messages = await CommitMessageInput.ReadMessages(input).ConfigureAwait(false);
+                var versionOutput = VersionCalculation.Calculate(
+                    SemanticVersion.Parse(options.BaseVersion),
+                    messages,
+                    options.Prerelease,
+                    options.Sha);
+
+                await output.WriteLineAsync(VersionOutputJson.Serialize(versionOutput)).ConfigureAwait(false);
+                return 0;
+            case ["calculate-release", .. var calculateArgs]:
+                await ReleaseVersionCommand.Run(CalculateReleaseOptions.Parse(calculateArgs), output).ConfigureAwait(false);
+                return 0;
+            case ["pack-sharedkernel", .. var packArgs]:
+                await SharedKernelPackCommand.Run(PackSharedKernelOptions.Parse(packArgs), output).ConfigureAwait(false);
+                return 0;
+            case ["prepare-release", .. var releaseArgs]:
+                var releaseOptions = PrepareReleaseOptions.Parse(releaseArgs);
+                await ReleaseArtifactWriter.Write(releaseOptions, input).ConfigureAwait(false);
+                await output.WriteLineAsync($"Release prep artifacts: {releaseOptions.OutputDirectory}").ConfigureAwait(false);
+                return 0;
+            case ["check-public-api-baselines", .. var baselineArgs]:
+                await PublicApiBaselineCommand.Run(ParseRepoRoot(baselineArgs), output).ConfigureAwait(false);
+                return 0;
+            case ["validate-package-metadata", .. var metadataArgs]:
+                PackageMetadataValidationCommand.Run(ParseRepoRoot(metadataArgs), output);
+                return 0;
+            case ["has-breaking-change-marker", var range, .. var markerArgs]:
+                await BreakingChangeMarkerCommand.Run(range, ParseRepoRoot(markerArgs), output).ConfigureAwait(false);
+                return 0;
+            case ["api-compatibility", .. var apiCompatibilityArgs]:
+                await ApiCompatibilityCommand.Run(ApiCompatibilityOptions.Parse(apiCompatibilityArgs), output).ConfigureAwait(false);
+                return 0;
+            default:
+                return null;
+        }
     }
 
     private const string Usage = """
