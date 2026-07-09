@@ -51,7 +51,9 @@ public abstract partial class PollingBackgroundService : BackgroundService
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        using var timer = new PeriodicTimer(pollInterval);
+
+        while (await timer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false))
         {
             try
             {
@@ -69,9 +71,6 @@ public abstract partial class PollingBackgroundService : BackgroundService
                     new KeyValuePair<string, object?>(SchedulingTelemetry.TagErrorType, exception.GetType().Name));
                 LogPollingFailure(logger, exception, serviceName);
             }
-
-            using var timer = new PeriodicTimer(pollInterval);
-            _ = await timer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false);
         }
     }
 
