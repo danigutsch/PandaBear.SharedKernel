@@ -5,7 +5,7 @@ namespace SharedKernel.Versioning.Tool;
 
 internal static class ReleaseArtifactWriter
 {
-    private const string SbomNote = "Generated from resolved packages.lock.json files; license fields use NOASSERTION until reviewed against NuGet and dependency-review metadata.";
+    private const string LicenseEvidenceNote = "Generated from resolved packages.lock.json files; license fields use NOASSERTION until reviewed against NuGet and dependency-review metadata.";
 
     public static async Task Write(PrepareReleaseOptions options, TextReader input)
     {
@@ -116,7 +116,7 @@ internal static class ReleaseArtifactWriter
         builder.Append("    \"noticePath\": ").Append(Escape(ReleaseArtifactPath("third-party-notices.md"))).AppendLine(",");
         builder.Append("    \"packageCount\": ").Append(inventory.Length).AppendLine();
         builder.AppendLine("  },");
-        builder.Append("  \"licenseEvidenceNote\": ").Append(Escape(SbomNote)).AppendLine();
+        builder.Append("  \"licenseEvidenceNote\": ").Append(Escape(LicenseEvidenceNote)).AppendLine();
         builder.AppendLine("}");
         return builder.ToString();
     }

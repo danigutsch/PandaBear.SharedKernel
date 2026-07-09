@@ -1,3 +1,4 @@
+using System.Text.Json;
 using SharedKernel.Versioning.Tool;
 
 namespace SharedKernel.Versioning.Tests;
@@ -981,12 +982,34 @@ public static class VersioningToolTests
             StringComparison.Ordinal);
         manifest.ShouldContain("\"path\": \"sbom.spdx.json\"", StringComparison.Ordinal);
         manifest.ShouldContain("\"packageCount\": 1", StringComparison.Ordinal);
+        manifest.ShouldContain("\"jsonPath\": \"third-party-attributions.json\"", StringComparison.Ordinal);
+        manifest.ShouldContain("\"noticePath\": \"third-party-notices.md\"", StringComparison.Ordinal);
+        manifest.ShouldContain("\"licenseEvidenceNote\":", StringComparison.Ordinal);
+        manifest.ShouldNotContain("sbomNote");
+        manifest.ShouldNotContain(temporaryDirectory.OutputDirectory);
         attributions.ShouldContain("\"id\": \"Example.Package\"", StringComparison.Ordinal);
         attributions.ShouldContain("\"licenseExpression\": \"NOASSERTION\"", StringComparison.Ordinal);
         notices.ShouldContain("| `Example.Package` | `1.2.3` | `NOASSERTION` | yes |", StringComparison.Ordinal);
         sbom.ShouldContain("\"spdxVersion\": \"SPDX-2.3\"", StringComparison.Ordinal);
         sbom.ShouldContain("\"documentNamespace\": \"https://example.invalid/custom-repo/sbom/1.2.3\"", StringComparison.Ordinal);
         sbom.ShouldContain("\"name\": \"Example.Package\"", StringComparison.Ordinal);
+        using var manifestJson = JsonDocument.Parse(manifest);
+        using var attributionsJson = JsonDocument.Parse(attributions);
+        using var sbomJson = JsonDocument.Parse(sbom);
+        var manifestRoot = manifestJson.RootElement;
+        var attributionsRoot = attributionsJson.RootElement;
+        var sbomRoot = sbomJson.RootElement;
+        var thirdPartyAttributions = manifestRoot.GetProperty("thirdPartyAttributions");
+        var attributionJsonPath = thirdPartyAttributions.GetProperty("jsonPath").GetString().ShouldNotBeNull();
+        var attributionNoticePath = thirdPartyAttributions.GetProperty("noticePath").GetString().ShouldNotBeNull();
+        var licenseEvidenceNote = manifestRoot.GetProperty("licenseEvidenceNote").GetString().ShouldNotBeNull();
+        var documentNamespace = sbomRoot.GetProperty("documentNamespace").GetString().ShouldNotBeNull();
+        attributionJsonPath.ShouldBe("third-party-attributions.json");
+        attributionNoticePath.ShouldBe("third-party-notices.md");
+        licenseEvidenceNote.ShouldContain("license fields use NOASSERTION", StringComparison.Ordinal);
+        documentNamespace.ShouldBe("https://example.invalid/custom-repo/sbom/1.2.3");
+        attributionsRoot.GetProperty("packages").GetArrayLength().ShouldBe(1);
+        sbomRoot.GetProperty("packages").GetArrayLength().ShouldBe(1);
     }
 
     [Fact]
@@ -1009,6 +1032,94 @@ public static class VersioningToolTests
 
         // Assert
         sbom.ShouldContain("\"created\": \"2000-01-01T00:00:00Z\"", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("not-a-timestamp", "SOURCE_DATE_EPOCH must be a Unix timestamp in seconds.")]
+    [InlineData("9223372036854775807", "SOURCE_DATE_EPOCH is outside the supported Unix timestamp range.")]
+    public static async Task Returns_error_for_invalid_source_date_epoch(string sourceDateEpoch, string expectedMessage)
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        using var sourceDateEpochScope = new EnvironmentVariableScope("SOURCE_DATE_EPOCH", sourceDateEpoch);
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "Example.Package": {
+                    "type": "Direct",
+                    "requested": "[1.2.3, )",
+                    "resolved": "1.2.3"
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
+        await File.WriteAllBytesAsync(
+            Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg"),
+            "package"u8.ToArray(),
+            TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            [
+                "prepare-release",
+                "--version",
+                "1.2.3",
+                "--package-dir",
+                temporaryDirectory.PackageDirectory,
+                "--repo-root",
+                temporaryDirectory.Root,
+            ],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain(expectedMessage, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Writes_spdx_json_when_repository_url_property_uses_msbuild_casing()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await File.WriteAllTextAsync(
+            Path.Combine(temporaryDirectory.Root, "Directory.Build.props"),
+            """
+            <Project>
+              <PropertyGroup>
+                <RepositoryURL>https://example.invalid/cased-repo</RepositoryURL>
+              </PropertyGroup>
+            </Project>
+            """,
+            TestContext.Current.CancellationToken);
+        var options = new PrepareReleaseOptions(
+            "1.2.3",
+            temporaryDirectory.PackageDirectory,
+            temporaryDirectory.OutputDirectory,
+            temporaryDirectory.Root,
+            SourceTag: null,
+            ReleaseImpact: null,
+            Sha: null);
+
+        // Act
+        var sbom = PackageLockInventory.WriteSpdxJson(options, []);
+
+        // Assert
+        using var sbomJson = JsonDocument.Parse(sbom);
+        var documentNamespace = sbomJson.RootElement.GetProperty("documentNamespace").GetString().ShouldNotBeNull();
+        documentNamespace.ShouldBe("https://example.invalid/cased-repo/sbom/1.2.3");
     }
 
     [Fact]
@@ -1067,6 +1178,140 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Reads_package_lock_inventory_in_deterministic_order()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var firstProjectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample.A");
+        var secondProjectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample.B");
+        Directory.CreateDirectory(firstProjectDirectory);
+        Directory.CreateDirectory(secondProjectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(secondProjectDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "Zeta.Package": {
+                    "type": "Transitive",
+                    "resolved": "2.0.0"
+                  },
+                  "Example.Package": {
+                    "type": "Direct",
+                    "resolved": "2.0.0"
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(
+            Path.Combine(firstProjectDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "Example.Package": {
+                    "type": "Direct",
+                    "resolved": "1.0.0"
+                  },
+                  "Alpha.Package": {
+                    "type": "Transitive",
+                    "resolved": "3.0.0"
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
+
+        // Act
+        var packages = PackageLockInventory.Read(temporaryDirectory.Root);
+
+        // Assert
+        packages.Select(package => package.Id + "@" + package.Version).ShouldBe(
+            [
+                "Alpha.Package@3.0.0",
+                "Example.Package@1.0.0",
+                "Example.Package@2.0.0",
+                "Zeta.Package@2.0.0",
+            ]);
+        packages[1].LockFiles.ShouldBe(["src/Sample.A/packages.lock.json"]);
+        packages[2].LockFiles.ShouldBe(["src/Sample.B/packages.lock.json"]);
+    }
+
+    [Fact]
+    public static async Task Ignores_generated_package_locks_under_source_directory()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample");
+        var objDirectory = Path.Combine(projectDirectory, "obj");
+        var binDirectory = Path.Combine(projectDirectory, "bin");
+        Directory.CreateDirectory(projectDirectory);
+        Directory.CreateDirectory(objDirectory);
+        Directory.CreateDirectory(binDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "Maintained.Package": {
+                    "type": "Direct",
+                    "resolved": "1.0.0"
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(
+            Path.Combine(objDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "Generated.Obj.Package": {
+                    "type": "Direct",
+                    "resolved": "9.0.0"
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(
+            Path.Combine(binDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "Generated.Bin.Package": {
+                    "type": "Direct",
+                    "resolved": "9.0.0"
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
+
+        // Act
+        var packages = PackageLockInventory.Read(temporaryDirectory.Root);
+
+        // Assert
+        var package = packages.ShouldHaveSingleItem();
+        package.Id.ShouldBe("Maintained.Package");
+        package.LockFiles.ShouldBe(["src/Sample/packages.lock.json"]);
+    }
+
+    [Fact]
     public static async Task Validates_package_metadata_for_packable_sharedkernel_projects()
     {
         // Arrange
@@ -1094,6 +1339,56 @@ public static class VersioningToolTests
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
                 <PackageId>SharedKernel.Sample</PackageId>
+                <Description>Sample package.</Description>
+                <PackageTags>sample;shared-kernel;dotnet</PackageTags>
+              </PropertyGroup>
+            </Project>
+            """,
+            TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            ["validate-package-metadata", "--repo-root", temporaryDirectory.Root],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        output.ToString().ShouldContain("Package metadata validation passed.", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Validates_package_metadata_with_msbuild_property_casing()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await File.WriteAllTextAsync(
+            Path.Combine(temporaryDirectory.Root, "Directory.Build.props"),
+            """
+            <Project>
+              <PropertyGroup>
+                <Authors>ViajantesTurismo contributors</Authors>
+                <Company>ViajantesTurismo</Company>
+                <Copyright>Copyright (c) 2025 ViajantesTurismo contributors</Copyright>
+                <PackageLicenseExpression>MIT</PackageLicenseExpression>
+                <RepositoryURL>https://github.com/danigutsch/ViajantesTurismo</RepositoryURL>
+                <PublishRepositoryURL>true</PublishRepositoryURL>
+              </PropertyGroup>
+            </Project>
+            """,
+            TestContext.Current.CancellationToken);
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
+            """
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <PackageID>SharedKernel.Sample</PackageID>
                 <Description>Sample package.</Description>
                 <PackageTags>sample;shared-kernel;dotnet</PackageTags>
               </PropertyGroup>
@@ -1500,7 +1795,15 @@ public static class VersioningToolTests
 
         // Assert
         exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("Usage:", StringComparison.Ordinal);
+        var help = output.ToString();
+        help.ShouldContain("Usage:", StringComparison.Ordinal);
+        help.ShouldContain(
+            "sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--repo-root <path>]",
+            StringComparison.Ordinal);
+        help.ShouldContain("sharedkernel-version validate-package-metadata [--repo-root <path>]", StringComparison.Ordinal);
+        help.ShouldContain(
+            "--repo-root <path>      Repository root for Git-backed release, pack, metadata, and SBOM commands.",
+            StringComparison.Ordinal);
     }
 
     [Fact]

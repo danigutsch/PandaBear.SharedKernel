@@ -18,7 +18,7 @@ internal static class ProjectPropertyReader
         }
 
         var value = document.Descendants()
-            .FirstOrDefault(element => string.Equals(element.Name.LocalName, propertyName, StringComparison.Ordinal))
+            .FirstOrDefault(element => string.Equals(element.Name.LocalName, propertyName, StringComparison.OrdinalIgnoreCase))
             ?.Value
             .Trim();
         return string.IsNullOrWhiteSpace(value) ? null : value;
