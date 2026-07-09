@@ -20,7 +20,7 @@ internal static class PackageLockInventory
             using var document = ReadLockFile(lockFile);
             if (!document.RootElement.TryGetProperty("dependencies", out var frameworks))
             {
-                continue;
+                throw new ArgumentException($"Unexpected packages.lock.json schema: {lockFile}. Missing top-level dependencies section.");
             }
 
             foreach (var framework in frameworks.EnumerateObject())

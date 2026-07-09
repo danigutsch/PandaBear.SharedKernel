@@ -1152,6 +1152,52 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Returns_error_for_package_lock_without_dependencies_section()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2
+            }
+            """,
+            TestContext.Current.CancellationToken);
+
+        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
+        await File.WriteAllBytesAsync(
+            packagePath,
+            "package"u8.ToArray(),
+            TestContext.Current.CancellationToken);
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            [
+                "prepare-release",
+                "--version",
+                "1.2.3",
+                "--package-dir",
+                temporaryDirectory.PackageDirectory,
+                "--repo-root",
+                temporaryDirectory.Root,
+            ],
+            input,
+            output,
+            error);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain("Unexpected packages.lock.json schema:", StringComparison.Ordinal);
+        error.ToString().ShouldContain("Missing top-level dependencies section.", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static async Task Returns_error_for_package_lock_without_resolved_version()
     {
         // Arrange
