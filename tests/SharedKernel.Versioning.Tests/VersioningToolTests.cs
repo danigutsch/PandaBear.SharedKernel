@@ -1263,8 +1263,10 @@ public static class VersioningToolTests
         error.ToString().ShouldContain("No packages found", StringComparison.Ordinal);
     }
 
-    [Fact]
-    public static async Task Prints_help_for_prepare_release_help_option()
+    [Theory]
+    [InlineData("prepare-release", "--help")]
+    [InlineData("future-command", "-h")]
+    public static async Task Prints_help_for_command_help_option(string command, string helpOption)
     {
         // Arrange
         using var input = new StringReader(string.Empty);
@@ -1272,11 +1274,11 @@ public static class VersioningToolTests
         using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(["prepare-release", "--help"], input, output, error);
+        var exitCode = await VersioningToolApplication.Run([command, helpOption], input, output, error);
 
         // Assert
         exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("prepare-release", StringComparison.Ordinal);
+        output.ToString().ShouldContain("Usage:", StringComparison.Ordinal);
     }
 
     [Fact]

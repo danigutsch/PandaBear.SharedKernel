@@ -6,7 +6,9 @@ internal static class VersioningToolApplication
 {
     public static async Task<int> Run(string[] args, TextReader input, TextWriter output, TextWriter error)
     {
-        if (args is [] or ["--help"] or ["-h"] or ["commit-impact", "--help"] or ["commit-impact", "-h"] or ["compute", "--help"] or ["compute", "-h"] or ["calculate-release", "--help"] or ["calculate-release", "-h"] or ["pack-sharedkernel", "--help"] or ["pack-sharedkernel", "-h"] or ["prepare-release", "--help"] or ["prepare-release", "-h"] or ["check-public-api-baselines", "--help"] or ["check-public-api-baselines", "-h"] or ["validate-package-metadata", "--help"] or ["validate-package-metadata", "-h"] or ["has-breaking-change-marker", "--help"] or ["has-breaking-change-marker", "-h"] or ["api-compatibility", "--help"] or ["api-compatibility", "-h"])
+        if (args.Length == 0
+            || args is ["--help"] or ["-h"]
+            || (args.Length == 2 && args[1] is "--help" or "-h"))
         {
             await output.WriteLineAsync(Usage).ConfigureAwait(false);
             return 0;
