@@ -16,6 +16,11 @@ public static class TestTraitValues
     public const string DependencyInjectionCategory = "dependency-injection";
 
     /// <summary>
+    /// Category value for security-focused tests.
+    /// </summary>
+    public const string SecurityCategory = "security";
+
+    /// <summary>
     /// Scope value for API integration tests.
     /// </summary>
     public const string ApiIntegrationScope = "api-integration";
