@@ -54,8 +54,10 @@ public static class AspNetCoreForwardedHeadersExtensions
 
         options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 
-        var knownProxies = GetValues(configuration.GetSection(KnownProxiesSectionName));
-        var knownNetworks = GetValues(configuration.GetSection(KnownNetworksSectionName));
+        var knownProxiesSection = configuration.GetSection(KnownProxiesSectionName);
+        var knownNetworksSection = configuration.GetSection(KnownNetworksSectionName);
+        var knownProxies = GetValues(knownProxiesSection);
+        var knownNetworks = GetValues(knownNetworksSection);
         var configuredForwardLimit = GetForwardLimit(configuration);
         if (knownProxies.Length == 0 && knownNetworks.Length == 0)
         {
@@ -80,12 +82,12 @@ public static class AspNetCoreForwardedHeadersExtensions
 
         foreach (var knownProxy in knownProxies)
         {
-            options.KnownProxies.Add(ParseIPAddress(knownProxy, KnownProxiesSectionName));
+            options.KnownProxies.Add(ParseIPAddress(knownProxy, knownProxiesSection.Path));
         }
 
         foreach (var knownNetwork in knownNetworks)
         {
-            options.KnownIPNetworks.Add(ParseIPNetwork(knownNetwork));
+            options.KnownIPNetworks.Add(ParseIPNetwork(knownNetwork, knownNetworksSection.Path));
         }
 
         return options;
@@ -101,11 +103,11 @@ public static class AspNetCoreForwardedHeadersExtensions
             .ToArray();
     }
 
-    private static IPAddress ParseIPAddress(string value, string sectionName)
+    private static IPAddress ParseIPAddress(string value, string sectionPath)
     {
         return IPAddress.TryParse(value, out var address)
             ? address
-            : throw new InvalidOperationException($"Security:ForwardedHeaders:{sectionName} contains an invalid IP address: {value}");
+            : throw new InvalidOperationException($"{sectionPath} contains an invalid IP address: {value}");
     }
 
     private static int? GetForwardLimit(IConfiguration configuration)
@@ -118,10 +120,10 @@ public static class AspNetCoreForwardedHeadersExtensions
 
         return int.TryParse(value, out var forwardLimit) && forwardLimit > 0
             ? forwardLimit
-            : throw new InvalidOperationException($"Security:ForwardedHeaders:{ForwardLimitSectionName} must be a positive integer.");
+            : throw new InvalidOperationException($"{configuration.GetSection(ForwardLimitSectionName).Path} must be a positive integer.");
     }
 
-    private static System.Net.IPNetwork ParseIPNetwork(string value)
+    private static System.Net.IPNetwork ParseIPNetwork(string value, string sectionPath)
     {
         var parts = value.Split('/', 2, StringSplitOptions.TrimEntries);
         if (parts.Length == 2
@@ -137,16 +139,16 @@ public static class AspNetCoreForwardedHeadersExtensions
                 }
                 catch (ArgumentException ex)
                 {
-                    throw CreateInvalidNetworkException(value, ex);
+                    throw CreateInvalidNetworkException(sectionPath, value, ex);
                 }
             }
         }
 
-        throw CreateInvalidNetworkException(value);
+        throw CreateInvalidNetworkException(sectionPath, value);
     }
 
-    private static InvalidOperationException CreateInvalidNetworkException(string value, Exception? innerException = null)
+    private static InvalidOperationException CreateInvalidNetworkException(string sectionPath, string value, Exception? innerException = null)
     {
-        return new InvalidOperationException($"Security:ForwardedHeaders:{KnownNetworksSectionName} contains an invalid CIDR network: {value}", innerException);
+        return new InvalidOperationException($"{sectionPath} contains an invalid CIDR network: {value}", innerException);
     }
 }
