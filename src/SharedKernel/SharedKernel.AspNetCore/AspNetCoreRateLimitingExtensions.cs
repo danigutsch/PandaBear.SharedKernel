@@ -16,6 +16,8 @@ public static class AspNetCoreRateLimitingExtensions
     /// <remarks>
     /// Applications behind reverse proxies must configure and trust forwarded headers before this policy runs.
     /// Otherwise, the remote IP address may be the proxy address rather than the original client address.
+    /// This helper also sets <see cref="RateLimiterOptions.RejectionStatusCode" /> to
+    /// <see cref="StatusCodes.Status429TooManyRequests" />.
     /// </remarks>
     /// <param name="options">The rate limiter options to configure.</param>
     /// <param name="policyName">The application-owned policy name.</param>
@@ -62,6 +64,10 @@ public static class AspNetCoreRateLimitingExtensions
     /// <summary>
     /// Adds fixed-window rate-limit policies partitioned by remote IP address.
     /// </summary>
+    /// <remarks>
+    /// This helper also sets <see cref="RateLimiterOptions.RejectionStatusCode" /> to
+    /// <see cref="StatusCodes.Status429TooManyRequests" /> through each added policy.
+    /// </remarks>
     /// <param name="options">The rate limiter options to configure.</param>
     /// <param name="policies">The application-owned rate-limit policy definitions.</param>
     /// <returns>The same <see cref="RateLimiterOptions"/> instance.</returns>

@@ -35,6 +35,7 @@ const SharedKernel.Testing.TestTraitNames.SurfaceName = "Surface" -> string!
 const SharedKernel.Testing.TestTraitValues.ApiIntegrationScope = "api-integration" -> string!
 const SharedKernel.Testing.TestTraitValues.DependencyInjectionCategory = "dependency-injection" -> string!
 const SharedKernel.Testing.TestTraitValues.EndpointCategory = "endpoint" -> string!
+const SharedKernel.Testing.TestTraitValues.SecurityCategory = "security" -> string!
 const SharedKernel.Testing.TestTraitValues.TestServerHost = "test-server" -> string!
 SharedKernel.Domain.Tests.TestTraits
 SharedKernel.EventSourcing.Tests.TestTraits
