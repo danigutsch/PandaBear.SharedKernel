@@ -100,7 +100,7 @@ public static class AspNetCoreForwardedHeadersExtensions
             && int.TryParse(parts[1], out var prefixLength))
         {
             var maxPrefixLength = prefix.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork ? 32 : 128;
-            if (prefixLength >= 0 && prefixLength <= maxPrefixLength)
+            if (prefixLength > 0 && prefixLength <= maxPrefixLength)
             {
                 try
                 {
