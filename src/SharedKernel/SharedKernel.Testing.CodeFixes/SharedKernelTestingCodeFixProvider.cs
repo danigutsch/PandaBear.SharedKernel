@@ -215,17 +215,24 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                 continue;
             }
 
-            if (IsNameofReference(simpleName, methodSymbol))
-            {
-                return true;
-            }
-
             if (!string.Equals(simpleName.Identifier.ValueText, methodSymbol.Name, StringComparison.Ordinal))
             {
                 continue;
             }
 
-            if (!SymbolEqualityComparer.Default.Equals(semanticModel.GetSymbolInfo(simpleName, ct).Symbol, methodSymbol))
+            var symbol = semanticModel.GetSymbolInfo(simpleName, ct).Symbol;
+            if (IsNameofReference(simpleName))
+            {
+                if (SymbolEqualityComparer.Default.Equals(symbol, methodSymbol)
+                    || (symbol is null && !HasOtherSymbolNamed(semanticModel, simpleName, methodSymbol, ct)))
+                {
+                    return true;
+                }
+
+                continue;
+            }
+
+            if (!SymbolEqualityComparer.Default.Equals(symbol, methodSymbol))
             {
                 if (IsInvocationName(simpleName))
                 {
@@ -246,6 +253,19 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         return false;
     }
 
+    private static bool HasOtherSymbolNamed(
+        SemanticModel semanticModel,
+        SimpleNameSyntax simpleName,
+        IMethodSymbol methodSymbol,
+        CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        return semanticModel.LookupSymbols(simpleName.SpanStart, name: methodSymbol.Name)
+                .Any(candidate => !SymbolEqualityComparer.Default.Equals(candidate, methodSymbol))
+            || semanticModel.LookupNamespacesAndTypes(simpleName.SpanStart, name: methodSymbol.Name).Any();
+    }
+
     private static bool IsInvocationName(SimpleNameSyntax simpleName)
     {
         return simpleName.Parent is InvocationExpressionSyntax { Expression: SimpleNameSyntax invocationName }
@@ -259,19 +279,18 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                 && memberAccessExpression.Name == simpleName;
     }
 
-    private static bool IsNameofReference(SimpleNameSyntax simpleName, IMethodSymbol methodSymbol)
+    private static bool IsNameofReference(SimpleNameSyntax simpleName)
     {
-        return string.Equals(simpleName.Identifier.ValueText, methodSymbol.Name, StringComparison.Ordinal)
-            && simpleName.Parent is ArgumentSyntax
+        return simpleName.Parent is ArgumentSyntax
+        {
+            Parent: ArgumentListSyntax
             {
-                Parent: ArgumentListSyntax
+                Parent: InvocationExpressionSyntax
                 {
-                    Parent: InvocationExpressionSyntax
-                    {
-                        Expression: IdentifierNameSyntax { Identifier.ValueText: "nameof" }
-                    }
+                    Expression: IdentifierNameSyntax { Identifier.ValueText: "nameof" }
                 }
-            };
+            }
+        };
     }
 
     private static bool IsRewriteableHelperInvocation(
