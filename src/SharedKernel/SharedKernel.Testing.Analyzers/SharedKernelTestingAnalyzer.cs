@@ -192,6 +192,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static void AnalyzeAttribute(SyntaxNodeAnalysisContext context)
     {
         if (context.Node is not AttributeSyntax { ArgumentList.Arguments.Count: >= 2 } attribute
+            || !HasTraitAttributeName(attribute)
             || !IsXunitTraitAttribute(context, attribute))
         {
             return;
@@ -199,6 +200,22 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
         AnalyzeTraitArgument(context, attribute, attribute.ArgumentList.Arguments[0], includeTraitValues: false);
         AnalyzeTraitArgument(context, attribute, attribute.ArgumentList.Arguments[1], includeTraitValues: true);
+    }
+
+    private static bool HasTraitAttributeName(AttributeSyntax attribute)
+    {
+        return GetRightmostAttributeIdentifier(attribute.Name) is "Trait" or "TraitAttribute";
+    }
+
+    private static string? GetRightmostAttributeIdentifier(NameSyntax name)
+    {
+        return name switch
+        {
+            IdentifierNameSyntax identifierName => identifierName.Identifier.ValueText,
+            QualifiedNameSyntax qualifiedName => qualifiedName.Right.Identifier.ValueText,
+            AliasQualifiedNameSyntax aliasQualifiedName => aliasQualifiedName.Name.Identifier.ValueText,
+            _ => null,
+        };
     }
 
     private static bool IsXunitTraitAttribute(SyntaxNodeAnalysisContext context, AttributeSyntax attribute)
