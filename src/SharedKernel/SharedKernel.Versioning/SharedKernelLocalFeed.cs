@@ -131,6 +131,10 @@ public static class SharedKernelLocalFeed
         ArgumentException.ThrowIfNullOrWhiteSpace(packageDirectory);
         ArgumentNullException.ThrowIfNull(packageIds);
         ArgumentNullException.ThrowIfNull(nugetSourceUrl);
+        if (!nugetSourceUrl.IsAbsoluteUri)
+        {
+            throw new ArgumentException("NuGet source URL must be absolute.", nameof(nugetSourceUrl));
+        }
 
         var configuration = new XElement("configuration",
             new XElement("packageSources",

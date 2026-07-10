@@ -113,6 +113,25 @@ public static class SharedKernelLocalFeedTests
     }
 
     [Fact]
+    public static async Task Rejects_relative_nuget_source_url()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var relativeUri = new Uri("v3/index.json", UriKind.Relative);
+
+        // Act
+        Func<Task> action = () => SharedKernelLocalFeed.WriteNuGetConfig(
+            temporaryDirectory.OutputDirectory,
+            temporaryDirectory.PackageDirectory,
+            ["SharedKernel.Results"],
+            relativeUri);
+
+        // Assert
+        var exception = await action.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldContain("NuGet source URL must be absolute.", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static async Task Writes_restore_project_and_nuget_config()
     {
         // Arrange
