@@ -133,20 +133,7 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
 
     private static bool IsIdentityCandidate(TypeDeclarationSyntax declaration)
     {
-        return declaration.AttributeLists.Count > 0 ||
-            declaration.BaseList?.Types.Any(static type => ContainsIdentifier(type.Type, "IIdentified")) == true;
-    }
-
-    private static bool ContainsIdentifier(SyntaxNode node, string identifier)
-    {
-        return node switch
-        {
-            IdentifierNameSyntax identifierName => string.Equals(identifierName.Identifier.ValueText, identifier, StringComparison.Ordinal),
-            GenericNameSyntax genericName => string.Equals(genericName.Identifier.ValueText, identifier, StringComparison.Ordinal),
-            QualifiedNameSyntax qualifiedName => ContainsIdentifier(qualifiedName.Right, identifier),
-            AliasQualifiedNameSyntax aliasQualifiedName => ContainsIdentifier(aliasQualifiedName.Name, identifier),
-            _ => node.ChildNodes().Any(child => ContainsIdentifier(child, identifier)),
-        };
+        return declaration.AttributeLists.Count > 0 || declaration.BaseList is not null;
     }
 
     private static (string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic) BuildModel(
@@ -357,7 +344,11 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
             .AppendLine("    /// <inheritdoc />")
             .AppendLine("    public override int GetHashCode()")
             .AppendLine("    {")
-            .AppendLine("        global::System.ArgumentNullException.ThrowIfNull(Id);")
+            .Append("        if (global::System.Collections.Generic.EqualityComparer<").Append(model.IdTypeName).AppendLine(">.Default.Equals(Id, default!))")
+            .AppendLine(OpenBlock8)
+            .AppendLine("            return base.GetHashCode();")
+            .AppendLine(CloseBlock8)
+            .AppendLine()
             .Append("        return global::System.Collections.Generic.EqualityComparer<").Append(model.IdTypeName).AppendLine(">.Default.GetHashCode(Id);")
             .AppendLine("    }")
             .AppendLine("}");

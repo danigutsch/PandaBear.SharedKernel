@@ -33,6 +33,35 @@ public sealed class ValueObjectGeneratorTests
     }
 
     [Fact]
+    public void Supports_partial_validation_hook_implementation()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly partial record struct TourCode
+            {
+                static partial void ValidateValue(string value, ref bool isValid)
+                {
+                    isValid = !string.IsNullOrWhiteSpace(value);
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var outputCompilation = GeneratorTestHarness.RunValueObjectGeneratorAndUpdateCompilation(compilation, out var runResult);
+        var errors = outputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
+            .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
+            .ToArray();
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        errors.ShouldBeEmpty();
+    }
+
+    [Fact]
     public void Generates_json_converter_when_json_is_requested()
     {
         // Arrange
@@ -524,6 +553,117 @@ public sealed class ValueObjectGeneratorTests
         diagnostic.Id.ShouldBe("SKMDL020");
         diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
         diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("Value", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_value_object_declares_non_partial_validation_hook()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly partial record struct TourCode
+            {
+                private static void ValidateValue(string value, ref bool isValid)
+                {
+                    isValid = !string.IsNullOrWhiteSpace(value);
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL020");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("ValidateValue", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_value_object_declares_validation_hook_without_body()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly partial record struct TourCode
+            {
+                static partial void ValidateValue(string value, ref bool isValid);
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL020");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("ValidateValue", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_value_object_declares_public_validation_hook()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly partial record struct TourCode
+            {
+                public static partial void ValidateValue(string value, ref bool isValid)
+                {
+                    isValid = !string.IsNullOrWhiteSpace(value);
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL020");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("ValidateValue", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_value_object_declares_nullable_validation_hook_value()
+    {
+        // Arrange
+        const string source = """
+            #nullable enable
+
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly partial record struct TourCode
+            {
+                static partial void ValidateValue(string? value, ref bool isValid)
+                {
+                    isValid = !string.IsNullOrWhiteSpace(value);
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL020");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("ValidateValue", StringComparison.Ordinal);
     }
 
     [Fact]

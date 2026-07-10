@@ -280,7 +280,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
         }
 
         var parsing = GetEffectiveBooleanOption(attribute, ParsingOptionName, defaults.ValueObjectParsing) || template == ValueObjectTemplate.ApiVersion;
-        if (HasReservedGeneratedMember(type, parsing, json, efCore, template, out var reservedMemberName))
+        if (HasReservedGeneratedMember(type, underlyingKind, parsing, json, efCore, template, out var reservedMemberName))
         {
             return DiagnosticOnly(Diagnostic.Create(ReservedMemberName, location, type.Name, reservedMemberName));
         }
@@ -426,6 +426,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
     private static bool HasReservedGeneratedMember(
         INamedTypeSymbol type,
+        UnderlyingKind underlyingKind,
         bool parsing,
         bool json,
         bool efCore,
@@ -482,8 +483,71 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             return true;
         }
 
+        if (HasUnsupportedValidateValueMember(type, underlyingKind))
+        {
+            memberName = "ValidateValue";
+            return true;
+        }
+
         memberName = string.Empty;
         return false;
+    }
+
+    private static bool HasUnsupportedValidateValueMember(INamedTypeSymbol type, UnderlyingKind underlyingKind)
+    {
+        return type.GetMembers("ValidateValue").Any(member => !IsSupportedValidateValueHook(member, underlyingKind));
+    }
+
+    private static bool IsSupportedValidateValueHook(ISymbol member, UnderlyingKind underlyingKind)
+    {
+        if (member is not IMethodSymbol method || !HasGeneratedValidateValueSignature(method, underlyingKind))
+        {
+            return false;
+        }
+
+        return method.DeclaringSyntaxReferences
+            .Select(static syntaxReference => syntaxReference.GetSyntax())
+            .OfType<MethodDeclarationSyntax>()
+            .Any(IsSupportedValidateValueHookDeclaration);
+    }
+
+    private static bool IsSupportedValidateValueHookDeclaration(MethodDeclarationSyntax declaration)
+    {
+        return declaration.Modifiers.Any(SyntaxKind.PartialKeyword) &&
+            !HasAccessibilityModifier(declaration.Modifiers) &&
+            (declaration.Body is not null || declaration.ExpressionBody is not null);
+    }
+
+    private static bool HasAccessibilityModifier(SyntaxTokenList modifiers)
+    {
+        return modifiers.Any(static modifier =>
+            modifier.IsKind(SyntaxKind.PublicKeyword) ||
+            modifier.IsKind(SyntaxKind.PrivateKeyword) ||
+            modifier.IsKind(SyntaxKind.ProtectedKeyword) ||
+            modifier.IsKind(SyntaxKind.InternalKeyword));
+    }
+
+    private static bool HasGeneratedValidateValueSignature(IMethodSymbol method, UnderlyingKind underlyingKind)
+    {
+        return method is { IsStatic: true, ReturnsVoid: true, TypeParameters.Length: 0, Parameters.Length: 2 } &&
+            MatchesUnderlyingKind(method.Parameters[0].Type, underlyingKind) &&
+            method.Parameters[0].NullableAnnotation != NullableAnnotation.Annotated &&
+            method.Parameters[0].RefKind == RefKind.None &&
+            method.Parameters[1].Type.SpecialType == SpecialType.System_Boolean &&
+            method.Parameters[1].RefKind == RefKind.Ref;
+    }
+
+    private static bool MatchesUnderlyingKind(ITypeSymbol type, UnderlyingKind underlyingKind)
+    {
+        return underlyingKind switch
+        {
+            UnderlyingKind.String => type.SpecialType == SpecialType.System_String,
+            UnderlyingKind.Int32 => type.SpecialType == SpecialType.System_Int32,
+            UnderlyingKind.Decimal => type.SpecialType == SpecialType.System_Decimal,
+            UnderlyingKind.Guid => string.Equals(type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat), "global::System.Guid", StringComparison.Ordinal),
+            UnderlyingKind.DateOnly => string.Equals(type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat), "global::System.DateOnly", StringComparison.Ordinal),
+            _ => false,
+        };
     }
 
     private static bool TemplateSupportsUnderlyingType(ValueObjectTemplate template, UnderlyingKind underlyingKind)

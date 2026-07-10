@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace SharedKernel.Domain.GeneratorTests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
 public sealed class ModelIdentityGeneratorTests
 {
     [Fact]
@@ -33,6 +33,38 @@ public sealed class ModelIdentityGeneratorTests
         Assert.Contains("GetType() != other.GetType()", generatedSource, StringComparison.Ordinal);
         Assert.Contains(".Default.Equals(Id, default!)", generatedSource, StringComparison.Ordinal);
         Assert.Contains("public override int GetHashCode()", generatedSource, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generates_default_safe_hash_code_for_reference_type_identity()
+    {
+        // Arrange
+        const string source = """
+            #nullable enable
+
+            namespace Demo;
+
+            [GenerateModelSupport(Identity = true)]
+            public sealed partial class Customer : IIdentified<string>
+            {
+                public string Id { get; private init; } = null!;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var outputCompilation = GeneratorTestHarness.RunGeneratorAndUpdateCompilation(compilation, out var runResult);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.Customer.ModelSupport.g.cs");
+        var errors = outputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
+            .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
+            .ToArray();
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        errors.ShouldBeEmpty();
+        generatedSource.ShouldContain(">.Default.Equals(Id, default!)", StringComparison.Ordinal);
+        generatedSource.ShouldContain("return base.GetHashCode();", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("ArgumentNullException.ThrowIfNull");
     }
 
     [Fact]
@@ -152,6 +184,81 @@ public sealed class ModelIdentityGeneratorTests
 
         // Assert
         Assert.Equal("SKMDL002", diagnostic.Id);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_attribute_suffix_requests_identity_without_identified_interface()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateModelSupportAttribute(Identity = true)]
+            public sealed partial class Customer
+            {
+                public int Id { get; private init; }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL002");
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_aliased_attribute_requests_identity_without_identified_interface()
+    {
+        // Arrange
+        const string source = """
+            using ModelSupport = SharedKernel.Domain.GenerateModelSupportAttribute;
+
+            namespace Demo;
+
+            [ModelSupport(Identity = true)]
+            public sealed partial class Customer
+            {
+                public int Id { get; private init; }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL002");
+    }
+
+    [Fact]
+    public void Generates_identity_for_assembly_default_with_aliased_identified_interface()
+    {
+        // Arrange
+        const string source = """
+            using CustomerIdentity = SharedKernel.Domain.IIdentified<int>;
+
+            [assembly: GenerateModelSupportDefaults(Identity = true)]
+
+            namespace Demo;
+
+            public sealed partial class Customer : CustomerIdentity
+            {
+                public int Id { get; private init; }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.Customer.ModelSupport.g.cs");
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        generatedSource.ShouldContain("public partial class Customer", StringComparison.Ordinal);
     }
 
     [Fact]
