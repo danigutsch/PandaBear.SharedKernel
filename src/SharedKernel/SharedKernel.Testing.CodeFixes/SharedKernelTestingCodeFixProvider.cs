@@ -374,16 +374,18 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             .AddModifiers(Token(SyntaxKind.InternalKeyword), Token(SyntaxKind.StaticKeyword))
             .AddMembers(helperMethod)
             .NormalizeWhitespace(eol: "\n");
-        var usings = NormalizeLineEndings(string.Concat(compilationUnit.Usings.Select(static usingDirective => usingDirective.ToFullString())));
+        var header = NormalizeLineEndings(
+            string.Concat(compilationUnit.Externs.Select(static externAlias => externAlias.ToFullString()))
+            + string.Concat(compilationUnit.Usings.Select(static usingDirective => usingDirective.ToFullString())));
         var namespaceDeclaration = methodDeclaration.FirstAncestorOrSelf<BaseNamespaceDeclarationSyntax>();
         if (namespaceDeclaration is null)
         {
-            return usings + helperClass + "\n";
+            return header + helperClass + "\n";
         }
 
         if (namespaceDeclaration is FileScopedNamespaceDeclarationSyntax)
         {
-            return usings
+            return header
                 + "namespace " + namespaceDeclaration.Name + ";\n\n"
                 + helperClass + "\n";
         }
@@ -392,7 +394,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             .WithMembers(SingletonList<MemberDeclarationSyntax>(helperClass))
             .NormalizeWhitespace(eol: "\n");
 
-        return usings + blockScopedNamespace + "\n";
+        return header + blockScopedNamespace + "\n";
     }
 
     private static MethodDeclarationSyntax MakeInternalStatic(MethodDeclarationSyntax methodDeclaration)

@@ -414,6 +414,47 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Helper_method_fix_preserves_extern_alias_header()
+    {
+        // Arrange
+        const string source = """
+            extern alias helpers;
+
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Xunit.Fact]
+                public void Creates_a_tour_when_the_request_uses_alias_header()
+                {
+                    var id = CreateTourId();
+                }
+
+                private static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source, includeDefaultUsings: false);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int CreateTourId()");
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
+
+        // Assert
+        helperDocumentText.ShouldContain("extern alias helpers;", StringComparison.Ordinal);
+        helperDocumentText.ShouldContain("namespace Demo;", StringComparison.Ordinal);
+        helperDocumentText.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Helper_method_fix_preserves_block_scoped_namespace()
     {
         // Arrange

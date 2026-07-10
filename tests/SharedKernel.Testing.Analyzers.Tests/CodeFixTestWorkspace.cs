@@ -35,7 +35,8 @@ internal sealed class CodeFixTestWorkspace
     public static CodeFixTestWorkspace Create(
         string source,
         string assemblyName = "SharedKernel.Testing.CodeFixes.Tests.Dynamic",
-        string? filePath = null)
+        string? filePath = null,
+        bool includeDefaultUsings = true)
     {
         var documentFilePath = filePath
             ?? Path.Combine(Path.GetTempPath(), "SharedKernel.Testing.CodeFixes.Tests", Guid.NewGuid().ToString("N"), "Test0.cs");
@@ -46,6 +47,7 @@ internal sealed class CodeFixTestWorkspace
         var projectId = ProjectId.CreateNewId(assemblyName);
         var versionStamp = VersionStamp.Create();
         var documentId = DocumentId.CreateNewId(projectId, "Test0.cs");
+        var documentSource = (includeDefaultUsings ? DefaultUsings : string.Empty) + source;
         var projectInfo = ProjectInfo.Create(
             projectId,
             versionStamp,
@@ -63,7 +65,7 @@ internal sealed class CodeFixTestWorkspace
             DocumentInfo.Create(
                 documentId,
                 "Test0.cs",
-                loader: TextLoader.From(TextAndVersion.Create(SourceText.From(DefaultUsings + source), versionStamp)),
+                loader: TextLoader.From(TextAndVersion.Create(SourceText.From(documentSource), versionStamp)),
                 filePath: documentFilePath));
 
         return new CodeFixTestWorkspace(workspace, documentId);
