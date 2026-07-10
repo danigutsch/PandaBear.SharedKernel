@@ -374,6 +374,46 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Helper_method_fix_moves_implicit_private_static_helper_to_dedicated_document()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_uses_implicit_private_helper()
+                {
+                    var id = CreateTourId();
+                }
+
+                static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "static int CreateTourId()");
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var testDocumentText = await workspace.GetDocumentText();
+        var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
+
+        // Assert
+        testDocumentText.ShouldContain("var id = TourLoaderTestsHelpers.CreateTourId();", StringComparison.Ordinal);
+        testDocumentText.ShouldNotContain("static int CreateTourId()");
+        helperDocumentText.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Helper_method_fix_preserves_verbatim_identifier_invocation()
     {
         // Arrange

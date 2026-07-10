@@ -124,7 +124,6 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         if (syntaxRoot.FindNode(context.Span).FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
             || methodDeclaration.Parent is not TypeDeclarationSyntax testClass
             || !methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.StaticKeyword))
-            || !methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PrivateKeyword))
             || HasOverloadInTestClass(testClass, methodDeclaration))
         {
             return;
@@ -134,6 +133,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         if (semanticModel is null
             || semanticModel.GetDeclaredSymbol(testClass, context.CancellationToken) is not INamedTypeSymbol testClassSymbol
             || semanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
+            || methodSymbol.DeclaredAccessibility != Accessibility.Private
             || UsesTestClassMember(semanticModel, methodDeclaration, testClassSymbol, methodSymbol, context.CancellationToken)
             || HasNonRewriteableHelperReference(semanticModel, methodDeclaration, testClass, methodSymbol, context.CancellationToken))
         {
