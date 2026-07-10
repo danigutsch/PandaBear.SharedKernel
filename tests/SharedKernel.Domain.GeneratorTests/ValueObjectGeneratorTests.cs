@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace SharedKernel.Domain.GeneratorTests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ValueObjectCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ValueObjectCapability)]
 public sealed class ValueObjectGeneratorTests
 {
     [Fact]
@@ -137,7 +137,11 @@ public sealed class ValueObjectGeneratorTests
         generatedSource.ShouldContain("public readonly partial record struct ContractVersion : global::System.IComparable<ContractVersion>", StringComparison.Ordinal);
         generatedSource.ShouldContain("public readonly string ToRouteSegment()", StringComparison.Ordinal);
         generatedSource.ShouldContain("return \"v\" + Value.ToString(global::System.Globalization.CultureInfo.InvariantCulture);", StringComparison.Ordinal);
+        generatedSource.ShouldContain("var normalized = global::System.MemoryExtensions.AsSpan(text);", StringComparison.Ordinal);
+        generatedSource.ShouldContain("global::System.MemoryExtensions.StartsWith", StringComparison.Ordinal);
+        generatedSource.ShouldContain("normalized = normalized.Slice(1);", StringComparison.Ordinal);
         generatedSource.ShouldContain("var isValid = value > 0;", StringComparison.Ordinal);
+        generatedSource.Contains("Substring(1)", StringComparison.Ordinal).ShouldBe(false);
         jsonSource.ShouldContain("writer.WriteStringValue(value.ToRouteSegment());", StringComparison.Ordinal);
     }
 
@@ -406,6 +410,35 @@ public sealed class ValueObjectGeneratorTests
     }
 
     [Fact]
+    public void Generates_distinct_sources_for_underscored_type_names()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo
+            {
+                [GenerateValueObject(UnderlyingType = typeof(string))]
+                public readonly partial record struct Tour_Code;
+            }
+
+            namespace Demo.Tour
+            {
+                [GenerateValueObject(UnderlyingType = typeof(string))]
+                public readonly partial record struct Code;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var generatedSources = runResult.Results.Single().GeneratedSources;
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        generatedSources.ShouldContain(source => string.Equals(source.HintName, "Demo.Tour_Code.ValueObject.g.cs", StringComparison.Ordinal));
+        generatedSources.ShouldContain(source => string.Equals(source.HintName, "Demo.Tour.Code.ValueObject.g.cs", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void Generates_once_when_same_partial_type_has_duplicate_value_object_attributes()
     {
         // Arrange
@@ -439,6 +472,28 @@ public sealed class ValueObjectGeneratorTests
             [GenerateValueObject(UnderlyingType = typeof(string), Parsing = true)]
             public readonly partial record struct TourCode;
 
+            [GenerateValueObject(UnderlyingType = typeof(string), Json = true)]
+            public readonly partial record struct TourCode;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL021");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_same_declaration_has_conflicting_value_object_attributes()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string), Parsing = true)]
             [GenerateValueObject(UnderlyingType = typeof(string), Json = true)]
             public readonly partial record struct TourCode;
             """;

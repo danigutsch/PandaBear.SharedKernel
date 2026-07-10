@@ -15,6 +15,11 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
     private const string AttributeName = "SharedKernel.Domain.GenerateValueObjectAttribute";
     private const string JsonConverterMetadataName = "System.Text.Json.Serialization.JsonConverter`1";
     private const string EfCoreValueConverterMetadataName = "Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter`2";
+    private const string UnderlyingTypeOptionName = "UnderlyingType";
+    private const string ParsingOptionName = "Parsing";
+    private const string JsonOptionName = "Json";
+    private const string EfCoreOptionName = "EfCore";
+    private const string TemplateOptionName = "Template";
     private const string DiagnosticCategory = "SharedKernel.Domain.ModelSupport";
     private const string UnsupportedUnderlyingKindMessage = "Unsupported underlying kind.";
     private const string SummaryStartLine = "    /// <summary>";
@@ -217,8 +222,15 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             return DiagnosticOnly(Diagnostic.Create(UnsupportedConstructor, location, type.Name));
         }
 
-        var attribute = context.Attributes.First(static attribute =>
-            string.Equals(attribute.AttributeClass?.ToDisplayString(), AttributeName, StringComparison.Ordinal));
+        var attributes = context.Attributes
+            .Where(static attribute => string.Equals(attribute.AttributeClass?.ToDisplayString(), AttributeName, StringComparison.Ordinal))
+            .ToArray();
+        var attribute = attributes[0];
+        if (attributes.Skip(1).Any(candidate => !HasSameAttributeConfiguration(attribute, candidate)))
+        {
+            return DiagnosticOnly(Diagnostic.Create(ConflictingValueObjectConfiguration, location, type.Name));
+        }
+
         var underlyingType = GetUnderlyingType(attribute);
         if (underlyingType is null)
         {
@@ -246,19 +258,19 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
                 underlyingType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
         }
 
-        var json = GetBooleanOption(attribute, "Json");
+        var json = GetBooleanOption(attribute, JsonOptionName);
         if (json && context.SemanticModel.Compilation.GetTypeByMetadataName(JsonConverterMetadataName) is null)
         {
             return DiagnosticOnly(Diagnostic.Create(MissingJsonReference, location, type.Name));
         }
 
-        var efCore = GetBooleanOption(attribute, "EfCore");
+        var efCore = GetBooleanOption(attribute, EfCoreOptionName);
         if (efCore && context.SemanticModel.Compilation.GetTypeByMetadataName(EfCoreValueConverterMetadataName) is null)
         {
             return DiagnosticOnly(Diagnostic.Create(MissingEfCoreReference, location, type.Name));
         }
 
-        var parsing = GetBooleanOption(attribute, "Parsing") || template == ValueObjectTemplate.ApiVersion;
+        var parsing = GetBooleanOption(attribute, ParsingOptionName) || template == ValueObjectTemplate.ApiVersion;
         if (HasReservedGeneratedMember(type, parsing, json, efCore, template, out var reservedMemberName))
         {
             return DiagnosticOnly(Diagnostic.Create(ReservedMemberName, location, type.Name, reservedMemberName));
@@ -293,6 +305,15 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             left.Template == right.Template;
     }
 
+    private static bool HasSameAttributeConfiguration(AttributeData left, AttributeData right)
+    {
+        return SymbolEqualityComparer.Default.Equals(GetUnderlyingType(left), GetUnderlyingType(right)) &&
+            GetBooleanOption(left, ParsingOptionName) == GetBooleanOption(right, ParsingOptionName) &&
+            GetBooleanOption(left, JsonOptionName) == GetBooleanOption(right, JsonOptionName) &&
+            GetBooleanOption(left, EfCoreOptionName) == GetBooleanOption(right, EfCoreOptionName) &&
+            GetTemplate(left) == GetTemplate(right);
+    }
+
     private static ValueObjectModel DiagnosticOnly(Diagnostic diagnostic)
     {
         return new ValueObjectModel { Diagnostic = diagnostic };
@@ -308,7 +329,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
     private static ITypeSymbol? GetUnderlyingType(AttributeData attribute)
     {
         return attribute.NamedArguments
-            .Where(static argument => string.Equals(argument.Key, "UnderlyingType", StringComparison.Ordinal))
+            .Where(static argument => string.Equals(argument.Key, UnderlyingTypeOptionName, StringComparison.Ordinal))
             .Select(static argument => argument.Value.Value as ITypeSymbol)
             .FirstOrDefault();
     }
@@ -325,7 +346,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
     private static ValueObjectTemplate GetTemplate(AttributeData attribute)
     {
         return attribute.NamedArguments
-            .Where(static argument => string.Equals(argument.Key, "Template", StringComparison.Ordinal))
+            .Where(static argument => string.Equals(argument.Key, TemplateOptionName, StringComparison.Ordinal))
             .Select(static argument => argument.Value.Value)
             .OfType<int>()
             .Select(static template => (ValueObjectTemplate)template)
@@ -456,7 +477,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
         foreach (var character in metadataName)
         {
-            builder.Append(char.IsLetterOrDigit(character) ? character : '.');
+            builder.Append(char.IsLetterOrDigit(character) || character == '_' ? character : '.');
         }
 
         builder.Append('.').Append(suffix).Append(".g.cs");
@@ -575,9 +596,11 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
                 .AppendLine(ReturnFalse12)
                 .AppendLine(CloseBlock8)
                 .AppendLine()
-                .AppendLine("        var normalized = text.StartsWith(\"v\", global::System.StringComparison.OrdinalIgnoreCase)")
-                .AppendLine("            ? text.Substring(1)")
-                .AppendLine("            : text;")
+                .AppendLine("        var normalized = global::System.MemoryExtensions.AsSpan(text);")
+                .AppendLine("        if (global::System.MemoryExtensions.StartsWith(normalized, global::System.MemoryExtensions.AsSpan(\"v\"), global::System.StringComparison.OrdinalIgnoreCase))")
+                .AppendLine(OpenBlock8)
+                .AppendLine("            normalized = normalized.Slice(1);")
+                .AppendLine(CloseBlock8)
                 .AppendLine("        if (!int.TryParse(normalized, global::System.Globalization.NumberStyles.None, global::System.Globalization.CultureInfo.InvariantCulture, out var parsed))")
                 .AppendLine(OpenBlock8)
                 .AppendLine(ResultDefault12)
