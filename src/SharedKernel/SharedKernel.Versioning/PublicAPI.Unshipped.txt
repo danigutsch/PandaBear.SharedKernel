@@ -34,6 +34,9 @@ SharedKernel.Versioning.ConventionalCommit.Scope.init -> void
 SharedKernel.Versioning.ConventionalCommit.Type.get -> string!
 SharedKernel.Versioning.ConventionalCommit.Type.init -> void
 SharedKernel.Versioning.ConventionalCommitParser
+SharedKernel.Versioning.PackageLockInventory
+SharedKernel.Versioning.PackageMetadataValidator
+SharedKernel.Versioning.ProjectPropertyReader
 SharedKernel.Versioning.PublicApiBaselineChecker
 SharedKernel.Versioning.ReleaseImpact
 SharedKernel.Versioning.ReleaseImpact.Major = 3 -> SharedKernel.Versioning.ReleaseImpact
@@ -49,7 +52,9 @@ SharedKernel.Versioning.ReleasePreparationOptions.PackageDirectory.get -> string
 SharedKernel.Versioning.ReleasePreparationOptions.PackageDirectory.init -> void
 SharedKernel.Versioning.ReleasePreparationOptions.ReleaseImpact.get -> string?
 SharedKernel.Versioning.ReleasePreparationOptions.ReleaseImpact.init -> void
-SharedKernel.Versioning.ReleasePreparationOptions.ReleasePreparationOptions(string! Version, string! PackageDirectory, string! OutputDirectory, string? SourceTag, string? ReleaseImpact, string? Sha) -> void
+SharedKernel.Versioning.ReleasePreparationOptions.ReleasePreparationOptions(string! Version, string! PackageDirectory, string! OutputDirectory, string! RepositoryRoot, string? SourceTag, string? ReleaseImpact, string? Sha) -> void
+SharedKernel.Versioning.ReleasePreparationOptions.RepositoryRoot.get -> string!
+SharedKernel.Versioning.ReleasePreparationOptions.RepositoryRoot.init -> void
 SharedKernel.Versioning.ReleasePreparationOptions.Sha.get -> string?
 SharedKernel.Versioning.ReleasePreparationOptions.Sha.init -> void
 SharedKernel.Versioning.ReleasePreparationOptions.SourceTag.get -> string?
@@ -79,6 +84,14 @@ SharedKernel.Versioning.ReleaseVersionCalculationResult.VersionJson.init -> void
 SharedKernel.Versioning.ReleaseVersionCalculationResult.VersionOutput.get -> SharedKernel.Versioning.VersionOutput!
 SharedKernel.Versioning.ReleaseVersionCalculationResult.VersionOutput.init -> void
 SharedKernel.Versioning.ReleaseVersionCalculator
+SharedKernel.Versioning.ResolvedNuGetPackage
+SharedKernel.Versioning.ResolvedNuGetPackage.Id.get -> string!
+SharedKernel.Versioning.ResolvedNuGetPackage.Id.init -> void
+SharedKernel.Versioning.ResolvedNuGetPackage.LockFiles.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Versioning.ResolvedNuGetPackage.LockFiles.init -> void
+SharedKernel.Versioning.ResolvedNuGetPackage.ResolvedNuGetPackage(string! Id, string! Version, System.Collections.Generic.IReadOnlyList<string!>! LockFiles) -> void
+SharedKernel.Versioning.ResolvedNuGetPackage.Version.get -> string!
+SharedKernel.Versioning.ResolvedNuGetPackage.Version.init -> void
 SharedKernel.Versioning.SemanticVersion
 SharedKernel.Versioning.SemanticVersion.BuildMetadata.get -> string?
 SharedKernel.Versioning.SemanticVersion.BuildMetadata.init -> void
@@ -133,6 +146,12 @@ static SharedKernel.Versioning.BreakingChangeMarker.HasMarker(string! messages) 
 static SharedKernel.Versioning.CommitMessageInput.ReadMessages(System.IO.TextReader! reader) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<string!>!>!
 static SharedKernel.Versioning.ConventionalCommitParser.Parse(string! message) -> SharedKernel.Versioning.ConventionalCommit!
 static SharedKernel.Versioning.ConventionalCommitParser.TryParse(string! message, out SharedKernel.Versioning.ConventionalCommit? commit) -> bool
+static SharedKernel.Versioning.PackageLockInventory.Read(string! repositoryRoot) -> SharedKernel.Versioning.ResolvedNuGetPackage![]!
+static SharedKernel.Versioning.PackageLockInventory.WriteAttributionJson(System.Collections.Generic.IReadOnlyCollection<SharedKernel.Versioning.ResolvedNuGetPackage!>! packages) -> string!
+static SharedKernel.Versioning.PackageLockInventory.WriteNoticesMarkdown(System.Collections.Generic.IReadOnlyCollection<SharedKernel.Versioning.ResolvedNuGetPackage!>! packages) -> string!
+static SharedKernel.Versioning.PackageLockInventory.WriteSpdxJson(SharedKernel.Versioning.ReleasePreparationOptions! options, System.Collections.Generic.IReadOnlyCollection<SharedKernel.Versioning.ResolvedNuGetPackage!>! packages) -> string!
+static SharedKernel.Versioning.PackageMetadataValidator.Validate(string! repositoryRoot) -> void
+static SharedKernel.Versioning.ProjectPropertyReader.Read(string! project, string! propertyName) -> string?
 static SharedKernel.Versioning.PublicApiBaselineChecker.EnsureBaselinesPresent(string! repoRoot) -> int
 static SharedKernel.Versioning.ReleaseImpactText.ToOutputValue(SharedKernel.Versioning.ReleaseImpact impact) -> string!
 static SharedKernel.Versioning.ReleasePreparationArtifacts.Write(SharedKernel.Versioning.ReleasePreparationOptions! options, string! changes) -> System.Threading.Tasks.Task!
