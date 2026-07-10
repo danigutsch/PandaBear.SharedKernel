@@ -220,9 +220,17 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                 return true;
             }
 
-            if (!string.Equals(simpleName.Identifier.ValueText, methodSymbol.Name, StringComparison.Ordinal)
-                || !SymbolEqualityComparer.Default.Equals(semanticModel.GetSymbolInfo(simpleName, ct).Symbol, methodSymbol)
-                || IsRewriteableHelperInvocation(simpleName, methodSymbol, semanticModel, ct))
+            if (!string.Equals(simpleName.Identifier.ValueText, methodSymbol.Name, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (!SymbolEqualityComparer.Default.Equals(semanticModel.GetSymbolInfo(simpleName, ct).Symbol, methodSymbol))
+            {
+                return IsInvocationName(simpleName);
+            }
+
+            if (IsRewriteableHelperInvocation(simpleName, methodSymbol, semanticModel, ct))
             {
                 continue;
             }
@@ -231,6 +239,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         }
 
         return false;
+    }
+
+    private static bool IsInvocationName(SimpleNameSyntax simpleName)
+    {
+        return simpleName.Parent is InvocationExpressionSyntax { Expression: SimpleNameSyntax invocationName }
+            && invocationName == simpleName;
     }
 
     private static bool IsNameofReference(SimpleNameSyntax simpleName, IMethodSymbol methodSymbol)

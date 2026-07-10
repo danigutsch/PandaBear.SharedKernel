@@ -552,6 +552,51 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Helper_method_fix_is_not_offered_when_same_named_invocation_binds_to_another_symbol()
+    {
+        // Arrange
+        const string source = """
+            using static Demo.OtherTourHelpers;
+
+            namespace Demo;
+
+            public static class OtherTourHelpers
+            {
+                public static int CreateTourId()
+                {
+                    return 7;
+                }
+            }
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var id = CreateTourId();
+                }
+
+                private static int CreateTourId(string value)
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int CreateTourId(string value)");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
     public async Task Trait_constant_fix_replaces_literal_with_configured_constant()
     {
         // Arrange
