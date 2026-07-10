@@ -1,0 +1,50 @@
+#nullable enable
+const SharedKernel.Branding.BrandingRoutes.ManagementSettingsPath = "branding/settings" -> string!
+const SharedKernel.Branding.BrandingRoutes.PublicSettingsPath = "public/branding" -> string!
+SharedKernel.Branding.BrandingApiClient
+SharedKernel.Branding.BrandingApiClient.BrandingApiClient(System.Net.Http.HttpClient! httpClient) -> void
+SharedKernel.Branding.BrandingContractConstants
+const SharedKernel.Branding.BrandingContractConstants.MaxBrandNameLength = 120 -> int
+const SharedKernel.Branding.BrandingContractConstants.MaxCssColorLength = 7 -> int
+const SharedKernel.Branding.BrandingContractConstants.MaxFontFamilyLength = 120 -> int
+const SharedKernel.Branding.BrandingContractConstants.MaxLogoUriLength = 2048 -> int
+SharedKernel.Branding.BrandingRoutes
+SharedKernel.Branding.BrandingSettings
+SharedKernel.Branding.BrandingSettings.AccentColor.get -> string!
+SharedKernel.Branding.BrandingSettings.BackgroundColor.get -> string!
+SharedKernel.Branding.BrandingSettings.BodyFontFamily.get -> string!
+SharedKernel.Branding.BrandingSettings.BrandName.get -> string!
+SharedKernel.Branding.BrandingSettings.HeadingFontFamily.get -> string!
+SharedKernel.Branding.BrandingSettings.LogoUri.get -> string?
+SharedKernel.Branding.BrandingSettings.PrimaryColor.get -> string!
+SharedKernel.Branding.BrandingSettings.TextColor.get -> string!
+SharedKernel.Branding.BrandingSettings.ToDto() -> SharedKernel.Branding.BrandingSettingsDto!
+SharedKernel.Branding.BrandingSettingsDto
+SharedKernel.Branding.BrandingSettingsDto.AccentColor.get -> string!
+SharedKernel.Branding.BrandingSettingsDto.AccentColor.set -> void
+SharedKernel.Branding.BrandingSettingsDto.BackgroundColor.get -> string!
+SharedKernel.Branding.BrandingSettingsDto.BackgroundColor.set -> void
+SharedKernel.Branding.BrandingSettingsDto.BodyFontFamily.get -> string!
+SharedKernel.Branding.BrandingSettingsDto.BodyFontFamily.set -> void
+SharedKernel.Branding.BrandingSettingsDto.BrandName.get -> string!
+SharedKernel.Branding.BrandingSettingsDto.BrandName.set -> void
+SharedKernel.Branding.BrandingSettingsDto.HeadingFontFamily.get -> string!
+SharedKernel.Branding.BrandingSettingsDto.HeadingFontFamily.set -> void
+SharedKernel.Branding.BrandingSettingsDto.LogoUri.get -> string?
+SharedKernel.Branding.BrandingSettingsDto.LogoUri.set -> void
+SharedKernel.Branding.BrandingSettingsDto.PrimaryColor.get -> string!
+SharedKernel.Branding.BrandingSettingsDto.PrimaryColor.set -> void
+SharedKernel.Branding.BrandingSettingsDto.TextColor.get -> string!
+SharedKernel.Branding.BrandingSettingsDto.TextColor.set -> void
+SharedKernel.Branding.IBrandingApiClient
+SharedKernel.Branding.IBrandingSettingsStore
+static SharedKernel.Branding.BrandingSettings.Create(SharedKernel.Branding.BrandingSettingsDto! request, System.Collections.Generic.IReadOnlyCollection<string!>! allowedFontFamilies) -> SharedKernel.Results.Result<SharedKernel.Branding.BrandingSettings!>
+SharedKernel.Branding.BrandingApiClient.GetPublicSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
+SharedKernel.Branding.BrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
+SharedKernel.Branding.BrandingApiClient.SaveSettings(SharedKernel.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
+SharedKernel.Branding.BrandingSettingsDto.BrandingSettingsDto() -> void
+SharedKernel.Branding.IBrandingApiClient.GetPublicSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
+SharedKernel.Branding.IBrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
+SharedKernel.Branding.IBrandingApiClient.SaveSettings(SharedKernel.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
+SharedKernel.Branding.IBrandingSettingsStore.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettings?>!
+SharedKernel.Branding.IBrandingSettingsStore.SaveSettings(SharedKernel.Branding.BrandingSettings! settings, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
