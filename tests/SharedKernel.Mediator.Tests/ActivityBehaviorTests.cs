@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace SharedKernel.Mediator.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ContractsCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ContractsCapability)]
 public sealed class ActivityBehaviorTests
 {
     [Fact]
@@ -159,17 +159,7 @@ public sealed class ActivityBehaviorTests
         // Act
         var response = await behavior.Handle(
             request,
-            static () =>
-            {
-                try
-                {
-                    throw new InvalidOperationException("boom");
-                }
-                catch (InvalidOperationException)
-                {
-                    return ValueTask.FromResult(99);
-                }
-            },
+            ActivityBehaviorTestsHelpers.HandleExceptionInternally,
             CancellationToken.None);
 
         // Assert

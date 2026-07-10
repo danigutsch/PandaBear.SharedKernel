@@ -127,18 +127,10 @@ public sealed class BrandingApiClientTests
         var request = BrandingSettingsTestData.ValidRequest();
 
         // Act
-        ContractValidationException? exception = null;
-        try
-        {
-            await sut.SaveSettings(request, TestContext.Current.CancellationToken);
-        }
-        catch (ContractValidationException caught)
-        {
-            exception = caught;
-        }
+        Func<Task> act = () => sut.SaveSettings(request, TestContext.Current.CancellationToken);
 
         // Assert
-        exception.ShouldNotBeNull();
+        var exception = await act.ShouldThrow<ContractValidationException>();
         exception.ValidationErrors.ContainsKey(nameof(BrandingSettingsDto.BrandName)).ShouldBeTrue();
     }
 }

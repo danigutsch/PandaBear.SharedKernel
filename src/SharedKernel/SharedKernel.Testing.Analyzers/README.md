@@ -18,7 +18,7 @@ This Roslyn component reports diagnostics for rules that only make sense in test
 | `SKTEST005` | Warning | Serial xUnit collection definitions should declare a justification. |
 | `SKTEST006` | Warning | Test code should use repository assertion wrappers instead of direct xUnit assertions. |
 | `SKTEST007` | Warning | Complete explicit Arrange/Act/Assert marker sets in xUnit test methods should stay ordered. |
-| `SKTEST008` | Warning | xUnit test methods should not use manual `try`/`finally` cleanup blocks. |
+| `SKTEST008` | Warning | xUnit test methods should not use manual `try`/`catch`/`finally` control flow. |
 | `SKTEST009` | Warning | xUnit trait metadata should use canonical constants when they exist. |
 
 ## Configuration
@@ -44,8 +44,8 @@ complete Arrange/Act/Assert marker set in line comments, with optional whitespac
 Tests without that exact marker set are not reported.
 Repeated markers are not reported because multi-act tests often need local judgment before restructuring.
 
-`SKTEST008` is intentionally syntax-bound: it only reports `try` statements with `finally` blocks
-inside xUnit test methods. It does not report production code or non-test helper methods.
+`SKTEST008` is intentionally syntax-bound: it reports `try` statements inside xUnit test methods. It
+does not report production code or non-test helper methods.
 
 `SKTEST009` is conservative: it reports string literals in `Trait` attributes only when exactly one
 matching constant can be identified from `SharedKernel.Testing` trait constants or a project-local

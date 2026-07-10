@@ -82,22 +82,15 @@ public sealed class CodeFixRunEngineTests : IDisposable
     [Fact]
     public async Task Run_rejects_non_project_or_solution_path()
     {
+        // Arrange
         var options = new CodeFixRunnerOptions(Path.Combine(projectDirectory.Path, "sample.txt"), "SKTEST006");
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        ArgumentException? exception = null;
 
-        try
-        {
-            await CodeFixRunEngine.Run(options, error);
-        }
-        catch (ArgumentException caught)
-        {
-            exception = caught;
-        }
+        // Act
+        // Assert
+        var exception = await ((Func<Task>)(() => CodeFixRunEngine.Run(options, error))).ShouldThrow<ArgumentException>();
 
-        var nonNullException = exception.ShouldNotBeNull();
-
-        (nonNullException.Message).ShouldContain("Expected a .csproj, .sln, or .slnx path.", StringComparison.Ordinal);
+        (exception.Message).ShouldContain("Expected a .csproj, .sln, or .slnx path.", StringComparison.Ordinal);
     }
 
     public void Dispose()

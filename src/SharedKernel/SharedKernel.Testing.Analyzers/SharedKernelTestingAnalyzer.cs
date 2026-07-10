@@ -131,12 +131,12 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static readonly DiagnosticDescriptor XunitTryFinallyCleanupRule = new(
         TestingDiagnosticIds.XunitTryFinallyCleanup,
-        title: "xUnit test methods should not use try/finally cleanup blocks",
-        messageFormat: "xUnit test method '{0}' should move try/finally cleanup to a fixture, disposable helper, or dedicated helper type",
+        title: "xUnit test methods should not use try blocks",
+        messageFormat: "xUnit test method '{0}' should move try/catch/finally control flow to a fixture, disposable helper, or dedicated helper type",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules discourage manual try/finally cleanup inside xUnit test methods because cleanup plumbing can hide behavior and assertions.");
+        description: "Repository testing rules discourage manual try/catch/finally control flow inside xUnit test methods because it can hide Arrange/Act/Assert behavior and cleanup plumbing.");
 
     private static readonly DiagnosticDescriptor XunitTraitConstantUsageRule = new(
         TestingDiagnosticIds.XunitTraitConstantUsage,
@@ -360,7 +360,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeTryStatement(SyntaxNodeAnalysisContext context)
     {
-        if (context.Node is not TryStatementSyntax { Finally: not null } tryStatement
+        if (context.Node is not TryStatementSyntax tryStatement
             || tryStatement.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
             || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
             || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol

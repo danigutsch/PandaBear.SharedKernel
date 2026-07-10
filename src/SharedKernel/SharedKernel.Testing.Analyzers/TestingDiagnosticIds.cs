@@ -41,7 +41,7 @@ public static class TestingDiagnosticIds
     public const string XunitArrangeActAssertMarkers = "SKTEST007";
 
     /// <summary>
-    /// Diagnostic emitted when an xUnit test method contains a try statement with a finally block.
+    /// Diagnostic emitted when an xUnit test method contains a try statement.
     /// </summary>
     public const string XunitTryFinallyCleanup = "SKTEST008";
 

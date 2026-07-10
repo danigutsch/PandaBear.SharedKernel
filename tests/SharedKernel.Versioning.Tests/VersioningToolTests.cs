@@ -563,18 +563,10 @@ public static class VersioningToolTests
         var options = new PackSharedKernelOptions("1.2.3", temporaryDirectory.PackageDirectory, VerifyRestore: false, RepoRoot: temporaryDirectory.Root);
 
         // Act
-        ArgumentException? exception = null;
-        try
-        {
-            await SharedKernelPackCommand.Run(options, TextWriter.Null);
-        }
-        catch (ArgumentException ex)
-        {
-            exception = ex;
-        }
+        Func<Task> act = () => SharedKernelPackCommand.Run(options, TextWriter.Null);
 
         // Assert
-        exception.ShouldNotBeNull();
+        var exception = await act.ShouldThrow<ArgumentException>();
         exception.Message.ShouldContain("Package version already exists", StringComparison.Ordinal);
     }
 
@@ -601,18 +593,10 @@ public static class VersioningToolTests
         var options = new PackSharedKernelOptions("1.2.3", "artifacts", VerifyRestore: false, RepoRoot: temporaryDirectory.Root);
 
         // Act
-        ArgumentException? exception = null;
-        try
-        {
-            await SharedKernelPackCommand.Run(options, TextWriter.Null);
-        }
-        catch (ArgumentException ex)
-        {
-            exception = ex;
-        }
+        Func<Task> act = () => SharedKernelPackCommand.Run(options, TextWriter.Null);
 
         // Assert
-        exception.ShouldNotBeNull();
+        var exception = await act.ShouldThrow<ArgumentException>();
         exception.Message.ShouldContain("No SharedKernel projects found.", StringComparison.Ordinal);
     }
 
