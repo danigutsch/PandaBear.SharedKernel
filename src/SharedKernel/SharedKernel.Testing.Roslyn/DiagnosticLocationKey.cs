@@ -11,7 +11,7 @@ public static class DiagnosticLocationKey
     /// Creates a key from the diagnostic source path, line, and character.
     /// </summary>
     /// <param name="diagnostic">The diagnostic.</param>
-    /// <returns>The diagnostic location key.</returns>
+    /// <returns>The diagnostic location key with zero-based line and character positions.</returns>
     public static string Create(Diagnostic diagnostic)
     {
         ArgumentNullException.ThrowIfNull(diagnostic);
