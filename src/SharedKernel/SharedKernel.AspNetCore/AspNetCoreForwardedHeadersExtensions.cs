@@ -69,7 +69,14 @@ public static class AspNetCoreForwardedHeadersExtensions
 
         options.KnownProxies.Clear();
         options.KnownIPNetworks.Clear();
-        options.ForwardLimit = configuredForwardLimit ?? Math.Max(1, knownProxies.Length + knownNetworks.Length);
+        if (configuredForwardLimit is not null)
+        {
+            options.ForwardLimit = configuredForwardLimit.Value;
+        }
+        else if (knownProxies.Length > 0)
+        {
+            options.ForwardLimit = knownProxies.Length;
+        }
 
         foreach (var knownProxy in knownProxies)
         {
