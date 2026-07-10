@@ -242,12 +242,9 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                 || (symbol is null && !HasOtherSymbolNamed(semanticModel, simpleName, methodSymbol, ct));
         }
 
-        if (!SymbolEqualityComparer.Default.Equals(symbol, methodSymbol))
-        {
-            return IsInvocationName(simpleName);
-        }
-
-        return !IsRewriteableHelperInvocation(simpleName, methodSymbol, semanticModel, ct);
+        return !SymbolEqualityComparer.Default.Equals(symbol, methodSymbol)
+            ? IsInvocationName(simpleName)
+            : !IsRewriteableHelperInvocation(simpleName, methodSymbol, semanticModel, ct);
     }
 
     private static bool HasOtherSymbolNamed(
