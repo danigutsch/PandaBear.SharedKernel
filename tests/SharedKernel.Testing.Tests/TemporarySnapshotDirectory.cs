@@ -34,7 +34,7 @@ internal sealed class TemporarySnapshotDirectory : IDisposable
         File.WriteAllText(Path.Combine(GeneratedDirectory, fileName), content);
     }
 
-    public JsonSnapshotArtifactSet CreateSet()
+    public JsonSnapshotArtifactSet CreateSet(IReadOnlyDictionary<string, string>? generatedFileNameOverrides = null)
     {
         return new JsonSnapshotArtifactSet(
             CanonicalDirectory,
@@ -42,7 +42,8 @@ internal sealed class TemporarySnapshotDirectory : IDisposable
             ".openapi.json",
             "Api_",
             "OpenAPI",
-            "Refresh snapshots.");
+            "Refresh snapshots.",
+            generatedFileNameOverrides);
     }
 
     public void Dispose()

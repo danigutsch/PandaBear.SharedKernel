@@ -11,6 +11,7 @@ public sealed class JsonSnapshotArtifactSet
     private readonly string generatedDirectory;
     private readonly string canonicalArtifactSuffix;
     private readonly string generatedArtifactPrefix;
+    private readonly IReadOnlyDictionary<string, string> generatedFileNameOverrides;
     private readonly string artifactDisplayName;
     private readonly string refreshHint;
 
@@ -23,13 +24,15 @@ public sealed class JsonSnapshotArtifactSet
     /// <param name="generatedArtifactPrefix">The generated artifact prefix.</param>
     /// <param name="artifactDisplayName">A human-readable artifact name for failure messages.</param>
     /// <param name="refreshHint">The refresh hint for failure messages.</param>
+    /// <param name="generatedFileNameOverrides">Generated file names for snapshots whose generator output does not use the common prefix.</param>
     public JsonSnapshotArtifactSet(
         string canonicalDirectory,
         string generatedDirectory,
         string canonicalArtifactSuffix,
         string generatedArtifactPrefix,
         string artifactDisplayName,
-        string refreshHint)
+        string refreshHint,
+        IReadOnlyDictionary<string, string>? generatedFileNameOverrides = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(canonicalDirectory);
         ArgumentException.ThrowIfNullOrWhiteSpace(generatedDirectory);
@@ -42,6 +45,9 @@ public sealed class JsonSnapshotArtifactSet
         this.generatedDirectory = generatedDirectory;
         this.canonicalArtifactSuffix = canonicalArtifactSuffix;
         this.generatedArtifactPrefix = generatedArtifactPrefix;
+        this.generatedFileNameOverrides = generatedFileNameOverrides is null
+            ? new Dictionary<string, string>(StringComparer.Ordinal)
+            : new Dictionary<string, string>(generatedFileNameOverrides, StringComparer.Ordinal);
         this.artifactDisplayName = artifactDisplayName;
         this.refreshHint = refreshHint;
     }
@@ -95,6 +101,8 @@ public sealed class JsonSnapshotArtifactSet
             .OrderBy(Path.GetFileName, StringComparer.Ordinal)
             .ToArray();
         var generatedFiles = Directory.GetFiles(generatedDirectory, $"{generatedArtifactPrefix}*.json", SearchOption.TopDirectoryOnly)
+            .Concat(GetGeneratedOverridePaths())
+            .Distinct(StringComparer.Ordinal)
             .OrderBy(Path.GetFileName, StringComparer.Ordinal)
             .ToArray();
         var failures = new List<string>();
@@ -205,7 +213,12 @@ public sealed class JsonSnapshotArtifactSet
         return fileName[..^canonicalArtifactSuffix.Length];
     }
 
-    private string GetGeneratedFileName(string snapshotName) => $"{generatedArtifactPrefix}{snapshotName}.json";
+    private IEnumerable<string> GetGeneratedOverridePaths() => generatedFileNameOverrides.Values
+        .Select(generatedFileName => Path.Combine(generatedDirectory, generatedFileName));
+
+    private string GetGeneratedFileName(string snapshotName) => generatedFileNameOverrides.TryGetValue(snapshotName, out var generatedFileName)
+        ? generatedFileName
+        : $"{generatedArtifactPrefix}{snapshotName}.json";
 
     private string GetCanonicalFileName(string snapshotName) => $"{snapshotName}{canonicalArtifactSuffix}";
 }
