@@ -381,11 +381,23 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             .NormalizeWhitespace();
         var usings = string.Concat(compilationUnit.Usings.Select(static usingDirective => usingDirective.ToFullString()));
         var namespaceDeclaration = methodDeclaration.FirstAncestorOrSelf<BaseNamespaceDeclarationSyntax>();
-        var namespacePrefix = namespaceDeclaration is null
-            ? string.Empty
-            : "namespace " + namespaceDeclaration.Name + ";" + Environment.NewLine + Environment.NewLine;
+        if (namespaceDeclaration is null)
+        {
+            return usings + helperClass + Environment.NewLine;
+        }
 
-        return usings + namespacePrefix + helperClass + Environment.NewLine;
+        if (namespaceDeclaration is FileScopedNamespaceDeclarationSyntax)
+        {
+            return usings
+                + "namespace " + namespaceDeclaration.Name + ";" + Environment.NewLine + Environment.NewLine
+                + helperClass + Environment.NewLine;
+        }
+
+        var blockScopedNamespace = NamespaceDeclaration(namespaceDeclaration.Name.WithoutTrivia())
+            .WithMembers(SingletonList<MemberDeclarationSyntax>(helperClass))
+            .NormalizeWhitespace();
+
+        return usings + blockScopedNamespace + Environment.NewLine;
     }
 
     private static MethodDeclarationSyntax MakeInternalStatic(MethodDeclarationSyntax methodDeclaration)
