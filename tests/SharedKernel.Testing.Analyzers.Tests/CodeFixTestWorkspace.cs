@@ -35,8 +35,13 @@ internal sealed class CodeFixTestWorkspace
     public static CodeFixTestWorkspace Create(
         string source,
         string assemblyName = "SharedKernel.Testing.CodeFixes.Tests.Dynamic",
-        string filePath = "/Test0.cs")
+        string? filePath = null)
     {
+        var documentFilePath = filePath
+            ?? Path.Combine(Path.GetTempPath(), "SharedKernel.Testing.CodeFixes.Tests", Guid.NewGuid().ToString("N"), "Test0.cs");
+        var projectDirectory = Path.GetDirectoryName(documentFilePath) is { Length: > 0 } directory
+            ? directory
+            : Path.GetTempPath();
         var workspace = new AdhocWorkspace();
         var projectId = ProjectId.CreateNewId(assemblyName);
         var versionStamp = VersionStamp.Create();
@@ -47,8 +52,8 @@ internal sealed class CodeFixTestWorkspace
             name: assemblyName,
             assemblyName: assemblyName,
             language: LanguageNames.CSharp,
-            filePath: $"/{assemblyName}.csproj",
-            outputFilePath: $"/{assemblyName}.dll",
+            filePath: Path.Combine(projectDirectory, assemblyName + ".csproj"),
+            outputFilePath: Path.Combine(projectDirectory, assemblyName + ".dll"),
             compilationOptions: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
             parseOptions: new CSharpParseOptions(LanguageVersion.Preview),
             metadataReferences: GetMetadataReferences());
@@ -59,7 +64,7 @@ internal sealed class CodeFixTestWorkspace
                 documentId,
                 "Test0.cs",
                 loader: TextLoader.From(TextAndVersion.Create(SourceText.From(DefaultUsings + source), versionStamp)),
-                filePath: filePath));
+                filePath: documentFilePath));
 
         return new CodeFixTestWorkspace(workspace, documentId);
     }
