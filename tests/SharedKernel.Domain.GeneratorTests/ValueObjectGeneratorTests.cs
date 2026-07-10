@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace SharedKernel.Domain.GeneratorTests;
 
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ValueObjectCapability)]
+[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ValueObjectCapability)]
 public sealed class ValueObjectGeneratorTests
 {
     [Fact]

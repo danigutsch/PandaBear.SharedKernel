@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace SharedKernel.Domain.GeneratorTests;
 
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
+[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
 public sealed class ModelIdentityGeneratorTests
 {
     [Fact]
