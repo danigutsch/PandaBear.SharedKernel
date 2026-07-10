@@ -21,3 +21,4 @@ SKMDL016 | SharedKernel.Domain.ModelSupport | Error | JSON value-object generati
 SKMDL017 | SharedKernel.Domain.ModelSupport | Error | EF Core value-object generation requires Microsoft.EntityFrameworkCore
 SKMDL018 | SharedKernel.Domain.ModelSupport | Error | Value-object template does not support the selected underlying type
 SKMDL019 | SharedKernel.Domain.ModelSupport | Error | Value-object generation does not support explicit constructors
+SKMDL020 | SharedKernel.Domain.ModelSupport | Error | Value-object generation requires generated member names to be unused

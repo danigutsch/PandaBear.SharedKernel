@@ -162,6 +162,135 @@ public sealed class ValueObjectGeneratorTests
     }
 
     [Fact]
+    public void Reports_diagnostic_when_value_object_is_not_readonly_record_struct()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public partial record struct TourCode;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL011");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_value_object_is_not_partial()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly record struct TourCode;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL012");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_value_object_is_nested()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed partial class Container
+            {
+                [GenerateValueObject(UnderlyingType = typeof(string))]
+                public readonly partial record struct TourCode;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL013");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_value_object_is_generic()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly partial record struct TourCode<T>;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL014");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_underlying_type_is_not_supported()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(global::System.DateTimeOffset))]
+            public readonly partial record struct TourInstant;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL015");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_template_does_not_match_underlying_type()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string), Template = ValueObjectTemplate.ApiVersion)]
+            public readonly partial record struct TourVersion;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL018");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+    }
+
+    [Fact]
     public void Reports_diagnostic_when_value_object_declares_constructor()
     {
         // Arrange
@@ -188,6 +317,120 @@ public sealed class ValueObjectGeneratorTests
         // Assert
         diagnostic.Id.ShouldBe("SKMDL019");
         diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_value_object_declares_generated_member_name()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly partial record struct TourCode
+            {
+                public string Value => "existing";
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL020");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("Value", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generates_distinct_sources_for_same_type_name_in_different_namespaces()
+    {
+        // Arrange
+        const string source = """
+            namespace First
+            {
+                [GenerateValueObject(UnderlyingType = typeof(string))]
+                public readonly partial record struct TourCode;
+            }
+
+            namespace Second
+            {
+                [GenerateValueObject(UnderlyingType = typeof(string))]
+                public readonly partial record struct TourCode;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var generatedSources = runResult.Results.Single().GeneratedSources;
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        generatedSources.ShouldContain(source => string.Equals(source.HintName, "First.TourCode.ValueObject.g.cs", StringComparison.Ordinal));
+        generatedSources.ShouldContain(source => string.Equals(source.HintName, "Second.TourCode.ValueObject.g.cs", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Generates_once_when_same_partial_type_has_duplicate_value_object_attributes()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly partial record struct TourCode;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly partial record struct TourCode;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var generatedSources = runResult.Results.Single().GeneratedSources;
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        generatedSources.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void Generates_template_validation_for_reusable_technical_invariants()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string), Template = ValueObjectTemplate.NonEmptyString)]
+            public readonly partial record struct TourName;
+
+            [GenerateValueObject(UnderlyingType = typeof(string), Template = ValueObjectTemplate.Slug)]
+            public readonly partial record struct TourSlug;
+
+            [GenerateValueObject(UnderlyingType = typeof(global::System.Guid), Template = ValueObjectTemplate.StronglyTypedId)]
+            public readonly partial record struct TourId;
+
+            [GenerateValueObject(UnderlyingType = typeof(string), Template = ValueObjectTemplate.IsoCode)]
+            public readonly partial record struct CountryCode;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var nonEmptySource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourName.ValueObject.g.cs");
+        var slugSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourSlug.ValueObject.g.cs");
+        var idSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourId.ValueObject.g.cs");
+        var isoCodeSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.CountryCode.ValueObject.g.cs");
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        nonEmptySource.ShouldContain("var isValid = !string.IsNullOrWhiteSpace(value);", StringComparison.Ordinal);
+        slugSource.ShouldContain("private static bool IsSlug(string value)", StringComparison.Ordinal);
+        idSource.ShouldContain("var isValid = value != global::System.Guid.Empty;", StringComparison.Ordinal);
+        isoCodeSource.ShouldContain("private static bool IsIsoCode(string value)", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -223,8 +466,23 @@ public sealed class ValueObjectGeneratorTests
                 [GenerateValueObject(UnderlyingType = typeof(decimal), Parsing = true)]
                 public readonly partial record struct Price;
 
-                [GenerateValueObject(UnderlyingType = typeof(global::System.DateOnly), Parsing = true)]
+                [GenerateValueObject(UnderlyingType = typeof(global::System.DateOnly), Parsing = true, Json = true)]
                 public readonly partial record struct DepartureDate;
+
+                [GenerateValueObject(UnderlyingType = typeof(string), Template = ValueObjectTemplate.NonEmptyString)]
+                public readonly partial record struct TourName;
+
+                [GenerateValueObject(UnderlyingType = typeof(string), Template = ValueObjectTemplate.Slug)]
+                public readonly partial record struct TourSlug;
+
+                [GenerateValueObject(UnderlyingType = typeof(global::System.Guid), Template = ValueObjectTemplate.StronglyTypedId)]
+                public readonly partial record struct StrongTourId;
+
+                [GenerateValueObject(UnderlyingType = typeof(int), Template = ValueObjectTemplate.StronglyTypedId)]
+                public readonly partial record struct NumericTourId;
+
+                [GenerateValueObject(UnderlyingType = typeof(string), Template = ValueObjectTemplate.IsoCode)]
+                public readonly partial record struct CountryCode;
 
                 [GenerateValueObject(UnderlyingType = typeof(int), Parsing = true, Json = true, EfCore = true, Template = ValueObjectTemplate.ApiVersion)]
                 public readonly partial record struct ContractVersion;
