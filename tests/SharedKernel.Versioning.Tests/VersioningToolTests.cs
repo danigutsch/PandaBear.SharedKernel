@@ -579,6 +579,20 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static void Rejects_pack_project_discovery_when_sharedkernel_directory_is_missing()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+
+        // Act
+        Action action = () => SharedKernelPackagePlanner.FindProjects(temporaryDirectory.Root);
+
+        // Assert
+        var exception = action.ShouldThrow<ArgumentException>();
+        exception.Message.ShouldContain("SharedKernel directory does not exist", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static async Task Rejects_pack_sharedkernel_when_no_projects_exist()
     {
         // Arrange

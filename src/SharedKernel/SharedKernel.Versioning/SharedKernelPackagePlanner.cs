@@ -29,7 +29,13 @@ public static class SharedKernelPackagePlanner
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(repoRoot);
 
-        return Directory.GetFiles(Path.Combine(repoRoot, "src", "SharedKernel"), "*.csproj", SearchOption.AllDirectories)
+        var sharedKernelDirectory = Path.Combine(repoRoot, "src", "SharedKernel");
+        if (!Directory.Exists(sharedKernelDirectory))
+        {
+            throw new ArgumentException($"SharedKernel directory does not exist: {sharedKernelDirectory}");
+        }
+
+        return Directory.GetFiles(sharedKernelDirectory, "*.csproj", SearchOption.AllDirectories)
             .Order(StringComparer.Ordinal)
             .ToArray();
     }
