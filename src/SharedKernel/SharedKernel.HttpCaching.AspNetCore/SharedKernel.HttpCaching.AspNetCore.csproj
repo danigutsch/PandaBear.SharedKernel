@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.HttpCaching.AspNetCore</PackageId>
+        <Description>ASP.NET Core HTTP caching helpers for SharedKernel.</Description>
+        <RootNamespace>SharedKernel.HttpCaching.AspNetCore</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>http-caching;aspnetcore;http;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>
