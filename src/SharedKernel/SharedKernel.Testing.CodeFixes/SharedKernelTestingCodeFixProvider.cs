@@ -370,31 +370,30 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
     {
         var compilationUnit = methodDeclaration.SyntaxTree.GetCompilationUnitRoot();
         var helperMethod = MakeInternalStatic(methodDeclaration)
-            .WithLeadingTrivia()
-            .WithTrailingTrivia(CarriageReturnLineFeed);
+            .WithTrailingTrivia(LineFeed);
         var helperClass = ClassDeclaration(helperClassName)
             .AddModifiers(Token(SyntaxKind.InternalKeyword), Token(SyntaxKind.StaticKeyword))
             .AddMembers(helperMethod)
-            .NormalizeWhitespace();
+            .NormalizeWhitespace(eol: "\n");
         var usings = string.Concat(compilationUnit.Usings.Select(static usingDirective => usingDirective.ToFullString()));
         var namespaceDeclaration = methodDeclaration.FirstAncestorOrSelf<BaseNamespaceDeclarationSyntax>();
         if (namespaceDeclaration is null)
         {
-            return usings + helperClass + Environment.NewLine;
+            return usings + helperClass + "\n";
         }
 
         if (namespaceDeclaration is FileScopedNamespaceDeclarationSyntax)
         {
             return usings
-                + "namespace " + namespaceDeclaration.Name + ";" + Environment.NewLine + Environment.NewLine
-                + helperClass + Environment.NewLine;
+                + "namespace " + namespaceDeclaration.Name + ";\n\n"
+                + helperClass + "\n";
         }
 
         var blockScopedNamespace = NamespaceDeclaration(namespaceDeclaration.Name.WithoutTrivia())
             .WithMembers(SingletonList<MemberDeclarationSyntax>(helperClass))
-            .NormalizeWhitespace();
+            .NormalizeWhitespace(eol: "\n");
 
-        return usings + blockScopedNamespace + Environment.NewLine;
+        return usings + blockScopedNamespace + "\n";
     }
 
     private static MethodDeclarationSyntax MakeInternalStatic(MethodDeclarationSyntax methodDeclaration)
@@ -412,7 +411,9 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
         modifiers.Insert(0, Token(SyntaxKind.InternalKeyword));
 
-        return methodDeclaration.WithModifiers(TokenList(modifiers));
+        return methodDeclaration
+            .WithModifiers(TokenList(modifiers))
+            .WithLeadingTrivia(methodDeclaration.GetLeadingTrivia());
     }
 
     private static void RegisterTraitConstantFix(

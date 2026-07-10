@@ -337,6 +337,9 @@ public sealed class SharedKernelTestingCodeFixProviderTests
                     var id = CreateTourId();
                 }
 
+                /// <summary>
+                /// Creates a stable tour id.
+                /// </summary>
                 private static int CreateTourId()
                 {
                     return 42;
@@ -359,7 +362,10 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         // Assert
         testDocumentText.ShouldContain("var id = TourLoaderTestsHelpers.CreateTourId();", StringComparison.Ordinal);
         testDocumentText.ShouldNotContain("private static int CreateTourId()");
+        helperDocumentText.ShouldNotContain("\r\n");
         helperDocumentText.ShouldContain("namespace Demo;", StringComparison.Ordinal);
+        helperDocumentText.ShouldContain("/// <summary>", StringComparison.Ordinal);
+        helperDocumentText.ShouldContain("/// Creates a stable tour id.", StringComparison.Ordinal);
         helperDocumentText.ShouldContain("internal static class TourLoaderTestsHelpers", StringComparison.Ordinal);
         helperDocumentText.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
     }
@@ -400,6 +406,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var normalizedHelperDocumentText = helperDocumentText.ReplaceLineEndings("\n");
 
         // Assert
+        helperDocumentText.ShouldNotContain("\r\n");
         normalizedHelperDocumentText.ShouldContain("namespace Demo\n{", StringComparison.Ordinal);
         normalizedHelperDocumentText.ShouldNotContain("namespace Demo;");
         normalizedHelperDocumentText.ShouldContain("internal static class TourLoaderTestsHelpers", StringComparison.Ordinal);
