@@ -15,6 +15,8 @@ public static class AspNetCoreForwardedHeadersExtensions
 
     private const string KnownNetworksSectionName = "KnownNetworks";
 
+    private const string ForwardLimitSectionName = "ForwardLimit";
+
     /// <summary>
     /// Registers forwarded-header options with configured trusted proxy addresses/networks.
     /// </summary>
@@ -54,13 +56,20 @@ public static class AspNetCoreForwardedHeadersExtensions
 
         var knownProxies = GetValues(configuration.GetSection(KnownProxiesSectionName));
         var knownNetworks = GetValues(configuration.GetSection(KnownNetworksSectionName));
+        var configuredForwardLimit = GetForwardLimit(configuration);
         if (knownProxies.Length == 0 && knownNetworks.Length == 0)
         {
+            if (configuredForwardLimit is not null)
+            {
+                options.ForwardLimit = configuredForwardLimit.Value;
+            }
+
             return options;
         }
 
         options.KnownProxies.Clear();
         options.KnownIPNetworks.Clear();
+        options.ForwardLimit = configuredForwardLimit ?? Math.Max(1, knownProxies.Length + knownNetworks.Length);
 
         foreach (var knownProxy in knownProxies)
         {
@@ -90,6 +99,19 @@ public static class AspNetCoreForwardedHeadersExtensions
         return IPAddress.TryParse(value, out var address)
             ? address
             : throw new InvalidOperationException($"Security:ForwardedHeaders:{sectionName} contains an invalid IP address: {value}");
+    }
+
+    private static int? GetForwardLimit(IConfiguration configuration)
+    {
+        var value = configuration[ForwardLimitSectionName];
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        return int.TryParse(value, out var forwardLimit) && forwardLimit > 0
+            ? forwardLimit
+            : throw new InvalidOperationException($"Security:ForwardedHeaders:{ForwardLimitSectionName} must be a positive integer.");
     }
 
     private static System.Net.IPNetwork ParseIPNetwork(string value)
