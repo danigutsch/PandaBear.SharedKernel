@@ -832,7 +832,12 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             builder
                 .AppendLine("            if (reader.TokenType == global::System.Text.Json.JsonTokenType.Number)")
                 .AppendLine(OpenBlock12)
-                .Append("                return ").Append(model.TypeName).AppendLine(".Create(reader.GetInt32());")
+                .Append("                if (reader.TryGetInt32(out var value) && ").Append(model.TypeName).AppendLine(".TryCreate(value, out var parsedNumber))")
+                .AppendLine("                {")
+                .AppendLine("                    return parsedNumber;")
+                .AppendLine("                }")
+                .AppendLine()
+                .Append("                throw new global::System.Text.Json.JsonException(\"The JSON value is not a valid ").Append(model.TypeName).AppendLine(JsonExceptionSuffixLine)
                 .AppendLine(CloseBlock12)
                 .AppendLine()
                 .AppendLine("            var text = reader.GetString();")

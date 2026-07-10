@@ -142,6 +142,8 @@ public sealed class ValueObjectGeneratorTests
         generatedSource.ShouldContain("normalized = normalized.Slice(1);", StringComparison.Ordinal);
         generatedSource.ShouldContain("var isValid = value > 0;", StringComparison.Ordinal);
         generatedSource.Contains("Substring(1)", StringComparison.Ordinal).ShouldBe(false);
+        jsonSource.ShouldContain("reader.TryGetInt32(out var value) && ContractVersion.TryCreate(value, out var parsedNumber)", StringComparison.Ordinal);
+        jsonSource.ShouldContain("throw new global::System.Text.Json.JsonException", StringComparison.Ordinal);
         jsonSource.ShouldContain("writer.WriteStringValue(value.ToRouteSegment());", StringComparison.Ordinal);
     }
 
