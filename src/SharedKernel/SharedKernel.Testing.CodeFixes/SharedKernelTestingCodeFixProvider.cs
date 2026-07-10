@@ -157,14 +157,9 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     private static bool HelperFilePathConflicts(Document document, string helperClassName)
     {
-        var helperFilePath = GetHelperFilePath(document, helperClassName);
-        if (helperFilePath is null)
-        {
-            return false;
-        }
-
-        return File.Exists(helperFilePath)
-            || document.Project.Documents.Any(candidate => string.Equals(candidate.FilePath, helperFilePath, StringComparison.OrdinalIgnoreCase));
+        return GetHelperFilePath(document, helperClassName) is { } helperFilePath
+            && (File.Exists(helperFilePath)
+                || document.Project.Documents.Any(candidate => string.Equals(candidate.FilePath, helperFilePath, StringComparison.OrdinalIgnoreCase)));
     }
 
     private static bool HasOverloadInTestClass(TypeDeclarationSyntax testClass, MethodDeclarationSyntax methodDeclaration)
