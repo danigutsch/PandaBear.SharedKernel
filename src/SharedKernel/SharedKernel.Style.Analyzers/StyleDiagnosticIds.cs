@@ -40,4 +40,9 @@ public static class StyleDiagnosticIds
     /// </summary>
     public const string NonSourceGeneratedLogging = "SKSTYLE007";
 
+    /// <summary>
+    /// Diagnostic emitted when a domain event type does not end with <c>DomainEvent</c>.
+    /// </summary>
+    public const string DomainEventSuffix = "SKSTYLE008";
+
 }

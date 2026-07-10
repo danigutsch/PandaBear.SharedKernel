@@ -1097,4 +1097,105 @@ public sealed class SharedKernelStyleAnalyzerTests
         Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
     }
 
+    [Fact]
+    public async Task Domain_event_without_suffix_reports_skstyle008()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Domain
+            {
+                public interface IDomainEvent;
+            }
+
+            namespace Demo
+            {
+                public sealed record TourCreated(Guid TourId) : SharedKernel.Domain.IDomainEvent;
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.Where(static candidate => candidate.Id == StyleDiagnosticIds.DomainEventSuffix)
+            .ShouldHaveSingleItem();
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)
+            .ShouldContain("TourCreated", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Domain_event_with_suffix_does_not_report_skstyle008()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Domain
+            {
+                public interface IDomainEvent;
+            }
+
+            namespace Demo
+            {
+                public sealed record TourCreatedDomainEvent(Guid TourId) : SharedKernel.Domain.IDomainEvent;
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.DomainEventSuffix);
+    }
+
+    [Fact]
+    public async Task Domain_event_notification_generic_type_does_not_report_skstyle008()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Domain
+            {
+                public interface IDomainEvent;
+            }
+
+            namespace Demo
+            {
+                public sealed class DomainEventNotification<TDomainEvent>
+                    where TDomainEvent : SharedKernel.Domain.IDomainEvent
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.DomainEventSuffix);
+    }
+
+    [Fact]
+    public async Task Nested_domain_event_without_suffix_does_not_report_skstyle008()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Domain
+            {
+                public interface IDomainEvent;
+            }
+
+            namespace Demo
+            {
+                public sealed class TourEvents
+                {
+                    public sealed record Created(System.Guid TourId) : SharedKernel.Domain.IDomainEvent;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.DomainEventSuffix);
+    }
+
 }

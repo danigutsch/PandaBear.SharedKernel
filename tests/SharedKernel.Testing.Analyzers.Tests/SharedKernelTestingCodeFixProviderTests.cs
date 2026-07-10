@@ -9,8 +9,10 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     private const string WarningSuppressionDiagnosticId = TestingDiagnosticIds.TestMethodWarningSuppression;
     private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
     private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
+    private const string XunitHelperMethodDiagnosticId = TestingDiagnosticIds.XunitTestClassHelperMethod;
     private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
     private const string XunitAssertionWrapperDiagnosticId = TestingDiagnosticIds.XunitAssertionWrapper;
+    private const string XunitTraitConstantUsageDiagnosticId = TestingDiagnosticIds.XunitTraitConstantUsage;
     [Fact]
     public async Task Test_naming_fix_renames_method_and_reference_correctly()
     {
@@ -301,7 +303,626 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     {
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        Assert.Contains(XunitAssertionWrapperDiagnosticId, provider.FixableDiagnosticIds);
+        provider.FixableDiagnosticIds.ShouldContain(XunitAssertionWrapperDiagnosticId);
+    }
+
+    [Fact]
+    public void Provider_advertises_trait_constant_usage_diagnostic()
+    {
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        provider.FixableDiagnosticIds.ShouldContain(XunitTraitConstantUsageDiagnosticId);
+    }
+
+    [Fact]
+    public void Provider_advertises_helper_method_diagnostic()
+    {
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        provider.FixableDiagnosticIds.ShouldContain(XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_moves_static_helper_to_dedicated_document()
+    {
+        // Arrange
+        var source = """
+            using System.Linq;
+
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var id = CreateTourId();
+                }
+
+                /// <summary>
+                /// Creates a stable tour id.
+                /// </summary>
+                private static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """.ReplaceLineEndings("\r\n");
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int CreateTourId()");
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var testDocumentText = await workspace.GetDocumentText();
+        var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
+
+        // Assert
+        testDocumentText.ShouldContain("var id = TourLoaderTestsHelpers.CreateTourId();", StringComparison.Ordinal);
+        testDocumentText.ShouldNotContain("private static int CreateTourId()");
+        helperDocumentText.ShouldNotContain("\r\n");
+        helperDocumentText.ShouldContain("using System.Linq;", StringComparison.Ordinal);
+        helperDocumentText.ShouldContain("namespace Demo;", StringComparison.Ordinal);
+        helperDocumentText.ShouldContain("/// <summary>", StringComparison.Ordinal);
+        helperDocumentText.ShouldContain("/// Creates a stable tour id.", StringComparison.Ordinal);
+        helperDocumentText.ShouldContain("internal static class TourLoaderTestsHelpers", StringComparison.Ordinal);
+        helperDocumentText.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_moves_implicit_private_static_helper_to_dedicated_document()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_uses_implicit_private_helper()
+                {
+                    var id = CreateTourId();
+                }
+
+                static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "static int CreateTourId()");
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var testDocumentText = await workspace.GetDocumentText();
+        var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
+
+        // Assert
+        testDocumentText.ShouldContain("var id = TourLoaderTestsHelpers.CreateTourId();", StringComparison.Ordinal);
+        testDocumentText.ShouldNotContain("static int CreateTourId()");
+        helperDocumentText.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_preserves_verbatim_identifier_invocation()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_uses_keyword_name()
+                {
+                    var id = @switch();
+                }
+
+                private static int @switch()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int @switch()");
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var testDocumentText = await workspace.GetDocumentText();
+        var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
+
+        // Assert
+        testDocumentText.ShouldContain("var id = TourLoaderTestsHelpers.@switch();", StringComparison.Ordinal);
+        testDocumentText.ShouldNotContain("private static int @switch()");
+        helperDocumentText.ShouldContain("internal static int @switch()", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_preserves_extern_alias_header()
+    {
+        // Arrange
+        const string source = """
+            extern alias helpers;
+
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Xunit.Fact]
+                public void Creates_a_tour_when_the_request_uses_alias_header()
+                {
+                    var id = CreateTourId();
+                }
+
+                private static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source, includeDefaultUsings: false);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int CreateTourId()");
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
+
+        // Assert
+        helperDocumentText.ShouldContain("extern alias helpers;", StringComparison.Ordinal);
+        helperDocumentText.ShouldContain("namespace Demo;", StringComparison.Ordinal);
+        helperDocumentText.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_preserves_block_scoped_namespace()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo
+            {
+                public sealed class TourLoaderTests
+                {
+                    [Fact]
+                    public void Creates_a_tour_when_the_request_is_valid()
+                    {
+                        var id = CreateTourId();
+                    }
+
+                    private static int CreateTourId()
+                    {
+                        return 42;
+                    }
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int CreateTourId()");
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
+        var normalizedHelperDocumentText = helperDocumentText.ReplaceLineEndings("\n");
+
+        // Assert
+        helperDocumentText.ShouldNotContain("\r\n");
+        normalizedHelperDocumentText.ShouldContain("namespace Demo\n{", StringComparison.Ordinal);
+        normalizedHelperDocumentText.ShouldNotContain("namespace Demo;");
+        normalizedHelperDocumentText.ShouldContain("internal static class TourLoaderTestsHelpers", StringComparison.Ordinal);
+        normalizedHelperDocumentText.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_is_not_offered_for_instance_helper()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var id = CreateTourId();
+                }
+
+                private int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private int CreateTourId()");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_is_not_offered_when_static_helper_uses_test_class_member()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                private static readonly int Seed = 42;
+
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var id = CreateTourId();
+                }
+
+                private static int CreateTourId()
+                {
+                    return Seed;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int CreateTourId()");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_is_not_offered_for_non_private_static_helper()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var id = CreateTourId();
+                }
+
+                internal static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "internal static int CreateTourId()");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_is_not_offered_when_helper_file_exists()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var id = CreateTourId();
+                }
+
+                private static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        using var tempDirectory = TemporaryCodeFixDirectory.Create();
+        var sourcePath = Path.Combine(tempDirectory.Path, "TourLoaderTests.cs");
+        var helperFilePath = Path.Combine(tempDirectory.Path, "TourLoaderTestsHelpers.cs");
+        await File.WriteAllTextAsync(helperFilePath, string.Empty, TestContext.Current.CancellationToken);
+        var workspace = CodeFixTestWorkspace.Create(source, filePath: sourcePath);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int CreateTourId()");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("var reference = (System.Func<int>)CreateTourId;", "private static int CreateTourId()")]
+    [InlineData("var name = nameof(CreateTourId);", "private static int CreateTourId()")]
+    [InlineData("var id = TourLoaderTests.CreateTourId();", "private static int CreateTourId()")]
+    [InlineData("var id = CreateTourId<int>();", "private static T CreateTourId<T>()")]
+    public async Task Helper_method_fix_is_not_offered_for_non_rewriteable_helper_reference(
+        string helperUsage,
+        string helperDeclaration)
+    {
+        // Arrange
+        var source = $$"""
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    {{helperUsage}}
+                }
+
+                {{helperDeclaration}}
+                {
+                    return default!;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            helperDeclaration);
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_is_not_offered_when_same_named_invocation_binds_to_another_symbol()
+    {
+        // Arrange
+        const string source = """
+            using static Demo.OtherTourHelpers;
+
+            namespace Demo;
+
+            public sealed class CreateTourId;
+
+            public static class OtherTourHelpers
+            {
+                public static int CreateTourId()
+                {
+                    return 7;
+                }
+            }
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var id = CreateTourId();
+                }
+
+                private static int CreateTourId(string value)
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int CreateTourId(string value)");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_keeps_scanning_after_same_named_non_invocation_binds_to_another_symbol()
+    {
+        // Arrange
+        const string source = """
+            using static Demo.OtherTourHelpers;
+
+            namespace Demo;
+
+            public static class OtherTourHelpers
+            {
+                public static int CreateTourId()
+                {
+                    return 7;
+                }
+            }
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var type = typeof(CreateTourId);
+                    var id = OtherTourHelpers.CreateTourId();
+                }
+
+                private static int CreateTourId(string value)
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int CreateTourId(string value)");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Helper_method_fix_is_offered_when_nameof_binds_to_another_symbol()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class CreateTourId;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    var name = nameof(CreateTourId);
+                    var id = CreateTourId("tour");
+                }
+
+                private static int CreateTourId(string value)
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int CreateTourId(string value)");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public async Task Trait_constant_fix_replaces_literal_with_configured_constant()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Testing
+            {
+                public static class TestTraitNames
+                {
+                    public const string CategoryName = "Category";
+                }
+            }
+
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                [Trait("Category", "Smoke")]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(new SharedKernelTestingAnalyzer());
+        var diagnostic = analyzerDiagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        diagnostic.Properties["Replacement"].ShouldBe("global::SharedKernel.Testing.TestTraitNames.CategoryName");
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        updatedText.ShouldContain("[Trait(global::SharedKernel.Testing.TestTraitNames.CategoryName, \"Smoke\")]", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Trait_constant_fix_is_not_offered_when_replacement_property_is_missing()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                [Trait("Category", "Smoke")]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitTraitConstantUsageDiagnosticId,
+            "\"Category\"");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
     }
 
     [Theory]
@@ -344,16 +965,20 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
-        var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, assertion);
+        var sourceText = await workspace.GetDocumentText();
+        var diagnostics = await workspace.GetAnalyzerDiagnostics(new SharedKernelTestingAnalyzer());
+        var diagnostic = diagnostics
+            .Where(candidate => candidate.Id == XunitAssertionWrapperDiagnosticId)
+            .ShouldHaveSingleItem(candidate => string.Equals(sourceText.Substring(candidate.Location.SourceSpan.Start, candidate.Location.SourceSpan.Length), assertion, StringComparison.Ordinal));
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("using SharedKernel.Testing.Assertions;", updatedText, StringComparison.Ordinal);
-        Assert.Contains(expectedRewrite, updatedText, StringComparison.Ordinal);
+        updatedText.ShouldContain("using SharedKernel.Testing.Assertions;", StringComparison.Ordinal);
+        updatedText.ShouldContain(expectedRewrite, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -380,7 +1005,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]

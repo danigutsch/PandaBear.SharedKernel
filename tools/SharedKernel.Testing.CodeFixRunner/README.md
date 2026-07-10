@@ -42,6 +42,10 @@ Run the default testing analyzer migration against a project or solution:
 sharedkernel-codefix tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj
 ```
 
+The default diagnostic is `SKTEST004`. The runner applies the safe code fix only for static helper
+methods that can be moved to a dedicated helper file without test-instance state. It skips local
+functions, nested helper types, overloaded helpers, and instance-dependent helpers for manual review.
+
 Run a specific diagnostic migration:
 
 ```text

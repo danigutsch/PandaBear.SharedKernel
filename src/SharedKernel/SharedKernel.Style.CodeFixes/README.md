@@ -13,6 +13,12 @@ This Roslyn component provides focused, safe code fixes for the diagnostics in
 - `SKSTYLE002` can rename a `CancellationToken` parameter and its references to `ct`
   when the rename does not conflict with an existing `ct` parameter or a `ct`
   declaration in the containing executable scope.
+- `SKSTYLE003` can remove safe `CancellationToken` default values.
+- `SKSTYLE005` can rename generic types that repeat generic arity in the type name.
+- `SKSTYLE006` can replace broad cancellation filters with `ShouldHandleAsFailure(ct)` when the
+  operation token is available.
+- `SKSTYLE008` can append the `DomainEvent` suffix to domain event types when the target name is
+  available.
 Fix All is limited to `SKSTYLE001`.
 
 ## Suppression policy

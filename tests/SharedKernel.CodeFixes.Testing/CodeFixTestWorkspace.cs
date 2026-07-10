@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
 namespace SharedKernel.CodeFixes.Testing;
@@ -112,6 +113,17 @@ public sealed class CodeFixTestWorkspace
 
         await provider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
         return actions;
+    }
+
+    public async Task<IReadOnlyList<Diagnostic>> GetAnalyzerDiagnostics(DiagnosticAnalyzer analyzer)
+    {
+        ArgumentNullException.ThrowIfNull(analyzer);
+
+        var project = Workspace.CurrentSolution.GetProject(ProjectId) ?? throw new InvalidOperationException("Test project could not be found.");
+        var compilation = await project.GetCompilationAsync().ConfigureAwait(false) ?? throw new InvalidOperationException("Test compilation could not be created.");
+        var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer]);
+
+        return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
     }
 
     public async Task ApplyCodeAction(CodeAction action)

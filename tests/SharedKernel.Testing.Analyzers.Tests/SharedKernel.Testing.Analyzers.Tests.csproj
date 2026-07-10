@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Using Include="SharedKernel.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -20,6 +21,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.CodeFixes\SharedKernel.Testing.CodeFixes.csproj">
             <Aliases>testingcodefixes</Aliases>
         </ProjectReference>

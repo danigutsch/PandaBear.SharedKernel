@@ -19,6 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Style.Analyzers\SharedKernel.Style.Analyzers.csproj" Aliases="styleanalyzers" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Style.CodeFixes\SharedKernel.Style.CodeFixes.csproj" />
         <ProjectReference Include="..\SharedKernel.CodeFixes.Testing\SharedKernel.CodeFixes.Testing.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />

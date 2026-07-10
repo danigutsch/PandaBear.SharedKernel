@@ -12,6 +12,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     private const string XunitAssertionWrapperDiagnosticId = TestingDiagnosticIds.XunitAssertionWrapper;
     private const string XunitArrangeActAssertDiagnosticId = TestingDiagnosticIds.XunitArrangeActAssertMarkers;
     private const string XunitCleanupFinallyDiagnosticId = TestingDiagnosticIds.XunitTryFinallyCleanup;
+    private const string XunitTraitConstantUsageDiagnosticId = TestingDiagnosticIds.XunitTraitConstantUsage;
 
     [Fact]
     public async Task Direct_xunit_assertion_reports_s_k_t_e_s_t006()
@@ -518,6 +519,192 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
+    public async Task Trait_name_literal_reports_SKTEST009_when_shared_constant_exists()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Testing
+            {
+                public static class TestTraitNames
+                {
+                    public const string CategoryName = "Category";
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed class TourLoaderTests
+                {
+                    [Fact]
+                    [Trait("Category", "Smoke")]
+                    public void Creates_a_tour_when_the_request_is_valid()
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
+        var sourceTree = diagnostic.Location.SourceTree.ShouldNotBeNull();
+        var sourceText = await sourceTree.GetTextAsync(TestContext.Current.CancellationToken);
+        var reportedText = sourceText.ToString(diagnostic.Location.SourceSpan);
+
+        reportedText.ShouldBe("\"Category\"");
+        diagnostic.Properties["Replacement"].ShouldBe("global::SharedKernel.Testing.TestTraitNames.CategoryName");
+    }
+
+    [Fact]
+    public async Task Trait_value_literal_reports_SKTEST009_when_local_constant_exists()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public static class TestTraits
+            {
+                public const string SmokeCategory = "Smoke";
+            }
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                [Trait("Category", "Smoke")]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
+        var sourceTree = diagnostic.Location.SourceTree.ShouldNotBeNull();
+        var sourceText = await sourceTree.GetTextAsync(TestContext.Current.CancellationToken);
+        var reportedText = sourceText.ToString(diagnostic.Location.SourceSpan);
+
+        reportedText.ShouldBe("\"Smoke\"");
+        diagnostic.Properties["Replacement"].ShouldBe("global::Demo.TestTraits.SmokeCategory");
+    }
+
+    [Fact]
+    public async Task Trait_name_literal_prefers_shared_name_constant_over_local_value_constant()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Testing
+            {
+                public static class TestTraitNames
+                {
+                    public const string CategoryName = "Category";
+                }
+            }
+
+            namespace Demo
+            {
+                public static class TestTraits
+                {
+                    public const string LocalCategoryValue = "Category";
+                }
+
+                public sealed class TourLoaderTests
+                {
+                    [Fact]
+                    [Trait("Category", "Smoke")]
+                    public void Creates_a_tour_when_the_request_is_valid()
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
+
+        diagnostic.Properties["Replacement"].ShouldBe("global::SharedKernel.Testing.TestTraitNames.CategoryName");
+    }
+
+    [Fact]
+    public async Task Trait_constant_arguments_do_not_report_SKTEST009()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Testing
+            {
+                public static class TestTraitNames
+                {
+                    public const string CategoryName = "Category";
+                }
+            }
+
+            namespace Demo
+            {
+                public static class TestTraits
+                {
+                    public const string SmokeCategory = "Smoke";
+                }
+
+                public sealed class TourLoaderTests
+                {
+                    [Fact]
+                    [Trait(global::SharedKernel.Testing.TestTraitNames.CategoryName, TestTraits.SmokeCategory)]
+                    public void Creates_a_tour_when_the_request_is_valid()
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
+    }
+
+    [Fact]
+    public async Task Ambiguous_trait_literal_replacement_does_not_report_SKTEST009()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Testing
+            {
+                public static class TestTraitNames
+                {
+                    public const string FirstCategoryName = "Category";
+                    public const string SecondCategoryName = "Category";
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed class TourLoaderTests
+                {
+                    [Fact]
+                    [Trait("Category", "Smoke")]
+                    public void Creates_a_tour_when_the_request_is_valid()
+                    {
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
+    }
+
+    [Fact]
     public async Task Reused_private_static_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
@@ -549,7 +736,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -584,7 +771,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -613,7 +800,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -641,7 +828,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -864,7 +1051,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Single(diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId));
+        diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId).ShouldHaveSingleItem();
     }
 
     [Fact]
@@ -891,7 +1078,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Single(diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId));
+        diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId).ShouldHaveSingleItem();
     }
 
     [Fact]
@@ -943,7 +1130,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Single(diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId));
+        diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId).ShouldHaveSingleItem();
     }
 
     [Fact]
@@ -965,7 +1152,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]

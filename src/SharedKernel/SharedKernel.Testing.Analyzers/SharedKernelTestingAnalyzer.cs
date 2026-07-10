@@ -138,9 +138,18 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true,
         description: "Repository testing rules discourage manual try/finally cleanup inside xUnit test methods because cleanup plumbing can hide behavior and assertions.");
 
+    private static readonly DiagnosticDescriptor XunitTraitConstantUsageRule = new(
+        TestingDiagnosticIds.XunitTraitConstantUsage,
+        title: "xUnit trait metadata should use canonical constants",
+        messageFormat: "xUnit trait literal '{0}' should use '{1}'",
+        category: TestingCategory,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository testing rules keep trait filters stable by requiring canonical constants when they exist for a trait name or value.");
+
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryFinallyCleanupRule];
+        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryFinallyCleanupRule, XunitTraitConstantUsageRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -174,7 +183,152 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             compilationContext.RegisterSyntaxNodeAction(
                 AnalyzeTryStatement,
                 SyntaxKind.TryStatement);
+            compilationContext.RegisterSyntaxNodeAction(
+                AnalyzeAttribute,
+                SyntaxKind.Attribute);
         });
+    }
+
+    private static void AnalyzeAttribute(SyntaxNodeAnalysisContext context)
+    {
+        if (context.Node is not AttributeSyntax { ArgumentList.Arguments.Count: >= 2 } attribute
+            || !HasTraitAttributeName(attribute)
+            || !IsXunitTraitAttribute(context, attribute))
+        {
+            return;
+        }
+
+        AnalyzeTraitArgument(context, attribute, attribute.ArgumentList.Arguments[0], includeTraitValues: false);
+        AnalyzeTraitArgument(context, attribute, attribute.ArgumentList.Arguments[1], includeTraitValues: true);
+    }
+
+    private static bool HasTraitAttributeName(AttributeSyntax attribute)
+    {
+        return GetRightmostAttributeIdentifier(attribute.Name) is "Trait" or "TraitAttribute";
+    }
+
+    private static string? GetRightmostAttributeIdentifier(NameSyntax name)
+    {
+        return name switch
+        {
+            IdentifierNameSyntax identifierName => identifierName.Identifier.ValueText,
+            QualifiedNameSyntax qualifiedName => qualifiedName.Right.Identifier.ValueText,
+            AliasQualifiedNameSyntax aliasQualifiedName => aliasQualifiedName.Name.Identifier.ValueText,
+            _ => null,
+        };
+    }
+
+    private static bool IsXunitTraitAttribute(SyntaxNodeAnalysisContext context, AttributeSyntax attribute)
+    {
+        return context.SemanticModel.GetSymbolInfo(attribute, context.CancellationToken).Symbol is IMethodSymbol constructor
+            && constructor.ContainingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) is "global::Xunit.TraitAttribute";
+    }
+
+    private static void AnalyzeTraitArgument(
+        SyntaxNodeAnalysisContext context,
+        AttributeSyntax attribute,
+        AttributeArgumentSyntax argument,
+        bool includeTraitValues)
+    {
+        if (argument.Expression is not LiteralExpressionSyntax literalExpression
+            || !literalExpression.IsKind(SyntaxKind.StringLiteralExpression)
+            || literalExpression.Token.ValueText is not { Length: > 0 } literalValue
+            || TryFindTraitConstantReplacement(context, attribute, literalValue, includeTraitValues) is not { Length: > 0 } replacement)
+        {
+            return;
+        }
+
+        var properties = ImmutableDictionary<string, string?>.Empty
+            .Add("Replacement", replacement);
+
+        context.ReportDiagnostic(
+            Diagnostic.Create(
+                XunitTraitConstantUsageRule,
+                literalExpression.GetLocation(),
+                properties,
+                literalValue,
+                replacement));
+    }
+
+    private static string? TryFindTraitConstantReplacement(
+        SyntaxNodeAnalysisContext context,
+        AttributeSyntax attribute,
+        string literalValue,
+        bool includeTraitValues)
+    {
+        var localReplacement = includeTraitValues
+            ? TryFindLocalTestTraitsReplacement(context, attribute, literalValue)
+            : null;
+        if (localReplacement is not null)
+        {
+            return localReplacement;
+        }
+
+        var replacements = ImmutableArray.CreateBuilder<string>();
+        AddConstantsFromType(context.Compilation.GetTypeByMetadataName("SharedKernel.Testing.TestTraitNames"), literalValue, replacements);
+        AddConstantsFromType(context.Compilation.GetTypeByMetadataName("SharedKernel.Testing.SharedKernelTestTraitNames"), literalValue, replacements);
+
+        if (includeTraitValues)
+        {
+            AddConstantsFromType(context.Compilation.GetTypeByMetadataName("SharedKernel.Testing.TestTraitValues"), literalValue, replacements);
+        }
+
+        return TryGetSingleReplacement(replacements);
+    }
+
+    private static string? TryFindLocalTestTraitsReplacement(
+        SyntaxNodeAnalysisContext context,
+        AttributeSyntax attribute,
+        string literalValue)
+    {
+        if (attribute.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>() is not BaseTypeDeclarationSyntax containingTypeDeclaration
+            || context.SemanticModel.GetDeclaredSymbol(containingTypeDeclaration, context.CancellationToken) is not INamedTypeSymbol containingType)
+        {
+            return null;
+        }
+
+        var replacements = ImmutableArray.CreateBuilder<string>();
+        for (var @namespace = containingType.ContainingNamespace; @namespace is not null && !@namespace.IsGlobalNamespace; @namespace = @namespace.ContainingNamespace)
+        {
+            foreach (var testTraitsType in @namespace.GetTypeMembers("TestTraits"))
+            {
+                AddConstantsFromType(testTraitsType, literalValue, replacements);
+            }
+        }
+
+        foreach (var testTraitsType in context.Compilation.GlobalNamespace.GetTypeMembers("TestTraits"))
+        {
+            AddConstantsFromType(testTraitsType, literalValue, replacements);
+        }
+
+        return TryGetSingleReplacement(replacements);
+    }
+
+    private static void AddConstantsFromType(INamedTypeSymbol? type, string literalValue, ImmutableArray<string>.Builder replacements)
+    {
+        if (type is null)
+        {
+            return;
+        }
+
+        foreach (var member in type.GetMembers().OfType<IFieldSymbol>())
+        {
+            if (!member.IsConst
+                || member.Type.SpecialType != SpecialType.System_String
+                || member.ConstantValue is not string constantValue
+                || !string.Equals(constantValue, literalValue, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            replacements.Add(type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) + "." + member.Name);
+        }
+    }
+
+    private static string? TryGetSingleReplacement(ImmutableArray<string>.Builder replacements)
+    {
+        var distinct = replacements.Distinct(StringComparer.Ordinal).ToArray();
+        return distinct.Length == 1 ? distinct[0] : null;
     }
 
     private static void AnalyzeInvocationExpression(SyntaxNodeAnalysisContext context)
@@ -415,7 +569,8 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
         AnalyzeSerialCollectionJustification(context, typeDeclaration, typeSymbol);
 
-        if (typeSymbol.ContainingType is null || !ContainsXunitTestMethod(typeSymbol.ContainingType))
+        if (typeSymbol.ContainingType is null
+            || !ContainsXunitTestMethod(typeSymbol.ContainingType))
         {
             return;
         }

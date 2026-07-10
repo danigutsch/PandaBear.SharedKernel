@@ -10,6 +10,8 @@
         <PackageTags>testing;code-fixes;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <IncludeBuildOutput>false</IncludeBuildOutput>
+        <TestingAnalyzerPackageFile Condition="'$(REMOTE_CONTAINERS)' != 'true'">..\SharedKernel.Testing.Analyzers\bin\$(Configuration)\netstandard2.0\SharedKernel.Testing.Analyzers.dll</TestingAnalyzerPackageFile>
+        <TestingAnalyzerPackageFile Condition="'$(REMOTE_CONTAINERS)' == 'true'">$(MSBuildThisFileDirectory)..\..\..\.build\bin\SharedKernel.Testing.Analyzers\$(Configuration)\netstandard2.0\SharedKernel.Testing.Analyzers.dll</TestingAnalyzerPackageFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" OutputItemType="_TestingAnalyzerPackFile" Targets="GetTargetPath" />
+        <ProjectReference Include="..\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
         <Compile Include="..\SharedKernel.Testing.Analyzers\TestingDiagnosticIds.cs" Link="TestingDiagnosticIds.cs" />
     </ItemGroup>
 
@@ -27,7 +29,7 @@
         <AdditionalFiles Include="..\SharedKernel.Testing.Analyzers\AnalyzerReleases.Unshipped.md" Link="AnalyzerReleases.Unshipped.md" />
         <None Include="README.md" Pack="true" PackagePath="\" />
         <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
-        <None Include="@(_TestingAnalyzerPackFile)" Pack="true" PackagePath="analyzers/dotnet/cs" CopyToOutputDirectory="PreserveNewest" Link="SharedKernel.Testing.Analyzers.dll" Visible="false" />
+        <None Include="$(TestingAnalyzerPackageFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Link="SharedKernel.Testing.Analyzers.dll" Visible="false" />
         <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
 

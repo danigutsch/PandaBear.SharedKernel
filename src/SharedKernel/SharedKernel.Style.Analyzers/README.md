@@ -15,31 +15,39 @@ the default .NET analyzer set.
 | `SKSTYLE002` | Warning | `CancellationToken` parameters should use the canonical name `ct`. |
 | `SKSTYLE003` | Warning | `CancellationToken` parameters should not declare default values. |
 | `SKSTYLE004` | Warning | Source files should not declare more than one top-level type unless they fall under a documented rollout exception. |
+| `SKSTYLE005` | Warning | Generic type names should not include suffixes that repeat generic arity. |
 | `SKSTYLE006` | Warning | Catch filters should not suppress every `OperationCanceledException` without checking the operation token. |
 | `SKSTYLE007` | Warning | Production logging should use source-generated `LoggerMessage` methods instead of direct `ILogger.Log*` calls. |
+| `SKSTYLE008` | Warning | Domain event types implementing `IDomainEvent` should end with `DomainEvent`. |
 
 ## Configuration
 
 Use `.editorconfig` to tune analyzer behavior:
 
 ```ini
-dotnet_diagnostic.SKSTYLE001.severity = suggestion
-dotnet_diagnostic.SKSTYLE002.severity = suggestion
-dotnet_diagnostic.SKSTYLE003.severity = suggestion
-dotnet_diagnostic.SKSTYLE004.severity = suggestion
-dotnet_diagnostic.SKSTYLE006.severity = suggestion
-dotnet_diagnostic.SKSTYLE007.severity = suggestion
+dotnet_diagnostic.SKSTYLE001.severity = warning
+dotnet_diagnostic.SKSTYLE002.severity = warning
+dotnet_diagnostic.SKSTYLE003.severity = warning
+dotnet_diagnostic.SKSTYLE004.severity = warning
+dotnet_diagnostic.SKSTYLE005.severity = warning
+dotnet_diagnostic.SKSTYLE006.severity = warning
+dotnet_diagnostic.SKSTYLE007.severity = warning
+dotnet_diagnostic.SKSTYLE008.severity = warning
 sharedkernel_style_allow_async_suffix_overrides = true
 sharedkernel_style_allow_async_suffix_interface_implementations = true
 ```
 
-The repository currently stages `SKSTYLE002` and `SKSTYLE003` as suggestions for rollout.
-They can be raised to warning or error after the existing codebase is cleaned up.
+Analyzer descriptors default to `warning`. Repository `.editorconfig` can stage cleanup-heavy
+adoption while the existing baseline is being retired.
 
 `SKSTYLE004` follows the same staged rollout. The first pass excludes generated files,
 files containing only partial top-level types, and a short list of production files that still carry
 intentional grouped top-level types. Test files are included so extracted helpers move to their own
 named files instead of becoming file-local helper types beside a test class.
+
+`SKSTYLE008` is scoped to source types that directly or indirectly implement
+`SharedKernel.Domain.IDomainEvent`. DTOs, read models, notification wrappers, and generic types that
+only constrain `TDomainEvent` are not reported.
 
 ## Intentional diagnostic sample
 
