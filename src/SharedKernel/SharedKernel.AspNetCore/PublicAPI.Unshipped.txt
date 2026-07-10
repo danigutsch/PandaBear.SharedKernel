@@ -7,6 +7,8 @@ static SharedKernel.AspNetCore.AspNetCoreForwardedHeadersExtensions.ConfigureTru
 SharedKernel.AspNetCore.AspNetCoreRateLimitingExtensions
 static SharedKernel.AspNetCore.AspNetCoreRateLimitingExtensions.AddRemoteIpFixedWindowPolicies(this Microsoft.AspNetCore.RateLimiting.RateLimiterOptions! options, System.Collections.Generic.IReadOnlyCollection<SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy!>! policies) -> Microsoft.AspNetCore.RateLimiting.RateLimiterOptions!
 static SharedKernel.AspNetCore.AspNetCoreRateLimitingExtensions.AddRemoteIpFixedWindowPolicy(this Microsoft.AspNetCore.RateLimiting.RateLimiterOptions! options, string! policyName, int permitLimit, System.TimeSpan window) -> Microsoft.AspNetCore.RateLimiting.RateLimiterOptions!
+SharedKernel.AspNetCore.AspNetCoreRobotsTxtExtensions
+static SharedKernel.AspNetCore.AspNetCoreRobotsTxtExtensions.MapRobotsTxt(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! app, string! robotsTxt) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
 SharedKernel.AspNetCore.AspNetCoreSecurityHeadersExtensions
 static SharedKernel.AspNetCore.AspNetCoreSecurityHeadersExtensions.UseSecurityHeaders(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, string! contentSecurityPolicy) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
 static SharedKernel.AspNetCore.AspNetCoreSecurityHeadersExtensions.UseSecurityHeaders(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, string! contentSecurityPolicy, string! permissionsPolicy) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
