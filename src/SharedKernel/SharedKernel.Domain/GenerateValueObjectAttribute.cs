@@ -3,7 +3,7 @@ namespace SharedKernel.Domain;
 /// <summary>
 /// Requests generated support code for a scalar value object.
 /// </summary>
-[AttributeUsage(AttributeTargets.Struct)]
+[AttributeUsage(AttributeTargets.Struct, AllowMultiple = true)]
 public sealed class GenerateValueObjectAttribute : Attribute
 {
     /// <summary>
