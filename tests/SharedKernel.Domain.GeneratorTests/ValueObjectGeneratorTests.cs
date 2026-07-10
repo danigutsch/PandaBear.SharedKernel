@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace SharedKernel.Domain.GeneratorTests;
 
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ValueObjectCapability)]
+[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ValueObjectCapability)]
 public sealed class ValueObjectGeneratorTests
 {
     [Fact]
@@ -29,6 +29,7 @@ public sealed class ValueObjectGeneratorTests
         generatedSource.ShouldContain("public static bool TryCreate(string value, out TourCode result)", StringComparison.Ordinal);
         generatedSource.ShouldContain("public static bool TryParse(string? text, global::System.IFormatProvider? provider, out TourCode result)", StringComparison.Ordinal);
         generatedSource.ShouldContain("static partial void ValidateValue(string value, ref bool isValid);", StringComparison.Ordinal);
+        generatedSource.ShouldContain("if (isValid)", StringComparison.Ordinal);
     }
 
     [Fact]

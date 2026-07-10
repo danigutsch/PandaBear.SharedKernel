@@ -132,7 +132,6 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             static (productionContext, models) =>
             {
                 var generatedModels = new Dictionary<string, ValueObjectModel>(StringComparer.Ordinal);
-                var generatedHintNames = new HashSet<string>(StringComparer.Ordinal);
 
                 foreach (var model in models)
                 {
@@ -157,16 +156,16 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
                     generatedModels.Add(model.CoreHintName!, model);
 
-                    AddSource(productionContext, generatedHintNames, model.CoreHintName!, EmitValueObject(model));
+                    productionContext.AddSource(model.CoreHintName!, SourceText.From(EmitValueObject(model), Encoding.UTF8));
 
                     if (model.Json)
                     {
-                        AddSource(productionContext, generatedHintNames, model.JsonHintName!, EmitJsonConverter(model));
+                        productionContext.AddSource(model.JsonHintName!, SourceText.From(EmitJsonConverter(model), Encoding.UTF8));
                     }
 
                     if (model.EfCore)
                     {
-                        AddSource(productionContext, generatedHintNames, model.EfCoreHintName!, EmitEfCoreConverter(model));
+                        productionContext.AddSource(model.EfCoreHintName!, SourceText.From(EmitEfCoreConverter(model), Encoding.UTF8));
                     }
                 }
             });
@@ -278,20 +277,6 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             left.Json == right.Json &&
             left.EfCore == right.EfCore &&
             left.Template == right.Template;
-    }
-
-    private static void AddSource(
-        SourceProductionContext productionContext,
-        HashSet<string> generatedHintNames,
-        string hintName,
-        string source)
-    {
-        if (!generatedHintNames.Add(hintName))
-        {
-            return;
-        }
-
-        productionContext.AddSource(hintName, SourceText.From(source, Encoding.UTF8));
     }
 
     private static ValueObjectModel DiagnosticOnly(Diagnostic diagnostic)
@@ -692,7 +677,10 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             .Append("    private static bool IsValid(").Append(model.UnderlyingTypeName).AppendLine(" value)")
             .AppendLine("    {")
             .Append("        var isValid = ").Append(GetValidationExpression(model)).AppendLine(";")
-            .AppendLine("        ValidateValue(value, ref isValid);")
+            .AppendLine("        if (isValid)")
+            .AppendLine("        {")
+            .AppendLine("            ValidateValue(value, ref isValid);")
+            .AppendLine("        }")
             .AppendLine("        return isValid;")
             .AppendLine("    }");
 
@@ -946,6 +934,8 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
     private enum ValueObjectTemplate
     {
+        // Values mirror SharedKernel.Domain.ValueObjectTemplate because attribute arguments arrive as
+        // integers.
         None = 0,
         ApiVersion = 1,
         NonEmptyString = 2,
