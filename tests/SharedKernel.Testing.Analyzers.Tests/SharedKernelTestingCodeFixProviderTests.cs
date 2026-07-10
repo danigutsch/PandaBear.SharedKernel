@@ -326,7 +326,9 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     public async Task Helper_method_fix_moves_static_helper_to_dedicated_document()
     {
         // Arrange
-        const string source = """
+        var source = """
+            using System.Linq;
+
             namespace Demo;
 
             public sealed class TourLoaderTests
@@ -345,7 +347,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
                     return 42;
                 }
             }
-            """;
+            """.ReplaceLineEndings("\r\n");
 
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
@@ -363,6 +365,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         testDocumentText.ShouldContain("var id = TourLoaderTestsHelpers.CreateTourId();", StringComparison.Ordinal);
         testDocumentText.ShouldNotContain("private static int CreateTourId()");
         helperDocumentText.ShouldNotContain("\r\n");
+        helperDocumentText.ShouldContain("using System.Linq;", StringComparison.Ordinal);
         helperDocumentText.ShouldContain("namespace Demo;", StringComparison.Ordinal);
         helperDocumentText.ShouldContain("/// <summary>", StringComparison.Ordinal);
         helperDocumentText.ShouldContain("/// Creates a stable tour id.", StringComparison.Ordinal);

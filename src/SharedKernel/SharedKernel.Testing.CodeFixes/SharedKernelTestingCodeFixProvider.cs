@@ -374,7 +374,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             .AddModifiers(Token(SyntaxKind.InternalKeyword), Token(SyntaxKind.StaticKeyword))
             .AddMembers(helperMethod)
             .NormalizeWhitespace(eol: "\n");
-        var usings = string.Concat(compilationUnit.Usings.Select(static usingDirective => usingDirective.ToFullString()));
+        var usings = NormalizeLineEndings(string.Concat(compilationUnit.Usings.Select(static usingDirective => usingDirective.ToFullString())));
         var namespaceDeclaration = methodDeclaration.FirstAncestorOrSelf<BaseNamespaceDeclarationSyntax>();
         if (namespaceDeclaration is null)
         {
@@ -410,9 +410,18 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
         modifiers.Insert(0, Token(SyntaxKind.InternalKeyword));
 
+        var leadingTrivia = ParseLeadingTrivia(NormalizeLineEndings(methodDeclaration.GetLeadingTrivia().ToFullString()));
+
         return methodDeclaration
             .WithModifiers(TokenList(modifiers))
-            .WithLeadingTrivia(methodDeclaration.GetLeadingTrivia());
+            .WithLeadingTrivia(leadingTrivia);
+    }
+
+    private static string NormalizeLineEndings(string text)
+    {
+        return text
+            .Replace("\r\n", "\n")
+            .Replace("\r", "\n");
     }
 
     private static void RegisterTraitConstantFix(
