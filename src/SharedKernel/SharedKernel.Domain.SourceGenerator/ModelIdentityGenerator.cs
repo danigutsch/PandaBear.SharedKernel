@@ -99,7 +99,7 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
     {
         var models = context.SyntaxProvider
             .CreateSyntaxProvider(
-                static (node, _) => node is TypeDeclarationSyntax,
+                static (node, _) => node is TypeDeclarationSyntax declaration && IsIdentityCandidate(declaration),
                 static (syntaxContext, cancellationToken) => BuildModel(syntaxContext, cancellationToken))
             .Where(static model => model.TypeName is not null || model.Diagnostic is not null)
             .Collect()
@@ -129,6 +129,24 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
                         SourceText.From(EmitModelSupport(model), Encoding.UTF8));
                 }
             });
+    }
+
+    private static bool IsIdentityCandidate(TypeDeclarationSyntax declaration)
+    {
+        return declaration.AttributeLists.Count > 0 ||
+            declaration.BaseList?.Types.Any(static type => ContainsIdentifier(type.Type, "IIdentified")) == true;
+    }
+
+    private static bool ContainsIdentifier(SyntaxNode node, string identifier)
+    {
+        return node switch
+        {
+            IdentifierNameSyntax identifierName => string.Equals(identifierName.Identifier.ValueText, identifier, StringComparison.Ordinal),
+            GenericNameSyntax genericName => string.Equals(genericName.Identifier.ValueText, identifier, StringComparison.Ordinal),
+            QualifiedNameSyntax qualifiedName => ContainsIdentifier(qualifiedName.Right, identifier),
+            AliasQualifiedNameSyntax aliasQualifiedName => ContainsIdentifier(aliasQualifiedName.Name, identifier),
+            _ => node.ChildNodes().Any(child => ContainsIdentifier(child, identifier)),
+        };
     }
 
     private static (string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic) BuildModel(
