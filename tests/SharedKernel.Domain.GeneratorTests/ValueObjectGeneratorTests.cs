@@ -53,6 +53,54 @@ public sealed class ValueObjectGeneratorTests
         generatedSource.ShouldContain("public sealed class JsonConverter : global::System.Text.Json.Serialization.JsonConverter<TourCode>", StringComparison.Ordinal);
         generatedSource.ShouldContain("public override TourCode Read(ref global::System.Text.Json.Utf8JsonReader reader", StringComparison.Ordinal);
         generatedSource.ShouldContain("public override void Write(global::System.Text.Json.Utf8JsonWriter writer, TourCode value", StringComparison.Ordinal);
+        generatedSource.ShouldContain("reader.TokenType != global::System.Text.Json.JsonTokenType.String", StringComparison.Ordinal);
+        generatedSource.ShouldContain("TourCode.TryCreate(value, out var parsedValue)", StringComparison.Ordinal);
+        generatedSource.ShouldContain("if (!TourCode.TryCreate(value.Value, out _))", StringComparison.Ordinal);
+        generatedSource.ShouldContain("throw new global::System.Text.Json.JsonException", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Generates_json_converter_with_json_exceptions_for_invalid_scalar_values()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(global::System.Guid), Json = true, Template = ValueObjectTemplate.StronglyTypedId)]
+            public readonly partial record struct TourId;
+
+            [GenerateValueObject(UnderlyingType = typeof(int), Json = true)]
+            public readonly partial record struct TourCount;
+
+            [GenerateValueObject(UnderlyingType = typeof(decimal), Json = true)]
+            public readonly partial record struct TourPrice;
+
+            [GenerateValueObject(UnderlyingType = typeof(global::System.DateOnly), Json = true)]
+            public readonly partial record struct DepartureDate;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var guidSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourId.Json.g.cs");
+        var intSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourCount.Json.g.cs");
+        var decimalSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourPrice.Json.g.cs");
+        var dateOnlySource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.DepartureDate.Json.g.cs");
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        guidSource.ShouldContain("reader.TokenType == global::System.Text.Json.JsonTokenType.String", StringComparison.Ordinal);
+        guidSource.ShouldContain("reader.TryGetGuid(out var value) && TourId.TryCreate(value, out var parsedValue)", StringComparison.Ordinal);
+        guidSource.ShouldContain("if (!TourId.TryCreate(value.Value, out _))", StringComparison.Ordinal);
+        intSource.ShouldContain("reader.TokenType == global::System.Text.Json.JsonTokenType.Number", StringComparison.Ordinal);
+        intSource.ShouldContain("reader.TryGetInt32(out var value) && TourCount.TryCreate(value, out var parsedValue)", StringComparison.Ordinal);
+        intSource.ShouldContain("if (!TourCount.TryCreate(value.Value, out _))", StringComparison.Ordinal);
+        decimalSource.ShouldContain("reader.TokenType == global::System.Text.Json.JsonTokenType.Number", StringComparison.Ordinal);
+        decimalSource.ShouldContain("reader.TryGetDecimal(out var value) && TourPrice.TryCreate(value, out var parsedValue)", StringComparison.Ordinal);
+        decimalSource.ShouldContain("if (!TourPrice.TryCreate(value.Value, out _))", StringComparison.Ordinal);
+        dateOnlySource.ShouldContain("reader.TokenType != global::System.Text.Json.JsonTokenType.String", StringComparison.Ordinal);
+        dateOnlySource.ShouldContain("DepartureDate.TryCreate(parsed, out var parsedValue)", StringComparison.Ordinal);
+        dateOnlySource.ShouldContain("if (!DepartureDate.TryCreate(value.Value, out _))", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -143,6 +191,7 @@ public sealed class ValueObjectGeneratorTests
         generatedSource.ShouldContain("var isValid = value > 0;", StringComparison.Ordinal);
         generatedSource.Contains("Substring(1)", StringComparison.Ordinal).ShouldBe(false);
         jsonSource.ShouldContain("reader.TryGetInt32(out var value) && ContractVersion.TryCreate(value, out var parsedNumber)", StringComparison.Ordinal);
+        jsonSource.ShouldContain("reader.TokenType != global::System.Text.Json.JsonTokenType.String", StringComparison.Ordinal);
         jsonSource.ShouldContain("throw new global::System.Text.Json.JsonException", StringComparison.Ordinal);
         jsonSource.ShouldContain("writer.WriteStringValue(value.ToRouteSegment());", StringComparison.Ordinal);
     }

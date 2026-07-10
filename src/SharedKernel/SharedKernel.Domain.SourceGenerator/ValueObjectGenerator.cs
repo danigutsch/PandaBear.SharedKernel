@@ -30,10 +30,14 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
     private const string CloseBlock8 = "        }";
     private const string OpenBlock12 = "            {";
     private const string CloseBlock12 = "            }";
+    private const string Indent12 = "            ";
+    private const string Indent16 = "                ";
     private const string ResultDefault12 = "            result = default;";
     private const string ReturnFalse12 = "            return false;";
-    private const string Return12 = "            return ";
     private const string ReturnTrue8 = "        return true;";
+    private const string ReturnParsedValue16 = "                return parsedValue;";
+    private const string If12Prefix = "            if (";
+    private const string StringTokenGuard12 = "            if (reader.TokenType != global::System.Text.Json.JsonTokenType.String)";
     private const string RecordStructDeclaration = " readonly partial record struct ";
     private const string ValueParameterSuffix = " value)";
     private const string JsonExceptionSuffixLine = ".\");";
@@ -836,8 +840,17 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
                 .AppendLine("                {")
                 .AppendLine("                    return parsedNumber;")
                 .AppendLine("                }")
+                .AppendLine();
+            AppendJsonInvalidThrow(builder, model, Indent16);
+
+            builder
+                .AppendLine(CloseBlock12)
                 .AppendLine()
-                .Append("                throw new global::System.Text.Json.JsonException(\"The JSON value is not a valid ").Append(model.TypeName).AppendLine(JsonExceptionSuffixLine)
+                .AppendLine(StringTokenGuard12)
+                .AppendLine(OpenBlock12);
+            AppendJsonInvalidThrow(builder, model, Indent16);
+
+            builder
                 .AppendLine(CloseBlock12)
                 .AppendLine()
                 .AppendLine("            var text = reader.GetString();")
@@ -845,8 +858,8 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
                 .AppendLine(OpenBlock12)
                 .AppendLine("                return parsed;")
                 .AppendLine(CloseBlock12)
-                .AppendLine()
-                .Append("            throw new global::System.Text.Json.JsonException(\"The JSON value is not a valid ").Append(model.TypeName).AppendLine(JsonExceptionSuffixLine);
+                .AppendLine();
+            AppendJsonInvalidThrow(builder, model);
             return;
         }
 
@@ -854,32 +867,67 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
         {
             case UnderlyingKind.String:
                 builder
-                    .AppendLine("            var value = reader.GetString();")
-                    .AppendLine("            if (value is null)")
-                    .AppendLine(OpenBlock12)
-                    .Append("                throw new global::System.Text.Json.JsonException(\"The JSON value is not a valid ").Append(model.TypeName).AppendLine(JsonExceptionSuffixLine)
+                    .AppendLine(StringTokenGuard12)
+                    .AppendLine(OpenBlock12);
+                AppendJsonInvalidThrow(builder, model, Indent16);
+
+                builder
                     .AppendLine(CloseBlock12)
                     .AppendLine()
-                    .Append(Return12).Append(model.TypeName).AppendLine(".Create(value);");
+                    .AppendLine("            var value = reader.GetString();")
+                    .AppendLine("            if (value is null)")
+                    .AppendLine(OpenBlock12);
+                AppendJsonInvalidThrow(builder, model, Indent16);
+
+                builder
+                    .AppendLine(CloseBlock12)
+                    .AppendLine()
+                    .Append(If12Prefix).Append(model.TypeName).AppendLine(".TryCreate(value, out var parsedValue))")
+                    .AppendLine(OpenBlock12)
+                    .AppendLine(ReturnParsedValue16)
+                    .AppendLine(CloseBlock12)
+                    .AppendLine();
+                AppendJsonInvalidThrow(builder, model);
                 break;
             case UnderlyingKind.Guid:
-                builder.Append(Return12).Append(model.TypeName).AppendLine(".Create(reader.GetGuid());");
+                AppendJsonTryGetAndCreateOrThrow(
+                    builder,
+                    model,
+                    "global::System.Text.Json.JsonTokenType.String",
+                    "reader.TryGetGuid(out var value)");
                 break;
             case UnderlyingKind.Int32:
-                builder.Append(Return12).Append(model.TypeName).AppendLine(".Create(reader.GetInt32());");
+                AppendJsonTryGetAndCreateOrThrow(
+                    builder,
+                    model,
+                    "global::System.Text.Json.JsonTokenType.Number",
+                    "reader.TryGetInt32(out var value)");
                 break;
             case UnderlyingKind.Decimal:
-                builder.Append(Return12).Append(model.TypeName).AppendLine(".Create(reader.GetDecimal());");
+                AppendJsonTryGetAndCreateOrThrow(
+                    builder,
+                    model,
+                    "global::System.Text.Json.JsonTokenType.Number",
+                    "reader.TryGetDecimal(out var value)");
                 break;
             case UnderlyingKind.DateOnly:
                 builder
-                    .AppendLine("            var value = reader.GetString();")
-                    .AppendLine("            if (!global::System.DateOnly.TryParse(value, global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None, out var parsed))")
-                    .AppendLine(OpenBlock12)
-                    .Append("                throw new global::System.Text.Json.JsonException(\"The JSON value is not a valid ").Append(model.TypeName).AppendLine(JsonExceptionSuffixLine)
+                    .AppendLine(StringTokenGuard12)
+                    .AppendLine(OpenBlock12);
+                AppendJsonInvalidThrow(builder, model, Indent16);
+
+                builder
                     .AppendLine(CloseBlock12)
                     .AppendLine()
-                    .Append(Return12).Append(model.TypeName).AppendLine(".Create(parsed);");
+                    .AppendLine("            var value = reader.GetString();")
+                    .AppendLine("            if (!global::System.DateOnly.TryParse(value, global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None, out var parsed))")
+                    .AppendLine(OpenBlock12);
+                AppendJsonInvalidThrow(builder, model, Indent16);
+
+                builder
+                    .AppendLine(CloseBlock12)
+                    .AppendLine();
+                AppendJsonTryCreateOrThrow(builder, model, "parsed");
                 break;
             default:
                 throw new InvalidOperationException(UnsupportedUnderlyingKindMessage);
@@ -888,6 +936,15 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
     private static void AppendJsonWriteBody(StringBuilder builder, ValueObjectModel model)
     {
+        builder
+            .Append(If12Prefix).Append('!').Append(model.TypeName).AppendLine(".TryCreate(value.Value, out _))")
+            .AppendLine(OpenBlock12);
+        AppendJsonInvalidThrow(builder, model, Indent16);
+
+        builder
+            .AppendLine(CloseBlock12)
+            .AppendLine();
+
         if (model.Template == ValueObjectTemplate.ApiVersion)
         {
             builder.AppendLine("            writer.WriteStringValue(value.ToRouteSegment());");
@@ -910,6 +967,38 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             default:
                 throw new InvalidOperationException(UnsupportedUnderlyingKindMessage);
         }
+    }
+
+    private static void AppendJsonTryGetAndCreateOrThrow(
+        StringBuilder builder,
+        ValueObjectModel model,
+        string expectedTokenType,
+        string tryGetExpression)
+    {
+        builder
+            .Append(If12Prefix).Append("reader.TokenType == ").Append(expectedTokenType).Append(" && ").Append(tryGetExpression).Append(" && ")
+            .Append(model.TypeName).AppendLine(".TryCreate(value, out var parsedValue))")
+            .AppendLine(OpenBlock12)
+            .AppendLine(ReturnParsedValue16)
+            .AppendLine(CloseBlock12)
+            .AppendLine();
+        AppendJsonInvalidThrow(builder, model);
+    }
+
+    private static void AppendJsonTryCreateOrThrow(StringBuilder builder, ValueObjectModel model, string valueExpression)
+    {
+        builder
+            .Append(If12Prefix).Append(model.TypeName).Append(".TryCreate(").Append(valueExpression).AppendLine(", out var parsedValue))")
+            .AppendLine(OpenBlock12)
+            .AppendLine(ReturnParsedValue16)
+            .AppendLine(CloseBlock12)
+            .AppendLine();
+        AppendJsonInvalidThrow(builder, model);
+    }
+
+    private static void AppendJsonInvalidThrow(StringBuilder builder, ValueObjectModel model, string indent = Indent12)
+    {
+        builder.Append(indent).Append("throw new global::System.Text.Json.JsonException(\"The JSON value is not a valid ").Append(model.TypeName).AppendLine(JsonExceptionSuffixLine);
     }
 
     private static string EmitEfCoreConverter(ValueObjectModel model)
