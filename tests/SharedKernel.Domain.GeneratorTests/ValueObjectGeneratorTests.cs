@@ -655,6 +655,28 @@ public sealed class ValueObjectGeneratorTests
     }
 
     [Fact]
+    public void Does_not_report_conflict_when_api_version_attributes_differ_only_by_redundant_parsing_option()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(int), Parsing = false, Template = ValueObjectTemplate.ApiVersion)]
+            [GenerateValueObject(UnderlyingType = typeof(int), Parsing = true, Template = ValueObjectTemplate.ApiVersion)]
+            public readonly partial record struct ContractVersion;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var generatedSources = runResult.Results.Single().GeneratedSources;
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        generatedSources.ShouldHaveSingleItem();
+    }
+
+    [Fact]
     public void Generates_template_validation_for_reusable_technical_invariants()
     {
         // Arrange

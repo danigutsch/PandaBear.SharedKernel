@@ -317,14 +317,16 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
     private static bool HasSameAttributeConfiguration(AttributeData left, AttributeData right, ModelSupportDefaults defaults)
     {
+        var leftTemplate = GetTemplate(left);
+        var rightTemplate = GetTemplate(right);
+
         return SymbolEqualityComparer.Default.Equals(GetUnderlyingType(left), GetUnderlyingType(right)) &&
-            GetEffectiveBooleanOption(left, ParsingOptionName, defaults.ValueObjectParsing) ==
-                GetEffectiveBooleanOption(right, ParsingOptionName, defaults.ValueObjectParsing) &&
+            GetEffectiveParsingOption(left, leftTemplate, defaults) == GetEffectiveParsingOption(right, rightTemplate, defaults) &&
             GetEffectiveBooleanOption(left, JsonOptionName, defaults.ValueObjectJson) ==
                 GetEffectiveBooleanOption(right, JsonOptionName, defaults.ValueObjectJson) &&
             GetEffectiveBooleanOption(left, EfCoreOptionName, defaults.ValueObjectEfCore) ==
                 GetEffectiveBooleanOption(right, EfCoreOptionName, defaults.ValueObjectEfCore) &&
-            GetTemplate(left) == GetTemplate(right);
+            leftTemplate == rightTemplate;
     }
 
     private static ValueObjectModel DiagnosticOnly(Diagnostic diagnostic)
@@ -350,6 +352,12 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
     private static bool GetEffectiveBooleanOption(AttributeData attribute, string optionName, bool defaultValue)
     {
         return GetBooleanOption(attribute, optionName) ?? defaultValue;
+    }
+
+    private static bool GetEffectiveParsingOption(AttributeData attribute, ValueObjectTemplate template, ModelSupportDefaults defaults)
+    {
+        return GetEffectiveBooleanOption(attribute, ParsingOptionName, defaults.ValueObjectParsing) ||
+            template == ValueObjectTemplate.ApiVersion;
     }
 
     private static bool? GetBooleanOption(AttributeData attribute, string optionName)
