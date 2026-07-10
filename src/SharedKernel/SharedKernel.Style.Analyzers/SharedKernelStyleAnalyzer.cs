@@ -18,6 +18,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     private const string ShouldHandleAsFailureMethodName = "ShouldHandleAsFailure";
     private const string LoggerExtensionsTypeName = "Microsoft.Extensions.Logging.LoggerExtensions";
     private const string LoggerInterfaceTypeName = "Microsoft.Extensions.Logging.ILogger";
+    private const string DomainEventSuffix = "DomainEvent";
     private static readonly ImmutableArray<string> GenericTypeNameSuffixes = ["Gereric", "Generic", "OfT"];
     private static readonly ImmutableHashSet<string> DirectLoggerExtensionMethodNames = ImmutableHashSet.Create(
         StringComparer.Ordinal,
@@ -83,6 +84,14 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository observability rules require stable source-generated logging contracts for production logging.");
+    private static readonly DiagnosticDescriptor DomainEventSuffixRule = new(
+        StyleDiagnosticIds.DomainEventSuffix,
+        title: "Domain event types should end with DomainEvent",
+        messageFormat: "Domain event type '{0}' should end with 'DomainEvent'",
+        category: "Style",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Repository domain rules require IDomainEvent implementations to use the DomainEvent suffix for clear ubiquitous language.");
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
@@ -92,7 +101,8 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             MultipleTopLevelTypesPerFileRule,
             GenericTypeNameSuffixRule,
             BroadOperationCanceledExceptionFilterRule,
-            NonSourceGeneratedLoggingRule);
+            NonSourceGeneratedLoggingRule,
+            DomainEventSuffixRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -110,6 +120,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     private static void InitializeCompilation(CompilationStartAnalysisContext context)
     {
         var cancellationTokenType = context.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken");
+        var domainEventType = context.Compilation.GetTypeByMetadataName("SharedKernel.Domain.IDomainEvent");
 
         context.RegisterSymbolAction(
             symbolContext =>
@@ -126,7 +137,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         context.RegisterSyntaxTreeAction(AnalyzeSyntaxTree);
 
         context.RegisterSymbolAction(
-            AnalyzeNamedType,
+            symbolContext => AnalyzeNamedType(symbolContext, domainEventType),
             SymbolKind.NamedType);
 
         context.RegisterSyntaxNodeAction(
@@ -241,9 +252,40 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         }
     }
 
-    private static void AnalyzeNamedType(SymbolAnalysisContext context)
+    private static void AnalyzeNamedType(SymbolAnalysisContext context, INamedTypeSymbol? domainEventType)
     {
-        if (context.Symbol is not INamedTypeSymbol { Arity: > 0 } type
+        if (context.Symbol is not INamedTypeSymbol type)
+        {
+            return;
+        }
+
+        AnalyzeDomainEventSuffix(context, type, domainEventType);
+        AnalyzeGenericTypeNameSuffix(context, type);
+    }
+
+    private static void AnalyzeDomainEventSuffix(
+        SymbolAnalysisContext context,
+        INamedTypeSymbol type,
+        INamedTypeSymbol? domainEventType)
+    {
+        if (domainEventType is null
+            || type.TypeKind is not (TypeKind.Class or TypeKind.Struct)
+            || type.Name.EndsWith(DomainEventSuffix, StringComparison.Ordinal)
+            || type.Locations.FirstOrDefault(static location => location.IsInSource) is not { } location
+            || !type.AllInterfaces.Any(candidate => SymbolEqualityComparer.Default.Equals(candidate, domainEventType)))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            DomainEventSuffixRule,
+            location,
+            type.Name));
+    }
+
+    private static void AnalyzeGenericTypeNameSuffix(SymbolAnalysisContext context, INamedTypeSymbol type)
+    {
+        if (type is not { Arity: > 0 }
             || type.ContainingType is not null
             || type.TypeKind is not (TypeKind.Class or TypeKind.Struct or TypeKind.Interface or TypeKind.Delegate)
             || type.Locations.FirstOrDefault(static location => location.IsInSource) is not { } location)

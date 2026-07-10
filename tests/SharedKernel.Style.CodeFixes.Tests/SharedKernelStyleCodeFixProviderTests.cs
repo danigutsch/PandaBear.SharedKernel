@@ -1,3 +1,5 @@
+extern alias styleanalyzers;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
@@ -755,7 +757,8 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 Analyzers.StyleDiagnosticIds.CancellationTokenParameterName,
                 Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue,
                 Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix,
-                Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter
+                Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
+                Analyzers.StyleDiagnosticIds.DomainEventSuffix
             ],
             diagnosticIds);
     }
@@ -873,6 +876,65 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         updatedText.ShouldContain("public delegate void ResultHandler<T>(T value);", StringComparison.Ordinal);
         updatedText.ShouldContain("public ResultHandler<string> Handler", StringComparison.Ordinal);
         updatedText.ShouldNotContain("ResultHandlerOfT");
+    }
+
+    [Fact]
+    public async Task Domain_event_suffix_fix_renames_type_and_references()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Domain
+            {
+                public interface IDomainEvent;
+            }
+
+            namespace Demo;
+
+            public sealed record TourCreated(System.Guid TourId) : SharedKernel.Domain.IDomainEvent;
+
+            public sealed class Consumer
+            {
+                public TourCreated Create() => new(System.Guid.NewGuid());
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer());
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = analyzerDiagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.DomainEventSuffix);
+
+        diagnostic.Location.SourceSpan.Length.ShouldBe("TourCreated".Length);
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+
+        // Assert
+        updatedText.ShouldContain("public sealed record TourCreatedDomainEvent(System.Guid TourId) : SharedKernel.Domain.IDomainEvent;", StringComparison.Ordinal);
+        updatedText.ShouldContain("public TourCreatedDomainEvent Create() => new(System.Guid.NewGuid());", StringComparison.Ordinal);
+        updatedText.ShouldNotContain("TourCreated ");
+    }
+
+    [Fact]
+    public async Task Domain_event_suffix_fix_is_not_offered_when_target_type_exists()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed record TourCreated(System.Guid TourId);
+
+            public sealed record TourCreatedDomainEvent(System.Guid TourId);
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.DomainEventSuffix, "TourCreated(System.Guid TourId)");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]

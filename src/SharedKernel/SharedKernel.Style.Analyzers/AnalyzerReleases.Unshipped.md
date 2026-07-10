@@ -9,3 +9,4 @@ SKSTYLE004 | Style | Warning | Source files should not declare more than one top
 SKSTYLE005 | Style | Warning | Generic type names should not include suffixes that repeat generic arity
 SKSTYLE006 | Style | Warning | Catch filters should not suppress every OperationCanceledException without checking the operation token
 SKSTYLE007 | Style | Warning | Production logging should use source-generated LoggerMessage methods
+SKSTYLE008 | Style | Warning | Domain event types implementing IDomainEvent should end with DomainEvent

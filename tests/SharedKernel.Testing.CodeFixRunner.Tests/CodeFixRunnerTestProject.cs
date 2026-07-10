@@ -54,6 +54,32 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    public const string HelperSourceFile = """
+        namespace Xunit
+        {
+            public sealed class FactAttribute : System.Attribute
+            {
+            }
+        }
+
+        namespace Sample.Tests
+        {
+            public sealed class SampleTests
+            {
+                [Xunit.Fact]
+                public void Creates_a_sample()
+                {
+                    var value = CreateTourId();
+                }
+
+                private static int CreateTourId()
+                {
+                    return 42;
+                }
+            }
+        }
+        """;
+
     public static string CreateTemporaryProject()
     {
         var projectDirectory = Path.Combine(Path.GetTempPath(), "sk-codefix-runner-" + Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture));

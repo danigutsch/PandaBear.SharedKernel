@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
 namespace SharedKernel.Testing.Analyzers.Tests;
@@ -29,9 +30,12 @@ internal sealed class CodeFixTestWorkspace
 
     private DocumentId DocumentId { get; }
 
-    private Document Document => Assert.IsType<Document>(Workspace.CurrentSolution.GetDocument(DocumentId));
+    private Document Document => Workspace.CurrentSolution.GetDocument(DocumentId).ShouldBeOfType<Document>();
 
-    public static CodeFixTestWorkspace Create(string source, string assemblyName = "SharedKernel.Testing.CodeFixes.Tests.Dynamic")
+    public static CodeFixTestWorkspace Create(
+        string source,
+        string assemblyName = "SharedKernel.Testing.CodeFixes.Tests.Dynamic",
+        string filePath = "/Test0.cs")
     {
         var workspace = new AdhocWorkspace();
         var projectId = ProjectId.CreateNewId(assemblyName);
@@ -55,7 +59,7 @@ internal sealed class CodeFixTestWorkspace
                 documentId,
                 "Test0.cs",
                 loader: TextLoader.From(TextAndVersion.Create(SourceText.From(DefaultUsings + source), versionStamp)),
-                filePath: "/Test0.cs"));
+                filePath: filePath));
 
         return new CodeFixTestWorkspace(workspace, documentId);
     }
@@ -73,10 +77,10 @@ internal sealed class CodeFixTestWorkspace
         var text = await Document.GetTextAsync().ConfigureAwait(false);
         var source = text.ToString();
         var start = source.IndexOf(markerText, StringComparison.Ordinal);
-        Assert.True(start >= 0, $"Could not find marker text '{markerText}'.");
+        (start >= 0).ShouldBeTrue($"Could not find marker text '{markerText}'.");
 
         var syntaxTree = await Document.GetSyntaxTreeAsync().ConfigureAwait(false);
-        var nonNullSyntaxTree = Assert.IsAssignableFrom<SyntaxTree>(syntaxTree);
+        var nonNullSyntaxTree = syntaxTree.ShouldBeAssignableTo<SyntaxTree>();
 
         var descriptor = new DiagnosticDescriptor(
             diagnosticId,
@@ -101,10 +105,19 @@ internal sealed class CodeFixTestWorkspace
         return actions;
     }
 
+    public async Task<IReadOnlyList<Diagnostic>> GetAnalyzerDiagnostics(DiagnosticAnalyzer analyzer)
+    {
+        var project = Document.Project;
+        var compilation = await project.GetCompilationAsync().ConfigureAwait(false) ?? throw new InvalidOperationException("Test compilation could not be created.");
+        var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer]);
+
+        return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+    }
+
     public async Task ApplyCodeAction(CodeAction action)
     {
         var operations = await action.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
-        var applyOperation = Assert.Single(operations.OfType<ApplyChangesOperation>());
+        var applyOperation = operations.OfType<ApplyChangesOperation>().ShouldHaveSingleItem();
         Workspace.TryApplyChanges(applyOperation.ChangedSolution);
     }
 
@@ -113,9 +126,15 @@ internal sealed class CodeFixTestWorkspace
         return (await Document.GetTextAsync().ConfigureAwait(false)).ToString();
     }
 
+    public async Task<string> GetDocumentText(string documentName)
+    {
+        var document = Workspace.CurrentSolution.Projects.Single().Documents.SingleOrDefault(candidate => string.Equals(candidate.Name, documentName, StringComparison.Ordinal)).ShouldBeOfType<Document>();
+        return (await document.GetTextAsync().ConfigureAwait(false)).ToString();
+    }
+
     private static IEnumerable<MetadataReference> GetMetadataReferences()
     {
-        var trustedPlatformAssemblies = Assert.IsType<string>(AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"));
+        var trustedPlatformAssemblies = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES").ShouldBeOfType<string>();
         foreach (var path in trustedPlatformAssemblies.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
         {
             yield return MetadataReference.CreateFromFile(path);

@@ -1,6 +1,7 @@
 #nullable enable
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitArrangeActAssertMarkers = "SKTEST007" -> string!
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitAssertionWrapper = "SKTEST006" -> string!
+const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTraitConstantUsage = "SKTEST009" -> string!
 const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTryFinallyCleanup = "SKTEST008" -> string!
 SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer
 SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer.SharedKernelTestingAnalyzer() -> void

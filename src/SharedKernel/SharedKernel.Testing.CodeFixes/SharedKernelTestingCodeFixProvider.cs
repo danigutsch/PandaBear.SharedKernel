@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Rename;
+using Microsoft.CodeAnalysis.Text;
 using SharedKernel.Testing.Analyzers;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
@@ -27,7 +28,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
-        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitSerialCollectionJustification, TestingDiagnosticIds.XunitAssertionWrapper];
+        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitTestClassHelperMethod, TestingDiagnosticIds.XunitSerialCollectionJustification, TestingDiagnosticIds.XunitAssertionWrapper, TestingDiagnosticIds.XunitTraitConstantUsage];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -69,6 +70,18 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return;
         }
 
+        if (string.Equals(diagnostic.Id, TestingDiagnosticIds.XunitTraitConstantUsage, StringComparison.Ordinal))
+        {
+            RegisterTraitConstantFix(context, document, diagnostic, syntaxRoot);
+            return;
+        }
+
+        if (string.Equals(diagnostic.Id, TestingDiagnosticIds.XunitTestClassHelperMethod, StringComparison.Ordinal))
+        {
+            await RegisterTestHelperExtractionFix(context, document, diagnostic, syntaxRoot).ConfigureAwait(false);
+            return;
+        }
+
         if (syntaxRoot.FindNode(context.Span).FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration)
         {
             return;
@@ -100,6 +113,234 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                 createChangedSolution: ct => RenameSymbolAsync(document.Project.Solution, methodSymbol, targetName, ct),
                 equivalenceKey: $"RenameXunitTestMethod:{targetName}"),
             diagnostic);
+    }
+
+    private static async Task RegisterTestHelperExtractionFix(
+        CodeFixContext context,
+        Document document,
+        Diagnostic diagnostic,
+        SyntaxNode syntaxRoot)
+    {
+        if (syntaxRoot.FindNode(context.Span).FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
+            || methodDeclaration.Parent is not TypeDeclarationSyntax testClass
+            || !methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.StaticKeyword))
+            || !methodDeclaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PrivateKeyword))
+            || HasOverloadInTestClass(testClass, methodDeclaration))
+        {
+            return;
+        }
+
+        var semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+        if (semanticModel is null
+            || semanticModel.GetDeclaredSymbol(testClass, context.CancellationToken) is not INamedTypeSymbol testClassSymbol
+            || semanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
+            || UsesTestClassMember(semanticModel, methodDeclaration, testClassSymbol, methodSymbol, context.CancellationToken))
+        {
+            return;
+        }
+
+        var helperClassName = testClass.Identifier.ValueText + "Helpers";
+        if (semanticModel.LookupSymbols(testClass.Identifier.SpanStart, name: helperClassName).OfType<INamedTypeSymbol>().Any()
+            || HelperFilePathConflicts(document, helperClassName))
+        {
+            return;
+        }
+
+        context.RegisterCodeFix(
+            CodeAction.Create(
+                title: $"Move helper to {helperClassName}",
+                createChangedSolution: ct => MoveStaticTestHelperToDocument(document, syntaxRoot, methodDeclaration, helperClassName, ct),
+                equivalenceKey: $"MoveStaticTestHelper:{helperClassName}:{methodDeclaration.Identifier.ValueText}"),
+            diagnostic);
+    }
+
+    private static bool HelperFilePathConflicts(Document document, string helperClassName)
+    {
+        var helperFilePath = GetHelperFilePath(document, helperClassName);
+        if (helperFilePath is null)
+        {
+            return false;
+        }
+
+        return File.Exists(helperFilePath)
+            || document.Project.Documents.Any(candidate => string.Equals(candidate.FilePath, helperFilePath, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool HasOverloadInTestClass(TypeDeclarationSyntax testClass, MethodDeclarationSyntax methodDeclaration)
+    {
+        return testClass.Members
+            .OfType<MethodDeclarationSyntax>()
+            .Count(candidate => string.Equals(candidate.Identifier.ValueText, methodDeclaration.Identifier.ValueText, StringComparison.Ordinal)) > 1;
+    }
+
+    private static bool UsesTestClassMember(
+        SemanticModel semanticModel,
+        MethodDeclarationSyntax methodDeclaration,
+        INamedTypeSymbol testClassSymbol,
+        IMethodSymbol methodSymbol,
+        CancellationToken ct)
+    {
+        if (methodDeclaration.DescendantNodes().OfType<ThisExpressionSyntax>().Any()
+            || methodDeclaration.DescendantNodes().OfType<BaseExpressionSyntax>().Any())
+        {
+            return true;
+        }
+
+        foreach (var identifier in methodDeclaration.DescendantNodes().OfType<IdentifierNameSyntax>())
+        {
+            ct.ThrowIfCancellationRequested();
+
+            if (semanticModel.GetSymbolInfo(identifier, ct).Symbol is not ISymbol symbol
+                || !SymbolEqualityComparer.Default.Equals(symbol.ContainingType, testClassSymbol)
+                || SymbolEqualityComparer.Default.Equals(symbol, methodSymbol))
+            {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static Task<Solution> MoveStaticTestHelperToDocument(
+        Document document,
+        SyntaxNode syntaxRoot,
+        MethodDeclarationSyntax methodDeclaration,
+        string helperClassName,
+        CancellationToken ct)
+    {
+        ct.ThrowIfCancellationRequested();
+
+        var methodAnnotation = new SyntaxAnnotation();
+        var annotatedRoot = syntaxRoot.ReplaceNode(methodDeclaration, methodDeclaration.WithAdditionalAnnotations(methodAnnotation));
+        if (annotatedRoot.GetAnnotatedNodes(methodAnnotation).OfType<MethodDeclarationSyntax>().SingleOrDefault() is not MethodDeclarationSyntax annotatedMethod
+            || annotatedMethod.Parent is not TypeDeclarationSyntax annotatedTestClass)
+        {
+            return Task.FromResult(document.Project.Solution);
+        }
+
+        var invocationReplacements = GetHelperInvocations(annotatedRoot, annotatedMethod, annotatedTestClass)
+            .ToDictionary(
+                invocation => invocation,
+                invocation => invocation.WithExpression(
+                    MemberAccessExpression(
+                        SyntaxKind.SimpleMemberAccessExpression,
+                        IdentifierName(helperClassName),
+                        IdentifierName(methodDeclaration.Identifier.ValueText))).WithTriviaFrom(invocation));
+        var updatedRoot = annotatedRoot.ReplaceNodes(invocationReplacements.Keys, (original, _) => invocationReplacements[original]);
+        var updatedMethod = updatedRoot.GetAnnotatedNodes(methodAnnotation).OfType<MethodDeclarationSyntax>().SingleOrDefault();
+        if (updatedMethod is null)
+        {
+            return Task.FromResult(document.Project.Solution);
+        }
+
+        updatedRoot = updatedRoot.RemoveNode(updatedMethod, SyntaxRemoveOptions.KeepExteriorTrivia) ?? updatedRoot;
+        var updatedDocument = document.WithSyntaxRoot(updatedRoot.WithAdditionalAnnotations(Formatter.Annotation));
+        var helperSource = CreateHelperDocumentText(methodDeclaration, helperClassName);
+        var helperDocumentName = helperClassName + ".cs";
+        var helperFilePath = GetHelperFilePath(document, helperClassName);
+        var helperDocument = updatedDocument.Project.AddDocument(
+            helperDocumentName,
+            SourceText.From(helperSource),
+            document.Folders,
+            helperFilePath);
+
+        return Task.FromResult(helperDocument.Project.Solution);
+    }
+
+    private static string? GetHelperFilePath(Document document, string helperClassName)
+    {
+        return document.FilePath is { Length: > 0 } filePath
+            ? Path.Combine(Path.GetDirectoryName(filePath) ?? string.Empty, helperClassName + ".cs")
+            : null;
+    }
+
+    private static IEnumerable<InvocationExpressionSyntax> GetHelperInvocations(
+        SyntaxNode syntaxRoot,
+        MethodDeclarationSyntax methodDeclaration,
+        TypeDeclarationSyntax testClass)
+    {
+        return syntaxRoot.DescendantNodes()
+            .OfType<InvocationExpressionSyntax>()
+            .Where(invocation => invocation.SpanStart >= testClass.SpanStart
+                && invocation.Span.End <= testClass.Span.End
+                && !methodDeclaration.Span.Contains(invocation.SpanStart)
+                && invocation.Expression is IdentifierNameSyntax identifierName
+                && string.Equals(identifierName.Identifier.ValueText, methodDeclaration.Identifier.ValueText, StringComparison.Ordinal));
+    }
+
+    private static string CreateHelperDocumentText(MethodDeclarationSyntax methodDeclaration, string helperClassName)
+    {
+        var compilationUnit = methodDeclaration.SyntaxTree.GetCompilationUnitRoot();
+        var helperMethod = MakeInternalStatic(methodDeclaration)
+            .WithLeadingTrivia()
+            .WithTrailingTrivia(CarriageReturnLineFeed);
+        var helperClass = ClassDeclaration(helperClassName)
+            .AddModifiers(Token(SyntaxKind.InternalKeyword), Token(SyntaxKind.StaticKeyword))
+            .AddMembers(helperMethod)
+            .NormalizeWhitespace();
+        var usings = string.Concat(compilationUnit.Usings.Select(static usingDirective => usingDirective.ToFullString()));
+        var namespaceDeclaration = methodDeclaration.FirstAncestorOrSelf<BaseNamespaceDeclarationSyntax>();
+        var namespacePrefix = namespaceDeclaration is null
+            ? string.Empty
+            : "namespace " + namespaceDeclaration.Name + ";" + Environment.NewLine + Environment.NewLine;
+
+        return usings + namespacePrefix + helperClass + Environment.NewLine;
+    }
+
+    private static MethodDeclarationSyntax MakeInternalStatic(MethodDeclarationSyntax methodDeclaration)
+    {
+        var modifiers = methodDeclaration.Modifiers
+            .Where(static modifier => !modifier.IsKind(SyntaxKind.PrivateKeyword)
+                && !modifier.IsKind(SyntaxKind.PublicKeyword)
+                && !modifier.IsKind(SyntaxKind.InternalKeyword)
+                && !modifier.IsKind(SyntaxKind.ProtectedKeyword))
+            .ToList();
+        if (!modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.StaticKeyword)))
+        {
+            modifiers.Insert(0, Token(SyntaxKind.StaticKeyword));
+        }
+
+        modifiers.Insert(0, Token(SyntaxKind.InternalKeyword));
+
+        return methodDeclaration.WithModifiers(TokenList(modifiers));
+    }
+
+    private static void RegisterTraitConstantFix(
+        CodeFixContext context,
+        Document document,
+        Diagnostic diagnostic,
+        SyntaxNode syntaxRoot)
+    {
+        var replacement = GetNonWhiteSpaceProperty(diagnostic, "Replacement");
+        var node = syntaxRoot.FindNode(context.Span);
+        if (replacement is null
+            || node.DescendantNodesAndSelf().OfType<LiteralExpressionSyntax>().FirstOrDefault(candidate => candidate.Span.IntersectsWith(context.Span)) is not LiteralExpressionSyntax literalExpression)
+        {
+            return;
+        }
+
+        context.RegisterCodeFix(
+            CodeAction.Create(
+                title: $"Use {replacement}",
+                createChangedDocument: _ => UseTraitConstant(document, syntaxRoot, literalExpression, replacement),
+                equivalenceKey: $"UseTraitConstant:{replacement}"),
+            diagnostic);
+    }
+
+    private static Task<Document> UseTraitConstant(
+        Document document,
+        SyntaxNode syntaxRoot,
+        LiteralExpressionSyntax literalExpression,
+        string replacement)
+    {
+        var replacementExpression = ParseExpression(replacement)
+            .WithTriviaFrom(literalExpression)
+            .WithAdditionalAnnotations(Formatter.Annotation);
+        var updatedRoot = syntaxRoot.ReplaceNode(literalExpression, replacementExpression);
+
+        return Task.FromResult(document.WithSyntaxRoot(updatedRoot));
     }
 
     private static void RegisterXunitAssertionWrapperFix(

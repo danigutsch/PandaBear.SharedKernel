@@ -44,4 +44,9 @@ public static class TestingDiagnosticIds
     /// Diagnostic emitted when an xUnit test method contains a try statement with a finally block.
     /// </summary>
     public const string XunitTryFinallyCleanup = "SKTEST008";
+
+    /// <summary>
+    /// Diagnostic emitted when xUnit trait metadata uses a string literal where a canonical constant exists.
+    /// </summary>
+    public const string XunitTraitConstantUsage = "SKTEST009";
 }

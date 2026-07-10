@@ -31,6 +31,33 @@ public sealed class CodeFixRunEngineTests : IDisposable
     }
 
     [Fact]
+    public async Task Run_applies_default_SKTEST004_code_fix_to_project_file()
+    {
+        // Arrange
+        var projectPath = Path.Combine(projectDirectory.Path, "Sample.Tests.csproj");
+        var sourcePath = Path.Combine(projectDirectory.Path, "SampleTests.cs");
+        var helperPath = Path.Combine(projectDirectory.Path, "SampleTestsHelpers.cs");
+        await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.ProjectFile, TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.HelperSourceFile, TestContext.Current.CancellationToken);
+
+        var options = CodeFixRunnerOptions.Parse([projectPath]).ShouldNotBeNull();
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+
+        // Act
+        var fixedCount = await CodeFixRunEngine.Run(options, error);
+        var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
+        var helperSource = await File.ReadAllTextAsync(helperPath, TestContext.Current.CancellationToken);
+
+        // Assert
+        fixedCount.ShouldBe(1);
+        updatedSource.ShouldContain("SampleTestsHelpers.CreateTourId()", StringComparison.Ordinal);
+        updatedSource.ShouldNotContain("private static int CreateTourId()");
+        helperSource.ShouldContain("internal static class SampleTestsHelpers", StringComparison.Ordinal);
+        helperSource.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
+        (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
+    }
+
+    [Fact]
     public async Task Run_returns_zero_when_project_has_no_matching_diagnostics()
     {
         // Arrange
