@@ -1008,7 +1008,6 @@
           "SharedKernel.Idempotency.EntityFrameworkCore": "[0.1.0-alpha.0, )",
           "SharedKernel.Messaging": "[0.1.0-alpha.0, )",
           "SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )",
-          "SharedKernel.Messaging.IntegrationEvents.CloudEvents": "[0.1.0-alpha.0, )",
           "SharedKernel.Scheduling": "[0.1.0-alpha.0, )"
         }
       },

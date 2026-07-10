@@ -8,10 +8,10 @@ public static class CloudEventConstants
     /// <summary>
     /// The CloudEvents envelope specification name.
     /// </summary>
-    public const string Spec = "cloudevents";
+    public const string Spec = IntegrationEventEnvelopeConstants.Spec;
 
     /// <summary>
     /// The supported CloudEvents specification version.
     /// </summary>
-    public const string SpecVersion = "1.0";
+    public const string SpecVersion = IntegrationEventEnvelopeConstants.SpecVersion;
 }

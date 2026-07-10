@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Text.Json;
-using SharedKernel.Messaging.IntegrationEvents.CloudEvents;
 
 namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
@@ -17,8 +16,8 @@ internal static class IntegrationEventOutboxMessageFactory
         DateTimeOffset enqueuedAt)
         where TIntegrationEvent : IIntegrationEvent => new(
             Guid.CreateVersion7(),
-            CloudEventConstants.Spec,
-            CloudEventConstants.SpecVersion,
+            IntegrationEventEnvelopeConstants.Spec,
+            IntegrationEventEnvelopeConstants.SpecVersion,
             integrationEvent.EventId.ToString("D"),
             new Uri(Source),
             TIntegrationEvent.EventType,

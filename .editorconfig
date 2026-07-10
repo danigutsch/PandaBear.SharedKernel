@@ -330,7 +330,7 @@ dotnet_diagnostic.CA1812.severity = none
 
 # Staged rollout for one-top-level-type-per-file. Owner: style analyzer maintainers.
 # Keep this allowlist small and remove each entry when the grouped file is split intentionally.
-[src/ViajantesTurismo.Admin.Contracts/ImportResultDto.cs]
+[src/ViajantesTurismo.Admin.Contracts.Application/ImportResultDto.cs]
 dotnet_diagnostic.SKSTYLE004.severity = none
 
 [src/ViajantesTurismo.Management.Web/Services/CountryService.cs]
