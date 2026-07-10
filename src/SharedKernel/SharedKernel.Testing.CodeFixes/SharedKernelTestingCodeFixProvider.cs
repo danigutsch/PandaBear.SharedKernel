@@ -210,47 +210,44 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         {
             ct.ThrowIfCancellationRequested();
 
-            if (methodDeclaration.Span.Contains(simpleName.SpanStart))
+            if (IsCandidateHelperReference(simpleName, methodDeclaration, methodSymbol)
+                && IsNonRewriteableHelperReference(semanticModel, simpleName, methodSymbol, ct))
             {
-                continue;
+                return true;
             }
-
-            if (!string.Equals(simpleName.Identifier.ValueText, methodSymbol.Name, StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            var symbol = semanticModel.GetSymbolInfo(simpleName, ct).Symbol;
-            if (IsNameofReference(simpleName))
-            {
-                if (SymbolEqualityComparer.Default.Equals(symbol, methodSymbol)
-                    || (symbol is null && !HasOtherSymbolNamed(semanticModel, simpleName, methodSymbol, ct)))
-                {
-                    return true;
-                }
-
-                continue;
-            }
-
-            if (!SymbolEqualityComparer.Default.Equals(symbol, methodSymbol))
-            {
-                if (IsInvocationName(simpleName))
-                {
-                    return true;
-                }
-
-                continue;
-            }
-
-            if (IsRewriteableHelperInvocation(simpleName, methodSymbol, semanticModel, ct))
-            {
-                continue;
-            }
-
-            return true;
         }
 
         return false;
+    }
+
+    private static bool IsCandidateHelperReference(
+        SimpleNameSyntax simpleName,
+        MethodDeclarationSyntax methodDeclaration,
+        IMethodSymbol methodSymbol)
+    {
+        return !methodDeclaration.Span.Contains(simpleName.SpanStart)
+            && string.Equals(simpleName.Identifier.ValueText, methodSymbol.Name, StringComparison.Ordinal);
+    }
+
+    private static bool IsNonRewriteableHelperReference(
+        SemanticModel semanticModel,
+        SimpleNameSyntax simpleName,
+        IMethodSymbol methodSymbol,
+        CancellationToken ct)
+    {
+        var symbol = semanticModel.GetSymbolInfo(simpleName, ct).Symbol;
+        if (IsNameofReference(simpleName))
+        {
+            return SymbolEqualityComparer.Default.Equals(symbol, methodSymbol)
+                || (symbol is null && !HasOtherSymbolNamed(semanticModel, simpleName, methodSymbol, ct));
+        }
+
+        if (!SymbolEqualityComparer.Default.Equals(symbol, methodSymbol))
+        {
+            return IsInvocationName(simpleName);
+        }
+
+        return !IsRewriteableHelperInvocation(simpleName, methodSymbol, semanticModel, ct);
     }
 
     private static bool HasOtherSymbolNamed(
