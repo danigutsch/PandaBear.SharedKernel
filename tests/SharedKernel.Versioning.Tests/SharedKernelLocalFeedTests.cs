@@ -1,5 +1,3 @@
-using SharedKernel.Versioning.Tool;
-
 namespace SharedKernel.Versioning.Tests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
@@ -130,7 +128,7 @@ public static class SharedKernelLocalFeedTests
             temporaryDirectory.OutputDirectory,
             temporaryDirectory.PackageDirectory,
             ["SharedKernel.Results"],
-            "https://example.test/v3/index.json");
+            new Uri("https://example.test/v3/index.json"));
 
         // Assert
         var project = await File.ReadAllTextAsync(

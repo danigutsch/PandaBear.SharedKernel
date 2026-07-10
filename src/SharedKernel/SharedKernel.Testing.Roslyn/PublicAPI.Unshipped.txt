@@ -3,8 +3,10 @@ override SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptions.TryGetValue(strin
 override SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptionsProvider.GetOptions(Microsoft.CodeAnalysis.AdditionalText! textFile) -> Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions!
 override SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptionsProvider.GetOptions(Microsoft.CodeAnalysis.SyntaxTree! tree) -> Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions!
 override SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptionsProvider.GlobalOptions.get -> Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions!
+SharedKernel.Testing.Roslyn.DiagnosticLocationKey
 SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptions
 SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptions.TestAnalyzerConfigOptions(System.Collections.Immutable.ImmutableDictionary<string!, string!>? values) -> void
 SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptionsProvider
 SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptionsProvider.TestAnalyzerConfigOptionsProvider(System.Collections.Immutable.ImmutableDictionary<string!, string!>? globalOptions) -> void
 static readonly SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptions.Empty -> SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptions!
+static SharedKernel.Testing.Roslyn.DiagnosticLocationKey.Create(Microsoft.CodeAnalysis.Diagnostic! diagnostic) -> string!

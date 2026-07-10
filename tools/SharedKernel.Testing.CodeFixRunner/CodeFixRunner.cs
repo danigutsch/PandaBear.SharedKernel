@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
 using SharedKernel.Testing.CodeFixes;
+using SharedKernel.Testing.Roslyn;
 
 namespace SharedKernel.Testing.CodeFixRunner;
 
@@ -80,8 +81,7 @@ internal static class CodeFixRunEngine
 
     internal static string GetDiagnosticKey(Diagnostic diagnostic)
     {
-        var lineSpan = diagnostic.Location.GetLineSpan();
-        return $"{lineSpan.Path}:{lineSpan.StartLinePosition.Line}:{lineSpan.StartLinePosition.Character}";
+        return DiagnosticLocationKey.Create(diagnostic);
     }
 
     private static async Task<Solution> OpenSolution(MSBuildWorkspace workspace, string targetPath)

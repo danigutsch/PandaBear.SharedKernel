@@ -2,20 +2,22 @@ namespace SharedKernel.Versioning.Tool;
 
 internal static class SharedKernelPackCommand
 {
-    private static readonly string NuGetSourceUrl = string.Concat("https://api.nuget.org", "/v3/index.json");
+    private static readonly Uri NuGetSourceUrl = new(string.Concat("https://api.nuget.org", "/v3/index.json"));
 
     public static async Task<string> Run(PackSharedKernelOptions options, TextWriter output)
     {
-        var packageDirectory = Path.Combine(ResolveOutputRoot(options), options.Version);
-        if (Directory.Exists(packageDirectory) && PackageVersionExists(packageDirectory, options.Version))
-        {
-            throw new ArgumentException($"Package version already exists in {packageDirectory}: {options.Version}");
-        }
+        var packageOptions = new SharedKernelPackageOptions(
+            options.Version,
+            options.OutputRoot,
+            options.RepoRoot,
+            options.AssemblyVersion,
+            options.FileVersion,
+            options.InformationalVersion);
+        var packageDirectory = SharedKernelPackagePlanner.ResolvePackageDirectory(packageOptions);
+        SharedKernelPackagePlanner.EnsurePackageVersionDoesNotExist(packageDirectory, options.Version);
 
         Directory.CreateDirectory(packageDirectory);
-        var projects = Directory.GetFiles(Path.Combine(options.RepoRoot, "src", "SharedKernel"), "*.csproj", SearchOption.AllDirectories)
-            .Order(StringComparer.Ordinal)
-            .ToArray();
+        var projects = SharedKernelPackagePlanner.FindProjects(options.RepoRoot);
         if (projects.Length == 0)
         {
             throw new ArgumentException("No SharedKernel projects found.");
@@ -25,7 +27,12 @@ internal static class SharedKernelPackCommand
         {
             CommandRunner.Run(
                 "dotnet",
-                CreatePackArguments(project, options, packageDirectory),
+                SharedKernelPackagePlanner.CreatePackArguments(
+                    project,
+                    packageOptions,
+                    packageDirectory,
+                    Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation),
+                    Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion)),
                 options.RepoRoot);
         }
 
@@ -77,50 +84,6 @@ internal static class SharedKernelPackCommand
         if (missing.Length > 0)
         {
             throw new ArgumentException("packages not restored from local feed: " + string.Join(", ", missing));
-        }
-    }
-
-    private static bool PackageVersionExists(string packageDirectory, string version) =>
-        Directory.EnumerateFiles(packageDirectory, "SharedKernel.*")
-            .Select(Path.GetFileName)
-            .Any(fileName => fileName is not null && IsPackageVersionFile(fileName, version));
-
-    private static bool IsPackageVersionFile(string fileName, string version) =>
-        fileName.EndsWith("." + version + ".nupkg", StringComparison.Ordinal)
-        || fileName.EndsWith("." + version + ".snupkg", StringComparison.Ordinal)
-        || fileName.EndsWith("." + version + ".symbols.nupkg", StringComparison.Ordinal);
-
-    private static string ResolveOutputRoot(PackSharedKernelOptions options) =>
-        Path.IsPathRooted(options.OutputRoot)
-            ? options.OutputRoot
-            : Path.Combine(options.RepoRoot, options.OutputRoot);
-
-    private static string[] CreatePackArguments(string project, PackSharedKernelOptions options, string packageDirectory)
-    {
-        var arguments = new List<string>
-        {
-            "pack",
-            project,
-            "-c",
-            "Release",
-            "-p:ComputedSemVer=" + options.Version,
-            "-o",
-            packageDirectory,
-        };
-
-        AddOptionalProperty(arguments, "ComputedAssemblyVersion", options.AssemblyVersion);
-        AddOptionalProperty(arguments, "ComputedFileVersion", options.FileVersion);
-        AddOptionalProperty(arguments, "ComputedInformationalVersion", options.InformationalVersion);
-        AddOptionalProperty(arguments, "EnablePackageValidation", Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation));
-        AddOptionalProperty(arguments, "PackageValidationBaselineVersion", Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion));
-        return [.. arguments];
-    }
-
-    private static void AddOptionalProperty(List<string> arguments, string propertyName, string? value)
-    {
-        if (!string.IsNullOrWhiteSpace(value))
-        {
-            arguments.Add("-p:" + propertyName + "=" + value);
         }
     }
 

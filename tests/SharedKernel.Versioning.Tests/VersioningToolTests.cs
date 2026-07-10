@@ -217,7 +217,7 @@ public static class VersioningToolTests
         const string messages = "feat(api)!: remove contract\0fix: patch\0docs: update\n\nBREAKING CHANGE: docs contract\0";
 
         // Act
-        var hasMarker = BreakingChangeMarkerCommand.HasMarker(messages);
+        var hasMarker = BreakingChangeMarker.HasMarker(messages);
 
         // Assert
         hasMarker.ShouldBeTrue();
@@ -230,7 +230,7 @@ public static class VersioningToolTests
         const string messages = "Merge pull request #1 from branch\0feat(api)!: remove contract\0";
 
         // Act
-        var hasMarker = BreakingChangeMarkerCommand.HasMarker(messages);
+        var hasMarker = BreakingChangeMarker.HasMarker(messages);
 
         // Assert
         hasMarker.ShouldBeTrue();
@@ -243,7 +243,7 @@ public static class VersioningToolTests
         const string messages = "Merge pull request #1 from branch\0not a conventional commit\0";
 
         // Act
-        var hasMarker = BreakingChangeMarkerCommand.HasMarker(messages);
+        var hasMarker = BreakingChangeMarker.HasMarker(messages);
 
         // Assert
         hasMarker.ShouldBeFalse();
@@ -256,7 +256,7 @@ public static class VersioningToolTests
         const string messages = "Merge pull request #1 from branch\n\nBREAKING-CHANGE: remove route\0";
 
         // Act
-        var hasMarker = BreakingChangeMarkerCommand.HasMarker(messages);
+        var hasMarker = BreakingChangeMarker.HasMarker(messages);
 
         // Assert
         hasMarker.ShouldBeTrue();
@@ -274,7 +274,7 @@ public static class VersioningToolTests
     public static void Does_not_treat_stable_breaking_marker_as_report_only()
     {
         // Arrange
-        var options = new ApiCompatibilityOptions(
+        var options = new ApiCompatibilityReportOptions(
             Version: "1.2.3",
             OutputRoot: "artifacts",
             ReleasePhase: "stable",
@@ -283,7 +283,7 @@ public static class VersioningToolTests
             BreakingMarker: true);
 
         // Act
-        var reportOnly = ApiCompatibilityCommand.ShouldTreatFailureAsReportOnly(options);
+        var reportOnly = ApiCompatibilityReport.ShouldTreatFailureAsReportOnly(options);
 
         // Assert
         reportOnly.ShouldBeFalse();
@@ -293,7 +293,7 @@ public static class VersioningToolTests
     public static void Treats_beta_breaking_marker_as_report_only()
     {
         // Arrange
-        var options = new ApiCompatibilityOptions(
+        var options = new ApiCompatibilityReportOptions(
             Version: "1.2.3-beta.1",
             OutputRoot: "artifacts",
             ReleasePhase: "beta",
@@ -302,7 +302,7 @@ public static class VersioningToolTests
             BreakingMarker: true);
 
         // Act
-        var reportOnly = ApiCompatibilityCommand.ShouldTreatFailureAsReportOnly(options);
+        var reportOnly = ApiCompatibilityReport.ShouldTreatFailureAsReportOnly(options);
 
         // Assert
         reportOnly.ShouldBeTrue();
@@ -351,13 +351,11 @@ public static class VersioningToolTests
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
 
-        using var output = new StringWriter();
-
         // Act
-        await PublicApiBaselineCommand.Run(temporaryDirectory.Root, output);
+        var checkedProjects = PublicApiBaselineChecker.EnsureBaselinesPresent(temporaryDirectory.Root);
 
         // Assert
-        output.ToString().ShouldContain("Public API baselines", StringComparison.Ordinal);
+        checkedProjects.ShouldBe(1);
     }
 
     [Fact]
@@ -390,29 +388,29 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Rejects_missing_sharedkernel_directory_for_public_api_baselines()
+    public static void Rejects_missing_sharedkernel_directory_for_public_api_baselines()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         // Act
-        Func<Task> action = () => PublicApiBaselineCommand.Run(temporaryDirectory.Root, TextWriter.Null);
+        Action action = () => PublicApiBaselineChecker.EnsureBaselinesPresent(temporaryDirectory.Root);
 
         // Assert
-        var exception = await action.ShouldThrow<ArgumentException>();
+        var exception = action.ShouldThrow<ArgumentException>();
         exception.Message.ShouldContain("SharedKernel directory does not exist", StringComparison.Ordinal);
     }
 
     [Fact]
-    public static async Task Rejects_sharedkernel_directory_without_projects_for_public_api_baselines()
+    public static void Rejects_sharedkernel_directory_without_projects_for_public_api_baselines()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         Directory.CreateDirectory(Path.Combine(temporaryDirectory.Root, "src", "SharedKernel"));
         // Act
-        Func<Task> action = () => PublicApiBaselineCommand.Run(temporaryDirectory.Root, TextWriter.Null);
+        Action action = () => PublicApiBaselineChecker.EnsureBaselinesPresent(temporaryDirectory.Root);
 
         // Assert
-        var exception = await action.ShouldThrow<ArgumentException>();
+        var exception = action.ShouldThrow<ArgumentException>();
         exception.Message.ShouldContain("No SharedKernel projects found", StringComparison.Ordinal);
     }
 
@@ -881,7 +879,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Runs_prepare_release_command_and_writes_artifacts()
+    public static async Task Writes_release_preparation_artifacts()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
@@ -922,33 +920,20 @@ public static class VersioningToolTests
             "package"u8.ToArray(),
             TestContext.Current.CancellationToken);
 
-        using var input = new StringReader("- feat: add release prep (abc123)" + Environment.NewLine + "- Merge pull request #1 from branch");
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-        string[] args =
-        [
-            "prepare-release",
-            "--version",
+        var options = new ReleasePreparationOptions(
             "1.2.3",
-            "--package-dir",
             temporaryDirectory.PackageDirectory,
-            "--output-dir",
             temporaryDirectory.OutputDirectory,
-            "--repo-root",
             temporaryDirectory.Root,
-            "--source-tag",
             "v1.2.2",
-            "--release-impact",
             "minor",
-            "--sha",
-            "abc123",
-        ];
+            "abc123");
+        var changes = "- feat: add release prep (abc123)" + Environment.NewLine + "- Merge pull request #1 from branch";
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(args, input, output, error);
+        await ReleasePreparationArtifacts.Write(options, changes);
 
         // Assert
-        exitCode.ShouldBe(0);
         var releaseNotes = await File.ReadAllTextAsync(
             Path.Combine(temporaryDirectory.OutputDirectory, "release-notes.md"),
             TestContext.Current.CancellationToken);
@@ -1018,7 +1003,7 @@ public static class VersioningToolTests
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         using var sourceDateEpochScope = new EnvironmentVariableScope("SOURCE_DATE_EPOCH", "946684800");
-        var options = new PrepareReleaseOptions(
+        var options = new ReleasePreparationOptions(
             "1.2.3",
             temporaryDirectory.PackageDirectory,
             temporaryDirectory.OutputDirectory,
@@ -1104,7 +1089,7 @@ public static class VersioningToolTests
             </Project>
             """,
             TestContext.Current.CancellationToken);
-        var options = new PrepareReleaseOptions(
+        var options = new ReleasePreparationOptions(
             "1.2.3",
             temporaryDirectory.PackageDirectory,
             temporaryDirectory.OutputDirectory,
@@ -1694,6 +1679,62 @@ public static class VersioningToolTests
         exitCode.ShouldBe(2);
         error.ToString().ShouldContain("Package Example.Package", StringComparison.Ordinal);
         error.ToString().ShouldContain("has no resolved version.", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Runs_prepare_release_command_and_writes_artifacts()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "Sample");
+        Directory.CreateDirectory(projectDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "packages.lock.json"),
+            """
+            {
+              "version": 2,
+              "dependencies": {
+                "net10.0": {
+                  "Example.Package": {
+                    "type": "Direct",
+                    "requested": "[1.2.3, )",
+                    "resolved": "1.2.3"
+                  }
+                }
+              }
+            }
+            """,
+            TestContext.Current.CancellationToken);
+
+        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
+        await File.WriteAllBytesAsync(
+            packagePath,
+            "package"u8.ToArray(),
+            TestContext.Current.CancellationToken);
+
+        using var input = new StringReader("- feat: add release prep (abc123)");
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+        string[] args =
+        [
+            "prepare-release",
+            "--version",
+            "1.2.3",
+            "--package-dir",
+            temporaryDirectory.PackageDirectory,
+            "--output-dir",
+            temporaryDirectory.OutputDirectory,
+            "--repo-root",
+            temporaryDirectory.Root,
+        ];
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(args, input, output, error);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        output.ToString().ShouldContain("Release prep artifacts", StringComparison.Ordinal);
+        File.Exists(Path.Combine(temporaryDirectory.OutputDirectory, "release-notes.md")).ShouldBeTrue();
     }
 
     [Fact]
