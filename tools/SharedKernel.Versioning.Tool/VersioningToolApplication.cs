@@ -74,7 +74,17 @@ internal static class VersioningToolApplication
                 return 0;
             case ["prepare-release", .. var releaseArgs]:
                 var releaseOptions = PrepareReleaseOptions.Parse(releaseArgs);
-                await ReleaseArtifactWriter.Write(releaseOptions, input).ConfigureAwait(false);
+                var changes = await input.ReadToEndAsync().ConfigureAwait(false);
+                await ReleasePreparationArtifacts.Write(
+                    new ReleasePreparationOptions(
+                        releaseOptions.Version,
+                        releaseOptions.PackageDirectory,
+                        releaseOptions.OutputDirectory,
+                        releaseOptions.RepositoryRoot,
+                        releaseOptions.SourceTag,
+                        releaseOptions.ReleaseImpact,
+                        releaseOptions.Sha),
+                    changes).ConfigureAwait(false);
                 await output.WriteLineAsync($"Release prep artifacts: {releaseOptions.OutputDirectory}").ConfigureAwait(false);
                 return 0;
             case ["check-public-api-baselines", .. var baselineArgs]:

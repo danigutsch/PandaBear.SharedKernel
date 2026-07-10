@@ -151,6 +151,12 @@
       "sharedkernel.testing.codefixes": {
         "type": "Project"
       },
+      "sharedkernel.testing.roslyn": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.CodeAnalysis.CSharp": "[5.3.0, )"
+        }
+      },
       "Microsoft.CodeAnalysis.Analyzers": {
         "type": "CentralTransitive",
         "requested": "[5.3.0, )",

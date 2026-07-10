@@ -1,14 +1,27 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SharedKernel.Versioning.Tool;
+namespace SharedKernel.Versioning;
 
-internal static class ReleaseArtifactWriter
+/// <summary>
+/// Writes release-preparation notes, changelog, and package manifest artifacts.
+/// </summary>
+public static class ReleasePreparationArtifacts
 {
     private const string LicenseEvidenceNote = "Generated from resolved packages.lock.json files; license fields use NOASSERTION until reviewed against NuGet and dependency-review metadata.";
 
-    public static async Task Write(PrepareReleaseOptions options, TextReader input)
+    /// <summary>
+    /// Writes release-preparation artifacts to the configured output directory.
+    /// </summary>
+    /// <param name="options">Release-preparation options.</param>
+    /// <param name="changes">Raw release change lines.</param>
+    /// <returns>A task that completes after artifacts are written.</returns>
+    /// <exception cref="ArgumentException">Thrown when package inputs are missing or invalid.</exception>
+    public static async Task Write(ReleasePreparationOptions options, string changes)
     {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(changes);
+
         if (!Directory.Exists(options.PackageDirectory))
         {
             throw new ArgumentException($"Package directory does not exist: {options.PackageDirectory}");
@@ -16,8 +29,8 @@ internal static class ReleaseArtifactWriter
 
         Directory.CreateDirectory(options.OutputDirectory);
 
-        var changes = FilterConventionalChanges(await input.ReadToEndAsync().ConfigureAwait(false));
-        var releaseNotes = CreateReleaseNotes(options, changes);
+        var filteredChanges = FilterConventionalChanges(changes);
+        var releaseNotes = CreateReleaseNotes(options, filteredChanges);
         var changelog = "# Changelog" + Environment.NewLine + Environment.NewLine + releaseNotes;
         var inventory = PackageLockInventory.Read(options.RepositoryRoot);
         var manifest = CreateManifest(options, inventory);
@@ -48,7 +61,7 @@ internal static class ReleaseArtifactWriter
             Encoding.UTF8).ConfigureAwait(false);
     }
 
-    private static string CreateReleaseNotes(PrepareReleaseOptions options, string changes)
+    private static string CreateReleaseNotes(ReleasePreparationOptions options, string changes)
     {
         var builder = new StringBuilder();
         builder.Append("# Release ").AppendLine(options.Version);
@@ -76,7 +89,7 @@ internal static class ReleaseArtifactWriter
         return builder.ToString();
     }
 
-    private static string CreateManifest(PrepareReleaseOptions options, ResolvedNuGetPackage[] inventory)
+    private static string CreateManifest(ReleasePreparationOptions options, ResolvedNuGetPackage[] inventory)
     {
         var packages = Directory.GetFiles(options.PackageDirectory, "*.nupkg")
             .Order(StringComparer.Ordinal)

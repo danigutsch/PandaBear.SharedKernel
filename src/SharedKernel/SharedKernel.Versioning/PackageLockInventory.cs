@@ -2,14 +2,24 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
-namespace SharedKernel.Versioning.Tool;
+namespace SharedKernel.Versioning;
 
-internal static class PackageLockInventory
+/// <summary>
+/// Reads lock-file package inventories and writes release attribution artifacts.
+/// </summary>
+public static class PackageLockInventory
 {
     private const string SourceDateEpochVariableName = "SOURCE_DATE_EPOCH";
 
+    /// <summary>
+    /// Reads resolved packages from maintained source-project lock files under a repository root.
+    /// </summary>
+    /// <param name="repositoryRoot">The repository root.</param>
+    /// <returns>The resolved packages.</returns>
     public static ResolvedNuGetPackage[] Read(string repositoryRoot)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(repositoryRoot);
+
         var packageLockFiles = GetPackageLockFiles(repositoryRoot);
         var packages = new Dictionary<string, SortedSet<string>>(StringComparer.OrdinalIgnoreCase);
         foreach (var lockFile in packageLockFiles)
@@ -20,8 +30,15 @@ internal static class PackageLockInventory
         return ToResolvedPackages(packages);
     }
 
+    /// <summary>
+    /// Writes third-party attribution JSON with review-required license placeholders.
+    /// </summary>
+    /// <param name="packages">The resolved packages.</param>
+    /// <returns>The attribution JSON.</returns>
     public static string WriteAttributionJson(IReadOnlyCollection<ResolvedNuGetPackage> packages)
     {
+        ArgumentNullException.ThrowIfNull(packages);
+
         var builder = new StringBuilder();
         builder.AppendLine("{");
         builder.AppendLine("  \"source\": \"packages.lock.json\",");
@@ -45,8 +62,15 @@ internal static class PackageLockInventory
         return builder.ToString();
     }
 
+    /// <summary>
+    /// Writes third-party notices markdown with review-required license placeholders.
+    /// </summary>
+    /// <param name="packages">The resolved packages.</param>
+    /// <returns>The notices markdown.</returns>
     public static string WriteNoticesMarkdown(IReadOnlyCollection<ResolvedNuGetPackage> packages)
     {
+        ArgumentNullException.ThrowIfNull(packages);
+
         var builder = new StringBuilder();
         builder.AppendLine("# Third-party notices");
         builder.AppendLine();
@@ -62,8 +86,17 @@ internal static class PackageLockInventory
         return builder.ToString();
     }
 
-    public static string WriteSpdxJson(PrepareReleaseOptions options, IReadOnlyCollection<ResolvedNuGetPackage> packages)
+    /// <summary>
+    /// Writes an SPDX JSON document for resolved packages.
+    /// </summary>
+    /// <param name="options">The release-preparation options.</param>
+    /// <param name="packages">The resolved packages.</param>
+    /// <returns>The SPDX JSON document.</returns>
+    public static string WriteSpdxJson(ReleasePreparationOptions options, IReadOnlyCollection<ResolvedNuGetPackage> packages)
     {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(packages);
+
         var created = GetCreatedTimestamp().ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture);
         var documentNamespace = ReadRepositoryUrl(options.RepositoryRoot).TrimEnd('/') + "/sbom/" + options.Version;
         var builder = new StringBuilder();
