@@ -236,15 +236,14 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         CancellationToken ct)
     {
         var symbol = semanticModel.GetSymbolInfo(simpleName, ct).Symbol;
-        if (IsNameofReference(simpleName))
-        {
-            return SymbolEqualityComparer.Default.Equals(symbol, methodSymbol)
-                || (symbol is null && !HasOtherSymbolNamed(semanticModel, simpleName, methodSymbol, ct));
-        }
+        var isNameofReference = IsNameofReference(simpleName);
+        var matchesMethod = SymbolEqualityComparer.Default.Equals(symbol, methodSymbol);
 
-        return !SymbolEqualityComparer.Default.Equals(symbol, methodSymbol)
-            ? IsInvocationName(simpleName)
-            : !IsRewriteableHelperInvocation(simpleName, methodSymbol, semanticModel, ct);
+        return isNameofReference
+            ? matchesMethod
+                || (symbol is null && !HasOtherSymbolNamed(semanticModel, simpleName, methodSymbol, ct))
+            : (!matchesMethod && IsInvocationName(simpleName))
+                || (matchesMethod && !IsRewriteableHelperInvocation(simpleName, methodSymbol, semanticModel, ct));
     }
 
     private static bool HasOtherSymbolNamed(
