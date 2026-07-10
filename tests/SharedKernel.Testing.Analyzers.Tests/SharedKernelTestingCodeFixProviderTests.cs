@@ -374,6 +374,46 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     }
 
     [Fact]
+    public async Task Helper_method_fix_preserves_verbatim_identifier_invocation()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_uses_keyword_name()
+                {
+                    var id = @switch();
+                }
+
+                private static int @switch()
+                {
+                    return 42;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            "private static int @switch()");
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var testDocumentText = await workspace.GetDocumentText();
+        var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
+
+        // Assert
+        testDocumentText.ShouldContain("var id = TourLoaderTestsHelpers.@switch();", StringComparison.Ordinal);
+        testDocumentText.ShouldNotContain("private static int @switch()");
+        helperDocumentText.ShouldContain("internal static int @switch()", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Helper_method_fix_preserves_block_scoped_namespace()
     {
         // Arrange

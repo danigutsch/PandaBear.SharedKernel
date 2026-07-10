@@ -322,7 +322,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
                     MemberAccessExpression(
                         SyntaxKind.SimpleMemberAccessExpression,
                         IdentifierName(helperClassName),
-                        IdentifierName(methodDeclaration.Identifier.ValueText))).WithTriviaFrom(invocation));
+                        IdentifierName(methodDeclaration.Identifier.WithoutTrivia()))).WithTriviaFrom(invocation));
         var updatedRoot = annotatedRoot.ReplaceNodes(invocationReplacements.Keys, (original, _) => invocationReplacements[original]);
         var updatedMethod = updatedRoot.GetAnnotatedNodes(methodAnnotation).OfType<MethodDeclarationSyntax>().SingleOrDefault();
         if (updatedMethod is null)
