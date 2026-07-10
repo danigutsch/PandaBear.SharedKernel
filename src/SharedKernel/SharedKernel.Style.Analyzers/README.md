@@ -25,20 +25,19 @@ the default .NET analyzer set.
 Use `.editorconfig` to tune analyzer behavior:
 
 ```ini
-dotnet_diagnostic.SKSTYLE001.severity = suggestion
-dotnet_diagnostic.SKSTYLE002.severity = suggestion
-dotnet_diagnostic.SKSTYLE003.severity = suggestion
-dotnet_diagnostic.SKSTYLE004.severity = suggestion
-dotnet_diagnostic.SKSTYLE005.severity = suggestion
-dotnet_diagnostic.SKSTYLE006.severity = suggestion
-dotnet_diagnostic.SKSTYLE007.severity = suggestion
-dotnet_diagnostic.SKSTYLE008.severity = suggestion
+dotnet_diagnostic.SKSTYLE001.severity = warning
+dotnet_diagnostic.SKSTYLE002.severity = warning
+dotnet_diagnostic.SKSTYLE003.severity = warning
+dotnet_diagnostic.SKSTYLE004.severity = warning
+dotnet_diagnostic.SKSTYLE005.severity = warning
+dotnet_diagnostic.SKSTYLE006.severity = warning
+dotnet_diagnostic.SKSTYLE007.severity = warning
+dotnet_diagnostic.SKSTYLE008.severity = warning
 sharedkernel_style_allow_async_suffix_overrides = true
 sharedkernel_style_allow_async_suffix_interface_implementations = true
 ```
 
-The repository currently stages `SKSTYLE002` and `SKSTYLE003` as suggestions for rollout.
-They can be raised to warning or error after the existing codebase is cleaned up.
+Repository-owned analyzers should stay at `warning` severity when enabled.
 
 `SKSTYLE004` follows the same staged rollout. The first pass excludes generated files,
 files containing only partial top-level types, and a short list of production files that still carry

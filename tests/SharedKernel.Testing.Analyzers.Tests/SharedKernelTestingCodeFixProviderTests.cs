@@ -510,6 +510,47 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         codeActions.ShouldBeEmpty();
     }
 
+    [Theory]
+    [InlineData("var reference = (System.Func<int>)CreateTourId;", "private static int CreateTourId()")]
+    [InlineData("var name = nameof(CreateTourId);", "private static int CreateTourId()")]
+    [InlineData("var id = TourLoaderTests.CreateTourId();", "private static int CreateTourId()")]
+    [InlineData("var id = CreateTourId<int>();", "private static T CreateTourId<T>()")]
+    public async Task Helper_method_fix_is_not_offered_for_non_rewriteable_helper_reference(
+        string helperUsage,
+        string helperDeclaration)
+    {
+        // Arrange
+        var source = $$"""
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                    {{helperUsage}}
+                }
+
+                {{helperDeclaration}}
+                {
+                    return default!;
+                }
+            }
+            """;
+
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(
+            XunitHelperMethodDiagnosticId,
+            helperDeclaration);
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
     [Fact]
     public async Task Trait_constant_fix_replaces_literal_with_configured_constant()
     {

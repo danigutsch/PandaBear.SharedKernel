@@ -10,6 +10,8 @@
         <PackageTags>style;code-fixes;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <IncludeBuildOutput>false</IncludeBuildOutput>
+        <StyleAnalyzerPackageFile Condition="'$(REMOTE_CONTAINERS)' != 'true'">..\SharedKernel.Style.Analyzers\bin\$(Configuration)\netstandard2.0\SharedKernel.Style.Analyzers.dll</StyleAnalyzerPackageFile>
+        <StyleAnalyzerPackageFile Condition="'$(REMOTE_CONTAINERS)' == 'true'">$(MSBuildThisFileDirectory)..\..\..\.build\bin\SharedKernel.Style.Analyzers\$(Configuration)\netstandard2.0\SharedKernel.Style.Analyzers.dll</StyleAnalyzerPackageFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -27,7 +29,7 @@
         <AdditionalFiles Include="..\SharedKernel.Style.Analyzers\AnalyzerReleases.Unshipped.md" Link="AnalyzerReleases.Unshipped.md" />
         <None Include="README.md" Pack="true" PackagePath="\" />
         <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
-        <None Include="..\SharedKernel.Style.Analyzers\bin\$(Configuration)\netstandard2.0\SharedKernel.Style.Analyzers.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Link="SharedKernel.Style.Analyzers.dll" Visible="false" />
+        <None Include="$(StyleAnalyzerPackageFile)" Pack="true" PackagePath="analyzers/dotnet/cs" Link="SharedKernel.Style.Analyzers.dll" Visible="false" />
         <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
 

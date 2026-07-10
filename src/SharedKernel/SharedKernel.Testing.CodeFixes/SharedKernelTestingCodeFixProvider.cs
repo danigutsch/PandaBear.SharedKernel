@@ -134,7 +134,8 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         if (semanticModel is null
             || semanticModel.GetDeclaredSymbol(testClass, context.CancellationToken) is not INamedTypeSymbol testClassSymbol
             || semanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
-            || UsesTestClassMember(semanticModel, methodDeclaration, testClassSymbol, methodSymbol, context.CancellationToken))
+            || UsesTestClassMember(semanticModel, methodDeclaration, testClassSymbol, methodSymbol, context.CancellationToken)
+            || HasNonRewriteableHelperReference(semanticModel, methodDeclaration, testClass, methodSymbol, context.CancellationToken))
         {
             return;
         }
@@ -201,6 +202,67 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         }
 
         return false;
+    }
+
+    private static bool HasNonRewriteableHelperReference(
+        SemanticModel semanticModel,
+        MethodDeclarationSyntax methodDeclaration,
+        TypeDeclarationSyntax testClass,
+        IMethodSymbol methodSymbol,
+        CancellationToken ct)
+    {
+        foreach (var simpleName in testClass.DescendantNodes().OfType<SimpleNameSyntax>())
+        {
+            ct.ThrowIfCancellationRequested();
+
+            if (methodDeclaration.Span.Contains(simpleName.SpanStart))
+            {
+                continue;
+            }
+
+            if (IsNameofReference(simpleName, methodSymbol))
+            {
+                return true;
+            }
+
+            if (!string.Equals(simpleName.Identifier.ValueText, methodSymbol.Name, StringComparison.Ordinal)
+                || !SymbolEqualityComparer.Default.Equals(semanticModel.GetSymbolInfo(simpleName, ct).Symbol, methodSymbol)
+                || IsRewriteableHelperInvocation(simpleName, methodSymbol, semanticModel, ct))
+            {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsNameofReference(SimpleNameSyntax simpleName, IMethodSymbol methodSymbol)
+    {
+        return string.Equals(simpleName.Identifier.ValueText, methodSymbol.Name, StringComparison.Ordinal)
+            && simpleName.Parent is ArgumentSyntax
+            {
+                Parent: ArgumentListSyntax
+                {
+                    Parent: InvocationExpressionSyntax
+                    {
+                        Expression: IdentifierNameSyntax { Identifier.ValueText: "nameof" }
+                    }
+                }
+            };
+    }
+
+    private static bool IsRewriteableHelperInvocation(
+        SimpleNameSyntax simpleName,
+        IMethodSymbol methodSymbol,
+        SemanticModel semanticModel,
+        CancellationToken ct)
+    {
+        return simpleName is IdentifierNameSyntax identifierName
+            && identifierName.Parent is InvocationExpressionSyntax { Expression: IdentifierNameSyntax invocationName }
+            && invocationName == identifierName
+            && SymbolEqualityComparer.Default.Equals(semanticModel.GetSymbolInfo(invocationName, ct).Symbol, methodSymbol);
     }
 
     private static Task<Solution> MoveStaticTestHelperToDocument(
