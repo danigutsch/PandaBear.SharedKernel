@@ -3,6 +3,16 @@ SharedKernel.Domain.GenerateModelSupportAttribute
 SharedKernel.Domain.GenerateModelSupportAttribute.GenerateModelSupportAttribute() -> void
 SharedKernel.Domain.GenerateModelSupportAttribute.Identity.get -> bool
 SharedKernel.Domain.GenerateModelSupportAttribute.Identity.set -> void
+SharedKernel.Domain.GenerateModelSupportDefaultsAttribute
+SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.GenerateModelSupportDefaultsAttribute() -> void
+SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.Identity.get -> bool
+SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.Identity.set -> void
+SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectEfCore.get -> bool
+SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectEfCore.set -> void
+SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectJson.get -> bool
+SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectJson.set -> void
+SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectParsing.get -> bool
+SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectParsing.set -> void
 SharedKernel.Domain.GenerateValueObjectAttribute
 SharedKernel.Domain.GenerateValueObjectAttribute.EfCore.get -> bool
 SharedKernel.Domain.GenerateValueObjectAttribute.EfCore.set -> void

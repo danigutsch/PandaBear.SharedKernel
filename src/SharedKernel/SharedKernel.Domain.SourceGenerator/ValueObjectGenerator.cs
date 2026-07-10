@@ -13,8 +13,10 @@ namespace SharedKernel.Domain.SourceGenerator;
 public sealed class ValueObjectGenerator : IIncrementalGenerator
 {
     private const string AttributeName = "SharedKernel.Domain.GenerateValueObjectAttribute";
+    private const string DefaultsAttributeName = "SharedKernel.Domain.GenerateModelSupportDefaultsAttribute";
     private const string JsonConverterMetadataName = "System.Text.Json.Serialization.JsonConverter`1";
     private const string EfCoreValueConverterMetadataName = "Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter`2";
+    private const string EfCorePropertyBuilderMetadataName = "Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder`1";
     private const string UnderlyingTypeOptionName = "UnderlyingType";
     private const string ParsingOptionName = "Parsing";
     private const string JsonOptionName = "Json";
@@ -230,7 +232,8 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             .Where(static attribute => string.Equals(attribute.AttributeClass?.ToDisplayString(), AttributeName, StringComparison.Ordinal))
             .ToArray();
         var attribute = attributes[0];
-        if (attributes.Skip(1).Any(candidate => !HasSameAttributeConfiguration(attribute, candidate)))
+        var defaults = GetDefaults(context.SemanticModel.Compilation);
+        if (attributes.Skip(1).Any(candidate => !HasSameAttributeConfiguration(attribute, candidate, defaults)))
         {
             return DiagnosticOnly(Diagnostic.Create(ConflictingValueObjectConfiguration, location, type.Name));
         }
@@ -262,19 +265,21 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
                 underlyingType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
         }
 
-        var json = GetBooleanOption(attribute, JsonOptionName);
+        var json = GetEffectiveBooleanOption(attribute, JsonOptionName, defaults.ValueObjectJson);
         if (json && context.SemanticModel.Compilation.GetTypeByMetadataName(JsonConverterMetadataName) is null)
         {
             return DiagnosticOnly(Diagnostic.Create(MissingJsonReference, location, type.Name));
         }
 
-        var efCore = GetBooleanOption(attribute, EfCoreOptionName);
-        if (efCore && context.SemanticModel.Compilation.GetTypeByMetadataName(EfCoreValueConverterMetadataName) is null)
+        var efCore = GetEffectiveBooleanOption(attribute, EfCoreOptionName, defaults.ValueObjectEfCore);
+        if (efCore &&
+            (context.SemanticModel.Compilation.GetTypeByMetadataName(EfCoreValueConverterMetadataName) is null ||
+            context.SemanticModel.Compilation.GetTypeByMetadataName(EfCorePropertyBuilderMetadataName) is null))
         {
             return DiagnosticOnly(Diagnostic.Create(MissingEfCoreReference, location, type.Name));
         }
 
-        var parsing = GetBooleanOption(attribute, ParsingOptionName) || template == ValueObjectTemplate.ApiVersion;
+        var parsing = GetEffectiveBooleanOption(attribute, ParsingOptionName, defaults.ValueObjectParsing) || template == ValueObjectTemplate.ApiVersion;
         if (HasReservedGeneratedMember(type, parsing, json, efCore, template, out var reservedMemberName))
         {
             return DiagnosticOnly(Diagnostic.Create(ReservedMemberName, location, type.Name, reservedMemberName));
@@ -295,6 +300,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             CoreHintName = GetHintName(type, "ValueObject"),
             JsonHintName = GetHintName(type, "Json"),
             EfCoreHintName = GetHintName(type, "EfCore"),
+            EfCoreExtensionsTypeName = $"{type.Name}EfCoreConfigurationExtensions",
             Location = location,
         };
     }
@@ -309,12 +315,15 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             left.Template == right.Template;
     }
 
-    private static bool HasSameAttributeConfiguration(AttributeData left, AttributeData right)
+    private static bool HasSameAttributeConfiguration(AttributeData left, AttributeData right, ModelSupportDefaults defaults)
     {
         return SymbolEqualityComparer.Default.Equals(GetUnderlyingType(left), GetUnderlyingType(right)) &&
-            GetBooleanOption(left, ParsingOptionName) == GetBooleanOption(right, ParsingOptionName) &&
-            GetBooleanOption(left, JsonOptionName) == GetBooleanOption(right, JsonOptionName) &&
-            GetBooleanOption(left, EfCoreOptionName) == GetBooleanOption(right, EfCoreOptionName) &&
+            GetEffectiveBooleanOption(left, ParsingOptionName, defaults.ValueObjectParsing) ==
+                GetEffectiveBooleanOption(right, ParsingOptionName, defaults.ValueObjectParsing) &&
+            GetEffectiveBooleanOption(left, JsonOptionName, defaults.ValueObjectJson) ==
+                GetEffectiveBooleanOption(right, JsonOptionName, defaults.ValueObjectJson) &&
+            GetEffectiveBooleanOption(left, EfCoreOptionName, defaults.ValueObjectEfCore) ==
+                GetEffectiveBooleanOption(right, EfCoreOptionName, defaults.ValueObjectEfCore) &&
             GetTemplate(left) == GetTemplate(right);
     }
 
@@ -338,13 +347,37 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             .FirstOrDefault();
     }
 
-    private static bool GetBooleanOption(AttributeData attribute, string optionName)
+    private static bool GetEffectiveBooleanOption(AttributeData attribute, string optionName, bool defaultValue)
+    {
+        return GetBooleanOption(attribute, optionName) ?? defaultValue;
+    }
+
+    private static bool? GetBooleanOption(AttributeData attribute, string optionName)
     {
         return attribute.NamedArguments
             .Where(argument => string.Equals(argument.Key, optionName, StringComparison.Ordinal))
             .Select(static argument => argument.Value.Value)
             .OfType<bool>()
+            .Cast<bool?>()
             .FirstOrDefault();
+    }
+
+    private static ModelSupportDefaults GetDefaults(Compilation compilation)
+    {
+        foreach (var attribute in compilation.Assembly.GetAttributes())
+        {
+            if (!string.Equals(attribute.AttributeClass?.ToDisplayString(), DefaultsAttributeName, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            return new ModelSupportDefaults(
+                GetEffectiveBooleanOption(attribute, "ValueObjectParsing", defaultValue: false),
+                GetEffectiveBooleanOption(attribute, "ValueObjectJson", defaultValue: false),
+                GetEffectiveBooleanOption(attribute, "ValueObjectEfCore", defaultValue: false));
+        }
+
+        return default;
     }
 
     private static ValueObjectTemplate GetTemplate(AttributeData attribute)
@@ -1022,6 +1055,21 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             .AppendLine(OpenBlock8)
             .AppendLine(CloseBlock8)
             .AppendLine(CloseBlock4)
+            .AppendLine("}")
+            .AppendLine()
+            .Append(model.Accessibility).Append(" static class ").AppendLine(model.EfCoreExtensionsTypeName)
+            .AppendLine("{")
+            .AppendLine(SummaryStartLine)
+            .Append("    /// Configures an EF Core property for <see cref=\"").Append(model.TypeName).AppendLine("\" /> conversion.")
+            .AppendLine(SummaryEndLine)
+            .AppendLine("    /// <param name=\"propertyBuilder\">The EF Core property builder.</param>")
+            .AppendLine("    /// <param name=\"mappingHints\">Optional EF Core converter mapping hints.</param>")
+            .AppendLine("    /// <returns>The supplied property builder.</returns>")
+            .Append("    public static global::Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder<").Append(model.TypeName).Append("> HasValueObjectConversion(this global::Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder<").Append(model.TypeName).AppendLine("> propertyBuilder, global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ConverterMappingHints? mappingHints = null)")
+            .AppendLine(OpenBlock4)
+            .AppendLine("        global::System.ArgumentNullException.ThrowIfNull(propertyBuilder);")
+            .Append("        return propertyBuilder.HasConversion(new ").Append(model.TypeName).AppendLine(".EfCoreValueConverter(mappingHints));")
+            .AppendLine(CloseBlock4)
             .AppendLine("}");
         return builder.ToString();
     }
@@ -1101,8 +1149,22 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
         public string? EfCoreHintName { get; set; }
 
+        public string? EfCoreExtensionsTypeName { get; set; }
+
         public Diagnostic? Diagnostic { get; set; }
 
         public Location? Location { get; set; }
+    }
+
+    private readonly struct ModelSupportDefaults(
+        bool valueObjectParsing,
+        bool valueObjectJson,
+        bool valueObjectEfCore)
+    {
+        public bool ValueObjectParsing { get; } = valueObjectParsing;
+
+        public bool ValueObjectJson { get; } = valueObjectJson;
+
+        public bool ValueObjectEfCore { get; } = valueObjectEfCore;
     }
 }

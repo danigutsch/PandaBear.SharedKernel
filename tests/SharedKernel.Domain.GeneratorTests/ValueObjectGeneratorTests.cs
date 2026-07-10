@@ -125,6 +125,18 @@ public sealed class ValueObjectGeneratorTests
                 }
             }
 
+            namespace Microsoft.EntityFrameworkCore.Metadata.Builders
+            {
+                public class PropertyBuilder<TProperty>
+                {
+                    public PropertyBuilder<TProperty> HasConversion<TProvider>(
+                        global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<TProperty, TProvider> converter)
+                    {
+                        return this;
+                    }
+                }
+            }
+
             namespace Demo;
 
             [GenerateValueObject(UnderlyingType = typeof(string), EfCore = true)]
@@ -140,6 +152,89 @@ public sealed class ValueObjectGeneratorTests
         runResult.Diagnostics.ShouldBeEmpty();
         generatedSource.ShouldContain("public sealed class EfCoreValueConverter", StringComparison.Ordinal);
         generatedSource.ShouldContain("global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<TourCode, string>", StringComparison.Ordinal);
+        generatedSource.ShouldContain("static class TourCodeEfCoreConfigurationExtensions", StringComparison.Ordinal);
+        generatedSource.ShouldContain("HasValueObjectConversion(this global::Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder<TourCode> propertyBuilder", StringComparison.Ordinal);
+        generatedSource.ShouldContain("return propertyBuilder.HasConversion(new TourCode.EfCoreValueConverter(mappingHints));", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Applies_assembly_defaults_to_annotated_value_objects()
+    {
+        // Arrange
+        const string source = """
+            [assembly: GenerateModelSupportDefaults(ValueObjectParsing = true, ValueObjectJson = true, ValueObjectEfCore = true)]
+
+            namespace Microsoft.EntityFrameworkCore.Storage.ValueConversion
+            {
+                public sealed class ConverterMappingHints
+                {
+                }
+
+                public class ValueConverter<TModel, TProvider>
+                {
+                    protected ValueConverter(
+                        global::System.Linq.Expressions.Expression<global::System.Func<TModel, TProvider>> convertToProviderExpression,
+                        global::System.Linq.Expressions.Expression<global::System.Func<TProvider, TModel>> convertFromProviderExpression,
+                        ConverterMappingHints? mappingHints = null)
+                    {
+                    }
+                }
+            }
+
+            namespace Microsoft.EntityFrameworkCore.Metadata.Builders
+            {
+                public class PropertyBuilder<TProperty>
+                {
+                    public PropertyBuilder<TProperty> HasConversion<TProvider>(
+                        global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<TProperty, TProvider> converter)
+                    {
+                        return this;
+                    }
+                }
+            }
+
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string))]
+            public readonly partial record struct TourCode;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var valueObjectSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourCode.ValueObject.g.cs");
+        var jsonSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourCode.Json.g.cs");
+        var efCoreSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourCode.EfCore.g.cs");
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        valueObjectSource.ShouldContain("public static TourCode Parse(string text", StringComparison.Ordinal);
+        jsonSource.ShouldContain("public sealed class JsonConverter", StringComparison.Ordinal);
+        efCoreSource.ShouldContain("public sealed class EfCoreValueConverter", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Value_object_attribute_options_override_assembly_defaults()
+    {
+        // Arrange
+        const string source = """
+            [assembly: GenerateModelSupportDefaults(ValueObjectParsing = true, ValueObjectJson = true)]
+
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string), Parsing = false, Json = false)]
+            public readonly partial record struct TourCode;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var valueObjectSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourCode.ValueObject.g.cs");
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        runResult.Results.Single().GeneratedSources.ShouldHaveSingleItem();
+        valueObjectSource.Contains("public static TourCode Parse(string text", StringComparison.Ordinal).ShouldBe(false);
     }
 
     [Fact]
@@ -613,6 +708,18 @@ public sealed class ValueObjectGeneratorTests
                         global::System.Linq.Expressions.Expression<global::System.Func<TProvider, TModel>> convertFromProviderExpression,
                         ConverterMappingHints? mappingHints = null)
                     {
+                    }
+                }
+            }
+
+            namespace Microsoft.EntityFrameworkCore.Metadata.Builders
+            {
+                public class PropertyBuilder<TProperty>
+                {
+                    public PropertyBuilder<TProperty> HasConversion<TProvider>(
+                        global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<TProperty, TProvider> converter)
+                    {
+                        return this;
                     }
                 }
             }
