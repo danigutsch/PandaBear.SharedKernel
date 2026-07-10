@@ -227,7 +227,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
             if (!SymbolEqualityComparer.Default.Equals(semanticModel.GetSymbolInfo(simpleName, ct).Symbol, methodSymbol))
             {
-                return IsInvocationName(simpleName);
+                if (IsInvocationName(simpleName))
+                {
+                    return true;
+                }
+
+                continue;
             }
 
             if (IsRewriteableHelperInvocation(simpleName, methodSymbol, semanticModel, ct))
@@ -244,7 +249,14 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
     private static bool IsInvocationName(SimpleNameSyntax simpleName)
     {
         return simpleName.Parent is InvocationExpressionSyntax { Expression: SimpleNameSyntax invocationName }
-            && invocationName == simpleName;
+                && invocationName == simpleName
+            || simpleName.Parent is MemberAccessExpressionSyntax
+            {
+                Name: var memberName,
+                Parent: InvocationExpressionSyntax { Expression: MemberAccessExpressionSyntax memberAccessExpression }
+            }
+                && memberName == simpleName
+                && memberAccessExpression.Name == simpleName;
     }
 
     private static bool IsNameofReference(SimpleNameSyntax simpleName, IMethodSymbol methodSymbol)
