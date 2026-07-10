@@ -39,6 +39,7 @@ static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeNull
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeNull<T>(this T? actual) -> T!
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeSameAs<T>(this T? actual, T? unexpected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain(this string? actual, string! expected) -> void
+static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain(this string? actual, string! expected, System.StringComparison comparisonType) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldStartWith(this string? actual, string! expected) -> void

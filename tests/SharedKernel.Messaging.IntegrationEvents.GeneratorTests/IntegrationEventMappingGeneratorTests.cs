@@ -37,7 +37,7 @@ public sealed class IntegrationEventMappingGeneratorTests
         generatedSource.ShouldContain("outbox.Enqueue(", StringComparison.Ordinal);
         generatedSource.ShouldContain("IDomainEventIntegrationEventOutbox outbox", StringComparison.Ordinal);
         generatedSource.ShouldContain("TryAddSingleton<global::SharedKernel.DomainEvents.IDomainEventDispatcher", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("IDomainEventHandler<");
+        generatedSource.ShouldNotContain("IDomainEventHandler<", StringComparison.Ordinal);
     }
 
     [Fact]

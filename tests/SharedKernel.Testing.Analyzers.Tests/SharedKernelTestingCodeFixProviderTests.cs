@@ -41,8 +41,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
-        Assert.Contains("Creates_a_tour_when_the_request_is_valid()", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("CreatesATourWhenTheRequestIsValid()", updatedText, StringComparison.Ordinal);
+        updatedText.ShouldContain("Creates_a_tour_when_the_request_is_valid()", StringComparison.Ordinal);
+        updatedText.ShouldNotContain("CreatesATourWhenTheRequestIsValid()", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -68,8 +68,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
-        Assert.Contains("Some_title()", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("Some_Title()", updatedText, StringComparison.Ordinal);
+        updatedText.ShouldContain("Some_title()", StringComparison.Ordinal);
+        updatedText.ShouldNotContain("Some_Title()", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -173,8 +173,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
-        Assert.Contains("Uses_http2_timeout_fallback()", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("UsesHTTP2TimeoutFallback", updatedText, StringComparison.Ordinal);
+        updatedText.ShouldContain("Uses_http2_timeout_fallback()", StringComparison.Ordinal);
+        updatedText.ShouldNotContain("UsesHTTP2TimeoutFallback", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -190,7 +190,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     {
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        Assert.Contains(WarningSuppressionDiagnosticId, provider.FixableDiagnosticIds);
+        provider.FixableDiagnosticIds.ShouldContain(WarningSuppressionDiagnosticId);
     }
 
     [Fact]
@@ -222,8 +222,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.DoesNotContain("#pragma warning disable CA1822", updatedText, StringComparison.Ordinal);
-        Assert.Contains("var value = 42;", updatedText, StringComparison.Ordinal);
+        updatedText.ShouldNotContain("#pragma warning disable CA1822", StringComparison.Ordinal);
+        updatedText.ShouldContain("var value = 42;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -258,7 +258,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("[global::Xunit.Trait(\"Category\", \"Smoke\")]", updatedText, StringComparison.Ordinal);
+        updatedText.ShouldContain("[global::Xunit.Trait(\"Category\", \"Smoke\")]", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -295,7 +295,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     {
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        Assert.Contains(XunitSerialJustificationDiagnosticId, provider.FixableDiagnosticIds);
+        provider.FixableDiagnosticIds.ShouldContain(XunitSerialJustificationDiagnosticId);
     }
 
     [Fact]
@@ -363,8 +363,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         // Assert
         testDocumentText.ShouldContain("var id = TourLoaderTestsHelpers.CreateTourId();", StringComparison.Ordinal);
-        testDocumentText.ShouldNotContain("private static int CreateTourId()");
-        helperDocumentText.ShouldNotContain("\r\n");
+        testDocumentText.ShouldNotContain("private static int CreateTourId()", StringComparison.Ordinal);
+        helperDocumentText.ShouldNotContain("\r\n", StringComparison.Ordinal);
         helperDocumentText.ShouldContain("using System.Linq;", StringComparison.Ordinal);
         helperDocumentText.ShouldContain("namespace Demo;", StringComparison.Ordinal);
         helperDocumentText.ShouldContain("/// <summary>", StringComparison.Ordinal);
@@ -409,7 +409,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         // Assert
         testDocumentText.ShouldContain("var id = TourLoaderTestsHelpers.CreateTourId();", StringComparison.Ordinal);
-        testDocumentText.ShouldNotContain("static int CreateTourId()");
+        testDocumentText.ShouldNotContain("static int CreateTourId()", StringComparison.Ordinal);
         helperDocumentText.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
     }
 
@@ -449,7 +449,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         // Assert
         testDocumentText.ShouldContain("var id = TourLoaderTestsHelpers.@switch();", StringComparison.Ordinal);
-        testDocumentText.ShouldNotContain("private static int @switch()");
+        testDocumentText.ShouldNotContain("private static int @switch()", StringComparison.Ordinal);
         helperDocumentText.ShouldContain("internal static int @switch()", StringComparison.Ordinal);
     }
 
@@ -530,9 +530,9 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var normalizedHelperDocumentText = helperDocumentText.ReplaceLineEndings("\n");
 
         // Assert
-        helperDocumentText.ShouldNotContain("\r\n");
+        helperDocumentText.ShouldNotContain("\r\n", StringComparison.Ordinal);
         normalizedHelperDocumentText.ShouldContain("namespace Demo\n{", StringComparison.Ordinal);
-        normalizedHelperDocumentText.ShouldNotContain("namespace Demo;");
+        normalizedHelperDocumentText.ShouldNotContain("namespace Demo;", StringComparison.Ordinal);
         normalizedHelperDocumentText.ShouldContain("internal static class TourLoaderTestsHelpers", StringComparison.Ordinal);
         normalizedHelperDocumentText.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
     }
@@ -1087,8 +1087,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", updatedText, StringComparison.Ordinal);
-        Assert.Contains("[global::Xunit.CollectionDefinition(\"Serial database\", DisableParallelization = true)]", updatedText, StringComparison.Ordinal);
+        updatedText.ShouldContain("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
+        updatedText.ShouldContain("[global::Xunit.CollectionDefinition(\"Serial database\", DisableParallelization = true)]", StringComparison.Ordinal);
         Assert.True(
             updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) < updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal),
             "Expected serial justification to be inserted before the collection definition.");
@@ -1117,8 +1117,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", updatedText, StringComparison.Ordinal);
-        Assert.Contains("public sealed record SerialDatabaseCollection;", updatedText, StringComparison.Ordinal);
+        updatedText.ShouldContain("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
+        updatedText.ShouldContain("public sealed record SerialDatabaseCollection;", StringComparison.Ordinal);
         Assert.True(
             updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) < updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal),
             "Expected serial justification to be inserted before the collection definition.");

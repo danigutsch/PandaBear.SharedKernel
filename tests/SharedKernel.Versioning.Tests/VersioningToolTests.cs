@@ -334,7 +334,7 @@ public static class VersioningToolTests
 
         // Assert
         usesProjectName.ShouldBeTrue();
-        props.ShouldNotContain("src/SharedKernel/SharedKernel.");
+        props.ShouldNotContain("src/SharedKernel/SharedKernel.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -956,7 +956,7 @@ public static class VersioningToolTests
         releaseNotes.ShouldContain("- Previous release tag: `v1.2.2`", StringComparison.Ordinal);
         releaseNotes.ShouldContain("- Release impact: `minor`", StringComparison.Ordinal);
         releaseNotes.ShouldContain("- feat: add release prep (abc123)", StringComparison.Ordinal);
-        releaseNotes.ShouldNotContain("Merge pull request");
+        releaseNotes.ShouldNotContain("Merge pull request", StringComparison.Ordinal);
         changelog.ShouldContain("# Changelog", StringComparison.Ordinal);
         manifest.ShouldContain("\"fileName\": \"SharedKernel.Results.1.2.3.nupkg\"", StringComparison.Ordinal);
         manifest.ShouldContain("\"sizeBytes\": 7", StringComparison.Ordinal);
@@ -968,8 +968,8 @@ public static class VersioningToolTests
         manifest.ShouldContain("\"jsonPath\": \"third-party-attributions.json\"", StringComparison.Ordinal);
         manifest.ShouldContain("\"noticePath\": \"third-party-notices.md\"", StringComparison.Ordinal);
         manifest.ShouldContain("\"licenseEvidenceNote\":", StringComparison.Ordinal);
-        manifest.ShouldNotContain("sbomNote");
-        manifest.ShouldNotContain(temporaryDirectory.OutputDirectory);
+        manifest.ShouldNotContain("sbomNote", StringComparison.Ordinal);
+        manifest.ShouldNotContain(temporaryDirectory.OutputDirectory, StringComparison.Ordinal);
         attributions.ShouldContain("\"id\": \"Example.Package\"", StringComparison.Ordinal);
         attributions.ShouldContain("\"licenseExpression\": \"NOASSERTION\"", StringComparison.Ordinal);
         notices.ShouldContain("| `Example.Package` | `1.2.3` | `NOASSERTION` | yes |", StringComparison.Ordinal);

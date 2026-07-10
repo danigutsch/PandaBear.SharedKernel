@@ -234,6 +234,7 @@ public sealed class SharedKernelTestingHelperTests
         5.ShouldBeGreaterThanOrEqualTo(5);
         5.ShouldBeLessThan(6);
         5.ShouldBeLessThanOrEqualTo(5);
+        "alphabet".ShouldNotContain("GAMMA", StringComparison.OrdinalIgnoreCase);
         "alphabet".ShouldEndWith("BET", StringComparison.OrdinalIgnoreCase);
         "alphabet".ShouldMatch(new Regex("bet$", RegexOptions.None, TimeSpan.FromSeconds(1)));
         var positiveValues = new[] { 1, 2 };

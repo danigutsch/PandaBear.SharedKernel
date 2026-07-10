@@ -795,7 +795,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         updatedText.ShouldContain("public sealed class Result<T>", StringComparison.Ordinal);
         updatedText.ShouldContain("public Result<string> Load() => new Result<string>();", StringComparison.Ordinal);
-        updatedText.ShouldNotContain("ResultOfT");
+        updatedText.ShouldNotContain("ResultOfT", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -875,7 +875,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         updatedText.ShouldContain("public delegate void ResultHandler<T>(T value);", StringComparison.Ordinal);
         updatedText.ShouldContain("public ResultHandler<string> Handler", StringComparison.Ordinal);
-        updatedText.ShouldNotContain("ResultHandlerOfT");
+        updatedText.ShouldNotContain("ResultHandlerOfT", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -912,7 +912,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         updatedText.ShouldContain("public sealed record TourCreatedDomainEvent(System.Guid TourId) : SharedKernel.Domain.IDomainEvent;", StringComparison.Ordinal);
         updatedText.ShouldContain("public TourCreatedDomainEvent Create() => new(System.Guid.NewGuid());", StringComparison.Ordinal);
-        updatedText.ShouldNotContain("TourCreated ");
+        updatedText.ShouldNotContain("TourCreated ", StringComparison.Ordinal);
     }
 
     [Fact]

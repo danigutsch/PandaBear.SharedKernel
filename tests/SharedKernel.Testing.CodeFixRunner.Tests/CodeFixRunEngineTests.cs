@@ -26,7 +26,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         (fixedCount).ShouldBe(1);
         (updatedSource).ShouldContain("using SharedKernel.Testing.Assertions;", StringComparison.Ordinal);
         (updatedSource).ShouldContain("(true).ShouldBeTrue()", StringComparison.Ordinal);
-        (updatedSource).ShouldNotContain("Xunit.Assert.True");
+        (updatedSource).ShouldNotContain("Xunit.Assert.True", StringComparison.Ordinal);
         (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
     }
 
@@ -51,7 +51,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
         var helperSource = await File.ReadAllTextAsync(helperPath, TestContext.Current.CancellationToken);
         updatedSource.ShouldContain("SampleTestsHelpers.CreateTourId()", StringComparison.Ordinal);
-        updatedSource.ShouldNotContain("private static int CreateTourId()");
+        updatedSource.ShouldNotContain("private static int CreateTourId()", StringComparison.Ordinal);
         helperSource.ShouldContain("internal static class SampleTestsHelpers", StringComparison.Ordinal);
         helperSource.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
         (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());

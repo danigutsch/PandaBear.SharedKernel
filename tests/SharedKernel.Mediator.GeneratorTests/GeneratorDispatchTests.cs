@@ -3,7 +3,7 @@ using SharedKernel.DomainEvents;
 
 namespace SharedKernel.Mediator.GeneratorTests;
 
-[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
 public sealed class GeneratorDispatchTests
 {
     [Fact]
@@ -44,8 +44,8 @@ public sealed class GeneratorDispatchTests
         generatedSource.ShouldContain("global::Demo.TourCreated typedDomainEvent => new global::SharedKernel.DomainEvents.DomainEventNotification<global::Demo.TourCreated>(typedDomainEvent)", StringComparison.Ordinal);
         generatedSource.ShouldContain("AddGeneratedDomainEventNotifications", StringComparison.Ordinal);
         generatedSource.ShouldContain("TryAddSingleton<global::SharedKernel.DomainEvents.IDomainEventNotificationFactory", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("MakeGenericMethod");
-        generatedSource.ShouldNotContain("dynamic");
+        generatedSource.ShouldNotContain("MakeGenericMethod", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("dynamic", StringComparison.Ordinal);
 
         var dependencyInjectionSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
