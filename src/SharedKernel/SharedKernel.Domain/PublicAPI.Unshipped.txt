@@ -3,6 +3,18 @@ SharedKernel.Domain.GenerateModelSupportAttribute
 SharedKernel.Domain.GenerateModelSupportAttribute.GenerateModelSupportAttribute() -> void
 SharedKernel.Domain.GenerateModelSupportAttribute.Identity.get -> bool
 SharedKernel.Domain.GenerateModelSupportAttribute.Identity.set -> void
+SharedKernel.Domain.GenerateValueObjectAttribute
+SharedKernel.Domain.GenerateValueObjectAttribute.EfCore.get -> bool
+SharedKernel.Domain.GenerateValueObjectAttribute.EfCore.set -> void
+SharedKernel.Domain.GenerateValueObjectAttribute.GenerateValueObjectAttribute() -> void
+SharedKernel.Domain.GenerateValueObjectAttribute.Json.get -> bool
+SharedKernel.Domain.GenerateValueObjectAttribute.Json.set -> void
+SharedKernel.Domain.GenerateValueObjectAttribute.Parsing.get -> bool
+SharedKernel.Domain.GenerateValueObjectAttribute.Parsing.set -> void
+SharedKernel.Domain.GenerateValueObjectAttribute.Template.get -> SharedKernel.Domain.ValueObjectTemplate
+SharedKernel.Domain.GenerateValueObjectAttribute.Template.set -> void
+SharedKernel.Domain.GenerateValueObjectAttribute.UnderlyingType.get -> System.Type?
+SharedKernel.Domain.GenerateValueObjectAttribute.UnderlyingType.set -> void
 SharedKernel.Domain.IAggregateRoot
 SharedKernel.Domain.IAggregateRoot.ClearDomainEvents() -> void
 SharedKernel.Domain.IAggregateRoot.GetDomainEvents() -> System.Collections.Generic.IReadOnlyCollection<SharedKernel.Domain.IDomainEvent!>!
@@ -11,3 +23,10 @@ SharedKernel.Domain.IDomainEvent
 SharedKernel.Domain.IEntity<TId>
 SharedKernel.Domain.IIdentified<TId>
 SharedKernel.Domain.IIdentified<TId>.Id.get -> TId
+SharedKernel.Domain.ValueObjectTemplate
+SharedKernel.Domain.ValueObjectTemplate.ApiVersion = 1 -> SharedKernel.Domain.ValueObjectTemplate
+SharedKernel.Domain.ValueObjectTemplate.IsoCode = 5 -> SharedKernel.Domain.ValueObjectTemplate
+SharedKernel.Domain.ValueObjectTemplate.None = 0 -> SharedKernel.Domain.ValueObjectTemplate
+SharedKernel.Domain.ValueObjectTemplate.NonEmptyString = 2 -> SharedKernel.Domain.ValueObjectTemplate
+SharedKernel.Domain.ValueObjectTemplate.Slug = 3 -> SharedKernel.Domain.ValueObjectTemplate
+SharedKernel.Domain.ValueObjectTemplate.StronglyTypedId = 4 -> SharedKernel.Domain.ValueObjectTemplate

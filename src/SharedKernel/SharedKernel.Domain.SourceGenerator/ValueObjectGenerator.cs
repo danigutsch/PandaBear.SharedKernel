@@ -1,0 +1,886 @@
+using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SharedKernel.Domain.SourceGenerator;
+
+/// <summary>
+/// Emits scalar value-object support for types that explicitly opt in.
+/// </summary>
+[Generator]
+public sealed class ValueObjectGenerator : IIncrementalGenerator
+{
+    private const string AttributeName = "SharedKernel.Domain.GenerateValueObjectAttribute";
+    private const string JsonConverterMetadataName = "System.Text.Json.Serialization.JsonConverter`1";
+    private const string EfCoreValueConverterMetadataName = "Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter`2";
+
+    private static readonly DiagnosticDescriptor MissingUnderlyingType = new(
+        "SKMDL010",
+        "Value-object generation requires an underlying type",
+        "Value-object generation requested for '{0}', but UnderlyingType was not set",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor UnsupportedDeclaration = new(
+        "SKMDL011",
+        "Value-object generation supports readonly record structs only",
+        "Value-object generation requested for '{0}', but only readonly record structs are supported",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor MissingPartial = new(
+        "SKMDL012",
+        "Value-object generation requires a partial declaration",
+        "Value-object generation requested for '{0}', but the type is not partial",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor UnsupportedNestedType = new(
+        "SKMDL013",
+        "Value-object generation does not support nested types",
+        "Value-object generation requested for '{0}', but nested types are not supported",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor UnsupportedGenericType = new(
+        "SKMDL014",
+        "Value-object generation does not support generic types",
+        "Value-object generation requested for '{0}', but generic types are not supported",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor UnsupportedUnderlyingType = new(
+        "SKMDL015",
+        "Value-object generation requires a supported scalar type",
+        "Value-object generation requested for '{0}', but underlying type '{1}' is not supported",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor MissingJsonReference = new(
+        "SKMDL016",
+        "JSON value-object generation requires System.Text.Json",
+        "JSON value-object generation requested for '{0}', but System.Text.Json is not referenced",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor MissingEfCoreReference = new(
+        "SKMDL017",
+        "EF Core value-object generation requires Microsoft.EntityFrameworkCore",
+        "EF Core value-object generation requested for '{0}', but Microsoft.EntityFrameworkCore is not referenced",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor UnsupportedTemplate = new(
+        "SKMDL018",
+        "Value-object template does not support the selected underlying type",
+        "Value-object generation requested for '{0}', but template '{1}' does not support underlying type '{2}'",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor UnsupportedConstructor = new(
+        "SKMDL019",
+        "Value-object generation does not support explicit constructors",
+        "Value-object generation requested for '{0}', but explicit constructors can bypass generated validation",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
+    /// <inheritdoc />
+    public void Initialize(IncrementalGeneratorInitializationContext context)
+    {
+        var models = context.SyntaxProvider
+            .ForAttributeWithMetadataName(
+                AttributeName,
+                static (node, _) => node is TypeDeclarationSyntax,
+                static (attributeContext, cancellationToken) => BuildModel(attributeContext, cancellationToken))
+            .Where(static model => model.TypeName is not null || model.Diagnostic is not null)
+            .Collect()
+            .WithTrackingName("ValueObjectGenerationModels");
+
+        context.RegisterSourceOutput(
+            models,
+            static (productionContext, models) =>
+            {
+                var generatedHintNames = new HashSet<string>(StringComparer.Ordinal);
+
+                foreach (var model in models)
+                {
+                    if (model.Diagnostic is not null)
+                    {
+                        productionContext.ReportDiagnostic(model.Diagnostic);
+                        continue;
+                    }
+
+                    AddSource(productionContext, generatedHintNames, model.CoreHintName!, EmitValueObject(model));
+
+                    if (model.Json)
+                    {
+                        AddSource(productionContext, generatedHintNames, model.JsonHintName!, EmitJsonConverter(model));
+                    }
+
+                    if (model.EfCore)
+                    {
+                        AddSource(productionContext, generatedHintNames, model.EfCoreHintName!, EmitEfCoreConverter(model));
+                    }
+                }
+            });
+    }
+
+    private static ValueObjectModel BuildModel(GeneratorAttributeSyntaxContext context, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var typeDeclaration = (TypeDeclarationSyntax)context.TargetNode;
+        var type = (INamedTypeSymbol)context.TargetSymbol;
+        var location = typeDeclaration.Identifier.GetLocation();
+
+        if (!IsReadonlyRecordStruct(typeDeclaration, type))
+        {
+            return DiagnosticOnly(Diagnostic.Create(UnsupportedDeclaration, location, type.Name));
+        }
+
+        if (type.ContainingType is not null)
+        {
+            return DiagnosticOnly(Diagnostic.Create(UnsupportedNestedType, location, type.Name));
+        }
+
+        if (type.TypeParameters.Length > 0)
+        {
+            return DiagnosticOnly(Diagnostic.Create(UnsupportedGenericType, location, type.Name));
+        }
+
+        if (!typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+        {
+            return DiagnosticOnly(Diagnostic.Create(MissingPartial, location, type.Name));
+        }
+
+        if (type.InstanceConstructors.Any(static constructor => !constructor.IsImplicitlyDeclared))
+        {
+            return DiagnosticOnly(Diagnostic.Create(UnsupportedConstructor, location, type.Name));
+        }
+
+        var attribute = context.Attributes.First(static attribute =>
+            string.Equals(attribute.AttributeClass?.ToDisplayString(), AttributeName, StringComparison.Ordinal));
+        var underlyingType = GetUnderlyingType(attribute);
+        if (underlyingType is null)
+        {
+            return DiagnosticOnly(Diagnostic.Create(MissingUnderlyingType, location, type.Name));
+        }
+
+        var underlyingKind = GetUnderlyingKind(underlyingType);
+        if (underlyingKind == UnderlyingKind.Unsupported)
+        {
+            return DiagnosticOnly(Diagnostic.Create(
+                UnsupportedUnderlyingType,
+                location,
+                type.Name,
+                underlyingType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+        }
+
+        var template = GetTemplate(attribute);
+        if (!TemplateSupportsUnderlyingType(template, underlyingKind))
+        {
+            return DiagnosticOnly(Diagnostic.Create(
+                UnsupportedTemplate,
+                location,
+                type.Name,
+                template,
+                underlyingType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)));
+        }
+
+        var json = GetBooleanOption(attribute, "Json");
+        if (json && context.SemanticModel.Compilation.GetTypeByMetadataName(JsonConverterMetadataName) is null)
+        {
+            return DiagnosticOnly(Diagnostic.Create(MissingJsonReference, location, type.Name));
+        }
+
+        var efCore = GetBooleanOption(attribute, "EfCore");
+        if (efCore && context.SemanticModel.Compilation.GetTypeByMetadataName(EfCoreValueConverterMetadataName) is null)
+        {
+            return DiagnosticOnly(Diagnostic.Create(MissingEfCoreReference, location, type.Name));
+        }
+
+        var namespaceName = type.ContainingNamespace.IsGlobalNamespace ? null : type.ContainingNamespace.ToDisplayString();
+        return new ValueObjectModel(
+            namespaceName,
+            type.Name,
+            GetAccessibility(type.DeclaredAccessibility),
+            GetTypeName(underlyingKind),
+            underlyingKind,
+            GetBooleanOption(attribute, "Parsing") || template == ValueObjectTemplate.ApiVersion,
+            json,
+            efCore,
+            template,
+            GetHintName(type, "ValueObject"),
+            GetHintName(type, "Json"),
+            GetHintName(type, "EfCore"),
+            null);
+    }
+
+    private static void AddSource(
+        SourceProductionContext productionContext,
+        HashSet<string> generatedHintNames,
+        string hintName,
+        string source)
+    {
+        if (!generatedHintNames.Add(hintName))
+        {
+            return;
+        }
+
+        productionContext.AddSource(hintName, SourceText.From(source, Encoding.UTF8));
+    }
+
+    private static ValueObjectModel DiagnosticOnly(Diagnostic diagnostic)
+    {
+        return new ValueObjectModel(null, null, null, null, UnderlyingKind.Unsupported, false, false, false, default, null, null, null, diagnostic);
+    }
+
+    private static bool IsReadonlyRecordStruct(TypeDeclarationSyntax declaration, INamedTypeSymbol type)
+    {
+        return type.IsValueType &&
+            type.IsRecord &&
+            declaration.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+    }
+
+    private static ITypeSymbol? GetUnderlyingType(AttributeData attribute)
+    {
+        return attribute.NamedArguments
+            .Where(static argument => string.Equals(argument.Key, "UnderlyingType", StringComparison.Ordinal))
+            .Select(static argument => argument.Value.Value as ITypeSymbol)
+            .FirstOrDefault();
+    }
+
+    private static bool GetBooleanOption(AttributeData attribute, string optionName)
+    {
+        return attribute.NamedArguments
+            .Where(argument => string.Equals(argument.Key, optionName, StringComparison.Ordinal))
+            .Select(static argument => argument.Value.Value)
+            .OfType<bool>()
+            .FirstOrDefault();
+    }
+
+    private static ValueObjectTemplate GetTemplate(AttributeData attribute)
+    {
+        return attribute.NamedArguments
+            .Where(static argument => string.Equals(argument.Key, "Template", StringComparison.Ordinal))
+            .Select(static argument => argument.Value.Value)
+            .OfType<int>()
+            .Select(static template => (ValueObjectTemplate)template)
+            .FirstOrDefault();
+    }
+
+    private static UnderlyingKind GetUnderlyingKind(ITypeSymbol type)
+    {
+        if (type.SpecialType == SpecialType.System_String)
+        {
+            return UnderlyingKind.String;
+        }
+
+        if (type.SpecialType == SpecialType.System_Int32)
+        {
+            return UnderlyingKind.Int32;
+        }
+
+        if (type.SpecialType == SpecialType.System_Decimal)
+        {
+            return UnderlyingKind.Decimal;
+        }
+
+        var metadataName = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        if (string.Equals(metadataName, "global::System.Guid", StringComparison.Ordinal))
+        {
+            return UnderlyingKind.Guid;
+        }
+
+        return string.Equals(metadataName, "global::System.DateOnly", StringComparison.Ordinal)
+            ? UnderlyingKind.DateOnly
+            : UnderlyingKind.Unsupported;
+    }
+
+    private static bool TemplateSupportsUnderlyingType(ValueObjectTemplate template, UnderlyingKind underlyingKind)
+    {
+        return template switch
+        {
+            ValueObjectTemplate.None => true,
+            ValueObjectTemplate.ApiVersion => underlyingKind == UnderlyingKind.Int32,
+            ValueObjectTemplate.NonEmptyString => underlyingKind == UnderlyingKind.String,
+            ValueObjectTemplate.Slug => underlyingKind == UnderlyingKind.String,
+            ValueObjectTemplate.StronglyTypedId => underlyingKind is UnderlyingKind.Guid or UnderlyingKind.Int32,
+            ValueObjectTemplate.IsoCode => underlyingKind == UnderlyingKind.String,
+            _ => false,
+        };
+    }
+
+    private static string GetTypeName(UnderlyingKind underlyingKind)
+    {
+        return underlyingKind switch
+        {
+            UnderlyingKind.String => "string",
+            UnderlyingKind.Guid => "global::System.Guid",
+            UnderlyingKind.Int32 => "int",
+            UnderlyingKind.Decimal => "decimal",
+            UnderlyingKind.DateOnly => "global::System.DateOnly",
+            _ => throw new InvalidOperationException("Unsupported underlying kind."),
+        };
+    }
+
+    private static string GetHintName(INamedTypeSymbol type, string suffix)
+    {
+        var metadataName = type.ContainingNamespace.IsGlobalNamespace
+            ? type.Name
+            : $"{type.ContainingNamespace}.{type.Name}";
+        var builder = new StringBuilder(metadataName.Length + suffix.Length + ".g.cs".Length + 1);
+
+        foreach (var character in metadataName)
+        {
+            builder.Append(char.IsLetterOrDigit(character) ? character : '.');
+        }
+
+        builder.Append('.').Append(suffix).Append(".g.cs");
+        return builder.ToString();
+    }
+
+    private static string EmitValueObject(ValueObjectModel model)
+    {
+        var builder = CreateHeader(model.NamespaceName);
+        var interfaceClause = model.Template == ValueObjectTemplate.ApiVersion
+            ? $" : global::System.IComparable<{model.TypeName}>"
+            : string.Empty;
+
+        builder
+            .Append(model.Accessibility).Append(" readonly partial record struct ").Append(model.TypeName).AppendLine(interfaceClause)
+            .AppendLine("{")
+            .AppendLine("    /// <summary>")
+            .AppendLine("    /// Gets the underlying scalar value.")
+            .AppendLine("    /// </summary>")
+            .Append("    public ").Append(model.UnderlyingTypeName).AppendLine(" Value { get; }")
+            .AppendLine()
+            .Append("    private ").Append(model.TypeName).Append('(').Append(model.UnderlyingTypeName).AppendLine(" value)")
+            .AppendLine("    {")
+            .AppendLine("        Value = value;")
+            .AppendLine("    }")
+            .AppendLine()
+            .AppendLine("    /// <summary>")
+            .AppendLine("    /// Creates a value object after validating the supplied scalar value.")
+            .AppendLine("    /// </summary>")
+            .AppendLine("    /// <param name=\"value\">The scalar value.</param>")
+            .AppendLine("    /// <returns>The generated value object.</returns>")
+            .Append("    public static ").Append(model.TypeName).Append(" Create(").Append(model.UnderlyingTypeName).AppendLine(" value)")
+            .AppendLine("    {")
+            .AppendLine("        if (!TryCreate(value, out var result))")
+            .AppendLine("        {")
+            .Append("            throw new global::System.ArgumentException(\"The value is not valid for ").Append(model.TypeName).AppendLine(".\", nameof(value));")
+            .AppendLine("        }")
+            .AppendLine()
+            .AppendLine("        return result;")
+            .AppendLine("    }")
+            .AppendLine()
+            .AppendLine("    /// <summary>")
+            .AppendLine("    /// Attempts to create a value object after validating the supplied scalar value.")
+            .AppendLine("    /// </summary>")
+            .AppendLine("    /// <param name=\"value\">The scalar value.</param>")
+            .AppendLine("    /// <param name=\"result\">The generated value object when validation succeeds.</param>")
+            .AppendLine("    /// <returns><see langword=\"true\" /> when the value is valid; otherwise, <see langword=\"false\" />.</returns>")
+            .Append("    public static bool TryCreate(").Append(model.UnderlyingTypeName).Append(" value, out ").Append(model.TypeName).AppendLine(" result)")
+            .AppendLine("    {")
+            .AppendLine("        if (!IsValid(value))")
+            .AppendLine("        {")
+            .AppendLine("            result = default;")
+            .AppendLine("            return false;")
+            .AppendLine("        }")
+            .AppendLine()
+            .Append("        result = new ").Append(model.TypeName).AppendLine("(value);")
+            .AppendLine("        return true;")
+            .AppendLine("    }")
+            .AppendLine();
+
+        if (model.Parsing)
+        {
+            AppendParsing(builder, model);
+        }
+
+        AppendFormatting(builder, model);
+        AppendValidation(builder, model);
+        builder.AppendLine("}");
+        return builder.ToString();
+    }
+
+    private static void AppendParsing(StringBuilder builder, ValueObjectModel model)
+    {
+        builder
+            .AppendLine("    /// <summary>")
+            .AppendLine("    /// Parses text into a generated value object.")
+            .AppendLine("    /// </summary>")
+            .AppendLine("    /// <param name=\"text\">The text to parse.</param>")
+            .AppendLine("    /// <param name=\"provider\">The format provider.</param>")
+            .AppendLine("    /// <returns>The parsed value object.</returns>")
+            .Append("    public static ").Append(model.TypeName).AppendLine(" Parse(string text, global::System.IFormatProvider? provider = null)")
+            .AppendLine("    {")
+            .AppendLine("        if (!TryParse(text, provider, out var result))")
+            .AppendLine("        {")
+            .Append("            throw new global::System.FormatException(\"The text is not a valid ").Append(model.TypeName).AppendLine(" value.\");")
+            .AppendLine("        }")
+            .AppendLine()
+            .AppendLine("        return result;")
+            .AppendLine("    }")
+            .AppendLine()
+            .AppendLine("    /// <summary>")
+            .AppendLine("    /// Attempts to parse text into a generated value object.")
+            .AppendLine("    /// </summary>")
+            .AppendLine("    /// <param name=\"text\">The text to parse.</param>")
+            .AppendLine("    /// <param name=\"provider\">The format provider.</param>")
+            .AppendLine("    /// <param name=\"result\">The parsed value object when parsing succeeds.</param>")
+            .AppendLine("    /// <returns><see langword=\"true\" /> when parsing succeeds; otherwise, <see langword=\"false\" />.</returns>")
+            .Append("    public static bool TryParse(string? text, global::System.IFormatProvider? provider, out ").Append(model.TypeName).AppendLine(" result)")
+            .AppendLine("    {");
+
+        AppendTryParseBody(builder, model);
+
+        builder
+            .AppendLine("    }")
+            .AppendLine();
+    }
+
+    private static void AppendTryParseBody(StringBuilder builder, ValueObjectModel model)
+    {
+        if (model.Template == ValueObjectTemplate.ApiVersion)
+        {
+            builder
+                .AppendLine("        if (string.IsNullOrWhiteSpace(text))")
+                .AppendLine("        {")
+                .AppendLine("            result = default;")
+                .AppendLine("            return false;")
+                .AppendLine("        }")
+                .AppendLine()
+                .AppendLine("        var normalized = text.StartsWith(\"v\", global::System.StringComparison.OrdinalIgnoreCase)")
+                .AppendLine("            ? text.Substring(1)")
+                .AppendLine("            : text;")
+                .AppendLine("        if (!int.TryParse(normalized, global::System.Globalization.NumberStyles.None, global::System.Globalization.CultureInfo.InvariantCulture, out var parsed))")
+                .AppendLine("        {")
+                .AppendLine("            result = default;")
+                .AppendLine("            return false;")
+                .AppendLine("        }")
+                .AppendLine()
+                .AppendLine("        return TryCreate(parsed, out result);");
+            return;
+        }
+
+        switch (model.UnderlyingKind)
+        {
+            case UnderlyingKind.String:
+                builder
+                    .AppendLine("        if (text is null)")
+                    .AppendLine("        {")
+                    .AppendLine("            result = default;")
+                    .AppendLine("            return false;")
+                    .AppendLine("        }")
+                    .AppendLine()
+                    .AppendLine("        return TryCreate(text, out result);");
+                break;
+            case UnderlyingKind.Guid:
+                AppendParsedTryCreate(builder, "global::System.Guid.TryParse(text, out var parsed)");
+                break;
+            case UnderlyingKind.Int32:
+                AppendParsedTryCreate(builder, "int.TryParse(text, global::System.Globalization.NumberStyles.Integer, provider, out var parsed)");
+                break;
+            case UnderlyingKind.Decimal:
+                AppendParsedTryCreate(builder, "decimal.TryParse(text, global::System.Globalization.NumberStyles.Number, provider, out var parsed)");
+                break;
+            case UnderlyingKind.DateOnly:
+                AppendParsedTryCreate(builder, "global::System.DateOnly.TryParse(text, provider, global::System.Globalization.DateTimeStyles.None, out var parsed)");
+                break;
+            default:
+                throw new InvalidOperationException("Unsupported underlying kind.");
+        }
+    }
+
+    private static void AppendParsedTryCreate(StringBuilder builder, string parseExpression)
+    {
+        builder
+            .Append("        if (!").Append(parseExpression).AppendLine(")")
+            .AppendLine("        {")
+            .AppendLine("            result = default;")
+            .AppendLine("            return false;")
+            .AppendLine("        }")
+            .AppendLine()
+            .AppendLine("        return TryCreate(parsed, out result);");
+    }
+
+    private static void AppendFormatting(StringBuilder builder, ValueObjectModel model)
+    {
+        builder
+            .AppendLine("    /// <inheritdoc />")
+            .AppendLine("    public override readonly string ToString()")
+            .AppendLine("    {");
+
+        if (model.Template == ValueObjectTemplate.ApiVersion)
+        {
+            builder.AppendLine("        return ToRouteSegment();");
+        }
+        else
+        {
+            builder.Append("        return ").Append(GetFormatExpression(model, "Value")).AppendLine(";");
+        }
+
+        builder
+            .AppendLine("    }")
+            .AppendLine();
+
+        if (model.Template == ValueObjectTemplate.ApiVersion)
+        {
+            builder
+                .AppendLine("    /// <summary>")
+                .AppendLine("    /// Formats the version as an API route segment.")
+                .AppendLine("    /// </summary>")
+                .AppendLine("    /// <returns>The route segment, such as <c>v1</c>.</returns>")
+                .AppendLine("    public readonly string ToRouteSegment()")
+                .AppendLine("    {")
+                .AppendLine("        return \"v\" + Value.ToString(global::System.Globalization.CultureInfo.InvariantCulture);")
+                .AppendLine("    }")
+                .AppendLine()
+                .AppendLine("    /// <inheritdoc />")
+                .Append("    public readonly int CompareTo(").Append(model.TypeName).AppendLine(" other)")
+                .AppendLine("    {")
+                .AppendLine("        return Value.CompareTo(other.Value);")
+                .AppendLine("    }")
+                .AppendLine();
+        }
+    }
+
+    private static string GetFormatExpression(ValueObjectModel model, string valueExpression)
+    {
+        return model.UnderlyingKind switch
+        {
+            UnderlyingKind.String => $"{valueExpression} ?? string.Empty",
+            UnderlyingKind.Guid => $"{valueExpression}.ToString()",
+            UnderlyingKind.Int32 => $"{valueExpression}.ToString(global::System.Globalization.CultureInfo.InvariantCulture)",
+            UnderlyingKind.Decimal => $"{valueExpression}.ToString(global::System.Globalization.CultureInfo.InvariantCulture)",
+            UnderlyingKind.DateOnly => $"{valueExpression}.ToString(\"O\", global::System.Globalization.CultureInfo.InvariantCulture)",
+            _ => throw new InvalidOperationException("Unsupported underlying kind."),
+        };
+    }
+
+    private static void AppendValidation(StringBuilder builder, ValueObjectModel model)
+    {
+        builder
+            .Append("    static partial void ValidateValue(").Append(model.UnderlyingTypeName).AppendLine(" value, ref bool isValid);")
+            .AppendLine()
+            .Append("    private static bool IsValid(").Append(model.UnderlyingTypeName).AppendLine(" value)")
+            .AppendLine("    {")
+            .Append("        var isValid = ").Append(GetValidationExpression(model)).AppendLine(";")
+            .AppendLine("        ValidateValue(value, ref isValid);")
+            .AppendLine("        return isValid;")
+            .AppendLine("    }");
+
+        if (model.Template == ValueObjectTemplate.Slug)
+        {
+            AppendSlugValidator(builder);
+        }
+        else if (model.Template == ValueObjectTemplate.IsoCode)
+        {
+            AppendIsoCodeValidator(builder);
+        }
+    }
+
+    private static string GetValidationExpression(ValueObjectModel model)
+    {
+        return model.Template switch
+        {
+            ValueObjectTemplate.ApiVersion => "value > 0",
+            ValueObjectTemplate.NonEmptyString => "!string.IsNullOrWhiteSpace(value)",
+            ValueObjectTemplate.Slug => "IsSlug(value)",
+            ValueObjectTemplate.StronglyTypedId when model.UnderlyingKind == UnderlyingKind.Guid => "value != global::System.Guid.Empty",
+            ValueObjectTemplate.StronglyTypedId => "value > 0",
+            ValueObjectTemplate.IsoCode => "IsIsoCode(value)",
+            _ when model.UnderlyingKind == UnderlyingKind.String => "value is not null",
+            _ => "true",
+        };
+    }
+
+    private static void AppendSlugValidator(StringBuilder builder)
+    {
+        builder
+            .AppendLine()
+            .AppendLine("    private static bool IsSlug(string value)")
+            .AppendLine("    {")
+            .AppendLine("        if (string.IsNullOrWhiteSpace(value) || value[0] == '-' || value[value.Length - 1] == '-')")
+            .AppendLine("        {")
+            .AppendLine("            return false;")
+            .AppendLine("        }")
+            .AppendLine()
+            .AppendLine("        foreach (var character in value)")
+            .AppendLine("        {")
+            .AppendLine("            if (!((character >= 'a' && character <= 'z') || (character >= '0' && character <= '9') || character == '-'))")
+            .AppendLine("            {")
+            .AppendLine("                return false;")
+            .AppendLine("            }")
+            .AppendLine("        }")
+            .AppendLine()
+            .AppendLine("        return true;")
+            .AppendLine("    }");
+    }
+
+    private static void AppendIsoCodeValidator(StringBuilder builder)
+    {
+        builder
+            .AppendLine()
+            .AppendLine("    private static bool IsIsoCode(string value)")
+            .AppendLine("    {")
+            .AppendLine("        if (value is null || value.Length is < 2 or > 3)")
+            .AppendLine("        {")
+            .AppendLine("            return false;")
+            .AppendLine("        }")
+            .AppendLine()
+            .AppendLine("        foreach (var character in value)")
+            .AppendLine("        {")
+            .AppendLine("            if (!((character >= 'A' && character <= 'Z') || (character >= 'a' && character <= 'z')))")
+            .AppendLine("            {")
+            .AppendLine("                return false;")
+            .AppendLine("            }")
+            .AppendLine("        }")
+            .AppendLine()
+            .AppendLine("        return true;")
+            .AppendLine("    }");
+    }
+
+    private static string EmitJsonConverter(ValueObjectModel model)
+    {
+        var builder = CreateHeader(model.NamespaceName);
+        builder
+            .Append(model.Accessibility).Append(" readonly partial record struct ").AppendLine(model.TypeName)
+            .AppendLine("{")
+            .AppendLine("    /// <summary>")
+            .Append("    /// Converts <see cref=\"").Append(model.TypeName).AppendLine("\" /> values for System.Text.Json.")
+            .AppendLine("    /// </summary>")
+            .Append("    public sealed class JsonConverter : global::System.Text.Json.Serialization.JsonConverter<").Append(model.TypeName).AppendLine(">")
+            .AppendLine("    {")
+            .AppendLine("        /// <inheritdoc />")
+            .Append("        public override ").Append(model.TypeName).AppendLine(" Read(ref global::System.Text.Json.Utf8JsonReader reader, global::System.Type typeToConvert, global::System.Text.Json.JsonSerializerOptions options)")
+            .AppendLine("        {");
+
+        AppendJsonReadBody(builder, model);
+
+        builder
+            .AppendLine("        }")
+            .AppendLine()
+            .AppendLine("        /// <inheritdoc />")
+            .Append("        public override void Write(global::System.Text.Json.Utf8JsonWriter writer, ").Append(model.TypeName).AppendLine(" value, global::System.Text.Json.JsonSerializerOptions options)")
+            .AppendLine("        {");
+
+        AppendJsonWriteBody(builder, model);
+
+        builder
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendLine("}");
+        return builder.ToString();
+    }
+
+    private static void AppendJsonReadBody(StringBuilder builder, ValueObjectModel model)
+    {
+        if (model.Template == ValueObjectTemplate.ApiVersion)
+        {
+            builder
+                .AppendLine("            if (reader.TokenType == global::System.Text.Json.JsonTokenType.Number)")
+                .AppendLine("            {")
+                .Append("                return ").Append(model.TypeName).AppendLine(".Create(reader.GetInt32());")
+                .AppendLine("            }")
+                .AppendLine()
+                .AppendLine("            var text = reader.GetString();")
+                .Append("            if (").Append(model.TypeName).AppendLine(".TryParse(text, global::System.Globalization.CultureInfo.InvariantCulture, out var parsed))")
+                .AppendLine("            {")
+                .AppendLine("                return parsed;")
+                .AppendLine("            }")
+                .AppendLine()
+                .Append("            throw new global::System.Text.Json.JsonException(\"The JSON value is not a valid ").Append(model.TypeName).AppendLine(".\");");
+            return;
+        }
+
+        switch (model.UnderlyingKind)
+        {
+            case UnderlyingKind.String:
+                builder
+                    .AppendLine("            var value = reader.GetString();")
+                    .AppendLine("            if (value is null)")
+                    .AppendLine("            {")
+                    .Append("                throw new global::System.Text.Json.JsonException(\"The JSON value is not a valid ").Append(model.TypeName).AppendLine(".\");")
+                    .AppendLine("            }")
+                    .AppendLine()
+                    .Append("            return ").Append(model.TypeName).AppendLine(".Create(value);");
+                break;
+            case UnderlyingKind.Guid:
+                builder.Append("            return ").Append(model.TypeName).AppendLine(".Create(reader.GetGuid());");
+                break;
+            case UnderlyingKind.Int32:
+                builder.Append("            return ").Append(model.TypeName).AppendLine(".Create(reader.GetInt32());");
+                break;
+            case UnderlyingKind.Decimal:
+                builder.Append("            return ").Append(model.TypeName).AppendLine(".Create(reader.GetDecimal());");
+                break;
+            case UnderlyingKind.DateOnly:
+                builder
+                    .AppendLine("            var value = reader.GetString();")
+                    .AppendLine("            if (!global::System.DateOnly.TryParse(value, global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None, out var parsed))")
+                    .AppendLine("            {")
+                    .Append("                throw new global::System.Text.Json.JsonException(\"The JSON value is not a valid ").Append(model.TypeName).AppendLine(".\");")
+                    .AppendLine("            }")
+                    .AppendLine()
+                    .Append("            return ").Append(model.TypeName).AppendLine(".Create(parsed);");
+                break;
+            default:
+                throw new InvalidOperationException("Unsupported underlying kind.");
+        }
+    }
+
+    private static void AppendJsonWriteBody(StringBuilder builder, ValueObjectModel model)
+    {
+        if (model.Template == ValueObjectTemplate.ApiVersion)
+        {
+            builder.AppendLine("            writer.WriteStringValue(value.ToRouteSegment());");
+            return;
+        }
+
+        switch (model.UnderlyingKind)
+        {
+            case UnderlyingKind.String:
+            case UnderlyingKind.Guid:
+                builder.AppendLine("            writer.WriteStringValue(value.Value);");
+                break;
+            case UnderlyingKind.Int32:
+            case UnderlyingKind.Decimal:
+                builder.AppendLine("            writer.WriteNumberValue(value.Value);");
+                break;
+            case UnderlyingKind.DateOnly:
+                builder.AppendLine("            writer.WriteStringValue(value.Value.ToString(\"O\", global::System.Globalization.CultureInfo.InvariantCulture));");
+                break;
+            default:
+                throw new InvalidOperationException("Unsupported underlying kind.");
+        }
+    }
+
+    private static string EmitEfCoreConverter(ValueObjectModel model)
+    {
+        var builder = CreateHeader(model.NamespaceName);
+        builder
+            .Append(model.Accessibility).Append(" readonly partial record struct ").AppendLine(model.TypeName)
+            .AppendLine("{")
+            .AppendLine("    /// <summary>")
+            .Append("    /// Converts <see cref=\"").Append(model.TypeName).AppendLine("\" /> values for EF Core.")
+            .AppendLine("    /// </summary>")
+            .AppendLine("    public sealed class EfCoreValueConverter")
+            .Append("        : global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter<").Append(model.TypeName).Append(", ").Append(model.UnderlyingTypeName).AppendLine(">")
+            .AppendLine("    {")
+            .AppendLine("        /// <summary>")
+            .AppendLine("        /// Initializes a new instance of the <see cref=\"EfCoreValueConverter\" /> class.")
+            .AppendLine("        /// </summary>")
+            .AppendLine("        /// <param name=\"mappingHints\">Optional EF Core converter mapping hints.</param>")
+            .AppendLine("        public EfCoreValueConverter(global::Microsoft.EntityFrameworkCore.Storage.ValueConversion.ConverterMappingHints? mappingHints = null)")
+            .Append("            : base(value => value.Value, value => ").Append(model.TypeName).AppendLine(".Create(value), mappingHints)")
+            .AppendLine("        {")
+            .AppendLine("        }")
+            .AppendLine("    }")
+            .AppendLine("}");
+        return builder.ToString();
+    }
+
+    private static StringBuilder CreateHeader(string? namespaceName)
+    {
+        var builder = new StringBuilder("""
+            // <auto-generated />
+            #nullable enable
+
+            """);
+
+        if (namespaceName is not null)
+        {
+            builder.Append("namespace ").Append(namespaceName).AppendLine(";");
+            builder.AppendLine();
+        }
+
+        return builder;
+    }
+
+    private static string GetAccessibility(Accessibility accessibility)
+    {
+        return accessibility switch
+        {
+            Accessibility.Public => "public",
+            Accessibility.Internal => "internal",
+            _ => "private",
+        };
+    }
+
+    private enum UnderlyingKind
+    {
+        Unsupported,
+        String,
+        Guid,
+        Int32,
+        Decimal,
+        DateOnly,
+    }
+
+    private enum ValueObjectTemplate
+    {
+        None,
+        ApiVersion,
+        NonEmptyString,
+        Slug,
+        StronglyTypedId,
+        IsoCode,
+    }
+
+    private sealed class ValueObjectModel(
+        string? namespaceName,
+        string? typeName,
+        string? accessibility,
+        string? underlyingTypeName,
+        UnderlyingKind underlyingKind,
+        bool parsing,
+        bool json,
+        bool efCore,
+        ValueObjectTemplate template,
+        string? coreHintName,
+        string? jsonHintName,
+        string? efCoreHintName,
+        Diagnostic? diagnostic)
+    {
+        public string? NamespaceName { get; } = namespaceName;
+
+        public string? TypeName { get; } = typeName;
+
+        public string? Accessibility { get; } = accessibility;
+
+        public string? UnderlyingTypeName { get; } = underlyingTypeName;
+
+        public UnderlyingKind UnderlyingKind { get; } = underlyingKind;
+
+        public bool Parsing { get; } = parsing;
+
+        public bool Json { get; } = json;
+
+        public bool EfCore { get; } = efCore;
+
+        public ValueObjectTemplate Template { get; } = template;
+
+        public string? CoreHintName { get; } = coreHintName;
+
+        public string? JsonHintName { get; } = jsonHintName;
+
+        public string? EfCoreHintName { get; } = efCoreHintName;
+
+        public Diagnostic? Diagnostic { get; } = diagnostic;
+    }
+}

@@ -38,6 +38,35 @@ internal static class GeneratorTestHarness
         return driver.GetRunResult();
     }
 
+    public static GeneratorDriverRunResult RunValueObjectGeneratorDriver(CSharpCompilation compilation)
+    {
+        var generator = new ValueObjectGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(
+            generators: [generator.AsSourceGenerator()],
+            additionalTexts: [],
+            parseOptions: (CSharpParseOptions?)compilation.SyntaxTrees.First().Options,
+            optionsProvider: new TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>.Empty));
+
+        driver = driver.RunGenerators(compilation);
+        return driver.GetRunResult();
+    }
+
+    public static Compilation RunValueObjectGeneratorAndUpdateCompilation(
+        CSharpCompilation compilation,
+        out GeneratorDriverRunResult runResult)
+    {
+        var generator = new ValueObjectGenerator();
+        GeneratorDriver driver = CSharpGeneratorDriver.Create(
+            generators: [generator.AsSourceGenerator()],
+            additionalTexts: [],
+            parseOptions: (CSharpParseOptions?)compilation.SyntaxTrees.First().Options,
+            optionsProvider: new TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>.Empty));
+
+        driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out _);
+        runResult = driver.GetRunResult();
+        return outputCompilation;
+    }
+
     public static string GetGeneratedSource(GeneratorDriverRunResult runResult, string hintName)
     {
         var generatedSource = runResult.Results.Single().GeneratedSources.SingleOrDefault(
