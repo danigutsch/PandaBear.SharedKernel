@@ -107,6 +107,14 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
+    private static readonly DiagnosticDescriptor ConflictingValueObjectConfiguration = new(
+        "SKMDL021",
+        "Value-object generation requires one attribute configuration per type",
+        "Value-object generation requested for '{0}' with conflicting attribute configuration",
+        "SharedKernel.Domain.ModelSupport",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
+
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -123,6 +131,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             models,
             static (productionContext, models) =>
             {
+                var generatedModels = new Dictionary<string, ValueObjectModel>(StringComparer.Ordinal);
                 var generatedHintNames = new HashSet<string>(StringComparer.Ordinal);
 
                 foreach (var model in models)
@@ -132,6 +141,21 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
                         productionContext.ReportDiagnostic(model.Diagnostic);
                         continue;
                     }
+
+                    if (generatedModels.TryGetValue(model.CoreHintName!, out var existingModel))
+                    {
+                        if (!HasSameGenerationOptions(existingModel, model))
+                        {
+                            productionContext.ReportDiagnostic(Diagnostic.Create(
+                                ConflictingValueObjectConfiguration,
+                                model.Location,
+                                model.TypeName));
+                        }
+
+                        continue;
+                    }
+
+                    generatedModels.Add(model.CoreHintName!, model);
 
                     AddSource(productionContext, generatedHintNames, model.CoreHintName!, EmitValueObject(model));
 
@@ -242,7 +266,18 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             GetHintName(type, "ValueObject"),
             GetHintName(type, "Json"),
             GetHintName(type, "EfCore"),
-            null);
+            null,
+            location);
+    }
+
+    private static bool HasSameGenerationOptions(ValueObjectModel left, ValueObjectModel right)
+    {
+        return string.Equals(left.UnderlyingTypeName, right.UnderlyingTypeName, StringComparison.Ordinal) &&
+            left.UnderlyingKind == right.UnderlyingKind &&
+            left.Parsing == right.Parsing &&
+            left.Json == right.Json &&
+            left.EfCore == right.EfCore &&
+            left.Template == right.Template;
     }
 
     private static void AddSource(
@@ -261,7 +296,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
     private static ValueObjectModel DiagnosticOnly(Diagnostic diagnostic)
     {
-        return new ValueObjectModel(null, null, null, null, UnderlyingKind.Unsupported, false, false, false, default, null, null, null, diagnostic);
+        return new ValueObjectModel(null, null, null, null, UnderlyingKind.Unsupported, false, false, false, default, null, null, null, diagnostic, null);
     }
 
     private static bool IsReadonlyRecordStruct(TypeDeclarationSyntax declaration, INamedTypeSymbol type)
@@ -570,13 +605,13 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
                 AppendParsedTryCreate(builder, "global::System.Guid.TryParse(text, out var parsed)");
                 break;
             case UnderlyingKind.Int32:
-                AppendParsedTryCreate(builder, "int.TryParse(text, global::System.Globalization.NumberStyles.Integer, provider, out var parsed)");
+                AppendParsedTryCreate(builder, "int.TryParse(text, global::System.Globalization.NumberStyles.Integer, provider ?? global::System.Globalization.CultureInfo.InvariantCulture, out var parsed)");
                 break;
             case UnderlyingKind.Decimal:
-                AppendParsedTryCreate(builder, "decimal.TryParse(text, global::System.Globalization.NumberStyles.Number, provider, out var parsed)");
+                AppendParsedTryCreate(builder, "decimal.TryParse(text, global::System.Globalization.NumberStyles.Number, provider ?? global::System.Globalization.CultureInfo.InvariantCulture, out var parsed)");
                 break;
             case UnderlyingKind.DateOnly:
-                AppendParsedTryCreate(builder, "global::System.DateOnly.TryParse(text, provider, global::System.Globalization.DateTimeStyles.None, out var parsed)");
+                AppendParsedTryCreate(builder, "global::System.DateOnly.TryParse(text, provider ?? global::System.Globalization.CultureInfo.InvariantCulture, global::System.Globalization.DateTimeStyles.None, out var parsed)");
                 break;
             default:
                 throw new InvalidOperationException("Unsupported underlying kind.");
@@ -911,12 +946,12 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
     private enum ValueObjectTemplate
     {
-        None,
-        ApiVersion,
-        NonEmptyString,
-        Slug,
-        StronglyTypedId,
-        IsoCode,
+        None = 0,
+        ApiVersion = 1,
+        NonEmptyString = 2,
+        Slug = 3,
+        StronglyTypedId = 4,
+        IsoCode = 5,
     }
 
     private sealed class ValueObjectModel(
@@ -932,7 +967,8 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
         string? coreHintName,
         string? jsonHintName,
         string? efCoreHintName,
-        Diagnostic? diagnostic)
+        Diagnostic? diagnostic,
+        Location? location)
     {
         public string? NamespaceName { get; } = namespaceName;
 
@@ -959,5 +995,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
         public string? EfCoreHintName { get; } = efCoreHintName;
 
         public Diagnostic? Diagnostic { get; } = diagnostic;
+
+        public Location? Location { get; } = location;
     }
 }

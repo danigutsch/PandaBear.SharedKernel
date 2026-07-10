@@ -141,6 +141,37 @@ public sealed class ValueObjectGeneratorTests
     }
 
     [Fact]
+    public void Generates_invariant_default_for_formatted_scalar_parsing()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(int), Parsing = true)]
+            public readonly partial record struct TourCount;
+
+            [GenerateValueObject(UnderlyingType = typeof(decimal), Parsing = true)]
+            public readonly partial record struct TourPrice;
+
+            [GenerateValueObject(UnderlyingType = typeof(global::System.DateOnly), Parsing = true)]
+            public readonly partial record struct DepartureDate;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var intSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourCount.ValueObject.g.cs");
+        var decimalSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.TourPrice.ValueObject.g.cs");
+        var dateOnlySource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.DepartureDate.ValueObject.g.cs");
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        intSource.ShouldContain("provider ?? global::System.Globalization.CultureInfo.InvariantCulture", StringComparison.Ordinal);
+        decimalSource.ShouldContain("provider ?? global::System.Globalization.CultureInfo.InvariantCulture", StringComparison.Ordinal);
+        dateOnlySource.ShouldContain("provider ?? global::System.Globalization.CultureInfo.InvariantCulture", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Reports_diagnostic_when_underlying_type_is_missing()
     {
         // Arrange
@@ -395,6 +426,30 @@ public sealed class ValueObjectGeneratorTests
         // Assert
         runResult.Diagnostics.ShouldBeEmpty();
         generatedSources.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_same_partial_type_has_conflicting_value_object_attributes()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateValueObject(UnderlyingType = typeof(string), Parsing = true)]
+            public readonly partial record struct TourCode;
+
+            [GenerateValueObject(UnderlyingType = typeof(string), Json = true)]
+            public readonly partial record struct TourCode;
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunValueObjectGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL021");
+        diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
     }
 
     [Fact]

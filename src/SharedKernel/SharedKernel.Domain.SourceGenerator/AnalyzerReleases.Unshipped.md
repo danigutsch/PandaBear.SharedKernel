@@ -22,3 +22,4 @@ SKMDL017 | SharedKernel.Domain.ModelSupport | Error | EF Core value-object gener
 SKMDL018 | SharedKernel.Domain.ModelSupport | Error | Value-object template does not support the selected underlying type
 SKMDL019 | SharedKernel.Domain.ModelSupport | Error | Value-object generation does not support explicit constructors
 SKMDL020 | SharedKernel.Domain.ModelSupport | Error | Value-object generation requires generated member names to be unused
+SKMDL021 | SharedKernel.Domain.ModelSupport | Error | Value-object generation requires one attribute configuration per type
