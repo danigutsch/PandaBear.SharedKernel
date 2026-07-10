@@ -92,6 +92,22 @@ public sealed class SharedKernelTestingHelperTests
     }
 
     [Fact]
+    public static void Json_snapshot_artifact_set_supports_generated_file_name_overrides()
+    {
+        using var directory = TemporarySnapshotDirectory.Create();
+        directory.WriteCanonical("v1.openapi.json", "{\"openapi\":\"3.1.1\",\"info\":{\"version\":\"1.0\"}}");
+        directory.WriteGenerated("Api.json", "{\"info\":{\"version\":\"1.0\"},\"openapi\":\"3.1.1\"}");
+        var snapshots = directory.CreateSet(new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["v1"] = "Api.json"
+        });
+
+        var drift = snapshots.GetArtifactDrift();
+
+        drift.ShouldBeEmpty();
+    }
+
+    [Fact]
     public static void Bunit_element_assertions_accept_expected_class()
     {
         BunitElementAssertions.HasClass(["card", "active"], "active");
