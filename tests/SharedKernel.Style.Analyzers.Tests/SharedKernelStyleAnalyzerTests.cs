@@ -1172,4 +1172,30 @@ public sealed class SharedKernelStyleAnalyzerTests
         diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.DomainEventSuffix);
     }
 
+    [Fact]
+    public async Task Nested_domain_event_without_suffix_does_not_report_skstyle008()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Domain
+            {
+                public interface IDomainEvent;
+            }
+
+            namespace Demo
+            {
+                public sealed class TourEvents
+                {
+                    public sealed record Created(System.Guid TourId) : SharedKernel.Domain.IDomainEvent;
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.DomainEventSuffix);
+    }
+
 }

@@ -16,9 +16,20 @@ internal sealed class TemporaryCodeFixDirectory : IDisposable
 
     public void Dispose()
     {
-        if (Directory.Exists(Path))
+        try
         {
-            Directory.Delete(Path, recursive: true);
+            if (Directory.Exists(Path))
+            {
+                Directory.Delete(Path, recursive: true);
+            }
+        }
+        catch (IOException)
+        {
+            // Test cleanup is best-effort so teardown does not hide assertion failures.
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // Test cleanup is best-effort so teardown does not hide assertion failures.
         }
     }
 }

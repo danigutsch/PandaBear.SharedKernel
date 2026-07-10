@@ -269,6 +269,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         INamedTypeSymbol? domainEventType)
     {
         if (domainEventType is null
+            || type.ContainingType is not null
             || type.TypeKind is not (TypeKind.Class or TypeKind.Struct)
             || type.Name.EndsWith(DomainEventSuffix, StringComparison.Ordinal)
             || type.Locations.FirstOrDefault(static location => location.IsInSource) is not { } location
