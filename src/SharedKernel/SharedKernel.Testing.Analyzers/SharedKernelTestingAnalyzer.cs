@@ -546,7 +546,6 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         IMethodSymbol methodSymbol)
     {
         if (IsXunitLifecycleMethod(methodSymbol)
-            || methodSymbol.DeclaredAccessibility != Accessibility.Private
             || !ContainsXunitTestMethod(methodSymbol.ContainingType))
         {
             return;
@@ -571,7 +570,6 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         AnalyzeSerialCollectionJustification(context, typeDeclaration, typeSymbol);
 
         if (typeSymbol.ContainingType is null
-            || typeSymbol.DeclaredAccessibility != Accessibility.Private
             || !ContainsXunitTestMethod(typeSymbol.ContainingType))
         {
             return;

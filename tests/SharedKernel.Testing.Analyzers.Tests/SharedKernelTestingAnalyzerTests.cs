@@ -740,7 +740,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Reused_internal_static_helper_method_in_xunit_test_class_does_not_report_SKTEST004()
+    public async Task Reused_internal_static_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -771,11 +771,11 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
-    public async Task Single_use_internal_static_helper_method_in_xunit_test_class_does_not_report_SKTEST004()
+    public async Task Single_use_internal_static_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -800,11 +800,11 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
-    public async Task Public_helper_method_in_xunit_test_class_does_not_report_SKTEST004()
+    public async Task Public_helper_method_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -828,7 +828,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -1107,7 +1107,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Public_nested_helper_class_in_xunit_test_class_does_not_report_SKTEST004()
+    public async Task Public_nested_helper_class_in_xunit_test_class_reports_SKTEST004()
     {
         // Arrange
         const string source = """
@@ -1130,7 +1130,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId).ShouldHaveSingleItem();
     }
 
     [Fact]
