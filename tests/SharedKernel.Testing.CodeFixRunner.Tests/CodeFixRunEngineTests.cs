@@ -45,11 +45,11 @@ public sealed class CodeFixRunEngineTests : IDisposable
 
         // Act
         var fixedCount = await CodeFixRunEngine.Run(options, error);
-        var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
-        var helperSource = await File.ReadAllTextAsync(helperPath, TestContext.Current.CancellationToken);
 
         // Assert
         fixedCount.ShouldBe(1);
+        var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
+        var helperSource = await File.ReadAllTextAsync(helperPath, TestContext.Current.CancellationToken);
         updatedSource.ShouldContain("SampleTestsHelpers.CreateTourId()", StringComparison.Ordinal);
         updatedSource.ShouldNotContain("private static int CreateTourId()");
         helperSource.ShouldContain("internal static class SampleTestsHelpers", StringComparison.Ordinal);
