@@ -1,5 +1,7 @@
 #nullable enable
 
 SharedKernel.HttpCaching.AspNetCore.HttpCacheHeaders
+SharedKernel.HttpCaching.AspNetCore.HttpCacheCultures
 static SharedKernel.HttpCaching.AspNetCore.HttpCacheHeaders.SetNoStore(Microsoft.AspNetCore.Http.HttpContext! httpContext) -> void
 static SharedKernel.HttpCaching.AspNetCore.HttpCacheHeaders.SetPublic(Microsoft.AspNetCore.Http.HttpContext! httpContext, System.TimeSpan maxAge, System.TimeSpan? staleWhileRevalidate = null) -> void
+static SharedKernel.HttpCaching.AspNetCore.HttpCacheCultures.Normalize(string? culture) -> string?
