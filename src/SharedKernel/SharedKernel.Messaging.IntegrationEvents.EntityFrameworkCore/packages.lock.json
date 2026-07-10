@@ -165,12 +165,6 @@
           "SharedKernel.Messaging": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.messaging.integrationevents.cloudevents": {
-        "type": "Project",
-        "dependencies": {
-          "SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )"
-        }
-      },
       "sharedkernel.scheduling": {
         "type": "Project",
         "dependencies": {
