@@ -4,6 +4,9 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
+#pragma warning disable S107 // Generator models intentionally capture all emitted feature switches.
+#pragma warning disable S1192 // Generated-source templates intentionally repeat emitted C# syntax.
+
 namespace SharedKernel.Domain.SourceGenerator;
 
 /// <summary>
@@ -313,14 +316,12 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
         }
 
         var metadataName = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-        if (string.Equals(metadataName, "global::System.Guid", StringComparison.Ordinal))
+        return metadataName switch
         {
-            return UnderlyingKind.Guid;
-        }
-
-        return string.Equals(metadataName, "global::System.DateOnly", StringComparison.Ordinal)
-            ? UnderlyingKind.DateOnly
-            : UnderlyingKind.Unsupported;
+            "global::System.Guid" => UnderlyingKind.Guid,
+            "global::System.DateOnly" => UnderlyingKind.DateOnly,
+            _ => UnderlyingKind.Unsupported,
+        };
     }
 
     private static bool HasReservedGeneratedMember(
