@@ -37,7 +37,8 @@ sharedkernel_style_allow_async_suffix_overrides = true
 sharedkernel_style_allow_async_suffix_interface_implementations = true
 ```
 
-Repository-owned analyzers should stay at `warning` severity when enabled.
+Analyzer descriptors default to `warning`. Repository `.editorconfig` can stage cleanup-heavy
+adoption while the existing baseline is being retired.
 
 `SKSTYLE004` follows the same staged rollout. The first pass excludes generated files,
 files containing only partial top-level types, and a short list of production files that still carry
