@@ -10,11 +10,7 @@ public sealed class HtmlDocumentRendererTests
     public void Render_escapes_document_content_and_decorates_with_branding()
     {
         // Arrange
-        var request = new DocumentRenderRequest(
-            "en",
-            "Contract <title>",
-            [new DocumentSection("Terms & conditions", [new DocumentField("Customer <name>", "A & B", DocumentPrivacyClassification.PersonalData)])],
-            new DocumentBrandingSnapshot("B1", "Viajantes <Turismo>", new Uri("/logo.svg?x=1&y=2", UriKind.Relative)));
+        var request = new DocumentRenderRequest("en", "Contract <title>", [new DocumentSection("Terms & conditions", [new DocumentField("Customer <name>", "A & B", DocumentPrivacyClassification.PersonalData)])], new DocumentBrandingSnapshot("B1", "Viajantes <Turismo>", new Uri("/logo.svg?x=1&y=2", UriKind.Relative)));
 
         // Act
         var html = Encoding.UTF8.GetString(new HtmlDocumentRenderer().Render(request));
@@ -32,11 +28,7 @@ public sealed class HtmlDocumentRendererTests
     public void Render_is_deterministic_and_uses_semantic_print_accessible_html()
     {
         // Arrange
-        var request = new DocumentRenderRequest(
-            "pt-BR",
-            "Tour service contract",
-            [new DocumentSection("Travel", [new DocumentField("Dates", "2026-07-11", DocumentPrivacyClassification.Public)])],
-            null);
+        var request = new DocumentRenderRequest("pt-BR", "Tour service contract", [new DocumentSection("Travel", [new DocumentField("Dates", "2026-07-11", DocumentPrivacyClassification.Public)])], null);
         var renderer = new HtmlDocumentRenderer();
 
         // Act
@@ -52,4 +44,19 @@ public sealed class HtmlDocumentRendererTests
         first.ShouldContain("@media print", StringComparison.Ordinal);
         first.ShouldNotContain("<img");
     }
+
+    [Fact]
+    public void Render_excludes_unsafe_logo_uris()
+    {
+        // Arrange
+        var request = new DocumentRenderRequest("en", "Tour service contract", [new DocumentSection("Travel", [new DocumentField("Dates", "2026-07-11", DocumentPrivacyClassification.Public)])], new DocumentBrandingSnapshot("B1", "Viajantes Turismo", new Uri("http://example.test/logo.svg", UriKind.Absolute)));
+
+        // Act
+        var html = Encoding.UTF8.GetString(new HtmlDocumentRenderer().Render(request));
+
+        // Assert
+        html.ShouldNotContain("<img");
+        html.ShouldContain("<p>Viajantes Turismo</p>", StringComparison.Ordinal);
+    }
+
 }
