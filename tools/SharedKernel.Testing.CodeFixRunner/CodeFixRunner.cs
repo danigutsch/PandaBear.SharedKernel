@@ -42,7 +42,10 @@ internal static class CodeFixRunEngine
                 {
                     await FormatAndApplyChanges(workspace, initialSolution, solution).ConfigureAwait(false);
                     solution = workspace.CurrentSolution;
-                    unsupportedDiagnostics = await FindDiagnostics(solution, options.DiagnosticId).ConfigureAwait(false);
+                    if (!unsupportedDiagnostics.IsEmpty)
+                    {
+                        unsupportedDiagnostics = await FindDiagnostics(solution, options.DiagnosticId).ConfigureAwait(false);
+                    }
                 }
 
                 if (!unsupportedDiagnostics.IsEmpty)
