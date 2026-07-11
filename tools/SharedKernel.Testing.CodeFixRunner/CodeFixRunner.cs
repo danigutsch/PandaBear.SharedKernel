@@ -32,27 +32,30 @@ internal static class CodeFixRunEngine
         var fixedCount = 0;
         while (true)
         {
-            var changedSolution = await ApplyFirstFix(workspace, solution, options.DiagnosticId).ConfigureAwait(false);
-            if (changedSolution is null)
+            var fixAttempt = await ApplyFirstFix(workspace, solution, options.DiagnosticId).ConfigureAwait(false);
+            if (fixAttempt.ChangedSolution is null)
             {
-                break;
+                if (!fixAttempt.Diagnostics.IsEmpty)
+                {
+                    await ReportUnsupportedDiagnostics(solution, fixAttempt.Diagnostics, error).ConfigureAwait(false);
+                }
+
+                return fixedCount;
             }
 
-            solution = changedSolution;
+            solution = fixAttempt.ChangedSolution;
             fixedCount++;
         }
-
-        var unsupportedDiagnostics = await FindUnsupportedDiagnostics(solution, options.DiagnosticId).ConfigureAwait(false);
-        await ReportUnsupportedDiagnostics(solution, unsupportedDiagnostics, error).ConfigureAwait(false);
-        return fixedCount;
     }
 
-    private static async Task<Solution?> ApplyFirstFix(Workspace workspace, Solution solution, string diagnosticId)
+    private static async Task<FixAttempt> ApplyFirstFix(Workspace workspace, Solution solution, string diagnosticId)
     {
+        var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
         foreach (var project in GetCSharpProjects(solution))
         {
-            var diagnostics = await GetProjectDiagnostics(project, diagnosticId).ConfigureAwait(false);
-            foreach (var diagnostic in diagnostics)
+            var projectDiagnostics = await GetProjectDiagnostics(project, diagnosticId).ConfigureAwait(false);
+            diagnostics.AddRange(projectDiagnostics);
+            foreach (var diagnostic in projectDiagnostics)
             {
                 var document = GetDocument(solution, diagnostic);
                 if (document is null)
@@ -63,12 +66,12 @@ internal static class CodeFixRunEngine
                 var action = await GetFirstCodeAction(document, diagnostic).ConfigureAwait(false);
                 if (action is not null)
                 {
-                    return await ApplyAction(workspace, solution, action).ConfigureAwait(false);
+                    return new FixAttempt(await ApplyAction(workspace, solution, action).ConfigureAwait(false), []);
                 }
             }
         }
 
-        return null;
+        return new FixAttempt(null, diagnostics.ToImmutable());
     }
 
     private static async Task ReportUnsupportedDiagnostics(Solution solution, ImmutableArray<Diagnostic> diagnostics, TextWriter error)
@@ -78,7 +81,7 @@ internal static class CodeFixRunEngine
             var document = GetDocument(solution, diagnostic);
             if (document is null)
             {
-                await error.WriteLineAsync($"Skipping diagnostic without document: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}").ConfigureAwait(false);
+                await error.WriteLineAsync($"Skipping diagnostic without document: {diagnostic.Id} at {diagnostic.Location.Kind}: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}").ConfigureAwait(false);
                 continue;
             }
 
@@ -122,20 +125,6 @@ internal static class CodeFixRunEngine
         };
     }
 
-    private static async Task<ImmutableArray<Diagnostic>> FindUnsupportedDiagnostics(Solution solution, string diagnosticId)
-    {
-        var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
-        foreach (var project in GetCSharpProjects(solution))
-        {
-            diagnostics.AddRange(await GetProjectDiagnostics(project, diagnosticId).ConfigureAwait(false));
-        }
-
-        return diagnostics
-            .OrderBy(static candidate => candidate.Location.GetLineSpan().Path, StringComparer.Ordinal)
-            .ThenBy(static candidate => candidate.Location.GetLineSpan().StartLinePosition.Line)
-            .ToImmutableArray();
-    }
-
     private static IEnumerable<Project> GetCSharpProjects(Solution solution) =>
         solution.Projects
             .Where(static project => project.Language == LanguageNames.CSharp)
@@ -160,6 +149,8 @@ internal static class CodeFixRunEngine
             .ThenBy(static candidate => candidate.Location.GetLineSpan().StartLinePosition.Line)
             .ToImmutableArray();
     }
+
+    private readonly record struct FixAttempt(Solution? ChangedSolution, ImmutableArray<Diagnostic> Diagnostics);
 
     private static async Task<CodeAction?> GetFirstCodeAction(Document document, Diagnostic diagnostic)
     {
