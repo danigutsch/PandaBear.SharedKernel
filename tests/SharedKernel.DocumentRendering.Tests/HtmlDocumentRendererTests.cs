@@ -3,7 +3,7 @@ using SharedKernel.Testing;
 
 namespace SharedKernel.DocumentRendering.Tests;
 
-[Trait(SharedKernelTestTraitNames.CapabilityName, "document-rendering")]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class HtmlDocumentRendererTests
 {
     [Fact]
