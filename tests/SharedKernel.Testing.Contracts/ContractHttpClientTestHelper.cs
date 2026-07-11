@@ -46,6 +46,7 @@ public sealed class ContractHttpClientTestHelper : HttpClient
     {
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             return Task.FromResult(responseFactory(request));
         }
     }
