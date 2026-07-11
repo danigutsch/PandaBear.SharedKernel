@@ -38,47 +38,53 @@ internal static class CodeFixRunEngine
                 return fixedCount;
             }
 
-            var appliedFix = false;
-            foreach (var diagnostic in diagnostics)
+            var changedSolution = await ApplyFirstFix(workspace, solution, diagnostics).ConfigureAwait(false);
+            if (changedSolution is not null)
             {
-                var document = solution.GetDocument(diagnostic.Location.SourceTree);
-                if (document is null)
-                {
-                    continue;
-                }
-
-                var action = await GetFirstCodeAction(document, diagnostic).ConfigureAwait(false);
-                if (action is null)
-                {
-                    continue;
-                }
-
-                solution = await ApplyAction(workspace, solution, action).ConfigureAwait(false);
+                solution = changedSolution;
                 fixedCount++;
-                appliedFix = true;
-                break;
+                continue;
             }
 
-            if (appliedFix)
+            await ReportUnsupportedDiagnostics(solution, diagnostics, error).ConfigureAwait(false);
+            return fixedCount;
+        }
+    }
+
+    private static async Task<Solution?> ApplyFirstFix(Workspace workspace, Solution solution, ImmutableArray<Diagnostic> diagnostics)
+    {
+        foreach (var diagnostic in diagnostics)
+        {
+            var document = solution.GetDocument(diagnostic.Location.SourceTree);
+            if (document is null)
             {
                 continue;
             }
 
-            foreach (var diagnostic in diagnostics)
+            var action = await GetFirstCodeAction(document, diagnostic).ConfigureAwait(false);
+            if (action is not null)
             {
-                var document = solution.GetDocument(diagnostic.Location.SourceTree);
-                if (document is null)
-                {
-                    await error.WriteLineAsync($"Skipping diagnostic without document: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}").ConfigureAwait(false);
-                    continue;
-                }
+                return await ApplyAction(workspace, solution, action).ConfigureAwait(false);
+            }
+        }
 
-                await error.WriteLineAsync(
-                    $"No code fix available for {diagnostic.Id} at {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}")
-                    .ConfigureAwait(false);
+        return null;
+    }
+
+    private static async Task ReportUnsupportedDiagnostics(Solution solution, ImmutableArray<Diagnostic> diagnostics, TextWriter error)
+    {
+        foreach (var diagnostic in diagnostics)
+        {
+            var document = solution.GetDocument(diagnostic.Location.SourceTree);
+            if (document is null)
+            {
+                await error.WriteLineAsync($"Skipping diagnostic without document: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}").ConfigureAwait(false);
+                continue;
             }
 
-            return fixedCount;
+            await error.WriteLineAsync(
+                $"No code fix available for {diagnostic.Id} at {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}")
+                .ConfigureAwait(false);
         }
     }
 

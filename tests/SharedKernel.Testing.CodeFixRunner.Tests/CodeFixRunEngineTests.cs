@@ -80,7 +80,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
     }
 
     [Fact]
-    public async Task Run_reports_unsupported_diagnostics_once_before_applying_supported_fixes()
+    public async Task Run_reports_unsupported_diagnostics_once_after_applying_supported_fixes()
     {
         // Arrange
         var projectPath = Path.Combine(projectDirectory.Path, "Sample.Tests.csproj");

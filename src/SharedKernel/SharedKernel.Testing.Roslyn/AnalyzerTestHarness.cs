@@ -53,12 +53,9 @@ public static class AnalyzerTestHarness
     private static ImmutableArray<MetadataReference> CreateTrustedPlatformReferences()
     {
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        if (string.IsNullOrWhiteSpace(trustedPlatformAssemblies))
-        {
-            throw new InvalidOperationException("TRUSTED_PLATFORM_ASSEMBLIES is required to create Roslyn test compilations.");
-        }
-
-        return trustedPlatformAssemblies
+        return string.IsNullOrWhiteSpace(trustedPlatformAssemblies)
+            ? throw new InvalidOperationException("TRUSTED_PLATFORM_ASSEMBLIES is required to create Roslyn test compilations.")
+            : trustedPlatformAssemblies
             .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
             .Select(static path => (MetadataReference)MetadataReference.CreateFromFile(path))
             .ToImmutableArray();
