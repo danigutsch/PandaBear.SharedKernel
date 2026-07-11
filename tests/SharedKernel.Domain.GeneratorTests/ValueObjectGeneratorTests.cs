@@ -24,7 +24,11 @@ public sealed class ValueObjectGeneratorTests
         // Assert
         runResult.Diagnostics.ShouldBeEmpty();
         generatedSource.ShouldContain("public readonly partial record struct TourCode", StringComparison.Ordinal);
-        generatedSource.ShouldContain("public string Value { get; }", StringComparison.Ordinal);
+        generatedSource.ShouldContain("private readonly string? __valueObjectValue;", StringComparison.Ordinal);
+        generatedSource.ShouldContain("public string Value", StringComparison.Ordinal);
+        generatedSource.ShouldContain("get => __valueObjectValue ?? throw new global::System.InvalidOperationException", StringComparison.Ordinal);
+        generatedSource.ShouldContain("__valueObjectValue = value;", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("public string Value { get; }");
         generatedSource.ShouldContain("public static TourCode Create(string value)", StringComparison.Ordinal);
         generatedSource.ShouldContain("public static bool TryCreate(string value, out TourCode result)", StringComparison.Ordinal);
         generatedSource.ShouldContain("public static bool TryParse(string? text, global::System.IFormatProvider? provider, out TourCode result)", StringComparison.Ordinal);
@@ -84,7 +88,8 @@ public sealed class ValueObjectGeneratorTests
         generatedSource.ShouldContain("public override void Write(global::System.Text.Json.Utf8JsonWriter writer, TourCode value", StringComparison.Ordinal);
         generatedSource.ShouldContain("reader.TokenType != global::System.Text.Json.JsonTokenType.String", StringComparison.Ordinal);
         generatedSource.ShouldContain("TourCode.TryCreate(value, out var parsedValue)", StringComparison.Ordinal);
-        generatedSource.ShouldContain("if (!TourCode.TryCreate(value.Value, out _))", StringComparison.Ordinal);
+        generatedSource.ShouldContain("value.__valueObjectValue is null || !TourCode.TryCreate(value.__valueObjectValue, out _)", StringComparison.Ordinal);
+        generatedSource.ShouldContain("writer.WriteStringValue(value.__valueObjectValue);", StringComparison.Ordinal);
         generatedSource.ShouldContain("throw new global::System.Text.Json.JsonException", StringComparison.Ordinal);
     }
 

@@ -43,6 +43,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
     private const string RecordStructDeclaration = " readonly partial record struct ";
     private const string ValueParameterSuffix = " value)";
     private const string JsonExceptionSuffixLine = ".\");";
+    private const string StringBackingFieldName = "__valueObjectValue";
     private static readonly DiagnosticDescriptor MissingUnderlyingType = new(
         "SKMDL010",
         "Value-object generation requires an underlying type",
@@ -442,6 +443,11 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             "Value",
         };
 
+        if (underlyingKind == UnderlyingKind.String)
+        {
+            reservedMemberNames.Add(StringBackingFieldName);
+        }
+
         if (parsing)
         {
             reservedMemberNames.Add("Parse");
@@ -602,15 +608,15 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
         builder
             .Append(model.Accessibility).Append(RecordStructDeclaration).Append(model.TypeName).AppendLine(interfaceClause)
-            .AppendLine("{")
-            .AppendLine(SummaryStartLine)
-            .AppendLine("    /// Gets the underlying scalar value.")
-            .AppendLine(SummaryEndLine)
-            .Append("    public ").Append(model.UnderlyingTypeName).AppendLine(" Value { get; }")
-            .AppendLine()
+            .AppendLine("{");
+        AppendValueStorage(builder, model);
+
+        builder
             .Append("    private ").Append(model.TypeName).Append('(').Append(model.UnderlyingTypeName).AppendLine(ValueParameterSuffix)
-            .AppendLine(OpenBlock4)
-            .AppendLine("        Value = value;")
+            .AppendLine(OpenBlock4);
+        AppendConstructorAssignment(builder, model);
+
+        builder
             .AppendLine(CloseBlock4)
             .AppendLine()
             .AppendLine(SummaryStartLine)
@@ -656,6 +662,43 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
         AppendValidation(builder, model);
         builder.AppendLine("}");
         return builder.ToString();
+    }
+
+    private static void AppendValueStorage(StringBuilder builder, ValueObjectModel model)
+    {
+        if (model.UnderlyingKind != UnderlyingKind.String)
+        {
+            builder
+                .AppendLine(SummaryStartLine)
+                .AppendLine("    /// Gets the underlying scalar value.")
+                .AppendLine(SummaryEndLine)
+                .Append("    public ").Append(model.UnderlyingTypeName).AppendLine(" Value { get; }")
+                .AppendLine();
+            return;
+        }
+
+        builder
+            .Append("    private readonly string? ").Append(StringBackingFieldName).AppendLine(";")
+            .AppendLine()
+            .AppendLine(SummaryStartLine)
+            .AppendLine("    /// Gets the underlying scalar value.")
+            .AppendLine(SummaryEndLine)
+            .AppendLine("    public string Value")
+            .AppendLine(OpenBlock4)
+            .Append("        get => ").Append(StringBackingFieldName).AppendLine(" ?? throw new global::System.InvalidOperationException(\"The value object instance is not initialized.\");")
+            .AppendLine(CloseBlock4)
+            .AppendLine();
+    }
+
+    private static void AppendConstructorAssignment(StringBuilder builder, ValueObjectModel model)
+    {
+        if (model.UnderlyingKind == UnderlyingKind.String)
+        {
+            builder.Append("        ").Append(StringBackingFieldName).AppendLine(" = value;");
+            return;
+        }
+
+        builder.AppendLine("        Value = value;");
     }
 
     private static void AppendParsing(StringBuilder builder, ValueObjectModel model)
@@ -806,7 +849,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
     {
         return model.UnderlyingKind switch
         {
-            UnderlyingKind.String => $"{valueExpression} ?? string.Empty",
+            UnderlyingKind.String => valueExpression,
             UnderlyingKind.Guid => $"{valueExpression}.ToString()",
             UnderlyingKind.Int32 => $"{valueExpression}.ToString(global::System.Globalization.CultureInfo.InvariantCulture)",
             UnderlyingKind.Decimal => $"{valueExpression}.ToString(global::System.Globalization.CultureInfo.InvariantCulture)",
@@ -1041,6 +1084,12 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
     private static void AppendJsonWriteBody(StringBuilder builder, ValueObjectModel model)
     {
+        if (model.UnderlyingKind == UnderlyingKind.String)
+        {
+            AppendStringJsonWriteBody(builder, model);
+            return;
+        }
+
         builder
             .Append(If12Prefix).Append('!').Append(model.TypeName).AppendLine(".TryCreate(value.Value, out _))")
             .AppendLine(OpenBlock12);
@@ -1072,6 +1121,20 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             default:
                 throw new InvalidOperationException(UnsupportedUnderlyingKindMessage);
         }
+    }
+
+    private static void AppendStringJsonWriteBody(StringBuilder builder, ValueObjectModel model)
+    {
+        builder
+            .Append(If12Prefix).Append("value.").Append(StringBackingFieldName).Append(" is null || !")
+            .Append(model.TypeName).Append(".TryCreate(value.").Append(StringBackingFieldName).AppendLine(", out _))")
+            .AppendLine(OpenBlock12);
+        AppendJsonInvalidThrow(builder, model, Indent16);
+
+        builder
+            .AppendLine(CloseBlock12)
+            .AppendLine()
+            .Append("            writer.WriteStringValue(value.").Append(StringBackingFieldName).AppendLine(");");
     }
 
     private static void AppendJsonTryGetAndCreateOrThrow(
