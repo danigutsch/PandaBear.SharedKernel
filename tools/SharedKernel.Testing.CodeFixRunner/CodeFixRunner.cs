@@ -55,7 +55,7 @@ internal static class CodeFixRunEngine
     {
         foreach (var diagnostic in diagnostics)
         {
-            var document = solution.GetDocument(diagnostic.Location.SourceTree);
+            var document = GetDocument(solution, diagnostic);
             if (document is null)
             {
                 continue;
@@ -75,7 +75,7 @@ internal static class CodeFixRunEngine
     {
         foreach (var diagnostic in diagnostics)
         {
-            var document = solution.GetDocument(diagnostic.Location.SourceTree);
+            var document = GetDocument(solution, diagnostic);
             if (document is null)
             {
                 await error.WriteLineAsync($"Skipping diagnostic without document: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}").ConfigureAwait(false);
@@ -86,6 +86,13 @@ internal static class CodeFixRunEngine
                 $"No code fix available for {diagnostic.Id} at {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}")
                 .ConfigureAwait(false);
         }
+    }
+
+    private static Document? GetDocument(Solution solution, Diagnostic diagnostic)
+    {
+        return diagnostic.Location.SourceTree is { } sourceTree
+            ? solution.GetDocument(sourceTree)
+            : null;
     }
 
     private static void EnsureMSBuildRegistered()
