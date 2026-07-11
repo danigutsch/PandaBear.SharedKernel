@@ -24,6 +24,8 @@ public static class AnalyzerTestHarness
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(defaultUsings);
+        ArgumentNullException.ThrowIfNull(assemblyName);
+        ArgumentNullException.ThrowIfNull(path);
 
         var syntaxTree = CSharpSyntaxTree.ParseText(
             defaultUsings + source,

@@ -42,7 +42,7 @@ internal static class CodeFixRunEngine
             fixedCount++;
         }
 
-        var unsupportedDiagnostics = await FindDiagnostics(solution, options.DiagnosticId).ConfigureAwait(false);
+        var unsupportedDiagnostics = await FindUnsupportedDiagnostics(solution, options.DiagnosticId).ConfigureAwait(false);
         await ReportUnsupportedDiagnostics(solution, unsupportedDiagnostics, error).ConfigureAwait(false);
         return fixedCount;
     }
@@ -122,7 +122,7 @@ internal static class CodeFixRunEngine
         };
     }
 
-    private static async Task<ImmutableArray<Diagnostic>> FindDiagnostics(Solution solution, string diagnosticId)
+    private static async Task<ImmutableArray<Diagnostic>> FindUnsupportedDiagnostics(Solution solution, string diagnosticId)
     {
         var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
         foreach (var project in GetCSharpProjects(solution))
