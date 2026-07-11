@@ -154,46 +154,61 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
         context.RegisterSourceOutput(
             models,
-            static (productionContext, models) =>
+            static (productionContext, models) => EmitValueObjectSources(productionContext, models));
+    }
+
+    private static void EmitValueObjectSources(SourceProductionContext productionContext, IEnumerable<ValueObjectModel> models)
+    {
+        var generatedModels = new Dictionary<string, ValueObjectModel>(StringComparer.Ordinal);
+
+        foreach (var model in models)
+        {
+            if (model.Diagnostic is not null)
             {
-                var generatedModels = new Dictionary<string, ValueObjectModel>(StringComparer.Ordinal);
+                productionContext.ReportDiagnostic(model.Diagnostic);
+                continue;
+            }
 
-                foreach (var model in models)
-                {
-                    if (model.Diagnostic is not null)
-                    {
-                        productionContext.ReportDiagnostic(model.Diagnostic);
-                        continue;
-                    }
+            var hintName = model.CoreHintName!;
+            if (generatedModels.TryGetValue(hintName, out var existingModel))
+            {
+                ReportConflictingOptions(productionContext, existingModel, model);
+                continue;
+            }
 
-                    if (generatedModels.TryGetValue(model.CoreHintName!, out var existingModel))
-                    {
-                        if (!HasSameGenerationOptions(existingModel, model))
-                        {
-                            productionContext.ReportDiagnostic(Diagnostic.Create(
-                                ConflictingValueObjectConfiguration,
-                                model.Location,
-                                model.TypeName));
-                        }
+            generatedModels.Add(hintName, model);
+            productionContext.AddSource(hintName, SourceText.From(EmitValueObject(model), Encoding.UTF8));
+            AddOptionalSources(productionContext, model);
+        }
+    }
 
-                        continue;
-                    }
+    private static void ReportConflictingOptions(
+        SourceProductionContext productionContext,
+        ValueObjectModel existingModel,
+        ValueObjectModel model)
+    {
+        if (HasSameGenerationOptions(existingModel, model))
+        {
+            return;
+        }
 
-                    generatedModels.Add(model.CoreHintName!, model);
+        productionContext.ReportDiagnostic(Diagnostic.Create(
+            ConflictingValueObjectConfiguration,
+            model.Location,
+            model.TypeName));
+    }
 
-                    productionContext.AddSource(model.CoreHintName!, SourceText.From(EmitValueObject(model), Encoding.UTF8));
+    private static void AddOptionalSources(SourceProductionContext productionContext, ValueObjectModel model)
+    {
+        if (model.Json)
+        {
+            productionContext.AddSource(model.JsonHintName!, SourceText.From(EmitJsonConverter(model), Encoding.UTF8));
+        }
 
-                    if (model.Json)
-                    {
-                        productionContext.AddSource(model.JsonHintName!, SourceText.From(EmitJsonConverter(model), Encoding.UTF8));
-                    }
-
-                    if (model.EfCore)
-                    {
-                        productionContext.AddSource(model.EfCoreHintName!, SourceText.From(EmitEfCoreConverter(model), Encoding.UTF8));
-                    }
-                }
-            });
+        if (model.EfCore)
+        {
+            productionContext.AddSource(model.EfCoreHintName!, SourceText.From(EmitEfCoreConverter(model), Encoding.UTF8));
+        }
     }
 
     private static ValueObjectModel BuildModel(GeneratorAttributeSyntaxContext context, CancellationToken cancellationToken)
@@ -204,29 +219,10 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
         var type = (INamedTypeSymbol)context.TargetSymbol;
         var location = typeDeclaration.Identifier.GetLocation();
 
-        if (!IsReadonlyRecordStruct(typeDeclaration, type))
+        var declarationDiagnostic = ValidateDeclaration(typeDeclaration, type, location);
+        if (declarationDiagnostic is not null)
         {
-            return DiagnosticOnly(Diagnostic.Create(UnsupportedDeclaration, location, type.Name));
-        }
-
-        if (type.ContainingType is not null)
-        {
-            return DiagnosticOnly(Diagnostic.Create(UnsupportedNestedType, location, type.Name));
-        }
-
-        if (type.TypeParameters.Length > 0)
-        {
-            return DiagnosticOnly(Diagnostic.Create(UnsupportedGenericType, location, type.Name));
-        }
-
-        if (!typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
-        {
-            return DiagnosticOnly(Diagnostic.Create(MissingPartial, location, type.Name));
-        }
-
-        if (type.InstanceConstructors.Any(static constructor => !constructor.IsImplicitlyDeclared))
-        {
-            return DiagnosticOnly(Diagnostic.Create(UnsupportedConstructor, location, type.Name));
+            return DiagnosticOnly(declarationDiagnostic);
         }
 
         var attributes = context.Attributes
@@ -304,6 +300,36 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
             EfCoreExtensionsTypeName = $"{type.Name}EfCoreConfigurationExtensions",
             Location = location,
         };
+    }
+
+    private static Diagnostic? ValidateDeclaration(TypeDeclarationSyntax typeDeclaration, INamedTypeSymbol type, Location location)
+    {
+        if (!IsReadonlyRecordStruct(typeDeclaration, type))
+        {
+            return Diagnostic.Create(UnsupportedDeclaration, location, type.Name);
+        }
+
+        if (type.ContainingType is not null)
+        {
+            return Diagnostic.Create(UnsupportedNestedType, location, type.Name);
+        }
+
+        if (type.TypeParameters.Length > 0)
+        {
+            return Diagnostic.Create(UnsupportedGenericType, location, type.Name);
+        }
+
+        if (!typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+        {
+            return Diagnostic.Create(MissingPartial, location, type.Name);
+        }
+
+        if (type.InstanceConstructors.Any(static constructor => !constructor.IsImplicitlyDeclared))
+        {
+            return Diagnostic.Create(UnsupportedConstructor, location, type.Name);
+        }
+
+        return null;
     }
 
     private static bool HasSameGenerationOptions(ValueObjectModel left, ValueObjectModel right)
