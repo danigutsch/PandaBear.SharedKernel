@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.CodeAnalysis.Text;
 using SharedKernel.Testing.CodeFixes;
 
 namespace SharedKernel.Testing.CodeFixRunner;
@@ -93,11 +94,24 @@ internal static class CodeFixRunEngine
     {
         var sourceTree = diagnostic.Location.SourceTree;
         var sourceText = sourceTree?.GetText();
-        var source = sourceText?.ToString(diagnostic.Location.SourceSpan) ?? string.Empty;
+        var sourceHash = sourceText is null
+            ? 0
+            : GetSourceSpanHash(sourceText, diagnostic.Location.SourceSpan);
 
         return string.Create(
             CultureInfo.InvariantCulture,
-            $"{sourceTree?.FilePath}|{diagnostic.Id}|{diagnostic.GetMessage(CultureInfo.InvariantCulture)}|{source}");
+            $"{sourceTree?.FilePath}|{diagnostic.Id}|{diagnostic.GetMessage(CultureInfo.InvariantCulture)}|{sourceHash:X8}");
+    }
+
+    private static int GetSourceSpanHash(SourceText sourceText, TextSpan sourceSpan)
+    {
+        var hash = new HashCode();
+        for (var index = sourceSpan.Start; index < sourceSpan.End; index++)
+        {
+            hash.Add(sourceText[index]);
+        }
+
+        return hash.ToHashCode();
     }
 
     private static async Task<Solution> OpenSolution(MSBuildWorkspace workspace, string targetPath)
