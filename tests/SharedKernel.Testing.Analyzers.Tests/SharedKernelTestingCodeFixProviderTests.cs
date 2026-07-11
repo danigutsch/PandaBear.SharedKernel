@@ -36,8 +36,10 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+        var fixableDiagnosticIds = provider.FixableDiagnosticIds;
 
         // Assert
+        fixableDiagnosticIds.ShouldNotContain(diagnosticId);
         (codeActions).ShouldBeEmpty();
     }
 
