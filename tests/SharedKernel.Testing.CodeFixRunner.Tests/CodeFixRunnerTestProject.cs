@@ -82,6 +82,30 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    public const string MultipleSupportedSourceFile = """
+        namespace Xunit
+        {
+            public static class Assert
+            {
+                public static void True(bool condition)
+                {
+                }
+            }
+        }
+
+        namespace Sample.Tests
+        {
+            public sealed class SampleTests
+            {
+                public void UsesXunitAssert()
+                {
+                    Xunit.Assert.True(  true );
+                    Xunit.Assert.True( true  );
+                }
+            }
+        }
+        """;
+
     public const string HelperSourceFile = """
         namespace Xunit
         {
