@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>SharedKernel.DocumentRendering.Tests</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <Using Include="SharedKernel.DocumentRendering" />
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="Xunit" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3.mtp-v2" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.DocumentRendering\SharedKernel.DocumentRendering.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
+    </ItemGroup>
+</Project>

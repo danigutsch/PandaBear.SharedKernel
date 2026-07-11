@@ -1,0 +1,44 @@
+#nullable enable
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.DocumentBrandingSnapshot(string! Version, string! BrandName, System.Uri? LogoUri) -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BrandName.get -> string!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BrandName.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.LogoUri.get -> System.Uri?
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.LogoUri.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.Version.get -> string!
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.Version.init -> void
+SharedKernel.DocumentRendering.DocumentField
+SharedKernel.DocumentRendering.DocumentField.DocumentField(string! Label, string! Value, SharedKernel.DocumentRendering.DocumentPrivacyClassification PrivacyClassification) -> void
+SharedKernel.DocumentRendering.DocumentField.Label.get -> string!
+SharedKernel.DocumentRendering.DocumentField.Label.init -> void
+SharedKernel.DocumentRendering.DocumentField.PrivacyClassification.get -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentField.PrivacyClassification.init -> void
+SharedKernel.DocumentRendering.DocumentField.Value.get -> string!
+SharedKernel.DocumentRendering.DocumentField.Value.init -> void
+SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentPrivacyClassification.None = 0 -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentPrivacyClassification.Operational = 2 -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentPrivacyClassification.PersonalData = 3 -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentPrivacyClassification.Public = 1 -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentPrivacyClassification.SensitivePersonalData = 4 -> SharedKernel.DocumentRendering.DocumentPrivacyClassification
+SharedKernel.DocumentRendering.DocumentRenderRequest
+SharedKernel.DocumentRendering.DocumentRenderRequest.DocumentRenderRequest(string! Language, string! Title, System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentSection!>! Sections, SharedKernel.DocumentRendering.DocumentBrandingSnapshot? Branding) -> void
+SharedKernel.DocumentRendering.DocumentRenderRequest.Branding.get -> SharedKernel.DocumentRendering.DocumentBrandingSnapshot?
+SharedKernel.DocumentRendering.DocumentRenderRequest.Branding.init -> void
+SharedKernel.DocumentRendering.DocumentRenderRequest.Language.get -> string!
+SharedKernel.DocumentRendering.DocumentRenderRequest.Language.init -> void
+SharedKernel.DocumentRendering.DocumentRenderRequest.Sections.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentSection!>!
+SharedKernel.DocumentRendering.DocumentRenderRequest.Sections.init -> void
+SharedKernel.DocumentRendering.DocumentRenderRequest.Title.get -> string!
+SharedKernel.DocumentRendering.DocumentRenderRequest.Title.init -> void
+SharedKernel.DocumentRendering.DocumentSection
+SharedKernel.DocumentRendering.DocumentSection.DocumentSection(string! Heading, System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentField!>! Fields) -> void
+SharedKernel.DocumentRendering.DocumentSection.Fields.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.DocumentRendering.DocumentField!>!
+SharedKernel.DocumentRendering.DocumentSection.Fields.init -> void
+SharedKernel.DocumentRendering.DocumentSection.Heading.get -> string!
+SharedKernel.DocumentRendering.DocumentSection.Heading.init -> void
+SharedKernel.DocumentRendering.HtmlDocumentRenderer
+SharedKernel.DocumentRendering.HtmlDocumentRenderer.HtmlDocumentRenderer() -> void
+SharedKernel.DocumentRendering.HtmlDocumentRenderer.Render(SharedKernel.DocumentRendering.DocumentRenderRequest! request) -> byte[]!
+SharedKernel.DocumentRendering.IDocumentRenderer
+SharedKernel.DocumentRendering.IDocumentRenderer.Render(SharedKernel.DocumentRendering.DocumentRenderRequest! request) -> byte[]!
