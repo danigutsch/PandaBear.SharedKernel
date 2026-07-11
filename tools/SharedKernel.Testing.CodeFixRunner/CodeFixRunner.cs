@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
-using Microsoft.CodeAnalysis.Text;
 using SharedKernel.Testing.CodeFixes;
 
 namespace SharedKernel.Testing.CodeFixRunner;
@@ -31,11 +30,9 @@ internal static class CodeFixRunEngine
         using var workspace = MSBuildWorkspace.Create();
         var solution = await OpenSolution(workspace, options.TargetPath).ConfigureAwait(false);
         var fixedCount = 0;
-        var skippedDiagnostics = new HashSet<string>(StringComparer.Ordinal);
-
         while (true)
         {
-            var diagnostics = await FindDiagnostics(solution, options.DiagnosticId, skippedDiagnostics).ConfigureAwait(false);
+            var diagnostics = await FindDiagnostics(solution, options.DiagnosticId).ConfigureAwait(false);
             if (diagnostics.IsEmpty)
             {
                 return fixedCount;
@@ -47,16 +44,12 @@ internal static class CodeFixRunEngine
                 var document = solution.GetDocument(diagnostic.Location.SourceTree);
                 if (document is null)
                 {
-                    await error.WriteLineAsync($"Skipping diagnostic without document: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}").ConfigureAwait(false);
-                    skippedDiagnostics.Add(GetDiagnosticKey(diagnostic));
                     continue;
                 }
 
                 var action = await GetFirstCodeAction(document, diagnostic).ConfigureAwait(false);
                 if (action is null)
                 {
-                    await error.WriteLineAsync($"No code fix available for {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}").ConfigureAwait(false);
-                    skippedDiagnostics.Add(GetDiagnosticKey(diagnostic));
                     continue;
                 }
 
@@ -66,10 +59,24 @@ internal static class CodeFixRunEngine
                 break;
             }
 
-            if (!appliedFix)
+            if (appliedFix)
             {
-                return fixedCount;
+                continue;
             }
+
+            foreach (var diagnostic in diagnostics)
+            {
+                var document = solution.GetDocument(diagnostic.Location.SourceTree);
+                if (document is null)
+                {
+                    await error.WriteLineAsync($"Skipping diagnostic without document: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}").ConfigureAwait(false);
+                    continue;
+                }
+
+                await error.WriteLineAsync($"No code fix available for {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}").ConfigureAwait(false);
+            }
+
+            return fixedCount;
         }
     }
 
@@ -90,30 +97,6 @@ internal static class CodeFixRunEngine
         }
     }
 
-    internal static string GetDiagnosticKey(Diagnostic diagnostic)
-    {
-        var sourceTree = diagnostic.Location.SourceTree;
-        var sourceText = sourceTree?.GetText();
-        var sourceHash = sourceText is null
-            ? 0
-            : GetSourceSpanHash(sourceText, diagnostic.Location.SourceSpan);
-
-        return string.Create(
-            CultureInfo.InvariantCulture,
-            $"{sourceTree?.FilePath}|{diagnostic.Id}|{diagnostic.GetMessage(CultureInfo.InvariantCulture)}|{sourceHash:X8}");
-    }
-
-    private static int GetSourceSpanHash(SourceText sourceText, TextSpan sourceSpan)
-    {
-        var hash = new HashCode();
-        for (var index = sourceSpan.Start; index < sourceSpan.End; index++)
-        {
-            hash.Add(sourceText[index]);
-        }
-
-        return hash.ToHashCode();
-    }
-
     private static async Task<Solution> OpenSolution(MSBuildWorkspace workspace, string targetPath)
     {
         return Path.GetExtension(targetPath) switch
@@ -124,7 +107,7 @@ internal static class CodeFixRunEngine
         };
     }
 
-    private static async Task<ImmutableArray<Diagnostic>> FindDiagnostics(Solution solution, string diagnosticId, HashSet<string> skippedDiagnostics)
+    private static async Task<ImmutableArray<Diagnostic>> FindDiagnostics(Solution solution, string diagnosticId)
     {
         var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
         foreach (var project in solution.Projects.Where(static project => project.Language == LanguageNames.CSharp))
@@ -140,8 +123,7 @@ internal static class CodeFixRunEngine
                 .GetAnalyzerDiagnosticsAsync()
                 .ConfigureAwait(false);
             diagnostics.AddRange(projectDiagnostics
-                .Where(candidate => string.Equals(candidate.Id, diagnosticId, StringComparison.Ordinal))
-                .Where(candidate => !skippedDiagnostics.Contains(GetDiagnosticKey(candidate))));
+                .Where(candidate => string.Equals(candidate.Id, diagnosticId, StringComparison.Ordinal)));
         }
 
         return diagnostics

@@ -19,6 +19,9 @@ public static class AnalyzerTestHarness
         string assemblyName = "SharedKernel.Testing.Roslyn.Dynamic",
         string path = "TestSource.cs")
     {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(defaultUsings);
+
         var syntaxTree = CSharpSyntaxTree.ParseText(
             defaultUsings + source,
             new CSharpParseOptions(LanguageVersion.Preview),
