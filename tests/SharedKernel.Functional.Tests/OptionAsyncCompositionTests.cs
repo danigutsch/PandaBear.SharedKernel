@@ -1,7 +1,7 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
 public sealed class OptionAsyncCompositionTests
 {
     [Fact]
@@ -14,7 +14,7 @@ public sealed class OptionAsyncCompositionTests
         var mapped = await option.Map(static value => Task.FromResult(value.Length));
 
         // Assert
-        Assert.Equal(Option.Some(5), mapped);
+        mapped.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public sealed class OptionAsyncCompositionTests
         var mapped = await option.Map(static value => ValueTask.FromResult(value.Length));
 
         // Assert
-        Assert.Equal(Option.Some(5), mapped);
+        mapped.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public sealed class OptionAsyncCompositionTests
         var bound = await option.Bind(static value => ValueTask.FromResult(Option.Some(value.Length)));
 
         // Assert
-        Assert.Equal(Option.Some(5), bound);
+        bound.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public sealed class OptionAsyncCompositionTests
             static () => Task.FromResult("EMPTY"));
 
         // Assert
-        Assert.Equal("EMPTY", matched);
+        matched.ShouldBe("EMPTY");
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public sealed class OptionAsyncCompositionTests
         var mapped = await optionTask.Map(static value => value.Length);
 
         // Assert
-        Assert.Equal(Option.Some(5), mapped);
+        mapped.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public sealed class OptionAsyncCompositionTests
         var bound = await optionTask.Bind(static value => Task.FromResult(Option.Some(value.Length)));
 
         // Assert
-        Assert.Equal(Option.Some(5), bound);
+        bound.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public sealed class OptionAsyncCompositionTests
             static () => ValueTask.FromResult("EMPTY"));
 
         // Assert
-        Assert.Equal("PORTO", matched);
+        matched.ShouldBe("PORTO");
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public sealed class OptionAsyncCompositionTests
         var mapped = await optionTask.Map(static value => Task.FromResult(value.Length));
 
         // Assert
-        Assert.Equal(Option.Some(5), mapped);
+        mapped.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public sealed class OptionAsyncCompositionTests
         var mapped = await optionTask.Map(static value => ValueTask.FromResult(value.Length));
 
         // Assert
-        Assert.Equal(Option.Some(5), mapped);
+        mapped.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -135,7 +135,7 @@ public sealed class OptionAsyncCompositionTests
         var bound = await optionTask.Bind(static value => Task.FromResult(Option.Some(value.Length)));
 
         // Assert
-        Assert.Equal(Option.Some(5), bound);
+        bound.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public sealed class OptionAsyncCompositionTests
         var mapped = await optionTask.Map(static value => value.Length);
 
         // Assert
-        Assert.Equal(Option.Some(5), mapped);
+        mapped.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -161,7 +161,7 @@ public sealed class OptionAsyncCompositionTests
         var mapped = await optionTask.Map(static value => Task.FromResult(value.Length));
 
         // Assert
-        Assert.Equal(Option.Some(5), mapped);
+        mapped.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -174,7 +174,7 @@ public sealed class OptionAsyncCompositionTests
         var bound = await optionTask.Bind(static value => ValueTask.FromResult(Option.Some(value.Length)));
 
         // Assert
-        Assert.Equal(Option.Some(5), bound);
+        bound.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -187,7 +187,7 @@ public sealed class OptionAsyncCompositionTests
         var bound = await optionTask.Bind(static value => Option.Some(value.Length));
 
         // Assert
-        Assert.Equal(Option.Some(5), bound);
+        bound.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -200,7 +200,7 @@ public sealed class OptionAsyncCompositionTests
         var bound = await optionTask.Bind(static value => ValueTask.FromResult(Option.Some(value.Length)));
 
         // Assert
-        Assert.Equal(Option.Some(5), bound);
+        bound.ShouldBe(Option.Some(5));
     }
 
     [Fact]
@@ -215,7 +215,7 @@ public sealed class OptionAsyncCompositionTests
             static () => Task.FromResult("EMPTY"));
 
         // Assert
-        Assert.Equal("PORTO", matched);
+        matched.ShouldBe("PORTO");
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public sealed class OptionAsyncCompositionTests
             static () => "EMPTY");
 
         // Assert
-        Assert.Equal("PORTO", matched);
+        matched.ShouldBe("PORTO");
     }
 
     [Fact]
@@ -245,7 +245,7 @@ public sealed class OptionAsyncCompositionTests
             static () => ValueTask.FromResult("EMPTY"));
 
         // Assert
-        Assert.Equal("PORTO", matched);
+        matched.ShouldBe("PORTO");
     }
 
     [Fact]
@@ -260,7 +260,7 @@ public sealed class OptionAsyncCompositionTests
             static () => Task.FromResult("EMPTY"));
 
         // Assert
-        Assert.Equal("PORTO", matched);
+        matched.ShouldBe("PORTO");
     }
 
     [Fact]
@@ -270,10 +270,10 @@ public sealed class OptionAsyncCompositionTests
         var source = NullArgumentData.Task<Option<string>>();
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => source.Map(static value => value.Length));
+        var exception = await ((Func<Task>)(() => source.Map(static value => value.Length))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("source", exception.ParamName);
+        exception.ParamName.ShouldBe("source");
     }
 
     [Fact]
@@ -283,10 +283,10 @@ public sealed class OptionAsyncCompositionTests
         var source = NullArgumentData.Task<Option<string>>();
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => source.Bind(static value => Option.Some(value.Length)));
+        var exception = await ((Func<Task>)(() => source.Bind(static value => Option.Some(value.Length)))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("source", exception.ParamName);
+        exception.ParamName.ShouldBe("source");
     }
 
     [Fact]
@@ -296,10 +296,10 @@ public sealed class OptionAsyncCompositionTests
         var source = NullArgumentData.Task<Option<string>>();
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => source.Match(static value => value.Length, static () => 0));
+        var exception = await ((Func<Task>)(() => source.Match(static value => value.Length, static () => 0))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("source", exception.ParamName);
+        exception.ParamName.ShouldBe("source");
     }
 
     [Fact]
@@ -310,10 +310,10 @@ public sealed class OptionAsyncCompositionTests
         var map = NullArgumentData.TaskFunc<string, int>();
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => option.Map(map));
+        var exception = await ((Func<Task>)(() => option.Map(map))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("map", exception.ParamName);
+        exception.ParamName.ShouldBe("map");
     }
 
     [Fact]
@@ -324,10 +324,10 @@ public sealed class OptionAsyncCompositionTests
         var map = NullArgumentData.ValueTaskFunc<string, int>();
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await option.Map(map));
+        var exception = await ((Func<Task>)(async () => await option.Map(map))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("map", exception.ParamName);
+        exception.ParamName.ShouldBe("map");
     }
 
     [Fact]
@@ -338,10 +338,10 @@ public sealed class OptionAsyncCompositionTests
         var bind = NullArgumentData.TaskFunc<string, Option<int>>();
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => option.Bind(bind));
+        var exception = await ((Func<Task>)(() => option.Bind(bind))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("bind", exception.ParamName);
+        exception.ParamName.ShouldBe("bind");
     }
 
     [Fact]
@@ -352,10 +352,10 @@ public sealed class OptionAsyncCompositionTests
         var bind = NullArgumentData.ValueTaskFunc<string, Option<int>>();
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await option.Bind(bind));
+        var exception = await ((Func<Task>)(async () => await option.Bind(bind))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("bind", exception.ParamName);
+        exception.ParamName.ShouldBe("bind");
     }
 
     [Fact]
@@ -366,10 +366,10 @@ public sealed class OptionAsyncCompositionTests
         var whenSome = NullArgumentData.TaskFunc<string, int>();
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => option.Match(whenSome, static () => Task.FromResult(0)));
+        var exception = await ((Func<Task>)(() => option.Match(whenSome, static () => Task.FromResult(0)))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("whenSome", exception.ParamName);
+        exception.ParamName.ShouldBe("whenSome");
     }
 
     [Fact]
@@ -380,9 +380,9 @@ public sealed class OptionAsyncCompositionTests
         var whenSome = NullArgumentData.ValueTaskFunc<string, int>();
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await option.Match(whenSome, static () => ValueTask.FromResult(0)));
+        var exception = await ((Func<Task>)(async () => await option.Match(whenSome, static () => ValueTask.FromResult(0)))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("whenSome", exception.ParamName);
+        exception.ParamName.ShouldBe("whenSome");
     }
 }

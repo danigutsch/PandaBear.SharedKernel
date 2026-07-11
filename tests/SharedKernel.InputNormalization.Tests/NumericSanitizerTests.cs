@@ -8,7 +8,7 @@ public sealed class NumericSanitizerTests
     {
         var result = NumericSanitizer.SanitizePrice(0.001m);
 
-        Assert.Equal(0.00m, result);
+        TestAssert.Equal(0.00m, result);
     }
 
     [Fact]
@@ -16,7 +16,7 @@ public sealed class NumericSanitizerTests
     {
         var result = NumericSanitizer.SanitizePrice(0.009m);
 
-        Assert.Equal(0.01m, result);
+        TestAssert.Equal(0.01m, result);
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public sealed class NumericSanitizerTests
         // Act
         var result = NumericSanitizer.SanitizePrice(2.225m);
 
-        Assert.Equal(2.23m, result);
+        TestAssert.Equal(2.23m, result);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public sealed class NumericSanitizerTests
         // Act
         var result = NumericSanitizer.SanitizePrice(2.215m);
 
-        Assert.Equal(2.22m, result);
+        TestAssert.Equal(2.22m, result);
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public sealed class NumericSanitizerTests
         // Act
         var result = NumericSanitizer.SanitizePrice(0.1m + 0.2m);
 
-        Assert.Equal(0.30m, result);
+        TestAssert.Equal(0.30m, result);
     }
 
     [Theory]
@@ -66,6 +66,6 @@ public sealed class NumericSanitizerTests
     {
         var result = NumericSanitizer.SanitizePrice(input);
 
-        Assert.Equal(expected, result);
+        TestAssert.Equal(expected, result);
     }
 }

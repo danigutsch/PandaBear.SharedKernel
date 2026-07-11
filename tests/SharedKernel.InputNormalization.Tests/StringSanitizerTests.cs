@@ -11,7 +11,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(null);
 
         // Assert
-        Assert.Null(result);
+        TestAssert.Null(result);
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(string.Empty);
 
         // Assert
-        Assert.Equal(string.Empty, result);
+        TestAssert.Equal(string.Empty, result);
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("   Hello");
 
         // Assert
-        Assert.Equal("Hello", result);
+        TestAssert.Equal("Hello", result);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello   ");
 
         // Assert
-        Assert.Equal("Hello", result);
+        TestAssert.Equal("Hello", result);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("   Hello   ");
 
         // Assert
-        Assert.Equal("Hello", result);
+        TestAssert.Equal("Hello", result);
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello    World");
 
         // Assert
-        Assert.Equal("Hello World", result);
+        TestAssert.Equal("Hello World", result);
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello \t\n  World");
 
         // Assert
-        Assert.Equal("Hello World", result);
+        TestAssert.Equal("Hello World", result);
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello" + "\x00\x01\x02" + "World");
 
         // Assert
-        Assert.Equal("HelloWorld", result);
+        TestAssert.Equal("HelloWorld", result);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello" + "\0" + "World");
 
         // Assert
-        Assert.Equal("HelloWorld", result);
+        TestAssert.Equal("HelloWorld", result);
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello" + "\x07" + "World");
 
         // Assert
-        Assert.Equal("HelloWorld", result);
+        TestAssert.Equal("HelloWorld", result);
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello" + "\x7F" + "World");
 
         // Assert
-        Assert.Equal("HelloWorld", result);
+        TestAssert.Equal("HelloWorld", result);
     }
 
     [Fact]
@@ -132,7 +132,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello\tWorld");
 
         // Assert
-        Assert.Equal("Hello World", result);
+        TestAssert.Equal("Hello World", result);
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello\nWorld");
 
         // Assert
-        Assert.Equal("Hello World", result);
+        TestAssert.Equal("Hello World", result);
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("  Hello" + "\x00" + "\t\t  World" + "\x01" + "  ");
 
         // Assert
-        Assert.Equal("Hello World", result);
+        TestAssert.Equal("Hello World", result);
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        Assert.Equal(input, result);
+        TestAssert.Equal(input, result);
     }
 
     [Fact]
@@ -178,7 +178,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("   \t\n   ");
 
         // Assert
-        Assert.Equal(string.Empty, result);
+        TestAssert.Equal(string.Empty, result);
     }
 
     [Fact]
@@ -191,7 +191,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        Assert.Equal(input, result);
+        TestAssert.Equal(input, result);
     }
 
     [Fact]
@@ -204,7 +204,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        Assert.Equal(input, result);
+        TestAssert.Equal(input, result);
     }
 
     [Fact]
@@ -217,7 +217,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        Assert.Equal(input, result);
+        TestAssert.Equal(input, result);
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        Assert.Equal("Café", result);
+        TestAssert.Equal("Café", result);
     }
 
     [Fact]
@@ -243,7 +243,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        Assert.Equal(input, result);
+        TestAssert.Equal(input, result);
     }
 
     [Fact]
@@ -254,7 +254,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(null);
 
         // Assert
-        Assert.Null(result);
+        TestAssert.Null(result);
     }
 
     [Fact]
@@ -265,7 +265,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(string.Empty);
 
         // Assert
-        Assert.Equal(string.Empty, result);
+        TestAssert.Equal(string.Empty, result);
     }
 
     [Fact]
@@ -276,7 +276,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes("   Hello World   ");
 
         // Assert
-        Assert.Equal("Hello World", result);
+        TestAssert.Equal("Hello World", result);
     }
 
     [Fact]
@@ -289,7 +289,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(input);
 
         // Assert
-        Assert.Equal(input, result);
+        TestAssert.Equal(input, result);
     }
 
     [Fact]
@@ -302,7 +302,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(input);
 
         // Assert
-        Assert.Equal(input, result);
+        TestAssert.Equal(input, result);
     }
 
     [Fact]
@@ -315,7 +315,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(input);
 
         // Assert
-        Assert.Equal(input, result);
+        TestAssert.Equal(input, result);
     }
 
     [Fact]
@@ -328,7 +328,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(input);
 
         // Assert
-        Assert.Equal(input, result);
+        TestAssert.Equal(input, result);
     }
 
     [Fact]
@@ -341,7 +341,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(input);
 
         // Assert
-        Assert.Equal(input, result);
+        TestAssert.Equal(input, result);
     }
 
     [Fact]
@@ -352,7 +352,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes("   \t\n   ");
 
         // Assert
-        Assert.Equal(string.Empty, result);
+        TestAssert.Equal(string.Empty, result);
     }
 
     [Fact]
@@ -363,8 +363,8 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(null);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
+        _ = TestAssert.NotNull(result);
+        TestAssert.Empty(result);
     }
 
     [Fact]
@@ -375,8 +375,8 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection([]);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
+        _ = TestAssert.NotNull(result);
+        TestAssert.Empty(result);
     }
 
     [Fact]
@@ -389,9 +389,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input!);
 
         // Assert
-        Assert.Equal(2, result.Length);
-        Assert.Contains("Hello", result);
-        Assert.Contains("World", result);
+        TestAssert.Equal(2, result.Length);
+        TestAssert.Contains("Hello", result);
+        TestAssert.Contains("World", result);
     }
 
     [Fact]
@@ -404,9 +404,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        Assert.Equal(2, result.Length);
-        Assert.Contains("Hello", result);
-        Assert.Contains("World", result);
+        TestAssert.Equal(2, result.Length);
+        TestAssert.Contains("Hello", result);
+        TestAssert.Contains("World", result);
     }
 
     [Fact]
@@ -419,9 +419,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        Assert.Equal(2, result.Length);
-        Assert.Contains("Hello", result);
-        Assert.Contains("World", result);
+        TestAssert.Equal(2, result.Length);
+        TestAssert.Contains("Hello", result);
+        TestAssert.Contains("World", result);
     }
 
     [Fact]
@@ -434,9 +434,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        Assert.Equal(2, result.Length);
-        Assert.Contains("Hello", result);
-        Assert.Contains("World", result);
+        TestAssert.Equal(2, result.Length);
+        TestAssert.Contains("Hello", result);
+        TestAssert.Contains("World", result);
     }
 
     [Fact]
@@ -449,9 +449,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        Assert.Equal(2, result.Length);
-        Assert.Contains("Hello", result);
-        Assert.Contains("World", result);
+        TestAssert.Equal(2, result.Length);
+        TestAssert.Contains("Hello", result);
+        TestAssert.Contains("World", result);
     }
 
     [Fact]
@@ -464,8 +464,8 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        Assert.Single(result);
-        Assert.Equal("Hello", result[0]);
+        TestAssert.ExactlyOne(result);
+        TestAssert.Equal("Hello", result[0]);
     }
 
     [Fact]
@@ -478,9 +478,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        Assert.Equal(2, result.Length);
-        Assert.Contains("Hello", result);
-        Assert.Contains("World", result);
+        TestAssert.Equal(2, result.Length);
+        TestAssert.Contains("Hello", result);
+        TestAssert.Contains("World", result);
     }
 
     [Fact]
@@ -493,10 +493,10 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input!);
 
         // Assert
-        Assert.Equal(3, result.Length);
-        Assert.Contains("Item1", result);
-        Assert.Contains("Item2", result);
-        Assert.Contains("Item3", result);
+        TestAssert.Equal(3, result.Length);
+        TestAssert.Contains("Item1", result);
+        TestAssert.Contains("Item2", result);
+        TestAssert.Contains("Item3", result);
     }
 
     [Fact]
@@ -509,8 +509,8 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input!);
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
+        _ = TestAssert.NotNull(result);
+        TestAssert.Empty(result);
     }
 
     [Fact]
@@ -523,10 +523,10 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        Assert.Equal(3, result.Length);
-        Assert.Equal("Zebra", result[0]);
-        Assert.Equal("Apple", result[1]);
-        Assert.Equal("Banana", result[2]);
+        TestAssert.Equal(3, result.Length);
+        TestAssert.Equal("Zebra", result[0]);
+        TestAssert.Equal("Apple", result[1]);
+        TestAssert.Equal("Banana", result[2]);
     }
 
     [Fact]
@@ -539,10 +539,10 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        Assert.Equal(3, result.Length);
-        Assert.Contains("Item@1", result);
-        Assert.Contains("Item#2", result);
-        Assert.Contains("Item$3", result);
+        TestAssert.Equal(3, result.Length);
+        TestAssert.Contains("Item@1", result);
+        TestAssert.Contains("Item#2", result);
+        TestAssert.Contains("Item$3", result);
     }
 
     [Fact]
@@ -555,9 +555,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        Assert.Equal(2, result.Length);
-        Assert.Contains("José", result);
-        Assert.Contains("María", result);
+        TestAssert.Equal(2, result.Length);
+        TestAssert.Contains("José", result);
+        TestAssert.Contains("María", result);
     }
 
     [Fact]
@@ -570,6 +570,6 @@ public class StringSanitizerTests
         var result = StringSanitizer.NormalizeKey(input);
 
         // Assert
-        Assert.Equal("CAFÉ NAME", result);
+        TestAssert.Equal("CAFÉ NAME", result);
     }
 }

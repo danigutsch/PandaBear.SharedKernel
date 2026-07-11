@@ -10,7 +10,7 @@ public sealed class ObservabilityBuilderExtensionsTests
     {
         var builder = new HostApplicationBuilder();
         var result = builder.ConfigureOpenTelemetry();
-        Assert.Same(builder, result);
+        TestAssert.Same(builder, result);
     }
 
     [Fact]
@@ -21,8 +21,8 @@ public sealed class ObservabilityBuilderExtensionsTests
         using var host = builder.Build();
         var hostedServices = host.Services.GetServices<IHostedService>();
 
-        Assert.Same(builder, result);
-        Assert.Contains(hostedServices, service => string.Equals(
+        TestAssert.Same(builder, result);
+        TestAssert.Contains(hostedServices, service => string.Equals(
             service.GetType().Name,
             "ApplicationVersionLoggingService",
             StringComparison.Ordinal));

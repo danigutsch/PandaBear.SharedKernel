@@ -21,11 +21,11 @@ public sealed class GeneratorDiscoveryReportTests
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedSource);
-        Assert.Contains("RequestCount = 1;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("HandlerCount = 1;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("PipelineCount = 1;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("NotificationCount = 1;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("StreamRequestCount = 1;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("RequestCount = 1;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("HandlerCount = 1;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("PipelineCount = 1;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("NotificationCount = 1;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("StreamRequestCount = 1;", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public sealed class GeneratorDiscoveryReportTests
             static source => string.Equals(source.HintName, GeneratedHintNames.CallGraph, StringComparison.Ordinal));
 
         // Assert
-        Assert.False(hasCallGraphSource);
+        TestAssert.False(hasCallGraphSource);
     }
 
     [Fact]
@@ -61,9 +61,9 @@ public sealed class GeneratorDiscoveryReportTests
 
         // Assert
         GeneratorSnapshotVerifier.Verify(json, extension: "json");
-        Assert.Contains("\"request\": \"global::Demo.CreateTour\"", json, StringComparison.Ordinal);
-        Assert.Contains("\"dispatch\": \"parallel\"", json, StringComparison.Ordinal);
-        Assert.Contains("\"request\": \"global::Demo.StreamTours\"", json, StringComparison.Ordinal);
+        TestAssert.Contains("\"request\": \"global::Demo.CreateTour\"", json, StringComparison.Ordinal);
+        TestAssert.Contains("\"dispatch\": \"parallel\"", json, StringComparison.Ordinal);
+        TestAssert.Contains("\"request\": \"global::Demo.StreamTours\"", json, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public sealed class GeneratorDiscoveryReportTests
         var secondRun = GeneratorTestHarness.RunGenerator(compilation);
 
         // Assert
-        Assert.Equal(firstRun, secondRun);
+        TestAssert.Equal(firstRun, secondRun);
     }
 
     [Fact]
@@ -92,11 +92,11 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.GenerateSource(source, additionalReferences: [moduleReference]);
 
         // Assert
-        Assert.Contains("RequestCount = 2;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("HandlerCount = 2;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("ModuleCount = 2;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("SharedKernel.Mediator.Tests.ModuleA | Primary=False | Marker=True", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::ModuleA.SearchTours | Kind=Query", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("RequestCount = 2;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("HandlerCount = 2;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("ModuleCount = 2;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("SharedKernel.Mediator.Tests.ModuleA | Primary=False | Marker=True", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::ModuleA.SearchTours | Kind=Query", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -109,9 +109,9 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.GenerateSource(source, additionalReferences: [moduleReference]);
 
         // Assert
-        Assert.Contains("RequestCount = 1;", generatedSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("SharedKernel.Mediator.Tests.ModuleA.Unmarked", generatedSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("global::ModuleA.SearchTours", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("RequestCount = 1;", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("SharedKernel.Mediator.Tests.ModuleA.Unmarked", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("global::ModuleA.SearchTours", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -134,10 +134,10 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.GenerateSource(source);
 
         // Assert
-        Assert.Contains("global::Demo.ListTours | Kind=Query", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("Response=global::Demo.Page<global::Demo.TourRow>", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("ResponseGenericDefinition=global::Demo.Page<TItem>", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("ResponseTypeArguments=[global::Demo.TourRow]", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.ListTours | Kind=Query", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("Response=global::Demo.Page<global::Demo.TourRow>", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("ResponseGenericDefinition=global::Demo.Page<TItem>", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("ResponseTypeArguments=[global::Demo.TourRow]", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -163,9 +163,9 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
 
         // Assert
-        Assert.Contains("Response=global::Demo.Result<string>", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("ResponseGenericDefinition=global::Demo.Result<TValue>", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("ResponseTypeArguments=[string]", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("Response=global::Demo.Result<string>", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("ResponseGenericDefinition=global::Demo.Result<TValue>", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("ResponseTypeArguments=[string]", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -183,12 +183,12 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.GenerateSource(source, includeMediatorReference: false);
 
         // Assert
-        Assert.Contains("RequestCount = 0;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("HandlerCount = 0;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("PipelineCount = 0;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("NotificationCount = 0;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("StreamRequestCount = 0;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("public static string[] Modules", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("RequestCount = 0;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("HandlerCount = 0;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("PipelineCount = 0;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("NotificationCount = 0;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("StreamRequestCount = 0;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("public static string[] Modules", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -216,9 +216,9 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.GenerateSource(source);
 
         // Assert
-        Assert.Contains("global::Demo.Container.LookupTour | Kind=Request", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.Container.LookupTourHandler(Request,Public,Handle)", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("Order=20", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.Container.LookupTour | Kind=Request", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.Container.LookupTourHandler(Request,Public,Handle)", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("Order=20", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -237,8 +237,8 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.GenerateSource(source);
 
         // Assert
-        Assert.Contains("global::Demo.DeleteTour | Kind=Command | Response=global::SharedKernel.Mediator.Unit", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.DeleteTourHandler(Command,Public,Handle)", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.DeleteTour | Kind=Command | Response=global::SharedKernel.Mediator.Unit", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.DeleteTourHandler(Command,Public,Handle)", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -294,15 +294,15 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.GenerateSource(source);
 
         // Assert
-        Assert.Contains("NotificationCount = 1;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("StreamRequestCount = 1;", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.PublishableHandler(Public,Handle)", generatedSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("AbstractRequest |", generatedSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("AbstractRequestHandler", generatedSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("AbstractNotificationHandler", generatedSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("AbstractStreamToursHandler", generatedSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("AbstractPipeline", generatedSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("global::Demo.INotificationShape", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("NotificationCount = 1;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("StreamRequestCount = 1;", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.PublishableHandler(Public,Handle)", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("AbstractRequest |", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("AbstractRequestHandler", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("AbstractNotificationHandler", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("AbstractStreamToursHandler", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("AbstractPipeline", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("global::Demo.INotificationShape", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -375,7 +375,7 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.RunGenerator(compilation);
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             "global::Demo.ValidationBehavior<global::Demo.CreateTour, int>(Stage=-1000,Order=10,Applicability=OpenGeneric,OpenGeneric=global::Demo.ValidationBehavior<TRequest, TResponse>)",
             generatedSource,
             StringComparison.Ordinal);
@@ -404,7 +404,7 @@ public sealed class GeneratorDiscoveryReportTests
         var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicatePipelineOrder
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.CreateTour", StringComparison.Ordinal));
@@ -428,7 +428,7 @@ public sealed class GeneratorDiscoveryReportTests
         var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.NeverAppliesPipeline
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ValidationBehavior", StringComparison.Ordinal));
@@ -451,7 +451,7 @@ public sealed class GeneratorDiscoveryReportTests
         var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidPipelineGenericArity
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ValidationBehavior<TRequest>", StringComparison.Ordinal));
@@ -474,7 +474,7 @@ public sealed class GeneratorDiscoveryReportTests
         var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.UnboundPipelineConstraints
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.QueryOnlyBehavior<TRequest, TResponse>", StringComparison.Ordinal));
@@ -503,12 +503,12 @@ public sealed class GeneratorDiscoveryReportTests
         var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.NotificationHandlersRequireExplicitOrder
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.TourCreated", StringComparison.Ordinal)
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.HandlerA", StringComparison.Ordinal));
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.NotificationHandlersRequireExplicitOrder
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.HandlerB", StringComparison.Ordinal));
@@ -539,7 +539,7 @@ public sealed class GeneratorDiscoveryReportTests
         var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicateNotificationHandlerOrder
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.TourCreated", StringComparison.Ordinal)
@@ -560,7 +560,7 @@ public sealed class GeneratorDiscoveryReportTests
         var diagnostics = runResult.Results.Single().Diagnostics;
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingHandler
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.MissingTour", StringComparison.Ordinal));
@@ -590,7 +590,7 @@ public sealed class GeneratorDiscoveryReportTests
         var diagnostics = runResult.Results.Single().Diagnostics;
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MultipleHandlers
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.LookupTour", StringComparison.Ordinal));
@@ -609,7 +609,7 @@ public sealed class GeneratorDiscoveryReportTests
         var diagnostics = runResult.Results.Single().Diagnostics;
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.UnprovenObjectDispatchCoverage
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains(
@@ -640,15 +640,15 @@ public sealed class GeneratorDiscoveryReportTests
             GeneratedHintNames.DependencyInjection);
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ExplicitLookupTourHandler", StringComparison.Ordinal));
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingHandler
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.LookupTour", StringComparison.Ordinal));
-        Assert.DoesNotContain("services.AddTransient<global::Demo.ExplicitLookupTourHandler>();", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("services.AddTransient<global::Demo.ExplicitLookupTourHandler>();", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -674,11 +674,11 @@ public sealed class GeneratorDiscoveryReportTests
             GeneratedHintNames.DependencyInjection);
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ExplicitStreamToursHandler", StringComparison.Ordinal));
-        Assert.DoesNotContain("services.AddTransient<global::Demo.ExplicitStreamToursHandler>();", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("services.AddTransient<global::Demo.ExplicitStreamToursHandler>();", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -702,11 +702,11 @@ public sealed class GeneratorDiscoveryReportTests
             GeneratedHintNames.DependencyInjection);
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.WrongReturnStreamToursHandler", StringComparison.Ordinal));
-        Assert.DoesNotContain("services.AddTransient<global::Demo.WrongReturnStreamToursHandler>();", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("services.AddTransient<global::Demo.WrongReturnStreamToursHandler>();", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -732,11 +732,11 @@ public sealed class GeneratorDiscoveryReportTests
             GeneratedHintNames.DependencyInjection);
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.NoCancellationStreamToursHandler", StringComparison.Ordinal));
-        Assert.DoesNotContain("services.AddTransient<global::Demo.NoCancellationStreamToursHandler>();", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("services.AddTransient<global::Demo.NoCancellationStreamToursHandler>();", generatedSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -750,7 +750,7 @@ public sealed class GeneratorDiscoveryReportTests
 
         // Act
         var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
-        var diagnostic = Assert.Single(diagnostics, static d => d.Id == MediatorDiagnosticIds.MissingHandler);
+        var diagnostic = TestAssert.ExactlyOne(diagnostics, static d => d.Id == MediatorDiagnosticIds.MissingHandler);
         var message = diagnostic.GetMessage(CultureInfo.InvariantCulture);
 
         // Assert
@@ -782,7 +782,7 @@ public sealed class GeneratorDiscoveryReportTests
         var message = diagnostic.GetMessage(CultureInfo.InvariantCulture);
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static d => d.Id == MediatorDiagnosticIds.DuplicatePipelineOrder);
         GeneratorSnapshotVerifier.Verify(message, extension: "txt");
@@ -801,7 +801,7 @@ public sealed class GeneratorDiscoveryReportTests
         var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingHandler
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.MissingStreamTour", StringComparison.Ordinal));
@@ -838,7 +838,7 @@ public sealed class GeneratorDiscoveryReportTests
         var diagnostics = GeneratorTestHarness.RunGeneratorDriver(compilation).Results.Single().Diagnostics;
 
         // Assert
-        Assert.Contains(
+        TestAssert.Contains(
             diagnostics,
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MultipleHandlers
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.StreamTours", StringComparison.Ordinal));

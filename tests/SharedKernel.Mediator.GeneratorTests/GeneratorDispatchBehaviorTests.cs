@@ -47,7 +47,7 @@ public sealed class GeneratorDispatchBehaviorTests
         var generatedResponse = await generatedDispatcher.Send(request, CancellationToken.None);
 
         // Assert
-        Assert.Equal(referenceResponse, generatedResponse);
+        TestAssert.Equal(referenceResponse, generatedResponse);
     }
 
     [Fact]
@@ -129,8 +129,8 @@ public sealed class GeneratorDispatchBehaviorTests
         var traceEntries = runtime.ReadTraceEntries("Demo.TraceLog");
 
         // Assert
-        Assert.Equal(42, response);
-        Assert.Equal(
+        TestAssert.Equal(42, response);
+        TestAssert.Equal(
             [
                 "validation-before",
                 "authorization-before",
@@ -178,11 +178,11 @@ public sealed class GeneratorDispatchBehaviorTests
         var request = (IRequest<int>)Activator.CreateInstance(requestType, "Tour")!;
 
         // Act
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        var exception = await TestAssert.Throws<InvalidOperationException>(() =>
             mediator.Send(request, CancellationToken.None).AsTask());
 
         // Assert
-        Assert.Equal("boom", exception.Message);
+        TestAssert.Equal("boom", exception.Message);
     }
 
     [Fact]
@@ -236,8 +236,8 @@ public sealed class GeneratorDispatchBehaviorTests
         var traceEntries = runtime.ReadTraceEntries("Demo.TraceLog");
 
         // Assert
-        Assert.Equal(42, response);
-        Assert.Equal(
+        TestAssert.Equal(42, response);
+        TestAssert.Equal(
             [
                 "pipeline:True",
                 "handler:True",
@@ -288,8 +288,8 @@ public sealed class GeneratorDispatchBehaviorTests
         var generatedItems = await AsyncEnumerableTestHelper.Collect(mediator.Send(request, CancellationToken.None));
 
         // Assert
-        Assert.Equal(referenceItems, generatedItems);
-        Assert.Equal(["item:1", "item:2", "item:3"], generatedItems);
+        TestAssert.Equal(referenceItems, generatedItems);
+        TestAssert.Equal(["item:1", "item:2", "item:3"], generatedItems);
     }
 
     [Fact]
@@ -349,8 +349,8 @@ public sealed class GeneratorDispatchBehaviorTests
         var generatedResponse = await mediator.Send(request, CancellationToken.None);
 
         // Assert
-        Assert.Equal(referenceResponse, generatedResponse);
-        Assert.Equal("6", generatedResponse);
+        TestAssert.Equal(referenceResponse, generatedResponse);
+        TestAssert.Equal("6", generatedResponse);
     }
 
     [Fact]
@@ -409,8 +409,8 @@ public sealed class GeneratorDispatchBehaviorTests
         var generatedItems = await AsyncEnumerableTestHelper.Collect(mediator.Send(request, CancellationToken.None));
 
         // Assert
-        Assert.Equal(referenceItems, generatedItems);
-        Assert.Equal(["item:1", "item:2", "item:3"], generatedItems);
+        TestAssert.Equal(referenceItems, generatedItems);
+        TestAssert.Equal(["item:1", "item:2", "item:3"], generatedItems);
     }
 
     [Fact]
@@ -430,9 +430,9 @@ public sealed class GeneratorDispatchBehaviorTests
             scenario.ReadTrace);
 
         // Assert
-        Assert.Equal(referenceItems, generatedItems);
-        Assert.Equal(["item:1", "item:2"], generatedItems);
-        Assert.Equal(
+        TestAssert.Equal(referenceItems, generatedItems);
+        TestAssert.Equal(["item:1", "item:2"], generatedItems);
+        TestAssert.Equal(
             [
                 "validation-before",
                 "observability-before",
@@ -442,7 +442,7 @@ public sealed class GeneratorDispatchBehaviorTests
                 "validation-after",
             ],
             referenceTrace);
-        Assert.Equal(referenceTrace, generatedTrace);
+        TestAssert.Equal(referenceTrace, generatedTrace);
     }
 
     [Fact]
@@ -464,9 +464,9 @@ public sealed class GeneratorDispatchBehaviorTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Equal("item:1", referenceFirstItem);
-        Assert.Equal(referenceFirstItem, generatedFirstItem);
-        Assert.Equal(
+        TestAssert.Equal("item:1", referenceFirstItem);
+        TestAssert.Equal(referenceFirstItem, generatedFirstItem);
+        TestAssert.Equal(
             [
                 "validation-before",
                 "observability-before",
@@ -476,7 +476,7 @@ public sealed class GeneratorDispatchBehaviorTests
                 "validation-yield:item:1",
             ],
             referenceTrace);
-        Assert.Equal(referenceTrace, generatedTrace);
+        TestAssert.Equal(referenceTrace, generatedTrace);
     }
 
     [Fact]
@@ -496,9 +496,9 @@ public sealed class GeneratorDispatchBehaviorTests
             scenario.ReadTrace);
 
         // Assert
-        Assert.Equal(["item:1", "item:2", "item:3"], referenceItems);
-        Assert.Equal(referenceItems, generatedItems);
-        Assert.Equal(
+        TestAssert.Equal(["item:1", "item:2", "item:3"], referenceItems);
+        TestAssert.Equal(referenceItems, generatedItems);
+        TestAssert.Equal(
             [
                 "validation-before",
                 "observability-before",
@@ -517,7 +517,7 @@ public sealed class GeneratorDispatchBehaviorTests
                 "validation-after",
             ],
             referenceTrace);
-        Assert.Equal(referenceTrace, generatedTrace);
+        TestAssert.Equal(referenceTrace, generatedTrace);
     }
 
     [Fact]
@@ -539,9 +539,9 @@ public sealed class GeneratorDispatchBehaviorTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Equal("item:1", referenceFirstItem);
-        Assert.Equal(referenceFirstItem, generatedFirstItem);
-        Assert.Equal(
+        TestAssert.Equal("item:1", referenceFirstItem);
+        TestAssert.Equal(referenceFirstItem, generatedFirstItem);
+        TestAssert.Equal(
             [
                 "validation-before",
                 "observability-before",
@@ -551,7 +551,7 @@ public sealed class GeneratorDispatchBehaviorTests
                 "validation-yield:item:1",
             ],
             referenceTrace);
-        Assert.Equal(referenceTrace, generatedTrace);
+        TestAssert.Equal(referenceTrace, generatedTrace);
     }
 
     [Fact]
@@ -573,9 +573,9 @@ public sealed class GeneratorDispatchBehaviorTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Equal("item:1", referenceFirstItem);
-        Assert.Equal(referenceFirstItem, generatedFirstItem);
-        Assert.Equal(
+        TestAssert.Equal("item:1", referenceFirstItem);
+        TestAssert.Equal(referenceFirstItem, generatedFirstItem);
+        TestAssert.Equal(
             [
                 "validation-before",
                 "observability-before",
@@ -585,7 +585,7 @@ public sealed class GeneratorDispatchBehaviorTests
                 "validation-yield:item:1",
             ],
             referenceTrace);
-        Assert.Equal(referenceTrace, generatedTrace);
+        TestAssert.Equal(referenceTrace, generatedTrace);
     }
 
     [Fact]
@@ -607,9 +607,9 @@ public sealed class GeneratorDispatchBehaviorTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Equal("item:1", referenceFirstItem);
-        Assert.Equal(referenceFirstItem, generatedFirstItem);
-        Assert.Equal(
+        TestAssert.Equal("item:1", referenceFirstItem);
+        TestAssert.Equal(referenceFirstItem, generatedFirstItem);
+        TestAssert.Equal(
             [
                 "validation-before",
                 "observability-before",
@@ -622,7 +622,7 @@ public sealed class GeneratorDispatchBehaviorTests
                 "validation-disposed",
             ],
             referenceTrace);
-        Assert.Equal(referenceTrace, generatedTrace);
+        TestAssert.Equal(referenceTrace, generatedTrace);
     }
 
     [Fact]
@@ -695,8 +695,8 @@ public sealed class GeneratorDispatchBehaviorTests
         var generatedTrace = runtime.ReadTraceEntries("Demo.TraceLog");
 
         // Assert
-        Assert.Equal(referenceTrace, generatedTrace);
-        Assert.Equal(
+        TestAssert.Equal(referenceTrace, generatedTrace);
+        TestAssert.Equal(
             [
                 "derived-2:tour",
                 "derived-1:tour",
@@ -731,7 +731,7 @@ public sealed class GeneratorDispatchBehaviorTests
         await mediator.Publish(notification, CancellationToken.None);
 
         // Assert
-        Assert.Empty(runtime.ReadTraceEntries("Demo.TraceLog"));
+        TestAssert.Empty(runtime.ReadTraceEntries("Demo.TraceLog"));
     }
 
     [Fact]
@@ -772,7 +772,7 @@ public sealed class GeneratorDispatchBehaviorTests
         var traceEntries = runtime.ReadTraceEntries("Demo.TraceLog");
 
         // Assert
-        Assert.Equal(["handler:42"], traceEntries);
+        TestAssert.Equal(["handler:42"], traceEntries);
     }
 
     [Fact]
@@ -875,14 +875,14 @@ public sealed class GeneratorDispatchBehaviorTests
         var parallelTrace = runtime.ReadTraceEntries("Demo.TraceLog");
 
         // Assert
-        Assert.Equal(["sequential-2", "sequential-1"], sequentialTrace);
-        Assert.Equal(4, parallelTrace.Length);
-        Assert.All(parallelTrace[..2], static entry => Assert.StartsWith("start:", entry, StringComparison.Ordinal));
-        Assert.All(parallelTrace[2..], static entry => Assert.StartsWith("end:", entry, StringComparison.Ordinal));
-        Assert.Contains("start:parallel-1", parallelTrace, StringComparer.Ordinal);
-        Assert.Contains("start:parallel-2", parallelTrace, StringComparer.Ordinal);
-        Assert.Contains("end:parallel-1", parallelTrace, StringComparer.Ordinal);
-        Assert.Contains("end:parallel-2", parallelTrace, StringComparer.Ordinal);
+        TestAssert.Equal(["sequential-2", "sequential-1"], sequentialTrace);
+        TestAssert.Equal(4, parallelTrace.Length);
+        TestAssert.All(parallelTrace[..2], static entry => TestAssert.StartsWith("start:", entry, StringComparison.Ordinal));
+        TestAssert.All(parallelTrace[2..], static entry => TestAssert.StartsWith("end:", entry, StringComparison.Ordinal));
+        TestAssert.Contains("start:parallel-1", parallelTrace, StringComparer.Ordinal);
+        TestAssert.Contains("start:parallel-2", parallelTrace, StringComparer.Ordinal);
+        TestAssert.Contains("end:parallel-1", parallelTrace, StringComparer.Ordinal);
+        TestAssert.Contains("end:parallel-2", parallelTrace, StringComparer.Ordinal);
     }
 
     [Fact]
@@ -929,13 +929,13 @@ public sealed class GeneratorDispatchBehaviorTests
         var notification = (INotification)Activator.CreateInstance(runtime.GetRequiredType("Demo.TourCreated"), 42)!;
 
         // Act
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        var exception = await TestAssert.Throws<InvalidOperationException>(() =>
             mediator.Publish(notification, CancellationToken.None).AsTask());
 
         // Assert
         var traceEntries = runtime.ReadTraceEntries("Demo.TraceLog");
-        Assert.Equal("boom", exception.Message);
-        Assert.Equal(["before-fail"], traceEntries);
+        TestAssert.Equal("boom", exception.Message);
+        TestAssert.Equal(["before-fail"], traceEntries);
     }
 
     [Fact]
@@ -976,7 +976,7 @@ public sealed class GeneratorDispatchBehaviorTests
         var traceEntries = runtime.ReadTraceEntries("Demo.TraceLog");
 
         // Assert
-        Assert.Equal(["handler:True"], traceEntries);
+        TestAssert.Equal(["handler:True"], traceEntries);
     }
 
 }

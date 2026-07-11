@@ -13,7 +13,7 @@ internal static class ResultConvertErrorTestsHelpers
             types: [typeof(ResultStatus), typeof(T), typeof(ResultError)],
             modifiers: null);
 
-        Assert.NotNull(constructor);
+        _ = TestAssert.NotNull(constructor);
         return (Result<T>)constructor.Invoke([status, value, error]);
     }
 
@@ -25,7 +25,7 @@ internal static class ResultConvertErrorTestsHelpers
             types: [typeof(ResultStatus), typeof(ResultError)],
             modifiers: null);
 
-        Assert.NotNull(constructor);
+        _ = TestAssert.NotNull(constructor);
         return (Result)constructor.Invoke([status, error]);
     }
 }

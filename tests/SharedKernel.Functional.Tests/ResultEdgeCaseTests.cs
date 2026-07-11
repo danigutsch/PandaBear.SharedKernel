@@ -1,7 +1,7 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
 public sealed class ResultEdgeCaseTests
 {
     [Fact]
@@ -11,14 +11,13 @@ public sealed class ResultEdgeCaseTests
         var result = Result.Error<string>("Unexpected failure");
 
         // Act
-        var exception = Assert.Throws<InvalidOperationException>(
-            () =>
+        var exception = ((Action)(() =>
             {
                 _ = result.Value;
-            });
+            })).ShouldThrow<InvalidOperationException>();
 
         // Assert
-        Assert.Contains("failed result", exception.Message, StringComparison.Ordinal);
+        exception.Message.ShouldContain("failed result", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -31,8 +30,8 @@ public sealed class ResultEdgeCaseTests
         var hasValue = result.TryGetValue(out var value);
 
         // Assert
-        Assert.False(hasValue);
-        Assert.Null(value);
+        hasValue.ShouldBeFalse();
+        value.ShouldBeNull();
     }
 
     [Fact]
@@ -40,10 +39,10 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = Assert.Throws<ArgumentNullException>(() => Result.Ok(NullArgumentData.String()));
+        var exception = TestAssert.Throws<ArgumentNullException>(() => Result.Ok(NullArgumentData.String()));
 
         // Assert
-        Assert.Equal("value", exception.ParamName);
+        exception.ParamName.ShouldBe("value");
     }
 
     [Fact]
@@ -51,10 +50,10 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = Assert.Throws<ArgumentNullException>(() => Result.Created(NullArgumentData.String()));
+        var exception = TestAssert.Throws<ArgumentNullException>(() => Result.Created(NullArgumentData.String()));
 
         // Assert
-        Assert.Equal("value", exception.ParamName);
+        exception.ParamName.ShouldBe("value");
     }
 
     [Fact]
@@ -62,10 +61,10 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = Assert.Throws<ArgumentNullException>(() => Result.Accepted(NullArgumentData.String()));
+        var exception = TestAssert.Throws<ArgumentNullException>(() => Result.Accepted(NullArgumentData.String()));
 
         // Assert
-        Assert.Equal("value", exception.ParamName);
+        exception.ParamName.ShouldBe("value");
     }
 
     [Fact]
@@ -78,7 +77,7 @@ public sealed class ResultEdgeCaseTests
         var text = result.ToString();
 
         // Assert
-        Assert.Equal("Success: Accepted", text);
+        text.ShouldBe("Success: Accepted");
     }
 
     [Fact]
@@ -91,7 +90,7 @@ public sealed class ResultEdgeCaseTests
         var text = result.ToString();
 
         // Assert
-        Assert.Equal("Failure: Error - Unexpected failure", text);
+        text.ShouldBe("Failure: Error - Unexpected failure");
     }
 
     [Fact]
@@ -104,7 +103,7 @@ public sealed class ResultEdgeCaseTests
         var text = result.ToString();
 
         // Assert
-        Assert.Equal("Success: Ok - porto", text);
+        text.ShouldBe("Success: Ok - porto");
     }
 
     [Fact]
@@ -117,7 +116,7 @@ public sealed class ResultEdgeCaseTests
         var text = result.ToString();
 
         // Assert
-        Assert.Equal("Failure: NotFound - Tour not found", text);
+        text.ShouldBe("Failure: NotFound - Tour not found");
     }
 
     [Fact]
@@ -130,7 +129,7 @@ public sealed class ResultEdgeCaseTests
         var text = result.ToString();
 
         // Assert
-        Assert.Equal("Unknown: Unknown", text);
+        text.ShouldBe("Unknown: Unknown");
     }
 
     [Fact]
@@ -143,7 +142,7 @@ public sealed class ResultEdgeCaseTests
         var text = result.ToString();
 
         // Assert
-        Assert.Equal("Unknown: Unknown", text);
+        text.ShouldBe("Unknown: Unknown");
     }
 
     [Fact]
@@ -156,7 +155,7 @@ public sealed class ResultEdgeCaseTests
         var text = result.ToString();
 
         // Assert
-        Assert.Equal("Success: Ok - VT-42 | Porto river ride", text);
+        text.ShouldBe("Success: Ok - VT-42 | Porto river ride");
     }
 
     [Fact]
@@ -166,10 +165,10 @@ public sealed class ResultEdgeCaseTests
         var result = ResultEdgeCaseTestsHelpers.CreateMalformedGenericResult(ResultStatus.Ok, value: null, error: null);
 
         // Act
-        var exception = Assert.Throws<InvalidOperationException>(() => result.TryGetValue(out _));
+        var exception = TestAssert.Throws<InvalidOperationException>(() => result.TryGetValue(out _));
 
         // Assert
-        Assert.Equal("Successful results must contain a value.", exception.Message);
+        exception.Message.ShouldBe("Successful results must contain a value.");
     }
 
     [Fact]
@@ -179,10 +178,10 @@ public sealed class ResultEdgeCaseTests
         var result = ResultEdgeCaseTestsHelpers.CreateMalformedNonGenericResult(ResultStatus.Error, error: null);
 
         // Act
-        var exception = Assert.Throws<InvalidOperationException>(() => result.TryGetError(out _));
+        var exception = TestAssert.Throws<InvalidOperationException>(() => result.TryGetError(out _));
 
         // Assert
-        Assert.Equal("Failed results must contain error details.", exception.Message);
+        exception.Message.ShouldBe("Failed results must contain error details.");
     }
 
     [Fact]
@@ -193,11 +192,11 @@ public sealed class ResultEdgeCaseTests
         var error = new ResultError("Validation failed", ResultErrorCodes.Invalid);
 
         // Act
-        var exception = Assert.Throws<ArgumentException>(() => result.Ensure(static _ => false, error));
+        var exception = TestAssert.Throws<ArgumentException>(() => result.Ensure(static _ => false, error));
 
         // Assert
-        Assert.Contains("Validation errors must include field details.", exception.Message, StringComparison.Ordinal);
-        Assert.Equal("error", exception.ParamName);
+        exception.Message.ShouldContain("Validation errors must include field details.", StringComparison.Ordinal);
+        exception.ParamName.ShouldBe("error");
     }
 
     [Fact]
@@ -208,11 +207,11 @@ public sealed class ResultEdgeCaseTests
         var error = new ResultError("Validation failed", ResultErrorCodes.Invalid);
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentException>(() => result.Ensure(static _ => Task.FromResult(false), error));
+        var exception = await ((Func<Task>)(() => result.Ensure(static _ => Task.FromResult(false), error))).ShouldThrow<ArgumentException>();
 
         // Assert
-        Assert.Contains("Validation errors must include field details.", exception.Message, StringComparison.Ordinal);
-        Assert.Equal("error", exception.ParamName);
+        exception.Message.ShouldContain("Validation errors must include field details.", StringComparison.Ordinal);
+        exception.ParamName.ShouldBe("error");
     }
 
     [Fact]
@@ -223,11 +222,11 @@ public sealed class ResultEdgeCaseTests
         var error = new ResultError("Validation failed", ResultErrorCodes.Invalid);
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentException>(() => result.Ensure(static _ => ValueTask.FromResult(false), error).AsTask());
+        var exception = await ((Func<Task>)(() => result.Ensure(static _ => ValueTask.FromResult(false), error).AsTask())).ShouldThrow<ArgumentException>();
 
         // Assert
-        Assert.Contains("Validation errors must include field details.", exception.Message, StringComparison.Ordinal);
-        Assert.Equal("error", exception.ParamName);
+        exception.Message.ShouldContain("Validation errors must include field details.", StringComparison.Ordinal);
+        exception.ParamName.ShouldBe("error");
     }
 
 }

@@ -1,8 +1,8 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MonadLawsTheory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MonadLawsTheory)]
 public sealed class OptionMonadLawTests
 {
     [Fact]
@@ -16,7 +16,7 @@ public sealed class OptionMonadLawTests
         var right = Option.Some(value.ToUpperInvariant());
 
         // Assert
-        Assert.Equal(right, left);
+        left.ShouldBe(right);
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public sealed class OptionMonadLawTests
         var bound = option.Bind(Option.Some);
 
         // Assert
-        Assert.Equal(option, bound);
+        bound.ShouldBe(option);
     }
 
     [Fact]
@@ -46,6 +46,6 @@ public sealed class OptionMonadLawTests
             Option.Some(city.Trim()).Bind(static trimmed => Option.Some(trimmed.ToUpperInvariant())));
 
         // Assert
-        Assert.Equal(left, right);
+        right.ShouldBe(left);
     }
 }

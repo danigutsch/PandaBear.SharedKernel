@@ -1,7 +1,7 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
 public sealed class ResultCompositionTests
 {
     [Fact]
@@ -14,9 +14,9 @@ public sealed class ResultCompositionTests
         var converted = result.ToResult();
 
         // Assert
-        Assert.True(converted.IsSuccess);
-        Assert.Equal(ResultStatus.Ok, converted.Status);
-        Assert.Null(converted.ErrorDetails);
+        converted.IsSuccess.ShouldBeTrue();
+        converted.Status.ShouldBe(ResultStatus.Ok);
+        converted.ErrorDetails.ShouldBeNull();
     }
 
     [Fact]
@@ -29,9 +29,9 @@ public sealed class ResultCompositionTests
         var converted = result.ToResult();
 
         // Assert
-        Assert.True(converted.IsSuccess);
-        Assert.Equal(ResultStatus.Created, converted.Status);
-        Assert.Null(converted.ErrorDetails);
+        converted.IsSuccess.ShouldBeTrue();
+        converted.Status.ShouldBe(ResultStatus.Created);
+        converted.ErrorDetails.ShouldBeNull();
     }
 
     [Fact]
@@ -44,10 +44,11 @@ public sealed class ResultCompositionTests
         var converted = result.ToResult();
 
         // Assert
-        Assert.True(converted.IsFailure);
-        Assert.Equal(ResultStatus.Conflict, converted.Status);
-        Assert.True(converted.TryGetError(out var error));
-        Assert.Equal("Tour is already published", error.Detail);
+        converted.IsFailure.ShouldBeTrue();
+        converted.Status.ShouldBe(ResultStatus.Conflict);
+        converted.TryGetError(out var error).ShouldBeTrue();
+        var nonNullError = TestAssert.NotNull(error);
+        nonNullError.Detail.ShouldBe("Tour is already published");
     }
 
     [Fact]
@@ -60,8 +61,8 @@ public sealed class ResultCompositionTests
         var mapped = result.Map(static value => value.Length);
 
         // Assert
-        Assert.True(mapped.IsSuccess);
-        Assert.Equal(5, mapped.Value);
+        mapped.IsSuccess.ShouldBeTrue();
+        mapped.Value.ShouldBe(5);
     }
 
     [Fact]
@@ -74,9 +75,10 @@ public sealed class ResultCompositionTests
         var mapped = result.Map(static value => value.Length);
 
         // Assert
-        Assert.True(mapped.IsFailure);
-        Assert.True(mapped.TryGetError(out var error));
-        Assert.Equal("Unexpected failure", error.Detail);
+        mapped.IsFailure.ShouldBeTrue();
+        mapped.TryGetError(out var error).ShouldBeTrue();
+        var nonNullError = TestAssert.NotNull(error);
+        nonNullError.Detail.ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -89,8 +91,8 @@ public sealed class ResultCompositionTests
         var bound = result.Bind(static value => Result.Ok(value.Length));
 
         // Assert
-        Assert.True(bound.IsSuccess);
-        Assert.Equal(5, bound.Value);
+        bound.IsSuccess.ShouldBeTrue();
+        bound.Value.ShouldBe(5);
     }
 
     [Fact]
@@ -103,9 +105,10 @@ public sealed class ResultCompositionTests
         var bound = result.Bind(static value => Result.Ok(value.Length));
 
         // Assert
-        Assert.True(bound.IsFailure);
-        Assert.True(bound.TryGetError(out var error));
-        Assert.Equal("Unexpected failure", error.Detail);
+        bound.IsFailure.ShouldBeTrue();
+        bound.TryGetError(out var error).ShouldBeTrue();
+        var nonNullError = TestAssert.NotNull(error);
+        nonNullError.Detail.ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -118,8 +121,8 @@ public sealed class ResultCompositionTests
         var ensured = result.Ensure(static value => value.Length == 5, new ResultError("Length mismatch"));
 
         // Assert
-        Assert.True(ensured.IsSuccess);
-        Assert.Equal("porto", ensured.Value);
+        ensured.IsSuccess.ShouldBeTrue();
+        ensured.Value.ShouldBe("porto");
     }
 
     [Fact]
@@ -133,10 +136,10 @@ public sealed class ResultCompositionTests
         var ensured = result.Ensure(static value => value.Length == 4, failure);
 
         // Assert
-        Assert.True(ensured.IsFailure);
-        Assert.True(ensured.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.Equal(failure, error);
+        ensured.IsFailure.ShouldBeTrue();
+        ensured.TryGetError(out var error).ShouldBeTrue();
+        error.ShouldNotBeNull();
+        error.ShouldBe(failure);
     }
 
     [Fact]
@@ -156,12 +159,12 @@ public sealed class ResultCompositionTests
         var ensured = result.Ensure(static value => value.Length == 4, failure);
 
         // Assert
-        Assert.True(ensured.IsFailure);
-        Assert.Equal(ResultStatus.Invalid, ensured.Status);
-        Assert.True(ensured.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.NotNull(error.ValidationErrors);
-        Assert.Equal(["Name is required"], error.ValidationErrors["Name"]);
+        ensured.IsFailure.ShouldBeTrue();
+        ensured.Status.ShouldBe(ResultStatus.Invalid);
+        ensured.TryGetError(out var error).ShouldBeTrue();
+        error.ShouldNotBeNull();
+        error.ValidationErrors.ShouldNotBeNull();
+        TestAssert.Equal(["Name is required"], error.ValidationErrors["Name"]);
     }
 
     [Theory]
@@ -183,8 +186,8 @@ public sealed class ResultCompositionTests
         var ensured = result.Ensure(static _ => false, failure);
 
         // Assert
-        Assert.True(ensured.IsFailure);
-        Assert.Equal(expectedStatus, ensured.Status);
+        ensured.IsFailure.ShouldBeTrue();
+        ensured.Status.ShouldBe(expectedStatus);
     }
 
     [Fact]
@@ -197,9 +200,9 @@ public sealed class ResultCompositionTests
         var ensured = result.Ensure(static _ => true, new ResultError("Should not be used"));
 
         // Assert
-        Assert.True(ensured.IsFailure);
-        Assert.True(ensured.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.Equal("Unexpected failure", error.Detail);
+        ensured.IsFailure.ShouldBeTrue();
+        ensured.TryGetError(out var error).ShouldBeTrue();
+        error.ShouldNotBeNull();
+        error.Detail.ShouldBe("Unexpected failure");
     }
 }

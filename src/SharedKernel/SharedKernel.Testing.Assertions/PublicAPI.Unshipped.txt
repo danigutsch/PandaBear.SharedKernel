@@ -57,6 +57,7 @@ static SharedKernel.Testing.Assertions.TestAssert.DoesNotContain(string! expecte
 static SharedKernel.Testing.Assertions.TestAssert.DoesNotContain(string! expectedSubstring, string? actualString, System.StringComparison comparisonType) -> void
 static SharedKernel.Testing.Assertions.TestAssert.DoesNotContain<T>(System.Collections.Generic.IEnumerable<T>! collection, System.Predicate<T>! predicate) -> void
 static SharedKernel.Testing.Assertions.TestAssert.DoesNotContain<T>(T expected, System.Collections.Generic.IEnumerable<T>! collection) -> void
+static SharedKernel.Testing.Assertions.TestAssert.DoesNotContain<T>(T expected, System.Collections.Generic.IEnumerable<T>! collection, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
 static SharedKernel.Testing.Assertions.TestAssert.DoesNotMatch(System.Text.RegularExpressions.Regex! expectedRegex, string? actualString) -> void
 static SharedKernel.Testing.Assertions.TestAssert.Empty<T>(System.Collections.Generic.IEnumerable<T>! collection) -> void
 static SharedKernel.Testing.Assertions.TestAssert.EndsWith(string! expectedEndString, string? actualString) -> void
@@ -66,6 +67,7 @@ static SharedKernel.Testing.Assertions.TestAssert.Equal(double expected, double 
 static SharedKernel.Testing.Assertions.TestAssert.Equal<T>(T expected, T actual) -> void
 static SharedKernel.Testing.Assertions.TestAssert.Equal<T>(T expected, T actual, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
 static SharedKernel.Testing.Assertions.TestAssert.ExactlyOne<T>(System.Collections.Generic.IEnumerable<T>! collection) -> T
+static SharedKernel.Testing.Assertions.TestAssert.ExactlyOne<T>(System.Collections.Generic.IEnumerable<T>! collection, System.Predicate<T>! predicate) -> T
 static SharedKernel.Testing.Assertions.TestAssert.Fail(string? message = null) -> void
 static SharedKernel.Testing.Assertions.TestAssert.False(bool condition, string? userMessage = null) -> void
 static SharedKernel.Testing.Assertions.TestAssert.False(bool? condition, string? userMessage = null) -> void
@@ -74,6 +76,7 @@ static SharedKernel.Testing.Assertions.TestAssert.IsAssignableFrom<T>(object? va
 static SharedKernel.Testing.Assertions.TestAssert.IsNotAssignableFrom<T>(object? value) -> void
 static SharedKernel.Testing.Assertions.TestAssert.IsNotType<T>(object? value) -> void
 static SharedKernel.Testing.Assertions.TestAssert.IsType<T>(object? value) -> T
+static SharedKernel.Testing.Assertions.TestAssert.IsType<T>(object? value, bool exactMatch) -> T
 static SharedKernel.Testing.Assertions.TestAssert.Matches(string! expectedRegexPattern, string? actualString) -> void
 static SharedKernel.Testing.Assertions.TestAssert.Matches(System.Text.RegularExpressions.Regex! expectedRegex, string? actualString) -> void
 static SharedKernel.Testing.Assertions.TestAssert.NotEmpty<T>(System.Collections.Generic.IEnumerable<T>! collection) -> void

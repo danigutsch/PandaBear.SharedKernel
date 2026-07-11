@@ -12,8 +12,8 @@ public sealed class IdempotencyValueTests
         var key = IdempotencyKey.From(value);
 
         // Assert
-        Assert.Equal("message-123", key.Value);
-        Assert.Equal("message-123", key.ToString());
+        TestAssert.Equal("message-123", key.Value);
+        TestAssert.Equal("message-123", key.ToString());
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public sealed class IdempotencyValueTests
         string? value = null;
 
         // Act, Assert
-        Assert.Throws<ArgumentNullException>(() => IdempotencyKey.From(value));
+        TestAssert.Throws<ArgumentNullException>(() => IdempotencyKey.From(value));
     }
 
     [Fact]
@@ -33,8 +33,8 @@ public sealed class IdempotencyValueTests
         var key = default(IdempotencyKey);
 
         // Act, Assert
-        Assert.Throws<InvalidOperationException>(() => key.Value);
-        Assert.Throws<InvalidOperationException>(() => key.ToString());
+        TestAssert.Throws<InvalidOperationException>(() => key.Value);
+        TestAssert.Throws<InvalidOperationException>(() => key.ToString());
     }
 
     [Theory]
@@ -43,7 +43,7 @@ public sealed class IdempotencyValueTests
     public void Key_from_rejects_blank_values(string value)
     {
         // Arrange, Act, Assert
-        Assert.Throws<ArgumentException>(() => IdempotencyKey.From(value));
+        TestAssert.Throws<ArgumentException>(() => IdempotencyKey.From(value));
     }
 
     [Theory]
@@ -56,7 +56,7 @@ public sealed class IdempotencyValueTests
         var key = IdempotencyKey.From(value);
 
         // Assert
-        Assert.Equal(value, key.Value);
+        TestAssert.Equal(value, key.Value);
     }
 
     [Theory]
@@ -67,7 +67,7 @@ public sealed class IdempotencyValueTests
     public void Key_from_rejects_values_outside_token_format(string value)
     {
         // Arrange, Act, Assert
-        Assert.Throws<ArgumentException>(() => IdempotencyKey.From(value));
+        TestAssert.Throws<ArgumentException>(() => IdempotencyKey.From(value));
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public sealed class IdempotencyValueTests
         var value = new string('a', 256);
 
         // Act, Assert
-        Assert.Throws<ArgumentException>(() => IdempotencyKey.From(value));
+        TestAssert.Throws<ArgumentException>(() => IdempotencyKey.From(value));
     }
 
     [Fact]
@@ -90,8 +90,8 @@ public sealed class IdempotencyValueTests
         var scope = IdempotencyScope.From(value);
 
         // Assert
-        Assert.Equal("inbox:tour-created", scope.Value);
-        Assert.Equal("inbox:tour-created", scope.ToString());
+        TestAssert.Equal("inbox:tour-created", scope.Value);
+        TestAssert.Equal("inbox:tour-created", scope.ToString());
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public sealed class IdempotencyValueTests
         string? value = null;
 
         // Act, Assert
-        Assert.Throws<ArgumentNullException>(() => IdempotencyScope.From(value));
+        TestAssert.Throws<ArgumentNullException>(() => IdempotencyScope.From(value));
     }
 
     [Theory]
@@ -110,7 +110,7 @@ public sealed class IdempotencyValueTests
     public void Scope_from_rejects_blank_values(string value)
     {
         // Arrange, Act, Assert
-        Assert.Throws<ArgumentException>(() => IdempotencyScope.From(value));
+        TestAssert.Throws<ArgumentException>(() => IdempotencyScope.From(value));
     }
 
     [Fact]
@@ -120,8 +120,8 @@ public sealed class IdempotencyValueTests
         var scope = default(IdempotencyScope);
 
         // Act, Assert
-        Assert.Throws<InvalidOperationException>(() => scope.Value);
-        Assert.Throws<InvalidOperationException>(() => scope.ToString());
+        TestAssert.Throws<InvalidOperationException>(() => scope.Value);
+        TestAssert.Throws<InvalidOperationException>(() => scope.ToString());
     }
 
     [Fact]
@@ -135,7 +135,7 @@ public sealed class IdempotencyValueTests
         var operation = new IdempotencyOperation(scope, key);
 
         // Assert
-        Assert.Equal(scope, operation.Scope);
-        Assert.Equal(key, operation.Key);
+        TestAssert.Equal(scope, operation.Scope);
+        TestAssert.Equal(key, operation.Key);
     }
 }

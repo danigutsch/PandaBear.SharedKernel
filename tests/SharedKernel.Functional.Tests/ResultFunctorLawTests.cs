@@ -15,7 +15,7 @@ public sealed class ResultFunctorLawTests
         var mapped = result.Map(static value => value);
 
         // Assert
-        Assert.Equal(result, mapped);
+        TestAssert.Equal(result, mapped);
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public sealed class ResultFunctorLawTests
         var chained = result.Map(static value => value.Trim()).Map(static value => value.ToUpperInvariant());
 
         // Assert
-        Assert.Equal(composed, chained);
+        TestAssert.Equal(composed, chained);
     }
 
     [Fact]
@@ -42,6 +42,6 @@ public sealed class ResultFunctorLawTests
         var mapped = result.Map(static value => value.Length);
 
         // Assert
-        Assert.Equal(Result.Error<int>("Unexpected failure"), mapped);
+        TestAssert.Equal(Result.Error<int>("Unexpected failure"), mapped);
     }
 }

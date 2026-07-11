@@ -1,5 +1,4 @@
 using ImageMagick;
-using SharedKernel.Testing.Assertions;
 
 namespace SharedKernel.ImageProcessing.Tests;
 

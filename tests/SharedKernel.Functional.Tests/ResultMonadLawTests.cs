@@ -16,7 +16,7 @@ public sealed class ResultMonadLawTests
         var right = Result.Ok(value.ToUpperInvariant());
 
         // Assert
-        Assert.Equal(right, left);
+        TestAssert.Equal(right, left);
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public sealed class ResultMonadLawTests
         var bound = result.Bind(Result.Ok);
 
         // Assert
-        Assert.Equal(result, bound);
+        TestAssert.Equal(result, bound);
     }
 
     [Fact]
@@ -46,7 +46,7 @@ public sealed class ResultMonadLawTests
             Result.Ok(city.Trim()).Bind(static trimmed => Result.Ok(trimmed.ToUpperInvariant())));
 
         // Assert
-        Assert.Equal(left, right);
+        TestAssert.Equal(left, right);
     }
 
     [Fact]
@@ -59,6 +59,6 @@ public sealed class ResultMonadLawTests
         var bound = result.Bind(static value => Result.Ok(value.Length));
 
         // Assert
-        Assert.Equal(Result.Error<int>("Unexpected failure"), bound);
+        TestAssert.Equal(Result.Error<int>("Unexpected failure"), bound);
     }
 }

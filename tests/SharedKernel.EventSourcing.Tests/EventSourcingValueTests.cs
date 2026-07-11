@@ -12,8 +12,8 @@ public sealed class EventSourcingValueTests
         var streamId = StreamId.From(value);
 
         // Assert
-        Assert.Equal("catalog-tour-tour-1", streamId.Value);
-        Assert.Equal("catalog-tour-tour-1", streamId.ToString());
+        TestAssert.Equal("catalog-tour-tour-1", streamId.Value);
+        TestAssert.Equal("catalog-tour-tour-1", streamId.ToString());
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public sealed class EventSourcingValueTests
         string? value = null;
 
         // Act, Assert
-        Assert.Throws<ArgumentNullException>(() => StreamId.From(value));
+        TestAssert.Throws<ArgumentNullException>(() => StreamId.From(value));
     }
 
     [Fact]
@@ -33,8 +33,8 @@ public sealed class EventSourcingValueTests
         var streamId = default(StreamId);
 
         // Act, Assert
-        Assert.Throws<InvalidOperationException>(() => streamId.Value);
-        Assert.Throws<InvalidOperationException>(() => streamId.ToString());
+        TestAssert.Throws<InvalidOperationException>(() => streamId.Value);
+        TestAssert.Throws<InvalidOperationException>(() => streamId.ToString());
     }
 
     [Theory]
@@ -43,7 +43,7 @@ public sealed class EventSourcingValueTests
     public void StreamId_from_rejects_blank_values(string value)
     {
         // Arrange, Act, Assert
-        Assert.Throws<ArgumentException>(() => StreamId.From(value));
+        TestAssert.Throws<ArgumentException>(() => StreamId.From(value));
     }
 
     [Theory]
@@ -52,7 +52,7 @@ public sealed class EventSourcingValueTests
     public void StreamRevision_from_rejects_non_positive_values(long value)
     {
         // Arrange, Act, Assert
-        Assert.Throws<ArgumentOutOfRangeException>(() => StreamRevision.From(value));
+        TestAssert.Throws<ArgumentOutOfRangeException>(() => StreamRevision.From(value));
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public sealed class EventSourcingValueTests
         var revision = default(StreamRevision);
 
         // Act, Assert
-        Assert.Throws<InvalidOperationException>(() => revision.Value);
+        TestAssert.Throws<InvalidOperationException>(() => revision.Value);
     }
 
     [Fact]
@@ -75,8 +75,8 @@ public sealed class EventSourcingValueTests
         var expectedRevision = ExpectedStreamRevision.From(revision);
 
         // Assert
-        Assert.Equal(3, expectedRevision.Value);
-        Assert.False(expectedRevision.RequiresEmptyStream);
+        TestAssert.Equal(3, expectedRevision.Value);
+        TestAssert.False(expectedRevision.RequiresEmptyStream);
     }
 
     [Fact]
@@ -86,8 +86,8 @@ public sealed class EventSourcingValueTests
         var expectedRevision = ExpectedStreamRevision.Any;
 
         // Assert
-        Assert.Null(expectedRevision.Value);
-        Assert.False(expectedRevision.RequiresEmptyStream);
+        TestAssert.Null(expectedRevision.Value);
+        TestAssert.False(expectedRevision.RequiresEmptyStream);
     }
 
     [Fact]
@@ -97,8 +97,8 @@ public sealed class EventSourcingValueTests
         var expectedRevision = ExpectedStreamRevision.NoStream;
 
         // Assert
-        Assert.Null(expectedRevision.Value);
-        Assert.True(expectedRevision.RequiresEmptyStream);
+        TestAssert.Null(expectedRevision.Value);
+        TestAssert.True(expectedRevision.RequiresEmptyStream);
     }
 
     [Fact]
@@ -115,13 +115,13 @@ public sealed class EventSourcingValueTests
         var envelope = new EventEnvelope(streamId, 12, revision, eventId, "TourPublished", data, recordedAt);
 
         // Assert
-        Assert.Equal(streamId, envelope.StreamId);
-        Assert.Equal(12, envelope.Position);
-        Assert.Equal(revision, envelope.Revision);
-        Assert.Equal(eventId, envelope.EventId);
-        Assert.Equal("TourPublished", envelope.EventType);
-        Assert.Equal(data, envelope.Data);
-        Assert.Equal(recordedAt, envelope.RecordedAt);
+        TestAssert.Equal(streamId, envelope.StreamId);
+        TestAssert.Equal(12, envelope.Position);
+        TestAssert.Equal(revision, envelope.Revision);
+        TestAssert.Equal(eventId, envelope.EventId);
+        TestAssert.Equal("TourPublished", envelope.EventType);
+        TestAssert.Equal(data, envelope.Data);
+        TestAssert.Equal(recordedAt, envelope.RecordedAt);
     }
 
     [Fact]
@@ -131,8 +131,8 @@ public sealed class EventSourcingValueTests
         var checkpoint = new ProjectionCheckpoint("catalog-tour-projection", 42);
 
         // Assert
-        Assert.Equal("catalog-tour-projection", checkpoint.ProjectionName);
-        Assert.Equal(42, checkpoint.Position);
+        TestAssert.Equal("catalog-tour-projection", checkpoint.ProjectionName);
+        TestAssert.Equal(42, checkpoint.Position);
     }
 
 }

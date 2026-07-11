@@ -53,21 +53,21 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         var envelopes = await store.Load(streamId, afterRevision: null, TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Collection(
+        TestAssert.Collection(
             envelopes,
             first =>
             {
-                Assert.Equal(1, first.Revision.Value);
-                Assert.Equal(TestEventSerializer.EventType, first.EventType);
-                var eventData = Assert.IsType<TestEvent>(first.Data);
-                Assert.Equal("draft-created", eventData.Name);
+                TestAssert.Equal(1, first.Revision.Value);
+                TestAssert.Equal(TestEventSerializer.EventType, first.EventType);
+                var eventData = TestAssert.IsType<TestEvent>(first.Data);
+                TestAssert.Equal("draft-created", eventData.Name);
             },
             second =>
             {
-                Assert.Equal(2, second.Revision.Value);
-                Assert.Equal(TestEventSerializer.EventType, second.EventType);
-                var eventData = Assert.IsType<TestEvent>(second.Data);
-                Assert.Equal("published", eventData.Name);
+                TestAssert.Equal(2, second.Revision.Value);
+                TestAssert.Equal(TestEventSerializer.EventType, second.EventType);
+                var eventData = TestAssert.IsType<TestEvent>(second.Data);
+                TestAssert.Equal("published", eventData.Name);
             });
     }
 
@@ -86,7 +86,7 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
             TestContext.Current.CancellationToken);
 
         // Act
-        var exception = await Assert.ThrowsAsync<ExpectedStreamRevisionConflictException>(
+        var exception = await TestAssert.Throws<ExpectedStreamRevisionConflictException>(
             () => store.Append(
                 streamId,
                 ExpectedStreamRevision.NoStream,
@@ -94,10 +94,10 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
                 TestContext.Current.CancellationToken).AsTask());
 
         // Assert
-        Assert.Equal(streamId, exception.StreamId);
-        Assert.True(exception.ExpectedRevision.RequiresEmptyStream);
-        var actualRevision = Assert.IsType<StreamRevision>(exception.ActualRevision);
-        Assert.Equal(1, actualRevision.Value);
+        TestAssert.Equal(streamId, exception.StreamId);
+        TestAssert.True(exception.ExpectedRevision.RequiresEmptyStream);
+        var actualRevision = TestAssert.IsType<StreamRevision>(exception.ActualRevision);
+        TestAssert.Equal(1, actualRevision.Value);
     }
 
     [Fact]
@@ -116,9 +116,9 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         var savedCheckpoint = await store.GetCheckpoint("catalog-public-listing", TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.NotNull(savedCheckpoint);
-        Assert.Equal("catalog-public-listing", savedCheckpoint.ProjectionName);
-        Assert.Equal(27, savedCheckpoint.Position);
+        _ = TestAssert.NotNull(savedCheckpoint);
+        TestAssert.Equal("catalog-public-listing", savedCheckpoint.ProjectionName);
+        TestAssert.Equal(27, savedCheckpoint.Position);
     }
 
     [Fact]
@@ -137,8 +137,8 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         var savedCheckpoint = await store.GetCheckpoint("catalog-public-listing", TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.NotNull(savedCheckpoint);
-        Assert.Equal(27, savedCheckpoint.Position);
+        _ = TestAssert.NotNull(savedCheckpoint);
+        TestAssert.Equal(27, savedCheckpoint.Position);
     }
 
     [Theory]
@@ -153,11 +153,11 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         var checkpoint = new ProjectionCheckpoint(projectionName, 12);
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentException>(
+        var exception = await TestAssert.Throws<ArgumentException>(
             () => store.Save(checkpoint, TestContext.Current.CancellationToken).AsTask());
 
         // Assert
-        Assert.Equal("checkpoint.ProjectionName", exception.ParamName);
+        TestAssert.Equal("checkpoint.ProjectionName", exception.ParamName);
     }
 
     [Fact]
@@ -170,11 +170,11 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         var checkpoint = new ProjectionCheckpoint("catalog-public-listing", -1);
 
         // Act
-        var exception = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+        var exception = await TestAssert.Throws<ArgumentOutOfRangeException>(
             () => store.Save(checkpoint, TestContext.Current.CancellationToken).AsTask());
 
         // Assert
-        Assert.Equal("checkpoint.Position", exception.ParamName);
+        TestAssert.Equal("checkpoint.Position", exception.ParamName);
     }
 
     [Fact]
@@ -193,12 +193,12 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         var results = await Task.WhenAll(appendTasks);
 
         // Assert
-        Assert.Equal(1, results.Count(result => result is null));
-        Assert.Equal(9, results.OfType<ExpectedStreamRevisionConflictException>().Count());
+        TestAssert.Equal(1, results.Count(result => result is null));
+        TestAssert.Equal(9, results.OfType<ExpectedStreamRevisionConflictException>().Count());
         var envelopes = await store.Load(streamId, afterRevision: null, TestContext.Current.CancellationToken);
-        var envelope = Assert.Single(envelopes);
-        Assert.Equal(1, envelope.Position);
-        Assert.Equal(1, envelope.Revision.Value);
+        var envelope = TestAssert.ExactlyOne(envelopes);
+        TestAssert.Equal(1, envelope.Position);
+        TestAssert.Equal(1, envelope.Revision.Value);
     }
 
     [Fact]
@@ -222,8 +222,8 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
 
         // Assert
         var envelopes = await store.Load(streamId, afterRevision: null, TestContext.Current.CancellationToken);
-        Assert.Equal(10, envelopes.Count);
-        Assert.Equal(Enumerable.Range(1, 10), envelopes.Select(envelope => (int)envelope.Revision.Value));
+        TestAssert.Equal(10, envelopes.Count);
+        TestAssert.Equal(Enumerable.Range(1, 10), envelopes.Select(envelope => (int)envelope.Revision.Value));
     }
 
     [Fact]
@@ -236,7 +236,7 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         var streamId = StreamId.From("catalog-tour-empty-conflict");
 
         // Act
-        var exception = await Assert.ThrowsAsync<ExpectedStreamRevisionConflictException>(
+        var exception = await TestAssert.Throws<ExpectedStreamRevisionConflictException>(
             () => store.Append(
                 streamId,
                 ExpectedStreamRevision.From(StreamRevision.From(1)),
@@ -244,7 +244,7 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
                 TestContext.Current.CancellationToken).AsTask());
 
         // Assert
-        Assert.Null(exception.ActualRevision);
+        TestAssert.Null(exception.ActualRevision);
     }
 
     [Fact]
@@ -266,17 +266,17 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
             ExpectedStreamRevision.NoStream,
             [new TestEvent("second")],
             TestContext.Current.CancellationToken);
-        var firstEnvelope = Assert.Single(await store.Load(firstStreamId, afterRevision: null, TestContext.Current.CancellationToken));
+        var firstEnvelope = TestAssert.ExactlyOne(await store.Load(firstStreamId, afterRevision: null, TestContext.Current.CancellationToken));
 
         // Act
         var envelopes = await store.LoadAfter(firstEnvelope.Position, maxCount: 10, TestContext.Current.CancellationToken);
 
         // Assert
-        var envelope = Assert.Single(envelopes);
-        Assert.Equal(secondStreamId, envelope.StreamId);
-        Assert.True(envelope.Position > firstEnvelope.Position);
-        var eventData = Assert.IsType<TestEvent>(envelope.Data);
-        Assert.Equal("second", eventData.Name);
+        var envelope = TestAssert.ExactlyOne(envelopes);
+        TestAssert.Equal(secondStreamId, envelope.StreamId);
+        TestAssert.True(envelope.Position > firstEnvelope.Position);
+        var eventData = TestAssert.IsType<TestEvent>(envelope.Data);
+        TestAssert.Equal("second", eventData.Name);
     }
 
     [Fact]
@@ -301,9 +301,9 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         var secondBatch = await store.LoadAfter(checkpoint, maxCount: 10, TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Equal(5, firstBatch.Count);
-        Assert.Equal(5, secondBatch.Count);
-        Assert.Equal(10, firstBatch.Concat(secondBatch).Select(envelope => envelope.EventId).Distinct().Count());
+        TestAssert.Equal(5, firstBatch.Count);
+        TestAssert.Equal(5, secondBatch.Count);
+        TestAssert.Equal(10, firstBatch.Concat(secondBatch).Select(envelope => envelope.EventId).Distinct().Count());
     }
 
     [Fact]
@@ -328,17 +328,17 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         _ = await store.Load(streamId, afterRevision: null, TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Contains(stoppedActivities, activity =>
+        TestAssert.Contains(stoppedActivities, activity =>
             string.Equals(activity.OperationName, PostgreSqlEventSourcingTelemetry.ActivityAppend, StringComparison.Ordinal)
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagOutcome, PostgreSqlEventSourcingTelemetry.OutcomeSuccess)
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagExpectedRevisionMode, PostgreSqlEventSourcingTelemetry.ExpectedRevisionNoStream));
-        Assert.Contains(stoppedActivities, activity =>
+        TestAssert.Contains(stoppedActivities, activity =>
             string.Equals(activity.OperationName, PostgreSqlEventSourcingTelemetry.ActivityLoad, StringComparison.Ordinal)
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagEventCount, 1));
-        Assert.Contains(PostgreSqlEventSourcingTelemetry.MetricAppendDuration, measurements, StringComparer.Ordinal);
-        Assert.Contains(PostgreSqlEventSourcingTelemetry.MetricLoadDuration, measurements, StringComparer.Ordinal);
-        Assert.Contains(PostgreSqlEventSourcingTelemetry.MetricEventsAppended, measurements, StringComparer.Ordinal);
-        Assert.Contains(PostgreSqlEventSourcingTelemetry.MetricEventsLoaded, measurements, StringComparer.Ordinal);
+        TestAssert.Contains(PostgreSqlEventSourcingTelemetry.MetricAppendDuration, measurements, StringComparer.Ordinal);
+        TestAssert.Contains(PostgreSqlEventSourcingTelemetry.MetricLoadDuration, measurements, StringComparer.Ordinal);
+        TestAssert.Contains(PostgreSqlEventSourcingTelemetry.MetricEventsAppended, measurements, StringComparer.Ordinal);
+        TestAssert.Contains(PostgreSqlEventSourcingTelemetry.MetricEventsLoaded, measurements, StringComparer.Ordinal);
     }
 
     [Fact]
@@ -360,7 +360,7 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
             TestContext.Current.CancellationToken);
 
         // Act
-        _ = await Assert.ThrowsAsync<ExpectedStreamRevisionConflictException>(
+        _ = await TestAssert.Throws<ExpectedStreamRevisionConflictException>(
             () => store.Append(
                 streamId,
                 ExpectedStreamRevision.NoStream,
@@ -368,12 +368,12 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
                 TestContext.Current.CancellationToken).AsTask());
 
         // Assert
-        Assert.Contains(stoppedActivities, activity =>
+        TestAssert.Contains(stoppedActivities, activity =>
             string.Equals(activity.OperationName, PostgreSqlEventSourcingTelemetry.ActivityAppend, StringComparison.Ordinal)
             && activity.Status == ActivityStatusCode.Error
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagOutcome, PostgreSqlEventSourcingTelemetry.OutcomeConflict)
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagActualRevision, 1L));
-        Assert.Contains(PostgreSqlEventSourcingTelemetry.MetricAppendConflicts, measurements, StringComparer.Ordinal);
+        TestAssert.Contains(PostgreSqlEventSourcingTelemetry.MetricAppendConflicts, measurements, StringComparer.Ordinal);
     }
 
     [Fact]
@@ -394,14 +394,14 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         _ = await store.GetCheckpoint(checkpoint.ProjectionName, TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Contains(stoppedActivities, activity =>
+        TestAssert.Contains(stoppedActivities, activity =>
             string.Equals(activity.OperationName, PostgreSqlEventSourcingTelemetry.ActivityCheckpoint, StringComparison.Ordinal)
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagOperation, "save_checkpoint")
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagCheckpointPosition, 27L));
-        Assert.Contains(stoppedActivities, activity =>
+        TestAssert.Contains(stoppedActivities, activity =>
             string.Equals(activity.OperationName, PostgreSqlEventSourcingTelemetry.ActivityCheckpoint, StringComparison.Ordinal)
             && PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagOperation, "get_checkpoint"));
-        Assert.Contains(PostgreSqlEventSourcingTelemetry.MetricCheckpointDuration, measurements, StringComparer.Ordinal);
+        TestAssert.Contains(PostgreSqlEventSourcingTelemetry.MetricCheckpointDuration, measurements, StringComparer.Ordinal);
     }
 
     [Fact]
@@ -421,33 +421,33 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         await cancellation.CancelAsync();
 
         // Act
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await eventStore.Append(
+        await TestAssert.ThrowsAny<OperationCanceledException>(async () => await eventStore.Append(
             StreamId.From("catalog-tour-cancelled-append"),
             ExpectedStreamRevision.NoStream,
             [new TestEvent("draft-created")],
             cancellation.Token));
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await eventStore.Load(
+        await TestAssert.ThrowsAny<OperationCanceledException>(async () => await eventStore.Load(
             StreamId.From("catalog-tour-cancelled-load"),
             afterRevision: null,
             cancellation.Token));
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await eventStore.LoadAfter(
+        await TestAssert.ThrowsAny<OperationCanceledException>(async () => await eventStore.LoadAfter(
             position: 0,
             maxCount: 1,
             cancellation.Token));
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await checkpointStore.GetCheckpoint(
+        await TestAssert.ThrowsAny<OperationCanceledException>(async () => await checkpointStore.GetCheckpoint(
             "catalog-cancelled-projection",
             cancellation.Token));
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => await checkpointStore.Save(
+        await TestAssert.ThrowsAny<OperationCanceledException>(async () => await checkpointStore.Save(
             new ProjectionCheckpoint("catalog-cancelled-projection", 1),
             cancellation.Token));
 
         // Assert
-        Assert.DoesNotContain(stoppedActivities, activity =>
+        TestAssert.DoesNotContain(stoppedActivities, activity =>
             activity.Status == ActivityStatusCode.Error
             || PostgreSqlEventStoreTestsHelpers.HasTag(activity, PostgreSqlEventSourcingTelemetry.TagOutcome, PostgreSqlEventSourcingTelemetry.OutcomeError));
-        Assert.DoesNotContain(PostgreSqlEventSourcingTelemetry.MetricAppendDuration, measurements, StringComparer.Ordinal);
-        Assert.DoesNotContain(PostgreSqlEventSourcingTelemetry.MetricLoadDuration, measurements, StringComparer.Ordinal);
-        Assert.DoesNotContain(PostgreSqlEventSourcingTelemetry.MetricCheckpointDuration, measurements, StringComparer.Ordinal);
+        TestAssert.DoesNotContain(PostgreSqlEventSourcingTelemetry.MetricAppendDuration, measurements, StringComparer.Ordinal);
+        TestAssert.DoesNotContain(PostgreSqlEventSourcingTelemetry.MetricLoadDuration, measurements, StringComparer.Ordinal);
+        TestAssert.DoesNotContain(PostgreSqlEventSourcingTelemetry.MetricCheckpointDuration, measurements, StringComparer.Ordinal);
     }
 
     private string ConnectionString => connectionString ?? throw new InvalidOperationException("Fixture is not initialized.");

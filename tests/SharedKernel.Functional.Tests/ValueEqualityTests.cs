@@ -16,10 +16,10 @@ public sealed class ValueEqualityTests
         var equalAsObject = left.Equals((object)right);
 
         // Assert
-        Assert.True(equalOperator);
-        Assert.False(notEqualOperator);
-        Assert.True(equalAsObject);
-        Assert.Equal(left.GetHashCode(), right.GetHashCode());
+        TestAssert.True(equalOperator);
+        TestAssert.False(notEqualOperator);
+        TestAssert.True(equalAsObject);
+        TestAssert.Equal(left.GetHashCode(), right.GetHashCode());
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public sealed class ValueEqualityTests
         var equal = left == right;
 
         // Assert
-        Assert.False(equal);
+        TestAssert.False(equal);
     }
 
     [Fact]
@@ -49,10 +49,10 @@ public sealed class ValueEqualityTests
         var equalAsObject = left.Equals((object)right);
 
         // Assert
-        Assert.True(equalOperator);
-        Assert.False(notEqualOperator);
-        Assert.True(equalAsObject);
-        Assert.Equal(left.GetHashCode(), right.GetHashCode());
+        TestAssert.True(equalOperator);
+        TestAssert.False(notEqualOperator);
+        TestAssert.True(equalAsObject);
+        TestAssert.Equal(left.GetHashCode(), right.GetHashCode());
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public sealed class ValueEqualityTests
         var equal = left == right;
 
         // Assert
-        Assert.False(equal);
+        TestAssert.False(equal);
     }
 
     [Fact]
@@ -82,10 +82,10 @@ public sealed class ValueEqualityTests
         var equalAsObject = left.Equals((object)right);
 
         // Assert
-        Assert.True(equalOperator);
-        Assert.False(notEqualOperator);
-        Assert.True(equalAsObject);
-        Assert.Equal(left.GetHashCode(), right.GetHashCode());
+        TestAssert.True(equalOperator);
+        TestAssert.False(notEqualOperator);
+        TestAssert.True(equalAsObject);
+        TestAssert.Equal(left.GetHashCode(), right.GetHashCode());
     }
 
     [Fact]
@@ -99,6 +99,6 @@ public sealed class ValueEqualityTests
         var equal = left == right;
 
         // Assert
-        Assert.False(equal);
+        TestAssert.False(equal);
     }
 }

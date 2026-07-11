@@ -16,6 +16,19 @@ public sealed class TestAssertWrapperTests
     }
 
     [Fact]
+    public void TestAssert_supports_migrated_xunit_assertion_overloads()
+    {
+        string[] values = ["alpha", "beta"];
+
+        var matchingValue = TestAssert.ExactlyOne(values, static value => value == "beta");
+        TestAssert.DoesNotContain("gamma", values, StringComparer.Ordinal);
+        var assignableValue = TestAssert.IsType<object>("alpha", exactMatch: false);
+
+        matchingValue.ShouldBe("beta");
+        TestAssert.Same("alpha", assignableValue);
+    }
+
+    [Fact]
     public void Should_assertion_extensions_cover_common_supported_shapes()
     {
         string[] values = ["alpha", "beta"];

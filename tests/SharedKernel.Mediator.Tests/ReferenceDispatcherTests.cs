@@ -19,8 +19,8 @@ public sealed class ReferenceDispatcherTests
         var response = await dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("vt-42"), CancellationToken.None);
 
         // Assert
-        Assert.Equal("VT-42", response);
-        Assert.Equal(["Handler:vt-42"], events);
+        TestAssert.Equal("VT-42", response);
+        TestAssert.Equal(["Handler:vt-42"], events);
     }
 
     [Fact]
@@ -36,8 +36,8 @@ public sealed class ReferenceDispatcherTests
         var response = await dispatcher.Send(new ReferenceDispatcherTestTypes.DeleteTour(7), CancellationToken.None);
 
         // Assert
-        Assert.Equal(Unit.Value, response);
-        Assert.Equal(["Delete:7"], events);
+        TestAssert.Equal(Unit.Value, response);
+        TestAssert.Equal(["Delete:7"], events);
     }
 
     [Fact]
@@ -48,11 +48,11 @@ public sealed class ReferenceDispatcherTests
             .Build();
 
         // Act
-        var exception = await Assert.ThrowsAsync<NotSupportedException>(() =>
+        var exception = await TestAssert.Throws<NotSupportedException>(() =>
             dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("missing"), CancellationToken.None).AsTask());
 
         // Assert
-        Assert.Contains(typeof(ReferenceDispatcherTestTypes.LookupTour).FullName!, exception.Message, StringComparison.Ordinal);
+        TestAssert.Contains(typeof(ReferenceDispatcherTestTypes.LookupTour).FullName!, exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -66,13 +66,13 @@ public sealed class ReferenceDispatcherTests
             .Build();
 
         // Act
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        var exception = await TestAssert.Throws<InvalidOperationException>(() =>
             dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("duplicate"), CancellationToken.None).AsTask());
 
         // Assert
-        Assert.Contains("found 2 registered handlers", exception.Message, StringComparison.Ordinal);
-        Assert.Contains(typeof(ReferenceDispatcherTestTypes.LookupTour).FullName!, exception.Message, StringComparison.Ordinal);
-        Assert.Empty(events);
+        TestAssert.Contains("found 2 registered handlers", exception.Message, StringComparison.Ordinal);
+        TestAssert.Contains(typeof(ReferenceDispatcherTestTypes.LookupTour).FullName!, exception.Message, StringComparison.Ordinal);
+        TestAssert.Empty(events);
     }
 
     [Fact]
@@ -90,8 +90,8 @@ public sealed class ReferenceDispatcherTests
         var response = await dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("order"), CancellationToken.None);
 
         // Assert
-        Assert.Equal("ORDER", response);
-        Assert.Equal(
+        TestAssert.Equal("ORDER", response);
+        TestAssert.Equal(
             [
                 "Validation:Before",
                 "Observability:Before",
@@ -114,7 +114,7 @@ public sealed class ReferenceDispatcherTests
         await dispatcher.Publish(new ReferenceDispatcherTestTypes.DerivedNotification("tour"), CancellationToken.None);
 
         // Assert
-        Assert.Empty(events);
+        TestAssert.Empty(events);
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public sealed class ReferenceDispatcherTests
         await dispatcher.Publish(notification, CancellationToken.None);
 
         // Assert
-        Assert.Equal(
+        TestAssert.Equal(
             [
                 "Derived-1:tour",
                 "Derived-2:tour",
@@ -157,7 +157,7 @@ public sealed class ReferenceDispatcherTests
         }
 
         // Assert
-        Assert.Equal(["Item-1", "Item-2", "Item-3"], items);
+        TestAssert.Equal(["Item-1", "Item-2", "Item-3"], items);
     }
 
     [Fact]
@@ -168,7 +168,7 @@ public sealed class ReferenceDispatcherTests
             .Build();
 
         // Act
-        var exception = await Assert.ThrowsAsync<NotSupportedException>(async () =>
+        var exception = await TestAssert.Throws<NotSupportedException>(async () =>
         {
             await using var enumerator =
                 dispatcher.Send(new ReferenceDispatcherTestTypes.StreamTours(1), CancellationToken.None)
@@ -177,7 +177,7 @@ public sealed class ReferenceDispatcherTests
         });
 
         // Assert
-        Assert.Contains(typeof(ReferenceDispatcherTestTypes.StreamTours).FullName!, exception.Message, StringComparison.Ordinal);
+        TestAssert.Contains(typeof(ReferenceDispatcherTestTypes.StreamTours).FullName!, exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -190,7 +190,7 @@ public sealed class ReferenceDispatcherTests
             .Build();
 
         // Act
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+        var exception = await TestAssert.Throws<InvalidOperationException>(async () =>
         {
             await using var enumerator =
                 dispatcher.Send(new ReferenceDispatcherTestTypes.StreamTours(1), CancellationToken.None)
@@ -199,8 +199,8 @@ public sealed class ReferenceDispatcherTests
         });
 
         // Assert
-        Assert.Contains("found 2 registered handlers", exception.Message, StringComparison.Ordinal);
-        Assert.Contains(typeof(ReferenceDispatcherTestTypes.StreamTours).FullName!, exception.Message, StringComparison.Ordinal);
+        TestAssert.Contains("found 2 registered handlers", exception.Message, StringComparison.Ordinal);
+        TestAssert.Contains(typeof(ReferenceDispatcherTestTypes.StreamTours).FullName!, exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -221,7 +221,7 @@ public sealed class ReferenceDispatcherTests
         }
 
         // Assert
-        Assert.Equal(["Item-1", "Item-2"], items);
-        Assert.Equal(["StreamValidation:Before", "StreamValidation:After"], events);
+        TestAssert.Equal(["Item-1", "Item-2"], items);
+        TestAssert.Equal(["StreamValidation:Before", "StreamValidation:After"], events);
     }
 }

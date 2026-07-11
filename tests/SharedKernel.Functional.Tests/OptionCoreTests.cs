@@ -1,11 +1,11 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
-public sealed class OptionCoreTests
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+public static class OptionCoreTests
 {
     [Fact]
-    public void Creates_an_option_with_a_value()
+    public static void Creates_an_option_with_a_value()
     {
         // Arrange
         const string expectedValue = "porto";
@@ -14,26 +14,26 @@ public sealed class OptionCoreTests
         var option = Option.Some(expectedValue);
 
         // Assert
-        Assert.True(option.HasValue);
-        Assert.False(option.IsEmpty);
-        Assert.Equal(expectedValue, option.Value);
+        option.HasValue.ShouldBeTrue();
+        option.IsEmpty.ShouldBeFalse();
+        option.Value.ShouldBe(expectedValue);
     }
 
     [Fact]
-    public void Creates_an_empty_option()
+    public static void Creates_an_empty_option()
     {
         // Arrange
         // Act
         var option = Option.None<string>();
 
         // Assert
-        Assert.False(option.HasValue);
-        Assert.True(option.IsEmpty);
-        Assert.Null(option.Value);
+        option.HasValue.ShouldBeFalse();
+        option.IsEmpty.ShouldBeTrue();
+        option.Value.ShouldBeNull();
     }
 
     [Fact]
-    public void Returns_none_for_null_values()
+    public static void Returns_none_for_null_values()
     {
         // Arrange
         string? value = null;
@@ -42,12 +42,12 @@ public sealed class OptionCoreTests
         var option = Option.FromNullable(value);
 
         // Assert
-        Assert.False(option.HasValue);
-        Assert.True(option.IsEmpty);
+        option.HasValue.ShouldBeFalse();
+        option.IsEmpty.ShouldBeTrue();
     }
 
     [Fact]
-    public void Supports_value_types_when_the_value_is_not_null()
+    public static void Supports_value_types_when_the_value_is_not_null()
     {
         // Arrange
         const int expectedValue = 42;
@@ -56,7 +56,7 @@ public sealed class OptionCoreTests
         var option = Option.Some(expectedValue);
 
         // Assert
-        Assert.True(option.HasValue);
-        Assert.Equal(expectedValue, option.Value);
+        option.HasValue.ShouldBeTrue();
+        option.Value.ShouldBe(expectedValue);
     }
 }

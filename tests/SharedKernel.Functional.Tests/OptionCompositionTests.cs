@@ -1,12 +1,12 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MatchSemanticsTheory)]
-public sealed class OptionCompositionTests
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MatchSemanticsTheory)]
+public static class OptionCompositionTests
 {
     [Fact]
-    public void Returns_the_some_branch_value_when_a_value_is_present()
+    public static void Returns_the_some_branch_value_when_a_value_is_present()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -17,11 +17,11 @@ public sealed class OptionCompositionTests
             static () => "EMPTY");
 
         // Assert
-        Assert.Equal("PORTO", result);
+        result.ShouldBe("PORTO");
     }
 
     [Fact]
-    public void Returns_the_none_branch_value_when_no_value_is_present()
+    public static void Returns_the_none_branch_value_when_no_value_is_present()
     {
         // Arrange
         var option = Option.None<string>();
@@ -32,11 +32,11 @@ public sealed class OptionCompositionTests
             static () => "EMPTY");
 
         // Assert
-        Assert.Equal("EMPTY", result);
+        result.ShouldBe("EMPTY");
     }
 
     [Fact]
-    public void Returns_none_when_the_option_is_empty()
+    public static void Returns_none_when_the_option_is_empty()
     {
         // Arrange
         var option = Option.None<string>();
@@ -45,11 +45,11 @@ public sealed class OptionCompositionTests
         var mapped = option.Map(static value => value.ToUpperInvariant());
 
         // Assert
-        Assert.Equal(Option.None<string>(), mapped);
+        mapped.ShouldBe(Option.None<string>());
     }
 
     [Fact]
-    public void Returns_none_when_the_option_is_empty_after_binding()
+    public static void Returns_none_when_the_option_is_empty_after_binding()
     {
         // Arrange
         var option = Option.None<string>();
@@ -58,11 +58,11 @@ public sealed class OptionCompositionTests
         var bound = option.Bind(static value => Option.Some(value.ToUpperInvariant()));
 
         // Assert
-        Assert.Equal(Option.None<string>(), bound);
+        bound.ShouldBe(Option.None<string>());
     }
 
     [Fact]
-    public void Can_project_reference_options_into_value_type_options()
+    public static void Can_project_reference_options_into_value_type_options()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -71,11 +71,11 @@ public sealed class OptionCompositionTests
         var mapped = option.Map(static value => value.Length);
 
         // Assert
-        Assert.Equal(Option.Some(5), mapped);
+        mapped.ShouldBe(Option.Some(5));
     }
 
     [Fact]
-    public void Can_project_into_value_type_options()
+    public static void Can_project_into_value_type_options()
     {
         // Arrange
         var option = Option.Some("porto");
@@ -84,6 +84,6 @@ public sealed class OptionCompositionTests
         var bound = option.Bind(static value => Option.Some(value.Length));
 
         // Assert
-        Assert.Equal(Option.Some(5), bound);
+        bound.ShouldBe(Option.Some(5));
     }
 }

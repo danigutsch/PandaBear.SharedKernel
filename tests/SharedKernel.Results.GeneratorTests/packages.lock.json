@@ -166,6 +166,12 @@
       "sharedkernel.results.sourcegenerator": {
         "type": "Project"
       },
+      "sharedkernel.testing.assertions": {
+        "type": "Project",
+        "dependencies": {
+          "xunit.v3.assert": "[3.2.2, )"
+        }
+      },
       "sharedkernel.testing.roslyn": {
         "type": "Project",
         "dependencies": {

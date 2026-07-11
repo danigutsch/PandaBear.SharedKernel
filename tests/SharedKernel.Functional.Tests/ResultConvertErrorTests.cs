@@ -1,7 +1,7 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
 public sealed class ResultConvertErrorTests
 {
     [Fact]
@@ -14,11 +14,11 @@ public sealed class ResultConvertErrorTests
         var converted = source.ConvertError<string>();
 
         // Assert
-        Assert.Equal(ResultStatus.NotFound, converted.Status);
+        converted.Status.ShouldBe(ResultStatus.NotFound);
         var error = converted.ErrorDetails;
-        Assert.NotNull(error);
-        Assert.Equal(ResultErrorCodes.NotFound, error.Code);
-        Assert.Equal("Tour not found", error.Detail);
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ResultErrorCodes.NotFound);
+        error.Detail.ShouldBe("Tour not found");
     }
 
     [Fact]
@@ -31,11 +31,11 @@ public sealed class ResultConvertErrorTests
         var converted = source.ConvertError();
 
         // Assert
-        Assert.Equal(ResultStatus.Conflict, converted.Status);
+        converted.Status.ShouldBe(ResultStatus.Conflict);
         var error = converted.ErrorDetails;
-        Assert.NotNull(error);
-        Assert.Equal(ResultErrorCodes.Conflict, error.Code);
-        Assert.Equal("Tour already exists", error.Detail);
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ResultErrorCodes.Conflict);
+        error.Detail.ShouldBe("Tour already exists");
     }
 
     [Fact]
@@ -48,11 +48,11 @@ public sealed class ResultConvertErrorTests
         var converted = source.ConvertError<string, int>();
 
         // Assert
-        Assert.Equal(ResultStatus.Error, converted.Status);
+        converted.Status.ShouldBe(ResultStatus.Error);
         var error = converted.ErrorDetails;
-        Assert.NotNull(error);
-        Assert.Equal(ResultErrorCodes.Error, error.Code);
-        Assert.Equal("Unexpected failure", error.Detail);
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ResultErrorCodes.Error);
+        error.Detail.ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -65,12 +65,12 @@ public sealed class ResultConvertErrorTests
         var converted = source.ConvertError<string>();
 
         // Assert
-        Assert.Equal(ResultStatus.Invalid, converted.Status);
+        converted.Status.ShouldBe(ResultStatus.Invalid);
         var error = converted.ErrorDetails;
-        Assert.NotNull(error);
-        Assert.Equal(ResultErrorCodes.Invalid, error.Code);
-        Assert.NotNull(error.ValidationErrors);
-        Assert.Equal(["Name is required"], error.ValidationErrors["Name"]);
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ResultErrorCodes.Invalid);
+        error.ValidationErrors.ShouldNotBeNull();
+        TestAssert.Equal(["Name is required"], error.ValidationErrors["Name"]);
     }
 
     [Fact]
@@ -82,10 +82,10 @@ public sealed class ResultConvertErrorTests
             new ResultError("Validation failed", ResultErrorCodes.Invalid));
 
         // Act
-        var exception = Assert.Throws<InvalidOperationException>(() => malformedResult.ConvertError<string>());
+        var exception = TestAssert.Throws<InvalidOperationException>(() => malformedResult.ConvertError<string>());
 
         // Assert
-        Assert.Equal("Validation errors must include field details.", exception.Message);
+        exception.Message.ShouldBe("Validation errors must include field details.");
     }
 
     [Theory]
@@ -98,10 +98,10 @@ public sealed class ResultConvertErrorTests
         var malformedResult = ResultConvertErrorTestsHelpers.CreateMalformedResult((ResultStatus)statusValue, new ResultError("Malformed result status."));
 
         // Act
-        var exception = Assert.Throws<InvalidOperationException>(() => malformedResult.ConvertError<string>());
+        var exception = TestAssert.Throws<InvalidOperationException>(() => malformedResult.ConvertError<string>());
 
         // Assert
-        Assert.Equal(expectedMessage, exception.Message);
+        exception.Message.ShouldBe(expectedMessage);
     }
 
     [Theory]
@@ -114,10 +114,10 @@ public sealed class ResultConvertErrorTests
         var malformedResult = ResultConvertErrorTestsHelpers.CreateMalformedGenericResult((ResultStatus)statusValue, "payload", new ResultError("Malformed result status."));
 
         // Act
-        var exception = Assert.Throws<InvalidOperationException>(() => malformedResult.ConvertError<string, int>());
+        var exception = TestAssert.Throws<InvalidOperationException>(() => malformedResult.ConvertError<string, int>());
 
         // Assert
-        Assert.Equal(expectedMessage, exception.Message);
+        exception.Message.ShouldBe(expectedMessage);
     }
 
 }

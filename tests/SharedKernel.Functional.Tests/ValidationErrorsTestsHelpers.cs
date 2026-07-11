@@ -12,7 +12,7 @@ internal static class ValidationErrorsTestsHelpers
             types: [typeof(ResultStatus), typeof(ResultError)],
             modifiers: null);
 
-        Assert.NotNull(constructor);
+        _ = TestAssert.NotNull(constructor);
         return (Result)constructor.Invoke([ResultStatus.Invalid, error]);
     }
 }

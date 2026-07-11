@@ -17,7 +17,7 @@ public sealed class ResultMatchTests
             static error => error.Detail.Length);
 
         // Assert
-        Assert.Equal(5, matched);
+        TestAssert.Equal(5, matched);
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public sealed class ResultMatchTests
             static error => error.Detail.Length);
 
         // Assert
-        Assert.Equal("Unexpected failure".Length, matched);
+        TestAssert.Equal("Unexpected failure".Length, matched);
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public sealed class ResultMatchTests
             static error => error.Detail);
 
         // Assert
-        Assert.Equal("success", matched);
+        TestAssert.Equal("success", matched);
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public sealed class ResultMatchTests
             static error => error.Detail);
 
         // Assert
-        Assert.Equal("Unexpected failure", matched);
+        TestAssert.Equal("Unexpected failure", matched);
     }
 
     [Fact]
@@ -72,11 +72,11 @@ public sealed class ResultMatchTests
         var result = default(Result);
 
         // Act
-        var exception = Assert.Throws<InvalidOperationException>(
+        var exception = TestAssert.Throws<InvalidOperationException>(
             () => result.Match(static () => "success", static error => error.Detail));
 
         // Assert
-        Assert.Equal("Result status is not initialized.", exception.Message);
+        TestAssert.Equal("Result status is not initialized.", exception.Message);
     }
 
     [Fact]
@@ -86,10 +86,10 @@ public sealed class ResultMatchTests
         var result = default(Result<string>);
 
         // Act
-        var exception = Assert.Throws<InvalidOperationException>(
+        var exception = TestAssert.Throws<InvalidOperationException>(
             () => result.Match(static value => value.Length, static error => error.Detail.Length));
 
         // Assert
-        Assert.Equal("Result status is not initialized.", exception.Message);
+        TestAssert.Equal("Result status is not initialized.", exception.Message);
     }
 }

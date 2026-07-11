@@ -135,40 +135,40 @@ public sealed class GeneratorDispatchTests
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedSource);
         GeneratorSnapshotVerifier.Verify(generatedDispatchSource, testName: "Generate_GeneratedDispatch_Shell");
-        Assert.Contains("public sealed partial class AppMediator : IMediator", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("internal global::System.IServiceProvider Services { get; }", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("public async global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.LookupTour request,", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("public async global::System.Threading.Tasks.ValueTask<int> Send(global::Demo.CreateTour request,", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("public async global::System.Threading.Tasks.ValueTask<global::SharedKernel.Mediator.Unit> Send(global::Demo.DeleteTour request,", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("public async global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.GetTourById request,", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("public global::System.Collections.Generic.IAsyncEnumerable<string> Send(global::Demo.StreamTours request,", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("public global::System.Collections.Generic.IAsyncEnumerable<TResponse> Send<TResponse>(", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("return GeneratedDispatch.Send<TResponse>(this, request, ct);", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("return GeneratedDispatch.Send<TResponse>(this, request, ct);", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("return GeneratedDispatch.Publish(this, notification, ct);", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("public global::System.Threading.Tasks.ValueTask<object?> SendObject(", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("throw new global::System.NotSupportedException($\"Generated request dispatch is not available for request type '{request.GetType().FullName}'.\");", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.ActivitySend", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess", generatedSource, StringComparison.Ordinal);
-        Assert.DoesNotContain("internal static class GeneratedDispatch", generatedSource, StringComparison.Ordinal);
-        Assert.Contains("internal static class GeneratedDispatch", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("internal static class GeneratedPipelines", generatedPipelinesSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.LookupTour typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.CreateTour typed => Cast<int, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.DeleteTour typed => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.GetTourById typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.LookupTour typed => Box<string>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> Send<TResponse>(", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.StreamTours typed => CastStream<string, TResponse>(mediator.Send(typed, ct), ct),", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("public static global::System.Threading.Tasks.ValueTask Publish<TNotification>(", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("global::Demo.TourCreated typed => Publish_0000(mediator, typed, ct),", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("await global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandler>(mediator.Services).Handle(notification, ct).ConfigureAwait(false);", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("public static global::System.Threading.Tasks.ValueTask<TResponse> ThrowNoHandler<TResponse>(", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> ThrowNoStreamHandler<TResponse>(", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("public static global::System.Threading.Tasks.ValueTask<object?> ThrowUnknownRequestObject(", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("public static TTarget ThrowInvalidResponseCast<TSource, TTarget>()", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("public sealed partial class AppMediator : IMediator", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("internal global::System.IServiceProvider Services { get; }", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("public async global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.LookupTour request,", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("public async global::System.Threading.Tasks.ValueTask<int> Send(global::Demo.CreateTour request,", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("public async global::System.Threading.Tasks.ValueTask<global::SharedKernel.Mediator.Unit> Send(global::Demo.DeleteTour request,", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("public async global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.GetTourById request,", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("public global::System.Collections.Generic.IAsyncEnumerable<string> Send(global::Demo.StreamTours request,", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("public global::System.Collections.Generic.IAsyncEnumerable<TResponse> Send<TResponse>(", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("return GeneratedDispatch.Send<TResponse>(this, request, ct);", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("return GeneratedDispatch.Send<TResponse>(this, request, ct);", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("return GeneratedDispatch.Publish(this, notification, ct);", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("public global::System.Threading.Tasks.ValueTask<object?> SendObject(", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("throw new global::System.NotSupportedException($\"Generated request dispatch is not available for request type '{request.GetType().FullName}'.\");", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.ActivitySend", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.TagRequestName", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess", generatedSource, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("internal static class GeneratedDispatch", generatedSource, StringComparison.Ordinal);
+        TestAssert.Contains("internal static class GeneratedDispatch", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("internal static class GeneratedPipelines", generatedPipelinesSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.LookupTour typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.CreateTour typed => Cast<int, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.DeleteTour typed => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.GetTourById typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.LookupTour typed => Box<string>(mediator.Send(typed, ct)),", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> Send<TResponse>(", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.StreamTours typed => CastStream<string, TResponse>(mediator.Send(typed, ct), ct),", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("public static global::System.Threading.Tasks.ValueTask Publish<TNotification>(", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("global::Demo.TourCreated typed => Publish_0000(mediator, typed, ct),", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("await global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandler>(mediator.Services).Handle(notification, ct).ConfigureAwait(false);", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("public static global::System.Threading.Tasks.ValueTask<TResponse> ThrowNoHandler<TResponse>(", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> ThrowNoStreamHandler<TResponse>(", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("public static global::System.Threading.Tasks.ValueTask<object?> ThrowUnknownRequestObject(", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("public static TTarget ThrowInvalidResponseCast<TSource, TTarget>()", generatedDispatchSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -197,10 +197,10 @@ public sealed class GeneratorDispatchTests
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedPipelinesSource);
-        Assert.Contains("var result = await GeneratedPipelines.Invoke_0000(this, request, ct).ConfigureAwait(false);", generatedMediatorSource, StringComparison.Ordinal);
-        Assert.Contains("public static global::System.Threading.Tasks.ValueTask<int> Invoke_0000(AppMediator mediator, global::Demo.CreateTour request,", generatedPipelinesSource, StringComparison.Ordinal);
-        Assert.Contains("var pipeline0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.ValidationBehavior>(mediator.Services);", generatedPipelinesSource, StringComparison.Ordinal);
-        Assert.Contains("return pipeline0.Handle(request, () => handler.Handle(request, ct), ct);", generatedPipelinesSource, StringComparison.Ordinal);
+        TestAssert.Contains("var result = await GeneratedPipelines.Invoke_0000(this, request, ct).ConfigureAwait(false);", generatedMediatorSource, StringComparison.Ordinal);
+        TestAssert.Contains("public static global::System.Threading.Tasks.ValueTask<int> Invoke_0000(AppMediator mediator, global::Demo.CreateTour request,", generatedPipelinesSource, StringComparison.Ordinal);
+        TestAssert.Contains("var pipeline0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.ValidationBehavior>(mediator.Services);", generatedPipelinesSource, StringComparison.Ordinal);
+        TestAssert.Contains("return pipeline0.Handle(request, () => handler.Handle(request, ct), ct);", generatedPipelinesSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -229,10 +229,10 @@ public sealed class GeneratorDispatchTests
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedPipelinesSource);
-        Assert.Contains("var enumerator = GeneratedPipelines.InvokeStream_0000(this, request, ct).GetAsyncEnumerator(ct);", generatedMediatorSource, StringComparison.Ordinal);
-        Assert.Contains("public static global::System.Collections.Generic.IAsyncEnumerable<string> InvokeStream_0000(AppMediator mediator, global::Demo.StreamTours request,", generatedPipelinesSource, StringComparison.Ordinal);
-        Assert.Contains("var pipeline0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.ValidationBehavior>(mediator.Services);", generatedPipelinesSource, StringComparison.Ordinal);
-        Assert.Contains("return pipeline0.Handle(request, () => handler.Handle(request, ct), ct);", generatedPipelinesSource, StringComparison.Ordinal);
+        TestAssert.Contains("var enumerator = GeneratedPipelines.InvokeStream_0000(this, request, ct).GetAsyncEnumerator(ct);", generatedMediatorSource, StringComparison.Ordinal);
+        TestAssert.Contains("public static global::System.Collections.Generic.IAsyncEnumerable<string> InvokeStream_0000(AppMediator mediator, global::Demo.StreamTours request,", generatedPipelinesSource, StringComparison.Ordinal);
+        TestAssert.Contains("var pipeline0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.ValidationBehavior>(mediator.Services);", generatedPipelinesSource, StringComparison.Ordinal);
+        TestAssert.Contains("return pipeline0.Handle(request, () => handler.Handle(request, ct), ct);", generatedPipelinesSource, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -264,8 +264,8 @@ public sealed class GeneratorDispatchTests
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedDispatchSource);
-        Assert.Contains("var handler0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerOne>(mediator.Services).Handle(notification, ct);", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("var handler1 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerTwo>(mediator.Services).Handle(notification, ct);", generatedDispatchSource, StringComparison.Ordinal);
-        Assert.Contains("await global::System.Threading.Tasks.Task.WhenAll(handler0.AsTask(), handler1.AsTask()).ConfigureAwait(false);", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("var handler0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerOne>(mediator.Services).Handle(notification, ct);", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("var handler1 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerTwo>(mediator.Services).Handle(notification, ct);", generatedDispatchSource, StringComparison.Ordinal);
+        TestAssert.Contains("await global::System.Threading.Tasks.Task.WhenAll(handler0.AsTask(), handler1.AsTask()).ConfigureAwait(false);", generatedDispatchSource, StringComparison.Ordinal);
     }
 }

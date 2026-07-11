@@ -27,13 +27,13 @@ public sealed class SharedKernelAspireCodeFixProviderTests
             "WithImageTag(\"18.4\")");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = TestAssert.ExactlyOne(await workspace.GetCodeActions(provider, diagnostic));
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("WithImageSHA256(REPLACE_WITH_VERIFIED_SHA256_DIGEST)", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("WithImageSHA256(\"REPLACE_WITH_VERIFIED_SHA256_DIGEST\")", updatedText, StringComparison.Ordinal);
+        TestAssert.Contains("WithImageSHA256(REPLACE_WITH_VERIFIED_SHA256_DIGEST)", updatedText, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("WithImageSHA256(\"REPLACE_WITH_VERIFIED_SHA256_DIGEST\")", updatedText, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -59,13 +59,13 @@ public sealed class SharedKernelAspireCodeFixProviderTests
             "WithImageSHA256");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = TestAssert.ExactlyOne(await workspace.GetCodeActions(provider, diagnostic));
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("WithImageTag(REPLACE_WITH_VERIFIED_IMAGE_TAG)", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("WithImageTag(\"REPLACE_WITH_VERIFIED_IMAGE_TAG\")", updatedText, StringComparison.Ordinal);
+        TestAssert.Contains("WithImageTag(REPLACE_WITH_VERIFIED_IMAGE_TAG)", updatedText, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("WithImageTag(\"REPLACE_WITH_VERIFIED_IMAGE_TAG\")", updatedText, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -92,13 +92,13 @@ public sealed class SharedKernelAspireCodeFixProviderTests
             "sha256:2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = TestAssert.ExactlyOne(await workspace.GetCodeActions(provider, diagnostic));
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("WithImageSHA256(\"2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32\")", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("sha256:", updatedText, StringComparison.Ordinal);
+        TestAssert.Contains("WithImageSHA256(\"2838d5524559494f6f1cd66e97e76b200d64a633a8614200620755ed395daf32\")", updatedText, StringComparison.Ordinal);
+        TestAssert.DoesNotContain("sha256:", updatedText, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -127,8 +127,8 @@ public sealed class SharedKernelAspireCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Contains(codeActions, static action => string.Equals(action.Title, "Remove sha256: prefix from verified digest", StringComparison.Ordinal));
-        Assert.Contains(codeActions, static action => string.Equals(action.Title, "Insert placeholder to replace with verified image tag", StringComparison.Ordinal));
+        TestAssert.Contains(codeActions, static action => string.Equals(action.Title, "Remove sha256: prefix from verified digest", StringComparison.Ordinal));
+        TestAssert.Contains(codeActions, static action => string.Equals(action.Title, "Insert placeholder to replace with verified image tag", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public sealed class SharedKernelAspireCodeFixProviderTests
         var fixAllProvider = provider.GetFixAllProvider();
 
         // Assert
-        Assert.Null(fixAllProvider);
+        TestAssert.Null(fixAllProvider);
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public sealed class SharedKernelAspireCodeFixProviderTests
         var diagnosticIds = provider.FixableDiagnosticIds.ToArray();
 
         // Assert
-        Assert.Equal(
+        TestAssert.Equal(
             [
                 AspireDiagnosticIds.ImageTagAndDigest
             ],
@@ -188,8 +188,8 @@ public sealed class SharedKernelAspireCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        var codeAction = Assert.Single(codeActions);
-        Assert.Equal("Remove sha256: prefix from verified digest", codeAction.Title);
+        var codeAction = TestAssert.ExactlyOne(codeActions);
+        TestAssert.Equal("Remove sha256: prefix from verified digest", codeAction.Title);
     }
 
     [Fact]
@@ -216,11 +216,11 @@ public sealed class SharedKernelAspireCodeFixProviderTests
             "WithImageTag(\"18.4\")");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = TestAssert.ExactlyOne(await workspace.GetCodeActions(provider, diagnostic));
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains(".WithDataVolume().WithImageSHA256(REPLACE_WITH_VERIFIED_SHA256_DIGEST)", updatedText, StringComparison.Ordinal);
+        TestAssert.Contains(".WithDataVolume().WithImageSHA256(REPLACE_WITH_VERIFIED_SHA256_DIGEST)", updatedText, StringComparison.Ordinal);
     }
 }

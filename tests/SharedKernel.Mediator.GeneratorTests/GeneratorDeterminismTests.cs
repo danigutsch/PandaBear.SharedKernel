@@ -22,8 +22,8 @@ public sealed class GeneratorDeterminismTests
         var secondDiagnostics = GeneratorDeterminismTestsHelpers.GetDiagnostics(secondRun);
 
         // Assert
-        Assert.Equal(firstSources, secondSources);
-        Assert.Equal(firstDiagnostics, secondDiagnostics);
+        TestAssert.Equal(firstSources, secondSources);
+        TestAssert.Equal(firstDiagnostics, secondDiagnostics);
     }
 
     [Fact]
@@ -55,8 +55,8 @@ public sealed class GeneratorDeterminismTests
         var secondDiagnostics = GeneratorDeterminismTestsHelpers.GetDiagnostics(secondRun);
 
         // Assert
-        Assert.Equal(firstSources, secondSources);
-        Assert.Equal(firstDiagnostics, secondDiagnostics);
+        TestAssert.Equal(firstSources, secondSources);
+        TestAssert.Equal(firstDiagnostics, secondDiagnostics);
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public sealed class GeneratorDeterminismTests
         var reorderedSources = GeneratorDeterminismTestsHelpers.GetGeneratedSourceMap(reorderedRun);
 
         // Assert
-        Assert.Equal(firstSources, reorderedSources);
+        TestAssert.Equal(firstSources, reorderedSources);
     }
 
 }

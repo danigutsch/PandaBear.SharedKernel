@@ -12,7 +12,7 @@ public sealed class ValueObjectTests
 
         var result = address1.Equals(address2);
 
-        Assert.True(result);
+        TestAssert.True(result);
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public sealed class ValueObjectTests
 
         var result = address1.Equals(address2);
 
-        Assert.False(result);
+        TestAssert.False(result);
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public sealed class ValueObjectTests
 
         var result = EqualsObject(address, null);
 
-        Assert.False(result);
+        TestAssert.False(result);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public sealed class ValueObjectTests
 
         var result = address.Equals(money);
 
-        Assert.False(result);
+        TestAssert.False(result);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public sealed class ValueObjectTests
 
         var result = address.Equals(other);
 
-        Assert.False(result);
+        TestAssert.False(result);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public sealed class ValueObjectTests
         var hash1 = address1.GetHashCode();
         var hash2 = address2.GetHashCode();
 
-        Assert.Equal(hash1, hash2);
+        TestAssert.Equal(hash1, hash2);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public sealed class ValueObjectTests
         var hash1 = address1.GetHashCode();
         var hash2 = address2.GetHashCode();
 
-        Assert.NotEqual(hash1, hash2);
+        TestAssert.NotEqual(hash1, hash2);
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public sealed class ValueObjectTests
 
         var hash = address.GetHashCode();
 
-        Assert.NotEqual(0, hash);
+        TestAssert.NotEqual(0, hash);
     }
 
     [Fact]
@@ -100,7 +100,7 @@ public sealed class ValueObjectTests
 
         var result = address1 == address2;
 
-        Assert.False(result);
+        TestAssert.False(result);
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public sealed class ValueObjectTests
 
         var result = address1 != address2;
 
-        Assert.False(result);
+        TestAssert.False(result);
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public sealed class ValueObjectTests
 
         var result = address1 != address2;
 
-        Assert.True(result);
+        TestAssert.True(result);
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public sealed class ValueObjectTests
 
         var result = value1.Equals(value2);
 
-        Assert.False(result);
+        TestAssert.False(result);
     }
 
     [Fact]
@@ -143,8 +143,8 @@ public sealed class ValueObjectTests
         var person2 = new TestPerson("John", "Doe", 30);
         var person3 = new TestPerson("John", "Doe", 31);
 
-        Assert.True(person1 == person2);
-        Assert.False(person1 == person3);
+        TestAssert.True(person1 == person2);
+        TestAssert.False(person1 == person3);
     }
 
     [Fact]
@@ -154,8 +154,8 @@ public sealed class ValueObjectTests
         var address2 = new TestAddress("123 Main St", null);
         var address3 = new TestAddress("123 Main St", "Springfield");
 
-        Assert.True(address1 == address2);
-        Assert.False(address1 == address3);
+        TestAssert.True(address1 == address2);
+        TestAssert.False(address1 == address3);
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public sealed class ValueObjectTests
 
         dictionary[address1] = "Home";
 
-        Assert.Equal("Home", dictionary[address2]);
+        TestAssert.Equal("Home", dictionary[address2]);
     }
 
     [Fact]
@@ -179,7 +179,7 @@ public sealed class ValueObjectTests
 
         hashSet.Add(address1);
 
-        Assert.Contains(address2, hashSet);
+        TestAssert.Contains(address2, hashSet);
     }
 
     [Fact]
@@ -189,8 +189,8 @@ public sealed class ValueObjectTests
         var order2 = new TestOrder(new TestMoney(100m, "USD"), new TestAddress("123 Main St", "Springfield"));
         var order3 = new TestOrder(new TestMoney(100m, "USD"), new TestAddress("456 Oak Ave", "Springfield"));
 
-        Assert.True(order1 == order2);
-        Assert.False(order1 == order3);
+        TestAssert.True(order1 == order2);
+        TestAssert.False(order1 == order3);
     }
 
 }

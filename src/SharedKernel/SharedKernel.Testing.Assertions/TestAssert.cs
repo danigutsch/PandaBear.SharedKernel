@@ -112,6 +112,11 @@ public static class TestAssert
     public static T ExactlyOne<T>(IEnumerable<T> collection) => Xunit.Assert.Single(collection);
 
     /// <summary>
+    /// Verifies that a collection contains exactly one matching item.
+    /// </summary>
+    public static T ExactlyOne<T>(IEnumerable<T> collection, Predicate<T> predicate) => Xunit.Assert.Single(collection, predicate);
+
+    /// <summary>
     /// Verifies that a collection contains an expected item.
     /// </summary>
     public static void Contains<T>(T expected, IEnumerable<T> collection) => Xunit.Assert.Contains(expected, collection);
@@ -142,6 +147,11 @@ public static class TestAssert
     public static void DoesNotContain<T>(T expected, IEnumerable<T> collection) => Xunit.Assert.DoesNotContain(expected, collection);
 
     /// <summary>
+    /// Verifies that a collection does not contain an expected item using a comparer.
+    /// </summary>
+    public static void DoesNotContain<T>(T expected, IEnumerable<T> collection, IEqualityComparer<T> comparer) => Xunit.Assert.DoesNotContain(expected, collection, comparer);
+
+    /// <summary>
     /// Verifies that a collection does not contain a matching item.
     /// </summary>
     public static void DoesNotContain<T>(IEnumerable<T> collection, Predicate<T> predicate) => Xunit.Assert.DoesNotContain(collection, predicate);
@@ -170,6 +180,11 @@ public static class TestAssert
     /// Verifies type equality.
     /// </summary>
     public static T IsType<T>(object? value) => Xunit.Assert.IsType<T>(value);
+
+    /// <summary>
+    /// Verifies type equality, optionally allowing derived types.
+    /// </summary>
+    public static T IsType<T>(object? value, bool exactMatch) => Xunit.Assert.IsType<T>(value, exactMatch);
 
     /// <summary>
     /// Verifies type inequality.

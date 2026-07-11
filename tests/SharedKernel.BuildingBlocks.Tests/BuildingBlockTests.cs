@@ -8,10 +8,10 @@ public sealed class BuildingBlockTests
         var first = new TestValueObject("Lisbon", 3);
         var second = new TestValueObject("Lisbon", 3);
 
-        Assert.Equal(first, second);
-        Assert.True(first == second);
-        Assert.False(first != second);
-        Assert.Equal(first.GetHashCode(), second.GetHashCode());
+        TestAssert.Equal(first, second);
+        TestAssert.True(first == second);
+        TestAssert.False(first != second);
+        TestAssert.Equal(first.GetHashCode(), second.GetHashCode());
     }
 
     [Fact]
@@ -19,8 +19,8 @@ public sealed class BuildingBlockTests
     {
         var valueObject = new TestValueObject("Lisbon", 3);
 
-        Assert.True(valueObject.Equals(valueObject));
-        Assert.False(valueObject.Equals(new OtherTestValueObject("Lisbon", 3)));
+        TestAssert.True(valueObject.Equals(valueObject));
+        TestAssert.False(valueObject.Equals(new OtherTestValueObject("Lisbon", 3)));
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public sealed class BuildingBlockTests
         var first = new TestValueObject("Lisbon", 3);
         var second = new TestValueObject("Porto", 3);
 
-        Assert.NotEqual(first, second);
+        TestAssert.NotEqual(first, second);
     }
 
     [Fact]
@@ -43,8 +43,8 @@ public sealed class BuildingBlockTests
         var areEqual = first.Equals(second);
 
         // Assert
-        Assert.False(areEqual);
-        Assert.NotEqual(first, second);
+        TestAssert.False(areEqual);
+        TestAssert.NotEqual(first, second);
     }
 
     [Fact]
@@ -60,8 +60,8 @@ public sealed class BuildingBlockTests
         var areNotEqual = left != right;
 
         // Assert
-        Assert.True(areEqual);
-        Assert.False(areNotEqual);
+        TestAssert.True(areEqual);
+        TestAssert.False(areNotEqual);
     }
 
     [Fact]
@@ -77,8 +77,8 @@ public sealed class BuildingBlockTests
         var areNotEqual = left != right;
 
         // Assert
-        Assert.False(areEqual);
-        Assert.True(areNotEqual);
+        TestAssert.False(areEqual);
+        TestAssert.True(areNotEqual);
     }
 
     [Fact]
@@ -94,8 +94,8 @@ public sealed class BuildingBlockTests
         var areNotEqual = left != right;
 
         // Assert
-        Assert.False(areEqual);
-        Assert.True(areNotEqual);
+        TestAssert.False(areEqual);
+        TestAssert.True(areNotEqual);
     }
 
     [Fact]
@@ -109,10 +109,10 @@ public sealed class BuildingBlockTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        Assert.True(result.IsSuccess);
-        Assert.Equal(startDate, result.Value.StartDate);
-        Assert.Equal(endDate, result.Value.EndDate);
-        Assert.Equal(7, result.Value.DurationDays);
+        TestAssert.True(result.IsSuccess);
+        TestAssert.Equal(startDate, result.Value.StartDate);
+        TestAssert.Equal(endDate, result.Value.EndDate);
+        TestAssert.Equal(7, result.Value.DurationDays);
     }
 
     [Fact]
@@ -125,12 +125,12 @@ public sealed class BuildingBlockTests
         var result = DateRange.Create(date, date);
 
         // Assert
-        Assert.False(result.IsSuccess);
+        TestAssert.False(result.IsSuccess);
         var error = result.ErrorDetails;
-        Assert.NotNull(error);
-        Assert.NotNull(error.ValidationErrors);
-        Assert.True(error.ValidationErrors.ContainsKey("schedule"));
-        Assert.Equal(["End date must be after start date."], error.ValidationErrors["schedule"]);
+        _ = TestAssert.NotNull(error);
+        TestAssert.NotNull(error.ValidationErrors);
+        TestAssert.True(error.ValidationErrors.ContainsKey("schedule"));
+        TestAssert.Equal(["End date must be after start date."], error.ValidationErrors["schedule"]);
     }
 
     [Fact]
@@ -144,11 +144,11 @@ public sealed class BuildingBlockTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        Assert.False(result.IsSuccess);
+        TestAssert.False(result.IsSuccess);
         var error = result.ErrorDetails;
-        Assert.NotNull(error);
-        Assert.NotNull(error.ValidationErrors);
-        Assert.True(error.ValidationErrors.ContainsKey("schedule"));
-        Assert.Equal(["End date must be after start date."], error.ValidationErrors["schedule"]);
+        _ = TestAssert.NotNull(error);
+        TestAssert.NotNull(error.ValidationErrors);
+        TestAssert.True(error.ValidationErrors.ContainsKey("schedule"));
+        TestAssert.Equal(["End date must be after start date."], error.ValidationErrors["schedule"]);
     }
 }

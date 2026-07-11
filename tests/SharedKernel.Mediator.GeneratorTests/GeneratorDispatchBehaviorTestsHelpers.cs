@@ -9,7 +9,7 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
     {
         await using var enumerator = source.GetAsyncEnumerator(ct);
         var hasItem = await enumerator.MoveNextAsync();
-        Assert.True(hasItem);
+        TestAssert.True(hasItem);
         return (enumerator.Current, readTrace());
     }
 
@@ -21,7 +21,7 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         await using var enumerator = createSource(cts.Token).GetAsyncEnumerator(cts.Token);
         var hasItem = await enumerator.MoveNextAsync();
-        Assert.True(hasItem);
+        TestAssert.True(hasItem);
         var firstItem = enumerator.Current;
         await cts.CancelAsync();
 
@@ -30,7 +30,7 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
             await enumerator.MoveNextAsync();
         }
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(Act);
+        await TestAssert.ThrowsAny<OperationCanceledException>(Act);
         return (firstItem, readTrace());
     }
 
@@ -41,7 +41,7 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
     {
         await using var enumerator = source.GetAsyncEnumerator(ct);
         var hasItem = await enumerator.MoveNextAsync();
-        Assert.True(hasItem);
+        TestAssert.True(hasItem);
         var firstItem = enumerator.Current;
 
         async Task Act()
@@ -49,8 +49,8 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
             await enumerator.MoveNextAsync();
         }
 
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(Act);
-        Assert.Equal("boom", exception.Message);
+        var exception = await TestAssert.Throws<InvalidOperationException>(Act);
+        TestAssert.Equal("boom", exception.Message);
         return (firstItem, readTrace());
     }
 
@@ -64,7 +64,7 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
         await using (var enumerator = source.GetAsyncEnumerator(ct))
         {
             var hasItem = await enumerator.MoveNextAsync();
-            Assert.True(hasItem);
+            TestAssert.True(hasItem);
             firstItem = enumerator.Current;
         }
 

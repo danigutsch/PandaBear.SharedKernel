@@ -17,9 +17,9 @@ public sealed class EventSourcedAggregateRootTests
         aggregate.Replay(events);
 
         // Assert
-        Assert.Equal("Rota Romantica", aggregate.Name);
-        Assert.Equal(2, aggregate.Version);
-        Assert.Empty(aggregate.GetUncommittedEvents());
+        TestAssert.Equal("Rota Romantica", aggregate.Name);
+        TestAssert.Equal(2, aggregate.Version);
+        TestAssert.Empty(aggregate.GetUncommittedEvents());
     }
 
     [Fact]
@@ -30,9 +30,9 @@ public sealed class EventSourcedAggregateRootTests
         var events = new object?[] { null }.Cast<object>();
 
         // Act, Assert
-        Assert.Throws<ArgumentNullException>(() => aggregate.Replay(events));
-        Assert.Equal(0, aggregate.Version);
-        Assert.Empty(aggregate.GetUncommittedEvents());
+        TestAssert.Throws<ArgumentNullException>(() => aggregate.Replay(events));
+        TestAssert.Equal(0, aggregate.Version);
+        TestAssert.Empty(aggregate.GetUncommittedEvents());
     }
 
     [Fact]
@@ -45,10 +45,10 @@ public sealed class EventSourcedAggregateRootTests
         aggregate.ChangeName("Rota Romantica");
 
         // Assert
-        var uncommittedEvent = Assert.Single(aggregate.GetUncommittedEvents());
-        Assert.IsType<NameChanged>(uncommittedEvent);
-        Assert.Equal("Rota Romantica", aggregate.Name);
-        Assert.Equal(1, aggregate.Version);
+        var uncommittedEvent = TestAssert.ExactlyOne(aggregate.GetUncommittedEvents());
+        TestAssert.IsType<NameChanged>(uncommittedEvent);
+        TestAssert.Equal("Rota Romantica", aggregate.Name);
+        TestAssert.Equal(1, aggregate.Version);
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public sealed class EventSourcedAggregateRootTests
         aggregate.ClearUncommittedEvents();
 
         // Assert
-        Assert.Empty(aggregate.GetUncommittedEvents());
-        Assert.Equal(1, aggregate.Version);
+        TestAssert.Empty(aggregate.GetUncommittedEvents());
+        TestAssert.Equal(1, aggregate.Version);
     }
 
 }
