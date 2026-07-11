@@ -1,0 +1,10 @@
+#nullable enable
+Aspire.Hosting.SeaweedFsResource
+Aspire.Hosting.SeaweedFsResource.AccessKeyParameter.get -> Aspire.Hosting.ApplicationModel.ParameterResource!
+Aspire.Hosting.SeaweedFsResource.BucketParameter.get -> Aspire.Hosting.ApplicationModel.ParameterResource!
+Aspire.Hosting.SeaweedFsResource.SeaweedFsResource(string! name, Aspire.Hosting.ApplicationModel.ParameterResource! accessKeyParameter, Aspire.Hosting.ApplicationModel.ParameterResource! secretKeyParameter, Aspire.Hosting.ApplicationModel.ParameterResource! bucketParameter) -> void
+Aspire.Hosting.SeaweedFsResource.SecretKeyParameter.get -> Aspire.Hosting.ApplicationModel.ParameterResource!
+Aspire.Hosting.SeaweedFsResourceExtensions
+const Aspire.Hosting.SeaweedFsResource.S3EndpointName = "s3" -> string!
+static Aspire.Hosting.SeaweedFsResourceExtensions.AddSeaweedFs(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.SeaweedFsResource!>!
+static Aspire.Hosting.SeaweedFsResourceExtensions.WithSeaweedFsReference<TDestination>(this Aspire.Hosting.ApplicationModel.IResourceBuilder<TDestination>! destination, Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.SeaweedFsResource!>! seaweedFs) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<TDestination>!

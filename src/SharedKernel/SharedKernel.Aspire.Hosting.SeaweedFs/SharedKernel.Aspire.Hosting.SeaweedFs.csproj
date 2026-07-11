@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <PackageId>SharedKernel.Aspire.Hosting.SeaweedFs</PackageId>
+        <Description>Aspire hosting extensions for authenticated local SeaweedFS S3 storage.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <PackageTags>aspire;seaweedfs;s3;object-storage</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+</Project>
