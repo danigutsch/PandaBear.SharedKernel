@@ -14,7 +14,7 @@ public sealed class ExceptionCancellationExtensionsTests
         var shouldHandle = exception.ShouldHandleAsFailure(cancellation.Token);
 
         // Assert
-        TestAssert.False(shouldHandle);
+        (shouldHandle).ShouldBeFalse();
     }
 
     [Fact]
@@ -27,7 +27,7 @@ public sealed class ExceptionCancellationExtensionsTests
         var shouldHandle = exception.ShouldHandleAsFailure(CancellationToken.None);
 
         // Assert
-        TestAssert.True(shouldHandle);
+        (shouldHandle).ShouldBeTrue();
     }
 
     [Fact]
@@ -42,6 +42,6 @@ public sealed class ExceptionCancellationExtensionsTests
         var shouldHandle = exception.ShouldHandleAsFailure(cancellation.Token);
 
         // Assert
-        TestAssert.True(shouldHandle);
+        (shouldHandle).ShouldBeTrue();
     }
 }

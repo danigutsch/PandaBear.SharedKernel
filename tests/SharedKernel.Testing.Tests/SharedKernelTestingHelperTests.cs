@@ -18,7 +18,7 @@ public sealed class SharedKernelTestingHelperTests
     {
         var value = TestUniqueId.Create("booking");
 
-        value.ShouldStartWith("booking-");
+        value.ShouldStartWith("booking-", StringComparison.Ordinal);
         value.Length.ShouldBeGreaterThan("booking-".Length);
     }
 
@@ -171,45 +171,49 @@ public sealed class SharedKernelTestingHelperTests
     [Fact]
     public async Task Test_assert_wraps_remaining_xunit_shapes()
     {
-        TestAssert.True(true);
-        TestAssert.True((bool?)true);
-        TestAssert.False(false);
-        TestAssert.False((bool?)false);
-        TestAssert.Equal(1.23, 1.234, 2);
-        TestAssert.Equal(1.23, 1.235, 2, MidpointRounding.ToZero);
-        TestAssert.NotEqual("alpha", "beta");
-        TestAssert.Null(null);
-        TestAssert.Same(this, this);
-        TestAssert.Empty(Array.Empty<int>());
-        TestAssert.NotEmpty([1]);
-        TestAssert.DoesNotContain(2, [1]);
-        TestAssert.DoesNotContain([1], value => value == 2);
-        TestAssert.DoesNotContain("beta", "alphabet", StringComparison.Ordinal);
-        TestAssert.DoesNotContain("BETA", "alphabet", StringComparison.Ordinal);
-        TestAssert.All([1, 2], value => value.ShouldBeGreaterThan(0));
-        TestAssert.Collection([1, 2], value => value.ShouldBe(1), value => value.ShouldBe(2));
-        TestAssert.IsType<string>("value").ShouldBe("value");
-        TestAssert.IsNotType<int>("value");
-        TestAssert.IsAssignableFrom<object>("value").ShouldBe("value");
-        TestAssert.IsNotAssignableFrom<IDisposable>("value");
-        TestAssert.InRange(5, 1, 9);
-        TestAssert.EndsWith("bet", "alphabet", StringComparison.Ordinal);
-        TestAssert.EndsWith("BET", "alphabet", StringComparison.OrdinalIgnoreCase);
-        TestAssert.Matches("^alpha", "alphabet");
-        TestAssert.Matches(new Regex("bet$", RegexOptions.None, TimeSpan.FromSeconds(1)), "alphabet");
-        TestAssert.DoesNotMatch(new Regex("gamma", RegexOptions.None, TimeSpan.FromSeconds(1)), "alphabet");
-        TestAssert.Throws<InvalidOperationException>((Action)(() => throw new InvalidOperationException()));
-        TestAssert.Throws<InvalidOperationException>((Func<object?>)(() => throw new InvalidOperationException()));
-        await TestAssert.Throws<InvalidOperationException>(() => Task.FromException(new InvalidOperationException()));
-        await TestAssert.ThrowsAny<ArgumentException>(() => Task.FromException(new ArgumentException("expected")));
-        TestAssert.NotNull("value").ShouldBe("value");
-        TestAssert.NotNull<int>(5).ShouldBe(5);
-        TestAssert.ExactlyOne([42]).ShouldBe(42);
-        TestAssert.Contains(1, [1], EqualityComparer<int>.Default);
-        TestAssert.Contains([1], value => value == 1);
-        TestAssert.Contains("pha", "alphabet", StringComparison.Ordinal);
-        TestAssert.StartsWith("alpha", "alphabet", StringComparison.Ordinal);
-        TestAssert.StartsWith("ALPHA", "alphabet", StringComparison.OrdinalIgnoreCase);
+        int[] singleItem = [1];
+        int[] twoItems = [1, 2];
+        int[] fortyTwo = [42];
+
+        (true).ShouldBeTrue();
+        ((bool?)true).ShouldBeTrue();
+        (false).ShouldBeFalse();
+        ((bool?)false).ShouldBeFalse();
+        (1.234).ShouldBe(1.23, 2);
+        (1.235).ShouldBe(1.23, 2, MidpointRounding.ToZero);
+        ("beta").ShouldNotBe("alpha");
+        ((object?)null).ShouldBeNull();
+        (this).ShouldBeSameAs(this);
+        (Array.Empty<int>()).ShouldBeEmpty();
+        (singleItem).ShouldNotBeEmpty();
+        (singleItem).ShouldNotContain(2);
+        (singleItem).ShouldNotContain(value => value == 2);
+        ("alphabet").ShouldNotContain("beta", StringComparison.Ordinal);
+        ("alphabet").ShouldNotContain("BETA", StringComparison.Ordinal);
+        (twoItems).ShouldAllSatisfy(value => value.ShouldBeGreaterThan(0));
+        (twoItems).ShouldMatchCollection(value => value.ShouldBe(1), value => value.ShouldBe(2));
+        ("value").ShouldBeOfType<string>().ShouldBe("value");
+        ("value").ShouldNotBeOfType<int>();
+        ("value").ShouldBeAssignableTo<object>().ShouldBe("value");
+        ("value").ShouldNotBeAssignableTo<IDisposable>();
+        (5).ShouldBeInRange(1, 9);
+        ("alphabet").ShouldEndWith("bet", StringComparison.Ordinal);
+        ("alphabet").ShouldEndWith("BET", StringComparison.OrdinalIgnoreCase);
+        ("alphabet").ShouldMatch("^alpha");
+        ("alphabet").ShouldMatch(new Regex("bet$", RegexOptions.None, TimeSpan.FromSeconds(1)));
+        ("alphabet").ShouldNotMatch(new Regex("gamma", RegexOptions.None, TimeSpan.FromSeconds(1)));
+        ((Action)(() => throw new InvalidOperationException())).ShouldThrow<InvalidOperationException>();
+        ((Func<object?>)(() => throw new InvalidOperationException())).ShouldThrow<InvalidOperationException>();
+        await ((Func<Task>)(() => Task.FromException(new InvalidOperationException()))).ShouldThrow<InvalidOperationException>();
+        await ((Func<Task>)(() => Task.FromException(new ArgumentException("expected")))).ShouldThrowAssignableTo<ArgumentException>();
+        ("value").ShouldNotBeNull().ShouldBe("value");
+        (5).ShouldBe(5);
+        (fortyTwo).ShouldHaveSingleItem().ShouldBe(42);
+        (singleItem).ShouldContain(1, EqualityComparer<int>.Default);
+        (singleItem).ShouldContain(value => value == 1);
+        ("alphabet").ShouldContain("pha", StringComparison.Ordinal);
+        ("alphabet").ShouldStartWith("alpha", StringComparison.Ordinal);
+        ("alphabet").ShouldStartWith("ALPHA", StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

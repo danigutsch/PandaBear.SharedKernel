@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace SharedKernel.Testing.CodeFixRunner.Tests;
 
-public sealed class TestAssertWrapperTests
+public sealed class ShouldAssertionExtensionsTests
 {
     [Fact]
     public void ExactlyOne_returns_the_only_collection_item()
@@ -16,16 +16,16 @@ public sealed class TestAssertWrapperTests
     }
 
     [Fact]
-    public void TestAssert_supports_migrated_xunit_assertion_overloads()
+    public void Should_assertion_extensions_support_migrated_xunit_assertion_overloads()
     {
         string[] values = ["alpha", "beta"];
 
-        var matchingValue = TestAssert.ExactlyOne(values, static value => value == "beta");
-        TestAssert.DoesNotContain("gamma", values, StringComparer.Ordinal);
-        var assignableValue = TestAssert.IsType<object>("alpha", exactMatch: false);
+        var matchingValue = values.ShouldHaveSingleItem(static value => value == "beta");
+        values.ShouldNotContain("gamma", StringComparer.Ordinal);
+        var assignableValue = ((object)"alpha").ShouldBeOfType<object>(exactMatch: false);
 
         matchingValue.ShouldBe("beta");
-        TestAssert.Same("alpha", assignableValue);
+        assignableValue.ShouldBe("alpha");
     }
 
     [Fact]

@@ -34,7 +34,7 @@ public sealed class ResultCoreTests
         error.Code.ShouldBe(ResultErrorCodes.Invalid);
         error.Detail.ShouldBe("Validation failed");
         error.ValidationErrors.ShouldNotBeNull();
-        TestAssert.Equal(["Name is required"], error.ValidationErrors["name"]);
+        (error.ValidationErrors["name"]).ShouldBe(["Name is required"]);
     }
 
     [Fact]
@@ -56,8 +56,8 @@ public sealed class ResultCoreTests
         error.ShouldNotBeNull();
         error.Code.ShouldBe(ResultErrorCodes.Invalid);
         error.ValidationErrors.ShouldNotBeNull();
-        TestAssert.Equal(["Name is required"], error.ValidationErrors["name"]);
-        TestAssert.Equal(["Email is invalid"], error.ValidationErrors["email"]);
+        (error.ValidationErrors["name"]).ShouldBe(["Name is required"]);
+        (error.ValidationErrors["email"]).ShouldBe(["Email is invalid"]);
     }
 
     [Fact]
@@ -190,7 +190,7 @@ public sealed class ResultCoreTests
         var validationErrors = new Dictionary<string, string[]>();
 
         // Act
-        var exception = TestAssert.Throws<ArgumentOutOfRangeException>(() => Result.Invalid("Validation failed", validationErrors));
+        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentOutOfRangeException>();
 
         // Assert
         exception.ParamName.ShouldBe("validationErrors");
@@ -206,7 +206,7 @@ public sealed class ResultCoreTests
         };
 
         // Act
-        var exception = TestAssert.Throws<ArgumentException>(() => Result.Invalid("Validation failed", validationErrors));
+        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentException>();
 
         // Assert
         exception.ParamName.ShouldBe("field");
@@ -222,7 +222,7 @@ public sealed class ResultCoreTests
         };
 
         // Act
-        var exception = TestAssert.Throws<ArgumentOutOfRangeException>(() => Result.Invalid("Validation failed", validationErrors));
+        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentOutOfRangeException>();
 
         // Assert
         exception.ParamName.ShouldBe("validationErrors");
@@ -238,7 +238,7 @@ public sealed class ResultCoreTests
         };
 
         // Act
-        var exception = TestAssert.Throws<ArgumentNullException>(() => Result.Invalid("Validation failed", validationErrors));
+        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentNullException>();
 
         // Assert
         exception.ParamName.ShouldBe("messages");

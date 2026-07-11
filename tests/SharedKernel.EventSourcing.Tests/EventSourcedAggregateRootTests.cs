@@ -17,9 +17,9 @@ public sealed class EventSourcedAggregateRootTests
         aggregate.Replay(events);
 
         // Assert
-        TestAssert.Equal("Rota Romantica", aggregate.Name);
-        TestAssert.Equal(2, aggregate.Version);
-        TestAssert.Empty(aggregate.GetUncommittedEvents());
+        (aggregate.Name).ShouldBe("Rota Romantica");
+        (aggregate.Version).ShouldBe(2);
+        (aggregate.GetUncommittedEvents()).ShouldBeEmpty();
     }
 
     [Fact]
@@ -30,9 +30,9 @@ public sealed class EventSourcedAggregateRootTests
         var events = new object?[] { null }.Cast<object>();
 
         // Act, Assert
-        TestAssert.Throws<ArgumentNullException>(() => aggregate.Replay(events));
-        TestAssert.Equal(0, aggregate.Version);
-        TestAssert.Empty(aggregate.GetUncommittedEvents());
+        ((Action)(() => aggregate.Replay(events))).ShouldThrow<ArgumentNullException>();
+        (aggregate.Version).ShouldBe(0);
+        (aggregate.GetUncommittedEvents()).ShouldBeEmpty();
     }
 
     [Fact]
@@ -45,10 +45,10 @@ public sealed class EventSourcedAggregateRootTests
         aggregate.ChangeName("Rota Romantica");
 
         // Assert
-        var uncommittedEvent = TestAssert.ExactlyOne(aggregate.GetUncommittedEvents());
-        TestAssert.IsType<NameChanged>(uncommittedEvent);
-        TestAssert.Equal("Rota Romantica", aggregate.Name);
-        TestAssert.Equal(1, aggregate.Version);
+        var uncommittedEvent = (aggregate.GetUncommittedEvents()).ShouldHaveSingleItem();
+        (uncommittedEvent).ShouldBeOfType<NameChanged>();
+        (aggregate.Name).ShouldBe("Rota Romantica");
+        (aggregate.Version).ShouldBe(1);
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public sealed class EventSourcedAggregateRootTests
         aggregate.ClearUncommittedEvents();
 
         // Assert
-        TestAssert.Empty(aggregate.GetUncommittedEvents());
-        TestAssert.Equal(1, aggregate.Version);
+        (aggregate.GetUncommittedEvents()).ShouldBeEmpty();
+        (aggregate.Version).ShouldBe(1);
     }
 
 }

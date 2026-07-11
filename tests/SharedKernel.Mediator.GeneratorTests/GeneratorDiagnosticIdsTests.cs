@@ -6,25 +6,25 @@ public sealed class GeneratorDiagnosticIdsTests
     [Fact]
     public void Mediator_diagnostic_ids_remain_stable()
     {
-        TestAssert.Equal("SKMED001", MediatorDiagnosticIds.MissingHandler);
-        TestAssert.Equal("SKMED002", MediatorDiagnosticIds.MultipleHandlers);
-        TestAssert.Equal("SKMED003", MediatorDiagnosticIds.InvalidHandlerSignature);
-        TestAssert.Equal("SKMED004", MediatorDiagnosticIds.MissingCancellationToken);
-        TestAssert.Equal("SKMED005", MediatorDiagnosticIds.HandlerReturnTypeMismatch);
-        TestAssert.Equal("SKMED006", MediatorDiagnosticIds.MissingCancellationForwarding);
-        TestAssert.Equal("SKMED007", MediatorDiagnosticIds.MissingEnumeratorCancellation);
-        TestAssert.Equal("SKMED008", MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
-        TestAssert.Equal("SKMED010", MediatorDiagnosticIds.InaccessibleRegistrationType);
-        TestAssert.Equal("SKMED011", MediatorDiagnosticIds.MissingModuleMarker);
-        TestAssert.Equal("SKMED012", MediatorDiagnosticIds.DuplicateGeneratedRegistration);
-        TestAssert.Equal("SKMED013", MediatorDiagnosticIds.UnprovenObjectDispatchCoverage);
-        TestAssert.Equal("SKMED020", MediatorDiagnosticIds.InvalidPipelineGenericArity);
-        TestAssert.Equal("SKMED021", MediatorDiagnosticIds.DuplicatePipelineOrder);
-        TestAssert.Equal("SKMED022", MediatorDiagnosticIds.NeverAppliesPipeline);
-        TestAssert.Equal("SKMED023", MediatorDiagnosticIds.UnboundPipelineConstraints);
-        TestAssert.Equal("SKMED200", MediatorDiagnosticIds.NotificationHandlersRequireExplicitOrder);
-        TestAssert.Equal("SKMED201", MediatorDiagnosticIds.DuplicateNotificationHandlerOrder);
-        TestAssert.Equal("SKMED500", MediatorDiagnosticIds.HandlerShouldNotCallSender);
+        (MediatorDiagnosticIds.MissingHandler).ShouldBe("SKMED001");
+        (MediatorDiagnosticIds.MultipleHandlers).ShouldBe("SKMED002");
+        (MediatorDiagnosticIds.InvalidHandlerSignature).ShouldBe("SKMED003");
+        (MediatorDiagnosticIds.MissingCancellationToken).ShouldBe("SKMED004");
+        (MediatorDiagnosticIds.HandlerReturnTypeMismatch).ShouldBe("SKMED005");
+        (MediatorDiagnosticIds.MissingCancellationForwarding).ShouldBe("SKMED006");
+        (MediatorDiagnosticIds.MissingEnumeratorCancellation).ShouldBe("SKMED007");
+        (MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken).ShouldBe("SKMED008");
+        (MediatorDiagnosticIds.InaccessibleRegistrationType).ShouldBe("SKMED010");
+        (MediatorDiagnosticIds.MissingModuleMarker).ShouldBe("SKMED011");
+        (MediatorDiagnosticIds.DuplicateGeneratedRegistration).ShouldBe("SKMED012");
+        (MediatorDiagnosticIds.UnprovenObjectDispatchCoverage).ShouldBe("SKMED013");
+        (MediatorDiagnosticIds.InvalidPipelineGenericArity).ShouldBe("SKMED020");
+        (MediatorDiagnosticIds.DuplicatePipelineOrder).ShouldBe("SKMED021");
+        (MediatorDiagnosticIds.NeverAppliesPipeline).ShouldBe("SKMED022");
+        (MediatorDiagnosticIds.UnboundPipelineConstraints).ShouldBe("SKMED023");
+        (MediatorDiagnosticIds.NotificationHandlersRequireExplicitOrder).ShouldBe("SKMED200");
+        (MediatorDiagnosticIds.DuplicateNotificationHandlerOrder).ShouldBe("SKMED201");
+        (MediatorDiagnosticIds.HandlerShouldNotCallSender).ShouldBe("SKMED500");
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public sealed class GeneratorDiagnosticIdsTests
             .OrderBy(static value => value, StringComparer.Ordinal)
             .ToArray();
 
-        TestAssert.Equal(diagnosticIds, orderedAnalyzerReleaseIds);
+        (orderedAnalyzerReleaseIds).ShouldBe(diagnosticIds);
     }
 
 }

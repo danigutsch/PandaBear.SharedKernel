@@ -17,7 +17,7 @@ public sealed class ResultMatchTests
             static error => error.Detail.Length);
 
         // Assert
-        TestAssert.Equal(5, matched);
+        (matched).ShouldBe(5);
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public sealed class ResultMatchTests
             static error => error.Detail.Length);
 
         // Assert
-        TestAssert.Equal("Unexpected failure".Length, matched);
+        (matched).ShouldBe("Unexpected failure".Length);
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public sealed class ResultMatchTests
             static error => error.Detail);
 
         // Assert
-        TestAssert.Equal("success", matched);
+        (matched).ShouldBe("success");
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public sealed class ResultMatchTests
             static error => error.Detail);
 
         // Assert
-        TestAssert.Equal("Unexpected failure", matched);
+        (matched).ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -72,11 +72,10 @@ public sealed class ResultMatchTests
         var result = default(Result);
 
         // Act
-        var exception = TestAssert.Throws<InvalidOperationException>(
-            () => result.Match(static () => "success", static error => error.Detail));
+        var exception = ((Func<object?>)(() => result.Match(static () => "success", static error => error.Detail))).ShouldThrow<InvalidOperationException>();
 
         // Assert
-        TestAssert.Equal("Result status is not initialized.", exception.Message);
+        (exception.Message).ShouldBe("Result status is not initialized.");
     }
 
     [Fact]
@@ -86,10 +85,9 @@ public sealed class ResultMatchTests
         var result = default(Result<string>);
 
         // Act
-        var exception = TestAssert.Throws<InvalidOperationException>(
-            () => result.Match(static value => value.Length, static error => error.Detail.Length));
+        var exception = ((Func<object?>)(() => result.Match(static value => value.Length, static error => error.Detail.Length))).ShouldThrow<InvalidOperationException>();
 
         // Assert
-        TestAssert.Equal("Result status is not initialized.", exception.Message);
+        (exception.Message).ShouldBe("Result status is not initialized.");
     }
 }

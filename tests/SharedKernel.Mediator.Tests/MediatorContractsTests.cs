@@ -13,7 +13,7 @@ public sealed class MediatorContractsTests
         var isAssignable = typeof(IRequest<Unit>).IsAssignableFrom(commandType);
 
         // Assert
-        TestAssert.True(isAssignable);
+        (isAssignable).ShouldBeTrue();
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public sealed class MediatorContractsTests
         var isAssignable = typeof(IRequest<string>).IsAssignableFrom(queryType);
 
         // Assert
-        TestAssert.True(isAssignable);
+        (isAssignable).ShouldBeTrue();
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public sealed class MediatorContractsTests
         var isAssignable = typeof(IRequest<int>).IsAssignableFrom(commandType);
 
         // Assert
-        TestAssert.True(isAssignable);
+        (isAssignable).ShouldBeTrue();
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public sealed class MediatorContractsTests
         var isAssignable = handlerContractType.IsAssignableFrom(typeof(BaseQueryHandler));
 
         // Assert
-        TestAssert.True(isAssignable);
+        (isAssignable).ShouldBeTrue();
     }
 
     [Fact]
@@ -67,8 +67,8 @@ public sealed class MediatorContractsTests
         var structConstraintHolds = structNotificationType.IsAssignableFrom(typeof(StructNotificationHandler));
 
         // Assert
-        TestAssert.True(classConstraintHolds);
-        TestAssert.True(structConstraintHolds);
+        (classConstraintHolds).ShouldBeTrue();
+        (structConstraintHolds).ShouldBeTrue();
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public sealed class MediatorContractsTests
         var order = attribute.Order;
 
         // Assert
-        TestAssert.Equal(5, order);
+        (order).ShouldBe(5);
     }
 
     [Fact]
@@ -100,7 +100,7 @@ public sealed class MediatorContractsTests
         var strategy = attribute.Strategy;
 
         // Assert
-        TestAssert.Equal(NotificationDispatchStrategy.Parallel, strategy);
+        (strategy).ShouldBe(NotificationDispatchStrategy.Parallel);
     }
 
     [Fact]
@@ -121,11 +121,11 @@ public sealed class MediatorContractsTests
         var pipelineConstraintHolds = pipelineType.IsAssignableFrom(typeof(TestPipelineBehavior));
 
         // Assert
-        TestAssert.True(streamConstraintHolds);
-        TestAssert.True(streamPipelineConstraintHolds);
-        TestAssert.True(streamCommandConstraintHolds);
-        TestAssert.True(duplexStreamConstraintHolds);
-        TestAssert.True(pipelineConstraintHolds);
+        (streamConstraintHolds).ShouldBeTrue();
+        (streamPipelineConstraintHolds).ShouldBeTrue();
+        (streamCommandConstraintHolds).ShouldBeTrue();
+        (duplexStreamConstraintHolds).ShouldBeTrue();
+        (pipelineConstraintHolds).ShouldBeTrue();
     }
 
     [Fact]
@@ -150,15 +150,15 @@ public sealed class MediatorContractsTests
         var isResponseStreamQuery = typeof(IStreamRequest<string>).IsAssignableFrom(streamQueryType);
 
         // Assert
-        TestAssert.True(isStreamCommand);
-        TestAssert.True(isStreamQuery);
-        TestAssert.True(isStreamInputQuery);
-        TestAssert.True(isDuplexStreamCommand);
-        TestAssert.True(isDuplexStreamQuery);
-        TestAssert.True(isUnaryRequest);
-        TestAssert.False(isResponseOnlyStream);
-        TestAssert.True(isResponseStreamCommand);
-        TestAssert.True(isResponseStreamQuery);
+        (isStreamCommand).ShouldBeTrue();
+        (isStreamQuery).ShouldBeTrue();
+        (isStreamInputQuery).ShouldBeTrue();
+        (isDuplexStreamCommand).ShouldBeTrue();
+        (isDuplexStreamQuery).ShouldBeTrue();
+        (isUnaryRequest).ShouldBeTrue();
+        (isResponseOnlyStream).ShouldBeFalse();
+        (isResponseStreamCommand).ShouldBeTrue();
+        (isResponseStreamQuery).ShouldBeTrue();
     }
 
     [Fact]
@@ -177,7 +177,7 @@ public sealed class MediatorContractsTests
         var genericReturnType = returnType?.GetGenericTypeDefinition();
 
         // Assert
-        _ = TestAssert.NotNull(method);
-        TestAssert.Equal(typeof(IAsyncEnumerable<>), genericReturnType);
+        _ = (method).ShouldNotBeNull();
+        (genericReturnType).ShouldBe(typeof(IAsyncEnumerable<>));
     }
 }

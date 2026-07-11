@@ -53,7 +53,7 @@ internal static class AnalyzerTestHarness
     {
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
         var isMissingTrustedAssemblies = string.IsNullOrWhiteSpace(trustedPlatformAssemblies);
-        TestAssert.False(isMissingTrustedAssemblies);
+        (isMissingTrustedAssemblies).ShouldBeFalse();
 
         foreach (var path in trustedPlatformAssemblies!.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
         {

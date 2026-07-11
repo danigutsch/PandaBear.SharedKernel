@@ -39,7 +39,7 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = TestAssert.Throws<ArgumentNullException>(() => Result.Ok(NullArgumentData.String()));
+        var exception = ((Func<object?>)(() => Result.Ok(NullArgumentData.String()))).ShouldThrow<ArgumentNullException>();
 
         // Assert
         exception.ParamName.ShouldBe("value");
@@ -50,7 +50,7 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = TestAssert.Throws<ArgumentNullException>(() => Result.Created(NullArgumentData.String()));
+        var exception = ((Func<object?>)(() => Result.Created(NullArgumentData.String()))).ShouldThrow<ArgumentNullException>();
 
         // Assert
         exception.ParamName.ShouldBe("value");
@@ -61,7 +61,7 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = TestAssert.Throws<ArgumentNullException>(() => Result.Accepted(NullArgumentData.String()));
+        var exception = ((Func<object?>)(() => Result.Accepted(NullArgumentData.String()))).ShouldThrow<ArgumentNullException>();
 
         // Assert
         exception.ParamName.ShouldBe("value");
@@ -165,7 +165,7 @@ public sealed class ResultEdgeCaseTests
         var result = ResultEdgeCaseTestsHelpers.CreateMalformedGenericResult(ResultStatus.Ok, value: null, error: null);
 
         // Act
-        var exception = TestAssert.Throws<InvalidOperationException>(() => result.TryGetValue(out _));
+        var exception = ((Func<object?>)(() => result.TryGetValue(out _))).ShouldThrow<InvalidOperationException>();
 
         // Assert
         exception.Message.ShouldBe("Successful results must contain a value.");
@@ -178,7 +178,7 @@ public sealed class ResultEdgeCaseTests
         var result = ResultEdgeCaseTestsHelpers.CreateMalformedNonGenericResult(ResultStatus.Error, error: null);
 
         // Act
-        var exception = TestAssert.Throws<InvalidOperationException>(() => result.TryGetError(out _));
+        var exception = ((Func<object?>)(() => result.TryGetError(out _))).ShouldThrow<InvalidOperationException>();
 
         // Assert
         exception.Message.ShouldBe("Failed results must contain error details.");
@@ -192,7 +192,7 @@ public sealed class ResultEdgeCaseTests
         var error = new ResultError("Validation failed", ResultErrorCodes.Invalid);
 
         // Act
-        var exception = TestAssert.Throws<ArgumentException>(() => result.Ensure(static _ => false, error));
+        var exception = ((Func<object?>)(() => result.Ensure(static _ => false, error))).ShouldThrow<ArgumentException>();
 
         // Assert
         exception.Message.ShouldContain("Validation errors must include field details.", StringComparison.Ordinal);

@@ -70,7 +70,7 @@ public sealed class ResultConvertErrorTests
         error.ShouldNotBeNull();
         error.Code.ShouldBe(ResultErrorCodes.Invalid);
         error.ValidationErrors.ShouldNotBeNull();
-        TestAssert.Equal(["Name is required"], error.ValidationErrors["Name"]);
+        (error.ValidationErrors["Name"]).ShouldBe(["Name is required"]);
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public sealed class ResultConvertErrorTests
             new ResultError("Validation failed", ResultErrorCodes.Invalid));
 
         // Act
-        var exception = TestAssert.Throws<InvalidOperationException>(() => malformedResult.ConvertError<string>());
+        var exception = ((Func<object?>)(() => malformedResult.ConvertError<string>())).ShouldThrow<InvalidOperationException>();
 
         // Assert
         exception.Message.ShouldBe("Validation errors must include field details.");
@@ -98,7 +98,7 @@ public sealed class ResultConvertErrorTests
         var malformedResult = ResultConvertErrorTestsHelpers.CreateMalformedResult((ResultStatus)statusValue, new ResultError("Malformed result status."));
 
         // Act
-        var exception = TestAssert.Throws<InvalidOperationException>(() => malformedResult.ConvertError<string>());
+        var exception = ((Func<object?>)(() => malformedResult.ConvertError<string>())).ShouldThrow<InvalidOperationException>();
 
         // Assert
         exception.Message.ShouldBe(expectedMessage);
@@ -114,7 +114,7 @@ public sealed class ResultConvertErrorTests
         var malformedResult = ResultConvertErrorTestsHelpers.CreateMalformedGenericResult((ResultStatus)statusValue, "payload", new ResultError("Malformed result status."));
 
         // Act
-        var exception = TestAssert.Throws<InvalidOperationException>(() => malformedResult.ConvertError<string, int>());
+        var exception = ((Func<object?>)(() => malformedResult.ConvertError<string, int>())).ShouldThrow<InvalidOperationException>();
 
         // Assert
         exception.Message.ShouldBe(expectedMessage);

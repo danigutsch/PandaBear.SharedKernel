@@ -11,10 +11,10 @@ internal static class SharedKernelStyleCodeFixProviderTestsHelpers
     public static bool InvokeIsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
     {
         var codeFixType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.RemoveAsyncSuffixCodeFix");
-        _ = TestAssert.NotNull(codeFixType);
+        _ = (codeFixType).ShouldNotBeNull();
         var method = codeFixType.GetMethod("IsRenamedMethodMatch", BindingFlags.NonPublic | BindingFlags.Static);
-        _ = TestAssert.NotNull(method);
-        return TestAssert.IsType<bool>(method.Invoke(null, [candidateSymbol, originalSymbol, updatedName]));
+        _ = (method).ShouldNotBeNull();
+        return (method.Invoke(null, [candidateSymbol, originalSymbol, updatedName])).ShouldBeOfType<bool>();
     }
 
     public static Project CreateProject(AdhocWorkspace workspace, string source, out DocumentId documentId, string assemblyName = "SharedKernel.Style.CodeFixes.Tests.Organizer")
@@ -44,7 +44,7 @@ internal static class SharedKernelStyleCodeFixProviderTestsHelpers
                 loader: TextLoader.From(TextAndVersion.Create(SourceText.From(source), versionStamp)),
                 filePath: "/Test0.cs"));
 
-        return TestAssert.IsType<Project>(workspace.CurrentSolution.GetProject(projectId));
+        return (workspace.CurrentSolution.GetProject(projectId)).ShouldBeOfType<Project>();
     }
 
     public static async Task<Solution> OrganizeOverloads(
@@ -55,24 +55,24 @@ internal static class SharedKernelStyleCodeFixProviderTestsHelpers
             CancellationToken ct)
     {
         var organizerType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.MethodOverloadGroupOrganizer");
-        _ = TestAssert.NotNull(organizerType);
+        _ = (organizerType).ShouldNotBeNull();
         var organizeMethod = organizerType.GetMethod("Organize", BindingFlags.Public | BindingFlags.Static);
-        _ = TestAssert.NotNull(organizeMethod);
-        var task = TestAssert.IsType<Task<Solution>>(organizeMethod.Invoke(null, [solution, documentId, targetMethod, updatedName, ct]));
+        _ = (organizeMethod).ShouldNotBeNull();
+        var task = (organizeMethod.Invoke(null, [solution, documentId, targetMethod, updatedName, ct])).ShouldBeOfType<Task<Solution>>();
         return await task.ConfigureAwait(false);
     }
 
     public static async Task<string> ReadDocumentText(Solution solution, DocumentId documentId)
     {
-        var document = TestAssert.IsType<Document>(solution.GetDocument(documentId));
+        var document = (solution.GetDocument(documentId)).ShouldBeOfType<Document>();
         return (await document.GetTextAsync().ConfigureAwait(false)).ToString();
     }
 
     private static IEnumerable<MetadataReference> GetMetadataReferences()
     {
         var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        TestAssert.False(string.IsNullOrWhiteSpace(trustedPlatformAssemblies));
-        var trustedAssemblyPaths = TestAssert.IsType<string>(trustedPlatformAssemblies);
+        (string.IsNullOrWhiteSpace(trustedPlatformAssemblies)).ShouldBeFalse();
+        var trustedAssemblyPaths = (trustedPlatformAssemblies).ShouldBeOfType<string>();
 
         foreach (var path in trustedAssemblyPaths.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
         {

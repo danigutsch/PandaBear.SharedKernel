@@ -37,7 +37,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
-        var codeAction = TestAssert.ExactlyOne(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -64,7 +64,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Some_Title()");
 
-        var codeAction = TestAssert.ExactlyOne(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -97,7 +97,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
-        TestAssert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
-        TestAssert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -147,7 +147,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
-        TestAssert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -169,7 +169,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "UsesHTTP2TimeoutFallback()");
 
-        var codeAction = TestAssert.ExactlyOne(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -182,7 +182,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     {
         var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        TestAssert.Empty(provider.GetFixAllProvider().GetSupportedFixAllScopes());
+        (provider.GetFixAllProvider().GetSupportedFixAllScopes()).ShouldBeEmpty();
     }
 
     [Fact]
@@ -217,7 +217,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(WarningSuppressionDiagnosticId, "#pragma warning disable CA1822");
 
         // Act
-        var codeAction = TestAssert.ExactlyOne(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -253,7 +253,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             properties);
 
         // Act
-        var codeAction = TestAssert.ExactlyOne(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -287,7 +287,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        TestAssert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -1032,7 +1032,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        TestAssert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -1059,7 +1059,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        TestAssert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -1082,16 +1082,16 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             "SerialDatabaseCollection");
 
         // Act
-        var codeAction = TestAssert.ExactlyOne(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
         updatedText.ShouldContain("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
         updatedText.ShouldContain("[global::Xunit.CollectionDefinition(\"Serial database\", DisableParallelization = true)]", StringComparison.Ordinal);
-        TestAssert.True(
-            updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) < updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal),
-            "Expected serial justification to be inserted before the collection definition.");
+        var justificationPrecedesCollectionDefinition = updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) <
+            updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal);
+        justificationPrecedesCollectionDefinition.ShouldBeTrue("Expected serial justification to be inserted before the collection definition.");
     }
 
     [Fact]
@@ -1112,16 +1112,16 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             "SerialDatabaseCollection");
 
         // Act
-        var codeAction = TestAssert.ExactlyOne(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
         updatedText.ShouldContain("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
         updatedText.ShouldContain("public sealed record SerialDatabaseCollection;", StringComparison.Ordinal);
-        TestAssert.True(
-            updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) < updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal),
-            "Expected serial justification to be inserted before the collection definition.");
+        var justificationPrecedesCollectionDefinition = updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) <
+            updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal);
+        justificationPrecedesCollectionDefinition.ShouldBeTrue("Expected serial justification to be inserted before the collection definition.");
     }
 
 }

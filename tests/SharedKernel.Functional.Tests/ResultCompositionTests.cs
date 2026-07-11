@@ -47,7 +47,7 @@ public sealed class ResultCompositionTests
         converted.IsFailure.ShouldBeTrue();
         converted.Status.ShouldBe(ResultStatus.Conflict);
         converted.TryGetError(out var error).ShouldBeTrue();
-        var nonNullError = TestAssert.NotNull(error);
+        var nonNullError = (error).ShouldNotBeNull();
         nonNullError.Detail.ShouldBe("Tour is already published");
     }
 
@@ -77,7 +77,7 @@ public sealed class ResultCompositionTests
         // Assert
         mapped.IsFailure.ShouldBeTrue();
         mapped.TryGetError(out var error).ShouldBeTrue();
-        var nonNullError = TestAssert.NotNull(error);
+        var nonNullError = (error).ShouldNotBeNull();
         nonNullError.Detail.ShouldBe("Unexpected failure");
     }
 
@@ -107,7 +107,7 @@ public sealed class ResultCompositionTests
         // Assert
         bound.IsFailure.ShouldBeTrue();
         bound.TryGetError(out var error).ShouldBeTrue();
-        var nonNullError = TestAssert.NotNull(error);
+        var nonNullError = (error).ShouldNotBeNull();
         nonNullError.Detail.ShouldBe("Unexpected failure");
     }
 
@@ -164,7 +164,7 @@ public sealed class ResultCompositionTests
         ensured.TryGetError(out var error).ShouldBeTrue();
         error.ShouldNotBeNull();
         error.ValidationErrors.ShouldNotBeNull();
-        TestAssert.Equal(["Name is required"], error.ValidationErrors["Name"]);
+        (error.ValidationErrors["Name"]).ShouldBe(["Name is required"]);
     }
 
     [Theory]

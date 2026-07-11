@@ -48,8 +48,8 @@ public sealed class ValidationErrorsTests
         error.Code.ShouldBe(ResultErrorCodes.Invalid);
         error.Detail.ShouldBe("Multiple validation errors occurred.");
         error.ValidationErrors.ShouldNotBeNull();
-        TestAssert.Equal(["Name is required"], error.ValidationErrors["Name"]);
-        TestAssert.Equal(["Email is invalid"], error.ValidationErrors["Email"]);
+        (error.ValidationErrors["Name"]).ShouldBe(["Name is required"]);
+        (error.ValidationErrors["Email"]).ShouldBe(["Email is invalid"]);
     }
 
     [Fact]
@@ -67,9 +67,7 @@ public sealed class ValidationErrorsTests
         var error = result.ErrorDetails;
         error.ShouldNotBeNull();
         error.ValidationErrors.ShouldNotBeNull();
-        TestAssert.Equal(
-            ["Name is required", "Name must be at least 3 characters"],
-            error.ValidationErrors["Name"]);
+        (error.ValidationErrors["Name"]).ShouldBe(["Name is required", "Name must be at least 3 characters"]);
     }
 
     [Fact]
@@ -88,7 +86,7 @@ public sealed class ValidationErrorsTests
         error.ShouldNotBeNull();
         error.Code.ShouldBe(ResultErrorCodes.Invalid);
         error.ValidationErrors.ShouldNotBeNull();
-        TestAssert.Equal(["Age must be positive"], error.ValidationErrors["Age"]);
+        (error.ValidationErrors["Age"]).ShouldBe(["Age must be positive"]);
     }
 
     [Fact]
@@ -98,7 +96,7 @@ public sealed class ValidationErrorsTests
         var errors = new ValidationErrors();
 
         // Act
-        var exception = TestAssert.Throws<InvalidOperationException>(() => errors.ToResult());
+        var exception = ((Func<object?>)(() => errors.ToResult())).ShouldThrow<InvalidOperationException>();
 
         // Assert
         exception.Message.ShouldContain("Cannot create result from empty error collection", StringComparison.Ordinal);
@@ -153,7 +151,7 @@ public sealed class ValidationErrorsTests
         errors.Add(ValidationErrorsTestsHelpers.CreateMalformedInvalidResult(error: null));
 
         // Act
-        var exception = TestAssert.Throws<InvalidOperationException>(() => errors.ToResult<int>());
+        var exception = ((Func<object?>)(() => errors.ToResult<int>())).ShouldThrow<InvalidOperationException>();
 
         // Assert
         exception.Message.ShouldBe("Validation errors must include error details.");
@@ -167,7 +165,7 @@ public sealed class ValidationErrorsTests
         errors.Add(ValidationErrorsTestsHelpers.CreateMalformedInvalidResult(new ResultError("Validation failed", ResultErrorCodes.Invalid)));
 
         // Act
-        var exception = TestAssert.Throws<InvalidOperationException>(() => errors.ToResult<int>());
+        var exception = ((Func<object?>)(() => errors.ToResult<int>())).ShouldThrow<InvalidOperationException>();
 
         // Assert
         exception.Message.ShouldBe("Validation errors must include field details.");
