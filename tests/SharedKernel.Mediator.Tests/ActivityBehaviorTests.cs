@@ -16,39 +16,39 @@ public sealed class ActivityBehaviorTests
         var sourceName = SharedKernelMediatorActivitySource.Source.Name;
 
         // Assert
-        Assert.Equal(expectedName, activitySourceName);
-        Assert.Equal(expectedName, sourceName);
+        (activitySourceName).ShouldBe(expectedName);
+        (sourceName).ShouldBe(expectedName);
     }
 
     [Fact]
     public void Mediator_telemetry_contract_uses_stable_names()
     {
         // Assert
-        Assert.Equal("SharedKernel.Mediator", MediatorTelemetry.Name);
-        Assert.Equal("mediator.send", MediatorTelemetry.ActivitySend);
-        Assert.Equal("mediator.stream", MediatorTelemetry.ActivityStream);
-        Assert.Equal("mediator.publish", MediatorTelemetry.ActivityPublish);
-        Assert.Equal("mediator.notification.handle", MediatorTelemetry.ActivityNotificationHandler);
-        Assert.Equal("mediator.requests", MediatorTelemetry.MetricRequests);
-        Assert.Equal("mediator.request.duration", MediatorTelemetry.MetricRequestDuration);
-        Assert.Equal("mediator.notifications", MediatorTelemetry.MetricNotifications);
-        Assert.Equal("mediator.notification.duration", MediatorTelemetry.MetricNotificationDuration);
-        Assert.Equal("mediator.streams", MediatorTelemetry.MetricStreams);
-        Assert.Equal("sharedkernel.mediator.request_type", MediatorTelemetry.TagRequestType);
-        Assert.Equal("sharedkernel.mediator.response_type", MediatorTelemetry.TagResponseType);
-        Assert.Equal("sharedkernel.mediator.outcome", MediatorTelemetry.TagRuntimeOutcome);
-        Assert.Equal("mediator.request.name", MediatorTelemetry.TagRequestName);
-        Assert.Equal("mediator.request.assembly", MediatorTelemetry.TagRequestAssembly);
-        Assert.Equal("mediator.handler.name", MediatorTelemetry.TagHandlerName);
-        Assert.Equal("mediator.pipeline.depth", MediatorTelemetry.TagPipelineDepth);
-        Assert.Equal("mediator.notification.name", MediatorTelemetry.TagNotificationName);
-        Assert.Equal("mediator.notification.assembly", MediatorTelemetry.TagNotificationAssembly);
-        Assert.Equal("mediator.notification.handler.count", MediatorTelemetry.TagNotificationHandlerCount);
-        Assert.Equal("mediator.outcome", MediatorTelemetry.TagOutcome);
-        Assert.Equal("error.type", MediatorTelemetry.TagErrorType);
-        Assert.Equal("success", MediatorTelemetry.OutcomeSuccess);
-        Assert.Equal("cancelled", MediatorTelemetry.OutcomeCancelled);
-        Assert.Equal("error", MediatorTelemetry.OutcomeError);
+        (MediatorTelemetry.Name).ShouldBe("SharedKernel.Mediator");
+        (MediatorTelemetry.ActivitySend).ShouldBe("mediator.send");
+        (MediatorTelemetry.ActivityStream).ShouldBe("mediator.stream");
+        (MediatorTelemetry.ActivityPublish).ShouldBe("mediator.publish");
+        (MediatorTelemetry.ActivityNotificationHandler).ShouldBe("mediator.notification.handle");
+        (MediatorTelemetry.MetricRequests).ShouldBe("mediator.requests");
+        (MediatorTelemetry.MetricRequestDuration).ShouldBe("mediator.request.duration");
+        (MediatorTelemetry.MetricNotifications).ShouldBe("mediator.notifications");
+        (MediatorTelemetry.MetricNotificationDuration).ShouldBe("mediator.notification.duration");
+        (MediatorTelemetry.MetricStreams).ShouldBe("mediator.streams");
+        (MediatorTelemetry.TagRequestType).ShouldBe("sharedkernel.mediator.request_type");
+        (MediatorTelemetry.TagResponseType).ShouldBe("sharedkernel.mediator.response_type");
+        (MediatorTelemetry.TagRuntimeOutcome).ShouldBe("sharedkernel.mediator.outcome");
+        (MediatorTelemetry.TagRequestName).ShouldBe("mediator.request.name");
+        (MediatorTelemetry.TagRequestAssembly).ShouldBe("mediator.request.assembly");
+        (MediatorTelemetry.TagHandlerName).ShouldBe("mediator.handler.name");
+        (MediatorTelemetry.TagPipelineDepth).ShouldBe("mediator.pipeline.depth");
+        (MediatorTelemetry.TagNotificationName).ShouldBe("mediator.notification.name");
+        (MediatorTelemetry.TagNotificationAssembly).ShouldBe("mediator.notification.assembly");
+        (MediatorTelemetry.TagNotificationHandlerCount).ShouldBe("mediator.notification.handler.count");
+        (MediatorTelemetry.TagOutcome).ShouldBe("mediator.outcome");
+        (MediatorTelemetry.TagErrorType).ShouldBe("error.type");
+        (MediatorTelemetry.OutcomeSuccess).ShouldBe("success");
+        (MediatorTelemetry.OutcomeCancelled).ShouldBe("cancelled");
+        (MediatorTelemetry.OutcomeError).ShouldBe("error");
     }
 
     [Fact]
@@ -64,16 +64,16 @@ public sealed class ActivityBehaviorTests
         var response = await behavior.Handle(request, () => ValueTask.FromResult(request.Id + 1), CancellationToken.None);
 
         // Assert
-        Assert.Equal(43, response);
-        var activity = Assert.Single(stoppedActivities);
-        Assert.Equal(nameof(ActivityTestQuery), activity.OperationName);
-        Assert.Equal(SharedKernelMediatorActivitySource.ActivitySourceName, activity.Source.Name);
-        Assert.Equal(ActivityStatusCode.Ok, activity.Status);
-        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRequestType && tag.Value == typeof(ActivityTestQuery).FullName);
-        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagResponseType && tag.Value == typeof(int).FullName);
-        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeSuccess);
-        Assert.DoesNotContain(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType);
-        Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
+        (response).ShouldBe(43);
+        var activity = (stoppedActivities).ShouldHaveSingleItem();
+        (activity.OperationName).ShouldBe(nameof(ActivityTestQuery));
+        (activity.Source.Name).ShouldBe(SharedKernelMediatorActivitySource.ActivitySourceName);
+        (activity.Status).ShouldBe(ActivityStatusCode.Ok);
+        (activity.Tags).ShouldContain(static tag => tag.Key == MediatorTelemetry.TagRequestType && tag.Value == typeof(ActivityTestQuery).FullName);
+        (activity.Tags).ShouldContain(static tag => tag.Key == MediatorTelemetry.TagResponseType && tag.Value == typeof(int).FullName);
+        (activity.Tags).ShouldContain(static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeSuccess);
+        (activity.Tags).ShouldNotContain(static tag => tag.Key == MediatorTelemetry.TagErrorType);
+        (activity.Events).ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public sealed class ActivityBehaviorTests
         var response = await behavior.Handle(request, () => ValueTask.FromResult(request.Id * 2), CancellationToken.None);
 
         // Assert
-        Assert.Equal(14, response);
+        (response).ShouldBe(14);
     }
 
     [Fact]
@@ -100,25 +100,25 @@ public sealed class ActivityBehaviorTests
         var request = new ActivityTestQuery(11);
 
         // Act
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        await ((Func<Task>)(() =>
             behavior.Handle(
                 request,
                 static () => ValueTask.FromException<int>(new InvalidOperationException("boom")),
-                CancellationToken.None).AsTask());
+                CancellationToken.None).AsTask())).ShouldThrow<InvalidOperationException>();
 
         // Assert
-        var activity = Assert.Single(stoppedActivities);
-        Assert.Equal(ActivityStatusCode.Error, activity.Status);
-        Assert.Equal("boom", activity.StatusDescription);
-        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType && tag.Value == "InvalidOperationException");
-        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeError);
+        var activity = (stoppedActivities).ShouldHaveSingleItem();
+        (activity.Status).ShouldBe(ActivityStatusCode.Error);
+        (activity.StatusDescription).ShouldBe("boom");
+        (activity.Tags).ShouldContain(static tag => tag.Key == MediatorTelemetry.TagErrorType && tag.Value == "InvalidOperationException");
+        (activity.Tags).ShouldContain(static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeError);
 
-        var exceptionEvent = Assert.Single(activity.Events, static evt => evt.Name == "exception");
+        var exceptionEvent = (activity.Events).ShouldHaveSingleItem(static evt => evt.Name == "exception");
         var exceptionTags = exceptionEvent.Tags;
-        Assert.NotNull(exceptionTags);
-        Assert.Contains(exceptionTags, static tag =>
+        _ = (exceptionTags).ShouldNotBeNull();
+        (exceptionTags).ShouldContain(static tag =>
             tag.Key == "exception.type" && string.Equals(tag.Value as string, typeof(InvalidOperationException).FullName, StringComparison.Ordinal));
-        Assert.Contains(exceptionTags, static tag =>
+        (exceptionTags).ShouldContain(static tag =>
             tag.Key == "exception.message" && string.Equals(tag.Value as string, "boom", StringComparison.Ordinal));
     }
 
@@ -132,19 +132,19 @@ public sealed class ActivityBehaviorTests
         var request = new ActivityTestQuery(12);
 
         // Act
-        await Assert.ThrowsAsync<OperationCanceledException>(() =>
+        await ((Func<Task>)(() =>
             behavior.Handle(
                 request,
                 static () => ValueTask.FromException<int>(new OperationCanceledException("cancelled")),
-                CancellationToken.None).AsTask());
+                CancellationToken.None).AsTask())).ShouldThrow<OperationCanceledException>();
 
         // Assert
-        var activity = Assert.Single(stoppedActivities);
-        Assert.Equal(ActivityStatusCode.Unset, activity.Status);
-        Assert.Null(activity.StatusDescription);
-        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeCancelled);
-        Assert.DoesNotContain(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType);
-        Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
+        var activity = (stoppedActivities).ShouldHaveSingleItem();
+        (activity.Status).ShouldBe(ActivityStatusCode.Unset);
+        (activity.StatusDescription).ShouldBeNull();
+        (activity.Tags).ShouldContain(static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeCancelled);
+        (activity.Tags).ShouldNotContain(static tag => tag.Key == MediatorTelemetry.TagErrorType);
+        (activity.Events).ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -163,13 +163,13 @@ public sealed class ActivityBehaviorTests
             CancellationToken.None);
 
         // Assert
-        Assert.Equal(99, response);
-        var activity = Assert.Single(stoppedActivities);
-        Assert.Equal(ActivityStatusCode.Ok, activity.Status);
-        Assert.Null(activity.StatusDescription);
-        Assert.Contains(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeSuccess);
-        Assert.DoesNotContain(activity.Tags, static tag => tag.Key == MediatorTelemetry.TagErrorType);
-        Assert.DoesNotContain(activity.Events, static evt => evt.Name == "exception");
+        (response).ShouldBe(99);
+        var activity = (stoppedActivities).ShouldHaveSingleItem();
+        (activity.Status).ShouldBe(ActivityStatusCode.Ok);
+        (activity.StatusDescription).ShouldBeNull();
+        (activity.Tags).ShouldContain(static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeSuccess);
+        (activity.Tags).ShouldNotContain(static tag => tag.Key == MediatorTelemetry.TagErrorType);
+        (activity.Events).ShouldNotContain(static evt => evt.Name == "exception");
     }
 
 }

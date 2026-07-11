@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SharedKernel.Testing.Assertions;
 namespace SharedKernel.Style.CodeFixes.Tests;
 
 public sealed class SharedKernelStyleCodeFixProviderTests
@@ -35,14 +34,14 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
-        Assert.Contains("return Load(ct);", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("LoadAsync", updatedText, StringComparison.Ordinal);
+        (updatedText).ShouldContain("Load(CancellationToken ct)", StringComparison.Ordinal);
+        (updatedText).ShouldContain("return Load(ct);", StringComparison.Ordinal);
+        (updatedText).ShouldNotContain("LoadAsync", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -74,7 +73,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -109,7 +108,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -143,22 +142,22 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("public async Task<string> Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
-        Assert.Contains("public Task<string> Load(string route, CancellationToken ct)", updatedText, StringComparison.Ordinal);
-        Assert.Contains("return Load(ct);", updatedText, StringComparison.Ordinal);
+        (updatedText).ShouldContain("public async Task<string> Load(CancellationToken ct)", StringComparison.Ordinal);
+        (updatedText).ShouldContain("public Task<string> Load(string route, CancellationToken ct)", StringComparison.Ordinal);
+        (updatedText).ShouldContain("return Load(ct);", StringComparison.Ordinal);
         var executeIndex = updatedText.IndexOf("public Task<string> Execute", StringComparison.Ordinal);
         var renamedOverloadIndex = updatedText.IndexOf("public async Task<string> Load(CancellationToken ct)", StringComparison.Ordinal);
         var existingOverloadIndex = updatedText.IndexOf("public Task<string> Load(string route, CancellationToken ct)", StringComparison.Ordinal);
-        Assert.True(executeIndex >= 0);
-        Assert.True(renamedOverloadIndex >= 0);
-        Assert.True(existingOverloadIndex >= 0);
-        Assert.True(renamedOverloadIndex < existingOverloadIndex);
-        Assert.True(existingOverloadIndex < executeIndex);
+        (executeIndex >= 0).ShouldBeTrue();
+        (renamedOverloadIndex >= 0).ShouldBeTrue();
+        (existingOverloadIndex >= 0).ShouldBeTrue();
+        (renamedOverloadIndex < existingOverloadIndex).ShouldBeTrue();
+        (existingOverloadIndex < executeIndex).ShouldBeTrue();
     }
 
     [Fact]
@@ -194,21 +193,21 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.DoesNotContain("nameof(LoadAsync)", updatedText, StringComparison.Ordinal);
-        Assert.Contains("nameof(Load)", updatedText, StringComparison.Ordinal);
+        (updatedText).ShouldNotContain("nameof(LoadAsync)", StringComparison.Ordinal);
+        (updatedText).ShouldContain("nameof(Load)", StringComparison.Ordinal);
         var executeIndex = updatedText.IndexOf("public Task<string> Execute", StringComparison.Ordinal);
         var renamedOverloadIndex = updatedText.IndexOf("public async Task<string> Load(CancellationToken ct)", StringComparison.Ordinal);
         var existingOverloadIndex = updatedText.IndexOf("public Task<string> Load(string route, CancellationToken ct)", StringComparison.Ordinal);
-        Assert.True(executeIndex >= 0);
-        Assert.True(renamedOverloadIndex >= 0);
-        Assert.True(existingOverloadIndex >= 0);
-        Assert.True(renamedOverloadIndex < existingOverloadIndex);
-        Assert.True(existingOverloadIndex < executeIndex);
+        (executeIndex >= 0).ShouldBeTrue();
+        (renamedOverloadIndex >= 0).ShouldBeTrue();
+        (existingOverloadIndex >= 0).ShouldBeTrue();
+        (renamedOverloadIndex < existingOverloadIndex).ShouldBeTrue();
+        (existingOverloadIndex < executeIndex).ShouldBeTrue();
     }
 
     [Fact]
@@ -247,7 +246,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.AsyncSuffix, "LoadAsync(CancellationToken ct)");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -255,14 +254,14 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var loadWithoutParametersIndex = updatedText.IndexOf("public Task<string> Load()", StringComparison.Ordinal);
         var loadWithCancellationTokenIndex = updatedText.IndexOf("public async Task<string> Load(CancellationToken ct)", StringComparison.Ordinal);
         var loadWithTwoParametersIndex = updatedText.IndexOf("public Task<string> Load(string route, CancellationToken ct)", StringComparison.Ordinal);
-        Assert.Contains("Load(string route, CancellationToken ct)", updatedText, StringComparison.Ordinal);
-        Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
-        Assert.Contains("return Load(ct);", updatedText, StringComparison.Ordinal);
-        Assert.True(loadWithoutParametersIndex >= 0);
-        Assert.True(loadWithCancellationTokenIndex >= 0);
-        Assert.True(loadWithTwoParametersIndex >= 0);
-        Assert.True(loadWithoutParametersIndex < loadWithCancellationTokenIndex);
-        Assert.True(loadWithCancellationTokenIndex < loadWithTwoParametersIndex);
+        (updatedText).ShouldContain("Load(string route, CancellationToken ct)", StringComparison.Ordinal);
+        (updatedText).ShouldContain("Load(CancellationToken ct)", StringComparison.Ordinal);
+        (updatedText).ShouldContain("return Load(ct);", StringComparison.Ordinal);
+        (loadWithoutParametersIndex >= 0).ShouldBeTrue();
+        (loadWithCancellationTokenIndex >= 0).ShouldBeTrue();
+        (loadWithTwoParametersIndex >= 0).ShouldBeTrue();
+        (loadWithoutParametersIndex < loadWithCancellationTokenIndex).ShouldBeTrue();
+        (loadWithCancellationTokenIndex < loadWithTwoParametersIndex).ShouldBeTrue();
     }
 
     [Fact]
@@ -292,7 +291,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -318,7 +317,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -342,14 +341,14 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
-        Assert.Contains("ct.ThrowIfCancellationRequested();", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("cancellationToken", updatedText, StringComparison.Ordinal);
+        (updatedText).ShouldContain("Load(CancellationToken ct)", StringComparison.Ordinal);
+        (updatedText).ShouldContain("ct.ThrowIfCancellationRequested();", StringComparison.Ordinal);
+        (updatedText).ShouldNotContain("cancellationToken", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -372,13 +371,13 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("ct = default", updatedText, StringComparison.Ordinal);
+        (updatedText).ShouldContain("Load(CancellationToken ct)", StringComparison.Ordinal);
+        (updatedText).ShouldNotContain("ct = default", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -401,13 +400,13 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default(CancellationToken)");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("default(CancellationToken)", updatedText, StringComparison.Ordinal);
+        (updatedText).ShouldContain("Load(CancellationToken ct)", StringComparison.Ordinal);
+        (updatedText).ShouldNotContain("default(CancellationToken)", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -427,13 +426,13 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct = default");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("Load(CancellationToken ct);", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("ct = default", updatedText, StringComparison.Ordinal);
+        (updatedText).ShouldContain("Load(CancellationToken ct);", StringComparison.Ordinal);
+        (updatedText).ShouldNotContain("ct = default", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -456,13 +455,13 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue, "CancellationToken ct /* preserved */ = default");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("/* preserved */", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("= default", updatedText, StringComparison.Ordinal);
+        (updatedText).ShouldContain("/* preserved */", StringComparison.Ordinal);
+        (updatedText).ShouldNotContain("= default", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -485,7 +484,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -512,7 +511,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -540,7 +539,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -574,7 +573,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -602,7 +601,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -632,14 +631,14 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.CancellationTokenParameterName, "CancellationToken cancellationToken");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("Load(CancellationToken ct)", updatedText, StringComparison.Ordinal);
-        Assert.Contains("var ct = \"nested\";", updatedText, StringComparison.Ordinal);
-        Assert.Contains("ct.ThrowIfCancellationRequested();", updatedText, StringComparison.Ordinal);
+        (updatedText).ShouldContain("Load(CancellationToken ct)", StringComparison.Ordinal);
+        (updatedText).ShouldContain("var ct = \"nested\";", StringComparison.Ordinal);
+        (updatedText).ShouldContain("ct.ThrowIfCancellationRequested();", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -670,7 +669,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -705,7 +704,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -738,7 +737,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
     [Fact]
@@ -751,16 +750,14 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var diagnosticIds = provider.FixableDiagnosticIds.ToArray();
 
         // Assert
-        Assert.Equal(
-            [
+        (diagnosticIds).ShouldBe([
                 Analyzers.StyleDiagnosticIds.AsyncSuffix,
                 Analyzers.StyleDiagnosticIds.CancellationTokenParameterName,
                 Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue,
                 Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix,
                 Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
                 Analyzers.StyleDiagnosticIds.DomainEventSuffix
-            ],
-            diagnosticIds);
+            ]);
     }
 
     [Fact]
@@ -949,11 +946,9 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             .ToArray();
 
         // Assert
-        Assert.Equal(
-            [
+        (supportedDiagnosticIds).ShouldBe([
                 Analyzers.StyleDiagnosticIds.AsyncSuffix
-            ],
-            supportedDiagnosticIds);
+            ]);
     }
 
     [Fact]
@@ -963,8 +958,8 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var fixAllProvider = new SharedKernelStyleCodeFixProvider().GetFixAllProvider();
 
         // Assert
-        var exception = Assert.Throws<ArgumentNullException>(() => fixAllProvider.GetSupportedFixAllDiagnosticIds(null!));
-        Assert.Equal("originalCodeFixProvider", exception.ParamName);
+        var exception = ((Func<object?>)(() => fixAllProvider.GetSupportedFixAllDiagnosticIds(null!))).ShouldThrow<ArgumentNullException>();
+        (exception.ParamName).ShouldBe("originalCodeFixProvider");
     }
 
     [Fact]
@@ -983,7 +978,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             .ToArray();
 
         // Assert
-        Assert.Equal(expectedScopes, supportedScopes);
+        (supportedScopes).ShouldBe(expectedScopes);
     }
 
     [Fact]
@@ -1000,10 +995,10 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         using var workspace = new AdhocWorkspace();
         var project = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(workspace, source, out var documentId);
-        var document = Assert.IsType<Document>(project.GetDocument(documentId));
+        var document = (project.GetDocument(documentId)).ShouldBeOfType<Document>();
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
-        Assert.NotNull(root);
-        var targetMethod = Assert.Single(root.DescendantNodes().OfType<MethodDeclarationSyntax>());
+        _ = (root).ShouldNotBeNull();
+        var targetMethod = (root.DescendantNodes().OfType<MethodDeclarationSyntax>()).ShouldHaveSingleItem();
 
         // Act
         var organizedSolution = await SharedKernelStyleCodeFixProviderTestsHelpers.OrganizeOverloads(
@@ -1014,7 +1009,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Same(workspace.CurrentSolution, organizedSolution);
+        (organizedSolution).ShouldBeSameAs(workspace.CurrentSolution);
     }
 
     [Fact]
@@ -1045,10 +1040,10 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """,
             out var otherDocumentId,
             assemblyName: "SharedKernel.Style.CodeFixes.Tests.Other");
-        var sourceDocument = Assert.IsType<Document>(sourceProject.GetDocument(sourceDocumentId));
+        var sourceDocument = (sourceProject.GetDocument(sourceDocumentId)).ShouldBeOfType<Document>();
         var sourceRoot = await sourceDocument.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
-        Assert.NotNull(sourceRoot);
-        var targetMethod = Assert.Single(sourceRoot.DescendantNodes().OfType<MethodDeclarationSyntax>());
+        _ = (sourceRoot).ShouldNotBeNull();
+        var targetMethod = (sourceRoot.DescendantNodes().OfType<MethodDeclarationSyntax>()).ShouldHaveSingleItem();
 
         // Act
         var organizedSolution = await SharedKernelStyleCodeFixProviderTestsHelpers.OrganizeOverloads(
@@ -1059,8 +1054,8 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Same(workspace.CurrentSolution, organizedSolution);
-        Assert.NotNull(otherProject.GetDocument(otherDocumentId));
+        (organizedSolution).ShouldBeSameAs(workspace.CurrentSolution);
+        (otherProject.GetDocument(otherDocumentId)).ShouldNotBeNull();
     }
 
     [Fact]
@@ -1080,7 +1075,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """,
             out var documentId,
             assemblyName: "SharedKernel.Style.CodeFixes.Tests.SyntaxTreeMismatch");
-        var document = Assert.IsType<Document>(project.GetDocument(documentId));
+        var document = (project.GetDocument(documentId)).ShouldBeOfType<Document>();
         var detachedTree = CSharpSyntaxTree.ParseText(
             """
             namespace Demo;
@@ -1093,7 +1088,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             new CSharpParseOptions(LanguageVersion.Preview),
             cancellationToken: TestContext.Current.CancellationToken);
         var detachedRoot = await detachedTree.GetRootAsync(TestContext.Current.CancellationToken);
-        var detachedMethod = Assert.Single(detachedRoot.DescendantNodes().OfType<MethodDeclarationSyntax>());
+        var detachedMethod = (detachedRoot.DescendantNodes().OfType<MethodDeclarationSyntax>()).ShouldHaveSingleItem();
 
         // Act
         var organizedSolution = await SharedKernelStyleCodeFixProviderTestsHelpers.OrganizeOverloads(
@@ -1104,8 +1099,8 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Same(workspace.CurrentSolution, organizedSolution);
-        Assert.NotNull(document);
+        (organizedSolution).ShouldBeSameAs(workspace.CurrentSolution);
+        _ = (document).ShouldNotBeNull();
     }
 
     [Fact]
@@ -1124,9 +1119,9 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         using var workspace = new AdhocWorkspace();
         var project = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.Params");
-        var document = Assert.IsType<Document>(project.GetDocument(documentId));
+        var document = (project.GetDocument(documentId)).ShouldBeOfType<Document>();
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
-        Assert.NotNull(root);
+        _ = (root).ShouldNotBeNull();
         var methods = root.DescendantNodes().OfType<MethodDeclarationSyntax>().ToArray();
         var targetMethod = methods.Single(method => method.Identifier.ValueText == "Load" && method.ParameterList.Parameters[0].Modifiers.Count > 0);
 
@@ -1142,9 +1137,9 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         var paramsIndex = updatedText.IndexOf("Load(params string[] values)", StringComparison.Ordinal);
         var regularIndex = updatedText.IndexOf("Load(string[] values)", StringComparison.Ordinal);
-        Assert.True(paramsIndex >= 0);
-        Assert.True(regularIndex >= 0);
-        Assert.True(paramsIndex < regularIndex);
+        (paramsIndex >= 0).ShouldBeTrue();
+        (regularIndex >= 0).ShouldBeTrue();
+        (paramsIndex < regularIndex).ShouldBeTrue();
     }
 
     [Fact]
@@ -1166,17 +1161,17 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """,
             out var documentId,
             assemblyName: "SharedKernel.Style.CodeFixes.Tests.SymbolMatch");
-        var document = Assert.IsType<Document>(project.GetDocument(documentId));
+        var document = (project.GetDocument(documentId)).ShouldBeOfType<Document>();
         var semanticModel = await document.GetSemanticModelAsync(TestContext.Current.CancellationToken);
-        Assert.NotNull(semanticModel);
+        _ = (semanticModel).ShouldNotBeNull();
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
-        Assert.NotNull(root);
-        var candidateMethod = Assert.Single(root.DescendantNodes().OfType<MethodDeclarationSyntax>());
+        _ = (root).ShouldNotBeNull();
+        var candidateMethod = (root.DescendantNodes().OfType<MethodDeclarationSyntax>()).ShouldHaveSingleItem();
         var candidateMethodSymbol = semanticModel.GetDeclaredSymbol(candidateMethod, TestContext.Current.CancellationToken);
-        Assert.NotNull(candidateMethodSymbol);
-        var propertyDeclaration = Assert.Single(root.DescendantNodes().OfType<PropertyDeclarationSyntax>());
+        _ = (candidateMethodSymbol).ShouldNotBeNull();
+        var propertyDeclaration = (root.DescendantNodes().OfType<PropertyDeclarationSyntax>()).ShouldHaveSingleItem();
         var propertySymbol = semanticModel.GetDeclaredSymbol(propertyDeclaration, TestContext.Current.CancellationToken);
-        Assert.NotNull(propertySymbol);
+        _ = (propertySymbol).ShouldNotBeNull();
 
         // Act
         var isMatch = SharedKernelStyleCodeFixProviderTestsHelpers.InvokeIsRenamedMethodMatch(
@@ -1185,7 +1180,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             updatedName: "Load");
 
         // Assert
-        Assert.False(isMatch);
+        (isMatch).ShouldBeFalse();
     }
 
     [Fact]
@@ -1206,9 +1201,9 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         using var workspace = new AdhocWorkspace();
         var project = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.RefKinds");
-        var document = Assert.IsType<Document>(project.GetDocument(documentId));
+        var document = (project.GetDocument(documentId)).ShouldBeOfType<Document>();
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
-        Assert.NotNull(root);
+        _ = (root).ShouldNotBeNull();
         var targetMethod = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
 
         // Act
@@ -1225,13 +1220,13 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var refIndex = updatedText.IndexOf("Load(ref int value)", StringComparison.Ordinal);
         var outIndex = updatedText.IndexOf("Load(out int value)", StringComparison.Ordinal);
         var inIndex = updatedText.IndexOf("Load(in int value)", StringComparison.Ordinal);
-        Assert.True(valueIndex >= 0);
-        Assert.True(refIndex >= 0);
-        Assert.True(outIndex >= 0);
-        Assert.True(inIndex >= 0);
-        Assert.True(valueIndex < refIndex);
-        Assert.True(refIndex < outIndex);
-        Assert.True(outIndex < inIndex);
+        (valueIndex >= 0).ShouldBeTrue();
+        (refIndex >= 0).ShouldBeTrue();
+        (outIndex >= 0).ShouldBeTrue();
+        (inIndex >= 0).ShouldBeTrue();
+        (valueIndex < refIndex).ShouldBeTrue();
+        (refIndex < outIndex).ShouldBeTrue();
+        (outIndex < inIndex).ShouldBeTrue();
     }
 
     [Fact]
@@ -1250,9 +1245,9 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             """;
         using var workspace = new AdhocWorkspace();
         var project = SharedKernelStyleCodeFixProviderTestsHelpers.CreateProject(workspace, source, out var documentId, assemblyName: "SharedKernel.Style.CodeFixes.Tests.Generic");
-        var document = Assert.IsType<Document>(project.GetDocument(documentId));
+        var document = (project.GetDocument(documentId)).ShouldBeOfType<Document>();
         var root = await document.GetSyntaxRootAsync(TestContext.Current.CancellationToken);
-        Assert.NotNull(root);
+        _ = (root).ShouldNotBeNull();
         var targetMethod = root.DescendantNodes().OfType<MethodDeclarationSyntax>().First();
 
         // Act
@@ -1267,9 +1262,9 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         var nonGenericIndex = updatedText.IndexOf("Load(string value)", StringComparison.Ordinal);
         var genericIndex = updatedText.IndexOf("Load<T>(T value)", StringComparison.Ordinal);
-        Assert.True(nonGenericIndex >= 0);
-        Assert.True(genericIndex >= 0);
-        Assert.True(nonGenericIndex < genericIndex);
+        (nonGenericIndex >= 0).ShouldBeTrue();
+        (genericIndex >= 0).ShouldBeTrue();
+        (nonGenericIndex < genericIndex).ShouldBeTrue();
     }
 
     [Fact]
@@ -1299,14 +1294,14 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             "ex is not OperationCanceledException");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Contains("using SharedKernel.BuildingBlocks;", updatedText, StringComparison.Ordinal);
-        Assert.Contains("catch (Exception ex) when (ex.ShouldHandleAsFailure(ct))", updatedText, StringComparison.Ordinal);
-        Assert.DoesNotContain("ex is not OperationCanceledException", updatedText, StringComparison.Ordinal);
+        (updatedText).ShouldContain("using SharedKernel.BuildingBlocks;", StringComparison.Ordinal);
+        (updatedText).ShouldContain("catch (Exception ex) when (ex.ShouldHandleAsFailure(ct))", StringComparison.Ordinal);
+        (updatedText).ShouldNotContain("ex is not OperationCanceledException", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1338,15 +1333,13 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             "ex is not OperationCanceledException");
 
         // Act
-        var codeAction = Assert.Single(await workspace.GetCodeActions(provider, diagnostic));
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        Assert.Equal(
-            updatedText.IndexOf("using SharedKernel.BuildingBlocks;", StringComparison.Ordinal),
-            updatedText.LastIndexOf("using SharedKernel.BuildingBlocks;", StringComparison.Ordinal));
-        Assert.Contains("catch (Exception ex) when (ex.ShouldHandleAsFailure(ct))", updatedText, StringComparison.Ordinal);
+        (updatedText.LastIndexOf("using SharedKernel.BuildingBlocks;", StringComparison.Ordinal)).ShouldBe(updatedText.IndexOf("using SharedKernel.BuildingBlocks;", StringComparison.Ordinal));
+        (updatedText).ShouldContain("catch (Exception ex) when (ex.ShouldHandleAsFailure(ct))", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1379,7 +1372,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        Assert.Empty(codeActions);
+        (codeActions).ShouldBeEmpty();
     }
 
 }

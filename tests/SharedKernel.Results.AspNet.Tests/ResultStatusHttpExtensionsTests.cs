@@ -23,7 +23,7 @@ public sealed class ResultStatusHttpExtensionsTests
         var actual = status.ToHttpStatusCode();
 
         // Assert
-        Assert.Equal(expectedStatusCode, actual);
+        (actual).ShouldBe(expectedStatusCode);
     }
 
     [Fact]
@@ -33,10 +33,10 @@ public sealed class ResultStatusHttpExtensionsTests
         var unknownStatus = Enum.Parse<ResultStatus>("2147483647");
 
         // Act
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => unknownStatus.ToHttpStatusCode());
+        var exception = ((Func<object?>)(() => unknownStatus.ToHttpStatusCode())).ShouldThrow<ArgumentOutOfRangeException>();
 
         // Assert
-        Assert.Equal("status", exception.ParamName);
+        (exception.ParamName).ShouldBe("status");
     }
 
     [Fact]
@@ -46,10 +46,10 @@ public sealed class ResultStatusHttpExtensionsTests
         var status = ResultStatus.Unknown;
 
         // Act
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => status.ToHttpStatusCode());
+        var exception = ((Func<object?>)(() => status.ToHttpStatusCode())).ShouldThrow<ArgumentOutOfRangeException>();
 
         // Assert
-        Assert.Equal("status", exception.ParamName);
-        Assert.Equal(status, exception.ActualValue);
+        (exception.ParamName).ShouldBe("status");
+        (exception.ActualValue).ShouldBe(status);
     }
 }

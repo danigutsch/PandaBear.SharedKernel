@@ -141,6 +141,12 @@
           "xunit.v3.extensibility.core": "[3.2.2]",
           "xunit.v3.runner.common": "[3.2.2]"
         }
+      },
+      "sharedkernel.testing.assertions": {
+        "type": "Project",
+        "dependencies": {
+          "xunit.v3.assert": "[3.2.2, )"
+        }
       }
     }
   }

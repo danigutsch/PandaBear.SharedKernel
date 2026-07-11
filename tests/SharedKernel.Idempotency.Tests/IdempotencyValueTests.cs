@@ -12,8 +12,8 @@ public sealed class IdempotencyValueTests
         var key = IdempotencyKey.From(value);
 
         // Assert
-        Assert.Equal("message-123", key.Value);
-        Assert.Equal("message-123", key.ToString());
+        (key.Value).ShouldBe("message-123");
+        (key.ToString()).ShouldBe("message-123");
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public sealed class IdempotencyValueTests
         string? value = null;
 
         // Act, Assert
-        Assert.Throws<ArgumentNullException>(() => IdempotencyKey.From(value));
+        ((Func<object?>)(() => IdempotencyKey.From(value))).ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -33,8 +33,8 @@ public sealed class IdempotencyValueTests
         var key = default(IdempotencyKey);
 
         // Act, Assert
-        Assert.Throws<InvalidOperationException>(() => key.Value);
-        Assert.Throws<InvalidOperationException>(() => key.ToString());
+        ((Func<object?>)(() => key.Value)).ShouldThrow<InvalidOperationException>();
+        ((Func<object?>)(() => key.ToString())).ShouldThrow<InvalidOperationException>();
     }
 
     [Theory]
@@ -43,7 +43,7 @@ public sealed class IdempotencyValueTests
     public void Key_from_rejects_blank_values(string value)
     {
         // Arrange, Act, Assert
-        Assert.Throws<ArgumentException>(() => IdempotencyKey.From(value));
+        ((Func<object?>)(() => IdempotencyKey.From(value))).ShouldThrow<ArgumentException>();
     }
 
     [Theory]
@@ -56,7 +56,7 @@ public sealed class IdempotencyValueTests
         var key = IdempotencyKey.From(value);
 
         // Assert
-        Assert.Equal(value, key.Value);
+        (key.Value).ShouldBe(value);
     }
 
     [Theory]
@@ -67,7 +67,7 @@ public sealed class IdempotencyValueTests
     public void Key_from_rejects_values_outside_token_format(string value)
     {
         // Arrange, Act, Assert
-        Assert.Throws<ArgumentException>(() => IdempotencyKey.From(value));
+        ((Func<object?>)(() => IdempotencyKey.From(value))).ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public sealed class IdempotencyValueTests
         var value = new string('a', 256);
 
         // Act, Assert
-        Assert.Throws<ArgumentException>(() => IdempotencyKey.From(value));
+        ((Func<object?>)(() => IdempotencyKey.From(value))).ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -90,8 +90,8 @@ public sealed class IdempotencyValueTests
         var scope = IdempotencyScope.From(value);
 
         // Assert
-        Assert.Equal("inbox:tour-created", scope.Value);
-        Assert.Equal("inbox:tour-created", scope.ToString());
+        (scope.Value).ShouldBe("inbox:tour-created");
+        (scope.ToString()).ShouldBe("inbox:tour-created");
     }
 
     [Fact]
@@ -101,7 +101,7 @@ public sealed class IdempotencyValueTests
         string? value = null;
 
         // Act, Assert
-        Assert.Throws<ArgumentNullException>(() => IdempotencyScope.From(value));
+        ((Func<object?>)(() => IdempotencyScope.From(value))).ShouldThrow<ArgumentNullException>();
     }
 
     [Theory]
@@ -110,7 +110,7 @@ public sealed class IdempotencyValueTests
     public void Scope_from_rejects_blank_values(string value)
     {
         // Arrange, Act, Assert
-        Assert.Throws<ArgumentException>(() => IdempotencyScope.From(value));
+        ((Func<object?>)(() => IdempotencyScope.From(value))).ShouldThrow<ArgumentException>();
     }
 
     [Fact]
@@ -120,8 +120,8 @@ public sealed class IdempotencyValueTests
         var scope = default(IdempotencyScope);
 
         // Act, Assert
-        Assert.Throws<InvalidOperationException>(() => scope.Value);
-        Assert.Throws<InvalidOperationException>(() => scope.ToString());
+        ((Func<object?>)(() => scope.Value)).ShouldThrow<InvalidOperationException>();
+        ((Func<object?>)(() => scope.ToString())).ShouldThrow<InvalidOperationException>();
     }
 
     [Fact]
@@ -135,7 +135,7 @@ public sealed class IdempotencyValueTests
         var operation = new IdempotencyOperation(scope, key);
 
         // Assert
-        Assert.Equal(scope, operation.Scope);
-        Assert.Equal(key, operation.Key);
+        (operation.Scope).ShouldBe(scope);
+        (operation.Key).ShouldBe(key);
     }
 }

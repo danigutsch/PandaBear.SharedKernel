@@ -11,8 +11,8 @@ internal static class GeneratorDiscoveryReportTestsHelpers
         foreach (var expectedSegment in expectedSegments)
         {
             var nextIndex = actual.IndexOf(expectedSegment, currentIndex + 1, StringComparison.Ordinal);
-            Assert.True(nextIndex >= 0, $"Expected segment not found: {expectedSegment}");
-            Assert.True(nextIndex > currentIndex, $"Expected segment out of order: {expectedSegment}");
+            (nextIndex >= 0).ShouldBeTrue($"Expected segment not found: {expectedSegment}");
+            (nextIndex > currentIndex).ShouldBeTrue($"Expected segment out of order: {expectedSegment}");
             currentIndex = nextIndex;
         }
     }

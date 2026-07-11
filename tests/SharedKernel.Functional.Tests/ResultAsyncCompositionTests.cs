@@ -14,8 +14,8 @@ public sealed class ResultAsyncCompositionTests
         var mapped = await result.Map(static value => Task.FromResult(value.Length));
 
         // Assert
-        Assert.True(mapped.IsSuccess);
-        Assert.Equal(5, mapped.Value);
+        (mapped.IsSuccess).ShouldBeTrue();
+        (mapped.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -28,10 +28,10 @@ public sealed class ResultAsyncCompositionTests
         var mapped = await result.Map(static value => ValueTask.FromResult(value.Length));
 
         // Assert
-        Assert.True(mapped.IsFailure);
-        Assert.True(mapped.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.Equal("Unexpected failure", error.Detail);
+        (mapped.IsFailure).ShouldBeTrue();
+        (mapped.TryGetError(out var error)).ShouldBeTrue();
+        _ = (error).ShouldNotBeNull();
+        (error.Detail).ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -44,10 +44,10 @@ public sealed class ResultAsyncCompositionTests
         var mapped = await result.Map(static value => Task.FromResult(value.Length));
 
         // Assert
-        Assert.True(mapped.IsFailure);
-        Assert.True(mapped.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.Equal("Unexpected failure", error.Detail);
+        (mapped.IsFailure).ShouldBeTrue();
+        (mapped.TryGetError(out var error)).ShouldBeTrue();
+        _ = (error).ShouldNotBeNull();
+        (error.Detail).ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -60,8 +60,8 @@ public sealed class ResultAsyncCompositionTests
         var bound = await result.Bind(static value => Task.FromResult(Result.Ok(value.Length)));
 
         // Assert
-        Assert.True(bound.IsSuccess);
-        Assert.Equal(5, bound.Value);
+        (bound.IsSuccess).ShouldBeTrue();
+        (bound.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -74,8 +74,8 @@ public sealed class ResultAsyncCompositionTests
         var bound = await result.Bind(static value => ValueTask.FromResult(Result.Ok(value.Length)));
 
         // Assert
-        Assert.True(bound.IsSuccess);
-        Assert.Equal(5, bound.Value);
+        (bound.IsSuccess).ShouldBeTrue();
+        (bound.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public sealed class ResultAsyncCompositionTests
             static error => Task.FromResult(error.Detail.Length));
 
         // Assert
-        Assert.Equal("Unexpected failure".Length, matched);
+        (matched).ShouldBe("Unexpected failure".Length);
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public sealed class ResultAsyncCompositionTests
             static error => Task.FromResult(error.Detail.Length));
 
         // Assert
-        Assert.Equal(5, matched);
+        (matched).ShouldBe(5);
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public sealed class ResultAsyncCompositionTests
             static error => ValueTask.FromResult(error.Detail.Length));
 
         // Assert
-        Assert.Equal(5, matched);
+        (matched).ShouldBe(5);
     }
 
     [Fact]
@@ -135,7 +135,7 @@ public sealed class ResultAsyncCompositionTests
             static error => ValueTask.FromResult(error.Detail));
 
         // Assert
-        Assert.Equal("success", matched);
+        (matched).ShouldBe("success");
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public sealed class ResultAsyncCompositionTests
             static error => Task.FromResult(error.Detail));
 
         // Assert
-        Assert.Equal("Unexpected failure", matched);
+        (matched).ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -165,7 +165,7 @@ public sealed class ResultAsyncCompositionTests
             static error => ValueTask.FromResult(error.Detail));
 
         // Assert
-        Assert.Equal("Unexpected failure", matched);
+        (matched).ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -178,8 +178,8 @@ public sealed class ResultAsyncCompositionTests
         var mapped = await resultTask.Map(static value => value.Length);
 
         // Assert
-        Assert.True(mapped.IsSuccess);
-        Assert.Equal(5, mapped.Value);
+        (mapped.IsSuccess).ShouldBeTrue();
+        (mapped.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -192,8 +192,8 @@ public sealed class ResultAsyncCompositionTests
         var bound = await resultTask.Bind(static value => ValueTask.FromResult(Result.Ok(value.Length)));
 
         // Assert
-        Assert.True(bound.IsSuccess);
-        Assert.Equal(5, bound.Value);
+        (bound.IsSuccess).ShouldBeTrue();
+        (bound.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -208,7 +208,7 @@ public sealed class ResultAsyncCompositionTests
             static error => ValueTask.FromResult(error.Detail.Length));
 
         // Assert
-        Assert.Equal("Unexpected failure".Length, matched);
+        (matched).ShouldBe("Unexpected failure".Length);
     }
 
     [Fact]
@@ -221,8 +221,8 @@ public sealed class ResultAsyncCompositionTests
         var mapped = await resultTask.Map(static value => Task.FromResult(value.Length));
 
         // Assert
-        Assert.True(mapped.IsSuccess);
-        Assert.Equal(5, mapped.Value);
+        (mapped.IsSuccess).ShouldBeTrue();
+        (mapped.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -235,10 +235,10 @@ public sealed class ResultAsyncCompositionTests
         var mapped = await resultTask.Map(static value => ValueTask.FromResult(value.Length));
 
         // Assert
-        Assert.True(mapped.IsFailure);
-        Assert.True(mapped.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.Equal("Unexpected failure", error.Detail);
+        (mapped.IsFailure).ShouldBeTrue();
+        (mapped.TryGetError(out var error)).ShouldBeTrue();
+        _ = (error).ShouldNotBeNull();
+        (error.Detail).ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -251,8 +251,8 @@ public sealed class ResultAsyncCompositionTests
         var mapped = await resultTask.Map(static value => ValueTask.FromResult(value.Length));
 
         // Assert
-        Assert.True(mapped.IsSuccess);
-        Assert.Equal(5, mapped.Value);
+        (mapped.IsSuccess).ShouldBeTrue();
+        (mapped.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -265,8 +265,8 @@ public sealed class ResultAsyncCompositionTests
         var bound = await resultTask.Bind(static value => Task.FromResult(Result.Ok(value.Length)));
 
         // Assert
-        Assert.True(bound.IsSuccess);
-        Assert.Equal(5, bound.Value);
+        (bound.IsSuccess).ShouldBeTrue();
+        (bound.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -279,8 +279,8 @@ public sealed class ResultAsyncCompositionTests
         var mapped = await resultTask.Map(static value => value.Length);
 
         // Assert
-        Assert.True(mapped.IsSuccess);
-        Assert.Equal(5, mapped.Value);
+        (mapped.IsSuccess).ShouldBeTrue();
+        (mapped.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -293,8 +293,8 @@ public sealed class ResultAsyncCompositionTests
         var mapped = await resultTask.Map(static value => Task.FromResult(value.Length));
 
         // Assert
-        Assert.True(mapped.IsSuccess);
-        Assert.Equal(5, mapped.Value);
+        (mapped.IsSuccess).ShouldBeTrue();
+        (mapped.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -307,8 +307,8 @@ public sealed class ResultAsyncCompositionTests
         var bound = await resultTask.Bind(static value => ValueTask.FromResult(Result.Ok(value.Length)));
 
         // Assert
-        Assert.True(bound.IsSuccess);
-        Assert.Equal(5, bound.Value);
+        (bound.IsSuccess).ShouldBeTrue();
+        (bound.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -321,8 +321,8 @@ public sealed class ResultAsyncCompositionTests
         var bound = await resultTask.Bind(static value => Result.Ok(value.Length));
 
         // Assert
-        Assert.True(bound.IsSuccess);
-        Assert.Equal(5, bound.Value);
+        (bound.IsSuccess).ShouldBeTrue();
+        (bound.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -335,8 +335,8 @@ public sealed class ResultAsyncCompositionTests
         var bound = await resultTask.Bind(static value => Task.FromResult(Result.Ok(value.Length)));
 
         // Assert
-        Assert.True(bound.IsSuccess);
-        Assert.Equal(5, bound.Value);
+        (bound.IsSuccess).ShouldBeTrue();
+        (bound.Value).ShouldBe(5);
     }
 
     [Fact]
@@ -349,8 +349,8 @@ public sealed class ResultAsyncCompositionTests
         var ensured = await result.Ensure(static value => Task.FromResult(value.Length == 5), new ResultError("Length mismatch"));
 
         // Assert
-        Assert.True(ensured.IsSuccess);
-        Assert.Equal("porto", ensured.Value);
+        (ensured.IsSuccess).ShouldBeTrue();
+        (ensured.Value).ShouldBe("porto");
     }
 
     [Fact]
@@ -364,10 +364,10 @@ public sealed class ResultAsyncCompositionTests
         var ensured = await result.Ensure(static value => ValueTask.FromResult(value.Length == 4), failure);
 
         // Assert
-        Assert.True(ensured.IsFailure);
-        Assert.True(ensured.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.Equal(failure, error);
+        (ensured.IsFailure).ShouldBeTrue();
+        (ensured.TryGetError(out var error)).ShouldBeTrue();
+        _ = (error).ShouldNotBeNull();
+        (error).ShouldBe(failure);
     }
 
     [Fact]
@@ -387,12 +387,12 @@ public sealed class ResultAsyncCompositionTests
         var ensured = await result.Ensure(static value => Task.FromResult(value.Length == 4), failure);
 
         // Assert
-        Assert.True(ensured.IsFailure);
-        Assert.Equal(ResultStatus.Invalid, ensured.Status);
-        Assert.True(ensured.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.NotNull(error.ValidationErrors);
-        Assert.Equal(["Name is required"], error.ValidationErrors["Name"]);
+        (ensured.IsFailure).ShouldBeTrue();
+        (ensured.Status).ShouldBe(ResultStatus.Invalid);
+        (ensured.TryGetError(out var error)).ShouldBeTrue();
+        _ = (error).ShouldNotBeNull();
+        (error.ValidationErrors).ShouldNotBeNull();
+        (error.ValidationErrors["Name"]).ShouldBe(["Name is required"]);
     }
 
     [Fact]
@@ -405,8 +405,8 @@ public sealed class ResultAsyncCompositionTests
         var ensured = await resultTask.Ensure(static value => value.Length == 5, new ResultError("Length mismatch"));
 
         // Assert
-        Assert.True(ensured.IsSuccess);
-        Assert.Equal("porto", ensured.Value);
+        (ensured.IsSuccess).ShouldBeTrue();
+        (ensured.Value).ShouldBe("porto");
     }
 
     [Fact]
@@ -419,10 +419,10 @@ public sealed class ResultAsyncCompositionTests
         var ensured = await resultTask.Ensure(static _ => true, new ResultError("Should not be used"));
 
         // Assert
-        Assert.True(ensured.IsFailure);
-        Assert.True(ensured.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.Equal("Unexpected failure", error.Detail);
+        (ensured.IsFailure).ShouldBeTrue();
+        (ensured.TryGetError(out var error)).ShouldBeTrue();
+        _ = (error).ShouldNotBeNull();
+        (error.Detail).ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -435,8 +435,8 @@ public sealed class ResultAsyncCompositionTests
         var ensured = await resultTask.Ensure(static value => value.Length == 5, new ResultError("Length mismatch"));
 
         // Assert
-        Assert.True(ensured.IsSuccess);
-        Assert.Equal("porto", ensured.Value);
+        (ensured.IsSuccess).ShouldBeTrue();
+        (ensured.Value).ShouldBe("porto");
     }
 
     [Fact]
@@ -449,10 +449,10 @@ public sealed class ResultAsyncCompositionTests
         var ensured = await resultTask.Ensure(static _ => true, new ResultError("Should not be used"));
 
         // Assert
-        Assert.True(ensured.IsFailure);
-        Assert.True(ensured.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.Equal("Unexpected failure", error.Detail);
+        (ensured.IsFailure).ShouldBeTrue();
+        (ensured.TryGetError(out var error)).ShouldBeTrue();
+        _ = (error).ShouldNotBeNull();
+        (error.Detail).ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -465,8 +465,8 @@ public sealed class ResultAsyncCompositionTests
         var ensured = await resultTask.Ensure(static value => Task.FromResult(value.Length == 5), new ResultError("Length mismatch"));
 
         // Assert
-        Assert.True(ensured.IsSuccess);
-        Assert.Equal("porto", ensured.Value);
+        (ensured.IsSuccess).ShouldBeTrue();
+        (ensured.Value).ShouldBe("porto");
     }
 
     [Fact]
@@ -479,8 +479,8 @@ public sealed class ResultAsyncCompositionTests
         var ensured = await resultTask.Ensure(static value => ValueTask.FromResult(value.Length == 5), new ResultError("Length mismatch"));
 
         // Assert
-        Assert.True(ensured.IsSuccess);
-        Assert.Equal("porto", ensured.Value);
+        (ensured.IsSuccess).ShouldBeTrue();
+        (ensured.Value).ShouldBe("porto");
     }
 
     [Fact]
@@ -495,7 +495,7 @@ public sealed class ResultAsyncCompositionTests
             static error => Task.FromResult(error.Detail.Length));
 
         // Assert
-        Assert.Equal("Unexpected failure".Length, matched);
+        (matched).ShouldBe("Unexpected failure".Length);
     }
 
     [Fact]
@@ -510,7 +510,7 @@ public sealed class ResultAsyncCompositionTests
             static error => error.Detail.Length);
 
         // Assert
-        Assert.Equal("Unexpected failure".Length, matched);
+        (matched).ShouldBe("Unexpected failure".Length);
     }
 
     [Fact]
@@ -525,7 +525,7 @@ public sealed class ResultAsyncCompositionTests
             static error => ValueTask.FromResult(error.Detail.Length));
 
         // Assert
-        Assert.Equal("Unexpected failure".Length, matched);
+        (matched).ShouldBe("Unexpected failure".Length);
     }
 
     [Fact]
@@ -540,7 +540,7 @@ public sealed class ResultAsyncCompositionTests
             static error => Task.FromResult(error.Detail.Length));
 
         // Assert
-        Assert.Equal("Unexpected failure".Length, matched);
+        (matched).ShouldBe("Unexpected failure".Length);
     }
 
     [Fact]
@@ -555,7 +555,7 @@ public sealed class ResultAsyncCompositionTests
             static error => error.Detail);
 
         // Assert
-        Assert.Equal("Unexpected failure", matched);
+        (matched).ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -570,7 +570,7 @@ public sealed class ResultAsyncCompositionTests
             static error => Task.FromResult(error.Detail));
 
         // Assert
-        Assert.Equal("success", matched);
+        (matched).ShouldBe("success");
     }
 
     [Fact]
@@ -585,7 +585,7 @@ public sealed class ResultAsyncCompositionTests
             static error => Task.FromResult(error.Detail));
 
         // Assert
-        Assert.Equal("success", matched);
+        (matched).ShouldBe("success");
     }
 
     [Fact]
@@ -600,7 +600,7 @@ public sealed class ResultAsyncCompositionTests
             static error => ValueTask.FromResult(error.Detail));
 
         // Assert
-        Assert.Equal("success", matched);
+        (matched).ShouldBe("success");
     }
 
     [Fact]
@@ -615,7 +615,7 @@ public sealed class ResultAsyncCompositionTests
             static error => error.Detail);
 
         // Assert
-        Assert.Equal("Unexpected failure", matched);
+        (matched).ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -630,47 +630,47 @@ public sealed class ResultAsyncCompositionTests
             static error => ValueTask.FromResult(error.Detail));
 
         // Assert
-        Assert.Equal("success", matched);
+        (matched).ShouldBe("success");
     }
 
     [Fact]
     public async Task Rejects_a_null_Task_result_source_for_map()
     {
         // Arrange
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ResultTaskExtensions.Map(NullArgumentData.Task<Result<string>>(), static value => value.Length));
+        var exception = await ((Func<Task>)(() => ResultTaskExtensions.Map(NullArgumentData.Task<Result<string>>(), static value => value.Length))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("source", exception.ParamName);
+        (exception.ParamName).ShouldBe("source");
     }
 
     [Fact]
     public async Task Rejects_a_null_Task_result_source_for_bind()
     {
         // Arrange
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ResultTaskExtensions.Bind(NullArgumentData.Task<Result<string>>(), static value => Result.Ok(value.Length)));
+        var exception = await ((Func<Task>)(() => ResultTaskExtensions.Bind(NullArgumentData.Task<Result<string>>(), static value => Result.Ok(value.Length)))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("source", exception.ParamName);
+        (exception.ParamName).ShouldBe("source");
     }
 
     [Fact]
     public async Task Rejects_a_null_Task_result_source_for_ensure()
     {
         // Arrange
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ResultTaskExtensions.Ensure(NullArgumentData.Task<Result<string>>(), static value => value.Length == 5, new ResultError("Length mismatch")));
+        var exception = await ((Func<Task>)(() => ResultTaskExtensions.Ensure(NullArgumentData.Task<Result<string>>(), static value => value.Length == 5, new ResultError("Length mismatch")))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("source", exception.ParamName);
+        (exception.ParamName).ShouldBe("source");
     }
 
     [Fact]
     public async Task Rejects_a_null_Task_result_source_for_match()
     {
         // Arrange
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => ResultTaskExtensions.Match(NullArgumentData.Task<Result<string>>(), static value => value.Length, static error => error.Detail.Length));
+        var exception = await ((Func<Task>)(() => ResultTaskExtensions.Match(NullArgumentData.Task<Result<string>>(), static value => value.Length, static error => error.Detail.Length))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("source", exception.ParamName);
+        (exception.ParamName).ShouldBe("source");
     }
 
     [Fact]
@@ -678,10 +678,10 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => result.Map(NullArgumentData.TaskFunc<string, int>()));
+        var exception = await ((Func<Task>)(() => result.Map(NullArgumentData.TaskFunc<string, int>()))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("map", exception.ParamName);
+        (exception.ParamName).ShouldBe("map");
     }
 
     [Fact]
@@ -689,10 +689,10 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await result.Map(NullArgumentData.ValueTaskFunc<string, int>()));
+        var exception = await ((Func<Task>)(async () => await result.Map(NullArgumentData.ValueTaskFunc<string, int>()))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("map", exception.ParamName);
+        (exception.ParamName).ShouldBe("map");
     }
 
     [Fact]
@@ -700,10 +700,10 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => result.Bind(NullArgumentData.TaskFunc<string, Result<int>>()));
+        var exception = await ((Func<Task>)(() => result.Bind(NullArgumentData.TaskFunc<string, Result<int>>()))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("bind", exception.ParamName);
+        (exception.ParamName).ShouldBe("bind");
     }
 
     [Fact]
@@ -711,10 +711,10 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await result.Bind(NullArgumentData.ValueTaskFunc<string, Result<int>>()));
+        var exception = await ((Func<Task>)(async () => await result.Bind(NullArgumentData.ValueTaskFunc<string, Result<int>>()))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("bind", exception.ParamName);
+        (exception.ParamName).ShouldBe("bind");
     }
 
     [Fact]
@@ -722,10 +722,10 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => result.Match(NullArgumentData.TaskFunc<string, int>(), static error => Task.FromResult(error.Detail.Length)));
+        var exception = await ((Func<Task>)(() => result.Match(NullArgumentData.TaskFunc<string, int>(), static error => Task.FromResult(error.Detail.Length)))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("whenSuccess", exception.ParamName);
+        (exception.ParamName).ShouldBe("whenSuccess");
     }
 
     [Fact]
@@ -733,10 +733,10 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await result.Match(NullArgumentData.ValueTaskFunc<string, int>(), static error => ValueTask.FromResult(error.Detail.Length)));
+        var exception = await ((Func<Task>)(async () => await result.Match(NullArgumentData.ValueTaskFunc<string, int>(), static error => ValueTask.FromResult(error.Detail.Length)))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("whenSuccess", exception.ParamName);
+        (exception.ParamName).ShouldBe("whenSuccess");
     }
 
     [Fact]
@@ -744,10 +744,10 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok();
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => result.Match(NullArgumentData.TaskFactory<int>(), static error => Task.FromResult(error.Detail.Length)));
+        var exception = await ((Func<Task>)(() => result.Match(NullArgumentData.TaskFactory<int>(), static error => Task.FromResult(error.Detail.Length)))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("whenSuccess", exception.ParamName);
+        (exception.ParamName).ShouldBe("whenSuccess");
     }
 
     [Fact]
@@ -755,10 +755,10 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok();
-        var exception = await Assert.ThrowsAsync<ArgumentNullException>(async () => await result.Match(NullArgumentData.ValueTaskFactory<int>(), static error => ValueTask.FromResult(error.Detail.Length)));
+        var exception = await ((Func<Task>)(async () => await result.Match(NullArgumentData.ValueTaskFactory<int>(), static error => ValueTask.FromResult(error.Detail.Length)))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("whenSuccess", exception.ParamName);
+        (exception.ParamName).ShouldBe("whenSuccess");
     }
 
     [Fact]
@@ -768,10 +768,10 @@ public sealed class ResultAsyncCompositionTests
         var result = default(Result);
 
         // Act
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => result.Match(static () => Task.FromResult("success"), static error => Task.FromResult(error.Detail)));
+        var exception = await ((Func<Task>)(() => result.Match(static () => Task.FromResult("success"), static error => Task.FromResult(error.Detail)))).ShouldThrow<InvalidOperationException>();
 
         // Assert
-        Assert.Equal("Result status is not initialized.", exception.Message);
+        (exception.Message).ShouldBe("Result status is not initialized.");
     }
 
     [Fact]
@@ -781,9 +781,9 @@ public sealed class ResultAsyncCompositionTests
         var result = default(Result<string>);
 
         // Act
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () => await result.Match(static value => ValueTask.FromResult(value.Length), static error => ValueTask.FromResult(error.Detail.Length)));
+        var exception = await ((Func<Task>)(async () => await result.Match(static value => ValueTask.FromResult(value.Length), static error => ValueTask.FromResult(error.Detail.Length)))).ShouldThrow<InvalidOperationException>();
 
         // Assert
-        Assert.Equal("Result status is not initialized.", exception.Message);
+        (exception.Message).ShouldBe("Result status is not initialized.");
     }
 }

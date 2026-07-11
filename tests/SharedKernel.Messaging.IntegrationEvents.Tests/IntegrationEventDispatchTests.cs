@@ -1,5 +1,4 @@
 using SharedKernel.Mediator;
-using SharedKernel.Testing.Assertions;
 
 namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 

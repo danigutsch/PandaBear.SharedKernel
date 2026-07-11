@@ -1,6 +1,5 @@
 using Microsoft.OpenApi;
 using System.Reflection;
-using Xunit;
 
 namespace SharedKernel.OpenApi.Tests;
 
@@ -75,15 +74,15 @@ internal static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
 
     public static OpenApiSchema GetMultipartSchema(OpenApiDocument document, string path)
     {
-        Assert.True(document.Paths.TryGetValue(path, out var pathItem), $"Expected OpenAPI path '{path}' to exist.");
-        Assert.NotNull(pathItem);
-        Assert.NotNull(pathItem.Operations);
-        Assert.True(pathItem.Operations.TryGetValue(HttpMethod.Post, out var operation), $"Expected POST operation for '{path}'.");
-        Assert.NotNull(operation);
+        (document.Paths.TryGetValue(path, out var pathItem)).ShouldBeTrue($"Expected OpenAPI path '{path}' to exist.");
+        _ = (pathItem).ShouldNotBeNull();
+        (pathItem.Operations).ShouldNotBeNull();
+        (pathItem.Operations.TryGetValue(HttpMethod.Post, out var operation)).ShouldBeTrue($"Expected POST operation for '{path}'.");
+        _ = (operation).ShouldNotBeNull();
 
         var schema = operation.RequestBody?.Content?["multipart/form-data"].Schema;
 
-        Assert.NotNull(schema);
-        return Assert.IsType<OpenApiSchema>(schema);
+        _ = (schema).ShouldNotBeNull();
+        return (schema).ShouldBeOfType<OpenApiSchema>();
     }
 }

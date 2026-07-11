@@ -1,8 +1,8 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.FunctorLawsTheory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.FunctorLawsTheory)]
 public sealed class OptionFunctorLawTests
 {
     [Fact]
@@ -15,7 +15,7 @@ public sealed class OptionFunctorLawTests
         var mapped = option.Map(static value => value);
 
         // Assert
-        Assert.Equal(option, mapped);
+        mapped.ShouldBe(option);
     }
 
     [Fact]
@@ -29,6 +29,6 @@ public sealed class OptionFunctorLawTests
         var chained = option.Map(static value => value.Trim()).Map(static value => value.ToUpperInvariant());
 
         // Assert
-        Assert.Equal(composed, chained);
+        chained.ShouldBe(composed);
     }
 }

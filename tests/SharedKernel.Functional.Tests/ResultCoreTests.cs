@@ -1,7 +1,7 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class ResultCoreTests
 {
     [Fact]
@@ -12,10 +12,10 @@ public sealed class ResultCoreTests
         var result = Result.Ok();
 
         // Assert
-        Assert.True(result.IsSuccess);
-        Assert.False(result.IsFailure);
-        Assert.Equal(ResultStatus.Ok, result.Status);
-        Assert.Null(result.ErrorDetails);
+        result.IsSuccess.ShouldBeTrue();
+        result.IsFailure.ShouldBeFalse();
+        result.Status.ShouldBe(ResultStatus.Ok);
+        result.ErrorDetails.ShouldBeNull();
     }
 
     [Fact]
@@ -26,15 +26,15 @@ public sealed class ResultCoreTests
         var result = Result.Invalid("Validation failed", "name", "Name is required");
 
         // Assert
-        Assert.True(result.IsFailure);
-        Assert.False(result.IsSuccess);
-        Assert.Equal(ResultStatus.Invalid, result.Status);
-        Assert.True(result.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.Equal(ResultErrorCodes.Invalid, error.Code);
-        Assert.Equal("Validation failed", error.Detail);
-        Assert.NotNull(error.ValidationErrors);
-        Assert.Equal(["Name is required"], error.ValidationErrors["name"]);
+        result.IsFailure.ShouldBeTrue();
+        result.IsSuccess.ShouldBeFalse();
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        result.TryGetError(out var error).ShouldBeTrue();
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ResultErrorCodes.Invalid);
+        error.Detail.ShouldBe("Validation failed");
+        error.ValidationErrors.ShouldNotBeNull();
+        (error.ValidationErrors["name"]).ShouldBe(["Name is required"]);
     }
 
     [Fact]
@@ -51,13 +51,13 @@ public sealed class ResultCoreTests
         var result = Result.Invalid("Validation failed", validationErrors);
 
         // Assert
-        Assert.Equal(ResultStatus.Invalid, result.Status);
+        result.Status.ShouldBe(ResultStatus.Invalid);
         var error = result.ErrorDetails;
-        Assert.NotNull(error);
-        Assert.Equal(ResultErrorCodes.Invalid, error.Code);
-        Assert.NotNull(error.ValidationErrors);
-        Assert.Equal(["Name is required"], error.ValidationErrors["name"]);
-        Assert.Equal(["Email is invalid"], error.ValidationErrors["email"]);
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ResultErrorCodes.Invalid);
+        error.ValidationErrors.ShouldNotBeNull();
+        (error.ValidationErrors["name"]).ShouldBe(["Name is required"]);
+        (error.ValidationErrors["email"]).ShouldBe(["Email is invalid"]);
     }
 
     [Fact]
@@ -68,10 +68,10 @@ public sealed class ResultCoreTests
         var result = Result.Ok("porto");
 
         // Assert
-        Assert.True(result.IsSuccess);
-        Assert.Equal(ResultStatus.Ok, result.Status);
-        Assert.Equal("porto", result.Value);
-        Assert.Null(result.ErrorDetails);
+        result.IsSuccess.ShouldBeTrue();
+        result.Status.ShouldBe(ResultStatus.Ok);
+        result.Value.ShouldBe("porto");
+        result.ErrorDetails.ShouldBeNull();
     }
 
     [Fact]
@@ -82,10 +82,10 @@ public sealed class ResultCoreTests
         var result = Result.Created("porto").ToResult();
 
         // Assert
-        Assert.True(result.IsSuccess);
-        Assert.False(result.IsFailure);
-        Assert.Equal(ResultStatus.Created, result.Status);
-        Assert.Null(result.ErrorDetails);
+        result.IsSuccess.ShouldBeTrue();
+        result.IsFailure.ShouldBeFalse();
+        result.Status.ShouldBe(ResultStatus.Created);
+        result.ErrorDetails.ShouldBeNull();
     }
 
     [Fact]
@@ -98,8 +98,8 @@ public sealed class ResultCoreTests
         var hasValue = result.TryGetValue(out var value);
 
         // Assert
-        Assert.True(hasValue);
-        Assert.Equal("porto", value);
+        hasValue.ShouldBeTrue();
+        value.ShouldBe("porto");
     }
 
     [Fact]
@@ -110,12 +110,12 @@ public sealed class ResultCoreTests
         var result = Result.Error<string>("Unexpected failure");
 
         // Assert
-        Assert.True(result.IsFailure);
-        Assert.Equal(ResultStatus.Error, result.Status);
-        Assert.True(result.TryGetError(out var error));
-        Assert.NotNull(error);
-        Assert.Equal(ResultErrorCodes.Error, error.Code);
-        Assert.Equal("Unexpected failure", error.Detail);
+        result.IsFailure.ShouldBeTrue();
+        result.Status.ShouldBe(ResultStatus.Error);
+        result.TryGetError(out var error).ShouldBeTrue();
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ResultErrorCodes.Error);
+        error.Detail.ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -128,8 +128,8 @@ public sealed class ResultCoreTests
         var hasError = result.TryGetError(out var error);
 
         // Assert
-        Assert.False(hasError);
-        Assert.Null(error);
+        hasError.ShouldBeFalse();
+        error.ShouldBeNull();
     }
 
     [Fact]
@@ -142,10 +142,10 @@ public sealed class ResultCoreTests
         var hasError = result.TryGetError(out var error);
 
         // Assert
-        Assert.True(hasError);
-        Assert.NotNull(error);
-        Assert.Equal(ResultErrorCodes.Error, error.Code);
-        Assert.Equal("Unexpected failure", error.Detail);
+        hasError.ShouldBeTrue();
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ResultErrorCodes.Error);
+        error.Detail.ShouldBe("Unexpected failure");
     }
 
     [Fact]
@@ -158,10 +158,10 @@ public sealed class ResultCoreTests
         var hasError = result.TryGetError(out var error);
 
         // Assert
-        Assert.False(hasError);
-        Assert.Null(error);
-        Assert.False(result.IsSuccess);
-        Assert.False(result.IsFailure);
+        hasError.ShouldBeFalse();
+        error.ShouldBeNull();
+        result.IsSuccess.ShouldBeFalse();
+        result.IsFailure.ShouldBeFalse();
     }
 
     [Fact]
@@ -175,12 +175,12 @@ public sealed class ResultCoreTests
         var hasError = result.TryGetError(out var error);
 
         // Assert
-        Assert.False(hasValue);
-        Assert.Null(value);
-        Assert.False(hasError);
-        Assert.Null(error);
-        Assert.False(result.IsSuccess);
-        Assert.False(result.IsFailure);
+        hasValue.ShouldBeFalse();
+        value.ShouldBeNull();
+        hasError.ShouldBeFalse();
+        error.ShouldBeNull();
+        result.IsSuccess.ShouldBeFalse();
+        result.IsFailure.ShouldBeFalse();
     }
 
     [Fact]
@@ -190,10 +190,10 @@ public sealed class ResultCoreTests
         var validationErrors = new Dictionary<string, string[]>();
 
         // Act
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => Result.Invalid("Validation failed", validationErrors));
+        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentOutOfRangeException>();
 
         // Assert
-        Assert.Equal("validationErrors", exception.ParamName);
+        exception.ParamName.ShouldBe("validationErrors");
     }
 
     [Fact]
@@ -206,10 +206,10 @@ public sealed class ResultCoreTests
         };
 
         // Act
-        var exception = Assert.Throws<ArgumentException>(() => Result.Invalid("Validation failed", validationErrors));
+        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentException>();
 
         // Assert
-        Assert.Equal("field", exception.ParamName);
+        exception.ParamName.ShouldBe("field");
     }
 
     [Fact]
@@ -222,10 +222,10 @@ public sealed class ResultCoreTests
         };
 
         // Act
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => Result.Invalid("Validation failed", validationErrors));
+        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentOutOfRangeException>();
 
         // Assert
-        Assert.Equal("validationErrors", exception.ParamName);
+        exception.ParamName.ShouldBe("validationErrors");
     }
 
     [Fact]
@@ -238,10 +238,10 @@ public sealed class ResultCoreTests
         };
 
         // Act
-        var exception = Assert.Throws<ArgumentNullException>(() => Result.Invalid("Validation failed", validationErrors));
+        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("messages", exception.ParamName);
+        exception.ParamName.ShouldBe("messages");
     }
 
     [Theory]
@@ -255,9 +255,9 @@ public sealed class ResultCoreTests
         var exception = Record.Exception(() => Result.Error(detail ?? NullArgumentData.String()));
 
         // Assert
-        Assert.NotNull(exception);
-        var argumentException = Assert.IsAssignableFrom<ArgumentException>(exception);
-        Assert.Equal("detail", argumentException.ParamName);
+        exception.ShouldNotBeNull();
+        var argumentException = exception.ShouldBeAssignableTo<ArgumentException>();
+        argumentException.ParamName.ShouldBe("detail");
     }
 
     [Theory]
@@ -271,9 +271,9 @@ public sealed class ResultCoreTests
         var exception = Record.Exception(() => Result.Invalid("Validation failed", field ?? NullArgumentData.String(), "Name is required"));
 
         // Assert
-        Assert.NotNull(exception);
-        var argumentException = Assert.IsAssignableFrom<ArgumentException>(exception);
-        Assert.Equal("field", argumentException.ParamName);
+        exception.ShouldNotBeNull();
+        var argumentException = exception.ShouldBeAssignableTo<ArgumentException>();
+        argumentException.ParamName.ShouldBe("field");
     }
 
     [Theory]
@@ -287,8 +287,8 @@ public sealed class ResultCoreTests
         var exception = Record.Exception(() => Result.Invalid("Validation failed", "Name", message ?? NullArgumentData.String()));
 
         // Assert
-        Assert.NotNull(exception);
-        var argumentException = Assert.IsAssignableFrom<ArgumentException>(exception);
-        Assert.Equal("message", argumentException.ParamName);
+        exception.ShouldNotBeNull();
+        var argumentException = exception.ShouldBeAssignableTo<ArgumentException>();
+        argumentException.ParamName.ShouldBe("message");
     }
 }

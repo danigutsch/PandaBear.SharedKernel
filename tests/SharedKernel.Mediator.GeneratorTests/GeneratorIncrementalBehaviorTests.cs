@@ -47,7 +47,7 @@ public sealed class GeneratorIncrementalBehaviorTests
             initialCompilation,
             globalOptions: null,
             trackIncrementalGeneratorSteps: true);
-        var originalSyntaxTree = Assert.Single(initialCompilation.SyntaxTrees);
+        var originalSyntaxTree = (initialCompilation.SyntaxTrees).ShouldHaveSingleItem();
         const string defaultUsings = """
             using System;
             using System.Collections.Generic;

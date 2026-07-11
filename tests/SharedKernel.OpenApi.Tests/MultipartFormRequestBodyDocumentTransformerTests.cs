@@ -22,10 +22,10 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/commit");
 
         // Assert
-        Assert.Equal(JsonSchemaType.Object, schema.Type);
-        Assert.NotNull(schema.Properties);
-        Assert.NotNull(schema.AllOf);
-        Assert.DoesNotContain(schema.AllOf, static item => item.Type != JsonSchemaType.Object || item.Properties is null);
+        (schema.Type).ShouldBe(JsonSchemaType.Object);
+        (schema.Properties).ShouldNotBeNull();
+        (schema.AllOf).ShouldNotBeNull();
+        (schema.AllOf).ShouldNotContain(static item => item.Type != JsonSchemaType.Object || item.Properties is null);
 
         var propertyNames = schema.AllOf
             .Where(static item => item.Properties is not null)
@@ -35,11 +35,11 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         var requiredContainer = schema.AllOf
             .FirstOrDefault(static item => item.Properties?.ContainsKey("file") == true);
 
-        Assert.NotNull(requiredContainer);
-        Assert.NotNull(requiredContainer.Required);
-        Assert.Contains("file", requiredContainer.Required);
-        Assert.Contains("file", propertyNames);
-        Assert.Contains("conflictResolutions", propertyNames);
+        _ = (requiredContainer).ShouldNotBeNull();
+        (requiredContainer.Required).ShouldNotBeNull();
+        (requiredContainer.Required).ShouldContain("file");
+        (propertyNames).ShouldContain("file");
+        (propertyNames).ShouldContain("conflictResolutions");
     }
 
     [Fact]
@@ -54,9 +54,9 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/optional");
 
         // Assert
-        Assert.Equal(JsonSchemaType.Object, schema.Type);
-        Assert.NotNull(schema.AllOf);
-        Assert.Null(schema.Required);
+        (schema.Type).ShouldBe(JsonSchemaType.Object);
+        (schema.AllOf).ShouldNotBeNull();
+        (schema.Required).ShouldBeNull();
     }
 
     [Fact]
@@ -78,12 +78,12 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
 
         // Assert
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(normalizedDocument, "/uploads/commit");
-        Assert.Equal(JsonSchemaType.Object, schema.Type);
-        Assert.NotNull(schema.AllOf);
-        Assert.Equal(2, schema.AllOf.Count);
-        Assert.All(schema.AllOf, item => Assert.Equal(JsonSchemaType.Object, item.Type));
-        Assert.Contains(schema.AllOf, static item => item.Properties?.ContainsKey("file") == true);
-        Assert.Contains(schema.AllOf, static item => item.Properties?.ContainsKey("conflictResolutions") == true);
+        (schema.Type).ShouldBe(JsonSchemaType.Object);
+        (schema.AllOf).ShouldNotBeNull();
+        (schema.AllOf.Count).ShouldBe(2);
+        (schema.AllOf).ShouldAllSatisfy(item => (item.Type).ShouldBe(JsonSchemaType.Object));
+        (schema.AllOf).ShouldContain(static item => item.Properties?.ContainsKey("file") == true);
+        (schema.AllOf).ShouldContain(static item => item.Properties?.ContainsKey("conflictResolutions") == true);
     }
 
     [Fact]
@@ -105,9 +105,9 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
 
         // Assert
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(untouchedDocument, "/uploads/commit");
-        Assert.NotNull(schema.AllOf);
-        Assert.Single(schema.AllOf);
-        Assert.Null(schema.Properties);
+        (schema.AllOf).ShouldNotBeNull();
+        (schema.AllOf).ShouldHaveSingleItem();
+        (schema.Properties).ShouldBeNull();
     }
 
     [Fact]
@@ -134,9 +134,9 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             });
 
         // Assert
-        Assert.NotNull(normalizedSchema.AllOf);
-        Assert.Empty(normalizedSchema.AllOf);
-        Assert.Null(normalizedSchema.Required);
+        (normalizedSchema.AllOf).ShouldNotBeNull();
+        (normalizedSchema.AllOf).ShouldBeEmpty();
+        (normalizedSchema.Required).ShouldBeNull();
     }
 
     [Fact]
@@ -158,8 +158,8 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
 
         // Assert
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(normalizedDocument, "/uploads/optional");
-        Assert.NotNull(schema.AllOf);
-        Assert.Null(schema.Required);
+        (schema.AllOf).ShouldNotBeNull();
+        (schema.Required).ShouldBeNull();
     }
 
     [Fact]
@@ -174,12 +174,9 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/files");
 
         // Assert
-        Assert.Equal(JsonSchemaType.Object, schema.Type);
-        Assert.NotNull(schema.AllOf);
-        Assert.Collection(
-            schema.AllOf,
-            item => Assert.Contains("firstFile", item.Properties!.Keys),
-            item => Assert.Contains("secondFile", item.Properties!.Keys));
+        (schema.Type).ShouldBe(JsonSchemaType.Object);
+        (schema.AllOf).ShouldNotBeNull();
+        (schema.AllOf).ShouldMatchCollection(item => (item.Properties!.Keys).ShouldContain("firstFile"), item => (item.Properties!.Keys).ShouldContain("secondFile"));
     }
 
     [Fact]
@@ -206,7 +203,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             });
 
         // Assert
-        Assert.True(document.Paths.ContainsKey("/uploads/commit"));
+        (document.Paths.ContainsKey("/uploads/commit")).ShouldBeTrue();
     }
 
     [Fact]
@@ -214,11 +211,11 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     {
         var schema = new OpenApiSchema();
 
-        var result = Assert.IsType<bool>(MultipartFormRequestBodyDocumentTransformerTestsHelpers.InvokePrivateStaticMethod(
+        var result = (MultipartFormRequestBodyDocumentTransformerTestsHelpers.InvokePrivateStaticMethod(
             "RequiresMultipartSchemaNormalization",
-            [schema]));
+            [schema])).ShouldBeOfType<bool>();
 
-        Assert.False(result);
+        (result).ShouldBeFalse();
     }
 
     [Fact]
@@ -229,7 +226,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             "PreserveRequirednessOnMultipartAllOfEntries",
             [schema, Array.Empty<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription>()]);
 
-        Assert.Null(schema.Required);
+        (schema.Required).ShouldBeNull();
     }
 
     [Fact]
@@ -259,7 +256,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             "PreserveRequirednessOnMultipartAllOfEntries",
             [schema, new[] { parameter }]);
 
-        Assert.Null(schema.AllOf[0].Required);
+        (schema.AllOf[0].Required).ShouldBeNull();
     }
 
 }

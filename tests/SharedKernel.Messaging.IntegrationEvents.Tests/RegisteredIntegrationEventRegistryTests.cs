@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
-using SharedKernel.Testing.Assertions;
 
 namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 

@@ -12,7 +12,7 @@ internal static class ResultEdgeCaseTestsHelpers
             types: [typeof(ResultStatus), typeof(string), typeof(ResultError)],
             modifiers: null);
 
-        Assert.NotNull(constructor);
+        _ = (constructor).ShouldNotBeNull();
         return (Result<string>)constructor.Invoke([status, value, error]);
     }
 
@@ -24,7 +24,7 @@ internal static class ResultEdgeCaseTestsHelpers
             types: [typeof(ResultStatus), typeof(ResultError)],
             modifiers: null);
 
-        Assert.NotNull(constructor);
+        _ = (constructor).ShouldNotBeNull();
         return (Result)constructor.Invoke([status, error]);
     }
 }

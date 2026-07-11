@@ -12,7 +12,7 @@ public sealed class ValueObjectTests
 
         var result = address1.Equals(address2);
 
-        Assert.True(result);
+        (result).ShouldBeTrue();
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public sealed class ValueObjectTests
 
         var result = address1.Equals(address2);
 
-        Assert.False(result);
+        (result).ShouldBeFalse();
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public sealed class ValueObjectTests
 
         var result = EqualsObject(address, null);
 
-        Assert.False(result);
+        (result).ShouldBeFalse();
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public sealed class ValueObjectTests
 
         var result = address.Equals(money);
 
-        Assert.False(result);
+        (result).ShouldBeFalse();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public sealed class ValueObjectTests
 
         var result = address.Equals(other);
 
-        Assert.False(result);
+        (result).ShouldBeFalse();
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public sealed class ValueObjectTests
         var hash1 = address1.GetHashCode();
         var hash2 = address2.GetHashCode();
 
-        Assert.Equal(hash1, hash2);
+        (hash2).ShouldBe(hash1);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public sealed class ValueObjectTests
         var hash1 = address1.GetHashCode();
         var hash2 = address2.GetHashCode();
 
-        Assert.NotEqual(hash1, hash2);
+        (hash2).ShouldNotBe(hash1);
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public sealed class ValueObjectTests
 
         var hash = address.GetHashCode();
 
-        Assert.NotEqual(0, hash);
+        (hash).ShouldNotBe(0);
     }
 
     [Fact]
@@ -100,7 +100,7 @@ public sealed class ValueObjectTests
 
         var result = address1 == address2;
 
-        Assert.False(result);
+        (result).ShouldBeFalse();
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public sealed class ValueObjectTests
 
         var result = address1 != address2;
 
-        Assert.False(result);
+        (result).ShouldBeFalse();
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public sealed class ValueObjectTests
 
         var result = address1 != address2;
 
-        Assert.True(result);
+        (result).ShouldBeTrue();
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public sealed class ValueObjectTests
 
         var result = value1.Equals(value2);
 
-        Assert.False(result);
+        (result).ShouldBeFalse();
     }
 
     [Fact]
@@ -143,8 +143,8 @@ public sealed class ValueObjectTests
         var person2 = new TestPerson("John", "Doe", 30);
         var person3 = new TestPerson("John", "Doe", 31);
 
-        Assert.True(person1 == person2);
-        Assert.False(person1 == person3);
+        (person1 == person2).ShouldBeTrue();
+        (person1 == person3).ShouldBeFalse();
     }
 
     [Fact]
@@ -154,8 +154,8 @@ public sealed class ValueObjectTests
         var address2 = new TestAddress("123 Main St", null);
         var address3 = new TestAddress("123 Main St", "Springfield");
 
-        Assert.True(address1 == address2);
-        Assert.False(address1 == address3);
+        (address1 == address2).ShouldBeTrue();
+        (address1 == address3).ShouldBeFalse();
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public sealed class ValueObjectTests
 
         dictionary[address1] = "Home";
 
-        Assert.Equal("Home", dictionary[address2]);
+        (dictionary[address2]).ShouldBe("Home");
     }
 
     [Fact]
@@ -179,7 +179,7 @@ public sealed class ValueObjectTests
 
         hashSet.Add(address1);
 
-        Assert.Contains(address2, hashSet);
+        (hashSet).ShouldContain(address2);
     }
 
     [Fact]
@@ -189,8 +189,8 @@ public sealed class ValueObjectTests
         var order2 = new TestOrder(new TestMoney(100m, "USD"), new TestAddress("123 Main St", "Springfield"));
         var order3 = new TestOrder(new TestMoney(100m, "USD"), new TestAddress("456 Oak Ave", "Springfield"));
 
-        Assert.True(order1 == order2);
-        Assert.False(order1 == order3);
+        (order1 == order2).ShouldBeTrue();
+        (order1 == order3).ShouldBeFalse();
     }
 
 }

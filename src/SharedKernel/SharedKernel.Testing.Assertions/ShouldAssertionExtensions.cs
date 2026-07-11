@@ -14,7 +14,16 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The value type.</typeparam>
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected value.</param>
-    public static void ShouldBe<T>(this T actual, T expected) => TestAssert.Equal(expected, actual);
+    public static void ShouldBe<T>(this T actual, T expected) => Xunit.Assert.Equal(expected, actual);
+
+    /// <summary>
+    /// Verifies equality with a nullable expected value.
+    /// </summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="actual">The actual value.</param>
+    /// <param name="expected">The expected value.</param>
+    public static void ShouldBe<T>(this T actual, T? expected)
+        where T : struct => Xunit.Assert.Equal(expected, actual);
 
     /// <summary>
     /// Verifies equality with the expected value using a comparer.
@@ -23,7 +32,7 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected value.</param>
     /// <param name="comparer">The equality comparer.</param>
-    public static void ShouldBe<T>(this T actual, T expected, IEqualityComparer<T> comparer) => TestAssert.Equal(expected, actual, comparer);
+    public static void ShouldBe<T>(this T actual, T expected, IEqualityComparer<T> comparer) => Xunit.Assert.Equal(expected, actual, comparer);
 
     /// <summary>
     /// Verifies floating-point equality with precision.
@@ -31,7 +40,17 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected value.</param>
     /// <param name="precision">The precision.</param>
-    public static void ShouldBe(this double actual, double expected, int precision) => TestAssert.Equal(expected, actual, precision);
+    public static void ShouldBe(this double actual, double expected, int precision) => Xunit.Assert.Equal(expected, actual, precision);
+
+    /// <summary>
+    /// Verifies floating-point equality with precision and midpoint rounding.
+    /// </summary>
+    /// <param name="actual">The actual value.</param>
+    /// <param name="expected">The expected value.</param>
+    /// <param name="precision">The precision.</param>
+    /// <param name="rounding">The midpoint rounding behavior.</param>
+    public static void ShouldBe(this double actual, double expected, int precision, MidpointRounding rounding) =>
+        Xunit.Assert.Equal(expected, actual, precision, rounding);
 
     /// <summary>
     /// Verifies inequality with the expected value.
@@ -39,7 +58,7 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The value type.</typeparam>
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected value.</param>
-    public static void ShouldNotBe<T>(this T actual, T expected) => TestAssert.NotEqual(expected, actual);
+    public static void ShouldNotBe<T>(this T actual, T expected) => Xunit.Assert.NotEqual(expected, actual);
 
     /// <summary>
     /// Verifies inequality with the expected value using a comparer.
@@ -48,7 +67,7 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected value.</param>
     /// <param name="comparer">The equality comparer.</param>
-    public static void ShouldNotBe<T>(this T actual, T expected, IEqualityComparer<T> comparer) => TestAssert.NotEqual(expected, actual, comparer);
+    public static void ShouldNotBe<T>(this T actual, T expected, IEqualityComparer<T> comparer) => Xunit.Assert.NotEqual(expected, actual, comparer);
 
     /// <summary>
     /// Verifies reference equality with the expected value.
@@ -57,7 +76,7 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected reference.</param>
     public static void ShouldBeSameAs<T>(this T? actual, T? expected)
-        where T : class => TestAssert.Same(expected, actual);
+        where T : class => Xunit.Assert.Same(expected, actual);
 
     /// <summary>
     /// Verifies reference inequality with the unexpected value.
@@ -66,7 +85,7 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual value.</param>
     /// <param name="unexpected">The unexpected reference.</param>
     public static void ShouldNotBeSameAs<T>(this T? actual, T? unexpected)
-        where T : class => TestAssert.NotSame(unexpected, actual);
+        where T : class => Xunit.Assert.NotSame(unexpected, actual);
 
     /// <summary>
     /// Verifies type equality.
@@ -74,7 +93,23 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The expected type.</typeparam>
     /// <param name="actual">The actual value.</param>
     /// <returns>The typed value.</returns>
-    public static T ShouldBeOfType<T>(this object? actual) => TestAssert.IsType<T>(actual);
+    public static T ShouldBeOfType<T>(this object? actual) => Xunit.Assert.IsType<T>(actual);
+
+    /// <summary>
+    /// Verifies type equality, optionally allowing derived types.
+    /// </summary>
+    /// <typeparam name="T">The expected type.</typeparam>
+    /// <param name="actual">The actual value.</param>
+    /// <param name="exactMatch">Whether the type must match exactly.</param>
+    /// <returns>The typed value.</returns>
+    public static T ShouldBeOfType<T>(this object? actual, bool exactMatch) => Xunit.Assert.IsType<T>(actual, exactMatch);
+
+    /// <summary>
+    /// Verifies type inequality.
+    /// </summary>
+    /// <typeparam name="T">The unexpected type.</typeparam>
+    /// <param name="actual">The actual value.</param>
+    public static void ShouldNotBeOfType<T>(this object? actual) => Xunit.Assert.IsNotType<T>(actual);
 
     /// <summary>
     /// Verifies assignability.
@@ -82,14 +117,14 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The expected type.</typeparam>
     /// <param name="actual">The actual value.</param>
     /// <returns>The typed value.</returns>
-    public static T ShouldBeAssignableTo<T>(this object? actual) => TestAssert.IsAssignableFrom<T>(actual);
+    public static T ShouldBeAssignableTo<T>(this object? actual) => Xunit.Assert.IsAssignableFrom<T>(actual);
 
     /// <summary>
     /// Verifies non-assignability.
     /// </summary>
     /// <typeparam name="T">The unexpected type.</typeparam>
     /// <param name="actual">The actual value.</param>
-    public static void ShouldNotBeAssignableTo<T>(this object? actual) => TestAssert.IsNotAssignableFrom<T>(actual);
+    public static void ShouldNotBeAssignableTo<T>(this object? actual) => Xunit.Assert.IsNotAssignableFrom<T>(actual);
 
     /// <summary>
     /// Verifies that a nullable reference is not null and updates compiler null-state flow.
@@ -98,7 +133,11 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual value.</param>
     /// <returns>The non-null value.</returns>
     public static T ShouldNotBeNull<T>([NotNull] this T? actual)
-        where T : class => TestAssert.NotNull(actual);
+        where T : class
+    {
+        Xunit.Assert.NotNull(actual);
+        return actual;
+    }
 
     /// <summary>
     /// Verifies that a nullable value type is not null.
@@ -107,48 +146,52 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual value.</param>
     /// <returns>The non-null value.</returns>
     public static T ShouldNotBeNull<T>([NotNull] this T? actual)
-        where T : struct => TestAssert.NotNull(actual);
+        where T : struct
+    {
+        Xunit.Assert.NotNull(actual);
+        return actual.Value;
+    }
 
     /// <summary>
     /// Verifies that a value is null.
     /// </summary>
     /// <param name="actual">The actual value.</param>
-    public static void ShouldBeNull(this object? actual) => TestAssert.Null(actual);
+    public static void ShouldBeNull(this object? actual) => Xunit.Assert.Null(actual);
 
     /// <summary>
     /// Verifies that a condition is true.
     /// </summary>
     /// <param name="actual">The actual value.</param>
     /// <param name="userMessage">The failure message.</param>
-    public static void ShouldBeTrue(this bool actual, string? userMessage = null) => TestAssert.True(actual, userMessage);
+    public static void ShouldBeTrue(this bool actual, string? userMessage = null) => Xunit.Assert.True(actual, userMessage);
 
     /// <summary>
     /// Verifies that a condition is true.
     /// </summary>
     /// <param name="actual">The actual value.</param>
     /// <param name="userMessage">The failure message.</param>
-    public static void ShouldBeTrue(this bool? actual, string? userMessage = null) => TestAssert.True(actual, userMessage);
+    public static void ShouldBeTrue(this bool? actual, string? userMessage = null) => Xunit.Assert.True(actual, userMessage);
 
     /// <summary>
     /// Verifies that a condition is false.
     /// </summary>
     /// <param name="actual">The actual value.</param>
     /// <param name="userMessage">The failure message.</param>
-    public static void ShouldBeFalse(this bool actual, string? userMessage = null) => TestAssert.False(actual, userMessage);
+    public static void ShouldBeFalse(this bool actual, string? userMessage = null) => Xunit.Assert.False(actual, userMessage);
 
     /// <summary>
     /// Verifies that a condition is false.
     /// </summary>
     /// <param name="actual">The actual value.</param>
     /// <param name="userMessage">The failure message.</param>
-    public static void ShouldBeFalse(this bool? actual, string? userMessage = null) => TestAssert.False(actual, userMessage);
+    public static void ShouldBeFalse(this bool? actual, string? userMessage = null) => Xunit.Assert.False(actual, userMessage);
 
     /// <summary>
     /// Verifies that a string contains the expected fragment with ordinal comparison.
     /// </summary>
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected fragment.</param>
-    public static void ShouldContain(this string? actual, string expected) => TestAssert.Contains(expected, actual, StringComparison.Ordinal);
+    public static void ShouldContain(this string? actual, string expected) => Xunit.Assert.Contains(expected, actual, StringComparison.Ordinal);
 
     /// <summary>
     /// Verifies that a string contains the expected fragment.
@@ -156,7 +199,7 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected fragment.</param>
     /// <param name="comparisonType">The string comparison type.</param>
-    public static void ShouldContain(this string? actual, string expected, StringComparison comparisonType) => TestAssert.Contains(expected, actual, comparisonType);
+    public static void ShouldContain(this string? actual, string expected, StringComparison comparisonType) => Xunit.Assert.Contains(expected, actual, comparisonType);
 
     /// <summary>
     /// Verifies that a collection contains the expected item.
@@ -164,7 +207,7 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The item type.</typeparam>
     /// <param name="actual">The actual collection.</param>
     /// <param name="expected">The expected item.</param>
-    public static void ShouldContain<T>(this IEnumerable<T> actual, T expected) => TestAssert.Contains(expected, actual);
+    public static void ShouldContain<T>(this IEnumerable<T> actual, T expected) => Xunit.Assert.Contains(expected, actual);
 
     /// <summary>
     /// Verifies that a collection contains the expected item using a comparer.
@@ -173,7 +216,7 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual collection.</param>
     /// <param name="expected">The expected item.</param>
     /// <param name="comparer">The equality comparer.</param>
-    public static void ShouldContain<T>(this IEnumerable<T> actual, T expected, IEqualityComparer<T> comparer) => TestAssert.Contains(expected, actual, comparer);
+    public static void ShouldContain<T>(this IEnumerable<T> actual, T expected, IEqualityComparer<T> comparer) => Xunit.Assert.Contains(expected, actual, comparer);
 
     /// <summary>
     /// Verifies that a collection contains a matching item.
@@ -181,7 +224,7 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The item type.</typeparam>
     /// <param name="actual">The actual collection.</param>
     /// <param name="predicate">The item predicate.</param>
-    public static void ShouldContain<T>(this IEnumerable<T> actual, Predicate<T> predicate) => TestAssert.Contains(actual, predicate);
+    public static void ShouldContain<T>(this IEnumerable<T> actual, Predicate<T> predicate) => Xunit.Assert.Contains(actual, predicate);
 
     /// <summary>
     /// Verifies that a string ends with the expected suffix.
@@ -189,7 +232,14 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected suffix.</param>
     /// <param name="comparisonType">The string comparison type.</param>
-    public static void ShouldEndWith(this string? actual, string expected, StringComparison comparisonType) => TestAssert.EndsWith(expected, actual, comparisonType);
+    public static void ShouldEndWith(this string? actual, string expected, StringComparison comparisonType) => Xunit.Assert.EndsWith(expected, actual, comparisonType);
+
+    /// <summary>
+    /// Verifies that a string ends with the expected suffix using ordinal comparison.
+    /// </summary>
+    /// <param name="actual">The actual value.</param>
+    /// <param name="expected">The expected suffix.</param>
+    public static void ShouldEndWith(this string? actual, string expected) => Xunit.Assert.EndsWith(expected, actual, StringComparison.Ordinal);
 
     /// <summary>
     /// Verifies that a collection does not contain the expected item.
@@ -197,7 +247,17 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The item type.</typeparam>
     /// <param name="actual">The actual collection.</param>
     /// <param name="expected">The expected item.</param>
-    public static void ShouldNotContain<T>(this IEnumerable<T> actual, T expected) => TestAssert.DoesNotContain(expected, actual);
+    public static void ShouldNotContain<T>(this IEnumerable<T> actual, T expected) => Xunit.Assert.DoesNotContain(expected, actual);
+
+    /// <summary>
+    /// Verifies that a collection does not contain the expected item using a comparer.
+    /// </summary>
+    /// <typeparam name="T">The item type.</typeparam>
+    /// <param name="actual">The actual collection.</param>
+    /// <param name="expected">The expected item.</param>
+    /// <param name="comparer">The equality comparer.</param>
+    public static void ShouldNotContain<T>(this IEnumerable<T> actual, T expected, IEqualityComparer<T> comparer) =>
+        Xunit.Assert.DoesNotContain(expected, actual, comparer);
 
     /// <summary>
     /// Verifies that a collection does not contain a matching item.
@@ -205,14 +265,14 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The item type.</typeparam>
     /// <param name="actual">The actual collection.</param>
     /// <param name="predicate">The item predicate.</param>
-    public static void ShouldNotContain<T>(this IEnumerable<T> actual, Predicate<T> predicate) => TestAssert.DoesNotContain(actual, predicate);
+    public static void ShouldNotContain<T>(this IEnumerable<T> actual, Predicate<T> predicate) => Xunit.Assert.DoesNotContain(actual, predicate);
 
     /// <summary>
     /// Verifies that a string does not contain the expected fragment.
     /// </summary>
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected fragment.</param>
-    public static void ShouldNotContain(this string? actual, string expected) => TestAssert.DoesNotContain(expected, actual, StringComparison.Ordinal);
+    public static void ShouldNotContain(this string? actual, string expected) => Xunit.Assert.DoesNotContain(expected, actual, StringComparison.Ordinal);
 
     /// <summary>
     /// Verifies that a string does not contain the expected fragment.
@@ -220,21 +280,21 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected fragment.</param>
     /// <param name="comparisonType">The string comparison type.</param>
-    public static void ShouldNotContain(this string? actual, string expected, StringComparison comparisonType) => TestAssert.DoesNotContain(expected, actual, comparisonType);
+    public static void ShouldNotContain(this string? actual, string expected, StringComparison comparisonType) => Xunit.Assert.DoesNotContain(expected, actual, comparisonType);
 
     /// <summary>
     /// Verifies that a collection is empty.
     /// </summary>
     /// <typeparam name="T">The item type.</typeparam>
     /// <param name="actual">The actual collection.</param>
-    public static void ShouldBeEmpty<T>(this IEnumerable<T> actual) => TestAssert.Empty(actual);
+    public static void ShouldBeEmpty<T>(this IEnumerable<T> actual) => Xunit.Assert.Empty(actual);
 
     /// <summary>
     /// Verifies that a collection is not empty.
     /// </summary>
     /// <typeparam name="T">The item type.</typeparam>
     /// <param name="actual">The actual collection.</param>
-    public static void ShouldNotBeEmpty<T>(this IEnumerable<T> actual) => TestAssert.NotEmpty(actual);
+    public static void ShouldNotBeEmpty<T>(this IEnumerable<T> actual) => Xunit.Assert.NotEmpty(actual);
 
     /// <summary>
     /// Verifies that a collection contains exactly one item.
@@ -242,7 +302,7 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The item type.</typeparam>
     /// <param name="actual">The actual collection.</param>
     /// <returns>The single item.</returns>
-    public static T ShouldHaveSingleItem<T>(this IEnumerable<T> actual) => TestAssert.ExactlyOne(actual);
+    public static T ShouldHaveSingleItem<T>(this IEnumerable<T> actual) => Xunit.Assert.Single(actual);
 
     /// <summary>
     /// Verifies that a collection contains exactly one matching item.
@@ -252,7 +312,7 @@ public static class ShouldAssertionExtensions
     /// <param name="predicate">The item predicate.</param>
     /// <returns>The single matching item.</returns>
     public static T ShouldHaveSingleItem<T>(this IEnumerable<T> actual, Predicate<T> predicate) =>
-        TestAssert.ExactlyOne(actual.Where(item => predicate(item)));
+        Xunit.Assert.Single(actual.Where(item => predicate(item)));
 
     /// <summary>
     /// Verifies that a value is within a range.
@@ -262,7 +322,7 @@ public static class ShouldAssertionExtensions
     /// <param name="low">The inclusive lower bound.</param>
     /// <param name="high">The inclusive upper bound.</param>
     public static void ShouldBeInRange<T>(this T actual, T low, T high)
-        where T : IComparable => TestAssert.InRange(actual, low, high);
+        where T : IComparable => Xunit.Assert.InRange(actual, low, high);
 
     /// <summary>
     /// Verifies that a value is greater than the expected value.
@@ -309,21 +369,37 @@ public static class ShouldAssertionExtensions
     /// </summary>
     /// <param name="actual">The actual value.</param>
     /// <param name="expected">The expected start value.</param>
-    public static void ShouldStartWith(this string? actual, string expected) => TestAssert.StartsWith(expected, actual, StringComparison.Ordinal);
+    public static void ShouldStartWith(this string? actual, string expected) => Xunit.Assert.StartsWith(expected, actual, StringComparison.Ordinal);
+
+    /// <summary>
+    /// Verifies that a string starts with the expected prefix.
+    /// </summary>
+    /// <param name="actual">The actual value.</param>
+    /// <param name="expected">The expected prefix.</param>
+    /// <param name="comparisonType">The string comparison type.</param>
+    public static void ShouldStartWith(this string? actual, string expected, StringComparison comparisonType) =>
+        Xunit.Assert.StartsWith(expected, actual, comparisonType);
 
     /// <summary>
     /// Verifies that a string matches a regular expression.
     /// </summary>
     /// <param name="actual">The actual value.</param>
     /// <param name="expectedRegexPattern">The expected regular expression pattern.</param>
-    public static void ShouldMatch(this string? actual, string expectedRegexPattern) => TestAssert.Matches(expectedRegexPattern, actual);
+    public static void ShouldMatch(this string? actual, string expectedRegexPattern) => Xunit.Assert.Matches(expectedRegexPattern, actual);
 
     /// <summary>
     /// Verifies that a string matches a regular expression.
     /// </summary>
     /// <param name="actual">The actual value.</param>
     /// <param name="expectedRegex">The expected regular expression.</param>
-    public static void ShouldMatch(this string? actual, Regex expectedRegex) => TestAssert.Matches(expectedRegex, actual);
+    public static void ShouldMatch(this string? actual, Regex expectedRegex) => Xunit.Assert.Matches(expectedRegex, actual);
+
+    /// <summary>
+    /// Verifies that a string does not match a regular expression.
+    /// </summary>
+    /// <param name="actual">The actual value.</param>
+    /// <param name="expectedRegex">The unexpected regular expression.</param>
+    public static void ShouldNotMatch(this string? actual, Regex expectedRegex) => Xunit.Assert.DoesNotMatch(expectedRegex, actual);
 
     /// <summary>
     /// Verifies every item in a collection.
@@ -331,7 +407,16 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The item type.</typeparam>
     /// <param name="actual">The actual collection.</param>
     /// <param name="action">The inspector.</param>
-    public static void ShouldAllSatisfy<T>(this IEnumerable<T> actual, Action<T> action) => TestAssert.All(actual, action);
+    public static void ShouldAllSatisfy<T>(this IEnumerable<T> actual, Action<T> action) => Xunit.Assert.All(actual, action);
+
+    /// <summary>
+    /// Verifies collection items with ordered inspectors.
+    /// </summary>
+    /// <typeparam name="T">The item type.</typeparam>
+    /// <param name="actual">The actual collection.</param>
+    /// <param name="inspectors">The ordered item inspectors.</param>
+    public static void ShouldMatchCollection<T>(this IEnumerable<T> actual, params Action<T>[] inspectors) =>
+        Xunit.Assert.Collection(actual, inspectors);
 
     /// <summary>
     /// Verifies that an action throws the expected exception.
@@ -340,7 +425,36 @@ public static class ShouldAssertionExtensions
     /// <param name="action">The action.</param>
     /// <returns>The thrown exception.</returns>
     public static T ShouldThrow<T>(this Action action)
-        where T : Exception => TestAssert.Throws<T>(action);
+        where T : Exception => Xunit.Assert.Throws<T>(action);
+
+    /// <summary>
+    /// Verifies that an action throws the expected argument exception parameter.
+    /// </summary>
+    /// <typeparam name="T">The expected exception type.</typeparam>
+    /// <param name="action">The action.</param>
+    /// <param name="paramName">The expected parameter name.</param>
+    /// <returns>The thrown exception.</returns>
+    public static T ShouldThrow<T>(this Action action, string? paramName)
+        where T : ArgumentException => Xunit.Assert.Throws<T>(paramName, action);
+
+    /// <summary>
+    /// Verifies that a value-returning action throws the expected exception.
+    /// </summary>
+    /// <typeparam name="T">The expected exception type.</typeparam>
+    /// <param name="action">The action.</param>
+    /// <returns>The thrown exception.</returns>
+    public static T ShouldThrow<T>(this Func<object?> action)
+        where T : Exception => Xunit.Assert.Throws<T>(action);
+
+    /// <summary>
+    /// Verifies that a value-returning action throws the expected argument exception parameter.
+    /// </summary>
+    /// <typeparam name="T">The expected exception type.</typeparam>
+    /// <param name="action">The action.</param>
+    /// <param name="paramName">The expected parameter name.</param>
+    /// <returns>The thrown exception.</returns>
+    public static T ShouldThrow<T>(this Func<object?> action, string? paramName)
+        where T : ArgumentException => Xunit.Assert.Throws<T>(paramName, action);
 
     /// <summary>
     /// Verifies that an async action throws the expected exception.
@@ -349,7 +463,26 @@ public static class ShouldAssertionExtensions
     /// <param name="action">The async action.</param>
     /// <returns>The thrown exception.</returns>
     public static Task<T> ShouldThrow<T>(this Func<Task> action)
-        where T : Exception => TestAssert.Throws<T>(action);
+        where T : Exception => Xunit.Assert.ThrowsAsync<T>(action);
+
+    /// <summary>
+    /// Verifies that an async action throws the expected argument exception parameter.
+    /// </summary>
+    /// <typeparam name="T">The expected exception type.</typeparam>
+    /// <param name="action">The async action.</param>
+    /// <param name="paramName">The expected parameter name.</param>
+    /// <returns>The thrown exception.</returns>
+    public static Task<T> ShouldThrow<T>(this Func<Task> action, string? paramName)
+        where T : ArgumentException => Xunit.Assert.ThrowsAsync<T>(paramName, action);
+
+    /// <summary>
+    /// Verifies that an async action throws an exception assignable to the expected type.
+    /// </summary>
+    /// <typeparam name="T">The expected exception type.</typeparam>
+    /// <param name="action">The async action.</param>
+    /// <returns>The thrown exception.</returns>
+    public static Task<T> ShouldThrowAssignableTo<T>(this Func<Task> action)
+        where T : Exception => Xunit.Assert.ThrowsAnyAsync<T>(action);
 
     /// <summary>
     /// Verifies that a reflection invocation throws an inner exception of the expected type.

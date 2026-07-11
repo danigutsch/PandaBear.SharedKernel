@@ -18,11 +18,11 @@ public sealed class IIdempotencyStoreTests
         await idempotencyStore.Complete(operation, completedAt, cts.Token);
 
         // Assert
-        Assert.Equal(operation, store.CompletedOperation);
-        Assert.Equal(completedAt, store.CompletedAt);
-        Assert.Null(store.ResultFingerprint);
-        Assert.Equal(cts.Token, store.CancellationToken);
-        Assert.Equal(1, store.CompleteCallCount);
+        (store.CompletedOperation).ShouldBe(operation);
+        (store.CompletedAt).ShouldBe(completedAt);
+        (store.ResultFingerprint).ShouldBeNull();
+        (store.CancellationToken).ShouldBe(cts.Token);
+        (store.CompleteCallCount).ShouldBe(1);
     }
 
     [Fact]
@@ -40,11 +40,11 @@ public sealed class IIdempotencyStoreTests
         await store.Complete(operation, completedAt, "sha256:booking-response", cts.Token);
 
         // Assert
-        Assert.Equal(operation, store.CompletedOperation);
-        Assert.Equal(completedAt, store.CompletedAt);
-        Assert.Equal("sha256:booking-response", store.ResultFingerprint);
-        Assert.Equal(cts.Token, store.CancellationToken);
-        Assert.Equal(1, store.CompleteCallCount);
+        (store.CompletedOperation).ShouldBe(operation);
+        (store.CompletedAt).ShouldBe(completedAt);
+        (store.ResultFingerprint).ShouldBe("sha256:booking-response");
+        (store.CancellationToken).ShouldBe(cts.Token);
+        (store.CompleteCallCount).ShouldBe(1);
     }
 
     [Fact]
@@ -61,11 +61,11 @@ public sealed class IIdempotencyStoreTests
         await store.Complete(operation, completedAt, resultFingerprint: null, CancellationToken.None);
 
         // Assert
-        Assert.Equal(operation, store.CompletedOperation);
-        Assert.Equal(completedAt, store.CompletedAt);
-        Assert.Null(store.ResultFingerprint);
-        Assert.Equal(CancellationToken.None, store.CancellationToken);
-        Assert.Equal(1, store.CompleteCallCount);
+        (store.CompletedOperation).ShouldBe(operation);
+        (store.CompletedAt).ShouldBe(completedAt);
+        (store.ResultFingerprint).ShouldBeNull();
+        (store.CancellationToken).ShouldBe(CancellationToken.None);
+        (store.CompleteCallCount).ShouldBe(1);
     }
 
     [Fact]
@@ -79,10 +79,10 @@ public sealed class IIdempotencyStoreTests
         var startedAt = new DateTimeOffset(2026, 6, 21, 10, 0, 0, TimeSpan.Zero);
 
         // Act, Assert
-        await Assert.ThrowsAsync<NotSupportedException>(async () =>
+        await ((Func<Task>)(async () =>
         {
             await store.TryStart(operation, startedAt, TimeSpan.FromMinutes(5), CancellationToken.None);
-        });
+        })).ShouldThrow<NotSupportedException>();
     }
 
     [Fact]
@@ -95,9 +95,9 @@ public sealed class IIdempotencyStoreTests
             IdempotencyKey.From("event-42"));
 
         // Act, Assert
-        await Assert.ThrowsAsync<NotSupportedException>(async () =>
+        await ((Func<Task>)(async () =>
         {
             await store.Get(operation, CancellationToken.None);
-        });
+        })).ShouldThrow<NotSupportedException>();
     }
 }

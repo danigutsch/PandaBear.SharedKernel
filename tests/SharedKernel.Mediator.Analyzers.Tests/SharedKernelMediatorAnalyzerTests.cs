@@ -29,7 +29,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature);
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingCancellationToken);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingCancellationToken);
     }
 
     [Fact]
@@ -93,7 +93,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.HandlerReturnTypeMismatch);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.HandlerReturnTypeMismatch);
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidPipelineGenericArity);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidPipelineGenericArity);
     }
 
     [Fact]
@@ -151,7 +151,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingCancellationForwarding);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingCancellationForwarding);
     }
 
     [Fact]
@@ -179,7 +179,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
     }
 
     [Fact]
@@ -210,7 +210,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
     }
 
     [Fact]
@@ -240,7 +240,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+        (diagnostics).ShouldNotContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
     }
 
     [Fact]
@@ -270,8 +270,8 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
+        (diagnostics).ShouldNotContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
     }
 
     [Fact]
@@ -298,8 +298,8 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
+        (diagnostics).ShouldNotContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
     }
 
     [Fact]
@@ -329,7 +329,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
             ImmutableDictionary<string, string>.Empty.Add("sharedkernel_mediator_enable_cancellation_analysis", "false"));
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingCancellationForwarding);
+        (diagnostics).ShouldNotContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingCancellationForwarding);
     }
 
     [Fact]
@@ -357,7 +357,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.HandlerShouldNotCallSender);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.HandlerShouldNotCallSender);
     }
 
     [Fact]
@@ -387,7 +387,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
             ImmutableDictionary<string, string>.Empty.Add("sharedkernel_mediator_allow_handler_to_handler_calls", "true"));
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.HandlerShouldNotCallSender);
+        (diagnostics).ShouldNotContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.HandlerShouldNotCallSender);
     }
 
     [Fact]
@@ -400,9 +400,9 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var options = MediatorAnalyzerConfigOptions.Parse(provider);
 
         // Assert
-        Assert.True(options.CqrsStrict);
-        Assert.False(options.AllowHandlerToHandlerCalls);
-        Assert.True(options.EnableCancellationAnalysis);
+        (options.CqrsStrict).ShouldBeTrue();
+        (options.AllowHandlerToHandlerCalls).ShouldBeFalse();
+        (options.EnableCancellationAnalysis).ShouldBeTrue();
     }
 
     [Fact]
@@ -434,7 +434,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature);
     }
 
     [Fact]
@@ -472,7 +472,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingCancellationToken);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingCancellationToken);
     }
 
     [Fact]
@@ -509,7 +509,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.HandlerReturnTypeMismatch);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.HandlerReturnTypeMismatch);
     }
 
     [Fact]
@@ -542,7 +542,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static diagnostic => diagnostic.Id == MediatorDiagnosticIds.HandlerShouldNotCallSender);
+        (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.HandlerShouldNotCallSender);
     }
 
     [Fact]
@@ -574,8 +574,8 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
-        Assert.DoesNotContain(diagnostics, static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+        (diagnostics).ShouldContain(static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
+        (diagnostics).ShouldNotContain(static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
     }
 
     [Fact]
@@ -605,8 +605,8 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
-        Assert.DoesNotContain(diagnostics, static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+        (diagnostics).ShouldContain(static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
+        (diagnostics).ShouldNotContain(static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
     }
 
     [Fact]
@@ -635,8 +635,8 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
-        Assert.DoesNotContain(diagnostics, static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
+        (diagnostics).ShouldContain(static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+        (diagnostics).ShouldNotContain(static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
     }
 
     [Fact]
@@ -672,8 +672,8 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
-        Assert.DoesNotContain(diagnostics, static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+        (diagnostics).ShouldNotContain(static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
+        (diagnostics).ShouldNotContain(static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
     }
 
     [Fact]
@@ -715,7 +715,7 @@ public sealed class SharedKernelMediatorAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
-        Assert.DoesNotContain(diagnostics, static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
+        (diagnostics).ShouldNotContain(static d => d.Id == MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken);
+        (diagnostics).ShouldNotContain(static d => d.Id == MediatorDiagnosticIds.MissingEnumeratorCancellation);
     }
 }

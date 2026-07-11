@@ -1,7 +1,7 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class ResultErrorTests
 {
     [Fact]
@@ -12,9 +12,9 @@ public sealed class ResultErrorTests
         var error = new ResultError("Something went wrong");
 
         // Assert
-        Assert.Equal(ResultErrorCodes.Error, error.Code);
-        Assert.Equal("Something went wrong", error.Detail);
-        Assert.Null(error.ValidationErrors);
+        error.Code.ShouldBe(ResultErrorCodes.Error);
+        error.Detail.ShouldBe("Something went wrong");
+        error.ValidationErrors.ShouldBeNull();
     }
 
     [Fact]
@@ -25,8 +25,8 @@ public sealed class ResultErrorTests
         var error = new ResultError("Tour not found", ResultErrorCodes.NotFound);
 
         // Assert
-        Assert.Equal(ResultErrorCodes.NotFound, error.Code);
-        Assert.Equal("Tour not found", error.Detail);
+        error.Code.ShouldBe(ResultErrorCodes.NotFound);
+        error.Detail.ShouldBe("Tour not found");
     }
 
     [Fact]
@@ -43,8 +43,8 @@ public sealed class ResultErrorTests
         source["Name"] = ["Changed after construction"];
 
         // Assert
-        Assert.NotNull(error.ValidationErrors);
-        Assert.Equal(["Name is required"], error.ValidationErrors["Name"]);
+        error.ValidationErrors.ShouldNotBeNull();
+        (error.ValidationErrors["Name"]).ShouldBe(["Name is required"]);
     }
 
     [Fact]
@@ -59,15 +59,15 @@ public sealed class ResultErrorTests
                 ["Name"] = ["Name is required"],
             });
 
-        Assert.NotNull(error.ValidationErrors);
+        error.ValidationErrors.ShouldNotBeNull();
 
         // Act
         var messages = error.ValidationErrors["Name"];
 
         // Assert
-        Assert.IsNotType<List<string>>(messages);
-        Assert.Throws<NotSupportedException>(() => ((IList<string>)messages).Add("Changed after construction"));
-        Assert.Equal(["Name is required"], error.ValidationErrors["Name"]);
+        (messages).ShouldNotBeOfType<List<string>>();
+        ((Action)(() => ((IList<string>)messages).Add("Changed after construction"))).ShouldThrow<NotSupportedException>();
+        (error.ValidationErrors["Name"]).ShouldBe(["Name is required"]);
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public sealed class ResultErrorTests
         var text = error.ToString();
 
         // Assert
-        Assert.Equal("not_found: Tour not found", text);
+        text.ShouldBe("not_found: Tour not found");
     }
 
     [Fact]
@@ -107,9 +107,9 @@ public sealed class ResultErrorTests
         var equalAsObject = left.Equals((object)right);
 
         // Assert
-        Assert.True(equalAsTyped);
-        Assert.True(equalAsObject);
-        Assert.Equal(left.GetHashCode(), right.GetHashCode());
+        equalAsTyped.ShouldBeTrue();
+        equalAsObject.ShouldBeTrue();
+        left.GetHashCode().ShouldBe(right.GetHashCode());
     }
 
     [Fact]
@@ -123,7 +123,7 @@ public sealed class ResultErrorTests
         var equal = left.Equals(right);
 
         // Assert
-        Assert.False(equal);
+        equal.ShouldBeFalse();
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public sealed class ResultErrorTests
         var equal = left.Equals(right);
 
         // Assert
-        Assert.False(equal);
+        equal.ShouldBeFalse();
     }
 
     [Theory]
@@ -163,9 +163,9 @@ public sealed class ResultErrorTests
         var exception = Record.Exception(() => new ResultError(detail ?? NullArgumentData.String(), ResultErrorCodes.Error));
 
         // Assert
-        Assert.NotNull(exception);
-        var argumentException = Assert.IsAssignableFrom<ArgumentException>(exception);
-        Assert.Equal("detail", argumentException.ParamName);
+        exception.ShouldNotBeNull();
+        var argumentException = exception.ShouldBeAssignableTo<ArgumentException>();
+        argumentException.ParamName.ShouldBe("detail");
     }
 
     [Theory]
@@ -179,9 +179,9 @@ public sealed class ResultErrorTests
         var exception = Record.Exception(() => new ResultError("Something went wrong", code ?? NullArgumentData.String()));
 
         // Assert
-        Assert.NotNull(exception);
-        var argumentException = Assert.IsAssignableFrom<ArgumentException>(exception);
-        Assert.Equal("code", argumentException.ParamName);
+        exception.ShouldNotBeNull();
+        var argumentException = exception.ShouldBeAssignableTo<ArgumentException>();
+        argumentException.ParamName.ShouldBe("code");
     }
 
     [Fact]
@@ -194,9 +194,9 @@ public sealed class ResultErrorTests
         var exception = Record.Exception(() => new ResultError("Validation failed", ResultErrorCodes.Invalid, validationErrors));
 
         // Assert
-        Assert.NotNull(exception);
-        var argumentException = Assert.IsAssignableFrom<ArgumentException>(exception);
-        Assert.Equal("messages", argumentException.ParamName);
+        exception.ShouldNotBeNull();
+        var argumentException = exception.ShouldBeAssignableTo<ArgumentException>();
+        argumentException.ParamName.ShouldBe("messages");
     }
 
 }

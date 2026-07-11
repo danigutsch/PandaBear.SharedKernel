@@ -1,17 +1,17 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
 public sealed class OptionEdgeCaseTests
 {
     [Fact]
     public void Rejects_null_values()
     {
         // Act
-        var exception = Assert.Throws<ArgumentNullException>(() => Option.Some(NullArgumentData.String()));
+        var exception = ((Func<object?>)(() => Option.Some(NullArgumentData.String()))).ShouldThrow<ArgumentNullException>();
 
         // Assert
-        Assert.Equal("value", exception.ParamName);
+        exception.ParamName.ShouldBe("value");
     }
 
     [Fact]
@@ -24,7 +24,7 @@ public sealed class OptionEdgeCaseTests
         var text = option.ToString();
 
         // Assert
-        Assert.Equal("Some(porto)", text);
+        text.ShouldBe("Some(porto)");
     }
 
     [Fact]
@@ -37,6 +37,6 @@ public sealed class OptionEdgeCaseTests
         var text = option.ToString();
 
         // Assert
-        Assert.Equal("None", text);
+        text.ShouldBe("None");
     }
 }

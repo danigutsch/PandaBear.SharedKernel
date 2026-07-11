@@ -41,7 +41,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         const string source = """
             namespace Demo;
 
-            public static class TestAssert
+            public static class ShouldAssertions
             {
                 public static void True(bool condition)
                 {
@@ -84,9 +84,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.Equal(
-            2,
-            diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId));
+        (diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId)).ShouldBe(2);
     }
 
     [Fact]
@@ -154,9 +152,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.Equal(
-            2,
-            diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId));
+        (diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId)).ShouldBe(2);
     }
 
     [Fact]
@@ -515,7 +511,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
 
         // Assert
-        Assert.Equal(2, diagnostics.Count(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId));
+        (diagnostics.Count(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId)).ShouldBe(2);
     }
 
     [Fact]
@@ -1103,7 +1099,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Single(diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId));
+        (diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId)).ShouldHaveSingleItem();
     }
 
     [Fact]
