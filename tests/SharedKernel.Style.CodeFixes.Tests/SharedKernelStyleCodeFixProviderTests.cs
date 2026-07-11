@@ -8,6 +8,33 @@ namespace SharedKernel.Style.CodeFixes.Tests;
 
 public sealed class SharedKernelStyleCodeFixProviderTests
 {
+    [Theory]
+    [InlineData(Analyzers.StyleDiagnosticIds.MultipleTopLevelTypesPerFile)]
+    [InlineData(Analyzers.StyleDiagnosticIds.NonSourceGeneratedLogging)]
+    public async Task Analyzer_only_diagnostics_do_not_offer_code_actions(string diagnosticId)
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Sample
+            {
+                public void Execute()
+                {
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(diagnosticId, "Execute()");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        (codeActions).ShouldBeEmpty();
+    }
+
     [Fact]
     public async Task Async_suffix_fix_renames_method_and_reference()
     {
