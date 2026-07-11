@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace SharedKernel.Domain.GeneratorTests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
+[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
 public sealed class ModelIdentityGeneratorTests
 {
     [Fact]
@@ -36,6 +36,38 @@ public sealed class ModelIdentityGeneratorTests
     }
 
     [Fact]
+    public void Generates_default_safe_hash_code_for_reference_type_identity()
+    {
+        // Arrange
+        const string source = """
+            #nullable enable
+
+            namespace Demo;
+
+            [GenerateModelSupport(Identity = true)]
+            public sealed partial class Customer : IIdentified<string>
+            {
+                public string Id { get; private init; } = null!;
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var outputCompilation = GeneratorTestHarness.RunGeneratorAndUpdateCompilation(compilation, out var runResult);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.Customer.ModelSupport.g.cs");
+        var errors = outputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
+            .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
+            .ToArray();
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        errors.ShouldBeEmpty();
+        generatedSource.ShouldContain(">.Default.Equals(Id, default!)", StringComparison.Ordinal);
+        generatedSource.ShouldContain("return base.GetHashCode();", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("ArgumentNullException.ThrowIfNull");
+    }
+
+    [Fact]
     public void Does_not_generate_when_identity_option_is_not_enabled()
     {
         // Arrange
@@ -55,6 +87,56 @@ public sealed class ModelIdentityGeneratorTests
 
         // Assert
         Assert.Empty(runResult.Results.Single().GeneratedSources);
+    }
+
+    [Fact]
+    public void Generates_identity_when_assembly_default_is_enabled_for_identified_models()
+    {
+        // Arrange
+        const string source = """
+            [assembly: GenerateModelSupportDefaults(Identity = true)]
+
+            namespace Demo;
+
+            public sealed partial class Customer : IIdentified<int>
+            {
+                public int Id { get; private init; }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.Customer.ModelSupport.g.cs");
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        generatedSource.ShouldContain("public partial class Customer", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Does_not_generate_identity_when_type_disables_assembly_default()
+    {
+        // Arrange
+        const string source = """
+            [assembly: GenerateModelSupportDefaults(Identity = true)]
+
+            namespace Demo;
+
+            [GenerateModelSupport(Identity = false)]
+            public sealed partial class Customer : IIdentified<int>
+            {
+                public int Id { get; private init; }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        runResult.Results.Single().GeneratedSources.ShouldBeEmpty();
     }
 
     [Fact]
@@ -102,6 +184,81 @@ public sealed class ModelIdentityGeneratorTests
 
         // Assert
         Assert.Equal("SKMDL002", diagnostic.Id);
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_attribute_suffix_requests_identity_without_identified_interface()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            [GenerateModelSupportAttribute(Identity = true)]
+            public sealed partial class Customer
+            {
+                public int Id { get; private init; }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL002");
+    }
+
+    [Fact]
+    public void Reports_diagnostic_when_aliased_attribute_requests_identity_without_identified_interface()
+    {
+        // Arrange
+        const string source = """
+            using ModelSupport = SharedKernel.Domain.GenerateModelSupportAttribute;
+
+            namespace Demo;
+
+            [ModelSupport(Identity = true)]
+            public sealed partial class Customer
+            {
+                public int Id { get; private init; }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnostic = runResult.Diagnostics.ShouldHaveSingleItem();
+
+        // Assert
+        diagnostic.Id.ShouldBe("SKMDL002");
+    }
+
+    [Fact]
+    public void Generates_identity_for_assembly_default_with_aliased_identified_interface()
+    {
+        // Arrange
+        const string source = """
+            using CustomerIdentity = SharedKernel.Domain.IIdentified<int>;
+
+            [assembly: GenerateModelSupportDefaults(Identity = true)]
+
+            namespace Demo;
+
+            public sealed partial class Customer : CustomerIdentity
+            {
+                public int Id { get; private init; }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult, "Demo.Customer.ModelSupport.g.cs");
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        generatedSource.ShouldContain("public partial class Customer", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -212,6 +369,41 @@ public sealed class ModelIdentityGeneratorTests
         Assert.Empty(runResult.Diagnostics);
         Assert.Contains(generatedSources, source => string.Equals(source.HintName, "First.Customer.ModelSupport.g.cs", StringComparison.Ordinal));
         Assert.Contains(generatedSources, source => string.Equals(source.HintName, "Second.Customer.ModelSupport.g.cs", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Generates_distinct_sources_for_underscored_model_names()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo
+            {
+                [GenerateModelSupport(Identity = true)]
+                public sealed partial class Tour_Code : IIdentified<int>
+                {
+                    public int Id { get; private init; }
+                }
+            }
+
+            namespace Demo.Tour
+            {
+                [GenerateModelSupport(Identity = true)]
+                public sealed partial class Code : IIdentified<int>
+                {
+                    public int Id { get; private init; }
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSources = runResult.Results.Single().GeneratedSources;
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        generatedSources.ShouldContain(source => string.Equals(source.HintName, "Demo.Tour_Code.ModelSupport.g.cs", StringComparison.Ordinal));
+        generatedSources.ShouldContain(source => string.Equals(source.HintName, "Demo.Tour.Code.ModelSupport.g.cs", StringComparison.Ordinal));
     }
 
     [Fact]
