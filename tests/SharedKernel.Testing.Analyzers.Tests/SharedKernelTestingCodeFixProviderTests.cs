@@ -13,6 +13,34 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
     private const string XunitAssertionWrapperDiagnosticId = TestingDiagnosticIds.XunitAssertionWrapper;
     private const string XunitTraitConstantUsageDiagnosticId = TestingDiagnosticIds.XunitTraitConstantUsage;
+
+    [Theory]
+    [InlineData(TestingDiagnosticIds.XunitArrangeActAssertMarkers)]
+    [InlineData(TestingDiagnosticIds.XunitTryFinallyCleanup)]
+    public async Task Analyzer_only_diagnostics_do_not_offer_code_actions(string diagnosticId)
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class SampleTests
+            {
+                public void Sample()
+                {
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(diagnosticId, "Sample()");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        (codeActions).ShouldBeEmpty();
+    }
+
     [Fact]
     public async Task Test_naming_fix_renames_method_and_reference_correctly()
     {
