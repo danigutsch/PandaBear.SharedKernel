@@ -33,11 +33,8 @@ const SharedKernel.Testing.TestTraitNames.HostName = "Host" -> string!
 const SharedKernel.Testing.TestTraitNames.ScopeName = "Scope" -> string!
 const SharedKernel.Testing.TestTraitNames.SurfaceName = "Surface" -> string!
 const SharedKernel.Testing.TestTraitValues.ApiIntegrationScope = "api-integration" -> string!
-const SharedKernel.Testing.TestTraitValues.CoreBehaviorCategory = "core-behavior" -> string!
 const SharedKernel.Testing.TestTraitValues.DependencyInjectionCategory = "dependency-injection" -> string!
-const SharedKernel.Testing.TestTraitValues.DocumentRenderingCapability = "document-rendering" -> string!
 const SharedKernel.Testing.TestTraitValues.EndpointCategory = "endpoint" -> string!
-const SharedKernel.Testing.TestTraitValues.GeneratedDocumentsCapability = "generated-documents" -> string!
 const SharedKernel.Testing.TestTraitValues.SecurityCategory = "security" -> string!
 const SharedKernel.Testing.TestTraitValues.TestServerHost = "test-server" -> string!
 SharedKernel.Domain.Tests.TestTraits
