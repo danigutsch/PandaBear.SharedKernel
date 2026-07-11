@@ -36,14 +36,18 @@ internal static class CodeFixRunEngine
             var fixAttempt = await ApplyFirstFix(workspace, solution, options.DiagnosticId).ConfigureAwait(false);
             if (fixAttempt.ChangedSolution is null)
             {
-                if (!fixAttempt.Diagnostics.IsEmpty)
-                {
-                    await ReportUnsupportedDiagnostics(solution, fixAttempt.Diagnostics, error).ConfigureAwait(false);
-                }
+                var unsupportedDiagnostics = fixAttempt.Diagnostics;
 
                 if (fixedCount > 0)
                 {
                     await FormatAndApplyChanges(workspace, initialSolution, solution).ConfigureAwait(false);
+                    solution = workspace.CurrentSolution;
+                    unsupportedDiagnostics = await FindDiagnostics(solution, options.DiagnosticId).ConfigureAwait(false);
+                }
+
+                if (!unsupportedDiagnostics.IsEmpty)
+                {
+                    await ReportUnsupportedDiagnostics(solution, unsupportedDiagnostics, error).ConfigureAwait(false);
                 }
 
                 return fixedCount;
@@ -156,6 +160,20 @@ internal static class CodeFixRunEngine
             .ToImmutableArray();
     }
 
+    private static async Task<ImmutableArray<Diagnostic>> FindDiagnostics(Solution solution, string diagnosticId)
+    {
+        var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
+        foreach (var project in GetCSharpProjects(solution))
+        {
+            diagnostics.AddRange(await GetProjectDiagnostics(project, diagnosticId).ConfigureAwait(false));
+        }
+
+        return diagnostics
+            .OrderBy(static candidate => candidate.Location.GetLineSpan().Path, StringComparer.Ordinal)
+            .ThenBy(static candidate => candidate.Location.GetLineSpan().StartLinePosition.Line)
+            .ToImmutableArray();
+    }
+
     private readonly record struct FixAttempt(Solution? ChangedSolution, ImmutableArray<Diagnostic> Diagnostics);
 
     private static async Task<CodeAction?> GetFirstCodeAction(Document document, Diagnostic diagnostic)
@@ -193,7 +211,7 @@ internal static class CodeFixRunEngine
     {
         foreach (var projectChanges in newSolution.GetChanges(oldSolution).GetProjectChanges())
         {
-            foreach (var documentId in projectChanges.GetChangedDocuments())
+            foreach (var documentId in projectChanges.GetChangedDocuments().Concat(projectChanges.GetAddedDocuments()))
             {
                 var document = newSolution.GetDocument(documentId);
                 if (document is null)
