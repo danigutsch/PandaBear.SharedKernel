@@ -97,12 +97,31 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var models = context.SyntaxProvider
-            .CreateSyntaxProvider(
-                static (node, _) => node is TypeDeclarationSyntax declaration && IsIdentityCandidate(declaration),
-                static (syntaxContext, cancellationToken) => BuildModel(syntaxContext, cancellationToken))
+        var attributedModels = context.SyntaxProvider
+            .ForAttributeWithMetadataName(
+                AttributeName,
+                static (node, _) => node is TypeDeclarationSyntax,
+                static (attributeContext, cancellationToken) => BuildModel(
+                    (TypeDeclarationSyntax)attributeContext.TargetNode,
+                    (INamedTypeSymbol)attributeContext.TargetSymbol,
+                    attributeContext.SemanticModel.Compilation,
+                    cancellationToken))
             .Where(static model => model.TypeName is not null || model.Diagnostic is not null)
-            .Collect()
+            .Collect();
+
+        var defaultCandidates = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                static (node, _) => node is TypeDeclarationSyntax { BaseList: not null },
+                static (syntaxContext, _) => (TypeDeclarationSyntax)syntaxContext.Node)
+            .Collect();
+
+        var defaultModels = context.CompilationProvider
+            .Combine(defaultCandidates)
+            .Select(static (source, cancellationToken) => BuildDefaultModels(source.Left, source.Right, cancellationToken));
+
+        var models = attributedModels
+            .Combine(defaultModels)
+            .Select(static (source, _) => source.Left.AddRange(source.Right))
             .WithTrackingName("ModelIdentityGenerationModels");
 
         context.RegisterSourceOutput(
@@ -131,27 +150,59 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
             });
     }
 
-    private static bool IsIdentityCandidate(TypeDeclarationSyntax declaration)
+    private static ImmutableArray<(string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic)> BuildDefaultModels(
+        Compilation compilation,
+        ImmutableArray<TypeDeclarationSyntax> candidates,
+        CancellationToken cancellationToken)
     {
-        return declaration.AttributeLists.Count > 0 || declaration.BaseList is not null;
+        if (!GetDefaults(compilation).Identity)
+        {
+            return ImmutableArray<(string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic)>.Empty;
+        }
+
+        var models = ImmutableArray.CreateBuilder<(string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic)>();
+        foreach (var candidate in candidates)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var semanticModel = compilation.GetSemanticModel(candidate.SyntaxTree);
+            if (semanticModel.GetDeclaredSymbol(candidate, cancellationToken) is not INamedTypeSymbol type)
+            {
+                continue;
+            }
+
+            if (HasGenerateModelSupportAttribute(type.GetAttributes()))
+            {
+                continue;
+            }
+
+            var model = BuildModel(candidate, type, compilation, cancellationToken);
+            if (model.TypeName is not null || model.Diagnostic is not null)
+            {
+                models.Add(model);
+            }
+        }
+
+        return models.ToImmutable();
+    }
+
+    private static bool HasGenerateModelSupportAttribute(ImmutableArray<AttributeData> attributes)
+    {
+        return attributes.Any(static attribute =>
+            string.Equals(attribute.AttributeClass?.ToDisplayString(), AttributeName, StringComparison.Ordinal));
     }
 
     private static (string? NamespaceName, string? TypeName, string? Accessibility, string? IdTypeName, string? HintName, Diagnostic? Diagnostic) BuildModel(
-        GeneratorSyntaxContext context,
+        TypeDeclarationSyntax typeDeclaration,
+        INamedTypeSymbol type,
+        Compilation compilation,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var typeDeclaration = (TypeDeclarationSyntax)context.Node;
-        if (context.SemanticModel.GetDeclaredSymbol(typeDeclaration, cancellationToken) is not INamedTypeSymbol type)
-        {
-            return default;
-        }
-
         var identityOption = GetIdentityOption(type.GetAttributes());
         var identifiedInterface = type.AllInterfaces.FirstOrDefault(static interfaceType =>
             string.Equals(interfaceType.OriginalDefinition.ToDisplayString(), IdentifiedInterfaceName, StringComparison.Ordinal));
-        var defaults = GetDefaults(context.SemanticModel.Compilation);
+        var defaults = GetDefaults(compilation);
         var requestsIdentity = identityOption is true ||
             (identityOption is not false && defaults.Identity && identifiedInterface is not null);
         if (!requestsIdentity)
