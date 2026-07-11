@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
 using SharedKernel.Testing.CodeFixes;
-using SharedKernel.Testing.Roslyn;
 
 namespace SharedKernel.Testing.CodeFixRunner;
 
@@ -35,30 +34,41 @@ internal static class CodeFixRunEngine
 
         while (true)
         {
-            var diagnostic = await FindNextDiagnostic(solution, options.DiagnosticId, skippedDiagnostics).ConfigureAwait(false);
-            if (diagnostic is null)
+            var diagnostics = await FindDiagnostics(solution, options.DiagnosticId, skippedDiagnostics).ConfigureAwait(false);
+            if (diagnostics.IsEmpty)
             {
                 return fixedCount;
             }
 
-            var document = solution.GetDocument(diagnostic.Location.SourceTree);
-            if (document is null)
+            var appliedFix = false;
+            foreach (var diagnostic in diagnostics)
             {
-                await error.WriteLineAsync($"Skipping diagnostic without document: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}").ConfigureAwait(false);
-                skippedDiagnostics.Add(GetDiagnosticKey(diagnostic));
-                continue;
+                var document = solution.GetDocument(diagnostic.Location.SourceTree);
+                if (document is null)
+                {
+                    await error.WriteLineAsync($"Skipping diagnostic without document: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}").ConfigureAwait(false);
+                    skippedDiagnostics.Add(GetDiagnosticKey(diagnostic));
+                    continue;
+                }
+
+                var action = await GetFirstCodeAction(document, diagnostic).ConfigureAwait(false);
+                if (action is null)
+                {
+                    await error.WriteLineAsync($"No code fix available for {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}").ConfigureAwait(false);
+                    skippedDiagnostics.Add(GetDiagnosticKey(diagnostic));
+                    continue;
+                }
+
+                solution = await ApplyAction(workspace, solution, action).ConfigureAwait(false);
+                fixedCount++;
+                appliedFix = true;
+                break;
             }
 
-            var action = await GetFirstCodeAction(document, diagnostic).ConfigureAwait(false);
-            if (action is null)
+            if (!appliedFix)
             {
-                await error.WriteLineAsync($"No code fix available for {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}").ConfigureAwait(false);
-                skippedDiagnostics.Add(GetDiagnosticKey(diagnostic));
-                continue;
+                return fixedCount;
             }
-
-            solution = await ApplyAction(workspace, solution, action).ConfigureAwait(false);
-            fixedCount++;
         }
     }
 
@@ -81,7 +91,13 @@ internal static class CodeFixRunEngine
 
     internal static string GetDiagnosticKey(Diagnostic diagnostic)
     {
-        return DiagnosticLocationKey.Create(diagnostic);
+        var sourceTree = diagnostic.Location.SourceTree;
+        var sourceText = sourceTree?.GetText();
+        var source = sourceText?.ToString(diagnostic.Location.SourceSpan) ?? string.Empty;
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"{sourceTree?.FilePath}|{diagnostic.Id}|{diagnostic.GetMessage(CultureInfo.InvariantCulture)}|{source}");
     }
 
     private static async Task<Solution> OpenSolution(MSBuildWorkspace workspace, string targetPath)
@@ -94,8 +110,9 @@ internal static class CodeFixRunEngine
         };
     }
 
-    private static async Task<Diagnostic?> FindNextDiagnostic(Solution solution, string diagnosticId, HashSet<string> skippedDiagnostics)
+    private static async Task<ImmutableArray<Diagnostic>> FindDiagnostics(Solution solution, string diagnosticId, HashSet<string> skippedDiagnostics)
     {
+        var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
         foreach (var project in solution.Projects.Where(static project => project.Language == LanguageNames.CSharp))
         {
             var compilation = await project.GetCompilationAsync().ConfigureAwait(false);
@@ -104,23 +121,19 @@ internal static class CodeFixRunEngine
                 continue;
             }
 
-            var diagnostics = await compilation
+            var projectDiagnostics = await compilation
                 .WithAnalyzers(Analyzers)
                 .GetAnalyzerDiagnosticsAsync()
                 .ConfigureAwait(false);
-            var diagnostic = diagnostics
+            diagnostics.AddRange(projectDiagnostics
                 .Where(candidate => string.Equals(candidate.Id, diagnosticId, StringComparison.Ordinal))
-                .Where(candidate => !skippedDiagnostics.Contains(GetDiagnosticKey(candidate)))
-                .OrderBy(static candidate => candidate.Location.GetLineSpan().Path, StringComparer.Ordinal)
-                .ThenBy(static candidate => candidate.Location.GetLineSpan().StartLinePosition.Line)
-                .FirstOrDefault();
-            if (diagnostic is not null)
-            {
-                return diagnostic;
-            }
+                .Where(candidate => !skippedDiagnostics.Contains(GetDiagnosticKey(candidate))));
         }
 
-        return null;
+        return diagnostics
+            .OrderBy(static candidate => candidate.Location.GetLineSpan().Path, StringComparer.Ordinal)
+            .ThenBy(static candidate => candidate.Location.GetLineSpan().StartLinePosition.Line)
+            .ToImmutableArray();
     }
 
     private static async Task<CodeAction?> GetFirstCodeAction(Document document, Diagnostic diagnostic)
