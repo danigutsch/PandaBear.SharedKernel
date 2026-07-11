@@ -84,7 +84,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.Equal(
+        TestAssert.Equal(
             2,
             diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId));
     }
@@ -154,7 +154,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.Equal(
+        TestAssert.Equal(
             2,
             diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId));
     }
@@ -515,7 +515,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
 
         // Assert
-        Assert.Equal(2, diagnostics.Count(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId));
+        TestAssert.Equal(2, diagnostics.Count(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId));
     }
 
     [Fact]
@@ -1103,7 +1103,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Single(diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId));
+        TestAssert.ExactlyOne(diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId));
     }
 
     [Fact]
