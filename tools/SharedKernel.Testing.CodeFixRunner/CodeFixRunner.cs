@@ -32,39 +32,39 @@ internal static class CodeFixRunEngine
         var fixedCount = 0;
         while (true)
         {
-            var diagnostics = await FindDiagnostics(solution, options.DiagnosticId).ConfigureAwait(false);
-            if (diagnostics.IsEmpty)
+            var changedSolution = await ApplyFirstFix(workspace, solution, options.DiagnosticId).ConfigureAwait(false);
+            if (changedSolution is null)
             {
-                return fixedCount;
+                break;
             }
 
-            var changedSolution = await ApplyFirstFix(workspace, solution, diagnostics).ConfigureAwait(false);
-            if (changedSolution is not null)
-            {
-                solution = changedSolution;
-                fixedCount++;
-                continue;
-            }
-
-            await ReportUnsupportedDiagnostics(solution, diagnostics, error).ConfigureAwait(false);
-            return fixedCount;
+            solution = changedSolution;
+            fixedCount++;
         }
+
+        var unsupportedDiagnostics = await FindDiagnostics(solution, options.DiagnosticId).ConfigureAwait(false);
+        await ReportUnsupportedDiagnostics(solution, unsupportedDiagnostics, error).ConfigureAwait(false);
+        return fixedCount;
     }
 
-    private static async Task<Solution?> ApplyFirstFix(Workspace workspace, Solution solution, ImmutableArray<Diagnostic> diagnostics)
+    private static async Task<Solution?> ApplyFirstFix(Workspace workspace, Solution solution, string diagnosticId)
     {
-        foreach (var diagnostic in diagnostics)
+        foreach (var project in GetCSharpProjects(solution))
         {
-            var document = GetDocument(solution, diagnostic);
-            if (document is null)
+            var diagnostics = await GetProjectDiagnostics(project, diagnosticId).ConfigureAwait(false);
+            foreach (var diagnostic in diagnostics)
             {
-                continue;
-            }
+                var document = GetDocument(solution, diagnostic);
+                if (document is null)
+                {
+                    continue;
+                }
 
-            var action = await GetFirstCodeAction(document, diagnostic).ConfigureAwait(false);
-            if (action is not null)
-            {
-                return await ApplyAction(workspace, solution, action).ConfigureAwait(false);
+                var action = await GetFirstCodeAction(document, diagnostic).ConfigureAwait(false);
+                if (action is not null)
+                {
+                    return await ApplyAction(workspace, solution, action).ConfigureAwait(false);
+                }
             }
         }
 
@@ -125,23 +125,37 @@ internal static class CodeFixRunEngine
     private static async Task<ImmutableArray<Diagnostic>> FindDiagnostics(Solution solution, string diagnosticId)
     {
         var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
-        foreach (var project in solution.Projects.Where(static project => project.Language == LanguageNames.CSharp))
+        foreach (var project in GetCSharpProjects(solution))
         {
-            var compilation = await project.GetCompilationAsync().ConfigureAwait(false);
-            if (compilation is null)
-            {
-                continue;
-            }
-
-            var projectDiagnostics = await compilation
-                .WithAnalyzers(Analyzers)
-                .GetAnalyzerDiagnosticsAsync()
-                .ConfigureAwait(false);
-            diagnostics.AddRange(projectDiagnostics
-                .Where(candidate => string.Equals(candidate.Id, diagnosticId, StringComparison.Ordinal)));
+            diagnostics.AddRange(await GetProjectDiagnostics(project, diagnosticId).ConfigureAwait(false));
         }
 
         return diagnostics
+            .OrderBy(static candidate => candidate.Location.GetLineSpan().Path, StringComparer.Ordinal)
+            .ThenBy(static candidate => candidate.Location.GetLineSpan().StartLinePosition.Line)
+            .ToImmutableArray();
+    }
+
+    private static IEnumerable<Project> GetCSharpProjects(Solution solution) =>
+        solution.Projects
+            .Where(static project => project.Language == LanguageNames.CSharp)
+            .OrderBy(static project => project.FilePath, StringComparer.Ordinal);
+
+    private static async Task<ImmutableArray<Diagnostic>> GetProjectDiagnostics(Project project, string diagnosticId)
+    {
+        var compilation = await project.GetCompilationAsync().ConfigureAwait(false);
+        if (compilation is null)
+        {
+            return [];
+        }
+
+        var diagnostics = await compilation
+            .WithAnalyzers(Analyzers)
+            .GetAnalyzerDiagnosticsAsync()
+            .ConfigureAwait(false);
+
+        return diagnostics
+            .Where(candidate => string.Equals(candidate.Id, diagnosticId, StringComparison.Ordinal))
             .OrderBy(static candidate => candidate.Location.GetLineSpan().Path, StringComparer.Ordinal)
             .ThenBy(static candidate => candidate.Location.GetLineSpan().StartLinePosition.Line)
             .ToImmutableArray();
