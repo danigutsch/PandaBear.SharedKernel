@@ -59,4 +59,18 @@ public sealed class HtmlDocumentRendererTests
         html.ShouldContain("<p>Viajantes Turismo</p>", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Render_excludes_backslash_logo_paths()
+    {
+        // Arrange
+        var request = new DocumentRenderRequest("en", "Tour service contract", [new DocumentSection("Travel", [new DocumentField("Dates", "2026-07-11", DocumentPrivacyClassification.Public)])], new DocumentBrandingSnapshot("B1", "Viajantes Turismo", new Uri("/\\evil.test/logo.svg", UriKind.Relative)));
+
+        // Act
+        var html = Encoding.UTF8.GetString(new HtmlDocumentRenderer().Render(request));
+
+        // Assert
+        html.ShouldNotContain("<img", StringComparison.Ordinal);
+        html.ShouldContain("<p>Viajantes Turismo</p>", StringComparison.Ordinal);
+    }
+
 }
