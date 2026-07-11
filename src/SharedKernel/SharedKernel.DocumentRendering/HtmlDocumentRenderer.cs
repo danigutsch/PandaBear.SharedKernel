@@ -33,6 +33,11 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
             foreach (var field in section.Fields)
             {
                 ArgumentNullException.ThrowIfNull(field);
+                if (field.PrivacyClassification == DocumentPrivacyClassification.None)
+                {
+                    throw new InvalidOperationException("Document fields must be privacy classified before rendering.");
+                }
+
                 builder.Append("<dt>").Append(HtmlEncode(field.Label)).Append("</dt><dd>")
                     .Append(HtmlEncode(field.Value)).Append("</dd>");
             }
