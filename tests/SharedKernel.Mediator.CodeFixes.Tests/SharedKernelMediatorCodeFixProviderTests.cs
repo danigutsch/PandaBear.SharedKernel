@@ -9,10 +9,10 @@ namespace SharedKernel.Mediator.CodeFixes.Tests;
 public sealed class SharedKernelMediatorCodeFixProviderTests
 {
     [Theory]
-    [InlineData("SKMED005")]
-    [InlineData("SKMED008")]
-    [InlineData("SKMED020")]
-    [InlineData("SKMED500")]
+    [InlineData(MediatorDiagnosticIds.HandlerReturnTypeMismatch)]
+    [InlineData(MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken)]
+    [InlineData(MediatorDiagnosticIds.InvalidPipelineGenericArity)]
+    [InlineData(MediatorDiagnosticIds.HandlerShouldNotCallSender)]
     public async Task Analyzer_only_diagnostics_do_not_offer_code_actions(string diagnosticId)
     {
         // Arrange
