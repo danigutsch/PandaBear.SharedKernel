@@ -20,23 +20,24 @@ internal static class AnalyzerTestHarness
 
     public static CSharpCompilation CreateCompilation(
         string source,
-        string assemblyName = "SharedKernel.Testing.Analyzers.Tests.Dynamic")
+        string assemblyName = "SharedKernel.Testing.Analyzers.Tests.Dynamic",
+        string path = "TestSource.cs")
     {
-        var syntaxTree = CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview));
-
-        return CSharpCompilation.Create(
+        return Roslyn.AnalyzerTestHarness.CreateCompilation(
+            source,
+            DefaultUsings,
+            [typeof(FactAttribute).Assembly],
             assemblyName,
-            [syntaxTree],
-            GetMetadataReferences(),
-            new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            path);
     }
 
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
         string assemblyName = "SharedKernel.Testing.Analyzers.Tests.Dynamic",
-        ImmutableDictionary<string, string>? analyzerOptions = null)
+        ImmutableDictionary<string, string>? analyzerOptions = null,
+        string path = "TestSource.cs")
     {
-        var compilation = CreateCompilation(source, assemblyName);
+        var compilation = CreateCompilation(source, assemblyName, path);
         var analyzer = new SharedKernelTestingAnalyzer();
         var optionsProvider = new TestAnalyzerConfigOptionsProvider(analyzerOptions ?? ImmutableDictionary<string, string>.Empty);
         var options = new AnalyzerOptions([]);
@@ -53,17 +54,4 @@ internal static class AnalyzerTestHarness
         return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
     }
 
-    private static IEnumerable<MetadataReference> GetMetadataReferences()
-    {
-        var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        (string.IsNullOrWhiteSpace(trustedPlatformAssemblies)).ShouldBeFalse();
-        var trustedAssemblyPaths = (trustedPlatformAssemblies).ShouldBeOfType<string>();
-
-        foreach (var path in trustedAssemblyPaths.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
-        {
-            yield return MetadataReference.CreateFromFile(path);
-        }
-
-        yield return MetadataReference.CreateFromFile(typeof(FactAttribute).Assembly.Location);
-    }
 }

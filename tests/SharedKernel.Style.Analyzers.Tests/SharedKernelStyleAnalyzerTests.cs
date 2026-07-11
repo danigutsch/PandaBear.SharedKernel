@@ -7,6 +7,30 @@ namespace SharedKernel.Style.Analyzers.Tests;
 public sealed class SharedKernelStyleAnalyzerTests
 {
     [Fact]
+    public void Supported_diagnostics_match_style_descriptor_contract()
+    {
+        // Arrange
+        var analyzer = new SharedKernelStyleAnalyzer();
+        string[] expectedDiagnosticIds =
+        [
+            StyleDiagnosticIds.AsyncSuffix,
+            StyleDiagnosticIds.CancellationTokenParameterName,
+            StyleDiagnosticIds.CancellationTokenDefaultValue,
+            StyleDiagnosticIds.MultipleTopLevelTypesPerFile,
+            StyleDiagnosticIds.GenericTypeNameSuffix,
+            StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
+            StyleDiagnosticIds.NonSourceGeneratedLogging,
+            StyleDiagnosticIds.DomainEventSuffix,
+        ];
+
+        // Act
+        var diagnosticIds = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id).OrderBy(static id => id, StringComparer.Ordinal);
+
+        // Assert
+        (diagnosticIds).ShouldBe(expectedDiagnosticIds.OrderBy(static id => id, StringComparer.Ordinal));
+    }
+
+    [Fact]
     public async Task Method_ending_with_async_reports_skstyle001()
     {
         // Arrange

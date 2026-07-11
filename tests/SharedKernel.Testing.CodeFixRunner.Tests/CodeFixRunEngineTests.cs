@@ -80,6 +80,28 @@ public sealed class CodeFixRunEngineTests : IDisposable
     }
 
     [Fact]
+    public async Task Run_reports_unsupported_diagnostics_once_after_applying_supported_fixes()
+    {
+        // Arrange
+        var projectPath = Path.Combine(projectDirectory.Path, "Sample.Tests.csproj");
+        var sourcePath = Path.Combine(projectDirectory.Path, "SampleTests.cs");
+        await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.ProjectFile, TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.SupportedAndUnsupportedSourceFile, TestContext.Current.CancellationToken);
+
+        var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+
+        // Act
+        var fixedCount = await CodeFixRunEngine.Run(options, error);
+
+        // Assert
+        (fixedCount).ShouldBe(1);
+        var messages = error.ToString();
+        (messages).ShouldContain("No code fix available", StringComparison.Ordinal);
+        (messages.Split("No code fix available", StringSplitOptions.None).Length - 1).ShouldBe(1);
+    }
+
+    [Fact]
     public async Task Run_rejects_non_project_or_solution_path()
     {
         // Arrange

@@ -489,7 +489,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
     private static bool CanRewriteXunitAssertion(MemberAccessExpressionSyntax memberAccess, out string equivalenceKey)
     {
         var name = memberAccess.Name.Identifier.ValueText;
-        equivalenceKey = $"UseTestAssertWrapper:{name}";
+        equivalenceKey = $"UseShouldAssertionWrapper:{name}";
 
         return name switch
         {

@@ -54,6 +54,34 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    public const string SupportedAndUnsupportedSourceFile = """
+        namespace Xunit
+        {
+            public static class Assert
+            {
+                public static void True(bool condition)
+                {
+                }
+
+                public static void Equal(string expected, string actual, bool ignoreCase)
+                {
+                }
+            }
+        }
+
+        namespace Sample.Tests
+        {
+            public sealed class SampleTests
+            {
+                public void UsesXunitAssert()
+                {
+                    Xunit.Assert.Equal("expected", "actual", true);
+                    Xunit.Assert.True(true);
+                }
+            }
+        }
+        """;
+
     public const string HelperSourceFile = """
         namespace Xunit
         {

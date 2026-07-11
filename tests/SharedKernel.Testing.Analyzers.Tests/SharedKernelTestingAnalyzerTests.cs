@@ -4,6 +4,53 @@ namespace SharedKernel.Testing.Analyzers.Tests;
 
 public sealed class SharedKernelTestingAnalyzerTests
 {
+    [Fact]
+    public void Supported_diagnostics_match_testing_descriptor_contract()
+    {
+        // Arrange
+        var analyzer = new SharedKernelTestingAnalyzer();
+        string[] expectedDiagnosticIds =
+        [
+            TestingDiagnosticIds.TestMethodWarningSuppression,
+            TestingDiagnosticIds.XunitTestMethodNaming,
+            TestingDiagnosticIds.XunitTestMethodRequiredTrait,
+            TestingDiagnosticIds.XunitTestClassHelperMethod,
+            TestingDiagnosticIds.XunitSerialCollectionJustification,
+            TestingDiagnosticIds.XunitAssertionWrapper,
+            TestingDiagnosticIds.XunitArrangeActAssertMarkers,
+            TestingDiagnosticIds.XunitTryFinallyCleanup,
+            TestingDiagnosticIds.XunitTraitConstantUsage,
+        ];
+
+        // Act
+        var diagnosticIds = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id).OrderBy(static id => id, StringComparer.Ordinal);
+
+        // Assert
+        (diagnosticIds).ShouldBe(expectedDiagnosticIds.OrderBy(static id => id, StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public async Task Generated_files_do_not_report_testing_diagnostics()
+    {
+        // Arrange
+        const string source = """
+            public sealed class SampleTests
+            {
+                [Fact]
+                public void Uses_direct_assertion()
+                {
+                    Xunit.Assert.True(true);
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, path: "Generated.g.cs");
+
+        // Assert
+        (diagnostics).ShouldBeEmpty();
+    }
+
     private const string WarningSuppressionDiagnosticId = TestingDiagnosticIds.TestMethodWarningSuppression;
     private const string XunitMethodNamingDiagnosticId = TestingDiagnosticIds.XunitTestMethodNaming;
     private const string XunitRequiredTraitDiagnosticId = TestingDiagnosticIds.XunitTestMethodRequiredTrait;
