@@ -21,6 +21,21 @@ public static class TestTraitValues
     public const string SecurityCategory = "security";
 
     /// <summary>
+    /// Category value for core behavior tests.
+    /// </summary>
+    public const string CoreBehaviorCategory = "core-behavior";
+
+    /// <summary>
+    /// Capability value for generated document tests.
+    /// </summary>
+    public const string GeneratedDocumentsCapability = "generated-documents";
+
+    /// <summary>
+    /// Capability value for document rendering tests.
+    /// </summary>
+    public const string DocumentRenderingCapability = "document-rendering";
+
+    /// <summary>
     /// Scope value for API integration tests.
     /// </summary>
     public const string ApiIntegrationScope = "api-integration";
