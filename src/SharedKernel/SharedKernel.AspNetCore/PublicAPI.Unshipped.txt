@@ -30,4 +30,4 @@ SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Window.get -> System.
 SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Window.init -> void
 static SharedKernel.AspNetCore.SitemapCanonicalOrigin.IsValid(string? value) -> bool
 static SharedKernel.AspNetCore.SitemapCanonicalOrigin.Parse(string! value) -> System.Uri!
-static SharedKernel.AspNetCore.SitemapXmlSerializer.Serialize(System.Collections.Generic.IEnumerable<SharedKernel.AspNetCore.SitemapEntry!>! entries, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<byte[]!>!
+static SharedKernel.AspNetCore.SitemapXmlSerializer.Serialize(System.Collections.Generic.IEnumerable<SharedKernel.AspNetCore.SitemapEntry!>! entries, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.IO.Stream!>!

@@ -25,9 +25,9 @@ public static class SitemapXmlSerializer
     /// </summary>
     /// <param name="entries">The sitemap URL entries.</param>
     /// <param name="cancellationToken">The token used to cancel serialization.</param>
-    /// <returns>A task that represents the serialization operation. The task result contains the UTF-8 encoded sitemap XML document.</returns>
+    /// <returns>A task that represents the serialization operation. The task result contains a readable UTF-8 sitemap XML stream positioned at its beginning.</returns>
     /// <exception cref="InvalidOperationException">Thrown when more than <see cref="MaximumUrlCount" /> entries are provided.</exception>
-    public static async Task<byte[]> Serialize(IEnumerable<SitemapEntry> entries, CancellationToken cancellationToken = default)
+    public static async Task<Stream> Serialize(IEnumerable<SitemapEntry> entries, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entries);
 
@@ -48,9 +48,10 @@ public static class SitemapXmlSerializer
             new XDeclaration("1.0", "utf-8", null),
             new XElement(SitemapNamespace + "urlset", urls));
 
-        using var stream = new MemoryStream();
-        await document.SaveAsync(stream, SaveOptions.None, cancellationToken).ConfigureAwait(false);
-        return stream.ToArray();
+        var stream = new MemoryStream();
+        await document.SaveAsync(stream, SaveOptions.DisableFormatting, cancellationToken).ConfigureAwait(false);
+        stream.Position = 0;
+        return stream;
     }
 
     private static XElement CreateSitemapUrl(SitemapEntry entry)
