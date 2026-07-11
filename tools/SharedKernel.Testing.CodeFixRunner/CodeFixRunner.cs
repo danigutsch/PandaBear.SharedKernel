@@ -73,7 +73,9 @@ internal static class CodeFixRunEngine
                     continue;
                 }
 
-                await error.WriteLineAsync($"No code fix available for {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}").ConfigureAwait(false);
+                await error.WriteLineAsync(
+                    $"No code fix available for {diagnostic.Id} at {diagnostic.Location.GetLineSpan().Path}:{diagnostic.Location.GetLineSpan().StartLinePosition.Line + 1}: {diagnostic.GetMessage(CultureInfo.InvariantCulture)}")
+                    .ConfigureAwait(false);
             }
 
             return fixedCount;

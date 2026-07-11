@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,6 +10,8 @@ namespace SharedKernel.Testing.Roslyn;
 /// </summary>
 public static class AnalyzerTestHarness
 {
+    private static readonly Lazy<ImmutableArray<MetadataReference>> TrustedPlatformReferences = new(CreateTrustedPlatformReferences);
+
     /// <summary>
     /// Creates a preview C# compilation with trusted-platform and caller-provided references.
     /// </summary>
@@ -36,20 +39,28 @@ public static class AnalyzerTestHarness
 
     private static IEnumerable<MetadataReference> GetMetadataReferences(IEnumerable<Assembly>? additionalReferenceAssemblies)
     {
-        var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        if (string.IsNullOrWhiteSpace(trustedPlatformAssemblies))
+        foreach (var reference in TrustedPlatformReferences.Value)
         {
-            throw new InvalidOperationException("TRUSTED_PLATFORM_ASSEMBLIES is required to create Roslyn test compilations.");
-        }
-
-        foreach (var path in trustedPlatformAssemblies.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
-        {
-            yield return MetadataReference.CreateFromFile(path);
+            yield return reference;
         }
 
         foreach (var assembly in additionalReferenceAssemblies ?? [])
         {
             yield return MetadataReference.CreateFromFile(assembly.Location);
         }
+    }
+
+    private static ImmutableArray<MetadataReference> CreateTrustedPlatformReferences()
+    {
+        var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
+        if (string.IsNullOrWhiteSpace(trustedPlatformAssemblies))
+        {
+            throw new InvalidOperationException("TRUSTED_PLATFORM_ASSEMBLIES is required to create Roslyn test compilations.");
+        }
+
+        return trustedPlatformAssemblies
+            .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
+            .Select(static path => (MetadataReference)MetadataReference.CreateFromFile(path))
+            .ToImmutableArray();
     }
 }
