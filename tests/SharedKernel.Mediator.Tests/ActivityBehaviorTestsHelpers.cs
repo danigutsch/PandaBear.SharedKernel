@@ -17,4 +17,16 @@ internal static class ActivityBehaviorTestsHelpers
         ActivitySource.AddActivityListener(listener);
         return listener;
     }
+
+    public static ValueTask<int> HandleExceptionInternally()
+    {
+        try
+        {
+            throw new InvalidOperationException("boom");
+        }
+        catch (InvalidOperationException)
+        {
+            return ValueTask.FromResult(99);
+        }
+    }
 }

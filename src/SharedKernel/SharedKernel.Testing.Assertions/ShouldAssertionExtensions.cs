@@ -215,6 +215,14 @@ public static class ShouldAssertionExtensions
     public static void ShouldNotContain(this string? actual, string expected) => TestAssert.DoesNotContain(expected, actual, StringComparison.Ordinal);
 
     /// <summary>
+    /// Verifies that a string does not contain the expected fragment.
+    /// </summary>
+    /// <param name="actual">The actual value.</param>
+    /// <param name="expected">The expected fragment.</param>
+    /// <param name="comparisonType">The string comparison type.</param>
+    public static void ShouldNotContain(this string? actual, string expected, StringComparison comparisonType) => TestAssert.DoesNotContain(expected, actual, comparisonType);
+
+    /// <summary>
     /// Verifies that a collection is empty.
     /// </summary>
     /// <typeparam name="T">The item type.</typeparam>

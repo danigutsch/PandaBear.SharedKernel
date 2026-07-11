@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace SharedKernel.Domain.GeneratorTests;
 
-[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ValueObjectCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ValueObjectCapability)]
 public sealed class ValueObjectGeneratorTests
 {
     [Fact]
@@ -28,7 +28,7 @@ public sealed class ValueObjectGeneratorTests
         generatedSource.ShouldContain("public string Value", StringComparison.Ordinal);
         generatedSource.ShouldContain("get => __valueObjectValue ?? throw new global::System.InvalidOperationException", StringComparison.Ordinal);
         generatedSource.ShouldContain("__valueObjectValue = value;", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("public string Value { get; }");
+        generatedSource.ShouldNotContain("public string Value { get; }", StringComparison.Ordinal);
         generatedSource.ShouldContain("public static TourCode Create(string value)", StringComparison.Ordinal);
         generatedSource.ShouldContain("public static bool TryCreate(string value, out TourCode result)", StringComparison.Ordinal);
         generatedSource.ShouldContain("public static bool TryParse(string? text, global::System.IFormatProvider? provider, out TourCode result)", StringComparison.Ordinal);

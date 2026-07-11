@@ -129,14 +129,14 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true,
         description: "Repository testing rules allow tests without Arrange/Act/Assert comments, but a complete explicit marker set should appear as Arrange, Act, and Assert in that order when used.");
 
-    private static readonly DiagnosticDescriptor XunitTryFinallyCleanupRule = new(
+    private static readonly DiagnosticDescriptor XunitTryStatementRule = new(
         TestingDiagnosticIds.XunitTryFinallyCleanup,
-        title: "xUnit test methods should not use try/finally cleanup blocks",
-        messageFormat: "xUnit test method '{0}' should move try/finally cleanup to a fixture, disposable helper, or dedicated helper type",
+        title: "xUnit test methods should not use try blocks",
+        messageFormat: "xUnit test method '{0}' should move try/catch/finally control flow to a fixture, disposable helper, or dedicated helper type",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules discourage manual try/finally cleanup inside xUnit test methods because cleanup plumbing can hide behavior and assertions.");
+        description: "Repository testing rules discourage manual try/catch/finally control flow inside xUnit test methods because it can hide Arrange/Act/Assert behavior and cleanup plumbing.");
 
     private static readonly DiagnosticDescriptor XunitTraitConstantUsageRule = new(
         TestingDiagnosticIds.XunitTraitConstantUsage,
@@ -149,7 +149,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryFinallyCleanupRule, XunitTraitConstantUsageRule];
+        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -360,7 +360,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeTryStatement(SyntaxNodeAnalysisContext context)
     {
-        if (context.Node is not TryStatementSyntax { Finally: not null } tryStatement
+        if (context.Node is not TryStatementSyntax tryStatement
             || tryStatement.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not MethodDeclarationSyntax methodDeclaration
             || !IsPotentialXunitTestMethodDeclaration(methodDeclaration)
             || context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken) is not IMethodSymbol methodSymbol
@@ -371,7 +371,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
         context.ReportDiagnostic(
             Diagnostic.Create(
-                XunitTryFinallyCleanupRule,
+                XunitTryStatementRule,
                 tryStatement.TryKeyword.GetLocation(),
                 methodSymbol.Name));
     }

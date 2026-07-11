@@ -11,7 +11,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
     private const string XunitAssertionWrapperDiagnosticId = TestingDiagnosticIds.XunitAssertionWrapper;
     private const string XunitArrangeActAssertDiagnosticId = TestingDiagnosticIds.XunitArrangeActAssertMarkers;
-    private const string XunitCleanupFinallyDiagnosticId = TestingDiagnosticIds.XunitTryFinallyCleanup;
+    private const string XunitTryStatementDiagnosticId = TestingDiagnosticIds.XunitTryFinallyCleanup;
     private const string XunitTraitConstantUsageDiagnosticId = TestingDiagnosticIds.XunitTraitConstantUsage;
 
     [Fact]
@@ -32,7 +32,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitAssertionWrapperDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitAssertionWrapperDiagnosticId);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitAssertionWrapperDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitAssertionWrapperDiagnosticId);
     }
 
     [Fact]
@@ -107,7 +107,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == WarningSuppressionDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == WarningSuppressionDiagnosticId);
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == WarningSuppressionDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == WarningSuppressionDiagnosticId);
     }
 
     [Fact]
@@ -176,7 +176,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
     [Fact]
@@ -196,7 +196,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
     [Fact]
@@ -218,7 +218,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
     [Fact]
@@ -240,7 +240,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
     [Fact]
@@ -263,7 +263,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
     [Fact]
@@ -285,7 +285,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
     [Fact]
@@ -307,7 +307,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
     [Fact]
@@ -340,7 +340,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
     [Fact]
@@ -366,7 +366,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
     [Fact]
@@ -386,7 +386,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
     [Fact]
@@ -411,7 +411,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
     }
 
     [Fact]
@@ -437,7 +437,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
     }
 
     [Fact]
@@ -463,7 +463,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
     }
 
     [Fact]
@@ -490,7 +490,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
     }
 
     [Fact]
@@ -857,7 +857,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -885,7 +885,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -914,7 +914,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -937,7 +937,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -963,7 +963,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -992,7 +992,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -1020,7 +1020,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -1179,7 +1179,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -1212,7 +1212,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -1250,7 +1250,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -1278,7 +1278,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitHelperMethodDiagnosticId);
     }
 
     [Fact]
@@ -1298,7 +1298,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
     }
 
     [Fact]
@@ -1325,7 +1325,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
     }
 
     [Fact]
@@ -1352,7 +1352,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
     }
 
     [Fact]
@@ -1372,7 +1372,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitSerialJustificationDiagnosticId);
     }
 
     [Fact]
@@ -1403,7 +1403,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
     }
 
     [Fact]
@@ -1437,7 +1437,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
     }
 
     [Fact]
@@ -1465,7 +1465,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
     }
 
     [Fact]
@@ -1496,7 +1496,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
     }
 
     [Fact]
@@ -1527,7 +1527,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
     }
 
     [Fact]
@@ -1552,7 +1552,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitArrangeActAssertDiagnosticId);
     }
 
     [Fact]
@@ -1583,7 +1583,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitTryStatementDiagnosticId);
     }
 
     [Fact]
@@ -1614,11 +1614,11 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.Contains(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitTryStatementDiagnosticId);
     }
 
     [Fact]
-    public async Task Try_without_finally_does_not_report_SKTEST008()
+    public async Task Try_catch_inside_fact_method_reports_SKTEST008()
     {
         // Arrange
         const string source = """
@@ -1645,7 +1645,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+        diagnostics.ShouldContain(static candidate => candidate.Id == XunitTryStatementDiagnosticId);
     }
 
     [Fact]
@@ -1675,7 +1675,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitTryStatementDiagnosticId);
     }
 
     [Fact]
@@ -1705,6 +1705,6 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        Assert.DoesNotContain(diagnostics, static candidate => candidate.Id == XunitCleanupFinallyDiagnosticId);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitTryStatementDiagnosticId);
     }
 }

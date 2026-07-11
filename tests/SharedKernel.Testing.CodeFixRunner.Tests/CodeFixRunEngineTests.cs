@@ -26,7 +26,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         (fixedCount).ShouldBe(1);
         (updatedSource).ShouldContain("using SharedKernel.Testing.Assertions;", StringComparison.Ordinal);
         (updatedSource).ShouldContain("(true).ShouldBeTrue()", StringComparison.Ordinal);
-        (updatedSource).ShouldNotContain("Xunit.Assert.True");
+        (updatedSource).ShouldNotContain("Xunit.Assert.True", StringComparison.Ordinal);
         (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
     }
 
@@ -51,7 +51,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
         var helperSource = await File.ReadAllTextAsync(helperPath, TestContext.Current.CancellationToken);
         updatedSource.ShouldContain("SampleTestsHelpers.CreateTourId()", StringComparison.Ordinal);
-        updatedSource.ShouldNotContain("private static int CreateTourId()");
+        updatedSource.ShouldNotContain("private static int CreateTourId()", StringComparison.Ordinal);
         helperSource.ShouldContain("internal static class SampleTestsHelpers", StringComparison.Ordinal);
         helperSource.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
         (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
@@ -82,22 +82,15 @@ public sealed class CodeFixRunEngineTests : IDisposable
     [Fact]
     public async Task Run_rejects_non_project_or_solution_path()
     {
+        // Arrange
         var options = new CodeFixRunnerOptions(Path.Combine(projectDirectory.Path, "sample.txt"), "SKTEST006");
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        ArgumentException? exception = null;
 
-        try
-        {
-            await CodeFixRunEngine.Run(options, error);
-        }
-        catch (ArgumentException caught)
-        {
-            exception = caught;
-        }
+        // Act
+        // Assert
+        var exception = await ((Func<Task>)(() => CodeFixRunEngine.Run(options, error))).ShouldThrow<ArgumentException>();
 
-        var nonNullException = exception.ShouldNotBeNull();
-
-        (nonNullException.Message).ShouldContain("Expected a .csproj, .sln, or .slnx path.", StringComparison.Ordinal);
+        (exception.Message).ShouldContain("Expected a .csproj, .sln, or .slnx path.", StringComparison.Ordinal);
     }
 
     public void Dispose()

@@ -25,6 +25,6 @@ public sealed class LoggingRedactionTests
         // Assert
         var message = provider.Messages.ShouldHaveSingleItem();
         message.ShouldContain("Imported customer", StringComparison.Ordinal);
-        message.ShouldNotContain("traveler@example.com");
+        message.ShouldNotContain("traveler@example.com", StringComparison.Ordinal);
     }
 }
