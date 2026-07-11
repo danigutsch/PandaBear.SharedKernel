@@ -1,5 +1,13 @@
 #nullable enable
+const SharedKernel.AspNetCore.SitemapXmlSerializer.ContentType = "application/xml; charset=utf-8" -> string!
+const SharedKernel.AspNetCore.SitemapXmlSerializer.MaximumUrlCount = 50000 -> int
 SharedKernel.AspNetCore.AspNetCoreCorsExtensions
+SharedKernel.AspNetCore.SitemapCanonicalOrigin
+SharedKernel.AspNetCore.SitemapEntry
+SharedKernel.AspNetCore.SitemapEntry.LastModified.get -> System.DateTimeOffset?
+SharedKernel.AspNetCore.SitemapEntry.Location.get -> System.Uri!
+SharedKernel.AspNetCore.SitemapEntry.SitemapEntry(System.Uri! location, System.DateTimeOffset? lastModified = null) -> void
+SharedKernel.AspNetCore.SitemapXmlSerializer
 static SharedKernel.AspNetCore.AspNetCoreCorsExtensions.AddConfiguredOriginsPolicy(this Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions! options, string! policyName, Microsoft.Extensions.Configuration.IConfiguration! allowedOriginsSection) -> Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions!
 SharedKernel.AspNetCore.AspNetCoreForwardedHeadersExtensions
 static SharedKernel.AspNetCore.AspNetCoreForwardedHeadersExtensions.AddConfiguredTrustedForwardedHeaders(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
@@ -20,3 +28,6 @@ SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.PermitLimit.init -> v
 SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.RemoteIpFixedWindowRateLimitPolicy(string! Name, int PermitLimit, System.TimeSpan Window) -> void
 SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Window.get -> System.TimeSpan
 SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Window.init -> void
+static SharedKernel.AspNetCore.SitemapCanonicalOrigin.IsValid(string? value) -> bool
+static SharedKernel.AspNetCore.SitemapCanonicalOrigin.Parse(string! value) -> System.Uri!
+static SharedKernel.AspNetCore.SitemapXmlSerializer.Serialize(System.Collections.Generic.IEnumerable<SharedKernel.AspNetCore.SitemapEntry!>! entries, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<byte[]!>!

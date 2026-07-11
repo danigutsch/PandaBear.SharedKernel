@@ -8,3 +8,6 @@ content security policies. Each consuming application owns those decisions.
 
 Use `MapRobotsTxt` to expose an application-owned crawler policy at `/robots.txt` with
 `text/plain; charset=utf-8`.
+
+Use `SitemapXmlSerializer` to generate sitemap XML while retaining URL inclusion policy in the
+consuming application.
