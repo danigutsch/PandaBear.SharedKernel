@@ -6,6 +6,20 @@ namespace SharedKernel.Mediator.Analyzers.Tests;
 public sealed class SharedKernelMediatorAnalyzerTests
 {
     [Fact]
+    public void Supported_diagnostics_match_mediator_descriptor_contract()
+    {
+        // Arrange
+        var analyzer = new SharedKernelMediatorAnalyzer();
+        string[] expectedDiagnosticIds = ["SKMED003", "SKMED004", "SKMED005", "SKMED006", "SKMED007", "SKMED008", "SKMED020", "SKMED500"];
+
+        // Act
+        var diagnosticIds = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id).OrderBy(static id => id, StringComparer.Ordinal);
+
+        // Assert
+        (diagnosticIds).ShouldBe(expectedDiagnosticIds.OrderBy(static id => id, StringComparer.Ordinal));
+    }
+
+    [Fact]
     public async Task Explicit_interface_handler_reports_invalid_handler_signature()
     {
         // Arrange

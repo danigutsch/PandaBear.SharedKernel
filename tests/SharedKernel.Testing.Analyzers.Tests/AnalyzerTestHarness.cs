@@ -20,21 +20,24 @@ internal static class AnalyzerTestHarness
 
     public static CSharpCompilation CreateCompilation(
         string source,
-        string assemblyName = "SharedKernel.Testing.Analyzers.Tests.Dynamic")
+        string assemblyName = "SharedKernel.Testing.Analyzers.Tests.Dynamic",
+        string path = "TestSource.cs")
     {
         return Roslyn.AnalyzerTestHarness.CreateCompilation(
             source,
             DefaultUsings,
             [typeof(FactAttribute).Assembly],
-            assemblyName);
+            assemblyName,
+            path);
     }
 
     public static async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnostics(
         string source,
         string assemblyName = "SharedKernel.Testing.Analyzers.Tests.Dynamic",
-        ImmutableDictionary<string, string>? analyzerOptions = null)
+        ImmutableDictionary<string, string>? analyzerOptions = null,
+        string path = "TestSource.cs")
     {
-        var compilation = CreateCompilation(source, assemblyName);
+        var compilation = CreateCompilation(source, assemblyName, path);
         var analyzer = new SharedKernelTestingAnalyzer();
         var optionsProvider = new TestAnalyzerConfigOptionsProvider(analyzerOptions ?? ImmutableDictionary<string, string>.Empty);
         var options = new AnalyzerOptions([]);

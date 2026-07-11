@@ -4,6 +4,42 @@ namespace SharedKernel.Aspire.Analyzers.Tests;
 public sealed class SharedKernelAspireAnalyzerTests
 {
     [Fact]
+    public void Supported_diagnostics_match_aspire_descriptor_contract()
+    {
+        // Arrange
+        var analyzer = new SharedKernelAspireAnalyzer();
+
+        // Act
+        var diagnosticIds = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id);
+
+        // Assert
+        (diagnosticIds).ShouldHaveSingleItem().ShouldBe(AspireDiagnosticIds.ImageTagAndDigest);
+    }
+
+    [Fact]
+    public async Task Generated_files_do_not_report_ska_spire001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class AppHost
+            {
+                public void Configure(dynamic builder)
+                {
+                    builder.AddPostgres("database").WithImageTag("18.4");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, path: "Generated.g.cs");
+
+        // Assert
+        (diagnostics).ShouldBeEmpty();
+    }
+
+    [Fact]
     public async Task With_image_tag_without_with_image_sha256_reports_ska_spire001()
     {
         // Arrange
