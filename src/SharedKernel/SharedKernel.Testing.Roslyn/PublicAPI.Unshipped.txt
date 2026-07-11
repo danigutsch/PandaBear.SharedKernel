@@ -1,4 +1,5 @@
 #nullable enable
+SharedKernel.Testing.Roslyn.AnalyzerTestHarness
 override SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptions.TryGetValue(string! key, out string! value) -> bool
 override SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptionsProvider.GetOptions(Microsoft.CodeAnalysis.AdditionalText! textFile) -> Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions!
 override SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptionsProvider.GetOptions(Microsoft.CodeAnalysis.SyntaxTree! tree) -> Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptions!
@@ -10,3 +11,4 @@ SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptionsProvider
 SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptionsProvider.TestAnalyzerConfigOptionsProvider(System.Collections.Immutable.ImmutableDictionary<string!, string!>? globalOptions) -> void
 static readonly SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptions.Empty -> SharedKernel.Testing.Roslyn.TestAnalyzerConfigOptions!
 static SharedKernel.Testing.Roslyn.DiagnosticLocationKey.Create(Microsoft.CodeAnalysis.Diagnostic! diagnostic) -> string!
+static SharedKernel.Testing.Roslyn.AnalyzerTestHarness.CreateCompilation(string! source, string! defaultUsings, System.Collections.Generic.IEnumerable<System.Reflection.Assembly!>? additionalReferenceAssemblies = null, string! assemblyName = "SharedKernel.Testing.Roslyn.Dynamic", string! path = "TestSource.cs") -> Microsoft.CodeAnalysis.CSharp.CSharpCompilation!
