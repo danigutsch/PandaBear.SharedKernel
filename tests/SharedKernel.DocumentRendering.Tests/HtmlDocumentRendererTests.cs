@@ -42,7 +42,7 @@ public sealed class HtmlDocumentRendererTests
         first.ShouldContain("<section><h2>", StringComparison.Ordinal);
         first.ShouldContain("<dl><dt>", StringComparison.Ordinal);
         first.ShouldContain("@media print", StringComparison.Ordinal);
-        first.ShouldNotContain("<img");
+        first.ShouldNotContain("<img", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public sealed class HtmlDocumentRendererTests
         var html = Encoding.UTF8.GetString(new HtmlDocumentRenderer().Render(request));
 
         // Assert
-        html.ShouldNotContain("<img");
+        html.ShouldNotContain("<img", StringComparison.Ordinal);
         html.ShouldContain("<p>Viajantes Turismo</p>", StringComparison.Ordinal);
     }
 
