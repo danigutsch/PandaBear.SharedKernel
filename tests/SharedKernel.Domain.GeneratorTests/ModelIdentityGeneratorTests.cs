@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 
 namespace SharedKernel.Domain.GeneratorTests;
 
-[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
 public sealed class ModelIdentityGeneratorTests
 {
     [Fact]
@@ -64,7 +64,7 @@ public sealed class ModelIdentityGeneratorTests
         errors.ShouldBeEmpty();
         generatedSource.ShouldContain(">.Default.Equals(Id, default!)", StringComparison.Ordinal);
         generatedSource.ShouldContain("return base.GetHashCode();", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("ArgumentNullException.ThrowIfNull");
+        generatedSource.ShouldNotContain("ArgumentNullException.ThrowIfNull", StringComparison.Ordinal);
     }
 
     [Fact]
