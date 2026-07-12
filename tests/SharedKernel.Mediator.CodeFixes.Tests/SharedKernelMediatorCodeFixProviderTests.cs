@@ -8,6 +8,35 @@ namespace SharedKernel.Mediator.CodeFixes.Tests;
 /// </summary>
 public sealed class SharedKernelMediatorCodeFixProviderTests
 {
+    [Theory]
+    [InlineData(MediatorDiagnosticIds.HandlerReturnTypeMismatch)]
+    [InlineData(MediatorDiagnosticIds.NonIteratorStreamHandlerHasCancellationToken)]
+    [InlineData(MediatorDiagnosticIds.InvalidPipelineGenericArity)]
+    [InlineData(MediatorDiagnosticIds.HandlerShouldNotCallSender)]
+    public async Task Analyzer_only_diagnostics_do_not_offer_code_actions(string diagnosticId)
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Sample
+            {
+                public void Execute()
+                {
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var provider = new SharedKernelMediatorCodeFixProvider();
+        var diagnostic = await workspace.CreateDocumentDiagnostic(diagnosticId, "Test0.cs", "Execute()");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        (codeActions).ShouldBeEmpty();
+    }
+
     private const string MissingArgumentDiagnosticId = "CS7036";
     private const string InvalidRequestArgumentDiagnosticId = "CS1503";
 

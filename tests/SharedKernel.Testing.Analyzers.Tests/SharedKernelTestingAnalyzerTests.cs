@@ -458,6 +458,29 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
+    public async Task Absent_required_trait_config_does_not_report_s_k_t_e_s_t003()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class TourLoaderTests
+            {
+                [Fact]
+                public void Creates_a_tour_when_the_request_is_valid()
+                {
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId);
+    }
+
+    [Fact]
     public async Task Required_trait_config_already_on_method_does_not_report_s_k_t_e_s_t003()
     {
         // Arrange

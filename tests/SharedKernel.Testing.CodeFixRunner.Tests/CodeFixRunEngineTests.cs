@@ -102,6 +102,31 @@ public sealed class CodeFixRunEngineTests : IDisposable
     }
 
     [Fact]
+    public async Task Run_formats_final_solution_after_applying_multiple_code_fixes()
+    {
+        // Arrange
+        var projectPath = Path.Combine(projectDirectory.Path, "Sample.Tests.csproj");
+        var sourcePath = Path.Combine(projectDirectory.Path, "SampleTests.cs");
+        await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.ProjectFile, TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.MultipleSupportedSourceFile, TestContext.Current.CancellationToken);
+
+        var options = new CodeFixRunnerOptions(projectPath, "SKTEST006");
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+
+        // Act
+        var fixedCount = await CodeFixRunEngine.Run(options, error);
+        var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
+
+        // Assert
+        (fixedCount).ShouldBe(2);
+        (updatedSource).ShouldContain("using SharedKernel.Testing.Assertions;", StringComparison.Ordinal);
+        (updatedSource).ShouldContain("(true).ShouldBeTrue();", StringComparison.Ordinal);
+        (updatedSource).ShouldNotContain("Xunit.Assert.True", StringComparison.Ordinal);
+        (updatedSource).ShouldNotContain("True(  true )", StringComparison.Ordinal);
+        (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
+    }
+
+    [Fact]
     public async Task Run_rejects_non_project_or_solution_path()
     {
         // Arrange

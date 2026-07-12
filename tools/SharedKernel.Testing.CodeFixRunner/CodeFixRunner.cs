@@ -29,15 +29,28 @@ internal static class CodeFixRunEngine
 
         using var workspace = MSBuildWorkspace.Create();
         var solution = await OpenSolution(workspace, options.TargetPath).ConfigureAwait(false);
+        var initialSolution = solution;
         var fixedCount = 0;
         while (true)
         {
             var fixAttempt = await ApplyFirstFix(workspace, solution, options.DiagnosticId).ConfigureAwait(false);
             if (fixAttempt.ChangedSolution is null)
             {
-                if (!fixAttempt.Diagnostics.IsEmpty)
+                var unsupportedDiagnostics = fixAttempt.Diagnostics;
+
+                if (fixedCount > 0)
                 {
-                    await ReportUnsupportedDiagnostics(solution, fixAttempt.Diagnostics, error).ConfigureAwait(false);
+                    await FormatAndApplyChanges(workspace, initialSolution, solution).ConfigureAwait(false);
+                    solution = workspace.CurrentSolution;
+                    if (!unsupportedDiagnostics.IsEmpty)
+                    {
+                        unsupportedDiagnostics = await FindDiagnostics(solution, options.DiagnosticId).ConfigureAwait(false);
+                    }
+                }
+
+                if (!unsupportedDiagnostics.IsEmpty)
+                {
+                    await ReportUnsupportedDiagnostics(solution, unsupportedDiagnostics, error).ConfigureAwait(false);
                 }
 
                 return fixedCount;
@@ -66,7 +79,7 @@ internal static class CodeFixRunEngine
                 var action = await GetFirstCodeAction(document, diagnostic).ConfigureAwait(false);
                 if (action is not null)
                 {
-                    return new FixAttempt(await ApplyAction(workspace, solution, action).ConfigureAwait(false), []);
+                    return new FixAttempt(await ApplyAction(workspace, action).ConfigureAwait(false), []);
                 }
             }
         }
@@ -150,6 +163,20 @@ internal static class CodeFixRunEngine
             .ToImmutableArray();
     }
 
+    private static async Task<ImmutableArray<Diagnostic>> FindDiagnostics(Solution solution, string diagnosticId)
+    {
+        var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
+        foreach (var project in GetCSharpProjects(solution))
+        {
+            diagnostics.AddRange(await GetProjectDiagnostics(project, diagnosticId).ConfigureAwait(false));
+        }
+
+        return diagnostics
+            .OrderBy(static candidate => candidate.Location.GetLineSpan().Path, StringComparer.Ordinal)
+            .ThenBy(static candidate => candidate.Location.GetLineSpan().StartLinePosition.Line)
+            .ToImmutableArray();
+    }
+
     private readonly record struct FixAttempt(Solution? ChangedSolution, ImmutableArray<Diagnostic> Diagnostics);
 
     private static async Task<CodeAction?> GetFirstCodeAction(Document document, Diagnostic diagnostic)
@@ -165,22 +192,29 @@ internal static class CodeFixRunEngine
         return actions.FirstOrDefault();
     }
 
-    private static async Task<Solution> ApplyAction(Workspace workspace, Solution solution, CodeAction action)
+    private static async Task<Solution> ApplyAction(Workspace workspace, CodeAction action)
     {
         var operations = await action.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
         var applyOperation = operations.OfType<ApplyChangesOperation>().Single();
-        var changedSolution = await FormatChangedDocuments(solution, applyOperation.ChangedSolution).ConfigureAwait(false);
-
-        return workspace.TryApplyChanges(changedSolution)
+        return workspace.TryApplyChanges(applyOperation.ChangedSolution)
             ? workspace.CurrentSolution
             : throw new InvalidOperationException("Failed to apply code fix changes.");
+    }
+
+    private static async Task FormatAndApplyChanges(Workspace workspace, Solution initialSolution, Solution changedSolution)
+    {
+        var formattedSolution = await FormatChangedDocuments(initialSolution, changedSolution).ConfigureAwait(false);
+        if (!workspace.TryApplyChanges(formattedSolution))
+        {
+            throw new InvalidOperationException("Failed to apply formatted code fix changes.");
+        }
     }
 
     private static async Task<Solution> FormatChangedDocuments(Solution oldSolution, Solution newSolution)
     {
         foreach (var projectChanges in newSolution.GetChanges(oldSolution).GetProjectChanges())
         {
-            foreach (var documentId in projectChanges.GetChangedDocuments())
+            foreach (var documentId in projectChanges.GetChangedDocuments().Concat(projectChanges.GetAddedDocuments()))
             {
                 var document = newSolution.GetDocument(documentId);
                 if (document is null)
