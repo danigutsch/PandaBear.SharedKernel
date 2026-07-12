@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace SharedKernel.IntegrationTesting;
 
 /// <summary>
@@ -26,34 +24,17 @@ public sealed class ConcurrentAspireTestApplications : IAsyncDisposable
     /// <summary>
     /// Starts two AppHost instances concurrently.
     /// </summary>
-    /// <typeparam name="TAppHost">The AppHost entry-point type.</typeparam>
-    /// <param name="healthyResourceNames">Resource names that must become healthy before returning.</param>
-    /// <param name="createAppHostArguments">Creates isolated AppHost configuration arguments for each instance.</param>
+    /// <param name="startApplication">Starts an isolated AppHost application instance.</param>
     /// <param name="ct">A cancellation token.</param>
     /// <returns>The concurrently started applications.</returns>
-    [SuppressMessage(
-        "Reliability",
-        "CA2000:Dispose objects before losing scope",
-        Justification = "The returned applications are owned by this type and disposed after a failed start.")]
-    public static async Task<ConcurrentAspireTestApplications> Start<TAppHost>(
-        IEnumerable<string> healthyResourceNames,
-        Func<IReadOnlyCollection<string>> createAppHostArguments,
+    public static async Task<ConcurrentAspireTestApplications> Start(
+        Func<CancellationToken, Task<AspireTestApplication>> startApplication,
         CancellationToken ct)
-        where TAppHost : class
     {
-        ArgumentNullException.ThrowIfNull(healthyResourceNames);
-        ArgumentNullException.ThrowIfNull(createAppHostArguments);
+        ArgumentNullException.ThrowIfNull(startApplication);
 
-        var firstStart = AspireTestApplication.Start<TAppHost>(
-            healthyResourceNames,
-            null,
-            createAppHostArguments(),
-            ct);
-        var secondStart = AspireTestApplication.Start<TAppHost>(
-            healthyResourceNames,
-            null,
-            createAppHostArguments(),
-            ct);
+        var firstStart = startApplication(ct);
+        var secondStart = startApplication(ct);
 
         try
         {
