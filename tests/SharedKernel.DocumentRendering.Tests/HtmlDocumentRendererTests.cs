@@ -37,10 +37,12 @@ public sealed class HtmlDocumentRendererTests
 
         // Assert
         first.ShouldBe(second);
-        first.ShouldContain("<!doctype html><html lang=\"pt-BR\">", StringComparison.Ordinal);
+        first.ShouldBeWellFormedHtmlDocument();
+        first.ShouldContain("<!DOCTYPE html><html lang=\"pt-BR\">", StringComparison.Ordinal);
         first.ShouldContain("<main><h1>", StringComparison.Ordinal);
         first.ShouldContain("<section><h2>", StringComparison.Ordinal);
         first.ShouldContain("<dl><dt>", StringComparison.Ordinal);
+        first.ShouldContain("</section></main></body></html>", StringComparison.Ordinal);
         first.ShouldContain("@media print", StringComparison.Ordinal);
         first.ShouldNotContain("<img", StringComparison.Ordinal);
     }
@@ -94,13 +96,14 @@ public sealed class HtmlDocumentRendererTests
         var html = Encoding.UTF8.GetString(new HtmlDocumentRenderer().Render(request));
 
         // Assert
+        html.ShouldBeWellFormedHtmlDocument();
         html.ShouldContain("--document-primary-color:#102030", StringComparison.Ordinal);
         html.ShouldContain("--document-accent-color:#405060", StringComparison.Ordinal);
         html.ShouldContain("--document-background-color:#fdfdfd", StringComparison.Ordinal);
         html.ShouldContain("--document-text-color:#111111", StringComparison.Ordinal);
         html.ShouldContain("--document-heading-font:Montserrat", StringComparison.Ordinal);
         html.ShouldContain("--document-body-font:Inter", StringComparison.Ordinal);
-        html.ShouldContain("<footer><p>Legal footer</p></footer>", StringComparison.Ordinal);
+        html.ShouldContain("</main><footer><p>Legal footer</p></footer></body></html>", StringComparison.Ordinal);
     }
 
     [Fact]

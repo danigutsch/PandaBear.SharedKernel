@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace SharedKernel.Testing.Assertions;
 
@@ -225,6 +226,20 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual collection.</param>
     /// <param name="predicate">The item predicate.</param>
     public static void ShouldContain<T>(this IEnumerable<T> actual, Predicate<T> predicate) => Xunit.Assert.Contains(actual, predicate);
+
+    /// <summary>
+    /// Verifies that a rendered HTML document is complete and XML-compatible.
+    /// </summary>
+    /// <param name="actual">The rendered HTML document.</param>
+    public static void ShouldBeWellFormedHtmlDocument(this string? actual)
+    {
+        Xunit.Assert.NotNull(actual);
+        var document = XDocument.Parse(actual);
+        Xunit.Assert.Equal("html", document.DocumentType?.Name);
+        Xunit.Assert.Equal("html", document.Root?.Name.LocalName);
+        Xunit.Assert.NotNull(document.Root?.Element("head"));
+        Xunit.Assert.NotNull(document.Root?.Element("body"));
+    }
 
     /// <summary>
     /// Verifies that a string ends with the expected suffix.

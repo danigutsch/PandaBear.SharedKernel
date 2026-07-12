@@ -15,9 +15,9 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
         ArgumentNullException.ThrowIfNull(request.Sections);
 
         var builder = new StringBuilder();
-        builder.Append("<!doctype html><html lang=\"")
+        builder.Append("<!DOCTYPE html><html lang=\"")
             .Append(HtmlEncode(request.Language))
-            .Append("\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>")
+            .Append("\"><head><meta charset=\"utf-8\" /><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" /><title>")
             .Append(HtmlEncode(request.Title))
             .Append("</title><style>");
 
@@ -48,6 +48,7 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
             builder.Append("</dl></section>");
         }
 
+        builder.Append("</main>");
         AppendFooter(builder, request.Branding);
         builder.Append("</body></html>");
         return Encoding.UTF8.GetBytes(builder.ToString());
@@ -81,7 +82,7 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
         if (logoUri is not null && IsAllowedLogoUri(logoUri))
         {
             builder.Append("<img src=\"").Append(HtmlEncode(logoUri.OriginalString)).Append("\" alt=\"")
-                .Append(HtmlEncode($"{branding.BrandName} logo")).Append("\">");
+                .Append(HtmlEncode($"{branding.BrandName} logo")).Append("\" />");
         }
 
         builder.Append("<p>").Append(HtmlEncode(branding.BrandName)).Append("</p></header>");
