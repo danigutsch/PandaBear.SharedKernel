@@ -126,6 +126,8 @@ public static class ApiAuthenticationServiceCollectionExtensions
         {
             ArgumentNullException.ThrowIfNull(principal);
 
+            RemoveProviderPermissions(principal);
+
             var permissions = principal.FindAll(ApiAuthenticationDefaults.RolesClaimType)
                 .Where(role => permissionsByRole.TryGetValue(role.Value, out _))
                 .SelectMany(role => permissionsByRole[role.Value])
@@ -137,17 +139,29 @@ public static class ApiAuthenticationServiceCollectionExtensions
                 return Task.FromResult(principal);
             }
 
-            if (principal.Identity is not ClaimsIdentity identity)
+            var identity = principal.Identities.OfType<ClaimsIdentity>().FirstOrDefault();
+            if (identity is null)
             {
                 return Task.FromResult(principal);
             }
 
-            foreach (var permission in permissions.Where(permission => !principal.HasClaim(ApiAuthenticationDefaults.PermissionClaimType, permission)))
+            foreach (var permission in permissions)
             {
                 identity.AddClaim(new Claim(ApiAuthenticationDefaults.PermissionClaimType, permission));
             }
 
             return Task.FromResult(principal);
+        }
+
+        private static void RemoveProviderPermissions(ClaimsPrincipal principal)
+        {
+            foreach (var identity in principal.Identities.OfType<ClaimsIdentity>())
+            {
+                foreach (var permission in identity.FindAll(ApiAuthenticationDefaults.PermissionClaimType).ToArray())
+                {
+                    identity.RemoveClaim(permission);
+                }
+            }
         }
     }
 }

@@ -128,4 +128,56 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         // Assert
         transformed.FindAll(ApiAuthenticationDefaults.PermissionClaimType).ShouldBeEmpty();
     }
+
+    [Fact]
+    public async Task Removes_permissions_supplied_by_an_unknown_role()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/viajantes");
+        await using var host = ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>> { ["Admin"] = ["tours.read"] });
+        var principal = new ClaimsPrincipal(new ClaimsIdentity(
+        [
+            new Claim(ApiAuthenticationDefaults.RolesClaimType, "Unknown"),
+            new Claim(ApiAuthenticationDefaults.PermissionClaimType, "tours.write")
+        ], "test"));
+
+        // Act
+        var transformed = await host.ClaimsTransformation.TransformAsync(principal);
+
+        // Assert
+        transformed.FindAll(ApiAuthenticationDefaults.PermissionClaimType).ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Replaces_permissions_supplied_by_a_mapped_role()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/viajantes");
+        await using var host = ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>> { ["Admin"] = ["tours.read"] });
+        var principal = new ClaimsPrincipal(new ClaimsIdentity(
+        [
+            new Claim(ApiAuthenticationDefaults.RolesClaimType, "Admin"),
+            new Claim(ApiAuthenticationDefaults.PermissionClaimType, "tours.read"),
+            new Claim(ApiAuthenticationDefaults.PermissionClaimType, "tours.write")
+        ], "test"));
+
+        // Act
+        var transformed = await host.ClaimsTransformation.TransformAsync(principal);
+        var permissions = transformed.FindAll(ApiAuthenticationDefaults.PermissionClaimType).Select(static claim => claim.Value).ToArray();
+
+        // Assert
+        permissions.ShouldBe(["tours.read"]);
+    }
 }
