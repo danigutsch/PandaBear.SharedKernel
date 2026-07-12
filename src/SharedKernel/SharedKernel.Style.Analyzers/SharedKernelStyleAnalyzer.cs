@@ -172,7 +172,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 
         if (resultType is not null)
         {
-            context.RegisterOperationBlockAction(operationContext => AnalyzeSuccessOnlyResultMethod(operationContext, resultType));
+            context.RegisterOperationBlockAction(operationContext => AnalyzeSuccessOnlyResultMethod(operationContext, resultType, genericResultType));
         }
 
         if (resultType is not null && genericResultType is not null)
@@ -192,14 +192,18 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeSuccessOnlyResultMethod(
         OperationBlockAnalysisContext context,
-        INamedTypeSymbol resultType)
+        INamedTypeSymbol resultFactoryType,
+        INamedTypeSymbol? genericResultType)
     {
         if (context.OwningSymbol is not IMethodSymbol
             {
                 MethodKind: MethodKind.Ordinary,
                 ReturnType: { } returnType,
             } method
-            || !SymbolEqualityComparer.Default.Equals(returnType, resultType)
+            || (!SymbolEqualityComparer.Default.Equals(returnType, resultFactoryType)
+                && (genericResultType is null
+                    || returnType is not INamedTypeSymbol genericReturnType
+                    || !SymbolEqualityComparer.Default.Equals(genericReturnType.OriginalDefinition, genericResultType)))
             || method.IsOverride
             || ImplementsInterfaceContract(method))
         {
@@ -208,7 +212,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 
         if (!TryGetReachableReturnValues(context, out var returnValues)
             || returnValues.IsDefaultOrEmpty
-            || returnValues.Any(value => !IsSuccessResultExpression(value, resultType)))
+            || returnValues.Any(value => !IsSuccessResultExpression(value, resultFactoryType, genericResultType)))
         {
             return;
         }
@@ -322,16 +326,19 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         return true;
     }
 
-    private static bool IsSuccessResultExpression(IOperation operation, INamedTypeSymbol resultType)
+    private static bool IsSuccessResultExpression(
+        IOperation operation,
+        INamedTypeSymbol resultFactoryType,
+        INamedTypeSymbol? genericResultType)
     {
         return operation switch
         {
-            IConversionOperation { Operand: { } operand } => IsSuccessResultExpression(operand, resultType),
+            IConversionOperation { Operand: { } operand } => IsSuccessResultExpression(operand, resultFactoryType, genericResultType),
             IConditionalOperation { WhenTrue: { } whenTrue, WhenFalse: { } whenFalse } =>
-                IsSuccessResultExpression(whenTrue, resultType)
-                && IsSuccessResultExpression(whenFalse, resultType),
+                IsSuccessResultExpression(whenTrue, resultFactoryType, genericResultType)
+                && IsSuccessResultExpression(whenFalse, resultFactoryType, genericResultType),
             ISwitchExpressionOperation switchExpression => switchExpression.Arms.All(arm =>
-                IsSuccessResultExpression(arm.Value, resultType)),
+                IsSuccessResultExpression(arm.Value, resultFactoryType, genericResultType)),
             IInvocationOperation
             {
                 TargetMethod:
@@ -339,8 +346,11 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                     IsStatic: true,
                     Name: "Ok" or "NoContent" or "Accepted",
                 } factoryMethod,
-            } => SymbolEqualityComparer.Default.Equals(factoryMethod.ContainingType, resultType)
-                && SymbolEqualityComparer.Default.Equals(factoryMethod.ReturnType, resultType),
+            } => SymbolEqualityComparer.Default.Equals(factoryMethod.ContainingType, resultFactoryType)
+                && (SymbolEqualityComparer.Default.Equals(factoryMethod.ReturnType, resultFactoryType)
+                    || (genericResultType is not null
+                        && factoryMethod.ReturnType is INamedTypeSymbol genericReturnType
+                        && SymbolEqualityComparer.Default.Equals(genericReturnType.OriginalDefinition, genericResultType))),
             _ => false,
         };
     }

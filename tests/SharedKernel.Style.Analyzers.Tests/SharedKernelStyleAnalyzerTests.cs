@@ -1602,6 +1602,7 @@ public sealed class SharedKernelStyleAnalyzerTests
 
         // Assert
         diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.OptionalResultMethod);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
     }
 
     [Fact]
