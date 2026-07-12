@@ -42,6 +42,10 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         jwt.TokenValidationParameters.ValidAudience.ShouldBe("admin-api");
         jwt.TokenValidationParameters.ClockSkew.ShouldBe(TimeSpan.FromMinutes(2));
         jwt.TokenValidationParameters.ValidAlgorithms.Contains(SecurityAlgorithms.RsaSha256).ShouldBeTrue();
+        var audienceValidator = jwt.TokenValidationParameters.AudienceValidator
+            ?? throw new InvalidOperationException("The audience validator is not configured.");
+        audienceValidator(["admin-api"], null, jwt.TokenValidationParameters).ShouldBeTrue();
+        audienceValidator(["admin-api", "catalog-api"], null, jwt.TokenValidationParameters).ShouldBeFalse();
         var permissionValues = twice.FindAll(ApiAuthenticationDefaults.PermissionClaimType).Select(static claim => claim.Value).ToArray();
         permissionValues.ShouldContain("tours.read");
         permissionValues.ShouldContain("tours.write");

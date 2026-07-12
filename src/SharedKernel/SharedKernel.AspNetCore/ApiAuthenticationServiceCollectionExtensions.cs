@@ -73,6 +73,12 @@ public static class ApiAuthenticationServiceCollectionExtensions
                     ValidIssuer = issuer,
                     ValidateAudience = true,
                     ValidAudience = audience,
+                    AudienceValidator = (audiences, _, _) =>
+                    {
+                        var audienceValues = audiences.ToArray();
+                        return audienceValues.Length == 1
+                               && string.Equals(audienceValues[0], audience, StringComparison.Ordinal);
+                    },
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.FromMinutes(2),
