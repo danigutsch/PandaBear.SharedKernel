@@ -1,3 +1,17 @@
 #nullable enable
+SharedKernel.Testing.Http.CapturedHttpRequest
+SharedKernel.Testing.Http.CapturedHttpRequest.Body.get -> string?
+SharedKernel.Testing.Http.CapturedHttpRequest.CapturedHttpRequest(System.Net.Http.HttpRequestMessage! message, string! pathAndQuery, string? body) -> void
+SharedKernel.Testing.Http.CapturedHttpRequest.Message.get -> System.Net.Http.HttpRequestMessage!
+SharedKernel.Testing.Http.CapturedHttpRequest.Method.get -> System.Net.Http.HttpMethod!
+SharedKernel.Testing.Http.CapturedHttpRequest.PathAndQuery.get -> string!
 SharedKernel.Testing.Http.HttpResponseFactory
+SharedKernel.Testing.Http.TestHttpMessageHandler
+SharedKernel.Testing.Http.TestHttpMessageHandler.Enqueue(System.Net.Http.HttpResponseMessage! response) -> void
+SharedKernel.Testing.Http.TestHttpMessageHandler.EnqueueJson(System.Net.HttpStatusCode statusCode, string! json) -> void
+SharedKernel.Testing.Http.TestHttpMessageHandler.LastRequest.get -> SharedKernel.Testing.Http.CapturedHttpRequest?
+SharedKernel.Testing.Http.TestHttpMessageHandler.Requests.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Testing.Http.CapturedHttpRequest!>!
+SharedKernel.Testing.Http.TestHttpMessageHandler.TestHttpMessageHandler() -> void
+SharedKernel.Testing.Http.TestHttpMessageHandler.TestHttpMessageHandler(System.Net.Http.HttpResponseMessage! response) -> void
 static SharedKernel.Testing.Http.HttpResponseFactory.Json(string! json, System.Net.HttpStatusCode statusCode = System.Net.HttpStatusCode.OK) -> System.Net.Http.HttpResponseMessage!
+static SharedKernel.Testing.Http.TestHttpMessageHandler.FromException(System.Exception! sendException) -> SharedKernel.Testing.Http.TestHttpMessageHandler!

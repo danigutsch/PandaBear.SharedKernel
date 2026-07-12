@@ -14,7 +14,8 @@ public sealed class BrandingApiClientTests
     public async Task GetPublicSettings_reads_public_branding_settings()
     {
         // Arrange
-        using var handler = new BrandingApiClientTestHandler(HttpStatusCode.OK, """
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, """
             {
               "brandName": "Example Brand",
               "primaryColor": "#112233",
@@ -36,8 +37,9 @@ public sealed class BrandingApiClientTests
         var settings = await sut.GetPublicSettings(TestContext.Current.CancellationToken);
 
         // Assert
-        handler.LastMethod.ShouldBe(HttpMethod.Get);
-        handler.LastPath.ShouldBe(PublicSettingsPath);
+        var request = handler.LastRequest.ShouldNotBeNull();
+        request.Method.ShouldBe(HttpMethod.Get);
+        request.PathAndQuery.ShouldBe(PublicSettingsPath);
         settings.BrandName.ShouldBe("Example Brand");
         settings.LogoUri.ShouldBe("/assets/logo.svg");
     }
@@ -46,7 +48,8 @@ public sealed class BrandingApiClientTests
     public async Task GetSettings_reads_management_branding_settings()
     {
         // Arrange
-        using var handler = new BrandingApiClientTestHandler(HttpStatusCode.OK, """
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, """
             {
               "brandName": "Managed Brand",
               "primaryColor": "#112233",
@@ -68,8 +71,9 @@ public sealed class BrandingApiClientTests
         var settings = await sut.GetSettings(TestContext.Current.CancellationToken);
 
         // Assert
-        handler.LastMethod.ShouldBe(HttpMethod.Get);
-        handler.LastPath.ShouldBe(ManagementSettingsPath);
+        var request = handler.LastRequest.ShouldNotBeNull();
+        request.Method.ShouldBe(HttpMethod.Get);
+        request.PathAndQuery.ShouldBe(ManagementSettingsPath);
         settings.BrandName.ShouldBe("Managed Brand");
         settings.LogoUri.ShouldBe("https://cdn.example.test/logo.svg");
     }
@@ -78,7 +82,8 @@ public sealed class BrandingApiClientTests
     public async Task SaveSettings_puts_management_settings_and_reads_response()
     {
         // Arrange
-        using var handler = new BrandingApiClientTestHandler(HttpStatusCode.OK, """
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, """
             {
               "brandName": "Saved Brand",
               "primaryColor": "#112233",
@@ -101,9 +106,10 @@ public sealed class BrandingApiClientTests
         var settings = await sut.SaveSettings(request, TestContext.Current.CancellationToken);
 
         // Assert
-        handler.LastMethod.ShouldBe(HttpMethod.Put);
-        handler.LastPath.ShouldBe(ManagementSettingsPath);
-        handler.LastRequestBody.ShouldContain("\"brandName\":\"Example Brand\"", StringComparison.Ordinal);
+        var sentRequest = handler.LastRequest.ShouldNotBeNull();
+        sentRequest.Method.ShouldBe(HttpMethod.Put);
+        sentRequest.PathAndQuery.ShouldBe(ManagementSettingsPath);
+        sentRequest.Body.ShouldContain("\"brandName\":\"Example Brand\"", StringComparison.Ordinal);
         settings.BrandName.ShouldBe("Saved Brand");
         settings.LogoUri.ShouldBeNull();
     }
@@ -112,7 +118,8 @@ public sealed class BrandingApiClientTests
     public async Task SaveSettings_throws_contract_validation_exception_for_validation_problem()
     {
         // Arrange
-        using var handler = new BrandingApiClientTestHandler(HttpStatusCode.BadRequest, """
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.BadRequest, """
             {
               "errors": {
                 "BrandName": ["Brand name is required."]

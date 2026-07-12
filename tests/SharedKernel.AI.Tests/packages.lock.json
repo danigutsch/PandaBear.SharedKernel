@@ -153,6 +153,9 @@
         "dependencies": {
           "xunit.v3.assert": "[3.2.2, )"
         }
+      },
+      "sharedkernel.testing.http": {
+        "type": "Project"
       }
     }
   }

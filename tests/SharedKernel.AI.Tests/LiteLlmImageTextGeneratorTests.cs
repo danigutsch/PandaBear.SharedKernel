@@ -24,7 +24,7 @@ public sealed class LiteLlmImageTextGeneratorTests
             }
             """)
         };
-        using var handler = new CapturingHttpMessageHandler(response);
+        using var handler = new TestHttpMessageHandler(response);
         using var httpClient = new HttpClient(handler, disposeHandler: false);
         var generator = new LiteLlmImageTextGenerator(
             httpClient,
@@ -52,19 +52,19 @@ public sealed class LiteLlmImageTextGeneratorTests
         result.AltText.ShouldBe("Sunny beach");
         result.Caption.ShouldBe("Beach view");
 
-        handler.Request.ShouldNotBeNull();
-        handler.Request.Method.ShouldBe(HttpMethod.Post);
-        handler.Request.RequestUri.ShouldBe(new Uri("https://litellm.example/v1/chat/completions"));
-        handler.Request.Headers.Authorization.ShouldBe(new AuthenticationHeaderValue("Bearer", "local-key"));
+        var request = handler.LastRequest.ShouldNotBeNull();
+        request.Method.ShouldBe(HttpMethod.Post);
+        request.Message.RequestUri.ShouldBe(new Uri("https://litellm.example/v1/chat/completions"));
+        request.Message.Headers.Authorization.ShouldBe(new AuthenticationHeaderValue("Bearer", "local-key"));
 
-        handler.RequestBody.ShouldNotBeNull();
-        handler.RequestBody.ShouldContain("\"model\":\"local/vision\"", StringComparison.Ordinal);
-        handler.RequestBody.ShouldContain("\"response_format\"", StringComparison.Ordinal);
-        handler.RequestBody.ShouldContain("\"json_schema\"", StringComparison.Ordinal);
-        handler.RequestBody.ShouldContain("\"image_url\"", StringComparison.Ordinal);
-        handler.RequestBody.ShouldContain("data:image/png;base64,AQID", StringComparison.Ordinal);
-        handler.RequestBody.ShouldContain("Tour hero image", StringComparison.Ordinal);
-        handler.RequestBody.ShouldContain("Latitude 12.34; longitude -56.78.", StringComparison.Ordinal);
+        request.Body.ShouldNotBeNull();
+        request.Body.ShouldContain("\"model\":\"local/vision\"", StringComparison.Ordinal);
+        request.Body.ShouldContain("\"response_format\"", StringComparison.Ordinal);
+        request.Body.ShouldContain("\"json_schema\"", StringComparison.Ordinal);
+        request.Body.ShouldContain("\"image_url\"", StringComparison.Ordinal);
+        request.Body.ShouldContain("data:image/png;base64,AQID", StringComparison.Ordinal);
+        request.Body.ShouldContain("Tour hero image", StringComparison.Ordinal);
+        request.Body.ShouldContain("Latitude 12.34; longitude -56.78.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public sealed class LiteLlmImageTextGeneratorTests
             }
             """)
         };
-        using var handler = new CapturingHttpMessageHandler(response);
+        using var handler = new TestHttpMessageHandler(response);
         using var httpClient = new HttpClient(handler, disposeHandler: false);
         var generator = new LiteLlmImageTextGenerator(
             httpClient,
@@ -115,7 +115,7 @@ public sealed class LiteLlmImageTextGeneratorTests
     {
         // Arrange
         using var response = new HttpResponseMessage(HttpStatusCode.BadGateway);
-        using var handler = new CapturingHttpMessageHandler(response);
+        using var handler = new TestHttpMessageHandler(response);
         using var httpClient = new HttpClient(handler, disposeHandler: false);
         var generator = new LiteLlmImageTextGenerator(
             httpClient,
