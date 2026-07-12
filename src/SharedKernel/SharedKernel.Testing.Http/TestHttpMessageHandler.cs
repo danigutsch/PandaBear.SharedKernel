@@ -97,7 +97,7 @@ public sealed class TestHttpMessageHandler : HttpMessageHandler
             throw _sendException;
         }
 
-        CaptureSynchronously(request, cancellationToken);
+        CaptureFromSend(request, cancellationToken);
 
         return DequeueResponse();
     }
@@ -111,11 +111,23 @@ public sealed class TestHttpMessageHandler : HttpMessageHandler
         AddRequest(request, body);
     }
 
-    private void CaptureSynchronously(HttpRequestMessage request, CancellationToken cancellationToken)
+    private void CaptureFromSend(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        var body = request.Content?.ReadAsStringAsync(cancellationToken).GetAwaiter().GetResult();
+        var body = ReadBodyFromContent(request.Content, cancellationToken);
 
         AddRequest(request, body);
+    }
+
+    private static string? ReadBodyFromContent(HttpContent? content, CancellationToken cancellationToken)
+    {
+        if (content is null)
+        {
+            return null;
+        }
+
+        using var stream = content.ReadAsStream(cancellationToken);
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
     }
 
     private void AddRequest(HttpRequestMessage request, string? body)
