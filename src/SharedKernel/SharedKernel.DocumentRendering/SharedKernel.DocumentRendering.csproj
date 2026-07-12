@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <PackageId>SharedKernel.DocumentRendering</PackageId>
+        <Description>Structured document models and deterministic HTML rendering primitives.</Description>
+        <RootNamespace>SharedKernel.DocumentRendering</RootNamespace>
+        <PackageTags>documents;html;rendering;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
+    </ItemGroup>
+</Project>

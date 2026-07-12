@@ -196,25 +196,26 @@ public sealed class BrandingSettings
 
     private static string? ValidateLogoUri(string? value, Dictionary<string, string[]> errors)
     {
-        var sanitized = StringSanitizer.Sanitize(value);
-        if (string.IsNullOrWhiteSpace(sanitized))
+        if (string.IsNullOrWhiteSpace(value))
         {
             return null;
         }
 
-        if (sanitized.Length > BrandingContractConstants.MaxLogoUriLength)
+        var trimmed = value.Trim();
+        if (trimmed.Length > BrandingContractConstants.MaxLogoUriLength)
         {
             errors[nameof(BrandingSettingsDto.LogoUri)] = [$"Logo URI must be {BrandingContractConstants.MaxLogoUriLength} characters or fewer."];
             return null;
         }
 
-        if (ContainsControlCharacter(sanitized) || ContainsWhitespace(sanitized) || !IsAllowedLogoUri(sanitized))
+        var normalized = WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(value, BrandingContractConstants.MaxLogoUriLength);
+        if (normalized is null)
         {
             errors[nameof(BrandingSettingsDto.LogoUri)] = ["Logo URI must be root-relative or absolute HTTPS."];
             return null;
         }
 
-        return sanitized;
+        return normalized;
     }
 
     private static Dictionary<string, string> BuildAllowedFontMap(IEnumerable<string> allowedFontFamilies)
@@ -253,25 +254,5 @@ public sealed class BrandingSettings
         return true;
     }
 
-    private static bool IsAllowedLogoUri(string value)
-    {
-        if (value.Contains('\\', StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        if (value[0] == '/')
-        {
-            return !value.StartsWith("//", StringComparison.Ordinal);
-        }
-
-        return Uri.TryCreate(value, UriKind.Absolute, out var uri)
-            && uri.Scheme == Uri.UriSchemeHttps
-            && string.IsNullOrEmpty(uri.UserInfo)
-            && !string.IsNullOrWhiteSpace(uri.Host);
-    }
-
     private static bool ContainsControlCharacter(string value) => value.Any(char.IsControl);
-
-    private static bool ContainsWhitespace(string value) => value.Any(char.IsWhiteSpace);
 }
