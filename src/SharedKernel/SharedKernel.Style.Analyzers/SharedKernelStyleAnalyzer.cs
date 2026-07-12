@@ -252,9 +252,15 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             return;
         }
 
+        var location = method.Locations.FirstOrDefault(static candidate => candidate.IsInSource);
+        if (location is null)
+        {
+            return;
+        }
+
         context.ReportDiagnostic(Diagnostic.Create(
             SuccessOnlyResultMethodRule,
-            method.Locations.FirstOrDefault(static location => location.IsInSource),
+            location,
             method.Name));
     }
 
