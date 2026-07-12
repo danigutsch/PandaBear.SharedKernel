@@ -7,6 +7,7 @@ namespace SharedKernel.AspNetCore.Tests;
 /// <summary>
 /// Verifies the shared bearer-authentication boundary configuration.
 /// </summary>
+[Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
 public sealed class ApiAuthenticationServiceCollectionExtensionsTests
 {
     [Fact]
@@ -40,6 +41,10 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         jwt.MapInboundClaims.ShouldBeFalse();
         jwt.TokenValidationParameters.ValidIssuer.ShouldBe("https://identity.example.test/realms/viajantes");
         jwt.TokenValidationParameters.ValidAudience.ShouldBe("admin-api");
+        jwt.TokenValidationParameters.ValidateIssuer.ShouldBeTrue();
+        jwt.TokenValidationParameters.ValidateAudience.ShouldBeTrue();
+        jwt.TokenValidationParameters.ValidateIssuerSigningKey.ShouldBeTrue();
+        jwt.TokenValidationParameters.ValidateLifetime.ShouldBeTrue();
         jwt.TokenValidationParameters.ClockSkew.ShouldBe(TimeSpan.FromMinutes(2));
         jwt.TokenValidationParameters.ValidAlgorithms.Contains(SecurityAlgorithms.RsaSha256).ShouldBeTrue();
         var permissionValues = twice.FindAll(ApiAuthenticationDefaults.PermissionClaimType).Select(static claim => claim.Value).ToArray();
@@ -200,5 +205,42 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
 
         // Assert
         permissions.ShouldBe(["tours.read"]);
+    }
+
+    [Fact]
+    public async Task Rebuilds_permissions_across_identities_without_provider_permissions()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/viajantes");
+        await using var host = ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>> { ["Admin"] = ["tours.read", "tours.write"] });
+        var principal = new ClaimsPrincipal(
+        [
+            new ClaimsIdentity(
+            [
+                new Claim(ApiAuthenticationDefaults.RolesClaimType, "Admin"),
+                new Claim(ApiAuthenticationDefaults.PermissionClaimType, "customers.read")
+            ], "first"),
+            new ClaimsIdentity(
+            [
+                new Claim(ApiAuthenticationDefaults.RolesClaimType, "Unknown"),
+                new Claim(ApiAuthenticationDefaults.PermissionClaimType, "bookings.delete")
+            ], "second")
+        ]);
+
+        // Act
+        var transformed = await host.ClaimsTransformation.TransformAsync(principal);
+        var permissions = transformed.FindAll(ApiAuthenticationDefaults.PermissionClaimType)
+            .Select(static claim => claim.Value)
+            .Order()
+            .ToArray();
+
+        // Assert
+        permissions.ShouldBe(["tours.read", "tours.write"]);
     }
 }

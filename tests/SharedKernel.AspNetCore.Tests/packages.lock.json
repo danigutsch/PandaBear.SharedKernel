@@ -207,6 +207,9 @@
       "sharedkernel.inputnormalization": {
         "type": "Project"
       },
+      "sharedkernel.testing": {
+        "type": "Project"
+      },
       "sharedkernel.testing.assertions": {
         "type": "Project",
         "dependencies": {
