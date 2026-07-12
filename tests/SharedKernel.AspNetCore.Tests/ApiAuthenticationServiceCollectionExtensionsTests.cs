@@ -109,6 +109,27 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public void Rejects_unsupported_authority_schemes_with_the_development_opt_in()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "ftp://identity.example.test/realms/viajantes",
+            "ftp://identity.example.test/realms/viajantes",
+            allowHttpDevelopmentAuthority: true);
+        var environment = new TestHostEnvironment { EnvironmentName = Environments.Development };
+
+        // Act
+        Action action = () => ApiAuthenticationTestHost.Create(
+            configuration,
+            environment,
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>>());
+
+        // Assert
+        action.ShouldThrow<InvalidOperationException>();
+    }
+
+    [Fact]
     public async Task Leaves_unknown_roles_without_permissions()
     {
         // Arrange

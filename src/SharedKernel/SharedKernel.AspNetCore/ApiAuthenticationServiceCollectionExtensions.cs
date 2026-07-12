@@ -104,19 +104,27 @@ public static class ApiAuthenticationServiceCollectionExtensions
             return;
         }
 
-        if (!Uri.TryCreate(authority, UriKind.Absolute, out var authorityUri)
-            || (!string.Equals(authorityUri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
-                && !allowHttpDevelopmentAuthority))
+        if (!IsAllowedAuthorityScheme(authority, allowHttpDevelopmentAuthority))
         {
             throw new InvalidOperationException($"{ApiAuthenticationDefaults.AuthorityConfigurationKey} must be an HTTPS absolute URI outside an explicitly configured Development environment.");
         }
 
-        if (!Uri.TryCreate(issuer, UriKind.Absolute, out var issuerUri)
-            || (!string.Equals(issuerUri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
-                && !allowHttpDevelopmentAuthority))
+        if (!IsAllowedAuthorityScheme(issuer, allowHttpDevelopmentAuthority))
         {
             throw new InvalidOperationException($"{ApiAuthenticationDefaults.IssuerConfigurationKey} must be an HTTPS absolute URI outside an explicitly configured Development environment.");
         }
+    }
+
+    private static bool IsAllowedAuthorityScheme(string value, bool allowHttpDevelopmentAuthority)
+    {
+        if (!Uri.TryCreate(value, UriKind.Absolute, out var uri))
+        {
+            return false;
+        }
+
+        return string.Equals(uri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
+               || (allowHttpDevelopmentAuthority
+                   && string.Equals(uri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase));
     }
 
     private sealed class PermissionClaimsTransformation(IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole)

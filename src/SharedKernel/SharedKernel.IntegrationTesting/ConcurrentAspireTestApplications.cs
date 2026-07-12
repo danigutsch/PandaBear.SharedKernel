@@ -51,8 +51,14 @@ public sealed class ConcurrentAspireTestApplications : IAsyncDisposable
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
-        await Second.DisposeAsync().ConfigureAwait(false);
-        await First.DisposeAsync().ConfigureAwait(false);
+        try
+        {
+            await Second.DisposeAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            await First.DisposeAsync().ConfigureAwait(false);
+        }
     }
 
     private static async Task DisposeCompletedApplications(
