@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using SharedKernel.InputNormalization;
 
 namespace SharedKernel.DocumentRendering;
 
@@ -78,10 +79,10 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
         }
 
         builder.Append("<header aria-label=\"Document branding\">");
-        var logoUri = branding.LogoUri;
-        if (logoUri is not null && IsAllowedLogoUri(logoUri))
+        var safeLogoUri = WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(branding.LogoUri?.OriginalString, 2048);
+        if (safeLogoUri is not null)
         {
-            builder.Append("<img src=\"").Append(HtmlEncode(logoUri.OriginalString)).Append("\" alt=\"")
+            builder.Append("<img src=\"").Append(HtmlEncode(safeLogoUri)).Append("\" alt=\"")
                 .Append(HtmlEncode($"{branding.BrandName} logo")).Append("\" />");
         }
 
@@ -131,23 +132,4 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
     private static bool IsAllowedFontCharacter(char character) =>
         char.IsAsciiLetterOrDigit(character)
         || character is ' ' or ',' or '-' or '_';
-
-    private static bool IsAllowedLogoUri(Uri? logoUri)
-    {
-        if (logoUri is null)
-        {
-            return false;
-        }
-
-        if (logoUri.IsAbsoluteUri)
-        {
-            return logoUri.Scheme == Uri.UriSchemeHttps && string.IsNullOrEmpty(logoUri.UserInfo);
-        }
-
-        var value = logoUri.OriginalString;
-        return value.StartsWith('/')
-            && !value.StartsWith("//", StringComparison.Ordinal)
-            && !value.Contains('\\', StringComparison.Ordinal)
-            && !value.Any(static character => char.IsWhiteSpace(character) || char.IsControl(character));
-    }
 }

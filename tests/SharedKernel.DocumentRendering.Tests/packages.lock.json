@@ -143,6 +143,12 @@
         }
       },
       "sharedkernel.documentrendering": {
+        "type": "Project",
+        "dependencies": {
+          "SharedKernel.InputNormalization": "[0.1.0-alpha.0, )"
+        }
+      },
+      "sharedkernel.inputnormalization": {
         "type": "Project"
       },
       "sharedkernel.testing": {

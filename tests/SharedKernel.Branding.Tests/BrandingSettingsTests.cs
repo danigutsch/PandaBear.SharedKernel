@@ -141,6 +141,9 @@ public sealed class BrandingSettingsTests
     [InlineData("logo.svg")]
     [InlineData("/images/my logo.svg")]
     [InlineData("/images\\logo.svg")]
+    [InlineData("/images/logo\0.svg")]
+    [InlineData("https://cdn.example.test/logo\0.svg")]
+    [InlineData("https://cdn.example.test/logo\u001F.svg")]
     public void Create_rejects_unsafe_logo_uri(string logoValue)
     {
         // Arrange

@@ -5,4 +5,7 @@
         <RootNamespace>SharedKernel.DocumentRendering</RootNamespace>
         <PackageTags>documents;html;rendering;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
+    </ItemGroup>
 </Project>

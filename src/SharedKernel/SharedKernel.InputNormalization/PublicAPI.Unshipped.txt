@@ -1,9 +1,12 @@
 #nullable enable
 SharedKernel.InputNormalization.NumericSanitizer
 SharedKernel.InputNormalization.StringSanitizer
+SharedKernel.InputNormalization.WebAssetUriSanitizer
 static SharedKernel.InputNormalization.NumericSanitizer.SanitizePrice(decimal value) -> decimal
 static SharedKernel.InputNormalization.StringSanitizer.NormalizeKey(string! value) -> string!
 static SharedKernel.InputNormalization.StringSanitizer.NormalizeKeyRemovingDiacritics(string! value) -> string!
 static SharedKernel.InputNormalization.StringSanitizer.Sanitize(string? value) -> string?
 static SharedKernel.InputNormalization.StringSanitizer.SanitizeCollection(System.Collections.Generic.IEnumerable<string!>? values) -> string![]!
 static SharedKernel.InputNormalization.StringSanitizer.SanitizeNotes(string? value) -> string?
+static SharedKernel.InputNormalization.WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(string? value, int maxLength) -> string?
+static SharedKernel.InputNormalization.WebAssetUriSanitizer.ToRootRelativeOrHttpsUri(string? value, int maxLength) -> System.Uri?
