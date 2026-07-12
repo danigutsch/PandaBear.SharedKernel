@@ -15,7 +15,7 @@ public sealed class ModelIdentityGenerator : IIncrementalGenerator
 {
     private const string AttributeName = "SharedKernel.Domain.GenerateModelSupportAttribute";
     private const string DefaultsAttributeName = "SharedKernel.Domain.GenerateModelSupportDefaultsAttribute";
-    private const string IdentifiedInterfaceName = "SharedKernel.Domain.IIdentified<TId>";
+    private const string IdentifiedInterfaceName = "SharedKernel.BuildingBlocks.IIdentified<TId>";
     private const string IdentityOptionName = "Identity";
     private const string DiagnosticCategory = "SharedKernel.Domain.ModelSupport";
     private const string OpenBlock8 = "        {";

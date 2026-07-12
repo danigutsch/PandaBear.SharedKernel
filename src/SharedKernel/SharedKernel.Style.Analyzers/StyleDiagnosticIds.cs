@@ -50,4 +50,9 @@ public static class StyleDiagnosticIds
     /// </summary>
     public const string SuccessOnlyResultMethod = "SKSTYLE009";
 
+    /// <summary>
+    /// Diagnostic emitted when a method uses <c>Result&lt;T&gt;</c> only to distinguish a value from not found.
+    /// </summary>
+    public const string OptionalResultMethod = "SKSTYLE010";
+
 }

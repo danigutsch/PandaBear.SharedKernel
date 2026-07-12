@@ -12,6 +12,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
     </ItemGroup>
 
     <ItemGroup>

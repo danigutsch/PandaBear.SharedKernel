@@ -31,8 +31,6 @@ SharedKernel.Domain.IAggregateRoot.GetDomainEvents() -> System.Collections.Gener
 SharedKernel.Domain.IAggregateRoot<TId>
 SharedKernel.Domain.IDomainEvent
 SharedKernel.Domain.IEntity<TId>
-SharedKernel.Domain.IIdentified<TId>
-SharedKernel.Domain.IIdentified<TId>.Id.get -> TId
 SharedKernel.Domain.ValueObjectTemplate
 SharedKernel.Domain.ValueObjectTemplate.ApiVersion = 1 -> SharedKernel.Domain.ValueObjectTemplate
 SharedKernel.Domain.ValueObjectTemplate.IsoCode = 5 -> SharedKernel.Domain.ValueObjectTemplate

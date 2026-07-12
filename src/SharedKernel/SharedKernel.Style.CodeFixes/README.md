@@ -34,6 +34,9 @@ This package owns fixes for `SharedKernel.Style.Analyzers` diagnostics only. It 
 catch-all fix package for testing, mediator, or optional-technology diagnostics. Add a fix here only
 when the matching style diagnostic has a local, deterministic, safe remediation.
 
+`SKSTYLE009` and `SKSTYLE010` are intentionally analyzer-only. Their remediation changes method
+signatures and callers; `SKSTYLE010` must also preserve the caller-specific not-found detail.
+
 ## See Also
 
 - [SharedKernel.Style.Analyzers](../SharedKernel.Style.Analyzers/README.md)

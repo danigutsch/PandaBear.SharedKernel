@@ -86,4 +86,5 @@ public static class OptionCompositionTests
         // Assert
         bound.ShouldBe(Option.Some(5));
     }
+
 }

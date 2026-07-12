@@ -11,3 +11,4 @@ SKSTYLE006 | Style | Warning | Catch filters should not suppress every Operation
 SKSTYLE007 | Style | Warning | Production logging should use source-generated LoggerMessage methods
 SKSTYLE008 | Style | Warning | Domain event types implementing IDomainEvent should end with DomainEvent
 SKSTYLE009 | Style | Warning | Result-returning methods should be able to return a failure Result
+SKSTYLE010 | Style | Warning | Result-returning methods should use Option for not-found outcomes

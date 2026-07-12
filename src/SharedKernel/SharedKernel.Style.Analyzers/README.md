@@ -20,6 +20,7 @@ the default .NET analyzer set.
 | `SKSTYLE007` | Warning | Production logging should use source-generated `LoggerMessage` methods instead of direct `ILogger.Log*` calls. |
 | `SKSTYLE008` | Warning | Domain event types implementing `IDomainEvent` should end with `DomainEvent`. |
 | `SKSTYLE009` | Warning | Methods returning `SharedKernel.Results.Result` must be able to return a failure `Result`; use a non-`Result` return type when every reachable return is successful. Overrides and interface implementations are excluded. |
+| `SKSTYLE010` | Warning | Methods returning `SharedKernel.Results.Result<T>` only as `Ok` or `NotFound` should return `Option<T>`. |
 
 ## Configuration
 
@@ -35,6 +36,7 @@ dotnet_diagnostic.SKSTYLE006.severity = warning
 dotnet_diagnostic.SKSTYLE007.severity = warning
 dotnet_diagnostic.SKSTYLE008.severity = warning
 dotnet_diagnostic.SKSTYLE009.severity = warning
+dotnet_diagnostic.SKSTYLE010.severity = warning
 sharedkernel_style_allow_async_suffix_overrides = true
 sharedkernel_style_allow_async_suffix_interface_implementations = true
 ```

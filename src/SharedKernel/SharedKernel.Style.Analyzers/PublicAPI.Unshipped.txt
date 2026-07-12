@@ -3,6 +3,7 @@ const SharedKernel.Style.Analyzers.StyleDiagnosticIds.BroadOperationCanceledExce
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.DomainEventSuffix = "SKSTYLE008" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix = "SKSTYLE005" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.NonSourceGeneratedLogging = "SKSTYLE007" -> string!
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.OptionalResultMethod = "SKSTYLE010" -> string!
 const SharedKernel.Style.Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod = "SKSTYLE009" -> string!
 SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer
 SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer.SharedKernelStyleAnalyzer() -> void
