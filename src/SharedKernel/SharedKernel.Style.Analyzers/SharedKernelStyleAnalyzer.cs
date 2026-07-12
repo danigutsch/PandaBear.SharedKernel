@@ -199,9 +199,9 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                 MethodKind: MethodKind.Ordinary,
                 ReturnType: { } returnType,
             } method
+            || !SymbolEqualityComparer.Default.Equals(returnType, resultType)
             || method.IsOverride
-            || ImplementsInterfaceContract(method)
-            || !SymbolEqualityComparer.Default.Equals(returnType, resultType))
+            || ImplementsInterfaceContract(method))
         {
             return;
         }
@@ -235,9 +235,9 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                 MethodKind: MethodKind.Ordinary,
                 ReturnType: INamedTypeSymbol returnType,
             } method
+            || !SymbolEqualityComparer.Default.Equals(returnType.OriginalDefinition, genericResultType)
             || method.IsOverride
             || ImplementsInterfaceContract(method)
-            || !SymbolEqualityComparer.Default.Equals(returnType.OriginalDefinition, genericResultType)
             || !TryGetReachableReturnValues(context, out var returnValues)
             || returnValues.IsDefaultOrEmpty)
         {
