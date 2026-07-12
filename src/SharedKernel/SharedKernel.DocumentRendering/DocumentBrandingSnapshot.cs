@@ -6,4 +6,30 @@ namespace SharedKernel.DocumentRendering;
 public sealed record DocumentBrandingSnapshot(
     string Version,
     string BrandName,
-    Uri? LogoUri);
+    Uri? LogoUri,
+    string PrimaryColor,
+    string AccentColor,
+    string BackgroundColor,
+    string TextColor,
+    string HeadingFontFamily,
+    string BodyFontFamily,
+    string FooterText)
+{
+    /// <summary>
+    /// Creates a branding snapshot with default visual tokens.
+    /// </summary>
+    public DocumentBrandingSnapshot(string Version, string BrandName, Uri? LogoUri)
+        : this(
+            Version,
+            BrandName,
+            LogoUri,
+            "#000000",
+            "#000000",
+            "#ffffff",
+            "#000000",
+            "system-ui, sans-serif",
+            "system-ui, sans-serif",
+            BrandName)
+    {
+    }
+}

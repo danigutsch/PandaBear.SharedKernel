@@ -73,4 +73,34 @@ public sealed class HtmlDocumentRendererTests
         html.ShouldContain("<p>Viajantes Turismo</p>", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Render_applies_captured_branding_tokens_and_footer()
+    {
+        // Arrange
+        var branding = new DocumentBrandingSnapshot(
+            "B1",
+            "Viajantes Turismo",
+            new Uri("/logo.svg", UriKind.Relative),
+            "#102030",
+            "#405060",
+            "#fdfdfd",
+            "#111111",
+            "Montserrat",
+            "Inter",
+            "Legal footer");
+        var request = new DocumentRenderRequest("en", "Tour service contract", [new DocumentSection("Travel", [new DocumentField("Dates", "2026-07-11", DocumentPrivacyClassification.Public)])], branding);
+
+        // Act
+        var html = Encoding.UTF8.GetString(new HtmlDocumentRenderer().Render(request));
+
+        // Assert
+        html.ShouldContain("--document-primary-color:#102030", StringComparison.Ordinal);
+        html.ShouldContain("--document-accent-color:#405060", StringComparison.Ordinal);
+        html.ShouldContain("--document-background-color:#fdfdfd", StringComparison.Ordinal);
+        html.ShouldContain("--document-text-color:#111111", StringComparison.Ordinal);
+        html.ShouldContain("--document-heading-font:Montserrat", StringComparison.Ordinal);
+        html.ShouldContain("--document-body-font:Inter", StringComparison.Ordinal);
+        html.ShouldContain("<footer><p>Legal footer</p></footer>", StringComparison.Ordinal);
+    }
+
 }

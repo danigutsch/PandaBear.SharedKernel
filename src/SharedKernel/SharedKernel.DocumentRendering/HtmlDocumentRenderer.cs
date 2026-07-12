@@ -19,7 +19,10 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
             .Append(HtmlEncode(request.Language))
             .Append("\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>")
             .Append(HtmlEncode(request.Title))
-            .Append("</title><style>@media print{header{break-inside:avoid}section{break-inside:avoid}}body{font-family:system-ui,sans-serif;line-height:1.5;margin:2rem}dl{display:grid;grid-template-columns:max-content 1fr;gap:.25rem 1rem}dt{font-weight:700}</style></head><body>");
+            .Append("</title><style>");
+
+        AppendBrandingStyles(builder, request.Branding);
+        builder.Append("@media print{header{break-inside:avoid}section{break-inside:avoid}}body{font-family:var(--document-body-font,system-ui,sans-serif);background:var(--document-background-color,#fff);color:var(--document-text-color,#111);line-height:1.5;margin:2rem}h1,h2{font-family:var(--document-heading-font,var(--document-body-font,system-ui,sans-serif));color:var(--document-primary-color,currentColor)}header{border-bottom:.25rem solid var(--document-accent-color,currentColor);margin-bottom:1rem;padding-bottom:.5rem}footer{border-top:1px solid var(--document-accent-color,currentColor);margin-top:2rem;padding-top:.5rem}dl{display:grid;grid-template-columns:max-content 1fr;gap:.25rem 1rem}dt{font-weight:700}</style></head><body>");
 
         AppendBranding(builder, request.Branding);
         builder.Append("<main><h1>").Append(HtmlEncode(request.Title)).Append("</h1>");
@@ -45,8 +48,25 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
             builder.Append("</dl></section>");
         }
 
-        builder.Append("</main></body></html>");
+        AppendFooter(builder, request.Branding);
+        builder.Append("</body></html>");
         return Encoding.UTF8.GetBytes(builder.ToString());
+    }
+
+    private static void AppendBrandingStyles(StringBuilder builder, DocumentBrandingSnapshot? branding)
+    {
+        if (branding is null)
+        {
+            return;
+        }
+
+        builder.Append(":root{")
+            .Append("--document-primary-color:").Append(CssEncode(branding.PrimaryColor)).Append(';')
+            .Append("--document-accent-color:").Append(CssEncode(branding.AccentColor)).Append(';')
+            .Append("--document-background-color:").Append(CssEncode(branding.BackgroundColor)).Append(';')
+            .Append("--document-text-color:").Append(CssEncode(branding.TextColor)).Append(';')
+            .Append("--document-heading-font:").Append(CssEncode(branding.HeadingFontFamily)).Append(';')
+            .Append("--document-body-font:").Append(CssEncode(branding.BodyFontFamily)).Append(";}");
     }
 
     private static void AppendBranding(StringBuilder builder, DocumentBrandingSnapshot? branding)
@@ -67,7 +87,19 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
         builder.Append("<p>").Append(HtmlEncode(branding.BrandName)).Append("</p></header>");
     }
 
+    private static void AppendFooter(StringBuilder builder, DocumentBrandingSnapshot? branding)
+    {
+        if (branding is null || string.IsNullOrWhiteSpace(branding.FooterText))
+        {
+            return;
+        }
+
+        builder.Append("<footer><p>").Append(HtmlEncode(branding.FooterText)).Append("</p></footer>");
+    }
+
     private static string HtmlEncode(string value) => WebUtility.HtmlEncode(value ?? string.Empty);
+
+    private static string CssEncode(string value) => HtmlEncode(value).Replace(";", string.Empty, StringComparison.Ordinal);
 
     private static bool IsAllowedLogoUri(Uri? logoUri)
     {
