@@ -129,7 +129,7 @@ public sealed class TestHttpMessageHandler : HttpMessageHandler
     }
 
     private HttpResponseMessage DequeueResponse() => _responses.Count == 0
-        ? new HttpResponseMessage(HttpStatusCode.InternalServerError)
+        ? throw new InvalidOperationException("No HTTP response is queued for the captured request.")
         : _responses.Dequeue();
 
     /// <inheritdoc />
