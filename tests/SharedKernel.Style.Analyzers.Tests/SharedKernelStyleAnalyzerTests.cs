@@ -1253,7 +1253,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         // Assert
         var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
         diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)
-            .ShouldContain("cannot fail", StringComparison.Ordinal);
+            .ShouldContain("cannot return a failure Result", StringComparison.Ordinal);
     }
 
     [Fact]

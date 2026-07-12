@@ -96,12 +96,12 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         description: "Repository domain rules require IDomainEvent implementations to use the DomainEvent suffix for clear ubiquitous language.");
     private static readonly DiagnosticDescriptor SuccessOnlyResultMethodRule = new(
         StyleDiagnosticIds.SuccessOnlyResultMethod,
-        title: "Result-returning methods should have a failure path",
-        messageFormat: "Method '{0}' cannot fail and should not return Result",
+        title: "Result-returning methods should be able to return a failure Result",
+        messageFormat: "Method '{0}' cannot return a failure Result and should not return Result",
         category: "Style",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Methods returning SharedKernel.Results.Result should expose a real failure path; use void when every reachable return is successful.");
+        description: "Methods returning SharedKernel.Results.Result should be able to return a failure Result; use a non-Result return type when every reachable return is successful.");
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
