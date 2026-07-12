@@ -1,4 +1,5 @@
 #nullable enable
+const SharedKernel.Style.Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod = "SKSTYLE009" -> string!
 SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider
 SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.SharedKernelStyleCodeFixProvider() -> void
 override SharedKernel.Style.CodeFixes.SharedKernelStyleCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>

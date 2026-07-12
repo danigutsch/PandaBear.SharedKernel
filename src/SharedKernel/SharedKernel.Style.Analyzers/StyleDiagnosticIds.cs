@@ -45,4 +45,9 @@ public static class StyleDiagnosticIds
     /// </summary>
     public const string DomainEventSuffix = "SKSTYLE008";
 
+    /// <summary>
+    /// Diagnostic emitted when a method returns only successful <c>SharedKernel.Results.Result</c> values.
+    /// </summary>
+    public const string SuccessOnlyResultMethod = "SKSTYLE009";
+
 }

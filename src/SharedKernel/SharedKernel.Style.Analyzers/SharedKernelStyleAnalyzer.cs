@@ -3,6 +3,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace SharedKernel.Style.Analyzers;
 
@@ -92,6 +94,14 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository domain rules require IDomainEvent implementations to use the DomainEvent suffix for clear ubiquitous language.");
+    private static readonly DiagnosticDescriptor SuccessOnlyResultMethodRule = new(
+        StyleDiagnosticIds.SuccessOnlyResultMethod,
+        title: "Result-returning methods should have a failure path",
+        messageFormat: "Method '{0}' cannot fail and should not return Result",
+        category: "Style",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Methods returning SharedKernel.Results.Result should expose a real failure path; use void when every reachable return is successful.");
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
@@ -102,7 +112,8 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             GenericTypeNameSuffixRule,
             BroadOperationCanceledExceptionFilterRule,
             NonSourceGeneratedLoggingRule,
-            DomainEventSuffixRule);
+            DomainEventSuffixRule,
+            SuccessOnlyResultMethodRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -121,6 +132,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     {
         var cancellationTokenType = context.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken");
         var domainEventType = context.Compilation.GetTypeByMetadataName("SharedKernel.Domain.IDomainEvent");
+        var resultType = context.Compilation.GetTypeByMetadataName("SharedKernel.Results.Result");
 
         context.RegisterSymbolAction(
             symbolContext =>
@@ -148,6 +160,11 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             AnalyzeLoggerInvocation,
             SyntaxKind.InvocationExpression);
 
+        if (resultType is not null)
+        {
+            context.RegisterOperationBlockAction(operationContext => AnalyzeSuccessOnlyResultMethod(operationContext, resultType));
+        }
+
         if (cancellationTokenType is null)
         {
             return;
@@ -156,6 +173,98 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         context.RegisterSyntaxNodeAction(
             syntaxContext => AnalyzeParameter(syntaxContext, cancellationTokenType),
             SyntaxKind.Parameter);
+    }
+
+    private static void AnalyzeSuccessOnlyResultMethod(
+        OperationBlockAnalysisContext context,
+        INamedTypeSymbol resultType)
+    {
+        if (context.OwningSymbol is not IMethodSymbol
+            {
+                MethodKind: MethodKind.Ordinary,
+                ReturnType: { } returnType,
+            } method
+            || method.IsOverride
+            || ImplementsInterfaceContract(method)
+            || !SymbolEqualityComparer.Default.Equals(returnType, resultType))
+        {
+            return;
+        }
+
+        var hasReachableReturn = false;
+        foreach (var operationBlock in context.OperationBlocks)
+        {
+            IMethodBodyOperation? methodBody = operationBlock switch
+            {
+                IMethodBodyOperation body => body,
+                _ when operationBlock.Parent is IMethodBodyOperation body => body,
+                _ => null,
+            };
+            if (methodBody is null)
+            {
+                continue;
+            }
+
+            var controlFlowGraph = ControlFlowGraph.Create(methodBody, context.CancellationToken);
+            foreach (var block in controlFlowGraph.Blocks)
+            {
+                if (!block.IsReachable)
+                {
+                    continue;
+                }
+
+                if (block.FallThroughSuccessor is { Semantics: ControlFlowBranchSemantics.Return }
+                    && block.BranchValue is { } branchValue)
+                {
+                    IEnumerable<IOperation> returnValues = branchValue is IFlowCaptureReferenceOperation captureReference
+                        ? controlFlowGraph.Blocks
+                            .Where(static candidate => candidate.IsReachable)
+                            .SelectMany(static candidate => candidate.Operations.OfType<IFlowCaptureOperation>())
+                            .Where(capture => capture.Id.Equals(captureReference.Id))
+                            .Select(static capture => capture.Value)
+                        : [branchValue];
+                    if (!returnValues.Any() || returnValues.Any(value => !IsSuccessResultExpression(value, resultType)))
+                    {
+                        return;
+                    }
+
+                    hasReachableReturn = true;
+                }
+            }
+        }
+
+        if (!hasReachableReturn)
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            SuccessOnlyResultMethodRule,
+            method.Locations.FirstOrDefault(static location => location.IsInSource),
+            method.Name));
+    }
+
+    private static bool IsSuccessResultExpression(IOperation operation, INamedTypeSymbol resultType)
+    {
+        return operation switch
+        {
+            IConversionOperation { Operand: { } operand } => IsSuccessResultExpression(operand, resultType),
+            IConditionalOperation { WhenTrue: { } whenTrue, WhenFalse: { } whenFalse } =>
+                IsSuccessResultExpression(whenTrue, resultType)
+                && IsSuccessResultExpression(whenFalse, resultType),
+            ISwitchExpressionOperation switchExpression => switchExpression.Arms.All(arm =>
+                IsSuccessResultExpression(arm.Value, resultType)),
+            IInvocationOperation
+            {
+                TargetMethod:
+                {
+                    IsStatic: true,
+                    Name: "Ok" or "NoContent" or "Accepted",
+                } factoryMethod,
+            } => SymbolEqualityComparer.Default.Equals(factoryMethod.ContainingType, resultType)
+                && SymbolEqualityComparer.Default.Equals(factoryMethod.ReturnType, resultType),
+            _ => false,
+        };
     }
 
     private static void AnalyzeMethod(SymbolAnalysisContext context, StyleAnalyzerConfigOptions options)
