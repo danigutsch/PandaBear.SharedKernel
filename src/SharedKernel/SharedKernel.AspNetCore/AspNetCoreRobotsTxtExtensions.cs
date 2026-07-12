@@ -15,18 +15,19 @@ public static class AspNetCoreRobotsTxtExtensions
     private const string RobotsTxtContentType = "text/plain; charset=utf-8";
 
     /// <summary>
-    /// Maps a root robots.txt endpoint with application-owned crawler policy text.
+    /// Maps an anonymous root robots.txt endpoint with application-owned crawler policy text.
     /// </summary>
     /// <param name="app">The endpoint route builder.</param>
     /// <param name="robotsTxt">The robots.txt content owned by the consuming application.</param>
-    /// <returns>The mapped endpoint convention builder.</returns>
+    /// <returns>The mapped endpoint convention builder, explicitly marked anonymous.</returns>
     public static IEndpointConventionBuilder MapRobotsTxt(this IEndpointRouteBuilder app, string robotsTxt)
     {
         ArgumentNullException.ThrowIfNull(app);
         ArgumentException.ThrowIfNullOrWhiteSpace(robotsTxt);
 
         return app.MapGet(RobotsTxtPath, context => WriteRobotsTxt(context, robotsTxt))
-            .ExcludeFromDescription();
+            .ExcludeFromDescription()
+            .AllowAnonymous();
     }
 
     private static Task WriteRobotsTxt(HttpContext context, string robotsTxt)
