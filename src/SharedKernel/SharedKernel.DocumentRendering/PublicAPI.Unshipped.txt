@@ -8,6 +8,7 @@ SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BodyFontFamily.get -> st
 SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BodyFontFamily.init -> void
 SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BrandName.get -> string!
 SharedKernel.DocumentRendering.DocumentBrandingSnapshot.BrandName.init -> void
+SharedKernel.DocumentRendering.DocumentBrandingSnapshot.Deconstruct(out string! Version, out string! BrandName, out System.Uri? LogoUri) -> void
 SharedKernel.DocumentRendering.DocumentBrandingSnapshot.DocumentBrandingSnapshot(string! Version, string! BrandName, System.Uri? LogoUri) -> void
 SharedKernel.DocumentRendering.DocumentBrandingSnapshot.DocumentBrandingSnapshot(string! Version, string! BrandName, System.Uri? LogoUri, string! PrimaryColor, string! AccentColor, string! BackgroundColor, string! TextColor, string! HeadingFontFamily, string! BodyFontFamily, string! FooterText) -> void
 SharedKernel.DocumentRendering.DocumentBrandingSnapshot.FooterText.get -> string!

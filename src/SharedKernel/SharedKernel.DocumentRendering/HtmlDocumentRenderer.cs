@@ -61,12 +61,12 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
         }
 
         builder.Append(":root{")
-            .Append("--document-primary-color:").Append(CssEncode(branding.PrimaryColor)).Append(';')
-            .Append("--document-accent-color:").Append(CssEncode(branding.AccentColor)).Append(';')
-            .Append("--document-background-color:").Append(CssEncode(branding.BackgroundColor)).Append(';')
-            .Append("--document-text-color:").Append(CssEncode(branding.TextColor)).Append(';')
-            .Append("--document-heading-font:").Append(CssEncode(branding.HeadingFontFamily)).Append(';')
-            .Append("--document-body-font:").Append(CssEncode(branding.BodyFontFamily)).Append(";}");
+            .Append("--document-primary-color:").Append(SafeCssColor(branding.PrimaryColor, "#000000")).Append(';')
+            .Append("--document-accent-color:").Append(SafeCssColor(branding.AccentColor, "#000000")).Append(';')
+            .Append("--document-background-color:").Append(SafeCssColor(branding.BackgroundColor, "#ffffff")).Append(';')
+            .Append("--document-text-color:").Append(SafeCssColor(branding.TextColor, "#000000")).Append(';')
+            .Append("--document-heading-font:").Append(SafeCssFont(branding.HeadingFontFamily)).Append(';')
+            .Append("--document-body-font:").Append(SafeCssFont(branding.BodyFontFamily)).Append(";}");
     }
 
     private static void AppendBranding(StringBuilder builder, DocumentBrandingSnapshot? branding)
@@ -99,7 +99,37 @@ public sealed class HtmlDocumentRenderer : IDocumentRenderer
 
     private static string HtmlEncode(string value) => WebUtility.HtmlEncode(value ?? string.Empty);
 
-    private static string CssEncode(string value) => HtmlEncode(value).Replace(";", string.Empty, StringComparison.Ordinal);
+    private static string SafeCssColor(string value, string fallback)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return fallback;
+        }
+
+        var trimmed = value.Trim();
+        if (trimmed.Length is not (4 or 7 or 9) || trimmed[0] != '#')
+        {
+            return fallback;
+        }
+
+        return trimmed.Skip(1).All(Uri.IsHexDigit) ? trimmed : fallback;
+    }
+
+    private static string SafeCssFont(string value)
+    {
+        const string fallback = "system-ui, sans-serif";
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return fallback;
+        }
+
+        var trimmed = value.Trim();
+        return trimmed.All(IsAllowedFontCharacter) ? trimmed : fallback;
+    }
+
+    private static bool IsAllowedFontCharacter(char character) =>
+        char.IsAsciiLetterOrDigit(character)
+        || character is ' ' or ',' or '-' or '_';
 
     private static bool IsAllowedLogoUri(Uri? logoUri)
     {

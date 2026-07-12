@@ -32,4 +32,14 @@ public sealed record DocumentBrandingSnapshot(
             BrandName)
     {
     }
+
+    /// <summary>
+    /// Deconstructs the stable core branding identity.
+    /// </summary>
+    public void Deconstruct(out string Version, out string BrandName, out Uri? LogoUri)
+    {
+        Version = this.Version;
+        BrandName = this.BrandName;
+        LogoUri = this.LogoUri;
+    }
 }

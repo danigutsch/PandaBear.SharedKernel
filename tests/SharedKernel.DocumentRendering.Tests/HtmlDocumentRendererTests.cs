@@ -103,4 +103,58 @@ public sealed class HtmlDocumentRendererTests
         html.ShouldContain("<footer><p>Legal footer</p></footer>", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Render_replaces_unsafe_css_color_tokens_with_fallbacks()
+    {
+        // Arrange
+        var branding = new DocumentBrandingSnapshot(
+            "B1",
+            "Viajantes Turismo",
+            null,
+            "red;}body{background:url(https://evil.test/x)",
+            "#405060",
+            "#fdfdfd",
+            "#111111",
+            "Montserrat",
+            "Inter",
+            "Legal footer");
+        var request = new DocumentRenderRequest("en", "Tour service contract", [new DocumentSection("Travel", [new DocumentField("Dates", "2026-07-11", DocumentPrivacyClassification.Public)])], branding);
+
+        // Act
+        var html = Encoding.UTF8.GetString(new HtmlDocumentRenderer().Render(request));
+
+        // Assert
+        html.ShouldContain("--document-primary-color:#000000", StringComparison.Ordinal);
+        html.ShouldNotContain("url(", StringComparison.Ordinal);
+        html.ShouldNotContain("}body{background", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Render_replaces_unsafe_css_font_tokens_with_fallbacks()
+    {
+        // Arrange
+        var branding = new DocumentBrandingSnapshot(
+            "B1",
+            "Viajantes Turismo",
+            null,
+            "#102030",
+            "#405060",
+            "#fdfdfd",
+            "#111111",
+            "Inter\n}body{background:url(https://evil.test/x)/*",
+            "Inter/*comment*/",
+            "Legal footer");
+        var request = new DocumentRenderRequest("en", "Tour service contract", [new DocumentSection("Travel", [new DocumentField("Dates", "2026-07-11", DocumentPrivacyClassification.Public)])], branding);
+
+        // Act
+        var html = Encoding.UTF8.GetString(new HtmlDocumentRenderer().Render(request));
+
+        // Assert
+        html.ShouldContain("--document-heading-font:system-ui, sans-serif", StringComparison.Ordinal);
+        html.ShouldContain("--document-body-font:system-ui, sans-serif", StringComparison.Ordinal);
+        html.ShouldNotContain("url(", StringComparison.Ordinal);
+        html.ShouldNotContain("/*", StringComparison.Ordinal);
+        html.ShouldNotContain("\n", StringComparison.Ordinal);
+    }
+
 }
