@@ -1,6 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.Testing;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace SharedKernel.IntegrationTesting;
 
@@ -9,6 +10,8 @@ namespace SharedKernel.IntegrationTesting;
 /// </summary>
 public sealed class AspireTestApplication : IAsyncDisposable
 {
+    private static int _dcpResourceNameSuffixSequence;
+
     /// <summary>
     /// Gets the default timeout for resource startup waits.
     /// </summary>
@@ -37,14 +40,36 @@ public sealed class AspireTestApplication : IAsyncDisposable
         CancellationToken ct)
         where TAppHost : class
     {
+        return await Start<TAppHost>(healthyResourceNames, resourceStartupTimeout, [], ct).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Starts an Aspire application with explicit AppHost configuration arguments and waits for resources.
+    /// </summary>
+    /// <typeparam name="TAppHost">The AppHost entry-point type.</typeparam>
+    /// <param name="healthyResourceNames">Resource names that must become healthy before the method returns.</param>
+    /// <param name="resourceStartupTimeout">The resource startup timeout.</param>
+    /// <param name="appHostArguments">AppHost configuration arguments.</param>
+    /// <param name="ct">A cancellation token.</param>
+    /// <returns>The started test application.</returns>
+    public static async Task<AspireTestApplication> Start<TAppHost>(
+        IEnumerable<string> healthyResourceNames,
+        TimeSpan? resourceStartupTimeout,
+        IReadOnlyCollection<string> appHostArguments,
+        CancellationToken ct)
+        where TAppHost : class
+    {
         ArgumentNullException.ThrowIfNull(healthyResourceNames);
+        ArgumentNullException.ThrowIfNull(appHostArguments);
 
         IDistributedApplicationTestingBuilder? appBuilder = null;
         DistributedApplication? app = null;
 
         try
         {
-            appBuilder = await DistributedApplicationTestingBuilder.CreateAsync<TAppHost>(ct).ConfigureAwait(false);
+            appBuilder = await DistributedApplicationTestingBuilder
+                .CreateAsync<TAppHost>(CreateAppHostArguments(appHostArguments), ct)
+                .ConfigureAwait(false);
             app = await appBuilder.BuildAsync(ct).ConfigureAwait(false);
             await app.StartAsync(ct).ConfigureAwait(false);
 
@@ -197,4 +222,12 @@ public sealed class AspireTestApplication : IAsyncDisposable
     }
 
     private DistributedApplication App => _app ?? throw new InvalidOperationException("Aspire test application is not initialized.");
+
+    private static string[] CreateAppHostArguments(IReadOnlyCollection<string> appHostArguments)
+    {
+        var suffix = string.Create(
+            CultureInfo.InvariantCulture,
+            $"test-{Environment.ProcessId}-{Interlocked.Increment(ref _dcpResourceNameSuffixSequence)}");
+        return [.. appHostArguments, $"--DcpPublisher:ResourceNameSuffix={suffix}"];
+    }
 }

@@ -1,3 +1,8 @@
 #nullable enable
+const SharedKernel.Testing.AspNetCore.ApiTestAuthentication.Authority = "https://identity.test" -> string!
+SharedKernel.Testing.AspNetCore.ApiTestAuthentication
 SharedKernel.Testing.AspNetCore.WebApplicationTestHost
-static SharedKernel.Testing.AspNetCore.WebApplicationTestHost.Create<TEntryPoint>(string? environment = null, System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>? configureTestServices = null) -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!
+static SharedKernel.Testing.AspNetCore.ApiTestAuthentication.ConfigureAuthenticatedClient(System.Net.Http.HttpClient! client, string! audience, string! role) -> void
+static SharedKernel.Testing.AspNetCore.ApiTestAuthentication.ConfigureClient(System.Net.Http.HttpClient! client, string! audience, string! issuer, string! role) -> void
+static SharedKernel.Testing.AspNetCore.ApiTestAuthentication.ConfigureJwtBearer(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! audience) -> void
+static SharedKernel.Testing.AspNetCore.WebApplicationTestHost.Create<TEntryPoint>(string? environment = null, System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>? configureTestServices = null, System.Action<System.Net.Http.HttpClient!>? configureClient = null, System.Collections.Generic.IReadOnlyDictionary<string!, string?>? configuration = null) -> Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint!>!

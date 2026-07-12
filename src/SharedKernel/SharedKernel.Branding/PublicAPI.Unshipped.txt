@@ -38,13 +38,16 @@ SharedKernel.Branding.BrandingSettingsDto.TextColor.get -> string!
 SharedKernel.Branding.BrandingSettingsDto.TextColor.set -> void
 SharedKernel.Branding.IBrandingApiClient
 SharedKernel.Branding.IBrandingSettingsStore
+SharedKernel.Branding.IManagementBrandingApiClient
+SharedKernel.Branding.IManagementBrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
+SharedKernel.Branding.IManagementBrandingApiClient.SaveSettings(SharedKernel.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
+SharedKernel.Branding.ManagementBrandingApiClient
+SharedKernel.Branding.ManagementBrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
+SharedKernel.Branding.ManagementBrandingApiClient.ManagementBrandingApiClient(System.Net.Http.HttpClient! httpClient) -> void
+SharedKernel.Branding.ManagementBrandingApiClient.SaveSettings(SharedKernel.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
 static SharedKernel.Branding.BrandingSettings.Create(SharedKernel.Branding.BrandingSettingsDto! request, System.Collections.Generic.IReadOnlyCollection<string!>! allowedFontFamilies) -> SharedKernel.Results.Result<SharedKernel.Branding.BrandingSettings!>
 SharedKernel.Branding.BrandingApiClient.GetPublicSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
-SharedKernel.Branding.BrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
-SharedKernel.Branding.BrandingApiClient.SaveSettings(SharedKernel.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
 SharedKernel.Branding.BrandingSettingsDto.BrandingSettingsDto() -> void
 SharedKernel.Branding.IBrandingApiClient.GetPublicSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
-SharedKernel.Branding.IBrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
-SharedKernel.Branding.IBrandingApiClient.SaveSettings(SharedKernel.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
 SharedKernel.Branding.IBrandingSettingsStore.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettings?>!
 SharedKernel.Branding.IBrandingSettingsStore.SaveSettings(SharedKernel.Branding.BrandingSettings! settings, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!

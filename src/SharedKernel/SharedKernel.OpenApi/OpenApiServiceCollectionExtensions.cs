@@ -61,6 +61,7 @@ public static class OpenApiServiceCollectionExtensions
             services.AddOpenApi(boundary.DocumentName, options =>
             {
                 options.AddDocumentTransformer<MultipartFormRequestBodyDocumentTransformer>();
+                options.AddDocumentTransformer<BearerSecurityDocumentTransformer>();
                 options.ShouldInclude = description =>
                     description.RelativePath is string relativePath
                     && (string.Equals(relativePath, routePrefix, StringComparison.OrdinalIgnoreCase)
@@ -108,6 +109,7 @@ public static class OpenApiServiceCollectionExtensions
             services.AddOpenApi(documentName, options =>
             {
                 options.AddDocumentTransformer<MultipartFormRequestBodyDocumentTransformer>();
+                options.AddDocumentTransformer<BearerSecurityDocumentTransformer>();
                 options.AddDocumentTransformer((document, context, ct) =>
                 {
                     _ = context;

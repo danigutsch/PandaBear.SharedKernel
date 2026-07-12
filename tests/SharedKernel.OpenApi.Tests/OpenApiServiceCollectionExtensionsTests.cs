@@ -151,6 +151,47 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public async Task Documents_bearer_authentication_only_for_protected_operations()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateDocumentFromApplication("tours", app =>
+        {
+            app.MapGroup("/tours")
+                .WithGroupName("tours")
+                .WithTags("tours")
+                .MapGet("/", () => TypedResults.Ok())
+                .RequireAuthorization();
+            app.MapGroup("/tours")
+                .WithGroupName("tours")
+                .WithTags("tours")
+                .MapGet("/public", () => TypedResults.Ok())
+                .AllowAnonymous();
+        });
+
+        // Act
+        var protectedPath = document.Paths["/tours"].ShouldNotBeNull();
+        var protectedOperations = protectedPath.Operations.ShouldNotBeNull();
+        var protectedOperation = protectedOperations[HttpMethod.Get].ShouldNotBeNull();
+        var publicPath = document.Paths["/tours/public"].ShouldNotBeNull();
+        var publicOperations = publicPath.Operations.ShouldNotBeNull();
+        var publicOperation = publicOperations[HttpMethod.Get].ShouldNotBeNull();
+
+        // Assert
+        var components = document.Components.ShouldNotBeNull();
+        var securitySchemes = components.SecuritySchemes.ShouldNotBeNull();
+        securitySchemes.ContainsKey(OpenApiAuthenticationDefaults.BearerSecuritySchemeName).ShouldBeTrue();
+        var security = protectedOperation.Security.ShouldNotBeNull();
+        security.ShouldHaveSingleItem();
+        var protectedResponses = protectedOperation.Responses.ShouldNotBeNull();
+        protectedResponses.ContainsKey("401").ShouldBeTrue();
+        protectedResponses.ContainsKey("403").ShouldBeTrue();
+        publicOperation.Security.ShouldBeNull();
+        var publicResponses = publicOperation.Responses.ShouldNotBeNull();
+        publicResponses.ContainsKey("401").ShouldBeFalse();
+        publicResponses.ContainsKey("403").ShouldBeFalse();
+    }
+
+    [Fact]
     public void Throws_when_api_version_services_are_null()
     {
         // Arrange
