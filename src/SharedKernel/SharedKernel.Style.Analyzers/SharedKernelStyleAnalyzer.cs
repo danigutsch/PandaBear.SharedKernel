@@ -206,6 +206,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             }
 
             var controlFlowGraph = ControlFlowGraph.Create(methodBody, context.CancellationToken);
+            Dictionary<CaptureId, IOperation[]>? capturedValues = null;
             foreach (var block in controlFlowGraph.Blocks)
             {
                 if (!block.IsReachable)
@@ -216,14 +217,26 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                 if (block.FallThroughSuccessor is { Semantics: ControlFlowBranchSemantics.Return }
                     && block.BranchValue is { } branchValue)
                 {
-                    IOperation[] returnValues = branchValue is IFlowCaptureReferenceOperation captureReference
-                        ? controlFlowGraph.Blocks
+                    IOperation[] returnValues;
+                    if (branchValue is IFlowCaptureReferenceOperation captureReference)
+                    {
+                        capturedValues ??= controlFlowGraph.Blocks
                             .Where(static candidate => candidate.IsReachable)
                             .SelectMany(static candidate => candidate.Operations.OfType<IFlowCaptureOperation>())
-                            .Where(capture => capture.Id.Equals(captureReference.Id))
-                            .Select(static capture => capture.Value)
-                            .ToArray()
-                        : [branchValue];
+                            .GroupBy(static capture => capture.Id)
+                            .ToDictionary(
+                                static group => group.Key,
+                                static group => group.Select(static capture => capture.Value).ToArray());
+                        if (!capturedValues.TryGetValue(captureReference.Id, out returnValues))
+                        {
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        returnValues = [branchValue];
+                    }
+
                     if (returnValues.Length == 0 || returnValues.Any(value => !IsSuccessResultExpression(value, resultType)))
                     {
                         return;
