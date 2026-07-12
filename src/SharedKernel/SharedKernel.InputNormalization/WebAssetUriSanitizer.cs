@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace SharedKernel.InputNormalization;
@@ -14,8 +13,6 @@ public static class WebAssetUriSanitizer
     /// <param name="value">The candidate web asset URI.</param>
     /// <param name="maxLength">The maximum accepted URI length.</param>
     /// <returns>The normalized URI string, or <see langword="null" /> when missing or unsafe.</returns>
-    [SuppressMessage("Design", "CA1055:URI-like return values should not be strings", Justification = "Web assets support root-relative paths and absolute HTTPS URIs.")]
-    [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "Web assets support root-relative paths and absolute HTTPS URIs.")]
     public static string? NormalizeRootRelativeOrHttps(string? value, int maxLength)
     {
         if (value is null)
@@ -61,7 +58,6 @@ public static class WebAssetUriSanitizer
     /// <param name="value">The candidate web asset URI.</param>
     /// <param name="maxLength">The maximum accepted URI length.</param>
     /// <returns>The URI value, or <see langword="null" /> when missing or unsafe.</returns>
-    [SuppressMessage("Design", "CA1054:URI-like parameters should not be strings", Justification = "Web assets support root-relative paths and absolute HTTPS URIs.")]
     public static Uri? ToRootRelativeOrHttpsUri(string? value, int maxLength)
     {
         var normalized = NormalizeRootRelativeOrHttps(value, maxLength);
