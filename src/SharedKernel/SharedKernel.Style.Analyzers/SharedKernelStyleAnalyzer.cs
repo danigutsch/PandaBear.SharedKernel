@@ -216,14 +216,15 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                 if (block.FallThroughSuccessor is { Semantics: ControlFlowBranchSemantics.Return }
                     && block.BranchValue is { } branchValue)
                 {
-                    IEnumerable<IOperation> returnValues = branchValue is IFlowCaptureReferenceOperation captureReference
+                    IOperation[] returnValues = branchValue is IFlowCaptureReferenceOperation captureReference
                         ? controlFlowGraph.Blocks
                             .Where(static candidate => candidate.IsReachable)
                             .SelectMany(static candidate => candidate.Operations.OfType<IFlowCaptureOperation>())
                             .Where(capture => capture.Id.Equals(captureReference.Id))
                             .Select(static capture => capture.Value)
+                            .ToArray()
                         : [branchValue];
-                    if (!returnValues.Any() || returnValues.Any(value => !IsSuccessResultExpression(value, resultType)))
+                    if (returnValues.Length == 0 || returnValues.Any(value => !IsSuccessResultExpression(value, resultType)))
                     {
                         return;
                     }

@@ -1380,6 +1380,49 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
+    public async Task Switch_expression_result_methods_report_only_when_all_arms_succeed()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result Ok() => default;
+                    public static Result NoContent() => default;
+                    public static Result Error(string detail) => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result Replace(int status) => status switch
+                    {
+                        0 => SharedKernel.Results.Result.Ok(),
+                        _ => SharedKernel.Results.Result.NoContent(),
+                    };
+
+                    public SharedKernel.Results.Result Validate(int status) => status switch
+                    {
+                        0 => SharedKernel.Results.Result.Ok(),
+                        _ => SharedKernel.Results.Result.Error("Theme is invalid."),
+                    };
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)
+            .ShouldContain("Replace", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Unreachable_result_failure_path_does_not_suppress_skstyle009()
     {
         // Arrange
