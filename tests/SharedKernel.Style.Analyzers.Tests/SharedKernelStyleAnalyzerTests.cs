@@ -1606,6 +1606,39 @@ public sealed class SharedKernelStyleAnalyzerTests
     }
 
     [Fact]
+    public async Task Generic_result_method_returning_created_only_reports_skstyle009()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result<T> Created<T>(T value) => default;
+                }
+
+                public readonly partial struct Result<T>
+                {
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result<string> Create() => SharedKernel.Results.Result.Created("Theme");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+    }
+
+    [Fact]
     public async Task Conditional_and_switch_generic_result_methods_report_skstyle010()
     {
         // Arrange

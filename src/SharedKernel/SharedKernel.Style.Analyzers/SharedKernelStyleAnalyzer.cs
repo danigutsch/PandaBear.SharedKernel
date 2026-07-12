@@ -344,7 +344,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                 TargetMethod:
                 {
                     IsStatic: true,
-                    Name: "Ok" or "NoContent" or "Accepted",
+                    Name: "Ok" or "Created" or "NoContent" or "Accepted",
                 } factoryMethod,
             } => SymbolEqualityComparer.Default.Equals(factoryMethod.ContainingType, resultFactoryType)
                 && (SymbolEqualityComparer.Default.Equals(factoryMethod.ReturnType, resultFactoryType)
