@@ -228,6 +228,27 @@ public static class ShouldAssertionExtensions
     public static void ShouldContain<T>(this IEnumerable<T> actual, Predicate<T> predicate) => Xunit.Assert.Contains(actual, predicate);
 
     /// <summary>
+    /// Verifies that a string contains every expected fragment in ordinal order.
+    /// </summary>
+    /// <param name="actual">The actual value.</param>
+    /// <param name="expected">The expected fragments.</param>
+    public static void ShouldContainInOrder(this string? actual, params string[] expected)
+    {
+        ArgumentNullException.ThrowIfNull(expected);
+        Xunit.Assert.NotNull(actual);
+
+        var startIndex = 0;
+        foreach (var fragment in expected)
+        {
+            ArgumentNullException.ThrowIfNull(fragment);
+
+            var index = actual.IndexOf(fragment, startIndex, StringComparison.Ordinal);
+            Xunit.Assert.True(index >= 0, $"Expected string to contain '{fragment}' after the prior fragment.");
+            startIndex = index + fragment.Length;
+        }
+    }
+
+    /// <summary>
     /// Verifies that a rendered HTML document is complete and XML-compatible.
     /// </summary>
     /// <param name="actual">The rendered HTML document.</param>

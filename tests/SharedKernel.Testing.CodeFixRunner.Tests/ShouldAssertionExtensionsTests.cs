@@ -42,4 +42,30 @@ public sealed class ShouldAssertionExtensionsTests
         values.ShouldNotBeEmpty();
         ("booking-42").ShouldMatch(new Regex(@"^booking-\d+$", RegexOptions.None, TimeSpan.FromSeconds(1)));
     }
+
+    [Fact]
+    public void Should_contain_in_order_matches_distinct_repeated_fragments()
+    {
+        const string Actual = "first second second third";
+
+        Actual.ShouldContainInOrder("first", "second", "second", "third");
+    }
+
+    [Fact]
+    public void Should_contain_in_order_rejects_out_of_order_fragments()
+    {
+        Action action = () => "second first".ShouldContainInOrder("first", "second");
+
+        action.ShouldThrow<Xunit.Sdk.TrueException>();
+    }
+
+    [Fact]
+    public void Should_contain_in_order_rejects_null_actual()
+    {
+        string? actual = null;
+        Action action = () => actual.ShouldContainInOrder();
+
+        action.ShouldThrow<Xunit.Sdk.NotNullException>();
+    }
+
 }

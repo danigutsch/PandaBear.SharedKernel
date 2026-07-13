@@ -26,6 +26,7 @@ static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeTrue(th
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeWellFormedHtmlDocument(this string? actual) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain(this string? actual, string! expected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain(this string? actual, string! expected, System.StringComparison comparisonType) -> void
+static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContainInOrder(this string? actual, params string![]! expected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void

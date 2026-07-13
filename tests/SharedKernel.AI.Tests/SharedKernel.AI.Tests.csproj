@@ -8,6 +8,7 @@
     <ItemGroup>
         <Using Include="SharedKernel.AI" />
         <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="SharedKernel.Testing.Http" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -21,6 +22,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.AI\SharedKernel.AI.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Http\SharedKernel.Testing.Http.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
     </ItemGroup>
 
