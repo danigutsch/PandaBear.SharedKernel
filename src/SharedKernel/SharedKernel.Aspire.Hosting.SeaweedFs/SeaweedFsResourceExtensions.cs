@@ -32,6 +32,10 @@ public static class SeaweedFsResourceExtensions
             secret: true,
             persist: true);
         var bucket = builder.AddParameter($"{name}-bucket", "viajantes-media");
+        var resourceNameSuffix = builder.Configuration["DcpPublisher:ResourceNameSuffix"];
+        var dataVolumeName = string.IsNullOrEmpty(resourceNameSuffix)
+            ? $"{name}-data"
+            : $"{name}-{resourceNameSuffix}-data";
         var resource = new SeaweedFsResource(name, accessKey.Resource, secretKey.Resource, bucket.Resource);
 
         return builder.AddResource(resource)
@@ -44,7 +48,7 @@ public static class SeaweedFsResourceExtensions
             .WithEndpoint(targetPort: 8333, name: SeaweedFsResource.S3EndpointName, scheme: "http", isExternal: false)
             .WithEndpoint(targetPort: 9333, name: "master", scheme: "http", isExternal: false)
             .WithHttpHealthCheck("/cluster/healthz", endpointName: "master")
-            .WithVolume($"{name}-data", "/data");
+            .WithVolume(dataVolumeName, "/data");
     }
 
     /// <summary>
