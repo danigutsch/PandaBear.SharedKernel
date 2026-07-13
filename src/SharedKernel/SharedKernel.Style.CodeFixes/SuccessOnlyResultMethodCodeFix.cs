@@ -73,7 +73,6 @@ internal static class SuccessOnlyResultMethodCodeFix
             || targetMethod.Body is null
             || targetMethod.ExpressionBody is not null
             || targetMethod.TypeParameterList is not null
-            || targetMethod.Modifiers.All(static modifier => !modifier.IsKind(SyntaxKind.PrivateKeyword))
             || targetMethod.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.VirtualKeyword)
                 || modifier.IsKind(SyntaxKind.AbstractKeyword)
                 || modifier.IsKind(SyntaxKind.PartialKeyword))

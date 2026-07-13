@@ -60,7 +60,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 {
                     public SharedKernel.Results.Result RunDirect()
                     {
-                        return /* preserve direct command */ Complete();
+                        return Complete(/* preserve direct command */);
                     }
 
                     public SharedKernel.Results.Result RunChained(SharedKernel.Results.Result source)
@@ -117,10 +117,55 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         updatedText.ShouldContain("public SharedKernel.Results.Result RunDirect()", StringComparison.Ordinal);
         updatedText.ShouldContain("source.Bind(() =>", StringComparison.Ordinal);
         updatedText.ShouldContain("await System.Threading.Tasks.Task.Yield();", StringComparison.Ordinal);
-        updatedText.ShouldContain("/* preserve direct command */", StringComparison.Ordinal);
+        updatedText.ShouldContain("Complete(/* preserve direct command */);", StringComparison.Ordinal);
         updatedText.ShouldContain("global::SharedKernel.Results.Result.Ok()", StringComparison.Ordinal);
         updatedText.ShouldNotContain("return Complete();", StringComparison.Ordinal);
         updatedText.ShouldNotContain("result.IsFailure", StringComparison.Ordinal);
+        compilationDiagnostics.ShouldNotContain(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public async Task Success_only_result_fix_converts_implicitly_private_commands()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly struct Result
+                {
+                    public static Result Ok() => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed class Workflow
+                {
+                    public SharedKernel.Results.Result Run()
+                    {
+                        return Complete();
+                    }
+
+                    SharedKernel.Results.Result Complete()
+                    {
+                        return SharedKernel.Results.Result.Ok();
+                    }
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+        var compilationDiagnostics = await workspace.GetCompilationDiagnostics();
+
+        // Assert
+        updatedText.ShouldContain("void Complete()", StringComparison.Ordinal);
         compilationDiagnostics.ShouldNotContain(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
     }
 
