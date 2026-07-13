@@ -6,7 +6,7 @@ using Microsoft.OpenApi;
 namespace SharedKernel.OpenApi;
 
 /// <summary>
-/// Documents JWT bearer authentication only for operations that are not explicitly anonymous.
+/// Documents JWT bearer authentication only for operations protected by authorization metadata or a fallback policy.
 /// </summary>
 public sealed class BearerSecurityDocumentTransformer : IOpenApiDocumentTransformer
 {
@@ -23,6 +23,8 @@ public sealed class BearerSecurityDocumentTransformer : IOpenApiDocumentTransfor
         var optionsMonitor = context.ApplicationServices.GetService(typeof(IOptionsMonitor<OpenApiOptions>)) as IOptionsMonitor<OpenApiOptions>
             ?? throw new InvalidOperationException("OpenApiOptions were not available from the document transformer service provider.");
         var options = optionsMonitor.Get(context.DocumentName);
+        var authorizationOptions = context.ApplicationServices.GetService(typeof(IOptions<AuthorizationOptions>)) as IOptions<AuthorizationOptions>;
+        var hasFallbackAuthorizationPolicy = authorizationOptions?.Value.FallbackPolicy is not null;
         var descriptions = context.DescriptionGroups
             .SelectMany(static group => group.Items)
             .Where(description => options.ShouldInclude(description))
@@ -42,8 +44,16 @@ public sealed class BearerSecurityDocumentTransformer : IOpenApiDocumentTransfor
 
             foreach (var operation in path.Value.Operations)
             {
-                if (!descriptions.TryGetValue(CreateOperationKey(path.Key.TrimStart('/'), operation.Key.Method), out var description)
-                    || description.ActionDescriptor.EndpointMetadata?.OfType<IAllowAnonymous>().Any() == true)
+                if (!descriptions.TryGetValue(CreateOperationKey(path.Key.TrimStart('/'), operation.Key.Method), out var description))
+                {
+                    continue;
+                }
+
+                var metadata = description.ActionDescriptor.EndpointMetadata;
+                if (metadata?.OfType<IAllowAnonymous>().Any() == true
+                    || (metadata?.OfType<IAuthorizeData>().Any() != true
+                        && metadata?.OfType<AuthorizationPolicy>().Any() != true
+                        && !hasFallbackAuthorizationPolicy))
                 {
                     continue;
                 }
