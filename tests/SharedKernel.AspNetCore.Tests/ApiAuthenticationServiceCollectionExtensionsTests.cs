@@ -37,6 +37,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         // Assert
         jwt.Authority.ShouldBe("https://identity.example.test/realms/viajantes");
         jwt.RequireHttpsMetadata.ShouldBeTrue();
+        jwt.ConfigurationManager.ShouldNotBeNull();
         jwt.Audience.ShouldBe("admin-api");
         jwt.MapInboundClaims.ShouldBeFalse();
         jwt.TokenValidationParameters.ValidIssuer.ShouldBe("https://identity.example.test/realms/viajantes");
