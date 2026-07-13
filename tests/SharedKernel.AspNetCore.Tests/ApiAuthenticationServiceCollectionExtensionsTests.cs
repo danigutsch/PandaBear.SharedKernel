@@ -72,6 +72,24 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public void Rejects_missing_authority_and_issuer_in_development()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(string.Empty, string.Empty);
+        var environment = new TestHostEnvironment { EnvironmentName = Environments.Development };
+
+        // Act
+        Action action = () => ApiAuthenticationTestHost.Create(
+            configuration,
+            environment,
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>>());
+
+        // Assert
+        action.ShouldThrow<InvalidOperationException>();
+    }
+
+    [Fact]
     public async Task Permits_http_authority_only_with_the_development_opt_in()
     {
         // Arrange

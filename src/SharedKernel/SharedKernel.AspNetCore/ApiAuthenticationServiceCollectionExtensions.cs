@@ -54,7 +54,7 @@ public static class ApiAuthenticationServiceCollectionExtensions
                 bool.TrueString,
                 StringComparison.OrdinalIgnoreCase);
 
-        ValidateConfiguration(authority, issuer, allowHttpDevelopmentAuthority, environment);
+        ValidateConfiguration(authority, issuer, allowHttpDevelopmentAuthority);
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -91,17 +91,11 @@ public static class ApiAuthenticationServiceCollectionExtensions
     private static void ValidateConfiguration(
         string? authority,
         string? issuer,
-        bool allowHttpDevelopmentAuthority,
-        IHostEnvironment environment)
+        bool allowHttpDevelopmentAuthority)
     {
         if (string.IsNullOrWhiteSpace(authority) || string.IsNullOrWhiteSpace(issuer))
         {
-            if (!environment.IsDevelopment())
-            {
-                throw new InvalidOperationException($"{ApiAuthenticationDefaults.AuthorityConfigurationKey} and {ApiAuthenticationDefaults.IssuerConfigurationKey} must be configured outside Development.");
-            }
-
-            return;
+            throw new InvalidOperationException($"{ApiAuthenticationDefaults.AuthorityConfigurationKey} and {ApiAuthenticationDefaults.IssuerConfigurationKey} must be configured.");
         }
 
         if (!IsAllowedAuthorityScheme(authority, allowHttpDevelopmentAuthority))
