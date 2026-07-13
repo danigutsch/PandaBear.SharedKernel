@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System.Diagnostics.CodeAnalysis;
 
 namespace SharedKernel.AspNetCore;
 
@@ -28,7 +29,6 @@ public static class ApiAuthenticationServiceCollectionExtensions
     /// <param name="audience">The only audience accepted by this API boundary.</param>
     /// <param name="permissionsByRole">The application-owned permissions granted for each validated role.</param>
     /// <returns>An authorization builder for boundary-specific permission policies.</returns>
-    [RequiresUnreferencedCode("Configures JWT bearer authentication through reflection-based framework components.")]
     public static AuthorizationBuilder AddApiBearerAuthentication(
         this IServiceCollection services,
         IConfiguration configuration,
@@ -51,12 +51,17 @@ public static class ApiAuthenticationServiceCollectionExtensions
         }
 
         var allowHttpDevelopmentAuthority = environment.IsDevelopment()
-            && configuration.GetValue<bool>(ApiAuthenticationDefaults.AllowHttpDevelopmentAuthorityConfigurationKey);
+            && string.Equals(
+                configuration[ApiAuthenticationDefaults.AllowHttpDevelopmentAuthorityConfigurationKey],
+                bool.TrueString,
+                StringComparison.OrdinalIgnoreCase);
 
         ValidateConfiguration(authority, issuer, allowHttpDevelopmentAuthority);
 
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+            .AddScheme<JwtBearerOptions, JwtBearerHandler>(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 if (!string.IsNullOrWhiteSpace(authority))
                 {
