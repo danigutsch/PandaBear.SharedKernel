@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SharedKernel.AspNetCore;
 
@@ -27,6 +28,7 @@ public static class ApiAuthenticationServiceCollectionExtensions
     /// <param name="audience">The only audience accepted by this API boundary.</param>
     /// <param name="permissionsByRole">The application-owned permissions granted for each validated role.</param>
     /// <returns>An authorization builder for boundary-specific permission policies.</returns>
+    [RequiresUnreferencedCode("Configures JWT bearer authentication through reflection-based framework components.")]
     public static AuthorizationBuilder AddApiBearerAuthentication(
         this IServiceCollection services,
         IConfiguration configuration,
@@ -49,10 +51,7 @@ public static class ApiAuthenticationServiceCollectionExtensions
         }
 
         var allowHttpDevelopmentAuthority = environment.IsDevelopment()
-            && string.Equals(
-                configuration[ApiAuthenticationDefaults.AllowHttpDevelopmentAuthorityConfigurationKey],
-                bool.TrueString,
-                StringComparison.OrdinalIgnoreCase);
+            && configuration.GetValue<bool>(ApiAuthenticationDefaults.AllowHttpDevelopmentAuthorityConfigurationKey);
 
         ValidateConfiguration(authority, issuer, allowHttpDevelopmentAuthority);
 
