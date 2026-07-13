@@ -59,4 +59,13 @@ public sealed class ShouldAssertionExtensionsTests
         action.ShouldThrow<Xunit.Sdk.TrueException>();
     }
 
+    [Fact]
+    public void Should_contain_in_order_rejects_null_actual()
+    {
+        string? actual = null;
+        Action action = () => actual.ShouldContainInOrder();
+
+        action.ShouldThrow<Xunit.Sdk.NotNullException>();
+    }
+
 }
