@@ -5,20 +5,21 @@ var bookingMessage = bookingResult.Match(
     static confirmation => $"Created booking: {confirmation}",
     static error => $"Booking failed: {error.Detail}");
 
-var lookupMessage = FindTourSummary("VT-42").Match(
+const string tourCode = "VT-42";
+var lookupMessage = FindTourSummary(tourCode).Match(
     static summary => $"Tour summary: {summary}",
-    static error => $"Lookup failed: {error.Detail}");
+    () => $"Tour '{tourCode}' was not found.");
 
 var maybePassenger = Option.FromNullable(GetPassengerNickname("Ada Lovelace"));
 var passengerMessage = maybePassenger.Match(
     static nickname => $"Nickname: {nickname}",
     static () => "Nickname: none");
 
-var asyncLookupMessage = await FindTourSummaryAsync("VT-42")
+var asyncLookupMessage = await FindTourSummaryAsync(tourCode)
     .Map(static summary => Task.FromResult(summary.ToUpperInvariant()))
     .Match(
         static summary => $"Async tour summary: {summary}",
-        static error => $"Async lookup failed: {error.Detail}");
+        () => $"Tour '{tourCode}' was not found.");
 
 var asyncPassengerOption = await ValueTask.FromResult(Option.FromNullable(GetPassengerNickname("Ada Lovelace")))
     .Map(static nickname => ValueTask.FromResult(nickname.ToUpperInvariant()));
@@ -61,12 +62,12 @@ static Result<string> CreateBooking(string tourCode, string passengerName)
     return Result.Created($"{tourCode}-{passengerName[..1].ToUpperInvariant()}001");
 }
 
-static Result<string> FindTourSummary(string tourCode) =>
+static Option<string> FindTourSummary(string tourCode) =>
     tourCode == "VT-42"
-        ? Result.Ok("VT-42 | Porto river ride")
-        : Result.NotFound<string>($"Tour '{tourCode}' was not found.");
+        ? Option.Some("VT-42 | Porto river ride")
+        : Option.None<string>();
 
-static Task<Result<string>> FindTourSummaryAsync(string tourCode) =>
+static Task<Option<string>> FindTourSummaryAsync(string tourCode) =>
     Task.FromResult(FindTourSummary(tourCode));
 
 static string? GetPassengerNickname(string passengerName) =>

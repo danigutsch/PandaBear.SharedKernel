@@ -1,6 +1,8 @@
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.Playwright;
 using SharedKernel.Testing.Data;
 using SharedKernel.Testing.Http;
+using SharedKernel.Testing.Playwright;
 using SharedKernel.Testing.Roslyn;
 using SharedKernel.Testing.Snapshots;
 using SharedKernel.Testing.Web;
@@ -121,6 +123,20 @@ public sealed class SharedKernelTestingHelperTests
         Action action = () => BunitElementAssertions.HasClass(["card"], "active");
 
         action.ShouldThrow<InvalidOperationException>().Message.ShouldContain("active", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Playwright_title_assertion_rejects_null_pages()
+    {
+        // Arrange
+        IPage page = null!;
+        Func<Task> action = () => page.ShouldHaveTitle("Bookings");
+
+        // Act
+        var exception = await action.ShouldThrow<ArgumentNullException>();
+
+        // Assert
+        exception.ParamName.ShouldBe("page");
     }
 
     [Fact]

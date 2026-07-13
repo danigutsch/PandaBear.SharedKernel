@@ -160,8 +160,17 @@
           "xunit.v3.runner.common": "[3.2.2]"
         }
       },
+      "sharedkernel.buildingblocks": {
+        "type": "Project",
+        "dependencies": {
+          "SharedKernel.Results": "[0.1.0-alpha.0, )"
+        }
+      },
       "sharedkernel.domain": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )"
+        }
       },
       "sharedkernel.domainevents": {
         "type": "Project",
@@ -185,6 +194,9 @@
         }
       },
       "sharedkernel.messaging.integrationevents.sourcegenerator": {
+        "type": "Project"
+      },
+      "sharedkernel.results": {
         "type": "Project"
       },
       "sharedkernel.testing.assertions": {

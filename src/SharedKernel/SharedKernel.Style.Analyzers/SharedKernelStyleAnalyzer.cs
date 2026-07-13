@@ -3,6 +3,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.FlowAnalysis;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace SharedKernel.Style.Analyzers;
 
@@ -92,6 +94,22 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Repository domain rules require IDomainEvent implementations to use the DomainEvent suffix for clear ubiquitous language.");
+    private static readonly DiagnosticDescriptor SuccessOnlyResultMethodRule = new(
+        StyleDiagnosticIds.SuccessOnlyResultMethod,
+        title: "Result-returning methods should be able to return a failure Result",
+        messageFormat: "Method '{0}' cannot return a failure Result and should not return Result",
+        category: "Style",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Methods returning SharedKernel.Results.Result should be able to return a failure Result; use a non-Result return type when every reachable return is successful.");
+    private static readonly DiagnosticDescriptor OptionalResultMethodRule = new(
+        StyleDiagnosticIds.OptionalResultMethod,
+        title: "Result-returning methods should use Option for not-found outcomes",
+        messageFormat: "Method '{0}' returns only OK or not-found Results and should return Option<T>",
+        category: "Style",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true,
+        description: "Methods returning Result<T> should use Option<T> when every reachable return is either OK or not found.");
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
@@ -102,7 +120,9 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             GenericTypeNameSuffixRule,
             BroadOperationCanceledExceptionFilterRule,
             NonSourceGeneratedLoggingRule,
-            DomainEventSuffixRule);
+            DomainEventSuffixRule,
+            SuccessOnlyResultMethodRule,
+            OptionalResultMethodRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -121,6 +141,8 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     {
         var cancellationTokenType = context.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken");
         var domainEventType = context.Compilation.GetTypeByMetadataName("SharedKernel.Domain.IDomainEvent");
+        var resultType = context.Compilation.GetTypeByMetadataName("SharedKernel.Results.Result");
+        var genericResultType = context.Compilation.GetTypeByMetadataName("SharedKernel.Results.Result`1");
 
         context.RegisterSymbolAction(
             symbolContext =>
@@ -148,6 +170,16 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             AnalyzeLoggerInvocation,
             SyntaxKind.InvocationExpression);
 
+        if (resultType is not null)
+        {
+            context.RegisterOperationBlockAction(operationContext => AnalyzeSuccessOnlyResultMethod(operationContext, resultType, genericResultType));
+        }
+
+        if (resultType is not null && genericResultType is not null)
+        {
+            context.RegisterOperationBlockAction(operationContext => AnalyzeOptionalResultMethod(operationContext, resultType, genericResultType));
+        }
+
         if (cancellationTokenType is null)
         {
             return;
@@ -156,6 +188,195 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         context.RegisterSyntaxNodeAction(
             syntaxContext => AnalyzeParameter(syntaxContext, cancellationTokenType),
             SyntaxKind.Parameter);
+    }
+
+    private static void AnalyzeSuccessOnlyResultMethod(
+        OperationBlockAnalysisContext context,
+        INamedTypeSymbol resultFactoryType,
+        INamedTypeSymbol? genericResultType)
+    {
+        if (context.OwningSymbol is not IMethodSymbol
+            {
+                MethodKind: MethodKind.Ordinary,
+                ReturnType: { } returnType,
+            } method
+            || (!SymbolEqualityComparer.Default.Equals(returnType, resultFactoryType)
+                && (genericResultType is null
+                    || returnType is not INamedTypeSymbol genericReturnType
+                    || !SymbolEqualityComparer.Default.Equals(genericReturnType.OriginalDefinition, genericResultType)))
+            || method.IsOverride
+            || ImplementsInterfaceContract(method))
+        {
+            return;
+        }
+
+        if (!TryGetReachableReturnValues(context, out var returnValues)
+            || returnValues.IsDefaultOrEmpty
+            || returnValues.Any(value => !IsSuccessResultExpression(value, resultFactoryType, genericResultType)))
+        {
+            return;
+        }
+
+        var location = method.Locations.FirstOrDefault(static candidate => candidate.IsInSource);
+        if (location is null)
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            SuccessOnlyResultMethodRule,
+            location,
+            method.Name));
+    }
+
+    private static void AnalyzeOptionalResultMethod(
+        OperationBlockAnalysisContext context,
+        INamedTypeSymbol resultFactoryType,
+        INamedTypeSymbol genericResultType)
+    {
+        if (context.OwningSymbol is not IMethodSymbol
+            {
+                MethodKind: MethodKind.Ordinary,
+                ReturnType: INamedTypeSymbol returnType,
+            } method
+            || !SymbolEqualityComparer.Default.Equals(returnType.OriginalDefinition, genericResultType)
+            || method.IsOverride
+            || ImplementsInterfaceContract(method)
+            || !TryGetReachableReturnValues(context, out var returnValues)
+            || returnValues.IsDefaultOrEmpty)
+        {
+            return;
+        }
+
+        var hasOk = false;
+        var hasNotFound = false;
+        foreach (var returnValue in returnValues)
+        {
+            if (!TryGetOptionalResultFactory(returnValue, resultFactoryType, genericResultType, out var isNotFound))
+            {
+                return;
+            }
+
+            hasOk |= !isNotFound;
+            hasNotFound |= isNotFound;
+        }
+
+        if (!hasOk || !hasNotFound)
+        {
+            return;
+        }
+
+        var location = method.Locations.FirstOrDefault(static candidate => candidate.IsInSource);
+        if (location is null)
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(OptionalResultMethodRule, location, method.Name));
+    }
+
+    private static bool TryGetReachableReturnValues(
+        OperationBlockAnalysisContext context,
+        out ImmutableArray<IOperation> returnValues)
+    {
+        var returnValueBuilder = ImmutableArray.CreateBuilder<IOperation>();
+        foreach (var operationBlock in context.OperationBlocks)
+        {
+            var methodBody = operationBlock as IMethodBodyOperation ?? operationBlock.Parent as IMethodBodyOperation;
+            if (methodBody is null)
+            {
+                continue;
+            }
+
+            var controlFlowGraph = ControlFlowGraph.Create(methodBody, context.CancellationToken);
+            Dictionary<CaptureId, IOperation[]>? capturedValues = null;
+            foreach (var block in controlFlowGraph.Blocks.Where(static block => block.IsReachable))
+            {
+                if (block.FallThroughSuccessor is not { Semantics: ControlFlowBranchSemantics.Return }
+                    || block.BranchValue is not { } branchValue)
+                {
+                    continue;
+                }
+
+                if (branchValue is not IFlowCaptureReferenceOperation captureReference)
+                {
+                    returnValueBuilder.Add(branchValue);
+                    continue;
+                }
+
+                capturedValues ??= controlFlowGraph.Blocks
+                    .Where(static candidate => candidate.IsReachable)
+                    .SelectMany(static candidate => candidate.Operations.OfType<IFlowCaptureOperation>())
+                    .GroupBy(static capture => capture.Id)
+                    .ToDictionary(
+                        static group => group.Key,
+                        static group => group.Select(static capture => capture.Value).ToArray());
+                if (!capturedValues.TryGetValue(captureReference.Id, out var capturedReturnValues))
+                {
+                    returnValues = default;
+                    return false;
+                }
+
+                returnValueBuilder.AddRange(capturedReturnValues);
+            }
+        }
+
+        returnValues = returnValueBuilder.ToImmutable();
+        return true;
+    }
+
+    private static bool IsSuccessResultExpression(
+        IOperation operation,
+        INamedTypeSymbol resultFactoryType,
+        INamedTypeSymbol? genericResultType)
+    {
+        return operation switch
+        {
+            IConversionOperation { Operand: { } operand } => IsSuccessResultExpression(operand, resultFactoryType, genericResultType),
+            IConditionalOperation { WhenTrue: { } whenTrue, WhenFalse: { } whenFalse } =>
+                IsSuccessResultExpression(whenTrue, resultFactoryType, genericResultType)
+                && IsSuccessResultExpression(whenFalse, resultFactoryType, genericResultType),
+            ISwitchExpressionOperation switchExpression => switchExpression.Arms.All(arm =>
+                IsSuccessResultExpression(arm.Value, resultFactoryType, genericResultType)),
+            IInvocationOperation
+            {
+                TargetMethod:
+                {
+                    IsStatic: true,
+                    Name: "Ok" or "Created" or "NoContent" or "Accepted",
+                } factoryMethod,
+            } => SymbolEqualityComparer.Default.Equals(factoryMethod.ContainingType, resultFactoryType)
+                && (SymbolEqualityComparer.Default.Equals(factoryMethod.ReturnType, resultFactoryType)
+                    || (genericResultType is not null
+                        && factoryMethod.ReturnType is INamedTypeSymbol genericReturnType
+                        && SymbolEqualityComparer.Default.Equals(genericReturnType.OriginalDefinition, genericResultType))),
+            _ => false,
+        };
+    }
+
+    private static bool TryGetOptionalResultFactory(
+        IOperation operation,
+        INamedTypeSymbol resultFactoryType,
+        INamedTypeSymbol genericResultType,
+        out bool isNotFound)
+    {
+        if (operation is IConversionOperation { Operand: { } operand })
+        {
+            return TryGetOptionalResultFactory(operand, resultFactoryType, genericResultType, out isNotFound);
+        }
+
+        if (operation is not IInvocationOperation { TargetMethod: { } method }
+            || !method.IsStatic
+            || !SymbolEqualityComparer.Default.Equals(method.ContainingType, resultFactoryType)
+            || method.ReturnType is not INamedTypeSymbol returnType
+            || !SymbolEqualityComparer.Default.Equals(returnType.OriginalDefinition, genericResultType))
+        {
+            isNotFound = false;
+            return false;
+        }
+
+        isNotFound = method.Name == "NotFound";
+        return isNotFound || method.Name == "Ok";
     }
 
     private static void AnalyzeMethod(SymbolAnalysisContext context, StyleAnalyzerConfigOptions options)

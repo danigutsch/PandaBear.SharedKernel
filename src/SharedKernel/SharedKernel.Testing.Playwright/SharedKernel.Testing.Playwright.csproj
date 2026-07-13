@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.Testing.Playwright</PackageId>
+        <Description>Reusable Playwright assertions for SharedKernel browser test suites.</Description>
+        <RootNamespace>SharedKernel.Testing.Playwright</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>testing;playwright;browser;assertions;shared-kernel;dotnet</PackageTags>
+        <IsAotCompatible>false</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Playwright" />
+    </ItemGroup>
+
+</Project>

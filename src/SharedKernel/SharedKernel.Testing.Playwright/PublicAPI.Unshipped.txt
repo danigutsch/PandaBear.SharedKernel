@@ -1,0 +1,3 @@
+#nullable enable
+SharedKernel.Testing.Playwright.PlaywrightShouldAssertionExtensions
+static SharedKernel.Testing.Playwright.PlaywrightShouldAssertionExtensions.ShouldHaveTitle(this Microsoft.Playwright.IPage! page, string! expectedTitle) -> System.Threading.Tasks.Task!

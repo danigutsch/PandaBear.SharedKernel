@@ -21,6 +21,8 @@ public sealed class SharedKernelStyleAnalyzerTests
             StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
             StyleDiagnosticIds.NonSourceGeneratedLogging,
             StyleDiagnosticIds.DomainEventSuffix,
+            StyleDiagnosticIds.SuccessOnlyResultMethod,
+            StyleDiagnosticIds.OptionalResultMethod,
         ];
 
         // Act
@@ -1209,6 +1211,539 @@ public sealed class SharedKernelStyleAnalyzerTests
 
         // Assert
         diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.DomainEventSuffix);
+    }
+
+    [Theory]
+    [InlineData("Ok")]
+    [InlineData("NoContent")]
+    [InlineData("Accepted")]
+    public async Task Success_only_result_method_reports_skstyle009(string factoryName)
+    {
+        // Arrange
+        var source = $$"""
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result Ok() => default;
+                    public static Result NoContent() => default;
+                    public static Result Accepted() => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result Replace(bool useAlternate)
+                    {
+                        if (useAlternate)
+                        {
+                            return SharedKernel.Results.Result.{{factoryName}}();
+                        }
+
+                        return SharedKernel.Results.Result.{{factoryName}}();
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)
+            .ShouldContain("cannot return a failure Result", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Expression_bodied_success_only_result_method_reports_skstyle009()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result Ok() => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result Replace() => SharedKernel.Results.Result.Ok();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+    }
+
+    [Fact]
+    public async Task Result_method_with_failure_path_does_not_report_skstyle009()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result Ok() => default;
+                    public static Result Error(string detail) => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result Replace(bool isValid) =>
+                        isValid ? SharedKernel.Results.Result.Ok() : SharedKernel.Results.Result.Error("Theme is invalid.");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+    }
+
+    [Fact]
+    public async Task Result_method_returning_propagated_result_does_not_report_skstyle009()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result Error(string detail) => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result Replace() => Validate();
+
+                    private static SharedKernel.Results.Result Validate() =>
+                        SharedKernel.Results.Result.Error("Theme is invalid.");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+    }
+
+    [Fact]
+    public async Task Conditional_success_only_result_method_reports_skstyle009()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result Ok() => default;
+                    public static Result NoContent() => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result Replace(bool isChanged) =>
+                        isChanged ? SharedKernel.Results.Result.Ok() : SharedKernel.Results.Result.NoContent();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+    }
+
+    [Fact]
+    public async Task Switch_expression_result_methods_report_only_when_all_arms_succeed()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result Ok() => default;
+                    public static Result NoContent() => default;
+                    public static Result Error(string detail) => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result Replace(int status) => status switch
+                    {
+                        0 => SharedKernel.Results.Result.Ok(),
+                        _ => SharedKernel.Results.Result.NoContent(),
+                    };
+
+                    public SharedKernel.Results.Result Validate(int status) => status switch
+                    {
+                        0 => SharedKernel.Results.Result.Ok(),
+                        _ => SharedKernel.Results.Result.Error("Theme is invalid."),
+                    };
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)
+            .ShouldContain("Replace", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Unreachable_result_failure_path_does_not_suppress_skstyle009()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result Ok() => default;
+                    public static Result Error(string detail) => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result Replace()
+                    {
+                        if (false)
+                        {
+                            return SharedKernel.Results.Result.Error("Unreachable");
+                        }
+
+                        return SharedKernel.Results.Result.Ok();
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+    }
+
+    [Fact]
+    public async Task Result_interface_implementation_does_not_report_skstyle009()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result Ok() => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public partial interface IThemeSettings
+                {
+                    SharedKernel.Results.Result Replace();
+                }
+
+                public sealed partial class ThemeSettings : IThemeSettings
+                {
+                    public SharedKernel.Results.Result Replace() => SharedKernel.Results.Result.Ok();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+    }
+
+    [Fact]
+    public async Task Result_override_does_not_report_skstyle009()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result Ok() => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public abstract partial class ThemeSettings
+                {
+                    public abstract SharedKernel.Results.Result Replace();
+                }
+
+                public sealed partial class PublicThemeSettings : ThemeSettings
+                {
+                    public override SharedKernel.Results.Result Replace() => SharedKernel.Results.Result.Ok();
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+    }
+
+    [Fact]
+    public async Task Generic_result_method_with_ok_and_not_found_paths_reports_skstyle010()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result<T> Ok<T>(T value) => default;
+                    public static Result<T> NotFound<T>(string detail) => default;
+                }
+
+                public readonly partial struct Result<T>
+                {
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result<string> Find(bool exists)
+                    {
+                        if (exists)
+                        {
+                            return SharedKernel.Results.Result.Ok("Theme");
+                        }
+
+                        return SharedKernel.Results.Result.NotFound<string>("Theme was not found.");
+                    }
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.OptionalResultMethod);
+    }
+
+    [Fact]
+    public async Task Generic_result_method_without_both_ok_and_not_found_paths_does_not_report_skstyle010()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result<T> Ok<T>(T value) => default;
+                }
+
+                public readonly partial struct Result<T>
+                {
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result<string> Find() => SharedKernel.Results.Result.Ok("Theme");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.OptionalResultMethod);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+    }
+
+    [Fact]
+    public async Task Generic_result_method_returning_created_only_reports_skstyle009()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result<T> Created<T>(T value) => default;
+                }
+
+                public readonly partial struct Result<T>
+                {
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result<string> Create() => SharedKernel.Results.Result.Created("Theme");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.SuccessOnlyResultMethod);
+    }
+
+    [Fact]
+    public async Task Conditional_and_switch_generic_result_methods_report_skstyle010()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result<T> Ok<T>(T value) => default;
+                    public static Result<T> NotFound<T>(string detail) => default;
+                }
+
+                public readonly partial struct Result<T>
+                {
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed partial class ThemeSettings
+                {
+                    public SharedKernel.Results.Result<string> Find(bool exists) =>
+                        exists ? SharedKernel.Results.Result.Ok("Theme") : SharedKernel.Results.Result.NotFound<string>("Theme was not found.");
+
+                    public SharedKernel.Results.Result<string> FindByStatus(int status) => status switch
+                    {
+                        0 => SharedKernel.Results.Result.Ok("Theme"),
+                        _ => SharedKernel.Results.Result.NotFound<string>("Theme was not found."),
+                    };
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        var optionalResultDiagnostics = diagnostics.Where(static candidate => candidate.Id == StyleDiagnosticIds.OptionalResultMethod).ToArray();
+        optionalResultDiagnostics.Length.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Unreachable_or_contract_or_non_direct_generic_result_methods_do_not_report_skstyle010()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly partial struct Result
+                {
+                    public static Result<T> Ok<T>(T value) => default;
+                    public static Result<T> NotFound<T>(string detail) => default;
+                    public static Result<T> Error<T>(string detail) => default;
+                }
+
+                public readonly partial struct Result<T>
+                {
+                }
+            }
+
+            namespace Demo
+            {
+                public partial interface IThemeSettings
+                {
+                    SharedKernel.Results.Result<string> Find();
+                }
+
+                public abstract partial class ThemeSettingsBase
+                {
+                    public abstract SharedKernel.Results.Result<string> FindById();
+                }
+
+                public sealed partial class ThemeSettings : ThemeSettingsBase, IThemeSettings
+                {
+                    public SharedKernel.Results.Result<string> Find()
+                    {
+                        if (false)
+                        {
+                            return SharedKernel.Results.Result.NotFound<string>("Unreachable");
+                        }
+
+                        return SharedKernel.Results.Result.Ok("Theme");
+                    }
+
+                    public override SharedKernel.Results.Result<string> FindById() =>
+                        SharedKernel.Results.Result.NotFound<string>("Theme was not found.");
+
+                    public SharedKernel.Results.Result<string> Propagated() => External();
+
+                    public System.Threading.Tasks.Task<SharedKernel.Results.Result<string>> FindAsync() =>
+                        System.Threading.Tasks.Task.FromResult(SharedKernel.Results.Result.Ok("Theme"));
+
+                    public SharedKernel.Results.Result<string> Throws() => throw new System.InvalidOperationException();
+
+                    private static SharedKernel.Results.Result<string> External() =>
+                        SharedKernel.Results.Result.Error<string>("Theme failed.");
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.OptionalResultMethod);
     }
 
 }

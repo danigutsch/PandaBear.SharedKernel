@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using SharedKernel.BuildingBlocks;
 using SharedKernel.Domain.SourceGenerator;
 using SharedKernel.Testing.Roslyn;
 
@@ -9,6 +10,7 @@ namespace SharedKernel.Domain.GeneratorTests;
 internal static class GeneratorTestHarness
 {
     private const string DefaultUsings = """
+        using SharedKernel.BuildingBlocks;
         using SharedKernel.Domain;
 
         """;

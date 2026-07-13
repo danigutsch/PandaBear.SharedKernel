@@ -2,6 +2,8 @@
 # Benchmark methods intentionally keep instance-shaped entrypoints for consistent BenchmarkDotNet
 # discovery and lifecycle behavior. Owner: benchmark maintainers. Remove CA1822 when benchmark
 # methods can be made static without changing benchmark scenario shape or lifecycle semantics.
+# Benchmark return values are measured outputs, not domain validation contracts.
 [*.cs]
 dotnet_diagnostic.CA1515.severity = none
 dotnet_diagnostic.CA1822.severity = none
+dotnet_diagnostic.SKSTYLE009.severity = none

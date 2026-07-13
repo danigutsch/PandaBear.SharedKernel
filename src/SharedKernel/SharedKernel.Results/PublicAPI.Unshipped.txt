@@ -1,5 +1,4 @@
 #nullable enable
-
 SharedKernel.Results.ResultErrorCatalogProviderAttribute
 SharedKernel.Results.ResultErrorCatalogProviderAttribute.ProviderType.get -> System.Type!
 SharedKernel.Results.ResultErrorCatalogProviderAttribute.ResultErrorCatalogProviderAttribute(System.Type! providerType) -> void
