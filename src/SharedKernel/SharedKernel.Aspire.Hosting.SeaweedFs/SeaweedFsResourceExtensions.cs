@@ -9,6 +9,7 @@ public static class SeaweedFsResourceExtensions
 {
     private const string ImageTag = "4.39";
     private const string ImageDigest = "c7d6c721b30ae711db766bbbfd40192776e263d4e51e22f57baef7bef93c12c6";
+    private const string ResourceNameSuffixConfigurationKey = "DcpPublisher:ResourceNameSuffix";
 
     /// <summary>
     /// Adds an authenticated SeaweedFS mini cluster with a persistent data volume.
@@ -32,7 +33,7 @@ public static class SeaweedFsResourceExtensions
             secret: true,
             persist: true);
         var bucket = builder.AddParameter($"{name}-bucket", "viajantes-media");
-        var resourceNameSuffix = builder.Configuration["DcpPublisher:ResourceNameSuffix"]?.Trim();
+        var resourceNameSuffix = builder.Configuration[ResourceNameSuffixConfigurationKey]?.Trim();
         var dataVolumeName = string.IsNullOrWhiteSpace(resourceNameSuffix)
             ? $"{name}-data"
             : $"{name}-{resourceNameSuffix}-data";
