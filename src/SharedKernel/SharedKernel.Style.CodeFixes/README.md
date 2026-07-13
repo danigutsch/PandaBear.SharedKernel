@@ -19,8 +19,9 @@ This Roslyn component provides focused, safe code fixes for the diagnostics in
   operation token is available.
 - `SKSTYLE008` can append the `DomainEvent` suffix to domain event types when the target name is
   available.
-- `SKSTYLE009` can convert a private command method that only returns `Result.Ok()` to `void` when
-  all direct callers and result-composition callbacks can preserve the successful result.
+- `SKSTYLE009` can convert a private command method that only returns `Result.Ok()` to `void`, `Task`,
+  or `ValueTask` when all direct callers and result-composition callbacks can preserve the successful
+  result.
 Fix All is limited to `SKSTYLE001`.
 
 ## Suppression policy

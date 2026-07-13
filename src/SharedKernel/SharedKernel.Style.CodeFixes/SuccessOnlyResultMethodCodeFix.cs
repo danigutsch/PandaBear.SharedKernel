@@ -15,6 +15,8 @@ namespace SharedKernel.Style.CodeFixes;
 internal static class SuccessOnlyResultMethodCodeFix
 {
     private const string ResultMetadataName = "SharedKernel.Results.Result";
+    private const string TaskOfTMetadataName = "System.Threading.Tasks.Task`1";
+    private const string ValueTaskOfTMetadataName = "System.Threading.Tasks.ValueTask`1";
 
     /// <summary>
     /// Registers a code action when all source references can preserve their successful result behavior.
@@ -44,7 +46,9 @@ internal static class SuccessOnlyResultMethodCodeFix
 
         context.RegisterCodeFix(
             CodeAction.Create(
-                title: "Convert command method to void",
+                title: methodSymbol.IsAsync
+                    ? $"Convert command method to {methodSymbol.ReturnType.Name}"
+                    : "Convert command method to void",
                 createChangedSolution: cancellationToken => Apply(
                     context.Document,
                     methodSymbol,
@@ -70,8 +74,7 @@ internal static class SuccessOnlyResultMethodCodeFix
             || targetMethod.ExpressionBody is not null
             || targetMethod.TypeParameterList is not null
             || targetMethod.Modifiers.All(static modifier => !modifier.IsKind(SyntaxKind.PrivateKeyword))
-            || targetMethod.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.AsyncKeyword)
-                || modifier.IsKind(SyntaxKind.VirtualKeyword)
+            || targetMethod.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.VirtualKeyword)
                 || modifier.IsKind(SyntaxKind.AbstractKeyword)
                 || modifier.IsKind(SyntaxKind.PartialKeyword))
             || targetMethod.Body.Statements.LastOrDefault() is not ReturnStatementSyntax returnStatement
@@ -83,7 +86,6 @@ internal static class SuccessOnlyResultMethodCodeFix
             || targetSymbol.IsOverride
             || targetSymbol.IsAbstract
             || targetSymbol.IsVirtual
-            || targetSymbol.IsAsync
             || targetSymbol.IsGenericMethod
             || targetSymbol.PartialDefinitionPart is not null
             || targetSymbol.PartialImplementationPart is not null)
@@ -93,7 +95,7 @@ internal static class SuccessOnlyResultMethodCodeFix
 
         var resultType = semanticModel.Compilation.GetTypeByMetadataName(ResultMetadataName);
         if (resultType is null
-            || !SymbolEqualityComparer.Default.Equals(targetSymbol.ReturnType, resultType)
+            || !IsSupportedTargetReturnType(targetSymbol, resultType, semanticModel.Compilation)
             || !IsResultOkInvocation(returnInvocation, semanticModel, resultType, cancellationToken))
         {
             return false;
@@ -101,6 +103,19 @@ internal static class SuccessOnlyResultMethodCodeFix
 
         methodSymbol = targetSymbol;
         return true;
+    }
+
+    private static bool IsSupportedTargetReturnType(
+        IMethodSymbol methodSymbol,
+        INamedTypeSymbol resultType,
+        Compilation compilation)
+    {
+        if (!methodSymbol.IsAsync)
+        {
+            return SymbolEqualityComparer.Default.Equals(methodSymbol.ReturnType, resultType);
+        }
+
+        return IsTaskOrValueTaskOfResult(methodSymbol.ReturnType, resultType, compilation);
     }
 
     private static async Task<IReadOnlyList<ReferenceEdit>?> TryGetReferenceEdits(
@@ -142,6 +157,7 @@ internal static class SuccessOnlyResultMethodCodeFix
                         reference.Location,
                         methodSymbol,
                         resultType,
+                        methodSymbol.IsAsync,
                         cancellationToken,
                         out var edit))
                 {
@@ -165,6 +181,7 @@ internal static class SuccessOnlyResultMethodCodeFix
         Location location,
         IMethodSymbol methodSymbol,
         INamedTypeSymbol resultType,
+        bool isAsyncTarget,
         CancellationToken cancellationToken,
         out ReferenceEdit? edit)
     {
@@ -178,19 +195,38 @@ internal static class SuccessOnlyResultMethodCodeFix
             return false;
         }
 
-        if (invocation.Parent is ExpressionStatementSyntax)
+        ExpressionSyntax callExpression;
+        if (invocation.Parent is AwaitExpressionSyntax awaitExpression)
+        {
+            if (!isAsyncTarget)
+            {
+                return false;
+            }
+
+            callExpression = awaitExpression;
+        }
+        else
+        {
+            callExpression = invocation;
+        }
+        if (callExpression.Parent is ExpressionStatementSyntax)
         {
             return true;
         }
 
-        if (TryCreateFailureGuardEdit(root, semanticModel, documentId, invocation, resultType, cancellationToken, out edit))
+        if (TryCreateFailureGuardEdit(root, semanticModel, documentId, callExpression, resultType, isAsyncTarget, cancellationToken, out edit))
         {
             return true;
         }
 
-        if (invocation.Parent is ReturnStatementSyntax { Expression: { } returnExpression } returnStatement
-            && returnExpression == invocation)
+        if (callExpression.Parent is ReturnStatementSyntax { Expression: { } returnExpression } returnStatement
+            && returnExpression == callExpression)
         {
+            if (isAsyncTarget && callExpression == invocation)
+            {
+                return false;
+            }
+
             if (returnStatement.Parent is not BlockSyntax)
             {
                 return false;
@@ -207,7 +243,7 @@ internal static class SuccessOnlyResultMethodCodeFix
                     return false;
                 }
 
-                edit = new ReferenceEdit(documentId, returnStatement, ReferenceEditKind.LambdaReturn, invocation);
+                edit = new ReferenceEdit(documentId, returnStatement, ReferenceEditKind.LambdaReturn, callExpression);
                 return true;
             }
 
@@ -216,20 +252,21 @@ internal static class SuccessOnlyResultMethodCodeFix
                     MethodKind: MethodKind.Ordinary,
                     ReturnType: { } returnType,
                 }
-                || !SymbolEqualityComparer.Default.Equals(returnType, resultType))
+                || !ReturnsResultOrAsyncResult(returnType, semanticModel.Compilation, resultType))
             {
                 return false;
             }
 
-            edit = new ReferenceEdit(documentId, returnStatement, ReferenceEditKind.MethodReturn, invocation);
+            edit = new ReferenceEdit(documentId, returnStatement, ReferenceEditKind.MethodReturn, callExpression);
             return true;
         }
 
-        if (invocation.Parent is LambdaExpressionSyntax lambdaExpression
-            && lambdaExpression.Body == invocation
+        if (callExpression.Parent is LambdaExpressionSyntax lambdaExpression
+            && lambdaExpression.Body == callExpression
+            && (!isAsyncTarget || callExpression is AwaitExpressionSyntax)
             && ReturnsResultOrTaskOfResult(lambdaExpression, semanticModel, resultType))
         {
-            edit = new ReferenceEdit(documentId, lambdaExpression, ReferenceEditKind.LambdaExpression, invocation);
+            edit = new ReferenceEdit(documentId, lambdaExpression, ReferenceEditKind.LambdaExpression, callExpression);
             return true;
         }
 
@@ -240,14 +277,16 @@ internal static class SuccessOnlyResultMethodCodeFix
         SyntaxNode root,
         SemanticModel semanticModel,
         DocumentId documentId,
-        InvocationExpressionSyntax invocation,
+        ExpressionSyntax callExpression,
         INamedTypeSymbol resultType,
+        bool isAsyncTarget,
         CancellationToken cancellationToken,
         out ReferenceEdit? edit)
     {
         edit = null;
 
-        if (invocation.Parent is not EqualsValueClauseSyntax { Parent: VariableDeclaratorSyntax variableDeclarator }
+        if ((isAsyncTarget && callExpression is not AwaitExpressionSyntax)
+            || callExpression.Parent is not EqualsValueClauseSyntax { Parent: VariableDeclaratorSyntax variableDeclarator }
             || variableDeclarator.Parent is not VariableDeclarationSyntax { Parent: LocalDeclarationStatementSyntax declaration }
             || declaration.Declaration.Variables.Count != 1
             || declaration.Parent is not BlockSyntax block
@@ -260,7 +299,7 @@ internal static class SuccessOnlyResultMethodCodeFix
             return false;
         }
 
-        edit = new ReferenceEdit(documentId, declaration, ReferenceEditKind.FailureGuard, invocation, failureGuard);
+        edit = new ReferenceEdit(documentId, declaration, ReferenceEditKind.FailureGuard, callExpression, failureGuard);
         return true;
     }
 
@@ -298,7 +337,7 @@ internal static class SuccessOnlyResultMethodCodeFix
                 MethodKind: MethodKind.Ordinary,
                 ReturnType: { } returnType,
             }
-            || !SymbolEqualityComparer.Default.Equals(returnType, resultType))
+            || !ReturnsResultOrAsyncResult(returnType, semanticModel.Compilation, resultType))
         {
             return false;
         }
@@ -368,7 +407,7 @@ internal static class SuccessOnlyResultMethodCodeFix
                     return document.Project.Solution;
                 }
 
-                ReplaceTargetMethod(editor, methodDeclaration);
+                ReplaceTargetMethod(editor, methodDeclaration, methodSymbol);
             }
 
             if (editsByDocument.TryGetValue(documentId, out var documentEdits))
@@ -406,14 +445,32 @@ internal static class SuccessOnlyResultMethodCodeFix
         return true;
     }
 
-    private static void ReplaceTargetMethod(DocumentEditor editor, MethodDeclarationSyntax methodDeclaration)
+    private static void ReplaceTargetMethod(
+        DocumentEditor editor,
+        MethodDeclarationSyntax methodDeclaration,
+        IMethodSymbol methodSymbol)
     {
         var returnStatement = (ReturnStatementSyntax)methodDeclaration.Body!.Statements[methodDeclaration.Body.Statements.Count - 1];
-        var voidReturnType = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword))
+        var replacementReturnType = CreateReplacementReturnType(methodSymbol)
             .WithTriviaFrom(methodDeclaration.ReturnType)
             .WithAdditionalAnnotations(Formatter.Annotation);
-        editor.ReplaceNode(methodDeclaration.ReturnType, voidReturnType);
+        editor.ReplaceNode(methodDeclaration.ReturnType, replacementReturnType);
         editor.RemoveNode(returnStatement, SyntaxRemoveOptions.KeepExteriorTrivia);
+    }
+
+    private static TypeSyntax CreateReplacementReturnType(IMethodSymbol methodSymbol)
+    {
+        if (!methodSymbol.IsAsync)
+        {
+            return SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.VoidKeyword));
+        }
+
+        return methodSymbol.ReturnType.Name switch
+        {
+            "Task" => SyntaxFactory.ParseTypeName("global::System.Threading.Tasks.Task"),
+            "ValueTask" => SyntaxFactory.ParseTypeName("global::System.Threading.Tasks.ValueTask"),
+            _ => throw new InvalidOperationException("Unsupported async command return type."),
+        };
     }
 
     private static void ApplyReferenceEdit(DocumentEditor editor, ReferenceEdit edit)
@@ -423,13 +480,13 @@ internal static class SuccessOnlyResultMethodCodeFix
             case ReferenceEditKind.MethodReturn:
             case ReferenceEditKind.LambdaReturn:
                 var returnStatement = (ReturnStatementSyntax)edit.Node;
-                editor.InsertBefore(returnStatement, CreateInvocationStatement(edit.Invocation));
+                editor.InsertBefore(returnStatement, CreateInvocationStatement(edit.CallExpression));
                 editor.ReplaceNode(returnStatement, returnStatement.WithExpression(CreateSuccessResult()).WithAdditionalAnnotations(Formatter.Annotation));
                 break;
             case ReferenceEditKind.LambdaExpression:
                 var lambdaExpression = (LambdaExpressionSyntax)edit.Node;
                 var block = SyntaxFactory.Block(
-                    CreateInvocationStatement(edit.Invocation),
+                    CreateInvocationStatement(edit.CallExpression),
                     SyntaxFactory.ReturnStatement(CreateSuccessResult()))
                     .WithAdditionalAnnotations(Formatter.Annotation);
                 editor.ReplaceNode(lambdaExpression, lambdaExpression.WithBody(block));
@@ -441,7 +498,7 @@ internal static class SuccessOnlyResultMethodCodeFix
                 }
 
                 var declaration = (LocalDeclarationStatementSyntax)edit.Node;
-                var invocationStatement = CreateInvocationStatement(edit.Invocation)
+                var invocationStatement = CreateInvocationStatement(edit.CallExpression)
                     .WithLeadingTrivia(declaration.GetLeadingTrivia())
                     .WithTrailingTrivia(declaration.GetTrailingTrivia());
                 editor.ReplaceNode(declaration, invocationStatement);
@@ -481,13 +538,25 @@ internal static class SuccessOnlyResultMethodCodeFix
             return false;
         }
 
-        if (SymbolEqualityComparer.Default.Equals(returnType, resultType))
-        {
-            return true;
-        }
+        return ReturnsResultOrAsyncResult(returnType, semanticModel.Compilation, resultType);
+    }
 
-        var taskOfT = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
-        var valueTaskOfT = semanticModel.Compilation.GetTypeByMetadataName("System.Threading.Tasks.ValueTask`1");
+    private static bool ReturnsResultOrAsyncResult(
+        ITypeSymbol returnType,
+        Compilation compilation,
+        INamedTypeSymbol resultType)
+    {
+        return SymbolEqualityComparer.Default.Equals(returnType, resultType)
+            || IsTaskOrValueTaskOfResult(returnType, resultType, compilation);
+    }
+
+    private static bool IsTaskOrValueTaskOfResult(
+        ITypeSymbol returnType,
+        INamedTypeSymbol resultType,
+        Compilation compilation)
+    {
+        var taskOfT = compilation.GetTypeByMetadataName(TaskOfTMetadataName);
+        var valueTaskOfT = compilation.GetTypeByMetadataName(ValueTaskOfTMetadataName);
         return returnType is INamedTypeSymbol genericReturnType
             && genericReturnType.TypeArguments.Length == 1
             && SymbolEqualityComparer.Default.Equals(genericReturnType.TypeArguments[0], resultType)
@@ -495,9 +564,9 @@ internal static class SuccessOnlyResultMethodCodeFix
                 || SymbolEqualityComparer.Default.Equals(genericReturnType.OriginalDefinition, valueTaskOfT));
     }
 
-    private static ExpressionStatementSyntax CreateInvocationStatement(InvocationExpressionSyntax invocation)
+    private static ExpressionStatementSyntax CreateInvocationStatement(ExpressionSyntax callExpression)
     {
-        return SyntaxFactory.ExpressionStatement(invocation.WithoutTrivia())
+        return SyntaxFactory.ExpressionStatement(callExpression)
             .WithAdditionalAnnotations(Formatter.Annotation);
     }
 
@@ -510,7 +579,7 @@ internal static class SuccessOnlyResultMethodCodeFix
         DocumentId documentId,
         SyntaxNode node,
         ReferenceEditKind kind,
-        InvocationExpressionSyntax invocation,
+        ExpressionSyntax callExpression,
         IfStatementSyntax? guard = null)
     {
         public DocumentId DocumentId { get; } = documentId;
@@ -519,7 +588,7 @@ internal static class SuccessOnlyResultMethodCodeFix
 
         public ReferenceEditKind Kind { get; } = kind;
 
-        public InvocationExpressionSyntax Invocation { get; } = invocation;
+        public ExpressionSyntax CallExpression { get; } = callExpression;
 
         public IfStatementSyntax? Guard { get; } = guard;
     }

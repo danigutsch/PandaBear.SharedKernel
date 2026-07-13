@@ -60,7 +60,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 {
                     public SharedKernel.Results.Result RunDirect()
                     {
-                        return Complete();
+                        return /* preserve direct command */ Complete();
                     }
 
                     public SharedKernel.Results.Result RunChained(SharedKernel.Results.Result source)
@@ -117,8 +117,89 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         updatedText.ShouldContain("public SharedKernel.Results.Result RunDirect()", StringComparison.Ordinal);
         updatedText.ShouldContain("source.Bind(() =>", StringComparison.Ordinal);
         updatedText.ShouldContain("await System.Threading.Tasks.Task.Yield();", StringComparison.Ordinal);
+        updatedText.ShouldContain("/* preserve direct command */", StringComparison.Ordinal);
         updatedText.ShouldContain("global::SharedKernel.Results.Result.Ok()", StringComparison.Ordinal);
         updatedText.ShouldNotContain("return Complete();", StringComparison.Ordinal);
+        updatedText.ShouldNotContain("result.IsFailure", StringComparison.Ordinal);
+        compilationDiagnostics.ShouldNotContain(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
+    }
+
+    [Theory]
+    [InlineData("Task")]
+    [InlineData("ValueTask")]
+    public async Task Success_only_async_result_fix_converts_commands_and_preserves_awaited_callers(string taskType)
+    {
+        // Arrange
+        var source = $$"""
+            namespace SharedKernel.Results
+            {
+                public readonly struct Result
+                {
+                    public bool IsFailure => false;
+
+                    public static Result Ok() => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed class Workflow
+                {
+                    public async {{taskType}}<SharedKernel.Results.Result> RunDirect()
+                    {
+                        return await Complete();
+                    }
+
+                    public async {{taskType}}<SharedKernel.Results.Result> RunChecked()
+                    {
+                        var result = await Complete();
+                        if (result.IsFailure)
+                        {
+                            return result;
+                        }
+
+                        return SharedKernel.Results.Result.Ok();
+                    }
+
+                    public System.Func<{{taskType}}<SharedKernel.Results.Result>> CreateCallback()
+                    {
+                        return async () =>
+                        {
+                            await Task.Yield();
+                            return await Complete();
+                        };
+                    }
+
+                    public async {{taskType}} RunIgnored()
+                    {
+                        await Complete();
+                    }
+
+                    private async {{taskType}}<SharedKernel.Results.Result> Complete()
+                    {
+                        await Task.Yield();
+                        return SharedKernel.Results.Result.Ok();
+                    }
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+        var compilationDiagnostics = await workspace.GetCompilationDiagnostics();
+
+        // Assert
+        updatedText.ShouldContain($"private async global::System.Threading.Tasks.{taskType} Complete()", StringComparison.Ordinal);
+        updatedText.ShouldContain("await Complete();", StringComparison.Ordinal);
+        updatedText.ShouldContain("return global::SharedKernel.Results.Result.Ok();", StringComparison.Ordinal);
+        updatedText.ShouldNotContain("return await Complete();", StringComparison.Ordinal);
+        updatedText.ShouldNotContain("var result = await Complete();", StringComparison.Ordinal);
         updatedText.ShouldNotContain("result.IsFailure", StringComparison.Ordinal);
         compilationDiagnostics.ShouldNotContain(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
     }
@@ -285,6 +366,318 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var workspace = CodeFixTestWorkspace.Create(source);
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod, "Complete()");
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Success_only_async_result_fix_is_not_offered_for_embedded_awaits()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly struct Result
+                {
+                    public static Result Ok() => default;
+                }
+            }
+
+            namespace Demo;
+
+            public sealed class Workflow
+            {
+                private async Task<SharedKernel.Results.Result> Complete()
+                {
+                    await Task.Yield();
+                    return SharedKernel.Results.Result.Ok();
+                }
+
+                public async Task<SharedKernel.Results.Result> Run(bool shouldComplete)
+                {
+                    return shouldComplete
+                        ? await Complete()
+                        : SharedKernel.Results.Result.Ok();
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("Task")]
+    [InlineData("ValueTask")]
+    public async Task Success_only_async_result_fix_is_not_offered_for_non_async_result_forwarders(string taskType)
+    {
+        // Arrange
+        var source = $$"""
+            namespace SharedKernel.Results
+            {
+                public readonly struct Result
+                {
+                    public static Result Ok() => default;
+                }
+            }
+
+            namespace Demo;
+
+            public sealed class Workflow
+            {
+                private async {{taskType}}<SharedKernel.Results.Result> Complete()
+                {
+                    await Task.Yield();
+                    return SharedKernel.Results.Result.Ok();
+                }
+
+                public {{taskType}}<SharedKernel.Results.Result> Forward()
+                {
+                    return Complete();
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("Task")]
+    [InlineData("ValueTask")]
+    public async Task Success_only_async_generic_result_fix_is_not_offered(string taskType)
+    {
+        // Arrange
+        var source = $$"""
+            namespace SharedKernel.Results
+            {
+                public readonly struct Result
+                {
+                    public static Result<T> Ok<T>(T value) => default;
+                }
+
+                public readonly struct Result<T>
+                {
+                }
+            }
+
+            namespace Demo;
+
+            public sealed class Workflow
+            {
+                private async {{taskType}}<SharedKernel.Results.Result<string>> Complete()
+                {
+                    await Task.Yield();
+                    return SharedKernel.Results.Result.Ok("Theme");
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Success_only_result_fix_is_not_offered_when_command_has_multiple_success_returns()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly struct Result
+                {
+                    public static Result Ok() => default;
+                }
+            }
+
+            namespace Demo;
+
+            public sealed class Workflow
+            {
+                private SharedKernel.Results.Result Complete(bool useAlternate)
+                {
+                    if (useAlternate)
+                    {
+                        return SharedKernel.Results.Result.Ok();
+                    }
+
+                    return SharedKernel.Results.Result.Ok();
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Success_only_result_fix_is_not_offered_when_method_is_used_as_a_method_group()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly struct Result
+                {
+                    public static Result Ok() => default;
+                }
+            }
+
+            namespace Demo;
+
+            public sealed class Workflow
+            {
+                private SharedKernel.Results.Result Complete()
+                {
+                    return SharedKernel.Results.Result.Ok();
+                }
+
+                public System.Func<SharedKernel.Results.Result> CreateCallback()
+                {
+                    return Complete;
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
+
+        // Act
+        var codeActions = await workspace.GetCodeActions(provider, diagnostic);
+
+        // Assert
+        codeActions.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("Task")]
+    [InlineData("ValueTask")]
+    public async Task Success_only_async_result_fix_rewrites_expression_bodied_async_lambda_callers(string taskType)
+    {
+        // Arrange
+        var source = $$"""
+            namespace SharedKernel.Results
+            {
+                public readonly struct Result
+                {
+                    public static Result Ok() => default;
+                }
+            }
+
+            namespace Demo
+            {
+                public sealed class Workflow
+                {
+                    public System.Func<{{taskType}}<SharedKernel.Results.Result>> CreateCallback()
+                    {
+                        return async () => await Complete();
+                    }
+
+                    private async {{taskType}}<SharedKernel.Results.Result> Complete()
+                    {
+                        await Task.Yield();
+                        return SharedKernel.Results.Result.Ok();
+                    }
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
+
+        // Act
+        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        await workspace.ApplyCodeAction(codeAction);
+        var updatedText = await workspace.GetDocumentText();
+        var compilationDiagnostics = await workspace.GetCompilationDiagnostics();
+
+        // Assert
+        updatedText.ShouldContain("async () =>", StringComparison.Ordinal);
+        updatedText.ShouldContain("await Complete();", StringComparison.Ordinal);
+        updatedText.ShouldContain("return global::SharedKernel.Results.Result.Ok();", StringComparison.Ordinal);
+        updatedText.ShouldNotContain("=> await Complete()", StringComparison.Ordinal);
+        compilationDiagnostics.ShouldNotContain(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
+    }
+
+    [Fact]
+    public async Task Success_only_result_fix_is_not_offered_for_awaitable_result_callers()
+    {
+        // Arrange
+        const string source = """
+            namespace SharedKernel.Results
+            {
+                public readonly struct Result
+                {
+                    public static Result Ok() => default;
+
+                    public ResultAwaiter GetAwaiter() => default;
+                }
+
+                public readonly struct ResultAwaiter : System.Runtime.CompilerServices.INotifyCompletion
+                {
+                    public bool IsCompleted => true;
+
+                    public void OnCompleted(System.Action continuation)
+                    {
+                    }
+
+                    public Result GetResult() => default;
+                }
+            }
+
+            namespace Demo;
+
+            public sealed class Workflow
+            {
+                private SharedKernel.Results.Result Complete()
+                {
+                    return SharedKernel.Results.Result.Ok();
+                }
+
+                public async Task<SharedKernel.Results.Result> Run()
+                {
+                    return await Complete();
+                }
+            }
+            """;
+        var workspace = CodeFixTestWorkspace.Create(source);
+        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var provider = new SharedKernelStyleCodeFixProvider();
+        var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
 
         // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
