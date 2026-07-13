@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Reflection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -17,9 +16,6 @@ namespace SharedKernel.AspNetCore;
 /// </summary>
 public static class ApiAuthenticationServiceCollectionExtensions
 {
-    private const string OpenApiDocumentGenerationEntryAssemblyName = "GetDocument.Insider";
-    private const string OpenApiDocumentGenerationAuthority = "https://openapi.invalid";
-
     /// <summary>
     /// Adds bearer authentication, permission-claim transformation, and an authenticated fallback policy.
     /// </summary>
@@ -44,11 +40,6 @@ public static class ApiAuthenticationServiceCollectionExtensions
 
         var authority = configuration[ApiAuthenticationDefaults.AuthorityConfigurationKey];
         var issuer = configuration[ApiAuthenticationDefaults.IssuerConfigurationKey];
-        if (Assembly.GetEntryAssembly()?.GetName().Name == OpenApiDocumentGenerationEntryAssemblyName)
-        {
-            authority ??= OpenApiDocumentGenerationAuthority;
-            issuer ??= OpenApiDocumentGenerationAuthority;
-        }
 
         var allowHttpDevelopmentAuthority = environment.IsDevelopment()
             && string.Equals(
