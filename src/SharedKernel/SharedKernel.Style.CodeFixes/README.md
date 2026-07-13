@@ -19,6 +19,8 @@ This Roslyn component provides focused, safe code fixes for the diagnostics in
   operation token is available.
 - `SKSTYLE008` can append the `DomainEvent` suffix to domain event types when the target name is
   available.
+- `SKSTYLE009` can convert a private command method that only returns `Result.Ok()` to `void` when
+  all direct callers and result-composition callbacks can preserve the successful result.
 Fix All is limited to `SKSTYLE001`.
 
 ## Suppression policy
@@ -34,8 +36,8 @@ This package owns fixes for `SharedKernel.Style.Analyzers` diagnostics only. It 
 catch-all fix package for testing, mediator, or optional-technology diagnostics. Add a fix here only
 when the matching style diagnostic has a local, deterministic, safe remediation.
 
-`SKSTYLE009` and `SKSTYLE010` are intentionally analyzer-only. Their remediation changes method
-signatures and callers; `SKSTYLE010` must also preserve the caller-specific not-found detail.
+`SKSTYLE010` is intentionally analyzer-only because its remediation must preserve the caller-specific
+not-found detail.
 
 ## See Also
 
