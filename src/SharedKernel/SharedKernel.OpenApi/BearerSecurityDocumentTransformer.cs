@@ -20,15 +20,6 @@ public sealed class BearerSecurityDocumentTransformer : IOpenApiDocumentTransfor
         ArgumentNullException.ThrowIfNull(context);
         cancellationToken.ThrowIfCancellationRequested();
 
-        document.Components ??= new OpenApiComponents();
-        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>(StringComparer.Ordinal);
-        document.Components.SecuritySchemes[OpenApiAuthenticationDefaults.BearerSecuritySchemeName] = new OpenApiSecurityScheme
-        {
-            Type = SecuritySchemeType.Http,
-            Scheme = "bearer",
-            BearerFormat = "JWT"
-        };
-
         var optionsMonitor = context.ApplicationServices.GetService(typeof(IOptionsMonitor<OpenApiOptions>)) as IOptionsMonitor<OpenApiOptions>
             ?? throw new InvalidOperationException("OpenApiOptions were not available from the document transformer service provider.");
         var options = optionsMonitor.Get(context.DocumentName);
@@ -41,6 +32,7 @@ public sealed class BearerSecurityDocumentTransformer : IOpenApiDocumentTransfor
                 description => description,
                 StringComparer.OrdinalIgnoreCase);
 
+        var hasProtectedOperation = false;
         foreach (var path in document.Paths)
         {
             if (path.Value.Operations is null)
@@ -66,7 +58,20 @@ public sealed class BearerSecurityDocumentTransformer : IOpenApiDocumentTransfor
                 operation.Value.Responses ??= [];
                 operation.Value.Responses.TryAdd("401", new OpenApiResponse { Description = "Authentication is required." });
                 operation.Value.Responses.TryAdd("403", new OpenApiResponse { Description = "The authenticated caller lacks the required permission." });
+                hasProtectedOperation = true;
             }
+        }
+
+        if (hasProtectedOperation)
+        {
+            document.Components ??= new OpenApiComponents();
+            document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>(StringComparer.Ordinal);
+            document.Components.SecuritySchemes[OpenApiAuthenticationDefaults.BearerSecuritySchemeName] = new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT"
+            };
         }
 
         return Task.CompletedTask;

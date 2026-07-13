@@ -10,6 +10,7 @@ namespace SharedKernel.OpenApi.Tests;
 /// <summary>
 /// Verifies named document registration and route filtering behavior.
 /// </summary>
+[Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.EndpointCategory)]
 public sealed class OpenApiServiceCollectionExtensionsTests
 {
     [Fact]
@@ -189,6 +190,26 @@ public sealed class OpenApiServiceCollectionExtensionsTests
         var publicResponses = publicOperation.Responses.ShouldNotBeNull();
         publicResponses.ContainsKey("401").ShouldBeFalse();
         publicResponses.ContainsKey("403").ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Omits_bearer_scheme_when_all_operations_are_anonymous()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateDocumentFromApplication("tours", app =>
+        {
+            app.MapGroup("/tours")
+                .WithGroupName("tours")
+                .WithTags("tours")
+                .MapGet("/public", () => TypedResults.Ok())
+                .AllowAnonymous();
+        });
+
+        // Act
+        var hasBearerScheme = document.Components?.SecuritySchemes?.ContainsKey(OpenApiAuthenticationDefaults.BearerSecuritySchemeName) ?? false;
+
+        // Assert
+        hasBearerScheme.ShouldBeFalse();
     }
 
     [Fact]
