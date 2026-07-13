@@ -298,27 +298,26 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
                     continue;
                 }
 
-                if (branchValue is IFlowCaptureReferenceOperation captureReference)
-                {
-                    capturedValues ??= controlFlowGraph.Blocks
-                        .Where(static candidate => candidate.IsReachable)
-                        .SelectMany(static candidate => candidate.Operations.OfType<IFlowCaptureOperation>())
-                        .GroupBy(static capture => capture.Id)
-                        .ToDictionary(
-                            static group => group.Key,
-                            static group => group.Select(static capture => capture.Value).ToArray());
-                    if (!capturedValues.TryGetValue(captureReference.Id, out var capturedReturnValues))
-                    {
-                        returnValues = default;
-                        return false;
-                    }
-
-                    returnValueBuilder.AddRange(capturedReturnValues);
-                }
-                else
+                if (branchValue is not IFlowCaptureReferenceOperation captureReference)
                 {
                     returnValueBuilder.Add(branchValue);
+                    continue;
                 }
+
+                capturedValues ??= controlFlowGraph.Blocks
+                    .Where(static candidate => candidate.IsReachable)
+                    .SelectMany(static candidate => candidate.Operations.OfType<IFlowCaptureOperation>())
+                    .GroupBy(static capture => capture.Id)
+                    .ToDictionary(
+                        static group => group.Key,
+                        static group => group.Select(static capture => capture.Value).ToArray());
+                if (!capturedValues.TryGetValue(captureReference.Id, out var capturedReturnValues))
+                {
+                    returnValues = default;
+                    return false;
+                }
+
+                returnValueBuilder.AddRange(capturedReturnValues);
             }
         }
 
