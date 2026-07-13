@@ -32,8 +32,8 @@ public static class SeaweedFsResourceExtensions
             secret: true,
             persist: true);
         var bucket = builder.AddParameter($"{name}-bucket", "viajantes-media");
-        var resourceNameSuffix = builder.Configuration["DcpPublisher:ResourceNameSuffix"];
-        var dataVolumeName = string.IsNullOrEmpty(resourceNameSuffix)
+        var resourceNameSuffix = builder.Configuration["DcpPublisher:ResourceNameSuffix"]?.Trim();
+        var dataVolumeName = string.IsNullOrWhiteSpace(resourceNameSuffix)
             ? $"{name}-data"
             : $"{name}-{resourceNameSuffix}-data";
         var resource = new SeaweedFsResource(name, accessKey.Resource, secretKey.Resource, bucket.Resource);
