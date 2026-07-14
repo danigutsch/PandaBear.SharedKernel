@@ -17,16 +17,17 @@ internal sealed class PostgreSqlIndexHealthHostedService(
             var collectors = dataSources
                 .Select(dataSource => new PostgreSqlIndexHealthCollector(dataSource, registration.Options.CommandTimeout))
                 .ToArray();
-            using var timer = new PeriodicTimer(registration.Options.PollingInterval);
 
-            do
+            while (!stoppingToken.IsCancellationRequested)
             {
                 foreach (var collector in collectors)
                 {
                     _ = await collector.Collect(stoppingToken).ConfigureAwait(false);
                 }
+
+                using var timer = new PeriodicTimer(registration.Options.PollingInterval);
+                _ = await timer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false);
             }
-            while (await timer.WaitForNextTickAsync(stoppingToken).ConfigureAwait(false));
         }
         finally
         {
