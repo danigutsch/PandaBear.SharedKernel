@@ -52,4 +52,34 @@ public sealed class PostgreSqlIndexHealthMonitoringServiceCollectionExtensionsTe
         // Assert
         exception.ToString().ShouldNotContain(sentinelSecret, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void AddPostgreSqlIndexHealthMonitoring_rejects_a_polling_interval_below_one_minute()
+    {
+        // Arrange
+        Action register = () => PostgreSqlIndexHealthMonitoringRegistrationScope.Create(
+            ["Host=localhost;Database=admin;Username=monitor;Password=test-only"],
+            new PostgreSqlIndexHealthMonitoringOptions { PollingInterval = TimeSpan.FromSeconds(59) });
+
+        // Act
+        var exception = register.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldContain("invalid polling interval", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AddPostgreSqlIndexHealthMonitoring_rejects_a_command_timeout_above_five_minutes()
+    {
+        // Arrange
+        Action register = () => PostgreSqlIndexHealthMonitoringRegistrationScope.Create(
+            ["Host=localhost;Database=admin;Username=monitor;Password=test-only"],
+            new PostgreSqlIndexHealthMonitoringOptions { CommandTimeout = TimeSpan.FromMinutes(5).Add(TimeSpan.FromSeconds(1)) });
+
+        // Act
+        var exception = register.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldContain("command timeout", StringComparison.Ordinal);
+    }
 }

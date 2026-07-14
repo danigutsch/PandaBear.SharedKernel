@@ -35,6 +35,90 @@ public sealed class PostgreSqlIndexHealthRecommendationPolicyTests
     }
 
     [Fact]
+    public void Assess_returns_insufficient_evidence_when_statistics_are_unavailable()
+    {
+        // Arrange
+        var evidence = new PostgreSqlIndexEvidence
+        {
+            Kind = PostgreSqlIndexEvidenceKind.Table,
+            SchemaName = "public",
+            TableName = "catalog_items",
+            StatisticsWindow = null,
+            ScanCount = 1_000,
+            TuplesRead = 200_000,
+            TuplesFetched = 0,
+            EstimatedRows = 20_000,
+            IsProtected = false,
+            IsUsable = true,
+            IsSimple = true,
+            StatisticsAreReliable = true,
+        };
+
+        // Act
+        var assessment = PostgreSqlIndexHealthRecommendationPolicy.Assess(evidence);
+
+        // Assert
+        assessment.Action.ShouldBe(PostgreSqlIndexHealthRecommendationAction.InsufficientEvidence);
+        assessment.Reason.ShouldBe(PostgreSqlIndexHealthRecommendationReason.StatisticsUnavailable);
+    }
+
+    [Fact]
+    public void Assess_returns_insufficient_evidence_when_statistics_are_unreliable()
+    {
+        // Arrange
+        var evidence = new PostgreSqlIndexEvidence
+        {
+            Kind = PostgreSqlIndexEvidenceKind.Table,
+            SchemaName = "public",
+            TableName = "catalog_items",
+            StatisticsWindow = TimeSpan.FromDays(14),
+            ScanCount = 1_000,
+            TuplesRead = 200_000,
+            TuplesFetched = 0,
+            EstimatedRows = 20_000,
+            IsProtected = false,
+            IsUsable = true,
+            IsSimple = true,
+            StatisticsAreReliable = false,
+        };
+
+        // Act
+        var assessment = PostgreSqlIndexHealthRecommendationPolicy.Assess(evidence);
+
+        // Assert
+        assessment.Action.ShouldBe(PostgreSqlIndexHealthRecommendationAction.InsufficientEvidence);
+        assessment.Reason.ShouldBe(PostgreSqlIndexHealthRecommendationReason.StatisticsWindowTooShort);
+    }
+
+    [Fact]
+    public void Assess_returns_insufficient_evidence_for_a_small_table()
+    {
+        // Arrange
+        var evidence = new PostgreSqlIndexEvidence
+        {
+            Kind = PostgreSqlIndexEvidenceKind.Table,
+            SchemaName = "public",
+            TableName = "catalog_items",
+            StatisticsWindow = TimeSpan.FromDays(14),
+            ScanCount = 1_000,
+            TuplesRead = 99_990,
+            TuplesFetched = 0,
+            EstimatedRows = 9_999,
+            IsProtected = false,
+            IsUsable = true,
+            IsSimple = true,
+            StatisticsAreReliable = true,
+        };
+
+        // Act
+        var assessment = PostgreSqlIndexHealthRecommendationPolicy.Assess(evidence);
+
+        // Assert
+        assessment.Action.ShouldBe(PostgreSqlIndexHealthRecommendationAction.InsufficientEvidence);
+        assessment.Reason.ShouldBe(PostgreSqlIndexHealthRecommendationReason.TableTooSmall);
+    }
+
+    [Fact]
     public void Assess_does_not_recommend_removing_a_protected_index()
     {
         // Arrange
@@ -119,6 +203,62 @@ public sealed class PostgreSqlIndexHealthRecommendationPolicyTests
     }
 
     [Fact]
+    public void Assess_does_not_recommend_changing_an_unusable_index()
+    {
+        // Arrange
+        var evidence = new PostgreSqlIndexEvidence
+        {
+            Kind = PostgreSqlIndexEvidenceKind.Index,
+            SchemaName = "public",
+            TableName = "catalog_items",
+            StatisticsWindow = TimeSpan.FromDays(14),
+            ScanCount = 100,
+            TuplesRead = 200_000,
+            TuplesFetched = 100,
+            EstimatedRows = 20_000,
+            IsProtected = false,
+            IsUsable = false,
+            IsSimple = true,
+            StatisticsAreReliable = true,
+        };
+
+        // Act
+        var assessment = PostgreSqlIndexHealthRecommendationPolicy.Assess(evidence);
+
+        // Assert
+        assessment.Action.ShouldBe(PostgreSqlIndexHealthRecommendationAction.InsufficientEvidence);
+        assessment.Reason.ShouldBe(PostgreSqlIndexHealthRecommendationReason.UnsupportedIndexShape);
+    }
+
+    [Fact]
+    public void Assess_does_not_recommend_changing_an_index_below_the_activity_threshold()
+    {
+        // Arrange
+        var evidence = new PostgreSqlIndexEvidence
+        {
+            Kind = PostgreSqlIndexEvidenceKind.Index,
+            SchemaName = "public",
+            TableName = "catalog_items",
+            StatisticsWindow = TimeSpan.FromDays(14),
+            ScanCount = 99,
+            TuplesRead = 200_000,
+            TuplesFetched = 100,
+            EstimatedRows = 20_000,
+            IsProtected = false,
+            IsUsable = true,
+            IsSimple = true,
+            StatisticsAreReliable = true,
+        };
+
+        // Act
+        var assessment = PostgreSqlIndexHealthRecommendationPolicy.Assess(evidence);
+
+        // Assert
+        assessment.Action.ShouldBe(PostgreSqlIndexHealthRecommendationAction.InsufficientEvidence);
+        assessment.Reason.ShouldBe(PostgreSqlIndexHealthRecommendationReason.InsufficientActivity);
+    }
+
+    [Fact]
     public void Assess_recommends_human_review_for_high_index_read_volume()
     {
         // Arrange
@@ -172,5 +312,33 @@ public sealed class PostgreSqlIndexHealthRecommendationPolicyTests
         // Assert
         assessment.Action.ShouldBe(PostgreSqlIndexHealthRecommendationAction.ReviewCreation);
         assessment.Reason.ShouldBe(PostgreSqlIndexHealthRecommendationReason.HighSequentialScanVolume);
+    }
+
+    [Fact]
+    public void Assess_does_not_recommend_creating_an_index_below_the_activity_threshold()
+    {
+        // Arrange
+        var evidence = new PostgreSqlIndexEvidence
+        {
+            Kind = PostgreSqlIndexEvidenceKind.Table,
+            SchemaName = "public",
+            TableName = "catalog_items",
+            StatisticsWindow = TimeSpan.FromDays(14),
+            ScanCount = 999,
+            TuplesRead = 200_000,
+            TuplesFetched = 0,
+            EstimatedRows = 20_000,
+            IsProtected = false,
+            IsUsable = true,
+            IsSimple = true,
+            StatisticsAreReliable = true,
+        };
+
+        // Act
+        var assessment = PostgreSqlIndexHealthRecommendationPolicy.Assess(evidence);
+
+        // Assert
+        assessment.Action.ShouldBe(PostgreSqlIndexHealthRecommendationAction.InsufficientEvidence);
+        assessment.Reason.ShouldBe(PostgreSqlIndexHealthRecommendationReason.InsufficientActivity);
     }
 }

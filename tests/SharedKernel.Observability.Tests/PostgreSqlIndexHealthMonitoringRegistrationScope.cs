@@ -15,8 +15,15 @@ internal sealed class PostgreSqlIndexHealthMonitoringRegistrationScope
 
     public static PostgreSqlIndexHealthMonitoringRegistrationScope Create(IEnumerable<string> connectionStrings)
     {
+        return Create(connectionStrings, new PostgreSqlIndexHealthMonitoringOptions());
+    }
+
+    public static PostgreSqlIndexHealthMonitoringRegistrationScope Create(
+        IEnumerable<string> connectionStrings,
+        PostgreSqlIndexHealthMonitoringOptions options)
+    {
         var scope = new PostgreSqlIndexHealthMonitoringRegistrationScope();
-        scope.Add(connectionStrings, new PostgreSqlIndexHealthMonitoringOptions());
+        scope.Add(connectionStrings, options);
         return scope;
     }
 
