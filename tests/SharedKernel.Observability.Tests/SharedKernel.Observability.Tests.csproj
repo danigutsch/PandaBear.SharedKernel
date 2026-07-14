@@ -14,6 +14,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Observability\SharedKernel.Observability.csproj" />
     <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+    <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Observability.Npgsql\SharedKernel.Observability.Npgsql.csproj" />
+    <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
