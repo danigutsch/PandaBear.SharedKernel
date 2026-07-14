@@ -132,45 +132,67 @@ internal static class SuccessOnlyResultMethodCodeFix
         var referencedSymbols = await SymbolFinder.FindReferencesAsync(methodSymbol, solution, cancellationToken).ConfigureAwait(false);
         foreach (var referencedSymbol in referencedSymbols)
         {
-            foreach (var reference in referencedSymbol.Locations)
+            if (!await TryAppendReferenceEdits(
+                edits,
+                referencedSymbol,
+                solution,
+                methodSymbol,
+                resultType,
+                cancellationToken).ConfigureAwait(false))
             {
-                if (reference.IsImplicit || !reference.Location.IsInSource)
-                {
-                    return null;
-                }
-
-                var document = solution.GetDocument(reference.Document.Id);
-                if (document is null)
-                {
-                    return null;
-                }
-
-                var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-                var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-                if (root is null
-                    || semanticModel is null
-                    || !TryCreateReferenceEdit(
-                        root,
-                        semanticModel,
-                        document.Id,
-                        reference.Location,
-                        methodSymbol,
-                        resultType,
-                        methodSymbol.IsAsync,
-                        cancellationToken,
-                        out var edit))
-                {
-                    return null;
-                }
-
-                if (edit is not null)
-                {
-                    edits.Add(edit);
-                }
+                return null;
             }
         }
 
         return edits;
+    }
+
+    private static async Task<bool> TryAppendReferenceEdits(
+        List<ReferenceEdit> edits,
+        ReferencedSymbol referencedSymbol,
+        Solution solution,
+        IMethodSymbol methodSymbol,
+        INamedTypeSymbol resultType,
+        CancellationToken cancellationToken)
+    {
+        foreach (var reference in referencedSymbol.Locations)
+        {
+            if (reference.IsImplicit || !reference.Location.IsInSource)
+            {
+                return false;
+            }
+
+            var document = solution.GetDocument(reference.Document.Id);
+            if (document is null)
+            {
+                return false;
+            }
+
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            if (root is null
+                || semanticModel is null
+                || !TryCreateReferenceEdit(
+                    root,
+                    semanticModel,
+                    document.Id,
+                    reference.Location,
+                    methodSymbol,
+                    resultType,
+                    methodSymbol.IsAsync,
+                    cancellationToken,
+                    out var edit))
+            {
+                return false;
+            }
+
+            if (edit is not null)
+            {
+                edits.Add(edit);
+            }
+        }
+
+        return true;
     }
 
     private static bool TryCreateReferenceEdit(
@@ -186,28 +208,12 @@ internal static class SuccessOnlyResultMethodCodeFix
     {
         edit = null;
 
-        var invocation = root.FindNode(location.SourceSpan, getInnermostNodeForTie: true)
-            .FirstAncestorOrSelf<InvocationExpressionSyntax>();
-        if (invocation is null
-            || !SymbolEqualityComparer.Default.Equals(semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol, methodSymbol))
+        var callExpression = TryGetCallExpression(root, semanticModel, location, methodSymbol, isAsyncTarget, cancellationToken);
+        if (callExpression is null)
         {
             return false;
         }
 
-        ExpressionSyntax callExpression;
-        if (invocation.Parent is AwaitExpressionSyntax awaitExpression)
-        {
-            if (!isAsyncTarget)
-            {
-                return false;
-            }
-
-            callExpression = awaitExpression;
-        }
-        else
-        {
-            callExpression = invocation;
-        }
         if (callExpression.Parent is ExpressionStatementSyntax)
         {
             return true;
@@ -218,58 +224,108 @@ internal static class SuccessOnlyResultMethodCodeFix
             return true;
         }
 
-        if (callExpression.Parent is ReturnStatementSyntax { Expression: { } returnExpression } returnStatement
-            && returnExpression == callExpression)
+        if (callExpression.Parent is ReturnStatementSyntax)
         {
-            if (isAsyncTarget && callExpression == invocation)
-            {
-                return false;
-            }
-
-            if (returnStatement.Parent is not BlockSyntax)
-            {
-                return false;
-            }
-
-            if (semanticModel.GetEnclosingSymbol(returnStatement.SpanStart, cancellationToken) is IMethodSymbol
-                {
-                    MethodKind: MethodKind.AnonymousFunction,
-                }
-                && returnStatement.FirstAncestorOrSelf<LambdaExpressionSyntax>() is { } lambda)
-            {
-                if (!ReturnsResultOrTaskOfResult(lambda, semanticModel, resultType))
-                {
-                    return false;
-                }
-
-                edit = new ReferenceEdit(documentId, returnStatement, ReferenceEditKind.LambdaReturn, callExpression);
-                return true;
-            }
-
-            if (semanticModel.GetEnclosingSymbol(returnStatement.SpanStart, cancellationToken) is not IMethodSymbol
-                {
-                    MethodKind: MethodKind.Ordinary,
-                    ReturnType: { } returnType,
-                }
-                || !ReturnsResultOrAsyncResult(returnType, semanticModel.Compilation, resultType))
-            {
-                return false;
-            }
-
-            edit = new ReferenceEdit(documentId, returnStatement, ReferenceEditKind.MethodReturn, callExpression);
-            return true;
+            edit = TryCreateReturnReferenceEdit(
+                semanticModel,
+                documentId,
+                callExpression,
+                resultType,
+                isAsyncTarget,
+                cancellationToken);
+            return edit is not null;
         }
 
-        if (callExpression.Parent is LambdaExpressionSyntax lambdaExpression
-            && lambdaExpression.Body == callExpression
-            && (!isAsyncTarget || callExpression is AwaitExpressionSyntax)
-            && ReturnsResultOrTaskOfResult(lambdaExpression, semanticModel, resultType))
+        return TryCreateLambdaExpressionReferenceEdit(
+            semanticModel,
+            documentId,
+            callExpression,
+            resultType,
+            isAsyncTarget,
+            out edit);
+    }
+
+    private static ExpressionSyntax? TryGetCallExpression(
+        SyntaxNode root,
+        SemanticModel semanticModel,
+        Location location,
+        IMethodSymbol methodSymbol,
+        bool isAsyncTarget,
+        CancellationToken cancellationToken)
+    {
+        var invocation = root.FindNode(location.SourceSpan, getInnermostNodeForTie: true)
+            .FirstAncestorOrSelf<InvocationExpressionSyntax>();
+        if (invocation is null
+            || !SymbolEqualityComparer.Default.Equals(semanticModel.GetSymbolInfo(invocation, cancellationToken).Symbol, methodSymbol))
         {
-            edit = new ReferenceEdit(documentId, lambdaExpression, ReferenceEditKind.LambdaExpression, callExpression);
-            return true;
+            return null;
         }
 
-        return false;
+        if (invocation.Parent is not AwaitExpressionSyntax awaitExpression)
+        {
+            return invocation;
+        }
+
+        return isAsyncTarget ? awaitExpression : null;
+    }
+
+    private static ReferenceEdit? TryCreateReturnReferenceEdit(
+        SemanticModel semanticModel,
+        DocumentId documentId,
+        ExpressionSyntax callExpression,
+        INamedTypeSymbol resultType,
+        bool isAsyncTarget,
+        CancellationToken cancellationToken)
+    {
+        if (callExpression.Parent is not ReturnStatementSyntax { Expression: { } returnExpression } returnStatement
+            || returnExpression != callExpression
+            || (isAsyncTarget && callExpression is not AwaitExpressionSyntax)
+            || returnStatement.Parent is not BlockSyntax)
+        {
+            return null;
+        }
+
+        var enclosingSymbol = semanticModel.GetEnclosingSymbol(returnStatement.SpanStart, cancellationToken);
+        if (enclosingSymbol is IMethodSymbol { MethodKind: MethodKind.AnonymousFunction }
+            && returnStatement.FirstAncestorOrSelf<LambdaExpressionSyntax>() is { } lambda)
+        {
+            return ReturnsResultOrTaskOfResult(lambda, semanticModel, resultType)
+                ? new ReferenceEdit(documentId, returnStatement, ReferenceEditKind.LambdaReturn, callExpression)
+                : null;
+        }
+
+        if (enclosingSymbol is not IMethodSymbol
+            {
+                MethodKind: MethodKind.Ordinary,
+                ReturnType: { } returnType,
+            }
+            || !ReturnsResultOrAsyncResult(returnType, semanticModel.Compilation, resultType))
+        {
+            return null;
+        }
+
+        return new ReferenceEdit(documentId, returnStatement, ReferenceEditKind.MethodReturn, callExpression);
+    }
+
+    private static bool TryCreateLambdaExpressionReferenceEdit(
+        SemanticModel semanticModel,
+        DocumentId documentId,
+        ExpressionSyntax callExpression,
+        INamedTypeSymbol resultType,
+        bool isAsyncTarget,
+        out ReferenceEdit? edit)
+    {
+        edit = null;
+        if (callExpression.Parent is not LambdaExpressionSyntax lambdaExpression
+            || lambdaExpression.Body != callExpression
+            || (isAsyncTarget && callExpression is not AwaitExpressionSyntax)
+            || !ReturnsResultOrTaskOfResult(lambdaExpression, semanticModel, resultType))
+        {
+            return false;
+        }
+
+        edit = new ReferenceEdit(documentId, lambdaExpression, ReferenceEditKind.LambdaExpression, callExpression);
+        return true;
     }
 
     private static bool TryCreateFailureGuardEdit(
