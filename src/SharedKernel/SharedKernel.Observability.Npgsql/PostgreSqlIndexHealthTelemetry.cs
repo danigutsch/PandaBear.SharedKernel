@@ -29,9 +29,12 @@ public static class PostgreSqlIndexHealthTelemetry
     {
         RecordCollection(result.Outcome);
 
-        foreach (var assessment in result.Assessments)
+        foreach (var assessmentGroup in result.Assessments.GroupBy(assessment => (assessment.Action, assessment.Reason)))
         {
-            RecordAssessment(assessment.Action, assessment.Reason);
+            RecordAssessment(
+                assessmentGroup.Key.Action,
+                assessmentGroup.Key.Reason,
+                assessmentGroup.LongCount());
         }
     }
 
@@ -47,7 +50,8 @@ public static class PostgreSqlIndexHealthTelemetry
 
     private static void RecordAssessment(
         PostgreSqlIndexHealthRecommendationAction action,
-        PostgreSqlIndexHealthRecommendationReason reason)
+        PostgreSqlIndexHealthRecommendationReason reason,
+        long count)
     {
         TagList tags =
         [
@@ -55,7 +59,7 @@ public static class PostgreSqlIndexHealthTelemetry
             new KeyValuePair<string, object?>("reason", GetReasonTag(reason)),
         ];
 
-        Assessments.Add(1, tags);
+        Assessments.Add(count, tags);
     }
 
     private static string GetOutcomeTag(PostgreSqlIndexHealthCollectionOutcome outcome)
