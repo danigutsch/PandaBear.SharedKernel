@@ -19,7 +19,8 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             StyleDiagnosticIds.CancellationTokenDefaultValue,
             StyleDiagnosticIds.GenericTypeNameSuffix,
             StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
-            StyleDiagnosticIds.DomainEventSuffix
+            StyleDiagnosticIds.DomainEventSuffix,
+            StyleDiagnosticIds.SuccessOnlyResultMethod
         ];
 
     /// <inheritdoc />
@@ -61,6 +62,11 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             if (diagnostic.Id == StyleDiagnosticIds.DomainEventSuffix)
             {
                 await RenameDomainEventTypeCodeFix.Register(context, diagnostic).ConfigureAwait(false);
+            }
+
+            if (diagnostic.Id == StyleDiagnosticIds.SuccessOnlyResultMethod)
+            {
+                await SuccessOnlyResultMethodCodeFix.Register(context, diagnostic).ConfigureAwait(false);
             }
         }
     }

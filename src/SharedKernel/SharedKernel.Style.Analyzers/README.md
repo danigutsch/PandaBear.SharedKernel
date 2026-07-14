@@ -19,7 +19,7 @@ the default .NET analyzer set.
 | `SKSTYLE006` | Warning | Catch filters should not suppress every `OperationCanceledException` without checking the operation token. |
 | `SKSTYLE007` | Warning | Production logging should use source-generated `LoggerMessage` methods instead of direct `ILogger.Log*` calls. |
 | `SKSTYLE008` | Warning | Domain event types implementing `IDomainEvent` should end with `DomainEvent`. |
-| `SKSTYLE009` | Warning | Methods returning `SharedKernel.Results.Result` must be able to return a failure `Result`; use a non-`Result` return type when every reachable return is successful. Overrides and interface implementations are excluded. |
+| `SKSTYLE009` | Warning | Methods returning `SharedKernel.Results.Result` or `Result<T>`, including async `Task` or `ValueTask` wrappers, must be able to return a failure `Result`; use a non-`Result` return type when every reachable return is successful. Overrides and interface implementations are excluded. |
 | `SKSTYLE010` | Warning | Methods returning `SharedKernel.Results.Result<T>` only as `Ok` or `NotFound` should return `Option<T>`. |
 
 ## Configuration

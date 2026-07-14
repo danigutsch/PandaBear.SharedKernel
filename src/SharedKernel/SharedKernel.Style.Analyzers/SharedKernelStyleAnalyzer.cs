@@ -143,6 +143,8 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         var domainEventType = context.Compilation.GetTypeByMetadataName("SharedKernel.Domain.IDomainEvent");
         var resultType = context.Compilation.GetTypeByMetadataName("SharedKernel.Results.Result");
         var genericResultType = context.Compilation.GetTypeByMetadataName("SharedKernel.Results.Result`1");
+        var taskOfTType = context.Compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
+        var valueTaskOfTType = context.Compilation.GetTypeByMetadataName("System.Threading.Tasks.ValueTask`1");
 
         context.RegisterSymbolAction(
             symbolContext =>
@@ -172,7 +174,12 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 
         if (resultType is not null)
         {
-            context.RegisterOperationBlockAction(operationContext => AnalyzeSuccessOnlyResultMethod(operationContext, resultType, genericResultType));
+            context.RegisterOperationBlockAction(operationContext => AnalyzeSuccessOnlyResultMethod(
+                operationContext,
+                resultType,
+                genericResultType,
+                taskOfTType,
+                valueTaskOfTType));
         }
 
         if (resultType is not null && genericResultType is not null)
@@ -193,17 +200,20 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     private static void AnalyzeSuccessOnlyResultMethod(
         OperationBlockAnalysisContext context,
         INamedTypeSymbol resultFactoryType,
-        INamedTypeSymbol? genericResultType)
+        INamedTypeSymbol? genericResultType,
+        INamedTypeSymbol? taskOfTType,
+        INamedTypeSymbol? valueTaskOfTType)
     {
         if (context.OwningSymbol is not IMethodSymbol
             {
                 MethodKind: MethodKind.Ordinary,
-                ReturnType: { } returnType,
             } method
-            || (!SymbolEqualityComparer.Default.Equals(returnType, resultFactoryType)
-                && (genericResultType is null
-                    || returnType is not INamedTypeSymbol genericReturnType
-                    || !SymbolEqualityComparer.Default.Equals(genericReturnType.OriginalDefinition, genericResultType)))
+            || !ReturnsResultOrAsyncResult(
+                method,
+                resultFactoryType,
+                genericResultType,
+                taskOfTType,
+                valueTaskOfTType)
             || method.IsOverride
             || ImplementsInterfaceContract(method))
         {
@@ -227,6 +237,39 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             SuccessOnlyResultMethodRule,
             location,
             method.Name));
+    }
+
+    private static bool ReturnsResultOrAsyncResult(
+        IMethodSymbol method,
+        INamedTypeSymbol resultFactoryType,
+        INamedTypeSymbol? genericResultType,
+        INamedTypeSymbol? taskOfTType,
+        INamedTypeSymbol? valueTaskOfTType)
+    {
+        if (IsResultType(method.ReturnType, resultFactoryType, genericResultType))
+        {
+            return true;
+        }
+
+        return method.IsAsync
+            && method.ReturnType is INamedTypeSymbol
+            {
+                TypeArguments.Length: 1,
+            } asyncReturnType
+            && IsResultType(asyncReturnType.TypeArguments[0], resultFactoryType, genericResultType)
+            && (SymbolEqualityComparer.Default.Equals(asyncReturnType.OriginalDefinition, taskOfTType)
+                || SymbolEqualityComparer.Default.Equals(asyncReturnType.OriginalDefinition, valueTaskOfTType));
+    }
+
+    private static bool IsResultType(
+        ITypeSymbol type,
+        INamedTypeSymbol resultFactoryType,
+        INamedTypeSymbol? genericResultType)
+    {
+        return SymbolEqualityComparer.Default.Equals(type, resultFactoryType)
+            || (genericResultType is not null
+                && type is INamedTypeSymbol genericResultTypeSymbol
+                && SymbolEqualityComparer.Default.Equals(genericResultTypeSymbol.OriginalDefinition, genericResultType));
     }
 
     private static void AnalyzeOptionalResultMethod(

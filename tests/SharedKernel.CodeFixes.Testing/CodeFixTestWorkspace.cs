@@ -74,6 +74,21 @@ public sealed class CodeFixTestWorkspace
         return new CodeFixTestWorkspace(workspace, projectId, documentId);
     }
 
+    public DocumentId AddDocument(string source, string name)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
+        var documentId = DocumentId.CreateNewId(ProjectId, name);
+        Workspace.AddDocument(
+            DocumentInfo.Create(
+                documentId,
+                name,
+                loader: TextLoader.From(TextAndVersion.Create(SourceText.From(DefaultUsings + source), VersionStamp.Create())),
+                filePath: $"/{name}"));
+        return documentId;
+    }
+
     public async Task<Diagnostic> CreateDocumentDiagnostic(string diagnosticId, string markerText)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(diagnosticId);
@@ -138,6 +153,21 @@ public sealed class CodeFixTestWorkspace
     public async Task<string> GetDocumentText()
     {
         return (await Document.GetTextAsync().ConfigureAwait(false)).ToString();
+    }
+
+    public async Task<string> GetDocumentText(DocumentId documentId)
+    {
+        ArgumentNullException.ThrowIfNull(documentId);
+
+        var document = Workspace.CurrentSolution.GetDocument(documentId) ?? throw new InvalidOperationException("Test document could not be found.");
+        return (await document.GetTextAsync().ConfigureAwait(false)).ToString();
+    }
+
+    public async Task<IReadOnlyList<Diagnostic>> GetCompilationDiagnostics()
+    {
+        var project = Workspace.CurrentSolution.GetProject(ProjectId) ?? throw new InvalidOperationException("Test project could not be found.");
+        var compilation = await project.GetCompilationAsync().ConfigureAwait(false) ?? throw new InvalidOperationException("Test compilation could not be created.");
+        return compilation.GetDiagnostics();
     }
 
     private static IEnumerable<MetadataReference> GetMetadataReferences()
