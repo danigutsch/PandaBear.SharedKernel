@@ -54,7 +54,7 @@ internal static class SuccessOnlyResultMethodCodeFix
                     methodSymbol,
                     referenceEdits,
                     cancellationToken),
-                equivalenceKey: "ConvertSuccessOnlyResultMethodToVoid"),
+                equivalenceKey: "ConvertSuccessOnlyResultMethod"),
             diagnostic);
     }
 

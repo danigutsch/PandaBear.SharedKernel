@@ -107,6 +107,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
         // Act
         var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var equivalenceKey = codeAction.EquivalenceKey;
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
         var compilationDiagnostics = await workspace.GetCompilationDiagnostics();
@@ -115,6 +116,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         updatedText.ShouldContain("private void Complete()", StringComparison.Ordinal);
         updatedText.ShouldContain("MarkComplete();", StringComparison.Ordinal);
         updatedText.ShouldContain("public SharedKernel.Results.Result RunDirect()", StringComparison.Ordinal);
+        equivalenceKey.ShouldBe("ConvertSuccessOnlyResultMethod");
         updatedText.ShouldContain("source.Bind(() =>", StringComparison.Ordinal);
         updatedText.ShouldContain("await System.Threading.Tasks.Task.Yield();", StringComparison.Ordinal);
         updatedText.ShouldContain("Complete(/* preserve direct command */);", StringComparison.Ordinal);
