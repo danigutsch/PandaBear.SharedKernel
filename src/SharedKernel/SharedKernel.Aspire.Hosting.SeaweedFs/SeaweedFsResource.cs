@@ -27,7 +27,7 @@ public sealed class SeaweedFsResource(
     public ParameterResource SecretKeyParameter { get; } = secretKeyParameter;
 
     /// <summary>
-    /// Gets the caller-provided S3 bucket parameter.
+    /// Gets the configured S3 bucket parameter.
     /// </summary>
     public ParameterResource BucketParameter { get; } = bucketParameter;
 }
