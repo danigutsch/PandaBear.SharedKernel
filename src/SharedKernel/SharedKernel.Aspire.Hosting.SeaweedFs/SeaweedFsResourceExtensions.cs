@@ -16,16 +16,16 @@ public static class SeaweedFsResourceExtensions
     /// </summary>
     /// <param name="builder">The distributed application builder.</param>
     /// <param name="name">The resource name.</param>
-    /// <param name="bucket">The bucket parameter.</param>
+    /// <param name="bucketDefault">The default bucket name.</param>
     /// <returns>The configured SeaweedFS container resource.</returns>
     public static IResourceBuilder<SeaweedFsResource> AddSeaweedFs(
         this IDistributedApplicationBuilder builder,
         [ResourceName] string name,
-        IResourceBuilder<ParameterResource> bucket)
+        string bucketDefault)
     {
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
-        ArgumentNullException.ThrowIfNull(bucket);
+        ArgumentException.ThrowIfNullOrWhiteSpace(bucketDefault);
 
         var accessKey = builder.AddParameter(
             $"{name}-access-key",
@@ -37,6 +37,7 @@ public static class SeaweedFsResourceExtensions
             new GenerateParameterDefault { MinLength = 32 },
             secret: true,
             persist: true);
+        var bucket = builder.AddParameter($"{name}-bucket", bucketDefault);
         var resourceNameSuffix = builder.Configuration[ResourceNameSuffixConfigurationKey]?.Trim();
         var dataVolumeName = string.IsNullOrWhiteSpace(resourceNameSuffix)
             ? $"{name}-data"
