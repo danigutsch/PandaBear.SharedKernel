@@ -1,5 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
 namespace SharedKernel.AspNetCore.Tests;
@@ -53,6 +59,89 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         permissionValues.ShouldContain("tours.write");
         permissionValues.Length.ShouldBe(2);
         authorization.FallbackPolicy.ShouldNotBeNull();
+    }
+
+    [Fact]
+    public void Rejects_openapi_build_generation_outside_the_document_generator()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            string.Empty,
+            string.Empty,
+            openApiBuildGeneration: true);
+
+        // Act
+        Action action = () => ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>>());
+
+        // Assert
+        action.ShouldThrow<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void Enables_openapi_build_generation_only_for_the_document_generator()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            string.Empty,
+            string.Empty,
+            openApiBuildGeneration: true);
+
+        // Act
+        var isDocumentGenerator = OpenApiBuildGeneration.IsEnabled(configuration, "GetDocument.Insider");
+        var isApplicationHost = OpenApiBuildGeneration.IsEnabled(configuration, "ViajantesTurismo.Admin.ApiService");
+
+        // Assert
+        isDocumentGenerator.ShouldBeTrue();
+        isApplicationHost.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Static_openapi_authentication_rejects_an_untrusted_signing_key_without_discovery()
+    {
+        // Arrange
+        var jwt = new JwtBearerOptions();
+        ApiAuthenticationServiceCollectionExtensions.ConfigureBearerOptions(
+            jwt,
+            "admin-api",
+            OpenApiBuildGeneration.PlaceholderAuthority,
+            OpenApiBuildGeneration.PlaceholderIssuer,
+            allowHttpDevelopmentAuthority: false,
+            isOpenApiBuildGeneration: true);
+        using var signingKey = RSA.Create();
+        var token = new JwtSecurityTokenHandler().CreateEncodedJwt(new SecurityTokenDescriptor
+        {
+            Audience = "admin-api",
+            Expires = DateTime.UtcNow.AddMinutes(5),
+            Issuer = OpenApiBuildGeneration.PlaceholderIssuer,
+            SigningCredentials = new SigningCredentials(new RsaSecurityKey(signingKey), SecurityAlgorithms.RsaSha256)
+        });
+
+        // Act
+        var configurationManager = jwt.ConfigurationManager.ShouldBeOfType<StaticConfigurationManager<OpenIdConnectConfiguration>>();
+        var configuration = await configurationManager.GetConfigurationAsync(CancellationToken.None);
+        Action validate = () => new JwtSecurityTokenHandler().ValidateToken(token, jwt.TokenValidationParameters, out _);
+
+        // Assert
+        jwt.Authority.ShouldBeNull();
+        configuration.SigningKeys.ShouldBeEmpty();
+        validate.ShouldThrow<SecurityTokenSignatureKeyNotFoundException>();
+    }
+
+    [Fact]
+    public void Configures_ephemeral_data_protection_for_openapi_build_generation()
+    {
+        // Arrange
+        using var host = OpenApiBuildGenerationDataProtectionTestHost.Create();
+
+        // Act
+        var dataProtection = host.DataProtectionProvider;
+
+        // Assert
+        dataProtection.ShouldBeOfType<EphemeralDataProtectionProvider>();
     }
 
     [Fact]

@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.AspNetCore.Tests" />
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 

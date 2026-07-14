@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 
 namespace SharedKernel.AspNetCore;
@@ -38,8 +40,13 @@ public static class ApiAuthenticationServiceCollectionExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(audience);
         ArgumentNullException.ThrowIfNull(permissionsByRole);
 
-        var authority = configuration[ApiAuthenticationDefaults.AuthorityConfigurationKey];
-        var issuer = configuration[ApiAuthenticationDefaults.IssuerConfigurationKey];
+        var isOpenApiBuildGeneration = OpenApiBuildGeneration.IsEnabled(configuration);
+        var authority = isOpenApiBuildGeneration
+            ? OpenApiBuildGeneration.PlaceholderAuthority
+            : configuration[ApiAuthenticationDefaults.AuthorityConfigurationKey];
+        var issuer = isOpenApiBuildGeneration
+            ? OpenApiBuildGeneration.PlaceholderIssuer
+            : configuration[ApiAuthenticationDefaults.IssuerConfigurationKey];
 
         var allowHttpDevelopmentAuthority = environment.IsDevelopment()
             && string.Equals(
@@ -47,32 +54,23 @@ public static class ApiAuthenticationServiceCollectionExtensions
                 bool.TrueString,
                 StringComparison.OrdinalIgnoreCase);
 
-        ValidateConfiguration(authority, issuer, allowHttpDevelopmentAuthority);
+        if (!isOpenApiBuildGeneration)
+        {
+            ValidateConfiguration(authority, issuer, allowHttpDevelopmentAuthority);
+        }
 
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddScheme<JwtBearerOptions, JwtBearerHandler>(JwtBearerDefaults.AuthenticationScheme, options =>
             {
-                if (!string.IsNullOrWhiteSpace(authority))
-                {
-                    options.Authority = authority;
-                    options.RequireHttpsMetadata = !allowHttpDevelopmentAuthority;
-                }
-
-                options.Audience = audience;
-                options.MapInboundClaims = false;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = issuer,
-                    ValidateAudience = true,
-                    ValidAudience = audience,
-                    ValidateIssuerSigningKey = true,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(2),
-                    ValidAlgorithms = [SecurityAlgorithms.RsaSha256]
-                };
+                ConfigureBearerOptions(
+                    options,
+                    audience,
+                    authority,
+                    issuer,
+                    allowHttpDevelopmentAuthority,
+                    isOpenApiBuildGeneration);
             });
 
         services.AddTransient<IClaimsTransformation>(_ => new PermissionClaimsTransformation(permissionsByRole));
@@ -80,7 +78,44 @@ public static class ApiAuthenticationServiceCollectionExtensions
         return services.AddAuthorizationBuilder()
             .SetFallbackPolicy(new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-                .Build());
+             .Build());
+    }
+
+    internal static void ConfigureBearerOptions(
+        JwtBearerOptions options,
+        string audience,
+        string? authority,
+        string? issuer,
+        bool allowHttpDevelopmentAuthority,
+        bool isOpenApiBuildGeneration)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentException.ThrowIfNullOrWhiteSpace(audience);
+
+        if (isOpenApiBuildGeneration)
+        {
+            options.ConfigurationManager = new StaticConfigurationManager<OpenIdConnectConfiguration>(
+                new OpenIdConnectConfiguration { Issuer = issuer });
+        }
+        else if (!string.IsNullOrWhiteSpace(authority))
+        {
+            options.Authority = authority;
+            options.RequireHttpsMetadata = !allowHttpDevelopmentAuthority;
+        }
+
+        options.Audience = audience;
+        options.MapInboundClaims = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = issuer,
+            ValidateAudience = true,
+            ValidAudience = audience,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromMinutes(2),
+            ValidAlgorithms = [SecurityAlgorithms.RsaSha256]
+        };
     }
 
     private static void ValidateConfiguration(

@@ -4,6 +4,10 @@ const SharedKernel.AspNetCore.ApiAuthenticationDefaults.AuthorityConfigurationKe
 const SharedKernel.AspNetCore.ApiAuthenticationDefaults.IssuerConfigurationKey = "Authentication:Issuer" -> string!
 const SharedKernel.AspNetCore.ApiAuthenticationDefaults.PermissionClaimType = "permission" -> string!
 const SharedKernel.AspNetCore.ApiAuthenticationDefaults.RolesClaimType = "roles" -> string!
+const SharedKernel.AspNetCore.OpenApiBuildGeneration.ConfigurationKey = "OpenApi:BuildGeneration" -> string!
+const SharedKernel.AspNetCore.OpenApiBuildGeneration.EnvironmentVariableName = "OpenApi__BuildGeneration" -> string!
+const SharedKernel.AspNetCore.OpenApiBuildGeneration.PlaceholderAuthority = "https://openapi.invalid" -> string!
+const SharedKernel.AspNetCore.OpenApiBuildGeneration.PlaceholderIssuer = "https://openapi.invalid" -> string!
 const SharedKernel.AspNetCore.SitemapXmlSerializer.ContentType = "application/xml; charset=utf-8" -> string!
 const SharedKernel.AspNetCore.SitemapXmlSerializer.MaximumUrlCount = 50000 -> int
 SharedKernel.AspNetCore.ApiAuthenticationDefaults
@@ -11,6 +15,8 @@ SharedKernel.AspNetCore.ApiAuthenticationServiceCollectionExtensions
 SharedKernel.AspNetCore.AntiforgerySignOutEndpointRouteBuilderExtensions
 SharedKernel.AspNetCore.AspNetCoreCorsExtensions
 SharedKernel.AspNetCore.AuthorizationPolicyBuilderExtensions
+SharedKernel.AspNetCore.OpenApiBuildGeneration
+SharedKernel.AspNetCore.OpenApiBuildGenerationServiceCollectionExtensions
 SharedKernel.AspNetCore.SitemapCanonicalOrigin
 SharedKernel.AspNetCore.SitemapEntry
 SharedKernel.AspNetCore.SitemapEntry.LastModified.get -> System.DateTimeOffset?
@@ -41,6 +47,8 @@ SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.RemoteIpFixedWindowRa
 SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Window.get -> System.TimeSpan
 SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Window.init -> void
 static SharedKernel.AspNetCore.AuthorizationPolicyBuilderExtensions.RequirePermission(this Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder! builder, string! permission) -> Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder!
+static SharedKernel.AspNetCore.OpenApiBuildGeneration.IsEnabled(Microsoft.Extensions.Configuration.IConfiguration! configuration) -> bool
+static SharedKernel.AspNetCore.OpenApiBuildGenerationServiceCollectionExtensions.AddOpenApiBuildGenerationDataProtection(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static SharedKernel.AspNetCore.SitemapCanonicalOrigin.IsValid(string? value) -> bool
 static SharedKernel.AspNetCore.SitemapCanonicalOrigin.Parse(string! value) -> System.Uri!
 static SharedKernel.AspNetCore.SitemapXmlSerializer.Serialize(System.Collections.Generic.IEnumerable<SharedKernel.AspNetCore.SitemapEntry!>! entries, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.IO.Stream!>!
