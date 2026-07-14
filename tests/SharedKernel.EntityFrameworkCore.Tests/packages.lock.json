@@ -782,16 +782,6 @@
           "Npgsql": "10.0.2"
         }
       },
-      "Npgsql.EntityFrameworkCore.PostgreSQL": {
-        "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "E2+uSWxSB8LdsUVwPaqRWOcGOP92biry2JEwc0KJMdLJF+aZdczeIdEXVwEyv4nSVMQJH0o8tLhyAMiR6VF0lw==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "[10.0.0, 11.0.0)",
-          "Microsoft.EntityFrameworkCore.Relational": "[10.0.0, 11.0.0)",
-          "Npgsql": "10.0.0"
-        }
-      },
       "Npgsql.OpenTelemetry": {
         "type": "Transitive",
         "resolved": "10.0.2",
@@ -1217,6 +1207,17 @@
         "contentHash": "7nb5YzXuvWWJxB0J8DiyL3we+X4FOctZrt0fIBnucOIaIevFEEwGQVZKtiu9olXdlNAK1eNgqSral6r/jlhI4w==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "10.0.0"
+        }
+      },
+      "Npgsql.EntityFrameworkCore.PostgreSQL": {
+        "type": "CentralTransitive",
+        "requested": "[10.0.0, )",
+        "resolved": "10.0.0",
+        "contentHash": "E2+uSWxSB8LdsUVwPaqRWOcGOP92biry2JEwc0KJMdLJF+aZdczeIdEXVwEyv4nSVMQJH0o8tLhyAMiR6VF0lw==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "[10.0.0, 11.0.0)",
+          "Microsoft.EntityFrameworkCore.Relational": "[10.0.0, 11.0.0)",
+          "Npgsql": "10.0.0"
         }
       },
       "OpenTelemetry": {

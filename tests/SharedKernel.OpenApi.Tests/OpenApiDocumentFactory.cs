@@ -48,6 +48,29 @@ internal static class OpenApiDocumentFactory
     }
 
     /// <summary>
+    /// Builds an app with configured services and returns the generated OpenAPI document for a named boundary.
+    /// </summary>
+    /// <param name="documentName">The OpenAPI document name to register and retrieve.</param>
+    /// <param name="configureServices">Configures services before the app is built.</param>
+    /// <param name="configureApp">Configures endpoints on the test app.</param>
+    /// <returns>The generated OpenAPI document.</returns>
+    public static async Task<OpenApiDocument> CreateDocumentFromApplication(
+        string documentName,
+        Action<IServiceCollection> configureServices,
+        Action<WebApplication> configureApp)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(documentName);
+        ArgumentNullException.ThrowIfNull(configureServices);
+        ArgumentNullException.ThrowIfNull(configureApp);
+
+        return await ExecuteWithApplication(
+            documentName,
+            configureApp,
+            static (document, _) => Task.FromResult(document),
+            configureServices);
+    }
+
+    /// <summary>
     /// Builds an app and returns the generated OpenAPI document for a versioned API contract.
     /// </summary>
     /// <param name="version">The API contract version definition.</param>
@@ -110,10 +133,12 @@ internal static class OpenApiDocumentFactory
     private static async Task<TResult> ExecuteWithApplication<TResult>(
         string documentName,
         Action<WebApplication> configureApp,
-        Func<OpenApiDocument, OpenApiDocumentTransformerContext, Task<TResult>> execute)
+        Func<OpenApiDocument, OpenApiDocumentTransformerContext, Task<TResult>> execute,
+        Action<IServiceCollection>? configureServices = null)
     {
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseUrls("http://127.0.0.1:0");
+        configureServices?.Invoke(builder.Services);
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddBoundaryOpenApiDocuments([documentName]);
         builder.Services.AddSingleton<OpenApiContextCapture>();

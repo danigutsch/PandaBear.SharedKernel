@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.ApiVersioning;
@@ -10,6 +11,7 @@ namespace SharedKernel.OpenApi.Tests;
 /// <summary>
 /// Verifies named document registration and route filtering behavior.
 /// </summary>
+[Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.EndpointCategory)]
 public sealed class OpenApiServiceCollectionExtensionsTests
 {
     [Fact]
@@ -148,6 +150,167 @@ public sealed class OpenApiServiceCollectionExtensionsTests
         document.Info.Version.ShouldBe("1.1");
         document.Paths.Keys.ShouldContain("/admin-api/v1.1/status");
         document.Paths.Keys.ShouldNotContain("/admin-api/v1/status");
+    }
+
+    [Fact]
+    public async Task Documents_bearer_authentication_only_for_protected_operations()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateDocumentFromApplication("tours", app =>
+        {
+            app.MapGroup("/tours")
+                .WithGroupName("tours")
+                .WithTags("tours")
+                .MapGet("/", () => TypedResults.Ok())
+                .RequireAuthorization();
+            app.MapGroup("/tours")
+                .WithGroupName("tours")
+                .WithTags("tours")
+                .MapGet("/public", () => TypedResults.Ok())
+                .AllowAnonymous();
+        });
+
+        // Act
+        var protectedPath = document.Paths["/tours"].ShouldNotBeNull();
+        var protectedOperations = protectedPath.Operations.ShouldNotBeNull();
+        var protectedOperation = protectedOperations[HttpMethod.Get].ShouldNotBeNull();
+        var publicPath = document.Paths["/tours/public"].ShouldNotBeNull();
+        var publicOperations = publicPath.Operations.ShouldNotBeNull();
+        var publicOperation = publicOperations[HttpMethod.Get].ShouldNotBeNull();
+
+        // Assert
+        var components = document.Components.ShouldNotBeNull();
+        var securitySchemes = components.SecuritySchemes.ShouldNotBeNull();
+        securitySchemes.ContainsKey(OpenApiAuthenticationDefaults.BearerSecuritySchemeName).ShouldBeTrue();
+        var security = protectedOperation.Security.ShouldNotBeNull();
+        security.ShouldHaveSingleItem();
+        var protectedResponses = protectedOperation.Responses.ShouldNotBeNull();
+        protectedResponses.ContainsKey("401").ShouldBeTrue();
+        protectedResponses.ContainsKey("403").ShouldBeTrue();
+        publicOperation.Security.ShouldBeNull();
+        var publicResponses = publicOperation.Responses.ShouldNotBeNull();
+        publicResponses.ContainsKey("401").ShouldBeFalse();
+        publicResponses.ContainsKey("403").ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Omits_bearer_scheme_when_all_operations_are_anonymous()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateDocumentFromApplication("tours", app =>
+        {
+            app.MapGroup("/tours")
+                .WithGroupName("tours")
+                .WithTags("tours")
+                .MapGet("/public", () => TypedResults.Ok())
+                .AllowAnonymous();
+        });
+
+        // Act
+        var hasBearerScheme = document.Components?.SecuritySchemes?.ContainsKey(OpenApiAuthenticationDefaults.BearerSecuritySchemeName) ?? false;
+
+        // Assert
+        hasBearerScheme.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Omits_bearer_authentication_when_operation_has_no_authorization_metadata()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateDocumentFromApplication("tours", app =>
+        {
+            app.MapGroup("/tours")
+                .WithGroupName("tours")
+                .WithTags("tours")
+                .MapGet("/public", () => TypedResults.Ok());
+        });
+
+        // Act
+        var path = document.Paths["/tours/public"].ShouldNotBeNull();
+        var operation = path.Operations.ShouldNotBeNull()[HttpMethod.Get].ShouldNotBeNull();
+        var hasBearerScheme = document.Components?.SecuritySchemes?.ContainsKey(OpenApiAuthenticationDefaults.BearerSecuritySchemeName) ?? false;
+
+        // Assert
+        operation.Security.ShouldBeNull();
+        operation.Responses.ShouldNotBeNull().ContainsKey("401").ShouldBeFalse();
+        operation.Responses.ShouldNotBeNull().ContainsKey("403").ShouldBeFalse();
+        hasBearerScheme.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Documents_bearer_authentication_when_fallback_policy_requires_authenticated_users()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateDocumentFromApplication(
+            "tours",
+            services => services.AddAuthorization(options =>
+                options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build()),
+            app =>
+            {
+                app.MapGroup("/tours")
+                    .WithGroupName("tours")
+                    .WithTags("tours")
+                    .MapGet("/managed", () => TypedResults.Ok());
+            });
+
+        // Act
+        var path = document.Paths["/tours/managed"].ShouldNotBeNull();
+        var operation = path.Operations.ShouldNotBeNull()[HttpMethod.Get].ShouldNotBeNull();
+
+        // Assert
+        operation.Security.ShouldNotBeNull().ShouldHaveSingleItem();
+        operation.Responses.ShouldNotBeNull().ContainsKey("401").ShouldBeTrue();
+        operation.Responses.ShouldNotBeNull().ContainsKey("403").ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Documents_bearer_authentication_when_fallback_policy_requires_a_role()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateDocumentFromApplication(
+            "tours",
+            services => services.AddAuthorization(options =>
+                options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireRole("Admin").Build()),
+            app =>
+            {
+                app.MapGroup("/tours")
+                    .WithGroupName("tours")
+                    .WithTags("tours")
+                    .MapGet("/public", () => TypedResults.Ok());
+            });
+
+        // Act
+        var path = document.Paths["/tours/public"].ShouldNotBeNull();
+        var operation = path.Operations.ShouldNotBeNull()[HttpMethod.Get].ShouldNotBeNull();
+
+        // Assert
+        operation.Security.ShouldNotBeNull().ShouldHaveSingleItem();
+        operation.Responses.ShouldNotBeNull().ContainsKey("401").ShouldBeTrue();
+        operation.Responses.ShouldNotBeNull().ContainsKey("403").ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Documents_bearer_authentication_when_operation_has_direct_authorization_policy_metadata()
+    {
+        // Arrange
+        var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+        var document = await OpenApiDocumentFactory.CreateDocumentFromApplication("tours", app =>
+        {
+            app.MapGroup("/tours")
+                .WithGroupName("tours")
+                .WithTags("tours")
+                .MapGet("/managed", () => TypedResults.Ok())
+                .RequireAuthorization(policy);
+        });
+
+        // Act
+        var path = document.Paths["/tours/managed"].ShouldNotBeNull();
+        var operation = path.Operations.ShouldNotBeNull()[HttpMethod.Get].ShouldNotBeNull();
+
+        // Assert
+        operation.Security.ShouldNotBeNull().ShouldHaveSingleItem();
+        operation.Responses.ShouldNotBeNull().ContainsKey("401").ShouldBeTrue();
+        operation.Responses.ShouldNotBeNull().ContainsKey("403").ShouldBeTrue();
     }
 
     [Fact]

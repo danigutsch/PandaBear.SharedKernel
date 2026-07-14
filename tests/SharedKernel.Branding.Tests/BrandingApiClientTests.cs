@@ -65,7 +65,7 @@ public sealed class BrandingApiClientTests
         {
             BaseAddress = new Uri("https://branding.example.test"),
         };
-        var sut = new BrandingApiClient(httpClient);
+        var sut = new ManagementBrandingApiClient(httpClient);
 
         // Act
         var settings = await sut.GetSettings(TestContext.Current.CancellationToken);
@@ -99,7 +99,7 @@ public sealed class BrandingApiClientTests
         {
             BaseAddress = new Uri("https://branding.example.test"),
         };
-        var sut = new BrandingApiClient(httpClient);
+        var sut = new ManagementBrandingApiClient(httpClient);
         var request = BrandingSettingsTestData.ValidRequest();
 
         // Act
@@ -130,7 +130,7 @@ public sealed class BrandingApiClientTests
         {
             BaseAddress = new Uri("https://branding.example.test"),
         };
-        var sut = new BrandingApiClient(httpClient);
+        var sut = new ManagementBrandingApiClient(httpClient);
         var request = BrandingSettingsTestData.ValidRequest();
 
         // Act

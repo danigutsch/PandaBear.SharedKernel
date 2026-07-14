@@ -6,6 +6,7 @@ SharedKernel seed and should stay reusable outside this repository.
 ## Scope
 
 - Aspire application startup and cleanup.
+- Unique DCP resource-name suffixes for test-created Aspire AppHosts.
 - Resource health waits with explicit timeouts and cancellation.
 - PostgreSQL public-schema resets for known-baseline tests.
 
@@ -20,6 +21,8 @@ SharedKernel seed and should stay reusable outside this repository.
 - Do not add Testcontainers, Respawn, generic fixture frameworks, or broader lifecycle abstractions for
   speculative future needs.
 - Prefer explicit operations over hidden global setup so tests can show which external state they reset.
+- Test AppHost isolation changes only DCP resource/service names. Host endpoints stay dynamically
+  allocated and Aspire service-discovery names remain unchanged.
 
 ## Usage
 
