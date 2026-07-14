@@ -3,7 +3,7 @@ using Aspire.Hosting.ApplicationModel;
 namespace Aspire.Hosting;
 
 /// <summary>
-/// Represents an authenticated SeaweedFS S3-compatible container and its owned parameters.
+/// Represents an authenticated SeaweedFS S3-compatible container and its configured parameters.
 /// </summary>
 public sealed class SeaweedFsResource(
     string name,
@@ -27,7 +27,7 @@ public sealed class SeaweedFsResource(
     public ParameterResource SecretKeyParameter { get; } = secretKeyParameter;
 
     /// <summary>
-    /// Gets the owned S3 bucket parameter.
+    /// Gets the configured S3 bucket parameter.
     /// </summary>
     public ParameterResource BucketParameter { get; } = bucketParameter;
 }
