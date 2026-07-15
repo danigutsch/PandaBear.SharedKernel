@@ -24,6 +24,8 @@ internal sealed class ApiAuthenticationTestHost : IAsyncDisposable
 
     public AuthorizationOptions AuthorizationOptions => _provider.GetRequiredService<IOptions<AuthorizationOptions>>().Value;
 
+    public bool HasAuthenticationSchemeProvider => _provider.GetService<IAuthenticationSchemeProvider>() is not null;
+
     public static ApiAuthenticationTestHost Create(
         IConfiguration configuration,
         TestHostEnvironment environment,
@@ -32,6 +34,30 @@ internal sealed class ApiAuthenticationTestHost : IAsyncDisposable
     {
         var services = new ServiceCollection();
         services.AddApiBearerAuthentication(configuration, environment, audience, permissionsByRole);
+        return new ApiAuthenticationTestHost(services.BuildServiceProvider());
+    }
+
+    public static ApiAuthenticationTestHost CreateAuthorizationOnly(
+        IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole)
+    {
+        var services = new ServiceCollection();
+        services.AddApiSecurity(
+            ApiAuthenticationTestConfiguration.Create(string.Empty, string.Empty),
+            new TestHostEnvironment(),
+            "test-api",
+            permissionsByRole,
+            registerBearerAuthentication: false);
+        return new ApiAuthenticationTestHost(services.BuildServiceProvider());
+    }
+
+    public static ApiAuthenticationTestHost CreateImplicitSecurity(
+        IConfiguration configuration,
+        TestHostEnvironment environment,
+        string audience,
+        IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole)
+    {
+        var services = new ServiceCollection();
+        services.AddApiSecurity(configuration, environment, audience, permissionsByRole);
         return new ApiAuthenticationTestHost(services.BuildServiceProvider());
     }
 

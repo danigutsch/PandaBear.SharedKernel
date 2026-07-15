@@ -7,9 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using SharedKernel.OpenApi;
 
 namespace SharedKernel.AspNetCore;
 
@@ -18,6 +17,53 @@ namespace SharedKernel.AspNetCore;
 /// </summary>
 public static class ApiAuthenticationServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds the complete bearer-authentication boundary or trusted OpenAPI generation authorization services.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="configuration">The application configuration.</param>
+    /// <param name="environment">The host environment.</param>
+    /// <param name="audience">The only audience accepted by this API boundary when bearer authentication is registered.</param>
+    /// <param name="permissionsByRole">The application-owned permissions granted for each validated role.</param>
+    /// <returns>An authorization builder for boundary-specific permission policies.</returns>
+    public static AuthorizationBuilder AddApiSecurity(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IHostEnvironment environment,
+        string audience,
+        IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole)
+    {
+        return AddApiSecurity(
+            services,
+            configuration,
+            environment,
+            audience,
+            permissionsByRole,
+            registerBearerAuthentication: null);
+    }
+
+    internal static AuthorizationBuilder AddApiSecurity(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IHostEnvironment environment,
+        string audience,
+        IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole,
+        bool? registerBearerAuthentication)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(environment);
+        ArgumentException.ThrowIfNullOrWhiteSpace(audience);
+        ArgumentNullException.ThrowIfNull(permissionsByRole);
+
+        var shouldRegisterBearerAuthentication = registerBearerAuthentication
+            ?? !OpenApiGenerationMode.IsEnabled(environment);
+
+        return shouldRegisterBearerAuthentication
+            ? services.AddApiBearerAuthentication(configuration, environment, audience, permissionsByRole)
+            : services.AddApiAuthorization(permissionsByRole);
+    }
+
     /// <summary>
     /// Adds bearer authentication, permission-claim transformation, and an authenticated fallback policy.
     /// </summary>
@@ -40,13 +86,8 @@ public static class ApiAuthenticationServiceCollectionExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(audience);
         ArgumentNullException.ThrowIfNull(permissionsByRole);
 
-        var isOpenApiBuildGeneration = OpenApiBuildGeneration.IsEnabled(configuration);
-        var authority = isOpenApiBuildGeneration
-            ? OpenApiBuildGeneration.PlaceholderAuthority
-            : configuration[ApiAuthenticationDefaults.AuthorityConfigurationKey];
-        var issuer = isOpenApiBuildGeneration
-            ? OpenApiBuildGeneration.PlaceholderIssuer
-            : configuration[ApiAuthenticationDefaults.IssuerConfigurationKey];
+        var authority = configuration[ApiAuthenticationDefaults.AuthorityConfigurationKey];
+        var issuer = configuration[ApiAuthenticationDefaults.IssuerConfigurationKey];
 
         var allowHttpDevelopmentAuthority = environment.IsDevelopment()
             && string.Equals(
@@ -54,10 +95,7 @@ public static class ApiAuthenticationServiceCollectionExtensions
                 bool.TrueString,
                 StringComparison.OrdinalIgnoreCase);
 
-        if (!isOpenApiBuildGeneration)
-        {
-            ValidateConfiguration(authority, issuer, allowHttpDevelopmentAuthority);
-        }
+        ValidateConfiguration(authority, issuer, allowHttpDevelopmentAuthority);
 
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
 
@@ -69,16 +107,31 @@ public static class ApiAuthenticationServiceCollectionExtensions
                     audience,
                     authority,
                     issuer,
-                    allowHttpDevelopmentAuthority,
-                    isOpenApiBuildGeneration);
+                    allowHttpDevelopmentAuthority);
             });
 
         services.AddTransient<IClaimsTransformation>(_ => new PermissionClaimsTransformation(permissionsByRole));
 
+        return services.AddApiAuthorization(permissionsByRole);
+    }
+
+    /// <summary>
+    /// Adds authorization policies and an authenticated fallback policy without registering an authentication handler.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="permissionsByRole">The application-owned permissions granted for each validated role.</param>
+    /// <returns>An authorization builder for boundary-specific permission policies.</returns>
+    public static AuthorizationBuilder AddApiAuthorization(
+        this IServiceCollection services,
+        IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(permissionsByRole);
+
         return services.AddAuthorizationBuilder()
             .SetFallbackPolicy(new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
-             .Build());
+                .Build());
     }
 
     internal static void ConfigureBearerOptions(
@@ -86,18 +139,12 @@ public static class ApiAuthenticationServiceCollectionExtensions
         string audience,
         string? authority,
         string? issuer,
-        bool allowHttpDevelopmentAuthority,
-        bool isOpenApiBuildGeneration)
+        bool allowHttpDevelopmentAuthority)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentException.ThrowIfNullOrWhiteSpace(audience);
 
-        if (isOpenApiBuildGeneration)
-        {
-            options.ConfigurationManager = new StaticConfigurationManager<OpenIdConnectConfiguration>(
-                new OpenIdConnectConfiguration { Issuer = issuer });
-        }
-        else if (!string.IsNullOrWhiteSpace(authority))
+        if (!string.IsNullOrWhiteSpace(authority))
         {
             options.Authority = authority;
             options.RequireHttpsMetadata = !allowHttpDevelopmentAuthority;

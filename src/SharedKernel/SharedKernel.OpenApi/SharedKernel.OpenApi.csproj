@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.OpenApi.Tests" />
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
