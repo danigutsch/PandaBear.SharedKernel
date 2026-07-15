@@ -24,7 +24,13 @@ internal sealed class ApiAuthenticationTestHost : IAsyncDisposable
 
     public AuthorizationOptions AuthorizationOptions => _provider.GetRequiredService<IOptions<AuthorizationOptions>>().Value;
 
-    public bool HasAuthenticationSchemeProvider => _provider.GetService<IAuthenticationSchemeProvider>() is not null;
+    public async ValueTask<bool> HasBearerAuthenticationScheme()
+    {
+        var schemeProvider = _provider.GetService<IAuthenticationSchemeProvider>();
+
+        return schemeProvider is not null
+            && await schemeProvider.GetSchemeAsync(JwtBearerDefaults.AuthenticationScheme).ConfigureAwait(false) is not null;
+    }
 
     public static ApiAuthenticationTestHost Create(
         IConfiguration configuration,

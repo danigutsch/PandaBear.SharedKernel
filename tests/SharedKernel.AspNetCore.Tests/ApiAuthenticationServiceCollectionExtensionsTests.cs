@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
@@ -48,12 +49,13 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         jwt.TokenValidationParameters.ValidateIssuerSigningKey.ShouldBeTrue();
         jwt.TokenValidationParameters.ValidateLifetime.ShouldBeTrue();
         jwt.TokenValidationParameters.ClockSkew.ShouldBe(TimeSpan.FromMinutes(2));
-        jwt.TokenValidationParameters.ValidAlgorithms.Contains(SecurityAlgorithms.RsaSha256).ShouldBeTrue();
+        jwt.TokenValidationParameters.ValidAlgorithms.ShouldBe([SecurityAlgorithms.RsaSha256]);
         var permissionValues = twice.FindAll(ApiAuthenticationDefaults.PermissionClaimType).Select(static claim => claim.Value).ToArray();
         permissionValues.ShouldContain("tours.read");
         permissionValues.ShouldContain("tours.write");
         permissionValues.Length.ShouldBe(2);
-        authorization.FallbackPolicy.ShouldNotBeNull();
+        var fallbackPolicy = authorization.FallbackPolicy.ShouldNotBeNull();
+        fallbackPolicy.Requirements.ShouldContain(requirement => requirement is DenyAnonymousAuthorizationRequirement);
     }
 
     [Fact]
@@ -65,35 +67,38 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
 
         // Act
         var authorization = host.AuthorizationOptions;
-        var hasAuthenticationSchemeProvider = host.HasAuthenticationSchemeProvider;
+        var hasBearerAuthenticationScheme = await host.HasBearerAuthenticationScheme();
 
         // Assert
         authorization.FallbackPolicy.ShouldNotBeNull();
-        hasAuthenticationSchemeProvider.ShouldBeFalse();
+        hasBearerAuthenticationScheme.ShouldBeFalse();
     }
 
     [Fact]
-    public void Rejects_a_legacy_generation_configuration_marker()
+    public async Task Legacy_generation_configuration_marker_does_not_disable_bearer_authentication()
     {
         // Arrange
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                [ApiAuthenticationDefaults.AuthorityConfigurationKey] = string.Empty,
-                [ApiAuthenticationDefaults.IssuerConfigurationKey] = string.Empty,
+                [ApiAuthenticationDefaults.AuthorityConfigurationKey] = "https://identity.example.test/realms/viajantes",
+                [ApiAuthenticationDefaults.IssuerConfigurationKey] = "https://identity.example.test/realms/viajantes",
                 ["OpenApi:BuildGeneration"] = bool.TrueString
             })
             .Build();
-
-        // Act
-        Action action = () => ApiAuthenticationTestHost.CreateImplicitSecurity(
+        await using var host = ApiAuthenticationTestHost.CreateImplicitSecurity(
             configuration,
             new TestHostEnvironment(),
             "admin-api",
             new Dictionary<string, IReadOnlyCollection<string>>());
 
+        // Act
+        var hasBearerAuthenticationScheme = await host.HasBearerAuthenticationScheme();
+        var bearerOptions = host.BearerOptions;
+
         // Assert
-        action.ShouldThrow<InvalidOperationException>();
+        hasBearerAuthenticationScheme.ShouldBeTrue();
+        bearerOptions.Audience.ShouldBe("admin-api");
     }
 
     [Fact]
@@ -119,6 +124,44 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(string.Empty, string.Empty);
+
+        // Act
+        Action action = () => ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>>());
+
+        // Assert
+        action.ShouldThrow<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void Rejects_a_missing_issuer_when_the_authority_is_present()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "https://identity.example.test/realms/viajantes",
+            string.Empty);
+
+        // Act
+        Action action = () => ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>>());
+
+        // Assert
+        action.ShouldThrow<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void Rejects_an_invalid_issuer_when_the_authority_is_valid()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "https://identity.example.test/realms/viajantes",
+            "ftp://identity.example.test/realms/viajantes");
 
         // Act
         Action action = () => ApiAuthenticationTestHost.Create(

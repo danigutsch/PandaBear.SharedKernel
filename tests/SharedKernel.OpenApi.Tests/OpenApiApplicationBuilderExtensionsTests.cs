@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Xunit;
@@ -30,11 +29,10 @@ public sealed class OpenApiApplicationBuilderExtensionsTests
     }
 
     [Fact]
-    public void Does_not_map_openapi_endpoints_for_a_production_build_generation_process()
+    public void Does_not_map_openapi_endpoints_outside_development()
     {
         // Arrange
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = Environments.Production });
-        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?> { ["OpenApi:BuildGeneration"] = bool.TrueString });
         builder.Services.AddOpenApi();
         using var application = builder.Build();
 

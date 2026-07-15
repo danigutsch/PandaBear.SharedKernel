@@ -32,4 +32,20 @@ public sealed class OpenApiGenerationModeTests
         ordinaryApplication.ShouldBeFalse();
         missingEnvironment.ShouldBeFalse();
     }
+
+    [Fact]
+    public void Does_not_enable_generation_for_the_current_test_process()
+    {
+        // Arrange
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+        {
+            EnvironmentName = OpenApiGenerationMode.HostEnvironmentName
+        });
+
+        // Act
+        var isEnabled = OpenApiGenerationMode.IsEnabled(builder.Environment);
+
+        // Assert
+        isEnabled.ShouldBeFalse();
+    }
 }
