@@ -333,6 +333,14 @@ public static class ShouldAssertionExtensions
     public static void ShouldNotBeEmpty<T>(this IEnumerable<T> actual) => Xunit.Assert.NotEmpty(actual);
 
     /// <summary>
+    /// Verifies that a collection contains the expected number of items.
+    /// </summary>
+    /// <typeparam name="T">The item type.</typeparam>
+    /// <param name="actual">The actual collection.</param>
+    /// <param name="expectedCount">The expected item count.</param>
+    public static void ShouldHaveCount<T>(this IEnumerable<T> actual, int expectedCount) => Xunit.Assert.Equal(expectedCount, actual.Count());
+
+    /// <summary>
     /// Verifies that a collection contains exactly one item.
     /// </summary>
     /// <typeparam name="T">The item type.</typeparam>
