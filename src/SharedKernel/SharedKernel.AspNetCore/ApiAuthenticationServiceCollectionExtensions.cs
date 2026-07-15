@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using SharedKernel.OpenApi;
 
 namespace SharedKernel.AspNetCore;
 
@@ -16,6 +17,53 @@ namespace SharedKernel.AspNetCore;
 /// </summary>
 public static class ApiAuthenticationServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds the complete bearer-authentication boundary or trusted OpenAPI generation authorization services.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="configuration">The application configuration.</param>
+    /// <param name="environment">The host environment.</param>
+    /// <param name="audience">The only audience accepted by this API boundary when bearer authentication is registered.</param>
+    /// <param name="permissionsByRole">The application-owned permissions granted for each validated role.</param>
+    /// <returns>An authorization builder for boundary-specific permission policies.</returns>
+    public static AuthorizationBuilder AddApiSecurity(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IHostEnvironment environment,
+        string audience,
+        IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole)
+    {
+        return AddApiSecurity(
+            services,
+            configuration,
+            environment,
+            audience,
+            permissionsByRole,
+            registerBearerAuthentication: null);
+    }
+
+    internal static AuthorizationBuilder AddApiSecurity(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IHostEnvironment environment,
+        string audience,
+        IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole,
+        bool? registerBearerAuthentication)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(environment);
+        ArgumentException.ThrowIfNullOrWhiteSpace(audience);
+        ArgumentNullException.ThrowIfNull(permissionsByRole);
+
+        var shouldRegisterBearerAuthentication = registerBearerAuthentication
+            ?? !OpenApiGenerationMode.IsEnabled(environment);
+
+        return shouldRegisterBearerAuthentication
+            ? services.AddApiBearerAuthentication(configuration, environment, audience, permissionsByRole)
+            : services.AddApiAuthorization(permissionsByRole);
+    }
+
     /// <summary>
     /// Adds bearer authentication, permission-claim transformation, and an authenticated fallback policy.
     /// </summary>
@@ -54,33 +102,67 @@ public static class ApiAuthenticationServiceCollectionExtensions
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddScheme<JwtBearerOptions, JwtBearerHandler>(JwtBearerDefaults.AuthenticationScheme, options =>
             {
-                if (!string.IsNullOrWhiteSpace(authority))
-                {
-                    options.Authority = authority;
-                    options.RequireHttpsMetadata = !allowHttpDevelopmentAuthority;
-                }
-
-                options.Audience = audience;
-                options.MapInboundClaims = false;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = issuer,
-                    ValidateAudience = true,
-                    ValidAudience = audience,
-                    ValidateIssuerSigningKey = true,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(2),
-                    ValidAlgorithms = [SecurityAlgorithms.RsaSha256]
-                };
+                ConfigureBearerOptions(
+                    options,
+                    audience,
+                    authority,
+                    issuer,
+                    allowHttpDevelopmentAuthority);
             });
 
         services.AddTransient<IClaimsTransformation>(_ => new PermissionClaimsTransformation(permissionsByRole));
+
+        return services.AddApiAuthorization(permissionsByRole);
+    }
+
+    /// <summary>
+    /// Adds authorization policies and an authenticated fallback policy without registering an authentication handler.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="permissionsByRole">The application-owned permissions granted for each validated role.</param>
+    /// <returns>An authorization builder for boundary-specific permission policies.</returns>
+    public static AuthorizationBuilder AddApiAuthorization(
+        this IServiceCollection services,
+        IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(permissionsByRole);
 
         return services.AddAuthorizationBuilder()
             .SetFallbackPolicy(new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
                 .Build());
+    }
+
+    internal static void ConfigureBearerOptions(
+        JwtBearerOptions options,
+        string audience,
+        string? authority,
+        string? issuer,
+        bool allowHttpDevelopmentAuthority)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentException.ThrowIfNullOrWhiteSpace(audience);
+
+        if (!string.IsNullOrWhiteSpace(authority))
+        {
+            options.Authority = authority;
+            options.RequireHttpsMetadata = !allowHttpDevelopmentAuthority;
+        }
+
+        options.Audience = audience;
+        options.MapInboundClaims = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = issuer,
+            ValidateAudience = true,
+            ValidAudience = audience,
+            ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromMinutes(2),
+            ValidAlgorithms = [SecurityAlgorithms.RsaSha256]
+        };
     }
 
     private static void ValidateConfiguration(

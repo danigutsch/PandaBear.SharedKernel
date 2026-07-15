@@ -9,6 +9,7 @@ const SharedKernel.AspNetCore.SitemapXmlSerializer.MaximumUrlCount = 50000 -> in
 SharedKernel.AspNetCore.ApiAuthenticationDefaults
 SharedKernel.AspNetCore.ApiAuthenticationServiceCollectionExtensions
 SharedKernel.AspNetCore.AntiforgerySignOutEndpointRouteBuilderExtensions
+SharedKernel.AspNetCore.ApiSecurityApplicationBuilderExtensions
 SharedKernel.AspNetCore.AspNetCoreCorsExtensions
 SharedKernel.AspNetCore.AuthorizationPolicyBuilderExtensions
 SharedKernel.AspNetCore.SitemapCanonicalOrigin
@@ -17,9 +18,12 @@ SharedKernel.AspNetCore.SitemapEntry.LastModified.get -> System.DateTimeOffset?
 SharedKernel.AspNetCore.SitemapEntry.Location.get -> System.Uri!
 SharedKernel.AspNetCore.SitemapEntry.SitemapEntry(System.Uri! location, System.DateTimeOffset? lastModified = null) -> void
 SharedKernel.AspNetCore.SitemapXmlSerializer
+static SharedKernel.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiAuthorization(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
 static SharedKernel.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiBearerAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
 static SharedKernel.AspNetCore.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, string! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
 static SharedKernel.AspNetCore.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, System.Uri! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
+static SharedKernel.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiSecurity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static SharedKernel.AspNetCore.ApiSecurityApplicationBuilderExtensions.UseApiSecurity(this Microsoft.AspNetCore.Builder.WebApplication! application) -> Microsoft.AspNetCore.Builder.WebApplication!
 static SharedKernel.AspNetCore.AspNetCoreCorsExtensions.AddConfiguredOriginsPolicy(this Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions! options, string! policyName, Microsoft.Extensions.Configuration.IConfiguration! allowedOriginsSection) -> Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions!
 SharedKernel.AspNetCore.AspNetCoreForwardedHeadersExtensions
 static SharedKernel.AspNetCore.AspNetCoreForwardedHeadersExtensions.AddConfiguredTrustedForwardedHeaders(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

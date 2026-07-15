@@ -14,9 +14,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
+        <ProjectReference Include="..\SharedKernel.OpenApi\SharedKernel.OpenApi.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.AspNetCore.Tests" />
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 

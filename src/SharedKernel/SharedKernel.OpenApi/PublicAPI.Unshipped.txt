@@ -1,11 +1,13 @@
 #nullable enable
 const SharedKernel.OpenApi.OpenApiAuthenticationDefaults.BearerSecuritySchemeName = "Bearer" -> string!
+const SharedKernel.OpenApi.OpenApiGenerationMode.HostEnvironmentName = "OpenApiGeneration" -> string!
 SharedKernel.OpenApi.BearerSecurityDocumentTransformer
 SharedKernel.OpenApi.BearerSecurityDocumentTransformer.BearerSecurityDocumentTransformer() -> void
 SharedKernel.OpenApi.BearerSecurityDocumentTransformer.TransformAsync(Microsoft.OpenApi.OpenApiDocument! document, Microsoft.AspNetCore.OpenApi.OpenApiDocumentTransformerContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
 SharedKernel.OpenApi.MultipartFormRequestBodyDocumentTransformer
 SharedKernel.OpenApi.MultipartFormRequestBodyDocumentTransformer.MultipartFormRequestBodyDocumentTransformer() -> void
 SharedKernel.OpenApi.MultipartFormRequestBodyDocumentTransformer.TransformAsync(Microsoft.OpenApi.OpenApiDocument! document, Microsoft.AspNetCore.OpenApi.OpenApiDocumentTransformerContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+SharedKernel.OpenApi.OpenApiApplicationBuilderExtensions
 SharedKernel.OpenApi.OpenApiAuthenticationDefaults
 SharedKernel.OpenApi.OpenApiBoundaryDocument
 SharedKernel.OpenApi.OpenApiBoundaryDocument.DocumentName.get -> string!
@@ -13,7 +15,10 @@ SharedKernel.OpenApi.OpenApiBoundaryDocument.DocumentName.init -> void
 SharedKernel.OpenApi.OpenApiBoundaryDocument.OpenApiBoundaryDocument(string! DocumentName, string! RoutePrefix) -> void
 SharedKernel.OpenApi.OpenApiBoundaryDocument.RoutePrefix.get -> string!
 SharedKernel.OpenApi.OpenApiBoundaryDocument.RoutePrefix.init -> void
+SharedKernel.OpenApi.OpenApiGenerationMode
 SharedKernel.OpenApi.OpenApiServiceCollectionExtensions
+static SharedKernel.OpenApi.OpenApiApplicationBuilderExtensions.MapConfiguredOpenApi(this Microsoft.AspNetCore.Builder.WebApplication! application) -> Microsoft.AspNetCore.Builder.WebApplication!
+static SharedKernel.OpenApi.OpenApiGenerationMode.IsEnabled(Microsoft.Extensions.Hosting.IHostEnvironment! environment) -> bool
 static SharedKernel.OpenApi.OpenApiServiceCollectionExtensions.AddBoundaryOpenApiDocuments(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyCollection<SharedKernel.OpenApi.OpenApiBoundaryDocument!>! boundaries) -> void
 static SharedKernel.OpenApi.OpenApiServiceCollectionExtensions.AddBoundaryOpenApiDocuments(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyCollection<string!>! boundaryNames) -> void
 static SharedKernel.OpenApi.OpenApiServiceCollectionExtensions.AddApiVersionOpenApiDocuments(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IReadOnlyCollection<SharedKernel.ApiVersioning.ApiVersionDefinition!>! versions, string! routePrefix = "api") -> void

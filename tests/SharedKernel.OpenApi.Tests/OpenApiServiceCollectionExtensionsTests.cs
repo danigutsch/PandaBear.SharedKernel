@@ -194,6 +194,32 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public async Task Allows_anonymous_metadata_to_override_direct_authorization()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateDocumentFromApplication("tours", app =>
+        {
+            app.MapGroup("/tours")
+                .WithGroupName("tours")
+                .WithTags("tours")
+                .MapGet("/public", () => TypedResults.Ok())
+                .RequireAuthorization()
+                .AllowAnonymous();
+        });
+
+        // Act
+        var path = document.Paths["/tours/public"].ShouldNotBeNull();
+        var operation = path.Operations.ShouldNotBeNull()[HttpMethod.Get].ShouldNotBeNull();
+        var hasBearerScheme = document.Components?.SecuritySchemes?.ContainsKey(OpenApiAuthenticationDefaults.BearerSecuritySchemeName) ?? false;
+
+        // Assert
+        operation.Security.ShouldBeNull();
+        operation.Responses.ShouldNotBeNull().ContainsKey("401").ShouldBeFalse();
+        operation.Responses.ShouldNotBeNull().ContainsKey("403").ShouldBeFalse();
+        hasBearerScheme.ShouldBeFalse();
+    }
+
+    [Fact]
     public async Task Omits_bearer_scheme_when_all_operations_are_anonymous()
     {
         // Arrange
