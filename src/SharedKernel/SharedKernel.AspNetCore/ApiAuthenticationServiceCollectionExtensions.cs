@@ -158,6 +158,7 @@ public static class ApiAuthenticationServiceCollectionExtensions
             ValidIssuer = issuer,
             ValidateAudience = true,
             ValidAudience = audience,
+            AudienceValidator = (audiences, _, _) => HasExactAudience(audiences, audience),
             ValidateIssuerSigningKey = true,
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromMinutes(2),
@@ -196,6 +197,17 @@ public static class ApiAuthenticationServiceCollectionExtensions
         return string.Equals(uri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)
                || (allowHttpDevelopmentAuthority
                    && string.Equals(uri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool HasExactAudience(IEnumerable<string>? audiences, string expectedAudience)
+    {
+        if (audiences is null)
+        {
+            return false;
+        }
+
+        var values = audiences.ToArray();
+        return values.Length == 1 && string.Equals(values[0], expectedAudience, StringComparison.Ordinal);
     }
 
     private sealed class PermissionClaimsTransformation(IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole)
