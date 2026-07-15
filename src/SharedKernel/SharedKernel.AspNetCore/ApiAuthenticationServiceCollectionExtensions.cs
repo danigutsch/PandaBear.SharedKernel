@@ -206,8 +206,10 @@ public static class ApiAuthenticationServiceCollectionExtensions
             return false;
         }
 
-        var values = audiences.ToArray();
-        return values.Length == 1 && string.Equals(values[0], expectedAudience, StringComparison.Ordinal);
+        using var enumerator = audiences.GetEnumerator();
+        return enumerator.MoveNext()
+               && string.Equals(enumerator.Current, expectedAudience, StringComparison.Ordinal)
+               && !enumerator.MoveNext();
     }
 
     private sealed class PermissionClaimsTransformation(IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole)

@@ -243,6 +243,31 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public async Task Rejects_a_second_audience_without_enumerating_remaining_values()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/viajantes");
+        await using var host = ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>>());
+        var audienceValidator = host.BearerOptions.TokenValidationParameters.AudienceValidator
+            ?? throw new InvalidOperationException("The bearer audience validator was not configured.");
+
+        // Act
+        var isValid = audienceValidator(
+            new ExactAudienceEnumerable(),
+            new JwtSecurityToken(),
+            new TokenValidationParameters());
+
+        // Assert
+        isValid.ShouldBeFalse();
+    }
+
+    [Fact]
     public void Rejects_missing_authority_and_issuer_outside_development()
     {
         // Arrange
