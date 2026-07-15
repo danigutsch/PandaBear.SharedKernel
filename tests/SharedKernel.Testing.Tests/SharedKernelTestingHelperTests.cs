@@ -202,6 +202,7 @@ public sealed class SharedKernelTestingHelperTests
         (this).ShouldBeSameAs(this);
         (Array.Empty<int>()).ShouldBeEmpty();
         (singleItem).ShouldNotBeEmpty();
+        (twoItems).ShouldHaveCount(2);
         (singleItem).ShouldNotContain(2);
         (singleItem).ShouldNotContain(value => value == 2);
         ("alphabet").ShouldNotContain("beta", StringComparison.Ordinal);

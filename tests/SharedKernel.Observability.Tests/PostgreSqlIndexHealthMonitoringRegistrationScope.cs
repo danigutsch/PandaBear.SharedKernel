@@ -13,6 +13,12 @@ internal sealed class PostgreSqlIndexHealthMonitoringRegistrationScope
 
     public int HostedServiceCount => _services.Count(descriptor => descriptor.ServiceType == typeof(IHostedService));
 
+    public int RegisteredConnectionCount => GetRegistration().ConnectionStrings.Count;
+
+    public Type? HostedServiceImplementationType => _services
+        .Single(descriptor => descriptor.ServiceType == typeof(IHostedService))
+        .ImplementationType;
+
     public static PostgreSqlIndexHealthMonitoringRegistrationScope Create(IEnumerable<string> connectionStrings)
     {
         return Create(connectionStrings, new PostgreSqlIndexHealthMonitoringOptions());
@@ -30,5 +36,14 @@ internal sealed class PostgreSqlIndexHealthMonitoringRegistrationScope
     public void Add(IEnumerable<string> connectionStrings, PostgreSqlIndexHealthMonitoringOptions options)
     {
         _services.AddPostgreSqlIndexHealthMonitoring(connectionStrings, options);
+    }
+
+    private PostgreSqlIndexHealthMonitoringRegistration GetRegistration()
+    {
+        var registration = _services
+            .Single(descriptor => descriptor.ServiceType == typeof(PostgreSqlIndexHealthMonitoringRegistration))
+            .ImplementationInstance as PostgreSqlIndexHealthMonitoringRegistration;
+
+        return registration ?? throw new InvalidOperationException("PostgreSQL index-health monitoring registration is missing.");
     }
 }

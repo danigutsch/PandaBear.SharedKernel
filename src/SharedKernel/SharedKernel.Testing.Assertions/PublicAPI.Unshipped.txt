@@ -32,6 +32,7 @@ static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldEndWith(this string? actual, string! expected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldEndWith(this string? actual, string! expected, System.StringComparison comparisonType) -> void
+static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldHaveCount<T>(this System.Collections.Generic.IEnumerable<T>! actual, int expectedCount) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldHaveSingleItem<T>(this System.Collections.Generic.IEnumerable<T>! actual) -> T
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldHaveSingleItem<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> T
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldMatch(this string? actual, string! expectedRegexPattern) -> void
