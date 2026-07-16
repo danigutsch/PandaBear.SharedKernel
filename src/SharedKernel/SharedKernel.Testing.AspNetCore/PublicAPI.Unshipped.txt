@@ -1,6 +1,16 @@
 #nullable enable
 const SharedKernel.Testing.AspNetCore.ApiTestAuthentication.Authority = "https://identity.test" -> string!
 SharedKernel.Testing.AspNetCore.ApiTestAuthentication
+SharedKernel.Testing.AspNetCore.TestHostEnvironment
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ApplicationName.get -> string!
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ApplicationName.set -> void
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ContentRootFileProvider.get -> Microsoft.Extensions.FileProviders.IFileProvider!
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ContentRootFileProvider.set -> void
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ContentRootPath.get -> string!
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.ContentRootPath.set -> void
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.EnvironmentName.get -> string!
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.EnvironmentName.set -> void
+SharedKernel.Testing.AspNetCore.TestHostEnvironment.TestHostEnvironment(string! applicationName) -> void
 SharedKernel.Testing.AspNetCore.WebApplicationTestHost
 static SharedKernel.Testing.AspNetCore.ApiTestAuthentication.ConfigureAuthenticatedClient(System.Net.Http.HttpClient! client, string! audience, string! role) -> void
 static SharedKernel.Testing.AspNetCore.ApiTestAuthentication.ConfigureClient(System.Net.Http.HttpClient! client, string! audience, string! issuer, string! role) -> void
