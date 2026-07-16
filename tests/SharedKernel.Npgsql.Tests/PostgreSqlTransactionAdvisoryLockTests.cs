@@ -6,6 +6,25 @@ public sealed class PostgreSqlTransactionAdvisoryLockTests
     private const long DifferentLockKey = 893_492_732;
 
     [Fact]
+    public async Task Waiting_for_an_advisory_lock_propagates_cancellation()
+    {
+        // Arrange
+        await using var environment = await PostgreSqlTransactionAdvisoryLockTestEnvironment.Start(TestContext.Current.CancellationToken);
+        using var cancellation = new CancellationTokenSource();
+        await cancellation.CancelAsync();
+
+        // Act
+        Func<Task> waitForLock = () => PostgreSqlTransactionAdvisoryLockTestsHelpers.WaitForWaitingLock(
+            environment.DataSource,
+            processId: 0,
+            cancellation.Token);
+        var exception = await waitForLock.ShouldThrowAssignableTo<OperationCanceledException>();
+
+        // Assert
+        exception.ShouldNotBeNull();
+    }
+
+    [Fact]
     public async Task Prevents_another_connection_from_acquiring_the_same_lock_until_commit()
     {
         // Arrange

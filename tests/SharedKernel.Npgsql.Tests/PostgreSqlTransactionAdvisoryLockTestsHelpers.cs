@@ -44,6 +44,7 @@ internal static class PostgreSqlTransactionAdvisoryLockTestsHelpers
             throw new TimeoutException("The PostgreSQL advisory lock acquisition did not begin waiting.");
         }
 
+        ct.ThrowIfCancellationRequested();
         throw new TimeoutException("The PostgreSQL advisory lock acquisition did not begin waiting.");
     }
 }
