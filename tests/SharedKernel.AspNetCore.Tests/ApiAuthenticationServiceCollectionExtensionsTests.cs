@@ -130,7 +130,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
             "https://identity.example.test/realms/viajantes");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
-            new TestHostEnvironment(),
+            new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
             "admin-api",
             new Dictionary<string, IReadOnlyCollection<string>>());
         using var rsa = RSA.Create();
@@ -161,7 +161,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
             "https://identity.example.test/realms/viajantes");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
-            new TestHostEnvironment(),
+            new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
             "admin-api",
             new Dictionary<string, IReadOnlyCollection<string>>());
         using var rsa = RSA.Create();
@@ -191,7 +191,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
             "https://identity.example.test/realms/viajantes");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
-            new TestHostEnvironment(),
+            new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
             "admin-api",
             new Dictionary<string, IReadOnlyCollection<string>>());
         using var rsa = RSA.Create();
@@ -221,7 +221,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
             "https://identity.example.test/realms/viajantes");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
-            new TestHostEnvironment(),
+            new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
             "admin-api",
             new Dictionary<string, IReadOnlyCollection<string>>());
         using var rsa = RSA.Create();
@@ -251,7 +251,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
             "https://identity.example.test/realms/viajantes");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
-            new TestHostEnvironment(),
+            new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
             "admin-api",
             new Dictionary<string, IReadOnlyCollection<string>>());
         var audienceValidator = host.BearerOptions.TokenValidationParameters.AudienceValidator
