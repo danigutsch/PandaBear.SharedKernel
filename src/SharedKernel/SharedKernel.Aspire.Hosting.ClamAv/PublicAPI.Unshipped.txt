@@ -1,5 +1,8 @@
 #nullable enable
 Aspire.Hosting.ClamAvResourceExtensions
-static Aspire.Hosting.ClamAvResourceExtensions.AddClamAv(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.ContainerResource!>!
-static Aspire.Hosting.ClamAvResourceExtensions.WithClamAvReference<TDestination>(this Aspire.Hosting.ApplicationModel.IResourceBuilder<TDestination>! destination, Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.ContainerResource!>! clamAv) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<TDestination>!
-static Aspire.Hosting.ClamAvResourceExtensions.WithFreshClam(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.ContainerResource!>! resource, bool enabled) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.ContainerResource!>!
+Aspire.Hosting.ClamAvResource
+Aspire.Hosting.ClamAvResource.ClamAvResource(string! name) -> void
+const Aspire.Hosting.ClamAvResource.TcpEndpointName = "tcp" -> string!
+static Aspire.Hosting.ClamAvResourceExtensions.AddClamAv(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ClamAvResource!>!
+static Aspire.Hosting.ClamAvResourceExtensions.WithClamAvReference<TDestination>(this Aspire.Hosting.ApplicationModel.IResourceBuilder<TDestination>! destination, Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ClamAvResource!>! clamAv) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<TDestination>!
+static Aspire.Hosting.ClamAvResourceExtensions.WithFreshClam(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ClamAvResource!>! resource, bool enabled) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ClamAvResource!>!
