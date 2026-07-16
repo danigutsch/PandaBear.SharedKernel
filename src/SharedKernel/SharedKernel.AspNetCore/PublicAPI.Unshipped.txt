@@ -36,6 +36,10 @@ static SharedKernel.AspNetCore.AspNetCoreRobotsTxtExtensions.MapRobotsTxt(this M
 SharedKernel.AspNetCore.AspNetCoreSecurityHeadersExtensions
 static SharedKernel.AspNetCore.AspNetCoreSecurityHeadersExtensions.UseSecurityHeaders(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, string! contentSecurityPolicy) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
 static SharedKernel.AspNetCore.AspNetCoreSecurityHeadersExtensions.UseSecurityHeaders(this Microsoft.AspNetCore.Builder.IApplicationBuilder! app, string! contentSecurityPolicy, string! permissionsPolicy) -> Microsoft.AspNetCore.Builder.IApplicationBuilder!
+SharedKernel.AspNetCore.KeyBoundDataProtector
+SharedKernel.AspNetCore.KeyBoundDataProtector.KeyBoundDataProtector(Microsoft.AspNetCore.DataProtection.IDataProtectionProvider! dataProtectionProvider, string! purpose) -> void
+SharedKernel.AspNetCore.KeyBoundDataProtector.Protect(string! key, byte[]! plaintext) -> byte[]!
+SharedKernel.AspNetCore.KeyBoundDataProtector.Unprotect(string! key, byte[]! protectedData) -> byte[]!
 SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy
 SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Name.get -> string!
 SharedKernel.AspNetCore.RemoteIpFixedWindowRateLimitPolicy.Name.init -> void

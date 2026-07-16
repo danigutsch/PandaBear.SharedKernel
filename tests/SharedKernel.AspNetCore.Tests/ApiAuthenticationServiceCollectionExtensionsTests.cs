@@ -1,4 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -117,6 +119,152 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
 
         // Assert
         action.ShouldThrow<InvalidOperationException>();
+    }
+
+    [Fact]
+    public async Task Accepts_a_token_with_only_the_expected_audience()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/viajantes");
+        await using var host = ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>>());
+        using var rsa = RSA.Create();
+        var signingKey = new RsaSecurityKey(rsa);
+        var token = ApiAuthenticationTokenFactory.Create(
+            signingKey,
+            "https://identity.example.test/realms/viajantes",
+            ["admin-api"]);
+        var validationParameters = host.BearerOptions.TokenValidationParameters.Clone();
+        validationParameters.IssuerSigningKey = signingKey;
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        // Act
+        var validationResult = await tokenHandler.ValidateTokenAsync(token, validationParameters);
+
+        // Assert
+        validationResult.IsValid.ShouldBeTrue();
+        validationResult.ClaimsIdentity.ShouldNotBeNull();
+        validationResult.ClaimsIdentity.IsAuthenticated.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task Rejects_a_token_without_an_audience()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/viajantes");
+        await using var host = ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>>());
+        using var rsa = RSA.Create();
+        var signingKey = new RsaSecurityKey(rsa);
+        var token = ApiAuthenticationTokenFactory.Create(
+            signingKey,
+            "https://identity.example.test/realms/viajantes",
+            []);
+        var validationParameters = host.BearerOptions.TokenValidationParameters.Clone();
+        validationParameters.IssuerSigningKey = signingKey;
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        // Act
+        var validationResult = await tokenHandler.ValidateTokenAsync(token, validationParameters);
+
+        // Assert
+        validationResult.IsValid.ShouldBeFalse();
+        validationResult.Exception.ShouldBeOfType<SecurityTokenInvalidAudienceException>();
+    }
+
+    [Fact]
+    public async Task Rejects_a_token_with_a_wrong_audience()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/viajantes");
+        await using var host = ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>>());
+        using var rsa = RSA.Create();
+        var signingKey = new RsaSecurityKey(rsa);
+        var token = ApiAuthenticationTokenFactory.Create(
+            signingKey,
+            "https://identity.example.test/realms/viajantes",
+            ["catalog-api"]);
+        var validationParameters = host.BearerOptions.TokenValidationParameters.Clone();
+        validationParameters.IssuerSigningKey = signingKey;
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        // Act
+        var validationResult = await tokenHandler.ValidateTokenAsync(token, validationParameters);
+
+        // Assert
+        validationResult.IsValid.ShouldBeFalse();
+        validationResult.Exception.ShouldBeOfType<SecurityTokenInvalidAudienceException>();
+    }
+
+    [Fact]
+    public async Task Rejects_a_token_with_the_expected_and_an_additional_audience()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/viajantes");
+        await using var host = ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>>());
+        using var rsa = RSA.Create();
+        var signingKey = new RsaSecurityKey(rsa);
+        var token = ApiAuthenticationTokenFactory.Create(
+            signingKey,
+            "https://identity.example.test/realms/viajantes",
+            ["admin-api", "catalog-api"]);
+        var validationParameters = host.BearerOptions.TokenValidationParameters.Clone();
+        validationParameters.IssuerSigningKey = signingKey;
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        // Act
+        var validationResult = await tokenHandler.ValidateTokenAsync(token, validationParameters);
+
+        // Assert
+        validationResult.IsValid.ShouldBeFalse();
+        validationResult.Exception.ShouldBeOfType<SecurityTokenInvalidAudienceException>();
+    }
+
+    [Fact]
+    public async Task Rejects_a_second_audience_without_enumerating_remaining_values()
+    {
+        // Arrange
+        var configuration = ApiAuthenticationTestConfiguration.Create(
+            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/viajantes");
+        await using var host = ApiAuthenticationTestHost.Create(
+            configuration,
+            new TestHostEnvironment(),
+            "admin-api",
+            new Dictionary<string, IReadOnlyCollection<string>>());
+        var audienceValidator = host.BearerOptions.TokenValidationParameters.AudienceValidator
+            ?? throw new InvalidOperationException("The bearer audience validator was not configured.");
+
+        // Act
+        var isValid = audienceValidator(
+            new ExactAudienceEnumerable(),
+            new JwtSecurityToken(),
+            new TokenValidationParameters());
+
+        // Assert
+        isValid.ShouldBeFalse();
     }
 
     [Fact]

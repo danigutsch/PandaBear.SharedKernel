@@ -851,13 +851,20 @@
         "dependencies": {
           "Npgsql": "[10.0.3, )",
           "SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
-          "SharedKernel.EventSourcing": "[0.1.0-alpha.0, )"
+          "SharedKernel.EventSourcing": "[0.1.0-alpha.0, )",
+          "SharedKernel.Npgsql": "[0.1.0-alpha.0, )"
         }
       },
       "sharedkernel.integrationtesting": {
         "type": "Project",
         "dependencies": {
           "Aspire.Hosting.Testing": "[13.4.6, )"
+        }
+      },
+      "sharedkernel.npgsql": {
+        "type": "Project",
+        "dependencies": {
+          "Npgsql": "[10.0.3, )"
         }
       },
       "sharedkernel.results": {
