@@ -11,10 +11,11 @@
     <PackageTags>event-sourcing;npgsql;postgresql;shared-kernel;dotnet</PackageTags>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
-    <ProjectReference Include="..\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
+        <ProjectReference Include="..\SharedKernel.EventSourcing\SharedKernel.EventSourcing.csproj" />
+        <ProjectReference Include="..\SharedKernel.Npgsql\SharedKernel.Npgsql.csproj" />
+    </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Npgsql" />

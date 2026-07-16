@@ -38,6 +38,12 @@
       "sharedkernel.eventsourcing": {
         "type": "Project"
       },
+      "sharedkernel.npgsql": {
+        "type": "Project",
+        "dependencies": {
+          "Npgsql": "[10.0.3, )"
+        }
+      },
       "sharedkernel.results": {
         "type": "Project"
       },

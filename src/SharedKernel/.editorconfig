@@ -71,3 +71,9 @@ csharp_style_prefer_primary_constructors = false:none
 [SharedKernel.EventSourcing.Npgsql/*.cs]
 dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA2100.severity = none
+
+# Transaction-scoped advisory locking is a low-level raw Npgsql primitive with fixed, parameterized SQL.
+# Owner: SharedKernel maintainers. Remove if this module adopts a provider-neutral persistence abstraction.
+[SharedKernel.Npgsql/*.cs]
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA2100.severity = none

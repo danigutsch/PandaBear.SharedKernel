@@ -1,0 +1,3 @@
+#nullable enable
+SharedKernel.Npgsql.PostgreSqlTransactionAdvisoryLock
+static SharedKernel.Npgsql.PostgreSqlTransactionAdvisoryLock.Acquire(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction, long lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask

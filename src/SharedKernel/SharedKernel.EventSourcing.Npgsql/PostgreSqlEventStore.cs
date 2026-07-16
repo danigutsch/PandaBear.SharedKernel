@@ -5,6 +5,7 @@ using System.Text;
 using Npgsql;
 using NpgsqlTypes;
 using SharedKernel.BuildingBlocks;
+using SharedKernel.Npgsql;
 
 namespace SharedKernel.EventSourcing.Npgsql;
 
@@ -114,7 +115,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         {
             await using var connection = await dataSource.OpenConnectionAsync(ct);
             await using var transaction = await connection.BeginTransactionAsync(ct);
-            await AcquireAppendLock(connection, transaction, appendLockKey, ct);
+            await PostgreSqlTransactionAdvisoryLock.Acquire(connection, transaction, appendLockKey, ct);
 
             var currentRevision = await GetCurrentRevision(connection, transaction, schema, streamId, ct);
             if (currentRevision is null)
@@ -486,19 +487,6 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
             {
                 { PostgreSqlEventSourcingTelemetry.TagSchema, schemaName },
             });
-    }
-
-    private static async ValueTask AcquireAppendLock(
-        NpgsqlConnection connection,
-        NpgsqlTransaction transaction,
-        long lockKey,
-        CancellationToken ct)
-    {
-        const string sql = "SELECT pg_advisory_xact_lock(@lockKey);";
-
-        await using var command = new NpgsqlCommand(sql, connection, transaction);
-        command.Parameters.AddWithValue("lockKey", lockKey);
-        _ = await command.ExecuteNonQueryAsync(ct);
     }
 
     private static long GetAppendLockKey(string schemaName)
