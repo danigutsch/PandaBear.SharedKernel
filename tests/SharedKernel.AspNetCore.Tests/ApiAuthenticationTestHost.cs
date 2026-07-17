@@ -49,7 +49,7 @@ internal sealed class ApiAuthenticationTestHost : IAsyncDisposable
         var services = new ServiceCollection();
         services.AddApiSecurity(
             ApiAuthenticationTestConfiguration.Create(string.Empty, string.Empty),
-            new TestHostEnvironment(),
+            new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
             "test-api",
             permissionsByRole,
             registerBearerAuthentication: false);

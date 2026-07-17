@@ -1,8 +1,10 @@
 #nullable enable
 SharedKernel.InputNormalization.NumericSanitizer
+SharedKernel.InputNormalization.ObjectStorageKeyValidator
 SharedKernel.InputNormalization.StringSanitizer
 SharedKernel.InputNormalization.WebAssetUriSanitizer
 static SharedKernel.InputNormalization.NumericSanitizer.SanitizePrice(decimal value) -> decimal
+static SharedKernel.InputNormalization.ObjectStorageKeyValidator.IsValidRelativeKey(string? value, int maxLength) -> bool
 static SharedKernel.InputNormalization.StringSanitizer.NormalizeKey(string! value) -> string!
 static SharedKernel.InputNormalization.StringSanitizer.NormalizeKeyRemovingDiacritics(string! value) -> string!
 static SharedKernel.InputNormalization.StringSanitizer.Sanitize(string? value) -> string?

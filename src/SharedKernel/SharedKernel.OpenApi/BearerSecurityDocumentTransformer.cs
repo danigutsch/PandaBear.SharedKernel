@@ -30,7 +30,7 @@ public sealed class BearerSecurityDocumentTransformer : IOpenApiDocumentTransfor
             .Where(description => options.ShouldInclude(description))
             .Where(static description => !string.IsNullOrWhiteSpace(description.RelativePath) && !string.IsNullOrWhiteSpace(description.HttpMethod))
             .ToDictionary(
-                description => CreateOperationKey(description.RelativePath!, description.HttpMethod!),
+                description => OpenApiOperationKey.Create(description.RelativePath!, description.HttpMethod!),
                 description => description,
                 StringComparer.OrdinalIgnoreCase);
 
@@ -44,7 +44,7 @@ public sealed class BearerSecurityDocumentTransformer : IOpenApiDocumentTransfor
 
             foreach (var operation in path.Value.Operations)
             {
-                if (!descriptions.TryGetValue(CreateOperationKey(path.Key.TrimStart('/'), operation.Key.Method), out var description))
+                if (!descriptions.TryGetValue(OpenApiOperationKey.Create(path.Key, operation.Key.Method), out var description))
                 {
                     continue;
                 }
@@ -87,8 +87,4 @@ public sealed class BearerSecurityDocumentTransformer : IOpenApiDocumentTransfor
         return Task.CompletedTask;
     }
 
-    private static string CreateOperationKey(string relativePath, string method)
-    {
-        return string.Concat(method, ":", relativePath.Trim('/'));
-    }
 }

@@ -15,6 +15,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="ViajantesTurismo.Management.WebTests" />
+        <InternalsVisibleTo Include="ViajantesTurismo.Public.WebTests" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 

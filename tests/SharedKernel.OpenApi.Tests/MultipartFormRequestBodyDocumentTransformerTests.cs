@@ -11,7 +11,7 @@ namespace SharedKernel.OpenApi.Tests;
 public sealed class MultipartFormRequestBodyDocumentTransformerTests
 {
     [Fact]
-    public async Task Normalizes_malformed_multipart_form_allof_entries()
+    public async Task Normalizes_multipart_form_schemas()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.CreateUploadsDocument(group =>
@@ -24,22 +24,29 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         // Assert
         (schema.Type).ShouldBe(JsonSchemaType.Object);
         (schema.Properties).ShouldNotBeNull();
-        (schema.AllOf).ShouldNotBeNull();
-        (schema.AllOf).ShouldNotContain(static item => item.Type != JsonSchemaType.Object || item.Properties is null);
+        (schema.AllOf).ShouldBeNull();
+        (schema.Required).ShouldNotBeNull();
+        (schema.Required).ShouldContain("file");
+        (schema.Properties.Keys).ShouldContain("file");
+        (schema.Properties.Keys).ShouldContain("conflictResolutions");
+    }
 
-        var propertyNames = schema.AllOf
-            .Where(static item => item.Properties is not null)
-            .SelectMany(static item => item.Properties!.Keys)
-            .ToArray();
+    [Fact]
+    public async Task Normalizes_multipart_form_schemas_with_constrained_route_parameters()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateUploadsDocument(group =>
+            group.MapPost("/commit/{id:guid}", (Guid id, [AsParameters] TestCommitImportFormDto form) => TypedResults.Ok())
+                .DisableAntiforgery());
 
-        var requiredContainer = schema.AllOf
-            .FirstOrDefault(static item => item.Properties?.ContainsKey("file") == true);
+        // Act
+        var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/commit/{id}");
 
-        _ = (requiredContainer).ShouldNotBeNull();
-        (requiredContainer.Required).ShouldNotBeNull();
-        (requiredContainer.Required).ShouldContain("file");
-        (propertyNames).ShouldContain("file");
-        (propertyNames).ShouldContain("conflictResolutions");
+        // Assert
+        (schema.Properties).ShouldNotBeNull();
+        (schema.AllOf).ShouldBeNull();
+        (schema.Properties.Keys).ShouldContain("file");
+        (schema.Properties.Keys).ShouldContain("conflictResolutions");
     }
 
     [Fact]
@@ -55,12 +62,13 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
 
         // Assert
         (schema.Type).ShouldBe(JsonSchemaType.Object);
-        (schema.AllOf).ShouldNotBeNull();
+        (schema.Properties).ShouldNotBeNull();
+        (schema.AllOf).ShouldBeNull();
         (schema.Required).ShouldBeNull();
     }
 
     [Fact]
-    public async Task Normalizes_already_malformed_multipart_schemas_using_runtime_context()
+    public async Task Normalizes_multipart_schemas_using_runtime_context()
     {
         // Arrange
         var normalizedDocument = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
@@ -70,6 +78,27 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             async (_, context) =>
             {
                 var document = MultipartFormRequestBodyDocumentTransformerTestsHelpers.CreateMalformedMultipartDocument("/uploads/commit");
+                var multipartSchema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/commit");
+                multipartSchema.AllOf =
+                [
+                    new OpenApiSchema(),
+                    new OpenApiSchema
+                    {
+                        Type = JsonSchemaType.Object,
+                        Properties = new Dictionary<string, IOpenApiSchema>
+                        {
+                            ["conflictResolutions"] = new OpenApiSchema
+                            {
+                                Type = JsonSchemaType.String,
+                                Format = "preserved-format"
+                            }
+                        },
+                        Required = new HashSet<string>(StringComparer.Ordinal)
+                        {
+                            "conflictResolutions"
+                        }
+                    }
+                ];
                 var transformer = new MultipartFormRequestBodyDocumentTransformer();
 
                 await transformer.TransformAsync(document, context, TestContext.Current.CancellationToken);
@@ -79,11 +108,13 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         // Assert
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(normalizedDocument, "/uploads/commit");
         (schema.Type).ShouldBe(JsonSchemaType.Object);
-        (schema.AllOf).ShouldNotBeNull();
-        (schema.AllOf.Count).ShouldBe(2);
-        (schema.AllOf).ShouldAllSatisfy(item => (item.Type).ShouldBe(JsonSchemaType.Object));
-        (schema.AllOf).ShouldContain(static item => item.Properties?.ContainsKey("file") == true);
-        (schema.AllOf).ShouldContain(static item => item.Properties?.ContainsKey("conflictResolutions") == true);
+        (schema.Properties).ShouldNotBeNull();
+        (schema.AllOf).ShouldBeNull();
+        (schema.Properties.Keys).ShouldContain("file");
+        (schema.Properties.Keys).ShouldContain("conflictResolutions");
+        (schema.Required).ShouldNotBeNull().ShouldContain("conflictResolutions");
+        var conflictResolutionSchema = schema.Properties["conflictResolutions"].ShouldBeOfType<OpenApiSchema>();
+        conflictResolutionSchema.Format.ShouldBe("preserved-format");
     }
 
     [Fact]
@@ -111,7 +142,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     }
 
     [Fact]
-    public async Task Skips_invalid_form_parameters_during_malformed_normalization()
+    public async Task Skips_invalid_form_parameters_during_multipart_normalization()
     {
         // Arrange
         var normalizedSchema = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
@@ -127,20 +158,19 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
                 };
 
                 await MultipartFormRequestBodyDocumentTransformerTestsHelpers.InvokePrivateStaticTaskMethod(
-                    "NormalizeMalformedMultipartSchema",
+                    "NormalizeMultipartSchema",
                     [schema, new[] { invalidParameter }, context, TestContext.Current.CancellationToken]);
 
                 return schema;
             });
 
         // Assert
-        (normalizedSchema.AllOf).ShouldNotBeNull();
-        (normalizedSchema.AllOf).ShouldBeEmpty();
+        (normalizedSchema.AllOf).ShouldBeNull();
         (normalizedSchema.Required).ShouldBeNull();
     }
 
     [Fact]
-    public async Task Clears_root_required_when_malformed_normalization_uses_only_optional_form_fields()
+    public async Task Clears_root_required_when_multipart_normalization_uses_only_optional_form_fields()
     {
         // Arrange
         var normalizedDocument = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
@@ -158,12 +188,12 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
 
         // Assert
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(normalizedDocument, "/uploads/optional");
-        (schema.AllOf).ShouldNotBeNull();
+        (schema.AllOf).ShouldBeNull();
         (schema.Required).ShouldBeNull();
     }
 
     [Fact]
-    public async Task Preserves_valid_multipart_form_allof_entries()
+    public async Task Canonicalizes_valid_multipart_form_allof_entries()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.CreateUploadsDocument(group =>
@@ -175,8 +205,10 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
 
         // Assert
         (schema.Type).ShouldBe(JsonSchemaType.Object);
-        (schema.AllOf).ShouldNotBeNull();
-        (schema.AllOf).ShouldMatchCollection(item => (item.Properties!.Keys).ShouldContain("firstFile"), item => (item.Properties!.Keys).ShouldContain("secondFile"));
+        (schema.Properties).ShouldNotBeNull();
+        (schema.AllOf).ShouldBeNull();
+        (schema.Properties.Keys).ShouldContain("firstFile");
+        (schema.Properties.Keys).ShouldContain("secondFile");
     }
 
     [Fact]
@@ -205,58 +237,4 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         // Assert
         (document.Paths.ContainsKey("/uploads/commit")).ShouldBeTrue();
     }
-
-    [Fact]
-    public void Returns_false_when_multipart_normalization_has_no_allof_entries()
-    {
-        var schema = new OpenApiSchema();
-
-        var result = (MultipartFormRequestBodyDocumentTransformerTestsHelpers.InvokePrivateStaticMethod(
-            "RequiresMultipartSchemaNormalization",
-            [schema])).ShouldBeOfType<bool>();
-
-        (result).ShouldBeFalse();
-    }
-
-    [Fact]
-    public void Returns_without_changing_requiredness_when_allof_is_missing()
-    {
-        var schema = new OpenApiSchema();
-        MultipartFormRequestBodyDocumentTransformerTestsHelpers.InvokePrivateStaticVoidMethod(
-            "PreserveRequirednessOnMultipartAllOfEntries",
-            [schema, Array.Empty<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription>()]);
-
-        (schema.Required).ShouldBeNull();
-    }
-
-    [Fact]
-    public void Skips_requiredness_when_no_container_matches_the_required_parameter()
-    {
-        var schema = new OpenApiSchema
-        {
-            AllOf =
-            [
-                new OpenApiSchema
-                {
-                    Type = JsonSchemaType.Object,
-                    Properties = new Dictionary<string, IOpenApiSchema>
-                    {
-                        ["other"] = new OpenApiSchema()
-                    }
-                }
-            ]
-        };
-
-        var parameter = new Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription
-        {
-            Name = "file",
-            IsRequired = true
-        };
-        MultipartFormRequestBodyDocumentTransformerTestsHelpers.InvokePrivateStaticVoidMethod(
-            "PreserveRequirednessOnMultipartAllOfEntries",
-            [schema, new[] { parameter }]);
-
-        (schema.AllOf[0].Required).ShouldBeNull();
-    }
-
 }

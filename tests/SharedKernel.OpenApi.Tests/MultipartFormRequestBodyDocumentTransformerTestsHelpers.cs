@@ -5,17 +5,6 @@ namespace SharedKernel.OpenApi.Tests;
 
 internal static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
 {
-    public static object InvokePrivateStaticMethod(string methodName, object?[] arguments)
-    {
-        var method = typeof(MultipartFormRequestBodyDocumentTransformer).GetMethod(
-            methodName,
-            BindingFlags.Static | BindingFlags.NonPublic)
-            ?? throw new InvalidOperationException($"Could not locate private method '{methodName}'.");
-
-        return method.Invoke(null, arguments)
-            ?? throw new InvalidOperationException($"Private method '{methodName}' returned null.");
-    }
-
     public static async Task InvokePrivateStaticTaskMethod(string methodName, object?[] arguments)
     {
         var method = typeof(MultipartFormRequestBodyDocumentTransformer).GetMethod(
@@ -60,16 +49,6 @@ internal static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
                 }
             }
         };
-    }
-
-    public static void InvokePrivateStaticVoidMethod(string methodName, object?[] arguments)
-    {
-        var method = typeof(MultipartFormRequestBodyDocumentTransformer).GetMethod(
-            methodName,
-            BindingFlags.Static | BindingFlags.NonPublic)
-            ?? throw new InvalidOperationException($"Could not locate private method '{methodName}'.");
-
-        _ = method.Invoke(null, arguments);
     }
 
     public static OpenApiSchema GetMultipartSchema(OpenApiDocument document, string path)
