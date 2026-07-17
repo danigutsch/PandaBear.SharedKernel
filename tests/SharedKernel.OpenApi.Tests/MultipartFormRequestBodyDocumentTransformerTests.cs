@@ -79,10 +79,26 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             {
                 var document = MultipartFormRequestBodyDocumentTransformerTestsHelpers.CreateMalformedMultipartDocument("/uploads/commit");
                 var multipartSchema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/commit");
-                multipartSchema.Required = new HashSet<string>(StringComparer.Ordinal)
-                {
-                    "conflictResolutions"
-                };
+                multipartSchema.AllOf =
+                [
+                    new OpenApiSchema(),
+                    new OpenApiSchema
+                    {
+                        Type = JsonSchemaType.Object,
+                        Properties = new Dictionary<string, IOpenApiSchema>
+                        {
+                            ["conflictResolutions"] = new OpenApiSchema
+                            {
+                                Type = JsonSchemaType.String,
+                                Format = "preserved-format"
+                            }
+                        },
+                        Required = new HashSet<string>(StringComparer.Ordinal)
+                        {
+                            "conflictResolutions"
+                        }
+                    }
+                ];
                 var transformer = new MultipartFormRequestBodyDocumentTransformer();
 
                 await transformer.TransformAsync(document, context, TestContext.Current.CancellationToken);
@@ -97,6 +113,8 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         (schema.Properties.Keys).ShouldContain("file");
         (schema.Properties.Keys).ShouldContain("conflictResolutions");
         (schema.Required).ShouldNotBeNull().ShouldContain("conflictResolutions");
+        var conflictResolutionSchema = schema.Properties["conflictResolutions"].ShouldBeOfType<OpenApiSchema>();
+        conflictResolutionSchema.Format.ShouldBe("preserved-format");
     }
 
     [Fact]
@@ -219,5 +237,4 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         // Assert
         (document.Paths.ContainsKey("/uploads/commit")).ShouldBeTrue();
     }
-
 }

@@ -37,7 +37,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformer : IOpenApiDocume
             .Where(description => options.ShouldInclude(description))
             .Where(static description => !string.IsNullOrWhiteSpace(description.RelativePath) && !string.IsNullOrWhiteSpace(description.HttpMethod))
             .ToDictionary(
-                description => OpenApiOperationKey.Create(description.RelativePath!, description.HttpMethod!),
+                description => OpenApiOperationKey.Create(description.RelativePath ?? string.Empty, description.HttpMethod ?? string.Empty),
                 description => description,
                 StringComparer.OrdinalIgnoreCase);
 
@@ -50,7 +50,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformer : IOpenApiDocume
 
             foreach (var operationItem in pathItem.Value.Operations)
             {
-                if (!TryGetMultipartSchema(operationItem.Value, out var schema))
+                if (!TryGetMultipartSchema(operationItem.Value, out var schema) || schema is null)
                 {
                     continue;
                 }
@@ -80,39 +80,86 @@ public sealed class MultipartFormRequestBodyDocumentTransformer : IOpenApiDocume
         OpenApiDocumentTransformerContext context,
         CancellationToken cancellationToken)
     {
-        var existingProperties = schema.Properties is null
+        var (existingProperties, existingRequiredFields) = CollectExistingMultipartFields(schema);
+        var (properties, requiredFields) = ResetMultipartSchema(schema);
+        await PopulateFormParameters(
+            properties,
+            requiredFields,
+            formParameters,
+            existingProperties,
+            existingRequiredFields,
+            context,
+            cancellationToken).ConfigureAwait(false);
+
+        if (requiredFields.Count == 0)
+        {
+            schema.Required = null;
+        }
+    }
+
+    private static (Dictionary<string, IOpenApiSchema> Properties, HashSet<string> RequiredFields) CollectExistingMultipartFields(OpenApiSchema schema)
+    {
+        var properties = schema.Properties is null
             ? new Dictionary<string, IOpenApiSchema>(StringComparer.Ordinal)
             : new Dictionary<string, IOpenApiSchema>(schema.Properties, StringComparer.Ordinal);
         var requiredFields = schema.Required is null
             ? new HashSet<string>(StringComparer.Ordinal)
             : new HashSet<string>(schema.Required, StringComparer.Ordinal);
 
-        if (schema.AllOf is not null)
+        foreach (var entry in schema.AllOf?.OfType<OpenApiSchema>() ?? [])
         {
-            foreach (var entry in schema.AllOf.OfType<OpenApiSchema>())
-            {
-                if (entry.Properties is not null)
-                {
-                    foreach (var property in entry.Properties)
-                    {
-                        existingProperties.TryAdd(property.Key, property.Value);
-                    }
-                }
-
-                if (entry.Required is not null)
-                {
-                    requiredFields.UnionWith(entry.Required);
-                }
-            }
+            CopyProperties(entry, properties);
+            CopyRequiredFields(entry, requiredFields);
         }
+
+        return (properties, requiredFields);
+    }
+
+    private static void CopyProperties(OpenApiSchema schema, Dictionary<string, IOpenApiSchema> properties)
+    {
+        if (schema.Properties is null)
+        {
+            return;
+        }
+
+        foreach (var property in schema.Properties)
+        {
+            properties.TryAdd(property.Key, property.Value);
+        }
+    }
+
+    private static void CopyRequiredFields(OpenApiSchema schema, HashSet<string> requiredFields)
+    {
+        if (schema.Required is not null)
+        {
+            requiredFields.UnionWith(schema.Required);
+        }
+    }
+
+    private static (Dictionary<string, IOpenApiSchema> Properties, HashSet<string> RequiredFields) ResetMultipartSchema(OpenApiSchema schema)
+    {
+        var properties = new Dictionary<string, IOpenApiSchema>(StringComparer.Ordinal);
+        var requiredFields = new HashSet<string>(StringComparer.Ordinal);
 
         schema.Type = JsonSchemaType.Object;
         schema.AllOf = null;
         schema.AnyOf = [];
         schema.OneOf = [];
-        schema.Properties = new Dictionary<string, IOpenApiSchema>(StringComparer.Ordinal);
-        schema.Required = new HashSet<string>(StringComparer.Ordinal);
+        schema.Properties = properties;
+        schema.Required = requiredFields;
 
+        return (properties, requiredFields);
+    }
+
+    private static async Task PopulateFormParameters(
+        Dictionary<string, IOpenApiSchema> properties,
+        HashSet<string> requiredFields,
+        IReadOnlyCollection<ApiParameterDescription> formParameters,
+        Dictionary<string, IOpenApiSchema> existingProperties,
+        HashSet<string> existingRequiredFields,
+        OpenApiDocumentTransformerContext context,
+        CancellationToken cancellationToken)
+    {
         foreach (var parameter in formParameters)
         {
             if (string.IsNullOrWhiteSpace(parameter.Name) || parameter.Type is null)
@@ -123,23 +170,18 @@ public sealed class MultipartFormRequestBodyDocumentTransformer : IOpenApiDocume
             var parameterSchema = existingProperties.TryGetValue(parameter.Name, out var existingSchema)
                 ? existingSchema
                 : await context.GetOrCreateSchemaAsync(parameter.Type, parameter, cancellationToken).ConfigureAwait(false);
-            schema.Properties[parameter.Name] = parameterSchema;
+            properties[parameter.Name] = parameterSchema;
 
-            if (requiredFields.Contains(parameter.Name) || IsRequired(parameter))
+            if (existingRequiredFields.Contains(parameter.Name) || IsRequired(parameter))
             {
-                schema.Required.Add(parameter.Name);
+                requiredFields.Add(parameter.Name);
             }
-        }
-
-        if (schema.Required.Count == 0)
-        {
-            schema.Required = null;
         }
     }
 
-    private static bool TryGetMultipartSchema(OpenApiOperation operation, out OpenApiSchema schema)
+    private static bool TryGetMultipartSchema(OpenApiOperation operation, out OpenApiSchema? schema)
     {
-        schema = null!;
+        schema = null;
 
         if (operation.RequestBody?.Content is null)
         {
