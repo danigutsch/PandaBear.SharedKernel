@@ -194,6 +194,29 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
+    public async Task Documents_bearer_authentication_for_protected_constrained_routes()
+    {
+        // Arrange
+        var document = await OpenApiDocumentFactory.CreateDocumentFromApplication("tours", app =>
+        {
+            app.MapGroup("/tours")
+                .WithGroupName("tours")
+                .WithTags("tours")
+                .MapGet("/{id:guid}", (Guid id) => TypedResults.Ok(id))
+                .RequireAuthorization();
+        });
+
+        // Act
+        var path = document.Paths["/tours/{id}"].ShouldNotBeNull();
+        var operation = path.Operations.ShouldNotBeNull()[HttpMethod.Get].ShouldNotBeNull();
+
+        // Assert
+        operation.Security.ShouldNotBeNull().ShouldHaveSingleItem();
+        operation.Responses.ShouldNotBeNull().ContainsKey("401").ShouldBeTrue();
+        operation.Responses.ShouldNotBeNull().ContainsKey("403").ShouldBeTrue();
+    }
+
+    [Fact]
     public async Task Allows_anonymous_metadata_to_override_direct_authorization()
     {
         // Arrange

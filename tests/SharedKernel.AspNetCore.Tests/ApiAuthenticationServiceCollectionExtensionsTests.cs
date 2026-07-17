@@ -77,7 +77,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public async Task Legacy_generation_configuration_marker_does_not_disable_bearer_authentication()
+    public async Task OpenApi_generation_configuration_marker_does_not_disable_bearer_authentication()
     {
         // Arrange
         var configuration = new ConfigurationBuilder()
