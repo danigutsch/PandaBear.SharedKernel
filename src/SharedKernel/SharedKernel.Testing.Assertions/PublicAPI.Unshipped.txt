@@ -20,6 +20,7 @@ static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeLessTha
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeNull(this object? actual) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeOfType<T>(this object? actual) -> T
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeOfType<T>(this object? actual, bool exactMatch) -> T
+static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeOneOf<T>(this T actual, params T[]! expected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeSameAs<T>(this T? actual, T? expected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeTrue(this bool actual, string? userMessage = null) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeTrue(this bool? actual, string? userMessage = null) -> void

@@ -228,6 +228,18 @@ public static class ShouldAssertionExtensions
     public static void ShouldContain<T>(this IEnumerable<T> actual, Predicate<T> predicate) => Xunit.Assert.Contains(actual, predicate);
 
     /// <summary>
+    /// Verifies that a value equals one of the expected values.
+    /// </summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="actual">The value being verified.</param>
+    /// <param name="expected">The accepted values.</param>
+    public static void ShouldBeOneOf<T>(this T actual, params T[] expected)
+    {
+        ArgumentNullException.ThrowIfNull(expected);
+        Xunit.Assert.Contains(actual, expected);
+    }
+
+    /// <summary>
     /// Verifies that a string contains every expected fragment in ordinal order.
     /// </summary>
     /// <param name="actual">The actual value.</param>
