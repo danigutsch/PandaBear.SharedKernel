@@ -1,11 +1,5 @@
 namespace SharedKernel.PlaywrightMcp.Tool;
 
-internal enum ContainerEngine
-{
-    Docker,
-    Podman
-}
-
 internal sealed record PlaywrightMcpOptions(
     ContainerEngine Engine,
     string ExecutablePath,
