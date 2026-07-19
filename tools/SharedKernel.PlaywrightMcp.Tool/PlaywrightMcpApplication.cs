@@ -40,58 +40,7 @@ internal static class PlaywrightMcpApplication
         {
             var options = PlaywrightMcpOptions.Parse(getEnvironmentVariable, resolveExecutable);
             cancellationToken.ThrowIfCancellationRequested();
-            if (options.Engine == ContainerEngine.Docker)
-            {
-                var contextResult = await runProcess(
-                    PlaywrightMcpCommand.CreateDockerContextShowStartInfo(options),
-                    cancellationToken).ConfigureAwait(false);
-                if (contextResult.ExitCode != 0)
-                {
-                    throw new InvalidOperationException(
-                        $"Docker current-context inspection failed: {contextResult.StandardError.Trim()}");
-                }
-
-                var dockerContext = contextResult.StandardOutput.Trim();
-                if (string.IsNullOrWhiteSpace(dockerContext)
-                    || dockerContext.Contains('\r', StringComparison.Ordinal)
-                    || dockerContext.Contains('\n', StringComparison.Ordinal))
-                {
-                    throw new InvalidOperationException("Docker returned an invalid current context name.");
-                }
-
-                options = options with { DockerContext = dockerContext };
-                var probe = PlaywrightMcpCommand.CreateDockerContextProbeStartInfo(options);
-                var probeResult = await runProcess(probe, cancellationToken).ConfigureAwait(false);
-                if (probeResult.ExitCode != 0)
-                {
-                    throw new InvalidOperationException(
-                        $"Docker context inspection failed: {probeResult.StandardError.Trim()}");
-                }
-
-                var dockerEndpoint = probeResult.StandardOutput.Trim();
-                if (!PlaywrightMcpCommand.IsLocalDockerEndpoint(dockerEndpoint))
-                {
-                    throw new InvalidOperationException(
-                        $"Refusing non-local Docker context '{dockerContext}': {dockerEndpoint}");
-                }
-
-                options = options with { DockerEndpoint = dockerEndpoint };
-            }
-            else
-            {
-                var probe = PlaywrightMcpCommand.CreatePodmanRootlessProbeStartInfo(options);
-                var probeResult = await runProcess(probe, cancellationToken).ConfigureAwait(false);
-                if (probeResult.ExitCode != 0)
-                {
-                    throw new InvalidOperationException(
-                        $"Podman rootless inspection failed: {probeResult.StandardError.Trim()}");
-                }
-
-                if (!string.Equals(probeResult.StandardOutput.Trim(), "true", StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new InvalidOperationException("Playwright MCP requires local rootless Podman mode.");
-                }
-            }
+            options = await ValidateLocalEngine(options, runProcess, cancellationToken).ConfigureAwait(false);
 
             cancellationToken.ThrowIfCancellationRequested();
             if (args is ["prepare"])
@@ -126,42 +75,7 @@ internal static class PlaywrightMcpApplication
                 runtimeFailure = ExceptionDispatchInfo.Capture(exception);
             }
 
-            using var cleanupTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            var cleanup = PlaywrightMcpCommand.CreateContainerCleanupStartInfo(options, containerName);
-            try
-            {
-                var cleanupResult = await runProcess(cleanup, cleanupTimeout.Token).ConfigureAwait(false);
-                var cleanupSucceeded = cleanupResult.ExitCode == 0;
-                if (cleanupResult.ExitCode != 0 && options.Engine == ContainerEngine.Docker)
-                {
-                    var existenceProbe = PlaywrightMcpCommand.CreateContainerExistenceProbeStartInfo(
-                        options,
-                        containerName);
-                    var existenceResult = await runProcess(
-                        existenceProbe,
-                        cleanupTimeout.Token).ConfigureAwait(false);
-                    cleanupSucceeded = existenceResult.ExitCode == 0
-                        && string.IsNullOrWhiteSpace(existenceResult.StandardOutput);
-                    if (!cleanupSucceeded)
-                    {
-                        throw new InvalidOperationException(
-                            $"Container cleanup failed for '{containerName}': {cleanupResult.StandardError.Trim()} "
-                            + $"Removal check: {existenceResult.StandardError.Trim()}");
-                    }
-                }
-
-                if (!cleanupSucceeded)
-                {
-                    throw new InvalidOperationException(
-                        $"Container cleanup failed for '{containerName}': {cleanupResult.StandardError.Trim()}");
-                }
-            }
-            catch (OperationCanceledException exception)
-            {
-                throw new InvalidOperationException(
-                    $"Container cleanup timed out for '{containerName}'. Remove it manually.",
-                    exception);
-            }
+            await CleanupContainer(options, containerName, runProcess).ConfigureAwait(false);
 
             runtimeFailure?.Throw();
             return runtimeResult.ExitCode;
@@ -193,7 +107,111 @@ internal static class PlaywrightMcpApplication
         }
     }
 
-    private static async Task<ProcessResult> RunProcess(
+    private static async Task<PlaywrightMcpOptions> ValidateLocalEngine(
+        PlaywrightMcpOptions options,
+        Func<ProcessStartInfo, CancellationToken, Task<ProcessResult>> runProcess,
+        CancellationToken cancellationToken)
+    {
+        if (options.Engine == ContainerEngine.Docker)
+        {
+            var contextResult = await runProcess(
+                PlaywrightMcpCommand.CreateDockerContextShowStartInfo(options),
+                cancellationToken).ConfigureAwait(false);
+            if (contextResult.ExitCode != 0)
+            {
+                throw new InvalidOperationException(
+                    $"Docker current-context inspection failed: {contextResult.StandardError.Trim()}");
+            }
+
+            var dockerContext = contextResult.StandardOutput.Trim();
+            if (string.IsNullOrWhiteSpace(dockerContext)
+                || dockerContext.Contains('\r', StringComparison.Ordinal)
+                || dockerContext.Contains('\n', StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("Docker returned an invalid current context name.");
+            }
+
+            options = options with { DockerContext = dockerContext };
+            var probeResult = await runProcess(
+                PlaywrightMcpCommand.CreateDockerContextProbeStartInfo(options),
+                cancellationToken).ConfigureAwait(false);
+            if (probeResult.ExitCode != 0)
+            {
+                throw new InvalidOperationException(
+                    $"Docker context inspection failed: {probeResult.StandardError.Trim()}");
+            }
+
+            var dockerEndpoint = probeResult.StandardOutput.Trim();
+            if (!PlaywrightMcpCommand.IsLocalDockerEndpoint(dockerEndpoint))
+            {
+                throw new InvalidOperationException(
+                    $"Refusing non-local Docker context '{dockerContext}': {dockerEndpoint}");
+            }
+
+            return options with { DockerEndpoint = dockerEndpoint };
+        }
+
+        var podmanProbeResult = await runProcess(
+            PlaywrightMcpCommand.CreatePodmanRootlessProbeStartInfo(options),
+            cancellationToken).ConfigureAwait(false);
+        if (podmanProbeResult.ExitCode != 0)
+        {
+            throw new InvalidOperationException(
+                $"Podman rootless inspection failed: {podmanProbeResult.StandardError.Trim()}");
+        }
+
+        if (!string.Equals(podmanProbeResult.StandardOutput.Trim(), "true", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("Playwright MCP requires local rootless Podman mode.");
+        }
+
+        return options;
+    }
+
+    private static async Task CleanupContainer(
+        PlaywrightMcpOptions options,
+        string containerName,
+        Func<ProcessStartInfo, CancellationToken, Task<ProcessResult>> runProcess)
+    {
+        using var cleanupTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var cleanup = PlaywrightMcpCommand.CreateContainerCleanupStartInfo(options, containerName);
+        try
+        {
+            var cleanupResult = await runProcess(cleanup, cleanupTimeout.Token).ConfigureAwait(false);
+            var cleanupSucceeded = cleanupResult.ExitCode == 0;
+            if (cleanupResult.ExitCode != 0 && options.Engine == ContainerEngine.Docker)
+            {
+                var existenceProbe = PlaywrightMcpCommand.CreateContainerExistenceProbeStartInfo(
+                    options,
+                    containerName);
+                var existenceResult = await runProcess(
+                    existenceProbe,
+                    cleanupTimeout.Token).ConfigureAwait(false);
+                cleanupSucceeded = existenceResult.ExitCode == 0
+                    && string.IsNullOrWhiteSpace(existenceResult.StandardOutput);
+                if (!cleanupSucceeded)
+                {
+                    throw new InvalidOperationException(
+                        $"Container cleanup failed for '{containerName}': {cleanupResult.StandardError.Trim()} "
+                        + $"Removal check: {existenceResult.StandardError.Trim()}");
+                }
+            }
+
+            if (!cleanupSucceeded)
+            {
+                throw new InvalidOperationException(
+                    $"Container cleanup failed for '{containerName}': {cleanupResult.StandardError.Trim()}");
+            }
+        }
+        catch (OperationCanceledException exception)
+        {
+            throw new InvalidOperationException(
+                $"Container cleanup timed out for '{containerName}'. Remove it manually.",
+                exception);
+        }
+    }
+
+    internal static async Task<ProcessResult> RunProcess(
         ProcessStartInfo startInfo,
         CancellationToken cancellationToken)
     {
