@@ -12,35 +12,50 @@ public sealed class ShouldAssertionExtensionsTests
 
         var value = values.ShouldHaveSingleItem();
 
-        (value).ShouldBe(42);
+        value.ShouldBe(42);
     }
 
     [Fact]
     public void Should_assertion_extensions_support_migrated_xunit_assertion_overloads()
     {
         string[] values = ["alpha", "beta"];
+        object actualValue = "alpha";
 
         var matchingValue = values.ShouldHaveSingleItem(static value => value == "beta");
         values.ShouldNotContain("gamma", StringComparer.Ordinal);
-        var assignableValue = ((object)"alpha").ShouldBeOfType<object>(exactMatch: false);
+        var assignableValue = actualValue.ShouldBeOfType<object>(exactMatch: false);
 
         matchingValue.ShouldBe("beta");
         assignableValue.ShouldBe("alpha");
     }
 
     [Fact]
+    public void Should_be_one_of_matches_an_expected_value()
+    {
+        // Arrange
+        const string Actual = "OPEN";
+        string[] expected = ["OPEN", "CLOSED"];
+
+        // Assert
+        Actual.ShouldBeOneOf(expected);
+    }
+
+    [Fact]
     public void Should_assertion_extensions_cover_common_supported_shapes()
     {
         string[] values = ["alpha", "beta"];
+        const double ActualValue = 1.234;
+        const string ActualName = "alpha";
+        const string BookingReference = "booking-42";
 
-        (1.234).ShouldBe(1.23, 2);
-        ("alpha").ShouldNotBe("beta", StringComparer.OrdinalIgnoreCase);
+        ActualValue.ShouldBe(1.23, 2);
+        ActualName.ShouldNotBe("beta", StringComparer.OrdinalIgnoreCase);
         Action<string, string> contains = ShouldAssertionExtensions.ShouldContain;
 
         contains("alphabet", "alpha");
         values.ShouldContain(static value => value.StartsWith('b'));
         values.ShouldNotBeEmpty();
-        ("booking-42").ShouldMatch(new Regex(@"^booking-\d+$", RegexOptions.None, TimeSpan.FromSeconds(1)));
+        BookingReference.ShouldMatch(new Regex(@"^booking-\d+$", RegexOptions.None, TimeSpan.FromSeconds(1)));
     }
 
     [Fact]
