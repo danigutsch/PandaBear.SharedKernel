@@ -234,6 +234,22 @@ internal static class PlaywrightMcpApplication
                 // Preserve cancellation so the caller can force-remove the named container.
             }
 
+            var outputDrain = Task.WhenAll(standardOutput, standardError);
+            try
+            {
+                await outputDrain.WaitAsync(TimeSpan.FromSeconds(2), CancellationToken.None).ConfigureAwait(false);
+            }
+            catch (Exception exception) when (exception is TimeoutException
+                or IOException
+                or InvalidOperationException)
+            {
+                _ = outputDrain.ContinueWith(
+                    static completed => _ = completed.Exception,
+                    CancellationToken.None,
+                    TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously,
+                    TaskScheduler.Default);
+            }
+
             throw;
         }
 
