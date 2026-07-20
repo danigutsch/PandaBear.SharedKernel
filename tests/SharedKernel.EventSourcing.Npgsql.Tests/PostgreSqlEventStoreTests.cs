@@ -49,10 +49,17 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
         };
 
         // Act
-        await store.Append(streamId, ExpectedStreamRevision.NoStream, events, TestContext.Current.CancellationToken);
+        var appended = await store.Append(streamId, ExpectedStreamRevision.NoStream, events, TestContext.Current.CancellationToken);
         var envelopes = await store.Load(streamId, afterRevision: null, TestContext.Current.CancellationToken);
+        var persistedEnvelopes = appended.ToArray();
+        var loadedEnvelopes = envelopes.ToArray();
 
         // Assert
+        persistedEnvelopes.Length.ShouldBe(2);
+        persistedEnvelopes[0].EventId.ShouldBe(loadedEnvelopes[0].EventId);
+        persistedEnvelopes[0].Position.ShouldBe(loadedEnvelopes[0].Position);
+        persistedEnvelopes[1].EventId.ShouldBe(loadedEnvelopes[1].EventId);
+        persistedEnvelopes[1].Position.ShouldBe(loadedEnvelopes[1].Position);
         (envelopes).ShouldMatchCollection(first =>
             {
                 (first.Revision.Value).ShouldBe(1);
@@ -66,6 +73,27 @@ public sealed class PostgreSqlEventStoreTests : IAsyncLifetime
                 var eventData = (second.Data).ShouldBeOfType<TestEvent>();
                 (eventData.Name).ShouldBe("published");
             });
+    }
+
+    [Fact]
+    public async Task Append_returns_the_recorded_at_persisted_for_subsequent_load()
+    {
+        // Arrange
+        var options = PostgreSqlEventStoreTestsHelpers.CreateOptions();
+        await using var store = new PostgreSqlEventStore(ConnectionString, new TestEventSerializer(), options);
+        await store.Initialize(TestContext.Current.CancellationToken);
+        var streamId = StreamId.From("catalog-tour-recorded-at");
+
+        // Act
+        var appended = await store.Append(
+            streamId,
+            ExpectedStreamRevision.NoStream,
+            [new TestEvent("draft-created")],
+            TestContext.Current.CancellationToken);
+        var loaded = await store.Load(streamId, afterRevision: null, TestContext.Current.CancellationToken);
+
+        // Assert
+        appended.ShouldHaveSingleItem().RecordedAt.ShouldBe(loaded.ShouldHaveSingleItem().RecordedAt);
     }
 
     [Fact]

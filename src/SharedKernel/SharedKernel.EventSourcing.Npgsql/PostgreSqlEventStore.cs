@@ -93,7 +93,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
     public ValueTask Initialize(CancellationToken ct) => PostgreSqlEventSourcingSchema.Initialize(dataSource, options, ct);
 
     /// <inheritdoc />
-    public async ValueTask Append(
+    public async ValueTask<IReadOnlyCollection<EventEnvelope>> Append(
         StreamId streamId,
         ExpectedStreamRevision expectedRevision,
         IReadOnlyCollection<object> events,
@@ -103,7 +103,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
 
         if (events.Count == 0)
         {
-            return;
+            return [];
         }
 
         var schemaName = PostgreSqlNames.SchemaName(options);
@@ -128,12 +128,21 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
             EnsureExpectedRevision(streamId, expectedRevision, currentRevision);
 
             var recordedAt = DateTimeOffset.UtcNow;
+            var appended = new List<EventEnvelope>(events.Count);
             foreach (var eventData in events)
             {
                 ArgumentNullException.ThrowIfNull(eventData);
 
                 currentRevision++;
-                await AppendEvent(connection, transaction, schema, streamId, currentRevision.Value, eventData, recordedAt, ct);
+                appended.Add(await AppendEvent(
+                    connection,
+                    transaction,
+                    schema,
+                    streamId,
+                    currentRevision.Value,
+                    eventData,
+                    recordedAt,
+                    ct));
             }
 
             await UpdateStreamRevision(connection, transaction, schema, streamId, currentRevision.Value, recordedAt, ct);
@@ -141,6 +150,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
             CompleteActivity(activity, PostgreSqlEventSourcingTelemetry.OutcomeSuccess);
             RecordAppendDuration(schemaName, PostgreSqlEventSourcingTelemetry.OutcomeSuccess, Stopwatch.GetElapsedTime(start));
             RecordEventsAppended(schemaName, events.Count);
+            return appended;
         }
         catch (ExpectedStreamRevisionConflictException exception)
         {
@@ -514,7 +524,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         _ = await command.ExecuteNonQueryAsync(ct);
     }
 
-    private async ValueTask AppendEvent(
+    private async ValueTask<EventEnvelope> AppendEvent(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         string schema,
@@ -526,17 +536,36 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
     {
         var sql = $"""
             INSERT INTO {schema}.events (event_id, stream_id, stream_revision, event_type, payload_json, recorded_at_utc)
-            VALUES (@eventId, @streamId, @streamRevision, @eventType, @payloadJson, @recordedAt);
+            VALUES (@eventId, @streamId, @streamRevision, @eventType, @payloadJson, @recordedAt)
+            RETURNING position, recorded_at_utc;
             """;
 
+        var eventId = Guid.CreateVersion7();
+        var eventType = serializer.GetEventType(eventData);
         await using var command = new NpgsqlCommand(sql, connection, transaction);
-        command.Parameters.AddWithValue("eventId", Guid.CreateVersion7());
+        command.Parameters.AddWithValue("eventId", eventId);
         command.Parameters.AddWithValue("streamId", streamId.Value);
         command.Parameters.AddWithValue("streamRevision", revision);
-        command.Parameters.AddWithValue("eventType", serializer.GetEventType(eventData));
+        command.Parameters.AddWithValue("eventType", eventType);
         command.Parameters.AddWithValue("payloadJson", NpgsqlDbType.Jsonb, serializer.Serialize(eventData));
         command.Parameters.AddWithValue("recordedAt", recordedAt);
-        _ = await command.ExecuteNonQueryAsync(ct);
+        await using var reader = await command.ExecuteReaderAsync(ct);
+        if (!await reader.ReadAsync(ct))
+        {
+            throw new InvalidOperationException("The appended event metadata was not returned.");
+        }
+
+        var position = reader.GetInt64(0);
+        var persistedRecordedAt = await reader.GetFieldValueAsync<DateTimeOffset>(1, ct);
+
+        return new EventEnvelope(
+            streamId,
+            position,
+            StreamRevision.From(revision),
+            eventId,
+            eventType,
+            eventData,
+            persistedRecordedAt);
     }
 
     private static async ValueTask UpdateStreamRevision(
