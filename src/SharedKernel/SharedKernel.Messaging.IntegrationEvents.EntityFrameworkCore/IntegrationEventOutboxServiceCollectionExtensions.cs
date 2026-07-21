@@ -27,7 +27,6 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
         services.TryAddScoped<IIntegrationEventOutbox, EfIntegrationEventOutbox<TContext>>();
         services.TryAddSingleton<IDomainEventIntegrationEventOutbox, EfDomainEventIntegrationEventOutbox<TContext>>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventOutboxDbContextConfiguration<TContext>>());
-        services.AddIdempotencyStore<TContext>();
 
         return services;
     }
