@@ -27,7 +27,7 @@ internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
 
     public static async ValueTask<PostgreSqlIdempotencyStoreScenario> Create(CancellationToken ct)
     {
-        var appBuilder = DistributedApplication.CreateBuilder([]);
+        var appBuilder = AspireTestApplication.CreateBuilder();
         var databaseServer = appBuilder.AddPostgres(PostgreSqlResourceName);
         _ = databaseServer.AddDatabase(DatabaseResourceName);
 

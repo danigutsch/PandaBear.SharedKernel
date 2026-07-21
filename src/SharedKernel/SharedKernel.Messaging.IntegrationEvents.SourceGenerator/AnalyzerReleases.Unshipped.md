@@ -7,3 +7,4 @@ SKMSG002 | SharedKernel.Messaging | Error | Registered integration-event consume
 SKMSG003 | SharedKernel.Messaging | Error | Statically known integration-event consumers declare the same event type
 SKMSG004 | SharedKernel.Messaging | Error | Integration-event mapping method or containing type is invalid for generated dispatch
 SKMSG005 | SharedKernel.Messaging | Error | Multiple mapping methods declare the same domain-event and integration-event pair
+SKMSG006 | SharedKernel.Messaging | Error | Registered integration-event contract must be concrete, closed, and accessible to generated code
