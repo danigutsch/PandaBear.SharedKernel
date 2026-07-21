@@ -23,7 +23,7 @@ public static class PostgreSqlPublicSchemaReset
                                                        AND NOT (tablename = ANY(excluded_table_names));
 
                                                      IF tables_to_truncate IS NOT NULL THEN
-                                                         EXECUTE 'TRUNCATE TABLE ' || tables_to_truncate || ' RESTART IDENTITY CASCADE';
+                                                         EXECUTE 'TRUNCATE TABLE ' || tables_to_truncate || ' RESTART IDENTITY RESTRICT';
                                                      END IF;
                                                  END;
                                                  $$;

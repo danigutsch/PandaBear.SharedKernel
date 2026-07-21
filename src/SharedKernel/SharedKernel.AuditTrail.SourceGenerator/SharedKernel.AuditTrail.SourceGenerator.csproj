@@ -11,16 +11,17 @@
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <Nullable>enable</Nullable>
+        <AuditTrailSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' != 'true'">$(MSBuildProjectDirectory)/bin/$(Configuration)/netstandard2.0/$(AssemblyName).dll</AuditTrailSourceGeneratorPackageFile>
+        <AuditTrailSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' == 'true'">$(MSBuildThisFileDirectory)..\..\..\.build\bin\$(MSBuildProjectName)\$(Configuration)\netstandard2.0\$(AssemblyName).dll</AuditTrailSourceGeneratorPackageFile>
+        <AuditTrailDependencyInjectionPackageVersion>10.0.10</AuditTrailDependencyInjectionPackageVersion>
+        <NuspecFile>SharedKernel.AuditTrail.SourceGenerator.nuspec</NuspecFile>
+        <NuspecBasePath>$(MSBuildProjectDirectory)</NuspecBasePath>
+        <NuspecProperties>packageVersion=$(PackageVersion);analyzerFile=$(AuditTrailSourceGeneratorPackageFile);dependencyInjectionVersion=$(AuditTrailDependencyInjectionPackageVersion)</NuspecProperties>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
-        <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
 
 </Project>
