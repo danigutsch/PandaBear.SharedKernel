@@ -25,7 +25,6 @@ internal static partial class DiscoveryModelBuilder
                 [],
                 [],
                 [],
-                [],
                 SupportsEfCoreCommandTransactions: false);
         }
 
@@ -71,7 +70,6 @@ internal static partial class DiscoveryModelBuilder
             [.. modules.OrderBy(static module => module.AssemblyName, StringComparer.Ordinal)],
             requests,
             BuildNotificationDescriptors(discoveryState.NotificationContracts, discoveryState.NotificationHandlers, discoveryState),
-            [.. discoveryState.DomainEventHandlers.Distinct().OrderBy(static handler => handler.DomainEventMetadataName, StringComparer.Ordinal)],
             streamRequests,
             [.. discoveryState.Diagnostics.OrderBy(static diagnostic => diagnostic.Location.SourceSpan.Start)],
             SupportsEfCoreCommandTransactions: compilation.GetTypeByMetadataName(MetadataNames.DbContext) is not null
@@ -165,11 +163,6 @@ internal static partial class DiscoveryModelBuilder
         foreach (var notificationHandler in CreateNotificationHandlers(type, discoverySymbols, discoveryState, primaryAssembly))
         {
             discoveryState.NotificationHandlers.Add(notificationHandler);
-        }
-
-        foreach (var domainEventHandler in CreateDomainEventHandlers(type, discoverySymbols))
-        {
-            discoveryState.DomainEventHandlers.Add(domainEventHandler);
         }
 
         if (TryCreateStreamRequestContract(type, discoverySymbols, primaryAssembly, out var streamRequestContract))

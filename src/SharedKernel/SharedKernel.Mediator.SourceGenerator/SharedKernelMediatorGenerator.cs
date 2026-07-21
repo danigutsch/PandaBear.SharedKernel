@@ -45,9 +45,6 @@ public sealed class SharedKernelMediatorGenerator : IIncrementalGenerator
                         AppMediatorTelemetry: AppMediatorTelemetryEmitter.Emit(),
                         GeneratedDispatch: GeneratedDispatchEmitter.Emit(discoveryModel),
                         GeneratedPipelines: GeneratedPipelinesEmitter.Emit(discoveryModel),
-                        DomainEventNotifications: discoveryModel.DomainEventHandlers.Length > 0
-                            ? DomainEventNotificationsEmitter.Emit(discoveryModel)
-                            : null,
                         CallGraph: generatorOptions.EmitCallGraphJson
                             ? CallGraphArtifactEmitter.Emit(discoveryModel)
                             : null);
@@ -81,13 +78,6 @@ public sealed class SharedKernelMediatorGenerator : IIncrementalGenerator
                 productionContext.AddSource(
                     GeneratedHintNames.GeneratedPipelines,
                     SourceText.From(output.GeneratedPipelines, Encoding.UTF8));
-
-                if (output.DomainEventNotifications is not null)
-                {
-                    productionContext.AddSource(
-                        GeneratedHintNames.DomainEventNotifications,
-                        SourceText.From(output.DomainEventNotifications, Encoding.UTF8));
-                }
 
                 if (output.CallGraph is not null)
                 {

@@ -659,13 +659,16 @@ public sealed class IntegrationEventMappingGeneratorTests
         generatedIntegrationEvents.ShouldNotContain("GetRequiredService", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldNotContain("ContractRegistration", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldNotContain("Dictionary", StringComparison.Ordinal);
-        topLevelTypeCount.ShouldBe(4);
+        topLevelTypeCount.ShouldBe(5);
         nestedTypeCount.ShouldBe(0);
         registrationMethodCount.ShouldBe(1);
         serviceProviderSiteCount.ShouldBe(0);
         runtimeRecoveryTypeCount.ShouldBe(0);
         var dispatcherRegistration = dispatcherRegistrations.ShouldHaveSingleItem();
-        dispatcherRegistration.ShouldContain("GeneratedIntegrationEventDomainEventDispatcher", StringComparison.Ordinal);
+        dispatcherRegistration.ShouldContain("CompositeDomainEventDispatcher", StringComparison.Ordinal);
+        generatedIntegrationEvents.ShouldContain(
+            "IDomainEventDispatchHandler, global::SharedKernel.Messaging.IntegrationEvents.Generated.GeneratedIntegrationEventDomainEventDispatcher",
+            StringComparison.Ordinal);
     }
 
     [Fact]

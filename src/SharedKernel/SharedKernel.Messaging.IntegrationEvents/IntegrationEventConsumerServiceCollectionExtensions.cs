@@ -26,27 +26,13 @@ public static class IntegrationEventConsumerServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(eventType);
         ArgumentNullException.ThrowIfNull(jsonTypeInfo);
-
-        services.TryAddSingleton<RegisteredIntegrationEventSerializer>();
-        services.TryAddSingleton<IIntegrationEventSerializer>(sp => sp.GetRequiredService<RegisteredIntegrationEventSerializer>());
-        var existingRegistration = services
-            .Where(static descriptor => descriptor.ServiceType == typeof(IIntegrationEventConsumerRegistration))
-            .Select(static descriptor => descriptor.ImplementationInstance)
-            .OfType<IIntegrationEventConsumerRegistration>()
-            .FirstOrDefault(registration => registration.IntegrationEventType == typeof(TIntegrationEvent) || registration.EventType == eventType);
-        if (existingRegistration is not null)
+        if (!string.Equals(eventType, TIntegrationEvent.EventType, StringComparison.Ordinal))
         {
-            if (existingRegistration.IntegrationEventType == typeof(TIntegrationEvent) && existingRegistration.EventType == eventType)
-            {
-                return services;
-            }
-
             throw new InvalidOperationException(
-                $"Integration event registration conflict for event type '{eventType}' and contract type '{typeof(TIntegrationEvent).FullName}'.");
+                $"Integration event contract '{typeof(TIntegrationEvent).FullName}' declares event type '{TIntegrationEvent.EventType}', not '{eventType}'.");
         }
 
-        services.AddSingleton<IIntegrationEventConsumerRegistration>(
-            new IntegrationEventConsumerRegistration<TIntegrationEvent>(eventType, jsonTypeInfo));
+        services.TryAddSingleton(jsonTypeInfo);
 
         return services;
     }
@@ -66,7 +52,6 @@ public static class IntegrationEventConsumerServiceCollectionExtensions
         where TIntegrationEvent : IIntegrationEvent
     {
         services.AddIntegrationEventContract(eventType, jsonTypeInfo);
-        services.TryAddScoped<IEventEnvelopePublisher, RegisteredIntegrationEventEnvelopePublisher>();
 
         return services;
     }

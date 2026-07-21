@@ -6,31 +6,44 @@ namespace SharedKernel.Mediator;
 /// <summary>
 /// Provides the generated mediator shell owned by the consumer compilation.
 /// </summary>
-public sealed partial class AppMediator : IMediator
+internal sealed partial class AppMediator : IMediator
 {
     private readonly global::SharedKernel.Mediator.AppMediatorInstrumentation _instrumentation;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AppMediator"/> class.
     /// </summary>
-    /// <param name="services">The scoped service provider used by generated mediator code.</param>
-    public AppMediator(global::System.IServiceProvider services)
+    public AppMediator(
+        global::Mediator.Sample.CreateBookingHandler requestHandler0000,
+        global::Mediator.Sample.LookupTourSummaryHandler requestHandler0001,
+        global::Mediator.Sample.StreamTourCodesHandler streamHandler0000,
+        global::Mediator.Sample.TourBookedHandler notificationHandler00000000,
+        global::SharedKernel.Mediator.AppMediatorInstrumentation instrumentation)
     {
-        global::System.ArgumentNullException.ThrowIfNull(services);
-
-        Services = services;
-        _instrumentation = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::SharedKernel.Mediator.AppMediatorInstrumentation>(services);
+        global::System.ArgumentNullException.ThrowIfNull(instrumentation);
+        _instrumentation = instrumentation;
+        global::System.ArgumentNullException.ThrowIfNull(requestHandler0000);
+        RequestHandler_0000 = requestHandler0000;
+        global::System.ArgumentNullException.ThrowIfNull(requestHandler0001);
+        RequestHandler_0001 = requestHandler0001;
+        global::System.ArgumentNullException.ThrowIfNull(streamHandler0000);
+        StreamHandler_0000 = streamHandler0000;
+        global::System.ArgumentNullException.ThrowIfNull(notificationHandler00000000);
+        NotificationHandler_0000_0000 = notificationHandler00000000;
     }
-
-    /// <summary>
-    /// Gets the scoped service provider used by generated mediator code.
-    /// </summary>
-    internal global::System.IServiceProvider Services { get; }
 
     /// <summary>
     /// Gets the instrumentation services used by generated mediator code.
     /// </summary>
     internal global::SharedKernel.Mediator.AppMediatorInstrumentation Instrumentation => _instrumentation;
+
+    internal global::Mediator.Sample.CreateBookingHandler RequestHandler_0000 { get; }
+
+    internal global::Mediator.Sample.LookupTourSummaryHandler RequestHandler_0001 { get; }
+
+    internal global::Mediator.Sample.StreamTourCodesHandler StreamHandler_0000 { get; }
+
+    internal global::Mediator.Sample.TourBookedHandler NotificationHandler_0000_0000 { get; }
 
 
     /// <summary>
@@ -53,9 +66,7 @@ public sealed partial class AppMediator : IMediator
         var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         try
         {
-            var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Mediator.Sample.CreateBookingHandler>(Services);
-
-            var result = await handler.Handle(request, ct).ConfigureAwait(false);
+            var result = await RequestHandler_0000.Handle(request, ct).ConfigureAwait(false);
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
             return result;
@@ -103,9 +114,7 @@ public sealed partial class AppMediator : IMediator
         var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         try
         {
-            var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Mediator.Sample.LookupTourSummaryHandler>(Services);
-
-            var result = await handler.Handle(request, ct).ConfigureAwait(false);
+            var result = await RequestHandler_0001.Handle(request, ct).ConfigureAwait(false);
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
             return result;
@@ -155,9 +164,7 @@ public sealed partial class AppMediator : IMediator
         activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagRequestAssembly, "Mediator.Sample");
         activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagHandlerName, "StreamTourCodesHandler");
         var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
-        var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Mediator.Sample.StreamTourCodesHandler>(Services);
-
-        var enumerator = handler.Handle(request, ct).GetAsyncEnumerator(ct);
+        var enumerator = StreamHandler_0000.Handle(request, ct).GetAsyncEnumerator(ct);
         try
         {
             while (true)

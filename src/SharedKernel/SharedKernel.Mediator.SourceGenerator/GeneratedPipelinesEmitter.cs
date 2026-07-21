@@ -34,7 +34,6 @@ internal static class GeneratedPipelinesEmitter
                 request.MetadataName,
                 request.Response.MetadataName,
                 request.Pipelines,
-                accessibleHandlers[0].MetadataName,
                 index,
                 isStream: false);
         }
@@ -56,7 +55,6 @@ internal static class GeneratedPipelinesEmitter
                 request.MetadataName,
                 request.ItemResponse.MetadataName,
                 request.Pipelines,
-                accessibleHandlers[0].MetadataName,
                 index,
                 isStream: true);
         }
@@ -71,7 +69,6 @@ internal static class GeneratedPipelinesEmitter
         string requestMetadataName,
         string responseMetadataName,
         ImmutableArray<PipelineDescriptor> pipelines,
-        string handlerMetadataName,
         int index,
         bool isStream)
     {
@@ -83,10 +80,10 @@ internal static class GeneratedPipelinesEmitter
 
         for (var pipelineIndex = 0; pipelineIndex < pipelines.Length; pipelineIndex++)
         {
-            writer.Line($"var pipeline{pipelineIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)} = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<{pipelines[pipelineIndex].MetadataName}>(mediator.Services);");
+            writer.Line($"var pipeline{pipelineIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)} = mediator.{(isStream ? "Stream" : "Request")}Pipeline_{index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)}_{pipelineIndex.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)};");
         }
 
-        writer.Line($"var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<{handlerMetadataName}>(mediator.Services);");
+        writer.Line($"var handler = mediator.{(isStream ? "Stream" : "Request")}Handler_{index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)};");
         writer.Line();
         writer.Line($"return {BuildPipelineInvocation(pipelines, "handler.Handle(request, ct)")};");
         writer.Unindent();
