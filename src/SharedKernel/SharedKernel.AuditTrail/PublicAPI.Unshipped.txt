@@ -1,0 +1,7 @@
+#nullable enable
+SharedKernel.AuditTrail.AuditTrailMappingAttribute
+SharedKernel.AuditTrail.AuditTrailMappingAttribute.AuditTrailMappingAttribute() -> void
+SharedKernel.AuditTrail.IAuditTrailEntry
+SharedKernel.AuditTrail.IAuditTrailEntry.OccurredAtUtc.get -> System.DateTime
+SharedKernel.AuditTrail.IAuditTrailSink<TAuditTrailEntry>
+SharedKernel.AuditTrail.IAuditTrailSink<TAuditTrailEntry>.Append(TAuditTrailEntry entry, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask

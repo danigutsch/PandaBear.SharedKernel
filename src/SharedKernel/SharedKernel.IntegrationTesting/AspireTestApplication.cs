@@ -21,10 +21,23 @@ public sealed class AspireTestApplication : IAsyncDisposable
     private IAsyncDisposable? _appBuilder;
     private DistributedApplication? _app;
 
-    private AspireTestApplication(IAsyncDisposable? appBuilder, DistributedApplication app)
+    private AspireTestApplication(
+        IAsyncDisposable? appBuilder,
+        DistributedApplication app)
     {
         _appBuilder = appBuilder;
         _app = app;
+    }
+
+    /// <summary>
+    /// Creates a resource-only Aspire testing builder with the standard concurrent-test defaults.
+    /// </summary>
+    /// <param name="args">Command-line configuration arguments for the builder.</param>
+    /// <returns>The configured Aspire testing builder.</returns>
+    public static IDistributedApplicationTestingBuilder CreateBuilder(params string[] args)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+        return DistributedApplicationTestingBuilder.Create(args);
     }
 
     /// <summary>
@@ -89,52 +102,6 @@ public sealed class AspireTestApplication : IAsyncDisposable
         catch (Exception startupFailure)
         {
             var teardownFailures = await DisposeAfterFailedStart(app, appBuilder).ConfigureAwait(false);
-            if (teardownFailures.Count > 0)
-            {
-                throw CreateStartupAndTeardownFailure(startupFailure, teardownFailures);
-            }
-
-            throw;
-        }
-    }
-
-    /// <summary>
-    /// Starts an Aspire application from an already configured builder.
-    /// </summary>
-    /// <param name="builder">The configured application builder.</param>
-    /// <param name="healthyResourceNames">Resource names that must become healthy before the method returns.</param>
-    /// <param name="resourceStartupTimeout">The resource startup timeout.</param>
-    /// <param name="ct">A cancellation token.</param>
-    /// <returns>The started test application.</returns>
-    public static async Task<AspireTestApplication> Start(
-        IDistributedApplicationBuilder builder,
-        IEnumerable<string> healthyResourceNames,
-        TimeSpan? resourceStartupTimeout,
-        CancellationToken ct)
-    {
-        ArgumentNullException.ThrowIfNull(builder);
-        ArgumentNullException.ThrowIfNull(healthyResourceNames);
-
-        DistributedApplication? app = null;
-
-        try
-        {
-            app = builder.Build();
-            var builtApp = app;
-            await RunWithResourceStartupTimeout(async startupCt =>
-            {
-                await builtApp.StartAsync(startupCt).ConfigureAwait(false);
-                foreach (var resourceName in healthyResourceNames)
-                {
-                    await builtApp.ResourceNotifications.WaitForResourceHealthyAsync(resourceName, startupCt).ConfigureAwait(false);
-                }
-            }, resourceStartupTimeout, ct).ConfigureAwait(false);
-
-            return new AspireTestApplication(null, app);
-        }
-        catch (Exception startupFailure)
-        {
-            var teardownFailures = await DisposeAfterFailedStart(app, null).ConfigureAwait(false);
             if (teardownFailures.Count > 0)
             {
                 throw CreateStartupAndTeardownFailure(startupFailure, teardownFailures);
@@ -246,13 +213,15 @@ public sealed class AspireTestApplication : IAsyncDisposable
         var teardownFailures = new List<Exception>();
         if (app is not null)
         {
-            await CaptureTeardownFailure(teardownCt => app.StopAsync(teardownCt), teardownFailures).ConfigureAwait(false);
-            await CaptureTeardownFailure(teardownCt => app.DisposeAsync().AsTask(), teardownFailures).ConfigureAwait(false);
+            await CaptureTeardownFailure(
+                () => RunWithResourceTeardownTimeout(app.StopAsync),
+                teardownFailures).ConfigureAwait(false);
+            await CaptureTeardownFailure(() => app.DisposeAsync().AsTask(), teardownFailures).ConfigureAwait(false);
         }
 
         if (appBuilder is not null)
         {
-            await CaptureTeardownFailure(teardownCt => appBuilder.DisposeAsync().AsTask(), teardownFailures)
+            await CaptureTeardownFailure(() => appBuilder.DisposeAsync().AsTask(), teardownFailures)
                 .ConfigureAwait(false);
         }
 
@@ -269,15 +238,15 @@ public sealed class AspireTestApplication : IAsyncDisposable
         var teardownFailures = new List<Exception>();
         if (app is not null)
         {
-            await CaptureTeardownFailure(teardownCt => app.StopAsync(teardownCt), teardownFailures)
-                .ConfigureAwait(false);
-            await CaptureTeardownFailure(teardownCt => app.DisposeAsync().AsTask(), teardownFailures)
-                .ConfigureAwait(false);
+            await CaptureTeardownFailure(
+                () => RunWithResourceTeardownTimeout(app.StopAsync),
+                teardownFailures).ConfigureAwait(false);
+            await CaptureTeardownFailure(() => app.DisposeAsync().AsTask(), teardownFailures).ConfigureAwait(false);
         }
 
         if (appBuilder is not null)
         {
-            await CaptureTeardownFailure(teardownCt => appBuilder.DisposeAsync().AsTask(), teardownFailures)
+            await CaptureTeardownFailure(() => appBuilder.DisposeAsync().AsTask(), teardownFailures)
                 .ConfigureAwait(false);
         }
 
@@ -298,12 +267,12 @@ public sealed class AspireTestApplication : IAsyncDisposable
         "CA1031:Do not catch general exception types",
         Justification = "Teardown must attempt every cleanup phase before reporting failures.")]
     private static async Task CaptureTeardownFailure(
-        Func<CancellationToken, Task> operation,
+        Func<Task> operation,
         List<Exception> teardownFailures)
     {
         try
         {
-            await RunWithResourceTeardownTimeout(operation).ConfigureAwait(false);
+            await operation().ConfigureAwait(false);
         }
         catch (Exception exception)
         {
@@ -314,7 +283,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
     private static async Task RunWithResourceTeardownTimeout(Func<CancellationToken, Task> operation)
     {
         using var timeoutCts = new CancellationTokenSource(DefaultResourceTeardownTimeout);
-        await operation(timeoutCts.Token).WaitAsync(timeoutCts.Token).ConfigureAwait(false);
+        await operation(timeoutCts.Token).ConfigureAwait(false);
     }
 
     private DistributedApplication App => _app ?? throw new InvalidOperationException("Aspire test application is not initialized.");
@@ -324,6 +293,10 @@ public sealed class AspireTestApplication : IAsyncDisposable
         var suffix = string.Create(
             CultureInfo.InvariantCulture,
             $"test-{Environment.ProcessId}-{Interlocked.Increment(ref _dcpResourceNameSuffixSequence)}");
-        return [.. appHostArguments, $"--DcpPublisher:ResourceNameSuffix={suffix}"];
+        return
+        [
+            .. appHostArguments,
+            $"--DcpPublisher:ResourceNameSuffix={suffix}"
+        ];
     }
 }

@@ -51,7 +51,8 @@ internal static class DomainEventNotificationsEmitter
         builder.AppendLine("    {");
         builder.AppendLine("        global::System.ArgumentNullException.ThrowIfNull(services);");
         builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<global::SharedKernel.DomainEvents.IDomainEventNotificationFactory, global::SharedKernel.DomainEvents.Generated.GeneratedDomainEventNotificationFactory>(services);");
-        builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddScoped<global::SharedKernel.DomainEvents.IDomainEventDispatcher, global::SharedKernel.DomainEvents.MediatorDomainEventDispatcher>(services);");
+        builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddScoped<global::SharedKernel.DomainEvents.IDomainEventDispatcher, global::SharedKernel.DomainEvents.CompositeDomainEventDispatcher>(services);");
+        builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddEnumerable(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Scoped<global::SharedKernel.DomainEvents.IDomainEventDispatchHandler, global::SharedKernel.DomainEvents.MediatorDomainEventDispatcher>());");
         builder.AppendLine();
         builder.AppendLine("        return services;");
         builder.AppendLine("    }");

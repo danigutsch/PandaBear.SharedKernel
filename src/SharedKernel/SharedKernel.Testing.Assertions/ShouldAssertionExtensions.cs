@@ -54,6 +54,15 @@ public static class ShouldAssertionExtensions
         Xunit.Assert.Equal(expected, actual, precision, rounding);
 
     /// <summary>
+    /// Verifies strict collection equivalence without requiring the same item order.
+    /// </summary>
+    /// <typeparam name="T">The collection item type.</typeparam>
+    /// <param name="actual">The actual collection.</param>
+    /// <param name="expected">The expected items, including duplicate multiplicity.</param>
+    public static void ShouldBeEquivalentTo<T>(this IEnumerable<T> actual, params T[] expected) =>
+        Xunit.Assert.Equivalent(expected, actual, strict: true);
+
+    /// <summary>
     /// Verifies inequality with the expected value.
     /// </summary>
     /// <typeparam name="T">The value type.</typeparam>

@@ -19,7 +19,7 @@ internal sealed class PostgreSqlTransactionAdvisoryLockTestEnvironment : IAsyncD
 
     public static async Task<PostgreSqlTransactionAdvisoryLockTestEnvironment> Start(CancellationToken ct)
     {
-        var appBuilder = DistributedApplication.CreateBuilder([]);
+        var appBuilder = AspireTestApplication.CreateBuilder();
         var databaseServer = appBuilder.AddPostgres(PostgreSqlResourceName);
         _ = databaseServer.AddDatabase(DatabaseResourceName);
 
