@@ -71,6 +71,28 @@ public sealed class GeneratedIntegrationEventDispatchTests
     }
 
     [Fact]
+    public async Task Publish_delivers_two_registered_event_types_through_one_scoped_handler()
+    {
+        // Arrange
+        using var host = GeneratedIntegrationEventTestServices.CreateConsumerHost();
+        using var delivery = host.OpenDelivery();
+        var occurredAt = DateTimeOffset.Parse("2026-07-05T12:30:00+00:00", CultureInfo.InvariantCulture);
+        var created = new TestIntegrationEvent(Guid.CreateVersion7(), occurredAt, "Rio de Janeiro");
+        var updated = new TestUpdatedIntegrationEvent(Guid.CreateVersion7(), occurredAt, "Rio Atualizado");
+        var createdEnvelope = TestEventEnvelopeFactory.Create(created, host.Serializer.Serialize(created));
+        var updatedEnvelope = TestEventEnvelopeFactory.Create(updated, host.Serializer.Serialize(updated));
+
+        // Act
+        await delivery.Publisher.Publish(createdEnvelope, CancellationToken.None);
+        await delivery.Publisher.Publish(updatedEnvelope, CancellationToken.None);
+
+        // Assert
+        delivery.Handler.IntegrationEvent.ShouldNotBeNull().ShouldBe(created);
+        delivery.Handler.UpdatedIntegrationEvent.ShouldNotBeNull().ShouldBe(updated);
+        delivery.Handler.InvocationCount.ShouldBe(2);
+    }
+
+    [Fact]
     public async Task Publish_rejects_malformed_payload_before_invoking_the_handler()
     {
         // Arrange
@@ -127,6 +149,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
 
         // Assert
         handler.IsDisposed.ShouldBeTrue();
+        handler.DisposeCount.ShouldBe(1);
     }
 
     [Fact]

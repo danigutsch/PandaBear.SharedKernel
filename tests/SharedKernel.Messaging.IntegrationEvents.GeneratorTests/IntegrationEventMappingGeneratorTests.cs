@@ -245,6 +245,139 @@ public sealed class IntegrationEventMappingGeneratorTests
     }
 
     [Fact]
+    public void One_concrete_handler_can_receive_two_registered_integration_events()
+    {
+        // Arrange
+        const string source = """
+            using Microsoft.Extensions.DependencyInjection;
+
+            namespace Demo;
+
+            public sealed record TourCreatedIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "tour.created";
+                public static int EventVersion => 1;
+            }
+
+            public sealed record TourUpdatedIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "tour.updated";
+                public static int EventVersion => 1;
+            }
+
+            public sealed class TourEventsHandler :
+                IIntegrationEventHandler<TourCreatedIntegrationEvent>,
+                IIntegrationEventHandler<TourUpdatedIntegrationEvent>
+            {
+                public ValueTask Handle(TourCreatedIntegrationEvent integrationEvent, CancellationToken ct) =>
+                    ValueTask.CompletedTask;
+
+                public ValueTask Handle(TourUpdatedIntegrationEvent integrationEvent, CancellationToken ct) =>
+                    ValueTask.CompletedTask;
+            }
+
+            public static class Registration
+            {
+                public static IServiceCollection AddMessaging(IServiceCollection services)
+                {
+                    services.AddIntegrationEventConsumer<TourCreatedIntegrationEvent>(TourCreatedIntegrationEvent.EventType, null!);
+                    services.AddIntegrationEventConsumer<TourUpdatedIntegrationEvent>(TourUpdatedIntegrationEvent.EventType, null!);
+                    return services;
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
+        var concreteRegistrationCount = generatedSource.Split(
+            "TryAddScoped<global::Demo.TourEventsHandler>(services);",
+            StringSplitOptions.None).Length - 1;
+
+        // Assert
+        runResult.Diagnostics.ShouldBeEmpty();
+        concreteRegistrationCount.ShouldBe(1);
+        generatedSource.ShouldContain(
+            "String.Equals(envelope.EventType, global::Demo.TourCreatedIntegrationEvent.EventType",
+            StringComparison.Ordinal);
+        generatedSource.ShouldContain(
+            "String.Equals(envelope.EventType, global::Demo.TourUpdatedIntegrationEvent.EventType",
+            StringComparison.Ordinal);
+        generatedSource.ShouldContain(
+            "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>, global::SharedKernel.Messaging.IntegrationEvents.Generated.GeneratedIntegrationEventHandlerForwarder<global::Demo.TourCreatedIntegrationEvent, global::Demo.TourEventsHandler>>",
+            StringComparison.Ordinal);
+        generatedSource.ShouldContain(
+            "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourUpdatedIntegrationEvent>, global::SharedKernel.Messaging.IntegrationEvents.Generated.GeneratedIntegrationEventHandlerForwarder<global::Demo.TourUpdatedIntegrationEvent, global::Demo.TourEventsHandler>>",
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Multi_event_handler_generation_is_deterministic_when_source_file_order_is_reversed()
+    {
+        // Arrange
+        const string firstSource = """
+            using Microsoft.Extensions.DependencyInjection;
+
+            namespace Demo;
+
+            public sealed record AlphaIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "alpha.created";
+                public static int EventVersion => 1;
+            }
+
+            public sealed partial class CombinedHandler : IIntegrationEventHandler<AlphaIntegrationEvent>
+            {
+                public ValueTask Handle(AlphaIntegrationEvent integrationEvent, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+
+            public static class AlphaRegistration
+            {
+                public static IServiceCollection AddAlpha(IServiceCollection services) =>
+                    services.AddIntegrationEventConsumer<AlphaIntegrationEvent>(AlphaIntegrationEvent.EventType, null!);
+            }
+            """;
+        const string secondSource = """
+            using Microsoft.Extensions.DependencyInjection;
+
+            namespace Demo;
+
+            public sealed record BetaIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "beta.created";
+                public static int EventVersion => 1;
+            }
+
+            public sealed partial class CombinedHandler : IIntegrationEventHandler<BetaIntegrationEvent>
+            {
+                public ValueTask Handle(BetaIntegrationEvent integrationEvent, CancellationToken ct) => ValueTask.CompletedTask;
+            }
+
+            public static class BetaRegistration
+            {
+                public static IServiceCollection AddBeta(IServiceCollection services) =>
+                    services.AddIntegrationEventConsumer<BetaIntegrationEvent>(BetaIntegrationEvent.EventType, null!);
+            }
+            """;
+
+        // Act
+        var forwardResult = GeneratorTestHarness.RunGeneratorDriver(
+            GeneratorTestHarness.CreateCompilation([firstSource, secondSource]));
+        var reverseResult = GeneratorTestHarness.RunGeneratorDriver(
+            GeneratorTestHarness.CreateCompilation([secondSource, firstSource]));
+        var forward = GeneratorTestHarness.GetGeneratedSource(forwardResult);
+        var reverse = GeneratorTestHarness.GetGeneratedSource(reverseResult);
+
+        // Assert
+        forwardResult.Diagnostics.ShouldBeEmpty();
+        reverseResult.Diagnostics.ShouldBeEmpty();
+        reverse.ShouldBe(forward);
+        forward.ShouldContain("global::Demo.AlphaIntegrationEvent.EventType", StringComparison.Ordinal);
+        forward.ShouldContain("global::Demo.BetaIntegrationEvent.EventType", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Inaccessible_and_open_generic_handler_containers_do_not_enable_delivery()
     {
         // Arrange
@@ -262,6 +395,12 @@ public sealed class IntegrationEventMappingGeneratorTests
             public sealed record GenericContainerIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
             {
                 public static string EventType => "generic.container";
+                public static int EventVersion => 1;
+            }
+
+            public sealed record FileLocalContainerIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "file-local.container";
                 public static int EventVersion => 1;
             }
 
@@ -284,12 +423,21 @@ public sealed class IntegrationEventMappingGeneratorTests
                 }
             }
 
+            file static class FileLocalContainer
+            {
+                public sealed class Handler : IIntegrationEventHandler<FileLocalContainerIntegrationEvent>
+                {
+                    public ValueTask Handle(FileLocalContainerIntegrationEvent integrationEvent, CancellationToken ct) => ValueTask.CompletedTask;
+                }
+            }
+
             public static class Registration
             {
                 public static IServiceCollection AddMessaging(IServiceCollection services)
                 {
                     services.AddIntegrationEventConsumer<PrivateContainerIntegrationEvent>(PrivateContainerIntegrationEvent.EventType, null!);
                     services.AddIntegrationEventConsumer<GenericContainerIntegrationEvent>(GenericContainerIntegrationEvent.EventType, null!);
+                    services.AddIntegrationEventConsumer<FileLocalContainerIntegrationEvent>(FileLocalContainerIntegrationEvent.EventType, null!);
                     return services;
                 }
             }
@@ -304,7 +452,7 @@ public sealed class IntegrationEventMappingGeneratorTests
         var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
 
         // Assert
-        missingHandlerDiagnostics.ShouldHaveCount(2);
+        missingHandlerDiagnostics.ShouldHaveCount(3);
         generatedSource.ShouldNotContain("GeneratedIntegrationEventEnvelopePublisher", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("IEventEnvelopePublisher", StringComparison.Ordinal);
     }
@@ -418,6 +566,168 @@ public sealed class IntegrationEventMappingGeneratorTests
         // Assert
         runResult.Diagnostics.ShouldBeEmpty();
         runResult.Results.Single().GeneratedSources.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Reports_invalid_registered_contracts_without_emitting_unsafe_cases()
+    {
+        // Arrange
+        const string source = """
+            using Microsoft.Extensions.DependencyInjection;
+
+            namespace Demo;
+
+            public sealed record ValidIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "valid.event";
+                public static int EventVersion => 1;
+            }
+
+            public interface InterfaceIntegrationEvent : IIntegrationEvent;
+
+            public abstract class AbstractIntegrationEvent : IIntegrationEvent
+            {
+                public static string EventType => "abstract.event";
+                public static int EventVersion => 1;
+                public abstract Guid EventId { get; }
+                public abstract DateTimeOffset OccurredAt { get; }
+            }
+
+            public static class PrivateContainer
+            {
+                private sealed record HiddenIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+                {
+                    public static string EventType => "hidden.event";
+                    public static int EventVersion => 1;
+                }
+
+                public static IServiceCollection AddHidden(IServiceCollection services) =>
+                    services.AddIntegrationEventContract<HiddenIntegrationEvent>("hidden.event", null!);
+            }
+
+            public sealed record OpenIntegrationEvent<T>(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "open.event";
+                public static int EventVersion => 1;
+            }
+
+            file sealed record FileLocalIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "file-local.event";
+                public static int EventVersion => 1;
+            }
+
+            public sealed record NullableIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "nullable.event";
+                public static int EventVersion => 1;
+            }
+
+            file static class FileLocalContractContainer
+            {
+                public sealed record NestedIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+                {
+                    public static string EventType => "nested-file-local.event";
+                    public static int EventVersion => 1;
+                }
+
+                public static IServiceCollection AddNested(IServiceCollection services) =>
+                    services.AddIntegrationEventContract<NestedIntegrationEvent>(NestedIntegrationEvent.EventType, null!);
+            }
+
+            file sealed record FileLocalPayload(string Value);
+
+            public sealed record PayloadIntegrationEvent<TPayload>(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "payload.event";
+                public static int EventVersion => 1;
+            }
+
+            public static class Registration
+            {
+                public static IServiceCollection AddMessaging<T>(IServiceCollection services)
+                {
+                    services.AddIntegrationEventContract<ValidIntegrationEvent>(ValidIntegrationEvent.EventType, null!);
+                    services.AddIntegrationEventConsumer<InterfaceIntegrationEvent>("interface.event", null!);
+                    services.AddIntegrationEventContract<AbstractIntegrationEvent>(AbstractIntegrationEvent.EventType, null!);
+                    services.AddIntegrationEventContract<OpenIntegrationEvent<T>>(OpenIntegrationEvent<T>.EventType, null!);
+                    services.AddIntegrationEventContract<FileLocalIntegrationEvent>(FileLocalIntegrationEvent.EventType, null!);
+                    services.AddIntegrationEventContract<NullableIntegrationEvent?>(NullableIntegrationEvent.EventType, null!);
+                    services.AddIntegrationEventContract<PayloadIntegrationEvent<FileLocalPayload>>(PayloadIntegrationEvent<FileLocalPayload>.EventType, null!);
+                    PrivateContainer.AddHidden(services);
+                    return FileLocalContractContainer.AddNested(services);
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnostics = runResult.Diagnostics
+            .Where(static diagnostic => diagnostic.Id == "SKMSG006")
+            .ToArray();
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
+
+        // Assert
+        diagnostics.ShouldHaveCount(8);
+        diagnostics.ShouldAllSatisfy(static diagnostic =>
+        {
+            diagnostic.Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
+            diagnostic.Location.IsInSource.ShouldBeTrue();
+        });
+        generatedSource.ShouldContain("global::Demo.ValidIntegrationEvent", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("InterfaceIntegrationEvent", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("AbstractIntegrationEvent", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("HiddenIntegrationEvent", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("OpenIntegrationEvent", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("FileLocalIntegrationEvent", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("NullableIntegrationEvent", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("NestedIntegrationEvent", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("PayloadIntegrationEvent", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("GeneratedIntegrationEventEnvelopePublisher", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Sealed_record_classes_and_record_structs_are_valid_registered_contracts()
+    {
+        // Arrange
+        const string source = """
+            using Microsoft.Extensions.DependencyInjection;
+
+            namespace Demo;
+
+            public sealed record TourCreatedIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "tour.created";
+                public static int EventVersion => 1;
+            }
+
+            public readonly record struct TourArchivedIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "tour.archived";
+                public static int EventVersion => 1;
+            }
+
+            public static class Registration
+            {
+                public static IServiceCollection AddMessaging(IServiceCollection services)
+                {
+                    services.AddIntegrationEventContract<TourCreatedIntegrationEvent>(TourCreatedIntegrationEvent.EventType, null!);
+                    services.AddIntegrationEventContract<TourArchivedIntegrationEvent>(TourArchivedIntegrationEvent.EventType, null!);
+                    return services;
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
+
+        // Assert
+        runResult.Diagnostics.ShouldNotContain(static diagnostic => diagnostic.Id == "SKMSG006");
+        generatedSource.ShouldContain("global::Demo.TourCreatedIntegrationEvent", StringComparison.Ordinal);
+        generatedSource.ShouldContain("global::Demo.TourArchivedIntegrationEvent", StringComparison.Ordinal);
     }
 
     [Fact]

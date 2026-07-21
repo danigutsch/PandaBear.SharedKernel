@@ -66,6 +66,8 @@ internal static class GeneratedMediatorPackageConsumerProjects
             using System.Diagnostics;
             using System.Globalization;
             using Consumer;
+            using Microsoft.Extensions.DependencyInjection;
+            using SharedKernel.Mediator;
 
             using var harness = MediatorHarness.Create();
 
@@ -97,6 +99,24 @@ internal static class GeneratedMediatorPackageConsumerProjects
             Console.WriteLine($"result={firstDispatchResult}");
             Console.WriteLine(FormattableString.Invariant($"first-dispatch-ms={firstDispatchStopwatch.Elapsed.TotalMilliseconds:F4}"));
             Console.WriteLine(FormattableString.Invariant($"steady-state-dispatch-ms={steadyStateStopwatch.Elapsed.TotalMilliseconds / steadyStateIterations:F4}"));
+
+            var services = new Microsoft.Extensions.DependencyInjection.ServiceCollection();
+            services.AddSharedKernelMediator();
+            using var provider = services.BuildServiceProvider();
+            using var firstScope = provider.CreateScope();
+            var firstHandler = firstScope.ServiceProvider.GetRequiredService<LookupTourHandler>();
+            var repeatedHandler = firstScope.ServiceProvider.GetRequiredService<LookupTourHandler>();
+            var firstPipeline = firstScope.ServiceProvider.GetRequiredService<TimingBehavior<LookupTour, string>>();
+            var repeatedPipeline = firstScope.ServiceProvider.GetRequiredService<TimingBehavior<LookupTour, string>>();
+            using var secondScope = provider.CreateScope();
+            var secondHandler = secondScope.ServiceProvider.GetRequiredService<LookupTourHandler>();
+            var secondPipeline = secondScope.ServiceProvider.GetRequiredService<TimingBehavior<LookupTour, string>>();
+            var sameWithinScope = ReferenceEquals(firstHandler, repeatedHandler) &&
+                ReferenceEquals(firstPipeline, repeatedPipeline);
+            var differentAcrossScopes = !ReferenceEquals(firstHandler, secondHandler) &&
+                !ReferenceEquals(firstPipeline, secondPipeline);
+            Console.WriteLine($"handler-pipeline-same-within-scope={(sameWithinScope ? "true" : "false")}");
+            Console.WriteLine($"handler-pipeline-different-across-scopes={(differentAcrossScopes ? "true" : "false")}");
             """)
         };
 

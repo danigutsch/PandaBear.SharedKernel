@@ -5,7 +5,7 @@ namespace SharedKernel.Mediator.SourceGenerator;
 /// </summary>
 internal static class DependencyInjectionEmitter
 {
-    private const string AddTransientMethodName = "AddTransient";
+    private const string AddScopedMethodName = "AddScoped";
 
     public static string Emit(DiscoveryModel model)
     {
@@ -84,7 +84,7 @@ internal static class DependencyInjectionEmitter
             {
                 EmitConcreteRegistration(
                     writer,
-                    AddTransientMethodName,
+                    AddScopedMethodName,
                     handler.MetadataName,
                     emittedRegistrationKeys);
                 emittedAny = true;
@@ -94,7 +94,7 @@ internal static class DependencyInjectionEmitter
             {
                 EmitConcreteRegistration(
                     writer,
-                    AddTransientMethodName,
+                    AddScopedMethodName,
                     pipeline.MetadataName,
                     emittedRegistrationKeys);
                 emittedAny = true;
@@ -123,7 +123,7 @@ internal static class DependencyInjectionEmitter
             {
                 EmitConcreteRegistration(
                     writer,
-                    AddTransientMethodName,
+                    AddScopedMethodName,
                     handler.MetadataName,
                     emittedRegistrationKeys);
                 emittedAny = true;
@@ -152,7 +152,7 @@ internal static class DependencyInjectionEmitter
             {
                 EmitConcreteRegistration(
                     writer,
-                    AddTransientMethodName,
+                    AddScopedMethodName,
                     handler.MetadataName,
                     emittedRegistrationKeys);
                 emittedAny = true;
@@ -162,7 +162,7 @@ internal static class DependencyInjectionEmitter
             {
                 EmitConcreteRegistration(
                     writer,
-                    AddTransientMethodName,
+                    AddScopedMethodName,
                     pipeline.MetadataName,
                     emittedRegistrationKeys);
                 emittedAny = true;

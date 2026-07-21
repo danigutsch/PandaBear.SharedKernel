@@ -17,13 +17,15 @@ internal sealed class GeneratedIntegrationEventConsumerHost : IDisposable
     public static GeneratedIntegrationEventConsumerHost Create()
     {
         var services = new ServiceCollection();
-        services.AddScoped<CapturingIntegrationEventHandler>();
-        services.AddScoped<IIntegrationEventHandler<TestIntegrationEvent>>(
-            static serviceProvider => serviceProvider.GetRequiredService<CapturingIntegrationEventHandler>());
         JsonTypeInfo<TestIntegrationEvent> jsonTypeInfo = TestIntegrationEventJsonContext.Default.TestIntegrationEvent;
         services.AddIntegrationEventConsumer(
             TestIntegrationEvent.EventType,
             jsonTypeInfo);
+        JsonTypeInfo<TestUpdatedIntegrationEvent> updatedJsonTypeInfo =
+            TestIntegrationEventJsonContext.Default.TestUpdatedIntegrationEvent;
+        services.AddIntegrationEventConsumer(
+            TestUpdatedIntegrationEvent.EventType,
+            updatedJsonTypeInfo);
         services.AddGeneratedIntegrationEvents();
 
         return new GeneratedIntegrationEventConsumerHost(services.BuildServiceProvider());

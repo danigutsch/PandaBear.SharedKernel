@@ -977,7 +977,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Assert
         (updatedModuleSource).ShouldContain("public sealed class SearchToursHandler", StringComparison.Ordinal);
         (diagnosticsAfterFix).ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
-        (generatedSource).ShouldContain("services.AddTransient<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
+        (generatedSource).ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1216,7 +1216,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Assert
         (friendAssemblySource).ShouldContain("[assembly: global::System.Runtime.CompilerServices.InternalsVisibleTo(\"SharedKernel.Mediator.CodeFixes.Tests.Primary\")]", StringComparison.Ordinal);
         (diagnosticsAfterFix).ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
-        (generatedSource).ShouldContain("services.AddTransient<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
+        (generatedSource).ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1264,7 +1264,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Assert
         (markerSource).ShouldContain("[assembly: global::SharedKernel.Mediator.MediatorModuleAttribute]", StringComparison.Ordinal);
         (diagnosticsAfterFix).ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.MissingModuleMarker);
-        (generatedSource).ShouldContain("services.AddTransient<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
+        (generatedSource).ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]

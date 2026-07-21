@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace SharedKernel.Mediator.GeneratorTests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DiscoveryCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DiscoveryCapability)]
 public sealed class GeneratorDiscoveryReportTests
 {
     [Fact]
@@ -621,7 +621,7 @@ public sealed class GeneratorDiscoveryReportTests
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ExplicitLookupTourHandler", StringComparison.Ordinal));
         (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingHandler
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.LookupTour", StringComparison.Ordinal));
-        (generatedSource).ShouldNotContain("services.AddTransient<global::Demo.ExplicitLookupTourHandler>();", StringComparison.Ordinal);
+        (generatedSource).ShouldNotContain("services.AddScoped<global::Demo.ExplicitLookupTourHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -649,7 +649,7 @@ public sealed class GeneratorDiscoveryReportTests
         // Assert
         (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ExplicitStreamToursHandler", StringComparison.Ordinal));
-        (generatedSource).ShouldNotContain("services.AddTransient<global::Demo.ExplicitStreamToursHandler>();", StringComparison.Ordinal);
+        (generatedSource).ShouldNotContain("services.AddScoped<global::Demo.ExplicitStreamToursHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -675,7 +675,7 @@ public sealed class GeneratorDiscoveryReportTests
         // Assert
         (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.WrongReturnStreamToursHandler", StringComparison.Ordinal));
-        (generatedSource).ShouldNotContain("services.AddTransient<global::Demo.WrongReturnStreamToursHandler>();", StringComparison.Ordinal);
+        (generatedSource).ShouldNotContain("services.AddScoped<global::Demo.WrongReturnStreamToursHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -703,7 +703,7 @@ public sealed class GeneratorDiscoveryReportTests
         // Assert
         (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.NoCancellationStreamToursHandler", StringComparison.Ordinal));
-        (generatedSource).ShouldNotContain("services.AddTransient<global::Demo.NoCancellationStreamToursHandler>();", StringComparison.Ordinal);
+        (generatedSource).ShouldNotContain("services.AddScoped<global::Demo.NoCancellationStreamToursHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]

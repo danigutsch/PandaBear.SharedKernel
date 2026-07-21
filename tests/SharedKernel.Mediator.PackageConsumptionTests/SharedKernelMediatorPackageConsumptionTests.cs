@@ -60,6 +60,8 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         // Assert
         (buildOutput).ShouldContain("Build succeeded.", StringComparison.Ordinal);
         (runOutput).ShouldContain("result=VT-42", StringComparison.Ordinal);
+        runOutput.ShouldContain("handler-pipeline-same-within-scope=true", StringComparison.Ordinal);
+        runOutput.ShouldContain("handler-pipeline-different-across-scopes=true", StringComparison.Ordinal);
         (appMediatorFiles).ShouldNotBeEmpty();
         (dependencyInjectionFiles).ShouldNotBeEmpty();
     }

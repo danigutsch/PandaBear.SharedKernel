@@ -2,16 +2,17 @@ namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
 internal static class TestEventEnvelopeFactory
 {
-    public static EventEnvelope Create(
-        TestIntegrationEvent integrationEvent,
+    public static EventEnvelope Create<TIntegrationEvent>(
+        TIntegrationEvent integrationEvent,
         string? payload,
-        string? eventType = null) => new(
+        string? eventType = null)
+        where TIntegrationEvent : IIntegrationEvent => new(
             "cloudevents",
             "1.0",
             integrationEvent.EventId.ToString(),
             new Uri("urn:test"),
-            eventType ?? TestIntegrationEvent.EventType,
-            TestIntegrationEvent.EventVersion,
+            eventType ?? TIntegrationEvent.EventType,
+            TIntegrationEvent.EventVersion,
             integrationEvent.OccurredAt,
             null,
             "application/json",
