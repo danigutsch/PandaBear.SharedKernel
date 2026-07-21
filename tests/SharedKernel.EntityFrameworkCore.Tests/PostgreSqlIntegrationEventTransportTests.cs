@@ -103,4 +103,60 @@ public sealed class PostgreSqlIntegrationEventTransportTests : IAsyncLifetime
         message.ClaimedBy.ShouldBeNull();
         message.ClaimedUntil.ShouldBeNull();
     }
+
+    [Fact]
+    public async Task Consumer_retries_a_fail_once_dispatch_without_losing_the_message()
+    {
+        // Arrange
+        const string eventId = "consumer-fail-once";
+        var ct = TestContext.Current.CancellationToken;
+        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 7, 20, 12, 0, 0, TimeSpan.Zero));
+        await Scenario.SeedMessage(eventId, ct);
+        var publisher = new RecordingEventEnvelopePublisher
+        {
+            Failure = new InvalidOperationException("handler is already being processed"),
+            FailOnce = true,
+        };
+
+        // Act
+        var firstConsumed = await Scenario.ConsumeWith(publisher, ct, timeProvider);
+        var failedMessage = await Scenario.GetMessage(eventId, ct);
+        timeProvider.Advance(TimeSpan.FromMinutes(1));
+        var secondConsumed = await Scenario.ConsumeWith(publisher, ct, timeProvider);
+
+        // Assert
+        firstConsumed.ShouldBe(1);
+        failedMessage.ProcessedAt.ShouldBeNull();
+        failedMessage.ConsumeAttempts.ShouldBe(1);
+        secondConsumed.ShouldBe(1);
+        publisher.Attempts.ShouldBe(2);
+        publisher.Published.ShouldHaveSingleItem().EventId.ShouldBe(eventId);
+        var processedMessage = await Scenario.GetMessage(eventId, ct);
+        processedMessage.ProcessedAt.ShouldNotBeNull();
+        processedMessage.LastConsumeError.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task Consumer_uses_one_scope_and_processes_a_claimed_batch_sequentially()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        await Scenario.SeedMessages(2, ct);
+        using var publisher = new ControlledEventEnvelopePublisher();
+
+        // Act
+        var consumeTask = Scenario.ConsumeBatchWith(publisher, 2, ct).AsTask();
+        await publisher.FirstStarted.WaitAsync(ct);
+        var invocationCountWhileFirstWasBlocked = publisher.InvocationCount;
+        publisher.ReleaseFirst();
+        await publisher.SecondStarted.WaitAsync(ct);
+        publisher.ReleaseSecond();
+        var consumed = await consumeTask;
+
+        // Assert
+        invocationCountWhileFirstWasBlocked.ShouldBe(1);
+        publisher.InvocationCount.ShouldBe(2);
+        publisher.DisposeCount.ShouldBe(1);
+        consumed.ShouldBe(2);
+    }
 }

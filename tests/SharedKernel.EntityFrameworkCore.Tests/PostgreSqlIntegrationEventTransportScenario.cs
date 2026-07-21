@@ -52,12 +52,23 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         _ = await dbContext.SaveChangesAsync(ct);
     }
 
-    public async ValueTask<int> ConsumeWith(RecordingEventEnvelopePublisher publisher, CancellationToken ct)
+    public async ValueTask<int> ConsumeWith(
+        RecordingEventEnvelopePublisher publisher,
+        CancellationToken ct,
+        TimeProvider? timeProvider = null)
     {
-        await using var provider = CreateConsumerProvider(publisher);
+        await using var provider = CreateConsumerProvider(publisher, timeProvider: timeProvider);
         var consumer = provider.GetRequiredService<PostgreSqlIntegrationEventTransportConsumer<TransportDbContext>>();
 
         return await consumer.ConsumePending(1, ct);
+    }
+
+    public async ValueTask<int> ConsumeBatchWith(ControlledEventEnvelopePublisher publisher, int batchSize, CancellationToken ct)
+    {
+        await using var provider = CreateConsumerProvider(publisher, ServiceLifetime.Scoped);
+        var consumer = provider.GetRequiredService<PostgreSqlIntegrationEventTransportConsumer<TransportDbContext>>();
+
+        return await consumer.ConsumePending(batchSize, ct);
     }
 
     public async ValueTask<IntegrationEventTransportMessage> GetMessage(string eventId, CancellationToken ct)
@@ -127,13 +138,21 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
             [new IntegrationEventTransportDbContextConfiguration<TransportDbContext>()]);
     }
 
-    private ServiceProvider CreateConsumerProvider(RecordingEventEnvelopePublisher publisher)
+    private ServiceProvider CreateConsumerProvider(
+        IEventEnvelopePublisher publisher,
+        ServiceLifetime publisherLifetime = ServiceLifetime.Singleton,
+        TimeProvider? timeProvider = null)
     {
         var services = new ServiceCollection();
         services.AddDbContext<TransportDbContext>(options => options.UseNpgsql(connectionString));
         services.AddSingleton<IDbContextConfiguration<TransportDbContext>, IntegrationEventTransportDbContextConfiguration<TransportDbContext>>();
-        services.AddSingleton<IEventEnvelopePublisher>(publisher);
-        services.AddSingleton(TimeProvider.System);
+        _ = publisherLifetime switch
+        {
+            ServiceLifetime.Singleton => services.AddSingleton(publisher),
+            ServiceLifetime.Scoped => services.AddScoped(_ => publisher),
+            _ => throw new ArgumentOutOfRangeException(nameof(publisherLifetime), publisherLifetime, "Unsupported test publisher lifetime.")
+        };
+        services.AddSingleton(timeProvider ?? TimeProvider.System);
         services.AddOptions<IntegrationEventOutboxRelayOptions>();
         services.AddSingleton(sp => new PostgreSqlIntegrationEventTransportConsumer<TransportDbContext>(
             sp.GetRequiredService<IServiceScopeFactory>(),

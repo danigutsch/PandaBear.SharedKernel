@@ -65,6 +65,33 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     }
 
     [Fact]
+    public async Task Mediator_and_integration_event_generators_compose_without_runtime_type_recovery()
+    {
+        // Arrange
+        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MessagingGeneratedConsumer");
+        GeneratedMessagingPackageConsumerProjects.Write(workspace, packageFeed);
+
+        // Act
+        var buildOutput = await workspace.Build();
+        var runOutput = await workspace.Run();
+        var mediatorDependencyInjection = workspace.GetGeneratedFiles("SharedKernel.Mediator.Generated.DependencyInjection.g.cs")
+            .Select(File.ReadAllText)
+            .ShouldHaveSingleItem();
+        var integrationEventGeneration = workspace.GetGeneratedFiles("SharedKernel.Messaging.IntegrationEvents.GeneratedIntegrationEvents.g.cs")
+            .Select(File.ReadAllText)
+            .ShouldHaveSingleItem();
+
+        // Assert
+        buildOutput.ShouldContain("Build succeeded.", StringComparison.Ordinal);
+        runOutput.ShouldContain("handled=019bfab5-71f0-7d01-940b-e857478d0a32;payload=true", StringComparison.Ordinal);
+        mediatorDependencyInjection.ShouldNotContain("IDomainEventDispatcher", StringComparison.Ordinal);
+        integrationEventGeneration.ShouldContain("GeneratedIntegrationEventSerializer", StringComparison.Ordinal);
+        integrationEventGeneration.ShouldContain("GeneratedIntegrationEventEnvelopePublisher", StringComparison.Ordinal);
+        integrationEventGeneration.ShouldNotContain("IServiceProvider", StringComparison.Ordinal);
+        integrationEventGeneration.ShouldNotContain("ContractRegistration", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Runtime_and_source_generator_packages_can_be_published_by_a_fresh_project()
     {
         // Arrange

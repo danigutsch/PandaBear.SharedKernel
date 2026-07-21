@@ -41,6 +41,13 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
         await Pack("src/SharedKernel/SharedKernel.Mediator.SourceGenerator/SharedKernel.Mediator.SourceGenerator.csproj").ConfigureAwait(false);
         await Pack("src/SharedKernel/SharedKernel.Mediator.Analyzers/SharedKernel.Mediator.Analyzers.csproj").ConfigureAwait(false);
         await Pack("src/SharedKernel/SharedKernel.Mediator.CodeFixes/SharedKernel.Mediator.CodeFixes.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.Domain/SharedKernel.Domain.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.DomainEvents/SharedKernel.DomainEvents.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.Messaging/SharedKernel.Messaging.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.Messaging.IntegrationEvents/SharedKernel.Messaging.IntegrationEvents.csproj").ConfigureAwait(false);
+        await Pack("src/SharedKernel/SharedKernel.Messaging.IntegrationEvents.SourceGenerator/SharedKernel.Messaging.IntegrationEvents.SourceGenerator.csproj").ConfigureAwait(false);
     }
 
     /// <inheritdoc />

@@ -16,7 +16,7 @@ internal static class GeneratedMediatorPackageConsumerProjects
 
             public sealed record LookupTour(string Code) : IQuery<string>;
 
-            public sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
+            internal sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
             {
                 public ValueTask<string> Handle(LookupTour request, CancellationToken ct)
                 {

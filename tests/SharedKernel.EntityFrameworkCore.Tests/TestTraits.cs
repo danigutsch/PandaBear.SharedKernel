@@ -8,5 +8,7 @@ internal static class TestTraits
 
     public const string IntegrationEventTransportCapability = "integration-event-transport";
 
+    public const string IdempotencyCapability = "idempotency";
+
     public const string ProviderGuardCategory = "provider-guard";
 }
