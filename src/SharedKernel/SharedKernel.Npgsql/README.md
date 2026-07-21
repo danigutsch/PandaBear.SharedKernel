@@ -6,8 +6,13 @@ Small raw-Npgsql primitives with a stable, provider-specific boundary.
 
 - `PostgreSqlTransactionAdvisoryLock` executes parameterized `pg_advisory_xact_lock` SQL on a
   caller-supplied active `NpgsqlConnection` and `NpgsqlTransaction`.
+- `PostgreSqlSessionAdvisoryLock` executes parameterized `pg_advisory_lock` SQL on a dedicated
+  `NpgsqlConnection` opened from a caller-supplied `NpgsqlDataSource`, returning an
+  `IAsyncDisposable` lease.
 - PostgreSQL releases the acquired lock when the caller's transaction commits, rolls back, or is
   disposed. Callers must retain the transaction for their entire critical section.
+- PostgreSQL releases a session lock when its lease is disposed and the owning connection closes.
+  Callers must retain the lease for their entire critical section.
 - Callers own lock-key derivation, command timeout configuration, retry behavior, and cancellation
   policy.
 - The package does not own database schemas, migrations, connection-string configuration,

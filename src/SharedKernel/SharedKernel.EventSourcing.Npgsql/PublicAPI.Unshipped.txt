@@ -1,5 +1,6 @@
 #nullable enable
 SharedKernel.EventSourcing.Npgsql.PostgreSqlEventSourcingTelemetry
+SharedKernel.EventSourcing.Npgsql.PostgreSqlEventStore.Append(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
 static SharedKernel.EventSourcing.Npgsql.PostgreSqlEventSourcingTelemetry.ActivityAppend.get -> string!
 static SharedKernel.EventSourcing.Npgsql.PostgreSqlEventSourcingTelemetry.ActivityCheckpoint.get -> string!
 static SharedKernel.EventSourcing.Npgsql.PostgreSqlEventSourcingTelemetry.ActivityLoad.get -> string!
@@ -36,7 +37,6 @@ SharedKernel.EventSourcing.Npgsql.PostgreSqlEventStore.PostgreSqlEventStore(Npgs
 SharedKernel.EventSourcing.Npgsql.PostgreSqlEventStore.PostgreSqlEventStore(Npgsql.NpgsqlDataSource! dataSource, SharedKernel.EventSourcing.IEventSerializer! serializer, SharedKernel.EventSourcing.Npgsql.PostgreSqlEventSourcingOptions? options) -> void
 SharedKernel.EventSourcing.Npgsql.PostgreSqlEventStore.PostgreSqlEventStore(string! connectionString, SharedKernel.EventSourcing.IEventSerializer! serializer) -> void
 SharedKernel.EventSourcing.Npgsql.PostgreSqlEventStore.PostgreSqlEventStore(string! connectionString, SharedKernel.EventSourcing.IEventSerializer! serializer, SharedKernel.EventSourcing.Npgsql.PostgreSqlEventSourcingOptions? options) -> void
-SharedKernel.EventSourcing.Npgsql.PostgreSqlEventStore.Append(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.EventSourcing.Npgsql.PostgreSqlEventStore.DisposeAsync() -> System.Threading.Tasks.ValueTask
 SharedKernel.EventSourcing.Npgsql.PostgreSqlEventStore.Initialize(System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.EventSourcing.Npgsql.PostgreSqlEventStore.Load(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.StreamRevision? afterRevision, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>

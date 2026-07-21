@@ -1,3 +1,5 @@
 #nullable enable
+SharedKernel.Npgsql.PostgreSqlSessionAdvisoryLock
 SharedKernel.Npgsql.PostgreSqlTransactionAdvisoryLock
+static SharedKernel.Npgsql.PostgreSqlSessionAdvisoryLock.Acquire(Npgsql.NpgsqlDataSource! dataSource, long lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.IAsyncDisposable!>
 static SharedKernel.Npgsql.PostgreSqlTransactionAdvisoryLock.Acquire(Npgsql.NpgsqlConnection! connection, Npgsql.NpgsqlTransaction! transaction, long lockKey, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask

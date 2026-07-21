@@ -41,7 +41,7 @@ SharedKernel.EventSourcing.IEventSerializer.Deserialize(string! eventType, strin
 SharedKernel.EventSourcing.IEventSerializer.GetEventType(object! eventData) -> string!
 SharedKernel.EventSourcing.IEventSerializer.Serialize(object! eventData) -> string!
 SharedKernel.EventSourcing.IEventStore
-SharedKernel.EventSourcing.IEventStore.Append(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.EventSourcing.IEventStore.Append(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.ExpectedStreamRevision expectedRevision, System.Collections.Generic.IReadOnlyCollection<object!>! events, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
 SharedKernel.EventSourcing.IEventStore.Load(SharedKernel.EventSourcing.StreamId streamId, SharedKernel.EventSourcing.StreamRevision? afterRevision, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
 SharedKernel.EventSourcing.IEventStore.LoadAfter(long position, int maxCount, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyCollection<SharedKernel.EventSourcing.EventEnvelope!>!>
 SharedKernel.EventSourcing.IProjection

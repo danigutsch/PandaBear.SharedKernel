@@ -8,7 +8,7 @@ public interface IEventStore
     /// <summary>
     /// Appends events to a stream with optimistic revision checking.
     /// </summary>
-    ValueTask Append(
+    ValueTask<IReadOnlyCollection<EventEnvelope>> Append(
         StreamId streamId,
         ExpectedStreamRevision expectedRevision,
         IReadOnlyCollection<object> events,
