@@ -208,7 +208,7 @@ internal static class AppMediatorEmitter
                 {
                     builder.Append("            var result = await RequestHandler_")
                         .Append(requestIndex.ToString("D4", CultureInfo.InvariantCulture))
-                        .AppendLine(".Handle(request, ct).ConfigureAwait(false);");
+                        .AppendLine("().Handle(request, ct).ConfigureAwait(false);");
                 }
                 else
                 {
@@ -356,7 +356,7 @@ internal static class AppMediatorEmitter
         {
             builder.Append("        var enumerator = StreamHandler_")
                 .Append(streamRequestIndex.ToString("D4", CultureInfo.InvariantCulture))
-                .AppendLine(".Handle(request, ct).GetAsyncEnumerator(ct);");
+                .AppendLine("().Handle(request, ct).GetAsyncEnumerator(ct);");
         }
         else
         {
@@ -419,10 +419,10 @@ internal static class AppMediatorEmitter
             var handlers = request.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod).ToArray();
             if (handlers.Length == 1)
             {
-                builder.Append("        ").Append(handlers[0].MetadataName).Append(" requestHandler").Append(requestIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
+                builder.Append("        global::System.Func<").Append(handlers[0].MetadataName).Append("> requestHandler").Append(requestIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
                 for (var pipelineIndex = 0; pipelineIndex < request.Pipelines.Length; pipelineIndex++)
                 {
-                    builder.Append("        ").Append(request.Pipelines[pipelineIndex].MetadataName).Append(" requestPipeline")
+                    builder.Append("        global::System.Func<").Append(request.Pipelines[pipelineIndex].MetadataName).Append("> requestPipeline")
                         .Append(requestIndex.ToString("D4", CultureInfo.InvariantCulture)).Append(pipelineIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
                 }
             }
@@ -431,13 +431,13 @@ internal static class AppMediatorEmitter
         for (var streamIndex = 0; streamIndex < model.StreamRequests.Length; streamIndex++)
         {
             var request = model.StreamRequests[streamIndex];
-            var handlers = request.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
+            var handlers = request.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod).ToArray();
             if (handlers.Length == 1)
             {
-                builder.Append("        ").Append(handlers[0].MetadataName).Append(" streamHandler").Append(streamIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
+                builder.Append("        global::System.Func<").Append(handlers[0].MetadataName).Append("> streamHandler").Append(streamIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
                 for (var pipelineIndex = 0; pipelineIndex < request.Pipelines.Length; pipelineIndex++)
                 {
-                    builder.Append("        ").Append(request.Pipelines[pipelineIndex].MetadataName).Append(" streamPipeline")
+                    builder.Append("        global::System.Func<").Append(request.Pipelines[pipelineIndex].MetadataName).Append("> streamPipeline")
                         .Append(streamIndex.ToString("D4", CultureInfo.InvariantCulture)).Append(pipelineIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
                 }
             }
@@ -448,7 +448,7 @@ internal static class AppMediatorEmitter
             var handlers = model.Notifications[notificationIndex].Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
             for (var handlerIndex = 0; handlerIndex < handlers.Length; handlerIndex++)
             {
-                builder.Append("        ").Append(handlers[handlerIndex].MetadataName).Append(" notificationHandler")
+                builder.Append("        global::System.Func<").Append(handlers[handlerIndex].MetadataName).Append("> notificationHandler")
                     .Append(notificationIndex.ToString("D4", CultureInfo.InvariantCulture)).Append(handlerIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
             }
         }
@@ -474,7 +474,7 @@ internal static class AppMediatorEmitter
         for (var streamIndex = 0; streamIndex < model.StreamRequests.Length; streamIndex++)
         {
             var request = model.StreamRequests[streamIndex];
-            if (request.Handlers.Count(static handler => handler.IsAccessibleToGeneratedMediator) == 1)
+            if (request.Handlers.Count(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod) == 1)
             {
                 EmitAssignment(builder, "StreamHandler_" + streamIndex.ToString("D4", CultureInfo.InvariantCulture), "streamHandler" + streamIndex.ToString("D4", CultureInfo.InvariantCulture));
                 for (var pipelineIndex = 0; pipelineIndex < request.Pipelines.Length; pipelineIndex++)
@@ -518,7 +518,7 @@ internal static class AppMediatorEmitter
         for (var streamIndex = 0; streamIndex < model.StreamRequests.Length; streamIndex++)
         {
             var request = model.StreamRequests[streamIndex];
-            var handlers = request.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
+            var handlers = request.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod).ToArray();
             if (handlers.Length == 1)
             {
                 EmitProperty(builder, handlers[0].MetadataName, "StreamHandler_" + streamIndex.ToString("D4", CultureInfo.InvariantCulture));
@@ -550,7 +550,7 @@ internal static class AppMediatorEmitter
     private static void EmitProperty(StringBuilder builder, string typeName, string propertyName)
     {
         builder.AppendLine();
-        builder.Append("    internal ").Append(typeName).Append(' ').Append(propertyName).AppendLine(" { get; }");
+        builder.Append("    internal global::System.Func<").Append(typeName).Append("> ").Append(propertyName).AppendLine(" { get; }");
     }
 
     private static string GetGeneratedPipelineMethodName(bool isStream, int index)

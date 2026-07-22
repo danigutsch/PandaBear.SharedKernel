@@ -14,10 +14,10 @@ internal sealed partial class AppMediator : IMediator
     /// Initializes a new instance of the <see cref="AppMediator"/> class.
     /// </summary>
     public AppMediator(
-        global::Mediator.Sample.CreateBookingHandler requestHandler0000,
-        global::Mediator.Sample.LookupTourSummaryHandler requestHandler0001,
-        global::Mediator.Sample.StreamTourCodesHandler streamHandler0000,
-        global::Mediator.Sample.TourBookedHandler notificationHandler00000000,
+        global::System.Func<global::Mediator.Sample.CreateBookingHandler> requestHandler0000,
+        global::System.Func<global::Mediator.Sample.LookupTourSummaryHandler> requestHandler0001,
+        global::System.Func<global::Mediator.Sample.StreamTourCodesHandler> streamHandler0000,
+        global::System.Func<global::Mediator.Sample.TourBookedHandler> notificationHandler00000000,
         global::SharedKernel.Mediator.AppMediatorInstrumentation instrumentation)
     {
         global::System.ArgumentNullException.ThrowIfNull(instrumentation);
@@ -37,13 +37,13 @@ internal sealed partial class AppMediator : IMediator
     /// </summary>
     internal global::SharedKernel.Mediator.AppMediatorInstrumentation Instrumentation => _instrumentation;
 
-    internal global::Mediator.Sample.CreateBookingHandler RequestHandler_0000 { get; }
+    internal global::System.Func<global::Mediator.Sample.CreateBookingHandler> RequestHandler_0000 { get; }
 
-    internal global::Mediator.Sample.LookupTourSummaryHandler RequestHandler_0001 { get; }
+    internal global::System.Func<global::Mediator.Sample.LookupTourSummaryHandler> RequestHandler_0001 { get; }
 
-    internal global::Mediator.Sample.StreamTourCodesHandler StreamHandler_0000 { get; }
+    internal global::System.Func<global::Mediator.Sample.StreamTourCodesHandler> StreamHandler_0000 { get; }
 
-    internal global::Mediator.Sample.TourBookedHandler NotificationHandler_0000_0000 { get; }
+    internal global::System.Func<global::Mediator.Sample.TourBookedHandler> NotificationHandler_0000_0000 { get; }
 
 
     /// <summary>
@@ -66,7 +66,7 @@ internal sealed partial class AppMediator : IMediator
         var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         try
         {
-            var result = await RequestHandler_0000.Handle(request, ct).ConfigureAwait(false);
+            var result = await RequestHandler_0000().Handle(request, ct).ConfigureAwait(false);
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
             return result;
@@ -114,7 +114,7 @@ internal sealed partial class AppMediator : IMediator
         var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         try
         {
-            var result = await RequestHandler_0001.Handle(request, ct).ConfigureAwait(false);
+            var result = await RequestHandler_0001().Handle(request, ct).ConfigureAwait(false);
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
             return result;
@@ -164,7 +164,7 @@ internal sealed partial class AppMediator : IMediator
         activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagRequestAssembly, "Mediator.Sample");
         activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagHandlerName, "StreamTourCodesHandler");
         var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
-        var enumerator = StreamHandler_0000.Handle(request, ct).GetAsyncEnumerator(ct);
+        var enumerator = StreamHandler_0000().Handle(request, ct).GetAsyncEnumerator(ct);
         try
         {
             while (true)

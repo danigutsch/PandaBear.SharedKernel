@@ -1,4 +1,5 @@
 using System.Diagnostics.Metrics;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace SharedKernel.Mediator.GeneratorTests;
@@ -73,11 +74,30 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
 
         var constructor = mediatorType.GetConstructors().ShouldHaveSingleItem();
         var arguments = constructor.GetParameters()
-            .Select(parameter => resolvedServices.FirstOrDefault(parameter.ParameterType.IsInstanceOfType)
-                ?? throw new InvalidOperationException($"No generated mediator dependency was supplied for '{parameter.ParameterType.FullName}'."))
+            .Select(parameter => ResolveService(parameter.ParameterType, resolvedServices))
             .ToArray();
 
         return (IMediator)constructor.Invoke(arguments);
+    }
+
+    private static object ResolveService(Type parameterType, IReadOnlyList<object> services)
+    {
+        var directService = services.FirstOrDefault(parameterType.IsInstanceOfType);
+        if (directService is not null)
+        {
+            return directService;
+        }
+
+        if (parameterType.IsGenericType && parameterType.GetGenericTypeDefinition() == typeof(Func<>))
+        {
+            var serviceType = parameterType.GenericTypeArguments[0];
+            var service = services.FirstOrDefault(serviceType.IsInstanceOfType)
+                ?? throw new InvalidOperationException($"No generated mediator dependency was supplied for '{parameterType.FullName}'.");
+            var body = Expression.Convert(Expression.Constant(service), serviceType);
+            return Expression.Lambda(parameterType, body).Compile();
+        }
+
+        throw new InvalidOperationException($"No generated mediator dependency was supplied for '{parameterType.FullName}'.");
     }
 
     public string[] ReadTraceEntries(string typeName = "Demo.TraceLog")

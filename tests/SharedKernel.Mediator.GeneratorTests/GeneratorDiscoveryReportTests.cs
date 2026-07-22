@@ -638,18 +638,39 @@ public sealed class GeneratorDiscoveryReportTests
                     yield return request.ToString();
                 }
             }
+
+            [PipelineOrder(PipelineStage.Validation, Order = 5)]
+            public sealed class ValidationBehavior : IStreamPipelineBehavior<StreamTours, string>
+            {
+                public IAsyncEnumerable<string> Handle(
+                    StreamTours request,
+                    StreamHandlerContinuation<string> next,
+                    CancellationToken ct) => next();
+            }
             """;
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
         // Act
-        var (generatedSource, diagnostics) = GeneratorTestHarness.RunAndGetResult(
-            compilation,
+        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
+        var diagnostics = runResult.Results.Single().Diagnostics;
+        var dependencyInjection = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
             GeneratedHintNames.DependencyInjection);
+        var appMediator = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            GeneratedHintNames.AppMediator);
+        var generatedPipelines = GeneratorTestHarness.GetGeneratedSource(
+            runResult,
+            GeneratedHintNames.GeneratedPipelines);
 
         // Assert
         (diagnostics).ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InvalidHandlerSignature
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.ExplicitStreamToursHandler", StringComparison.Ordinal));
-        (generatedSource).ShouldNotContain("services.AddScoped<global::Demo.ExplicitStreamToursHandler>();", StringComparison.Ordinal);
+        diagnostics.ShouldContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.MissingHandler
+            && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.StreamTours", StringComparison.Ordinal));
+        dependencyInjection.ShouldNotContain("services.AddScoped<global::Demo.ExplicitStreamToursHandler>();", StringComparison.Ordinal);
+        appMediator.ShouldNotContain("ExplicitStreamToursHandler", StringComparison.Ordinal);
+        generatedPipelines.ShouldNotContain("InvokeStream_0000", StringComparison.Ordinal);
     }
 
     [Fact]

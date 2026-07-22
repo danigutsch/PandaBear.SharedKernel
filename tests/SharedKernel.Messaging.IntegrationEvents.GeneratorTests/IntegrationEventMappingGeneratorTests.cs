@@ -870,6 +870,55 @@ public sealed class IntegrationEventMappingGeneratorTests
     }
 
     [Fact]
+    public void Serializer_matches_registered_base_and_derived_contracts_by_exact_runtime_type()
+    {
+        // Arrange
+        const string source = """
+            using Microsoft.Extensions.DependencyInjection;
+
+            namespace Demo;
+
+            public record BaseIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "tour.base";
+                public static int EventVersion => 1;
+            }
+
+            public sealed record DerivedIntegrationEvent(
+                Guid EventId,
+                DateTimeOffset OccurredAt,
+                string Details) : BaseIntegrationEvent(EventId, OccurredAt);
+
+            public static class Registration
+            {
+                public static IServiceCollection AddMessaging(IServiceCollection services)
+                {
+                    services.AddIntegrationEventContract<BaseIntegrationEvent>(BaseIntegrationEvent.EventType, null!);
+                    services.AddIntegrationEventContract<DerivedIntegrationEvent>("tour.derived", null!);
+                    return services;
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var result = GeneratorTestHarness.RunGenerator(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(result.RunResult);
+        var errors = result.OutputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
+            .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
+            .ToArray();
+
+        // Assert
+        errors.ShouldBeEmpty();
+        generatedSource.ShouldContain(
+            "global::Demo.BaseIntegrationEvent typed when integrationEvent.GetType() == typeof(global::Demo.BaseIntegrationEvent)",
+            StringComparison.Ordinal);
+        generatedSource.ShouldContain(
+            "global::Demo.DerivedIntegrationEvent typed when integrationEvent.GetType() == typeof(global::Demo.DerivedIntegrationEvent)",
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Combined_generators_register_only_the_transactional_outbox_dispatcher()
     {
         // Arrange

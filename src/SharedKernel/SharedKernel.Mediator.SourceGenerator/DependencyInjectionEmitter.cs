@@ -182,6 +182,7 @@ internal static class DependencyInjectionEmitter
         if (emittedRegistrationKeys.Add(selfRegistrationKey))
         {
             writer.Line($"services.{methodName}<{implementationType}>();");
+            writer.Line($"services.{methodName}<global::System.Func<{implementationType}>>(static sp => () => sp.GetRequiredService<{implementationType}>());");
         }
     }
 

@@ -9,8 +9,8 @@ internal static class GeneratedPipelines
     public static global::System.Collections.Generic.IAsyncEnumerable<string> InvokeStream_0000(AppMediator mediator, global::Demo.StreamTours request,
         global::System.Threading.CancellationToken ct)
     {
-        var pipeline0 = mediator.StreamPipeline_0000_0000;
-        var handler = mediator.StreamHandler_0000;
+        var pipeline0 = mediator.StreamPipeline_0000_0000();
+        var handler = mediator.StreamHandler_0000();
 
         return pipeline0.Handle(request, () => handler.Handle(request, ct), ct);
     }

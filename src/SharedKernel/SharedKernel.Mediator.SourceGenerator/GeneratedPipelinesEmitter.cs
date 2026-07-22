@@ -42,7 +42,7 @@ internal static class GeneratedPipelinesEmitter
         {
             var request = model.StreamRequests[index];
             var accessibleHandlers = request.Handlers
-                .Where(static handler => handler.IsAccessibleToGeneratedMediator)
+                .Where(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod)
                 .ToArray();
 
             if (request.Pipelines.Length == 0 || accessibleHandlers.Length != 1)
@@ -80,10 +80,10 @@ internal static class GeneratedPipelinesEmitter
 
         for (var pipelineIndex = 0; pipelineIndex < pipelines.Length; pipelineIndex++)
         {
-            writer.Line($"var pipeline{pipelineIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)} = mediator.{(isStream ? "Stream" : "Request")}Pipeline_{index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)}_{pipelineIndex.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)};");
+            writer.Line($"var pipeline{pipelineIndex.ToString(System.Globalization.CultureInfo.InvariantCulture)} = mediator.{(isStream ? "Stream" : "Request")}Pipeline_{index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)}_{pipelineIndex.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)}();");
         }
 
-        writer.Line($"var handler = mediator.{(isStream ? "Stream" : "Request")}Handler_{index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)};");
+        writer.Line($"var handler = mediator.{(isStream ? "Stream" : "Request")}Handler_{index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)}();");
         writer.Line();
         writer.Line($"return {BuildPipelineInvocation(pipelines, "handler.Handle(request, ct)")};");
         writer.Unindent();

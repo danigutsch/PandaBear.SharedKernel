@@ -167,6 +167,26 @@ public sealed class GeneratedIntegrationEventDispatchTests
     }
 
     [Fact]
+    public void Serialize_rejects_an_unregistered_derived_event()
+    {
+        // Arrange
+        var serializer = GeneratedIntegrationEventTestServices.CreateSerializer();
+        var integrationEvent = new UnregisteredDerivedIntegrationEvent(
+            Guid.CreateVersion7(),
+            DateTimeOffset.UtcNow,
+            "Rio de Janeiro",
+            "must not be dropped");
+
+        // Act
+        Action serialize = () => serializer.Serialize(integrationEvent);
+        var exception = serialize.ShouldThrow<NotSupportedException>();
+
+        // Assert
+        var eventTypeName = typeof(UnregisteredDerivedIntegrationEvent).FullName.ShouldNotBeNull();
+        exception.Message.ShouldContain(eventTypeName, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Publish_reports_unknown_envelope_event_type()
     {
         // Arrange

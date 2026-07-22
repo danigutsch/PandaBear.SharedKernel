@@ -64,8 +64,8 @@ internal static class GeneratedDispatch
         var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         try
         {
-            var handler0 = mediator.NotificationHandler_0000_0000.Handle(notification, ct);
-            var handler1 = mediator.NotificationHandler_0000_0001.Handle(notification, ct);
+            var handler0 = mediator.NotificationHandler_0000_0000().Handle(notification, ct);
+            var handler1 = mediator.NotificationHandler_0000_0001().Handle(notification, ct);
             await global::System.Threading.Tasks.Task.WhenAll(handler0.AsTask(), handler1.AsTask()).ConfigureAwait(false);
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);

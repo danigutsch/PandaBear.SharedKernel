@@ -26,11 +26,15 @@ public static partial class SharedKernelMediatorServiceCollectionExtensions
         services.AddScoped<IMediator>(static sp => sp.GetRequiredService<AppMediator>());
 
         services.AddScoped<global::Demo.CreateTourHandler>();
+        services.AddScoped<global::System.Func<global::Demo.CreateTourHandler>>(static sp => () => sp.GetRequiredService<global::Demo.CreateTourHandler>());
         services.AddScoped<global::Demo.ValidationBehavior>();
+        services.AddScoped<global::System.Func<global::Demo.ValidationBehavior>>(static sp => () => sp.GetRequiredService<global::Demo.ValidationBehavior>());
 
         services.AddScoped<global::Demo.TourCreatedHandler>();
+        services.AddScoped<global::System.Func<global::Demo.TourCreatedHandler>>(static sp => () => sp.GetRequiredService<global::Demo.TourCreatedHandler>());
 
         services.AddScoped<global::Demo.StreamToursHandler>();
+        services.AddScoped<global::System.Func<global::Demo.StreamToursHandler>>(static sp => () => sp.GetRequiredService<global::Demo.StreamToursHandler>());
 
         return services;
     }

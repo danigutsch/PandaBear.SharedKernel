@@ -26,11 +26,15 @@ public static partial class SharedKernelMediatorServiceCollectionExtensions
         services.AddScoped<IMediator>(static sp => sp.GetRequiredService<AppMediator>());
 
         services.AddScoped<global::Mediator.Sample.CreateBookingHandler>();
+        services.AddScoped<global::System.Func<global::Mediator.Sample.CreateBookingHandler>>(static sp => () => sp.GetRequiredService<global::Mediator.Sample.CreateBookingHandler>());
         services.AddScoped<global::Mediator.Sample.LookupTourSummaryHandler>();
+        services.AddScoped<global::System.Func<global::Mediator.Sample.LookupTourSummaryHandler>>(static sp => () => sp.GetRequiredService<global::Mediator.Sample.LookupTourSummaryHandler>());
 
         services.AddScoped<global::Mediator.Sample.TourBookedHandler>();
+        services.AddScoped<global::System.Func<global::Mediator.Sample.TourBookedHandler>>(static sp => () => sp.GetRequiredService<global::Mediator.Sample.TourBookedHandler>());
 
         services.AddScoped<global::Mediator.Sample.StreamTourCodesHandler>();
+        services.AddScoped<global::System.Func<global::Mediator.Sample.StreamTourCodesHandler>>(static sp => () => sp.GetRequiredService<global::Mediator.Sample.StreamTourCodesHandler>());
 
         return services;
     }

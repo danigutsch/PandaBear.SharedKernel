@@ -278,7 +278,7 @@ internal static class GeneratedDispatchEmitter
                 builder.AppendLine("        {");
                 builder.Append("            await mediator.NotificationHandler_")
                     .Append(notificationIndex.ToString("D4", CultureInfo.InvariantCulture))
-                    .AppendLine("_0000.Handle(notification, ct).ConfigureAwait(false);");
+                    .AppendLine("_0000().Handle(notification, ct).ConfigureAwait(false);");
                 builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);");
                 builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);");
                 builder.AppendLine("        }");
@@ -333,7 +333,7 @@ internal static class GeneratedDispatchEmitter
                             .Append(notificationIndex.ToString("D4", CultureInfo.InvariantCulture))
                             .Append('_')
                             .Append(handlerIndex.ToString("D4", CultureInfo.InvariantCulture))
-                            .AppendLine(".Handle(notification, ct);");
+                            .AppendLine("().Handle(notification, ct);");
                     }
 
                     builder.Append("            await global::System.Threading.Tasks.Task.WhenAll(");
@@ -367,7 +367,7 @@ internal static class GeneratedDispatchEmitter
                             .Append(notificationIndex.ToString("D4", CultureInfo.InvariantCulture))
                             .Append('_')
                             .Append(handlerIndex.ToString("D4", CultureInfo.InvariantCulture))
-                            .AppendLine(".Handle(notification, ct).ConfigureAwait(false);");
+                            .AppendLine("().Handle(notification, ct).ConfigureAwait(false);");
                         builder.AppendLine("                    handlerActivity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);");
                         builder.AppendLine("                    handlerActivity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);");
                         builder.AppendLine("                }");

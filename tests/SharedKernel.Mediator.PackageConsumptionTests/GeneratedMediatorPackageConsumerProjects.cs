@@ -16,11 +16,21 @@ internal static class GeneratedMediatorPackageConsumerProjects
 
             public sealed record LookupTour(string Code) : IQuery<string>;
 
-            internal sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
+            public sealed record ResolveTourCode(string Code) : IQuery<string>;
+
+            internal sealed class ResolveTourCodeHandler : IQueryHandler<ResolveTourCode, string>
+            {
+                public ValueTask<string> Handle(ResolveTourCode request, CancellationToken ct)
+                {
+                    return ValueTask.FromResult(request.Code);
+                }
+            }
+
+            internal sealed class LookupTourHandler(ISender sender) : IQueryHandler<LookupTour, string>
             {
                 public ValueTask<string> Handle(LookupTour request, CancellationToken ct)
                 {
-                    return ValueTask.FromResult(request.Code);
+                    return sender.Send(new ResolveTourCode(request.Code), ct);
                 }
             }
 

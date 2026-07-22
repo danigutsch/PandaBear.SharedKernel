@@ -619,7 +619,7 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
         builder.AppendLine("        {");
         for (var index = 0; index < contractTypes.Length; index++)
         {
-            builder.Append("            ").Append(contractTypes[index]).Append(" typed => global::System.Text.Json.JsonSerializer.Serialize(typed, jsonTypeInfo").Append(index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)).AppendLine("),");
+            builder.Append("            ").Append(contractTypes[index]).Append(" typed when integrationEvent.GetType() == typeof(").Append(contractTypes[index]).Append(") => global::System.Text.Json.JsonSerializer.Serialize(typed, jsonTypeInfo").Append(index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)).AppendLine("),");
         }
         builder.AppendLine("            _ => throw new global::System.NotSupportedException($\"Integration event type '{integrationEvent.GetType().FullName}' is not registered for durable serialization.\"),");
         builder.AppendLine("        };");

@@ -9,8 +9,8 @@ internal static class GeneratedPipelines
     public static global::System.Threading.Tasks.ValueTask<int> Invoke_0000(AppMediator mediator, global::Demo.CreateTour request,
         global::System.Threading.CancellationToken ct)
     {
-        var pipeline0 = mediator.RequestPipeline_0000_0000;
-        var handler = mediator.RequestHandler_0000;
+        var pipeline0 = mediator.RequestPipeline_0000_0000();
+        var handler = mediator.RequestHandler_0000();
 
         return pipeline0.Handle(request, () => handler.Handle(request, ct), ct);
     }
