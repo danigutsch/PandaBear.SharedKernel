@@ -39,9 +39,9 @@ public sealed class AuditTrailMappingGeneratorTests
         generatedSource.ShouldContain("auditTrailSink.Append(", StringComparison.Ordinal);
         generatedSource.ShouldContain("IDomainEventDispatchHandler", StringComparison.Ordinal);
         generatedSource.ShouldContain("TryAddEnumerable", StringComparison.Ordinal);
-        generatedSource.ShouldContain("TryAddScoped<global::SharedKernel.DomainEvents.IDomainEventDispatcher", StringComparison.Ordinal);
-        generatedSource.ShouldContain("ServiceDescriptor.Scoped<global::SharedKernel.DomainEvents.IDomainEventDispatchHandler", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("ServiceDescriptor.Singleton<global::SharedKernel.DomainEvents.IDomainEventDispatchHandler", StringComparison.Ordinal);
+        generatedSource.ShouldContain("TryAddScoped<global::SharedKernel.Domain.IDomainEventDispatcher", StringComparison.Ordinal);
+        generatedSource.ShouldContain("ServiceDescriptor.Scoped<global::SharedKernel.Domain.IDomainEventDispatchHandler", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("ServiceDescriptor.Singleton<global::SharedKernel.Domain.IDomainEventDispatchHandler", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("IntegrationEvent", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("CloudEvent", StringComparison.Ordinal);
     }

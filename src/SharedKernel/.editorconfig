@@ -49,9 +49,6 @@ dotnet_diagnostic.CA1040.severity = none
 [SharedKernel.Domain/IDomainEvent.cs]
 dotnet_diagnostic.CA1040.severity = none
 
-[SharedKernel.DomainEvents/IDomainEventHandler.cs]
-dotnet_diagnostic.CA1711.severity = none
-
 [SharedKernel.Messaging.IntegrationEvents/IIntegrationEventHandler.cs]
 dotnet_diagnostic.CA1711.severity = none
 

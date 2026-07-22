@@ -7,8 +7,6 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
         "src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj",
         "src/SharedKernel/SharedKernel.BuildingBlocks/SharedKernel.BuildingBlocks.csproj",
         "src/SharedKernel/SharedKernel.Domain/SharedKernel.Domain.csproj",
-        "src/SharedKernel/SharedKernel.Mediator.Abstractions/SharedKernel.Mediator.Abstractions.csproj",
-        "src/SharedKernel/SharedKernel.DomainEvents/SharedKernel.DomainEvents.csproj",
         "src/SharedKernel/SharedKernel.AuditTrail/SharedKernel.AuditTrail.csproj",
         "src/SharedKernel/SharedKernel.AuditTrail.SourceGenerator/SharedKernel.AuditTrail.SourceGenerator.csproj"
     ];

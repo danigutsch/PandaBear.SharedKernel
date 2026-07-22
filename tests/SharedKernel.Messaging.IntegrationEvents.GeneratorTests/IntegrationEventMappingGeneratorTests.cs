@@ -930,20 +930,9 @@ public sealed class IntegrationEventMappingGeneratorTests
 
             [assembly: MediatorModule]
 
-            namespace SharedKernel.DomainEvents
-            {
-                public interface IDomainEventHandler<in TDomainEvent>
-                    where TDomainEvent : IDomainEvent;
-            }
-
             namespace Demo
             {
                 public sealed record TourCreatedDomainEvent(Guid TourId) : IDomainEvent;
-
-                public sealed class TourCreatedDomainEventHandler : SharedKernel.DomainEvents.IDomainEventHandler<TourCreatedDomainEvent>
-                {
-                    public ValueTask Handle(TourCreatedDomainEvent domainEvent, CancellationToken ct) => ValueTask.CompletedTask;
-                }
 
                 public sealed record TourCreatedIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt, Guid TourId) : IIntegrationEvent
                 {
@@ -1067,9 +1056,9 @@ public sealed class IntegrationEventMappingGeneratorTests
         generatedSource.ShouldContain("IDomainEventIntegrationEventOutbox outbox", StringComparison.Ordinal);
         generatedSource.ShouldContain("CompositeDomainEventDispatcher", StringComparison.Ordinal);
         generatedSource.ShouldContain("TryAddEnumerable", StringComparison.Ordinal);
-        generatedSource.ShouldContain("TryAddScoped<global::SharedKernel.DomainEvents.IDomainEventDispatcher", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("TryAddSingleton<global::SharedKernel.DomainEvents.IDomainEventDispatcher", StringComparison.Ordinal);
-        generatedSource.ShouldContain("ServiceDescriptor.Scoped<global::SharedKernel.DomainEvents.IDomainEventDispatchHandler", StringComparison.Ordinal);
+        generatedSource.ShouldContain("TryAddScoped<global::SharedKernel.Domain.IDomainEventDispatcher", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("TryAddSingleton<global::SharedKernel.Domain.IDomainEventDispatcher", StringComparison.Ordinal);
+        generatedSource.ShouldContain("ServiceDescriptor.Scoped<global::SharedKernel.Domain.IDomainEventDispatchHandler", StringComparison.Ordinal);
         generatedSource.ShouldContain("IDomainEventDispatchHandler", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("IDomainEventHandler<", StringComparison.Ordinal);
     }

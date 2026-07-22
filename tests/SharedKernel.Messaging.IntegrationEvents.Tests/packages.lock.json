@@ -163,12 +163,6 @@
           "SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.domainevents": {
-        "type": "Project",
-        "dependencies": {
-          "SharedKernel.Domain": "[0.1.0-alpha.0, )"
-        }
-      },
       "sharedkernel.messaging": {
         "type": "Project"
       },

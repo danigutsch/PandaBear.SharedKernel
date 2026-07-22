@@ -3,7 +3,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.AuditTrail.SourceGenerator;
-using SharedKernel.DomainEvents;
 using SharedKernel.Testing.Roslyn;
 
 namespace SharedKernel.AuditTrail.GeneratorTests;
@@ -70,7 +69,6 @@ internal static class AuditTrailGeneratorTestHarness
 
         references.Add(MetadataReference.CreateFromFile(typeof(IAuditTrailEntry).Assembly.Location));
         references.Add(MetadataReference.CreateFromFile(typeof(Domain.IDomainEvent).Assembly.Location));
-        references.Add(MetadataReference.CreateFromFile(typeof(IDomainEventDispatchHandler).Assembly.Location));
         references.Add(MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location));
         return references;
     }

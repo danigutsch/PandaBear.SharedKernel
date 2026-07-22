@@ -8,60 +8,6 @@ namespace SharedKernel.Mediator.GeneratorTests;
 public sealed class GeneratorDispatchTests
 {
     [Fact]
-    public void Omit_domain_event_notification_discovery_and_registration()
-    {
-        // Arrange
-        const string source = """
-            using SharedKernel.Domain;
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace SharedKernel.DomainEvents
-            {
-                public interface IDomainEventHandler<in TDomainEvent>
-                    where TDomainEvent : IDomainEvent;
-            }
-
-            namespace Demo
-            {
-                public sealed record TourCreated(Guid TourId) : IDomainEvent;
-
-                public sealed class TourCreatedHandler : SharedKernel.DomainEvents.IDomainEventHandler<TourCreated>
-                {
-                    public ValueTask Handle(TourCreated domainEvent, CancellationToken ct) => ValueTask.CompletedTask;
-                }
-            }
-            """;
-        var references = new[]
-        {
-            MetadataReference.CreateFromFile(typeof(Domain.IDomainEvent).Assembly.Location),
-        };
-        var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: references);
-
-        // Act
-        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
-        var generatedHintNames = runResult.Results
-            .SelectMany(static result => result.GeneratedSources)
-            .Select(static generatedSource => generatedSource.HintName)
-            .ToArray();
-        var domainEventDispatcherRegistrations = runResult.Results
-            .SelectMany(static result => result.GeneratedSources)
-            .SelectMany(static generatedSource => generatedSource.SourceText.Lines)
-            .Select(static line => line.ToString())
-            .Count(static line =>
-                line.Contains("ServiceCollectionDescriptorExtensions.TryAdd", StringComparison.Ordinal) &&
-                line.Contains("IDomainEventDispatcher", StringComparison.Ordinal));
-        var dependencyInjectionSource = GeneratorTestHarness.GetGeneratedSource(
-            runResult,
-            GeneratedHintNames.DependencyInjection);
-        // Assert
-        generatedHintNames.ShouldNotContain("SharedKernel.DomainEvents.Generated.DomainEventNotifications.g.cs");
-        domainEventDispatcherRegistrations.ShouldBe(0);
-        dependencyInjectionSource.ShouldNotContain("SharedKernel.DomainEvents", StringComparison.Ordinal);
-    }
-
-    [Fact]
     public void Generate_appmediator_shell()
     {
         // Arrange

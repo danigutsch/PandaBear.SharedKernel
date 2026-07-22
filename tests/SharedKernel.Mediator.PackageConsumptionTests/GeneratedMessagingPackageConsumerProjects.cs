@@ -16,7 +16,7 @@ internal static class GeneratedMessagingPackageConsumerProjects
                 <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
               </PropertyGroup>
               <ItemGroup>
-                {{workspace.GetPackageReference("SharedKernel.DomainEvents")}}
+                {{workspace.GetPackageReference("SharedKernel.Domain")}}
                 {{workspace.GetPackageReference("SharedKernel.Mediator")}}
                 {{workspace.GetPackageReference("SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
                 {{workspace.GetPackageReference("SharedKernel.Messaging.IntegrationEvents")}}

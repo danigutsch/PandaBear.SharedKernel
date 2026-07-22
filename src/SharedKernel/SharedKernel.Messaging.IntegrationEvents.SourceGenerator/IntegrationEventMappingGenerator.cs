@@ -678,7 +678,7 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
 
     private static void EmitDomainEventDispatcher(StringBuilder builder, ImmutableArray<IntegrationEventMappingModel> mappings)
     {
-        builder.AppendLine("internal sealed class GeneratedIntegrationEventDomainEventDispatcher(global::SharedKernel.Messaging.IntegrationEvents.IDomainEventIntegrationEventOutbox outbox, global::System.TimeProvider timeProvider) : global::SharedKernel.DomainEvents.IDomainEventDispatchHandler");
+        builder.AppendLine("internal sealed class GeneratedIntegrationEventDomainEventDispatcher(global::SharedKernel.Messaging.IntegrationEvents.IDomainEventIntegrationEventOutbox outbox, global::System.TimeProvider timeProvider) : global::SharedKernel.Domain.IDomainEventDispatchHandler");
         builder.AppendLine("{");
         builder.AppendLine("    public global::System.Threading.Tasks.ValueTask Handle(global::SharedKernel.Domain.IDomainEvent domainEvent, global::System.Threading.CancellationToken ct)");
         builder.AppendLine("    {");
@@ -746,8 +746,8 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
         if (hasMappings)
         {
             builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton(services, global::System.TimeProvider.System);");
-            builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddScoped<global::SharedKernel.DomainEvents.IDomainEventDispatcher, global::SharedKernel.DomainEvents.CompositeDomainEventDispatcher>(services);");
-            builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddEnumerable(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Scoped<global::SharedKernel.DomainEvents.IDomainEventDispatchHandler, global::SharedKernel.Messaging.IntegrationEvents.Generated.GeneratedIntegrationEventDomainEventDispatcher>());");
+            builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddScoped<global::SharedKernel.Domain.IDomainEventDispatcher, global::SharedKernel.Domain.CompositeDomainEventDispatcher>(services);");
+            builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddEnumerable(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Scoped<global::SharedKernel.Domain.IDomainEventDispatchHandler, global::SharedKernel.Messaging.IntegrationEvents.Generated.GeneratedIntegrationEventDomainEventDispatcher>());");
         }
         if (contractTypes.Length > 0)
         {

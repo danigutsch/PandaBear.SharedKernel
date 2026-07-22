@@ -193,7 +193,7 @@ public sealed class AuditTrailMappingGenerator : IIncrementalGenerator
                 internal sealed class GeneratedAuditTrailDomainEventHandler{{index}}(
                     global::SharedKernel.AuditTrail.IAuditTrailSink<{{mapping.AuditTrailEntryType}}> auditTrailSink,
                     global::System.TimeProvider timeProvider)
-                    : global::SharedKernel.DomainEvents.IDomainEventDispatchHandler
+                    : global::SharedKernel.Domain.IDomainEventDispatchHandler
                 {
                     public global::System.Threading.Tasks.ValueTask Handle(global::SharedKernel.Domain.IDomainEvent domainEvent, global::System.Threading.CancellationToken ct)
                     {
@@ -221,12 +221,12 @@ public sealed class AuditTrailMappingGenerator : IIncrementalGenerator
         builder.AppendLine("    {");
         builder.AppendLine("        global::System.ArgumentNullException.ThrowIfNull(services);");
         builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton(services, global::System.TimeProvider.System);");
-        builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddScoped<global::SharedKernel.DomainEvents.IDomainEventDispatcher, global::SharedKernel.DomainEvents.CompositeDomainEventDispatcher>(services);");
+        builder.AppendLine("        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddScoped<global::SharedKernel.Domain.IDomainEventDispatcher, global::SharedKernel.Domain.CompositeDomainEventDispatcher>(services);");
 
         for (var index = 0; index < mappings.Length; index++)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            builder.AppendLine($"        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddEnumerable(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Scoped<global::SharedKernel.DomainEvents.IDomainEventDispatchHandler, global::SharedKernel.AuditTrail.Generated.GeneratedAuditTrailDomainEventHandler{index}>());");
+            builder.AppendLine($"        global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddEnumerable(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Scoped<global::SharedKernel.Domain.IDomainEventDispatchHandler, global::SharedKernel.AuditTrail.Generated.GeneratedAuditTrailDomainEventHandler{index}>());");
         }
 
         builder.AppendLine("        return services;");
