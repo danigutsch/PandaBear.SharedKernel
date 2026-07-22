@@ -21,4 +21,16 @@ public sealed class HttpServiceCollectionExtensionsTests
         // Assert
         act.ShouldThrow<ArgumentNullException>();
     }
+
+    [Fact]
+    [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
+    public void AddHttpClientDefaults_registers_metrics_without_tracing()
+    {
+        // Act
+        var registrations = HttpClientDefaultsTestServices.GetTelemetryRegistrations();
+
+        // Assert
+        registrations.MetricsRegistered.ShouldBeTrue();
+        registrations.TracingRegistered.ShouldBeFalse();
+    }
 }

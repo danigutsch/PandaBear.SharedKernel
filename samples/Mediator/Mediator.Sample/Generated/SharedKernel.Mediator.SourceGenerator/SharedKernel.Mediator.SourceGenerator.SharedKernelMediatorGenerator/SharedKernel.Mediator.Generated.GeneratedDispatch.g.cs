@@ -73,7 +73,7 @@ internal static class GeneratedDispatch
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
         }
-        catch (global::System.OperationCanceledException)
+        catch (global::System.OperationCanceledException) when (ct.IsCancellationRequested)
         {
             outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);
@@ -83,8 +83,7 @@ internal static class GeneratedDispatch
         {
             outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
-            activity?.AddException(ex);
-            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);
+            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);
             throw;
         }

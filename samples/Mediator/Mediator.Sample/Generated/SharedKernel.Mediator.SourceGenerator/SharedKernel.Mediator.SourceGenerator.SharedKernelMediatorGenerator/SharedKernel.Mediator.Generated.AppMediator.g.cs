@@ -71,7 +71,7 @@ internal sealed partial class AppMediator : IMediator
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
             return result;
         }
-        catch (global::System.OperationCanceledException)
+        catch (global::System.OperationCanceledException) when (ct.IsCancellationRequested)
         {
             outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);
@@ -81,8 +81,7 @@ internal sealed partial class AppMediator : IMediator
         {
             outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
-            activity?.AddException(ex);
-            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);
+            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);
             throw;
         }
@@ -119,7 +118,7 @@ internal sealed partial class AppMediator : IMediator
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
             return result;
         }
-        catch (global::System.OperationCanceledException)
+        catch (global::System.OperationCanceledException) when (ct.IsCancellationRequested)
         {
             outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);
@@ -129,8 +128,7 @@ internal sealed partial class AppMediator : IMediator
         {
             outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
-            activity?.AddException(ex);
-            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);
+            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);
             throw;
         }
@@ -174,7 +172,7 @@ internal sealed partial class AppMediator : IMediator
                 {
                     hasNext = await enumerator.MoveNextAsync();
                 }
-                catch (global::System.OperationCanceledException)
+                catch (global::System.OperationCanceledException) when (ct.IsCancellationRequested)
                 {
                     outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;
                     activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);
@@ -184,8 +182,7 @@ internal sealed partial class AppMediator : IMediator
                 {
                     outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;
                     activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);
-                    activity?.AddException(ex);
-                    activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);
+                    activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);
                     activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);
                     throw;
                 }

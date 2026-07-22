@@ -364,6 +364,9 @@
           "OpenTelemetry.Instrumentation.Http": "[1.16.0, )"
         }
       },
+      "sharedkernel.testing": {
+        "type": "Project"
+      },
       "sharedkernel.testing.assertions": {
         "type": "Project",
         "dependencies": {

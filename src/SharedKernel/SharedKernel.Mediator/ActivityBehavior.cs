@@ -28,7 +28,7 @@ public sealed class ActivityBehavior<TRequest, TResponse> : IPipelineBehavior<TR
             activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Ok);
             return response;
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
             activity?.SetTag(MediatorTelemetry.TagRuntimeOutcome, MediatorTelemetry.OutcomeCancelled);
             throw;
@@ -36,8 +36,7 @@ public sealed class ActivityBehavior<TRequest, TResponse> : IPipelineBehavior<TR
         catch (Exception ex)
         {
             activity?.SetTag(MediatorTelemetry.TagErrorType, ex.GetType().Name);
-            activity?.AddException(ex);
-            activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Error, ex.Message);
+            activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Error);
             activity?.SetTag(MediatorTelemetry.TagRuntimeOutcome, MediatorTelemetry.OutcomeError);
             throw;
         }

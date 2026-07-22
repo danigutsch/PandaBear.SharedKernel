@@ -64,6 +64,11 @@ public static class SchedulingTelemetry
     public static string OutcomeSuccess => "success";
 
     /// <summary>
+    /// Gets the cancelled outcome value.
+    /// </summary>
+    public static string OutcomeCancelled => "cancelled";
+
+    /// <summary>
     /// Gets the error outcome value.
     /// </summary>
     public static string OutcomeError => "error";

@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
 
 namespace SharedKernel.HttpClients;
 
@@ -25,8 +24,7 @@ public static class HttpServiceCollectionExtensions
         });
 
         services.AddOpenTelemetry()
-            .WithMetrics(metrics => metrics.AddHttpClientInstrumentation())
-            .WithTracing(tracing => tracing.AddHttpClientInstrumentation());
+            .WithMetrics(metrics => metrics.AddHttpClientInstrumentation());
 
         return services;
     }

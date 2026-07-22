@@ -91,7 +91,7 @@ public sealed class ActivityBehaviorTests
     }
 
     [Fact]
-    public async Task Activity_behavior_records_exception_event_when_the_handler_fails()
+    public async Task Activity_behavior_records_bounded_error_type_without_exception_content_when_the_handler_fails()
     {
         // Arrange
         List<Activity> stoppedActivities = [];
@@ -109,17 +109,11 @@ public sealed class ActivityBehaviorTests
         // Assert
         var activity = (stoppedActivities).ShouldHaveSingleItem();
         (activity.Status).ShouldBe(ActivityStatusCode.Error);
-        (activity.StatusDescription).ShouldBe("boom");
+        (activity.StatusDescription).ShouldBeNull();
         (activity.Tags).ShouldContain(static tag => tag.Key == MediatorTelemetry.TagErrorType && tag.Value == "InvalidOperationException");
         (activity.Tags).ShouldContain(static tag => tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeError);
 
-        var exceptionEvent = (activity.Events).ShouldHaveSingleItem(static evt => evt.Name == "exception");
-        var exceptionTags = exceptionEvent.Tags;
-        _ = (exceptionTags).ShouldNotBeNull();
-        (exceptionTags).ShouldContain(static tag =>
-            tag.Key == "exception.type" && string.Equals(tag.Value as string, typeof(InvalidOperationException).FullName, StringComparison.Ordinal));
-        (exceptionTags).ShouldContain(static tag =>
-            tag.Key == "exception.message" && string.Equals(tag.Value as string, "boom", StringComparison.Ordinal));
+        (activity.Events).ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -130,13 +124,15 @@ public sealed class ActivityBehaviorTests
         using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(stoppedActivities);
         var behavior = new ActivityBehavior<ActivityTestQuery, int>();
         var request = new ActivityTestQuery(12);
+        using var cancellation = new CancellationTokenSource();
+        await cancellation.CancelAsync();
 
         // Act
         await ((Func<Task>)(() =>
             behavior.Handle(
                 request,
-                static () => ValueTask.FromException<int>(new OperationCanceledException("cancelled")),
-                CancellationToken.None).AsTask())).ShouldThrow<OperationCanceledException>();
+                () => ValueTask.FromException<int>(new OperationCanceledException(cancellation.Token)),
+                cancellation.Token).AsTask())).ShouldThrow<OperationCanceledException>();
 
         // Assert
         var activity = (stoppedActivities).ShouldHaveSingleItem();
@@ -148,13 +144,40 @@ public sealed class ActivityBehaviorTests
     }
 
     [Fact]
-    public async Task Activity_behavior_does_not_record_an_error_when_the_handler_handles_the_exception_internally()
+    public async Task Activity_behavior_records_unsignaled_cancellation_as_an_error()
     {
         // Arrange
         List<Activity> stoppedActivities = [];
         using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(stoppedActivities);
         var behavior = new ActivityBehavior<ActivityTestQuery, int>();
         var request = new ActivityTestQuery(13);
+
+        // Act
+        await ((Func<Task>)(() =>
+            behavior.Handle(
+                request,
+                static () => ValueTask.FromException<int>(new OperationCanceledException("unexpected")),
+                CancellationToken.None).AsTask())).ShouldThrow<OperationCanceledException>();
+
+        // Assert
+        var activity = stoppedActivities.ShouldHaveSingleItem();
+        activity.Status.ShouldBe(ActivityStatusCode.Error);
+        activity.StatusDescription.ShouldBeNull();
+        activity.Tags.ShouldContain(static tag =>
+            tag.Key == MediatorTelemetry.TagRuntimeOutcome && tag.Value == MediatorTelemetry.OutcomeError);
+        activity.Tags.ShouldContain(static tag =>
+            tag.Key == MediatorTelemetry.TagErrorType && tag.Value == nameof(OperationCanceledException));
+        activity.Events.ShouldNotContain(static evt => evt.Name == "exception");
+    }
+
+    [Fact]
+    public async Task Activity_behavior_does_not_record_an_error_when_the_handler_handles_the_exception_internally()
+    {
+        // Arrange
+        List<Activity> stoppedActivities = [];
+        using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(stoppedActivities);
+        var behavior = new ActivityBehavior<ActivityTestQuery, int>();
+        var request = new ActivityTestQuery(14);
 
         // Act
         var response = await behavior.Handle(
