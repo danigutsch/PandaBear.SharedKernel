@@ -672,7 +672,7 @@ public sealed class IntegrationEventMappingGeneratorTests
         diagnostics.ShouldHaveCount(8);
         diagnostics.ShouldAllSatisfy(static diagnostic =>
         {
-            diagnostic.Severity.ShouldBe(Microsoft.CodeAnalysis.DiagnosticSeverity.Error);
+            diagnostic.Severity.ShouldBe(DiagnosticSeverity.Error);
             diagnostic.Location.IsInSource.ShouldBeTrue();
         });
         generatedSource.ShouldContain("global::Demo.ValidIntegrationEvent", StringComparison.Ordinal);
@@ -1010,7 +1010,6 @@ public sealed class IntegrationEventMappingGeneratorTests
         var errors = result.OutputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
             .ToArray();
-
         errors.ShouldBeEmpty();
         generatedSource.ShouldContain("GeneratedIntegrationEventDomainEventDispatcher", StringComparison.Ordinal);
         generatedSource.ShouldContain("Handle(global::SharedKernel.Domain.IDomainEvent domainEvent", StringComparison.Ordinal);
@@ -1387,7 +1386,7 @@ public sealed class IntegrationEventMappingGeneratorTests
         diagnostics.Length.ShouldBe(2);
         diagnostics.All(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error).ShouldBeTrue();
         diagnostics.All(static diagnostic => diagnostic.GetMessage(CultureInfo.InvariantCulture)
-            .Contains("concrete IIntegrationEvent", StringComparison.Ordinal)).ShouldBeTrue();
+            .Contains("must be concrete, closed, accessible classes or structs", StringComparison.Ordinal)).ShouldBeTrue();
     }
 
     [Fact]

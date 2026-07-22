@@ -113,7 +113,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
     }
 
     [Fact]
-    public async Task Publish_propagates_cancellation_from_the_closed_typed_handler()
+    public async Task Publish_rejects_precancelled_delivery_before_invoking_the_handler()
     {
         // Arrange
         using var host = GeneratedIntegrationEventTestServices.CreateConsumerHost();
@@ -123,7 +123,6 @@ public sealed class GeneratedIntegrationEventDispatchTests
             DateTimeOffset.Parse("2026-07-05T12:30:00+00:00", CultureInfo.InvariantCulture),
             "Rio de Janeiro");
         var envelope = TestEventEnvelopeFactory.Create(integrationEvent, host.Serializer.Serialize(integrationEvent));
-        delivery.Handler.ThrowWhenCancelled = true;
         using var cancellationTokenSource = new CancellationTokenSource();
         await cancellationTokenSource.CancelAsync();
 
@@ -132,8 +131,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
         _ = await publish.ShouldThrowAssignableTo<OperationCanceledException>();
 
         // Assert
-        delivery.Handler.InvocationCount.ShouldBe(1);
-        delivery.Handler.CancellationToken.ShouldBe(cancellationTokenSource.Token);
+        delivery.Handler.InvocationCount.ShouldBe(0);
     }
 
     [Fact]

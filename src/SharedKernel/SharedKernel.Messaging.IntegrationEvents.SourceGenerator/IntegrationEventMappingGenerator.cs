@@ -48,7 +48,8 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
         "SKMSG004",
         "Integration-event mapping method is invalid",
         "Method '{0}' marked with IntegrationEventMappingAttribute must be a non-generic static accessible method " +
-        "on accessible non-generic containing types with signature TIntegrationEvent Method(TDomainEvent, Guid, DateTimeOffset)",
+        "on accessible non-generic containing types with signature TIntegrationEvent Method(TDomainEvent, Guid, DateTimeOffset); " +
+        "TDomainEvent and TIntegrationEvent must be concrete, closed, accessible classes or structs",
         "SharedKernel.Messaging",
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -73,7 +74,9 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
         globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Included,
         typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
         genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters,
-        miscellaneousOptions: SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier);
+        miscellaneousOptions:
+            SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier |
+            SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers);
 
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
