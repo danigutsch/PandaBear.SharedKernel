@@ -13,9 +13,10 @@ public sealed class GeneratedIntegrationEventDispatchTests
             "wrong.event.type");
 
         // Act
-        var exception = register.ShouldThrow<InvalidOperationException>();
+        var exception = register.ShouldThrow<ArgumentException>();
 
         // Assert
+        exception.ParamName.ShouldBe("eventType");
         exception.Message.ShouldContain(TestIntegrationEvent.EventType, StringComparison.Ordinal);
         exception.Message.ShouldContain("wrong.event.type", StringComparison.Ordinal);
     }

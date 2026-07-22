@@ -28,8 +28,9 @@ public static class IntegrationEventConsumerServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(jsonTypeInfo);
         if (!string.Equals(eventType, TIntegrationEvent.EventType, StringComparison.Ordinal))
         {
-            throw new InvalidOperationException(
-                $"Integration event contract '{typeof(TIntegrationEvent).FullName}' declares event type '{TIntegrationEvent.EventType}', not '{eventType}'.");
+            throw new ArgumentException(
+                $"Integration event contract '{typeof(TIntegrationEvent).FullName}' declares event type '{TIntegrationEvent.EventType}', not '{eventType}'.",
+                nameof(eventType));
         }
 
         services.TryAddSingleton(jsonTypeInfo);
