@@ -31,6 +31,12 @@ internal static class GeneratorTestHarness
 
     public static GeneratorDriverRunResult RunGeneratorDriver(CSharpCompilation compilation)
     {
+        return RunGenerator(compilation).RunResult;
+    }
+
+    public static (GeneratorDriverRunResult RunResult, CSharpCompilation OutputCompilation) RunGenerator(
+        CSharpCompilation compilation)
+    {
         var generator = new IntegrationEventMappingGenerator();
         GeneratorDriver driver = CSharpGeneratorDriver.Create(
             generators: [generator.AsSourceGenerator()],
@@ -38,8 +44,8 @@ internal static class GeneratorTestHarness
             parseOptions: (CSharpParseOptions?)compilation.SyntaxTrees.First().Options,
             optionsProvider: new TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>.Empty));
 
-        driver = driver.RunGenerators(compilation);
-        return driver.GetRunResult();
+        driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out _);
+        return (driver.GetRunResult(), (CSharpCompilation)outputCompilation);
     }
 
     public static string GetGeneratedSource(GeneratorDriverRunResult runResult)

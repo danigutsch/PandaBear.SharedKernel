@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>SharedKernel.AuditTrail.GeneratorTests</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="xunit.v3.mtp-v2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.AuditTrail\SharedKernel.AuditTrail.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.AuditTrail.SourceGenerator\SharedKernel.AuditTrail.SourceGenerator.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Domain\SharedKernel.Domain.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.DomainEvents\SharedKernel.DomainEvents.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Roslyn\SharedKernel.Testing.Roslyn.csproj" />
+    </ItemGroup>
+
+</Project>

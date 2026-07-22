@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <IsAotCompatible>false</IsAotCompatible>
+        <PackageId>SharedKernel.AuditTrail.SourceGenerator</PackageId>
+        <Description>Source generator for typed domain-event to audit-trail mappings.</Description>
+        <RootNamespace>SharedKernel.AuditTrail.SourceGenerator</RootNamespace>
+        <PackageTags>audit-trail;domain-events;source-generator;shared-kernel;dotnet</PackageTags>
+        <IsRoslynComponent>true</IsRoslynComponent>
+        <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <Nullable>enable</Nullable>
+        <AuditTrailSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' != 'true'">$(MSBuildProjectDirectory)/bin/$(Configuration)/netstandard2.0/$(AssemblyName).dll</AuditTrailSourceGeneratorPackageFile>
+        <AuditTrailSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' == 'true'">$(MSBuildThisFileDirectory)..\..\..\.build\bin\$(MSBuildProjectName)\$(Configuration)\netstandard2.0\$(AssemblyName).dll</AuditTrailSourceGeneratorPackageFile>
+        <AuditTrailDependencyInjectionPackageVersion>10.0.10</AuditTrailDependencyInjectionPackageVersion>
+        <NuspecFile>SharedKernel.AuditTrail.SourceGenerator.nuspec</NuspecFile>
+        <NuspecBasePath>$(MSBuildProjectDirectory)</NuspecBasePath>
+        <NuspecProperties>packageVersion=$(PackageVersion);analyzerFile=$(AuditTrailSourceGeneratorPackageFile);dependencyInjectionVersion=$(AuditTrailDependencyInjectionPackageVersion)</NuspecProperties>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+    </ItemGroup>
+
+</Project>

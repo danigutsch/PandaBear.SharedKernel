@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>SharedKernel.AuditTrail.SourceGenerator</id>
+    <version>$packageVersion$</version>
+    <authors>ViajantesTurismo contributors</authors>
+    <description>Source generator for typed domain-event to audit-trail mappings.</description>
+    <license type="expression">MIT</license>
+    <repository type="git" url="https://github.com/danigutsch/ViajantesTurismo" />
+    <tags>audit-trail domain-events source-generator shared-kernel dotnet</tags>
+    <dependencies>
+      <group targetFramework="net10.0">
+        <dependency id="SharedKernel.AuditTrail" version="[$packageVersion$, )" exclude="Build,Analyzers" />
+        <dependency id="SharedKernel.Domain" version="[$packageVersion$, )" exclude="Build,Analyzers" />
+        <dependency id="SharedKernel.DomainEvents" version="[$packageVersion$, )" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="[$dependencyInjectionVersion$, )" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="$analyzerFile$" target="analyzers/dotnet/cs" />
+    <file src="_._" target="lib/net10.0" />
+  </files>
+</package>

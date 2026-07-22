@@ -25,7 +25,7 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
 
     public static async ValueTask<PostgreSqlIntegrationEventTransportScenario> Create(CancellationToken ct)
     {
-        var appBuilder = DistributedApplication.CreateBuilder([]);
+        var appBuilder = AspireTestApplication.CreateBuilder();
         var databaseServer = appBuilder.AddPostgres(PostgreSqlResourceName);
         _ = databaseServer.AddDatabase(DatabaseResourceName);
 

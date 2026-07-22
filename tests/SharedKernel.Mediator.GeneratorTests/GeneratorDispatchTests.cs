@@ -51,7 +51,11 @@ public sealed class GeneratorDispatchTests
             runResult,
             GeneratedHintNames.DependencyInjection);
         dependencyInjectionSource.ShouldContain("TryAddSingleton<global::SharedKernel.DomainEvents.IDomainEventNotificationFactory", StringComparison.Ordinal);
-        dependencyInjectionSource.ShouldContain("TryAddScoped<global::SharedKernel.DomainEvents.IDomainEventDispatcher", StringComparison.Ordinal);
+        dependencyInjectionSource.ShouldContain("CompositeDomainEventDispatcher", StringComparison.Ordinal);
+        dependencyInjectionSource.ShouldContain("TryAddEnumerable", StringComparison.Ordinal);
+        dependencyInjectionSource.ShouldContain("IDomainEventDispatchHandler, global::SharedKernel.DomainEvents.MediatorDomainEventDispatcher", StringComparison.Ordinal);
+        generatedSource.ShouldContain("CompositeDomainEventDispatcher", StringComparison.Ordinal);
+        generatedSource.ShouldContain("IDomainEventDispatchHandler, global::SharedKernel.DomainEvents.MediatorDomainEventDispatcher", StringComparison.Ordinal);
     }
 
     [Fact]

@@ -1,0 +1,4 @@
+#nullable enable
+SharedKernel.AuditTrail.SourceGenerator.AuditTrailMappingGenerator
+SharedKernel.AuditTrail.SourceGenerator.AuditTrailMappingGenerator.AuditTrailMappingGenerator() -> void
+SharedKernel.AuditTrail.SourceGenerator.AuditTrailMappingGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void

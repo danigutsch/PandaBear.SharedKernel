@@ -8,6 +8,7 @@ static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBe(this d
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T expected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T? expected) -> void
+static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeEquivalentTo<T>(this System.Collections.Generic.IEnumerable<T>! actual, params T[]! expected) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeAssignableTo<T>(this object? actual) -> T
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeEmpty<T>(this System.Collections.Generic.IEnumerable<T>! actual) -> void
 static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeFalse(this bool actual, string? userMessage = null) -> void
