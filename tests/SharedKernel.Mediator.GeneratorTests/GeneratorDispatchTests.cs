@@ -188,15 +188,15 @@ public sealed class GeneratorDispatchTests
         (generatedSource).ShouldNotContain("internal static class GeneratedDispatch", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("internal static class GeneratedDispatch", StringComparison.Ordinal);
         (generatedPipelinesSource).ShouldContain("internal static class GeneratedPipelines", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.LookupTour typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.CreateTour typed => Cast<int, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.DeleteTour typed => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.GetTourById typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.LookupTour typed => Box<string>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.LookupTour typed when request.GetType() == typeof(global::Demo.LookupTour) => Cast<string, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.CreateTour typed when request.GetType() == typeof(global::Demo.CreateTour) => Cast<int, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.DeleteTour typed when request.GetType() == typeof(global::Demo.DeleteTour) => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.GetTourById typed when request.GetType() == typeof(global::Demo.GetTourById) => Cast<string, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.LookupTour typed when request.GetType() == typeof(global::Demo.LookupTour) => Box<string>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> Send<TResponse>(", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.StreamTours typed => CastStream<string, TResponse>(mediator.Send(typed, ct), ct),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.StreamTours typed when request.GetType() == typeof(global::Demo.StreamTours) => CastStream<string, TResponse>(mediator.Send(typed, ct), ct),", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("public static global::System.Threading.Tasks.ValueTask Publish<TNotification>(", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.TourCreated typed => Publish_0000(mediator, typed, ct),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.TourCreated typed when notification.GetType() == typeof(global::Demo.TourCreated) => Publish_0000(mediator, typed, ct),", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("await mediator.NotificationHandler_0000_0000().Handle(notification, ct).ConfigureAwait(false);", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldNotContain("GetRequiredService", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("public static global::System.Threading.Tasks.ValueTask<TResponse> ThrowNoHandler<TResponse>(", StringComparison.Ordinal);
@@ -308,9 +308,9 @@ public sealed class GeneratorDispatchTests
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedDispatchSource);
-        (generatedDispatchSource).ShouldContain("var handler0 = mediator.NotificationHandler_0000_0000().Handle(notification, ct);", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("var handler1 = mediator.NotificationHandler_0000_0001().Handle(notification, ct);", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("handler0 = mediator.NotificationHandler_0000_0000().Handle(notification, ct).AsTask();", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("handler1 = mediator.NotificationHandler_0000_0001().Handle(notification, ct).AsTask();", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldNotContain("GetRequiredService", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("await global::System.Threading.Tasks.Task.WhenAll(handler0.AsTask(), handler1.AsTask()).ConfigureAwait(false);", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("await global::System.Threading.Tasks.Task.WhenAll(handler0, handler1).ConfigureAwait(false);", StringComparison.Ordinal);
     }
 }

@@ -46,7 +46,7 @@ internal static class GeneratedDispatch
     {
         return notification switch
         {
-            global::Demo.TourCreated typed => Publish_0000(mediator, typed, ct),
+            global::Demo.TourCreated typed when notification.GetType() == typeof(global::Demo.TourCreated) => Publish_0000(mediator, typed, ct),
             _ => global::System.Threading.Tasks.ValueTask.CompletedTask,
         };
     }
@@ -64,9 +64,25 @@ internal static class GeneratedDispatch
         var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         try
         {
-            var handler0 = mediator.NotificationHandler_0000_0000().Handle(notification, ct);
-            var handler1 = mediator.NotificationHandler_0000_0001().Handle(notification, ct);
-            await global::System.Threading.Tasks.Task.WhenAll(handler0.AsTask(), handler1.AsTask()).ConfigureAwait(false);
+            global::System.Threading.Tasks.Task handler0;
+            try
+            {
+                handler0 = mediator.NotificationHandler_0000_0000().Handle(notification, ct).AsTask();
+            }
+            catch (global::System.Exception ex)
+            {
+                handler0 = global::System.Threading.Tasks.Task.FromException(ex);
+            }
+            global::System.Threading.Tasks.Task handler1;
+            try
+            {
+                handler1 = mediator.NotificationHandler_0000_0001().Handle(notification, ct).AsTask();
+            }
+            catch (global::System.Exception ex)
+            {
+                handler1 = global::System.Threading.Tasks.Task.FromException(ex);
+            }
+            await global::System.Threading.Tasks.Task.WhenAll(handler0, handler1).ConfigureAwait(false);
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
         }

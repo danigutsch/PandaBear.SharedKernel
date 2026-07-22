@@ -32,7 +32,9 @@ internal static class GeneratedDispatchEmitter
         {
             builder.Append("            ")
                 .Append(request.MetadataName)
-                .Append(" typed => Cast<")
+                .Append(" typed when request.GetType() == typeof(")
+                .Append(request.MetadataName)
+                .Append(") => Cast<")
                 .Append(request.Response.MetadataName)
                 .Append(", TResponse>(mediator.Send(typed, ct)),")
                 .AppendLine();
@@ -54,7 +56,9 @@ internal static class GeneratedDispatchEmitter
         {
             builder.Append("            ")
                 .Append(request.MetadataName)
-                .Append(" typed => Box<")
+                .Append(" typed when request.GetType() == typeof(")
+                .Append(request.MetadataName)
+                .Append(") => Box<")
                 .Append(request.Response.MetadataName)
                 .Append(">(mediator.Send(typed, ct)),")
                 .AppendLine();
@@ -76,7 +80,9 @@ internal static class GeneratedDispatchEmitter
         {
             builder.Append("            ")
                 .Append(streamRequest.MetadataName)
-                .Append(" typed => CastStream<")
+                .Append(" typed when request.GetType() == typeof(")
+                .Append(streamRequest.MetadataName)
+                .Append(") => CastStream<")
                 .Append(streamRequest.ItemResponse.MetadataName)
                 .Append(", TResponse>(mediator.Send(typed, ct), ct),")
                 .AppendLine();
@@ -99,7 +105,9 @@ internal static class GeneratedDispatchEmitter
         {
             builder.Append("            ")
                 .Append(notificationList[notificationIndex].MetadataName)
-                .Append(" typed => Publish_")
+                .Append(" typed when notification.GetType() == typeof(")
+                .Append(notificationList[notificationIndex].MetadataName)
+                .Append(") => Publish_")
                 .Append(notificationIndex.ToString("D4", CultureInfo.InvariantCulture))
                 .Append("(mediator, typed, ct),")
                 .AppendLine();
@@ -327,13 +335,25 @@ internal static class GeneratedDispatchEmitter
                 {
                     for (var handlerIndex = 0; handlerIndex < accessibleHandlers.Length; handlerIndex++)
                     {
-                        builder.Append("            var handler")
+                        builder.Append("            global::System.Threading.Tasks.Task handler")
+                            .Append(handlerIndex.ToString(CultureInfo.InvariantCulture))
+                            .AppendLine(";");
+                        builder.AppendLine("            try");
+                        builder.AppendLine("            {");
+                        builder.Append("                handler")
                             .Append(handlerIndex.ToString(CultureInfo.InvariantCulture))
                             .Append(" = mediator.NotificationHandler_")
                             .Append(notificationIndex.ToString("D4", CultureInfo.InvariantCulture))
                             .Append('_')
                             .Append(handlerIndex.ToString("D4", CultureInfo.InvariantCulture))
-                            .AppendLine("().Handle(notification, ct);");
+                            .AppendLine("().Handle(notification, ct).AsTask();");
+                        builder.AppendLine("            }");
+                        builder.AppendLine("            catch (global::System.Exception ex)");
+                        builder.AppendLine("            {");
+                        builder.Append("                handler")
+                            .Append(handlerIndex.ToString(CultureInfo.InvariantCulture))
+                            .AppendLine(" = global::System.Threading.Tasks.Task.FromException(ex);");
+                        builder.AppendLine("            }");
                     }
 
                     builder.Append("            await global::System.Threading.Tasks.Task.WhenAll(");
@@ -345,8 +365,7 @@ internal static class GeneratedDispatchEmitter
                         }
 
                         builder.Append("handler")
-                            .Append(handlerIndex.ToString(CultureInfo.InvariantCulture))
-                            .Append(".AsTask()");
+                            .Append(handlerIndex.ToString(CultureInfo.InvariantCulture));
                     }
 
                     builder.AppendLine(").ConfigureAwait(false);");

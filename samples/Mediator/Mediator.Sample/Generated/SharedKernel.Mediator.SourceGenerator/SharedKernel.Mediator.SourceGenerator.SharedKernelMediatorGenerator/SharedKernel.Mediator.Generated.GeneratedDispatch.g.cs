@@ -12,8 +12,8 @@ internal static class GeneratedDispatch
     {
         return request switch
         {
-            global::Mediator.Sample.CreateBooking typed => Cast<string, TResponse>(mediator.Send(typed, ct)),
-            global::Mediator.Sample.LookupTourSummary typed => Cast<string, TResponse>(mediator.Send(typed, ct)),
+            global::Mediator.Sample.CreateBooking typed when request.GetType() == typeof(global::Mediator.Sample.CreateBooking) => Cast<string, TResponse>(mediator.Send(typed, ct)),
+            global::Mediator.Sample.LookupTourSummary typed when request.GetType() == typeof(global::Mediator.Sample.LookupTourSummary) => Cast<string, TResponse>(mediator.Send(typed, ct)),
             _ => ThrowNoHandler<TResponse>(request),
         };
     }
@@ -25,8 +25,8 @@ internal static class GeneratedDispatch
     {
         return request switch
         {
-            global::Mediator.Sample.CreateBooking typed => Box<string>(mediator.Send(typed, ct)),
-            global::Mediator.Sample.LookupTourSummary typed => Box<string>(mediator.Send(typed, ct)),
+            global::Mediator.Sample.CreateBooking typed when request.GetType() == typeof(global::Mediator.Sample.CreateBooking) => Box<string>(mediator.Send(typed, ct)),
+            global::Mediator.Sample.LookupTourSummary typed when request.GetType() == typeof(global::Mediator.Sample.LookupTourSummary) => Box<string>(mediator.Send(typed, ct)),
             _ => ThrowUnknownRequestObject(request),
         };
     }
@@ -38,7 +38,7 @@ internal static class GeneratedDispatch
     {
         return request switch
         {
-            global::Mediator.Sample.StreamTourCodes typed => CastStream<string, TResponse>(mediator.Send(typed, ct), ct),
+            global::Mediator.Sample.StreamTourCodes typed when request.GetType() == typeof(global::Mediator.Sample.StreamTourCodes) => CastStream<string, TResponse>(mediator.Send(typed, ct), ct),
             _ => ThrowNoStreamHandler<TResponse>(request),
         };
     }
@@ -51,7 +51,7 @@ internal static class GeneratedDispatch
     {
         return notification switch
         {
-            global::Mediator.Sample.TourBooked typed => Publish_0000(mediator, typed, ct),
+            global::Mediator.Sample.TourBooked typed when notification.GetType() == typeof(global::Mediator.Sample.TourBooked) => Publish_0000(mediator, typed, ct),
             _ => global::System.Threading.Tasks.ValueTask.CompletedTask,
         };
     }
