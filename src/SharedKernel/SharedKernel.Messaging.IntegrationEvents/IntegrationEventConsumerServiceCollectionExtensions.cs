@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace SharedKernel.Messaging.IntegrationEvents;
 
@@ -33,7 +32,23 @@ public static class IntegrationEventConsumerServiceCollectionExtensions
                 nameof(eventType));
         }
 
-        services.TryAddSingleton(jsonTypeInfo);
+        var existingRegistrations = services
+            .Where(descriptor => !descriptor.IsKeyedService
+                && descriptor.ServiceType == typeof(JsonTypeInfo<TIntegrationEvent>))
+            .ToArray();
+        if (existingRegistrations.Length > 0)
+        {
+            if (existingRegistrations.Length == 1
+                && ReferenceEquals(existingRegistrations[0].ImplementationInstance, jsonTypeInfo))
+            {
+                return services;
+            }
+
+            throw new InvalidOperationException(
+                $"Integration event contract '{typeof(TIntegrationEvent).FullName}' is already registered with different JSON metadata.");
+        }
+
+        services.AddSingleton(jsonTypeInfo);
 
         return services;
     }
