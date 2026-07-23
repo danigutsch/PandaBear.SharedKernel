@@ -198,18 +198,7 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
                 .Distinct(StringComparer.Ordinal)
                 .ToArray();
 
-            foreach (var consumerType in consumerTypes)
-            {
-                var handlerCount = handlers.Count(handler => string.Equals(handler.IntegrationEventType, consumerType, StringComparison.Ordinal));
-                if (handlerCount == 0)
-                {
-                    productionContext.ReportDiagnostic(Diagnostic.Create(MissingConsumerHandler, Location.None, consumerType));
-                }
-                else if (handlerCount > 1)
-                {
-                    productionContext.ReportDiagnostic(Diagnostic.Create(DuplicateConsumerHandlers, Location.None, consumerType, handlerCount));
-                }
-            }
+            ReportConsumerHandlerDiagnostics(productionContext, consumerTypes, handlers);
 
             var duplicateEventTypeGroups = registrations
                 .Where(static registration => registration.IsConsumer && registration.EventType is not null)
@@ -248,6 +237,33 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
                 GeneratedHintName,
                 SourceText.From(Emit(mappings, registrations, handlers, ambiguousConsumerTypes), Encoding.UTF8));
         });
+    }
+
+    private static void ReportConsumerHandlerDiagnostics(
+        SourceProductionContext productionContext,
+        string[] consumerTypes,
+        ImmutableArray<IntegrationEventHandlerModel> handlers)
+    {
+        foreach (var consumerType in consumerTypes)
+        {
+            var handlerCount = handlers.Count(handler =>
+                string.Equals(handler.IntegrationEventType, consumerType, StringComparison.Ordinal));
+            if (handlerCount == 0)
+            {
+                productionContext.ReportDiagnostic(Diagnostic.Create(
+                    MissingConsumerHandler,
+                    Location.None,
+                    consumerType));
+            }
+            else if (handlerCount > 1)
+            {
+                productionContext.ReportDiagnostic(Diagnostic.Create(
+                    DuplicateConsumerHandlers,
+                    Location.None,
+                    consumerType,
+                    handlerCount));
+            }
+        }
     }
 
     private static (IntegrationEventMappingModel? Mapping, string MethodDisplayName, Location Location) BuildMapping(

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Text;
 
@@ -443,9 +444,16 @@ internal static class AppMediatorEmitter
             }
         }
 
-        for (var notificationIndex = 0; notificationIndex < model.Notifications.Length; notificationIndex++)
+        EmitNotificationConstructorParameters(builder, model.Notifications);
+    }
+
+    private static void EmitNotificationConstructorParameters(
+        StringBuilder builder,
+        ImmutableArray<NotificationDescriptor> notifications)
+    {
+        for (var notificationIndex = 0; notificationIndex < notifications.Length; notificationIndex++)
         {
-            var handlers = model.Notifications[notificationIndex].Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
+            var handlers = notifications[notificationIndex].Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
             for (var handlerIndex = 0; handlerIndex < handlers.Length; handlerIndex++)
             {
                 builder.Append("        global::System.Func<").Append(handlers[handlerIndex].MetadataName).Append("> notificationHandler")
@@ -486,9 +494,16 @@ internal static class AppMediatorEmitter
             }
         }
 
-        for (var notificationIndex = 0; notificationIndex < model.Notifications.Length; notificationIndex++)
+        EmitNotificationConstructorAssignments(builder, model.Notifications);
+    }
+
+    private static void EmitNotificationConstructorAssignments(
+        StringBuilder builder,
+        ImmutableArray<NotificationDescriptor> notifications)
+    {
+        for (var notificationIndex = 0; notificationIndex < notifications.Length; notificationIndex++)
         {
-            var handlers = model.Notifications[notificationIndex].Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
+            var handlers = notifications[notificationIndex].Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
             for (var handlerIndex = 0; handlerIndex < handlers.Length; handlerIndex++)
             {
                 EmitAssignment(builder,
@@ -530,9 +545,16 @@ internal static class AppMediatorEmitter
             }
         }
 
-        for (var notificationIndex = 0; notificationIndex < model.Notifications.Length; notificationIndex++)
+        EmitNotificationDependencyProperties(builder, model.Notifications);
+    }
+
+    private static void EmitNotificationDependencyProperties(
+        StringBuilder builder,
+        ImmutableArray<NotificationDescriptor> notifications)
+    {
+        for (var notificationIndex = 0; notificationIndex < notifications.Length; notificationIndex++)
         {
-            var handlers = model.Notifications[notificationIndex].Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
+            var handlers = notifications[notificationIndex].Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
             for (var handlerIndex = 0; handlerIndex < handlers.Length; handlerIndex++)
             {
                 EmitProperty(builder, handlers[handlerIndex].MetadataName,
