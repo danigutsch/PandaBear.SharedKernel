@@ -43,5 +43,5 @@ internal sealed class ControlledEventEnvelopePublisher : IEventEnvelopePublisher
 
     public void ReleaseSecond() => releaseSecond.TrySetResult(true);
 
-    public void Dispose() => Interlocked.CompareExchange(ref disposeCount, 1, 0);
+    public void Dispose() => Interlocked.Increment(ref disposeCount);
 }
