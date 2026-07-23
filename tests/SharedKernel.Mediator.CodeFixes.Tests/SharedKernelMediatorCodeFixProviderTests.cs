@@ -1,11 +1,14 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CodeFixes;
+using SharedKernel.Testing;
 
 namespace SharedKernel.Mediator.CodeFixes.Tests;
 
 /// <summary>
 /// Verifies safe fixes for the currently implemented mediator diagnostics.
 /// </summary>
+[Trait(SharedKernelTestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(SharedKernelTestTraitNames.ComponentName, "SharedKernel.Mediator.CodeFixes")]
 public sealed class SharedKernelMediatorCodeFixProviderTests
 {
     [Theory]

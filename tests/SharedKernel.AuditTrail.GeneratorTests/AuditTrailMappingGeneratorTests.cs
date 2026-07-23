@@ -1,7 +1,10 @@
 using Microsoft.CodeAnalysis;
+using SharedKernel.Testing;
 
 namespace SharedKernel.AuditTrail.GeneratorTests;
 
+[Trait(SharedKernelTestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
+[Trait(SharedKernelTestTraitNames.ComponentName, "SharedKernel.AuditTrail.SourceGenerator")]
 public sealed class AuditTrailMappingGeneratorTests
 {
     [Fact]

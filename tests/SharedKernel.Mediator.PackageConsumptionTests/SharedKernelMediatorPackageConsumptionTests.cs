@@ -1,5 +1,8 @@
+using SharedKernel.Testing;
+
 namespace SharedKernel.Mediator.PackageConsumptionTests;
 
+[Trait(SharedKernelTestTraitNames.CategoryName, "PackageConsumption")]
 public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)
     : IClassFixture<MediatorPackageFeedFixture>
 {
