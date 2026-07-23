@@ -59,6 +59,35 @@ public sealed class IdempotencyValueTests
         (key.Value).ShouldBe(value);
     }
 
+    [Fact]
+    public void Key_try_from_returns_a_normalized_key_for_a_valid_external_value()
+    {
+        // Arrange
+        const string value = " request_123:retry.1 ";
+
+        // Act
+        var parsed = IdempotencyKey.TryFrom(value, out var key);
+
+        // Assert
+        parsed.ShouldBeTrue();
+        key.Value.ShouldBe("request_123:retry.1");
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("key with spaces")]
+    [InlineData("key/with/slashes")]
+    public void Key_try_from_returns_false_for_invalid_external_values(string? value)
+    {
+        // Act
+        var parsed = IdempotencyKey.TryFrom(value, out var key);
+
+        // Assert
+        parsed.ShouldBeFalse();
+        key.ShouldBe(default);
+    }
+
     [Theory]
     [InlineData("key with spaces")]
     [InlineData("key/with/slashes")]

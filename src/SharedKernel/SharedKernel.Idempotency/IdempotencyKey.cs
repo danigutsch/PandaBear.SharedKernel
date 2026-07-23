@@ -36,15 +36,36 @@ public readonly partial record struct IdempotencyKey
             throw new ArgumentException("Idempotency keys cannot be empty or whitespace.", nameof(value));
         }
 
-        var trimmedValue = value.Trim();
-        if (!KeyFormatRegex().IsMatch(trimmedValue))
+        if (!TryFrom(value, out var key))
         {
             throw new ArgumentException(
                 "Idempotency keys must be 1 to 255 characters and contain only letters, digits, '.', '_', ':', or '-'.",
                 nameof(value));
         }
 
-        return new IdempotencyKey(trimmedValue);
+        return key;
+    }
+
+    /// <summary>Attempts to create an idempotency key from an external value without throwing for invalid input.</summary>
+    /// <param name="value">The candidate key value.</param>
+    /// <param name="key">The normalized key when parsing succeeds; otherwise, the default value.</param>
+    /// <returns><see langword="true" /> when the value uses the supported opaque token format.</returns>
+    public static bool TryFrom(string? value, out IdempotencyKey key)
+    {
+        key = default;
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        var trimmedValue = value.Trim();
+        if (!KeyFormatRegex().IsMatch(trimmedValue))
+        {
+            return false;
+        }
+
+        key = new IdempotencyKey(trimmedValue);
+        return true;
     }
 
     /// <inheritdoc />

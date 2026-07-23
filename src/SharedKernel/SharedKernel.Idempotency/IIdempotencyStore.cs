@@ -46,8 +46,22 @@ public interface IIdempotencyStore
         CancellationToken ct) => Complete(
             operation,
             completedAt,
-            resultFingerprint: null,
-            ct: ct);
+             resultFingerprint: null,
+             ct: ct);
+
+    /// <summary>
+    /// Stages an idempotent operation as completed for a caller-owned unit-of-work commit.
+    /// </summary>
+    /// <param name="operation">The idempotent operation.</param>
+    /// <param name="completedAt">The time at which processing completed.</param>
+    /// <param name="resultFingerprint">An optional stable fingerprint of the completed result.</param>
+    /// <param name="ct">A token that can cancel the operation.</param>
+    /// <returns>A task that completes when the entry has been staged.</returns>
+    ValueTask StageCompletion(
+        IdempotencyOperation operation,
+        DateTimeOffset completedAt,
+        string? resultFingerprint,
+        CancellationToken ct);
 
     /// <summary>
     /// Gets the stored idempotency entry for an operation, when one exists.
