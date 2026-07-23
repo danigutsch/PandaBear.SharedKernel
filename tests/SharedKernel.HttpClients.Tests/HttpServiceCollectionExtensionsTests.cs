@@ -24,13 +24,13 @@ public sealed class HttpServiceCollectionExtensionsTests
 
     [Fact]
     [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
-    public void AddHttpClientDefaults_registers_metrics_without_tracing()
+    public void AddHttpClientDefaults_registers_http_client_tracing_and_metrics()
     {
         // Act
         var registrations = HttpClientDefaultsTestServices.GetTelemetryRegistrations();
 
         // Assert
         registrations.MetricsRegistered.ShouldBeTrue();
-        registrations.TracingRegistered.ShouldBeFalse();
+        registrations.TracingRegistered.ShouldBeTrue();
     }
 }

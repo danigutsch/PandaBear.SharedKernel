@@ -8,6 +8,10 @@ namespace Aspire.Hosting;
 public static class GrafanaLgtmStackResourceExtensions
 {
     private const string OtlpGrpcEndpointName = "otlp-grpc";
+    private const string OtlpExporterEndpointVariableName = "OTEL_EXPORTER_OTLP_ENDPOINT";
+    private const string OtlpExporterProtocolVariableName = "OTEL_EXPORTER_OTLP_PROTOCOL";
+    private const string CollectorGrpcEndpointName = "grpc";
+    private const string CollectorHttpEndpointName = "http";
 
     /// <summary>Tag for <c>docker.io/otel/opentelemetry-collector-contrib:0.130.1</c>.</summary>
     private const string OpenTelemetryCollectorImageTag = "0.130.1";
@@ -38,6 +42,86 @@ public static class GrafanaLgtmStackResourceExtensions
 
     /// <summary>Digest for <c>docker.io/prom/prometheus:v3.5.0</c>.</summary>
     private const string PrometheusImageDigest = "63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996";
+
+    /// <summary>
+    /// Adds a pinned OpenTelemetry Collector gateway and routes compatible AppHost resources through it.
+    /// </summary>
+    /// <param name="builder">The distributed application builder.</param>
+    /// <param name="name">The collector resource name.</param>
+    /// <param name="privacyConfigurationFile">The shared receiver and privacy-processor configuration file.</param>
+    /// <param name="routingConfigurationFile">The exporter and pipeline-routing configuration file.</param>
+    /// <returns>The configured OpenTelemetry Collector resource.</returns>
+    public static IResourceBuilder<OpenTelemetryCollectorResource> AddOpenTelemetryCollectorGateway(
+        this IDistributedApplicationBuilder builder,
+        [ResourceName] string name,
+        string privacyConfigurationFile,
+        string routingConfigurationFile)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentException.ThrowIfNullOrWhiteSpace(privacyConfigurationFile);
+        ArgumentException.ThrowIfNullOrWhiteSpace(routingConfigurationFile);
+
+        var collector = builder.AddOpenTelemetryCollector(name)
+            .WithImageTag(OpenTelemetryCollectorImageTag)
+            .WithImageSHA256(OpenTelemetryCollectorImageDigest)
+            .WithConfig(privacyConfigurationFile)
+            .WithConfig(routingConfigurationFile);
+        ConfigureAppForwarding(collector);
+
+        return collector.ExcludeFromManifest();
+    }
+
+    internal static IResourceBuilder<T> ConfigureOpenTelemetryCollectorRouting<T>(
+        IResourceBuilder<T> builder,
+        IResourceBuilder<OpenTelemetryCollectorResource> collector)
+        where T : IResourceWithEnvironment
+    {
+        builder.WithEnvironment(callback =>
+        {
+            callback.EnvironmentVariables.TryGetValue(OtlpExporterProtocolVariableName, out var configuredProtocol);
+            var endpointName = ResolveCollectorEndpointName(configuredProtocol?.ToString());
+            callback.EnvironmentVariables[OtlpExporterEndpointVariableName] = collector.Resource.GetEndpoint(endpointName);
+        });
+        builder.WithAnnotation(new WaitAnnotation(collector.Resource, WaitType.WaitUntilHealthy));
+
+        return builder;
+    }
+
+    private static void ConfigureAppForwarding(IResourceBuilder<OpenTelemetryCollectorResource> collector)
+    {
+        collector.ApplicationBuilder.Eventing.Subscribe<BeforeStartEvent>((beforeStart, _) =>
+        {
+            var telemetryResources = beforeStart.Model.Resources
+                .OfType<IResourceWithEnvironment>()
+                .Where(static resource => resource.HasAnnotationOfType<OtlpExporterAnnotation>());
+
+            foreach (var resource in telemetryResources)
+            {
+                var resourceBuilder = collector.ApplicationBuilder.CreateResourceBuilder(resource);
+                ConfigureOpenTelemetryCollectorRouting(resourceBuilder, collector);
+            }
+
+            return Task.CompletedTask;
+        });
+    }
+
+    private static string ResolveCollectorEndpointName(string? protocol)
+    {
+        if (string.IsNullOrWhiteSpace(protocol)
+            || string.Equals(protocol, CollectorGrpcEndpointName, StringComparison.OrdinalIgnoreCase))
+        {
+            return CollectorGrpcEndpointName;
+        }
+
+        if (string.Equals(protocol, "http/protobuf", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(protocol, "http/json", StringComparison.OrdinalIgnoreCase))
+        {
+            return CollectorHttpEndpointName;
+        }
+
+        throw new InvalidOperationException($"Unsupported OTLP exporter protocol '{protocol}'.");
+    }
 
     /// <summary>
     /// Adds a Grafana resource to the Aspire model.
@@ -184,14 +268,12 @@ public static class GrafanaLgtmStackResourceExtensions
         var tempo = builder.AddTempo(resourceNames.Tempo, Path.Combine(fullConfigurationRoot, "tempo", "tempo.yaml"));
         var loki = builder.AddLoki(resourceNames.Loki, Path.Combine(fullConfigurationRoot, "loki", "loki.yaml"));
 
-        var collector = builder.AddOpenTelemetryCollector(resourceNames.OpenTelemetryCollector)
-            .WithImageTag(OpenTelemetryCollectorImageTag)
-            .WithImageSHA256(OpenTelemetryCollectorImageDigest)
-            .WithConfig(Path.Combine(fullConfigurationRoot, "otel-collector", "config.yaml"))
-            .WithAppForwarding()
+        var collector = builder.AddOpenTelemetryCollectorGateway(
+                resourceNames.OpenTelemetryCollector,
+                Path.Combine(fullConfigurationRoot, "otel-collector", "privacy.yaml"),
+                Path.Combine(fullConfigurationRoot, "otel-collector", "config.yaml"))
             .WaitFor(tempo)
-            .WaitFor(loki)
-            .ExcludeFromManifest();
+            .WaitFor(loki);
 
         var prometheus = builder.AddPrometheus(
             resourceNames.Prometheus,
