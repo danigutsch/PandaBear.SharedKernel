@@ -1,7 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
@@ -27,33 +26,30 @@ public sealed class GeneratedIntegrationEventDispatchTests
     public void Contract_registration_allows_the_same_json_metadata_instance_twice()
     {
         // Arrange
-        var services = new ServiceCollection();
+        var scenario = new IntegrationEventContractRegistrationScenario();
         JsonTypeInfo<TestIntegrationEvent> jsonTypeInfo = TestIntegrationEventJsonContext.Default.TestIntegrationEvent;
-        services.AddIntegrationEventContract(TestIntegrationEvent.EventType, jsonTypeInfo);
+        scenario.Register(jsonTypeInfo);
 
         // Act
-        services.AddIntegrationEventContract(TestIntegrationEvent.EventType, jsonTypeInfo);
+        scenario.Register(jsonTypeInfo);
 
         // Assert
-        services.Count(descriptor => descriptor.ServiceType == typeof(JsonTypeInfo<TestIntegrationEvent>))
-            .ShouldBe(1);
+        scenario.UnkeyedRegistrationCount.ShouldBe(1);
     }
 
     [Fact]
     public void Contract_registration_rejects_different_json_metadata_for_the_same_contract()
     {
         // Arrange
-        var services = new ServiceCollection();
+        var scenario = new IntegrationEventContractRegistrationScenario();
         var firstContext = new TestIntegrationEventJsonContext(new JsonSerializerOptions());
         var secondContext = new TestIntegrationEventJsonContext(new JsonSerializerOptions());
         JsonTypeInfo<TestIntegrationEvent> firstJsonTypeInfo = firstContext.TestIntegrationEvent;
         JsonTypeInfo<TestIntegrationEvent> secondJsonTypeInfo = secondContext.TestIntegrationEvent;
-        services.AddIntegrationEventContract(TestIntegrationEvent.EventType, firstJsonTypeInfo);
+        scenario.Register(firstJsonTypeInfo);
 
         // Act
-        Action register = () => services.AddIntegrationEventContract(
-            TestIntegrationEvent.EventType,
-            secondJsonTypeInfo);
+        Action register = () => scenario.Register(secondJsonTypeInfo);
         var exception = register.ShouldThrow<InvalidOperationException>();
 
         // Assert
@@ -65,18 +61,16 @@ public sealed class GeneratedIntegrationEventDispatchTests
     public void Contract_registration_rejects_ambiguous_existing_json_metadata()
     {
         // Arrange
-        var services = new ServiceCollection();
+        var scenario = new IntegrationEventContractRegistrationScenario();
         var firstContext = new TestIntegrationEventJsonContext(new JsonSerializerOptions());
         var secondContext = new TestIntegrationEventJsonContext(new JsonSerializerOptions());
         JsonTypeInfo<TestIntegrationEvent> firstJsonTypeInfo = firstContext.TestIntegrationEvent;
         JsonTypeInfo<TestIntegrationEvent> secondJsonTypeInfo = secondContext.TestIntegrationEvent;
-        services.AddSingleton(firstJsonTypeInfo);
-        services.AddSingleton(secondJsonTypeInfo);
+        scenario.AddExisting(firstJsonTypeInfo);
+        scenario.AddExisting(secondJsonTypeInfo);
 
         // Act
-        Action register = () => services.AddIntegrationEventContract(
-            TestIntegrationEvent.EventType,
-            firstJsonTypeInfo);
+        Action register = () => scenario.Register(firstJsonTypeInfo);
         var exception = register.ShouldThrow<InvalidOperationException>();
 
         // Assert
@@ -88,21 +82,18 @@ public sealed class GeneratedIntegrationEventDispatchTests
     public void Contract_registration_ignores_keyed_json_metadata()
     {
         // Arrange
-        var services = new ServiceCollection();
+        var scenario = new IntegrationEventContractRegistrationScenario();
         var keyedContext = new TestIntegrationEventJsonContext(new JsonSerializerOptions());
         var contractContext = new TestIntegrationEventJsonContext(new JsonSerializerOptions());
         JsonTypeInfo<TestIntegrationEvent> keyedJsonTypeInfo = keyedContext.TestIntegrationEvent;
         JsonTypeInfo<TestIntegrationEvent> contractJsonTypeInfo = contractContext.TestIntegrationEvent;
-        services.AddKeyedSingleton("alternate", keyedJsonTypeInfo);
+        scenario.RegisterKeyed("alternate", keyedJsonTypeInfo);
 
         // Act
-        services.AddIntegrationEventContract(TestIntegrationEvent.EventType, contractJsonTypeInfo);
+        scenario.Register(contractJsonTypeInfo);
 
         // Assert
-        var registration = services.ShouldHaveSingleItem(descriptor =>
-            !descriptor.IsKeyedService
-            && descriptor.ServiceType == typeof(JsonTypeInfo<TestIntegrationEvent>));
-        registration.ImplementationInstance.ShouldBeSameAs(contractJsonTypeInfo);
+        scenario.GetUnkeyedMetadata().ShouldBeSameAs(contractJsonTypeInfo);
     }
 
     [Fact]
