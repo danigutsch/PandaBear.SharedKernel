@@ -10,6 +10,8 @@ public static class GrafanaLgtmStackResourceExtensions
     private const string OtlpGrpcEndpointName = "otlp-grpc";
     private const string OtlpExporterEndpointVariableName = "OTEL_EXPORTER_OTLP_ENDPOINT";
     private const string OtlpExporterProtocolVariableName = "OTEL_EXPORTER_OTLP_PROTOCOL";
+    private const string OtlpHttpProtobufProtocol = "http/protobuf";
+    private const string OtlpHttpJsonProtocol = "http/json";
     private const string CollectorGrpcEndpointName = "grpc";
     private const string CollectorHttpEndpointName = "http";
 
@@ -114,8 +116,8 @@ public static class GrafanaLgtmStackResourceExtensions
             return CollectorGrpcEndpointName;
         }
 
-        if (string.Equals(protocol, "http/protobuf", StringComparison.OrdinalIgnoreCase)
-            || string.Equals(protocol, "http/json", StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(protocol, OtlpHttpProtobufProtocol, StringComparison.OrdinalIgnoreCase)
+            || string.Equals(protocol, OtlpHttpJsonProtocol, StringComparison.OrdinalIgnoreCase))
         {
             return CollectorHttpEndpointName;
         }
