@@ -8,7 +8,7 @@
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <PackageTags>messaging;integration-events;shared-kernel;mediator;dotnet</PackageTags>
+        <PackageTags>messaging;integration-events;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,7 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
         <ProjectReference Include="..\SharedKernel.Messaging\SharedKernel.Messaging.csproj" />
     </ItemGroup>
 

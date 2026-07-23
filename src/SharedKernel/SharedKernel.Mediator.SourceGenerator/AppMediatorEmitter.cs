@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Text;
 
@@ -18,7 +19,7 @@ internal static class AppMediatorEmitter
             builder,
             string.Empty,
             "Provides the generated mediator shell owned by the consumer compilation.");
-        builder.AppendLine("public sealed partial class AppMediator : IMediator");
+        builder.AppendLine("internal sealed partial class AppMediator : IMediator");
         builder.AppendLine("{");
         builder.AppendLine("    private readonly global::SharedKernel.Mediator.AppMediatorInstrumentation _instrumentation;");
         builder.AppendLine();
@@ -26,30 +27,21 @@ internal static class AppMediatorEmitter
             builder,
             "    ",
             "Initializes a new instance of the <see cref=\"AppMediator\"/> class.");
-        GeneratedXmlDocumentationEmitter.AppendParam(
-            builder,
-            "    ",
-            "services",
-            "The scoped service provider used by generated mediator code.");
-        builder.AppendLine("    public AppMediator(global::System.IServiceProvider services)");
+        builder.AppendLine("    public AppMediator(");
+        EmitConstructorParameters(builder, model);
+        builder.AppendLine("        global::SharedKernel.Mediator.AppMediatorInstrumentation instrumentation)");
         builder.AppendLine("    {");
-        builder.AppendLine("        global::System.ArgumentNullException.ThrowIfNull(services);");
-        builder.AppendLine();
-        builder.AppendLine("        Services = services;");
-        builder.AppendLine("        _instrumentation = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::SharedKernel.Mediator.AppMediatorInstrumentation>(services);");
+        builder.AppendLine("        global::System.ArgumentNullException.ThrowIfNull(instrumentation);");
+        builder.AppendLine("        _instrumentation = instrumentation;");
+        EmitConstructorAssignments(builder, model);
         builder.AppendLine("    }");
-        builder.AppendLine();
-        GeneratedXmlDocumentationEmitter.AppendSummary(
-            builder,
-            "    ",
-            "Gets the scoped service provider used by generated mediator code.");
-        builder.AppendLine("    internal global::System.IServiceProvider Services { get; }");
         builder.AppendLine();
         GeneratedXmlDocumentationEmitter.AppendSummary(
             builder,
             "    ",
             "Gets the instrumentation services used by generated mediator code.");
         builder.AppendLine("    internal global::SharedKernel.Mediator.AppMediatorInstrumentation Instrumentation => _instrumentation;");
+        EmitDependencyProperties(builder, model);
         builder.AppendLine();
 
         for (var requestIndex = 0; requestIndex < model.Requests.Length; requestIndex++)
@@ -215,11 +207,9 @@ internal static class AppMediatorEmitter
                 builder.AppendLine("        {");
                 if (request.Pipelines.Length == 0)
                 {
-                    builder.Append("            var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<")
-                        .Append(accessibleHandlers[0].MetadataName)
-                        .AppendLine(">(Services);");
-                    builder.AppendLine();
-                    builder.AppendLine("            var result = await handler.Handle(request, ct).ConfigureAwait(false);");
+                    builder.Append("            var result = await RequestHandler_")
+                        .Append(requestIndex.ToString("D4", CultureInfo.InvariantCulture))
+                        .AppendLine("().Handle(request, ct).ConfigureAwait(false);");
                 }
                 else
                 {
@@ -365,11 +355,9 @@ internal static class AppMediatorEmitter
         builder.AppendLine("        var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;");
         if (streamRequest.Pipelines.Length == 0)
         {
-            builder.Append("        var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<")
-                .Append(handlerDescriptor.MetadataName)
-                .AppendLine(">(Services);");
-            builder.AppendLine();
-            builder.AppendLine("        var enumerator = handler.Handle(request, ct).GetAsyncEnumerator(ct);");
+            builder.Append("        var enumerator = StreamHandler_")
+                .Append(streamRequestIndex.ToString("D4", CultureInfo.InvariantCulture))
+                .AppendLine("().Handle(request, ct).GetAsyncEnumerator(ct);");
         }
         else
         {
@@ -422,6 +410,169 @@ internal static class AppMediatorEmitter
             .AppendLine(" }, { global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, outcome } });");
         builder.AppendLine("        }");
         builder.AppendLine("    }");
+    }
+
+    private static void EmitConstructorParameters(StringBuilder builder, DiscoveryModel model)
+    {
+        for (var requestIndex = 0; requestIndex < model.Requests.Length; requestIndex++)
+        {
+            var request = model.Requests[requestIndex];
+            var handlers = request.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod).ToArray();
+            if (handlers.Length == 1)
+            {
+                builder.Append("        global::System.Func<").Append(handlers[0].MetadataName).Append("> requestHandler").Append(requestIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
+                for (var pipelineIndex = 0; pipelineIndex < request.Pipelines.Length; pipelineIndex++)
+                {
+                    builder.Append("        global::System.Func<").Append(request.Pipelines[pipelineIndex].MetadataName).Append("> requestPipeline")
+                        .Append(requestIndex.ToString("D4", CultureInfo.InvariantCulture)).Append(pipelineIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
+                }
+            }
+        }
+
+        for (var streamIndex = 0; streamIndex < model.StreamRequests.Length; streamIndex++)
+        {
+            var request = model.StreamRequests[streamIndex];
+            var handlers = request.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod).ToArray();
+            if (handlers.Length == 1)
+            {
+                builder.Append("        global::System.Func<").Append(handlers[0].MetadataName).Append("> streamHandler").Append(streamIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
+                for (var pipelineIndex = 0; pipelineIndex < request.Pipelines.Length; pipelineIndex++)
+                {
+                    builder.Append("        global::System.Func<").Append(request.Pipelines[pipelineIndex].MetadataName).Append("> streamPipeline")
+                        .Append(streamIndex.ToString("D4", CultureInfo.InvariantCulture)).Append(pipelineIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
+                }
+            }
+        }
+
+        EmitNotificationConstructorParameters(builder, model.Notifications);
+    }
+
+    private static void EmitNotificationConstructorParameters(
+        StringBuilder builder,
+        ImmutableArray<NotificationDescriptor> notifications)
+    {
+        for (var notificationIndex = 0; notificationIndex < notifications.Length; notificationIndex++)
+        {
+            var handlers = notifications[notificationIndex].Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
+            for (var handlerIndex = 0; handlerIndex < handlers.Length; handlerIndex++)
+            {
+                builder.Append("        global::System.Func<").Append(handlers[handlerIndex].MetadataName).Append("> notificationHandler")
+                    .Append(notificationIndex.ToString("D4", CultureInfo.InvariantCulture)).Append(handlerIndex.ToString("D4", CultureInfo.InvariantCulture)).AppendLine(",");
+            }
+        }
+    }
+
+    private static void EmitConstructorAssignments(StringBuilder builder, DiscoveryModel model)
+    {
+        for (var requestIndex = 0; requestIndex < model.Requests.Length; requestIndex++)
+        {
+            var request = model.Requests[requestIndex];
+            if (request.Handlers.Count(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod) == 1)
+            {
+                EmitAssignment(builder, "RequestHandler_" + requestIndex.ToString("D4", CultureInfo.InvariantCulture), "requestHandler" + requestIndex.ToString("D4", CultureInfo.InvariantCulture));
+                for (var pipelineIndex = 0; pipelineIndex < request.Pipelines.Length; pipelineIndex++)
+                {
+                    EmitAssignment(builder,
+                        "RequestPipeline_" + requestIndex.ToString("D4", CultureInfo.InvariantCulture) + "_" + pipelineIndex.ToString("D4", CultureInfo.InvariantCulture),
+                        "requestPipeline" + requestIndex.ToString("D4", CultureInfo.InvariantCulture) + pipelineIndex.ToString("D4", CultureInfo.InvariantCulture));
+                }
+            }
+        }
+
+        for (var streamIndex = 0; streamIndex < model.StreamRequests.Length; streamIndex++)
+        {
+            var request = model.StreamRequests[streamIndex];
+            if (request.Handlers.Count(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod) == 1)
+            {
+                EmitAssignment(builder, "StreamHandler_" + streamIndex.ToString("D4", CultureInfo.InvariantCulture), "streamHandler" + streamIndex.ToString("D4", CultureInfo.InvariantCulture));
+                for (var pipelineIndex = 0; pipelineIndex < request.Pipelines.Length; pipelineIndex++)
+                {
+                    EmitAssignment(builder,
+                        "StreamPipeline_" + streamIndex.ToString("D4", CultureInfo.InvariantCulture) + "_" + pipelineIndex.ToString("D4", CultureInfo.InvariantCulture),
+                        "streamPipeline" + streamIndex.ToString("D4", CultureInfo.InvariantCulture) + pipelineIndex.ToString("D4", CultureInfo.InvariantCulture));
+                }
+            }
+        }
+
+        EmitNotificationConstructorAssignments(builder, model.Notifications);
+    }
+
+    private static void EmitNotificationConstructorAssignments(
+        StringBuilder builder,
+        ImmutableArray<NotificationDescriptor> notifications)
+    {
+        for (var notificationIndex = 0; notificationIndex < notifications.Length; notificationIndex++)
+        {
+            var handlers = notifications[notificationIndex].Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
+            for (var handlerIndex = 0; handlerIndex < handlers.Length; handlerIndex++)
+            {
+                EmitAssignment(builder,
+                    "NotificationHandler_" + notificationIndex.ToString("D4", CultureInfo.InvariantCulture) + "_" + handlerIndex.ToString("D4", CultureInfo.InvariantCulture),
+                    "notificationHandler" + notificationIndex.ToString("D4", CultureInfo.InvariantCulture) + handlerIndex.ToString("D4", CultureInfo.InvariantCulture));
+            }
+        }
+    }
+
+    private static void EmitDependencyProperties(StringBuilder builder, DiscoveryModel model)
+    {
+        for (var requestIndex = 0; requestIndex < model.Requests.Length; requestIndex++)
+        {
+            var request = model.Requests[requestIndex];
+            var handlers = request.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod).ToArray();
+            if (handlers.Length == 1)
+            {
+                EmitProperty(builder, handlers[0].MetadataName, "RequestHandler_" + requestIndex.ToString("D4", CultureInfo.InvariantCulture));
+                for (var pipelineIndex = 0; pipelineIndex < request.Pipelines.Length; pipelineIndex++)
+                {
+                    EmitProperty(builder, request.Pipelines[pipelineIndex].MetadataName,
+                        "RequestPipeline_" + requestIndex.ToString("D4", CultureInfo.InvariantCulture) + "_" + pipelineIndex.ToString("D4", CultureInfo.InvariantCulture));
+                }
+            }
+        }
+
+        for (var streamIndex = 0; streamIndex < model.StreamRequests.Length; streamIndex++)
+        {
+            var request = model.StreamRequests[streamIndex];
+            var handlers = request.Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator && handler.HasCompatibleHandleMethod).ToArray();
+            if (handlers.Length == 1)
+            {
+                EmitProperty(builder, handlers[0].MetadataName, "StreamHandler_" + streamIndex.ToString("D4", CultureInfo.InvariantCulture));
+                for (var pipelineIndex = 0; pipelineIndex < request.Pipelines.Length; pipelineIndex++)
+                {
+                    EmitProperty(builder, request.Pipelines[pipelineIndex].MetadataName,
+                        "StreamPipeline_" + streamIndex.ToString("D4", CultureInfo.InvariantCulture) + "_" + pipelineIndex.ToString("D4", CultureInfo.InvariantCulture));
+                }
+            }
+        }
+
+        EmitNotificationDependencyProperties(builder, model.Notifications);
+    }
+
+    private static void EmitNotificationDependencyProperties(
+        StringBuilder builder,
+        ImmutableArray<NotificationDescriptor> notifications)
+    {
+        for (var notificationIndex = 0; notificationIndex < notifications.Length; notificationIndex++)
+        {
+            var handlers = notifications[notificationIndex].Handlers.Where(static handler => handler.IsAccessibleToGeneratedMediator).ToArray();
+            for (var handlerIndex = 0; handlerIndex < handlers.Length; handlerIndex++)
+            {
+                EmitProperty(builder, handlers[handlerIndex].MetadataName,
+                    "NotificationHandler_" + notificationIndex.ToString("D4", CultureInfo.InvariantCulture) + "_" + handlerIndex.ToString("D4", CultureInfo.InvariantCulture));
+            }
+        }
+    }
+
+    private static void EmitAssignment(StringBuilder builder, string propertyName, string parameterName)
+    {
+        builder.Append("        global::System.ArgumentNullException.ThrowIfNull(").Append(parameterName).AppendLine(");");
+        builder.Append("        ").Append(propertyName).Append(" = ").Append(parameterName).AppendLine(";");
+    }
+
+    private static void EmitProperty(StringBuilder builder, string typeName, string propertyName)
+    {
+        builder.AppendLine();
+        builder.Append("    internal global::System.Func<").Append(typeName).Append("> ").Append(propertyName).AppendLine(" { get; }");
     }
 
     private static string GetGeneratedPipelineMethodName(bool isStream, int index)

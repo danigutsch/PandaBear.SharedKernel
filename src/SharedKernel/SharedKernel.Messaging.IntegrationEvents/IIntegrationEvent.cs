@@ -1,11 +1,9 @@
-using SharedKernel.Mediator;
-
 namespace SharedKernel.Messaging.IntegrationEvents;
 
 /// <summary>
 /// Represents an event intended to cross bounded-context or process boundaries.
 /// </summary>
-public interface IIntegrationEvent : INotification
+public interface IIntegrationEvent
 {
     /// <summary>
     /// Gets the stable integration event type name.

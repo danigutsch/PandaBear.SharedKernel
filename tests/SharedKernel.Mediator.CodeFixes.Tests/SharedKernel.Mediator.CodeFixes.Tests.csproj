@@ -23,6 +23,7 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.CodeFixes\SharedKernel.Mediator.CodeFixes.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
     </ItemGroup>
 
     <ItemGroup>

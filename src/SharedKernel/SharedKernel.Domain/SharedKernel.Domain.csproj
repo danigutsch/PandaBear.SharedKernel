@@ -2,13 +2,13 @@
 
     <PropertyGroup>
         <PackageId>SharedKernel.Domain</PackageId>
-        <Description>Persistence-agnostic DDD domain primitives for shared-kernel workflows.</Description>
+        <Description>Persistence-agnostic DDD primitives and typed domain-event dispatch contracts.</Description>
         <RootNamespace>SharedKernel.Domain</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <PackageTags>domain-driven-design;shared-kernel;ddd;dotnet</PackageTags>
+        <PackageTags>domain-driven-design;domain-events;shared-kernel;ddd;dotnet</PackageTags>
     </PropertyGroup>
 
     <ItemGroup>

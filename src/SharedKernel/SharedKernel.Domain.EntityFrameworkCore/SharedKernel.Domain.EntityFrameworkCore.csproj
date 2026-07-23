@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>SharedKernel.Domain.EntityFrameworkCore</PackageId>
+        <Description>Entity Framework Core SaveChanges integration for dispatching aggregate domain events.</Description>
+        <RootNamespace>SharedKernel.Domain.EntityFrameworkCore</RootNamespace>
+        <PackageTags>domain-events;entity-framework-core;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Domain\SharedKernel.Domain.csproj" />
+        <ProjectReference Include="..\SharedKernel.EntityFrameworkCore\SharedKernel.EntityFrameworkCore.csproj" />
+    </ItemGroup>
+
+</Project>

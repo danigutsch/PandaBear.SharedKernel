@@ -184,17 +184,10 @@
           "SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.domainevents": {
-        "type": "Project",
-        "dependencies": {
-          "SharedKernel.Domain": "[0.1.0-alpha.0, )",
-          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
-        }
-      },
-      "sharedkernel.mediator.abstractions": {
+      "sharedkernel.results": {
         "type": "Project"
       },
-      "sharedkernel.results": {
+      "sharedkernel.testing": {
         "type": "Project"
       },
       "sharedkernel.testing.assertions": {

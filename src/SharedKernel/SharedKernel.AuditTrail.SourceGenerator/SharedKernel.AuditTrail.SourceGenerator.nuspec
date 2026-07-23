@@ -12,7 +12,6 @@
       <group targetFramework="net10.0">
         <dependency id="SharedKernel.AuditTrail" version="[$packageVersion$, )" exclude="Build,Analyzers" />
         <dependency id="SharedKernel.Domain" version="[$packageVersion$, )" exclude="Build,Analyzers" />
-        <dependency id="SharedKernel.DomainEvents" version="[$packageVersion$, )" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="[$dependencyInjectionVersion$, )" exclude="Build,Analyzers" />
       </group>
     </dependencies>

@@ -25,12 +25,16 @@ public static partial class SharedKernelMediatorServiceCollectionExtensions
         services.AddScoped<IPublisher>(static sp => sp.GetRequiredService<AppMediator>());
         services.AddScoped<IMediator>(static sp => sp.GetRequiredService<AppMediator>());
 
-        services.AddTransient<global::Mediator.Sample.CreateBookingHandler>();
-        services.AddTransient<global::Mediator.Sample.LookupTourSummaryHandler>();
+        services.AddScoped<global::Mediator.Sample.CreateBookingHandler>();
+        services.AddScoped<global::System.Func<global::Mediator.Sample.CreateBookingHandler>>(static sp => () => sp.GetRequiredService<global::Mediator.Sample.CreateBookingHandler>());
+        services.AddScoped<global::Mediator.Sample.LookupTourSummaryHandler>();
+        services.AddScoped<global::System.Func<global::Mediator.Sample.LookupTourSummaryHandler>>(static sp => () => sp.GetRequiredService<global::Mediator.Sample.LookupTourSummaryHandler>());
 
-        services.AddTransient<global::Mediator.Sample.TourBookedHandler>();
+        services.AddScoped<global::Mediator.Sample.TourBookedHandler>();
+        services.AddScoped<global::System.Func<global::Mediator.Sample.TourBookedHandler>>(static sp => () => sp.GetRequiredService<global::Mediator.Sample.TourBookedHandler>());
 
-        services.AddTransient<global::Mediator.Sample.StreamTourCodesHandler>();
+        services.AddScoped<global::Mediator.Sample.StreamTourCodesHandler>();
+        services.AddScoped<global::System.Func<global::Mediator.Sample.StreamTourCodesHandler>>(static sp => () => sp.GetRequiredService<global::Mediator.Sample.StreamTourCodesHandler>());
 
         return services;
     }

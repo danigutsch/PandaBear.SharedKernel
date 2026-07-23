@@ -38,3 +38,12 @@ SharedKernel.Domain.ValueObjectTemplate.None = 0 -> SharedKernel.Domain.ValueObj
 SharedKernel.Domain.ValueObjectTemplate.NonEmptyString = 2 -> SharedKernel.Domain.ValueObjectTemplate
 SharedKernel.Domain.ValueObjectTemplate.Slug = 3 -> SharedKernel.Domain.ValueObjectTemplate
 SharedKernel.Domain.ValueObjectTemplate.StronglyTypedId = 4 -> SharedKernel.Domain.ValueObjectTemplate
+SharedKernel.Domain.CompositeDomainEventDispatcher
+SharedKernel.Domain.CompositeDomainEventDispatcher.CompositeDomainEventDispatcher(System.Collections.Generic.IEnumerable<SharedKernel.Domain.IDomainEventDispatchHandler!>! handlers) -> void
+SharedKernel.Domain.CompositeDomainEventDispatcher.Dispatch(SharedKernel.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Domain.CompositeDomainEventDispatcher.Dispatch<TDomainEvent>(TDomainEvent domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Domain.IDomainEventDispatchHandler
+SharedKernel.Domain.IDomainEventDispatchHandler.Handle(SharedKernel.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Domain.IDomainEventDispatcher
+SharedKernel.Domain.IDomainEventDispatcher.Dispatch(SharedKernel.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Domain.IDomainEventDispatcher.Dispatch<TDomainEvent>(TDomainEvent domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask

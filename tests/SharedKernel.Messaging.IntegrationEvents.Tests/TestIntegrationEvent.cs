@@ -1,6 +1,6 @@
 namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 
-internal sealed record TestIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt, string Name) : IIntegrationEvent
+internal record TestIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt, string Name) : IIntegrationEvent
 {
     public static string EventType => "admin.tour.created";
 

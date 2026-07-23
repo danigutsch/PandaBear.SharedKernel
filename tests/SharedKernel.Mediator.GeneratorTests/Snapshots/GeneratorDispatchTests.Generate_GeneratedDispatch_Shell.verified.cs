@@ -12,11 +12,11 @@ internal static class GeneratedDispatch
     {
         return request switch
         {
-            global::Demo.CreateTour typed => Cast<int, TResponse>(mediator.Send(typed, ct)),
-            global::Demo.DeleteTour typed => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),
-            global::Demo.GetTourById typed => Cast<string, TResponse>(mediator.Send(typed, ct)),
-            global::Demo.LookupTour typed => Cast<string, TResponse>(mediator.Send(typed, ct)),
-            global::Demo.MissingTour typed => Cast<string, TResponse>(mediator.Send(typed, ct)),
+            global::Demo.CreateTour typed when request.GetType() == typeof(global::Demo.CreateTour) => Cast<int, TResponse>(mediator.Send(typed, ct)),
+            global::Demo.DeleteTour typed when request.GetType() == typeof(global::Demo.DeleteTour) => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),
+            global::Demo.GetTourById typed when request.GetType() == typeof(global::Demo.GetTourById) => Cast<string, TResponse>(mediator.Send(typed, ct)),
+            global::Demo.LookupTour typed when request.GetType() == typeof(global::Demo.LookupTour) => Cast<string, TResponse>(mediator.Send(typed, ct)),
+            global::Demo.MissingTour typed when request.GetType() == typeof(global::Demo.MissingTour) => Cast<string, TResponse>(mediator.Send(typed, ct)),
             _ => ThrowNoHandler<TResponse>(request),
         };
     }
@@ -28,11 +28,11 @@ internal static class GeneratedDispatch
     {
         return request switch
         {
-            global::Demo.CreateTour typed => Box<int>(mediator.Send(typed, ct)),
-            global::Demo.DeleteTour typed => Box<global::SharedKernel.Mediator.Unit>(mediator.Send(typed, ct)),
-            global::Demo.GetTourById typed => Box<string>(mediator.Send(typed, ct)),
-            global::Demo.LookupTour typed => Box<string>(mediator.Send(typed, ct)),
-            global::Demo.MissingTour typed => Box<string>(mediator.Send(typed, ct)),
+            global::Demo.CreateTour typed when request.GetType() == typeof(global::Demo.CreateTour) => Box<int>(mediator.Send(typed, ct)),
+            global::Demo.DeleteTour typed when request.GetType() == typeof(global::Demo.DeleteTour) => Box<global::SharedKernel.Mediator.Unit>(mediator.Send(typed, ct)),
+            global::Demo.GetTourById typed when request.GetType() == typeof(global::Demo.GetTourById) => Box<string>(mediator.Send(typed, ct)),
+            global::Demo.LookupTour typed when request.GetType() == typeof(global::Demo.LookupTour) => Box<string>(mediator.Send(typed, ct)),
+            global::Demo.MissingTour typed when request.GetType() == typeof(global::Demo.MissingTour) => Box<string>(mediator.Send(typed, ct)),
             _ => ThrowUnknownRequestObject(request),
         };
     }
@@ -44,7 +44,7 @@ internal static class GeneratedDispatch
     {
         return request switch
         {
-            global::Demo.StreamTours typed => CastStream<string, TResponse>(mediator.Send(typed, ct), ct),
+            global::Demo.StreamTours typed when request.GetType() == typeof(global::Demo.StreamTours) => CastStream<string, TResponse>(mediator.Send(typed, ct), ct),
             _ => ThrowNoStreamHandler<TResponse>(request),
         };
     }
@@ -57,7 +57,7 @@ internal static class GeneratedDispatch
     {
         return notification switch
         {
-            global::Demo.TourCreated typed => Publish_0000(mediator, typed, ct),
+            global::Demo.TourCreated typed when notification.GetType() == typeof(global::Demo.TourCreated) => Publish_0000(mediator, typed, ct),
             _ => global::System.Threading.Tasks.ValueTask.CompletedTask,
         };
     }
@@ -75,7 +75,7 @@ internal static class GeneratedDispatch
         var outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess;
         try
         {
-            await global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandler>(mediator.Services).Handle(notification, ct).ConfigureAwait(false);
+            await mediator.NotificationHandler_0000_0000().Handle(notification, ct).ConfigureAwait(false);
             activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);
             activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);
         }

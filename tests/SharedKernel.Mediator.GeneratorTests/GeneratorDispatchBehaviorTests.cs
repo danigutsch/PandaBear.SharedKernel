@@ -51,6 +51,39 @@ public sealed class GeneratorDispatchBehaviorTests
     }
 
     [Fact]
+    public async Task Generated_mediator_compiles_and_executes_with_an_internal_primary_handler()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record LookupTour(string Code) : IQuery<string>;
+
+            internal sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
+            {
+                public ValueTask<string> Handle(LookupTour request, CancellationToken ct) =>
+                    ValueTask.FromResult(request.Code);
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var request = Activator.CreateInstance(runtime.GetRequiredType("Demo.LookupTour"), "VT-42")
+            .ShouldBeAssignableTo<IRequest<string>>();
+        var handler = Activator.CreateInstance(runtime.GetRequiredType("Demo.LookupTourHandler"))
+            .ShouldNotBeNull();
+        var mediator = runtime.CreateMediator(handler);
+
+        // Act
+        var result = await mediator.Send(request, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldBe("VT-42");
+    }
+
+    [Fact]
     public async Task Generated_request_dispatch_executes_pipelines_in_stage_and_order_sequence()
     {
         // Arrange
@@ -959,6 +992,198 @@ public sealed class GeneratorDispatchBehaviorTests
 
         // Assert
         (traceEntries).ShouldBe(["handler:True"]);
+    }
+
+    [Fact]
+    public async Task Generated_parallel_notification_dispatch_cancels_all_started_handlers()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public static class ParallelCancellationGate
+            {
+                private static int startedCount;
+                private static int cancelledCount;
+                private static readonly TaskCompletionSource<bool> AllStartedSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+                private static readonly TaskCompletionSource<bool> Never = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+                public static Task AllStarted => AllStartedSource.Task;
+
+                public static int StartedCount => Volatile.Read(ref startedCount);
+
+                public static int CancelledCount => Volatile.Read(ref cancelledCount);
+
+                public static async ValueTask Enter(CancellationToken ct)
+                {
+                    if (Interlocked.Increment(ref startedCount) == 2)
+                    {
+                        AllStartedSource.TrySetResult(true);
+                    }
+
+                    try
+                    {
+                        await Never.Task.WaitAsync(ct);
+                    }
+                    catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                    {
+                        Interlocked.Increment(ref cancelledCount);
+                        throw;
+                    }
+                }
+            }
+
+            [NotificationDispatch(NotificationDispatchStrategy.Parallel)]
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class FirstHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) =>
+                    ParallelCancellationGate.Enter(ct);
+            }
+
+            public sealed class SecondHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) =>
+                    ParallelCancellationGate.Enter(ct);
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var mediator = runtime.CreateMediator(
+            Activator.CreateInstance(runtime.GetRequiredType("Demo.FirstHandler")).ShouldNotBeNull(),
+            Activator.CreateInstance(runtime.GetRequiredType("Demo.SecondHandler")).ShouldNotBeNull());
+        var notification = Activator.CreateInstance(runtime.GetRequiredType("Demo.TourCreated"), 42)
+            .ShouldBeAssignableTo<INotification>();
+        var gateType = runtime.GetRequiredType("Demo.ParallelCancellationGate");
+        var allStarted = gateType.GetProperty("AllStarted").ShouldNotBeNull()
+            .GetValue(null).ShouldBeAssignableTo<Task>();
+        using var cancellationTokenSource = new CancellationTokenSource();
+
+        // Act
+        var publishTask = mediator.Publish(notification, cancellationTokenSource.Token).AsTask();
+        await allStarted.WaitAsync(TestContext.Current.CancellationToken);
+        await cancellationTokenSource.CancelAsync();
+        Func<Task> publish = async () => await publishTask;
+        _ = await publish.ShouldThrowAssignableTo<OperationCanceledException>();
+
+        // Assert
+        var startedCount = gateType.GetProperty("StartedCount").ShouldNotBeNull()
+            .GetValue(null).ShouldBeOfType<int>();
+        var cancelledCount = gateType.GetProperty("CancelledCount").ShouldNotBeNull()
+            .GetValue(null).ShouldBeOfType<int>();
+        startedCount.ShouldBe(2);
+        cancelledCount.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Generated_parallel_notification_dispatch_waits_for_other_handlers_after_failure()
+    {
+        // Arrange
+        const string source = """
+            using SharedKernel.Mediator;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public static class ParallelFailureGate
+            {
+                private static int startedCount;
+                private static int completedCount;
+                private static readonly TaskCompletionSource<bool> AllStartedSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+                private static readonly TaskCompletionSource<bool> ReleaseFailureSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+                private static readonly TaskCompletionSource<bool> FailureReadySource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+                private static readonly TaskCompletionSource<bool> ReleaseCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+                public static Task AllStarted => AllStartedSource.Task;
+
+                public static Task FailureReady => FailureReadySource.Task;
+
+                public static int CompletedCount => Volatile.Read(ref completedCount);
+
+                public static void ReleaseFailure() => ReleaseFailureSource.TrySetResult(true);
+
+                public static void ReleaseCompletion() => ReleaseCompletionSource.TrySetResult(true);
+
+                public static async ValueTask Fail(CancellationToken ct)
+                {
+                    SignalStarted();
+                    await AllStartedSource.Task.WaitAsync(ct);
+                    await ReleaseFailureSource.Task.WaitAsync(ct);
+                    FailureReadySource.TrySetResult(true);
+                    throw new InvalidOperationException("parallel boom");
+                }
+
+                public static async ValueTask Complete(CancellationToken ct)
+                {
+                    SignalStarted();
+                    await AllStartedSource.Task.WaitAsync(ct);
+                    await ReleaseCompletionSource.Task.WaitAsync(ct);
+                    Interlocked.Increment(ref completedCount);
+                }
+
+                private static void SignalStarted()
+                {
+                    if (Interlocked.Increment(ref startedCount) == 2)
+                    {
+                        AllStartedSource.TrySetResult(true);
+                    }
+                }
+            }
+
+            [NotificationDispatch(NotificationDispatchStrategy.Parallel)]
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class FailingHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) =>
+                    ParallelFailureGate.Fail(ct);
+            }
+
+            public sealed class CompletingHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct) =>
+                    ParallelFailureGate.Complete(ct);
+            }
+            """;
+        using var runtime = GeneratedMediatorRuntimeContext.Create(source);
+        var mediator = runtime.CreateMediator(
+            Activator.CreateInstance(runtime.GetRequiredType("Demo.FailingHandler")).ShouldNotBeNull(),
+            Activator.CreateInstance(runtime.GetRequiredType("Demo.CompletingHandler")).ShouldNotBeNull());
+        var notification = Activator.CreateInstance(runtime.GetRequiredType("Demo.TourCreated"), 42)
+            .ShouldBeAssignableTo<INotification>();
+        var gateType = runtime.GetRequiredType("Demo.ParallelFailureGate");
+        var allStarted = gateType.GetProperty("AllStarted").ShouldNotBeNull()
+            .GetValue(null).ShouldBeAssignableTo<Task>();
+        var failureReady = gateType.GetProperty("FailureReady").ShouldNotBeNull()
+            .GetValue(null).ShouldBeAssignableTo<Task>();
+        var releaseFailure = gateType.GetMethod("ReleaseFailure").ShouldNotBeNull();
+        var releaseCompletion = gateType.GetMethod("ReleaseCompletion").ShouldNotBeNull();
+
+        // Act
+        var publishTask = mediator.Publish(notification, TestContext.Current.CancellationToken).AsTask();
+        await allStarted.WaitAsync(TestContext.Current.CancellationToken);
+        _ = releaseFailure.Invoke(null, null);
+        await failureReady.WaitAsync(TestContext.Current.CancellationToken);
+        var completedBeforeOtherHandler = publishTask.IsCompleted;
+        _ = releaseCompletion.Invoke(null, null);
+        Func<Task> publish = async () => await publishTask;
+        var exception = await publish.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        var completedCount = gateType.GetProperty("CompletedCount").ShouldNotBeNull()
+            .GetValue(null).ShouldBeOfType<int>();
+        completedBeforeOtherHandler.ShouldBeFalse();
+        completedCount.ShouldBe(1);
+        exception.Message.ShouldBe("parallel boom");
     }
 
 }

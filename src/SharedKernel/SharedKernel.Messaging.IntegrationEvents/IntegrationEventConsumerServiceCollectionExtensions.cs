@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace SharedKernel.Messaging.IntegrationEvents;
 
@@ -26,27 +25,30 @@ public static class IntegrationEventConsumerServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(eventType);
         ArgumentNullException.ThrowIfNull(jsonTypeInfo);
-
-        services.TryAddSingleton<RegisteredIntegrationEventSerializer>();
-        services.TryAddSingleton<IIntegrationEventSerializer>(sp => sp.GetRequiredService<RegisteredIntegrationEventSerializer>());
-        var existingRegistration = services
-            .Where(static descriptor => descriptor.ServiceType == typeof(IIntegrationEventConsumerRegistration))
-            .Select(static descriptor => descriptor.ImplementationInstance)
-            .OfType<IIntegrationEventConsumerRegistration>()
-            .FirstOrDefault(registration => registration.IntegrationEventType == typeof(TIntegrationEvent) || registration.EventType == eventType);
-        if (existingRegistration is not null)
+        if (!string.Equals(eventType, TIntegrationEvent.EventType, StringComparison.Ordinal))
         {
-            if (existingRegistration.IntegrationEventType == typeof(TIntegrationEvent) && existingRegistration.EventType == eventType)
+            throw new ArgumentException(
+                $"Integration event contract '{typeof(TIntegrationEvent).FullName}' declares event type '{TIntegrationEvent.EventType}', not '{eventType}'.",
+                nameof(eventType));
+        }
+
+        var existingRegistrations = services
+            .Where(descriptor => !descriptor.IsKeyedService
+                && descriptor.ServiceType == typeof(JsonTypeInfo<TIntegrationEvent>))
+            .ToArray();
+        if (existingRegistrations.Length > 0)
+        {
+            if (existingRegistrations.Length == 1
+                && ReferenceEquals(existingRegistrations[0].ImplementationInstance, jsonTypeInfo))
             {
                 return services;
             }
 
             throw new InvalidOperationException(
-                $"Integration event registration conflict for event type '{eventType}' and contract type '{typeof(TIntegrationEvent).FullName}'.");
+                $"Integration event contract '{typeof(TIntegrationEvent).FullName}' is already registered with different JSON metadata.");
         }
 
-        services.AddSingleton<IIntegrationEventConsumerRegistration>(
-            new IntegrationEventConsumerRegistration<TIntegrationEvent>(eventType, jsonTypeInfo));
+        services.AddSingleton(jsonTypeInfo);
 
         return services;
     }
@@ -66,7 +68,6 @@ public static class IntegrationEventConsumerServiceCollectionExtensions
         where TIntegrationEvent : IIntegrationEvent
     {
         services.AddIntegrationEventContract(eventType, jsonTypeInfo);
-        services.TryAddScoped<IEventEnvelopePublisher, RegisteredIntegrationEventEnvelopePublisher>();
 
         return services;
     }

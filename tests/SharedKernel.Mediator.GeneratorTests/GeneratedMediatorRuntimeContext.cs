@@ -1,4 +1,5 @@
 using System.Diagnostics.Metrics;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace SharedKernel.Mediator.GeneratorTests;
@@ -24,25 +25,6 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
             using System.Threading.Tasks;
 
             """;
-        const string serviceProviderExtensionsSource = """
-            namespace Microsoft.Extensions.DependencyInjection;
-
-            public static class ServiceProviderServiceExtensions
-            {
-                public static T GetRequiredService<T>(global::System.IServiceProvider provider)
-                {
-                    global::System.ArgumentNullException.ThrowIfNull(provider);
-
-                    var service = provider.GetService(typeof(T));
-                    if (service is T typed)
-                    {
-                        return typed;
-                    }
-
-                    throw new global::System.InvalidOperationException($"No service for type '{typeof(T).FullName}'.");
-                }
-            }
-            """;
         var runResult = GeneratorTestHarness.RunGeneratorDriver(source);
         var generatedMediatorSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
@@ -54,7 +36,7 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
             runResult,
             "SharedKernel.Mediator.Generated.GeneratedPipelines.g.cs");
         var runtimeCompilation = GeneratorTestHarness.CreateCompilation(
-            [runtimeUsings + source, generatedMediatorSource, generatedDispatchSource, generatedPipelinesSource, serviceProviderExtensionsSource],
+            [runtimeUsings + source, generatedMediatorSource, generatedDispatchSource, generatedPipelinesSource],
             assemblyName: "SharedKernel.Mediator.Tests.GeneratedDispatchRuntime");
         var assembly = GeneratorTestHarness.LoadAssembly(runtimeCompilation);
         var mediatorType = assembly.GetType("SharedKernel.Mediator.AppMediator", throwOnError: true)!;
@@ -90,7 +72,32 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
             resolvedServices.Add(new AppMediatorInstrumentation(meterFactory));
         }
 
-        return (IMediator)Activator.CreateInstance(mediatorType, new TestServiceProvider([.. resolvedServices]))!;
+        var constructor = mediatorType.GetConstructors().ShouldHaveSingleItem();
+        var arguments = constructor.GetParameters()
+            .Select(parameter => ResolveService(parameter.ParameterType, resolvedServices))
+            .ToArray();
+
+        return (IMediator)constructor.Invoke(arguments);
+    }
+
+    private static object ResolveService(Type parameterType, IReadOnlyList<object> services)
+    {
+        var directService = services.FirstOrDefault(parameterType.IsInstanceOfType);
+        if (directService is not null)
+        {
+            return directService;
+        }
+
+        if (parameterType.IsGenericType && parameterType.GetGenericTypeDefinition() == typeof(Func<>))
+        {
+            var serviceType = parameterType.GenericTypeArguments[0];
+            var service = services.FirstOrDefault(serviceType.IsInstanceOfType)
+                ?? throw new InvalidOperationException($"No generated mediator dependency was supplied for '{parameterType.FullName}'.");
+            var body = Expression.Convert(Expression.Constant(service), serviceType);
+            return Expression.Lambda(parameterType, body).Compile();
+        }
+
+        throw new InvalidOperationException($"No generated mediator dependency was supplied for '{parameterType.FullName}'.");
     }
 
     public string[] ReadTraceEntries(string typeName = "Demo.TraceLog")
@@ -113,16 +120,6 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
         if (assembly is IDisposable disposableAssembly)
         {
             disposableAssembly.Dispose();
-        }
-    }
-
-    private sealed class TestServiceProvider(params object[] services) : IServiceProvider
-    {
-        private readonly Dictionary<Type, object> services = services.ToDictionary(static service => service.GetType());
-
-        public object? GetService(Type serviceType)
-        {
-            return services.TryGetValue(serviceType, out var service) ? service : null;
         }
     }
 

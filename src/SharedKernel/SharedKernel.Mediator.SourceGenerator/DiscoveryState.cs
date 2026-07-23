@@ -14,7 +14,6 @@ internal sealed class DiscoveryState
         Pipelines = [];
         NotificationContracts = new Dictionary<string, RawNotificationContract>(StringComparer.Ordinal);
         NotificationHandlers = [];
-        DomainEventHandlers = [];
         StreamRequestContracts = new Dictionary<string, RawStreamRequestContract>(StringComparer.Ordinal);
         StreamHandlers = [];
         StreamPipelines = [];
@@ -35,8 +34,6 @@ internal sealed class DiscoveryState
     public Dictionary<string, RawNotificationContract> NotificationContracts { get; }
 
     public List<RawNotificationHandlerDescriptor> NotificationHandlers { get; }
-
-    public List<DomainEventHandlerDescriptor> DomainEventHandlers { get; }
 
     public Dictionary<string, RawStreamRequestContract> StreamRequestContracts { get; }
 

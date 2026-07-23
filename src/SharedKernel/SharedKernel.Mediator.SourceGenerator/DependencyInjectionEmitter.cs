@@ -5,7 +5,7 @@ namespace SharedKernel.Mediator.SourceGenerator;
 /// </summary>
 internal static class DependencyInjectionEmitter
 {
-    private const string AddTransientMethodName = "AddTransient";
+    private const string AddScopedMethodName = "AddScoped";
 
     public static string Emit(DiscoveryModel model)
     {
@@ -51,12 +51,7 @@ internal static class DependencyInjectionEmitter
             model.StreamRequests,
             emittedRequestRegistrations || emittedNotificationRegistrations,
             emittedRegistrationKeys);
-        var emittedDomainEventRegistrations = EmitDomainEventRegistrations(
-            writer,
-            model.DomainEventHandlers,
-            emittedRequestRegistrations || emittedNotificationRegistrations || emittedStreamRegistrations);
-
-        if (emittedRequestRegistrations || emittedNotificationRegistrations || emittedStreamRegistrations || emittedDomainEventRegistrations)
+        if (emittedRequestRegistrations || emittedNotificationRegistrations || emittedStreamRegistrations)
         {
             writer.Line();
         }
@@ -89,7 +84,7 @@ internal static class DependencyInjectionEmitter
             {
                 EmitConcreteRegistration(
                     writer,
-                    AddTransientMethodName,
+                    AddScopedMethodName,
                     handler.MetadataName,
                     emittedRegistrationKeys);
                 emittedAny = true;
@@ -99,7 +94,7 @@ internal static class DependencyInjectionEmitter
             {
                 EmitConcreteRegistration(
                     writer,
-                    AddTransientMethodName,
+                    AddScopedMethodName,
                     pipeline.MetadataName,
                     emittedRegistrationKeys);
                 emittedAny = true;
@@ -107,28 +102,6 @@ internal static class DependencyInjectionEmitter
         }
 
         return emittedAny;
-    }
-
-    private static bool EmitDomainEventRegistrations(
-        IndentedCodeWriter writer,
-        IEnumerable<DomainEventHandlerDescriptor> domainEventHandlers,
-        bool prependBlankLine)
-    {
-        if (!domainEventHandlers.Any())
-        {
-            return false;
-        }
-
-        if (prependBlankLine)
-        {
-            writer.Line();
-        }
-
-        writer.Line("Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<global::SharedKernel.DomainEvents.IDomainEventNotificationFactory, global::SharedKernel.DomainEvents.Generated.GeneratedDomainEventNotificationFactory>(services);");
-        writer.Line("Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddScoped<global::SharedKernel.DomainEvents.IDomainEventDispatcher, global::SharedKernel.DomainEvents.CompositeDomainEventDispatcher>(services);");
-        writer.Line("Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddEnumerable(services, global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Scoped<global::SharedKernel.DomainEvents.IDomainEventDispatchHandler, global::SharedKernel.DomainEvents.MediatorDomainEventDispatcher>());");
-
-        return true;
     }
 
     private static bool EmitNotificationRegistrations(
@@ -150,7 +123,7 @@ internal static class DependencyInjectionEmitter
             {
                 EmitConcreteRegistration(
                     writer,
-                    AddTransientMethodName,
+                    AddScopedMethodName,
                     handler.MetadataName,
                     emittedRegistrationKeys);
                 emittedAny = true;
@@ -179,7 +152,7 @@ internal static class DependencyInjectionEmitter
             {
                 EmitConcreteRegistration(
                     writer,
-                    AddTransientMethodName,
+                    AddScopedMethodName,
                     handler.MetadataName,
                     emittedRegistrationKeys);
                 emittedAny = true;
@@ -189,7 +162,7 @@ internal static class DependencyInjectionEmitter
             {
                 EmitConcreteRegistration(
                     writer,
-                    AddTransientMethodName,
+                    AddScopedMethodName,
                     pipeline.MetadataName,
                     emittedRegistrationKeys);
                 emittedAny = true;
@@ -209,6 +182,7 @@ internal static class DependencyInjectionEmitter
         if (emittedRegistrationKeys.Add(selfRegistrationKey))
         {
             writer.Line($"services.{methodName}<{implementationType}>();");
+            writer.Line($"services.{methodName}<global::System.Func<{implementationType}>>(static sp => () => sp.GetRequiredService<{implementationType}>());");
         }
     }
 

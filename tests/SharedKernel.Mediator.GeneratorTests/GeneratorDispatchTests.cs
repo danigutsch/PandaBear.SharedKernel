@@ -1,63 +1,12 @@
 using Microsoft.CodeAnalysis;
-using SharedKernel.DomainEvents;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace SharedKernel.Mediator.GeneratorTests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
 public sealed class GeneratorDispatchTests
 {
-    [Fact]
-    public void Generate_domain_event_notification_factory_for_domain_event_handlers()
-    {
-        // Arrange
-        const string source = """
-            using SharedKernel.Domain;
-            using SharedKernel.DomainEvents;
-            using SharedKernel.Mediator;
-
-            [assembly: MediatorModule]
-
-            namespace Demo;
-
-            public sealed record TourCreated(Guid TourId) : IDomainEvent;
-
-            public sealed class TourCreatedHandler : IDomainEventHandler<TourCreated>
-            {
-                public ValueTask Handle(TourCreated domainEvent, CancellationToken ct) => ValueTask.CompletedTask;
-            }
-            """;
-        var references = new[]
-        {
-            MetadataReference.CreateFromFile(typeof(Domain.IDomainEvent).Assembly.Location),
-            MetadataReference.CreateFromFile(typeof(IDomainEventHandler<>).Assembly.Location),
-        };
-        var compilation = GeneratorTestHarness.CreateCompilation(source, additionalReferences: references);
-
-        // Act
-        var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
-        var generatedSource = GeneratorTestHarness.GetGeneratedSource(
-            runResult,
-            GeneratedHintNames.DomainEventNotifications);
-
-        // Assert
-        generatedSource.ShouldContain("GeneratedDomainEventNotificationFactory", StringComparison.Ordinal);
-        generatedSource.ShouldContain("global::Demo.TourCreated typedDomainEvent => new global::SharedKernel.DomainEvents.DomainEventNotification<global::Demo.TourCreated>(typedDomainEvent)", StringComparison.Ordinal);
-        generatedSource.ShouldContain("AddGeneratedDomainEventNotifications", StringComparison.Ordinal);
-        generatedSource.ShouldContain("TryAddSingleton<global::SharedKernel.DomainEvents.IDomainEventNotificationFactory", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("MakeGenericMethod", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("dynamic", StringComparison.Ordinal);
-
-        var dependencyInjectionSource = GeneratorTestHarness.GetGeneratedSource(
-            runResult,
-            GeneratedHintNames.DependencyInjection);
-        dependencyInjectionSource.ShouldContain("TryAddSingleton<global::SharedKernel.DomainEvents.IDomainEventNotificationFactory", StringComparison.Ordinal);
-        dependencyInjectionSource.ShouldContain("CompositeDomainEventDispatcher", StringComparison.Ordinal);
-        dependencyInjectionSource.ShouldContain("TryAddEnumerable", StringComparison.Ordinal);
-        dependencyInjectionSource.ShouldContain("IDomainEventDispatchHandler, global::SharedKernel.DomainEvents.MediatorDomainEventDispatcher", StringComparison.Ordinal);
-        generatedSource.ShouldContain("CompositeDomainEventDispatcher", StringComparison.Ordinal);
-        generatedSource.ShouldContain("IDomainEventDispatchHandler, global::SharedKernel.DomainEvents.MediatorDomainEventDispatcher", StringComparison.Ordinal);
-    }
-
     [Fact]
     public void Generate_appmediator_shell()
     {
@@ -135,12 +84,38 @@ public sealed class GeneratorDispatchTests
         var generatedPipelinesSource = GeneratorTestHarness.GetGeneratedSource(
             runResult,
             GeneratedHintNames.GeneratedPipelines);
+        var generatedDispatchFiles = new[]
+        {
+            generatedSource,
+            generatedDispatchSource,
+            generatedPipelinesSource
+        };
+        var generatedRoots = generatedDispatchFiles
+            .Select(sourceText => CSharpSyntaxTree.ParseText(
+                sourceText,
+                cancellationToken: TestContext.Current.CancellationToken).GetRoot(TestContext.Current.CancellationToken))
+            .ToArray();
+        var generatedTypes = generatedRoots
+            .SelectMany(static root => root.DescendantNodes().OfType<TypeDeclarationSyntax>())
+            .ToArray();
+        var topLevelTypeCount = generatedTypes.Count(static type =>
+            type.Parent is CompilationUnitSyntax or BaseNamespaceDeclarationSyntax);
+        var nestedTypeCount = generatedTypes.Length - topLevelTypeCount;
+        var registrationMethodCount = generatedRoots
+            .SelectMany(static root => root.DescendantNodes().OfType<MethodDeclarationSyntax>())
+            .Count(static method => method.Identifier.ValueText.StartsWith("Add", StringComparison.Ordinal));
+        var nonBlankLineCount = generatedDispatchFiles.Sum(static sourceText => sourceText.Split('\n')
+            .Count(static line => !string.IsNullOrWhiteSpace(line)));
+        var serviceProviderSiteCount = generatedDispatchFiles.Sum(static sourceText =>
+            sourceText.Split("IServiceProvider").Length - 1
+            + sourceText.Split("GetRequiredService").Length - 1);
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedSource);
         GeneratorSnapshotVerifier.Verify(generatedDispatchSource, testName: "Generate_GeneratedDispatch_Shell");
-        (generatedSource).ShouldContain("public sealed partial class AppMediator : IMediator", StringComparison.Ordinal);
-        (generatedSource).ShouldContain("internal global::System.IServiceProvider Services { get; }", StringComparison.Ordinal);
+        (generatedSource).ShouldContain("internal sealed partial class AppMediator : IMediator", StringComparison.Ordinal);
+        (generatedSource).ShouldNotContain("global::System.IServiceProvider", StringComparison.Ordinal);
+        (generatedSource).ShouldNotContain("GetRequiredService", StringComparison.Ordinal);
         (generatedSource).ShouldContain("public async global::System.Threading.Tasks.ValueTask<string> Send(global::Demo.LookupTour request,", StringComparison.Ordinal);
         (generatedSource).ShouldContain("public async global::System.Threading.Tasks.ValueTask<int> Send(global::Demo.CreateTour request,", StringComparison.Ordinal);
         (generatedSource).ShouldContain("public async global::System.Threading.Tasks.ValueTask<global::SharedKernel.Mediator.Unit> Send(global::Demo.DeleteTour request,", StringComparison.Ordinal);
@@ -159,20 +134,27 @@ public sealed class GeneratorDispatchTests
         (generatedSource).ShouldNotContain("internal static class GeneratedDispatch", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("internal static class GeneratedDispatch", StringComparison.Ordinal);
         (generatedPipelinesSource).ShouldContain("internal static class GeneratedPipelines", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.LookupTour typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.CreateTour typed => Cast<int, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.DeleteTour typed => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.GetTourById typed => Cast<string, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.LookupTour typed => Box<string>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.LookupTour typed when request.GetType() == typeof(global::Demo.LookupTour) => Cast<string, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.CreateTour typed when request.GetType() == typeof(global::Demo.CreateTour) => Cast<int, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.DeleteTour typed when request.GetType() == typeof(global::Demo.DeleteTour) => Cast<global::SharedKernel.Mediator.Unit, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.GetTourById typed when request.GetType() == typeof(global::Demo.GetTourById) => Cast<string, TResponse>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.LookupTour typed when request.GetType() == typeof(global::Demo.LookupTour) => Box<string>(mediator.Send(typed, ct)),", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> Send<TResponse>(", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.StreamTours typed => CastStream<string, TResponse>(mediator.Send(typed, ct), ct),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.StreamTours typed when request.GetType() == typeof(global::Demo.StreamTours) => CastStream<string, TResponse>(mediator.Send(typed, ct), ct),", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("public static global::System.Threading.Tasks.ValueTask Publish<TNotification>(", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("global::Demo.TourCreated typed => Publish_0000(mediator, typed, ct),", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("await global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandler>(mediator.Services).Handle(notification, ct).ConfigureAwait(false);", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("global::Demo.TourCreated typed when notification.GetType() == typeof(global::Demo.TourCreated) => Publish_0000(mediator, typed, ct),", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("await mediator.NotificationHandler_0000_0000().Handle(notification, ct).ConfigureAwait(false);", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldNotContain("GetRequiredService", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("public static global::System.Threading.Tasks.ValueTask<TResponse> ThrowNoHandler<TResponse>(", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("public static global::System.Collections.Generic.IAsyncEnumerable<TResponse> ThrowNoStreamHandler<TResponse>(", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("public static global::System.Threading.Tasks.ValueTask<object?> ThrowUnknownRequestObject(", StringComparison.Ordinal);
         (generatedDispatchSource).ShouldContain("public static TTarget ThrowInvalidResponseCast<TSource, TTarget>()", StringComparison.Ordinal);
+        generatedDispatchFiles.Length.ShouldBe(3);
+        topLevelTypeCount.ShouldBe(3);
+        nestedTypeCount.ShouldBe(1);
+        registrationMethodCount.ShouldBe(0);
+        nonBlankLineCount.ShouldBeGreaterThan(0);
+        serviceProviderSiteCount.ShouldBe(0);
     }
 
     [Fact]
@@ -203,7 +185,9 @@ public sealed class GeneratorDispatchTests
         GeneratorSnapshotVerifier.Verify(generatedPipelinesSource);
         (generatedMediatorSource).ShouldContain("var result = await GeneratedPipelines.Invoke_0000(this, request, ct).ConfigureAwait(false);", StringComparison.Ordinal);
         (generatedPipelinesSource).ShouldContain("public static global::System.Threading.Tasks.ValueTask<int> Invoke_0000(AppMediator mediator, global::Demo.CreateTour request,", StringComparison.Ordinal);
-        (generatedPipelinesSource).ShouldContain("var pipeline0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.ValidationBehavior>(mediator.Services);", StringComparison.Ordinal);
+        (generatedPipelinesSource).ShouldContain("var pipeline0 = mediator.RequestPipeline_0000_0000();", StringComparison.Ordinal);
+        (generatedPipelinesSource).ShouldContain("var handler = mediator.RequestHandler_0000();", StringComparison.Ordinal);
+        (generatedPipelinesSource).ShouldNotContain("GetRequiredService", StringComparison.Ordinal);
         (generatedPipelinesSource).ShouldContain("return pipeline0.Handle(request, () => handler.Handle(request, ct), ct);", StringComparison.Ordinal);
     }
 
@@ -235,7 +219,9 @@ public sealed class GeneratorDispatchTests
         GeneratorSnapshotVerifier.Verify(generatedPipelinesSource);
         (generatedMediatorSource).ShouldContain("var enumerator = GeneratedPipelines.InvokeStream_0000(this, request, ct).GetAsyncEnumerator(ct);", StringComparison.Ordinal);
         (generatedPipelinesSource).ShouldContain("public static global::System.Collections.Generic.IAsyncEnumerable<string> InvokeStream_0000(AppMediator mediator, global::Demo.StreamTours request,", StringComparison.Ordinal);
-        (generatedPipelinesSource).ShouldContain("var pipeline0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.ValidationBehavior>(mediator.Services);", StringComparison.Ordinal);
+        (generatedPipelinesSource).ShouldContain("var pipeline0 = mediator.StreamPipeline_0000_0000();", StringComparison.Ordinal);
+        (generatedPipelinesSource).ShouldContain("var handler = mediator.StreamHandler_0000();", StringComparison.Ordinal);
+        (generatedPipelinesSource).ShouldNotContain("GetRequiredService", StringComparison.Ordinal);
         (generatedPipelinesSource).ShouldContain("return pipeline0.Handle(request, () => handler.Handle(request, ct), ct);", StringComparison.Ordinal);
     }
 
@@ -268,8 +254,9 @@ public sealed class GeneratorDispatchTests
 
         // Assert
         GeneratorSnapshotVerifier.Verify(generatedDispatchSource);
-        (generatedDispatchSource).ShouldContain("var handler0 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerOne>(mediator.Services).Handle(notification, ct);", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("var handler1 = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::Demo.TourCreatedHandlerTwo>(mediator.Services).Handle(notification, ct);", StringComparison.Ordinal);
-        (generatedDispatchSource).ShouldContain("await global::System.Threading.Tasks.Task.WhenAll(handler0.AsTask(), handler1.AsTask()).ConfigureAwait(false);", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("handler0 = mediator.NotificationHandler_0000_0000().Handle(notification, ct).AsTask();", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("handler1 = mediator.NotificationHandler_0000_0001().Handle(notification, ct).AsTask();", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldNotContain("GetRequiredService", StringComparison.Ordinal);
+        (generatedDispatchSource).ShouldContain("await global::System.Threading.Tasks.Task.WhenAll(handler0, handler1).ConfigureAwait(false);", StringComparison.Ordinal);
     }
 }

@@ -62,11 +62,11 @@ public sealed class GeneratorDependencyInjectionTests
         generatedSource.ShouldContain("services.AddScoped<ISender>(static sp => sp.GetRequiredService<AppMediator>());", StringComparison.Ordinal);
         generatedSource.ShouldContain("services.AddScoped<IPublisher>(static sp => sp.GetRequiredService<AppMediator>());", StringComparison.Ordinal);
         generatedSource.ShouldContain("services.AddScoped<IMediator>(static sp => sp.GetRequiredService<AppMediator>());", StringComparison.Ordinal);
-        generatedSource.ShouldContain("services.AddTransient<global::Demo.CreateTourHandler>();", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddTransient<global::SharedKernel.Mediator.ICommandHandler<", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddTransient<global::SharedKernel.Mediator.IPipelineBehavior<", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddTransient<global::SharedKernel.Mediator.INotificationHandler<", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddTransient<global::SharedKernel.Mediator.IStreamRequestHandler<", StringComparison.Ordinal);
+        generatedSource.ShouldContain("services.AddScoped<global::Demo.CreateTourHandler>();", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.ICommandHandler<", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.IPipelineBehavior<", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.INotificationHandler<", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.IStreamRequestHandler<", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -89,8 +89,8 @@ public sealed class GeneratorDependencyInjectionTests
             GeneratedHintNames.DependencyInjection);
 
         // Assert
-        generatedSource.ShouldContain("services.AddTransient<global::Demo.ValidationBehavior<global::Demo.CreateTour, int>>();", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddTransient<global::SharedKernel.Mediator.IPipelineBehavior<", StringComparison.Ordinal);
+        generatedSource.ShouldContain("services.AddScoped<global::Demo.ValidationBehavior<global::Demo.CreateTour, int>>();", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.IPipelineBehavior<", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -113,8 +113,8 @@ public sealed class GeneratorDependencyInjectionTests
             GeneratedHintNames.DependencyInjection);
 
         // Assert
-        generatedSource.ShouldContain("services.AddTransient<global::Demo.ValidationBehavior<global::Demo.StreamTours, string>>();", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddTransient<global::SharedKernel.Mediator.IStreamPipelineBehavior<", StringComparison.Ordinal);
+        generatedSource.ShouldContain("services.AddScoped<global::Demo.ValidationBehavior<global::Demo.StreamTours, string>>();", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.IStreamPipelineBehavior<", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -185,9 +185,9 @@ public sealed class GeneratorDependencyInjectionTests
             additionalReferences: [moduleReference]);
 
         // Assert
-        generatedSource.ShouldContain("services.AddTransient<global::Demo.CreateTourHandler>();", StringComparison.Ordinal);
-        generatedSource.ShouldContain("services.AddTransient<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddTransient<global::SharedKernel.Mediator.IQueryHandler<", StringComparison.Ordinal);
+        generatedSource.ShouldContain("services.AddScoped<global::Demo.CreateTourHandler>();", StringComparison.Ordinal);
+        generatedSource.ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.IQueryHandler<", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -213,9 +213,9 @@ public sealed class GeneratorDependencyInjectionTests
 
         // Assert
         diagnostics.ShouldBeEmpty();
-        generatedSource.ShouldContain("services.AddTransient<global::Demo.TourCreatedHandler>();", StringComparison.Ordinal);
+        generatedSource.ShouldContain("services.AddScoped<global::Demo.TourCreatedHandler>();", StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddTransient<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourCreated>, global::Demo.TourCreatedHandler>();",
+            "services.AddScoped<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourCreated>, global::Demo.TourCreatedHandler>();",
             StringComparison.Ordinal);
     }
 
@@ -249,9 +249,9 @@ public sealed class GeneratorDependencyInjectionTests
 
         // Assert
         diagnostics.ShouldBeEmpty();
-        generatedSource.ShouldContain("services.AddTransient<global::Demo.StreamToursHandler>();", StringComparison.Ordinal);
+        generatedSource.ShouldContain("services.AddScoped<global::Demo.StreamToursHandler>();", StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddTransient<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamTours, string>, global::Demo.StreamToursHandler>();",
+            "services.AddScoped<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamTours, string>, global::Demo.StreamToursHandler>();",
             StringComparison.Ordinal);
     }
 
@@ -277,7 +277,7 @@ public sealed class GeneratorDependencyInjectionTests
 
         // Assert
         diagnostics.ShouldNotContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
-        generatedSource.ShouldContain("services.AddTransient<global::Demo.CreateTourHandler>();", StringComparison.Ordinal);
+        generatedSource.ShouldContain("services.AddScoped<global::Demo.CreateTourHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -311,9 +311,9 @@ public sealed class GeneratorDependencyInjectionTests
         diagnostics.ShouldContain(
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InaccessibleRegistrationType
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::ModuleA.SearchToursHandler", StringComparison.Ordinal));
-        generatedSource.ShouldNotContain("services.AddTransient<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddTransient<global::SharedKernel.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();",
+            "services.AddScoped<global::SharedKernel.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();",
             StringComparison.Ordinal);
     }
 
@@ -348,9 +348,9 @@ public sealed class GeneratorDependencyInjectionTests
 
         // Assert
         diagnostics.ShouldNotContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
-        generatedSource.ShouldContain("services.AddTransient<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
+        generatedSource.ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddTransient<global::SharedKernel.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();",
+            "services.AddScoped<global::SharedKernel.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();",
             StringComparison.Ordinal);
     }
 
@@ -373,7 +373,7 @@ public sealed class GeneratorDependencyInjectionTests
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains(
                                      "SharedKernel.Mediator.Tests.ModuleA.Unmarked",
                                      StringComparison.Ordinal));
-        generatedSource.ShouldNotContain("services.AddTransient<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -403,13 +403,13 @@ public sealed class GeneratorDependencyInjectionTests
         diagnostics.ShouldContain(
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicateGeneratedRegistration
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.TourEventsHandler", StringComparison.Ordinal));
-        var registrationCount = generatedSource.Split("services.AddTransient<global::Demo.TourEventsHandler>();", StringSplitOptions.None).Length - 1;
+        var registrationCount = generatedSource.Split("services.AddScoped<global::Demo.TourEventsHandler>();", StringSplitOptions.None).Length - 1;
         registrationCount.ShouldBe(1);
         generatedSource.ShouldNotContain(
-            "services.AddTransient<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourCreated>, global::Demo.TourEventsHandler>();",
+            "services.AddScoped<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourCreated>, global::Demo.TourEventsHandler>();",
             StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddTransient<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourUpdated>, global::Demo.TourEventsHandler>();",
+            "services.AddScoped<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourUpdated>, global::Demo.TourEventsHandler>();",
             StringComparison.Ordinal);
     }
 
@@ -448,13 +448,13 @@ public sealed class GeneratorDependencyInjectionTests
         diagnostics.ShouldContain(
             static diagnostic => diagnostic.Id == MediatorDiagnosticIds.DuplicateGeneratedRegistration
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::Demo.SearchStreamHandler", StringComparison.Ordinal));
-        var registrationCount = generatedSource.Split("services.AddTransient<global::Demo.SearchStreamHandler>();", StringSplitOptions.None).Length - 1;
+        var registrationCount = generatedSource.Split("services.AddScoped<global::Demo.SearchStreamHandler>();", StringSplitOptions.None).Length - 1;
         registrationCount.ShouldBe(1);
         generatedSource.ShouldNotContain(
-            "services.AddTransient<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamTours, string>, global::Demo.SearchStreamHandler>();",
+            "services.AddScoped<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamTours, string>, global::Demo.SearchStreamHandler>();",
             StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddTransient<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamCities, string>, global::Demo.SearchStreamHandler>();",
+            "services.AddScoped<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamCities, string>, global::Demo.SearchStreamHandler>();",
             StringComparison.Ordinal);
     }
 }

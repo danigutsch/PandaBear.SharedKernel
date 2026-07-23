@@ -1,6 +1,7 @@
 #nullable enable
 SharedKernel.Messaging.IntegrationEvents.IDomainEventIntegrationEventOutbox
 SharedKernel.Messaging.IntegrationEvents.IDomainEventIntegrationEventOutbox.Enqueue<TIntegrationEvent>(TIntegrationEvent integrationEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<TIntegrationEvent>.Handle(TIntegrationEvent integrationEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.Messaging.IntegrationEvents.IntegrationEventConsumerServiceCollectionExtensions
 static SharedKernel.Messaging.IntegrationEvents.IntegrationEventConsumerServiceCollectionExtensions.AddIntegrationEventConsumer<TIntegrationEvent>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! eventType, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TIntegrationEvent>! jsonTypeInfo) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static SharedKernel.Messaging.IntegrationEvents.IntegrationEventConsumerServiceCollectionExtensions.AddIntegrationEventContract<TIntegrationEvent>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! eventType, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TIntegrationEvent>! jsonTypeInfo) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
@@ -23,16 +24,11 @@ SharedKernel.Messaging.IntegrationEvents.IIntegrationEvent.EventId.get -> System
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEvent.EventType.get -> string!
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEvent.EventVersion.get -> int
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEvent.OccurredAt.get -> System.DateTimeOffset
-SharedKernel.Messaging.IntegrationEvents.IIntegrationEventDispatcher
-SharedKernel.Messaging.IntegrationEvents.IIntegrationEventDispatcher.Dispatch<TIntegrationEvent>(TIntegrationEvent integrationEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<TIntegrationEvent>
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventSerializer
 SharedKernel.Messaging.IntegrationEvents.IIntegrationEventSerializer.Serialize<TIntegrationEvent>(TIntegrationEvent integrationEvent) -> string!
 SharedKernel.Messaging.IntegrationEvents.IntegrationEventMappingAttribute
 SharedKernel.Messaging.IntegrationEvents.IntegrationEventMappingAttribute.IntegrationEventMappingAttribute() -> void
-SharedKernel.Messaging.IntegrationEvents.MediatorIntegrationEventDispatcher
-SharedKernel.Messaging.IntegrationEvents.MediatorIntegrationEventDispatcher.Dispatch<TIntegrationEvent>(TIntegrationEvent integrationEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.Messaging.IntegrationEvents.MediatorIntegrationEventDispatcher.MediatorIntegrationEventDispatcher(SharedKernel.Mediator.IPublisher! publisher) -> void
 SharedKernel.Messaging.IntegrationEvents.IRetryableMessage
 SharedKernel.Messaging.IntegrationEvents.IRetryableMessage.Attempts.get -> int
 SharedKernel.Messaging.IntegrationEvents.IRetryableMessage.LastAttemptAt.get -> System.DateTimeOffset?

@@ -142,9 +142,6 @@
           "xunit.v3.runner.common": "[3.2.2]"
         }
       },
-      "sharedkernel.mediator.abstractions": {
-        "type": "Project"
-      },
       "sharedkernel.messaging": {
         "type": "Project"
       },
@@ -152,7 +149,6 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.10, )",
-          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )",
           "SharedKernel.Messaging": "[0.1.0-alpha.0, )"
         }
       },
