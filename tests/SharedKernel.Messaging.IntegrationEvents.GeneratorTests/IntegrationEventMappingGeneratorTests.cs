@@ -245,7 +245,7 @@ public sealed class IntegrationEventMappingGeneratorTests
     }
 
     [Fact]
-    public void One_concrete_handler_can_receive_two_registered_integration_events()
+    public void One_concrete_handler_generates_direct_closed_registrations_for_two_events()
     {
         // Arrange
         const string source = """
@@ -297,7 +297,7 @@ public sealed class IntegrationEventMappingGeneratorTests
 
         // Assert
         runResult.Diagnostics.ShouldBeEmpty();
-        concreteRegistrationCount.ShouldBe(1);
+        concreteRegistrationCount.ShouldBe(0);
         generatedSource.ShouldContain(
             "String.Equals(envelope.EventType, global::Demo.TourCreatedIntegrationEvent.EventType",
             StringComparison.Ordinal);
@@ -305,11 +305,20 @@ public sealed class IntegrationEventMappingGeneratorTests
             "String.Equals(envelope.EventType, global::Demo.TourUpdatedIntegrationEvent.EventType",
             StringComparison.Ordinal);
         generatedSource.ShouldContain(
-            "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>, global::SharedKernel.Messaging.IntegrationEvents.Generated.GeneratedIntegrationEventHandlerForwarder<global::Demo.TourCreatedIntegrationEvent, global::Demo.TourEventsHandler>>",
+            "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>, global::Demo.TourEventsHandler>",
             StringComparison.Ordinal);
         generatedSource.ShouldContain(
-            "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourUpdatedIntegrationEvent>, global::SharedKernel.Messaging.IntegrationEvents.Generated.GeneratedIntegrationEventHandlerForwarder<global::Demo.TourUpdatedIntegrationEvent, global::Demo.TourEventsHandler>>",
+            "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourUpdatedIntegrationEvent>, global::Demo.TourEventsHandler>",
             StringComparison.Ordinal);
+        generatedSource.ShouldContain("IServiceScopeFactory scopeFactory", StringComparison.Ordinal);
+        generatedSource.ShouldContain("scopeFactory.CreateScope()", StringComparison.Ordinal);
+        generatedSource.ShouldContain(
+            "GetRequiredService<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>>",
+            StringComparison.Ordinal);
+        generatedSource.ShouldContain(
+            "GetRequiredService<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourUpdatedIntegrationEvent>>",
+            StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("GeneratedIntegrationEventHandlerForwarder", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -980,6 +989,14 @@ public sealed class IntegrationEventMappingGeneratorTests
                 line.Contains("IDomainEventDispatcher", StringComparison.Ordinal))
             .ToArray();
         var generatedIntegrationEvents = GeneratorTestHarness.GetGeneratedSource(runResult);
+        var generatedAppMediator = runResult.Results
+            .SelectMany(static result => result.GeneratedSources)
+            .Where(static source => string.Equals(
+                source.HintName,
+                "SharedKernel.Mediator.Generated.AppMediator.g.cs",
+                StringComparison.Ordinal))
+            .Select(static source => source.SourceText.ToString())
+            .ShouldHaveSingleItem();
         var generatedRoot = CSharpSyntaxTree.ParseText(
             generatedIntegrationEvents,
             cancellationToken: TestContext.Current.CancellationToken).GetRoot(TestContext.Current.CancellationToken);
@@ -992,11 +1009,13 @@ public sealed class IntegrationEventMappingGeneratorTests
             .Count(static method => method.Identifier.ValueText.StartsWith("Add", StringComparison.Ordinal));
         var serviceProviderSiteCount = generatedIntegrationEvents.Split("IServiceProvider").Length - 1
             + generatedIntegrationEvents.Split("GetRequiredService").Length - 1;
+        var scopeCreationSiteCount = generatedIntegrationEvents.Split("scopeFactory.CreateScope()").Length - 1;
         var runtimeRecoveryTypeCount = generatedTypes.Count(static type =>
             type.Identifier.ValueText.EndsWith("Registration", StringComparison.Ordinal) ||
             type.Identifier.ValueText.EndsWith("Registry", StringComparison.Ordinal) ||
             type.Identifier.ValueText.EndsWith("Factory", StringComparison.Ordinal) ||
-            type.Identifier.ValueText.EndsWith("Wrapper", StringComparison.Ordinal));
+            type.Identifier.ValueText.EndsWith("Wrapper", StringComparison.Ordinal) ||
+            type.Identifier.ValueText.EndsWith("Forwarder", StringComparison.Ordinal));
 
         // Assert
         generatedIntegrationEvents.ShouldContain("GeneratedIntegrationEventSerializer", StringComparison.Ordinal);
@@ -1004,13 +1023,21 @@ public sealed class IntegrationEventMappingGeneratorTests
         generatedIntegrationEvents.ShouldContain("JsonTypeInfo<global::Demo.TourCreatedIntegrationEvent>", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldContain("IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldNotContain("IServiceProvider", StringComparison.Ordinal);
-        generatedIntegrationEvents.ShouldNotContain("GetRequiredService", StringComparison.Ordinal);
+        generatedIntegrationEvents.ShouldContain(
+            "GetRequiredService<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>>",
+            StringComparison.Ordinal);
+        generatedIntegrationEvents.ShouldContain("scopeFactory.CreateScope()", StringComparison.Ordinal);
+        generatedIntegrationEvents.ShouldNotContain("GeneratedIntegrationEventHandlerForwarder", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldNotContain("ContractRegistration", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldNotContain("Dictionary", StringComparison.Ordinal);
-        topLevelTypeCount.ShouldBe(5);
+        generatedAppMediator.ShouldNotContain("IServiceProvider", StringComparison.Ordinal);
+        generatedAppMediator.ShouldNotContain("GetRequiredService", StringComparison.Ordinal);
+        generatedAppMediator.ShouldNotContain("CreateScope", StringComparison.Ordinal);
+        topLevelTypeCount.ShouldBe(4);
         nestedTypeCount.ShouldBe(0);
         registrationMethodCount.ShouldBe(1);
-        serviceProviderSiteCount.ShouldBe(0);
+        serviceProviderSiteCount.ShouldBe(1);
+        scopeCreationSiteCount.ShouldBe(1);
         runtimeRecoveryTypeCount.ShouldBe(0);
         var dispatcherRegistration = dispatcherRegistrations.ShouldHaveSingleItem();
         dispatcherRegistration.ShouldContain("CompositeDomainEventDispatcher", StringComparison.Ordinal);

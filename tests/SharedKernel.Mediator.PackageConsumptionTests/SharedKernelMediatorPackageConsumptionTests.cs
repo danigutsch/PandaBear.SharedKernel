@@ -88,11 +88,16 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
 
         // Assert
         buildOutput.ShouldContain("Build succeeded.", StringComparison.Ordinal);
-        runOutput.ShouldContain("handled=019bfab5-71f0-7d01-940b-e857478d0a32;payload=true", StringComparison.Ordinal);
+        runOutput.ShouldContain("handled=019bfab5-71f0-7d01-940b-e857478d0a32;payload=true;disposed=1", StringComparison.Ordinal);
         mediatorDependencyInjection.ShouldNotContain("IDomainEventDispatcher", StringComparison.Ordinal);
         integrationEventGeneration.ShouldContain("GeneratedIntegrationEventSerializer", StringComparison.Ordinal);
         integrationEventGeneration.ShouldContain("GeneratedIntegrationEventEnvelopePublisher", StringComparison.Ordinal);
         integrationEventGeneration.ShouldNotContain("IServiceProvider", StringComparison.Ordinal);
+        integrationEventGeneration.ShouldContain("scopeFactory.CreateScope()", StringComparison.Ordinal);
+        integrationEventGeneration.ShouldContain(
+            "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Consumer.TourCreatedIntegrationEvent>, global::Consumer.TourCreatedIntegrationEventHandler>",
+            StringComparison.Ordinal);
+        integrationEventGeneration.ShouldNotContain("GeneratedIntegrationEventHandlerForwarder", StringComparison.Ordinal);
         integrationEventGeneration.ShouldNotContain("ContractRegistration", StringComparison.Ordinal);
     }
 

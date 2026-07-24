@@ -45,14 +45,21 @@ internal static class GeneratedMessagingPackageConsumerProjects
                 public static int EventVersion => 1;
             }
 
-            public sealed class TourCreatedIntegrationEventHandler : IIntegrationEventHandler<TourCreatedIntegrationEvent>
+            public sealed class TourCreatedIntegrationEventHandler : IIntegrationEventHandler<TourCreatedIntegrationEvent>, IDisposable
             {
-                public Guid? HandledTourId { get; private set; }
+                public static Guid? HandledTourId { get; private set; }
+
+                public static int DisposeCount { get; private set; }
 
                 public ValueTask Handle(TourCreatedIntegrationEvent integrationEvent, CancellationToken ct)
                 {
                     HandledTourId = integrationEvent.TourId;
                     return ValueTask.CompletedTask;
+                }
+
+                public void Dispose()
+                {
+                    DisposeCount++;
                 }
             }
 
@@ -85,9 +92,6 @@ internal static class GeneratedMessagingPackageConsumerProjects
             using SharedKernel.Messaging.IntegrationEvents;
 
             var services = new ServiceCollection();
-            services.AddScoped<TourCreatedIntegrationEventHandler>();
-            services.AddScoped<IIntegrationEventHandler<TourCreatedIntegrationEvent>>(static provider =>
-                provider.GetRequiredService<TourCreatedIntegrationEventHandler>());
             Registration.AddMessaging(services);
             services.AddGeneratedIntegrationEvents();
 
@@ -119,8 +123,7 @@ internal static class GeneratedMessagingPackageConsumerProjects
                 null);
 
             await publisher.Publish(envelope, CancellationToken.None);
-            var handler = scope.ServiceProvider.GetRequiredService<TourCreatedIntegrationEventHandler>();
-            Console.WriteLine($"handled={handler.HandledTourId};payload={(payload.Contains(tourId.ToString(), StringComparison.Ordinal) ? "true" : "false")}");
+            Console.WriteLine($"handled={TourCreatedIntegrationEventHandler.HandledTourId};payload={(payload.Contains(tourId.ToString(), StringComparison.Ordinal) ? "true" : "false")};disposed={TourCreatedIntegrationEventHandler.DisposeCount}");
             """));
     }
 }
