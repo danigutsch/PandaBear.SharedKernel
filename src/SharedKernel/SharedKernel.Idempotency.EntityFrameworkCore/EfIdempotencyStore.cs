@@ -72,11 +72,21 @@ internal sealed class EfIdempotencyStore<TContext>(TContext dbContext) : IIdempo
         string? resultFingerprint,
         CancellationToken ct)
     {
+        await StageCompletion(operation, completedAt, resultFingerprint, ct).ConfigureAwait(false);
+        await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async ValueTask StageCompletion(
+        IdempotencyOperation operation,
+        DateTimeOffset completedAt,
+        string? resultFingerprint,
+        CancellationToken ct)
+    {
         var existing = await Find(operation, ct).ConfigureAwait(false)
             ?? throw new InvalidOperationException("Idempotency operation must be started before it can be completed.");
 
         existing.Complete(completedAt, resultFingerprint);
-        await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
