@@ -46,8 +46,8 @@ public interface IIdempotencyStore
         CancellationToken ct) => Complete(
             operation,
             completedAt,
-             resultFingerprint: null,
-             ct: ct);
+            resultFingerprint: null,
+            ct: ct);
 
     /// <summary>
     /// Stages an idempotent operation as completed for a caller-owned unit-of-work commit.
