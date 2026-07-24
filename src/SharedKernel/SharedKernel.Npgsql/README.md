@@ -9,6 +9,8 @@ Small raw-Npgsql primitives with a stable, provider-specific boundary.
 - `PostgreSqlSessionAdvisoryLock` executes parameterized `pg_advisory_lock` SQL on a dedicated
   `NpgsqlConnection` opened from a caller-supplied `NpgsqlDataSource`, returning an
   `IAsyncDisposable` lease.
+- `ConfigureTracingWithoutFirstResponseEvent` keeps Npgsql tracing enabled while omitting the
+  optional first-response event that can carry provider-owned payload data.
 - PostgreSQL releases the acquired lock when the caller's transaction commits, rolls back, or is
   disposed. Callers must retain the transaction for their entire critical section.
 - PostgreSQL releases a session lock when its lease is disposed and the owning connection closes.

@@ -1,7 +1,20 @@
 #nullable enable
+SharedKernel.Observability.CredentialDataAttribute
+SharedKernel.Observability.CredentialDataAttribute.CredentialDataAttribute() -> void
 SharedKernel.Observability.ExplicitServiceNameDetector
 SharedKernel.Observability.ExplicitServiceNameDetector.Detect() -> OpenTelemetry.Resources.Resource!
 SharedKernel.Observability.ExplicitServiceNameDetector.ExplicitServiceNameDetector(string! serviceName, string? serviceVersion = null) -> void
+SharedKernel.Observability.FinancialDataAttribute
+SharedKernel.Observability.FinancialDataAttribute.FinancialDataAttribute() -> void
 SharedKernel.Observability.ObservabilityBuilderExtensions
+SharedKernel.Observability.PersonalDataAttribute
+SharedKernel.Observability.PersonalDataAttribute.PersonalDataAttribute() -> void
+SharedKernel.Observability.PrivacyDataClassifications
+SharedKernel.Observability.SensitiveDataAttribute
+SharedKernel.Observability.SensitiveDataAttribute.SensitiveDataAttribute() -> void
 static SharedKernel.Observability.ObservabilityBuilderExtensions.AddApplicationVersionLogging<TBuilder>(this TBuilder builder, string? applicationVersion = null) -> TBuilder
 static SharedKernel.Observability.ObservabilityBuilderExtensions.ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) -> TBuilder
+static SharedKernel.Observability.PrivacyDataClassifications.Credential.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
+static SharedKernel.Observability.PrivacyDataClassifications.Financial.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
+static SharedKernel.Observability.PrivacyDataClassifications.Personal.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
+static SharedKernel.Observability.PrivacyDataClassifications.Sensitive.get -> Microsoft.Extensions.Compliance.Classification.DataClassification

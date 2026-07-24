@@ -10,6 +10,7 @@ static SharedKernel.Scheduling.SchedulingTelemetry.MetricPollingCycleDuration.ge
 static SharedKernel.Scheduling.SchedulingTelemetry.MetricPollingFailures.get -> string!
 static SharedKernel.Scheduling.SchedulingTelemetry.MetricPollingItems.get -> string!
 static SharedKernel.Scheduling.SchedulingTelemetry.Name.get -> string!
+static SharedKernel.Scheduling.SchedulingTelemetry.OutcomeCancelled.get -> string!
 static SharedKernel.Scheduling.SchedulingTelemetry.OutcomeError.get -> string!
 static SharedKernel.Scheduling.SchedulingTelemetry.OutcomeSuccess.get -> string!
 static SharedKernel.Scheduling.SchedulingTelemetry.TagItemCount.get -> string!

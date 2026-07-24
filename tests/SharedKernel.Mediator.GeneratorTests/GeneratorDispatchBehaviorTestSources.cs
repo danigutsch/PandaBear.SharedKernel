@@ -483,6 +483,26 @@ internal static class GeneratorDispatchBehaviorTestSources
             """;
     }
 
+    public static string SendWithUnexpectedCancellation()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record GetTour(int Id) : IRequest<string>;
+
+            public sealed class GetTourHandler : IRequestHandler<GetTour, string>
+            {
+                public ValueTask<string> Handle(GetTour request, CancellationToken ct)
+                    => throw new OperationCanceledException("unexpected");
+            }
+            """;
+    }
+
     public static string PublishWithCancellation()
     {
         return """
@@ -502,6 +522,26 @@ internal static class GeneratorDispatchBehaviorTestSources
                     ct.ThrowIfCancellationRequested();
                     return ValueTask.CompletedTask;
                 }
+            }
+            """;
+    }
+
+    public static string PublishWithUnexpectedCancellation()
+    {
+        return """
+            using SharedKernel.Mediator;
+            using System.Threading.Tasks;
+
+            [assembly: MediatorModule]
+
+            namespace Demo;
+
+            public sealed record TourCreated(int Id) : INotification;
+
+            public sealed class TourCreatedHandler : INotificationHandler<TourCreated>
+            {
+                public ValueTask Handle(TourCreated notification, CancellationToken ct)
+                    => throw new OperationCanceledException("unexpected");
             }
             """;
     }

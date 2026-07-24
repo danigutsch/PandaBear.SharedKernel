@@ -40,17 +40,11 @@ public sealed class GeneratorTelemetryBehaviorTests
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
         (span.Status).ShouldBe(ActivityStatusCode.Error);
-        (span.StatusDescription).ShouldBe("handler boom");
+        (span.StatusDescription).ShouldBeNull();
         (outcome).ShouldBe(MediatorTelemetry.OutcomeError);
         (errorType).ShouldBe("InvalidOperationException");
 
-        var exceptionEvent = (span.Events).ShouldHaveSingleItem(static evt => evt.Name == "exception");
-        var exceptionTags = exceptionEvent.Tags;
-        _ = (exceptionTags).ShouldNotBeNull();
-        (exceptionTags).ShouldContain(static tag =>
-            tag.Key == "exception.type" && string.Equals(tag.Value as string, typeof(InvalidOperationException).FullName, StringComparison.Ordinal));
-        (exceptionTags).ShouldContain(static tag =>
-            tag.Key == "exception.message" && string.Equals(tag.Value as string, "handler boom", StringComparison.Ordinal));
+        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -135,6 +129,30 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
+    public async Task Records_unsignaled_send_cancellation_as_an_error()
+    {
+        // Arrange
+        var stopped = new List<Activity>();
+        using var root = new Activity("test-root");
+        root.Start();
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
+        using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.SendWithUnexpectedCancellation());
+        var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.GetTourHandler"));
+        var request = ctx.CreateInstance("Demo.GetTour", 1);
+
+        // Act
+        await ((Func<Task>)(() => mediator.Send((IRequest<string>)request, CancellationToken.None).AsTask())).ShouldThrowAssignableTo<OperationCanceledException>();
+
+        // Assert
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivitySend);
+        span.Status.ShouldBe(ActivityStatusCode.Error);
+        span.StatusDescription.ShouldBeNull();
+        span.GetTagItem(MediatorTelemetry.TagOutcome).ShouldBe(MediatorTelemetry.OutcomeError);
+        span.GetTagItem(MediatorTelemetry.TagErrorType).ShouldBe(nameof(OperationCanceledException));
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
+    }
+
+    [Fact]
     public async Task Records_a_cancelled_outcome_for_publish_cancellation()
     {
         // Arrange
@@ -161,6 +179,30 @@ public sealed class GeneratorTelemetryBehaviorTests
         (errorType).ShouldBeNull();
         (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
 
+    }
+
+    [Fact]
+    public async Task Records_unsignaled_publish_cancellation_as_an_error()
+    {
+        // Arrange
+        var stopped = new List<Activity>();
+        using var root = new Activity("test-root");
+        root.Start();
+        using var listener = GeneratorTelemetryBehaviorTestsHelpers.CreateCapturingListener(stopped, root.TraceId);
+        using var ctx = GeneratedMediatorRuntimeContext.Create(GeneratorDispatchBehaviorTestSources.PublishWithUnexpectedCancellation());
+        var mediator = ctx.CreateMediator(ctx.CreateInstance("Demo.TourCreatedHandler"));
+        var notification = ctx.CreateInstance("Demo.TourCreated", 1);
+
+        // Act
+        await ((Func<Task>)(() => mediator.Publish((INotification)notification, CancellationToken.None).AsTask())).ShouldThrowAssignableTo<OperationCanceledException>();
+
+        // Assert
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityPublish);
+        span.Status.ShouldBe(ActivityStatusCode.Error);
+        span.StatusDescription.ShouldBeNull();
+        span.GetTagItem(MediatorTelemetry.TagOutcome).ShouldBe(MediatorTelemetry.OutcomeError);
+        span.GetTagItem(MediatorTelemetry.TagErrorType).ShouldBe(nameof(OperationCanceledException));
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -191,7 +233,7 @@ public sealed class GeneratorTelemetryBehaviorTests
     }
 
     [Fact]
-    public async Task Records_a_single_exception_event_for_a_publish_exception()
+    public async Task Records_publish_error_type_without_exception_content()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -210,17 +252,11 @@ public sealed class GeneratorTelemetryBehaviorTests
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
         (span.Status).ShouldBe(ActivityStatusCode.Error);
-        (span.StatusDescription).ShouldBe("handler boom");
+        (span.StatusDescription).ShouldBeNull();
         (outcome).ShouldBe(MediatorTelemetry.OutcomeError);
         (errorType).ShouldBe("InvalidOperationException");
 
-        var exceptionEvent = (span.Events).ShouldHaveSingleItem(static evt => evt.Name == "exception");
-        var exceptionTags = exceptionEvent.Tags;
-        _ = (exceptionTags).ShouldNotBeNull();
-        (exceptionTags).ShouldContain(static tag =>
-            tag.Key == "exception.type" && string.Equals(tag.Value as string, typeof(InvalidOperationException).FullName, StringComparison.Ordinal));
-        (exceptionTags).ShouldContain(static tag =>
-            tag.Key == "exception.message" && string.Equals(tag.Value as string, "handler boom", StringComparison.Ordinal));
+        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
 
     }
 
@@ -313,22 +349,16 @@ public sealed class GeneratorTelemetryBehaviorTests
         var handlerErrorType = handlerSpan.GetTagItem(MediatorTelemetry.TagErrorType);
         var handlerName = handlerSpan.GetTagItem(MediatorTelemetry.TagHandlerName);
         (handlerSpan.Status).ShouldBe(ActivityStatusCode.Error);
-        (handlerSpan.StatusDescription).ShouldBe("handler boom");
+        (handlerSpan.StatusDescription).ShouldBeNull();
         (handlerOutcome).ShouldBe(MediatorTelemetry.OutcomeError);
         (handlerErrorType).ShouldBe("InvalidOperationException");
         (handlerName).ShouldBe("TourCreatedHandlerOne");
 
-        var handlerExceptionEvent = (handlerSpan.Events).ShouldHaveSingleItem(static evt => evt.Name == "exception");
-        var handlerExceptionTags = handlerExceptionEvent.Tags;
-        _ = (handlerExceptionTags).ShouldNotBeNull();
-        (handlerExceptionTags).ShouldContain(static tag =>
-            tag.Key == "exception.type" && string.Equals(tag.Value as string, typeof(InvalidOperationException).FullName, StringComparison.Ordinal));
-        (handlerExceptionTags).ShouldContain(static tag =>
-            tag.Key == "exception.message" && string.Equals(tag.Value as string, "handler boom", StringComparison.Ordinal));
+        (handlerSpan.Events).ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
-    public async Task Captures_a_stream_enumeration_exception_on_the_span()
+    public async Task Captures_stream_error_type_without_exception_content()
     {
         // Arrange
         var stopped = new List<Activity>();
@@ -353,17 +383,11 @@ public sealed class GeneratorTelemetryBehaviorTests
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
         (span.Status).ShouldBe(ActivityStatusCode.Error);
-        (span.StatusDescription).ShouldBe("boom");
+        (span.StatusDescription).ShouldBeNull();
         (outcome).ShouldBe(MediatorTelemetry.OutcomeError);
         (errorType).ShouldBe("InvalidOperationException");
 
-        var exceptionEvent = (span.Events).ShouldHaveSingleItem(static evt => evt.Name == "exception");
-        var exceptionTags = exceptionEvent.Tags;
-        _ = (exceptionTags).ShouldNotBeNull();
-        (exceptionTags).ShouldContain(static tag =>
-            tag.Key == "exception.type" && string.Equals(tag.Value as string, typeof(InvalidOperationException).FullName, StringComparison.Ordinal));
-        (exceptionTags).ShouldContain(static tag =>
-            tag.Key == "exception.message" && string.Equals(tag.Value as string, "boom", StringComparison.Ordinal));
+        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]

@@ -290,7 +290,7 @@ internal static class GeneratedDispatchEmitter
                 builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);");
                 builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);");
                 builder.AppendLine("        }");
-                builder.AppendLine("        catch (global::System.OperationCanceledException)");
+                builder.AppendLine("        catch (global::System.OperationCanceledException) when (ct.IsCancellationRequested)");
                 builder.AppendLine("        {");
                 builder.AppendLine("            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;");
                 builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);");
@@ -300,8 +300,7 @@ internal static class GeneratedDispatchEmitter
                 builder.AppendLine("        {");
                 builder.AppendLine("            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;");
                 builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);");
-                builder.AppendLine("            activity?.AddException(ex);");
-                builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);");
+                builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);");
                 builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);");
                 builder.AppendLine("            throw;");
                 builder.AppendLine("        }");
@@ -390,7 +389,7 @@ internal static class GeneratedDispatchEmitter
                         builder.AppendLine("                    handlerActivity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);");
                         builder.AppendLine("                    handlerActivity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);");
                         builder.AppendLine("                }");
-                        builder.AppendLine("                catch (global::System.OperationCanceledException)");
+                        builder.AppendLine("                catch (global::System.OperationCanceledException) when (ct.IsCancellationRequested)");
                         builder.AppendLine("                {");
                         builder.AppendLine("                    handlerActivity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);");
                         builder.AppendLine("                    throw;");
@@ -398,8 +397,7 @@ internal static class GeneratedDispatchEmitter
                         builder.AppendLine("                catch (global::System.Exception ex)");
                         builder.AppendLine("                {");
                         builder.AppendLine("                    handlerActivity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);");
-                        builder.AppendLine("                    handlerActivity?.AddException(ex);");
-                        builder.AppendLine("                    handlerActivity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);");
+                        builder.AppendLine("                    handlerActivity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);");
                         builder.AppendLine("                    handlerActivity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);");
                         builder.AppendLine("                    throw;");
                         builder.AppendLine("                }");
@@ -414,7 +412,7 @@ internal static class GeneratedDispatchEmitter
                 builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess);");
                 builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Ok);");
                 builder.AppendLine("        }");
-                builder.AppendLine("        catch (global::System.OperationCanceledException)");
+                builder.AppendLine("        catch (global::System.OperationCanceledException) when (ct.IsCancellationRequested)");
                 builder.AppendLine("        {");
                 builder.AppendLine("            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled;");
                 builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled);");
@@ -424,8 +422,7 @@ internal static class GeneratedDispatchEmitter
                 builder.AppendLine("        {");
                 builder.AppendLine("            outcome = global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError;");
                 builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagErrorType, ex.GetType().Name);");
-                builder.AppendLine("            activity?.AddException(ex);");
-                builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error, ex.Message);");
+                builder.AppendLine("            activity?.SetStatus(global::System.Diagnostics.ActivityStatusCode.Error);");
                 builder.AppendLine("            activity?.SetTag(global::SharedKernel.Mediator.MediatorTelemetry.TagOutcome, global::SharedKernel.Mediator.MediatorTelemetry.OutcomeError);");
                 builder.AppendLine("            throw;");
                 builder.AppendLine("        }");
