@@ -67,8 +67,8 @@ public static class GrafanaLgtmStackResourceExtensions
         var collector = builder.AddOpenTelemetryCollector(name)
             .WithImageTag(OpenTelemetryCollectorImageTag)
             .WithImageSHA256(OpenTelemetryCollectorImageDigest)
-            .WithConfig(privacyConfigurationFile)
-            .WithConfig(routingConfigurationFile);
+            .WithConfig(Path.GetFullPath(privacyConfigurationFile))
+            .WithConfig(Path.GetFullPath(routingConfigurationFile));
         ConfigureAppForwarding(collector);
 
         return collector.ExcludeFromManifest();
