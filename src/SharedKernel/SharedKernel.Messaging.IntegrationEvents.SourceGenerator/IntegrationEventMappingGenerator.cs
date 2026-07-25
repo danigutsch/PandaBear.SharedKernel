@@ -661,7 +661,7 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
             builder.AppendLine("            if (envelope.Payload is null) throw new global::System.InvalidOperationException($\"Integration event '{envelope.EventType}' payload is required.\");");
             builder.Append("            var integrationEvent = global::System.Text.Json.JsonSerializer.Deserialize(envelope.Payload, jsonTypeInfo").Append(contractIndex.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)).AppendLine(")");
             builder.AppendLine("                ?? throw new global::System.InvalidOperationException($\"Integration event '{envelope.EventType}' payload could not be deserialized.\");");
-            builder.AppendLine("            using var scope = scopeFactory.CreateScope();");
+            builder.AppendLine("            await using var scope = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.CreateAsyncScope(scopeFactory);");
             builder.Append("            var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<")
                 .Append(consumerType)
                 .AppendLine(">>(scope.ServiceProvider);");

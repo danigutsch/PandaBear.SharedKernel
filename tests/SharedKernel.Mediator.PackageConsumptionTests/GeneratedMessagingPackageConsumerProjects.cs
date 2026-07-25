@@ -45,11 +45,11 @@ internal static class GeneratedMessagingPackageConsumerProjects
                 public static int EventVersion => 1;
             }
 
-            public sealed class TourCreatedIntegrationEventHandler : IIntegrationEventHandler<TourCreatedIntegrationEvent>, IDisposable
+            public sealed class TourCreatedIntegrationEventHandler : IIntegrationEventHandler<TourCreatedIntegrationEvent>, IAsyncDisposable
             {
                 public static Guid? HandledTourId { get; private set; }
 
-                public static int DisposeCount { get; private set; }
+                public static int DisposeAsyncCount { get; private set; }
 
                 public ValueTask Handle(TourCreatedIntegrationEvent integrationEvent, CancellationToken ct)
                 {
@@ -57,9 +57,10 @@ internal static class GeneratedMessagingPackageConsumerProjects
                     return ValueTask.CompletedTask;
                 }
 
-                public void Dispose()
+                public ValueTask DisposeAsync()
                 {
-                    DisposeCount++;
+                    DisposeAsyncCount++;
+                    return ValueTask.CompletedTask;
                 }
             }
 
@@ -123,7 +124,7 @@ internal static class GeneratedMessagingPackageConsumerProjects
                 null);
 
             await publisher.Publish(envelope, CancellationToken.None);
-            Console.WriteLine($"handled={TourCreatedIntegrationEventHandler.HandledTourId};payload={(payload.Contains(tourId.ToString(), StringComparison.Ordinal) ? "true" : "false")};disposed={TourCreatedIntegrationEventHandler.DisposeCount}");
+            Console.WriteLine($"handled={TourCreatedIntegrationEventHandler.HandledTourId};payload={(payload.Contains(tourId.ToString(), StringComparison.Ordinal) ? "true" : "false")};asyncDisposed={TourCreatedIntegrationEventHandler.DisposeAsyncCount}");
             """));
     }
 }

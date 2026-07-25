@@ -311,7 +311,10 @@ public sealed class IntegrationEventMappingGeneratorTests
             "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourUpdatedIntegrationEvent>, global::Demo.TourEventsHandler>",
             StringComparison.Ordinal);
         generatedSource.ShouldContain("IServiceScopeFactory scopeFactory", StringComparison.Ordinal);
-        generatedSource.ShouldContain("scopeFactory.CreateScope()", StringComparison.Ordinal);
+        generatedSource.ShouldContain(
+            "await using var scope = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.CreateAsyncScope(scopeFactory);",
+            StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("scopeFactory.CreateScope()", StringComparison.Ordinal);
         generatedSource.ShouldContain(
             "GetRequiredService<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>>",
             StringComparison.Ordinal);
@@ -1009,7 +1012,7 @@ public sealed class IntegrationEventMappingGeneratorTests
             .Count(static method => method.Identifier.ValueText.StartsWith("Add", StringComparison.Ordinal));
         var serviceProviderSiteCount = generatedIntegrationEvents.Split("IServiceProvider").Length - 1
             + generatedIntegrationEvents.Split("GetRequiredService").Length - 1;
-        var scopeCreationSiteCount = generatedIntegrationEvents.Split("scopeFactory.CreateScope()").Length - 1;
+        var scopeCreationSiteCount = generatedIntegrationEvents.Split("CreateAsyncScope(scopeFactory)").Length - 1;
         var runtimeRecoveryTypeCount = generatedTypes.Count(static type =>
             type.Identifier.ValueText.EndsWith("Registration", StringComparison.Ordinal) ||
             type.Identifier.ValueText.EndsWith("Registry", StringComparison.Ordinal) ||
@@ -1026,7 +1029,10 @@ public sealed class IntegrationEventMappingGeneratorTests
         generatedIntegrationEvents.ShouldContain(
             "GetRequiredService<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>>",
             StringComparison.Ordinal);
-        generatedIntegrationEvents.ShouldContain("scopeFactory.CreateScope()", StringComparison.Ordinal);
+        generatedIntegrationEvents.ShouldContain(
+            "await using var scope = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.CreateAsyncScope(scopeFactory);",
+            StringComparison.Ordinal);
+        generatedIntegrationEvents.ShouldNotContain("scopeFactory.CreateScope()", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldNotContain("GeneratedIntegrationEventHandlerForwarder", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldNotContain("ContractRegistration", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldNotContain("Dictionary", StringComparison.Ordinal);

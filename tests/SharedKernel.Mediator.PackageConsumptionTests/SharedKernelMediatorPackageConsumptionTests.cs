@@ -88,12 +88,15 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
 
         // Assert
         buildOutput.ShouldContain("Build succeeded.", StringComparison.Ordinal);
-        runOutput.ShouldContain("handled=019bfab5-71f0-7d01-940b-e857478d0a32;payload=true;disposed=1", StringComparison.Ordinal);
+        runOutput.ShouldContain("handled=019bfab5-71f0-7d01-940b-e857478d0a32;payload=true;asyncDisposed=1", StringComparison.Ordinal);
         mediatorDependencyInjection.ShouldNotContain("IDomainEventDispatcher", StringComparison.Ordinal);
         integrationEventGeneration.ShouldContain("GeneratedIntegrationEventSerializer", StringComparison.Ordinal);
         integrationEventGeneration.ShouldContain("GeneratedIntegrationEventEnvelopePublisher", StringComparison.Ordinal);
         integrationEventGeneration.ShouldNotContain("IServiceProvider", StringComparison.Ordinal);
-        integrationEventGeneration.ShouldContain("scopeFactory.CreateScope()", StringComparison.Ordinal);
+        integrationEventGeneration.ShouldContain(
+            "await using var scope = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.CreateAsyncScope(scopeFactory);",
+            StringComparison.Ordinal);
+        integrationEventGeneration.ShouldNotContain("scopeFactory.CreateScope()", StringComparison.Ordinal);
         integrationEventGeneration.ShouldContain(
             "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Consumer.TourCreatedIntegrationEvent>, global::Consumer.TourCreatedIntegrationEventHandler>",
             StringComparison.Ordinal);

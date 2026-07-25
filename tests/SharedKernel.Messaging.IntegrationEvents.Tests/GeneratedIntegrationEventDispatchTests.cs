@@ -142,8 +142,28 @@ public sealed class GeneratedIntegrationEventDispatchTests
         deliveredEvent.Name.ShouldBe("Rio de Janeiro");
         handler.CancellationToken.ShouldBe(cancellationTokenSource.Token);
         handler.InvocationCount.ShouldBe(1);
-        handler.IsDisposed.ShouldBeTrue();
-        handler.DisposeCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Publish_awaits_async_only_handler_disposal_without_post_success_failure()
+    {
+        // Arrange
+        using var host = GeneratedIntegrationEventTestServices.CreateConsumerHost();
+        using var delivery = host.OpenDelivery();
+        var integrationEvent = new TestIntegrationEvent(
+            Guid.CreateVersion7(),
+            DateTimeOffset.Parse("2026-07-05T12:30:00+00:00", CultureInfo.InvariantCulture),
+            "Rio de Janeiro");
+        var envelope = TestEventEnvelopeFactory.Create(integrationEvent, host.Serializer.Serialize(integrationEvent));
+
+        // Act
+        await delivery.Publisher.Publish(envelope, CancellationToken.None);
+
+        // Assert
+        var handler = host.Handlers.ShouldHaveSingleItem();
+        handler.InvocationCount.ShouldBe(1);
+        handler.IsDisposedAsynchronously.ShouldBeTrue();
+        handler.DisposeAsyncCount.ShouldBe(1);
     }
 
     [Fact]
@@ -171,8 +191,8 @@ public sealed class GeneratedIntegrationEventDispatchTests
         updatedHandler.UpdatedIntegrationEvent.ShouldNotBeNull().ShouldBe(updated);
         updatedHandler.InvocationCount.ShouldBe(1);
         ReferenceEquals(createdHandler, updatedHandler).ShouldBeFalse();
-        createdHandler.IsDisposed.ShouldBeTrue();
-        updatedHandler.IsDisposed.ShouldBeTrue();
+        createdHandler.IsDisposedAsynchronously.ShouldBeTrue();
+        updatedHandler.IsDisposedAsynchronously.ShouldBeTrue();
     }
 
     [Fact]
@@ -218,7 +238,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
     }
 
     [Fact]
-    public async Task Each_publish_creates_and_disposes_a_closed_typed_handler_scope()
+    public async Task Each_publish_creates_and_asynchronously_disposes_a_closed_typed_handler_scope()
     {
         // Arrange
         using var host = GeneratedIntegrationEventTestServices.CreateConsumerHost();
@@ -238,8 +258,8 @@ public sealed class GeneratedIntegrationEventDispatchTests
         ReferenceEquals(host.Handlers[0], host.Handlers[1]).ShouldBeFalse();
         foreach (var handler in host.Handlers)
         {
-            handler.IsDisposed.ShouldBeTrue();
-            handler.DisposeCount.ShouldBe(1);
+            handler.IsDisposedAsynchronously.ShouldBeTrue();
+            handler.DisposeAsyncCount.ShouldBe(1);
         }
     }
 
