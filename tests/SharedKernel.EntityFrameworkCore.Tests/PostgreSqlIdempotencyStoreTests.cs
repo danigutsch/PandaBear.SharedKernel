@@ -5,7 +5,7 @@ namespace SharedKernel.EntityFrameworkCore.Tests;
 
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.DatabaseIntegrationCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]
-public sealed class PostgreSqlIdempotencyStoreTests : IAsyncLifetime
+public sealed class PostgreSqlIdempotencyStoreTests(PostgreSqlFixture fixture) : IAsyncLifetime
 {
     private PostgreSqlIdempotencyStoreScenario? scenario;
 
@@ -14,7 +14,7 @@ public sealed class PostgreSqlIdempotencyStoreTests : IAsyncLifetime
 
     public async ValueTask InitializeAsync()
     {
-        scenario = await PostgreSqlIdempotencyStoreScenario.Create(TestContext.Current.CancellationToken);
+        scenario = await PostgreSqlIdempotencyStoreScenario.Create(fixture, TestContext.Current.CancellationToken);
     }
 
     public async ValueTask DisposeAsync()

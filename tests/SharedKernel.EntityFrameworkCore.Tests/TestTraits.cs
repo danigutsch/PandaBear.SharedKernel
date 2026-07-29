@@ -10,5 +10,9 @@ internal static class TestTraits
 
     public const string IdempotencyCapability = "idempotency";
 
+    public const string PostgreSqlFixtureCapability = "postgresql-fixture";
+
+    public const string CommandTransactionScopeCapability = "command-transaction-scope";
+
     public const string ProviderGuardCategory = "provider-guard";
 }

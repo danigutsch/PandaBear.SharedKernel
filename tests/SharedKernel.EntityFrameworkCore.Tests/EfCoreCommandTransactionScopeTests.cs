@@ -1,45 +1,46 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.IntegrationTesting;
+using Npgsql;
+using SharedKernel.Testing;
 
 namespace SharedKernel.EntityFrameworkCore.Tests;
 
-public sealed class EfCoreCommandTransactionScopeTests : IAsyncLifetime
+[Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.DatabaseIntegrationCategory)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.CommandTransactionScopeCapability)]
+[SuppressMessage(
+    "Usage",
+    "CA2213:Disposable fields should be disposed",
+    Justification = "DisposeAsync passes the data source to the independent aggregate cleanup helper.")]
+public sealed class EfCoreCommandTransactionScopeTests(PostgreSqlFixture fixture) : IAsyncLifetime
 {
-    private const string PostgreSqlResourceName = "postgres";
-    private const string DatabaseResourceName = "efcoretransactions";
+    private PostgreSqlTestDatabase? database;
+    private NpgsqlDataSource? dataSource;
 
-    private AspireTestApplication? app;
-    private string? connectionString;
+    private NpgsqlDataSource DataSource =>
+        dataSource ?? throw new InvalidOperationException("PostgreSQL test database is not initialized.");
 
     public async ValueTask InitializeAsync()
     {
-        var appBuilder = AspireTestApplication.CreateBuilder();
-        var databaseServer = appBuilder.AddPostgres(PostgreSqlResourceName);
-        _ = databaseServer.AddDatabase(DatabaseResourceName);
-
-        app = await AspireTestApplication.Start(appBuilder, [PostgreSqlResourceName], null, TestContext.Current.CancellationToken);
-        connectionString = await app.GetConnectionString(DatabaseResourceName, TestContext.Current.CancellationToken);
+        database = await fixture.CreateIsolatedDatabase(TestContext.Current.CancellationToken);
+        dataSource = database.CreateDataSource(nameof(EfCoreCommandTransactionScopeTests));
     }
 
     public async ValueTask DisposeAsync()
     {
-        var application = app;
-        app = null;
-        connectionString = null;
+        var currentDataSource = dataSource;
+        var currentDatabase = database;
+        dataSource = null;
+        database = null;
 
-        if (application is not null)
-        {
-            await application.DisposeAsync();
-        }
+        await PostgreSqlScenarioCleanup.DisposeResources(null, currentDataSource, currentDatabase);
     }
 
     [Fact]
     public async Task Commits_successful_work_inside_a_postgres_transaction()
     {
         // Arrange
-        var currentConnectionString = connectionString ?? throw new InvalidOperationException("PostgreSQL is not started.");
         var options = new DbContextOptionsBuilder<TestDbContext>()
-            .UseNpgsql(currentConnectionString)
+            .UseNpgsql(DataSource)
             .Options;
         await using var dbContext = new TestDbContext(options);
         await dbContext.Database.EnsureCreatedAsync(TestContext.Current.CancellationToken);
@@ -68,9 +69,8 @@ public sealed class EfCoreCommandTransactionScopeTests : IAsyncLifetime
     public async Task Rolls_back_failed_work_inside_a_postgres_transaction()
     {
         // Arrange
-        var currentConnectionString = connectionString ?? throw new InvalidOperationException("PostgreSQL is not started.");
         var options = new DbContextOptionsBuilder<TestDbContext>()
-            .UseNpgsql(currentConnectionString)
+            .UseNpgsql(DataSource)
             .Options;
         await using var dbContext = new TestDbContext(options);
         await dbContext.Database.EnsureCreatedAsync(TestContext.Current.CancellationToken);
@@ -101,9 +101,8 @@ public sealed class EfCoreCommandTransactionScopeTests : IAsyncLifetime
     public async Task Uses_the_existing_transaction_without_committing_it()
     {
         // Arrange
-        var currentConnectionString = connectionString ?? throw new InvalidOperationException("PostgreSQL is not started.");
         var options = new DbContextOptionsBuilder<TestDbContext>()
-            .UseNpgsql(currentConnectionString)
+            .UseNpgsql(DataSource)
             .Options;
         await using var dbContext = new TestDbContext(options);
         await dbContext.Database.EnsureCreatedAsync(TestContext.Current.CancellationToken);

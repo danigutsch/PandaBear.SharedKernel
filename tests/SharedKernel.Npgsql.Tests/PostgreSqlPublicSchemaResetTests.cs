@@ -2,15 +2,15 @@ using SharedKernel.IntegrationTesting;
 
 namespace SharedKernel.Npgsql.Tests;
 
-public sealed class PostgreSqlPublicSchemaResetTests
+public sealed class PostgreSqlPublicSchemaResetTests(PostgreSqlTestServerFixture fixture)
+    : PostgreSqlDatabaseTestBase(fixture)
 {
     [Fact]
     public async Task Reset_truncates_public_tables_restarts_identities_and_preserves_excluded_and_migration_tables()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        await using var environment = await PostgreSqlTransactionAdvisoryLockTestEnvironment.Start(ct);
-        await using var connection = await environment.DataSource.OpenConnectionAsync(ct);
+        await using var connection = await DataSource.OpenConnectionAsync(ct);
         await using var setupCommand = new NpgsqlCommand(
             """
             CREATE TABLE public.reset_parent (
@@ -104,8 +104,7 @@ public sealed class PostgreSqlPublicSchemaResetTests
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        await using var environment = await PostgreSqlTransactionAdvisoryLockTestEnvironment.Start(ct);
-        await using var connection = await environment.DataSource.OpenConnectionAsync(ct);
+        await using var connection = await DataSource.OpenConnectionAsync(ct);
         await using var setupCommand = new NpgsqlCommand(
             """
             CREATE TABLE public.reset_parent (

@@ -1,38 +1,48 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using SharedKernel.IntegrationTesting;
+using Npgsql;
 using SharedKernel.Messaging;
 using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 namespace SharedKernel.EntityFrameworkCore.Tests;
 
+[SuppressMessage(
+    "Usage",
+    "CA2213:Disposable fields should be disposed",
+    Justification = "DisposeAsync passes the context and data source to the independent aggregate cleanup helper.")]
 internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDisposable
 {
-    private const string PostgreSqlResourceName = "postgres";
-    private const string DatabaseResourceName = "transport";
     private const string ConsumerName = "catalog";
 
-    private readonly AspireTestApplication app;
-    private readonly string connectionString;
+    private readonly PostgreSqlTestDatabase database;
+    private readonly NpgsqlDataSource dataSource;
     private TransportDbContext? duplicateContext;
 
-    private PostgreSqlIntegrationEventTransportScenario(AspireTestApplication app, string connectionString)
+    private PostgreSqlIntegrationEventTransportScenario(
+        PostgreSqlTestDatabase database,
+        NpgsqlDataSource dataSource)
     {
-        this.app = app;
-        this.connectionString = connectionString;
+        this.database = database;
+        this.dataSource = dataSource;
     }
 
-    public static async ValueTask<PostgreSqlIntegrationEventTransportScenario> Create(CancellationToken ct)
+    public static async ValueTask<PostgreSqlIntegrationEventTransportScenario> Create(
+        PostgreSqlFixture fixture,
+        CancellationToken ct)
     {
-        var appBuilder = AspireTestApplication.CreateBuilder();
-        var databaseServer = appBuilder.AddPostgres(PostgreSqlResourceName);
-        _ = databaseServer.AddDatabase(DatabaseResourceName);
-
-        var app = await AspireTestApplication.Start(appBuilder, [PostgreSqlResourceName], null, ct);
-        var connectionString = await app.GetConnectionString(DatabaseResourceName, ct);
-
-        return new PostgreSqlIntegrationEventTransportScenario(app, connectionString);
+        var database = await fixture.CreateIsolatedDatabase(ct);
+        try
+        {
+            var dataSource = database.CreateDataSource(nameof(PostgreSqlIntegrationEventTransportScenario));
+            return new PostgreSqlIntegrationEventTransportScenario(database, dataSource);
+        }
+        catch (Exception creationFailure)
+        {
+            await PostgreSqlScenarioCleanup.DisposeResources(creationFailure, database);
+            throw;
+        }
     }
 
     public async ValueTask SeedMessages(int count, CancellationToken ct)
@@ -109,12 +119,7 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
 
     public async ValueTask DisposeAsync()
     {
-        if (duplicateContext is not null)
-        {
-            await duplicateContext.DisposeAsync();
-        }
-
-        await app.DisposeAsync();
+        await PostgreSqlScenarioCleanup.DisposeResources(null, duplicateContext, dataSource, database);
     }
 
     private static ValueTask<IntegrationEventTransportMessage[]> Claim(TransportDbContext dbContext, string workerName, CancellationToken ct) =>
@@ -130,7 +135,7 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
     private TransportDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<TransportDbContext>()
-            .UseNpgsql(connectionString)
+            .UseNpgsql(dataSource)
             .Options;
 
         return new TransportDbContext(
@@ -144,7 +149,7 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         TimeProvider? timeProvider = null)
     {
         var services = new ServiceCollection();
-        services.AddDbContext<TransportDbContext>(options => options.UseNpgsql(connectionString));
+        services.AddDbContext<TransportDbContext>(options => options.UseNpgsql(dataSource));
         services.AddSingleton<IDbContextConfiguration<TransportDbContext>, IntegrationEventTransportDbContextConfiguration<TransportDbContext>>();
         _ = publisherLifetime switch
         {
