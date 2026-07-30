@@ -30,6 +30,7 @@ public static class ClamAvResourceExtensions
         var resource = new ClamAvResource(name);
         var resourceBuilder = builder.AddResource(resource)
             .WithImage("clamav/clamav", ImageTag)
+            .WithImageRegistry("docker.io")
             .WithImageSHA256(ImageDigest)
             .WithEndpoint(targetPort: 3310, name: ClamAvResource.TcpEndpointName, scheme: "tcp", isExternal: false)
             .WithVolume(definitionsVolumeName, "/var/lib/clamav");

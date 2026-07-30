@@ -46,6 +46,7 @@ public static class SeaweedFsResourceExtensions
 
         return builder.AddResource(resource)
             .WithImage("chrislusf/seaweedfs", ImageTag)
+            .WithImageRegistry("docker.io")
             .WithImageSHA256(ImageDigest)
             .WithArgs("mini", "-dir=/data", "-webdav=false", "-admin.ui=false")
             .WithEnvironment("AWS_ACCESS_KEY_ID", accessKey)
