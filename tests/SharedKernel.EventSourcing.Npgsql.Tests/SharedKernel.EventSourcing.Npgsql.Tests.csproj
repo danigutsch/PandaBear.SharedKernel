@@ -9,6 +9,7 @@
         <Using Include="SharedKernel.EventSourcing" />
         <Using Include="SharedKernel.EventSourcing.Npgsql" />
         <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="Npgsql" />
         <Using Include="Xunit" />
     </ItemGroup>
 

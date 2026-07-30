@@ -1,6 +1,7 @@
 namespace SharedKernel.Npgsql.Tests;
 
-public sealed class PostgreSqlSessionAdvisoryLockTests
+public sealed class PostgreSqlSessionAdvisoryLockTests(PostgreSqlTestServerFixture fixture)
+    : PostgreSqlDatabaseTestBase(fixture)
 {
     private const long LockKey = 893_492_733;
 
@@ -8,20 +9,19 @@ public sealed class PostgreSqlSessionAdvisoryLockTests
     public async Task Holds_the_lock_until_the_session_lease_is_disposed()
     {
         // Arrange
-        await using var environment = await PostgreSqlTransactionAdvisoryLockTestEnvironment.Start(TestContext.Current.CancellationToken);
         var lease = await PostgreSqlSessionAdvisoryLock.Acquire(
-            environment.DataSource,
+            DataSource,
             LockKey,
             TestContext.Current.CancellationToken);
 
         // Act
         var acquiredWhileHeld = await PostgreSqlTransactionAdvisoryLockTestsHelpers.TryAcquire(
-            environment.DataSource,
+            DataSource,
             LockKey,
             TestContext.Current.CancellationToken);
         await lease.DisposeAsync();
         var acquiredAfterDisposal = await PostgreSqlTransactionAdvisoryLockTestsHelpers.TryAcquire(
-            environment.DataSource,
+            DataSource,
             LockKey,
             TestContext.Current.CancellationToken);
 

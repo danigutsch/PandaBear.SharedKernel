@@ -4,7 +4,7 @@ namespace SharedKernel.EntityFrameworkCore.Tests;
 
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.DatabaseIntegrationCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]
-public sealed class PostgreSqlIntegrationEventTransportTests : IAsyncLifetime
+public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture fixture) : IAsyncLifetime
 {
     private PostgreSqlIntegrationEventTransportScenario? scenario;
 
@@ -13,7 +13,7 @@ public sealed class PostgreSqlIntegrationEventTransportTests : IAsyncLifetime
 
     public async ValueTask InitializeAsync()
     {
-        scenario = await PostgreSqlIntegrationEventTransportScenario.Create(TestContext.Current.CancellationToken);
+        scenario = await PostgreSqlIntegrationEventTransportScenario.Create(fixture, TestContext.Current.CancellationToken);
     }
 
     public async ValueTask DisposeAsync()

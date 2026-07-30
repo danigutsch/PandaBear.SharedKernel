@@ -32,8 +32,38 @@ internal static class PostgreSqlEventStoreTestsHelpers
         }
     }
 
-    public static ActivityListener CreateActivityListener(ConcurrentQueue<Activity> stoppedActivities)
+    public static async Task<(Activity[] Activities, string[] Measurements)> CaptureTelemetry(
+        string connectionString,
+        PostgreSqlEventSourcingOptions options,
+        string streamId)
     {
+        var stoppedActivities = new ConcurrentQueue<Activity>();
+        var measurements = new ConcurrentQueue<string>();
+        using var rootActivity = new Activity($"telemetry-isolation-{streamId}");
+        _ = rootActivity.Start();
+        using var activityListener = CreateActivityListener(stoppedActivities, rootActivity);
+        using var meterListener = CreateMeterListener(measurements, options.Schema);
+        await using var store = new PostgreSqlEventStore(connectionString, new TestEventSerializer(), options);
+        await store.Initialize(TestContext.Current.CancellationToken);
+        var id = StreamId.From(streamId);
+
+        await store.Append(
+            id,
+            ExpectedStreamRevision.NoStream,
+            [new TestEvent("created")],
+            TestContext.Current.CancellationToken);
+        _ = await store.Load(id, afterRevision: null, TestContext.Current.CancellationToken);
+
+        return ([.. stoppedActivities], [.. measurements]);
+    }
+
+    public static ActivityListener CreateActivityListener(
+        ConcurrentQueue<Activity> stoppedActivities,
+        Activity rootActivity)
+    {
+        ArgumentNullException.ThrowIfNull(rootActivity);
+        var traceId = rootActivity.TraceId;
+        var parentSpanId = rootActivity.SpanId;
         var listener = new ActivityListener
         {
             ShouldListenTo = static source => string.Equals(
@@ -41,14 +71,22 @@ internal static class PostgreSqlEventStoreTestsHelpers
                 PostgreSqlEventSourcingTelemetry.Name,
                 StringComparison.Ordinal),
             Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
-            ActivityStopped = activity => stoppedActivities.Enqueue(activity),
+            ActivityStopped = activity =>
+            {
+                if (activity.TraceId == traceId && activity.ParentSpanId == parentSpanId)
+                {
+                    stoppedActivities.Enqueue(activity);
+                }
+            },
         };
 
         ActivitySource.AddActivityListener(listener);
         return listener;
     }
 
-    public static MeterListener CreateMeterListener(ConcurrentQueue<string> measurements)
+    public static MeterListener CreateMeterListener(
+        ConcurrentQueue<string> measurements,
+        string schema)
     {
         var listener = new MeterListener
         {
@@ -61,8 +99,20 @@ internal static class PostgreSqlEventStoreTestsHelpers
             },
         };
 
-        listener.SetMeasurementEventCallback<double>((instrument, _, _, _) => measurements.Enqueue(instrument.Name));
-        listener.SetMeasurementEventCallback<long>((instrument, _, _, _) => measurements.Enqueue(instrument.Name));
+        listener.SetMeasurementEventCallback<double>((instrument, _, tags, _) =>
+        {
+            if (HasMeasurementTag(tags, PostgreSqlEventSourcingTelemetry.TagSchema, schema))
+            {
+                measurements.Enqueue(instrument.Name);
+            }
+        });
+        listener.SetMeasurementEventCallback<long>((instrument, _, tags, _) =>
+        {
+            if (HasMeasurementTag(tags, PostgreSqlEventSourcingTelemetry.TagSchema, schema))
+            {
+                measurements.Enqueue(instrument.Name);
+            }
+        });
         listener.Start();
         return listener;
     }
@@ -70,6 +120,22 @@ internal static class PostgreSqlEventStoreTestsHelpers
     public static bool HasTag(Activity activity, string key, object expectedValue)
     {
         foreach (var tag in activity.TagObjects)
+        {
+            if (string.Equals(tag.Key, key, StringComparison.Ordinal) && Equals(tag.Value, expectedValue))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool HasMeasurementTag(
+        ReadOnlySpan<KeyValuePair<string, object?>> tags,
+        string key,
+        object expectedValue)
+    {
+        foreach (var tag in tags)
         {
             if (string.Equals(tag.Key, key, StringComparison.Ordinal) && Equals(tag.Value, expectedValue))
             {

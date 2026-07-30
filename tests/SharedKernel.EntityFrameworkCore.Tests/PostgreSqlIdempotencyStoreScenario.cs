@@ -1,58 +1,65 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using SharedKernel.Idempotency;
 using SharedKernel.Idempotency.EntityFrameworkCore;
-using SharedKernel.IntegrationTesting;
 
 namespace SharedKernel.EntityFrameworkCore.Tests;
 
 internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
 {
-    private const string PostgreSqlResourceName = "postgres";
-    private const string DatabaseResourceName = "idempotency";
-
-    private readonly AspireTestApplication app;
+    private readonly PostgreSqlTestDatabase database;
+    private readonly NpgsqlDataSource dataSource;
     private readonly ConcurrentSaveBarrierInterceptor saveBarrier;
     private readonly ServiceProvider serviceProvider;
 
     private PostgreSqlIdempotencyStoreScenario(
-        AspireTestApplication app,
+        PostgreSqlTestDatabase database,
+        NpgsqlDataSource dataSource,
         ConcurrentSaveBarrierInterceptor saveBarrier,
         ServiceProvider serviceProvider)
     {
-        this.app = app;
+        this.database = database;
+        this.dataSource = dataSource;
         this.saveBarrier = saveBarrier;
         this.serviceProvider = serviceProvider;
     }
 
-    public static async ValueTask<PostgreSqlIdempotencyStoreScenario> Create(CancellationToken ct)
+    public static async ValueTask<PostgreSqlIdempotencyStoreScenario> Create(
+        PostgreSqlFixture fixture,
+        CancellationToken ct)
     {
-        var appBuilder = AspireTestApplication.CreateBuilder();
-        var databaseServer = appBuilder.AddPostgres(PostgreSqlResourceName);
-        _ = databaseServer.AddDatabase(DatabaseResourceName);
-
-        var app = await AspireTestApplication.Start(appBuilder, [PostgreSqlResourceName], null, ct);
-        var connectionString = await app.GetConnectionString(DatabaseResourceName, ct);
+        var database = await fixture.CreateIsolatedDatabase(ct);
+        var dataSource = database.CreateDataSource(nameof(PostgreSqlIdempotencyStoreScenario));
         var saveBarrier = new ConcurrentSaveBarrierInterceptor();
         var services = new ServiceCollection();
         services.AddSingleton(saveBarrier);
         services.AddIdempotencyStore<IdempotencyDbContext>();
         services.AddDbContext<IdempotencyDbContext>((serviceProvider, options) =>
         {
-            options.UseNpgsql(connectionString);
+            options.UseNpgsql(dataSource);
             options.AddInterceptors(serviceProvider.GetRequiredService<ConcurrentSaveBarrierInterceptor>());
         });
-        var serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+        ServiceProvider? serviceProvider = null;
+        try
         {
-            ValidateOnBuild = true,
-            ValidateScopes = true,
-        });
+            serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
+            {
+                ValidateOnBuild = true,
+                ValidateScopes = true,
+            });
 
-        await using var scope = serviceProvider.CreateAsyncScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<IdempotencyDbContext>();
-        await dbContext.Database.EnsureCreatedAsync(ct);
+            await using var scope = serviceProvider.CreateAsyncScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<IdempotencyDbContext>();
+            await dbContext.Database.EnsureCreatedAsync(ct);
 
-        return new PostgreSqlIdempotencyStoreScenario(app, saveBarrier, serviceProvider);
+            return new PostgreSqlIdempotencyStoreScenario(database, dataSource, saveBarrier, serviceProvider);
+        }
+        catch (Exception creationFailure)
+        {
+            await PostgreSqlScenarioCleanup.DisposeResources(creationFailure, serviceProvider, dataSource, database);
+            throw;
+        }
     }
 
     public async ValueTask<IdempotencyStartResult[]> TryStartConcurrently(CancellationToken ct)
@@ -83,8 +90,7 @@ internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        await serviceProvider.DisposeAsync();
-        await app.DisposeAsync();
+        await PostgreSqlScenarioCleanup.DisposeResources(null, serviceProvider, dataSource, database);
     }
 
     private sealed class IdempotencyDbContext(
