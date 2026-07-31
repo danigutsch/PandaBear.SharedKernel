@@ -1,6 +1,7 @@
 root = true
 
 [*]
+charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 
@@ -229,6 +230,11 @@ dotnet_diagnostic.CS0618.severity = none
 # Keep scoped to the single file and remove when upgrading to an SDK with the fix.
 [tests/ViajantesTurismo.Admin.Tests.Shared/Integration/Helpers/ApiTestExtensions.cs]
 dotnet_diagnostic.CA1034.severity = none
+
+# CA2025 crashes while analyzing the deliberately concurrent, fully observed process-stream tasks
+# (dotnet/roslyn-analyzers#7652). Keep the exception scoped to this process boundary.
+[tools/SharedKernel.RepoConfig.Tool/TextEncodingVerifier.cs]
+dotnet_diagnostic.CA2025.severity = none
 
 # API and Blazor app entry projects expose framework-discovered surfaces that are not package APIs.
 # Owner: API/Web maintainers. Remove when public framework entrypoints are fully documented or internalized.
