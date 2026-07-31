@@ -92,7 +92,8 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddKeyedScoped(
             typeof(TContext),
-            (serviceProvider, _) => serviceProvider.GetRequiredService<IEventEnvelopePublisher>());
+            (serviceProvider, _) =>
+                IntegrationEventTransportPublisherCompatibilityAlias.GetRequiredApplicationPublisher(serviceProvider));
         services.TryAddSingleton<IIntegrationEventOutboxClaimStrategy<TContext>, EfIntegrationEventOutboxClaimStrategy<TContext>>();
         services.AddSingleton<EfIntegrationEventOutboxRelay<TContext>>();
         services.AddHostedService<IntegrationEventOutboxRelayHostedService<TContext>>();
@@ -203,8 +204,9 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
                 serviceProvider.GetRequiredService<TContext>(),
                 serviceProvider.GetRequiredService<TimeProvider>(),
                 consumerName));
-        services.TryAddScoped(serviceProvider =>
-            serviceProvider.GetRequiredKeyedService<IEventEnvelopePublisher>(typeof(TContext)));
+        services.TryAddScoped<IEventEnvelopePublisher>(serviceProvider =>
+            new IntegrationEventTransportPublisherCompatibilityAlias(
+                serviceProvider.GetRequiredKeyedService<IEventEnvelopePublisher>(typeof(TContext))));
 
         return services;
     }

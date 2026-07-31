@@ -21,7 +21,7 @@ internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
         var scope = scopeFactory.CreateAsyncScope();
         await using var scopeDisposal = scope.ConfigureAwait(false);
         var dbContext = scope.ServiceProvider.GetRequiredService<TContext>();
-        var publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
+        var publisher = IntegrationEventTransportPublisherCompatibilityAlias.GetRequiredApplicationPublisher(scope.ServiceProvider);
         var now = timeProvider.GetUtcNow();
         var claimedBy = Guid.CreateVersion7().ToString("N");
         var claimedUntil = now.Add(options.Get(IntegrationEventOptionsNames.Consumer<TContext>()).ClaimLeaseDuration);

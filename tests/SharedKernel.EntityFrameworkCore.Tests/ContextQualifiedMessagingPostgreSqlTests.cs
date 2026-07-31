@@ -51,4 +51,65 @@ public sealed class ContextQualifiedMessagingPostgreSqlTests(PostgreSqlFixture f
         counts.SecondBusiness.ShouldBe(1);
         counts.SecondOutbox.ShouldBe(1);
     }
+
+    [Fact]
+    public async Task Relay_without_an_application_publisher_does_not_use_another_contexts_transport_alias()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        await Scenario.EnqueueSecondOutboxEvent(ct);
+
+        // Act
+        Func<Task> publish = async () => _ = await Scenario.PublishSecondOutbox(ct);
+
+        // Assert
+        var exception = await publish.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldContain("application", StringComparison.OrdinalIgnoreCase);
+        var state = await Scenario.GetSecondOutboxState(ct);
+        state.PublishedAt.ShouldBeNull();
+        state.Attempts.ShouldBe(0);
+        state.LastAttemptAt.ShouldBeNull();
+        state.ClaimedBy.ShouldBeNull();
+        state.ClaimedUntil.ShouldBeNull();
+        var firstTransportCount = await Scenario.CountFirstTransportMessages(ct);
+        firstTransportCount.ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Relay_without_an_application_publisher_keeps_its_same_context_transport_producer()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+
+        // Act
+        var result = await Scenario.PublishFirstOutboxThroughItsProducer(ct);
+
+        // Assert
+        result.PublishedAt.ShouldNotBeNull();
+        result.TransportCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Consumer_without_an_application_publisher_does_not_use_another_contexts_transport_alias()
+    {
+        // Arrange
+        const string eventId = "cross-context-consumer";
+        var ct = TestContext.Current.CancellationToken;
+        await Scenario.SeedSecondTransportMessage(eventId, ct);
+
+        // Act
+        Func<Task> consume = async () => _ = await Scenario.ConsumeSecondTransport(ct);
+
+        // Assert
+        var exception = await consume.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldContain("application", StringComparison.OrdinalIgnoreCase);
+        var state = await Scenario.GetSecondTransportState(eventId, ct);
+        state.ProcessedAt.ShouldBeNull();
+        state.Attempts.ShouldBe(0);
+        state.LastAttemptAt.ShouldBeNull();
+        state.ClaimedBy.ShouldBeNull();
+        state.ClaimedUntil.ShouldBeNull();
+        var firstTransportCount = await Scenario.CountFirstTransportMessages(ct);
+        firstTransportCount.ShouldBe(0);
+    }
 }
