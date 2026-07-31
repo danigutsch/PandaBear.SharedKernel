@@ -9,14 +9,29 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// </summary>
 internal sealed class IntegrationEventTransportMessageConfiguration : IEntityTypeConfiguration<IntegrationEventTransportMessage>
 {
-    private const string TableName = "transport_messages";
+    private readonly string schema;
+    private readonly string tableName;
+
+    public IntegrationEventTransportMessageConfiguration()
+        : this(SharedKernelSchemas.Messaging, IntegrationEventStorageOptions.DefaultTransportTableName)
+    {
+    }
+
+    public IntegrationEventTransportMessageConfiguration(string schema, string tableName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(schema);
+        ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
+
+        this.schema = schema;
+        this.tableName = tableName;
+    }
 
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<IntegrationEventTransportMessage> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.ToTable(TableName, SharedKernelSchemas.Messaging);
+        builder.ToTable(tableName, schema);
         builder.HasKey(message => message.Id);
         builder.Property(message => message.Id).ValueGeneratedNever();
         builder.Property(message => message.ConsumerName).HasMaxLength(IntegrationEventTransportMessage.ConsumerNameMaxLength).IsRequired();

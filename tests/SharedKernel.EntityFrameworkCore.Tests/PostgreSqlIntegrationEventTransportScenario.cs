@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Npgsql;
 using SharedKernel.Messaging;
 using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
@@ -63,11 +62,12 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
     }
 
     public async ValueTask<int> ConsumeWith(
-        RecordingEventEnvelopePublisher publisher,
+        IEventEnvelopePublisher publisher,
         CancellationToken ct,
-        TimeProvider? timeProvider = null)
+        TimeProvider? timeProvider = null,
+        ServiceLifetime publisherLifetime = ServiceLifetime.Singleton)
     {
-        await using var provider = CreateConsumerProvider(publisher, timeProvider: timeProvider);
+        await using var provider = CreateConsumerProvider(publisher, publisherLifetime, timeProvider);
         var consumer = provider.GetRequiredService<PostgreSqlIntegrationEventTransportConsumer<TransportDbContext>>();
 
         return await consumer.ConsumePending(1, ct);
@@ -158,12 +158,7 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
             _ => throw new ArgumentOutOfRangeException(nameof(publisherLifetime), publisherLifetime, "Unsupported test publisher lifetime.")
         };
         services.AddSingleton(timeProvider ?? TimeProvider.System);
-        services.AddOptions<IntegrationEventOutboxRelayOptions>();
-        services.AddSingleton(sp => new PostgreSqlIntegrationEventTransportConsumer<TransportDbContext>(
-            sp.GetRequiredService<IServiceScopeFactory>(),
-            sp.GetRequiredService<TimeProvider>(),
-            sp.GetRequiredService<IOptions<IntegrationEventOutboxRelayOptions>>(),
-            ConsumerName));
+        services.AddPostgreSqlIntegrationEventTransportConsumer<TransportDbContext>(ConsumerName);
 
         return services.BuildServiceProvider();
     }

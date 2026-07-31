@@ -18,14 +18,47 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <remarks>The outbox is keyed by <c>typeof(TContext)</c>; the first registration also remains available unkeyed for compatibility.</remarks>
     public static IServiceCollection AddIntegrationEventOutbox<TContext>(this IServiceCollection services)
+        where TContext : DbContext
+    {
+        return AddIntegrationEventOutboxCore<TContext>(services, configureStorage: null);
+    }
+
+    /// <summary>
+    /// Adds an EF Core integration event outbox with context-specific relational storage.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="configureStorage">The delegate that configures the context's integration-event tables.</param>
+    /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    /// <remarks>The outbox is keyed by <c>typeof(TContext)</c>; the first registration also remains available unkeyed for compatibility.</remarks>
+    public static IServiceCollection AddIntegrationEventOutbox<TContext>(
+        this IServiceCollection services,
+        Action<IntegrationEventStorageOptions> configureStorage)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(configureStorage);
+
+        return AddIntegrationEventOutboxCore<TContext>(services, configureStorage);
+    }
+
+    private static IServiceCollection AddIntegrationEventOutboxCore<TContext>(
+        IServiceCollection services,
+        Action<IntegrationEventStorageOptions>? configureStorage)
         where TContext : DbContext
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        AddIntegrationEventStorageOptions<TContext>(services, configureStorage);
         services.TryAddSingleton(TimeProvider.System);
-        services.TryAddScoped<IIntegrationEventOutbox, EfIntegrationEventOutbox<TContext>>();
-        services.TryAddSingleton<IDomainEventIntegrationEventOutbox, EfDomainEventIntegrationEventOutbox<TContext>>();
+        services.TryAddScoped<EfIntegrationEventOutbox<TContext>>();
+        services.TryAddKeyedScoped<IIntegrationEventOutbox>(
+            typeof(TContext),
+            (serviceProvider, _) => serviceProvider.GetRequiredService<EfIntegrationEventOutbox<TContext>>());
+        services.TryAddScoped(serviceProvider =>
+            serviceProvider.GetRequiredKeyedService<IIntegrationEventOutbox>(typeof(TContext)));
+        services.TryAddSingleton<IDomainEventIntegrationEventOutbox, EfDomainEventIntegrationEventOutbox>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventOutboxDbContextConfiguration<TContext>>());
 
         return services;
@@ -38,6 +71,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="configureOptions">An optional delegate that configures relay behavior.</param>
     /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <remarks>The relay resolves the envelope publisher keyed by <c>typeof(TContext)</c>.</remarks>
     public static IServiceCollection AddIntegrationEventOutboxRelay<TContext>(
         this IServiceCollection services,
         Action<IntegrationEventOutboxRelayOptions>? configureOptions = null)
@@ -45,7 +79,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        var optionsBuilder = services.AddOptions<IntegrationEventOutboxRelayOptions>().ValidateOnStart();
+        var optionsBuilder = services.AddOptions<IntegrationEventOutboxRelayOptions>(IntegrationEventOptionsNames.Relay<TContext>()).ValidateOnStart();
         if (configureOptions is not null)
         {
             optionsBuilder.Configure(configureOptions);
@@ -56,6 +90,9 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
                 IValidateOptions<IntegrationEventOutboxRelayOptions>,
                 IntegrationEventOutboxRelayOptionsValidator>());
         services.TryAddSingleton(TimeProvider.System);
+        services.TryAddKeyedScoped(
+            typeof(TContext),
+            (serviceProvider, _) => serviceProvider.GetRequiredService<IEventEnvelopePublisher>());
         services.TryAddSingleton<IIntegrationEventOutboxClaimStrategy<TContext>, EfIntegrationEventOutboxClaimStrategy<TContext>>();
         services.AddSingleton<EfIntegrationEventOutboxRelay<TContext>>();
         services.AddHostedService<IntegrationEventOutboxRelayHostedService<TContext>>();
@@ -89,8 +126,28 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type that owns the inbox idempotency table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <remarks>The store is keyed by <c>typeof(TContext)</c>; the first registration also remains available unkeyed for compatibility.</remarks>
     public static IServiceCollection AddIntegrationEventInbox<TContext>(this IServiceCollection services)
         where TContext : DbContext => services.AddIdempotencyStore<TContext>();
+
+    /// <summary>
+    /// Adds an EF Core integration event inbox with context-specific idempotency storage.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="configureStorage">The delegate that configures the context's idempotency table.</param>
+    /// <typeparam name="TContext">The DbContext type that owns the inbox idempotency table.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    /// <remarks>The store is keyed by <c>typeof(TContext)</c>; the first registration also remains available unkeyed for compatibility.</remarks>
+    public static IServiceCollection AddIntegrationEventInbox<TContext>(
+        this IServiceCollection services,
+        Action<IdempotencyStorageOptions> configureStorage)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configureStorage);
+
+        return services.AddIdempotencyStore<TContext>(configureStorage);
+    }
 
     /// <summary>
     /// Adds a PostgreSQL-backed integration-event transport producer for one consumer queue.
@@ -99,20 +156,55 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="consumerName">The durable consumer queue name.</param>
     /// <typeparam name="TContext">The DbContext type that owns the transport table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <remarks>The producer is keyed by <c>typeof(TContext)</c> and is registered unkeyed only when no publisher already exists.</remarks>
     public static IServiceCollection AddPostgreSqlIntegrationEventTransportProducer<TContext>(
         this IServiceCollection services,
         string consumerName)
         where TContext : DbContext
     {
+        return AddPostgreSqlIntegrationEventTransportProducerCore<TContext>(services, consumerName, configureStorage: null);
+    }
+
+    /// <summary>
+    /// Adds a PostgreSQL-backed integration-event transport producer with context-specific relational storage.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="consumerName">The durable consumer queue name.</param>
+    /// <param name="configureStorage">The delegate that configures the context's integration-event tables.</param>
+    /// <typeparam name="TContext">The DbContext type that owns the transport table.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    /// <remarks>The producer is keyed by <c>typeof(TContext)</c> and is registered unkeyed only when no publisher already exists.</remarks>
+    public static IServiceCollection AddPostgreSqlIntegrationEventTransportProducer<TContext>(
+        this IServiceCollection services,
+        string consumerName,
+        Action<IntegrationEventStorageOptions> configureStorage)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(configureStorage);
+
+        return AddPostgreSqlIntegrationEventTransportProducerCore<TContext>(services, consumerName, configureStorage);
+    }
+
+    private static IServiceCollection AddPostgreSqlIntegrationEventTransportProducerCore<TContext>(
+        IServiceCollection services,
+        string consumerName,
+        Action<IntegrationEventStorageOptions>? configureStorage)
+        where TContext : DbContext
+    {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(consumerName);
 
+        AddIntegrationEventStorageOptions<TContext>(services, configureStorage);
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventTransportDbContextConfiguration<TContext>>());
-        services.Replace(ServiceDescriptor.Scoped<IEventEnvelopePublisher>(sp => new PostgreSqlIntegrationEventTransportPublisher<TContext>(
-            sp.GetRequiredService<TContext>(),
-            sp.GetRequiredService<TimeProvider>(),
-            consumerName)));
+        services.AddKeyedScoped<IEventEnvelopePublisher>(
+            typeof(TContext),
+            (serviceProvider, _) => new PostgreSqlIntegrationEventTransportPublisher<TContext>(
+                serviceProvider.GetRequiredService<TContext>(),
+                serviceProvider.GetRequiredService<TimeProvider>(),
+                consumerName));
+        services.TryAddScoped(serviceProvider =>
+            serviceProvider.GetRequiredKeyedService<IEventEnvelopePublisher>(typeof(TContext)));
 
         return services;
     }
@@ -134,7 +226,8 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(consumerName);
 
-        var optionsBuilder = services.AddOptions<IntegrationEventOutboxRelayOptions>().ValidateOnStart();
+        AddIntegrationEventStorageOptions<TContext>(services, configureStorage: null);
+        var optionsBuilder = services.AddOptions<IntegrationEventOutboxRelayOptions>(IntegrationEventOptionsNames.Consumer<TContext>()).ValidateOnStart();
         if (configureOptions is not null)
         {
             optionsBuilder.Configure(configureOptions);
@@ -149,10 +242,47 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
         services.AddSingleton(sp => new PostgreSqlIntegrationEventTransportConsumer<TContext>(
             sp.GetRequiredService<IServiceScopeFactory>(),
             sp.GetRequiredService<TimeProvider>(),
-            sp.GetRequiredService<IOptions<IntegrationEventOutboxRelayOptions>>(),
+            sp.GetRequiredService<IOptionsMonitor<IntegrationEventOutboxRelayOptions>>(),
             consumerName));
         services.AddHostedService<PostgreSqlIntegrationEventTransportConsumerHostedService<TContext>>();
 
         return services;
+    }
+
+    /// <summary>
+    /// Configures context-specific integration-event storage before registering an outbox or transport component.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="configureStorage">The delegate that configures the context's integration-event tables.</param>
+    /// <typeparam name="TContext">The DbContext type that owns or reads the configured tables.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection ConfigureIntegrationEventStorage<TContext>(
+        this IServiceCollection services,
+        Action<IntegrationEventStorageOptions> configureStorage)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configureStorage);
+
+        AddIntegrationEventStorageOptions<TContext>(services, configureStorage);
+
+        return services;
+    }
+
+    private static void AddIntegrationEventStorageOptions<TContext>(
+        IServiceCollection services,
+        Action<IntegrationEventStorageOptions>? configureStorage)
+        where TContext : DbContext
+    {
+        var optionsBuilder = services.AddOptions<IntegrationEventStorageOptions>(IntegrationEventOptionsNames.Storage<TContext>()).ValidateOnStart();
+        if (configureStorage is not null)
+        {
+            optionsBuilder.Configure(configureStorage);
+        }
+
+        services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<
+                IValidateOptions<IntegrationEventStorageOptions>,
+                IntegrationEventStorageOptionsValidator>());
     }
 }

@@ -159,4 +159,22 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
         publisher.DisposeCount.ShouldBe(1);
         consumed.ShouldBe(2);
     }
+
+    [Fact]
+    public async Task Consumer_asynchronously_disposes_an_async_only_scoped_publisher()
+    {
+        // Arrange
+        await Scenario.SeedMessage("consumer-async-disposal", TestContext.Current.CancellationToken);
+        var publisher = new AsyncDisposableEventEnvelopePublisher();
+
+        // Act
+        var consumed = await Scenario.ConsumeWith(
+            publisher,
+            TestContext.Current.CancellationToken,
+            publisherLifetime: Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped);
+
+        // Assert
+        consumed.ShouldBe(1);
+        publisher.DisposeCount.ShouldBe(1);
+    }
 }

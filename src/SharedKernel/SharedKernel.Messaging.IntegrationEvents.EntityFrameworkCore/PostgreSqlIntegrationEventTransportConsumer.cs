@@ -7,23 +7,24 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
     IServiceScopeFactory scopeFactory,
     TimeProvider timeProvider,
-    IOptions<IntegrationEventOutboxRelayOptions> options,
+    IOptionsMonitor<IntegrationEventOutboxRelayOptions> options,
     string consumerName)
     where TContext : DbContext
 {
     public async ValueTask<int> ConsumePending(CancellationToken ct) =>
-        await ConsumePending(options.Value.BatchSize, ct).ConfigureAwait(false);
+        await ConsumePending(options.Get(IntegrationEventOptionsNames.Consumer<TContext>()).BatchSize, ct).ConfigureAwait(false);
 
     internal async ValueTask<int> ConsumePending(int batchSize, CancellationToken ct)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(batchSize);
 
-        using var scope = scopeFactory.CreateScope();
+        var scope = scopeFactory.CreateAsyncScope();
+        await using var scopeDisposal = scope.ConfigureAwait(false);
         var dbContext = scope.ServiceProvider.GetRequiredService<TContext>();
         var publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
         var now = timeProvider.GetUtcNow();
         var claimedBy = Guid.CreateVersion7().ToString("N");
-        var claimedUntil = now.Add(options.Value.ClaimLeaseDuration);
+        var claimedUntil = now.Add(options.Get(IntegrationEventOptionsNames.Consumer<TContext>()).ClaimLeaseDuration);
         var messages = await PostgreSqlIntegrationEventTransportClaimSql.ClaimPending(
             dbContext,
             consumerName,
