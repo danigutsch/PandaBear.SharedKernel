@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using SharedKernel.Idempotency;
 using SharedKernel.Idempotency.EntityFrameworkCore;
@@ -26,17 +27,24 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
 
     public static ContextQualifiedMessagingScenario Create()
     {
-        return Create(firstPublisher: null);
+        return Create(firstPublisher: null, addTransportProducers: true);
     }
 
     public static ContextQualifiedMessagingScenario CreateWithFirstPublisher(IEventEnvelopePublisher firstPublisher)
     {
         ArgumentNullException.ThrowIfNull(firstPublisher);
 
-        return Create(firstPublisher);
+        return Create(firstPublisher, addTransportProducers: true);
     }
 
-    private static ContextQualifiedMessagingScenario Create(IEventEnvelopePublisher? firstPublisher)
+    public static ContextQualifiedMessagingScenario CreateWithoutTransportProducers()
+    {
+        return Create(firstPublisher: null, addTransportProducers: false);
+    }
+
+    private static ContextQualifiedMessagingScenario Create(
+        IEventEnvelopePublisher? firstPublisher,
+        bool addTransportProducers)
     {
         var services = new ServiceCollection();
         var firstDatabaseName = $"first-{Guid.CreateVersion7():N}";
@@ -67,8 +75,11 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
             options.Schema = "second_messaging";
             options.TableName = "second_inbox";
         });
-        services.AddPostgreSqlIntegrationEventTransportProducer<FirstMessagingDbContext>(FirstConsumerName);
-        services.AddPostgreSqlIntegrationEventTransportProducer<SecondMessagingDbContext>(SecondConsumerName);
+        if (addTransportProducers)
+        {
+            services.AddPostgreSqlIntegrationEventTransportProducer<FirstMessagingDbContext>(FirstConsumerName);
+            services.AddPostgreSqlIntegrationEventTransportProducer<SecondMessagingDbContext>(SecondConsumerName);
+        }
         services.AddPostgreSqlIntegrationEventTransportConsumer<FirstMessagingDbContext>(FirstConsumerName, options => options.BatchSize = 3);
         services.AddPostgreSqlIntegrationEventTransportConsumer<SecondMessagingDbContext>(SecondConsumerName, options => options.BatchSize = 4);
         if (firstPublisher is not null)
@@ -90,6 +101,33 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
 
         return new ContextQualifiedMessagingScenario(provider, applicationPublisher);
     }
+
+    public static async ValueTask<(int ApplicationPublished, int TransportCount)> PublishWithApplicationRegisteredAfterProducer(
+        CancellationToken ct)
+    {
+        var services = new ServiceCollection();
+        var applicationPublisher = new RecordingEventEnvelopePublisher();
+        services.AddPostgreSqlIntegrationEventTransportProducer<DefaultMessagingDbContext>("producer-first");
+        services.TryAddScoped<IEventEnvelopePublisher>(_ => applicationPublisher);
+        services.AddDbContext<DefaultMessagingDbContext>(options =>
+            options.UseInMemoryDatabase($"producer-first-{Guid.CreateVersion7():N}"));
+        await using var provider = services.BuildServiceProvider(new ServiceProviderOptions
+        {
+            ValidateOnBuild = true,
+            ValidateScopes = true,
+        });
+        await using var scope = provider.CreateAsyncScope();
+        var publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
+        await publisher.Publish(TransportEnvelopeFactory.Create("application-event"), ct);
+        var dbContext = scope.ServiceProvider.GetRequiredService<DefaultMessagingDbContext>();
+        _ = await dbContext.SaveChangesAsync(ct);
+
+        return (
+            applicationPublisher.Published.Count,
+            await dbContext.Set<IntegrationEventTransportMessage>().CountAsync(ct));
+    }
+
+    public int GetApplicationPublishedCount() => applicationPublisher.Published.Count;
 
     public ValueTask<(Guid[] First, Guid[] Second)> EnqueueInEachContext(CancellationToken ct)
     {

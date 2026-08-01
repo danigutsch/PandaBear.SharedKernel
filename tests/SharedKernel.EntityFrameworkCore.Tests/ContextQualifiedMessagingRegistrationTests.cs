@@ -82,6 +82,20 @@ public sealed class ContextQualifiedMessagingRegistrationTests
     }
 
     [Fact]
+    public async Task Application_try_add_after_a_transport_producer_remains_the_unkeyed_publisher()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+
+        // Act
+        var published = await ContextQualifiedMessagingScenario.PublishWithApplicationRegisteredAfterProducer(ct);
+
+        // Assert
+        published.ApplicationPublished.ShouldBe(1);
+        published.TransportCount.ShouldBe(0);
+    }
+
+    [Fact]
     public async Task Transport_consumers_use_their_own_context_qualified_options()
     {
         // Arrange
@@ -111,6 +125,24 @@ public sealed class ContextQualifiedMessagingRegistrationTests
         destinations.Second.ShouldBe("second-consumer");
         transportedEventIds.First.ShouldBe(publishedEventIds.First.ToString("D"));
         transportedEventIds.Second.ShouldBe(publishedEventIds.Second.ToString("D"));
+        scenario.GetApplicationPublishedCount().ShouldBe(0);
+    }
+
+    [Fact]
+    public async Task Relay_uses_the_unkeyed_application_publisher_when_its_context_key_is_absent()
+    {
+        // Arrange
+        await using var scenario = ContextQualifiedMessagingScenario.CreateWithoutTransportProducers();
+        await scenario.EnqueueInFirstContext(TestContext.Current.CancellationToken);
+
+        // Act
+        var published = await scenario.PublishFirstRelay(TestContext.Current.CancellationToken);
+
+        // Assert
+        published.ShouldBe(1);
+        scenario.GetApplicationPublishedCount().ShouldBe(1);
+        var state = await scenario.GetFirstOutboxState(TestContext.Current.CancellationToken);
+        state.PublishedAt.ShouldNotBeNull();
     }
 
     [Fact]

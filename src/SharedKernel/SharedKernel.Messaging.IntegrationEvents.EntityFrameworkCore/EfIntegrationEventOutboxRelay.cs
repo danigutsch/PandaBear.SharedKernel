@@ -24,7 +24,8 @@ internal sealed class EfIntegrationEventOutboxRelay<TContext>(
         var scope = scopeFactory.CreateAsyncScope();
         await using var scopeDisposal = scope.ConfigureAwait(false);
         var dbContext = scope.ServiceProvider.GetRequiredService<TContext>();
-        var publisher = scope.ServiceProvider.GetRequiredKeyedService<IEventEnvelopePublisher>(typeof(TContext));
+        var publisher = scope.ServiceProvider.GetKeyedService<IEventEnvelopePublisher>(typeof(TContext))
+            ?? scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
         var claimStrategy = scope.ServiceProvider.GetRequiredService<IIntegrationEventOutboxClaimStrategy<TContext>>();
         var now = timeProvider.GetUtcNow();
         var claimedBy = Guid.CreateVersion7().ToString("N");

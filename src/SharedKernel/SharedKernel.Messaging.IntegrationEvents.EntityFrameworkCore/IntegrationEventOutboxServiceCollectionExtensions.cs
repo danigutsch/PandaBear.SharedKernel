@@ -71,7 +71,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="configureOptions">An optional delegate that configures relay behavior.</param>
     /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
     /// <returns>The configured service collection.</returns>
-    /// <remarks>The relay resolves the envelope publisher keyed by <c>typeof(TContext)</c>.</remarks>
+    /// <remarks>The relay prefers the envelope publisher keyed by <c>typeof(TContext)</c>, then requires an unkeyed application publisher.</remarks>
     public static IServiceCollection AddIntegrationEventOutboxRelay<TContext>(
         this IServiceCollection services,
         Action<IntegrationEventOutboxRelayOptions>? configureOptions = null)
@@ -90,10 +90,6 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
                 IValidateOptions<IntegrationEventOutboxRelayOptions>,
                 IntegrationEventOutboxRelayOptionsValidator>());
         services.TryAddSingleton(TimeProvider.System);
-        services.TryAddKeyedScoped(
-            typeof(TContext),
-            (serviceProvider, _) =>
-                IntegrationEventTransportPublisherCompatibilityAlias.GetRequiredApplicationPublisher(serviceProvider));
         services.TryAddSingleton<IIntegrationEventOutboxClaimStrategy<TContext>, EfIntegrationEventOutboxClaimStrategy<TContext>>();
         services.AddSingleton<EfIntegrationEventOutboxRelay<TContext>>();
         services.AddHostedService<IntegrationEventOutboxRelayHostedService<TContext>>();
@@ -157,7 +153,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="consumerName">The durable consumer queue name.</param>
     /// <typeparam name="TContext">The DbContext type that owns the transport table.</typeparam>
     /// <returns>The configured service collection.</returns>
-    /// <remarks>The producer is keyed by <c>typeof(TContext)</c> and is registered unkeyed only when no publisher already exists.</remarks>
+    /// <remarks>The producer is registered only as an <see cref="IEventEnvelopePublisher" /> keyed by <c>typeof(TContext)</c>.</remarks>
     public static IServiceCollection AddPostgreSqlIntegrationEventTransportProducer<TContext>(
         this IServiceCollection services,
         string consumerName)
@@ -174,7 +170,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="configureStorage">The delegate that configures the context's integration-event tables.</param>
     /// <typeparam name="TContext">The DbContext type that owns the transport table.</typeparam>
     /// <returns>The configured service collection.</returns>
-    /// <remarks>The producer is keyed by <c>typeof(TContext)</c> and is registered unkeyed only when no publisher already exists.</remarks>
+    /// <remarks>The producer is registered only as an <see cref="IEventEnvelopePublisher" /> keyed by <c>typeof(TContext)</c>.</remarks>
     public static IServiceCollection AddPostgreSqlIntegrationEventTransportProducer<TContext>(
         this IServiceCollection services,
         string consumerName,
@@ -204,9 +200,6 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
                 serviceProvider.GetRequiredService<TContext>(),
                 serviceProvider.GetRequiredService<TimeProvider>(),
                 consumerName));
-        services.TryAddScoped<IEventEnvelopePublisher>(serviceProvider =>
-            new IntegrationEventTransportPublisherCompatibilityAlias(
-                serviceProvider.GetRequiredKeyedService<IEventEnvelopePublisher>(typeof(TContext))));
 
         return services;
     }
@@ -219,6 +212,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="configureOptions">An optional delegate that configures polling behavior.</param>
     /// <typeparam name="TContext">The DbContext type that reads the transport table.</typeparam>
     /// <returns>The configured service collection.</returns>
+    /// <remarks>The consumer requires an unkeyed application <see cref="IEventEnvelopePublisher" />.</remarks>
     public static IServiceCollection AddPostgreSqlIntegrationEventTransportConsumer<TContext>(
         this IServiceCollection services,
         string consumerName,

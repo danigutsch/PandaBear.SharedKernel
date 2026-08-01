@@ -53,7 +53,7 @@ public sealed class ContextQualifiedMessagingPostgreSqlTests(PostgreSqlFixture f
     }
 
     [Fact]
-    public async Task Relay_without_an_application_publisher_does_not_use_another_contexts_transport_alias()
+    public async Task Relay_without_a_context_key_or_unkeyed_application_publisher_fails_before_claiming()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
@@ -64,7 +64,7 @@ public sealed class ContextQualifiedMessagingPostgreSqlTests(PostgreSqlFixture f
 
         // Assert
         var exception = await publish.ShouldThrow<InvalidOperationException>();
-        exception.Message.ShouldContain("application", StringComparison.OrdinalIgnoreCase);
+        exception.Message.ShouldContain(nameof(Messaging.IEventEnvelopePublisher), StringComparison.Ordinal);
         var state = await Scenario.GetSecondOutboxState(ct);
         state.PublishedAt.ShouldBeNull();
         state.Attempts.ShouldBe(0);
@@ -90,7 +90,7 @@ public sealed class ContextQualifiedMessagingPostgreSqlTests(PostgreSqlFixture f
     }
 
     [Fact]
-    public async Task Consumer_without_an_application_publisher_does_not_use_another_contexts_transport_alias()
+    public async Task Consumer_without_an_unkeyed_application_publisher_fails_before_claiming()
     {
         // Arrange
         const string eventId = "cross-context-consumer";
@@ -102,7 +102,7 @@ public sealed class ContextQualifiedMessagingPostgreSqlTests(PostgreSqlFixture f
 
         // Assert
         var exception = await consume.ShouldThrow<InvalidOperationException>();
-        exception.Message.ShouldContain("application", StringComparison.OrdinalIgnoreCase);
+        exception.Message.ShouldContain(nameof(Messaging.IEventEnvelopePublisher), StringComparison.Ordinal);
         var state = await Scenario.GetSecondTransportState(eventId, ct);
         state.ProcessedAt.ShouldBeNull();
         state.Attempts.ShouldBe(0);
