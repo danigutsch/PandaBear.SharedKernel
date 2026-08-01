@@ -8,7 +8,10 @@ internal sealed class IntegrationEventStorageOptionsValidator : IValidateOptions
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        if (!IsValidIdentifier(options.Schema)
+        var outboxSchema = options.EffectiveOutboxSchema;
+        var transportSchema = options.EffectiveTransportSchema;
+        if (!IsValidIdentifier(outboxSchema)
+            || !IsValidIdentifier(transportSchema)
             || !IsValidIdentifier(options.OutboxTableName)
             || !IsValidIdentifier(options.TransportTableName))
         {
@@ -16,8 +19,11 @@ internal sealed class IntegrationEventStorageOptionsValidator : IValidateOptions
                 "Integration event storage schema and table names must be valid PostgreSQL unquoted identifiers.");
         }
 
-        return string.Equals(options.OutboxTableName, options.TransportTableName, StringComparison.Ordinal)
-            ? ValidateOptionsResult.Fail("Integration event outbox and transport table names must be distinct within one schema.")
+        var hasDuplicateOwnership = string.Equals(outboxSchema, transportSchema, StringComparison.Ordinal)
+            && string.Equals(options.OutboxTableName, options.TransportTableName, StringComparison.Ordinal);
+
+        return hasDuplicateOwnership
+            ? ValidateOptionsResult.Fail("Integration event outbox and transport schema/table ownership must be distinct.")
             : ValidateOptionsResult.Success;
     }
 

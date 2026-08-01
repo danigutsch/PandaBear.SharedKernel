@@ -371,6 +371,40 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return GetStorageMappings(dbContext);
     }
 
+    public static async ValueTask<(string OutboxSchema, string OutboxTable, string TransportSchema, string TransportTable, string OutboxSql, string TransportSql)> GetSplitSchemaStorage()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IIntegrationEventSerializer, ComposedMessagingTestIntegrationEventSerializer>();
+        services.AddIntegrationEventOutbox<SplitSchemaMessagingDbContext>(options =>
+        {
+            options.Schema = "fallback_messaging";
+            options.OutboxSchema = "branding";
+            options.OutboxTableName = "outbox_messages";
+            options.TransportSchema = "messaging";
+            options.TransportTableName = "transport_messages";
+        });
+        services.AddPostgreSqlIntegrationEventTransportProducer<SplitSchemaMessagingDbContext>("split-schema-consumer");
+        services.AddDbContext<SplitSchemaMessagingDbContext>(options =>
+            options.UseInMemoryDatabase($"split-schema-{Guid.CreateVersion7():N}"));
+        await using var provider = services.BuildServiceProvider(new ServiceProviderOptions
+        {
+            ValidateOnBuild = true,
+            ValidateScopes = true,
+        });
+        await using var scope = provider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<SplitSchemaMessagingDbContext>();
+        var outbox = dbContext.Model.FindEntityType(typeof(IntegrationEventOutboxMessage)).ShouldNotBeNull();
+        var transport = dbContext.Model.FindEntityType(typeof(IntegrationEventTransportMessage)).ShouldNotBeNull();
+
+        return (
+            outbox.GetSchema().ShouldNotBeNull(),
+            outbox.GetTableName().ShouldNotBeNull(),
+            transport.GetSchema().ShouldNotBeNull(),
+            transport.GetTableName().ShouldNotBeNull(),
+            PostgreSqlIntegrationEventOutboxClaimStrategy<SplitSchemaMessagingDbContext>.CreateClaimSql(outbox),
+            PostgreSqlIntegrationEventTransportClaimSql.CreateClaimSql(transport));
+    }
+
     public async ValueTask<(string FirstOutbox, string FirstTransport, string SecondOutbox, string SecondTransport)> GetClaimSql()
     {
         await using var scope = provider.CreateAsyncScope();

@@ -37,6 +37,8 @@ internal sealed class IntegrationEventTransportDbContextConfiguration<TContext> 
 
         var options = storageOptions?.Get(IntegrationEventOptionsNames.Storage<TContext>())
             ?? new IntegrationEventStorageOptions();
-        modelBuilder.ApplyConfiguration(new IntegrationEventTransportMessageConfiguration(options.Schema, options.TransportTableName));
+        modelBuilder.ApplyConfiguration(new IntegrationEventTransportMessageConfiguration(
+            options.EffectiveTransportSchema,
+            options.TransportTableName));
     }
 }

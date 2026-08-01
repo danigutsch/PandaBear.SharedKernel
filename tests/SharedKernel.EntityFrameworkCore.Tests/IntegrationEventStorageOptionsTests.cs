@@ -23,6 +23,8 @@ public sealed class IntegrationEventStorageOptionsTests
         integrationEventResult.Succeeded.ShouldBeTrue();
         idempotencyResult.Succeeded.ShouldBeTrue();
         integrationEventOptions.Schema.ShouldBe("messaging");
+        integrationEventOptions.OutboxSchema.ShouldBeNull();
+        integrationEventOptions.TransportSchema.ShouldBeNull();
         integrationEventOptions.OutboxTableName.ShouldBe("outbox_messages");
         integrationEventOptions.TransportTableName.ShouldBe("transport_messages");
         idempotencyOptions.Schema.ShouldBe("messaging");
@@ -58,7 +60,7 @@ public sealed class IntegrationEventStorageOptionsTests
     }
 
     [Fact]
-    public void Integration_event_storage_rejects_duplicate_table_names()
+    public void Integration_event_storage_rejects_duplicate_effective_table_ownership()
     {
         // Arrange
         var options = new IntegrationEventStorageOptions
@@ -73,6 +75,47 @@ public sealed class IntegrationEventStorageOptionsTests
         // Assert
         result.Failed.ShouldBeTrue();
         result.FailureMessage.ShouldContain("distinct", StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Theory]
+    [InlineData("invalid-schema", null)]
+    [InlineData(null, "transport schema")]
+    public void Integration_event_storage_rejects_invalid_per_table_schema_overrides(
+        string? outboxSchema,
+        string? transportSchema)
+    {
+        // Arrange
+        var options = new IntegrationEventStorageOptions
+        {
+            OutboxSchema = outboxSchema,
+            TransportSchema = transportSchema,
+        };
+
+        // Act
+        var result = new IntegrationEventStorageOptionsValidator().Validate(null, options);
+
+        // Assert
+        result.Failed.ShouldBeTrue();
+        result.FailureMessage.ShouldContain("identifier", StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Integration_event_storage_accepts_the_same_table_name_in_distinct_effective_schemas()
+    {
+        // Arrange
+        var options = new IntegrationEventStorageOptions
+        {
+            OutboxSchema = "branding",
+            OutboxTableName = "messages",
+            TransportSchema = "messaging",
+            TransportTableName = "messages",
+        };
+
+        // Act
+        var result = new IntegrationEventStorageOptionsValidator().Validate(null, options);
+
+        // Assert
+        result.Succeeded.ShouldBeTrue();
     }
 
     [Theory]
@@ -130,6 +173,30 @@ public sealed class IntegrationEventStorageOptionsTests
 
         // Assert
         mappings.ShouldBe(("messaging", "outbox_messages", "messaging", "transport_messages", "messaging", "idempotency_keys"));
+    }
+
+    [Fact]
+    public async Task Per_table_schema_overrides_map_one_context_to_distinct_table_owners()
+    {
+        // Act
+        var storage = await ContextQualifiedMessagingScenario.GetSplitSchemaStorage();
+
+        // Assert
+        storage.OutboxSchema.ShouldBe("branding");
+        storage.OutboxTable.ShouldBe("outbox_messages");
+        storage.TransportSchema.ShouldBe("messaging");
+        storage.TransportTable.ShouldBe("transport_messages");
+    }
+
+    [Fact]
+    public async Task PostgreSql_claim_sql_uses_each_effective_table_schema()
+    {
+        // Act
+        var storage = await ContextQualifiedMessagingScenario.GetSplitSchemaStorage();
+
+        // Assert
+        storage.OutboxSql.ShouldContain("UPDATE \"branding\".\"outbox_messages\"", StringComparison.Ordinal);
+        storage.TransportSql.ShouldContain("UPDATE \"messaging\".\"transport_messages\"", StringComparison.Ordinal);
     }
 
     [Fact]
