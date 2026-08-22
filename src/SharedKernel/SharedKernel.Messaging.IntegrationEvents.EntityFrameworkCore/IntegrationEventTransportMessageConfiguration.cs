@@ -11,19 +11,27 @@ internal sealed class IntegrationEventTransportMessageConfiguration : IEntityTyp
 {
     private readonly string schema;
     private readonly string tableName;
+    private readonly bool excludeFromMigrations;
 
     public IntegrationEventTransportMessageConfiguration()
-        : this(SharedKernelSchemas.Messaging, IntegrationEventStorageOptions.DefaultTransportTableName)
+        : this(
+            SharedKernelSchemas.Messaging,
+            IntegrationEventStorageOptions.DefaultTransportTableName,
+            excludeFromMigrations: false)
     {
     }
 
-    public IntegrationEventTransportMessageConfiguration(string schema, string tableName)
+    public IntegrationEventTransportMessageConfiguration(
+        string schema,
+        string tableName,
+        bool excludeFromMigrations)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(schema);
         ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
 
         this.schema = schema;
         this.tableName = tableName;
+        this.excludeFromMigrations = excludeFromMigrations;
     }
 
     /// <inheritdoc />
@@ -31,7 +39,14 @@ internal sealed class IntegrationEventTransportMessageConfiguration : IEntityTyp
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.ToTable(tableName, schema);
+        if (excludeFromMigrations)
+        {
+            builder.ToTable(tableName, schema, table => table.ExcludeFromMigrations());
+        }
+        else
+        {
+            builder.ToTable(tableName, schema);
+        }
         builder.HasKey(message => message.Id);
         builder.Property(message => message.Id).ValueGeneratedNever();
         builder.Property(message => message.ConsumerName).HasMaxLength(IntegrationEventTransportMessage.ConsumerNameMaxLength).IsRequired();

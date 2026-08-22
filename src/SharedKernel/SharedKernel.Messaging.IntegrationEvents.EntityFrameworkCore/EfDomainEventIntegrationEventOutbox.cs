@@ -1,10 +1,11 @@
+using Microsoft.Extensions.DependencyInjection;
 using SharedKernel.EntityFrameworkCore;
 
 namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 internal sealed class EfDomainEventIntegrationEventOutbox(
     TimeProvider timeProvider,
-    IIntegrationEventSerializer serializer)
+    IServiceProvider serviceProvider)
     : IDomainEventIntegrationEventOutbox
 {
     public ValueTask Enqueue<TIntegrationEvent>(TIntegrationEvent integrationEvent, CancellationToken ct)
@@ -15,6 +16,8 @@ internal sealed class EfDomainEventIntegrationEventOutbox(
 
         var currentDbContext = CurrentSaveChangesDbContext.Current
             ?? throw new InvalidOperationException("No current SaveChanges context is available for the domain-event integration event outbox.");
+        var serializer = serviceProvider.GetKeyedService<IIntegrationEventSerializer>(currentDbContext.GetType())
+            ?? serviceProvider.GetRequiredService<IIntegrationEventSerializer>();
 
         currentDbContext.Set<IntegrationEventOutboxMessage>().Add(IntegrationEventOutboxMessageFactory.Create(
             integrationEvent,

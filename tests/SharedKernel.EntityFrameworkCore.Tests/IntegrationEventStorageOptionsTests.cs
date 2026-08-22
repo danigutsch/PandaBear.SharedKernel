@@ -27,6 +27,7 @@ public sealed class IntegrationEventStorageOptionsTests
         integrationEventOptions.TransportSchema.ShouldBeNull();
         integrationEventOptions.OutboxTableName.ShouldBe("outbox_messages");
         integrationEventOptions.TransportTableName.ShouldBe("transport_messages");
+        integrationEventOptions.ExcludeTransportFromMigrations.ShouldBeFalse();
         idempotencyOptions.Schema.ShouldBe("messaging");
         idempotencyOptions.TableName.ShouldBe("idempotency_keys");
     }
@@ -141,7 +142,7 @@ public sealed class IntegrationEventStorageOptionsTests
     }
 
     [Fact]
-    public async Task Custom_storage_mappings_are_context_specific_and_have_one_table_owner()
+    public async Task Custom_storage_mappings_are_context_specific()
     {
         // Arrange
         await using var scenario = ContextQualifiedMessagingScenario.Create();
@@ -153,16 +154,6 @@ public sealed class IntegrationEventStorageOptionsTests
         // Assert
         first.ShouldBe(("first_messaging", "first_outbox", "first_messaging", "first_transport", "first_messaging", "first_inbox"));
         second.ShouldBe(("second_messaging", "second_outbox", "second_messaging", "second_transport", "second_messaging", "second_inbox"));
-        var ownedTables = new[]
-        {
-            (first.OutboxSchema, first.OutboxTable),
-            (first.TransportSchema, first.TransportTable),
-            (first.InboxSchema, first.InboxTable),
-            (second.OutboxSchema, second.OutboxTable),
-            (second.TransportSchema, second.TransportTable),
-            (second.InboxSchema, second.InboxTable),
-        };
-        ownedTables.Distinct().Count().ShouldBe(ownedTables.Length);
     }
 
     [Fact]
@@ -186,6 +177,16 @@ public sealed class IntegrationEventStorageOptionsTests
         storage.OutboxTable.ShouldBe("outbox_messages");
         storage.TransportSchema.ShouldBe("messaging");
         storage.TransportTable.ShouldBe("transport_messages");
+    }
+
+    [Fact]
+    public async Task Shared_transport_mapping_can_exclude_a_non_owner_context_from_migrations()
+    {
+        // Act
+        var excludedFromMigrations = await ContextQualifiedMessagingScenario.IsSplitSchemaTransportExcludedFromMigrations();
+
+        // Assert
+        excludedFromMigrations.ShouldBeTrue();
     }
 
     [Fact]

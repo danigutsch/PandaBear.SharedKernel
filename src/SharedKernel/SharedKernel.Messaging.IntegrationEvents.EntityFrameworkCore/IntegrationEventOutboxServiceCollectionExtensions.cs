@@ -52,13 +52,17 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
 
         AddIntegrationEventStorageOptions<TContext>(services, configureStorage);
         services.TryAddSingleton(TimeProvider.System);
-        services.TryAddScoped<EfIntegrationEventOutbox<TContext>>();
+        services.TryAddScoped(serviceProvider => new EfIntegrationEventOutbox<TContext>(
+            serviceProvider.GetRequiredService<TContext>(),
+            serviceProvider.GetRequiredService<TimeProvider>(),
+            serviceProvider.GetKeyedService<IIntegrationEventSerializer>(typeof(TContext))
+                ?? serviceProvider.GetRequiredService<IIntegrationEventSerializer>()));
         services.TryAddKeyedScoped<IIntegrationEventOutbox>(
             typeof(TContext),
             (serviceProvider, _) => serviceProvider.GetRequiredService<EfIntegrationEventOutbox<TContext>>());
         services.TryAddScoped(serviceProvider =>
             serviceProvider.GetRequiredKeyedService<IIntegrationEventOutbox>(typeof(TContext)));
-        services.TryAddSingleton<IDomainEventIntegrationEventOutbox, EfDomainEventIntegrationEventOutbox>();
+        services.TryAddScoped<IDomainEventIntegrationEventOutbox, EfDomainEventIntegrationEventOutbox>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventOutboxDbContextConfiguration<TContext>>());
 
         return services;
@@ -182,6 +186,23 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
         return AddPostgreSqlIntegrationEventTransportProducerCore<TContext>(services, consumerName, configureStorage);
     }
 
+    /// <summary>
+    /// Adds the integration-event transport model to a context without registering a producer or consumer.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <typeparam name="TContext">The DbContext type that maps the transport table.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection AddIntegrationEventTransportStorage<TContext>(this IServiceCollection services)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        AddIntegrationEventStorageOptions<TContext>(services, configureStorage: null);
+        AddIntegrationEventTransportStorageCore<TContext>(services);
+
+        return services;
+    }
+
     private static IServiceCollection AddPostgreSqlIntegrationEventTransportProducerCore<TContext>(
         IServiceCollection services,
         string consumerName,
@@ -193,7 +214,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
 
         AddIntegrationEventStorageOptions<TContext>(services, configureStorage);
         services.TryAddSingleton(TimeProvider.System);
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventTransportDbContextConfiguration<TContext>>());
+        AddIntegrationEventTransportStorageCore<TContext>(services);
         services.AddKeyedScoped<IEventEnvelopePublisher>(
             typeof(TContext),
             (serviceProvider, _) => new PostgreSqlIntegrationEventTransportPublisher<TContext>(
@@ -234,7 +255,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
                 IValidateOptions<IntegrationEventOutboxRelayOptions>,
                 IntegrationEventOutboxRelayOptionsValidator>());
         services.TryAddSingleton(TimeProvider.System);
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventTransportDbContextConfiguration<TContext>>());
+        AddIntegrationEventTransportStorageCore<TContext>(services);
         services.AddSingleton(sp => new PostgreSqlIntegrationEventTransportConsumer<TContext>(
             sp.GetRequiredService<IServiceScopeFactory>(),
             sp.GetRequiredService<TimeProvider>(),
@@ -280,5 +301,14 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
             ServiceDescriptor.Singleton<
                 IValidateOptions<IntegrationEventStorageOptions>,
                 IntegrationEventStorageOptionsValidator>());
+    }
+
+    private static void AddIntegrationEventTransportStorageCore<TContext>(IServiceCollection services)
+        where TContext : DbContext
+    {
+        services.TryAddEnumerable(
+            ServiceDescriptor.Singleton<
+                IDbContextConfiguration<TContext>,
+                IntegrationEventTransportDbContextConfiguration<TContext>>());
     }
 }

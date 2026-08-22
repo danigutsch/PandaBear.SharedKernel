@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -53,6 +55,14 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         services.AddLogging();
         services.AddSingleton<IEventEnvelopePublisher>(applicationPublisher);
         services.AddSingleton<IIntegrationEventSerializer, ComposedMessagingTestIntegrationEventSerializer>();
+        services.AddKeyedSingleton<IIntegrationEventSerializer>(
+            typeof(FirstMessagingDbContext),
+            new ContextQualifiedMessagingTestIntegrationEventSerializer(
+                ContextQualifiedMessagingTestIntegrationEventSerializer.FirstPayload));
+        services.AddKeyedSingleton<IIntegrationEventSerializer>(
+            typeof(SecondMessagingDbContext),
+            new ContextQualifiedMessagingTestIntegrationEventSerializer(
+                ContextQualifiedMessagingTestIntegrationEventSerializer.SecondPayload));
         services.AddIntegrationEventOutbox<FirstMessagingDbContext>(options =>
         {
             options.Schema = "first_messaging";
@@ -170,6 +180,31 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         var secondCount = await secondDbContext.Set<IntegrationEventOutboxMessage>().CountAsync(ct);
 
         return (firstCount, secondCount);
+    }
+
+    public async ValueTask<(string? First, string? Second)> GetSingleOutboxPayloads(CancellationToken ct)
+    {
+        await using var scope = provider.CreateAsyncScope();
+        var firstDbContext = scope.ServiceProvider.GetRequiredService<FirstMessagingDbContext>();
+        var secondDbContext = scope.ServiceProvider.GetRequiredService<SecondMessagingDbContext>();
+        var firstPayload = await firstDbContext.Set<IntegrationEventOutboxMessage>()
+            .Select(message => message.Payload)
+            .SingleAsync(ct);
+        var secondPayload = await secondDbContext.Set<IntegrationEventOutboxMessage>()
+            .Select(message => message.Payload)
+            .SingleAsync(ct);
+
+        return (firstPayload, secondPayload);
+    }
+
+    public async ValueTask<string?> GetSecondOutboxPayload(CancellationToken ct)
+    {
+        await using var scope = provider.CreateAsyncScope();
+        var secondDbContext = scope.ServiceProvider.GetRequiredService<SecondMessagingDbContext>();
+
+        return await secondDbContext.Set<IntegrationEventOutboxMessage>()
+            .Select(message => message.Payload)
+            .SingleAsync(ct);
     }
 
     public async ValueTask EnqueueDomainEventInSecondContext(CancellationToken ct)
@@ -382,6 +417,7 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
             options.OutboxTableName = "outbox_messages";
             options.TransportSchema = "messaging";
             options.TransportTableName = "transport_messages";
+            options.ExcludeTransportFromMigrations = true;
         });
         services.AddPostgreSqlIntegrationEventTransportProducer<SplitSchemaMessagingDbContext>("split-schema-consumer");
         services.AddDbContext<SplitSchemaMessagingDbContext>(options =>
@@ -394,7 +430,9 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         await using var scope = provider.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<SplitSchemaMessagingDbContext>();
         var outbox = dbContext.Model.FindEntityType(typeof(IntegrationEventOutboxMessage)).ShouldNotBeNull();
-        var transport = dbContext.Model.FindEntityType(typeof(IntegrationEventTransportMessage)).ShouldNotBeNull();
+        var transport = dbContext.GetService<IDesignTimeModel>().Model
+            .FindEntityType(typeof(IntegrationEventTransportMessage))
+            .ShouldNotBeNull();
 
         return (
             outbox.GetSchema().ShouldNotBeNull(),
@@ -403,6 +441,32 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
             transport.GetTableName().ShouldNotBeNull(),
             PostgreSqlIntegrationEventOutboxClaimStrategy<SplitSchemaMessagingDbContext>.CreateClaimSql(outbox),
             PostgreSqlIntegrationEventTransportClaimSql.CreateClaimSql(transport));
+    }
+
+    public static async ValueTask<bool> IsSplitSchemaTransportExcludedFromMigrations()
+    {
+        var services = new ServiceCollection();
+        services.ConfigureIntegrationEventStorage<SplitSchemaMessagingDbContext>(options =>
+        {
+            options.TransportSchema = "messaging";
+            options.TransportTableName = "transport_messages";
+            options.ExcludeTransportFromMigrations = true;
+        });
+        services.AddIntegrationEventTransportStorage<SplitSchemaMessagingDbContext>();
+        services.AddDbContext<SplitSchemaMessagingDbContext>(options =>
+            options.UseInMemoryDatabase($"split-schema-ownership-{Guid.CreateVersion7():N}"));
+        await using var provider = services.BuildServiceProvider(new ServiceProviderOptions
+        {
+            ValidateOnBuild = true,
+            ValidateScopes = true,
+        });
+        await using var scope = provider.CreateAsyncScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<SplitSchemaMessagingDbContext>();
+        var transport = dbContext.GetService<IDesignTimeModel>().Model
+            .FindEntityType(typeof(IntegrationEventTransportMessage))
+            .ShouldNotBeNull();
+
+        return transport.IsTableExcludedFromMigrations();
     }
 
     public async ValueTask<(string FirstOutbox, string FirstTransport, string SecondOutbox, string SecondTransport)> GetClaimSql()

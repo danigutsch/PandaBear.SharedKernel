@@ -22,6 +22,21 @@ public sealed class ContextQualifiedMessagingRegistrationTests
     }
 
     [Fact]
+    public async Task Context_qualified_outboxes_use_their_own_serializers()
+    {
+        // Arrange
+        await using var scenario = ContextQualifiedMessagingScenario.Create();
+
+        // Act
+        await scenario.EnqueueInEachContext(TestContext.Current.CancellationToken);
+        var payloads = await scenario.GetSingleOutboxPayloads(TestContext.Current.CancellationToken);
+
+        // Assert
+        payloads.First.ShouldBe(ContextQualifiedMessagingTestIntegrationEventSerializer.FirstPayload);
+        payloads.Second.ShouldBe(ContextQualifiedMessagingTestIntegrationEventSerializer.SecondPayload);
+    }
+
+    [Fact]
     public async Task Domain_event_outbox_uses_the_current_save_context()
     {
         // Arrange
@@ -32,8 +47,10 @@ public sealed class ContextQualifiedMessagingRegistrationTests
 
         // Assert
         var counts = await scenario.CountOutboxMessages(TestContext.Current.CancellationToken);
+        var secondPayload = await scenario.GetSecondOutboxPayload(TestContext.Current.CancellationToken);
         counts.First.ShouldBe(0);
         counts.Second.ShouldBe(1);
+        secondPayload.ShouldBe(ContextQualifiedMessagingTestIntegrationEventSerializer.SecondPayload);
     }
 
     [Fact]

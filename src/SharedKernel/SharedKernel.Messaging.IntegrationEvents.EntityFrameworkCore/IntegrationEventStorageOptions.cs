@@ -35,6 +35,11 @@ public sealed class IntegrationEventStorageOptions
     /// </summary>
     public string TransportTableName { get; set; } = DefaultTransportTableName;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the transport table is mapped for runtime access but excluded from this context's migrations.
+    /// </summary>
+    public bool ExcludeTransportFromMigrations { get; set; }
+
     internal string EffectiveOutboxSchema => OutboxSchema ?? Schema;
 
     internal string EffectiveTransportSchema => TransportSchema ?? Schema;
