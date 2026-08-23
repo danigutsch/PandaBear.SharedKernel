@@ -6,6 +6,10 @@ namespace SharedKernel.Mediator.PackageConsumptionTests;
 public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)
     : IClassFixture<MediatorPackageFeedFixture>
 {
+    private const string GeneratedAsyncScopeCreation =
+        "await using var scope = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.CreateAsyncScope(scopeFactory);";
+    private const string GeneratedSynchronousScopeCreation = "scopeFactory.CreateScope()";
+
     [Fact]
     public async Task Abstractions_package_can_be_consumed_by_a_fresh_project()
     {
@@ -94,9 +98,9 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         integrationEventGeneration.ShouldContain("GeneratedIntegrationEventEnvelopePublisher", StringComparison.Ordinal);
         integrationEventGeneration.ShouldNotContain("IServiceProvider", StringComparison.Ordinal);
         integrationEventGeneration.ShouldContain(
-            "await using var scope = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.CreateAsyncScope(scopeFactory);",
+            GeneratedAsyncScopeCreation,
             StringComparison.Ordinal);
-        integrationEventGeneration.ShouldNotContain("scopeFactory.CreateScope()", StringComparison.Ordinal);
+        integrationEventGeneration.ShouldNotContain(GeneratedSynchronousScopeCreation, StringComparison.Ordinal);
         integrationEventGeneration.ShouldContain(
             "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Consumer.TourCreatedIntegrationEvent>, global::Consumer.TourCreatedIntegrationEventHandler>",
             StringComparison.Ordinal);
