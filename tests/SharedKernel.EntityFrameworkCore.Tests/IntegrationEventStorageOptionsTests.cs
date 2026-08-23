@@ -157,8 +157,12 @@ public sealed class IntegrationEventStorageOptionsTests
     }
 
     [Fact]
-    public async Task Default_registrations_keep_existing_model_mappings()
+    public async Task Default_registrations_do_not_reuse_transport_only_cached_model()
     {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        _ = await ContextQualifiedMessagingScenario.PublishWithApplicationRegisteredAfterProducer(ct);
+
         // Act
         var mappings = await ContextQualifiedMessagingScenario.GetDefaultStorageMappings();
 

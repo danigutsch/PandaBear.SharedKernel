@@ -120,7 +120,8 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         services.AddPostgreSqlIntegrationEventTransportProducer<DefaultMessagingDbContext>("producer-first");
         services.TryAddScoped<IEventEnvelopePublisher>(_ => applicationPublisher);
         services.AddDbContext<DefaultMessagingDbContext>(options =>
-            options.UseInMemoryDatabase($"producer-first-{Guid.CreateVersion7():N}"));
+            options.UseInMemoryDatabase($"producer-first-{Guid.CreateVersion7():N}")
+                .EnableServiceProviderCaching(false));
         await using var provider = services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateOnBuild = true,
@@ -394,7 +395,8 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         services.AddIntegrationEventInbox<DefaultMessagingDbContext>();
         services.AddPostgreSqlIntegrationEventTransportProducer<DefaultMessagingDbContext>("default-consumer");
         services.AddDbContext<DefaultMessagingDbContext>(options =>
-            options.UseInMemoryDatabase($"default-{Guid.CreateVersion7():N}"));
+            options.UseInMemoryDatabase($"default-{Guid.CreateVersion7():N}")
+                .EnableServiceProviderCaching(false));
         await using var provider = services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateOnBuild = true,
