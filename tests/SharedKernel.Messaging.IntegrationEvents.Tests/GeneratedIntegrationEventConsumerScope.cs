@@ -12,12 +12,9 @@ internal sealed class GeneratedIntegrationEventConsumerScope : IDisposable
 
         scope = serviceProvider.CreateScope();
         Publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
-        Handler = scope.ServiceProvider.GetRequiredService<CapturingIntegrationEventHandler>();
     }
 
     public IEventEnvelopePublisher Publisher { get; }
-
-    public CapturingIntegrationEventHandler Handler { get; }
 
     public void Dispose()
     {

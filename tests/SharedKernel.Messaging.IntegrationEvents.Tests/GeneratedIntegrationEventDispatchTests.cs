@@ -123,31 +123,51 @@ public sealed class GeneratedIntegrationEventDispatchTests
         using var host = GeneratedIntegrationEventTestServices.CreateConsumerHost();
         using var delivery = host.OpenDelivery();
         var publisher = delivery.Publisher;
-        var handler = delivery.Handler;
         var eventId = Guid.CreateVersion7();
         var occurredAt = DateTimeOffset.Parse("2026-07-05T12:30:00+00:00", CultureInfo.InvariantCulture);
         var integrationEvent = new TestIntegrationEvent(eventId, occurredAt, "Rio de Janeiro");
         var serializer = host.Serializer;
         var envelope = TestEventEnvelopeFactory.Create(integrationEvent, serializer.Serialize(integrationEvent));
         using var cancellationTokenSource = new CancellationTokenSource();
-        using var secondDelivery = host.OpenDelivery();
-        var secondHandler = secondDelivery.Handler;
+        host.Handlers.ShouldBeEmpty();
 
         // Act
         await publisher.Publish(envelope, cancellationTokenSource.Token);
 
         // Assert
+        var handler = host.Handlers.ShouldHaveSingleItem();
         var deliveredEvent = handler.IntegrationEvent.ShouldNotBeNull();
         deliveredEvent.EventId.ShouldBe(eventId);
         deliveredEvent.OccurredAt.ShouldBe(occurredAt);
         deliveredEvent.Name.ShouldBe("Rio de Janeiro");
         handler.CancellationToken.ShouldBe(cancellationTokenSource.Token);
         handler.InvocationCount.ShouldBe(1);
-        ReferenceEquals(handler, secondHandler).ShouldBeFalse();
     }
 
     [Fact]
-    public async Task Publish_delivers_two_registered_event_types_through_one_scoped_handler()
+    public async Task Publish_awaits_async_only_handler_disposal_without_post_success_failure()
+    {
+        // Arrange
+        using var host = GeneratedIntegrationEventTestServices.CreateConsumerHost();
+        using var delivery = host.OpenDelivery();
+        var integrationEvent = new TestIntegrationEvent(
+            Guid.CreateVersion7(),
+            DateTimeOffset.Parse("2026-07-05T12:30:00+00:00", CultureInfo.InvariantCulture),
+            "Rio de Janeiro");
+        var envelope = TestEventEnvelopeFactory.Create(integrationEvent, host.Serializer.Serialize(integrationEvent));
+
+        // Act
+        await delivery.Publisher.Publish(envelope, CancellationToken.None);
+
+        // Assert
+        var handler = host.Handlers.ShouldHaveSingleItem();
+        handler.InvocationCount.ShouldBe(1);
+        handler.IsDisposedAsynchronously.ShouldBeTrue();
+        handler.DisposeAsyncCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public async Task Publish_delivers_two_registered_event_types_through_separate_scoped_handlers()
     {
         // Arrange
         using var host = GeneratedIntegrationEventTestServices.CreateConsumerHost();
@@ -163,9 +183,16 @@ public sealed class GeneratedIntegrationEventDispatchTests
         await delivery.Publisher.Publish(updatedEnvelope, CancellationToken.None);
 
         // Assert
-        delivery.Handler.IntegrationEvent.ShouldNotBeNull().ShouldBe(created);
-        delivery.Handler.UpdatedIntegrationEvent.ShouldNotBeNull().ShouldBe(updated);
-        delivery.Handler.InvocationCount.ShouldBe(2);
+        host.Handlers.ShouldHaveCount(2);
+        var createdHandler = host.Handlers[0];
+        var updatedHandler = host.Handlers[1];
+        createdHandler.IntegrationEvent.ShouldNotBeNull().ShouldBe(created);
+        createdHandler.InvocationCount.ShouldBe(1);
+        updatedHandler.UpdatedIntegrationEvent.ShouldNotBeNull().ShouldBe(updated);
+        updatedHandler.InvocationCount.ShouldBe(1);
+        ReferenceEquals(createdHandler, updatedHandler).ShouldBeFalse();
+        createdHandler.IsDisposedAsynchronously.ShouldBeTrue();
+        updatedHandler.IsDisposedAsynchronously.ShouldBeTrue();
     }
 
     [Fact]
@@ -185,7 +212,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
         _ = await publish.ShouldThrow<JsonException>();
 
         // Assert
-        delivery.Handler.InvocationCount.ShouldBe(0);
+        host.Handlers.ShouldBeEmpty();
     }
 
     [Fact]
@@ -207,23 +234,33 @@ public sealed class GeneratedIntegrationEventDispatchTests
         _ = await publish.ShouldThrowAssignableTo<OperationCanceledException>();
 
         // Assert
-        delivery.Handler.InvocationCount.ShouldBe(0);
+        host.Handlers.ShouldBeEmpty();
     }
 
     [Fact]
-    public void Disposing_the_delivery_scope_disposes_the_closed_typed_handler()
+    public async Task Each_publish_creates_and_asynchronously_disposes_a_closed_typed_handler_scope()
     {
         // Arrange
         using var host = GeneratedIntegrationEventTestServices.CreateConsumerHost();
-        var delivery = host.OpenDelivery();
-        var handler = delivery.Handler;
+        using var delivery = host.OpenDelivery();
+        var integrationEvent = new TestIntegrationEvent(
+            Guid.CreateVersion7(),
+            DateTimeOffset.Parse("2026-07-05T12:30:00+00:00", CultureInfo.InvariantCulture),
+            "Rio de Janeiro");
+        var envelope = TestEventEnvelopeFactory.Create(integrationEvent, host.Serializer.Serialize(integrationEvent));
 
         // Act
-        delivery.Dispose();
+        await delivery.Publisher.Publish(envelope, CancellationToken.None);
+        await delivery.Publisher.Publish(envelope, CancellationToken.None);
 
         // Assert
-        handler.IsDisposed.ShouldBeTrue();
-        handler.DisposeCount.ShouldBe(1);
+        host.Handlers.ShouldHaveCount(2);
+        ReferenceEquals(host.Handlers[0], host.Handlers[1]).ShouldBeFalse();
+        foreach (var handler in host.Handlers)
+        {
+            handler.IsDisposedAsynchronously.ShouldBeTrue();
+            handler.DisposeAsyncCount.ShouldBe(1);
+        }
     }
 
     [Fact]

@@ -3,7 +3,7 @@ namespace SharedKernel.Messaging.IntegrationEvents.Tests;
 internal sealed class CapturingIntegrationEventHandler :
     IIntegrationEventHandler<TestIntegrationEvent>,
     IIntegrationEventHandler<TestUpdatedIntegrationEvent>,
-    IDisposable
+    IAsyncDisposable
 {
     public TestIntegrationEvent? IntegrationEvent { get; private set; }
 
@@ -13,11 +13,11 @@ internal sealed class CapturingIntegrationEventHandler :
 
     public int InvocationCount { get; private set; }
 
-    public int DisposeCount { get; private set; }
+    public int DisposeAsyncCount { get; private set; }
 
     public bool ThrowWhenCancelled { get; set; }
 
-    public bool IsDisposed { get; private set; }
+    public bool IsDisposedAsynchronously { get; private set; }
 
     public ValueTask Handle(TestIntegrationEvent integrationEvent, CancellationToken ct)
     {
@@ -45,9 +45,10 @@ internal sealed class CapturingIntegrationEventHandler :
         return ValueTask.CompletedTask;
     }
 
-    public void Dispose()
+    public ValueTask DisposeAsync()
     {
-        DisposeCount++;
-        IsDisposed = true;
+        DisposeAsyncCount++;
+        IsDisposedAsynchronously = true;
+        return ValueTask.CompletedTask;
     }
 }
