@@ -5,7 +5,7 @@ public class ExplicitServiceNameDetectorTests
     [Fact]
     public void Detect_sets_service_name_attribute()
     {
-        var detector = new SharedKernel.Observability.ExplicitServiceNameDetector("observable-app");
+        var detector = new ExplicitServiceNameDetector("observable-app");
         var resource = detector.Detect();
         var dict = resource.Attributes.ToDictionary(x => x.Key, x => x.Value);
         (dict.ContainsKey("service.name")).ShouldBeTrue();
@@ -15,7 +15,7 @@ public class ExplicitServiceNameDetectorTests
     [Fact]
     public void Detect_sets_service_version_when_provided()
     {
-        var detector = new SharedKernel.Observability.ExplicitServiceNameDetector("observable-app", "1.2.3");
+        var detector = new ExplicitServiceNameDetector("observable-app", "1.2.3");
         var resource = detector.Detect();
         var dict = resource.Attributes.ToDictionary(x => x.Key, x => x.Value);
         (dict.ContainsKey("service.version")).ShouldBeTrue();
@@ -25,7 +25,7 @@ public class ExplicitServiceNameDetectorTests
     [Fact]
     public void Detect_does_not_set_service_version_when_whitespace()
     {
-        var detector = new SharedKernel.Observability.ExplicitServiceNameDetector("observable-app", "  ");
+        var detector = new ExplicitServiceNameDetector("observable-app", "  ");
         var resource = detector.Detect();
         var dict = resource.Attributes.ToDictionary(x => x.Key, x => x.Value);
         (dict.ContainsKey("service.version")).ShouldBeFalse();

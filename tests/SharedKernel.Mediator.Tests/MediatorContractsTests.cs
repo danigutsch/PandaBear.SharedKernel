@@ -1,6 +1,6 @@
 namespace SharedKernel.Mediator.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ContractsCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ContractsCapability)]
 public sealed class MediatorContractsTests
 {
     [Fact]

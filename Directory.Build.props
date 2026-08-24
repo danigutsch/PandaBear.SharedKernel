@@ -20,8 +20,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(IsAspireHost)' == 'true'">
-		<!-- Keep orchestration dependencies lock-file managed while CLI bundle delegation is preview. -->
-		<NoWarn>$(NoWarn);ASPIRE010</NoWarn>
+		<!-- Keep orchestration tooling paired with the pinned AppHost SDK. -->
+		<AspireUseCliBundle>true</AspireUseCliBundle>
+		<AspireCliInvocationMode>DnxPinned</AspireCliInvocationMode>
 	</PropertyGroup>
 
 	<PropertyGroup>
