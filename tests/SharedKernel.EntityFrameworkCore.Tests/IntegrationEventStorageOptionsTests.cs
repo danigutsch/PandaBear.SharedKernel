@@ -173,6 +173,9 @@ public sealed class IntegrationEventStorageOptionsTests
     [Fact]
     public async Task Per_table_schema_overrides_map_one_context_to_distinct_table_owners()
     {
+        // Arrange
+        _ = await ContextQualifiedMessagingScenario.IsSplitSchemaTransportExcludedFromMigrations();
+
         // Act
         var storage = await ContextQualifiedMessagingScenario.GetSplitSchemaStorage();
 

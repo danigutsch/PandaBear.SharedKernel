@@ -19,6 +19,11 @@
 		<NuGetAuditLevel>high</NuGetAuditLevel>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(IsAspireHost)' == 'true'">
+		<!-- Keep orchestration dependencies lock-file managed while CLI bundle delegation is preview. -->
+		<NoWarn>$(NoWarn);ASPIRE010</NoWarn>
+	</PropertyGroup>
+
 	<PropertyGroup>
 		<ComputedSemVer Condition="'$(ComputedSemVer)' == ''">0.1.0-alpha.0</ComputedSemVer>
 		<ComputedAssemblyVersion Condition="'$(ComputedAssemblyVersion)' == ''">0.0.0.0</ComputedAssemblyVersion>

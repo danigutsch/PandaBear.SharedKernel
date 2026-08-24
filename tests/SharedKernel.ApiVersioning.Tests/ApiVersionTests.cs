@@ -70,7 +70,7 @@ public sealed class ApiVersionTests
     public void Parse_rejects_blank_version_text(string value)
     {
         // Act
-        Action action = () => _ = ApiVersion.Parse(value!);
+        Action action = () => _ = ApiVersion.Parse(value);
 
         // Assert
         action.ShouldThrow<ArgumentException>();

@@ -293,7 +293,7 @@ internal sealed class CodeFixTestWorkspace
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true);
 
-        return Diagnostic.Create(descriptor, Location.Create(syntaxTree!, span), properties);
+        return Diagnostic.Create(descriptor, Location.Create(syntaxTree, span), properties);
     }
 
     /// <summary>
