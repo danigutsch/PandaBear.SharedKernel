@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
 namespace SharedKernel.Mediator.SourceGenerator;
@@ -203,19 +204,24 @@ internal static partial class DiscoveryModelBuilder
 
     private static ResponseDescriptor CreateResponseDescriptor(ITypeSymbol type)
     {
-        var namedType = type as INamedTypeSymbol;
-        var isConstructedGenericType = namedType is { IsGenericType: true, TypeArguments.Length: > 0 };
+        var interfaces = type.AllInterfaces
+            .Select(GetTypeDisplayString)
+            .OrderBy(static interfaceName => interfaceName, StringComparer.Ordinal)
+            .ToImmutableArray();
 
-        return new ResponseDescriptor(
-            GetTypeDisplayString(type),
-            isConstructedGenericType,
-            isConstructedGenericType ? GetMetadataName(namedType!.OriginalDefinition) : null,
-            isConstructedGenericType
-                ? [.. namedType!.TypeArguments.Select(GetTypeDisplayString)]
-                : [],
-            [.. type.AllInterfaces
-                .Select(GetTypeDisplayString)
-                .OrderBy(static interfaceName => interfaceName, StringComparer.Ordinal)]);
+        return type is INamedTypeSymbol { IsGenericType: true, TypeArguments.Length: > 0 } namedType
+            ? new ResponseDescriptor(
+                GetTypeDisplayString(type),
+                true,
+                GetMetadataName(namedType.OriginalDefinition),
+                [.. namedType.TypeArguments.Select(GetTypeDisplayString)],
+                interfaces)
+            : new ResponseDescriptor(
+                GetTypeDisplayString(type),
+                false,
+                null,
+                [],
+                interfaces);
     }
 
     private static bool HasCompatibleRequestHandleMethod(

@@ -4,11 +4,11 @@
     "net10.0": {
       "Magick.NET-Q8-AnyCPU": {
         "type": "Direct",
-        "requested": "[14.14.0, )",
-        "resolved": "14.14.0",
-        "contentHash": "Af7QdAb1AfLN09gpr4lzrTjioDez1hW1IQN3Tb0qJWi8NY3ywTJyteoH/8P/mripXq4D5Khz0uWBEX5O59i5Zw==",
+        "requested": "[14.16.0, )",
+        "resolved": "14.16.0",
+        "contentHash": "mV5igNia0VyUtRAmqUpI/ZBEL78+0A+JxPoOs7clwlZEvPCsvk+uF0hLl10zaFYmH5I8BaqVpI2+R+td1bbNrg==",
         "dependencies": {
-          "Magick.NET.Core": "14.14.0"
+          "Magick.NET.Core": "14.16.0"
         }
       },
       "Microsoft.CodeAnalysis.PublicApiAnalyzers": {
@@ -19,20 +19,20 @@
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[10.0.10, )",
-        "resolved": "10.0.10",
-        "contentHash": "f5VCIE7AJpd5YvzNTeMGVzQIgyE9tX+AreTYwQF+REbu+DZo/2Ae+jNSwhPEYrVz6RRkd7y8ubXjk6Nn6Ka+Cg=="
+        "requested": "[10.0.11, )",
+        "resolved": "10.0.11",
+        "contentHash": "IBf7lbovvjGWVWXZX5cJ/cO0WXbId0Zq4BuSeT94mGZuOAP66oMeH9PTBZ9Jpp3Jb6jtK0qm/NyUbPRo1gC/wQ=="
       },
       "SonarAnalyzer.CSharp": {
         "type": "Direct",
-        "requested": "[10.27.0.140913, )",
-        "resolved": "10.27.0.140913",
-        "contentHash": "cxk12QjN9io1SjN36B1QO+9dRf+ek2CGfQGsOWtHBojE35cKchKJod48raxZwe47jHhzmAUO4AJSh7+hF0GS4g=="
+        "requested": "[10.33.0.1635, )",
+        "resolved": "10.33.0.1635",
+        "contentHash": "nOwgvMh7p64z62GTy2n4Ki51DVy4Q2ejxxfuclW6Y5u6Htk1i2RNRqxuONiZ/4aaBi8V6RwzuCcGTOFcoVoQOg=="
       },
       "Magick.NET.Core": {
         "type": "Transitive",
-        "resolved": "14.14.0",
-        "contentHash": "pACR3w4QmjBkebtYvZwNk0oow8YwEAF4CLfzSrGmPcWsObL8wvt/lOXsrzK9M0cVwYES7jp+bdnHQBTeQgfoIg=="
+        "resolved": "14.16.0",
+        "contentHash": "ddBX/Zb0sCsX4agqHdHeqUx+grfw8I7GFU+lgut3mtNl7roxbxemSQFGLIJXtzwPuAHxbaMtkXA+ijVl02EUhQ=="
       }
     }
   }

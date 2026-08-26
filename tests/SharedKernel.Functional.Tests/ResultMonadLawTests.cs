@@ -1,8 +1,8 @@
 namespace SharedKernel.Functional.Tests;
 
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
-[Trait(global::SharedKernel.Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MonadLawsTheory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MonadLawsTheory)]
 public sealed class ResultMonadLawTests
 {
     [Fact]

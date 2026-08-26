@@ -48,7 +48,7 @@ public sealed class CompositeDomainEventDispatcherTests
         [
             new CapturingDomainEventDispatchHandler("audit", calls),
         ]);
-        Domain.IDomainEvent domainEvent = new TestDomainEvent("document-finalized");
+        IDomainEvent domainEvent = new TestDomainEvent("document-finalized");
 
         // Act
         await dispatcher.Dispatch(domainEvent, CancellationToken.None);
@@ -98,7 +98,7 @@ public sealed class CompositeDomainEventDispatcherTests
         // Arrange
         var dispatcher = new CompositeDomainEventDispatcher([]);
         Func<Task> dispatch = async () =>
-            await dispatcher.Dispatch((Domain.IDomainEvent)null!, TestContext.Current.CancellationToken);
+            await dispatcher.Dispatch((IDomainEvent)null!, TestContext.Current.CancellationToken);
 
         // Act
         var exception = await dispatch.ShouldThrow<ArgumentNullException>();

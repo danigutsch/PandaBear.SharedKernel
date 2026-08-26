@@ -423,7 +423,8 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         });
         services.AddPostgreSqlIntegrationEventTransportProducer<SplitSchemaMessagingDbContext>("split-schema-consumer");
         services.AddDbContext<SplitSchemaMessagingDbContext>(options =>
-            options.UseInMemoryDatabase($"split-schema-{Guid.CreateVersion7():N}"));
+            options.UseInMemoryDatabase($"split-schema-{Guid.CreateVersion7():N}")
+                .EnableServiceProviderCaching(false));
         await using var provider = services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateOnBuild = true,
@@ -456,7 +457,8 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         });
         services.AddIntegrationEventTransportStorage<SplitSchemaMessagingDbContext>();
         services.AddDbContext<SplitSchemaMessagingDbContext>(options =>
-            options.UseInMemoryDatabase($"split-schema-ownership-{Guid.CreateVersion7():N}"));
+            options.UseInMemoryDatabase($"split-schema-ownership-{Guid.CreateVersion7():N}")
+                .EnableServiceProviderCaching(false));
         await using var provider = services.BuildServiceProvider(new ServiceProviderOptions
         {
             ValidateOnBuild = true,
