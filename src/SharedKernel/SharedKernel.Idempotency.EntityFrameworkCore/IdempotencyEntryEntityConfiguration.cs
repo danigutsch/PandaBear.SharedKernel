@@ -9,14 +9,29 @@ namespace SharedKernel.Idempotency.EntityFrameworkCore;
 /// </summary>
 internal sealed class IdempotencyEntryEntityConfiguration : IEntityTypeConfiguration<IdempotencyEntryEntity>
 {
-    private const string TableName = "idempotency_keys";
+    private readonly string schema;
+    private readonly string tableName;
+
+    public IdempotencyEntryEntityConfiguration()
+        : this(SharedKernelSchemas.Messaging, IdempotencyStorageOptions.DefaultTableName)
+    {
+    }
+
+    public IdempotencyEntryEntityConfiguration(string schema, string tableName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(schema);
+        ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
+
+        this.schema = schema;
+        this.tableName = tableName;
+    }
 
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<IdempotencyEntryEntity> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.ToTable(TableName, SharedKernelSchemas.Messaging);
+        builder.ToTable(tableName, schema);
         builder.HasKey(entry => new { entry.Scope, entry.Key });
         builder.Property(entry => entry.Scope).HasMaxLength(200).IsRequired();
         builder.Property(entry => entry.Key).HasMaxLength(255).IsRequired();

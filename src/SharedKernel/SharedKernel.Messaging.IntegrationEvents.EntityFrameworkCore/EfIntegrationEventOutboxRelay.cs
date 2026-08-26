@@ -11,23 +11,25 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 internal sealed class EfIntegrationEventOutboxRelay<TContext>(
     IServiceScopeFactory scopeFactory,
     TimeProvider timeProvider,
-    IOptions<IntegrationEventOutboxRelayOptions> options)
+    IOptionsMonitor<IntegrationEventOutboxRelayOptions> options)
     where TContext : DbContext
 {
     public async ValueTask<int> PublishPending(CancellationToken ct) =>
-        await PublishPending(options.Value.BatchSize, ct).ConfigureAwait(false);
+        await PublishPending(options.Get(IntegrationEventOptionsNames.Relay<TContext>()).BatchSize, ct).ConfigureAwait(false);
 
     internal async ValueTask<int> PublishPending(int batchSize, CancellationToken ct)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(batchSize);
 
-        using var scope = scopeFactory.CreateScope();
+        var scope = scopeFactory.CreateAsyncScope();
+        await using var scopeDisposal = scope.ConfigureAwait(false);
         var dbContext = scope.ServiceProvider.GetRequiredService<TContext>();
-        var publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
+        var publisher = scope.ServiceProvider.GetKeyedService<IEventEnvelopePublisher>(typeof(TContext))
+            ?? scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
         var claimStrategy = scope.ServiceProvider.GetRequiredService<IIntegrationEventOutboxClaimStrategy<TContext>>();
         var now = timeProvider.GetUtcNow();
         var claimedBy = Guid.CreateVersion7().ToString("N");
-        var claimedUntil = now.Add(options.Value.ClaimLeaseDuration);
+        var claimedUntil = now.Add(options.Get(IntegrationEventOptionsNames.Relay<TContext>()).ClaimLeaseDuration);
         var messages = await claimStrategy.ClaimPending(dbContext, batchSize, now, claimedBy, claimedUntil, ct)
             .ConfigureAwait(false);
 

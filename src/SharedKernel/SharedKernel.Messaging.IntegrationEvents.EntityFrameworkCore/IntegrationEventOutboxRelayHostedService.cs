@@ -8,11 +8,11 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 internal sealed class IntegrationEventOutboxRelayHostedService<TContext>(
     EfIntegrationEventOutboxRelay<TContext> relay,
     ILogger<IntegrationEventOutboxRelayHostedService<TContext>> logger,
-    IOptions<IntegrationEventOutboxRelayOptions> options)
+    IOptionsMonitor<IntegrationEventOutboxRelayOptions> options)
     : PollingBackgroundService(
         logger,
         $"integration-event-outbox-relay:{typeof(TContext).Name}",
-        options.Value.PollInterval)
+        options.Get(IntegrationEventOptionsNames.Relay<TContext>()).PollInterval)
     where TContext : DbContext
 {
     protected override async ValueTask<int> ExecuteBatch(CancellationToken stoppingToken) =>

@@ -1,3 +1,10 @@
 #nullable enable
 SharedKernel.Idempotency.EntityFrameworkCore.IdempotencyServiceCollectionExtensions
+SharedKernel.Idempotency.EntityFrameworkCore.IdempotencyStorageOptions
+SharedKernel.Idempotency.EntityFrameworkCore.IdempotencyStorageOptions.IdempotencyStorageOptions() -> void
+SharedKernel.Idempotency.EntityFrameworkCore.IdempotencyStorageOptions.Schema.get -> string!
+SharedKernel.Idempotency.EntityFrameworkCore.IdempotencyStorageOptions.Schema.set -> void
+SharedKernel.Idempotency.EntityFrameworkCore.IdempotencyStorageOptions.TableName.get -> string!
+SharedKernel.Idempotency.EntityFrameworkCore.IdempotencyStorageOptions.TableName.set -> void
 static SharedKernel.Idempotency.EntityFrameworkCore.IdempotencyServiceCollectionExtensions.AddIdempotencyStore<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static SharedKernel.Idempotency.EntityFrameworkCore.IdempotencyServiceCollectionExtensions.AddIdempotencyStore<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<SharedKernel.Idempotency.EntityFrameworkCore.IdempotencyStorageOptions!>! configureStorage) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

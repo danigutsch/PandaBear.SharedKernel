@@ -78,6 +78,25 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
     }
 
     [Fact]
+    public async Task Consumer_accepts_a_decorated_unkeyed_application_publisher()
+    {
+        // Arrange
+        const string eventId = "consumer-decorated-application-publisher";
+        await Scenario.SeedMessage(eventId, TestContext.Current.CancellationToken);
+        var applicationPublisher = new RecordingEventEnvelopePublisher();
+        var decoratedPublisher = new DelegatingEventEnvelopePublisher(applicationPublisher);
+
+        // Act
+        var consumed = await Scenario.ConsumeWith(decoratedPublisher, TestContext.Current.CancellationToken);
+
+        // Assert
+        consumed.ShouldBe(1);
+        applicationPublisher.Published.ShouldHaveSingleItem().EventId.ShouldBe(eventId);
+        var message = await Scenario.GetMessage(eventId, TestContext.Current.CancellationToken);
+        message.ProcessedAt.ShouldNotBeNull();
+    }
+
+    [Fact]
     public async Task Consumer_records_retry_state_when_dispatch_fails()
     {
         // Arrange
@@ -158,5 +177,23 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
         publisher.InvocationCount.ShouldBe(2);
         publisher.DisposeCount.ShouldBe(1);
         consumed.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task Consumer_asynchronously_disposes_an_async_only_scoped_publisher()
+    {
+        // Arrange
+        await Scenario.SeedMessage("consumer-async-disposal", TestContext.Current.CancellationToken);
+        var publisher = new AsyncDisposableEventEnvelopePublisher();
+
+        // Act
+        var consumed = await Scenario.ConsumeWith(
+            publisher,
+            TestContext.Current.CancellationToken,
+            publisherLifetime: Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped);
+
+        // Assert
+        consumed.ShouldBe(1);
+        publisher.DisposeCount.ShouldBe(1);
     }
 }

@@ -9,14 +9,44 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 /// </summary>
 internal sealed class IntegrationEventTransportMessageConfiguration : IEntityTypeConfiguration<IntegrationEventTransportMessage>
 {
-    private const string TableName = "transport_messages";
+    private readonly string schema;
+    private readonly string tableName;
+    private readonly bool excludeFromMigrations;
+
+    public IntegrationEventTransportMessageConfiguration()
+        : this(
+            SharedKernelSchemas.Messaging,
+            IntegrationEventStorageOptions.DefaultTransportTableName,
+            excludeFromMigrations: false)
+    {
+    }
+
+    public IntegrationEventTransportMessageConfiguration(
+        string schema,
+        string tableName,
+        bool excludeFromMigrations)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(schema);
+        ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
+
+        this.schema = schema;
+        this.tableName = tableName;
+        this.excludeFromMigrations = excludeFromMigrations;
+    }
 
     /// <inheritdoc />
     public void Configure(EntityTypeBuilder<IntegrationEventTransportMessage> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        builder.ToTable(TableName, SharedKernelSchemas.Messaging);
+        if (excludeFromMigrations)
+        {
+            builder.ToTable(tableName, schema, table => table.ExcludeFromMigrations());
+        }
+        else
+        {
+            builder.ToTable(tableName, schema);
+        }
         builder.HasKey(message => message.Id);
         builder.Property(message => message.Id).ValueGeneratedNever();
         builder.Property(message => message.ConsumerName).HasMaxLength(IntegrationEventTransportMessage.ConsumerNameMaxLength).IsRequired();

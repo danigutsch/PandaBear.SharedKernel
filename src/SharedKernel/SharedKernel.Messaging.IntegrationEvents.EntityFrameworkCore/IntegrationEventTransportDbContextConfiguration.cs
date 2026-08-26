@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SharedKernel.EntityFrameworkCore;
 
 namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
@@ -10,6 +11,19 @@ namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
 internal sealed class IntegrationEventTransportDbContextConfiguration<TContext> : IDbContextConfiguration<TContext>
     where TContext : DbContext
 {
+    private readonly IOptionsMonitor<IntegrationEventStorageOptions>? storageOptions;
+
+    public IntegrationEventTransportDbContextConfiguration()
+    {
+    }
+
+    public IntegrationEventTransportDbContextConfiguration(IOptionsMonitor<IntegrationEventStorageOptions> storageOptions)
+    {
+        ArgumentNullException.ThrowIfNull(storageOptions);
+
+        this.storageOptions = storageOptions;
+    }
+
     /// <inheritdoc />
     public void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
@@ -21,6 +35,11 @@ internal sealed class IntegrationEventTransportDbContextConfiguration<TContext> 
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);
 
-        modelBuilder.ApplyConfiguration(new IntegrationEventTransportMessageConfiguration());
+        var options = storageOptions?.Get(IntegrationEventOptionsNames.Storage<TContext>())
+            ?? new IntegrationEventStorageOptions();
+        modelBuilder.ApplyConfiguration(new IntegrationEventTransportMessageConfiguration(
+            options.EffectiveTransportSchema,
+            options.TransportTableName,
+            options.ExcludeTransportFromMigrations));
     }
 }
