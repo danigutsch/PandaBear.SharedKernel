@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace SharedKernel.AspNetCore;
 
@@ -11,11 +12,30 @@ namespace SharedKernel.AspNetCore;
 /// </summary>
 public static class AspNetCoreForwardedHeadersExtensions
 {
+    private const string ForwardedHeadersConfigurationSectionName = "Security:ForwardedHeaders";
+
     private const string KnownProxiesSectionName = "KnownProxies";
 
     private const string KnownNetworksSectionName = "KnownNetworks";
 
     private const string ForwardLimitSectionName = "ForwardLimit";
+
+    /// <summary>
+    /// Registers forwarded-header options from the standard trusted-proxy configuration section.
+    /// </summary>
+    /// <param name="builder">The application builder.</param>
+    /// <typeparam name="TApplicationBuilder">The application builder type.</typeparam>
+    /// <returns>The same application builder.</returns>
+    public static TApplicationBuilder AddConfiguredTrustedForwardedHeaders<TApplicationBuilder>(
+        this TApplicationBuilder builder)
+        where TApplicationBuilder : IHostApplicationBuilder
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.Services.AddConfiguredTrustedForwardedHeaders(
+            builder.Configuration.GetSection(ForwardedHeadersConfigurationSectionName));
+        return builder;
+    }
 
     /// <summary>
     /// Registers forwarded-header options with configured trusted proxy addresses/networks.
@@ -61,6 +81,12 @@ public static class AspNetCoreForwardedHeadersExtensions
         var configuredForwardLimit = GetForwardLimit(configuration);
         if (knownProxies.Length == 0 && knownNetworks.Length == 0)
         {
+            if (options.KnownProxies.Count == 0 && options.KnownIPNetworks.Count == 0)
+            {
+                options.KnownProxies.Add(IPAddress.Loopback);
+                options.KnownProxies.Add(IPAddress.IPv6Loopback);
+            }
+
             if (configuredForwardLimit is not null)
             {
                 options.ForwardLimit = configuredForwardLimit.Value;
