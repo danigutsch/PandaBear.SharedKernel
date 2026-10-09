@@ -35,8 +35,18 @@ if __name__ == '__main__':
         central = ET.parse(consumer / 'Directory.Packages.props')
         versions = [p.get('Version') for p in central.iter('PackageVersion')
                     if p.get('Include', '').startswith('SharedKernel.')]
-        if not versions or any(v != '[' + evidence['packageVersion'] + ']' for v in versions):
-            raise ValueError('Consumer must pin exact candidate package versions using [version].')
+        if not versions or any(v not in (evidence['packageVersion'], '[' + evidence['packageVersion'] + ']') for v in versions):
+            raise ValueError('Consumer must declare the candidate minimum version before validating adoption.')
+        solution = ET.parse(consumer / 'ViajantesTurismo.slnx')
+        for project in solution.iter('Project'):
+            lock = consumer / Path(project.get('Path')).parent / 'packages.lock.json'
+            if not lock.exists():
+                raise ValueError(f'Consumer lock file is unavailable: {lock}')
+            for dependencies in json.loads(lock.read_text())['dependencies'].values():
+                for package, dependency in dependencies.items():
+                    if package.startswith('SharedKernel.') and dependency.get('type') != 'Project':
+                        if dependency.get('resolved') != evidence['packageVersion']:
+                            raise ValueError(f'{lock}: {package} does not resolve to the tested candidate.')
         config = candidate_path.parent / '.restore-check/NuGet.config'
         if not config.exists():
             config = candidate_path.parent / 'sample-checks/Mediator.Sample/NuGet.config'
