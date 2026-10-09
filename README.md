@@ -116,3 +116,38 @@ References: [local NuGet feeds](https://learn.microsoft.com/en-us/nuget/hosting-
 [package source mapping](https://learn.microsoft.com/en-us/nuget/consume-packages/package-source-mapping),
 [git-filter-repo](https://github.com/newren/git-filter-repo), and
 [.NET package validation](https://learn.microsoft.com/en-us/dotnet/fundamentals/package-validation/overview).
+
+## Library version policy
+
+Use SemVer 2.0 for the coordinated SharedKernel package set: patch for compatible fixes,
+minor for compatible additions, and major for breaking changes. Keep initial extraction under
+`0.1.0-alpha.*`; do not imply stable compatibility before a reviewed 1.0 release. Conventional
+Commit analysis in `SharedKernel.Versioning` calculates release impact, but API validation and
+human review must also account for behavioral changes and supported target frameworks.
+
+Use unique prerelease identifiers for every development pack. Build metadata (`+sha.*`) does
+not create a distinct NuGet package identity, so it cannot prevent overwriting versions. Record
+the source revision and package SHA-256 alongside each candidate. Keep stable assembly identity
+within a major release (`Major.0.0.0`), file versions numeric (`Major.Minor.Patch.0`), and the full
+SemVer plus source revision in informational versions. The existing `VersionOutput` implementation
+already applies these rules; do not change assembly identity merely for a prerelease suffix.
+
+Applications pin exact `[version]` ranges and commit lock files. Published library dependency
+ranges retain their declared compatibility requirements; application pins do not redefine the
+library API contract. Compare release candidates against the last accepted baseline and preserve
+immutable tested artifacts. A stable version has a different package identity from a prerelease:
+if that identity is needed, create and validate the stable artifact once before promoting it.
+Do not relabel a prerelease archive or repack an already tested version.
+
+See [Microsoft library versioning guidance](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning)
+and [NuGet version semantics](https://learn.microsoft.com/en-us/nuget/concepts/package-versioning).
+
+
+## Transitional consumer tests
+
+ViajantesTurismo still has tests of internal persistence, relay, and ASP.NET Core testing types.
+Their friend declarations remain temporarily so package adoption preserves those risk guards.
+The package consumer build reproduced inaccessible-member errors when those declarations were
+removed. They do not add public API. Remove these declarations only after transferring reusable
+internal tests and adapting application composition checks to public contracts. Until then, this
+application coupling is recorded as pending extraction cleanup and blocks stable promotion.
