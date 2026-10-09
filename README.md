@@ -132,7 +132,10 @@ within a major release (`Major.0.0.0`), file versions numeric (`Major.Minor.Patc
 SemVer plus source revision in informational versions. The existing `VersionOutput` implementation
 already applies these rules; do not change assembly identity merely for a prerelease suffix.
 
-Applications pin exact `[version]` ranges and commit lock files. Published library dependency
+Consumed dependency versions are minimum compatible versions (`10.0.11` means
+`[10.0.11,)`), allowing newer dependencies without exact pins or speculative upper bounds.
+Application lock files preserve reviewed resolutions in CI; explicit upgrades refresh those
+locks and run compatibility checks. Published library dependency
 ranges retain their declared compatibility requirements; application pins do not redefine the
 library API contract. Compare release candidates against the last accepted baseline and preserve
 immutable tested artifacts. A stable version has a different package identity from a prerelease:
