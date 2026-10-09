@@ -4,6 +4,25 @@ namespace SharedKernel.Versioning.Tests;
 public static class SharedKernelLocalFeedTests
 {
     [Fact]
+    public static async Task Missing_internal_packages_cannot_fall_back_to_public_feed()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        Directory.CreateDirectory(temporaryDirectory.OutputDirectory);
+
+        // Act
+        await SharedKernelLocalFeed.WriteNuGetConfig(
+            temporaryDirectory.OutputDirectory,
+            temporaryDirectory.PackageDirectory,
+            ["SharedKernel.Results"],
+            new Uri("https://example.test/v3/index.json"));
+        var config = await File.ReadAllTextAsync(Path.Combine(temporaryDirectory.OutputDirectory, "NuGet.config"), TestContext.Current.CancellationToken);
+
+        // Assert
+        config.ShouldContain("pattern=\"SharedKernel.*\"", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static void Reads_package_ids_from_valid_packages()
     {
         // Arrange

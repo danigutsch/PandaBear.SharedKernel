@@ -149,6 +149,7 @@ public static class SharedKernelLocalFeed
             new XElement("packageSourceMapping",
                 new XElement("packageSource",
                     new XAttribute("key", "sharedkernel-local"),
+                    new XElement("package", new XAttribute("pattern", "SharedKernel.*")),
                     packageIds.Select(packageId => new XElement("package", new XAttribute("pattern", packageId)))),
                 new XElement("packageSource",
                     new XAttribute("key", "nuget.org"),
