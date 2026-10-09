@@ -58,6 +58,8 @@ if __name__ == '__main__':
             ['dotnet', 'restore', 'ViajantesTurismo.slnx', '--locked-mode', '--configfile', str(config),
              '--packages', str(cache), '--no-cache', '-m:2'],
             ['dotnet', 'build', 'ViajantesTurismo.slnx', '-c', 'Release', '--no-restore', '-m:2'],
+            ['dotnet', 'run', '--project', 'tools/ViajantesTurismo.OpenApi.Tool', '-c', 'Release',
+             '--no-build', '--no-restore', '--', 'generate', 'all'],
             ['dotnet', 'test', '--solution', 'ViajantesTurismo.slnx', '-c', 'Release', '--no-build', '--no-restore']
         ]:
             subprocess.run(command, cwd=consumer, check=True)
