@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <IsAotCompatible>false</IsAotCompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../SharedKernel.Versioning.Tool/CommandRunner.cs" Link="CommandRunner.cs" />
+    <InternalsVisibleTo Include="SharedKernel.Repository.Tests" />
+  </ItemGroup>
+</Project>

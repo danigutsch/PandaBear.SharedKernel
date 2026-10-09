@@ -50,6 +50,15 @@ internal static class VersioningToolApplication
     {
         switch (args)
         {
+            case ["validate-candidate", .. var candidateArgs]:
+                await CandidateCommand.Run(CandidateCommandOptions.Parse(candidateArgs), output).ConfigureAwait(false);
+                return 0;
+            case ["smoke-packages", .. var smokeArgs]:
+                await PackageSmokeCommand.Run(CandidateCommandOptions.Parse(smokeArgs), output).ConfigureAwait(false);
+                return 0;
+            case ["consume-candidate", .. var consumeArgs]:
+                await CandidateCommand.Consume(CandidateCommandOptions.Parse(consumeArgs), output).ConfigureAwait(false);
+                return 0;
             case ["commit-impact", .. var messageParts]:
                 var message = string.Join(' ', messageParts);
                 var commit = ConventionalCommitParser.Parse(message);
@@ -108,6 +117,9 @@ internal static class VersioningToolApplication
         Usage:
           sharedkernel-version --help
           sharedkernel-version --version
+          sharedkernel-version validate-candidate [--version <semver>] [--repo-root <path>] [--baseline-version <semver>] [--aot]
+          sharedkernel-version smoke-packages --feed <path> --version <semver> [--repo-root <path>] [--aot]
+          sharedkernel-version consume-candidate --candidate <path> [--repo-root <path>] [--output <path>] [--aot]
           sharedkernel-version commit-impact <message>
           sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha>] < commit-messages.txt
           sharedkernel-version calculate-release [--repo-root <path>] [--version-kind <prerelease|stable>] [--run-number <number>] [--sha <sha>] [--github-output <path>] [--github-summary <path>]

@@ -228,55 +228,11 @@ dotnet_diagnostic.CS0618.severity = none
 
 # C# extension block false-positive in .NET 10 analyzers (dotnet/sdk#51681).
 # Keep scoped to the single file and remove when upgrading to an SDK with the fix.
-[tests/ViajantesTurismo.Admin.Tests.Shared/Integration/Helpers/ApiTestExtensions.cs]
-dotnet_diagnostic.CA1034.severity = none
-
-# CA2025 crashes while analyzing the deliberately concurrent, fully observed process-stream tasks
-# (dotnet/roslyn-analyzers#7652). Keep the exception scoped to this process boundary.
 [tools/SharedKernel.RepoConfig.Tool/TextEncodingVerifier.cs]
 dotnet_diagnostic.CA2025.severity = none
 
 # API and Blazor app entry projects expose framework-discovered surfaces that are not package APIs.
 # Owner: API/Web maintainers. Remove when public framework entrypoints are fully documented or internalized.
-[src/ViajantesTurismo.Admin.ApiService/**.cs]
-dotnet_diagnostic.CS1591.severity = none
-
-[src/ViajantesTurismo.Catalog.ApiService/**.cs]
-dotnet_diagnostic.CS1591.severity = none
-
-[src/ViajantesTurismo.Management.Web/**.cs]
-dotnet_diagnostic.CS1591.severity = none
-
-# CA2007 is valuable for reusable libraries, but application/host code intentionally keeps
-# framework-context awaits readable. Owner: application maintainers. Remove scope entries as
-# app layers adopt an explicit ConfigureAwait policy.
-[src/ViajantesTurismo.Admin.Application/**.cs]
-dotnet_diagnostic.CA2007.severity = none
-
-[src/ViajantesTurismo.Catalog.Application/**.cs]
-dotnet_diagnostic.CA2007.severity = none
-
-[src/ViajantesTurismo.Admin.Infrastructure/**.cs]
-dotnet_diagnostic.CA2007.severity = none
-
-[src/ViajantesTurismo.Admin.ApiService/**.cs]
-dotnet_diagnostic.CA2007.severity = none
-
-[src/ViajantesTurismo.Catalog.ApiService/**.cs]
-dotnet_diagnostic.CA2007.severity = none
-
-[src/ViajantesTurismo.Management.Web/**.cs]
-dotnet_diagnostic.CA2007.severity = none
-
-[src/ViajantesTurismo.Public.Web/**.cs]
-dotnet_diagnostic.CA2007.severity = none
-
-[src/ViajantesTurismo.MigrationService/**.cs]
-dotnet_diagnostic.CA2007.severity = none
-
-[src/ViajantesTurismo.AppHost/**.cs]
-dotnet_diagnostic.CA2007.severity = none
-
 [samples/**.cs]
 dotnet_diagnostic.CA2007.severity = none
 
@@ -294,31 +250,6 @@ dotnet_diagnostic.CA1716.severity = none
 [src/SharedKernel/SharedKernel.Results/Option*.cs]
 dotnet_diagnostic.CA1716.severity = none
 
-[src/ViajantesTurismo.Admin.Domain/Shared/*.cs]
-dotnet_diagnostic.CA1716.severity = none
-
-[src/ViajantesTurismo.Management.Web/Components/Shared/*.cs]
-dotnet_diagnostic.CA1716.severity = none
-
-# Blazor component parameters are public and require public model types. Owner: Management.Web.
-# Remove when these components no longer expose the models through public [Parameter] surfaces.
-[src/ViajantesTurismo.Management.Web/Components/Shared/BookingFormModel.cs]
-dotnet_diagnostic.CA1515.severity = none
-
-[src/ViajantesTurismo.Management.Web/Models/PaymentFormModel.cs]
-dotnet_diagnostic.CA1515.severity = none
-
-[src/ViajantesTurismo.Management.Web/Services/CountryService.cs]
-dotnet_diagnostic.CA1515.severity = none
-
-[src/ViajantesTurismo.Management.Web/Services/CustomerImportHeaderMatcher.cs]
-dotnet_diagnostic.CA1515.severity = none
-
-[src/ViajantesTurismo.Management.Web/Components/Pages/Customers/ImportCustomersDuplicateResolutionItem.cs]
-dotnet_diagnostic.CA1515.severity = none
-
-# Test projects are not public API, and test names/namespaces intentionally use readable terms.
-# Test helpers and test cases also intentionally favor readable builders/overloads.
 [tests/**.cs]
 dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA5394.severity = none
@@ -331,21 +262,6 @@ dotnet_diagnostic.SKSTYLE004.severity = suggestion
 
 # Reqnroll discovers binding and generated test support types by reflection.
 # Owner: behavior-test maintainers. Remove when unused binding types can be internalized safely.
-[tests/ViajantesTurismo.Admin.BehaviorTests/**.cs]
-dotnet_diagnostic.CA1812.severity = none
-
-# Staged rollout for one-top-level-type-per-file. Owner: style analyzer maintainers.
-# Keep this allowlist small and remove each entry when the grouped file is split intentionally.
-[src/ViajantesTurismo.Admin.Contracts.Application/ImportResultDto.cs]
-dotnet_diagnostic.SKSTYLE004.severity = none
-
-[src/ViajantesTurismo.Management.Web/Services/CountryService.cs]
-dotnet_diagnostic.SKSTYLE004.severity = none
-
-[src/ViajantesTurismo.Management.Web/Services/CustomerImportHeaderMatcher.cs]
-dotnet_diagnostic.SKSTYLE004.severity = none
-
-# SharedKernel style analyzer defaults
 [*]
 sharedkernel_style_allow_async_suffix_overrides = true
 sharedkernel_style_allow_async_suffix_interface_implementations = true

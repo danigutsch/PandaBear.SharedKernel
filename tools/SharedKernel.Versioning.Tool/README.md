@@ -159,3 +159,10 @@ dotnet publish tools/SharedKernel.Versioning.Tool/SharedKernel.Versioning.Tool.c
 
 `IsRoslynComponent=true` skips repository analyzer project references during the publish check so the
 Native AOT publish property is not applied to analyzer projects.
+
+## Private candidate workflow
+
+`validate-candidate [--version <unique-prerelease>] [--aot]` packs and validates a clean committed repository, recording revisions and package hashes.
+`consume-candidate --candidate <candidate.json> [--output <evidence.json>] [--aot]` verifies those hashes and consumes the same packages from their
+current location with isolated caches. `smoke-packages --feed <directory> --version <version> [--aot]` performs package checks directly. Application
+compatibility is owned by ViajantesTurismo tooling.

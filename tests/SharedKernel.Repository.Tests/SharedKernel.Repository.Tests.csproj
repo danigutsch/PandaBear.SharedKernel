@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType></PropertyGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="SharedKernel.Testing.Assertions" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
+    <ProjectReference Include="../../tools/SharedKernel.Repository.Tool/SharedKernel.Repository.Tool.csproj" />
+    <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing.Assertions/SharedKernel.Testing.Assertions.csproj" />
+    <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing/SharedKernel.Testing.csproj" />
+  </ItemGroup>
+</Project>

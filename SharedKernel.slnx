@@ -120,4 +120,6 @@
   <Project Path="samples/Results/BasicResults.Sample/BasicResults.Sample.csproj" />
   <Project Path="benchmarks/SharedKernel.Functional.Benchmarks/SharedKernel.Functional.Benchmarks.csproj" />
   <Project Path="benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Mediator.Benchmarks.csproj" />
+  <Project Path="tools/SharedKernel.Repository.Tool/SharedKernel.Repository.Tool.csproj" />
+  <Project Path="tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj" />
 </Solution>

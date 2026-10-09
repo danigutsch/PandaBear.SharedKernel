@@ -47,7 +47,7 @@ internal static class CommandRunner
                 command.Append(' ').Append(argument);
             }
 
-            throw new InvalidOperationException($"Command failed ({process.ExitCode}): {command}{Environment.NewLine}{error}");
+            throw new InvalidOperationException($"Command failed ({process.ExitCode}): {command}{Environment.NewLine}{output}{Environment.NewLine}{error}");
         }
 
         return output;

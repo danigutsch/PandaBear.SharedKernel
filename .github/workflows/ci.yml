@@ -23,17 +23,19 @@ jobs:
       - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
         with:
           global-json-file: global.json
-      - name: Verify selection fallback and extraction boundaries
-        run: python3 scripts/sharedkernel/test-workflow.py
+      - name: Build repository tooling
+        run: |
+          dotnet restore tools/SharedKernel.Repository.Tool --locked-mode
+          dotnet build tools/SharedKernel.Repository.Tool -c Release --no-restore
       - name: Select affected projects
         env:
           BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || '' }}
         run: |
           args=()
           if [[ -n "${BASE_SHA}" ]]; then args+=(--base "${BASE_SHA}"); fi
-          python3 scripts/sharedkernel/select-projects.py "${args[@]}"
+          dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- select "${args[@]}"
       - name: Build, test, validate APIs and candidate packages
-        run: python3 scripts/sharedkernel/validate.py --pack
+        run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- validate --pack --aot
       - name: Upload selection reasons
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -46,9 +48,9 @@ jobs:
         with:
           name: candidate-packages
           path: |
-            artifacts/api-compat/packages/**/*.nupkg
-            artifacts/api-compat/packages/**/*.snupkg
-            artifacts/api-compat/packages/**/candidate.json
+            artifacts/api-compat/packages/*/*.nupkg
+            artifacts/api-compat/packages/*/*.snupkg
+            artifacts/api-compat/packages/*/candidate.json
           if-no-files-found: error
           retention-days: 14
   windows-package-consumption:
@@ -67,9 +69,16 @@ jobs:
           name: candidate-packages
           path: artifacts/candidate
       - name: Consume the same candidate packages on Windows
-        shell: bash
+        shell: pwsh
         run: |
-          python scripts/sharedkernel/windows-consumption.py
+          dotnet restore tools/SharedKernel.Versioning.Tool --locked-mode
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet build tools/SharedKernel.Versioning.Tool -c Release --no-restore
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $manifests = @(Get-ChildItem artifacts/candidate -Filter candidate.json -Recurse)
+          if ($manifests.Count -ne 1) { throw "Expected exactly one candidate manifest." }
+          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- consume-candidate --candidate $manifests[0].FullName --aot
+          exit $LASTEXITCODE
       - name: Retain Windows compatibility evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
