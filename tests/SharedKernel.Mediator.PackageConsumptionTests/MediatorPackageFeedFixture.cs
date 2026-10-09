@@ -100,7 +100,7 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
 
         while (currentDirectory is not null)
         {
-            if (File.Exists(Path.Combine(currentDirectory.FullName, "ViajantesTurismo.slnx")))
+            if (File.Exists(Path.Combine(currentDirectory.FullName, "SharedKernel.slnx")))
             {
                 return currentDirectory.FullName;
             }

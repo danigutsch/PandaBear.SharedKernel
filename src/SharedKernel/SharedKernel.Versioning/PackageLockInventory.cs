@@ -104,7 +104,7 @@ public static class PackageLockInventory
         builder.AppendLine("  \"spdxVersion\": \"SPDX-2.3\",");
         builder.AppendLine("  \"dataLicense\": \"CC0-1.0\",");
         builder.Append("  \"SPDXID\": ").Append(Escape("SPDXRef-DOCUMENT")).AppendLine(",");
-        builder.Append("  \"name\": ").Append(Escape("ViajantesTurismo " + options.Version)).AppendLine(",");
+        builder.Append("  \"name\": ").Append(Escape("SharedKernel " + options.Version)).AppendLine(",");
         builder.Append("  \"documentNamespace\": ").Append(Escape(documentNamespace)).AppendLine(",");
         builder.AppendLine("  \"creationInfo\": {");
         builder.AppendLine("    \"creators\": [\"Tool: SharedKernel.Versioning.Tool\"],");

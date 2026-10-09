@@ -1,0 +1,26 @@
+{
+  "sourceRevision": "20dba6e29664a35c25ae22873da42a1f677f7f87",
+  "filteredRevision": "2fd79a4558907cf35596df892eef58c300e0ffcc",
+  "manifestSha256": "4e77bb43b605b86eaa60e586933bf810b9c8154ba785f95d1d3762bc89c71a47",
+  "filterRepoVersion": "a40bce548d2c",
+  "adaptations": [
+    "standalone solution",
+    "test repository discovery",
+    "SBOM title",
+    "application friend removal",
+    "private development scripts and CI"
+  ],
+  "scriptSha256": {
+    "compatibility.py": "c17d75c20289736642e97e2377ef46e26c6a59a875921464e81cb2f01c2d2a77",
+    "extract.py": "211ecca58f444477972ea17d6753eb4922eb82d83846a15b1fd740d9fdebcd61",
+    "extraction-manifest.json": "4e77bb43b605b86eaa60e586933bf810b9c8154ba785f95d1d3762bc89c71a47",
+    "library-ci.yml": "38590e27f061921944b8ef62541b30f50f7388c1582189e2ffbd9a5ba5819660",
+    "select-projects.py": "aecd9da2279fcdd8e9b2a4edcdf647749ce1c5f2cd3aa92f08a5ddc420e4404f",
+    "smoke.py": "f67c72d8ba66c495e25e0258bad2c2dba6de74d2c0cff038e1c9ed83d736c6ed",
+    "test-workflow.py": "8fdf3eb1d1c201a1ad92beb30350f933dcb92c1b6b468d0c00b6bf387eb9b5dd",
+    "validate.py": "135b16dc1d557c1d9b2d152479bdbc69823807d54e96a8426ccb7874f332c415",
+    "windows-consumption.py": "c8461d8112d84b34cb5229d88c7cef1dcd9695266fdaea29fe3bf2dca9e815d2"
+  },
+  "consumerCompatibility": "pending",
+  "stablePromotion": "pending"
+}

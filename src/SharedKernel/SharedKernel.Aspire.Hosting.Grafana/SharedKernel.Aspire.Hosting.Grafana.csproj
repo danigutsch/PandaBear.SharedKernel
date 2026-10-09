@@ -21,7 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="ViajantesTurismo.ArchitectureTests" />
     </ItemGroup>
 
 </Project>

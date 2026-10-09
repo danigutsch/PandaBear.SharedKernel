@@ -14,7 +14,7 @@ public static class VersioningToolTests
         string? repositoryRoot = null;
         while (currentDirectory is not null)
         {
-            var solutionPath = Path.Combine(currentDirectory.FullName, "ViajantesTurismo.slnx");
+            var solutionPath = Path.Combine(currentDirectory.FullName, "SharedKernel.slnx");
             if (File.Exists(solutionPath))
             {
                 repositoryRoot = currentDirectory.FullName;
@@ -55,7 +55,7 @@ public static class VersioningToolTests
         string? repositoryRoot = null;
         while (currentDirectory is not null)
         {
-            var solutionPath = Path.Combine(currentDirectory.FullName, "ViajantesTurismo.slnx");
+            var solutionPath = Path.Combine(currentDirectory.FullName, "SharedKernel.slnx");
             if (File.Exists(solutionPath))
             {
                 repositoryRoot = currentDirectory.FullName;

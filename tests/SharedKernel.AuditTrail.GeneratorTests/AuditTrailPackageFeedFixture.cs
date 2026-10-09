@@ -57,7 +57,7 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
         var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
         while (currentDirectory is not null)
         {
-            if (File.Exists(Path.Combine(currentDirectory.FullName, "ViajantesTurismo.slnx")))
+            if (File.Exists(Path.Combine(currentDirectory.FullName, "SharedKernel.slnx")))
             {
                 return currentDirectory.FullName;
             }
