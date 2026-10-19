@@ -15,6 +15,7 @@ internal sealed class AuditTrailPackageConsumptionWorkspace : IDisposable
         projectDirectory = Path.Combine(rootPath, "Consumer");
         projectFilePath = Path.Combine(projectDirectory, "Consumer.csproj");
         Directory.CreateDirectory(projectDirectory);
+        File.Copy(Path.Combine(packageFeed.RepositoryRoot, "global.json"), Path.Combine(rootPath, "global.json"));
         File.WriteAllText(Path.Combine(rootPath, "NuGet.Config"), CreateNuGetConfig(packageFeed.FeedPath));
         File.WriteAllText(
             projectFilePath,

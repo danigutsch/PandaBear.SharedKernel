@@ -24,7 +24,7 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
 
     private string RootPath { get; set; } = null!;
 
-    private string RepositoryRoot { get; set; } = null!;
+    internal string RepositoryRoot { get; private set; } = null!;
 
     /// <inheritdoc />
     public async ValueTask InitializeAsync()

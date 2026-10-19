@@ -31,7 +31,7 @@ internal sealed class CancellableChildProcess : IAsyncDisposable
             StartInfo.ArgumentList.Add("-NonInteractive");
             StartInfo.ArgumentList.Add("-Command");
             StartInfo.ArgumentList.Add(
-                "Set-Content -LiteralPath $env:PID_FILE -Value $PID -NoNewline; Start-Sleep -Seconds 300");
+                "[System.IO.File]::WriteAllText($env:PID_FILE, [string]$PID); [System.Threading.Thread]::Sleep(300000)");
         }
         else
         {
@@ -71,7 +71,7 @@ internal sealed class CancellableChildProcess : IAsyncDisposable
     public async Task WaitUntilReady(CancellationToken cancellationToken)
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        timeout.CancelAfter(TimeSpan.FromSeconds(5));
+        timeout.CancelAfter(TimeSpan.FromSeconds(30));
         var pidText = string.Empty;
         while (string.IsNullOrWhiteSpace(pidText))
         {

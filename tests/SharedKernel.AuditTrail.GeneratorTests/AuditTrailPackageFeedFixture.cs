@@ -17,7 +17,7 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
 
     private string RootPath { get; set; } = null!;
 
-    private string RepositoryRoot { get; set; } = null!;
+    internal string RepositoryRoot { get; private set; } = null!;
 
     public async ValueTask InitializeAsync()
     {

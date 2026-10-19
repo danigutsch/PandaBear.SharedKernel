@@ -32,6 +32,21 @@ internal sealed class TemporaryGitRepository : IDisposable
     {
         if (Directory.Exists(Root))
         {
+            var options = new EnumerationOptions
+            {
+                RecurseSubdirectories = true,
+                AttributesToSkip = FileAttributes.ReparsePoint,
+                IgnoreInaccessible = false
+            };
+            foreach (var path in Directory.EnumerateFiles(Root, "*", options))
+            {
+                var attributes = File.GetAttributes(path);
+                if ((attributes & FileAttributes.ReadOnly) != 0)
+                {
+                    File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
+                }
+            }
+
             Directory.Delete(Root, recursive: true);
         }
     }

@@ -20,6 +20,7 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
         ProjectFilePath = Path.Combine(ProjectDirectory, projectName + ".csproj");
 
         Directory.CreateDirectory(ProjectDirectory);
+        File.Copy(Path.Combine(packageFeed.RepositoryRoot, "global.json"), Path.Combine(RootPath, "global.json"));
         File.WriteAllText(Path.Combine(RootPath, "NuGet.Config"), CreateNuGetConfig(packageFeed.FeedPath));
     }
 
@@ -215,6 +216,15 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
                 <add key="local" value="{feedPath}" />
                 <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
               </packageSources>
+              <packageSourceMapping>
+                <clear />
+                <packageSource key="local">
+                  <package pattern="PandaBear.SharedKernel.*" />
+                </packageSource>
+                <packageSource key="nuget.org">
+                  <package pattern="*" />
+                </packageSource>
+              </packageSourceMapping>
             </configuration>
             """;
     }
