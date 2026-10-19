@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.HttpClients</PackageId>
+        <PackageId>PandaBear.SharedKernel.HttpClients</PackageId>
         <Description>Reusable HTTP client helpers, validation responses, defaults, and telemetry.</Description>
         <RootNamespace>SharedKernel.HttpClients</RootNamespace>
         <PackageTags>http-clients;resilience;shared-kernel;dotnet</PackageTags>

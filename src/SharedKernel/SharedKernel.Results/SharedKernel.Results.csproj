@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Results</PackageId>
+        <PackageId>PandaBear.SharedKernel.Results</PackageId>
         <Description>Core result primitives for shared-kernel workflows.</Description>
         <RootNamespace>SharedKernel.Results</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

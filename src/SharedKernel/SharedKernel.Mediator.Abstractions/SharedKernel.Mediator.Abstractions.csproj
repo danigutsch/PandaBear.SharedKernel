@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Mediator.Abstractions</PackageId>
+        <PackageId>PandaBear.SharedKernel.Mediator.Abstractions</PackageId>
         <Description>Core abstractions for SharedKernel.Mediator.</Description>
         <RootNamespace>SharedKernel.Mediator</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -29,7 +29,7 @@
         "resolved": "2.12.2",
         "contentHash": "ZkT7qiJe0Kj0+DTZOZo+xrDy1kNmdsWFQVPIQLNx9ZJ0T9cB2LG7r+Bi60so8/+yg1nkS7QCPadrzsTG4VPKrA=="
       },
-      "sharedkernel.apiversioning": {
+      "PandaBear.SharedKernel.ApiVersioning": {
         "type": "Project"
       }
     }

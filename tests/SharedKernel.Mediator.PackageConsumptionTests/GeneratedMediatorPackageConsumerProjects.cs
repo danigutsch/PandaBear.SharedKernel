@@ -143,9 +143,9 @@ internal static class GeneratedMediatorPackageConsumerProjects
                 <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
               </PropertyGroup>
               <ItemGroup>
-                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.Abstractions")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
                 <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="{{packageFeed.DependencyInjectionPackageVersion}}" />
               </ItemGroup>
             </Project>

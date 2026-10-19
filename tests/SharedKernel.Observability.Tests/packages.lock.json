@@ -382,7 +382,7 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.observability": {
+      "PandaBear.SharedKernel.Observability": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Compliance.Redaction": "[10.11.0, )",
@@ -393,7 +393,7 @@
           "OpenTelemetry.Instrumentation.Runtime": "[1.20.0, )"
         }
       },
-      "sharedkernel.observability.npgsql": {
+      "PandaBear.SharedKernel.Observability.Npgsql": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
@@ -401,10 +401,10 @@
           "Npgsql": "[10.0.3, )"
         }
       },
-      "sharedkernel.testing": {
+      "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"

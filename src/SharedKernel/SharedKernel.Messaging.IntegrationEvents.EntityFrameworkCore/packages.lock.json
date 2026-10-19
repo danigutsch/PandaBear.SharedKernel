@@ -126,36 +126,36 @@
         "resolved": "10.0.13",
         "contentHash": "ZjTwxzhiw2TMEzIbUDkMF0dfDB2I4NQgIfKD0ELu9/5Mk+SRGdKZcD0/lvBrRCAPo6KN2r0BW86MRancoyJkoA=="
       },
-      "sharedkernel.entityframeworkcore": {
+      "PandaBear.SharedKernel.EntityFrameworkCore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.13, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )"
         }
       },
-      "sharedkernel.idempotency": {
+      "PandaBear.SharedKernel.Idempotency": {
         "type": "Project"
       },
-      "sharedkernel.idempotency.entityframeworkcore": {
+      "PandaBear.SharedKernel.Idempotency.EntityFrameworkCore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.13, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
-          "SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
-          "SharedKernel.Idempotency": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Idempotency": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.messaging": {
+      "PandaBear.SharedKernel.Messaging": {
         "type": "Project"
       },
-      "sharedkernel.messaging.integrationevents": {
+      "PandaBear.SharedKernel.Messaging.IntegrationEvents": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
-          "SharedKernel.Messaging": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Messaging": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.scheduling": {
+      "PandaBear.SharedKernel.Scheduling": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Hosting.Abstractions": "[10.0.13, )",

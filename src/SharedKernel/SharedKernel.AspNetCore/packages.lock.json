@@ -84,18 +84,18 @@
           "Microsoft.IdentityModel.Tokens": "8.19.2"
         }
       },
-      "sharedkernel.apiversioning": {
+      "PandaBear.SharedKernel.ApiVersioning": {
         "type": "Project"
       },
-      "sharedkernel.inputnormalization": {
+      "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
       },
-      "sharedkernel.openapi": {
+      "PandaBear.SharedKernel.OpenApi": {
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.OpenApi": "[10.0.13, )",
           "Microsoft.OpenApi": "[2.12.2, )",
-          "SharedKernel.ApiVersioning": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.ApiVersioning": "[0.1.0-alpha.0, )"
         }
       },
       "Microsoft.AspNetCore.OpenApi": {

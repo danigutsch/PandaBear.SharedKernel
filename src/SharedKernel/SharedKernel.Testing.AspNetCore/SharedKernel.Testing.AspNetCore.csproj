@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Testing.AspNetCore</PackageId>
+        <PackageId>PandaBear.SharedKernel.Testing.AspNetCore</PackageId>
         <Description>ASP.NET Core web application factory helpers for SharedKernel tests.</Description>
         <RootNamespace>SharedKernel.Testing.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

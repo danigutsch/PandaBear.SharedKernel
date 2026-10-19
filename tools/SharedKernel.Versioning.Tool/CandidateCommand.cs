@@ -17,16 +17,16 @@ internal static class CandidateCommand
         if (options.Baseline is not null)
         {
             var config = XDocument.Load(Path.Combine(options.Root, "NuGet.Config"));
-            var mappings = config.Descendants("packageSource").Where(x => x.Elements("package").Any(p => (string?)p.Attribute("pattern") == "SharedKernel.*")).ToArray();
+            var mappings = config.Descendants("packageSource").Where(x => x.Elements("package").Any(p => (string?)p.Attribute("pattern") == "PandaBear.SharedKernel.*")).ToArray();
             if (mappings.Length != 1)
             {
-                throw new ArgumentException("Baseline requires SharedKernel.* mapped exclusively to a local feed.");
+                throw new ArgumentException("Baseline requires PandaBear.SharedKernel.* mapped exclusively to a local feed.");
             }
 
             var key = (string?)mappings[0].Attribute("key");
             var source = config.Descendants("packageSources").Elements("add").Single(x => (string?)x.Attribute("key") == key);
             var value = (string?)source.Attribute("value") ?? string.Empty;
-            if (!Directory.Exists(Path.GetFullPath(value, options.Root)) || config.Descendants("packageSource").Any(x => x != mappings[0] && x.Elements("package").Any(p => ((string?)p.Attribute("pattern"))?.StartsWith("SharedKernel.", StringComparison.Ordinal) == true)))
+            if (!Directory.Exists(Path.GetFullPath(value, options.Root)) || config.Descendants("packageSource").Any(x => x != mappings[0] && x.Elements("package").Any(p => ((string?)p.Attribute("pattern"))?.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal) == true)))
             {
                 throw new ArgumentException("Internal baseline packages must map exclusively to an existing local feed.");
             }

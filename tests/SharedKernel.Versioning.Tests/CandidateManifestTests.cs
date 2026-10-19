@@ -11,7 +11,7 @@ public static class CandidateManifestTests
     public static async Task Downloaded_candidates_generate_configuration_for_the_current_feed_location()
     {
         using var temporary = new TemporaryReleasePrepDirectory();
-        var package = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "SharedKernel.Probe", "1.0.0");
+        var package = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "PandaBear.SharedKernel.Probe", "1.0.0");
         using var stream = File.OpenRead(package);
         var hashes = new JsonObject { [Path.GetFileName(package)] = Convert.ToHexStringLower((await SHA256.HashDataAsync(stream, TestContext.Current.CancellationToken).ConfigureAwait(true))) };
         var manifest = Path.Combine(temporary.PackageDirectory, "candidate.json");
@@ -22,14 +22,14 @@ public static class CandidateManifestTests
         await SharedKernelLocalFeed.WriteNuGetConfig(temporary.OutputDirectory, temporary.PackageDirectory, ids, new Uri("https://example.test/v3/index.json"));
         var config = XDocument.Load(Path.Combine(temporary.OutputDirectory, "NuGet.config"));
         config.Descendants("add").ShouldContain(x => (string?)x.Attribute("value") == temporary.PackageDirectory);
-        config.Descendants("package").ShouldContain(x => (string?)x.Attribute("pattern") == "SharedKernel.*");
+        config.Descendants("package").ShouldContain(x => (string?)x.Attribute("pattern") == "PandaBear.SharedKernel.*");
     }
 
     [Fact]
     public static void Changed_candidate_packages_are_rejected()
     {
         using var temporary = new TemporaryReleasePrepDirectory();
-        var package = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "SharedKernel.Probe", "1.0.0");
+        var package = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "PandaBear.SharedKernel.Probe", "1.0.0");
         var manifest = Path.Combine(temporary.PackageDirectory, "candidate.json");
         CandidateManifest.Write(manifest, new JsonObject { ["packageVersion"] = "1.0.0", ["packageSha256"] = new JsonObject { [Path.GetFileName(package)] = "changed" } });
         Action check = () => CandidateManifest.ReadAndVerify(manifest);

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Testing.Assertions</PackageId>
+        <PackageId>PandaBear.SharedKernel.Testing.Assertions</PackageId>
         <Description>Reusable assertion extensions for SharedKernel xUnit test suites.</Description>
         <RootNamespace>SharedKernel.Testing.Assertions</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -287,19 +287,19 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.mediator.abstractions": {
+      "PandaBear.SharedKernel.Mediator.Abstractions": {
         "type": "Project"
       },
-      "sharedkernel.mediator.codefixes": {
+      "PandaBear.SharedKernel.Mediator.CodeFixes": {
         "type": "Project"
       },
-      "sharedkernel.mediator.sourcegenerator": {
+      "PandaBear.SharedKernel.Mediator.SourceGenerator": {
         "type": "Project"
       },
-      "sharedkernel.testing": {
+      "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"

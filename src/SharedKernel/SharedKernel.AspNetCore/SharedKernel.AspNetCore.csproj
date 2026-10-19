@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.AspNetCore</PackageId>
+        <PackageId>PandaBear.SharedKernel.AspNetCore</PackageId>
         <Description>Reusable ASP.NET Core helpers for explicit application security and hosting defaults.</Description>
         <RootNamespace>SharedKernel.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

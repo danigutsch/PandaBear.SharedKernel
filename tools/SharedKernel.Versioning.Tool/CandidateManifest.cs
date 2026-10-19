@@ -5,7 +5,7 @@ namespace SharedKernel.Versioning.Tool;
 
 internal static class CandidateManifest
 {
-    public static JsonObject ReadAndVerify(string path)
+    public static JsonObject ReadAndVerify(string path, string? feed = null)
     {
         var evidence = JsonNode.Parse(File.ReadAllText(path))?.AsObject()
             ?? throw new ArgumentException("Candidate manifest is empty.");
@@ -23,7 +23,7 @@ internal static class CandidateManifest
                 throw new ArgumentException($"Invalid candidate package filename: {name}.");
             }
 
-            using var stream = File.OpenRead(Path.Combine(Path.GetDirectoryName(path)!, name));
+            using var stream = File.OpenRead(Path.Combine(feed ?? Path.GetDirectoryName(path)!, name));
             var actual = Convert.ToHexStringLower(SHA256.HashData(stream));
             if (!string.Equals(actual, value?.GetValue<string>(), StringComparison.Ordinal))
             {

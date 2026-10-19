@@ -32,7 +32,7 @@ internal sealed class AuditTrailPackageConsumptionWorkspace : IDisposable
                 <Compile Remove="Generated/**/*.cs" />
               </ItemGroup>
               <ItemGroup>
-                <PackageReference Include="SharedKernel.AuditTrail.SourceGenerator"
+                <PackageReference Include="PandaBear.SharedKernel.AuditTrail.SourceGenerator"
                                   Version="{{packageFeed.PackageVersion}}"
                                   PrivateAssets="all" />
               </ItemGroup>
@@ -134,7 +134,7 @@ internal sealed class AuditTrailPackageConsumptionWorkspace : IDisposable
           </packageSources>
           <packageSourceMapping>
             <packageSource key="local">
-              <package pattern="SharedKernel.*" />
+              <package pattern="PandaBear.SharedKernel.*" />
             </packageSource>
             <packageSource key="nuget.org">
               <package pattern="*" />

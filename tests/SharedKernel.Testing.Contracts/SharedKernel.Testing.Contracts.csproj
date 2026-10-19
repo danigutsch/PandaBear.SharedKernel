@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <PackageId>PandaBear.SharedKernel.Testing.Contracts</PackageId>
+        <Description>Reusable contract test marker and trait contracts.</Description>
         <RootNamespace>SharedKernel.Testing.Contracts</RootNamespace>
-        <IsPackable>false</IsPackable>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
 </Project>

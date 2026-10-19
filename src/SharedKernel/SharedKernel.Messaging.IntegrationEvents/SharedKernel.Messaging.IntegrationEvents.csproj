@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Messaging.IntegrationEvents</PackageId>
+        <PackageId>PandaBear.SharedKernel.Messaging.IntegrationEvents</PackageId>
         <Description>Typed, versioned integration-event contracts and dispatch abstractions for cross-boundary messaging.</Description>
         <RootNamespace>SharedKernel.Messaging.IntegrationEvents</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

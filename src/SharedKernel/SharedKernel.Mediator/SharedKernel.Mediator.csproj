@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Mediator</PackageId>
+        <PackageId>PandaBear.SharedKernel.Mediator</PackageId>
         <Description>Runtime support surface for SharedKernel.Mediator.</Description>
         <RootNamespace>SharedKernel.Mediator</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

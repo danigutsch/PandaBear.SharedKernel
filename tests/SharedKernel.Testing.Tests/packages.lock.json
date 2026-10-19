@@ -224,34 +224,34 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
-      "sharedkernel.testing.data": {
+      "PandaBear.SharedKernel.Testing.Data": {
         "type": "Project"
       },
-      "sharedkernel.testing.http": {
+      "PandaBear.SharedKernel.Testing.Http": {
         "type": "Project"
       },
-      "sharedkernel.testing.playwright": {
+      "PandaBear.SharedKernel.Testing.Playwright": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Playwright": "[1.63.0, )"
         }
       },
-      "sharedkernel.testing.roslyn": {
+      "PandaBear.SharedKernel.Testing.Roslyn": {
         "type": "Project",
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "[5.6.0, )"
         }
       },
-      "sharedkernel.testing.snapshots": {
+      "PandaBear.SharedKernel.Testing.Snapshots": {
         "type": "Project"
       },
-      "sharedkernel.testing.web": {
+      "PandaBear.SharedKernel.Testing.Web": {
         "type": "Project"
       },
       "Microsoft.CodeAnalysis.Analyzers": {

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Testing.Snapshots</PackageId>
+        <PackageId>PandaBear.SharedKernel.Testing.Snapshots</PackageId>
         <Description>Reusable snapshot text helpers for SharedKernel test suites.</Description>
         <RootNamespace>SharedKernel.Testing.Snapshots</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

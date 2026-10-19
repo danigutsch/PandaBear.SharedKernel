@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Branding</PackageId>
+        <PackageId>PandaBear.SharedKernel.Branding</PackageId>
         <Description>Reusable branding settings contracts, validation, and HTTP client primitives.</Description>
         <RootNamespace>SharedKernel.Branding</RootNamespace>
         <PackageTags>branding;settings;validation;shared-kernel;dotnet</PackageTags>

@@ -225,37 +225,37 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.audittrail": {
+      "PandaBear.SharedKernel.AuditTrail": {
         "type": "Project"
       },
-      "sharedkernel.audittrail.sourcegenerator": {
+      "PandaBear.SharedKernel.AuditTrail.SourceGenerator": {
         "type": "Project"
       },
-      "sharedkernel.buildingblocks": {
+      "PandaBear.SharedKernel.BuildingBlocks": {
         "type": "Project",
         "dependencies": {
-          "SharedKernel.Results": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.domain": {
+      "PandaBear.SharedKernel.Domain": {
         "type": "Project",
         "dependencies": {
-          "SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.results": {
+      "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
-      "sharedkernel.testing": {
+      "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
-      "sharedkernel.testing.roslyn": {
+      "PandaBear.SharedKernel.Testing.Roslyn": {
         "type": "Project",
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "[5.6.0, )"

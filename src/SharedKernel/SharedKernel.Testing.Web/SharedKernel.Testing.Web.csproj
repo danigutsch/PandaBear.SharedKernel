@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Testing.Web</PackageId>
+        <PackageId>PandaBear.SharedKernel.Testing.Web</PackageId>
         <Description>Reusable bUnit element assertions for SharedKernel web test suites.</Description>
         <RootNamespace>SharedKernel.Testing.Web</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

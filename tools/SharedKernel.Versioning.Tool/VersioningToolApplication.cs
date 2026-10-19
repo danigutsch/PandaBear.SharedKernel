@@ -26,6 +26,16 @@ internal static class VersioningToolApplication
                 return exitCode.Value;
             }
         }
+        catch (OperationCanceledException)
+        {
+            await error.WriteLineAsync("Candidate staging canceled.").ConfigureAwait(false);
+            return 130;
+        }
+        catch (IOException ex)
+        {
+            await error.WriteLineAsync($"Error: {ex.Message}").ConfigureAwait(false);
+            return 2;
+        }
         catch (ArgumentException ex)
         {
             await error.WriteLineAsync($"Error: {ex.Message}").ConfigureAwait(false);
@@ -50,6 +60,15 @@ internal static class VersioningToolApplication
     {
         switch (args)
         {
+            case ["stage-candidate", .. var stageArgs]:
+                using (var cancellation = new CancellationTokenSource())
+                {
+                    void Cancel(object? sender, ConsoleCancelEventArgs e) { e.Cancel = true; cancellation.Cancel(); }
+                    Console.CancelKeyPress += Cancel;
+                    try { await CandidateStagingCommand.Run(CandidateCommandOptions.Parse(stageArgs), output, cancellation.Token).ConfigureAwait(false); }
+                    finally { Console.CancelKeyPress -= Cancel; }
+                }
+                return 0;
             case ["validate-candidate", .. var candidateArgs]:
                 await CandidateCommand.Run(CandidateCommandOptions.Parse(candidateArgs), output).ConfigureAwait(false);
                 return 0;
@@ -117,6 +136,7 @@ internal static class VersioningToolApplication
         Usage:
           sharedkernel-version --help
           sharedkernel-version --version
+          sharedkernel-version stage-candidate --candidate <manifest> --feed <packages> --output <local-feed> [--repo-root <library>]
           sharedkernel-version validate-candidate [--version <semver>] [--repo-root <path>] [--baseline-version <semver>] [--aot]
           sharedkernel-version smoke-packages --feed <path> --version <semver> [--repo-root <path>] [--aot]
           sharedkernel-version consume-candidate --candidate <path> [--repo-root <path>] [--output <path>] [--aot]

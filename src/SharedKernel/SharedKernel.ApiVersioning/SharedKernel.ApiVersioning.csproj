@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.ApiVersioning</PackageId>
+        <PackageId>PandaBear.SharedKernel.ApiVersioning</PackageId>
         <Description>Host-agnostic API contract versioning primitives.</Description>
         <RootNamespace>SharedKernel.ApiVersioning</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Domain.EntityFrameworkCore</PackageId>
+        <PackageId>PandaBear.SharedKernel.Domain.EntityFrameworkCore</PackageId>
         <Description>Entity Framework Core SaveChanges integration for dispatching aggregate domain events.</Description>
         <RootNamespace>SharedKernel.Domain.EntityFrameworkCore</RootNamespace>
         <PackageTags>domain-events;entity-framework-core;shared-kernel;dotnet</PackageTags>

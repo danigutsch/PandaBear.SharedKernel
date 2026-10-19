@@ -823,43 +823,43 @@
         "resolved": "18.1.0",
         "contentHash": "5K+9KFg2TdTl7VXv88Qzi/0lqK6JFoNP3lRuImPYGRV7K/QYklDyTrj4+A+KAki1JsQi6qKY+hDyY7d6WRqjrw=="
       },
-      "sharedkernel.buildingblocks": {
+      "PandaBear.SharedKernel.BuildingBlocks": {
         "type": "Project",
         "dependencies": {
-          "SharedKernel.Results": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.eventsourcing": {
+      "PandaBear.SharedKernel.EventSourcing": {
         "type": "Project"
       },
-      "sharedkernel.eventsourcing.npgsql": {
+      "PandaBear.SharedKernel.EventSourcing.Npgsql": {
         "type": "Project",
         "dependencies": {
           "Npgsql": "[10.0.3, )",
-          "SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
-          "SharedKernel.EventSourcing": "[0.1.0-alpha.0, )",
-          "SharedKernel.Npgsql": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.EventSourcing": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Npgsql": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.integrationtesting": {
+      "PandaBear.SharedKernel.IntegrationTesting": {
         "type": "Project",
         "dependencies": {
           "Aspire.Hosting.Testing": "[13.6.1, )"
         }
       },
-      "sharedkernel.npgsql": {
+      "PandaBear.SharedKernel.Npgsql": {
         "type": "Project",
         "dependencies": {
           "Npgsql": "[10.0.3, )"
         }
       },
-      "sharedkernel.results": {
+      "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
-      "sharedkernel.testing": {
+      "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"

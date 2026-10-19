@@ -823,22 +823,22 @@
         "resolved": "18.1.0",
         "contentHash": "5K+9KFg2TdTl7VXv88Qzi/0lqK6JFoNP3lRuImPYGRV7K/QYklDyTrj4+A+KAki1JsQi6qKY+hDyY7d6WRqjrw=="
       },
-      "sharedkernel.integrationtesting": {
+      "PandaBear.SharedKernel.IntegrationTesting": {
         "type": "Project",
         "dependencies": {
           "Aspire.Hosting.Testing": "[13.6.1, )"
         }
       },
-      "sharedkernel.npgsql": {
+      "PandaBear.SharedKernel.Npgsql": {
         "type": "Project",
         "dependencies": {
           "Npgsql": "[10.0.3, )"
         }
       },
-      "sharedkernel.testing": {
+      "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"

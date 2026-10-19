@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Observability</PackageId>
+        <PackageId>PandaBear.SharedKernel.Observability</PackageId>
         <Description>Reusable observability helpers for shared-kernel service diagnostics.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>observability;opentelemetry;shared-kernel;dotnet</PackageTags>

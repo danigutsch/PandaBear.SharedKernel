@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <IsAotCompatible>false</IsAotCompatible>
-        <PackageId>SharedKernel.Mediator.SourceGenerator</PackageId>
+        <PackageId>PandaBear.SharedKernel.Mediator.SourceGenerator</PackageId>
         <Description>Source generator for SharedKernel.Mediator.</Description>
         <RootNamespace>SharedKernel.Mediator.SourceGenerator</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -22,7 +22,7 @@
         <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
         <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
         <None Include="README.md" Pack="true" PackagePath="\" />
-        <None Include="SharedKernel.Mediator.SourceGenerator.props" Pack="true" PackagePath="buildTransitive/" Visible="false" />
+        <None Include="SharedKernel.Mediator.SourceGenerator.props" Pack="true" PackagePath="buildTransitive/PandaBear.SharedKernel.Mediator.SourceGenerator.props" Visible="false" />
         <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
         <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>

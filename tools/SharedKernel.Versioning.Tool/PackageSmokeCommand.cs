@@ -40,6 +40,8 @@ internal static class PackageSmokeCommand
             {
                 var id = Path.GetFileNameWithoutExtension(((string)reference.Attribute("Include")!).Replace('\\', '/'));
                 reference.ReplaceWith(new XElement("PackageReference", new XAttribute("Include", id)));
+                id = "PandaBear." + id;
+                reference.SetAttributeValue("Include", id);
                 versions[id] = "[" + version + "]";
             }
 

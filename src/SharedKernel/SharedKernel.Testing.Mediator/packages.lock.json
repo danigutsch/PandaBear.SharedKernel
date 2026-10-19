@@ -8,7 +8,7 @@
         "resolved": "3.3.4",
         "contentHash": "kNLTfXtXUWDHVt5iaPkkiPuyHYlMgLI6SOFT4w88bfeI2vqSeGgHunFkdvlaCM8RDfcY0t2+jnesQtidRJJ/DA=="
       },
-      "sharedkernel.mediator.abstractions": {
+      "PandaBear.SharedKernel.Mediator.Abstractions": {
         "type": "Project"
       }
     }

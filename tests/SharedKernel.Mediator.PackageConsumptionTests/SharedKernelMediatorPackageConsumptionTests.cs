@@ -24,7 +24,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
                 <Nullable>enable</Nullable>
               </PropertyGroup>
               <ItemGroup>
-                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.Abstractions")}}
               </ItemGroup>
             </Project>
             """,
@@ -183,8 +183,8 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
                 <Nullable>enable</Nullable>
               </PropertyGroup>
               <ItemGroup>
-                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator.Analyzers", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.Abstractions")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.Analyzers", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
               </ItemGroup>
             </Project>
             """,
@@ -228,9 +228,9 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
                 <Nullable>enable</Nullable>
               </PropertyGroup>
               <ItemGroup>
-                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator.Analyzers", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator.CodeFixes", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.Abstractions")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.Analyzers", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.CodeFixes", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
               </ItemGroup>
             </Project>
             """,
@@ -279,7 +279,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
                 <Nullable>enable</Nullable>
               </PropertyGroup>
               <ItemGroup>
-                {{workspace.GetPackageReference("SharedKernel.Mediator")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator")}}
               </ItemGroup>
             </Project>
             """,
@@ -331,8 +331,8 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
                 <Compile Remove="Generated/**/*.cs" />
               </ItemGroup>
               <ItemGroup>
-                {{workspace.GetPackageReference("SharedKernel.Mediator")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
               </ItemGroup>
             </Project>
             """,
@@ -423,7 +423,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
                 <Nullable>enable</Nullable>
               </PropertyGroup>
               <ItemGroup>
-                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.Abstractions")}}
               </ItemGroup>
             </Project>
             """,
@@ -491,9 +491,9 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
               </PropertyGroup>
               <ItemGroup>
                 {{workspace.GetProjectReference(moduleName)}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator.Abstractions")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.Abstractions")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
                 <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="{{packageFeed.DependencyInjectionPackageVersion}}" />
               </ItemGroup>
             </Project>

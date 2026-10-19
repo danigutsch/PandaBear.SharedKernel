@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.ApiVersioning.AspNetCore</PackageId>
+        <PackageId>PandaBear.SharedKernel.ApiVersioning.AspNetCore</PackageId>
         <Description>ASP.NET Core adapters for SharedKernel API contract versioning.</Description>
         <RootNamespace>SharedKernel.ApiVersioning.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

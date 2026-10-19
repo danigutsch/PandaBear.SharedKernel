@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.OpenApi</PackageId>
+        <PackageId>PandaBear.SharedKernel.OpenApi</PackageId>
         <Description>Reusable OpenAPI helpers for shared-kernel HTTP contract documentation.</Description>
         <RootNamespace>SharedKernel.OpenApi</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

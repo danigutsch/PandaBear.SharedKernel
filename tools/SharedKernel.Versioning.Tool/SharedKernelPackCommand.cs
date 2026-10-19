@@ -47,7 +47,7 @@ internal static class SharedKernelPackCommand
 
     private static async Task VerifyLocalFeed(string packageDirectory, string version)
     {
-        var packages = Directory.GetFiles(packageDirectory, "SharedKernel.*.nupkg")
+        var packages = Directory.GetFiles(packageDirectory, "PandaBear.SharedKernel.*.nupkg")
             .Where(path => !path.EndsWith(".symbols.nupkg", StringComparison.Ordinal))
             .Order(StringComparer.Ordinal)
             .ToArray();

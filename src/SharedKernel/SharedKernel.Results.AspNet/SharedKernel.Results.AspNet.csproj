@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Results.AspNet</PackageId>
+        <PackageId>PandaBear.SharedKernel.Results.AspNet</PackageId>
         <Description>ASP.NET Core adapters for SharedKernel.Results.</Description>
         <RootNamespace>SharedKernel.Results.AspNet</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

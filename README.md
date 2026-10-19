@@ -1,6 +1,6 @@
 # SharedKernel
 
-Private reusable .NET libraries extracted from ViajantesTurismo. Package IDs and public APIs remain unchanged. The extraction manifest, history
+Private reusable .NET libraries extracted from ViajantesTurismo. Package IDs use `PandaBear.SharedKernel.*`; public APIs, assembly names and C# namespaces remain unchanged. The extraction manifest, history
 mapping, and archived extraction tools are in `provenance/`.
 
 ## Development

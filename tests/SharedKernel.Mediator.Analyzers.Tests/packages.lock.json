@@ -219,19 +219,19 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.mediator.abstractions": {
+      "PandaBear.SharedKernel.Mediator.Abstractions": {
         "type": "Project"
       },
-      "sharedkernel.mediator.analyzers": {
+      "PandaBear.SharedKernel.Mediator.Analyzers": {
         "type": "Project"
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
-      "sharedkernel.testing.roslyn": {
+      "PandaBear.SharedKernel.Testing.Roslyn": {
         "type": "Project",
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "[5.6.0, )"

@@ -166,3 +166,11 @@ Native AOT publish property is not applied to analyzer projects.
 `consume-candidate --candidate <candidate.json> [--output <evidence.json>] [--aot]` verifies those hashes and consumes the same packages from their
 current location with isolated caches. `smoke-packages --feed <directory> --version <version> [--aot]` performs package checks directly. Application
 compatibility is owned by ViajantesTurismo tooling.
+
+## Stage a pinned local candidate
+
+`stage-candidate --candidate <manifest> --feed <source-directory> --output <local-feed> --repo-root <library-checkout>`
+verifies the pinned library revision and package hashes before copying packages. Existing different
+artifacts are never overwritten. Repeating staging with identical artifacts is safe. Cancellation removes
+incomplete temporary copies; previously verified packages remain reusable. No package registry is contacted
+by staging. Assemblies and namespaces remain `SharedKernel.*`; package IDs use `PandaBear.SharedKernel.*`.

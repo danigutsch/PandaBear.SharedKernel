@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PackageId>SharedKernel.EventSourcing.Npgsql</PackageId>
+    <PackageId>PandaBear.SharedKernel.EventSourcing.Npgsql</PackageId>
     <Description>Npgsql adapter for SharedKernel event-sourcing primitives.</Description>
     <RootNamespace>SharedKernel.EventSourcing.Npgsql</RootNamespace>
     <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -392,15 +392,15 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.branding": {
+      "PandaBear.SharedKernel.Branding": {
         "type": "Project",
         "dependencies": {
-          "SharedKernel.HttpClients": "[0.1.0-alpha.0, )",
-          "SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
-          "SharedKernel.Results": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.HttpClients": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.httpclients": {
+      "PandaBear.SharedKernel.HttpClients": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
@@ -410,22 +410,22 @@
           "OpenTelemetry.Instrumentation.Http": "[1.20.0, )"
         }
       },
-      "sharedkernel.inputnormalization": {
+      "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
       },
-      "sharedkernel.results": {
+      "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
-      "sharedkernel.testing": {
+      "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
-      "sharedkernel.testing.http": {
+      "PandaBear.SharedKernel.Testing.Http": {
         "type": "Project"
       },
       "Microsoft.Extensions.Compliance.Abstractions": {

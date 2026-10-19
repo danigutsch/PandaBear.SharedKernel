@@ -235,7 +235,7 @@
         "resolved": "8.0.0",
         "contentHash": "7mu9v0QDv66ar3DpGSZHg9NuNcxDaaAcnMULuZlaTpP9+hwXhrxNGsF5GmLkSHxFdb5bBc1TzeujsRgTrPWi+Q=="
       },
-      "sharedkernel.httpclients": {
+      "PandaBear.SharedKernel.HttpClients": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
@@ -245,10 +245,10 @@
           "OpenTelemetry.Instrumentation.Http": "[1.20.0, )"
         }
       },
-      "sharedkernel.inputnormalization": {
+      "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
       },
-      "sharedkernel.results": {
+      "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
       "Microsoft.Extensions.Compliance.Abstractions": {

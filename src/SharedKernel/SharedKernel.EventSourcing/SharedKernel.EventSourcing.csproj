@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.EventSourcing</PackageId>
+        <PackageId>PandaBear.SharedKernel.EventSourcing</PackageId>
         <Description>Storage-neutral event-sourcing primitives for shared-kernel workflows.</Description>
         <RootNamespace>SharedKernel.EventSourcing</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

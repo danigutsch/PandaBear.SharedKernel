@@ -42,7 +42,7 @@ public static class VersioningToolTests
         // Assert
         properties["PackAsTool"].ShouldBe("true");
         properties["ToolCommandName"].ShouldBe("sharedkernel-version");
-        properties["PackageId"].ShouldBe("SharedKernel.Versioning.Tool");
+        properties["PackageId"].ShouldBe("PandaBear.SharedKernel.Versioning.Tool");
         properties["PackageReadmeFile"].ShouldBe("README.md");
         (readmeItem).ShouldNotBeNull();
     }
@@ -68,19 +68,20 @@ public static class VersioningToolTests
         var root = (repositoryRoot).ShouldNotBeNull();
         string[] packageIds =
         [
-            "SharedKernel.Testing",
-            "SharedKernel.Testing.Assertions",
-            "SharedKernel.Testing.Data",
-            "SharedKernel.Testing.Http",
-            "SharedKernel.Testing.Snapshots",
-            "SharedKernel.Testing.Web",
-            "SharedKernel.Testing.Roslyn",
-            "SharedKernel.IntegrationTesting",
+            "PandaBear.SharedKernel.Testing",
+            "PandaBear.SharedKernel.Testing.Assertions",
+            "PandaBear.SharedKernel.Testing.Data",
+            "PandaBear.SharedKernel.Testing.Http",
+            "PandaBear.SharedKernel.Testing.Snapshots",
+            "PandaBear.SharedKernel.Testing.Web",
+            "PandaBear.SharedKernel.Testing.Roslyn",
+            "PandaBear.SharedKernel.IntegrationTesting",
         ];
 
         foreach (var packageId in packageIds)
         {
-            var projectPath = Path.Combine(root, "src", "SharedKernel", packageId, packageId + ".csproj");
+            var projectName = packageId["PandaBear.".Length..];
+            var projectPath = Path.Combine(root, "src", "SharedKernel", projectName, projectName + ".csproj");
 
             // Act
             var project = System.Xml.Linq.XDocument.Load(projectPath);
@@ -423,7 +424,7 @@ public static class VersioningToolTests
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
-            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>not-a-tfm</TargetFramework><PackageId>SharedKernel.Sample</PackageId></PropertyGroup></Project>",
+            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>not-a-tfm</TargetFramework><PackageId>PandaBear.SharedKernel.Sample</PackageId></PropertyGroup></Project>",
             TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
@@ -458,7 +459,7 @@ public static class VersioningToolTests
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
-            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>not-a-tfm</TargetFramework><PackageId>SharedKernel.Sample</PackageId></PropertyGroup></Project>",
+            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>not-a-tfm</TargetFramework><PackageId>PandaBear.SharedKernel.Sample</PackageId></PropertyGroup></Project>",
             TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
@@ -499,7 +500,7 @@ public static class VersioningToolTests
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
-            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>not-a-tfm</TargetFramework><PackageId>SharedKernel.Sample</PackageId></PropertyGroup></Project>",
+            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>not-a-tfm</TargetFramework><PackageId>PandaBear.SharedKernel.Sample</PackageId></PropertyGroup></Project>",
             TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
@@ -548,8 +549,8 @@ public static class VersioningToolTests
     }
 
     [Theory]
-    [InlineData("SharedKernel.Results.1.2.3.snupkg")]
-    [InlineData("SharedKernel.Results.1.2.3.symbols.nupkg")]
+    [InlineData("PandaBear.SharedKernel.Results.1.2.3.snupkg")]
+    [InlineData("PandaBear.SharedKernel.Results.1.2.3.symbols.nupkg")]
     public static async Task Rejects_existing_sharedkernel_package_variants(string fileName)
     {
         // Arrange
@@ -613,7 +614,7 @@ public static class VersioningToolTests
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
                 <TargetFramework>net10.0</TargetFramework>
-                <PackageId>SharedKernel.Sample</PackageId>
+                <PackageId>PandaBear.SharedKernel.Sample</PackageId>
                 <PackageVersion>$(ComputedSemVer)</PackageVersion>
               </PropertyGroup>
             </Project>
@@ -644,7 +645,7 @@ public static class VersioningToolTests
 
         // Assert
         var packageDirectory = Path.Combine(temporaryDirectory.Root, "artifacts", "packages", "1.2.3");
-        var packagePath = Path.Combine(packageDirectory, "SharedKernel.Sample.1.2.3.nupkg");
+        var packagePath = Path.Combine(packageDirectory, "PandaBear.SharedKernel.Sample.1.2.3.nupkg");
         exitCode.ShouldBe(0);
         File.Exists(packagePath).ShouldBeTrue();
         output.ToString().ShouldContain(packageDirectory, StringComparison.Ordinal);
@@ -912,7 +913,7 @@ public static class VersioningToolTests
             """,
             TestContext.Current.CancellationToken);
 
-        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
+        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "PandaBear.SharedKernel.Results.1.2.3.nupkg");
         await File.WriteAllBytesAsync(
             packagePath,
             "package"u8.ToArray(),
@@ -958,7 +959,7 @@ public static class VersioningToolTests
         releaseNotes.ShouldContain("- feat: add release prep (abc123)", StringComparison.Ordinal);
         releaseNotes.ShouldNotContain("Merge pull request", StringComparison.Ordinal);
         changelog.ShouldContain("# Changelog", StringComparison.Ordinal);
-        manifest.ShouldContain("\"fileName\": \"SharedKernel.Results.1.2.3.nupkg\"", StringComparison.Ordinal);
+        manifest.ShouldContain("\"fileName\": \"PandaBear.SharedKernel.Results.1.2.3.nupkg\"", StringComparison.Ordinal);
         manifest.ShouldContain("\"sizeBytes\": 7", StringComparison.Ordinal);
         manifest.ShouldContain(
             "\"sha256\": \"BC4A71180870F7945155FBB02F4B0A2E3FAA2A62D6D31B7039013055ED19869A\"",
@@ -1045,7 +1046,7 @@ public static class VersioningToolTests
             """,
             TestContext.Current.CancellationToken);
         await File.WriteAllBytesAsync(
-            Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg"),
+            Path.Combine(temporaryDirectory.PackageDirectory, "PandaBear.SharedKernel.Results.1.2.3.nupkg"),
             "package"u8.ToArray(),
             TestContext.Current.CancellationToken);
         using var input = new StringReader(string.Empty);
@@ -1321,7 +1322,7 @@ public static class VersioningToolTests
             """
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
-                <PackageId>SharedKernel.Sample</PackageId>
+                <PackageId>PandaBear.SharedKernel.Sample</PackageId>
                 <Description>Sample package.</Description>
                 <PackageTags>sample;shared-kernel;dotnet</PackageTags>
               </PropertyGroup>
@@ -1417,7 +1418,7 @@ public static class VersioningToolTests
             """
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
-                <PackageId>SharedKernel.Sample</PackageId>
+                <PackageId>PandaBear.SharedKernel.Sample</PackageId>
               </PropertyGroup>
             </Project>
             """,
@@ -1514,7 +1515,7 @@ public static class VersioningToolTests
             "{ invalid json",
             TestContext.Current.CancellationToken);
 
-        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
+        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "PandaBear.SharedKernel.Results.1.2.3.nupkg");
         await File.WriteAllBytesAsync(
             packagePath,
             "package"u8.ToArray(),
@@ -1559,7 +1560,7 @@ public static class VersioningToolTests
             """,
             TestContext.Current.CancellationToken);
 
-        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
+        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "PandaBear.SharedKernel.Results.1.2.3.nupkg");
         await File.WriteAllBytesAsync(
             packagePath,
             "package"u8.ToArray(),
@@ -1595,7 +1596,7 @@ public static class VersioningToolTests
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         Directory.CreateDirectory(Path.Combine(temporaryDirectory.Root, "src"));
-        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
+        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "PandaBear.SharedKernel.Results.1.2.3.nupkg");
         await File.WriteAllBytesAsync(
             packagePath,
             "package"u8.ToArray(),
@@ -1649,7 +1650,7 @@ public static class VersioningToolTests
             """,
             TestContext.Current.CancellationToken);
 
-        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
+        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "PandaBear.SharedKernel.Results.1.2.3.nupkg");
         await File.WriteAllBytesAsync(
             packagePath,
             "package"u8.ToArray(),
@@ -1704,7 +1705,7 @@ public static class VersioningToolTests
             """,
             TestContext.Current.CancellationToken);
 
-        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "SharedKernel.Results.1.2.3.nupkg");
+        var packagePath = Path.Combine(temporaryDirectory.PackageDirectory, "PandaBear.SharedKernel.Results.1.2.3.nupkg");
         await File.WriteAllBytesAsync(
             packagePath,
             "package"u8.ToArray(),

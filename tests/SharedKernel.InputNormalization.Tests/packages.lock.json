@@ -201,13 +201,13 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.inputnormalization": {
+      "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
       },
-      "sharedkernel.testing": {
+      "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"

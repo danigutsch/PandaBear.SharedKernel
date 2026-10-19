@@ -4,7 +4,7 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageId>SharedKernel.ImageProcessing</PackageId>
+        <PackageId>PandaBear.SharedKernel.ImageProcessing</PackageId>
         <Description>Image decoding and responsive variant generation for shared-kernel workflows.</Description>
         <RootNamespace>SharedKernel.ImageProcessing</RootNamespace>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>

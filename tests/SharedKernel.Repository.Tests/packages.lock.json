@@ -121,17 +121,17 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.repository.tool": {
+      "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
-      "sharedkernel.testing": {
-        "type": "Project"
-      },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"
         }
+      },
+      "sharedkernel.repository.tool": {
+        "type": "Project"
       }
     }
   }

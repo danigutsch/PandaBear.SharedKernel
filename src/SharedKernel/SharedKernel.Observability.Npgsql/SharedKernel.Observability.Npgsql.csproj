@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <PackageId>SharedKernel.Observability.Npgsql</PackageId>
+    <PackageId>PandaBear.SharedKernel.Observability.Npgsql</PackageId>
     <Description>Read-only PostgreSQL observability helpers for shared-kernel diagnostics.</Description>
     <RootNamespace>SharedKernel.Observability.Npgsql</RootNamespace>
     <PackageReadmeFile>README.md</PackageReadmeFile>

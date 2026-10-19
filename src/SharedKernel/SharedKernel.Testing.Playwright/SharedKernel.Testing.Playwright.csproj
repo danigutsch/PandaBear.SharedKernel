@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Testing.Playwright</PackageId>
+        <PackageId>PandaBear.SharedKernel.Testing.Playwright</PackageId>
         <Description>Reusable Playwright assertions for SharedKernel browser test suites.</Description>
         <RootNamespace>SharedKernel.Testing.Playwright</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

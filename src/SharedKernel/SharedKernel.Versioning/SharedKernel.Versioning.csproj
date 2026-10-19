@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Versioning</PackageId>
+        <PackageId>PandaBear.SharedKernel.Versioning</PackageId>
         <Description>Reusable SemVer and Conventional Commit release-impact primitives.</Description>
         <RootNamespace>SharedKernel.Versioning</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

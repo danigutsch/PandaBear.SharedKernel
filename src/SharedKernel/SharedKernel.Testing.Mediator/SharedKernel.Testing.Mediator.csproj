@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Testing.Mediator</PackageId>
+        <PackageId>PandaBear.SharedKernel.Testing.Mediator</PackageId>
         <Description>Reference mediator test dispatcher helpers for SharedKernel.Mediator.</Description>
         <RootNamespace>SharedKernel.Testing.Mediator</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.BuildingBlocks</PackageId>
+        <PackageId>PandaBear.SharedKernel.BuildingBlocks</PackageId>
         <Description>Reusable value-object and workflow building blocks for shared-kernel workflows.</Description>
         <RootNamespace>SharedKernel.BuildingBlocks</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

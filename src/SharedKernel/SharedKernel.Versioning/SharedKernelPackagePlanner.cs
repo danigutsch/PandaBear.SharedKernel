@@ -5,6 +5,10 @@ namespace SharedKernel.Versioning;
 /// </summary>
 public static class SharedKernelPackagePlanner
 {
+    private static readonly string[] ConsumerSupportProjects =
+        ["SharedKernel.Testing.Contracts", "SharedKernel.MalwareScanning.ClamAv.Testing"];
+    private static readonly string[] PackagedTools =
+        ["SharedKernel.Versioning.Tool", "SharedKernel.Testing.CodeFixRunner", "SharedKernel.PlaywrightMcp.Tool"];
     /// <summary>
     /// Resolves the package directory for a package version.
     /// </summary>
@@ -36,6 +40,9 @@ public static class SharedKernelPackagePlanner
         }
 
         return Directory.GetFiles(sharedKernelDirectory, "*.csproj", SearchOption.AllDirectories)
+            .Concat(ConsumerSupportProjects
+                .Select(name => Path.Combine(repoRoot, "tests", name, name + ".csproj")).Where(File.Exists))
+            .Concat(PackagedTools.Select(name => Path.Combine(repoRoot, "tools", name, name + ".csproj")).Where(File.Exists))
             .Order(StringComparer.Ordinal)
             .ToArray();
     }
@@ -97,7 +104,7 @@ public static class SharedKernelPackagePlanner
     }
 
     private static bool PackageVersionExists(string packageDirectory, string version) =>
-        Directory.EnumerateFiles(packageDirectory, "SharedKernel.*")
+        Directory.EnumerateFiles(packageDirectory, "PandaBear.SharedKernel.*")
             .Select(Path.GetFileName)
             .Any(fileName => fileName is not null && IsPackageVersionFile(fileName, version));
 

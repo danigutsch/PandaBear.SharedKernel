@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.IntegrationTesting</PackageId>
+        <PackageId>PandaBear.SharedKernel.IntegrationTesting</PackageId>
         <Description>Reusable Aspire and PostgreSQL integration-test helpers for SharedKernel test suites.</Description>
         <RootNamespace>SharedKernel.IntegrationTesting</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

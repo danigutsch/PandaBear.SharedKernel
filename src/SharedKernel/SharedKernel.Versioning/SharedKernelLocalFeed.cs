@@ -44,7 +44,7 @@ public static class SharedKernelLocalFeed
             {
                 var dependencyId = dependency.Attribute("id")?.Value ?? string.Empty;
                 var dependencyVersion = dependency.Attribute("version")?.Value ?? string.Empty;
-                if (dependencyId.StartsWith("SharedKernel.", StringComparison.Ordinal) && dependencyVersion != version)
+                if (dependencyId.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal) && dependencyVersion != version)
                 {
                     throw new ArgumentException($"{package}: expected {dependencyId} dependency version {version}, found {dependencyVersion}");
                 }
@@ -149,7 +149,7 @@ public static class SharedKernelLocalFeed
             new XElement("packageSourceMapping",
                 new XElement("packageSource",
                     new XAttribute("key", "sharedkernel-local"),
-                    new XElement("package", new XAttribute("pattern", "SharedKernel.*")),
+                    new XElement("package", new XAttribute("pattern", "PandaBear.SharedKernel.*")),
                     packageIds.Select(packageId => new XElement("package", new XAttribute("pattern", packageId)))),
                 new XElement("packageSource",
                     new XAttribute("key", "nuget.org"),

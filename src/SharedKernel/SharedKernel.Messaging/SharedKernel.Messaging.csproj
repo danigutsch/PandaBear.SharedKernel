@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Messaging</PackageId>
+        <PackageId>PandaBear.SharedKernel.Messaging</PackageId>
         <Description>Storage-neutral messaging model for event envelopes, messages, metadata, and delivery boundaries.</Description>
         <RootNamespace>SharedKernel.Messaging</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

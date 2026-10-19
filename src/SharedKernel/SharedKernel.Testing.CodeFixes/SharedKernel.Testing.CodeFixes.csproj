@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <IsAotCompatible>false</IsAotCompatible>
-        <PackageId>SharedKernel.Testing.CodeFixes</PackageId>
+        <PackageId>PandaBear.SharedKernel.Testing.CodeFixes</PackageId>
         <Description>Code fixes for repository test conventions.</Description>
         <RootNamespace>SharedKernel.Testing.CodeFixes</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

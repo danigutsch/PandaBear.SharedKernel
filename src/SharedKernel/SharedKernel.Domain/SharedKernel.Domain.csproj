@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Domain</PackageId>
+        <PackageId>PandaBear.SharedKernel.Domain</PackageId>
         <Description>Persistence-agnostic DDD primitives and typed domain-event dispatch contracts.</Description>
         <RootNamespace>SharedKernel.Domain</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

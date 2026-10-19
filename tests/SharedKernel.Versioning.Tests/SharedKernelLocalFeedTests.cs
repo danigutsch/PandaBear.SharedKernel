@@ -14,12 +14,12 @@ public static class SharedKernelLocalFeedTests
         await SharedKernelLocalFeed.WriteNuGetConfig(
             temporaryDirectory.OutputDirectory,
             temporaryDirectory.PackageDirectory,
-            ["SharedKernel.Results"],
+            ["PandaBear.SharedKernel.Results"],
             new Uri("https://example.test/v3/index.json"));
         var config = await File.ReadAllTextAsync(Path.Combine(temporaryDirectory.OutputDirectory, "NuGet.config"), TestContext.Current.CancellationToken);
 
         // Assert
-        config.ShouldContain("pattern=\"SharedKernel.*\"", StringComparison.Ordinal);
+        config.ShouldContain("pattern=\"PandaBear.SharedKernel.*\"", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -29,19 +29,19 @@ public static class SharedKernelLocalFeedTests
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         var firstPackage = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.PackageDirectory,
-            "SharedKernel.Results",
+            "PandaBear.SharedKernel.Results",
             "1.2.3",
-            ("SharedKernel.Functional", "1.2.3"));
+            ("PandaBear.SharedKernel.Functional", "1.2.3"));
         var secondPackage = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.PackageDirectory,
-            "SharedKernel.Functional",
+            "PandaBear.SharedKernel.Functional",
             "1.2.3");
 
         // Act
         var packageIds = SharedKernelLocalFeed.ReadPackageIds([firstPackage, secondPackage], "1.2.3");
 
         // Assert
-        packageIds.ShouldBe(["SharedKernel.Functional", "SharedKernel.Results"]);
+        packageIds.ShouldBe(["PandaBear.SharedKernel.Functional", "PandaBear.SharedKernel.Results"]);
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public static class SharedKernelLocalFeedTests
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         var package = NuGetPackageBuilder.WritePackageWithoutNuspec(
             temporaryDirectory.PackageDirectory,
-            "SharedKernel.Results.1.2.3.nupkg");
+            "PandaBear.SharedKernel.Results.1.2.3.nupkg");
 
         // Act
         Action action = () => SharedKernelLocalFeed.ReadPackageIds([package], "1.2.3");
@@ -67,7 +67,7 @@ public static class SharedKernelLocalFeedTests
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         var package = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.PackageDirectory,
-            "SharedKernel.Results",
+            "PandaBear.SharedKernel.Results",
             "1.2.2");
 
         // Act
@@ -84,9 +84,9 @@ public static class SharedKernelLocalFeedTests
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         var package = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.PackageDirectory,
-            "SharedKernel.Results",
+            "PandaBear.SharedKernel.Results",
             "1.2.3",
-            ("SharedKernel.Functional", "1.2.2"));
+            ("PandaBear.SharedKernel.Functional", "1.2.2"));
 
         // Act
         Action action = () => SharedKernelLocalFeed.ReadPackageIds([package], "1.2.3");
@@ -102,11 +102,11 @@ public static class SharedKernelLocalFeedTests
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         var firstPackage = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.PackageDirectory,
-            "SharedKernel.Results",
+            "PandaBear.SharedKernel.Results",
             "1.2.3");
         var secondPackage = NuGetPackageBuilder.WritePackage(
             temporaryDirectory.OutputDirectory,
-            "SharedKernel.Results",
+            "PandaBear.SharedKernel.Results",
             "1.2.3");
 
         // Act
@@ -122,10 +122,10 @@ public static class SharedKernelLocalFeedTests
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         var packageCache = Path.Combine(temporaryDirectory.Root, "packages");
-        Directory.CreateDirectory(Path.Combine(packageCache, "sharedkernel.results", "1.2.3"));
+        Directory.CreateDirectory(Path.Combine(packageCache, "pandabear.sharedkernel.results", "1.2.3"));
 
         // Act
-        var restored = SharedKernelLocalFeed.PackageWasRestored(packageCache, "SharedKernel.Results", "1.2.3");
+        var restored = SharedKernelLocalFeed.PackageWasRestored(packageCache, "PandaBear.SharedKernel.Results", "1.2.3");
 
         // Assert
         restored.ShouldBeTrue();
@@ -142,7 +142,7 @@ public static class SharedKernelLocalFeedTests
         Func<Task> action = () => SharedKernelLocalFeed.WriteNuGetConfig(
             temporaryDirectory.OutputDirectory,
             temporaryDirectory.PackageDirectory,
-            ["SharedKernel.Results"],
+            ["PandaBear.SharedKernel.Results"],
             relativeUri);
 
         // Assert
@@ -160,12 +160,12 @@ public static class SharedKernelLocalFeedTests
         // Act
         await SharedKernelLocalFeed.WriteRestoreProject(
             temporaryDirectory.OutputDirectory,
-            ["SharedKernel.Results"],
+            ["PandaBear.SharedKernel.Results"],
             "1.2.3");
         await SharedKernelLocalFeed.WriteNuGetConfig(
             temporaryDirectory.OutputDirectory,
             temporaryDirectory.PackageDirectory,
-            ["SharedKernel.Results"],
+            ["PandaBear.SharedKernel.Results"],
             new Uri("https://example.test/v3/index.json"));
 
         // Assert
@@ -175,9 +175,9 @@ public static class SharedKernelLocalFeedTests
         var nugetConfig = await File.ReadAllTextAsync(
             Path.Combine(temporaryDirectory.OutputDirectory, "NuGet.config"),
             TestContext.Current.CancellationToken);
-        project.ShouldContain("PackageReference Include=\"SharedKernel.Results\" Version=\"1.2.3\"", StringComparison.Ordinal);
+        project.ShouldContain("PackageReference Include=\"PandaBear.SharedKernel.Results\" Version=\"1.2.3\"", StringComparison.Ordinal);
         nugetConfig.ShouldContain("<clear />", StringComparison.Ordinal);
-        nugetConfig.ShouldContain("pattern=\"SharedKernel.Results\"", StringComparison.Ordinal);
+        nugetConfig.ShouldContain("pattern=\"PandaBear.SharedKernel.Results\"", StringComparison.Ordinal);
         nugetConfig.ShouldContain("https://example.test/v3/index.json", StringComparison.Ordinal);
     }
 }

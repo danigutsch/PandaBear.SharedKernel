@@ -196,39 +196,39 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.apiversioning": {
+      "PandaBear.SharedKernel.ApiVersioning": {
         "type": "Project"
       },
-      "sharedkernel.aspnetcore": {
+      "PandaBear.SharedKernel.AspNetCore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.13, )",
-          "SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
-          "SharedKernel.OpenApi": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.OpenApi": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.inputnormalization": {
+      "PandaBear.SharedKernel.InputNormalization": {
         "type": "Project"
       },
-      "sharedkernel.openapi": {
+      "PandaBear.SharedKernel.OpenApi": {
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.OpenApi": "[10.0.13, )",
           "Microsoft.OpenApi": "[2.12.2, )",
-          "SharedKernel.ApiVersioning": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.ApiVersioning": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.testing": {
+      "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
-      "sharedkernel.testing.aspnetcore": {
+      "PandaBear.SharedKernel.Testing.AspNetCore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.13, )",
           "Microsoft.AspNetCore.Mvc.Testing": "[10.0.13, )"
         }
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"

@@ -23,22 +23,22 @@
           "Microsoft.Extensions.Logging.Abstractions": "10.0.0"
         }
       },
-      "sharedkernel.buildingblocks": {
+      "PandaBear.SharedKernel.BuildingBlocks": {
         "type": "Project",
         "dependencies": {
-          "SharedKernel.Results": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.eventsourcing": {
+      "PandaBear.SharedKernel.EventSourcing": {
         "type": "Project"
       },
-      "sharedkernel.npgsql": {
+      "PandaBear.SharedKernel.Npgsql": {
         "type": "Project",
         "dependencies": {
           "Npgsql": "[10.0.3, )"
         }
       },
-      "sharedkernel.results": {
+      "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {

@@ -154,10 +154,10 @@
           "System.Composition.Runtime": "10.0.1"
         }
       },
-      "sharedkernel.testing.analyzers": {
+      "PandaBear.SharedKernel.Testing.Analyzers": {
         "type": "Project"
       },
-      "sharedkernel.testing.codefixes": {
+      "PandaBear.SharedKernel.Testing.CodeFixes": {
         "type": "Project"
       },
       "Microsoft.CodeAnalysis.Analyzers": {

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.HttpCaching.AspNetCore</PackageId>
+        <PackageId>PandaBear.SharedKernel.HttpCaching.AspNetCore</PackageId>
         <Description>ASP.NET Core HTTP caching helpers for SharedKernel.</Description>
         <RootNamespace>SharedKernel.HttpCaching.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

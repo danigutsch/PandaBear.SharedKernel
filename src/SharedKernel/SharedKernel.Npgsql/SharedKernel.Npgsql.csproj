@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Npgsql</PackageId>
+        <PackageId>PandaBear.SharedKernel.Npgsql</PackageId>
         <Description>Small reusable PostgreSQL primitives for SharedKernel consumers.</Description>
         <RootNamespace>SharedKernel.Npgsql</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

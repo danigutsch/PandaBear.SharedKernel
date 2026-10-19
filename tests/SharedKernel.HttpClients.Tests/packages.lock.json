@@ -392,7 +392,7 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.httpclients": {
+      "PandaBear.SharedKernel.HttpClients": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
@@ -402,10 +402,10 @@
           "OpenTelemetry.Instrumentation.Http": "[1.20.0, )"
         }
       },
-      "sharedkernel.testing": {
+      "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"

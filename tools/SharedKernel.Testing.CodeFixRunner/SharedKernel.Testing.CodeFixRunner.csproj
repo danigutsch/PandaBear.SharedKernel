@@ -20,7 +20,7 @@
         <Nullable>enable</Nullable>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>sharedkernel-codefix</ToolCommandName>
-        <PackageId>SharedKernel.Testing.CodeFixRunner</PackageId>
+        <PackageId>PandaBear.SharedKernel.Testing.CodeFixRunner</PackageId>
         <Description>Local code-fix runner for SharedKernel testing analyzer migrations.</Description>
         <PackageTags>testing;analyzers;codefix;dotnet-tool</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -206,13 +206,13 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.imageprocessing": {
+      "PandaBear.SharedKernel.ImageProcessing": {
         "type": "Project",
         "dependencies": {
           "Magick.NET-Q8-AnyCPU": "[15.0.0, )"
         }
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"

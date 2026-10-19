@@ -201,23 +201,23 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "sharedkernel.messaging": {
+      "PandaBear.SharedKernel.Messaging": {
         "type": "Project"
       },
-      "sharedkernel.messaging.integrationevents": {
+      "PandaBear.SharedKernel.Messaging.IntegrationEvents": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
-          "SharedKernel.Messaging": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Messaging": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.messaging.integrationevents.cloudevents": {
+      "PandaBear.SharedKernel.Messaging.IntegrationEvents.CloudEvents": {
         "type": "Project",
         "dependencies": {
-          "SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"

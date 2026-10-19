@@ -14,13 +14,13 @@
         "resolved": "10.0.13",
         "contentHash": "40yrBMsLEcjixBR4G+FiUaBPvxXIPSKJ2OgSrbOZcmSDBda4Sb0k7BWrfDpIvn3IvvDzwOL/tEPa6gDQfh6aRw=="
       },
-      "sharedkernel.buildingblocks": {
+      "PandaBear.SharedKernel.BuildingBlocks": {
         "type": "Project",
         "dependencies": {
-          "SharedKernel.Results": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.results": {
+      "PandaBear.SharedKernel.Results": {
         "type": "Project"
       }
     }

@@ -919,71 +919,71 @@
         "resolved": "18.1.0",
         "contentHash": "5K+9KFg2TdTl7VXv88Qzi/0lqK6JFoNP3lRuImPYGRV7K/QYklDyTrj4+A+KAki1JsQi6qKY+hDyY7d6WRqjrw=="
       },
-      "sharedkernel.entityframeworkcore": {
+      "PandaBear.SharedKernel.EntityFrameworkCore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.13, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )"
         }
       },
-      "sharedkernel.idempotency": {
+      "PandaBear.SharedKernel.Idempotency": {
         "type": "Project"
       },
-      "sharedkernel.idempotency.entityframeworkcore": {
+      "PandaBear.SharedKernel.Idempotency.EntityFrameworkCore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.13, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
-          "SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
-          "SharedKernel.Idempotency": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Idempotency": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.integrationtesting": {
+      "PandaBear.SharedKernel.IntegrationTesting": {
         "type": "Project",
         "dependencies": {
           "Aspire.Hosting.Testing": "[13.6.1, )"
         }
       },
-      "sharedkernel.messaging": {
+      "PandaBear.SharedKernel.Messaging": {
         "type": "Project"
       },
-      "sharedkernel.messaging.integrationevents": {
+      "PandaBear.SharedKernel.Messaging.IntegrationEvents": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
-          "SharedKernel.Messaging": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Messaging": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.messaging.integrationevents.cloudevents": {
+      "PandaBear.SharedKernel.Messaging.IntegrationEvents.CloudEvents": {
         "type": "Project",
         "dependencies": {
-          "SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.messaging.integrationevents.entityframeworkcore": {
+      "PandaBear.SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.13, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[10.0.13, )",
-          "SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
-          "SharedKernel.Idempotency.EntityFrameworkCore": "[0.1.0-alpha.0, )",
-          "SharedKernel.Messaging": "[0.1.0-alpha.0, )",
-          "SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )",
-          "SharedKernel.Scheduling": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Idempotency.EntityFrameworkCore": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Messaging": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Scheduling": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.scheduling": {
+      "PandaBear.SharedKernel.Scheduling": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Hosting.Abstractions": "[10.0.13, )",
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.13, )"
         }
       },
-      "sharedkernel.testing": {
+      "PandaBear.SharedKernel.Testing": {
         "type": "Project"
       },
-      "sharedkernel.testing.assertions": {
+      "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
           "xunit.v3.assert": "[4.0.0, )"

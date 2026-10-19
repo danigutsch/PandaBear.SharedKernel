@@ -2,6 +2,10 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <PackAsTool>true</PackAsTool>
+        <PackageId>PandaBear.SharedKernel.PlaywrightMcp.Tool</PackageId>
+        <ToolCommandName>sharedkernel-playwright-mcp</ToolCommandName>
+        <Description>Reusable Playwright MCP browser automation tool.</Description>
         <RootNamespace>SharedKernel.PlaywrightMcp.Tool</RootNamespace>
     </PropertyGroup>
 

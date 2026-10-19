@@ -14,14 +14,14 @@
         "resolved": "10.0.13",
         "contentHash": "40yrBMsLEcjixBR4G+FiUaBPvxXIPSKJ2OgSrbOZcmSDBda4Sb0k7BWrfDpIvn3IvvDzwOL/tEPa6gDQfh6aRw=="
       },
-      "sharedkernel.messaging": {
+      "PandaBear.SharedKernel.Messaging": {
         "type": "Project"
       },
-      "sharedkernel.messaging.integrationevents": {
+      "PandaBear.SharedKernel.Messaging.IntegrationEvents": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
-          "SharedKernel.Messaging": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Messaging": "[0.1.0-alpha.0, )"
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.AuditTrail</PackageId>
+        <PackageId>PandaBear.SharedKernel.AuditTrail</PackageId>
         <Description>Metadata-only audit-trail mapping contracts for application-owned persistence boundaries.</Description>
         <RootNamespace>SharedKernel.AuditTrail</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

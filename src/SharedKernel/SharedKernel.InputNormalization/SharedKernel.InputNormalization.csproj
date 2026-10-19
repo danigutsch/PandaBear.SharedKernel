@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.InputNormalization</PackageId>
+        <PackageId>PandaBear.SharedKernel.InputNormalization</PackageId>
         <Description>Reusable input normalization helpers for shared-kernel workflows.</Description>
         <RootNamespace>SharedKernel.InputNormalization</RootNamespace>
         <PackageTags>input-normalization;validation;shared-kernel;dotnet</PackageTags>

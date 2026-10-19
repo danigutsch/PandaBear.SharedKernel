@@ -16,11 +16,11 @@ internal static class GeneratedMessagingPackageConsumerProjects
                 <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
               </PropertyGroup>
               <ItemGroup>
-                {{workspace.GetPackageReference("SharedKernel.Domain")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator")}}
-                {{workspace.GetPackageReference("SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
-                {{workspace.GetPackageReference("SharedKernel.Messaging.IntegrationEvents")}}
-                {{workspace.GetPackageReference("SharedKernel.Messaging.IntegrationEvents.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Domain")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Mediator.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Messaging.IntegrationEvents")}}
+                {{workspace.GetPackageReference("PandaBear.SharedKernel.Messaging.IntegrationEvents.SourceGenerator", "PrivateAssets=\"all\" IncludeAssets=\"build;analyzers;buildTransitive\"")}}
                 <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="{{packageFeed.DependencyInjectionPackageVersion}}" />
               </ItemGroup>
             </Project>

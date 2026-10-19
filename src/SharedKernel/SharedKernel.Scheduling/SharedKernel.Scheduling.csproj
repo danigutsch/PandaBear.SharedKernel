@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>SharedKernel.Scheduling</PackageId>
+        <PackageId>PandaBear.SharedKernel.Scheduling</PackageId>
         <Description>Host-integrated scheduling primitives for polling and background work coordination.</Description>
         <RootNamespace>SharedKernel.Scheduling</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>

@@ -96,26 +96,26 @@
         "resolved": "10.0.13",
         "contentHash": "ZjTwxzhiw2TMEzIbUDkMF0dfDB2I4NQgIfKD0ELu9/5Mk+SRGdKZcD0/lvBrRCAPo6KN2r0BW86MRancoyJkoA=="
       },
-      "sharedkernel.buildingblocks": {
+      "PandaBear.SharedKernel.BuildingBlocks": {
         "type": "Project",
         "dependencies": {
-          "SharedKernel.Results": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.domain": {
+      "PandaBear.SharedKernel.Domain": {
         "type": "Project",
         "dependencies": {
-          "SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.BuildingBlocks": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.entityframeworkcore": {
+      "PandaBear.SharedKernel.EntityFrameworkCore": {
         "type": "Project",
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.13, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )"
         }
       },
-      "sharedkernel.results": {
+      "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
       "Microsoft.Extensions.DependencyInjection": {

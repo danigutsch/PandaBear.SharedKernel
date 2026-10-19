@@ -22,7 +22,7 @@ internal static class CallGraphArtifactEmitter
         builder.AppendLine("    public static string Json { get; } =");
         builder.AppendLine("        \"\"\"");
 
-        foreach (var line in BuildJson(model).Split('\n'))
+        foreach (var line in BuildJson(model).Replace("\r\n", "\n").Split('\n'))
         {
             builder.Append("        ").AppendLine(line);
         }
