@@ -8,6 +8,9 @@ mapping, and archived extraction tools are in `provenance/`.
 Install the SDK pinned in `global.json`. Provider integration tests require a working container runtime; NativeAOT checks also require the platform
 native build toolchain.
 
+Analyzer and source-generator packages retain the Roslyn 5.6 compiler API baseline so consumers can use compatible .NET 10 SDKs without upgrading
+to this repository's development SDK. The repository SDK and runtime dependencies can advance independently of that compiler compatibility floor.
+
 ```sh
 dotnet restore SharedKernel.slnx --locked-mode
 dotnet build SharedKernel.slnx -c Release --no-restore

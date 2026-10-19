@@ -21,7 +21,7 @@ internal static class TestImages
     {
         using var image = new MagickImage(MagickColors.Blue, width, height);
         image.Format = MagickFormat.Jpeg;
-        image.Orientation = OrientationType.RightTop;
+        image.Orientation = Orientation.RightTop;
         image.SetProfile(CreateOrientationProfile());
 
         var stream = new MemoryStream();

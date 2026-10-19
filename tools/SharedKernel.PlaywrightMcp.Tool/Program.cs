@@ -2,12 +2,12 @@ using System.Runtime.InteropServices;
 using SharedKernel.PlaywrightMcp.Tool;
 
 using var cancellation = new CancellationTokenSource();
-ConsoleCancelEventHandler cancelHandler = (_, eventArgs) =>
+void CancelHandler(object? sender, ConsoleCancelEventArgs eventArgs)
 {
     eventArgs.Cancel = true;
     cancellation.Cancel();
-};
-Console.CancelKeyPress += cancelHandler;
+}
+Console.CancelKeyPress += CancelHandler;
 
 using var terminationSignal = OperatingSystem.IsWindows()
     ? null
@@ -23,5 +23,5 @@ try
 }
 finally
 {
-    Console.CancelKeyPress -= cancelHandler;
+    Console.CancelKeyPress -= CancelHandler;
 }
