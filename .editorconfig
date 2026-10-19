@@ -129,12 +129,6 @@ dotnet_diagnostic.CA1852.severity = warning
 dotnet_diagnostic.CA5394.severity = warning
 dotnet_diagnostic.CS1591.severity = warning
 dotnet_diagnostic.IDE0161.severity = warning
-dotnet_diagnostic.S2326.severity = warning
-dotnet_diagnostic.S2094.severity = warning
-dotnet_diagnostic.S1186.severity = warning
-dotnet_diagnostic.S4136.severity = warning
-dotnet_diagnostic.S4144.severity = warning
-dotnet_diagnostic.S4035.severity = warning
 dotnet_diagnostic.SKSTYLE001.severity = suggestion
 dotnet_diagnostic.SKSTYLE002.severity = suggestion
 dotnet_diagnostic.SKSTYLE003.severity = suggestion
@@ -257,7 +251,6 @@ dotnet_diagnostic.CA1515.severity = none
 dotnet_diagnostic.CA1707.severity = none
 dotnet_diagnostic.CA1716.severity = none
 dotnet_diagnostic.CS1591.severity = none
-dotnet_diagnostic.S107.severity = none
 dotnet_diagnostic.SKSTYLE004.severity = suggestion
 
 # Reqnroll discovers binding and generated test support types by reflection.

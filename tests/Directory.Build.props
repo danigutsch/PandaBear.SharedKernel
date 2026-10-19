@@ -2,7 +2,6 @@
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" Condition="'' != $([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 
 	<PropertyGroup>
-		<SonarQubeTestProject>true</SonarQubeTestProject>
 		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
 		<TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
 		<TestingPlatformCaptureOutput>false</TestingPlatformCaptureOutput>
@@ -18,6 +17,9 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
+		<Content Include="$(MSBuildThisFileDirectory)testconfig.json"
+			Link="testconfig.json"
+			CopyToOutputDirectory="PreserveNewest" />
 		<Content Include="$(MSBuildThisFileDirectory)xunit.runner.json"
 			Link="xunit.runner.json"
 			CopyToOutputDirectory="PreserveNewest" />

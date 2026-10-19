@@ -17,6 +17,21 @@ dotnet build SharedKernel.slnx -c Release --no-restore
 dotnet test --solution SharedKernel.slnx -c Release --no-build --no-restore
 ```
 
+Coverage uses the MIT-licensed `coverlet.MTP` extension. To collect Cobertura for a project, run:
+
+```sh
+dotnet test --project tests/SharedKernel.HttpClients.Tests/SharedKernel.HttpClients.Tests.csproj -c Release --no-build --no-restore --coverlet --results-directory TestResults/coverage
+```
+
+`tests/testconfig.json` defines the coverage filters and is copied beside test executables. It excludes test assemblies, migrations, intermediate and
+generated source files, and explicitly marked generated/excluded code. Compiler-generated async and iterator code remains measurable. Coverlet
+measures instrumented managed modules in the test process; separate application/container processes are not covered automatically. Selected-project
+reports are evidence for those projects, not whole-repository coverage trends. This repository does not currently enforce a coverage percentage.
+
+Build gates retain SDK analyzers (`AnalysisMode=All`), SharedKernel analyzers, warnings as errors, public API checks, dependency vulnerability auditing,
+and package-consumption checks. These checks do not replace every former Sonar rule, security hotspot review, or SonarCloud new-code metric; code
+review remains necessary for those gaps. No remote SonarCloud upload or proprietary coverage collector is required.
+
 Ongoing automation uses C# tools. `SharedKernel.Repository.Tool` is repository-only and is not packaged. Selection reads the live solution, includes
 reverse transitive dependents and whole test projects, and falls back to full validation when history or dependencies are uncertain. Full runs happen
 nightly; selection reasons are retained in CI.

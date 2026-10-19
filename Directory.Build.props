@@ -49,10 +49,6 @@
 		<PublishRepositoryUrl Condition="'$(PublishRepositoryUrl)' == ''">true</PublishRepositoryUrl>
 	</PropertyGroup>
 
-	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
-		<PackageReference Include="SonarAnalyzer.CSharp" PrivateAssets="all" />
-	</ItemGroup>
-
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj' and '$(IsRoslynComponent)' != 'true'">
 		<ProjectReference Include="$(MSBuildThisFileDirectory)src/SharedKernel/SharedKernel.Style.Analyzers/SharedKernel.Style.Analyzers.csproj"
 			OutputItemType="Analyzer"

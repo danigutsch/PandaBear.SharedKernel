@@ -1,0 +1,14 @@
+{
+  "platformOptions": {
+    "Coverlet": {
+      "include": "[SharedKernel.*]*",
+      "exclude": "[*Tests]*,[*.Tests.*]*",
+      "excludeByFile": "**/Migrations/**,**/obj/**,**/*.g.cs,**/*.generated.cs",
+      "excludeByAttribute": "ExcludeFromCodeCoverageAttribute,GeneratedCodeAttribute",
+      "format": "cobertura",
+      "includeTestAssembly": false,
+      "skipAutoProps": false,
+      "excludeAssembliesWithoutSources": "MissingAll"
+    }
+  }
+}

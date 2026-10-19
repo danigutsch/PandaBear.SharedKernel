@@ -9,7 +9,7 @@
         <Using Include="Xunit" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage">
+        <PackageReference Include="coverlet.MTP">
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="xunit.v3.mtp-v2" />
