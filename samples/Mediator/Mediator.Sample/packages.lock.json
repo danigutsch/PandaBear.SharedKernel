@@ -57,15 +57,15 @@
         "resolved": "10.0.13",
         "contentHash": "ZjTwxzhiw2TMEzIbUDkMF0dfDB2I4NQgIfKD0ELu9/5Mk+SRGdKZcD0/lvBrRCAPo6KN2r0BW86MRancoyJkoA=="
       },
-      "sharedkernel.mediator": {
+      "PandaBear.SharedKernel.Mediator": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
           "Microsoft.Extensions.Diagnostics": "[10.0.13, )",
-          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.mediator.abstractions": {
+      "PandaBear.SharedKernel.Mediator.Abstractions": {
         "type": "Project"
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {

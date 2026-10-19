@@ -179,21 +179,21 @@
         "resolved": "4.7.0",
         "contentHash": "VybpaOQQhqE6siHppMktjfGBw1GCwvCqiufqmP8F1nj7fTUNtW35LOEt3UZTEsECfo+ELAl/9o9nJx3U91i7vA=="
       },
-      "sharedkernel.mediator": {
+      "PandaBear.SharedKernel.Mediator": {
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
           "Microsoft.Extensions.Diagnostics": "[10.0.13, )",
-          "SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Mediator.Abstractions": "[0.1.0-alpha.0, )"
         }
       },
-      "sharedkernel.mediator.abstractions": {
+      "PandaBear.SharedKernel.Mediator.Abstractions": {
         "type": "Project"
       },
-      "sharedkernel.mediator.analyzers": {
+      "PandaBear.SharedKernel.Mediator.Analyzers": {
         "type": "Project"
       },
-      "sharedkernel.mediator.sourcegenerator": {
+      "PandaBear.SharedKernel.Mediator.SourceGenerator": {
         "type": "Project"
       },
       "Microsoft.CodeAnalysis.Analyzers": {
