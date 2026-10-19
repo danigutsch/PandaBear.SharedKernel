@@ -1,3 +1,6 @@
+using System.IO.Compression;
+using System.Xml.Linq;
+
 namespace SharedKernel.Versioning.Tool;
 
 internal static class SharedKernelPackCommand
@@ -23,18 +26,16 @@ internal static class SharedKernelPackCommand
             throw new ArgumentException("No SharedKernel projects found.");
         }
 
-        foreach (var project in projects)
-        {
-            CommandRunner.Run(
-                "dotnet",
-                SharedKernelPackagePlanner.CreatePackArguments(
-                    project,
-                    packageOptions,
-                    packageDirectory,
-                    Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation),
-                    Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion)),
-                options.RepoRoot);
-        }
+        var solution = Path.Combine(packageDirectory, ".pack.slnx");
+        new XDocument(new XElement("Solution", projects.Select(project =>
+            new XElement("Project", new XAttribute("Path", Path.GetFullPath(project)))))).Save(solution);
+        CommandRunner.Run(
+            "dotnet",
+            SharedKernelPackagePlanner.CreatePackArguments(
+                solution, packageOptions, packageDirectory,
+                Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation),
+                Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion)),
+            options.RepoRoot);
 
         if (options.VerifyRestore)
         {
@@ -43,6 +44,14 @@ internal static class SharedKernelPackCommand
 
         await output.WriteLineAsync("SharedKernel packages: " + packageDirectory).ConfigureAwait(false);
         return packageDirectory;
+    }
+
+    private static bool IsToolPackage(string package)
+    {
+        using var archive = ZipFile.OpenRead(package);
+        using var stream = archive.Entries.Single(entry => entry.FullName.EndsWith(".nuspec", StringComparison.Ordinal)).Open();
+        return XDocument.Load(stream).Descendants().Any(element => element.Name.LocalName == "packageType"
+            && (string?)element.Attribute("name") == "DotnetTool");
     }
 
     private static async Task VerifyLocalFeed(string packageDirectory, string version)
@@ -56,7 +65,9 @@ internal static class SharedKernelPackCommand
             throw new ArgumentException($"No SharedKernel packages found in {packageDirectory}");
         }
 
-        var packageIds = SharedKernelLocalFeed.ReadPackageIds(packages, version);
+        _ = SharedKernelLocalFeed.ReadPackageIds(packages, version);
+        var tools = packages.Where(IsToolPackage).ToArray();
+        var packageIds = SharedKernelLocalFeed.ReadPackageIds(packages.Except(tools).ToArray(), version);
         var restoreDirectory = Path.Combine(packageDirectory, ".restore-check");
         if (Directory.Exists(restoreDirectory))
         {
@@ -79,6 +90,14 @@ internal static class SharedKernelPackCommand
                 "--no-cache",
                 "-p:RestorePackagesWithLockFile=false",
             ]);
+
+        foreach (var tool in tools)
+        {
+            var id = SharedKernelLocalFeed.ReadPackageIds([tool], version).Single();
+            CommandRunner.Run("dotnet", ["tool", "install", id, "--version", version,
+                "--tool-path", Path.Combine(restoreDirectory, "tools", id), "--configfile",
+                Path.Combine(restoreDirectory, "NuGet.config"), "--no-cache"], restoreDirectory);
+        }
 
         var missing = packageIds.Where(packageId => !SharedKernelLocalFeed.PackageWasRestored(packageCache, packageId, version)).ToArray();
         if (missing.Length > 0)
