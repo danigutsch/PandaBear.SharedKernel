@@ -65,3 +65,9 @@ test-only fixes, or optional-technology fixes here.
 
 - [SharedKernel.Mediator.Analyzers](../SharedKernel.Mediator.Analyzers/README.md)
 - [SharedKernel.Mediator.SourceGenerator](../SharedKernel.Mediator.SourceGenerator/README.md)
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Mediator.CodeFixes`. C# namespace: `PandaBear.Mediator.CodeFixes`. Assembly/project identity: `SharedKernel.Mediator.CodeFixes`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

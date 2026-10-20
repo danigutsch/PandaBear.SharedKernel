@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SharedKernel.EntityFrameworkCore;
+using PandaBear.EntityFrameworkCore;
 
-namespace SharedKernel.Idempotency.EntityFrameworkCore;
+namespace PandaBear.Idempotency.EntityFrameworkCore;
 
 /// <summary>
 /// Configures persisted idempotency entries.

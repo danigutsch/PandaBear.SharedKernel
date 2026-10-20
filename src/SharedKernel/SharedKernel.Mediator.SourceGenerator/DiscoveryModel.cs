@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
-namespace SharedKernel.Mediator.SourceGenerator;
+namespace PandaBear.Mediator.SourceGenerator;
 
 /// <summary>
 /// Captures the immutable discovery data produced for the initial generator report.

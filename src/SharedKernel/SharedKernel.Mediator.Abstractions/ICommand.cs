@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator;
+namespace PandaBear.Mediator;
 
 /// <summary>
 /// Represents a command that returns <see cref="Unit" />.

@@ -1,5 +1,5 @@
 using System.Runtime.CompilerServices;
-using SharedKernel.Mediator;
+using PandaBear.Mediator;
 
 namespace Mediator.Sample;
 

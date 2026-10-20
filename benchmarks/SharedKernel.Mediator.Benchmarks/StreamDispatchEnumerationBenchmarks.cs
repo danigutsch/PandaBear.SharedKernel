@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using System.Reflection;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Measures full-enumeration costs for the stream-dispatch strategies under comparison.

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace SharedKernel.Idempotency.EntityFrameworkCore;
+namespace PandaBear.Idempotency.EntityFrameworkCore;
 
 internal static class IdempotencyOptionsNames
 {

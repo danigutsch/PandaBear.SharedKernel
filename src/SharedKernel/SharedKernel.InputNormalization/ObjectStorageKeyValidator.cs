@@ -1,4 +1,4 @@
-namespace SharedKernel.InputNormalization;
+namespace PandaBear.InputNormalization;
 
 /// <summary>
 /// Validates relative slash-delimited keys used by object storage providers.

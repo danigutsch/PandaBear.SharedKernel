@@ -1,4 +1,4 @@
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace PandaBear.BuildingBlocks.Tests;
 
 internal static class ValueObjectTestsHelpers
 {

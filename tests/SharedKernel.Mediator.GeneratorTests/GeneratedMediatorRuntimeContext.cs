@@ -2,7 +2,7 @@ using System.Diagnostics.Metrics;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace SharedKernel.Mediator.GeneratorTests;
+namespace PandaBear.Mediator.GeneratorTests;
 
 internal sealed class GeneratedMediatorRuntimeContext : IDisposable
 {
@@ -39,7 +39,7 @@ internal sealed class GeneratedMediatorRuntimeContext : IDisposable
             [runtimeUsings + source, generatedMediatorSource, generatedDispatchSource, generatedPipelinesSource],
             assemblyName: "SharedKernel.Mediator.Tests.GeneratedDispatchRuntime");
         var assembly = GeneratorTestHarness.LoadAssembly(runtimeCompilation);
-        var mediatorType = assembly.GetType("SharedKernel.Mediator.AppMediator", throwOnError: true)!;
+        var mediatorType = assembly.GetType("PandaBear.Mediator.AppMediator", throwOnError: true)!;
 
         return new GeneratedMediatorRuntimeContext(assembly, mediatorType);
     }

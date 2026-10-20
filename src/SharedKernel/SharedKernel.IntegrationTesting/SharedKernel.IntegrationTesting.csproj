@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.IntegrationTesting</PackageId>
         <Description>Reusable Aspire and PostgreSQL integration-test helpers for SharedKernel test suites.</Description>
-        <RootNamespace>SharedKernel.IntegrationTesting</RootNamespace>
+        <RootNamespace>PandaBear.IntegrationTesting</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;integration-testing;aspire;postgresql;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Mediator</PackageId>
         <Description>Runtime support surface for SharedKernel.Mediator.</Description>
-        <RootNamespace>SharedKernel.Mediator</RootNamespace>
+        <RootNamespace>PandaBear.Mediator</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>mediator;dependency-injection;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace SharedKernel.InputNormalization;
+namespace PandaBear.InputNormalization;
 
 /// <summary>
 /// Provides string sanitization methods for domain inputs.

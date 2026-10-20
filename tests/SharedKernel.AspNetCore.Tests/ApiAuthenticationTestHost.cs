@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace SharedKernel.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Tests;
 
 internal sealed class ApiAuthenticationTestHost : IAsyncDisposable
 {

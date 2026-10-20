@@ -26,3 +26,9 @@ The project now exposes `ReferenceDispatcherBuilder` and `ReferenceMediator` for
 
 - `tests/SharedKernel.Mediator.Tests`
 - `tests/SharedKernel.Mediator.GeneratorTests`
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Testing.Mediator`. C# namespace: `PandaBear.Testing.Mediator`. Assembly/project identity: `SharedKernel.Testing.Mediator`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

@@ -1,4 +1,4 @@
-namespace SharedKernel.Branding;
+namespace PandaBear.Branding;
 
 /// <summary>
 /// Persists validated branding settings without imposing a storage provider.

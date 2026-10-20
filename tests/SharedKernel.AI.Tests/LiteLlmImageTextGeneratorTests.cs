@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 
-namespace SharedKernel.AI.Tests;
+namespace PandaBear.AI.Tests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ImageTextGenerationCapability)]
 public sealed class LiteLlmImageTextGeneratorTests

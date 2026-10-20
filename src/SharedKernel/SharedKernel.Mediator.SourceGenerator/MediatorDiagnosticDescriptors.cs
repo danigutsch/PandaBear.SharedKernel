@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace SharedKernel.Mediator;
+namespace PandaBear.Mediator;
 
 /// <summary>
 /// Central diagnostic descriptors used by mediator generation, analysis, and code fixes.

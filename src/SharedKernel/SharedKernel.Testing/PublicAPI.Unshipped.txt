@@ -1,69 +1,69 @@
 #nullable enable
-const SharedKernel.Domain.Tests.TestTraits.AggregateRootCapability = "AggregateRoot" -> string!
-const SharedKernel.Domain.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
-const SharedKernel.Domain.Tests.TestTraits.DomainComponent = "SharedKernel.Domain" -> string!
-const SharedKernel.Domain.Tests.TestTraits.EntityCapability = "Entity" -> string!
-const SharedKernel.EventSourcing.Tests.TestTraits.EventSourcingComponent = "SharedKernel.EventSourcing" -> string!
-const SharedKernel.Functional.Tests.TestTraits.CompositionCategory = "Composition" -> string!
-const SharedKernel.Functional.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
-const SharedKernel.Functional.Tests.TestTraits.EdgeCaseCategory = "EdgeCase" -> string!
-const SharedKernel.Functional.Tests.TestTraits.FunctorLawsTheory = "FunctorLaws" -> string!
-const SharedKernel.Functional.Tests.TestTraits.MatchSemanticsTheory = "MatchSemantics" -> string!
-const SharedKernel.Functional.Tests.TestTraits.MonadLawsTheory = "MonadLaws" -> string!
-const SharedKernel.Functional.Tests.TestTraits.OptionCapability = "Option" -> string!
-const SharedKernel.Functional.Tests.TestTraits.ResultCapability = "Result" -> string!
-const SharedKernel.Functional.Tests.TestTraits.ResultsComponent = "SharedKernel.Results" -> string!
-const SharedKernel.Idempotency.Tests.TestTraits.IdempotencyComponent = "SharedKernel.Idempotency" -> string!
-const SharedKernel.Mediator.GeneratorTests.TestTraits.DependencyInjectionCapability = "DependencyInjection" -> string!
-const SharedKernel.Mediator.GeneratorTests.TestTraits.DiscoveryCapability = "Discovery" -> string!
-const SharedKernel.Mediator.GeneratorTests.TestTraits.DispatchCapability = "Dispatch" -> string!
-const SharedKernel.Mediator.GeneratorTests.TestTraits.SourceGeneratorComponent = "SharedKernel.Mediator.SourceGenerator" -> string!
-const SharedKernel.Mediator.Tests.TestTraits.AbstractionsComponent = "SharedKernel.Mediator.Abstractions" -> string!
-const SharedKernel.Mediator.Tests.TestTraits.ContractsCapability = "Contracts" -> string!
-const SharedKernel.Mediator.Tests.TestTraits.ReferenceDispatcherCapability = "ReferenceDispatcher" -> string!
-const SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName = "TestCapability" -> string!
-const SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName = "TestCategory" -> string!
-const SharedKernel.Testing.SharedKernelTestTraitNames.ComponentName = "TestComponent" -> string!
-const SharedKernel.Testing.SharedKernelTestTraitNames.ScopeName = "TestScope" -> string!
-const SharedKernel.Testing.SharedKernelTestTraitNames.TheoryName = "TestTheory" -> string!
-const SharedKernel.Testing.SharedKernelTestTraitNames.UnitScope = "Unit" -> string!
-const SharedKernel.Testing.TestTraitNames.AreaName = "Area" -> string!
-const SharedKernel.Testing.TestTraitNames.CategoryName = "Category" -> string!
-const SharedKernel.Testing.TestTraitNames.HostName = "Host" -> string!
-const SharedKernel.Testing.TestTraitNames.ScopeName = "Scope" -> string!
-const SharedKernel.Testing.TestTraitNames.SurfaceName = "Surface" -> string!
-const SharedKernel.Testing.TestTraitValues.ApiIntegrationScope = "api-integration" -> string!
-const SharedKernel.Testing.TestTraitValues.DependencyInjectionCategory = "dependency-injection" -> string!
-const SharedKernel.Testing.TestTraitValues.EndpointCategory = "endpoint" -> string!
-const SharedKernel.Testing.TestTraitValues.SecurityCategory = "security" -> string!
-const SharedKernel.Testing.TestTraitValues.TestServerHost = "test-server" -> string!
-override SharedKernel.Testing.GatedCountingReadStream.CanRead.get -> bool
-override SharedKernel.Testing.GatedCountingReadStream.CanSeek.get -> bool
-override SharedKernel.Testing.GatedCountingReadStream.CanWrite.get -> bool
-override SharedKernel.Testing.GatedCountingReadStream.Flush() -> void
-override SharedKernel.Testing.GatedCountingReadStream.Length.get -> long
-override SharedKernel.Testing.GatedCountingReadStream.Position.get -> long
-override SharedKernel.Testing.GatedCountingReadStream.Position.set -> void
-override SharedKernel.Testing.GatedCountingReadStream.Read(byte[]! buffer, int offset, int count) -> int
-override SharedKernel.Testing.GatedCountingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
-override SharedKernel.Testing.GatedCountingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<int>
-override SharedKernel.Testing.GatedCountingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
-override SharedKernel.Testing.GatedCountingReadStream.SetLength(long value) -> void
-override SharedKernel.Testing.GatedCountingReadStream.Write(byte[]! buffer, int offset, int count) -> void
-SharedKernel.Domain.Tests.TestTraits
-SharedKernel.EventSourcing.Tests.TestTraits
-SharedKernel.Functional.Tests.TestTraits
-SharedKernel.Idempotency.Tests.TestTraits
-SharedKernel.Mediator.GeneratorTests.TestTraits
-SharedKernel.Mediator.Tests.TestTraits
-SharedKernel.Testing.GatedCountingReadStream
-SharedKernel.Testing.GatedCountingReadStream.BytesRead.get -> long
-SharedKernel.Testing.GatedCountingReadStream.GatedCountingReadStream(byte[]! content) -> void
-SharedKernel.Testing.GatedCountingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
-SharedKernel.Testing.GatedCountingReadStream.Release() -> void
-SharedKernel.Testing.SerialTestJustificationAttribute
-SharedKernel.Testing.SerialTestJustificationAttribute.Reason.get -> string!
-SharedKernel.Testing.SerialTestJustificationAttribute.SerialTestJustificationAttribute(string! reason) -> void
-SharedKernel.Testing.SharedKernelTestTraitNames
-SharedKernel.Testing.TestTraitNames
-SharedKernel.Testing.TestTraitValues
+const PandaBear.Domain.Tests.TestTraits.AggregateRootCapability = "AggregateRoot" -> string!
+const PandaBear.Domain.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
+const PandaBear.Domain.Tests.TestTraits.DomainComponent = "SharedKernel.Domain" -> string!
+const PandaBear.Domain.Tests.TestTraits.EntityCapability = "Entity" -> string!
+const PandaBear.EventSourcing.Tests.TestTraits.EventSourcingComponent = "SharedKernel.EventSourcing" -> string!
+const PandaBear.Functional.Tests.TestTraits.CompositionCategory = "Composition" -> string!
+const PandaBear.Functional.Tests.TestTraits.CoreBehaviorCategory = "CoreBehavior" -> string!
+const PandaBear.Functional.Tests.TestTraits.EdgeCaseCategory = "EdgeCase" -> string!
+const PandaBear.Functional.Tests.TestTraits.FunctorLawsTheory = "FunctorLaws" -> string!
+const PandaBear.Functional.Tests.TestTraits.MatchSemanticsTheory = "MatchSemantics" -> string!
+const PandaBear.Functional.Tests.TestTraits.MonadLawsTheory = "MonadLaws" -> string!
+const PandaBear.Functional.Tests.TestTraits.OptionCapability = "Option" -> string!
+const PandaBear.Functional.Tests.TestTraits.ResultCapability = "Result" -> string!
+const PandaBear.Functional.Tests.TestTraits.ResultsComponent = "SharedKernel.Results" -> string!
+const PandaBear.Idempotency.Tests.TestTraits.IdempotencyComponent = "SharedKernel.Idempotency" -> string!
+const PandaBear.Mediator.GeneratorTests.TestTraits.DependencyInjectionCapability = "DependencyInjection" -> string!
+const PandaBear.Mediator.GeneratorTests.TestTraits.DiscoveryCapability = "Discovery" -> string!
+const PandaBear.Mediator.GeneratorTests.TestTraits.DispatchCapability = "Dispatch" -> string!
+const PandaBear.Mediator.GeneratorTests.TestTraits.SourceGeneratorComponent = "SharedKernel.Mediator.SourceGenerator" -> string!
+const PandaBear.Mediator.Tests.TestTraits.AbstractionsComponent = "SharedKernel.Mediator.Abstractions" -> string!
+const PandaBear.Mediator.Tests.TestTraits.ContractsCapability = "Contracts" -> string!
+const PandaBear.Mediator.Tests.TestTraits.ReferenceDispatcherCapability = "ReferenceDispatcher" -> string!
+const PandaBear.Testing.SharedKernelTestTraitNames.CapabilityName = "TestCapability" -> string!
+const PandaBear.Testing.SharedKernelTestTraitNames.CategoryName = "TestCategory" -> string!
+const PandaBear.Testing.SharedKernelTestTraitNames.ComponentName = "TestComponent" -> string!
+const PandaBear.Testing.SharedKernelTestTraitNames.ScopeName = "TestScope" -> string!
+const PandaBear.Testing.SharedKernelTestTraitNames.TheoryName = "TestTheory" -> string!
+const PandaBear.Testing.SharedKernelTestTraitNames.UnitScope = "Unit" -> string!
+const PandaBear.Testing.TestTraitNames.AreaName = "Area" -> string!
+const PandaBear.Testing.TestTraitNames.CategoryName = "Category" -> string!
+const PandaBear.Testing.TestTraitNames.HostName = "Host" -> string!
+const PandaBear.Testing.TestTraitNames.ScopeName = "Scope" -> string!
+const PandaBear.Testing.TestTraitNames.SurfaceName = "Surface" -> string!
+const PandaBear.Testing.TestTraitValues.ApiIntegrationScope = "api-integration" -> string!
+const PandaBear.Testing.TestTraitValues.DependencyInjectionCategory = "dependency-injection" -> string!
+const PandaBear.Testing.TestTraitValues.EndpointCategory = "endpoint" -> string!
+const PandaBear.Testing.TestTraitValues.SecurityCategory = "security" -> string!
+const PandaBear.Testing.TestTraitValues.TestServerHost = "test-server" -> string!
+override PandaBear.Testing.GatedCountingReadStream.CanRead.get -> bool
+override PandaBear.Testing.GatedCountingReadStream.CanSeek.get -> bool
+override PandaBear.Testing.GatedCountingReadStream.CanWrite.get -> bool
+override PandaBear.Testing.GatedCountingReadStream.Flush() -> void
+override PandaBear.Testing.GatedCountingReadStream.Length.get -> long
+override PandaBear.Testing.GatedCountingReadStream.Position.get -> long
+override PandaBear.Testing.GatedCountingReadStream.Position.set -> void
+override PandaBear.Testing.GatedCountingReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override PandaBear.Testing.GatedCountingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override PandaBear.Testing.GatedCountingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<int>
+override PandaBear.Testing.GatedCountingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override PandaBear.Testing.GatedCountingReadStream.SetLength(long value) -> void
+override PandaBear.Testing.GatedCountingReadStream.Write(byte[]! buffer, int offset, int count) -> void
+PandaBear.Domain.Tests.TestTraits
+PandaBear.EventSourcing.Tests.TestTraits
+PandaBear.Functional.Tests.TestTraits
+PandaBear.Idempotency.Tests.TestTraits
+PandaBear.Mediator.GeneratorTests.TestTraits
+PandaBear.Mediator.Tests.TestTraits
+PandaBear.Testing.GatedCountingReadStream
+PandaBear.Testing.GatedCountingReadStream.BytesRead.get -> long
+PandaBear.Testing.GatedCountingReadStream.GatedCountingReadStream(byte[]! content) -> void
+PandaBear.Testing.GatedCountingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
+PandaBear.Testing.GatedCountingReadStream.Release() -> void
+PandaBear.Testing.SerialTestJustificationAttribute
+PandaBear.Testing.SerialTestJustificationAttribute.Reason.get -> string!
+PandaBear.Testing.SerialTestJustificationAttribute.SerialTestJustificationAttribute(string! reason) -> void
+PandaBear.Testing.SharedKernelTestTraitNames
+PandaBear.Testing.TestTraitNames
+PandaBear.Testing.TestTraitValues

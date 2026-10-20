@@ -1,4 +1,4 @@
-namespace SharedKernel.EventSourcing;
+namespace PandaBear.EventSourcing;
 
 /// <summary>
 /// Represents a one-based revision in a stream.

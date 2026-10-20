@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.Testing;
+using PandaBear.Testing;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.DatabaseIntegrationCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.PostgreSqlFixtureCapability)]

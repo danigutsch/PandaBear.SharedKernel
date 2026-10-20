@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Testing.Http</PackageId>
         <Description>Reusable HTTP response helpers for SharedKernel test suites.</Description>
-        <RootNamespace>SharedKernel.Testing.Http</RootNamespace>
+        <RootNamespace>PandaBear.Testing.Http</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;http;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

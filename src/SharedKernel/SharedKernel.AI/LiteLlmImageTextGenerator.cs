@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 
-namespace SharedKernel.AI;
+namespace PandaBear.AI;
 
 /// <summary>
 /// Generates image accessibility text through a LiteLLM OpenAI-compatible proxy.

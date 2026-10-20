@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace SharedKernel.Observability;
+namespace PandaBear.Observability;
 
 internal sealed class ApplicationVersionLoggingService(
     string applicationName,

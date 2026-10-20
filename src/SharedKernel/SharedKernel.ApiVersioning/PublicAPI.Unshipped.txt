@@ -1,45 +1,45 @@
 #nullable enable
-SharedKernel.ApiVersioning.ApiDeprecationPolicy
-SharedKernel.ApiVersioning.ApiDeprecationPolicy.DeprecatedOn.get -> System.DateOnly?
-SharedKernel.ApiVersioning.ApiDeprecationPolicy.DeprecatedOn.init -> void
-SharedKernel.ApiVersioning.ApiDeprecationPolicy.InformationUrl.get -> System.Uri?
-SharedKernel.ApiVersioning.ApiDeprecationPolicy.InformationUrl.init -> void
-SharedKernel.ApiVersioning.ApiDeprecationPolicy.SunsetOn.get -> System.DateOnly?
-SharedKernel.ApiVersioning.ApiDeprecationPolicy.SunsetOn.init -> void
-SharedKernel.ApiVersioning.ApiDeprecationPolicy.ApiDeprecationPolicy(System.DateOnly? DeprecatedOn = null, System.DateOnly? SunsetOn = null, System.Uri? InformationUrl = null) -> void
-SharedKernel.ApiVersioning.ApiDeprecationPolicyExtensions
-SharedKernel.ApiVersioning.ApiVersion
-SharedKernel.ApiVersioning.ApiVersion.ApiVersion() -> void
-SharedKernel.ApiVersioning.ApiVersion.ApiVersion(int major, int minor = 0) -> void
-SharedKernel.ApiVersioning.ApiVersion.CompareTo(SharedKernel.ApiVersioning.ApiVersion other) -> int
-SharedKernel.ApiVersioning.ApiVersion.Major.get -> int
-SharedKernel.ApiVersioning.ApiVersion.Minor.get -> int
-SharedKernel.ApiVersioning.ApiVersion.RouteSegment.get -> string!
-override SharedKernel.ApiVersioning.ApiVersion.ToString() -> string!
-SharedKernel.ApiVersioning.ApiVersionCatalog
-SharedKernel.ApiVersioning.ApiVersionCatalog.ApiVersionCatalog(System.Collections.Generic.IEnumerable<SharedKernel.ApiVersioning.ApiVersionDefinition!>! versions) -> void
-SharedKernel.ApiVersioning.ApiVersionCatalog.Select(SharedKernel.ApiVersioning.ApiVersion? requestedVersion = null) -> SharedKernel.ApiVersioning.ApiVersionDefinition!
-SharedKernel.ApiVersioning.ApiVersionCatalog.SelectableVersions.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.ApiVersioning.ApiVersionDefinition!>!
-SharedKernel.ApiVersioning.ApiVersionCatalog.Versions.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.ApiVersioning.ApiVersionDefinition!>!
-SharedKernel.ApiVersioning.ApiVersionDefinition
-SharedKernel.ApiVersioning.ApiVersionDefinition.Deprecation.get -> SharedKernel.ApiVersioning.ApiDeprecationPolicy?
-SharedKernel.ApiVersioning.ApiVersionDefinition.Deprecation.init -> void
-SharedKernel.ApiVersioning.ApiVersionDefinition.OpenApiDocumentName.get -> string!
-SharedKernel.ApiVersioning.ApiVersionDefinition.RouteSegment.get -> string!
-SharedKernel.ApiVersioning.ApiVersionDefinition.Status.get -> SharedKernel.ApiVersioning.ApiVersionStatus
-SharedKernel.ApiVersioning.ApiVersionDefinition.Status.init -> void
-SharedKernel.ApiVersioning.ApiVersionDefinition.Version.get -> SharedKernel.ApiVersioning.ApiVersion
-SharedKernel.ApiVersioning.ApiVersionDefinition.Version.init -> void
-SharedKernel.ApiVersioning.ApiVersionDefinition.ApiVersionDefinition(SharedKernel.ApiVersioning.ApiVersion Version, SharedKernel.ApiVersioning.ApiVersionStatus Status = SharedKernel.ApiVersioning.ApiVersionStatus.Active, SharedKernel.ApiVersioning.ApiDeprecationPolicy? Deprecation = null) -> void
-SharedKernel.ApiVersioning.ApiVersionStatus
-static SharedKernel.ApiVersioning.ApiDeprecationPolicyExtensions.HasDeprecationPolicy(this SharedKernel.ApiVersioning.ApiVersionDefinition! definition) -> bool
-static SharedKernel.ApiVersioning.ApiDeprecationPolicyExtensions.HasSunsetOnOrBefore(this SharedKernel.ApiVersioning.ApiVersionDefinition! definition, System.DateOnly date) -> bool
-static SharedKernel.ApiVersioning.ApiVersion.Parse(string! value) -> SharedKernel.ApiVersioning.ApiVersion
-static SharedKernel.ApiVersioning.ApiVersion.TryParse(string? value, out SharedKernel.ApiVersioning.ApiVersion version) -> bool
-static SharedKernel.ApiVersioning.ApiVersion.operator <(SharedKernel.ApiVersioning.ApiVersion left, SharedKernel.ApiVersioning.ApiVersion right) -> bool
-static SharedKernel.ApiVersioning.ApiVersion.operator <=(SharedKernel.ApiVersioning.ApiVersion left, SharedKernel.ApiVersioning.ApiVersion right) -> bool
-static SharedKernel.ApiVersioning.ApiVersion.operator >(SharedKernel.ApiVersioning.ApiVersion left, SharedKernel.ApiVersioning.ApiVersion right) -> bool
-static SharedKernel.ApiVersioning.ApiVersion.operator >=(SharedKernel.ApiVersioning.ApiVersion left, SharedKernel.ApiVersioning.ApiVersion right) -> bool
-SharedKernel.ApiVersioning.ApiVersionStatus.Active = 0 -> SharedKernel.ApiVersioning.ApiVersionStatus
-SharedKernel.ApiVersioning.ApiVersionStatus.Deprecated = 1 -> SharedKernel.ApiVersioning.ApiVersionStatus
-SharedKernel.ApiVersioning.ApiVersionStatus.Retired = 2 -> SharedKernel.ApiVersioning.ApiVersionStatus
+PandaBear.ApiVersioning.ApiDeprecationPolicy
+PandaBear.ApiVersioning.ApiDeprecationPolicy.DeprecatedOn.get -> System.DateOnly?
+PandaBear.ApiVersioning.ApiDeprecationPolicy.DeprecatedOn.init -> void
+PandaBear.ApiVersioning.ApiDeprecationPolicy.InformationUrl.get -> System.Uri?
+PandaBear.ApiVersioning.ApiDeprecationPolicy.InformationUrl.init -> void
+PandaBear.ApiVersioning.ApiDeprecationPolicy.SunsetOn.get -> System.DateOnly?
+PandaBear.ApiVersioning.ApiDeprecationPolicy.SunsetOn.init -> void
+PandaBear.ApiVersioning.ApiDeprecationPolicy.ApiDeprecationPolicy(System.DateOnly? DeprecatedOn = null, System.DateOnly? SunsetOn = null, System.Uri? InformationUrl = null) -> void
+PandaBear.ApiVersioning.ApiDeprecationPolicyExtensions
+PandaBear.ApiVersioning.ApiVersion
+PandaBear.ApiVersioning.ApiVersion.ApiVersion() -> void
+PandaBear.ApiVersioning.ApiVersion.ApiVersion(int major, int minor = 0) -> void
+PandaBear.ApiVersioning.ApiVersion.CompareTo(PandaBear.ApiVersioning.ApiVersion other) -> int
+PandaBear.ApiVersioning.ApiVersion.Major.get -> int
+PandaBear.ApiVersioning.ApiVersion.Minor.get -> int
+PandaBear.ApiVersioning.ApiVersion.RouteSegment.get -> string!
+override PandaBear.ApiVersioning.ApiVersion.ToString() -> string!
+PandaBear.ApiVersioning.ApiVersionCatalog
+PandaBear.ApiVersioning.ApiVersionCatalog.ApiVersionCatalog(System.Collections.Generic.IEnumerable<PandaBear.ApiVersioning.ApiVersionDefinition!>! versions) -> void
+PandaBear.ApiVersioning.ApiVersionCatalog.Select(PandaBear.ApiVersioning.ApiVersion? requestedVersion = null) -> PandaBear.ApiVersioning.ApiVersionDefinition!
+PandaBear.ApiVersioning.ApiVersionCatalog.SelectableVersions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.ApiVersioning.ApiVersionDefinition!>!
+PandaBear.ApiVersioning.ApiVersionCatalog.Versions.get -> System.Collections.Generic.IReadOnlyList<PandaBear.ApiVersioning.ApiVersionDefinition!>!
+PandaBear.ApiVersioning.ApiVersionDefinition
+PandaBear.ApiVersioning.ApiVersionDefinition.Deprecation.get -> PandaBear.ApiVersioning.ApiDeprecationPolicy?
+PandaBear.ApiVersioning.ApiVersionDefinition.Deprecation.init -> void
+PandaBear.ApiVersioning.ApiVersionDefinition.OpenApiDocumentName.get -> string!
+PandaBear.ApiVersioning.ApiVersionDefinition.RouteSegment.get -> string!
+PandaBear.ApiVersioning.ApiVersionDefinition.Status.get -> PandaBear.ApiVersioning.ApiVersionStatus
+PandaBear.ApiVersioning.ApiVersionDefinition.Status.init -> void
+PandaBear.ApiVersioning.ApiVersionDefinition.Version.get -> PandaBear.ApiVersioning.ApiVersion
+PandaBear.ApiVersioning.ApiVersionDefinition.Version.init -> void
+PandaBear.ApiVersioning.ApiVersionDefinition.ApiVersionDefinition(PandaBear.ApiVersioning.ApiVersion Version, PandaBear.ApiVersioning.ApiVersionStatus Status = PandaBear.ApiVersioning.ApiVersionStatus.Active, PandaBear.ApiVersioning.ApiDeprecationPolicy? Deprecation = null) -> void
+PandaBear.ApiVersioning.ApiVersionStatus
+static PandaBear.ApiVersioning.ApiDeprecationPolicyExtensions.HasDeprecationPolicy(this PandaBear.ApiVersioning.ApiVersionDefinition! definition) -> bool
+static PandaBear.ApiVersioning.ApiDeprecationPolicyExtensions.HasSunsetOnOrBefore(this PandaBear.ApiVersioning.ApiVersionDefinition! definition, System.DateOnly date) -> bool
+static PandaBear.ApiVersioning.ApiVersion.Parse(string! value) -> PandaBear.ApiVersioning.ApiVersion
+static PandaBear.ApiVersioning.ApiVersion.TryParse(string? value, out PandaBear.ApiVersioning.ApiVersion version) -> bool
+static PandaBear.ApiVersioning.ApiVersion.operator <(PandaBear.ApiVersioning.ApiVersion left, PandaBear.ApiVersioning.ApiVersion right) -> bool
+static PandaBear.ApiVersioning.ApiVersion.operator <=(PandaBear.ApiVersioning.ApiVersion left, PandaBear.ApiVersioning.ApiVersion right) -> bool
+static PandaBear.ApiVersioning.ApiVersion.operator >(PandaBear.ApiVersioning.ApiVersion left, PandaBear.ApiVersioning.ApiVersion right) -> bool
+static PandaBear.ApiVersioning.ApiVersion.operator >=(PandaBear.ApiVersioning.ApiVersion left, PandaBear.ApiVersioning.ApiVersion right) -> bool
+PandaBear.ApiVersioning.ApiVersionStatus.Active = 0 -> PandaBear.ApiVersioning.ApiVersionStatus
+PandaBear.ApiVersioning.ApiVersionStatus.Deprecated = 1 -> PandaBear.ApiVersioning.ApiVersionStatus
+PandaBear.ApiVersioning.ApiVersionStatus.Retired = 2 -> PandaBear.ApiVersioning.ApiVersionStatus

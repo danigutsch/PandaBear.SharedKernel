@@ -1,4 +1,4 @@
-namespace SharedKernel.EventSourcing.Tests;
+namespace PandaBear.EventSourcing.Tests;
 
 internal sealed class TestAggregate(string id) : EventSourcedAggregateRoot<string>
 {

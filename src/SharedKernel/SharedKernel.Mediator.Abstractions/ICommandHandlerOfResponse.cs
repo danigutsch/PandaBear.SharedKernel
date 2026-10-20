@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator;
+namespace PandaBear.Mediator;
 
 /// <summary>
 /// Handles a command that returns a response value.

@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
-using SharedKernel.Mediator.SourceGenerator;
+using PandaBear.Mediator.SourceGenerator;
 
-namespace SharedKernel.Mediator.CodeFixes;
+namespace PandaBear.Mediator.CodeFixes;
 
 /// <summary>
 /// Forwards the available handler cancellation token to mediator dispatch calls.

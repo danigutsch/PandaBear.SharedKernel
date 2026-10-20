@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
-namespace SharedKernel.HttpClients.Tests;
+namespace PandaBear.HttpClients.Tests;
 
 public sealed class ContractHttpValidationTests
 {
@@ -168,19 +168,26 @@ public sealed class ContractHttpValidationTests
     }
 
     [Fact]
-    public async Task FromResponse_returns_generic_malformed_body_message_for_invalid_validation_problem_json()
+    public async Task Send_returns_generic_malformed_body_message_for_invalid_validation_problem_json()
     {
-        using var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
-        {
-            Content = new StringContent("not json alice@example.test", Encoding.UTF8, "application/problem+json")
-        };
+        // Arrange
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
+            new HttpResponseMessage(HttpStatusCode.BadRequest)
+            {
+                Content = new StringContent("not json alice@example.test", Encoding.UTF8, "application/problem+json")
+            }));
+        using var client = new HttpClient(handler) { BaseAddress = new Uri("https://admin.example.test") };
 
-        var outcome = await ContractCommandOutcome.FromResponse(
-            response,
+        // Act
+        var outcome = await HttpOutcomeMapper.Send(
+            client,
+            new HttpRequestMessage(HttpMethod.Post, "/documents"),
+            HttpStatusCode.Created,
             ContractHttpValidationTestsJsonContext.Default.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.MalformedBody);
+        // Assert
+        outcome.Kind.ShouldBe(HttpOutcomeKind.MalformedBody);
         outcome.Message.ShouldBe("Validation problem response body was malformed.");
         outcome.Message.ShouldNotBeNull();
         outcome.Message.Contains("alice@example.test", StringComparison.Ordinal).ShouldBeFalse();

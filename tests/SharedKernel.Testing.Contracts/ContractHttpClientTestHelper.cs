@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 
-namespace SharedKernel.Testing.Contracts;
+namespace PandaBear.Testing.Contracts;
 
 /// <summary>
 /// Provides deterministic HTTP responses for contract client seam tests.

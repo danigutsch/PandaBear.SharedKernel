@@ -1,19 +1,19 @@
 #nullable enable
-SharedKernel.IntegrationTesting.AspireTestApplication
-SharedKernel.IntegrationTesting.ConcurrentAspireTestApplications
-static SharedKernel.IntegrationTesting.AspireTestApplication.CreateBuilder(params string![]! args) -> Aspire.Hosting.Testing.IDistributedApplicationTestingBuilder!
-SharedKernel.IntegrationTesting.AspireTestApplication.CreateHttpClient(string! resourceName) -> System.Net.Http.HttpClient!
-SharedKernel.IntegrationTesting.AspireTestApplication.DisposeAsync() -> System.Threading.Tasks.ValueTask
-SharedKernel.IntegrationTesting.AspireTestApplication.GetConnectionString(string! resourceName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
-SharedKernel.IntegrationTesting.AspireTestApplication.GetEndpoint(string! resourceName, string! endpointName) -> System.Uri!
-SharedKernel.IntegrationTesting.PostgreSqlPublicSchemaReset
-static readonly SharedKernel.IntegrationTesting.AspireTestApplication.DefaultResourceStartupTimeout -> System.TimeSpan
-SharedKernel.IntegrationTesting.ConcurrentAspireTestApplications.First.get -> SharedKernel.IntegrationTesting.AspireTestApplication!
-SharedKernel.IntegrationTesting.ConcurrentAspireTestApplications.Second.get -> SharedKernel.IntegrationTesting.AspireTestApplication!
-SharedKernel.IntegrationTesting.ConcurrentAspireTestApplications.DisposeAsync() -> System.Threading.Tasks.ValueTask
-static SharedKernel.IntegrationTesting.ConcurrentAspireTestApplications.Start(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<SharedKernel.IntegrationTesting.AspireTestApplication!>!>! startApplication, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.IntegrationTesting.ConcurrentAspireTestApplications!>!
-static SharedKernel.IntegrationTesting.AspireTestApplication.Start<TAppHost>(System.Collections.Generic.IEnumerable<string!>! healthyResourceNames, System.TimeSpan? resourceStartupTimeout, System.Collections.Generic.IReadOnlyCollection<string!>! appHostArguments, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.IntegrationTesting.AspireTestApplication!>!
-static SharedKernel.IntegrationTesting.AspireTestApplication.Start(Aspire.Hosting.Testing.IDistributedApplicationTestingBuilder! builder, System.Collections.Generic.IEnumerable<string!>! healthyResourceNames, System.TimeSpan? resourceStartupTimeout, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.IntegrationTesting.AspireTestApplication!>!
-static SharedKernel.IntegrationTesting.AspireTestApplication.Start<TAppHost>(System.Collections.Generic.IEnumerable<string!>! healthyResourceNames, System.TimeSpan? resourceStartupTimeout, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.IntegrationTesting.AspireTestApplication!>!
-static SharedKernel.IntegrationTesting.PostgreSqlPublicSchemaReset.Reset(System.Data.Common.DbConnection! connection, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-static SharedKernel.IntegrationTesting.PostgreSqlPublicSchemaReset.Reset(System.Data.Common.DbConnection! connection, System.Collections.Generic.IReadOnlyCollection<string!>! excludedTableNames, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.IntegrationTesting.AspireTestApplication
+PandaBear.IntegrationTesting.ConcurrentAspireTestApplications
+static PandaBear.IntegrationTesting.AspireTestApplication.CreateBuilder(params string![]! args) -> Aspire.Hosting.Testing.IDistributedApplicationTestingBuilder!
+PandaBear.IntegrationTesting.AspireTestApplication.CreateHttpClient(string! resourceName) -> System.Net.Http.HttpClient!
+PandaBear.IntegrationTesting.AspireTestApplication.DisposeAsync() -> System.Threading.Tasks.ValueTask
+PandaBear.IntegrationTesting.AspireTestApplication.GetConnectionString(string! resourceName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<string!>!
+PandaBear.IntegrationTesting.AspireTestApplication.GetEndpoint(string! resourceName, string! endpointName) -> System.Uri!
+PandaBear.IntegrationTesting.PostgreSqlPublicSchemaReset
+static readonly PandaBear.IntegrationTesting.AspireTestApplication.DefaultResourceStartupTimeout -> System.TimeSpan
+PandaBear.IntegrationTesting.ConcurrentAspireTestApplications.First.get -> PandaBear.IntegrationTesting.AspireTestApplication!
+PandaBear.IntegrationTesting.ConcurrentAspireTestApplications.Second.get -> PandaBear.IntegrationTesting.AspireTestApplication!
+PandaBear.IntegrationTesting.ConcurrentAspireTestApplications.DisposeAsync() -> System.Threading.Tasks.ValueTask
+static PandaBear.IntegrationTesting.ConcurrentAspireTestApplications.Start(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.IntegrationTesting.AspireTestApplication!>!>! startApplication, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.IntegrationTesting.ConcurrentAspireTestApplications!>!
+static PandaBear.IntegrationTesting.AspireTestApplication.Start<TAppHost>(System.Collections.Generic.IEnumerable<string!>! healthyResourceNames, System.TimeSpan? resourceStartupTimeout, System.Collections.Generic.IReadOnlyCollection<string!>! appHostArguments, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.IntegrationTesting.AspireTestApplication!>!
+static PandaBear.IntegrationTesting.AspireTestApplication.Start(Aspire.Hosting.Testing.IDistributedApplicationTestingBuilder! builder, System.Collections.Generic.IEnumerable<string!>! healthyResourceNames, System.TimeSpan? resourceStartupTimeout, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.IntegrationTesting.AspireTestApplication!>!
+static PandaBear.IntegrationTesting.AspireTestApplication.Start<TAppHost>(System.Collections.Generic.IEnumerable<string!>! healthyResourceNames, System.TimeSpan? resourceStartupTimeout, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.IntegrationTesting.AspireTestApplication!>!
+static PandaBear.IntegrationTesting.PostgreSqlPublicSchemaReset.Reset(System.Data.Common.DbConnection! connection, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static PandaBear.IntegrationTesting.PostgreSqlPublicSchemaReset.Reset(System.Data.Common.DbConnection! connection, System.Collections.Generic.IReadOnlyCollection<string!>! excludedTableNames, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!

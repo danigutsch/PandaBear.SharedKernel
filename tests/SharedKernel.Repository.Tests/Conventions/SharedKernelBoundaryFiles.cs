@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace SharedKernel.Repository.Tests.Conventions;
+namespace PandaBear.Repository.Tests.Conventions;
 
 internal static partial class SharedKernelBoundaryFiles
 {

@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Configures the stream-enumeration benchmark summary columns.

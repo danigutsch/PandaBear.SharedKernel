@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 
-namespace SharedKernel.Versioning;
+namespace PandaBear.Versioning;
 
 /// <summary>
 /// Reads lock-file package inventories and writes release attribution artifacts.
@@ -107,7 +107,7 @@ public static class PackageLockInventory
         builder.Append("  \"name\": ").Append(Escape("SharedKernel " + options.Version)).AppendLine(",");
         builder.Append("  \"documentNamespace\": ").Append(Escape(documentNamespace)).AppendLine(",");
         builder.AppendLine("  \"creationInfo\": {");
-        builder.AppendLine("    \"creators\": [\"Tool: SharedKernel.Versioning.Tool\"],");
+        builder.AppendLine("    \"creators\": [\"Tool: PandaBear.Versioning.Tool\"],");
         builder.Append("    \"created\": ").Append(Escape(created)).AppendLine();
         builder.AppendLine("  },");
         builder.AppendLine("  \"packages\": [");

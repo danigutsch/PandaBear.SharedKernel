@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Configures the dispatch-scale benchmark summary columns.

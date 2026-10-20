@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
 
-namespace SharedKernel.Functional.Benchmarks;
+namespace PandaBear.Functional.Benchmarks;
 
 /// <summary>
 /// Measures whether passing a larger payload by <c>in</c> changes hot-path helper cost enough to justify API experiments.

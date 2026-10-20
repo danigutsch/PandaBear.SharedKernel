@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator;
+namespace PandaBear.Mediator;
 
 /// <summary>
 /// Defines the coarse-grained stages used to order pipeline behaviors.

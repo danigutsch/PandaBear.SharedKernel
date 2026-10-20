@@ -1,4 +1,4 @@
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace PandaBear.BuildingBlocks.Tests;
 
 internal sealed class OtherTestValueObject(string city, int nights) : ValueObject
 {

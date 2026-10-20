@@ -1,5 +1,5 @@
 
-namespace SharedKernel.Testing.CodeFixRunner.Tests;
+namespace PandaBear.Testing.CodeFixRunner.Tests;
 
 public sealed class CodeFixRunnerToolTests
 {

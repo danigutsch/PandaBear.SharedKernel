@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
 
-namespace SharedKernel.Functional.Benchmarks;
+namespace PandaBear.Functional.Benchmarks;
 
 /// <summary>
 /// Measures structured error conversion and aggregation flows.

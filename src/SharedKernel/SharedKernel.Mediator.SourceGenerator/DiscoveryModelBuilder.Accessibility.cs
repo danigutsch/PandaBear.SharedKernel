@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 
-namespace SharedKernel.Mediator.SourceGenerator;
+namespace PandaBear.Mediator.SourceGenerator;
 
 /// <summary>
 /// Accessibility checks, module candidate detection, and related diagnostic reporting

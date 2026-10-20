@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using SharedKernel.Messaging.IntegrationEvents;
-using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+using PandaBear.Messaging.IntegrationEvents;
+using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDisposable
 {

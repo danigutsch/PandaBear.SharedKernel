@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
-namespace SharedKernel.ApiVersioning.AspNetCore.Tests;
+namespace PandaBear.ApiVersioning.AspNetCore.Tests;
 
 internal static class ApiVersionEndpointTestHost
 {

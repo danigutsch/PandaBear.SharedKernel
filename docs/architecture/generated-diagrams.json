@@ -1,0 +1,20 @@
+{
+  "docsPath": "docs/architecture",
+  "generatorName": "tools/SharedKernel.Documentation.Tool",
+  "blocks": [
+    {
+      "name": "library-dependencies",
+      "targetPath": "README.md",
+      "kind": "project-references",
+      "sourcePath": "src",
+      "projectFilter": "sharedkernel"
+    },
+    {
+      "name": "library-ci",
+      "targetPath": "README.md",
+      "kind": "github-actions-jobs",
+      "sourcePath": ".github/workflows/ci.yml",
+      "triggerLabel": "Pull request, main push, nightly, or manual run"
+    }
+  ]
+}

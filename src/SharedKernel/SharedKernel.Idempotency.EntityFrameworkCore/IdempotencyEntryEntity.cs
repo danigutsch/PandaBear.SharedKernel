@@ -1,4 +1,4 @@
-namespace SharedKernel.Idempotency.EntityFrameworkCore;
+namespace PandaBear.Idempotency.EntityFrameworkCore;
 
 /// <summary>
 /// Represents a persisted idempotency entry.

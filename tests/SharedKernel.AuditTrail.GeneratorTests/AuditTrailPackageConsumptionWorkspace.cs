@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace SharedKernel.AuditTrail.GeneratorTests;
+namespace PandaBear.AuditTrail.GeneratorTests;
 
 internal sealed class AuditTrailPackageConsumptionWorkspace : IDisposable
 {
@@ -43,8 +43,8 @@ internal sealed class AuditTrailPackageConsumptionWorkspace : IDisposable
             Path.Combine(projectDirectory, "Consumer.cs"),
             """
             using Microsoft.Extensions.DependencyInjection;
-            using SharedKernel.AuditTrail;
-            using SharedKernel.Domain;
+            using PandaBear.AuditTrail;
+            using PandaBear.Domain;
 
             namespace Consumer;
 

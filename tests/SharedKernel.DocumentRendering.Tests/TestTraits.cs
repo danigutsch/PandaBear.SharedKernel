@@ -1,4 +1,4 @@
-namespace SharedKernel.DocumentRendering.Tests;
+namespace PandaBear.DocumentRendering.Tests;
 
 internal static class TestTraits
 {

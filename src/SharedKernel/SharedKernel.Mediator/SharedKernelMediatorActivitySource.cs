@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace SharedKernel.Mediator;
+namespace PandaBear.Mediator;
 
 /// <summary>
 /// Exposes the shared activity source used by optional mediator observability components.

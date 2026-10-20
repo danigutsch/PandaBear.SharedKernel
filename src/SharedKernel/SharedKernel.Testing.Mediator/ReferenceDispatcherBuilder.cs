@@ -1,8 +1,8 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using SharedKernel.Mediator;
+using PandaBear.Mediator;
 
-namespace SharedKernel.Testing.Mediator;
+namespace PandaBear.Testing.Mediator;
 
 /// <summary>
 /// Collects explicit test registrations and builds a <see cref="ReferenceMediator"/>.

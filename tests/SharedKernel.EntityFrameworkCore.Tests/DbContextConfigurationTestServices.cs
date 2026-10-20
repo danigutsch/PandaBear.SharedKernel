@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal static class DbContextConfigurationTestServices
 {

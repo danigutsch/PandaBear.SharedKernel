@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SharedKernel.Mediator.EntityFrameworkCore.Tests;
+namespace PandaBear.Mediator.EntityFrameworkCore.Tests;
 
 public sealed class EfCoreCommandTransactionBehaviorTests
 {

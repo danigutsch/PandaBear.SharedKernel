@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Testing.Data</PackageId>
         <Description>Reusable deterministic test data helpers for SharedKernel test suites.</Description>
-        <RootNamespace>SharedKernel.Testing.Data</RootNamespace>
+        <RootNamespace>PandaBear.Testing.Data</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;test-data;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

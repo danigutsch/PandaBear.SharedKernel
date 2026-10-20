@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging.IntegrationEvents.CloudEvents;
+namespace PandaBear.Messaging.IntegrationEvents.CloudEvents;
 
 /// <summary>
 /// Defines CloudEvents envelope constants used by messaging adapters.

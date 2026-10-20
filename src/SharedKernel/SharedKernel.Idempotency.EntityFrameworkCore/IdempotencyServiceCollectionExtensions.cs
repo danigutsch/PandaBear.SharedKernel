@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using SharedKernel.EntityFrameworkCore;
+using PandaBear.EntityFrameworkCore;
 
-namespace SharedKernel.Idempotency.EntityFrameworkCore;
+namespace PandaBear.Idempotency.EntityFrameworkCore;
 
 /// <summary>
 /// Provides registration helpers for EF Core idempotency storage.

@@ -1,4 +1,4 @@
-namespace SharedKernel.Versioning;
+namespace PandaBear.Versioning;
 
 /// <summary>
 /// Represents a package resolved from one or more lock files.

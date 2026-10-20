@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator;
+namespace PandaBear.Mediator;
 
 /// <summary>
 /// Represents the absence of a meaningful return value.

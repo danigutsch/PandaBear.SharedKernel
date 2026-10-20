@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Configuration;
-using SharedKernel.InputNormalization;
+using PandaBear.InputNormalization;
 
-namespace SharedKernel.AspNetCore;
+namespace PandaBear.AspNetCore;
 
 /// <summary>
 /// Provides reusable CORS policy helpers for ASP.NET Core applications.

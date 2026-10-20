@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using SharedKernel.PlaywrightMcp.Tool;
+using PandaBear.PlaywrightMcp.Tool;
 
 using var cancellation = new CancellationTokenSource();
 void CancelHandler(object? sender, ConsoleCancelEventArgs eventArgs)

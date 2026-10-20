@@ -1,4 +1,4 @@
-namespace SharedKernel.Versioning;
+namespace PandaBear.Versioning;
 
 /// <summary>
 /// Reads commit-message streams used by release calculation commands.

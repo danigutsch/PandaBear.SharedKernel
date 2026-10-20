@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace SharedKernel.Domain.GeneratorTests;
+namespace PandaBear.Domain.GeneratorTests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.IdentityCapability)]
 public sealed class ModelIdentityGeneratorTests
@@ -214,7 +214,7 @@ public sealed class ModelIdentityGeneratorTests
     {
         // Arrange
         const string source = """
-            using ModelSupport = SharedKernel.Domain.GenerateModelSupportAttribute;
+            using ModelSupport = PandaBear.Domain.GenerateModelSupportAttribute;
 
             namespace Demo;
 
@@ -239,7 +239,7 @@ public sealed class ModelIdentityGeneratorTests
     {
         // Arrange
         const string source = """
-            using CustomerIdentity = SharedKernel.BuildingBlocks.IIdentified<int>;
+            using CustomerIdentity = PandaBear.BuildingBlocks.IIdentified<int>;
 
             [assembly: GenerateModelSupportDefaults(Identity = true)]
 

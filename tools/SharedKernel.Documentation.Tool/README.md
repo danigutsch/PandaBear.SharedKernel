@@ -7,15 +7,9 @@ Local .NET tool for generated documentation checks and refreshes.
 ```text
 dotnet run --project tools/SharedKernel.Documentation.Tool -- generate --config docs/architecture/generated-diagrams.json
 dotnet run --project tools/SharedKernel.Documentation.Tool -- generate --config docs/architecture/generated-diagrams.json --check
-dotnet run --project tools/SharedKernel.Documentation.Tool -- check --config docs/architecture/documentation-conformance.json
 ```
 
-Repository scripts may wrap the command. In this repository, use:
-
-```text
-bash scripts/update-architecture-diagrams.sh
-bash scripts/update-architecture-diagrams.sh --check
-```
+The standalone repository invokes the .NET command directly; generated configuration belongs to this repository. Application-only conformance rules remain consumer-owned.
 
 ## Command behavior
 
@@ -28,6 +22,12 @@ bash scripts/update-architecture-diagrams.sh --check
 - `check` validates machine-readable documentation facts against the configured source files without
   writing documents.
 
-The tool is a thin CLI over `src/SharedKernel.Documentation`; it contains no parsing or
+The tool is a thin CLI over `src/SharedKernel/SharedKernel.Documentation`; it contains no parsing or
 ViajantesTurismo-specific rules. Repository-specific system maps, labels, source paths, and
 conformance checks belong in config.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Documentation.Tool`. C# namespace: `PandaBear.Documentation.Tool`. Assembly/project identity: `SharedKernel.Documentation.Tool`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

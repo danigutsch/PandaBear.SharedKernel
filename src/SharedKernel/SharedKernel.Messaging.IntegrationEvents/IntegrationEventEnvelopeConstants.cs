@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("SharedKernel.Messaging.IntegrationEvents.CloudEvents")]
 [assembly: InternalsVisibleTo("SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore")]
 
-namespace SharedKernel.Messaging.IntegrationEvents;
+namespace PandaBear.Messaging.IntegrationEvents;
 
 internal static class IntegrationEventEnvelopeConstants
 {

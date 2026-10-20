@@ -3,8 +3,7 @@
 Storage-neutral idempotency primitives for request replay protection, message inbox processing, and projection
 deduplication.
 
-This project intentionally contains abstractions only. Persistence implementations belong in bounded-context
-infrastructure projects.
+Persistence implementations belong in bounded-context infrastructure projects.
 
 ## Concepts
 
@@ -17,3 +16,21 @@ infrastructure projects.
 
 Inbox/outbox tables and projection checkpoints can use these primitives without depending on HTTP, messaging, or a
 specific database provider.
+
+## Request fingerprints
+
+`IdempotencyRequestFingerprint.Create("operation", "value")` returns uppercase SHA-256 hexadecimal text
+for ordered string components. It hashes UTF-8 bytes of colon-separated frames; each frame contains the
+invariant decimal UTF-16 string length, a colon, and the unchanged value. Length framing distinguishes
+component boundaries even when values contain colons. Empty strings and an empty list are supported;
+null lists or components are rejected. The primitive does not trim, normalize, or apply business validation.
+Callers define stable component ordering and perform domain validation before fingerprinting.
+
+Fingerprints allow replay checks without storing raw inputs. Hashes are not encryption and do not hide
+low-entropy values from guessing. Do not use this API for password storage or authentication.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Idempotency`. C# namespace: `PandaBear.Idempotency`. Assembly/project identity: `SharedKernel.Idempotency`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

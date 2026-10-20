@@ -1,4 +1,4 @@
-namespace SharedKernel.Testing.Analyzers;
+namespace PandaBear.Testing.Analyzers;
 
 /// <summary>
 /// Exposes the public diagnostic identifiers for repository testing analyzers.

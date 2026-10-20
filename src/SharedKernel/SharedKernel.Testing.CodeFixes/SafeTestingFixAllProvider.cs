@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CodeFixes;
 
-namespace SharedKernel.Testing.CodeFixes;
+namespace PandaBear.Testing.CodeFixes;
 
 /// <summary>
 /// Restricts Fix All support until the testing code-fix family has a proven bulk-safe strategy.

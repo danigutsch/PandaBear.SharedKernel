@@ -1,4 +1,4 @@
-namespace SharedKernel.RepoConfig.Tests;
+namespace PandaBear.RepoConfig.Tests;
 
 internal sealed class BeforeResponseHttpMessageHandler(Func<HttpResponseMessage> createResponse, Action beforeResponse) : HttpMessageHandler
 {

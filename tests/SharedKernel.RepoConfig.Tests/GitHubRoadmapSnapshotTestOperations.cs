@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace SharedKernel.RepoConfig.Tests;
+namespace PandaBear.RepoConfig.Tests;
 
 internal static class GitHubRoadmapSnapshotTestOperations
 {

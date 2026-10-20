@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.GeneratorTests;
+namespace PandaBear.Mediator.GeneratorTests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
 public sealed class GeneratorDeterminismTests

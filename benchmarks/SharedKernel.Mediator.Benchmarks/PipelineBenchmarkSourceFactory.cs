@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Creates synthetic benchmark sources for pipeline-dispatch strategy comparisons.
@@ -18,7 +18,7 @@ internal static class PipelineBenchmarkSourceFactory
         ArgumentOutOfRangeException.ThrowIfNegative(pipelineDepth);
 
         var builder = new StringBuilder();
-        builder.AppendLine("using SharedKernel.Mediator;");
+        builder.AppendLine("using PandaBear.Mediator;");
         builder.AppendLine();
         builder.AppendLine("namespace BenchmarkApp;");
         builder.AppendLine();

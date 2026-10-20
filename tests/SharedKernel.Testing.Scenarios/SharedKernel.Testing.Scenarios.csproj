@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace>SharedKernel.Testing.Scenarios</RootNamespace>
+        <RootNamespace>PandaBear.Testing.Scenarios</RootNamespace>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
 

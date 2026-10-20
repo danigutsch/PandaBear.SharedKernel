@@ -1,4 +1,4 @@
-namespace SharedKernel.AI;
+namespace PandaBear.AI;
 
 /// <summary>
 /// Generates draft image accessibility text from image content and trusted context.

@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging.IntegrationEvents.Tests;
+namespace PandaBear.Messaging.IntegrationEvents.Tests;
 
 public sealed class IntegrationEventDispatchTests
 {
@@ -28,8 +28,8 @@ public sealed class IntegrationEventDispatchTests
         typeNames.ShouldNotContain("MediatorIntegrationEventDispatcher");
         typeNames.ShouldNotContain("IIntegrationEventConsumerRegistration");
         typeNames.ShouldNotContain("IntegrationEventConsumerRegistration`1");
-        integrationEventInterfaces.ShouldNotContain("SharedKernel.Mediator.INotification");
-        handlerInterfaces.ShouldNotContain("SharedKernel.Mediator.INotificationHandler`1");
+        integrationEventInterfaces.ShouldNotContain("PandaBear.Mediator.INotification");
+        handlerInterfaces.ShouldNotContain("PandaBear.Mediator.INotificationHandler`1");
     }
 
     [Fact]

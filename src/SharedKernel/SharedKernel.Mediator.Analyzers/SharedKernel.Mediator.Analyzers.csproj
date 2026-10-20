@@ -5,7 +5,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Mediator.Analyzers</PackageId>
         <Description>Analyzers for SharedKernel.Mediator.</Description>
-        <RootNamespace>SharedKernel.Mediator.Analyzers</RootNamespace>
+        <RootNamespace>PandaBear.Mediator.Analyzers</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>mediator;analyzers;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

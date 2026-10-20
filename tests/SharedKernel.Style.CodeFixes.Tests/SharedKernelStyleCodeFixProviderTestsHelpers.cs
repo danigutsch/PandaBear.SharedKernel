@@ -4,13 +4,13 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace SharedKernel.Style.CodeFixes.Tests;
+namespace PandaBear.Style.CodeFixes.Tests;
 
 internal static class SharedKernelStyleCodeFixProviderTestsHelpers
 {
     public static bool InvokeIsRenamedMethodMatch(IMethodSymbol candidateSymbol, ISymbol originalSymbol, string updatedName)
     {
-        var codeFixType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.RemoveAsyncSuffixCodeFix");
+        var codeFixType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("PandaBear.Style.CodeFixes.RemoveAsyncSuffixCodeFix");
         _ = (codeFixType).ShouldNotBeNull();
         var method = codeFixType.GetMethod("IsRenamedMethodMatch", BindingFlags.NonPublic | BindingFlags.Static);
         _ = (method).ShouldNotBeNull();
@@ -54,7 +54,7 @@ internal static class SharedKernelStyleCodeFixProviderTestsHelpers
             string updatedName,
             CancellationToken ct)
     {
-        var organizerType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("SharedKernel.Style.CodeFixes.MethodOverloadGroupOrganizer");
+        var organizerType = typeof(SharedKernelStyleCodeFixProvider).Assembly.GetType("PandaBear.Style.CodeFixes.MethodOverloadGroupOrganizer");
         _ = (organizerType).ShouldNotBeNull();
         var organizeMethod = organizerType.GetMethod("Organize", BindingFlags.Public | BindingFlags.Static);
         _ = (organizeMethod).ShouldNotBeNull();

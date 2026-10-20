@@ -1,2 +1,2 @@
-[assembly: Trait(SharedKernel.Testing.SharedKernelTestTraitNames.ScopeName, SharedKernel.Testing.SharedKernelTestTraitNames.UnitScope)]
-[assembly: Trait(SharedKernel.Testing.SharedKernelTestTraitNames.ComponentName, SharedKernel.Domain.GeneratorTests.TestTraits.SourceGeneratorComponent)]
+[assembly: Trait(PandaBear.Testing.SharedKernelTestTraitNames.ScopeName, PandaBear.Testing.SharedKernelTestTraitNames.UnitScope)]
+[assembly: Trait(PandaBear.Testing.SharedKernelTestTraitNames.ComponentName, PandaBear.Domain.GeneratorTests.TestTraits.SourceGeneratorComponent)]

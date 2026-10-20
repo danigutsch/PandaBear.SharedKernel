@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace SharedKernel.Domain.SourceGenerator;
+namespace PandaBear.Domain.SourceGenerator;
 
 /// <summary>
 /// Emits identity equality support for models that explicitly opt in.
@@ -13,9 +13,9 @@ namespace SharedKernel.Domain.SourceGenerator;
 [Generator]
 public sealed class ModelIdentityGenerator : IIncrementalGenerator
 {
-    private const string AttributeName = "SharedKernel.Domain.GenerateModelSupportAttribute";
-    private const string DefaultsAttributeName = "SharedKernel.Domain.GenerateModelSupportDefaultsAttribute";
-    private const string IdentifiedInterfaceName = "SharedKernel.BuildingBlocks.IIdentified<TId>";
+    private const string AttributeName = "PandaBear.Domain.GenerateModelSupportAttribute";
+    private const string DefaultsAttributeName = "PandaBear.Domain.GenerateModelSupportDefaultsAttribute";
+    private const string IdentifiedInterfaceName = "PandaBear.BuildingBlocks.IIdentified<TId>";
     private const string IdentityOptionName = "Identity";
     private const string DiagnosticCategory = "SharedKernel.Domain.ModelSupport";
     private const string OpenBlock8 = "        {";

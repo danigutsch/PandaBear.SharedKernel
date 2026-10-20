@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
-namespace SharedKernel.RepoConfig.Tool;
+namespace PandaBear.RepoConfig.Tool;
 
 internal sealed class GitHubProjectClient(HttpClient httpClient)
 {

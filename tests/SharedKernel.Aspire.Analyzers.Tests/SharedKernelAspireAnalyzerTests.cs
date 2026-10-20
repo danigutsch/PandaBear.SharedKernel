@@ -1,4 +1,4 @@
-namespace SharedKernel.Aspire.Analyzers.Tests;
+namespace PandaBear.Aspire.Analyzers.Tests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.AspireImagePinningCapability)]
 public sealed class SharedKernelAspireAnalyzerTests

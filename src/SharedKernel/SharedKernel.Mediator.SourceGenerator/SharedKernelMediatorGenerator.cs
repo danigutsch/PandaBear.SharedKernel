@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace SharedKernel.Mediator.SourceGenerator;
+namespace PandaBear.Mediator.SourceGenerator;
 
 /// <summary>
 /// Discovers mediator contracts and emits an initial readable discovery report.

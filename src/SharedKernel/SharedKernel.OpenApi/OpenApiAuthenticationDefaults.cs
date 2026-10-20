@@ -1,4 +1,4 @@
-namespace SharedKernel.OpenApi;
+namespace PandaBear.OpenApi;
 
 /// <summary>
 /// Defines reusable OpenAPI bearer-authentication conventions.

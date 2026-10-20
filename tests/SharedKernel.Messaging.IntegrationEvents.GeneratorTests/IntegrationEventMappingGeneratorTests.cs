@@ -2,10 +2,10 @@ using System.Globalization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SharedKernel.Mediator.SourceGenerator;
-using SharedKernel.Messaging.IntegrationEvents.SourceGenerator;
+using PandaBear.Mediator.SourceGenerator;
+using PandaBear.Messaging.IntegrationEvents.SourceGenerator;
 
-namespace SharedKernel.Messaging.IntegrationEvents.GeneratorTests;
+namespace PandaBear.Messaging.IntegrationEvents.GeneratorTests;
 
 public sealed class IntegrationEventMappingGeneratorTests
 {
@@ -310,10 +310,10 @@ public sealed class IntegrationEventMappingGeneratorTests
             "String.Equals(envelope.EventType, global::Demo.TourUpdatedIntegrationEvent.EventType",
             StringComparison.Ordinal);
         generatedSource.ShouldContain(
-            "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>, global::Demo.TourEventsHandler>",
+            "TryAddScoped<global::PandaBear.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>, global::Demo.TourEventsHandler>",
             StringComparison.Ordinal);
         generatedSource.ShouldContain(
-            "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourUpdatedIntegrationEvent>, global::Demo.TourEventsHandler>",
+            "TryAddScoped<global::PandaBear.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourUpdatedIntegrationEvent>, global::Demo.TourEventsHandler>",
             StringComparison.Ordinal);
         generatedSource.ShouldContain("IServiceScopeFactory scopeFactory", StringComparison.Ordinal);
         generatedSource.ShouldContain(
@@ -321,10 +321,10 @@ public sealed class IntegrationEventMappingGeneratorTests
             StringComparison.Ordinal);
         generatedSource.ShouldNotContain(GeneratedSynchronousScopeCreation, StringComparison.Ordinal);
         generatedSource.ShouldContain(
-            "GetRequiredService<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>>",
+            "GetRequiredService<global::PandaBear.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>>",
             StringComparison.Ordinal);
         generatedSource.ShouldContain(
-            "GetRequiredService<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourUpdatedIntegrationEvent>>",
+            "GetRequiredService<global::PandaBear.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourUpdatedIntegrationEvent>>",
             StringComparison.Ordinal);
         generatedSource.ShouldNotContain("GeneratedIntegrationEventHandlerForwarder", StringComparison.Ordinal);
     }
@@ -940,9 +940,9 @@ public sealed class IntegrationEventMappingGeneratorTests
     {
         // Arrange
         const string source = """
-            using SharedKernel.Domain;
-            using SharedKernel.Mediator;
-            using SharedKernel.Messaging.IntegrationEvents;
+            using PandaBear.Domain;
+            using PandaBear.Mediator;
+            using PandaBear.Messaging.IntegrationEvents;
             using Microsoft.Extensions.DependencyInjection;
 
             [assembly: MediatorModule]
@@ -1032,7 +1032,7 @@ public sealed class IntegrationEventMappingGeneratorTests
         generatedIntegrationEvents.ShouldContain("IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldNotContain("IServiceProvider", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldContain(
-            "GetRequiredService<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>>",
+            "GetRequiredService<global::PandaBear.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Demo.TourCreatedIntegrationEvent>>",
             StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldContain(
             GeneratedAsyncScopeCreation,
@@ -1053,7 +1053,7 @@ public sealed class IntegrationEventMappingGeneratorTests
         var dispatcherRegistration = dispatcherRegistrations.ShouldHaveSingleItem();
         dispatcherRegistration.ShouldContain("CompositeDomainEventDispatcher", StringComparison.Ordinal);
         generatedIntegrationEvents.ShouldContain(
-            "IDomainEventDispatchHandler, global::SharedKernel.Messaging.IntegrationEvents.Generated.GeneratedIntegrationEventDomainEventDispatcher",
+            "IDomainEventDispatchHandler, global::PandaBear.Messaging.IntegrationEvents.Generated.GeneratedIntegrationEventDomainEventDispatcher",
             StringComparison.Ordinal);
     }
 
@@ -1088,15 +1088,15 @@ public sealed class IntegrationEventMappingGeneratorTests
             .ToArray();
         errors.ShouldBeEmpty();
         generatedSource.ShouldContain("GeneratedIntegrationEventDomainEventDispatcher", StringComparison.Ordinal);
-        generatedSource.ShouldContain("Handle(global::SharedKernel.Domain.IDomainEvent domainEvent", StringComparison.Ordinal);
+        generatedSource.ShouldContain("Handle(global::PandaBear.Domain.IDomainEvent domainEvent", StringComparison.Ordinal);
         generatedSource.ShouldContain("Demo.TourCreatedDomainEvent typedDomainEvent", StringComparison.Ordinal);
         generatedSource.ShouldContain("outbox.Enqueue(", StringComparison.Ordinal);
         generatedSource.ShouldContain("IDomainEventIntegrationEventOutbox outbox", StringComparison.Ordinal);
         generatedSource.ShouldContain("CompositeDomainEventDispatcher", StringComparison.Ordinal);
         generatedSource.ShouldContain("TryAddEnumerable", StringComparison.Ordinal);
-        generatedSource.ShouldContain("TryAddScoped<global::SharedKernel.Domain.IDomainEventDispatcher", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("TryAddSingleton<global::SharedKernel.Domain.IDomainEventDispatcher", StringComparison.Ordinal);
-        generatedSource.ShouldContain("ServiceDescriptor.Scoped<global::SharedKernel.Domain.IDomainEventDispatchHandler", StringComparison.Ordinal);
+        generatedSource.ShouldContain("TryAddScoped<global::PandaBear.Domain.IDomainEventDispatcher", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("TryAddSingleton<global::PandaBear.Domain.IDomainEventDispatcher", StringComparison.Ordinal);
+        generatedSource.ShouldContain("ServiceDescriptor.Scoped<global::PandaBear.Domain.IDomainEventDispatchHandler", StringComparison.Ordinal);
         generatedSource.ShouldContain("IDomainEventDispatchHandler", StringComparison.Ordinal);
         generatedSource.ShouldNotContain("IDomainEventHandler<", StringComparison.Ordinal);
     }

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi;
 using Xunit;
 
-namespace SharedKernel.OpenApi.Tests;
+namespace PandaBear.OpenApi.Tests;
 
 /// <summary>
 /// Verifies generic multipart form OpenAPI normalization behavior.

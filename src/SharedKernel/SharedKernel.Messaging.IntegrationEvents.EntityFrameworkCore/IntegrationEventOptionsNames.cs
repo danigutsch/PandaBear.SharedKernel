@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 internal static class IntegrationEventOptionsNames
 {

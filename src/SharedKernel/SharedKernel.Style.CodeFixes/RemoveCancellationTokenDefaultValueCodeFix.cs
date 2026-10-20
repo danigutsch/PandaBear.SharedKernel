@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 
-namespace SharedKernel.Style.CodeFixes;
+namespace PandaBear.Style.CodeFixes;
 
 /// <summary>
 /// Registers the default-value removal code fix for <c>SKSTYLE003</c> diagnostics.

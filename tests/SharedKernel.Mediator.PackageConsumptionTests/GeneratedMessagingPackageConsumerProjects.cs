@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.PackageConsumptionTests;
+namespace PandaBear.Mediator.PackageConsumptionTests;
 
 internal static class GeneratedMessagingPackageConsumerProjects
 {
@@ -29,9 +29,9 @@ internal static class GeneratedMessagingPackageConsumerProjects
             using System.Text.Json.Serialization;
             using System.Text.Json.Serialization.Metadata;
             using Microsoft.Extensions.DependencyInjection;
-            using SharedKernel.Domain;
-            using SharedKernel.Mediator;
-            using SharedKernel.Messaging.IntegrationEvents;
+            using PandaBear.Domain;
+            using PandaBear.Mediator;
+            using PandaBear.Messaging.IntegrationEvents;
 
             [assembly: MediatorModule]
 
@@ -89,8 +89,8 @@ internal static class GeneratedMessagingPackageConsumerProjects
             ("Program.cs", """
             using Consumer;
             using Microsoft.Extensions.DependencyInjection;
-            using SharedKernel.Messaging;
-            using SharedKernel.Messaging.IntegrationEvents;
+            using PandaBear.Messaging;
+            using PandaBear.Messaging.IntegrationEvents;
 
             var services = new ServiceCollection();
             Registration.AddMessaging(services);

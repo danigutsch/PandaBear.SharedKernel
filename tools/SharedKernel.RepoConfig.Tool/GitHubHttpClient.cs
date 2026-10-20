@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 
-namespace SharedKernel.RepoConfig.Tool;
+namespace PandaBear.RepoConfig.Tool;
 
 internal static class GitHubHttpClient
 {

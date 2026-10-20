@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using System.Reflection;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Observes how far a producer can advance while the consumer pauses after the first item.

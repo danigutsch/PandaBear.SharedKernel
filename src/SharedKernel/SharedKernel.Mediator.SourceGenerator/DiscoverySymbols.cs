@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace SharedKernel.Mediator.SourceGenerator;
+namespace PandaBear.Mediator.SourceGenerator;
 
 /// <summary>
 /// Holds the Roslyn symbols used by discovery.

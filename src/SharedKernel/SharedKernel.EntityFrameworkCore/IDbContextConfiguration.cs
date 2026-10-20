@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore;
+namespace PandaBear.EntityFrameworkCore;
 
 /// <summary>
 /// Configures the three EF Core DbContext configuration phases for a context type.

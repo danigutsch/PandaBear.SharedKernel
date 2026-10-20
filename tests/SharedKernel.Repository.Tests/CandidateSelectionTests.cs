@@ -1,6 +1,6 @@
-using SharedKernel.Repository.Tool;
+using PandaBear.Repository.Tool;
 
-namespace SharedKernel.Repository.Tests;
+namespace PandaBear.Repository.Tests;
 
 public static class CandidateSelectionTests
 {

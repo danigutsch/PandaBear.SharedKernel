@@ -1,4 +1,4 @@
-namespace SharedKernel.Branding;
+namespace PandaBear.Branding;
 
 /// <summary>
 /// Defines branding contract limits shared by API clients and stores.

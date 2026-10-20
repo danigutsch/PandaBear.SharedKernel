@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace SharedKernel.Domain.SourceGenerator;
+namespace PandaBear.Domain.SourceGenerator;
 
 /// <summary>
 /// Emits scalar value-object support for types that explicitly opt in.
@@ -12,8 +12,8 @@ namespace SharedKernel.Domain.SourceGenerator;
 [Generator]
 public sealed class ValueObjectGenerator : IIncrementalGenerator
 {
-    private const string AttributeName = "SharedKernel.Domain.GenerateValueObjectAttribute";
-    private const string DefaultsAttributeName = "SharedKernel.Domain.GenerateModelSupportDefaultsAttribute";
+    private const string AttributeName = "PandaBear.Domain.GenerateValueObjectAttribute";
+    private const string DefaultsAttributeName = "PandaBear.Domain.GenerateModelSupportDefaultsAttribute";
     private const string JsonConverterMetadataName = "System.Text.Json.Serialization.JsonConverter`1";
     private const string EfCoreValueConverterMetadataName = "Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter`2";
     private const string EfCorePropertyBuilderMetadataName = "Microsoft.EntityFrameworkCore.Metadata.Builders.PropertyBuilder`1";
@@ -1274,7 +1274,7 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
     private enum ValueObjectTemplate
     {
-        // Values mirror SharedKernel.Domain.ValueObjectTemplate because attribute arguments arrive as
+        // Values mirror PandaBear.Domain.ValueObjectTemplate because attribute arguments arrive as
         // integers.
         None = 0,
         ApiVersion = 1,

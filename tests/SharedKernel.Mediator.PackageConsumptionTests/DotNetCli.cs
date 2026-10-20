@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace SharedKernel.Mediator.PackageConsumptionTests;
+namespace PandaBear.Mediator.PackageConsumptionTests;
 
 /// <summary>
 /// Runs focused dotnet CLI commands for package-consumption tests.

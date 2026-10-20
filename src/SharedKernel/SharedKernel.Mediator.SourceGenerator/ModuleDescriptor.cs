@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.SourceGenerator;
+namespace PandaBear.Mediator.SourceGenerator;
 
 /// <summary>
 /// Describes an assembly that participated in mediator discovery.

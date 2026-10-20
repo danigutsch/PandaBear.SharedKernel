@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging;
+namespace PandaBear.Messaging;
 
 /// <summary>
 /// Publishes transport-neutral event envelopes to the configured delivery mechanism.

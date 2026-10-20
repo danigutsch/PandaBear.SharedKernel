@@ -1,4 +1,4 @@
-namespace SharedKernel.Testing.Tests;
+namespace PandaBear.Testing.Tests;
 
 public sealed class ShouldCollectionAssertionTests
 {

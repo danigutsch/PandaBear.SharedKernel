@@ -1,4 +1,4 @@
-namespace SharedKernel.PlaywrightMcp.Tool.Tests;
+namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
 internal sealed class PlaywrightMcpTestEnvironment
 {

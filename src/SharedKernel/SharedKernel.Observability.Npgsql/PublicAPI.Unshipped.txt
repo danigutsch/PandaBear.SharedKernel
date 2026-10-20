@@ -1,81 +1,81 @@
 #nullable enable
-const SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.CollectionMetricName = "postgresql.index_health.collections" -> string!
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.EstimatedRows.get -> long
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.EstimatedRows.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.IndexName.get -> string?
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.IndexName.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.IsProtected.get -> bool
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.IsProtected.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.IsSimple.get -> bool
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.IsSimple.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.IsUsable.get -> bool
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.IsUsable.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.Kind.get -> SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidenceKind
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.Kind.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.ScanCount.get -> long
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.ScanCount.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.SchemaName.get -> string!
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.SchemaName.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.StatisticsAreReliable.get -> bool
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.StatisticsAreReliable.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.StatisticsWindow.get -> System.TimeSpan?
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.StatisticsWindow.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.TableName.get -> string!
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.TableName.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.TuplesFetched.get -> long
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.TuplesFetched.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.TuplesRead.get -> long
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence.TuplesRead.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidenceKind
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidenceKind.Index = 0 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidenceKind
-SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidenceKind.Table = 1 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidenceKind
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthAssessment
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Action.get -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Action.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Evidence.get -> SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence!
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Evidence.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthAssessment.PostgreSqlIndexHealthAssessment(SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence! Evidence, SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction Action, SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason Reason) -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Reason.get -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Reason.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome.Collected = 0 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome.PermissionDenied = 1 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome.Unsupported = 2 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome.Unavailable = 3 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.Assessments.get -> System.Collections.Generic.IReadOnlyList<SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthAssessment!>!
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.Assessments.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.Outcome.get -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.Outcome.init -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.PostgreSqlIndexHealthCollectionResult(SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome Outcome, System.Collections.Generic.IReadOnlyList<SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthAssessment!>! Assessments) -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollector
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollector.PostgreSqlIndexHealthCollector(Npgsql.NpgsqlDataSource! dataSource, System.TimeSpan? commandTimeout = null) -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollector.Collect(System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult!>
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions.CommandTimeout.get -> System.TimeSpan
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions.CommandTimeout.set -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions.PollingInterval.get -> System.TimeSpan
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions.PollingInterval.set -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions.PostgreSqlIndexHealthMonitoringOptions() -> void
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction.InsufficientEvidence = 0 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction.ReviewCreation = 1 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction.ReviewModification = 2 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationPolicy
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthServiceCollectionExtensions
-static SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationPolicy.Assess(SharedKernel.Observability.Npgsql.PostgreSqlIndexEvidence! evidence) -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthAssessment!
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.StatisticsUnavailable = 0 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.StatisticsWindowTooShort = 1 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.TableTooSmall = 2 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.ProtectedIndex = 3 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.UnsupportedIndexShape = 4 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.PerObjectStatisticsWindowUnavailable = 5 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.HighIndexReadVolume = 6 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.HighSequentialScanVolume = 7 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.InsufficientActivity = 8 -> SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
-SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthTelemetry
-const SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.AssessmentMetricName = "postgresql.index_health.assessments" -> string!
-const SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.MeterName = "SharedKernel.Observability.Npgsql" -> string!
-static SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthServiceCollectionExtensions.AddPostgreSqlIndexHealthMonitoring(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IEnumerable<string!>! connectionStrings, SharedKernel.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions! options) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+const PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.CollectionMetricName = "postgresql.index_health.collections" -> string!
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.EstimatedRows.get -> long
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.EstimatedRows.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.IndexName.get -> string?
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.IndexName.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.IsProtected.get -> bool
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.IsProtected.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.IsSimple.get -> bool
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.IsSimple.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.IsUsable.get -> bool
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.IsUsable.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.Kind.get -> PandaBear.Observability.Npgsql.PostgreSqlIndexEvidenceKind
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.Kind.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.ScanCount.get -> long
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.ScanCount.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.SchemaName.get -> string!
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.SchemaName.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.StatisticsAreReliable.get -> bool
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.StatisticsAreReliable.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.StatisticsWindow.get -> System.TimeSpan?
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.StatisticsWindow.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.TableName.get -> string!
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.TableName.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.TuplesFetched.get -> long
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.TuplesFetched.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.TuplesRead.get -> long
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence.TuplesRead.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidenceKind
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidenceKind.Index = 0 -> PandaBear.Observability.Npgsql.PostgreSqlIndexEvidenceKind
+PandaBear.Observability.Npgsql.PostgreSqlIndexEvidenceKind.Table = 1 -> PandaBear.Observability.Npgsql.PostgreSqlIndexEvidenceKind
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Action.get -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Action.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Evidence.get -> PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence!
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Evidence.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.PostgreSqlIndexHealthAssessment(PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence! Evidence, PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction Action, PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason Reason) -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Reason.get -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment.Reason.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome.Collected = 0 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome.PermissionDenied = 1 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome.Unsupported = 2 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome.Unavailable = 3 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.Assessments.get -> System.Collections.Generic.IReadOnlyList<PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment!>!
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.Assessments.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.Outcome.get -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.Outcome.init -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult.PostgreSqlIndexHealthCollectionResult(PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionOutcome Outcome, System.Collections.Generic.IReadOnlyList<PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment!>! Assessments) -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollector
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollector.PostgreSqlIndexHealthCollector(Npgsql.NpgsqlDataSource! dataSource, System.TimeSpan? commandTimeout = null) -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollector.Collect(System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Observability.Npgsql.PostgreSqlIndexHealthCollectionResult!>
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions.CommandTimeout.get -> System.TimeSpan
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions.CommandTimeout.set -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions.PollingInterval.get -> System.TimeSpan
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions.PollingInterval.set -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions.PostgreSqlIndexHealthMonitoringOptions() -> void
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction.InsufficientEvidence = 0 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction.ReviewCreation = 1 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction.ReviewModification = 2 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationAction
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationPolicy
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthServiceCollectionExtensions
+static PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationPolicy.Assess(PandaBear.Observability.Npgsql.PostgreSqlIndexEvidence! evidence) -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthAssessment!
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.StatisticsUnavailable = 0 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.StatisticsWindowTooShort = 1 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.TableTooSmall = 2 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.ProtectedIndex = 3 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.UnsupportedIndexShape = 4 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.PerObjectStatisticsWindowUnavailable = 5 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.HighIndexReadVolume = 6 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.HighSequentialScanVolume = 7 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason.InsufficientActivity = 8 -> PandaBear.Observability.Npgsql.PostgreSqlIndexHealthRecommendationReason
+PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry
+const PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.AssessmentMetricName = "postgresql.index_health.assessments" -> string!
+const PandaBear.Observability.Npgsql.PostgreSqlIndexHealthTelemetry.MeterName = "SharedKernel.Observability.Npgsql" -> string!
+static PandaBear.Observability.Npgsql.PostgreSqlIndexHealthServiceCollectionExtensions.AddPostgreSqlIndexHealthMonitoring(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Collections.Generic.IEnumerable<string!>! connectionStrings, PandaBear.Observability.Npgsql.PostgreSqlIndexHealthMonitoringOptions! options) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

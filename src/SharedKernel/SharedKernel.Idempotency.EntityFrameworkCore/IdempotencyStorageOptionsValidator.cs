@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 
-namespace SharedKernel.Idempotency.EntityFrameworkCore;
+namespace PandaBear.Idempotency.EntityFrameworkCore;
 
 internal sealed class IdempotencyStorageOptionsValidator : IValidateOptions<IdempotencyStorageOptions>
 {

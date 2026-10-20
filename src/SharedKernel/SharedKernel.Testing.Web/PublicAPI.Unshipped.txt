@@ -1,3 +1,3 @@
 #nullable enable
-SharedKernel.Testing.Web.BunitElementAssertions
-static SharedKernel.Testing.Web.BunitElementAssertions.HasClass(System.Collections.Generic.IEnumerable<string!>! classList, string! className) -> void
+PandaBear.Testing.Web.BunitElementAssertions
+static PandaBear.Testing.Web.BunitElementAssertions.HasClass(System.Collections.Generic.IEnumerable<string!>! classList, string! className) -> void

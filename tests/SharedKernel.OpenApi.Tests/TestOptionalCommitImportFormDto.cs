@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace SharedKernel.OpenApi.Tests;
+namespace PandaBear.OpenApi.Tests;
 
 /// <summary>
 /// Represents an optional multipart form shape for normalization tests.

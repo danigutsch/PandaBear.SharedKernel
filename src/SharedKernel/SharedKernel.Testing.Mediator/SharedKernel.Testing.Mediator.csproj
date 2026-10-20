@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Testing.Mediator</PackageId>
         <Description>Reference mediator test dispatcher helpers for SharedKernel.Mediator.</Description>
-        <RootNamespace>SharedKernel.Testing.Mediator</RootNamespace>
+        <RootNamespace>PandaBear.Testing.Mediator</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;mediator;reference-dispatcher;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

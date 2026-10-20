@@ -1,8 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using SharedKernel.HttpClients;
+using PandaBear.HttpClients;
 
-namespace SharedKernel.Branding;
+namespace PandaBear.Branding;
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(BrandingSettingsDto))]

@@ -1,6 +1,6 @@
-using static SharedKernel.Repository.Tests.Conventions.SharedKernelBoundaryFiles;
+using static PandaBear.Repository.Tests.Conventions.SharedKernelBoundaryFiles;
 
-namespace SharedKernel.Repository.Tests.Conventions;
+namespace PandaBear.Repository.Tests.Conventions;
 
 public sealed class SharedKernelBoundaryTests
 {
@@ -119,7 +119,7 @@ public sealed class SharedKernelBoundaryTests
     }
 
     [Fact]
-    [Trait(SharedKernel.Testing.TestTraitNames.CategoryName, SharedKernel.Testing.TestTraitValues.SecurityCategory)]
+    [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
     public void Every_hosted_profile_routes_through_the_trusted_collector_gateway_in_library()
     {
         var sharedHostingText = File.ReadAllText(Path.Combine(
@@ -344,7 +344,7 @@ public sealed class SharedKernelBoundaryTests
             .ToArray();
 
         (offendingLines.Length != 0).ShouldBeFalse(
-            $"Expected SharedKernel.Testing to stay neutral and leave product or area-specific trait values local, but found:{Environment.NewLine}{string.Join(Environment.NewLine, offendingLines)}");
+            $"Expected PandaBear.Testing to stay neutral and leave product or area-specific trait values local, but found:{Environment.NewLine}{string.Join(Environment.NewLine, offendingLines)}");
     }
 
     [Fact]

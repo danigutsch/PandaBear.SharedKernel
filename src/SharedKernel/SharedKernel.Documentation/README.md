@@ -87,3 +87,9 @@ configuration block can supply `endpointNameMethods`, `sourceAudiences` (source 
 `routeAudiences` (regular expressions), and `defaultAudience`. Source matches precede route matches;
 method and mapping order determines the first match. Application metadata conventions and audience
 labels belong in the consumer configuration rather than this engine.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Documentation`. C# namespace: `PandaBear.Documentation`. Assembly/project identity: `SharedKernel.Documentation`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

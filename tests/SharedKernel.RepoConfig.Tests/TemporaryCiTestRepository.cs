@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace SharedKernel.RepoConfig.Tests;
+namespace PandaBear.RepoConfig.Tests;
 
 internal sealed class TemporaryCiTestRepository : IDisposable
 {

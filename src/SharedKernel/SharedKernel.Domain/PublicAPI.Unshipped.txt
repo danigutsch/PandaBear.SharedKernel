@@ -1,49 +1,49 @@
 #nullable enable
-SharedKernel.Domain.GenerateModelSupportAttribute
-SharedKernel.Domain.GenerateModelSupportAttribute.GenerateModelSupportAttribute() -> void
-SharedKernel.Domain.GenerateModelSupportAttribute.Identity.get -> bool
-SharedKernel.Domain.GenerateModelSupportAttribute.Identity.set -> void
-SharedKernel.Domain.GenerateModelSupportDefaultsAttribute
-SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.GenerateModelSupportDefaultsAttribute() -> void
-SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.Identity.get -> bool
-SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.Identity.set -> void
-SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectEfCore.get -> bool
-SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectEfCore.set -> void
-SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectJson.get -> bool
-SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectJson.set -> void
-SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectParsing.get -> bool
-SharedKernel.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectParsing.set -> void
-SharedKernel.Domain.GenerateValueObjectAttribute
-SharedKernel.Domain.GenerateValueObjectAttribute.EfCore.get -> bool
-SharedKernel.Domain.GenerateValueObjectAttribute.EfCore.set -> void
-SharedKernel.Domain.GenerateValueObjectAttribute.GenerateValueObjectAttribute() -> void
-SharedKernel.Domain.GenerateValueObjectAttribute.Json.get -> bool
-SharedKernel.Domain.GenerateValueObjectAttribute.Json.set -> void
-SharedKernel.Domain.GenerateValueObjectAttribute.Parsing.get -> bool
-SharedKernel.Domain.GenerateValueObjectAttribute.Parsing.set -> void
-SharedKernel.Domain.GenerateValueObjectAttribute.Template.get -> SharedKernel.Domain.ValueObjectTemplate
-SharedKernel.Domain.GenerateValueObjectAttribute.Template.set -> void
-SharedKernel.Domain.GenerateValueObjectAttribute.UnderlyingType.get -> System.Type?
-SharedKernel.Domain.GenerateValueObjectAttribute.UnderlyingType.set -> void
-SharedKernel.Domain.IAggregateRoot
-SharedKernel.Domain.IAggregateRoot.ClearDomainEvents() -> void
-SharedKernel.Domain.IAggregateRoot.GetDomainEvents() -> System.Collections.Generic.IReadOnlyCollection<SharedKernel.Domain.IDomainEvent!>!
-SharedKernel.Domain.IAggregateRoot<TId>
-SharedKernel.Domain.IDomainEvent
-SharedKernel.Domain.IEntity<TId>
-SharedKernel.Domain.ValueObjectTemplate
-SharedKernel.Domain.ValueObjectTemplate.ApiVersion = 1 -> SharedKernel.Domain.ValueObjectTemplate
-SharedKernel.Domain.ValueObjectTemplate.IsoCode = 5 -> SharedKernel.Domain.ValueObjectTemplate
-SharedKernel.Domain.ValueObjectTemplate.None = 0 -> SharedKernel.Domain.ValueObjectTemplate
-SharedKernel.Domain.ValueObjectTemplate.NonEmptyString = 2 -> SharedKernel.Domain.ValueObjectTemplate
-SharedKernel.Domain.ValueObjectTemplate.Slug = 3 -> SharedKernel.Domain.ValueObjectTemplate
-SharedKernel.Domain.ValueObjectTemplate.StronglyTypedId = 4 -> SharedKernel.Domain.ValueObjectTemplate
-SharedKernel.Domain.CompositeDomainEventDispatcher
-SharedKernel.Domain.CompositeDomainEventDispatcher.CompositeDomainEventDispatcher(System.Collections.Generic.IEnumerable<SharedKernel.Domain.IDomainEventDispatchHandler!>! handlers) -> void
-SharedKernel.Domain.CompositeDomainEventDispatcher.Dispatch(SharedKernel.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.Domain.CompositeDomainEventDispatcher.Dispatch<TDomainEvent>(TDomainEvent domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.Domain.IDomainEventDispatchHandler
-SharedKernel.Domain.IDomainEventDispatchHandler.Handle(SharedKernel.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.Domain.IDomainEventDispatcher
-SharedKernel.Domain.IDomainEventDispatcher.Dispatch(SharedKernel.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.Domain.IDomainEventDispatcher.Dispatch<TDomainEvent>(TDomainEvent domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Domain.GenerateModelSupportAttribute
+PandaBear.Domain.GenerateModelSupportAttribute.GenerateModelSupportAttribute() -> void
+PandaBear.Domain.GenerateModelSupportAttribute.Identity.get -> bool
+PandaBear.Domain.GenerateModelSupportAttribute.Identity.set -> void
+PandaBear.Domain.GenerateModelSupportDefaultsAttribute
+PandaBear.Domain.GenerateModelSupportDefaultsAttribute.GenerateModelSupportDefaultsAttribute() -> void
+PandaBear.Domain.GenerateModelSupportDefaultsAttribute.Identity.get -> bool
+PandaBear.Domain.GenerateModelSupportDefaultsAttribute.Identity.set -> void
+PandaBear.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectEfCore.get -> bool
+PandaBear.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectEfCore.set -> void
+PandaBear.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectJson.get -> bool
+PandaBear.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectJson.set -> void
+PandaBear.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectParsing.get -> bool
+PandaBear.Domain.GenerateModelSupportDefaultsAttribute.ValueObjectParsing.set -> void
+PandaBear.Domain.GenerateValueObjectAttribute
+PandaBear.Domain.GenerateValueObjectAttribute.EfCore.get -> bool
+PandaBear.Domain.GenerateValueObjectAttribute.EfCore.set -> void
+PandaBear.Domain.GenerateValueObjectAttribute.GenerateValueObjectAttribute() -> void
+PandaBear.Domain.GenerateValueObjectAttribute.Json.get -> bool
+PandaBear.Domain.GenerateValueObjectAttribute.Json.set -> void
+PandaBear.Domain.GenerateValueObjectAttribute.Parsing.get -> bool
+PandaBear.Domain.GenerateValueObjectAttribute.Parsing.set -> void
+PandaBear.Domain.GenerateValueObjectAttribute.Template.get -> PandaBear.Domain.ValueObjectTemplate
+PandaBear.Domain.GenerateValueObjectAttribute.Template.set -> void
+PandaBear.Domain.GenerateValueObjectAttribute.UnderlyingType.get -> System.Type?
+PandaBear.Domain.GenerateValueObjectAttribute.UnderlyingType.set -> void
+PandaBear.Domain.IAggregateRoot
+PandaBear.Domain.IAggregateRoot.ClearDomainEvents() -> void
+PandaBear.Domain.IAggregateRoot.GetDomainEvents() -> System.Collections.Generic.IReadOnlyCollection<PandaBear.Domain.IDomainEvent!>!
+PandaBear.Domain.IAggregateRoot<TId>
+PandaBear.Domain.IDomainEvent
+PandaBear.Domain.IEntity<TId>
+PandaBear.Domain.ValueObjectTemplate
+PandaBear.Domain.ValueObjectTemplate.ApiVersion = 1 -> PandaBear.Domain.ValueObjectTemplate
+PandaBear.Domain.ValueObjectTemplate.IsoCode = 5 -> PandaBear.Domain.ValueObjectTemplate
+PandaBear.Domain.ValueObjectTemplate.None = 0 -> PandaBear.Domain.ValueObjectTemplate
+PandaBear.Domain.ValueObjectTemplate.NonEmptyString = 2 -> PandaBear.Domain.ValueObjectTemplate
+PandaBear.Domain.ValueObjectTemplate.Slug = 3 -> PandaBear.Domain.ValueObjectTemplate
+PandaBear.Domain.ValueObjectTemplate.StronglyTypedId = 4 -> PandaBear.Domain.ValueObjectTemplate
+PandaBear.Domain.CompositeDomainEventDispatcher
+PandaBear.Domain.CompositeDomainEventDispatcher.CompositeDomainEventDispatcher(System.Collections.Generic.IEnumerable<PandaBear.Domain.IDomainEventDispatchHandler!>! handlers) -> void
+PandaBear.Domain.CompositeDomainEventDispatcher.Dispatch(PandaBear.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Domain.CompositeDomainEventDispatcher.Dispatch<TDomainEvent>(TDomainEvent domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Domain.IDomainEventDispatchHandler
+PandaBear.Domain.IDomainEventDispatchHandler.Handle(PandaBear.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Domain.IDomainEventDispatcher
+PandaBear.Domain.IDomainEventDispatcher.Dispatch(PandaBear.Domain.IDomainEvent! domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Domain.IDomainEventDispatcher.Dispatch<TDomainEvent>(TDomainEvent domainEvent, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask

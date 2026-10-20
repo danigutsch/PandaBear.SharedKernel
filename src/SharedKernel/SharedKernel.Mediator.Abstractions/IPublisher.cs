@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator;
+namespace PandaBear.Mediator;
 
 /// <summary>
 /// Publishes notifications to generated notification handlers.

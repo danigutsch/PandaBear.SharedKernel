@@ -2,13 +2,13 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>SharedKernel.HttpClients.Tests</RootNamespace>
+        <RootNamespace>PandaBear.HttpClients.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <Using Include="Microsoft.Extensions.DependencyInjection" />
-        <Using Include="SharedKernel.HttpClients" />
-        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="PandaBear.HttpClients" />
+        <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
 

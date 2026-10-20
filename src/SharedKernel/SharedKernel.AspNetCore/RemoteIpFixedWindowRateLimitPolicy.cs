@@ -1,4 +1,4 @@
-namespace SharedKernel.AspNetCore;
+namespace PandaBear.AspNetCore;
 
 /// <summary>
 /// Defines an application-owned fixed-window rate-limit policy partitioned by remote IP address.

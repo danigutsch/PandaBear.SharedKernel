@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.FlowAnalysis;
 using Microsoft.CodeAnalysis.Operations;
 
-namespace SharedKernel.Style.Analyzers;
+namespace PandaBear.Style.Analyzers;
 
 /// <summary>
 /// Reports diagnostics for repository-specific style rules.
@@ -101,7 +101,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         category: "Style",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Methods returning SharedKernel.Results.Result should be able to return a failure Result; use a non-Result return type when every reachable return is successful.");
+        description: "Methods returning PandaBear.Results.Result should be able to return a failure Result; use a non-Result return type when every reachable return is successful.");
     private static readonly DiagnosticDescriptor OptionalResultMethodRule = new(
         StyleDiagnosticIds.OptionalResultMethod,
         title: "Result-returning methods should use Option for not-found outcomes",
@@ -140,9 +140,9 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     private static void InitializeCompilation(CompilationStartAnalysisContext context)
     {
         var cancellationTokenType = context.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken");
-        var domainEventType = context.Compilation.GetTypeByMetadataName("SharedKernel.Domain.IDomainEvent");
-        var resultType = context.Compilation.GetTypeByMetadataName("SharedKernel.Results.Result");
-        var genericResultType = context.Compilation.GetTypeByMetadataName("SharedKernel.Results.Result`1");
+        var domainEventType = context.Compilation.GetTypeByMetadataName("PandaBear.Domain.IDomainEvent");
+        var resultType = context.Compilation.GetTypeByMetadataName("PandaBear.Results.Result");
+        var genericResultType = context.Compilation.GetTypeByMetadataName("PandaBear.Results.Result`1");
         var taskOfTType = context.Compilation.GetTypeByMetadataName("System.Threading.Tasks.Task`1");
         var valueTaskOfTType = context.Compilation.GetTypeByMetadataName("System.Threading.Tasks.ValueTask`1");
 

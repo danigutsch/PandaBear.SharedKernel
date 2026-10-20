@@ -1,4 +1,4 @@
-namespace SharedKernel.Branding;
+namespace PandaBear.Branding;
 
 /// <summary>
 /// Defines client operations for branding API contracts.

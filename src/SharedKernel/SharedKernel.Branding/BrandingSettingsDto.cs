@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace SharedKernel.Branding;
+namespace PandaBear.Branding;
 
 /// <summary>
 /// Carries branding settings across API boundaries.

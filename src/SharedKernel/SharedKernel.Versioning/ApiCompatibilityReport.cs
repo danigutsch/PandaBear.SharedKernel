@@ -1,4 +1,4 @@
-namespace SharedKernel.Versioning;
+namespace PandaBear.Versioning;
 
 /// <summary>
 /// Creates API compatibility report files and applies release-phase failure policy.

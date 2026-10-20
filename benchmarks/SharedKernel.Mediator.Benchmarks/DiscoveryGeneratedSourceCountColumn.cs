@@ -4,7 +4,7 @@ using BenchmarkDotNet.Running;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Globalization;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Reports the number of generated source files emitted for each discovery benchmark case.

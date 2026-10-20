@@ -1,4 +1,4 @@
-namespace SharedKernel.Observability.Npgsql;
+namespace PandaBear.Observability.Npgsql;
 
 /// <summary>Pairs advisory evidence with the conservative action and reason it supports.</summary>
 public sealed record PostgreSqlIndexHealthAssessment(

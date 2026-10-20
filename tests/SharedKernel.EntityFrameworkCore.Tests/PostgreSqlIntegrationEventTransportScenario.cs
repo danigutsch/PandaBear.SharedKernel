@@ -2,10 +2,10 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using SharedKernel.Messaging;
-using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+using PandaBear.Messaging;
+using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 [SuppressMessage(
     "Usage",

@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.GeneratorTests;
+namespace PandaBear.Mediator.GeneratorTests;
 
 /// <summary>
 /// Composable source string building blocks for generator tests.
@@ -10,7 +10,7 @@ internal static class TestSources
     /// Standard primary-assembly header: mediator using, module marker, Demo namespace.
     /// </summary>
     public const string ModuleHeader = """
-        using SharedKernel.Mediator;
+        using PandaBear.Mediator;
 
         [assembly: MediatorModule]
 
@@ -22,7 +22,7 @@ internal static class TestSources
     /// Demo namespace header without the module marker (for secondary-assembly primary sources).
     /// </summary>
     public const string DemoHeader = """
-        using SharedKernel.Mediator;
+        using PandaBear.Mediator;
 
         namespace Demo;
 
@@ -115,7 +115,7 @@ internal static class TestSources
     /// Pass as the source argument to <see cref="GeneratorTestHarness.CreateMetadataReference"/>.
     /// </summary>
     public const string ModuleAMarkedSource = """
-        using SharedKernel.Mediator;
+        using PandaBear.Mediator;
 
         [assembly: MediatorModule]
 
@@ -135,7 +135,7 @@ internal static class TestSources
     /// Pass as the source argument to <see cref="GeneratorTestHarness.CreateMetadataReference"/>.
     /// </summary>
     public const string ModuleAUnmarkedSource = """
-        using SharedKernel.Mediator;
+        using PandaBear.Mediator;
 
         namespace ModuleA;
 

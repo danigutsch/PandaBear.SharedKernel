@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace SharedKernel.Versioning.Tool;
+namespace PandaBear.Versioning.Tool;
 
 internal static class CandidateStagingCommand
 {

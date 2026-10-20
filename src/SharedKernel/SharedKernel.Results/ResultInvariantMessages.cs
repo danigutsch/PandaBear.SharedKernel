@@ -1,4 +1,4 @@
-namespace SharedKernel.Results;
+namespace PandaBear.Results;
 
 internal static class ResultInvariantMessages
 {

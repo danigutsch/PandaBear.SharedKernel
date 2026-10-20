@@ -1,7 +1,7 @@
 using System.Text;
-using SharedKernel.Testing;
+using PandaBear.Testing;
 
-namespace SharedKernel.DocumentRendering.Tests;
+namespace PandaBear.DocumentRendering.Tests;
 
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentRenderingCapability)]
 public sealed class HtmlDocumentRendererTests

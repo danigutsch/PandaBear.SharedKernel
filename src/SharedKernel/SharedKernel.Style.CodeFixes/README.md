@@ -44,3 +44,9 @@ not-found detail.
 
 - [SharedKernel.Style.Analyzers](../SharedKernel.Style.Analyzers/README.md)
 - `docs/CODING_GUIDELINES.md`
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Style.CodeFixes`. C# namespace: `PandaBear.Style.CodeFixes`. Assembly/project identity: `SharedKernel.Style.CodeFixes`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

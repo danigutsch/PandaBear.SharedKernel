@@ -2,7 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace SharedKernel.Documentation;
+namespace PandaBear.Documentation;
 
 internal static class DocumentationSourceFacts
 {

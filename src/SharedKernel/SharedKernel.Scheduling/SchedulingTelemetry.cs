@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
-namespace SharedKernel.Scheduling;
+namespace PandaBear.Scheduling;
 
 /// <summary>
 /// Defines stable telemetry names emitted by SharedKernel scheduling primitives.

@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging.IntegrationEvents;
+namespace PandaBear.Messaging.IntegrationEvents;
 
 /// <summary>
 /// Handles a typed integration event.

@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace SharedKernel.Documentation;
+namespace PandaBear.Documentation;
 
 /// <summary>
 /// Builds Markdown integration-event inventories from source-backed contracts and handlers.

@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using System.Reflection;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Measures dispatch-shape costs across request-count scale points and pipeline-count variants.

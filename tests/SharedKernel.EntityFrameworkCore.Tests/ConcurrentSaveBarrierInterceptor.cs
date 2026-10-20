@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal sealed class ConcurrentSaveBarrierInterceptor : SaveChangesInterceptor
 {

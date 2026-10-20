@@ -5,7 +5,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Testing.CodeFixes</PackageId>
         <Description>Code fixes for repository test conventions.</Description>
-        <RootNamespace>SharedKernel.Testing.CodeFixes</RootNamespace>
+        <RootNamespace>PandaBear.Testing.CodeFixes</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;code-fixes;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

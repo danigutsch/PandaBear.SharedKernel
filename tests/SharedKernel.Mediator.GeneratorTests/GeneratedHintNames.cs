@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.GeneratorTests;
+namespace PandaBear.Mediator.GeneratorTests;
 
 internal static class GeneratedHintNames
 {

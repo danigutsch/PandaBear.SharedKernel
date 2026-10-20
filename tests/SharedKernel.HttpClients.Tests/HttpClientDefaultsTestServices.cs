@@ -2,7 +2,7 @@ using System.Net;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
-namespace SharedKernel.HttpClients.Tests;
+namespace PandaBear.HttpClients.Tests;
 
 internal static class HttpClientDefaultsTestServices
 {

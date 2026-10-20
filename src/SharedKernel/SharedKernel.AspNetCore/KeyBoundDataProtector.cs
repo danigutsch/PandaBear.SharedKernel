@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.DataProtection;
 
-namespace SharedKernel.AspNetCore;
+namespace PandaBear.AspNetCore;
 
 /// <summary>
 /// Protects values with a purpose derived from an opaque storage-entry key.

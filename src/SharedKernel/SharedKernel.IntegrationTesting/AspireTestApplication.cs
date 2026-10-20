@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace SharedKernel.IntegrationTesting;
+namespace PandaBear.IntegrationTesting;
 
 /// <summary>
 /// Owns an Aspire distributed application lifetime for integration tests.

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Compliance.Classification;
 
-namespace SharedKernel.Observability;
+namespace PandaBear.Observability;
 
 /// <summary>Classifies a logging parameter as financial data.</summary>
 [AttributeUsage(AttributeTargets.Parameter)]

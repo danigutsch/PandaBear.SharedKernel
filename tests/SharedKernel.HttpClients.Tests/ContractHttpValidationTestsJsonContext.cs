@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace SharedKernel.HttpClients.Tests;
+namespace PandaBear.HttpClients.Tests;
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(ContractValidationProblemDto))]

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace SharedKernel.Testing;
+namespace PandaBear.Testing;
 
 /// <summary>
 /// Provides a deterministic read barrier and byte count for cancellation and bounded-stream tests.

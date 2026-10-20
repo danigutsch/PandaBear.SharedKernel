@@ -1,4 +1,4 @@
-namespace SharedKernel.AuditTrail;
+namespace PandaBear.AuditTrail;
 
 /// <summary>Appends audit entries at an application-owned persistence boundary.</summary>
 /// <typeparam name="TAuditTrailEntry">The metadata-only audit entry type.</typeparam>

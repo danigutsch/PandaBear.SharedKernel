@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace SharedKernel.Mediator.Tests;
+namespace PandaBear.Mediator.Tests;
 
 internal sealed record TestCommand : ICommand;
 

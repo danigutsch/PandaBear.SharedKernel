@@ -1,17 +1,17 @@
-namespace SharedKernel.HttpClients;
+namespace PandaBear.HttpClients;
 
 /// <summary>
-/// Describes the HTTP outcome of a command request without applying caller fallback policy.
+/// Describes an HTTP request outcome without applying caller fallback or user-interface policy.
 /// </summary>
-public enum ContractCommandOutcomeKind
+public enum HttpOutcomeKind
 {
     /// <summary>
-    /// The command completed successfully.
+    /// The response matched the expected success status and, when required, contained a valid JSON value.
     /// </summary>
     Succeeded,
 
     /// <summary>
-    /// The API returned a validation problem response.
+    /// An HTTP 400 response contained usable field or model validation errors.
     /// </summary>
     ValidationProblem,
 
@@ -41,7 +41,7 @@ public enum ContractCommandOutcomeKind
     EmptyBody,
 
     /// <summary>
-    /// The API returned a response body that could not be deserialized into the expected contract.
+    /// The response body exceeded its read limit, used an unsupported encoding, or failed decoding or validation against the expected contract.
     /// </summary>
     MalformedBody,
 
@@ -51,17 +51,17 @@ public enum ContractCommandOutcomeKind
     UnexpectedStatus,
 
     /// <summary>
-    /// The API returned a body with a content type that is not JSON.
+    /// A required JSON response had a missing or non-JSON Content-Type header.
     /// </summary>
     UnsupportedContentType,
 
     /// <summary>
-    /// The HTTP operation timed out before a response was available.
+    /// A timeout interrupted the request or asynchronous response-body processing.
     /// </summary>
     TimedOut,
 
     /// <summary>
-    /// The HTTP transport failed before a usable response was available.
+    /// The request transport, circuit breaker, or response-body I/O failed.
     /// </summary>
     TransportFailure
 }

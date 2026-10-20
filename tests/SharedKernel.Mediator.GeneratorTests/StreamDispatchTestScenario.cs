@@ -1,6 +1,6 @@
-using SharedKernel.Testing.Mediator;
+using PandaBear.Testing.Mediator;
 
-namespace SharedKernel.Mediator.GeneratorTests;
+namespace PandaBear.Mediator.GeneratorTests;
 
 internal sealed class StreamDispatchTestScenario : IDisposable
 {

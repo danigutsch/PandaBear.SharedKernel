@@ -1,5 +1,5 @@
 
-namespace SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests;
+namespace PandaBear.Messaging.IntegrationEvents.CloudEvents.Tests;
 
 public sealed class CloudEventMapperTests
 {

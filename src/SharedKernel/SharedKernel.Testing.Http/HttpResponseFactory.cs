@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 
-namespace SharedKernel.Testing.Http;
+namespace PandaBear.Testing.Http;
 
 /// <summary>
 /// Creates deterministic HTTP responses for test doubles.

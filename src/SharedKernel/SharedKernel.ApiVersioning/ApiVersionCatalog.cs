@@ -1,4 +1,4 @@
-namespace SharedKernel.ApiVersioning;
+namespace PandaBear.ApiVersioning;
 
 /// <summary>
 /// Provides selection over known API contract versions.

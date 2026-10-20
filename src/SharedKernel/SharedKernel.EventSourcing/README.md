@@ -5,3 +5,9 @@ Storage-neutral event-sourcing primitives for aggregates, append/load operations
 This project intentionally contains abstractions only. Reusable provider implementations belong in
 adapter packages such as `SharedKernel.EventSourcing.Npgsql`; bounded-context infrastructure owns
 composition, schema names, migrations, read models, and context-specific projection rebuild policy.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.EventSourcing`. C# namespace: `PandaBear.EventSourcing`. Assembly/project identity: `SharedKernel.EventSourcing`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

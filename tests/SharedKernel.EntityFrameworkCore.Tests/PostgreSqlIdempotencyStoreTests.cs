@@ -1,7 +1,7 @@
-using SharedKernel.Idempotency;
-using SharedKernel.Testing;
+using PandaBear.Idempotency;
+using PandaBear.Testing;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.DatabaseIntegrationCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IdempotencyCapability)]

@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace SharedKernel.Testing.CodeFixRunner;
+namespace PandaBear.Testing.CodeFixRunner;
 
 internal static class ProgramEntryPoint
 {

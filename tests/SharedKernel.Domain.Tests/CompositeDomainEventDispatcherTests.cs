@@ -1,4 +1,4 @@
-namespace SharedKernel.Domain.Tests;
+namespace PandaBear.Domain.Tests;
 
 public sealed class CompositeDomainEventDispatcherTests
 {

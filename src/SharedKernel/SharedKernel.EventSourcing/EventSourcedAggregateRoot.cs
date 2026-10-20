@@ -1,4 +1,4 @@
-namespace SharedKernel.EventSourcing;
+namespace PandaBear.EventSourcing;
 
 /// <summary>
 /// Base type for event-sourced aggregate roots.

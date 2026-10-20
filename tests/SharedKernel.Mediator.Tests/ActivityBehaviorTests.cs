@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace SharedKernel.Mediator.Tests;
+namespace PandaBear.Mediator.Tests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ContractsCapability)]
 public sealed class ActivityBehaviorTests

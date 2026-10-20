@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace SharedKernel.Versioning.Tool;
+namespace PandaBear.Versioning.Tool;
 
 internal static class PackageSmokeCommand
 {

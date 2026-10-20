@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace SharedKernel.EventSourcing.Npgsql;
+namespace PandaBear.EventSourcing.Npgsql;
 
 /// <summary>
 /// Creates PostgreSQL tables required by the event-sourcing provider.

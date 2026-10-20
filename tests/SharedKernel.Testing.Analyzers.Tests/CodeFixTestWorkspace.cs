@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-namespace SharedKernel.Testing.Analyzers.Tests;
+namespace PandaBear.Testing.Analyzers.Tests;
 
 internal sealed class CodeFixTestWorkspace
 {
@@ -39,7 +39,7 @@ internal sealed class CodeFixTestWorkspace
         bool includeDefaultUsings = true)
     {
         var documentFilePath = filePath
-            ?? Path.Combine(Path.GetTempPath(), "SharedKernel.Testing.CodeFixes.Tests", Guid.NewGuid().ToString("N"), "Test0.cs");
+            ?? Path.Combine(Path.GetTempPath(), "PandaBear.Testing.CodeFixes.Tests", Guid.NewGuid().ToString("N"), "Test0.cs");
         var projectDirectory = Path.GetDirectoryName(documentFilePath) is { Length: > 0 } directory
             ? directory
             : Path.GetTempPath();

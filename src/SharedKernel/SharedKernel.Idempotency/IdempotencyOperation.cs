@@ -1,4 +1,4 @@
-namespace SharedKernel.Idempotency;
+namespace PandaBear.Idempotency;
 
 /// <summary>
 /// Identifies one idempotent operation by scope and key.

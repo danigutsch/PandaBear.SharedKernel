@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SharedKernel.Results.SourceGenerator;
+using PandaBear.Results.SourceGenerator;
 
-namespace SharedKernel.Results.GeneratorTests;
+namespace PandaBear.Results.GeneratorTests;
 
 public sealed class GeneratorImplementationTests
 {

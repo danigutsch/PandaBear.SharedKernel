@@ -1,6 +1,6 @@
-using SharedKernel.Messaging.IntegrationEvents;
+using PandaBear.Messaging.IntegrationEvents;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal sealed class ComposedMessagingTestIntegrationEventSerializer : IIntegrationEventSerializer
 {

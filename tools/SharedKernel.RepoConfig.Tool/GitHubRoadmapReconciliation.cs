@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace SharedKernel.RepoConfig.Tool;
+namespace PandaBear.RepoConfig.Tool;
 
 internal sealed class GitHubRoadmapReconciliation
 {

@@ -1,6 +1,6 @@
-using SharedKernel.Testing.Snapshots;
+using PandaBear.Testing.Snapshots;
 
-namespace SharedKernel.Testing.Tests;
+namespace PandaBear.Testing.Tests;
 
 internal sealed class TemporarySnapshotDirectory : IDisposable
 {

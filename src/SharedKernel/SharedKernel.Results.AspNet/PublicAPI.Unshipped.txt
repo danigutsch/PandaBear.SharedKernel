@@ -1,4 +1,4 @@
 #nullable enable
 
-SharedKernel.Results.AspNet.ResultStatusHttpExtensions
-static SharedKernel.Results.AspNet.ResultStatusHttpExtensions.ToHttpStatusCode(this SharedKernel.Results.ResultStatus status) -> int
+PandaBear.Results.AspNet.ResultStatusHttpExtensions
+static PandaBear.Results.AspNet.ResultStatusHttpExtensions.ToHttpStatusCode(this PandaBear.Results.ResultStatus status) -> int

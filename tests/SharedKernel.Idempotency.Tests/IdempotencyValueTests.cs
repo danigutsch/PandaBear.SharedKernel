@@ -1,4 +1,4 @@
-namespace SharedKernel.Idempotency.Tests;
+namespace PandaBear.Idempotency.Tests;
 
 public sealed class IdempotencyValueTests
 {

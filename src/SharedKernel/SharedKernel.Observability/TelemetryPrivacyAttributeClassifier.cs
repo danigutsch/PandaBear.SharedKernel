@@ -1,4 +1,4 @@
-namespace SharedKernel.Observability;
+namespace PandaBear.Observability;
 
 internal static class TelemetryPrivacyAttributeClassifier
 {

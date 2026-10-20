@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Functional</PackageId>
         <Description>Core functional result and option primitives for shared-kernel workflows.</Description>
-        <RootNamespace>SharedKernel.Functional</RootNamespace>
+        <RootNamespace>PandaBear.Functional</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

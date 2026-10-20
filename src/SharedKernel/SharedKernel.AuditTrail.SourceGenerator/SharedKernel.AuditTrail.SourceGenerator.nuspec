@@ -6,6 +6,7 @@
     <authors>ViajantesTurismo contributors</authors>
     <description>Source generator for typed domain-event to audit-trail mappings.</description>
     <license type="expression">MIT</license>
+    <readme>README.md</readme>
     <repository type="git" url="https://github.com/danigutsch/ViajantesTurismo" />
     <tags>audit-trail domain-events source-generator shared-kernel dotnet</tags>
     <dependencies>
@@ -17,6 +18,7 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="README.md" target="" />
     <file src="$analyzerFile$" target="analyzers/dotnet/cs" />
     <file src="_._" target="lib/net10.0" />
   </files>

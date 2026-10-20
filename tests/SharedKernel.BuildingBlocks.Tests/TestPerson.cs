@@ -1,5 +1,5 @@
 
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace PandaBear.BuildingBlocks.Tests;
 
 internal sealed class TestPerson(string firstName, string lastName, int age) : ValueObject
 {

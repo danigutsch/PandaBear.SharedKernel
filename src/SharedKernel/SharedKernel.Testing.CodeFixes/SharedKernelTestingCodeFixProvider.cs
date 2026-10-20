@@ -8,11 +8,11 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeAnalysis.Text;
-using SharedKernel.Testing.Analyzers;
+using PandaBear.Testing.Analyzers;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
-namespace SharedKernel.Testing.CodeFixes;
+namespace PandaBear.Testing.CodeFixes;
 
 /// <summary>
 /// Placeholder code-fix provider for implemented SharedKernel testing diagnostics.
@@ -613,13 +613,13 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         if (syntaxRoot is not CompilationUnitSyntax compilationUnit
             || compilationUnit.Usings.Any(static usingDirective => string.Equals(
                 usingDirective.Name?.ToString(),
-                "SharedKernel.Testing.Assertions",
+                "PandaBear.Testing.Assertions",
                 StringComparison.Ordinal)))
         {
             return syntaxRoot;
         }
 
-        var usingDirective = UsingDirective(ParseName("SharedKernel.Testing.Assertions"));
+        var usingDirective = UsingDirective(ParseName("PandaBear.Testing.Assertions"));
         return compilationUnit.AddUsings(usingDirective)
             .WithAdditionalAnnotations(Formatter.Annotation);
     }
@@ -760,7 +760,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
     {
         ct.ThrowIfCancellationRequested();
 
-        var justificationAttribute = Attribute(ParseName("global::SharedKernel.Testing.SerialTestJustification"))
+        var justificationAttribute = Attribute(ParseName("global::PandaBear.Testing.SerialTestJustification"))
             .WithArgumentList(
                 AttributeArgumentList(
                     SingletonSeparatedList(

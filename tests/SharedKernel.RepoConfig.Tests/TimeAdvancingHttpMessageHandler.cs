@@ -1,7 +1,7 @@
 using System.Net;
 using Microsoft.Extensions.Time.Testing;
 
-namespace SharedKernel.RepoConfig.Tests;
+namespace PandaBear.RepoConfig.Tests;
 
 internal sealed class TimeAdvancingHttpMessageHandler(FakeTimeProvider timeProvider) : HttpMessageHandler
 {

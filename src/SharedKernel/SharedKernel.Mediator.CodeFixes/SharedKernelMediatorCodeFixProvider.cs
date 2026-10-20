@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 
-namespace SharedKernel.Mediator.CodeFixes;
+namespace PandaBear.Mediator.CodeFixes;
 
 /// <summary>
 /// Provides safe code fixes for currently implemented mediator diagnostics.

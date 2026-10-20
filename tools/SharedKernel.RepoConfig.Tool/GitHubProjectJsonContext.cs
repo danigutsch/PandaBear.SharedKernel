@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace SharedKernel.RepoConfig.Tool;
+namespace PandaBear.RepoConfig.Tool;
 
 [JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
 [JsonSerializable(typeof(GitHubProjectResponse), TypeInfoPropertyName = "ProjectResponse")]

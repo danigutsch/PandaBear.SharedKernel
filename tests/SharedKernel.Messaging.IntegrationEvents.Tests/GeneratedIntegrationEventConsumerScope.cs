@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SharedKernel.Messaging.IntegrationEvents.Tests;
+namespace PandaBear.Messaging.IntegrationEvents.Tests;
 
 internal sealed class GeneratedIntegrationEventConsumerScope : IDisposable
 {

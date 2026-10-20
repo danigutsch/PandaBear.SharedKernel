@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Messaging</PackageId>
         <Description>Storage-neutral messaging model for event envelopes, messages, metadata, and delivery boundaries.</Description>
-        <RootNamespace>SharedKernel.Messaging</RootNamespace>
+        <RootNamespace>PandaBear.Messaging</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

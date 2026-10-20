@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace SharedKernel.HttpClients.Tests;
+namespace PandaBear.HttpClients.Tests;
 
 internal sealed class TrackingStreamContent(Stream source) : HttpContent
 {

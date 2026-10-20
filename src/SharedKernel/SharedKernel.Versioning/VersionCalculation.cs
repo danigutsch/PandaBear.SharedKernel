@@ -1,4 +1,4 @@
-namespace SharedKernel.Versioning;
+namespace PandaBear.Versioning;
 
 /// <summary>
 /// Calculates release versions from Conventional Commit history.

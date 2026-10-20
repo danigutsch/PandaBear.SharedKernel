@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using SharedKernel.Idempotency;
-using SharedKernel.Idempotency.EntityFrameworkCore;
-using SharedKernel.Messaging;
-using SharedKernel.Messaging.IntegrationEvents;
-using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+using PandaBear.Idempotency;
+using PandaBear.Idempotency.EntityFrameworkCore;
+using PandaBear.Messaging;
+using PandaBear.Messaging.IntegrationEvents;
+using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
 {

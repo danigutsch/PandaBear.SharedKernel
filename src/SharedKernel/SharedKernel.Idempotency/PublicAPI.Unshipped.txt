@@ -1,46 +1,48 @@
 #nullable enable
 
-SharedKernel.Idempotency.IIdempotencyStore
-SharedKernel.Idempotency.IIdempotencyStore.Complete(SharedKernel.Idempotency.IdempotencyOperation operation, System.DateTimeOffset completedAt, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.Idempotency.IIdempotencyStore.Complete(SharedKernel.Idempotency.IdempotencyOperation operation, System.DateTimeOffset completedAt, string? resultFingerprint, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.Idempotency.IIdempotencyStore.Get(SharedKernel.Idempotency.IdempotencyOperation operation, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Idempotency.IdempotencyEntry?>
-SharedKernel.Idempotency.IIdempotencyStore.StageCompletion(SharedKernel.Idempotency.IdempotencyOperation operation, System.DateTimeOffset completedAt, string? resultFingerprint, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.Idempotency.IIdempotencyStore.TryStart(SharedKernel.Idempotency.IdempotencyOperation operation, System.DateTimeOffset startedAt, System.TimeSpan? lockDuration, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.Idempotency.IdempotencyStartResult!>
-SharedKernel.Idempotency.IdempotencyEntry
-SharedKernel.Idempotency.IdempotencyEntry.CompletedAt.get -> System.DateTimeOffset?
-SharedKernel.Idempotency.IdempotencyEntry.CompletedAt.init -> void
-SharedKernel.Idempotency.IdempotencyEntry.IdempotencyEntry(SharedKernel.Idempotency.IdempotencyOperation Operation, SharedKernel.Idempotency.IdempotencyEntryState State, System.DateTimeOffset StartedAt, System.DateTimeOffset? CompletedAt, string? ResultFingerprint) -> void
-SharedKernel.Idempotency.IdempotencyEntry.Operation.get -> SharedKernel.Idempotency.IdempotencyOperation
-SharedKernel.Idempotency.IdempotencyEntry.Operation.init -> void
-SharedKernel.Idempotency.IdempotencyEntry.ResultFingerprint.get -> string?
-SharedKernel.Idempotency.IdempotencyEntry.ResultFingerprint.init -> void
-SharedKernel.Idempotency.IdempotencyEntry.StartedAt.get -> System.DateTimeOffset
-SharedKernel.Idempotency.IdempotencyEntry.StartedAt.init -> void
-SharedKernel.Idempotency.IdempotencyEntry.State.get -> SharedKernel.Idempotency.IdempotencyEntryState
-SharedKernel.Idempotency.IdempotencyEntry.State.init -> void
-SharedKernel.Idempotency.IdempotencyEntryState
-SharedKernel.Idempotency.IdempotencyEntryState.Completed = 1 -> SharedKernel.Idempotency.IdempotencyEntryState
-SharedKernel.Idempotency.IdempotencyEntryState.Started = 0 -> SharedKernel.Idempotency.IdempotencyEntryState
-SharedKernel.Idempotency.IdempotencyKey
-SharedKernel.Idempotency.IdempotencyKey.IdempotencyKey() -> void
-SharedKernel.Idempotency.IdempotencyKey.Value.get -> string!
-SharedKernel.Idempotency.IdempotencyOperation
-SharedKernel.Idempotency.IdempotencyOperation.IdempotencyOperation() -> void
-SharedKernel.Idempotency.IdempotencyOperation.IdempotencyOperation(SharedKernel.Idempotency.IdempotencyScope Scope, SharedKernel.Idempotency.IdempotencyKey Key) -> void
-SharedKernel.Idempotency.IdempotencyOperation.Key.get -> SharedKernel.Idempotency.IdempotencyKey
-SharedKernel.Idempotency.IdempotencyOperation.Key.init -> void
-SharedKernel.Idempotency.IdempotencyOperation.Scope.get -> SharedKernel.Idempotency.IdempotencyScope
-SharedKernel.Idempotency.IdempotencyOperation.Scope.init -> void
-SharedKernel.Idempotency.IdempotencyScope
-SharedKernel.Idempotency.IdempotencyScope.IdempotencyScope() -> void
-SharedKernel.Idempotency.IdempotencyScope.Value.get -> string!
-SharedKernel.Idempotency.IdempotencyStartResult
-static SharedKernel.Idempotency.IdempotencyKey.TryFrom(string? value, out SharedKernel.Idempotency.IdempotencyKey key) -> bool
-static SharedKernel.Idempotency.IdempotencyStartResult.AlreadyStarted(SharedKernel.Idempotency.IdempotencyEntry! entry) -> SharedKernel.Idempotency.IdempotencyStartResult!
-SharedKernel.Idempotency.IdempotencyStartResult.ExistingEntry.get -> SharedKernel.Idempotency.IdempotencyEntry?
-static SharedKernel.Idempotency.IdempotencyStartResult.StartedNew() -> SharedKernel.Idempotency.IdempotencyStartResult!
-SharedKernel.Idempotency.IdempotencyStartResult.Started.get -> bool
-static SharedKernel.Idempotency.IdempotencyKey.From(string? value) -> SharedKernel.Idempotency.IdempotencyKey
-override SharedKernel.Idempotency.IdempotencyKey.ToString() -> string!
-static SharedKernel.Idempotency.IdempotencyScope.From(string? value) -> SharedKernel.Idempotency.IdempotencyScope
-override SharedKernel.Idempotency.IdempotencyScope.ToString() -> string!
+PandaBear.Idempotency.IIdempotencyStore
+PandaBear.Idempotency.IIdempotencyStore.Complete(PandaBear.Idempotency.IdempotencyOperation operation, System.DateTimeOffset completedAt, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Idempotency.IIdempotencyStore.Complete(PandaBear.Idempotency.IdempotencyOperation operation, System.DateTimeOffset completedAt, string? resultFingerprint, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Idempotency.IIdempotencyStore.Get(PandaBear.Idempotency.IdempotencyOperation operation, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Idempotency.IdempotencyEntry?>
+PandaBear.Idempotency.IIdempotencyStore.StageCompletion(PandaBear.Idempotency.IdempotencyOperation operation, System.DateTimeOffset completedAt, string? resultFingerprint, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Idempotency.IIdempotencyStore.TryStart(PandaBear.Idempotency.IdempotencyOperation operation, System.DateTimeOffset startedAt, System.TimeSpan? lockDuration, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.Idempotency.IdempotencyStartResult!>
+PandaBear.Idempotency.IdempotencyEntry
+PandaBear.Idempotency.IdempotencyEntry.CompletedAt.get -> System.DateTimeOffset?
+PandaBear.Idempotency.IdempotencyEntry.CompletedAt.init -> void
+PandaBear.Idempotency.IdempotencyEntry.IdempotencyEntry(PandaBear.Idempotency.IdempotencyOperation Operation, PandaBear.Idempotency.IdempotencyEntryState State, System.DateTimeOffset StartedAt, System.DateTimeOffset? CompletedAt, string? ResultFingerprint) -> void
+PandaBear.Idempotency.IdempotencyEntry.Operation.get -> PandaBear.Idempotency.IdempotencyOperation
+PandaBear.Idempotency.IdempotencyEntry.Operation.init -> void
+PandaBear.Idempotency.IdempotencyEntry.ResultFingerprint.get -> string?
+PandaBear.Idempotency.IdempotencyEntry.ResultFingerprint.init -> void
+PandaBear.Idempotency.IdempotencyEntry.StartedAt.get -> System.DateTimeOffset
+PandaBear.Idempotency.IdempotencyEntry.StartedAt.init -> void
+PandaBear.Idempotency.IdempotencyEntry.State.get -> PandaBear.Idempotency.IdempotencyEntryState
+PandaBear.Idempotency.IdempotencyEntry.State.init -> void
+PandaBear.Idempotency.IdempotencyEntryState
+PandaBear.Idempotency.IdempotencyEntryState.Completed = 1 -> PandaBear.Idempotency.IdempotencyEntryState
+PandaBear.Idempotency.IdempotencyEntryState.Started = 0 -> PandaBear.Idempotency.IdempotencyEntryState
+PandaBear.Idempotency.IdempotencyKey
+PandaBear.Idempotency.IdempotencyKey.IdempotencyKey() -> void
+PandaBear.Idempotency.IdempotencyKey.Value.get -> string!
+PandaBear.Idempotency.IdempotencyOperation
+PandaBear.Idempotency.IdempotencyOperation.IdempotencyOperation() -> void
+PandaBear.Idempotency.IdempotencyOperation.IdempotencyOperation(PandaBear.Idempotency.IdempotencyScope Scope, PandaBear.Idempotency.IdempotencyKey Key) -> void
+PandaBear.Idempotency.IdempotencyOperation.Key.get -> PandaBear.Idempotency.IdempotencyKey
+PandaBear.Idempotency.IdempotencyOperation.Key.init -> void
+PandaBear.Idempotency.IdempotencyOperation.Scope.get -> PandaBear.Idempotency.IdempotencyScope
+PandaBear.Idempotency.IdempotencyOperation.Scope.init -> void
+PandaBear.Idempotency.IdempotencyScope
+PandaBear.Idempotency.IdempotencyScope.IdempotencyScope() -> void
+PandaBear.Idempotency.IdempotencyScope.Value.get -> string!
+PandaBear.Idempotency.IdempotencyStartResult
+static PandaBear.Idempotency.IdempotencyKey.TryFrom(string? value, out PandaBear.Idempotency.IdempotencyKey key) -> bool
+static PandaBear.Idempotency.IdempotencyStartResult.AlreadyStarted(PandaBear.Idempotency.IdempotencyEntry! entry) -> PandaBear.Idempotency.IdempotencyStartResult!
+PandaBear.Idempotency.IdempotencyStartResult.ExistingEntry.get -> PandaBear.Idempotency.IdempotencyEntry?
+static PandaBear.Idempotency.IdempotencyStartResult.StartedNew() -> PandaBear.Idempotency.IdempotencyStartResult!
+PandaBear.Idempotency.IdempotencyStartResult.Started.get -> bool
+static PandaBear.Idempotency.IdempotencyKey.From(string? value) -> PandaBear.Idempotency.IdempotencyKey
+override PandaBear.Idempotency.IdempotencyKey.ToString() -> string!
+static PandaBear.Idempotency.IdempotencyScope.From(string? value) -> PandaBear.Idempotency.IdempotencyScope
+override PandaBear.Idempotency.IdempotencyScope.ToString() -> string!
+PandaBear.Idempotency.IdempotencyRequestFingerprint
+static PandaBear.Idempotency.IdempotencyRequestFingerprint.Create(params string![]! components) -> string!

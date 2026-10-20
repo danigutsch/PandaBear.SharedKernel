@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.Tests;
+namespace PandaBear.Mediator.Tests;
 
 /// <summary>
 /// Shared trait constants for mediator abstraction tests.

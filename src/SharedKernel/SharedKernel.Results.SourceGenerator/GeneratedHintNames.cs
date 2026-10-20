@@ -1,4 +1,4 @@
-namespace SharedKernel.Results.SourceGenerator;
+namespace PandaBear.Results.SourceGenerator;
 
 internal static class GeneratedHintNames
 {

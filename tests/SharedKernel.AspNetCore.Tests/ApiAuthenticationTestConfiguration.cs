@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 
-namespace SharedKernel.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Tests;
 
 internal static class ApiAuthenticationTestConfiguration
 {

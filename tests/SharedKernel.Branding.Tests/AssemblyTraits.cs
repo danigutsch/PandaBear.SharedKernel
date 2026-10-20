@@ -1,2 +1,2 @@
-[assembly: Trait(SharedKernel.Testing.SharedKernelTestTraitNames.ScopeName, SharedKernel.Testing.SharedKernelTestTraitNames.UnitScope)]
-[assembly: Trait(SharedKernel.Testing.SharedKernelTestTraitNames.ComponentName, SharedKernel.Branding.Tests.TestTraits.BrandingComponent)]
+[assembly: Trait(PandaBear.Testing.SharedKernelTestTraitNames.ScopeName, PandaBear.Testing.SharedKernelTestTraitNames.UnitScope)]
+[assembly: Trait(PandaBear.Testing.SharedKernelTestTraitNames.ComponentName, PandaBear.Branding.Tests.TestTraits.BrandingComponent)]

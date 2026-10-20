@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging.IntegrationEvents.Tests;
+namespace PandaBear.Messaging.IntegrationEvents.Tests;
 
 internal sealed record UnknownIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
 {

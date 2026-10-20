@@ -1,4 +1,4 @@
-namespace SharedKernel.Idempotency;
+namespace PandaBear.Idempotency;
 
 /// <summary>
 /// Defines storage-neutral idempotency operations.

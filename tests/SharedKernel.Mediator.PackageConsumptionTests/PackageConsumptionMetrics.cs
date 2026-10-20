@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-namespace SharedKernel.Mediator.PackageConsumptionTests;
+namespace PandaBear.Mediator.PackageConsumptionTests;
 
 internal static partial class PackageConsumptionMetrics
 {

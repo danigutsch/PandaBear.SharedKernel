@@ -19,3 +19,9 @@ Small raw-Npgsql primitives with a stable, provider-specific boundary.
   policy.
 - The package does not own database schemas, migrations, connection-string configuration,
   distributed-cache behavior, or application-specific authentication/token rules.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Npgsql`. C# namespace: `PandaBear.Npgsql`. Assembly/project identity: `SharedKernel.Npgsql`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

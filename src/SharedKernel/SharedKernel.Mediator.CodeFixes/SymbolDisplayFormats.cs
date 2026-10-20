@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace SharedKernel.Mediator.CodeFixes;
+namespace PandaBear.Mediator.CodeFixes;
 
 /// <summary>
 /// Provides symbol-display formats that preserve nullable reference annotations in generated code.

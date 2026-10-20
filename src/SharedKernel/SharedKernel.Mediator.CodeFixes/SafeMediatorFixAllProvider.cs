@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CodeFixes;
 
-namespace SharedKernel.Mediator.CodeFixes;
+namespace PandaBear.Mediator.CodeFixes;
 
 /// <summary>
 /// Restricts Fix All support to code fixes that are safe to apply in bulk.

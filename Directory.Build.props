@@ -5,6 +5,7 @@
 		<LangVersion>preview</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<RootNamespace Condition="'$(RootNamespace)' == '' and $([System.String]::Copy('$(MSBuildProjectName)').StartsWith('SharedKernel.'))">$([System.String]::Copy('$(MSBuildProjectName)').Replace('SharedKernel.', 'PandaBear.'))</RootNamespace>
 		<NoDefaultExcludes>true</NoDefaultExcludes>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>

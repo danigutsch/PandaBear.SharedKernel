@@ -2,11 +2,11 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>SharedKernel.Aspire.CodeFixes.Tests</RootNamespace>
+        <RootNamespace>PandaBear.Aspire.CodeFixes.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
 

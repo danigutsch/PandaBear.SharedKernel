@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace SharedKernel.Mediator.SourceGenerator;
+namespace PandaBear.Mediator.SourceGenerator;
 
 internal sealed class IndentedCodeWriter
 {

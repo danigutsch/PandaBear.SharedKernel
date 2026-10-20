@@ -1,6 +1,6 @@
-using SharedKernel.Testing;
+using PandaBear.Testing;
 
-namespace SharedKernel.Observability.Npgsql.Tests;
+namespace PandaBear.Observability.Npgsql.Tests;
 
 [Collection("PostgreSQL index health telemetry")]
 [Trait(TestTraitNames.ScopeName, TestTraits.IntegrationScope)]

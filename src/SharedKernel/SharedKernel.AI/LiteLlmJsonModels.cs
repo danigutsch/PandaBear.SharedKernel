@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using System.Text.Json;
 
-namespace SharedKernel.AI;
+namespace PandaBear.AI;
 
 internal sealed record LiteLlmChatCompletionRequest(
     string Model,

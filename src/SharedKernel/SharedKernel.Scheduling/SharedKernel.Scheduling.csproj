@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Scheduling</PackageId>
         <Description>Host-integrated scheduling primitives for polling and background work coordination.</Description>
-        <RootNamespace>SharedKernel.Scheduling</RootNamespace>
+        <RootNamespace>PandaBear.Scheduling</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>scheduling;background-services;polling;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

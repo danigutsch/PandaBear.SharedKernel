@@ -1,4 +1,4 @@
-namespace SharedKernel.Versioning;
+namespace PandaBear.Versioning;
 
 /// <summary>
 /// Represents a parsed Conventional Commit message.

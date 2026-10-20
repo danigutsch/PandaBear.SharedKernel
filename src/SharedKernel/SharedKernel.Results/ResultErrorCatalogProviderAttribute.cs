@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace SharedKernel.Results;
+namespace PandaBear.Results;
 
 /// <summary>
 /// Marks an assembly as providing a generated centralized error catalog.

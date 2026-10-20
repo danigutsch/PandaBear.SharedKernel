@@ -149,3 +149,9 @@ rules or test-only rules here.
 
 - [SharedKernel.Mediator.CodeFixes](../SharedKernel.Mediator.CodeFixes/README.md)
 - [SharedKernel.Mediator.SourceGenerator](../SharedKernel.Mediator.SourceGenerator/README.md)
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Mediator.Analyzers`. C# namespace: `PandaBear.Mediator.Analyzers`. Assembly/project identity: `SharedKernel.Mediator.Analyzers`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

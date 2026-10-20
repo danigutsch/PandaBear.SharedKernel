@@ -1,4 +1,4 @@
-namespace SharedKernel.AI;
+namespace PandaBear.AI;
 
 /// <summary>
 /// Represents an AI image text generation failure.

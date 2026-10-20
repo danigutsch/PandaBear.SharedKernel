@@ -1,8 +1,8 @@
-using SharedKernel.Versioning.Tool;
+using PandaBear.Versioning.Tool;
 
-namespace SharedKernel.Versioning.Tests;
+namespace PandaBear.Versioning.Tests;
 
-[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class CandidateStagingTests
 {
     [Fact]

@@ -1,65 +1,90 @@
 #nullable enable
-const SharedKernel.HttpClients.ContractCommandOutcome.ActivitySourceName = "SharedKernel.HttpClients.ContractOutcomes" -> string!
-SharedKernel.HttpClients.ContractCommandOutcome
-SharedKernel.HttpClients.ContractCommandOutcomeDto
-SharedKernel.HttpClients.ContractCommandOutcomeDto.Kind.get -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeDto.Kind.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeDto.Location.get -> System.Uri?
-SharedKernel.HttpClients.ContractCommandOutcomeDto.Location.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeDto.Message.get -> string?
-SharedKernel.HttpClients.ContractCommandOutcomeDto.Message.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeDto.StatusCode.get -> System.Net.HttpStatusCode?
-SharedKernel.HttpClients.ContractCommandOutcomeDto.StatusCode.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeDto.ValidationErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
-SharedKernel.HttpClients.ContractCommandOutcomeDto.ValidationErrors.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Kind.get -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Kind.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Location.get -> System.Uri?
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Location.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Message.get -> string?
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Message.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.StatusCode.get -> System.Net.HttpStatusCode?
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.StatusCode.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.ValidationErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.ValidationErrors.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Value.get -> TValue?
-SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Value.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.Conflict = 5 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.EmptyBody = 6 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.Forbidden = 4 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.MalformedBody = 7 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.NotFound = 2 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.Succeeded = 0 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.TimedOut = 10 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.TransportFailure = 11 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.Unauthorized = 3 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.UnexpectedStatus = 8 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.UnsupportedContentType = 9 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractCommandOutcomeKind.ValidationProblem = 1 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
-SharedKernel.HttpClients.ContractHttpValidation
-SharedKernel.HttpClients.ContractValidationException
-SharedKernel.HttpClients.ContractValidationException.ContractValidationException() -> void
-SharedKernel.HttpClients.ContractValidationException.ContractValidationException(string! message) -> void
-SharedKernel.HttpClients.ContractValidationException.ContractValidationException(string! message, System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>! validationErrors) -> void
-SharedKernel.HttpClients.ContractValidationException.ContractValidationException(string! message, System.Exception! innerException) -> void
-SharedKernel.HttpClients.ContractValidationException.GetAllErrorMessages() -> string!
-SharedKernel.HttpClients.ContractValidationException.ValidationErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>!
-SharedKernel.HttpClients.ContractValidationProblemDto
-SharedKernel.HttpClients.ContractValidationProblemDto.Errors.get -> System.Collections.Generic.Dictionary<string!, string![]!>?
-SharedKernel.HttpClients.ContractValidationProblemDto.Errors.init -> void
-SharedKernel.HttpClients.HttpServiceCollectionExtensions
-static SharedKernel.HttpClients.ContractCommandOutcome.FromResponse(System.Net.Http.HttpResponseMessage! response, System.Net.HttpStatusCode successStatusCode, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.HttpClients.ContractCommandOutcomeDto!>!
-SharedKernel.HttpClients.ProgressStreamContent
-SharedKernel.HttpClients.ProgressStreamContent.ProgressStreamContent(System.IO.Stream! content, long contentLength, System.IProgress<long>? progress) -> void
-static SharedKernel.HttpClients.ContractCommandOutcome.FromResponse(System.Net.Http.HttpResponseMessage! response, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.HttpClients.ContractCommandOutcomeDto!>!
-static SharedKernel.HttpClients.ContractCommandOutcome.FromResponse<TValue>(System.Net.Http.HttpResponseMessage! response, System.Net.HttpStatusCode successStatusCode, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TValue>! valueJson, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>!>!
-static SharedKernel.HttpClients.ContractCommandOutcome.Send(System.Net.Http.HttpClient! httpClient, System.Net.Http.HttpRequestMessage! request, System.Net.HttpStatusCode successStatusCode, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.HttpClients.ContractCommandOutcomeDto!>!
-static SharedKernel.HttpClients.ContractCommandOutcome.Send<TValue>(System.Net.Http.HttpClient! httpClient, System.Net.Http.HttpRequestMessage! request, System.Net.HttpStatusCode successStatusCode, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TValue>! valueJson, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>!>!
-static SharedKernel.HttpClients.ContractCommandOutcome.Status(SharedKernel.HttpClients.ContractCommandOutcomeKind kind, System.Net.HttpStatusCode statusCode, string? message = null) -> SharedKernel.HttpClients.ContractCommandOutcomeDto!
-static SharedKernel.HttpClients.ContractCommandOutcome.Status<TValue>(SharedKernel.HttpClients.ContractCommandOutcomeKind kind, System.Net.HttpStatusCode statusCode, string? message = null) -> SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>!
-static SharedKernel.HttpClients.ContractCommandOutcome.Succeeded(System.Net.HttpStatusCode statusCode, System.Uri? location) -> SharedKernel.HttpClients.ContractCommandOutcomeDto!
-static SharedKernel.HttpClients.ContractCommandOutcome.Succeeded<TValue>(System.Net.HttpStatusCode statusCode, TValue value, System.Uri? location = null) -> SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>!
-static SharedKernel.HttpClients.ContractHttpValidation.EnsureSuccessOrThrowValidationException(System.Net.Http.HttpResponseMessage! response, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! jsonTypeInfo, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
-static SharedKernel.HttpClients.HttpServiceCollectionExtensions.AddHttpClientDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.HttpClients.ContractHttpValidation
+PandaBear.HttpClients.ContractValidationException
+PandaBear.HttpClients.ContractValidationException.ContractValidationException() -> void
+PandaBear.HttpClients.ContractValidationException.ContractValidationException(string! message) -> void
+PandaBear.HttpClients.ContractValidationException.ContractValidationException(string! message, System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>! validationErrors) -> void
+PandaBear.HttpClients.ContractValidationException.ContractValidationException(string! message, System.Exception! innerException) -> void
+PandaBear.HttpClients.ContractValidationException.GetAllErrorMessages() -> string!
+PandaBear.HttpClients.ContractValidationException.ValidationErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>!
+PandaBear.HttpClients.ContractValidationProblemDto
+PandaBear.HttpClients.ContractValidationProblemDto.Errors.get -> System.Collections.Generic.Dictionary<string!, string![]!>?
+PandaBear.HttpClients.ContractValidationProblemDto.Errors.init -> void
+PandaBear.HttpClients.HttpOutcome
+PandaBear.HttpClients.HttpOutcome.Kind.get -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcome.Kind.init -> void
+PandaBear.HttpClients.HttpOutcome.Location.get -> System.Uri?
+PandaBear.HttpClients.HttpOutcome.Location.init -> void
+PandaBear.HttpClients.HttpOutcome.Message.get -> string?
+PandaBear.HttpClients.HttpOutcome.Message.init -> void
+PandaBear.HttpClients.HttpOutcome.StatusCode.get -> System.Net.HttpStatusCode?
+PandaBear.HttpClients.HttpOutcome.StatusCode.init -> void
+PandaBear.HttpClients.HttpOutcome.ValidationErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
+PandaBear.HttpClients.HttpOutcome.ValidationErrors.init -> void
+PandaBear.HttpClients.HttpOutcome<TValue>
+PandaBear.HttpClients.HttpOutcome<TValue>.Kind.get -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcome<TValue>.Kind.init -> void
+PandaBear.HttpClients.HttpOutcome<TValue>.Location.get -> System.Uri?
+PandaBear.HttpClients.HttpOutcome<TValue>.Location.init -> void
+PandaBear.HttpClients.HttpOutcome<TValue>.Message.get -> string?
+PandaBear.HttpClients.HttpOutcome<TValue>.Message.init -> void
+PandaBear.HttpClients.HttpOutcome<TValue>.StatusCode.get -> System.Net.HttpStatusCode?
+PandaBear.HttpClients.HttpOutcome<TValue>.StatusCode.init -> void
+PandaBear.HttpClients.HttpOutcome<TValue>.ValidationErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
+PandaBear.HttpClients.HttpOutcome<TValue>.ValidationErrors.init -> void
+PandaBear.HttpClients.HttpOutcome<TValue>.Value.get -> TValue?
+PandaBear.HttpClients.HttpOutcome<TValue>.Value.init -> void
+PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.Conflict = 5 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.EmptyBody = 6 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.Forbidden = 4 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.MalformedBody = 7 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.NotFound = 2 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.Succeeded = 0 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.TimedOut = 10 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.TransportFailure = 11 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.Unauthorized = 3 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.UnexpectedStatus = 8 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.UnsupportedContentType = 9 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeKind.ValidationProblem = 1 -> PandaBear.HttpClients.HttpOutcomeKind
+PandaBear.HttpClients.HttpOutcomeMapper
+PandaBear.HttpClients.HttpServiceCollectionExtensions
+PandaBear.HttpClients.ProgressStreamContent
+PandaBear.HttpClients.ProgressStreamContent.ProgressStreamContent(System.IO.Stream! content, long contentLength, System.IProgress<long>? progress) -> void
+const PandaBear.HttpClients.HttpOutcomeMapper.ActivitySourceName = "SharedKernel.HttpClients.ContractOutcomes" -> string!
+static PandaBear.HttpClients.ContractHttpValidation.EnsureSuccessOrThrowValidationException(System.Net.Http.HttpResponseMessage! response, System.Text.Json.Serialization.Metadata.JsonTypeInfo<PandaBear.HttpClients.ContractValidationProblemDto!>! jsonTypeInfo, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+static PandaBear.HttpClients.HttpOutcomeMapper.Send(System.Net.Http.HttpClient! httpClient, System.Net.Http.HttpRequestMessage! request, System.Net.HttpStatusCode successStatusCode, System.Text.Json.Serialization.Metadata.JsonTypeInfo<PandaBear.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome!>!
+static PandaBear.HttpClients.HttpOutcomeMapper.Send<TValue>(System.Net.Http.HttpClient! httpClient, System.Net.Http.HttpRequestMessage! request, System.Net.HttpStatusCode successStatusCode, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TValue>! valueJson, System.Text.Json.Serialization.Metadata.JsonTypeInfo<PandaBear.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome<TValue>!>!
+static PandaBear.HttpClients.HttpOutcomeMapper.Status(PandaBear.HttpClients.HttpOutcomeKind kind, System.Net.HttpStatusCode statusCode, string? message = null) -> PandaBear.HttpClients.HttpOutcome!
+static PandaBear.HttpClients.HttpOutcomeMapper.Status<TValue>(PandaBear.HttpClients.HttpOutcomeKind kind, System.Net.HttpStatusCode statusCode, string? message = null) -> PandaBear.HttpClients.HttpOutcome<TValue>!
+static PandaBear.HttpClients.HttpOutcomeMapper.Succeeded(System.Net.HttpStatusCode statusCode, System.Uri? location) -> PandaBear.HttpClients.HttpOutcome!
+static PandaBear.HttpClients.HttpOutcomeMapper.Succeeded<TValue>(System.Net.HttpStatusCode statusCode, TValue value, System.Uri? location = null) -> PandaBear.HttpClients.HttpOutcome<TValue>!
+static PandaBear.HttpClients.HttpServiceCollectionExtensions.AddHttpClientDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.HttpClients.UploadOperationState
+PandaBear.HttpClients.UploadOperationState.UploadOperationState() -> void
+PandaBear.HttpClients.UploadOperationState.OperationId.get -> long
+PandaBear.HttpClients.UploadOperationState.Status.get -> PandaBear.HttpClients.UploadOperationStatus
+PandaBear.HttpClients.UploadOperationState.FileName.get -> string!
+PandaBear.HttpClients.UploadOperationState.BytesTransferred.get -> long
+PandaBear.HttpClients.UploadOperationState.TotalBytes.get -> long
+PandaBear.HttpClients.UploadOperationState.Announcement.get -> string!
+PandaBear.HttpClients.UploadOperationState.FailureMessage.get -> string?
+PandaBear.HttpClients.UploadOperationState.IsActive.get -> bool
+PandaBear.HttpClients.UploadOperationState.IsDeterminate.get -> bool
+PandaBear.HttpClients.UploadOperationState.CanRetry.get -> bool
+PandaBear.HttpClients.UploadOperationState.Begin(string! fileName, long totalBytes, bool isRetry) -> long
+PandaBear.HttpClients.UploadOperationState.ReportBytes(long operationId, long bytesTransferred) -> bool
+PandaBear.HttpClients.UploadOperationState.Complete(long operationId) -> bool
+PandaBear.HttpClients.UploadOperationState.Cancel(long operationId) -> bool
+PandaBear.HttpClients.UploadOperationState.Fail(long operationId, string! failureMessage) -> bool
+PandaBear.HttpClients.UploadOperationState.IsCurrentActive(long operationId) -> bool
+PandaBear.HttpClients.UploadOperationState.Reset() -> void
+PandaBear.HttpClients.UploadOperationStatus
+PandaBear.HttpClients.UploadOperationStatus.None = 0 -> PandaBear.HttpClients.UploadOperationStatus
+PandaBear.HttpClients.UploadOperationStatus.Queued = 1 -> PandaBear.HttpClients.UploadOperationStatus
+PandaBear.HttpClients.UploadOperationStatus.Retrying = 2 -> PandaBear.HttpClients.UploadOperationStatus
+PandaBear.HttpClients.UploadOperationStatus.Uploading = 3 -> PandaBear.HttpClients.UploadOperationStatus
+PandaBear.HttpClients.UploadOperationStatus.Processing = 4 -> PandaBear.HttpClients.UploadOperationStatus
+PandaBear.HttpClients.UploadOperationStatus.Complete = 5 -> PandaBear.HttpClients.UploadOperationStatus
+PandaBear.HttpClients.UploadOperationStatus.Canceled = 6 -> PandaBear.HttpClients.UploadOperationStatus
+PandaBear.HttpClients.UploadOperationStatus.Failed = 7 -> PandaBear.HttpClients.UploadOperationStatus

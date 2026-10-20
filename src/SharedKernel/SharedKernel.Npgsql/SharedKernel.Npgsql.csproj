@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Npgsql</PackageId>
         <Description>Small reusable PostgreSQL primitives for SharedKernel consumers.</Description>
-        <RootNamespace>SharedKernel.Npgsql</RootNamespace>
+        <RootNamespace>PandaBear.Npgsql</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>npgsql;postgresql;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

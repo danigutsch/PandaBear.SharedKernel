@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 
-namespace SharedKernel.OpenApi;
+namespace PandaBear.OpenApi;
 
 /// <summary>
 /// Rebuilds multipart form request-body schemas from form-bound API parameters.

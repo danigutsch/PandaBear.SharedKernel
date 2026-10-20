@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging.IntegrationEvents;
+namespace PandaBear.Messaging.IntegrationEvents;
 
 /// <summary>
 /// Marks a static method that maps a domain event to one integration event.

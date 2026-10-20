@@ -81,3 +81,9 @@ EF Core, Dapper, Azure SDKs, browser tooling, and test-only rules in narrower ca
 - [SharedKernel.Style.CodeFixes](../SharedKernel.Style.CodeFixes/README.md)
 - [SharedKernel.Aspire.Analyzers](../SharedKernel.Aspire.Analyzers/README.md)
 - `docs/CODING_GUIDELINES.md`
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Style.Analyzers`. C# namespace: `PandaBear.Style.Analyzers`. Assembly/project identity: `SharedKernel.Style.Analyzers`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

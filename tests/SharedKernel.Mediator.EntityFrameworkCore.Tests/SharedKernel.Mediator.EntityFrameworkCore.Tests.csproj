@@ -2,11 +2,11 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>SharedKernel.Mediator.EntityFrameworkCore.Tests</RootNamespace>
+        <RootNamespace>PandaBear.Mediator.EntityFrameworkCore.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
 

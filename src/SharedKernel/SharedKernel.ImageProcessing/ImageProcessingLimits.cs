@@ -1,4 +1,4 @@
-namespace SharedKernel.ImageProcessing;
+namespace PandaBear.ImageProcessing;
 
 /// <summary>
 /// Decoded image limits enforced before variants are generated.

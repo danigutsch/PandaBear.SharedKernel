@@ -1,4 +1,4 @@
-namespace SharedKernel.Testing.Integration;
+namespace PandaBear.Testing.Integration;
 
 /// <summary>
 /// Shared defaults for dependency-heavy integration test support.

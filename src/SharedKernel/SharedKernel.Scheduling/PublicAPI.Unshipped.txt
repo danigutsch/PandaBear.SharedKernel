@@ -1,19 +1,19 @@
 #nullable enable
-SharedKernel.Scheduling.PollingBackgroundService
-SharedKernel.Scheduling.PollingBackgroundService.PollingBackgroundService(Microsoft.Extensions.Logging.ILogger! logger, string! serviceName, System.TimeSpan pollInterval) -> void
-SharedKernel.Scheduling.SchedulingTelemetry
-abstract SharedKernel.Scheduling.PollingBackgroundService.ExecuteBatch(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.ValueTask<int>
-override SharedKernel.Scheduling.PollingBackgroundService.ExecuteAsync(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.Task!
-static SharedKernel.Scheduling.SchedulingTelemetry.ActivityPollingCycle.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.MetricPollingBatches.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.MetricPollingCycleDuration.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.MetricPollingFailures.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.MetricPollingItems.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.Name.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.OutcomeCancelled.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.OutcomeError.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.OutcomeSuccess.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.TagItemCount.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.TagOutcome.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.TagErrorType.get -> string!
-static SharedKernel.Scheduling.SchedulingTelemetry.TagServiceName.get -> string!
+PandaBear.Scheduling.PollingBackgroundService
+PandaBear.Scheduling.PollingBackgroundService.PollingBackgroundService(Microsoft.Extensions.Logging.ILogger! logger, string! serviceName, System.TimeSpan pollInterval) -> void
+PandaBear.Scheduling.SchedulingTelemetry
+abstract PandaBear.Scheduling.PollingBackgroundService.ExecuteBatch(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.ValueTask<int>
+override PandaBear.Scheduling.PollingBackgroundService.ExecuteAsync(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.Task!
+static PandaBear.Scheduling.SchedulingTelemetry.ActivityPollingCycle.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.MetricPollingBatches.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.MetricPollingCycleDuration.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.MetricPollingFailures.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.MetricPollingItems.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.Name.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.OutcomeCancelled.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.OutcomeError.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.OutcomeSuccess.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.TagItemCount.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.TagOutcome.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.TagErrorType.get -> string!
+static PandaBear.Scheduling.SchedulingTelemetry.TagServiceName.get -> string!

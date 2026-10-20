@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace SharedKernel.Observability;
+namespace PandaBear.Observability;
 
 internal static partial class ApplicationVersionLogger
 {

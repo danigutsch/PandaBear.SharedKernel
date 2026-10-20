@@ -1,26 +1,26 @@
 #nullable enable
-SharedKernel.Observability.CredentialDataAttribute
-SharedKernel.Observability.CredentialDataAttribute.CredentialDataAttribute() -> void
-SharedKernel.Observability.ExplicitServiceNameDetector
-SharedKernel.Observability.ExplicitServiceNameDetector.Detect() -> OpenTelemetry.Resources.Resource!
-SharedKernel.Observability.ExplicitServiceNameDetector.ExplicitServiceNameDetector(string! serviceName, string? serviceVersion = null) -> void
-SharedKernel.Observability.FinancialDataAttribute
-SharedKernel.Observability.FinancialDataAttribute.FinancialDataAttribute() -> void
-SharedKernel.Observability.ObservabilityBuilderExtensions
-SharedKernel.Observability.PersonalDataAttribute
-SharedKernel.Observability.PersonalDataAttribute.PersonalDataAttribute() -> void
-SharedKernel.Observability.PrivacyDataClassifications
-SharedKernel.Observability.SensitiveDataAttribute
-SharedKernel.Observability.SensitiveDataAttribute.SensitiveDataAttribute() -> void
-static SharedKernel.Observability.ObservabilityBuilderExtensions.AddApplicationVersionLogging<TBuilder>(this TBuilder builder, string? applicationVersion = null) -> TBuilder
-static SharedKernel.Observability.ObservabilityBuilderExtensions.ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) -> TBuilder
-static SharedKernel.Observability.PrivacyDataClassifications.Credential.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
-static SharedKernel.Observability.PrivacyDataClassifications.Financial.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
-static SharedKernel.Observability.PrivacyDataClassifications.Personal.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
-static SharedKernel.Observability.PrivacyDataClassifications.Sensitive.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
-SharedKernel.Observability.ActivityPrivacyProcessor
-SharedKernel.Observability.ActivityPrivacyProcessor.ActivityPrivacyProcessor(System.Func<string!, bool>? additionalSensitiveAttribute = null) -> void
-override SharedKernel.Observability.ActivityPrivacyProcessor.OnEnd(System.Diagnostics.Activity! data) -> void
-SharedKernel.Observability.LogRecordPrivacyProcessor
-SharedKernel.Observability.LogRecordPrivacyProcessor.LogRecordPrivacyProcessor(System.Func<string!, bool>? additionalSensitiveAttribute = null) -> void
-override SharedKernel.Observability.LogRecordPrivacyProcessor.OnEnd(OpenTelemetry.Logs.LogRecord! data) -> void
+PandaBear.Observability.CredentialDataAttribute
+PandaBear.Observability.CredentialDataAttribute.CredentialDataAttribute() -> void
+PandaBear.Observability.ExplicitServiceNameDetector
+PandaBear.Observability.ExplicitServiceNameDetector.Detect() -> OpenTelemetry.Resources.Resource!
+PandaBear.Observability.ExplicitServiceNameDetector.ExplicitServiceNameDetector(string! serviceName, string? serviceVersion = null) -> void
+PandaBear.Observability.FinancialDataAttribute
+PandaBear.Observability.FinancialDataAttribute.FinancialDataAttribute() -> void
+PandaBear.Observability.ObservabilityBuilderExtensions
+PandaBear.Observability.PersonalDataAttribute
+PandaBear.Observability.PersonalDataAttribute.PersonalDataAttribute() -> void
+PandaBear.Observability.PrivacyDataClassifications
+PandaBear.Observability.SensitiveDataAttribute
+PandaBear.Observability.SensitiveDataAttribute.SensitiveDataAttribute() -> void
+static PandaBear.Observability.ObservabilityBuilderExtensions.AddApplicationVersionLogging<TBuilder>(this TBuilder builder, string? applicationVersion = null) -> TBuilder
+static PandaBear.Observability.ObservabilityBuilderExtensions.ConfigureOpenTelemetry<TBuilder>(this TBuilder builder) -> TBuilder
+static PandaBear.Observability.PrivacyDataClassifications.Credential.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
+static PandaBear.Observability.PrivacyDataClassifications.Financial.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
+static PandaBear.Observability.PrivacyDataClassifications.Personal.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
+static PandaBear.Observability.PrivacyDataClassifications.Sensitive.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
+PandaBear.Observability.ActivityPrivacyProcessor
+PandaBear.Observability.ActivityPrivacyProcessor.ActivityPrivacyProcessor(System.Func<string!, bool>? additionalSensitiveAttribute = null) -> void
+override PandaBear.Observability.ActivityPrivacyProcessor.OnEnd(System.Diagnostics.Activity! data) -> void
+PandaBear.Observability.LogRecordPrivacyProcessor
+PandaBear.Observability.LogRecordPrivacyProcessor.LogRecordPrivacyProcessor(System.Func<string!, bool>? additionalSensitiveAttribute = null) -> void
+override PandaBear.Observability.LogRecordPrivacyProcessor.OnEnd(OpenTelemetry.Logs.LogRecord! data) -> void

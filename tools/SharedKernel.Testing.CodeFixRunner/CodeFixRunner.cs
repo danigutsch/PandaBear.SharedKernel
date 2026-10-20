@@ -9,14 +9,14 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.MSBuild;
-using SharedKernel.Testing.CodeFixes;
+using PandaBear.Testing.CodeFixes;
 
-namespace SharedKernel.Testing.CodeFixRunner;
+namespace PandaBear.Testing.CodeFixRunner;
 
 internal static class CodeFixRunEngine
 {
     private static readonly ImmutableArray<DiagnosticAnalyzer> Analyzers =
-        [new testinganalyzers::SharedKernel.Testing.Analyzers.SharedKernelTestingAnalyzer()];
+        [new testinganalyzers::PandaBear.Testing.Analyzers.SharedKernelTestingAnalyzer()];
 
     private static readonly SharedKernelTestingCodeFixProvider CodeFixProvider = new();
 

@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace SharedKernel.Aspire.Analyzers;
+namespace PandaBear.Aspire.Analyzers;
 
 /// <summary>
 /// Reports diagnostics for SharedKernel Aspire conventions.

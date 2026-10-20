@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Results.AspNet</PackageId>
         <Description>ASP.NET Core adapters for SharedKernel.Results.</Description>
-        <RootNamespace>SharedKernel.Results.AspNet</RootNamespace>
+        <RootNamespace>PandaBear.Results.AspNet</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

@@ -1,4 +1,4 @@
-namespace SharedKernel.AI.Tests;
+namespace PandaBear.AI.Tests;
 
 internal static class TestTraits
 {

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Time.Testing;
 
-namespace SharedKernel.RepoConfig.Tests;
+namespace PandaBear.RepoConfig.Tests;
 
 internal sealed class TimingOutHttpMessageHandler(
     FakeTimeProvider timeProvider,

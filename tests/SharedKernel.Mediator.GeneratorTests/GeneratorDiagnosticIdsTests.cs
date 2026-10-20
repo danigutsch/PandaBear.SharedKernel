@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.GeneratorTests;
+namespace PandaBear.Mediator.GeneratorTests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DiscoveryCapability)]
 public sealed class GeneratorDiagnosticIdsTests

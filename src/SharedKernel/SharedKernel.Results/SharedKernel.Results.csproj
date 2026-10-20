@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Results</PackageId>
         <Description>Core result primitives for shared-kernel workflows.</Description>
-        <RootNamespace>SharedKernel.Results</RootNamespace>
+        <RootNamespace>PandaBear.Results</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

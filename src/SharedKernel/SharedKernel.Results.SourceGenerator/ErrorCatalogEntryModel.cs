@@ -1,4 +1,4 @@
-namespace SharedKernel.Results.SourceGenerator;
+namespace PandaBear.Results.SourceGenerator;
 
 internal sealed record ErrorCatalogEntryModel(
     string Identifier,

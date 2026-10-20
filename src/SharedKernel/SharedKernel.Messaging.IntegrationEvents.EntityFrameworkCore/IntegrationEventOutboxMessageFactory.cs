@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
 
-namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 internal static class IntegrationEventOutboxMessageFactory
 {

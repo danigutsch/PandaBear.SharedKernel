@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace SharedKernel.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Tests;
 
 internal sealed class ExactAudienceEnumerable : IEnumerable<string>
 {

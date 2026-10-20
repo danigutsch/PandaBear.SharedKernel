@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace SharedKernel.Results.SourceGenerator;
+namespace PandaBear.Results.SourceGenerator;
 
 internal static class ErrorCatalogModelBuilder
 {
@@ -120,8 +120,8 @@ internal static class ErrorCatalogModelBuilder
     {
         return type.ToDisplayString() switch
         {
-            "SharedKernel.Results.Result" => true,
-            var displayName when displayName.StartsWith("SharedKernel.Results.Result<", StringComparison.Ordinal) => true,
+            "PandaBear.Results.Result" => true,
+            var displayName when displayName.StartsWith("PandaBear.Results.Result<", StringComparison.Ordinal) => true,
             _ => false,
         };
     }
@@ -138,8 +138,8 @@ internal static class ErrorCatalogModelBuilder
 
         var containingType = invokedMethod.ContainingType.ToDisplayString();
         var containingOriginalType = invokedMethod.ContainingType.OriginalDefinition.ToDisplayString();
-        if (!string.Equals(containingType, "SharedKernel.Results.Result", StringComparison.Ordinal)
-            && !string.Equals(containingOriginalType, "SharedKernel.Results.Result<T>", StringComparison.Ordinal))
+        if (!string.Equals(containingType, "PandaBear.Results.Result", StringComparison.Ordinal)
+            && !string.Equals(containingOriginalType, "PandaBear.Results.Result<T>", StringComparison.Ordinal))
         {
             return false;
         }

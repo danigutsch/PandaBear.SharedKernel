@@ -1,6 +1,6 @@
-using SharedKernel.Results;
+using PandaBear.Results;
 
-namespace SharedKernel.BuildingBlocks;
+namespace PandaBear.BuildingBlocks;
 
 /// <summary>
 /// Extension methods for converting optional identified models to results.

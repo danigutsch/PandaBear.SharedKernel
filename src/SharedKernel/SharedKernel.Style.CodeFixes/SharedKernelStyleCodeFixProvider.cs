@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using SharedKernel.Style.Analyzers;
+using PandaBear.Style.Analyzers;
 
-namespace SharedKernel.Style.CodeFixes;
+namespace PandaBear.Style.CodeFixes;
 
 /// <summary>
 /// Provides repository style code fixes, including placeholders that intentionally require manual completion.

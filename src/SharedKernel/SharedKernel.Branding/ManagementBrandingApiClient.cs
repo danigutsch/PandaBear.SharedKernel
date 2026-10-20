@@ -1,7 +1,7 @@
 using System.Net.Http.Json;
-using SharedKernel.HttpClients;
+using PandaBear.HttpClients;
 
-namespace SharedKernel.Branding;
+namespace PandaBear.Branding;
 
 /// <summary>
 /// HTTP client for authenticated Management Web Branding API contracts.

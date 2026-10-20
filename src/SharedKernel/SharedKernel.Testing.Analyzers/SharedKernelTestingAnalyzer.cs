@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace SharedKernel.Testing.Analyzers;
+namespace PandaBear.Testing.Analyzers;
 
 /// <summary>
 /// Reports diagnostics for repository-specific testing rules.
@@ -114,11 +114,11 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
     private static readonly DiagnosticDescriptor XunitAssertionWrapperRule = new(
         TestingDiagnosticIds.XunitAssertionWrapper,
         title: "Test code should use repository assertion wrappers",
-        messageFormat: "Use SharedKernel.Testing.Assertions instead of direct xUnit assertion '{0}'",
+        messageFormat: "Use PandaBear.Testing.Assertions instead of direct xUnit assertion '{0}'",
         category: TestingCategory,
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
-        description: "Repository testing rules require assertion calls to go through SharedKernel.Testing.Assertions so test diagnostics and nullability behavior stay consistent.");
+        description: "Repository testing rules require assertion calls to go through PandaBear.Testing.Assertions so test diagnostics and nullability behavior stay consistent.");
 
     private static readonly DiagnosticDescriptor XunitArrangeActAssertMarkersRule = new(
         TestingDiagnosticIds.XunitArrangeActAssertMarkers,
@@ -265,12 +265,12 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         }
 
         var replacements = ImmutableArray.CreateBuilder<string>();
-        AddConstantsFromType(context.Compilation.GetTypeByMetadataName("SharedKernel.Testing.TestTraitNames"), literalValue, replacements);
-        AddConstantsFromType(context.Compilation.GetTypeByMetadataName("SharedKernel.Testing.SharedKernelTestTraitNames"), literalValue, replacements);
+        AddConstantsFromType(context.Compilation.GetTypeByMetadataName("PandaBear.Testing.TestTraitNames"), literalValue, replacements);
+        AddConstantsFromType(context.Compilation.GetTypeByMetadataName("PandaBear.Testing.SharedKernelTestTraitNames"), literalValue, replacements);
 
         if (includeTraitValues)
         {
-            AddConstantsFromType(context.Compilation.GetTypeByMetadataName("SharedKernel.Testing.TestTraitValues"), literalValue, replacements);
+            AddConstantsFromType(context.Compilation.GetTypeByMetadataName("PandaBear.Testing.TestTraitValues"), literalValue, replacements);
         }
 
         return TryGetSingleReplacement(replacements);

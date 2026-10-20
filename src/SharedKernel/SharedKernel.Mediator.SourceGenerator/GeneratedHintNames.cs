@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.SourceGenerator;
+namespace PandaBear.Mediator.SourceGenerator;
 
 /// <summary>
 /// Centralizes stable hint names for generated mediator artifacts.

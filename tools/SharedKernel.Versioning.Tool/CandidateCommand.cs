@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
 
-namespace SharedKernel.Versioning.Tool;
+namespace PandaBear.Versioning.Tool;
 
 internal static class CandidateCommand
 {

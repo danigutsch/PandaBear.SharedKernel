@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace SharedKernel.Testing.AspNetCore;
+namespace PandaBear.Testing.AspNetCore;
 
 /// <summary>
 /// Provides deterministic named-route paths for ASP.NET Core tests.

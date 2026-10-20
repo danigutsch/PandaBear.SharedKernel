@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Collections.Immutable;
 
-namespace SharedKernel.Mediator.GeneratorTests;
+namespace PandaBear.Mediator.GeneratorTests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DiscoveryCapability)]
 public sealed class GeneratorDiscoveryReportTests
@@ -237,7 +237,7 @@ public sealed class GeneratorDiscoveryReportTests
         var generatedSource = GeneratorTestHarness.GenerateSource(source);
 
         // Assert
-        (generatedSource).ShouldContain("global::Demo.DeleteTour | Kind=Command | Response=global::SharedKernel.Mediator.Unit", StringComparison.Ordinal);
+        (generatedSource).ShouldContain("global::Demo.DeleteTour | Kind=Command | Response=global::PandaBear.Mediator.Unit", StringComparison.Ordinal);
         (generatedSource).ShouldContain("global::Demo.DeleteTourHandler(Command,Public,Handle)", StringComparison.Ordinal);
     }
 

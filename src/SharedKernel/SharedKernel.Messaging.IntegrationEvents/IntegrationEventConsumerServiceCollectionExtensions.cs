@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SharedKernel.Messaging.IntegrationEvents;
+namespace PandaBear.Messaging.IntegrationEvents;
 
 /// <summary>
 /// Registers explicit integration event consumers and payload metadata.

@@ -1,4 +1,4 @@
-namespace SharedKernel.Functional.Tests;
+namespace PandaBear.Functional.Tests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]

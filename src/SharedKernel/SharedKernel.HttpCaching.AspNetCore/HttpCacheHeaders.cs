@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using System.Globalization;
 
-namespace SharedKernel.HttpCaching.AspNetCore;
+namespace PandaBear.HttpCaching.AspNetCore;
 
 /// <summary>
 /// Provides ASP.NET Core response-header helpers for standard HTTP cache directives.

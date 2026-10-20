@@ -3,8 +3,9 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.EntityFrameworkCore</PackageId>
         <Description>Reusable Entity Framework Core composition, registration, and transaction primitives for shared-kernel workflows.</Description>
-        <RootNamespace>SharedKernel.EntityFrameworkCore</RootNamespace>
+        <RootNamespace>PandaBear.EntityFrameworkCore</RootNamespace>
         <PackageTags>entity-framework-core;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,5 +13,9 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     </ItemGroup>
 
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
 </Project>

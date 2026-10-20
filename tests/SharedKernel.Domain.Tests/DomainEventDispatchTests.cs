@@ -1,4 +1,4 @@
-namespace SharedKernel.Domain.Tests;
+namespace PandaBear.Domain.Tests;
 
 public sealed class DomainEventDispatchTests
 {
@@ -28,6 +28,6 @@ public sealed class DomainEventDispatchTests
         dispatcherMethod.IsGenericMethodDefinition.ShouldBeTrue();
         dispatcherMethod.GetGenericArguments().Single().GetGenericParameterConstraints().ShouldContain(typeof(IDomainEvent));
         typeof(IDomainEventDispatcher).Assembly.ShouldBe(typeof(IDomainEvent).Assembly);
-        typeof(IDomainEventDispatcher).Namespace.ShouldBe("SharedKernel.Domain");
+        typeof(IDomainEventDispatcher).Namespace.ShouldBe("PandaBear.Domain");
     }
 }

@@ -1,4 +1,4 @@
-namespace SharedKernel.Npgsql.Tests;
+namespace PandaBear.Npgsql.Tests;
 
 internal sealed class TrackingCleanupAction(
     string name,

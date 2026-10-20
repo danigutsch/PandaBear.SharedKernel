@@ -1,4 +1,4 @@
-namespace SharedKernel.AuditTrail;
+namespace PandaBear.AuditTrail;
 
 /// <summary>Represents a metadata-only entry that belongs in an application-owned audit trail.</summary>
 public interface IAuditTrailEntry

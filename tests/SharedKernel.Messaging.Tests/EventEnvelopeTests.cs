@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging.Tests;
+namespace PandaBear.Messaging.Tests;
 
 public sealed class EventEnvelopeTests
 {

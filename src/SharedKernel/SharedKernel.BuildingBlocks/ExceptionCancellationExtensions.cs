@@ -1,4 +1,4 @@
-namespace SharedKernel.BuildingBlocks;
+namespace PandaBear.BuildingBlocks;
 
 /// <summary>
 /// Provides exception helpers for cooperative cancellation handling.

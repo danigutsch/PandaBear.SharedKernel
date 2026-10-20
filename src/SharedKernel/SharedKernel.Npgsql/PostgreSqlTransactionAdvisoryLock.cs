@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace SharedKernel.Npgsql;
+namespace PandaBear.Npgsql;
 
 /// <summary>
 /// Acquires PostgreSQL advisory locks that PostgreSQL releases when the supplied transaction completes.

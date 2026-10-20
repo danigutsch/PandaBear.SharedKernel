@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging.IntegrationEvents;
+namespace PandaBear.Messaging.IntegrationEvents;
 
 /// <summary>
 /// Exposes transport-neutral retry state for durable integration-message processing.

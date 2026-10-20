@@ -1,8 +1,8 @@
 using System.Net;
 using System.Text;
-using SharedKernel.InputNormalization;
+using PandaBear.InputNormalization;
 
-namespace SharedKernel.DocumentRendering;
+namespace PandaBear.DocumentRendering;
 
 /// <summary>
 /// Renders structured document data as deterministic semantic HTML.

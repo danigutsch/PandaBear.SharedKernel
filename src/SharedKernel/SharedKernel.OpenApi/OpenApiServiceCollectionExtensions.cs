@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
-using SharedKernel.ApiVersioning;
+using PandaBear.ApiVersioning;
 
-namespace SharedKernel.OpenApi;
+namespace PandaBear.OpenApi;
 
 /// <summary>
 /// Adds reusable OpenAPI document registration helpers for boundary-specific API artifacts.

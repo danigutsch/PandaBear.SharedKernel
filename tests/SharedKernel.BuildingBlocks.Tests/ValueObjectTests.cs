@@ -1,6 +1,6 @@
-using static SharedKernel.BuildingBlocks.Tests.ValueObjectTestsHelpers;
+using static PandaBear.BuildingBlocks.Tests.ValueObjectTestsHelpers;
 
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace PandaBear.BuildingBlocks.Tests;
 
 public sealed class ValueObjectTests
 {

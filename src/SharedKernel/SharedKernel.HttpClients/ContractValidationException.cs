@@ -1,9 +1,9 @@
 using System.Net;
 
-namespace SharedKernel.HttpClients;
+namespace PandaBear.HttpClients;
 
 /// <summary>
-/// Exception thrown when a contract-owned API client receives validation errors.
+/// Represents an HTTP 400 validation response, including a payload that cannot provide usable field errors.
 /// </summary>
 public sealed class ContractValidationException : HttpRequestException
 {
@@ -51,7 +51,7 @@ public sealed class ContractValidationException : HttpRequestException
     }
 
     /// <summary>
-    /// Gets validation errors by field name.
+    /// Gets validation errors by field or model key; empty when the response did not provide usable errors.
     /// </summary>
     public IReadOnlyDictionary<string, string[]> ValidationErrors { get; }
 

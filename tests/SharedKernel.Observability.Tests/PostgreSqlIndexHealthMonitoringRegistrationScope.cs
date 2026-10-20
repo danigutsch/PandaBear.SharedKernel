@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace SharedKernel.Observability.Npgsql.Tests;
+namespace PandaBear.Observability.Npgsql.Tests;
 
 internal sealed class PostgreSqlIndexHealthMonitoringRegistrationScope
 {

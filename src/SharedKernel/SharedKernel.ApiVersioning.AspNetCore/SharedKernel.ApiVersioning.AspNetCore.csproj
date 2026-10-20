@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.ApiVersioning.AspNetCore</PackageId>
         <Description>ASP.NET Core adapters for SharedKernel API contract versioning.</Description>
-        <RootNamespace>SharedKernel.ApiVersioning.AspNetCore</RootNamespace>
+        <RootNamespace>PandaBear.ApiVersioning.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>api-versioning;aspnetcore;http;contracts;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

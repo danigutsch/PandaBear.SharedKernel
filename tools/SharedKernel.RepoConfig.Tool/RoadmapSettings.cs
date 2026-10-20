@@ -1,4 +1,4 @@
-namespace SharedKernel.RepoConfig.Tool;
+namespace PandaBear.RepoConfig.Tool;
 
 internal sealed record RoadmapSettings(string ItemIdPrefix, IReadOnlyList<string> AllowedTypes, IReadOnlyList<string> AllowedStatuses)
 {

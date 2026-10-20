@@ -1,4 +1,4 @@
-namespace SharedKernel.Observability.Npgsql.Tests;
+namespace PandaBear.Observability.Npgsql.Tests;
 
 internal static class TestTraits
 {

@@ -1,4 +1,4 @@
-namespace SharedKernel.Documentation;
+namespace PandaBear.Documentation;
 
 /// <summary>
 /// Result of a generated documentation update or drift check.

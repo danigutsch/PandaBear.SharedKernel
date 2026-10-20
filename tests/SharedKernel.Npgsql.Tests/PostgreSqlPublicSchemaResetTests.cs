@@ -1,6 +1,6 @@
-using SharedKernel.IntegrationTesting;
+using PandaBear.IntegrationTesting;
 
-namespace SharedKernel.Npgsql.Tests;
+namespace PandaBear.Npgsql.Tests;
 
 public sealed class PostgreSqlPublicSchemaResetTests(PostgreSqlTestServerFixture fixture)
     : PostgreSqlDatabaseTestBase(fixture)

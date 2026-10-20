@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace SharedKernel.Mediator.GeneratorTests;
+namespace PandaBear.Mediator.GeneratorTests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DispatchCapability)]
 public sealed class GeneratorIncrementalBehaviorTests

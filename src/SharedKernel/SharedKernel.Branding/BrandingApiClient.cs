@@ -1,6 +1,6 @@
 using System.Net.Http.Json;
 
-namespace SharedKernel.Branding;
+namespace PandaBear.Branding;
 
 /// <summary>
 /// HTTP client for branding API contracts.

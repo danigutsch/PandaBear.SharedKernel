@@ -1,4 +1,4 @@
-namespace SharedKernel.InputNormalization.Tests;
+namespace PandaBear.InputNormalization.Tests;
 
 internal static class TestTraits
 {

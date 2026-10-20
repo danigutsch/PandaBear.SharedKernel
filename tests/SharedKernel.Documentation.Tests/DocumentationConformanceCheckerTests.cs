@@ -1,7 +1,7 @@
-namespace SharedKernel.Documentation.Tests;
+namespace PandaBear.Documentation.Tests;
 
-[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
-[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DocumentationGenerationCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class DocumentationConformanceCheckerTests
 {
     [Fact]

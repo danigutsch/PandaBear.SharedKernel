@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace SharedKernel.Style.Analyzers.Tests;
+namespace PandaBear.Style.Analyzers.Tests;
 
 internal sealed class StyleTestAnalyzerConfigOptionsProvider(
     ImmutableDictionary<string, string>? globalOptions = null,

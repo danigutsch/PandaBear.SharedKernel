@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-namespace SharedKernel.Testing.Assertions;
+namespace PandaBear.Testing.Assertions;
 
 /// <summary>
 /// Provides assertion helpers for values used in tests.

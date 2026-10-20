@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace SharedKernel.Repository.Tests.Conventions;
+namespace PandaBear.Repository.Tests.Conventions;
 
 internal static class SharedKernelPackagingConventionTestFiles
 {
@@ -85,7 +85,7 @@ internal static class SharedKernelPackagingConventionTestFiles
 
         foreach (var expectedAnalyzerDllName in expectedAnalyzerDllNames)
         {
-            if (!PacksAnalyzerDll(document, expectedAnalyzerDllName))
+            if (!PacksAnalyzerDll(document, projectPath, expectedAnalyzerDllName))
             {
                 yield return $"{projectPath}: {expectedAnalyzerDllName} must be packed under analyzers/dotnet/cs.";
             }
@@ -138,11 +138,11 @@ internal static class SharedKernelPackagingConventionTestFiles
             && string.Equals(element.Attribute("PackagePath")?.Value, packagePath, StringComparison.Ordinal));
     }
 
-    private static bool PacksAnalyzerDll(XDocument document, string expectedAnalyzerDllName)
+    private static bool PacksAnalyzerDll(XDocument document, string projectPath, string expectedAnalyzerDllName)
     {
         var selfDllName = GetProperty(document, "AssemblyName") is { Length: > 0 } assemblyName
             ? assemblyName + ".dll"
-            : GetProperty(document, "RootNamespace") + ".dll";
+            : Path.GetFileNameWithoutExtension(projectPath) + ".dll";
 
         return document.Descendants().Any(element =>
             element.Name.LocalName == "None"

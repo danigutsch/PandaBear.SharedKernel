@@ -1,4 +1,4 @@
-namespace SharedKernel.HttpClients.Tests;
+namespace PandaBear.HttpClients.Tests;
 
 internal sealed class TrackingReadStream(byte[] content) : Stream
 {

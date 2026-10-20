@@ -1,4 +1,4 @@
-namespace SharedKernel.Domain;
+namespace PandaBear.Domain;
 
 /// <summary>
 /// Dispatches domain events raised inside one bounded context.

@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace SharedKernel.Documentation;
+namespace PandaBear.Documentation;
 
 /// <summary>
 /// Builds Markdown endpoint inventories from simple Minimal API route declarations.

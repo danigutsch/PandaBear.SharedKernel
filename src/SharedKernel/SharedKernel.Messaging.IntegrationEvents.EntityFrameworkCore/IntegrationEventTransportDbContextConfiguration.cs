@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using SharedKernel.EntityFrameworkCore;
+using PandaBear.EntityFrameworkCore;
 
-namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>
 /// Adds the integration-event transport model to an EF Core context.

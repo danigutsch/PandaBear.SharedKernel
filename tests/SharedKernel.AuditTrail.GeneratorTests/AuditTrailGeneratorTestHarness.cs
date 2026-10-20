@@ -2,10 +2,10 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
-using SharedKernel.AuditTrail.SourceGenerator;
-using SharedKernel.Testing.Roslyn;
+using PandaBear.AuditTrail.SourceGenerator;
+using PandaBear.Testing.Roslyn;
 
-namespace SharedKernel.AuditTrail.GeneratorTests;
+namespace PandaBear.AuditTrail.GeneratorTests;
 
 internal static class AuditTrailGeneratorTestHarness
 {
@@ -13,8 +13,8 @@ internal static class AuditTrailGeneratorTestHarness
 
     private const string DefaultUsings = """
         using System;
-        using SharedKernel.AuditTrail;
-        using SharedKernel.Domain;
+        using PandaBear.AuditTrail;
+        using PandaBear.Domain;
 
         """;
 

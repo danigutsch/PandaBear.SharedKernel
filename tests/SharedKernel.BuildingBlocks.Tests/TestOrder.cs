@@ -1,5 +1,5 @@
 
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace PandaBear.BuildingBlocks.Tests;
 
 internal sealed class TestOrder(TestMoney price, TestAddress address) : ValueObject
 {

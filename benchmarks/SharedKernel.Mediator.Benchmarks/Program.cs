@@ -1,9 +1,9 @@
 using BenchmarkDotNet.Running;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
-/// Runs the SharedKernel.Mediator benchmark suite.
+/// Runs the PandaBear.Mediator benchmark suite.
 /// </summary>
 internal static class Program
 {

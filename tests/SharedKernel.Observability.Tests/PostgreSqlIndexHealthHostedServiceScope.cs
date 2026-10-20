@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.Metrics;
 
-namespace SharedKernel.Observability.Npgsql.Tests;
+namespace PandaBear.Observability.Npgsql.Tests;
 
 internal sealed class PostgreSqlIndexHealthHostedServiceScope : IAsyncDisposable
 {

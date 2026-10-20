@@ -1,7 +1,7 @@
 using Microsoft.OpenApi;
 using System.Reflection;
 
-namespace SharedKernel.OpenApi.Tests;
+namespace PandaBear.OpenApi.Tests;
 
 internal static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
 {

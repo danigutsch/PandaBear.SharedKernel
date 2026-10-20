@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 using Xunit;
 
-namespace SharedKernel.OpenApi.Tests;
+namespace PandaBear.OpenApi.Tests;
 
 /// <summary>
 /// Verifies trusted build-time OpenAPI generation detection.

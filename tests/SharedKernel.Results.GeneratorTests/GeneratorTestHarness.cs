@@ -1,10 +1,10 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using SharedKernel.Results.SourceGenerator;
-using SharedKernel.Testing.Roslyn;
+using PandaBear.Results.SourceGenerator;
+using PandaBear.Testing.Roslyn;
 
-namespace SharedKernel.Results.GeneratorTests;
+namespace PandaBear.Results.GeneratorTests;
 
 internal static class GeneratorTestHarness
 {
@@ -12,7 +12,7 @@ internal static class GeneratorTestHarness
 
     private const string DefaultUsings = """
         using System;
-        using SharedKernel.Results;
+        using PandaBear.Results;
 
         """;
 

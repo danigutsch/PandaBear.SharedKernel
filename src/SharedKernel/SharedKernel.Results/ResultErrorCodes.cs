@@ -1,4 +1,4 @@
-namespace SharedKernel.Results;
+namespace PandaBear.Results;
 
 /// <summary>
 /// Stable machine-readable error codes for result failures.

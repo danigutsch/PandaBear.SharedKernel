@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SharedKernel.Observability.Tests;
+namespace PandaBear.Observability.Tests;
 
 public sealed class ObservabilityBuilderExtensionsTests
 {

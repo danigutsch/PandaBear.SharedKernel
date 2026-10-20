@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.SourceGenerator;
+namespace PandaBear.Mediator.SourceGenerator;
 
 /// <summary>
 /// Indicates whether a pipeline applies to one request contract or an open generic family.

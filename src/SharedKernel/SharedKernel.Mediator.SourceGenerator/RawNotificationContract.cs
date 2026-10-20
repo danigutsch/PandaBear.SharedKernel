@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.SourceGenerator;
+namespace PandaBear.Mediator.SourceGenerator;
 
 /// <summary>
 /// Captures the discovered notification contract before handler projection.

@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>SharedKernel.OpenApi.Tests</RootNamespace>
+        <RootNamespace>PandaBear.OpenApi.Tests</RootNamespace>
         <EnableRequestDelegateGenerator>true</EnableRequestDelegateGenerator>
     </PropertyGroup>
 
@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Assertions" />
     </ItemGroup>
 
     <ItemGroup>

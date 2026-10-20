@@ -1,6 +1,6 @@
-namespace SharedKernel.HttpClients.Tests;
+namespace PandaBear.HttpClients.Tests;
 
-internal sealed class ContractCommandOutcomeTestHandler(
+internal sealed class HttpOutcomeMapperTestHandler(
     Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> send) : HttpMessageHandler
 {
     public CancellationToken ObservedCancellationToken { get; private set; }

@@ -1,4 +1,4 @@
-namespace SharedKernel.Idempotency;
+namespace PandaBear.Idempotency;
 
 /// <summary>
 /// Describes the result of attempting to start an idempotent operation.

@@ -1,20 +1,29 @@
-# SharedKernel.Results.AspNet
+# PandaBear.SharedKernel.Results.AspNet
 
-ASP.NET Core adapters for `SharedKernel.Results`.
+Map transport-neutral result statuses to conventional ASP.NET Core HTTP status codes without placing HTTP dependencies in the Results contract package. Use the mapping at an endpoint boundary; application policy still owns the response body, problem details, and authorization. Undefined statuses throw rather than silently selecting a success code.
 
-## Purpose
+## Install
 
-This package keeps HTTP-specific result behavior outside the transport-neutral
-`SharedKernel.Results` package.
+Replace both placeholders with an actually validated candidate version and its private feed; no new post-namespace candidate is advertised yet.
 
-It currently provides:
+```text
+dotnet add package PandaBear.SharedKernel.Results.AspNet --version <validated-candidate-version> --source <private-candidate-feed>
+```
 
-- `ResultStatusHttpExtensions.ToHttpStatusCode()` for converting result statuses to conventional
-  ASP.NET Core HTTP status codes.
+## Example
 
-## Package Conventions
+```csharp
+using PandaBear.Results;
+using PandaBear.Results.AspNet;
 
-- `PackageId`: `SharedKernel.Results.AspNet`
-- `RootNamespace`: `SharedKernel.Results.AspNet`
-- `IsAotCompatible=true`
-- package README included during packing
+public static class Example
+{
+    public static int MissingItemStatus() => ResultStatus.NotFound.ToHttpStatusCode();
+}
+```
+
+## Constraints
+
+Check success/failure before accessing payloads; propagate cancellation in asynchronous flows. Keep business validation in its owning domain. Registry publication remains deferred.
+
+Package ID: `PandaBear.SharedKernel.Results.AspNet`. C# namespace: `PandaBear.Results.AspNet`. Assembly/project identity: `SharedKernel.Results.AspNet`.

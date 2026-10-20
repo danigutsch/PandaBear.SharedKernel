@@ -5,7 +5,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.AuditTrail.SourceGenerator</PackageId>
         <Description>Source generator for typed domain-event to audit-trail mappings.</Description>
-        <RootNamespace>SharedKernel.AuditTrail.SourceGenerator</RootNamespace>
+        <RootNamespace>PandaBear.AuditTrail.SourceGenerator</RootNamespace>
         <PackageTags>audit-trail;domain-events;source-generator;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
@@ -17,11 +17,16 @@
         <NuspecFile>SharedKernel.AuditTrail.SourceGenerator.nuspec</NuspecFile>
         <NuspecBasePath>$(MSBuildProjectDirectory)</NuspecBasePath>
         <NuspecProperties>packageVersion=$(PackageVersion);analyzerFile=$(AuditTrailSourceGeneratorPackageFile);dependencyInjectionVersion=$(AuditTrailDependencyInjectionPackageVersion)</NuspecProperties>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

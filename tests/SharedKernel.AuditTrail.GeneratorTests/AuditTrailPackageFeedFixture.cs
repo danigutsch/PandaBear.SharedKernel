@@ -1,4 +1,4 @@
-namespace SharedKernel.AuditTrail.GeneratorTests;
+namespace PandaBear.AuditTrail.GeneratorTests;
 
 public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
 {

@@ -1,4 +1,4 @@
-namespace SharedKernel.Domain.Tests;
+namespace PandaBear.Domain.Tests;
 
 /// <summary>
 /// Shared trait constants for domain SharedKernel tests.

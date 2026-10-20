@@ -1,17 +1,17 @@
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Playwright;
-using SharedKernel.Testing.Data;
-using SharedKernel.Testing.Http;
-using SharedKernel.Testing.Playwright;
-using SharedKernel.Testing.Roslyn;
-using SharedKernel.Testing.Snapshots;
-using SharedKernel.Testing.Web;
+using PandaBear.Testing.Data;
+using PandaBear.Testing.Http;
+using PandaBear.Testing.Playwright;
+using PandaBear.Testing.Roslyn;
+using PandaBear.Testing.Snapshots;
+using PandaBear.Testing.Web;
 using System.Collections.Immutable;
 using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace SharedKernel.Testing.Tests;
+namespace PandaBear.Testing.Tests;
 
 public sealed class SharedKernelTestingHelperTests
 {
@@ -143,13 +143,13 @@ public sealed class SharedKernelTestingHelperTests
     public void Analyzer_config_options_provider_returns_registered_values()
     {
         var provider = new TestAnalyzerConfigOptionsProvider(
-            ImmutableDictionary<string, string>.Empty.Add("build_property.RootNamespace", "SharedKernel.Testing.Tests"));
+            ImmutableDictionary<string, string>.Empty.Add("build_property.RootNamespace", "PandaBear.Testing.Tests"));
 
         var options = provider.GlobalOptions;
         var exists = options.TryGetValue("build_property.RootNamespace", out var value);
 
         exists.ShouldBeTrue();
-        value.ShouldBe("SharedKernel.Testing.Tests");
+        value.ShouldBe("PandaBear.Testing.Tests");
         var syntaxTree = CSharpSyntaxTree.ParseText(string.Empty, cancellationToken: TestContext.Current.CancellationToken);
         provider.GetOptions(syntaxTree).ShouldBeSameAs(TestAnalyzerConfigOptions.Empty);
     }

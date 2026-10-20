@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace SharedKernel.EventSourcing.Npgsql.Tests;
+namespace PandaBear.EventSourcing.Npgsql.Tests;
 
 internal sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
 {

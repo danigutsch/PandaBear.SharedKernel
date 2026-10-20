@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace SharedKernel.Testing.CodeFixRunner.Tests;
+namespace PandaBear.Testing.CodeFixRunner.Tests;
 
 internal static class CodeFixRunnerTestProject
 {

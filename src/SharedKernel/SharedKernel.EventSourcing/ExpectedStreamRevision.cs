@@ -1,4 +1,4 @@
-namespace SharedKernel.EventSourcing;
+namespace PandaBear.EventSourcing;
 
 /// <summary>
 /// Represents the expected stream revision used for optimistic appends.

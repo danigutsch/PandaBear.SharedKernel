@@ -3,8 +3,9 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Idempotency.EntityFrameworkCore</PackageId>
         <Description>Entity Framework Core persistence provider for reusable idempotency stores.</Description>
-        <RootNamespace>SharedKernel.Idempotency.EntityFrameworkCore</RootNamespace>
+        <RootNamespace>PandaBear.Idempotency.EntityFrameworkCore</RootNamespace>
         <PackageTags>idempotency;entity-framework-core;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,6 +16,10 @@
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.EntityFrameworkCore\SharedKernel.EntityFrameworkCore.csproj" />
         <ProjectReference Include="..\SharedKernel.Idempotency\SharedKernel.Idempotency.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

@@ -3,9 +3,9 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Formatting;
-using SharedKernel.Mediator.SourceGenerator;
+using PandaBear.Mediator.SourceGenerator;
 
-namespace SharedKernel.Mediator.CodeFixes;
+namespace PandaBear.Mediator.CodeFixes;
 
 /// <summary>
 /// Adds a missing mediator request interface to a request type used in a send call.
@@ -147,7 +147,7 @@ internal static class MissingRequestInterfaceCodeFix
                     && SymbolEqualityComparer.Default.Equals(candidateInterface.TypeArguments[0], requestType))
                 {
                     return new InterfacePlan(
-                        $"global::SharedKernel.Mediator.IQuery<{candidateInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormats.FullyQualifiedWithNullability)}>",
+                        $"global::PandaBear.Mediator.IQuery<{candidateInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormats.FullyQualifiedWithNullability)}>",
                         $"IQuery<{candidateInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormats.MinimallyQualifiedWithNullability)}>");
                 }
 
@@ -155,21 +155,21 @@ internal static class MissingRequestInterfaceCodeFix
                     && SymbolEqualityComparer.Default.Equals(candidateInterface.TypeArguments[0], requestType))
                 {
                     return new InterfacePlan(
-                        $"global::SharedKernel.Mediator.ICommand<{candidateInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormats.FullyQualifiedWithNullability)}>",
+                        $"global::PandaBear.Mediator.ICommand<{candidateInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormats.FullyQualifiedWithNullability)}>",
                         $"ICommand<{candidateInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormats.MinimallyQualifiedWithNullability)}>");
                 }
 
                 if (SymbolMatches(compilation, candidateInterface, MetadataNames.CommandHandler)
                     && SymbolEqualityComparer.Default.Equals(candidateInterface.TypeArguments[0], requestType))
                 {
-                    return new InterfacePlan("global::SharedKernel.Mediator.ICommand", "ICommand");
+                    return new InterfacePlan("global::PandaBear.Mediator.ICommand", "ICommand");
                 }
 
                 if (SymbolMatches(compilation, candidateInterface, MetadataNames.RequestHandler)
                     && SymbolEqualityComparer.Default.Equals(candidateInterface.TypeArguments[0], requestType))
                 {
                     return new InterfacePlan(
-                        $"global::SharedKernel.Mediator.IRequest<{candidateInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormats.FullyQualifiedWithNullability)}>",
+                        $"global::PandaBear.Mediator.IRequest<{candidateInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormats.FullyQualifiedWithNullability)}>",
                         $"IRequest<{candidateInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormats.MinimallyQualifiedWithNullability)}>");
                 }
             }

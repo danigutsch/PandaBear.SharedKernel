@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal sealed class RecordingDbContextConfiguration(List<string> calls, string name) : IDbContextConfiguration<TestDbContext>
 {

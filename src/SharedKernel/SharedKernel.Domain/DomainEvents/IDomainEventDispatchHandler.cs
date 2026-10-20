@@ -1,4 +1,4 @@
-namespace SharedKernel.Domain;
+namespace PandaBear.Domain;
 
 /// <summary>Handles an untyped domain event as part of a composite dispatch operation.</summary>
 public interface IDomainEventDispatchHandler

@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
 
-namespace SharedKernel.Style.CodeFixes;
+namespace PandaBear.Style.CodeFixes;
 
 internal static class RenameDomainEventTypeCodeFix
 {

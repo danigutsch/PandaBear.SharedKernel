@@ -1,4 +1,4 @@
-namespace SharedKernel.Npgsql.Tests;
+namespace PandaBear.Npgsql.Tests;
 
 public sealed class PostgreSqlTransactionAdvisoryLockTests(PostgreSqlTestServerFixture fixture)
     : PostgreSqlDatabaseTestBase(fixture)

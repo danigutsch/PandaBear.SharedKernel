@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Npgsql;
-using SharedKernel.BuildingBlocks;
+using PandaBear.BuildingBlocks;
 
-namespace SharedKernel.EventSourcing.Npgsql;
+namespace PandaBear.EventSourcing.Npgsql;
 
 /// <summary>
 /// Persists projection checkpoints in PostgreSQL.

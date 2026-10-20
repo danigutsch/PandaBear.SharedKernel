@@ -1,6 +1,6 @@
 using ImageMagick;
 
-namespace SharedKernel.ImageProcessing;
+namespace PandaBear.ImageProcessing;
 
 /// <summary>
 /// ImageMagick-backed image processor that strips metadata from generated variants.

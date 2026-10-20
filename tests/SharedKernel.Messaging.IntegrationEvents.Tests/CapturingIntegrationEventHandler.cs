@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging.IntegrationEvents.Tests;
+namespace PandaBear.Messaging.IntegrationEvents.Tests;
 
 internal sealed class CapturingIntegrationEventHandler :
     IIntegrationEventHandler<TestIntegrationEvent>,

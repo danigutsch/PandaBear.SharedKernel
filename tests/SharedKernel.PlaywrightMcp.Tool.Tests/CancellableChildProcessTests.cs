@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace SharedKernel.PlaywrightMcp.Tool.Tests;
+namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
 [Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]

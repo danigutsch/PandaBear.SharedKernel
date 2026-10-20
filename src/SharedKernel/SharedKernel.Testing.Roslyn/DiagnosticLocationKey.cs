@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace SharedKernel.Testing.Roslyn;
+namespace PandaBear.Testing.Roslyn;
 
 /// <summary>
 /// Creates stable keys for diagnostics reported at source locations.

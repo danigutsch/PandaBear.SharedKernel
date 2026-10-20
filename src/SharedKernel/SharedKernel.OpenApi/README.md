@@ -15,3 +15,9 @@ Usage:
 
 - keep reusable OpenAPI registration and generation helpers here
 - keep application-specific document lists close to the consuming API project
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.OpenApi`. C# namespace: `PandaBear.OpenApi`. Assembly/project identity: `SharedKernel.OpenApi`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

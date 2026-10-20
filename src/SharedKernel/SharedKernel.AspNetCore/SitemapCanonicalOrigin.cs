@@ -1,4 +1,4 @@
-namespace SharedKernel.AspNetCore;
+namespace PandaBear.AspNetCore;
 
 /// <summary>
 /// Validates canonical public origins used in sitemap and robots.txt URLs.

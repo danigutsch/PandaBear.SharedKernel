@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Messaging.IntegrationEvents</PackageId>
         <Description>Typed, versioned integration-event contracts and dispatch abstractions for cross-boundary messaging.</Description>
-        <RootNamespace>SharedKernel.Messaging.IntegrationEvents</RootNamespace>
+        <RootNamespace>PandaBear.Messaging.IntegrationEvents</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

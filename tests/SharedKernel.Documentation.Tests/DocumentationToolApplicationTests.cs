@@ -1,9 +1,9 @@
 using System.Globalization;
 
-namespace SharedKernel.Documentation.Tests;
+namespace PandaBear.Documentation.Tests;
 
-[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.CommandLineCapability)]
-[Trait(SharedKernel.Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
+[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.CommandLineCapability)]
+[Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class DocumentationToolApplicationTests
 {
     [Fact]

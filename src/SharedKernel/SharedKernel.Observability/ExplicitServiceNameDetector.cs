@@ -1,6 +1,6 @@
 using OpenTelemetry.Resources;
 
-namespace SharedKernel.Observability;
+namespace PandaBear.Observability;
 
 /// <summary>
 /// An OpenTelemetry resource detector that ensures service identity is set explicitly from application config or host.

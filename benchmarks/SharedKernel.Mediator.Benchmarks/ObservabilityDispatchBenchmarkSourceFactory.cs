@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Creates synthetic dispatch benchmark sources for optional mediator observability comparisons.
@@ -11,7 +11,7 @@ internal static class ObservabilityDispatchBenchmarkSourceFactory
     public const string Source = """
         #nullable enable
 
-        using SharedKernel.Mediator;
+        using PandaBear.Mediator;
 
         namespace BenchmarkApp;
 

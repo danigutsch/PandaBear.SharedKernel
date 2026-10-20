@@ -1,6 +1,6 @@
 using Npgsql;
 
-namespace SharedKernel.EventSourcing.Npgsql;
+namespace PandaBear.EventSourcing.Npgsql;
 
 internal static class PostgreSqlNames
 {

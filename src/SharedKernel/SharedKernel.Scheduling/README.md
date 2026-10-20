@@ -22,3 +22,9 @@ The polling loop emits:
 - Batch counter: `scheduling.polling.batch`
 - Item counter: `scheduling.polling.item`
 - Failure counter: `scheduling.polling.failure`
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Scheduling`. C# namespace: `PandaBear.Scheduling`. Assembly/project identity: `SharedKernel.Scheduling`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

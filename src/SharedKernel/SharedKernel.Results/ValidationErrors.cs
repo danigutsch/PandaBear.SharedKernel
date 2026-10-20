@@ -1,4 +1,4 @@
-namespace SharedKernel.Results;
+namespace PandaBear.Results;
 
 /// <summary>
 /// Collects and combines multiple validation errors into a single result.

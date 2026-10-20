@@ -1,6 +1,6 @@
-using SharedKernel.Testing;
+using PandaBear.Testing;
 
-namespace SharedKernel.InputNormalization.Tests;
+namespace PandaBear.InputNormalization.Tests;
 
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.InputNormalizationCapability)]
 public sealed class ObjectStorageKeyValidatorTests

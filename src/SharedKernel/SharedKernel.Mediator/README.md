@@ -40,3 +40,9 @@ dispatch, and steady-state dispatch metrics.
 
 - [SharedKernel.Mediator.SourceGenerator](../SharedKernel.Mediator.SourceGenerator/README.md)
 - [Mediator.Sample](../../../samples/Mediator/Mediator.Sample/README.md)
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Mediator`. C# namespace: `PandaBear.Mediator`. Assembly/project identity: `SharedKernel.Mediator`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

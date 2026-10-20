@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.SourceGenerator;
+namespace PandaBear.Mediator.SourceGenerator;
 
 /// <summary>
 /// Centralizes generated string literal escaping and mediator service type names.
@@ -19,10 +19,10 @@ internal static class MediatorGenerationNames
     {
         return handler.Kind switch
         {
-            HandlerKind.Request => $"global::SharedKernel.Mediator.IRequestHandler<{handler.RequestMetadataName}, {handler.ResponseMetadataName}>",
-            HandlerKind.Command => $"global::SharedKernel.Mediator.ICommandHandler<{handler.RequestMetadataName}>",
-            HandlerKind.CommandWithResponse => $"global::SharedKernel.Mediator.ICommandHandler<{handler.RequestMetadataName}, {handler.ResponseMetadataName}>",
-            HandlerKind.Query => $"global::SharedKernel.Mediator.IQueryHandler<{handler.RequestMetadataName}, {handler.ResponseMetadataName}>",
+            HandlerKind.Request => $"global::PandaBear.Mediator.IRequestHandler<{handler.RequestMetadataName}, {handler.ResponseMetadataName}>",
+            HandlerKind.Command => $"global::PandaBear.Mediator.ICommandHandler<{handler.RequestMetadataName}>",
+            HandlerKind.CommandWithResponse => $"global::PandaBear.Mediator.ICommandHandler<{handler.RequestMetadataName}, {handler.ResponseMetadataName}>",
+            HandlerKind.Query => $"global::PandaBear.Mediator.IQueryHandler<{handler.RequestMetadataName}, {handler.ResponseMetadataName}>",
             _ => throw new ArgumentOutOfRangeException(nameof(handler))
         };
     }
@@ -36,21 +36,21 @@ internal static class MediatorGenerationNames
     {
         return isStream
             ? GetStreamPipelineServiceType(requestMetadataName, responseMetadataName)
-            : $"global::SharedKernel.Mediator.IPipelineBehavior<{requestMetadataName}, {responseMetadataName}>";
+            : $"global::PandaBear.Mediator.IPipelineBehavior<{requestMetadataName}, {responseMetadataName}>";
     }
 
     public static string GetNotificationHandlerServiceType(string notificationMetadataName)
     {
-        return $"global::SharedKernel.Mediator.INotificationHandler<{notificationMetadataName}>";
+        return $"global::PandaBear.Mediator.INotificationHandler<{notificationMetadataName}>";
     }
 
     public static string GetStreamHandlerServiceType(string requestMetadataName, string responseMetadataName)
     {
-        return $"global::SharedKernel.Mediator.IStreamRequestHandler<{requestMetadataName}, {responseMetadataName}>";
+        return $"global::PandaBear.Mediator.IStreamRequestHandler<{requestMetadataName}, {responseMetadataName}>";
     }
 
     public static string GetStreamPipelineServiceType(string requestMetadataName, string responseMetadataName)
     {
-        return $"global::SharedKernel.Mediator.IStreamPipelineBehavior<{requestMetadataName}, {responseMetadataName}>";
+        return $"global::PandaBear.Mediator.IStreamPipelineBehavior<{requestMetadataName}, {responseMetadataName}>";
     }
 }

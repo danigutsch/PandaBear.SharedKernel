@@ -1,4 +1,4 @@
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace PandaBear.BuildingBlocks.Tests;
 
 public sealed class TestIdentifiedEntity(Guid id) : IIdentified<Guid>
 {

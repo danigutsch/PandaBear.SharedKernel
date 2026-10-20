@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Http.Headers;
-using SharedKernel.HttpClients;
-using SharedKernel.Testing;
+using PandaBear.HttpClients;
+using PandaBear.Testing;
 
-namespace SharedKernel.Branding.Tests;
+namespace PandaBear.Branding.Tests;
 
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ApiClientCapability)]
 public sealed class BrandingApiClientTests

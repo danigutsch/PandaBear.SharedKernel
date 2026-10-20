@@ -1,4 +1,4 @@
-namespace SharedKernel.Observability.Npgsql;
+namespace PandaBear.Observability.Npgsql;
 
 /// <summary>Contains read-only PostgreSQL catalog evidence for one index-health assessment.</summary>
 /// <remarks>Object names are advisory evidence. Callers must not add them to telemetry or logs.</remarks>

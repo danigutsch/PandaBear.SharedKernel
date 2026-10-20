@@ -9,3 +9,23 @@ ASP.NET Core helpers for small, explicit HTTP cache response-header policies.
 - The policy writes `Cache-Control: no-store`, `Pragma: no-cache`, and an expired `Expires` header.
 - Use it for management or other non-cacheable route groups. Endpoint code that writes cache
   headers later can replace the policy.
+
+## Scoped route-group protection
+
+Use `WithNoStoreResponses(pathPrefix)` on a route group and register `app.UseNoStoreResponses()`
+before authentication, authorization, and rate limiting. Supply the absolute literal group prefix,
+including parent route groups. Configuration stays with the group; the pipeline contains no
+application-specific path checks.
+
+The middleware consumes endpoint metadata and the existing `EndpointDataSource`. It also matches
+configured prefixes on segment boundaries so unmatched paths and unsupported HTTP methods retain
+no-store headers. Headers are enforced when the response starts, including exception responses and
+responses that attempt to set public cache headers. No separate policy registry or cache is created.
+
+The parameterless endpoint-filter overload remains available for executed-endpoint-only policies.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.HttpCaching.AspNetCore`. C# namespace: `PandaBear.HttpCaching.AspNetCore`. Assembly/project identity: `SharedKernel.HttpCaching.AspNetCore`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

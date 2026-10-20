@@ -1,7 +1,7 @@
 using System.IO.Compression;
 using System.Xml.Linq;
 
-namespace SharedKernel.Versioning;
+namespace PandaBear.Versioning;
 
 /// <summary>
 /// Builds and validates local package-feed assets for SharedKernel package sets.

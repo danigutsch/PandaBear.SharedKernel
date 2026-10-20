@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace SharedKernel.Testing.Analyzers;
+namespace PandaBear.Testing.Analyzers;
 
 /// <summary>
 /// Reads repository testing analyzer options from <c>.editorconfig</c>.

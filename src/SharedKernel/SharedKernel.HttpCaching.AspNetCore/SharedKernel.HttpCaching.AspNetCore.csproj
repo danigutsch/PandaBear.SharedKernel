@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.HttpCaching.AspNetCore</PackageId>
         <Description>ASP.NET Core HTTP caching helpers for SharedKernel.</Description>
-        <RootNamespace>SharedKernel.HttpCaching.AspNetCore</RootNamespace>
+        <RootNamespace>PandaBear.HttpCaching.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>http-caching;aspnetcore;http;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

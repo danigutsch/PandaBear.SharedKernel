@@ -1,53 +1,53 @@
 #nullable enable
-const SharedKernel.Branding.BrandingRoutes.ManagementSettingsPath = "branding/settings" -> string!
-const SharedKernel.Branding.BrandingRoutes.PublicSettingsPath = "public/branding" -> string!
-SharedKernel.Branding.BrandingApiClient
-SharedKernel.Branding.BrandingApiClient.BrandingApiClient(System.Net.Http.HttpClient! httpClient) -> void
-SharedKernel.Branding.BrandingContractConstants
-const SharedKernel.Branding.BrandingContractConstants.MaxBrandNameLength = 120 -> int
-const SharedKernel.Branding.BrandingContractConstants.MaxCssColorLength = 7 -> int
-const SharedKernel.Branding.BrandingContractConstants.MaxFontFamilyLength = 120 -> int
-const SharedKernel.Branding.BrandingContractConstants.MaxLogoUriLength = 2048 -> int
-SharedKernel.Branding.BrandingRoutes
-SharedKernel.Branding.BrandingSettings
-SharedKernel.Branding.BrandingSettings.AccentColor.get -> string!
-SharedKernel.Branding.BrandingSettings.BackgroundColor.get -> string!
-SharedKernel.Branding.BrandingSettings.BodyFontFamily.get -> string!
-SharedKernel.Branding.BrandingSettings.BrandName.get -> string!
-SharedKernel.Branding.BrandingSettings.HeadingFontFamily.get -> string!
-SharedKernel.Branding.BrandingSettings.LogoUri.get -> string?
-SharedKernel.Branding.BrandingSettings.PrimaryColor.get -> string!
-SharedKernel.Branding.BrandingSettings.TextColor.get -> string!
-SharedKernel.Branding.BrandingSettings.ToDto() -> SharedKernel.Branding.BrandingSettingsDto!
-SharedKernel.Branding.BrandingSettingsDto
-SharedKernel.Branding.BrandingSettingsDto.AccentColor.get -> string!
-SharedKernel.Branding.BrandingSettingsDto.AccentColor.set -> void
-SharedKernel.Branding.BrandingSettingsDto.BackgroundColor.get -> string!
-SharedKernel.Branding.BrandingSettingsDto.BackgroundColor.set -> void
-SharedKernel.Branding.BrandingSettingsDto.BodyFontFamily.get -> string!
-SharedKernel.Branding.BrandingSettingsDto.BodyFontFamily.set -> void
-SharedKernel.Branding.BrandingSettingsDto.BrandName.get -> string!
-SharedKernel.Branding.BrandingSettingsDto.BrandName.set -> void
-SharedKernel.Branding.BrandingSettingsDto.HeadingFontFamily.get -> string!
-SharedKernel.Branding.BrandingSettingsDto.HeadingFontFamily.set -> void
-SharedKernel.Branding.BrandingSettingsDto.LogoUri.get -> string?
-SharedKernel.Branding.BrandingSettingsDto.LogoUri.set -> void
-SharedKernel.Branding.BrandingSettingsDto.PrimaryColor.get -> string!
-SharedKernel.Branding.BrandingSettingsDto.PrimaryColor.set -> void
-SharedKernel.Branding.BrandingSettingsDto.TextColor.get -> string!
-SharedKernel.Branding.BrandingSettingsDto.TextColor.set -> void
-SharedKernel.Branding.IBrandingApiClient
-SharedKernel.Branding.IBrandingSettingsStore
-SharedKernel.Branding.IManagementBrandingApiClient
-SharedKernel.Branding.IManagementBrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
-SharedKernel.Branding.IManagementBrandingApiClient.SaveSettings(SharedKernel.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
-SharedKernel.Branding.ManagementBrandingApiClient
-SharedKernel.Branding.ManagementBrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
-SharedKernel.Branding.ManagementBrandingApiClient.ManagementBrandingApiClient(System.Net.Http.HttpClient! httpClient) -> void
-SharedKernel.Branding.ManagementBrandingApiClient.SaveSettings(SharedKernel.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
-static SharedKernel.Branding.BrandingSettings.Create(SharedKernel.Branding.BrandingSettingsDto! request, System.Collections.Generic.IReadOnlyCollection<string!>! allowedFontFamilies) -> SharedKernel.Results.Result<SharedKernel.Branding.BrandingSettings!>
-SharedKernel.Branding.BrandingApiClient.GetPublicSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
-SharedKernel.Branding.BrandingSettingsDto.BrandingSettingsDto() -> void
-SharedKernel.Branding.IBrandingApiClient.GetPublicSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettingsDto!>!
-SharedKernel.Branding.IBrandingSettingsStore.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.Branding.BrandingSettings?>!
-SharedKernel.Branding.IBrandingSettingsStore.SaveSettings(SharedKernel.Branding.BrandingSettings! settings, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+const PandaBear.Branding.BrandingRoutes.ManagementSettingsPath = "branding/settings" -> string!
+const PandaBear.Branding.BrandingRoutes.PublicSettingsPath = "public/branding" -> string!
+PandaBear.Branding.BrandingApiClient
+PandaBear.Branding.BrandingApiClient.BrandingApiClient(System.Net.Http.HttpClient! httpClient) -> void
+PandaBear.Branding.BrandingContractConstants
+const PandaBear.Branding.BrandingContractConstants.MaxBrandNameLength = 120 -> int
+const PandaBear.Branding.BrandingContractConstants.MaxCssColorLength = 7 -> int
+const PandaBear.Branding.BrandingContractConstants.MaxFontFamilyLength = 120 -> int
+const PandaBear.Branding.BrandingContractConstants.MaxLogoUriLength = 2048 -> int
+PandaBear.Branding.BrandingRoutes
+PandaBear.Branding.BrandingSettings
+PandaBear.Branding.BrandingSettings.AccentColor.get -> string!
+PandaBear.Branding.BrandingSettings.BackgroundColor.get -> string!
+PandaBear.Branding.BrandingSettings.BodyFontFamily.get -> string!
+PandaBear.Branding.BrandingSettings.BrandName.get -> string!
+PandaBear.Branding.BrandingSettings.HeadingFontFamily.get -> string!
+PandaBear.Branding.BrandingSettings.LogoUri.get -> string?
+PandaBear.Branding.BrandingSettings.PrimaryColor.get -> string!
+PandaBear.Branding.BrandingSettings.TextColor.get -> string!
+PandaBear.Branding.BrandingSettings.ToDto() -> PandaBear.Branding.BrandingSettingsDto!
+PandaBear.Branding.BrandingSettingsDto
+PandaBear.Branding.BrandingSettingsDto.AccentColor.get -> string!
+PandaBear.Branding.BrandingSettingsDto.AccentColor.set -> void
+PandaBear.Branding.BrandingSettingsDto.BackgroundColor.get -> string!
+PandaBear.Branding.BrandingSettingsDto.BackgroundColor.set -> void
+PandaBear.Branding.BrandingSettingsDto.BodyFontFamily.get -> string!
+PandaBear.Branding.BrandingSettingsDto.BodyFontFamily.set -> void
+PandaBear.Branding.BrandingSettingsDto.BrandName.get -> string!
+PandaBear.Branding.BrandingSettingsDto.BrandName.set -> void
+PandaBear.Branding.BrandingSettingsDto.HeadingFontFamily.get -> string!
+PandaBear.Branding.BrandingSettingsDto.HeadingFontFamily.set -> void
+PandaBear.Branding.BrandingSettingsDto.LogoUri.get -> string?
+PandaBear.Branding.BrandingSettingsDto.LogoUri.set -> void
+PandaBear.Branding.BrandingSettingsDto.PrimaryColor.get -> string!
+PandaBear.Branding.BrandingSettingsDto.PrimaryColor.set -> void
+PandaBear.Branding.BrandingSettingsDto.TextColor.get -> string!
+PandaBear.Branding.BrandingSettingsDto.TextColor.set -> void
+PandaBear.Branding.IBrandingApiClient
+PandaBear.Branding.IBrandingSettingsStore
+PandaBear.Branding.IManagementBrandingApiClient
+PandaBear.Branding.IManagementBrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettingsDto!>!
+PandaBear.Branding.IManagementBrandingApiClient.SaveSettings(PandaBear.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettingsDto!>!
+PandaBear.Branding.ManagementBrandingApiClient
+PandaBear.Branding.ManagementBrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettingsDto!>!
+PandaBear.Branding.ManagementBrandingApiClient.ManagementBrandingApiClient(System.Net.Http.HttpClient! httpClient) -> void
+PandaBear.Branding.ManagementBrandingApiClient.SaveSettings(PandaBear.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettingsDto!>!
+static PandaBear.Branding.BrandingSettings.Create(PandaBear.Branding.BrandingSettingsDto! request, System.Collections.Generic.IReadOnlyCollection<string!>! allowedFontFamilies) -> PandaBear.Results.Result<PandaBear.Branding.BrandingSettings!>
+PandaBear.Branding.BrandingApiClient.GetPublicSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettingsDto!>!
+PandaBear.Branding.BrandingSettingsDto.BrandingSettingsDto() -> void
+PandaBear.Branding.IBrandingApiClient.GetPublicSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettingsDto!>!
+PandaBear.Branding.IBrandingSettingsStore.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettings?>!
+PandaBear.Branding.IBrandingSettingsStore.SaveSettings(PandaBear.Branding.BrandingSettings! settings, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!

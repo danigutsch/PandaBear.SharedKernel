@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Testing.AspNetCore</PackageId>
         <Description>ASP.NET Core web application factory helpers for SharedKernel tests.</Description>
-        <RootNamespace>SharedKernel.Testing.AspNetCore</RootNamespace>
+        <RootNamespace>PandaBear.Testing.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;aspnetcore;webapplicationfactory;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

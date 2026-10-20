@@ -1,4 +1,4 @@
-namespace SharedKernel.RepoConfig.Tool;
+namespace PandaBear.RepoConfig.Tool;
 
 internal sealed record GitHubRoadmapPriorityPolicy(
     int FirstItemNumber,

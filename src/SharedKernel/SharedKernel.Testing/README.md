@@ -17,3 +17,9 @@ hardcoded trait literals through `SKTEST009` when a single safe replacement can 
 
 Use `SerialTestJustificationAttribute` on xUnit collection definitions that disable parallelization.
 `SKTEST005` enforces a non-empty reason.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Testing`. C# namespace: `PandaBear.Testing`. Assembly/project identity: `SharedKernel.Testing`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

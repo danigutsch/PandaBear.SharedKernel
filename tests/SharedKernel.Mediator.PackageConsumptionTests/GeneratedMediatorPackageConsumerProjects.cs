@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.PackageConsumptionTests;
+namespace PandaBear.Mediator.PackageConsumptionTests;
 
 internal static class GeneratedMediatorPackageConsumerProjects
 {
@@ -10,7 +10,7 @@ internal static class GeneratedMediatorPackageConsumerProjects
             using System.Collections.Generic;
             using System.Runtime.CompilerServices;
             using Microsoft.Extensions.DependencyInjection;
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             namespace Consumer;
 
@@ -77,7 +77,7 @@ internal static class GeneratedMediatorPackageConsumerProjects
             using System.Globalization;
             using Consumer;
             using Microsoft.Extensions.DependencyInjection;
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             using var harness = MediatorHarness.Create();
 

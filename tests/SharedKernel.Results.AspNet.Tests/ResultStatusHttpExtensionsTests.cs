@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace SharedKernel.Results.AspNet.Tests;
+namespace PandaBear.Results.AspNet.Tests;
 
 public sealed class ResultStatusHttpExtensionsTests
 {

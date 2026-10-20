@@ -1,3 +1,3 @@
-namespace SharedKernel.EventSourcing.Npgsql.Tests;
+namespace PandaBear.EventSourcing.Npgsql.Tests;
 
 internal sealed record TestEvent(string Name);

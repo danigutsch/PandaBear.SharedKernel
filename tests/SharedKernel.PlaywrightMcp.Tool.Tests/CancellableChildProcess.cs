@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace SharedKernel.PlaywrightMcp.Tool.Tests;
+namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
 internal sealed class CancellableChildProcess : IAsyncDisposable
 {

@@ -2,10 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using SharedKernel.EntityFrameworkCore;
-using SharedKernel.Idempotency.EntityFrameworkCore;
+using PandaBear.EntityFrameworkCore;
+using PandaBear.Idempotency.EntityFrameworkCore;
 
-namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>
 /// Provides registration helpers for the EF Core integration event outbox.

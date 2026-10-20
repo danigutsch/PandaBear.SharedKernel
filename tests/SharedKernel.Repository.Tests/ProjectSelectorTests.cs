@@ -1,6 +1,6 @@
-using SharedKernel.Repository.Tool;
+using PandaBear.Repository.Tool;
 
-namespace SharedKernel.Repository.Tests;
+namespace PandaBear.Repository.Tests;
 
 /// <summary>Guards project discovery and fail-closed impact selection.</summary>
 public sealed class ProjectSelectorTests : IDisposable

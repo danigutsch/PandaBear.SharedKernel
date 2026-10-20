@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-namespace SharedKernel.Style.CodeFixes.Tests;
+namespace PandaBear.Style.CodeFixes.Tests;
 
 public sealed class SharedKernelStyleCodeFixProviderTests
 {
@@ -40,7 +40,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -58,17 +58,17 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             {
                 public sealed class Workflow
                 {
-                    public SharedKernel.Results.Result RunDirect()
+                    public PandaBear.Results.Result RunDirect()
                     {
                         return Complete(/* preserve direct command */);
                     }
 
-                    public SharedKernel.Results.Result RunChained(SharedKernel.Results.Result source)
+                    public PandaBear.Results.Result RunChained(PandaBear.Results.Result source)
                     {
                         return source.Bind(() => Complete());
                     }
 
-                    public System.Threading.Tasks.Task<SharedKernel.Results.Result> RunAsyncChained(SharedKernel.Results.Result source)
+                    public System.Threading.Tasks.Task<PandaBear.Results.Result> RunAsyncChained(PandaBear.Results.Result source)
                     {
                         return source.Bind(async () =>
                         {
@@ -77,7 +77,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                         });
                     }
 
-                    public SharedKernel.Results.Result RunChecked()
+                    public PandaBear.Results.Result RunChecked()
                     {
                         var result = Complete();
                         if (result.IsFailure)
@@ -85,13 +85,13 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                             return result;
                         }
 
-                        return SharedKernel.Results.Result.Ok();
+                        return PandaBear.Results.Result.Ok();
                     }
 
-                    private SharedKernel.Results.Result Complete()
+                    private PandaBear.Results.Result Complete()
                     {
                         MarkComplete();
-                        return SharedKernel.Results.Result.Ok();
+                        return PandaBear.Results.Result.Ok();
                     }
 
                     private void MarkComplete()
@@ -101,7 +101,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
 
@@ -115,12 +115,12 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         updatedText.ShouldContain("private void Complete()", StringComparison.Ordinal);
         updatedText.ShouldContain("MarkComplete();", StringComparison.Ordinal);
-        updatedText.ShouldContain("public SharedKernel.Results.Result RunDirect()", StringComparison.Ordinal);
+        updatedText.ShouldContain("public PandaBear.Results.Result RunDirect()", StringComparison.Ordinal);
         equivalenceKey.ShouldBe("ConvertSuccessOnlyResultMethod");
         updatedText.ShouldContain("source.Bind(() =>", StringComparison.Ordinal);
         updatedText.ShouldContain("await System.Threading.Tasks.Task.Yield();", StringComparison.Ordinal);
         updatedText.ShouldContain("Complete(/* preserve direct command */);", StringComparison.Ordinal);
-        updatedText.ShouldContain("global::SharedKernel.Results.Result.Ok()", StringComparison.Ordinal);
+        updatedText.ShouldContain("global::PandaBear.Results.Result.Ok()", StringComparison.Ordinal);
         updatedText.ShouldNotContain("return Complete();", StringComparison.Ordinal);
         updatedText.ShouldNotContain("result.IsFailure", StringComparison.Ordinal);
         compilationDiagnostics.ShouldNotContain(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
@@ -131,7 +131,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -143,20 +143,20 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             {
                 public sealed class Workflow
                 {
-                    public SharedKernel.Results.Result Run()
+                    public PandaBear.Results.Result Run()
                     {
                         return Complete();
                     }
 
-                    SharedKernel.Results.Result Complete()
+                    PandaBear.Results.Result Complete()
                     {
-                        return SharedKernel.Results.Result.Ok();
+                        return PandaBear.Results.Result.Ok();
                     }
                 }
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
 
@@ -178,7 +178,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         var source = $$"""
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -192,12 +192,12 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             {
                 public sealed class Workflow
                 {
-                    public async {{taskType}}<SharedKernel.Results.Result> RunDirect()
+                    public async {{taskType}}<PandaBear.Results.Result> RunDirect()
                     {
                         return await Complete();
                     }
 
-                    public async {{taskType}}<SharedKernel.Results.Result> RunChecked()
+                    public async {{taskType}}<PandaBear.Results.Result> RunChecked()
                     {
                         var result = await Complete();
                         if (result.IsFailure)
@@ -205,10 +205,10 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                             return result;
                         }
 
-                        return SharedKernel.Results.Result.Ok();
+                        return PandaBear.Results.Result.Ok();
                     }
 
-                    public System.Func<{{taskType}}<SharedKernel.Results.Result>> CreateCallback()
+                    public System.Func<{{taskType}}<PandaBear.Results.Result>> CreateCallback()
                     {
                         return async () =>
                         {
@@ -222,16 +222,16 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                         await Complete();
                     }
 
-                    private async {{taskType}}<SharedKernel.Results.Result> Complete()
+                    private async {{taskType}}<PandaBear.Results.Result> Complete()
                     {
                         await Task.Yield();
-                        return SharedKernel.Results.Result.Ok();
+                        return PandaBear.Results.Result.Ok();
                     }
                 }
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
 
@@ -244,7 +244,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         updatedText.ShouldContain($"private async global::System.Threading.Tasks.{taskType} Complete()", StringComparison.Ordinal);
         updatedText.ShouldContain("await Complete();", StringComparison.Ordinal);
-        updatedText.ShouldContain("return global::SharedKernel.Results.Result.Ok();", StringComparison.Ordinal);
+        updatedText.ShouldContain("return global::PandaBear.Results.Result.Ok();", StringComparison.Ordinal);
         updatedText.ShouldNotContain("return await Complete();", StringComparison.Ordinal);
         updatedText.ShouldNotContain("var result = await Complete();", StringComparison.Ordinal);
         updatedText.ShouldNotContain("result.IsFailure", StringComparison.Ordinal);
@@ -256,7 +256,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -268,9 +268,9 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
             public sealed class Workflow
             {
-                private SharedKernel.Results.Result Complete()
+                private PandaBear.Results.Result Complete()
                 {
-                    return SharedKernel.Results.Result.NoContent();
+                    return PandaBear.Results.Result.NoContent();
                 }
             }
             """;
@@ -290,7 +290,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string targetSource = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -302,9 +302,9 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             {
                 public sealed partial class Workflow
                 {
-                    private SharedKernel.Results.Result Complete()
+                    private PandaBear.Results.Result Complete()
                     {
-                        return SharedKernel.Results.Result.Ok();
+                        return PandaBear.Results.Result.Ok();
                     }
                 }
             }
@@ -314,7 +314,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
             public sealed partial class Workflow
             {
-                public SharedKernel.Results.Result Run()
+                public PandaBear.Results.Result Run()
                 {
                     return Complete();
                 }
@@ -333,7 +333,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
         // Assert
         callerText.ShouldContain("Complete();", StringComparison.Ordinal);
-        callerText.ShouldContain("global::SharedKernel.Results.Result.Ok()", StringComparison.Ordinal);
+        callerText.ShouldContain("global::PandaBear.Results.Result.Ok()", StringComparison.Ordinal);
         callerText.ShouldNotContain("return Complete();", StringComparison.Ordinal);
         compilationDiagnostics.ShouldNotContain(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
     }
@@ -343,7 +343,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -355,10 +355,10 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             {
                 public sealed class Workflow
                 {
-                    private SharedKernel.Results.Result Complete()
+                    private PandaBear.Results.Result Complete()
                     {
-                        System.Func<SharedKernel.Results.Result> retry = () => Complete();
-                        return SharedKernel.Results.Result.Ok();
+                        System.Func<PandaBear.Results.Result> retry = () => Complete();
+                        return PandaBear.Results.Result.Ok();
                     }
                 }
             }
@@ -384,7 +384,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -396,17 +396,17 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
             public sealed class Workflow
             {
-                private SharedKernel.Results.Result Complete()
+                private PandaBear.Results.Result Complete()
                 {
-                    return SharedKernel.Results.Result.Ok();
+                    return PandaBear.Results.Result.Ok();
                 }
 
-                public SharedKernel.Results.Result Run(bool shouldComplete)
+                public PandaBear.Results.Result Run(bool shouldComplete)
                 {
                     if (shouldComplete)
                         return Complete();
 
-                    return SharedKernel.Results.Result.Ok();
+                    return PandaBear.Results.Result.Ok();
                 }
             }
             """;
@@ -426,7 +426,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -438,22 +438,22 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
             public sealed class Workflow
             {
-                private async Task<SharedKernel.Results.Result> Complete()
+                private async Task<PandaBear.Results.Result> Complete()
                 {
                     await Task.Yield();
-                    return SharedKernel.Results.Result.Ok();
+                    return PandaBear.Results.Result.Ok();
                 }
 
-                public async Task<SharedKernel.Results.Result> Run(bool shouldComplete)
+                public async Task<PandaBear.Results.Result> Run(bool shouldComplete)
                 {
                     return shouldComplete
                         ? await Complete()
-                        : SharedKernel.Results.Result.Ok();
+                        : PandaBear.Results.Result.Ok();
                 }
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
 
@@ -471,7 +471,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         var source = $$"""
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -483,20 +483,20 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
             public sealed class Workflow
             {
-                private async {{taskType}}<SharedKernel.Results.Result> Complete()
+                private async {{taskType}}<PandaBear.Results.Result> Complete()
                 {
                     await Task.Yield();
-                    return SharedKernel.Results.Result.Ok();
+                    return PandaBear.Results.Result.Ok();
                 }
 
-                public {{taskType}}<SharedKernel.Results.Result> Forward()
+                public {{taskType}}<PandaBear.Results.Result> Forward()
                 {
                     return Complete();
                 }
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
 
@@ -514,7 +514,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         var source = $$"""
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -530,15 +530,15 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
             public sealed class Workflow
             {
-                private async {{taskType}}<SharedKernel.Results.Result<string>> Complete()
+                private async {{taskType}}<PandaBear.Results.Result<string>> Complete()
                 {
                     await Task.Yield();
-                    return SharedKernel.Results.Result.Ok("Theme");
+                    return PandaBear.Results.Result.Ok("Theme");
                 }
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
 
@@ -554,7 +554,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -566,19 +566,19 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
             public sealed class Workflow
             {
-                private SharedKernel.Results.Result Complete(bool useAlternate)
+                private PandaBear.Results.Result Complete(bool useAlternate)
                 {
                     if (useAlternate)
                     {
-                        return SharedKernel.Results.Result.Ok();
+                        return PandaBear.Results.Result.Ok();
                     }
 
-                    return SharedKernel.Results.Result.Ok();
+                    return PandaBear.Results.Result.Ok();
                 }
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
 
@@ -594,7 +594,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -606,19 +606,19 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
             public sealed class Workflow
             {
-                private SharedKernel.Results.Result Complete()
+                private PandaBear.Results.Result Complete()
                 {
-                    return SharedKernel.Results.Result.Ok();
+                    return PandaBear.Results.Result.Ok();
                 }
 
-                public System.Func<SharedKernel.Results.Result> CreateCallback()
+                public System.Func<PandaBear.Results.Result> CreateCallback()
                 {
                     return Complete;
                 }
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
 
@@ -636,7 +636,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         var source = $$"""
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -648,21 +648,21 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             {
                 public sealed class Workflow
                 {
-                    public System.Func<{{taskType}}<SharedKernel.Results.Result>> CreateCallback()
+                    public System.Func<{{taskType}}<PandaBear.Results.Result>> CreateCallback()
                     {
                         return async () => await Complete();
                     }
 
-                    private async {{taskType}}<SharedKernel.Results.Result> Complete()
+                    private async {{taskType}}<PandaBear.Results.Result> Complete()
                     {
                         await Task.Yield();
-                        return SharedKernel.Results.Result.Ok();
+                        return PandaBear.Results.Result.Ok();
                     }
                 }
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
 
@@ -675,7 +675,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Assert
         updatedText.ShouldContain("async () =>", StringComparison.Ordinal);
         updatedText.ShouldContain("await Complete();", StringComparison.Ordinal);
-        updatedText.ShouldContain("return global::SharedKernel.Results.Result.Ok();", StringComparison.Ordinal);
+        updatedText.ShouldContain("return global::PandaBear.Results.Result.Ok();", StringComparison.Ordinal);
         updatedText.ShouldNotContain("=> await Complete()", StringComparison.Ordinal);
         compilationDiagnostics.ShouldNotContain(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error);
     }
@@ -685,7 +685,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -710,19 +710,19 @@ public sealed class SharedKernelStyleCodeFixProviderTests
 
             public sealed class Workflow
             {
-                private SharedKernel.Results.Result Complete()
+                private PandaBear.Results.Result Complete()
                 {
-                    return SharedKernel.Results.Result.Ok();
+                    return PandaBear.Results.Result.Ok();
                 }
 
-                public async Task<SharedKernel.Results.Result> Run()
+                public async Task<PandaBear.Results.Result> Run()
                 {
                     return await Complete();
                 }
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var analyzer = new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer();
+        var analyzer = new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer();
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = (await workspace.GetAnalyzerDiagnostics(analyzer)).ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod);
 
@@ -738,7 +738,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly struct Result
                 {
@@ -752,19 +752,19 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             {
                 public bool IsFailure => true;
 
-                public static implicit operator ResultWrapper(SharedKernel.Results.Result result) => new();
+                public static implicit operator ResultWrapper(PandaBear.Results.Result result) => new();
 
-                public static implicit operator SharedKernel.Results.Result(ResultWrapper wrapper) => SharedKernel.Results.Result.Ok();
+                public static implicit operator PandaBear.Results.Result(ResultWrapper wrapper) => PandaBear.Results.Result.Ok();
             }
 
             public sealed class Workflow
             {
-                private SharedKernel.Results.Result Complete()
+                private PandaBear.Results.Result Complete()
                 {
-                    return SharedKernel.Results.Result.Ok();
+                    return PandaBear.Results.Result.Ok();
                 }
 
-                public SharedKernel.Results.Result Run()
+                public PandaBear.Results.Result Run()
                 {
                     ResultWrapper result = Complete();
                     if (result.IsFailure)
@@ -772,7 +772,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                         return result;
                     }
 
-                    return SharedKernel.Results.Result.Ok();
+                    return PandaBear.Results.Result.Ok();
                 }
             }
             """;
@@ -1660,14 +1660,14 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Domain
+            namespace PandaBear.Domain
             {
                 public interface IDomainEvent;
             }
 
             namespace Demo;
 
-            public sealed record TourCreated(System.Guid TourId) : SharedKernel.Domain.IDomainEvent;
+            public sealed record TourCreated(System.Guid TourId) : PandaBear.Domain.IDomainEvent;
 
             public sealed class Consumer
             {
@@ -1675,7 +1675,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(new styleanalyzers::SharedKernel.Style.Analyzers.SharedKernelStyleAnalyzer());
+        var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(new styleanalyzers::PandaBear.Style.Analyzers.SharedKernelStyleAnalyzer());
         var provider = new SharedKernelStyleCodeFixProvider();
         var diagnostic = analyzerDiagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == Analyzers.StyleDiagnosticIds.DomainEventSuffix);
 
@@ -1687,7 +1687,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        updatedText.ShouldContain("public sealed record TourCreatedDomainEvent(System.Guid TourId) : SharedKernel.Domain.IDomainEvent;", StringComparison.Ordinal);
+        updatedText.ShouldContain("public sealed record TourCreatedDomainEvent(System.Guid TourId) : PandaBear.Domain.IDomainEvent;", StringComparison.Ordinal);
         updatedText.ShouldContain("public TourCreatedDomainEvent Create() => new(System.Guid.NewGuid());", StringComparison.Ordinal);
         updatedText.ShouldNotContain("TourCreated ", StringComparison.Ordinal);
     }
@@ -2079,7 +2079,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedText).ShouldContain("using SharedKernel.BuildingBlocks;", StringComparison.Ordinal);
+        (updatedText).ShouldContain("using PandaBear.BuildingBlocks;", StringComparison.Ordinal);
         (updatedText).ShouldContain("catch (Exception ex) when (ex.ShouldHandleAsFailure(ct))", StringComparison.Ordinal);
         (updatedText).ShouldNotContain("ex is not OperationCanceledException", StringComparison.Ordinal);
     }
@@ -2089,7 +2089,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            using SharedKernel.BuildingBlocks;
+            using PandaBear.BuildingBlocks;
 
             namespace Demo;
 
@@ -2118,7 +2118,7 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedText.LastIndexOf("using SharedKernel.BuildingBlocks;", StringComparison.Ordinal)).ShouldBe(updatedText.IndexOf("using SharedKernel.BuildingBlocks;", StringComparison.Ordinal));
+        (updatedText.LastIndexOf("using PandaBear.BuildingBlocks;", StringComparison.Ordinal)).ShouldBe(updatedText.IndexOf("using PandaBear.BuildingBlocks;", StringComparison.Ordinal));
         (updatedText).ShouldContain("catch (Exception ex) when (ex.ShouldHandleAsFailure(ct))", StringComparison.Ordinal);
     }
 

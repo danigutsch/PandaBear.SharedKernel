@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
 
-namespace SharedKernel.Mediator.Tests;
+namespace PandaBear.Mediator.Tests;
 
 /// <summary>
 /// Provides nested test-only types used by the reference-dispatcher correctness tests.

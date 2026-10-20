@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SharedKernel.Testing.AspNetCore;
+namespace PandaBear.Testing.AspNetCore;
 
 /// <summary>
 /// Creates ASP.NET Core test hosts with optional environment and service overrides.

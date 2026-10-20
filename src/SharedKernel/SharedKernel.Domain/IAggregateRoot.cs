@@ -1,4 +1,4 @@
-namespace SharedKernel.Domain;
+namespace PandaBear.Domain;
 
 /// <summary>
 /// Marks an entity as an aggregate root that records domain events.

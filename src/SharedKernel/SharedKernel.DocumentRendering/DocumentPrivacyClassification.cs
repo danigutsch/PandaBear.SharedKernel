@@ -1,4 +1,4 @@
-namespace SharedKernel.DocumentRendering;
+namespace PandaBear.DocumentRendering;
 
 /// <summary>
 /// Classifies content before it is included in a rendered document.

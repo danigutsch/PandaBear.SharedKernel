@@ -1,4 +1,4 @@
-namespace SharedKernel.Domain;
+namespace PandaBear.Domain;
 
 /// <summary>
 /// Marks a domain aggregate root identified by a stable identifier.

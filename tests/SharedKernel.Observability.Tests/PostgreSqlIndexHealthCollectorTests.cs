@@ -1,7 +1,7 @@
 using Npgsql;
-using SharedKernel.Testing;
+using PandaBear.Testing;
 
-namespace SharedKernel.Observability.Npgsql.Tests;
+namespace PandaBear.Observability.Npgsql.Tests;
 
 [Trait(TestTraitNames.ScopeName, TestTraits.UnitScope)]
 [Trait(TestTraits.ComponentName, TestTraits.PostgreSqlObservabilityComponent)]

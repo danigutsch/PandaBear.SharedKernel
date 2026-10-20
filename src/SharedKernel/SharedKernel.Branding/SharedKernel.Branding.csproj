@@ -3,14 +3,19 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Branding</PackageId>
         <Description>Reusable branding settings contracts, validation, and HTTP client primitives.</Description>
-        <RootNamespace>SharedKernel.Branding</RootNamespace>
+        <RootNamespace>PandaBear.Branding</RootNamespace>
         <PackageTags>branding;settings;validation;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.HttpClients\SharedKernel.HttpClients.csproj" />
         <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
         <ProjectReference Include="..\SharedKernel.Results\SharedKernel.Results.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Reflection;
 using BenchmarkDotNet.Attributes;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Measures dispatch overhead for optional mediator observability under different listener states.

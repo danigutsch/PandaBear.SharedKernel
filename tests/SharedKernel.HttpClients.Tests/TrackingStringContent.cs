@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace SharedKernel.HttpClients.Tests;
+namespace PandaBear.HttpClients.Tests;
 
 internal sealed class TrackingStringContent(string content, string mediaType) : StringContent(content, Encoding.UTF8, mediaType)
 {

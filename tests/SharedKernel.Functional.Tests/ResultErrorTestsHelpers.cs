@@ -1,4 +1,4 @@
-namespace SharedKernel.Functional.Tests;
+namespace PandaBear.Functional.Tests;
 
 internal static class ResultErrorTestsHelpers
 {

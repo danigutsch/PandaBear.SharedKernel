@@ -1,4 +1,4 @@
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal static class TestTraits
 {

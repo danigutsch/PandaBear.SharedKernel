@@ -1,4 +1,4 @@
-namespace SharedKernel.ImageProcessing;
+namespace PandaBear.ImageProcessing;
 
 /// <summary>
 /// Contains an encoded image variant.

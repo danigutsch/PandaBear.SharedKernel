@@ -20,4 +20,10 @@ repository-wide style fixes, test-only fixes, or mediator fixes here.
 ## See Also
 
 - [SharedKernel.Aspire.Analyzers](../SharedKernel.Aspire.Analyzers/README.md)
-- `src/ViajantesTurismo.AppHost/README.md`
+- [Aspire official documentation](https://aspire.dev)
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Aspire.CodeFixes`. C# namespace: `PandaBear.Aspire.CodeFixes`. Assembly/project identity: `SharedKernel.Aspire.CodeFixes`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

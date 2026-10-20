@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore;
+namespace PandaBear.EntityFrameworkCore;
 
 /// <summary>
 /// Enables EF Core diagnostics intended for local development only.

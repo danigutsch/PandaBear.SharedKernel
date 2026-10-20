@@ -1,8 +1,8 @@
 #nullable enable
-SharedKernel.Documentation.DocumentationConformanceChecker
-static SharedKernel.Documentation.DocumentationConformanceChecker.Check(string! rootPath, string! configPath) -> int
-SharedKernel.Documentation.DocumentationGenerationResult
-SharedKernel.Documentation.DocumentationGenerationResult.ChangedFiles.get -> System.Collections.Generic.IReadOnlyList<string!>!
-SharedKernel.Documentation.DocumentationGenerationResult.DocumentationGenerationResult(System.Collections.Generic.IReadOnlyList<string!>! changedFiles) -> void
-SharedKernel.Documentation.DocumentationGenerator
-static SharedKernel.Documentation.DocumentationGenerator.Run(string! rootPath, string! configPath, bool checkOnly) -> SharedKernel.Documentation.DocumentationGenerationResult!
+PandaBear.Documentation.DocumentationConformanceChecker
+static PandaBear.Documentation.DocumentationConformanceChecker.Check(string! rootPath, string! configPath) -> int
+PandaBear.Documentation.DocumentationGenerationResult
+PandaBear.Documentation.DocumentationGenerationResult.ChangedFiles.get -> System.Collections.Generic.IReadOnlyList<string!>!
+PandaBear.Documentation.DocumentationGenerationResult.DocumentationGenerationResult(System.Collections.Generic.IReadOnlyList<string!>! changedFiles) -> void
+PandaBear.Documentation.DocumentationGenerator
+static PandaBear.Documentation.DocumentationGenerator.Run(string! rootPath, string! configPath, bool checkOnly) -> PandaBear.Documentation.DocumentationGenerationResult!

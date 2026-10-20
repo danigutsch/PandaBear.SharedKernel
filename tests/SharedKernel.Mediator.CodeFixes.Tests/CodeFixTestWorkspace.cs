@@ -4,9 +4,9 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
-using SharedKernel.Mediator.SourceGenerator;
+using PandaBear.Mediator.SourceGenerator;
 
-namespace SharedKernel.Mediator.CodeFixes.Tests;
+namespace PandaBear.Mediator.CodeFixes.Tests;
 
 /// <summary>
 /// Creates and mutates an in-memory workspace for mediator code-fix tests.

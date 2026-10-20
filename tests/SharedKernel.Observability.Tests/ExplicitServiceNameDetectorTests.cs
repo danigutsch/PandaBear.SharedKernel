@@ -1,4 +1,4 @@
-namespace SharedKernel.Observability.Tests;
+namespace PandaBear.Observability.Tests;
 
 public class ExplicitServiceNameDetectorTests
 {

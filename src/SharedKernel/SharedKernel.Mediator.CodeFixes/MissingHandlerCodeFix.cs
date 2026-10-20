@@ -3,9 +3,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Text;
-using SharedKernel.Mediator.SourceGenerator;
+using PandaBear.Mediator.SourceGenerator;
 
-namespace SharedKernel.Mediator.CodeFixes;
+namespace PandaBear.Mediator.CodeFixes;
 
 /// <summary>
 /// Generates a missing handler when a request has no existing handler candidates.
@@ -92,7 +92,7 @@ internal static class MissingHandlerCodeFix
                 plan = new GenerationPlan(
                     handlerName,
                     namespaceName,
-                    $"global::SharedKernel.Mediator.IQueryHandler<{requestTypeName}, {responseTypeName}>",
+                    $"global::PandaBear.Mediator.IQueryHandler<{requestTypeName}, {responseTypeName}>",
                     $"global::System.Threading.Tasks.ValueTask<{responseTypeName}>",
                     requestTypeName,
                     NotImplementedBody);
@@ -105,7 +105,7 @@ internal static class MissingHandlerCodeFix
                 plan = new GenerationPlan(
                     handlerName,
                     namespaceName,
-                    $"global::SharedKernel.Mediator.ICommandHandler<{requestTypeName}, {responseTypeName}>",
+                    $"global::PandaBear.Mediator.ICommandHandler<{requestTypeName}, {responseTypeName}>",
                     $"global::System.Threading.Tasks.ValueTask<{responseTypeName}>",
                     requestTypeName,
                     NotImplementedBody);
@@ -117,8 +117,8 @@ internal static class MissingHandlerCodeFix
                 plan = new GenerationPlan(
                     handlerName,
                     namespaceName,
-                    $"global::SharedKernel.Mediator.ICommandHandler<{requestTypeName}>",
-                    "global::System.Threading.Tasks.ValueTask<global::SharedKernel.Mediator.Unit>",
+                    $"global::PandaBear.Mediator.ICommandHandler<{requestTypeName}>",
+                    "global::System.Threading.Tasks.ValueTask<global::PandaBear.Mediator.Unit>",
                     requestTypeName,
                     NotImplementedBody);
                 return true;
@@ -130,7 +130,7 @@ internal static class MissingHandlerCodeFix
                 plan = new GenerationPlan(
                     handlerName,
                     namespaceName,
-                    $"global::SharedKernel.Mediator.IRequestHandler<{requestTypeName}, {responseTypeName}>",
+                    $"global::PandaBear.Mediator.IRequestHandler<{requestTypeName}, {responseTypeName}>",
                     $"global::System.Threading.Tasks.ValueTask<{responseTypeName}>",
                     requestTypeName,
                     NotImplementedBody);

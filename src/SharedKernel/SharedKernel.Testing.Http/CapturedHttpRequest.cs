@@ -1,4 +1,4 @@
-namespace SharedKernel.Testing.Http;
+namespace PandaBear.Testing.Http;
 
 /// <summary>
 /// Describes an HTTP request captured by a test message handler.

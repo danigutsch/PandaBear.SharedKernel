@@ -1,4 +1,4 @@
-namespace SharedKernel.EventSourcing.Npgsql;
+namespace PandaBear.EventSourcing.Npgsql;
 
 /// <summary>
 /// Configures PostgreSQL event-sourcing storage.

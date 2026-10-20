@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace SharedKernel.PlaywrightMcp.Tool;
+namespace PandaBear.PlaywrightMcp.Tool;
 
 internal static class PlaywrightMcpCommand
 {

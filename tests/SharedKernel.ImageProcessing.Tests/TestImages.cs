@@ -1,6 +1,6 @@
 using ImageMagick;
 
-namespace SharedKernel.ImageProcessing.Tests;
+namespace PandaBear.ImageProcessing.Tests;
 
 internal static class TestImages
 {

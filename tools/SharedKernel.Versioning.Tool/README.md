@@ -30,28 +30,27 @@ sharedkernel-version prepare-release --version <semver> --package-dir <path> < c
 
 ## Restore or install
 
-Use this repository's local tool manifest when the tool is added there:
+This repository builds the tool directly; no local tool manifest is required:
 
 ```text
-dotnet tool restore
-dotnet tool run sharedkernel-version -- --help
+dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- --help
 ```
 
 Install from a local package during development:
 
 ```text
-dotnet pack tools/SharedKernel.Versioning.Tool/SharedKernel.Versioning.Tool.csproj -o /tmp/opencode/sharedkernel-version-pack
-dotnet tool install SharedKernel.Versioning.Tool --tool-path ./.tools --add-source /tmp/opencode/sharedkernel-version-pack
+dotnet pack tools/SharedKernel.Versioning.Tool/SharedKernel.Versioning.Tool.csproj -o artifacts/local-tool-feed
+dotnet tool install PandaBear.SharedKernel.Versioning.Tool --tool-path ./.tools --version <validated-candidate-version> --add-source artifacts/local-tool-feed
 ./.tools/sharedkernel-version --help
 ```
 
 When installing from this repository, follow the local-feed source-mapping notes in
-`docs/SHAREDKERNEL_PACKAGING.md`.
+[release policy](../../docs/release-policy.md).
 
 Install as a global tool only from a trusted package source:
 
 ```text
-dotnet tool install --global SharedKernel.Versioning.Tool --add-source <trusted-package-source>
+dotnet tool install --global PandaBear.SharedKernel.Versioning.Tool --version <validated-candidate-version> --add-source <trusted-package-source>
 sharedkernel-version --help
 ```
 
@@ -93,9 +92,9 @@ Output fields:
 - `informationalVersion`
 
 GitHub Actions output names use snake case: `sem_ver`, `release_impact`, `package_version`,
-`assembly_version`, `file_version`, `informational_version`, and `source_tag`. Release workflows pass
-`package_version` to Aspire as the application container image tag and pass `informational_version` to
-MSBuild so deployed diagnostics report the same release identity.
+`assembly_version`, `file_version`, `informational_version`, and `source_tag`. Library release workflows use
+`package_version` for immutable package identity. Application container tagging and deployment remain
+consumer-owned.
 
 The `compute` command reads commit messages from standard input. Non-Conventional merge commits are
 ignored; valid Conventional Commit messages drive the release impact. Use null-separated input when
@@ -154,7 +153,7 @@ flow.
 Repository check for a native Linux x64 binary:
 
 ```text
-dotnet publish tools/SharedKernel.Versioning.Tool/SharedKernel.Versioning.Tool.csproj -c Release -r linux-x64 -p:PublishAot=true -p:IsRoslynComponent=true -o /tmp/opencode/sharedkernel-version-aot-check
+dotnet publish tools/SharedKernel.Versioning.Tool/SharedKernel.Versioning.Tool.csproj -c Release -r linux-x64 -p:PublishAot=true -p:IsRoslynComponent=true -o artifacts/sharedkernel-version-aot-check
 ```
 
 `IsRoslynComponent=true` skips repository analyzer project references during the publish check so the
@@ -173,4 +172,10 @@ compatibility is owned by ViajantesTurismo tooling.
 verifies the pinned library revision and package hashes before copying packages. Existing different
 artifacts are never overwritten. Repeating staging with identical artifacts is safe. Cancellation removes
 incomplete temporary copies; previously verified packages remain reusable. No package registry is contacted
-by staging. Assemblies and namespaces remain `SharedKernel.*`; package IDs use `PandaBear.SharedKernel.*`.
+by staging. Assemblies remain `SharedKernel.*`; C# namespaces use `PandaBear.*`; package IDs use `PandaBear.SharedKernel.*`.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Versioning.Tool`. C# namespace: `PandaBear.Versioning.Tool`. Assembly/project identity: `SharedKernel.Versioning.Tool`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

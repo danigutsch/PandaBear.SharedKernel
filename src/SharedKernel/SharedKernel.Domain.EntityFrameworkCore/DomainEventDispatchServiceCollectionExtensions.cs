@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using SharedKernel.EntityFrameworkCore;
+using PandaBear.EntityFrameworkCore;
 
-namespace SharedKernel.Domain.EntityFrameworkCore;
+namespace PandaBear.Domain.EntityFrameworkCore;
 
 /// <summary>
 /// Provides service registration helpers for EF Core domain-event dispatching.

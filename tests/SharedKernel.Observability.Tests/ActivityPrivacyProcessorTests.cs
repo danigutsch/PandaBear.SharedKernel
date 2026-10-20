@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace SharedKernel.Observability.Tests;
+namespace PandaBear.Observability.Tests;
 
 public sealed class ActivityPrivacyProcessorTests
 {

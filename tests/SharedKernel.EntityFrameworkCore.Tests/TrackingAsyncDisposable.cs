@@ -1,4 +1,4 @@
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal sealed class TrackingAsyncDisposable(
     string name,

@@ -1,4 +1,4 @@
-namespace SharedKernel.Functional.Benchmarks;
+namespace PandaBear.Functional.Benchmarks;
 
 /// <summary>
 /// Larger value-type payload used to compare by-value and <c>in</c> helper calls in benchmarks.

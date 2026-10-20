@@ -1,6 +1,6 @@
 using System.Runtime.ExceptionServices;
 
-namespace SharedKernel.Documentation.Tests;
+namespace PandaBear.Documentation.Tests;
 
 internal sealed class PathTooLongExceptionCapture : IDisposable
 {

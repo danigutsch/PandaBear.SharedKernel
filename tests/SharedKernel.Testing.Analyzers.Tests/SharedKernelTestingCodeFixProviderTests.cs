@@ -2,7 +2,7 @@ extern alias testingcodefixes;
 
 using System.Collections.Immutable;
 
-namespace SharedKernel.Testing.Analyzers.Tests;
+namespace PandaBear.Testing.Analyzers.Tests;
 
 public sealed class SharedKernelTestingCodeFixProviderTests
 {
@@ -31,7 +31,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             }
             """;
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(diagnosticId, "Sample()");
 
         // Act
@@ -64,7 +64,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
         var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
@@ -91,7 +91,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Some_Title()");
 
         var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
@@ -122,7 +122,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -148,7 +148,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -172,7 +172,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Tour()");
 
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
@@ -196,7 +196,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "UsesHTTP2TimeoutFallback()");
 
         var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
@@ -210,7 +210,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [Fact]
     public void Fix_all_is_not_advertised_for_testing_code_fixes()
     {
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         (provider.GetFixAllProvider().GetSupportedFixAllScopes()).ShouldBeEmpty();
     }
@@ -218,7 +218,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [Fact]
     public void Provider_advertises_warning_suppression_diagnostic()
     {
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         provider.FixableDiagnosticIds.ShouldContain(WarningSuppressionDiagnosticId);
     }
@@ -243,7 +243,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(WarningSuppressionDiagnosticId, "#pragma warning disable CA1822");
 
         // Act
@@ -276,7 +276,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             .Add("TraitValue", "Smoke");
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitRequiredTraitDiagnosticId,
             "Creates_a_tour_when_the_request_is_valid()",
@@ -308,7 +308,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitRequiredTraitDiagnosticId,
             "Creates_a_tour_when_the_request_is_valid()");
@@ -323,7 +323,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [Fact]
     public void Provider_advertises_serial_justification_diagnostic()
     {
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         provider.FixableDiagnosticIds.ShouldContain(XunitSerialJustificationDiagnosticId);
     }
@@ -331,7 +331,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [Fact]
     public void Provider_advertises_assertion_wrapper_diagnostic()
     {
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         provider.FixableDiagnosticIds.ShouldContain(XunitAssertionWrapperDiagnosticId);
     }
@@ -339,7 +339,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [Fact]
     public void Provider_advertises_trait_constant_usage_diagnostic()
     {
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         provider.FixableDiagnosticIds.ShouldContain(XunitTraitConstantUsageDiagnosticId);
     }
@@ -347,7 +347,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [Fact]
     public void Provider_advertises_helper_method_diagnostic()
     {
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         provider.FixableDiagnosticIds.ShouldContain(XunitHelperMethodDiagnosticId);
     }
@@ -380,7 +380,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """.ReplaceLineEndings("\r\n");
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId()");
@@ -426,7 +426,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "static int CreateTourId()");
@@ -466,7 +466,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int @switch()");
@@ -508,7 +508,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source, includeDefaultUsings: false);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId()");
@@ -548,7 +548,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId()");
@@ -590,7 +590,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private int CreateTourId()");
@@ -627,7 +627,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId()");
@@ -662,7 +662,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "internal static int CreateTourId()");
@@ -701,7 +701,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var helperFilePath = Path.Combine(tempDirectory.Path, "TourLoaderTestsHelpers.cs");
         await File.WriteAllTextAsync(helperFilePath, string.Empty, TestContext.Current.CancellationToken);
         var workspace = CodeFixTestWorkspace.Create(source, filePath: sourcePath);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId()");
@@ -742,7 +742,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             helperDeclaration);
@@ -789,7 +789,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId(string value)");
@@ -835,7 +835,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId(string value)");
@@ -873,7 +873,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitHelperMethodDiagnosticId,
             "private static int CreateTourId(string value)");
@@ -890,7 +890,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Testing
+            namespace PandaBear.Testing
             {
                 public static class TestTraitNames
                 {
@@ -912,9 +912,9 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var workspace = CodeFixTestWorkspace.Create(source);
         var analyzerDiagnostics = await workspace.GetAnalyzerDiagnostics(new SharedKernelTestingAnalyzer());
         var diagnostic = analyzerDiagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        diagnostic.Properties["Replacement"].ShouldBe("global::SharedKernel.Testing.TestTraitNames.CategoryName");
+        diagnostic.Properties["Replacement"].ShouldBe("global::PandaBear.Testing.TestTraitNames.CategoryName");
 
         // Act
         var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
@@ -922,7 +922,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        updatedText.ShouldContain("[Trait(global::SharedKernel.Testing.TestTraitNames.CategoryName, \"Smoke\")]", StringComparison.Ordinal);
+        updatedText.ShouldContain("[Trait(global::PandaBear.Testing.TestTraitNames.CategoryName, \"Smoke\")]", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -943,7 +943,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitTraitConstantUsageDiagnosticId,
             "\"Category\"");
@@ -994,7 +994,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var sourceText = await workspace.GetDocumentText();
         var diagnostics = await workspace.GetAnalyzerDiagnostics(new SharedKernelTestingAnalyzer());
         var diagnostic = diagnostics
@@ -1007,7 +1007,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        updatedText.ShouldContain("using SharedKernel.Testing.Assertions;", StringComparison.Ordinal);
+        updatedText.ShouldContain("using PandaBear.Testing.Assertions;", StringComparison.Ordinal);
         updatedText.ShouldContain(expectedRewrite, StringComparison.Ordinal);
     }
 
@@ -1028,7 +1028,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, "Assert.Multiple");
 
         // Act
@@ -1055,7 +1055,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, "Assert.Equal");
 
         // Act
@@ -1082,7 +1082,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitAssertionWrapperDiagnosticId, "Assert.Single");
 
         // Act
@@ -1106,7 +1106,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitSerialJustificationDiagnosticId,
             "SerialDatabaseCollection");
@@ -1117,7 +1117,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        updatedText.ShouldContain("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
+        updatedText.ShouldContain("[global::PandaBear.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
         updatedText.ShouldContain("[global::Xunit.CollectionDefinition(\"Serial database\", DisableParallelization = true)]", StringComparison.Ordinal);
         var justificationPrecedesCollectionDefinition = updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) <
             updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal);
@@ -1136,7 +1136,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             """;
 
         var workspace = CodeFixTestWorkspace.Create(source);
-        var provider = new testingcodefixes::SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(
             XunitSerialJustificationDiagnosticId,
             "SerialDatabaseCollection");
@@ -1147,7 +1147,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var updatedText = await workspace.GetDocumentText();
 
         // Assert
-        updatedText.ShouldContain("[global::SharedKernel.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
+        updatedText.ShouldContain("[global::PandaBear.Testing.SerialTestJustification(\"TODO: explain why this collection must run serially.\")]", StringComparison.Ordinal);
         updatedText.ShouldContain("public sealed record SerialDatabaseCollection;", StringComparison.Ordinal);
         var justificationPrecedesCollectionDefinition = updatedText.IndexOf("SerialTestJustification", StringComparison.Ordinal) <
             updatedText.IndexOf("CollectionDefinition", StringComparison.Ordinal);

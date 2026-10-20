@@ -1,4 +1,4 @@
-namespace SharedKernel.RepoConfig.Tests;
+namespace PandaBear.RepoConfig.Tests;
 
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubIssueSnapshotDigestTests

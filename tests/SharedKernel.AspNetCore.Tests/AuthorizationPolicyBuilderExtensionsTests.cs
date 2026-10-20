@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 
-namespace SharedKernel.AspNetCore.Tests;
+namespace PandaBear.AspNetCore.Tests;
 
 /// <summary>
 /// Verifies application-owned permission policy requirements.

@@ -1,9 +1,9 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Npgsql;
-using SharedKernel.IntegrationTesting;
+using PandaBear.IntegrationTesting;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 /// <summary>
 /// Provides one lazily started PostgreSQL server and isolated databases for this test assembly.

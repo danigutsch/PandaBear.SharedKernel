@@ -1,3 +1,3 @@
-using SharedKernel.Repository.Tool;
+using PandaBear.Repository.Tool;
 
 return RepositoryToolApplication.Run(args, Console.Out, Console.Error);

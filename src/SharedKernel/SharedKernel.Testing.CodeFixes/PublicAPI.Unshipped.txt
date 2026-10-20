@@ -1,16 +1,16 @@
 #nullable enable
-SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider
-SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.SharedKernelTestingCodeFixProvider() -> void
-override SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
-override SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
-override SharedKernel.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
-SharedKernel.Testing.Analyzers.TestingDiagnosticIds
-const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitArrangeActAssertMarkers = "SKTEST007" -> string!
-const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitAssertionWrapper = "SKTEST006" -> string!
-const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTraitConstantUsage = "SKTEST009" -> string!
-const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTryFinallyCleanup = "SKTEST008" -> string!
-const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.TestMethodWarningSuppression = "SKTEST001" -> string!
-const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming = "SKTEST002" -> string!
-const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodRequiredTrait = "SKTEST003" -> string!
-const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitTestClassHelperMethod = "SKTEST004" -> string!
-const SharedKernel.Testing.Analyzers.TestingDiagnosticIds.XunitSerialCollectionJustification = "SKTEST005" -> string!
+PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider
+PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.SharedKernelTestingCodeFixProvider() -> void
+override PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider!
+override PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+PandaBear.Testing.Analyzers.TestingDiagnosticIds
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitArrangeActAssertMarkers = "SKTEST007" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitAssertionWrapper = "SKTEST006" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTraitConstantUsage = "SKTEST009" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTryFinallyCleanup = "SKTEST008" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.TestMethodWarningSuppression = "SKTEST001" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming = "SKTEST002" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodRequiredTrait = "SKTEST003" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestClassHelperMethod = "SKTEST004" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitSerialCollectionJustification = "SKTEST005" -> string!

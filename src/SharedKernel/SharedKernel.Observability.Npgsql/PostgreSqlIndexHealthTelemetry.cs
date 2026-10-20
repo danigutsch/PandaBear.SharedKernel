@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 
-namespace SharedKernel.Observability.Npgsql;
+namespace PandaBear.Observability.Npgsql;
 
 /// <summary>Defines the bounded OpenTelemetry metric contract for PostgreSQL index-health collection.</summary>
 public static class PostgreSqlIndexHealthTelemetry

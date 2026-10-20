@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore;
+namespace PandaBear.EntityFrameworkCore;
 
 /// <summary>
 /// Runs continuations inside retry-compatible EF Core transactions.

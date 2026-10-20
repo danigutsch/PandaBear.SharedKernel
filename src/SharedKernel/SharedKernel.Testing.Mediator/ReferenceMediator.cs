@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
-using SharedKernel.Mediator;
+using PandaBear.Mediator;
 
-namespace SharedKernel.Testing.Mediator;
+namespace PandaBear.Testing.Mediator;
 
 /// <summary>
 /// Provides a test-only mediator implementation used as a correctness oracle for generated dispatch.

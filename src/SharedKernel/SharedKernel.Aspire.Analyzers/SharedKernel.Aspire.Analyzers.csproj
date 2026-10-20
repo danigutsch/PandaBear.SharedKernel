@@ -5,7 +5,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Aspire.Analyzers</PackageId>
         <Description>Analyzers for SharedKernel Aspire conventions.</Description>
-        <RootNamespace>SharedKernel.Aspire.Analyzers</RootNamespace>
+        <RootNamespace>PandaBear.Aspire.Analyzers</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspire;analyzers;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

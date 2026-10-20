@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.Hosting;
 
-namespace SharedKernel.OpenApi;
+namespace PandaBear.OpenApi;
 
 /// <summary>
 /// Identifies the ASP.NET Core build-time OpenAPI document generator process.

@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Measures direct request-handler API shape costs across request forms and completion modes.

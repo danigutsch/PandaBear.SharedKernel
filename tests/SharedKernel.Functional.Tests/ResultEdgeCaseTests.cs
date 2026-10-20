@@ -1,4 +1,4 @@
-namespace SharedKernel.Functional.Tests;
+namespace PandaBear.Functional.Tests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]

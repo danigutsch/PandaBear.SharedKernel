@@ -1,4 +1,4 @@
-namespace SharedKernel.AspNetCore;
+namespace PandaBear.AspNetCore;
 
 /// <summary>
 /// Defines provider-neutral API authentication configuration and claim conventions.

@@ -1,4 +1,4 @@
-namespace SharedKernel.Testing.System;
+namespace PandaBear.Testing.System;
 
 /// <summary>
 /// Shared constants for full-system browser tests.

@@ -1,4 +1,4 @@
-namespace SharedKernel.Testing;
+namespace PandaBear.Testing;
 
 /// <summary>
 /// Shared trait values used by multiple test projects.

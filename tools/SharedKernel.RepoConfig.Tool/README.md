@@ -20,3 +20,9 @@ Application CI slices, coverage exclusions, bootstrap, and consumer compatibilit
 ## Roadmap automation
 
 Use `automation plan-github` for an integrity-bound plan. Application workflow configuration and protected-environment approval remain consumer-owned. Applying and publishing require the reviewed plan and artifact digests; publication also requires a sealed result.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.RepoConfig.Tool`. C# namespace: `PandaBear.RepoConfig.Tool`. Assembly/project identity: `SharedKernel.RepoConfig.Tool`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

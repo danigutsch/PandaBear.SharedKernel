@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>SharedKernel.Mediator.GeneratorTests</RootNamespace>
+        <RootNamespace>PandaBear.Mediator.GeneratorTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
 

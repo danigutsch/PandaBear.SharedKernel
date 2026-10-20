@@ -1,4 +1,4 @@
-namespace SharedKernel.Versioning;
+namespace PandaBear.Versioning;
 
 /// <summary>
 /// Represents a Semantic Versioning 2.0.0 version core with optional prerelease and build metadata.

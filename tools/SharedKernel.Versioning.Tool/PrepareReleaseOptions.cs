@@ -1,4 +1,4 @@
-namespace SharedKernel.Versioning.Tool;
+namespace PandaBear.Versioning.Tool;
 
 internal sealed record PrepareReleaseOptions(
     string Version,

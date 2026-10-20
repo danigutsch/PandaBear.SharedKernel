@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace SharedKernel.Testing.Analyzers.Tests;
+namespace PandaBear.Testing.Analyzers.Tests;
 
 public sealed class SharedKernelTestingAnalyzerTests
 {
@@ -589,7 +589,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Testing
+            namespace PandaBear.Testing
             {
                 public static class TestTraitNames
                 {
@@ -620,7 +620,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var reportedText = sourceText.ToString(diagnostic.Location.SourceSpan);
 
         reportedText.ShouldBe("\"Category\"");
-        diagnostic.Properties["Replacement"].ShouldBe("global::SharedKernel.Testing.TestTraitNames.CategoryName");
+        diagnostic.Properties["Replacement"].ShouldBe("global::PandaBear.Testing.TestTraitNames.CategoryName");
     }
 
     [Fact]
@@ -663,7 +663,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Testing
+            namespace PandaBear.Testing
             {
                 public static class TestTraitNames
                 {
@@ -695,7 +695,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         // Assert
         var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == XunitTraitConstantUsageDiagnosticId);
 
-        diagnostic.Properties["Replacement"].ShouldBe("global::SharedKernel.Testing.TestTraitNames.CategoryName");
+        diagnostic.Properties["Replacement"].ShouldBe("global::PandaBear.Testing.TestTraitNames.CategoryName");
     }
 
     [Fact]
@@ -703,7 +703,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Testing
+            namespace PandaBear.Testing
             {
                 public static class TestTraitNames
                 {
@@ -721,7 +721,7 @@ public sealed class SharedKernelTestingAnalyzerTests
                 public sealed class TourLoaderTests
                 {
                     [Fact]
-                    [Trait(global::SharedKernel.Testing.TestTraitNames.CategoryName, TestTraits.SmokeCategory)]
+                    [Trait(global::PandaBear.Testing.TestTraitNames.CategoryName, TestTraits.SmokeCategory)]
                     public void Creates_a_tour_when_the_request_is_valid()
                     {
                     }
@@ -741,7 +741,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Testing
+            namespace PandaBear.Testing
             {
                 public static class TestTraitNames
                 {

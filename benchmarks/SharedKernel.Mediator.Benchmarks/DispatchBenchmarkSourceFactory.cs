@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Creates synthetic dispatch benchmark sources for generated-style mediator comparisons.
@@ -31,7 +31,7 @@ internal static class DispatchBenchmarkSourceFactory
 
         var targetIndex = requestCount - 1;
         var builder = new StringBuilder();
-        builder.AppendLine("using SharedKernel.Mediator;");
+        builder.AppendLine("using PandaBear.Mediator;");
         builder.AppendLine("using System.Collections.Frozen;");
         builder.AppendLine();
         builder.AppendLine("namespace BenchmarkApp;");

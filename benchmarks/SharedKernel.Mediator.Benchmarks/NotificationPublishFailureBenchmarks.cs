@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using System.Reflection;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Measures exceptional and canceled notification publish paths for sequential and parallel strategies.

@@ -41,3 +41,9 @@ None.
 
 - [SharedKernel.Mediator](../SharedKernel.Mediator/README.md)
 - [SharedKernel.Mediator.SourceGenerator](../SharedKernel.Mediator.SourceGenerator/README.md)
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Mediator.Abstractions`. C# namespace: `PandaBear.Mediator`. Assembly/project identity: `SharedKernel.Mediator.Abstractions`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

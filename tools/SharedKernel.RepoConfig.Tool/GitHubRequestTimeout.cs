@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace SharedKernel.RepoConfig.Tool;
+namespace PandaBear.RepoConfig.Tool;
 
 internal static class GitHubRequestTimeout
 {

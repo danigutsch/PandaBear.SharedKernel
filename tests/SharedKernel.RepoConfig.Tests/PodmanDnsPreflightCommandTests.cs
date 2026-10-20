@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
-namespace SharedKernel.RepoConfig.Tests;
+namespace PandaBear.RepoConfig.Tests;
 
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class PodmanDnsPreflightCommandTests

@@ -1,7 +1,7 @@
-using SharedKernel.Aspire.Analyzers;
-using SharedKernel.CodeFixes.Testing;
+using PandaBear.Aspire.Analyzers;
+using PandaBear.CodeFixes.Testing;
 
-namespace SharedKernel.Aspire.CodeFixes.Tests;
+namespace PandaBear.Aspire.CodeFixes.Tests;
 
 public sealed class SharedKernelAspireCodeFixProviderTests
 {

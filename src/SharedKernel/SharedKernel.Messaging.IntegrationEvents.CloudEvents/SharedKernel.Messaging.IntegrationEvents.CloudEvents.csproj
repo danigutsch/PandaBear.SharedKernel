@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Messaging.IntegrationEvents.CloudEvents</PackageId>
         <Description>CloudEvents interoperability adapter for typed integration-event messaging boundaries.</Description>
-        <RootNamespace>SharedKernel.Messaging.IntegrationEvents.CloudEvents</RootNamespace>
+        <RootNamespace>PandaBear.Messaging.IntegrationEvents.CloudEvents</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

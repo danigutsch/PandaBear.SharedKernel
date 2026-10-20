@@ -1,39 +1,39 @@
 #nullable enable
-SharedKernel.AI.IImageTextGenerator
-SharedKernel.AI.IImageTextGenerator.GenerateImageText(SharedKernel.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.AI.ImageTextGenerationResult!>
-SharedKernel.AI.ImageTextGenerationException
-SharedKernel.AI.ImageTextGenerationException.ImageTextGenerationException() -> void
-SharedKernel.AI.ImageTextGenerationException.ImageTextGenerationException(string! message) -> void
-SharedKernel.AI.ImageTextGenerationException.ImageTextGenerationException(string! message, System.Exception! innerException) -> void
-SharedKernel.AI.ImageTextGenerationRequest
-SharedKernel.AI.ImageTextGenerationRequest.ContentType.get -> string!
-SharedKernel.AI.ImageTextGenerationRequest.ContentType.init -> void
-SharedKernel.AI.ImageTextGenerationRequest.Context.get -> string?
-SharedKernel.AI.ImageTextGenerationRequest.Context.init -> void
-SharedKernel.AI.ImageTextGenerationRequest.Image.get -> System.IO.Stream!
-SharedKernel.AI.ImageTextGenerationRequest.Image.init -> void
-SharedKernel.AI.ImageTextGenerationRequest.Language.get -> string!
-SharedKernel.AI.ImageTextGenerationRequest.Language.init -> void
-SharedKernel.AI.ImageTextGenerationRequest.Latitude.get -> decimal?
-SharedKernel.AI.ImageTextGenerationRequest.Latitude.init -> void
-SharedKernel.AI.ImageTextGenerationRequest.Longitude.get -> decimal?
-SharedKernel.AI.ImageTextGenerationRequest.Longitude.init -> void
-SharedKernel.AI.ImageTextGenerationResult
-SharedKernel.AI.ImageTextGenerationResult.AltText.get -> string!
-SharedKernel.AI.ImageTextGenerationResult.AltText.init -> void
-SharedKernel.AI.ImageTextGenerationResult.Caption.get -> string?
-SharedKernel.AI.ImageTextGenerationResult.Caption.init -> void
-SharedKernel.AI.ImageTextGenerationResult.ImageTextGenerationResult(string! AltText, string? Caption) -> void
-SharedKernel.AI.LiteLlmImageTextGenerator
-SharedKernel.AI.LiteLlmImageTextGenerator.GenerateImageText(SharedKernel.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<SharedKernel.AI.ImageTextGenerationResult!>
-SharedKernel.AI.LiteLlmImageTextGenerator.LiteLlmImageTextGenerator(System.Net.Http.HttpClient! httpClient, SharedKernel.AI.LiteLlmImageTextGeneratorOptions! options) -> void
-SharedKernel.AI.LiteLlmImageTextGeneratorOptions
-SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ApiKey.get -> string?
-SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ApiKey.init -> void
-SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ChatCompletionsPath.get -> string!
-SharedKernel.AI.LiteLlmImageTextGeneratorOptions.ChatCompletionsPath.init -> void
-SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Endpoint.get -> System.Uri?
-SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Endpoint.init -> void
-SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Model.get -> string?
-SharedKernel.AI.LiteLlmImageTextGeneratorOptions.Model.init -> void
-const SharedKernel.AI.LiteLlmImageTextGeneratorOptions.SectionName = "AI:ImageText:LiteLlm" -> string!
+PandaBear.AI.IImageTextGenerator
+PandaBear.AI.IImageTextGenerator.GenerateImageText(PandaBear.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.AI.ImageTextGenerationResult!>
+PandaBear.AI.ImageTextGenerationException
+PandaBear.AI.ImageTextGenerationException.ImageTextGenerationException() -> void
+PandaBear.AI.ImageTextGenerationException.ImageTextGenerationException(string! message) -> void
+PandaBear.AI.ImageTextGenerationException.ImageTextGenerationException(string! message, System.Exception! innerException) -> void
+PandaBear.AI.ImageTextGenerationRequest
+PandaBear.AI.ImageTextGenerationRequest.ContentType.get -> string!
+PandaBear.AI.ImageTextGenerationRequest.ContentType.init -> void
+PandaBear.AI.ImageTextGenerationRequest.Context.get -> string?
+PandaBear.AI.ImageTextGenerationRequest.Context.init -> void
+PandaBear.AI.ImageTextGenerationRequest.Image.get -> System.IO.Stream!
+PandaBear.AI.ImageTextGenerationRequest.Image.init -> void
+PandaBear.AI.ImageTextGenerationRequest.Language.get -> string!
+PandaBear.AI.ImageTextGenerationRequest.Language.init -> void
+PandaBear.AI.ImageTextGenerationRequest.Latitude.get -> decimal?
+PandaBear.AI.ImageTextGenerationRequest.Latitude.init -> void
+PandaBear.AI.ImageTextGenerationRequest.Longitude.get -> decimal?
+PandaBear.AI.ImageTextGenerationRequest.Longitude.init -> void
+PandaBear.AI.ImageTextGenerationResult
+PandaBear.AI.ImageTextGenerationResult.AltText.get -> string!
+PandaBear.AI.ImageTextGenerationResult.AltText.init -> void
+PandaBear.AI.ImageTextGenerationResult.Caption.get -> string?
+PandaBear.AI.ImageTextGenerationResult.Caption.init -> void
+PandaBear.AI.ImageTextGenerationResult.ImageTextGenerationResult(string! AltText, string? Caption) -> void
+PandaBear.AI.LiteLlmImageTextGenerator
+PandaBear.AI.LiteLlmImageTextGenerator.GenerateImageText(PandaBear.AI.ImageTextGenerationRequest! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.AI.ImageTextGenerationResult!>
+PandaBear.AI.LiteLlmImageTextGenerator.LiteLlmImageTextGenerator(System.Net.Http.HttpClient! httpClient, PandaBear.AI.LiteLlmImageTextGeneratorOptions! options) -> void
+PandaBear.AI.LiteLlmImageTextGeneratorOptions
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.ApiKey.get -> string?
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.ApiKey.init -> void
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.ChatCompletionsPath.get -> string!
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.ChatCompletionsPath.init -> void
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.Endpoint.get -> System.Uri?
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.Endpoint.init -> void
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.Model.get -> string?
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.Model.init -> void
+const PandaBear.AI.LiteLlmImageTextGeneratorOptions.SectionName = "AI:ImageText:LiteLlm" -> string!

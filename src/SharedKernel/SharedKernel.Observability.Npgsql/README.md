@@ -30,3 +30,9 @@ database schema.
 - [Npgsql metrics](https://www.npgsql.org/doc/diagnostics/metrics.html)
 - [PostgreSQL statistics views](https://www.postgresql.org/docs/16/monitoring-stats.html)
 - [PostgreSQL predefined roles](https://www.postgresql.org/docs/16/predefined-roles.html)
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Observability.Npgsql`. C# namespace: `PandaBear.Observability.Npgsql`. Assembly/project identity: `SharedKernel.Observability.Npgsql`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

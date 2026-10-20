@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 /// <summary>
 /// Configures the EF Core integration event outbox relay.

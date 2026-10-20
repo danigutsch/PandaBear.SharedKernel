@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace SharedKernel.Domain.GeneratorTests;
+namespace PandaBear.Domain.GeneratorTests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ValueObjectCapability)]
 public sealed class ValueObjectGeneratorTests

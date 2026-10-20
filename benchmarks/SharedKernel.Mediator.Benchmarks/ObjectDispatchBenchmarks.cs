@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Measures a generated-style object dispatch switch separately from typed and generic dispatch.

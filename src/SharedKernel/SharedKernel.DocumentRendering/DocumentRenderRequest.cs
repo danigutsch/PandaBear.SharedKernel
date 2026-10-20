@@ -1,4 +1,4 @@
-namespace SharedKernel.DocumentRendering;
+namespace PandaBear.DocumentRendering;
 
 /// <summary>
 /// Supplies canonical structured data to a document renderer.

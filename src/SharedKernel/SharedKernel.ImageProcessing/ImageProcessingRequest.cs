@@ -1,4 +1,4 @@
-namespace SharedKernel.ImageProcessing;
+namespace PandaBear.ImageProcessing;
 
 /// <summary>
 /// Describes an input image and the variants to generate.

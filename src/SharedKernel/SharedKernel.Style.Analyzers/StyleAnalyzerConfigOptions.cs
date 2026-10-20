@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace SharedKernel.Style.Analyzers;
+namespace PandaBear.Style.Analyzers;
 
 /// <summary>
 /// Captures the analyzer-config switches that shape async-suffix rule behavior.

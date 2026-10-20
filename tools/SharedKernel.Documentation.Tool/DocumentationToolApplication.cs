@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace SharedKernel.Documentation.Tool;
+namespace PandaBear.Documentation.Tool;
 
 internal static class DocumentationToolApplication
 {

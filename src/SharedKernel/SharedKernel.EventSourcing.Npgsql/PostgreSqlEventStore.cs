@@ -4,10 +4,10 @@ using System.Security.Cryptography;
 using System.Text;
 using Npgsql;
 using NpgsqlTypes;
-using SharedKernel.BuildingBlocks;
-using SharedKernel.Npgsql;
+using PandaBear.BuildingBlocks;
+using PandaBear.Npgsql;
 
-namespace SharedKernel.EventSourcing.Npgsql;
+namespace PandaBear.EventSourcing.Npgsql;
 
 /// <summary>
 /// Persists event streams in PostgreSQL.

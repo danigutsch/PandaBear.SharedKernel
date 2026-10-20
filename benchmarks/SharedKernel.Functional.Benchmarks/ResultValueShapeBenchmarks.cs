@@ -1,6 +1,6 @@
 using BenchmarkDotNet.Attributes;
 
-namespace SharedKernel.Functional.Benchmarks;
+namespace PandaBear.Functional.Benchmarks;
 
 /// <summary>
 /// Measures how payload shape affects common <see cref="Result{T}"/> success-path operations.

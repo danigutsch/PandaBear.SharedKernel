@@ -1,4 +1,4 @@
-namespace SharedKernel.Testing;
+namespace PandaBear.Testing;
 
 /// <summary>
 /// Documents why an xUnit collection must disable parallel execution.

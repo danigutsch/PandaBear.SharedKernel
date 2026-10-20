@@ -1,6 +1,6 @@
-using SharedKernel.Versioning.Tool;
+using PandaBear.Versioning.Tool;
 
-namespace SharedKernel.Versioning.Tests;
+namespace PandaBear.Versioning.Tests;
 
 internal sealed class TemporaryGitRepository : IDisposable
 {

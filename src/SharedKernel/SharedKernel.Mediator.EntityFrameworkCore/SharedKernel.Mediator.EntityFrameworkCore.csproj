@@ -3,8 +3,9 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Mediator.EntityFrameworkCore</PackageId>
         <Description>Mediator pipeline behaviors and dispatch integrations backed by Entity Framework Core.</Description>
-        <RootNamespace>SharedKernel.Mediator.EntityFrameworkCore</RootNamespace>
+        <RootNamespace>PandaBear.Mediator.EntityFrameworkCore</RootNamespace>
         <PackageTags>mediator;entity-framework-core;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,6 +15,10 @@
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.EntityFrameworkCore\SharedKernel.EntityFrameworkCore.csproj" />
         <ProjectReference Include="..\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

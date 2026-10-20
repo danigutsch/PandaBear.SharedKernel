@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis.CodeFixes;
-using SharedKernel.Style.Analyzers;
+using PandaBear.Style.Analyzers;
 
-namespace SharedKernel.Style.CodeFixes;
+namespace PandaBear.Style.CodeFixes;
 
 /// <summary>
 /// Restricts Fix All support to style diagnostics that are safe to apply in bulk.

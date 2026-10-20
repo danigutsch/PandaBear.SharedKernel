@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace SharedKernel.Mediator.PackageConsumptionTests;
+namespace PandaBear.Mediator.PackageConsumptionTests;
 
 /// <summary>
 /// Packs the current mediator packages into a temporary local NuGet feed for consumption tests.

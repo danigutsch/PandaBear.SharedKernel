@@ -1,6 +1,6 @@
 # SharedKernel
 
-Private reusable .NET libraries extracted from ViajantesTurismo. Package IDs use `PandaBear.SharedKernel.*`; public APIs, assembly names and C# namespaces remain unchanged. The extraction manifest, history
+Private reusable .NET libraries extracted from ViajantesTurismo. Package IDs use `PandaBear.SharedKernel.*`; C# namespaces use `PandaBear.*`, while project and assembly identities remain `SharedKernel.*`. The extraction manifest, history
 mapping, and archived extraction tools are in `provenance/`.
 
 ## Development
@@ -73,3 +73,5 @@ merge. Keep the previous application dependency configuration for rollback. Prom
 replacements, or application cutover are part of this setup.
 
 Release cadence and coordinated SemVer are documented in [release policy](docs/release-policy.md).
+
+[Documentation index](docs/README.md), [contribution guide](CONTRIBUTING.md), [security reporting](SECURITY.md), and [attribution](NOTICE.md) describe repository ownership and portable setup.

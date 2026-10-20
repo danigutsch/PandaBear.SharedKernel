@@ -1,4 +1,4 @@
-namespace SharedKernel.Testing.Analyzers.Tests;
+namespace PandaBear.Testing.Analyzers.Tests;
 
 internal sealed class TemporaryCodeFixDirectory : IDisposable
 {

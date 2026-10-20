@@ -7,14 +7,14 @@ using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Formatting;
 
-namespace SharedKernel.Style.CodeFixes;
+namespace PandaBear.Style.CodeFixes;
 
 /// <summary>
 /// Registers the signature-changing code fix for private command methods that always return <c>Result.Ok()</c>.
 /// </summary>
 internal static class SuccessOnlyResultMethodCodeFix
 {
-    private const string ResultMetadataName = "SharedKernel.Results.Result";
+    private const string ResultMetadataName = "PandaBear.Results.Result";
     private const string TaskOfTMetadataName = "System.Threading.Tasks.Task`1";
     private const string ValueTaskOfTMetadataName = "System.Threading.Tasks.ValueTask`1";
 
@@ -627,7 +627,7 @@ internal static class SuccessOnlyResultMethodCodeFix
 
     private static ExpressionSyntax CreateSuccessResult()
     {
-        return SyntaxFactory.ParseExpression("global::SharedKernel.Results.Result.Ok()");
+        return SyntaxFactory.ParseExpression("global::PandaBear.Results.Result.Ok()");
     }
 
     private sealed class ReferenceEdit(

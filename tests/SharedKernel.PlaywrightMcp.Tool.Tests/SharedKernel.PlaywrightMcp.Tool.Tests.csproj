@@ -2,13 +2,13 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>SharedKernel.PlaywrightMcp.Tool.Tests</RootNamespace>
+        <RootNamespace>PandaBear.PlaywrightMcp.Tool.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="SharedKernel.Testing" />
-        <Using Include="SharedKernel.Testing.Assertions" />
-        <Using Include="SharedKernel.PlaywrightMcp.Tool" />
+        <Using Include="PandaBear.Testing" />
+        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.PlaywrightMcp.Tool" />
         <Using Include="Xunit" />
     </ItemGroup>
 

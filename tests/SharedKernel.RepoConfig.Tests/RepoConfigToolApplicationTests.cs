@@ -3,7 +3,7 @@ using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Time.Testing;
 
-namespace SharedKernel.RepoConfig.Tests;
+namespace PandaBear.RepoConfig.Tests;
 
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection("Repo config tool environment")]

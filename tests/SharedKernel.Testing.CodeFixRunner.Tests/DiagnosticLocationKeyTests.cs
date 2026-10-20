@@ -2,9 +2,9 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
-using SharedKernel.Testing.Roslyn;
+using PandaBear.Testing.Roslyn;
 
-namespace SharedKernel.Testing.CodeFixRunner.Tests;
+namespace PandaBear.Testing.CodeFixRunner.Tests;
 
 public sealed class DiagnosticLocationKeyTests
 {

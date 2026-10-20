@@ -1,8 +1,8 @@
-using SharedKernel.Messaging;
-using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
-using SharedKernel.Testing;
+using PandaBear.Messaging;
+using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+using PandaBear.Testing;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]

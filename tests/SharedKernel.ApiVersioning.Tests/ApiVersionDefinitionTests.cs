@@ -1,4 +1,4 @@
-namespace SharedKernel.ApiVersioning.Tests;
+namespace PandaBear.ApiVersioning.Tests;
 
 /// <summary>
 /// Verifies API version metadata behavior.

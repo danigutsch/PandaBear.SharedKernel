@@ -1,6 +1,6 @@
-using SharedKernel.Testing;
+using PandaBear.Testing;
 
-namespace SharedKernel.Branding.Tests;
+namespace PandaBear.Branding.Tests;
 
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ValidationCapability)]
 public sealed class BrandingSettingsTests

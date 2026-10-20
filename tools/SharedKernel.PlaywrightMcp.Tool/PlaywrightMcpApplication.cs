@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 
-namespace SharedKernel.PlaywrightMcp.Tool;
+namespace PandaBear.PlaywrightMcp.Tool;
 
 internal static class PlaywrightMcpApplication
 {

@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 
-namespace SharedKernel.RepoConfig.Tests;
+namespace PandaBear.RepoConfig.Tests;
 
 internal sealed class CancellationAfterWriteHttpContent(string content, Action afterWrite) : HttpContent
 {

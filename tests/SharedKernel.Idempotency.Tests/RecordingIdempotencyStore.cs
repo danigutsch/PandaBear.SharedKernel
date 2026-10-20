@@ -1,4 +1,4 @@
-namespace SharedKernel.Idempotency.Tests;
+namespace PandaBear.Idempotency.Tests;
 
 internal sealed class RecordingIdempotencyStore : IIdempotencyStore
 {

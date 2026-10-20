@@ -1,12 +1,12 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using SharedKernel.Mediator.SourceGenerator;
-using SharedKernel.Testing.Roslyn;
+using PandaBear.Mediator.SourceGenerator;
+using PandaBear.Testing.Roslyn;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Collections.Immutable;
 
-namespace SharedKernel.Mediator.GeneratorTests;
+namespace PandaBear.Mediator.GeneratorTests;
 
 internal static class GeneratorTestHarness
 {

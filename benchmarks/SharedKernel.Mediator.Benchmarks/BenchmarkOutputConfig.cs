@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Configures the shared summary columns required across benchmark reports.

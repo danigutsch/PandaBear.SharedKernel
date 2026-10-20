@@ -1,4 +1,4 @@
-namespace SharedKernel.Branding;
+namespace PandaBear.Branding;
 
 /// <summary>
 /// Defines authenticated Management Web operations for Branding API contracts.

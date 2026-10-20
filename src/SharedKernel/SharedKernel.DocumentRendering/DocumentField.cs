@@ -1,4 +1,4 @@
-namespace SharedKernel.DocumentRendering;
+namespace PandaBear.DocumentRendering;
 
 /// <summary>
 /// Defines one structured value displayed in a document section.

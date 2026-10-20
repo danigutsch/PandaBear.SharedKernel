@@ -1,91 +1,91 @@
 #nullable enable
-SharedKernel.Mediator.IDuplexStreamCommand<TRequestItem, TResponse>
-SharedKernel.Mediator.IDuplexStreamCommand<TRequestItem, TResponse>.Items.get -> System.Collections.Generic.IAsyncEnumerable<TRequestItem>!
-SharedKernel.Mediator.IDuplexStreamQuery<TRequestItem, TResponse>
-SharedKernel.Mediator.IDuplexStreamQuery<TRequestItem, TResponse>.Items.get -> System.Collections.Generic.IAsyncEnumerable<TRequestItem>!
-SharedKernel.Mediator.NotificationDispatchAttribute
-SharedKernel.Mediator.NotificationDispatchAttribute.NotificationDispatchAttribute(SharedKernel.Mediator.NotificationDispatchStrategy strategy) -> void
-SharedKernel.Mediator.NotificationDispatchAttribute.Strategy.get -> SharedKernel.Mediator.NotificationDispatchStrategy
-SharedKernel.Mediator.NotificationDispatchStrategy
-SharedKernel.Mediator.NotificationDispatchStrategy.Parallel = 1 -> SharedKernel.Mediator.NotificationDispatchStrategy
-SharedKernel.Mediator.NotificationDispatchStrategy.Sequential = 0 -> SharedKernel.Mediator.NotificationDispatchStrategy
-SharedKernel.Mediator.NotificationOrderAttribute
-SharedKernel.Mediator.NotificationOrderAttribute.NotificationOrderAttribute(int order) -> void
-SharedKernel.Mediator.NotificationOrderAttribute.Order.get -> int
-SharedKernel.Mediator.ICommand
-SharedKernel.Mediator.ICommand<TResponse>
-SharedKernel.Mediator.ICommandHandler<TCommand, TResponse>
-SharedKernel.Mediator.ICommandHandler<TCommand>
-SharedKernel.Mediator.IMediator
-SharedKernel.Mediator.INotification
-SharedKernel.Mediator.INotificationHandler<TNotification>
-SharedKernel.Mediator.INotificationHandler<TNotification>.Handle(TNotification notification, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.Mediator.IPipelineBehavior<TRequest, TResponse>
-SharedKernel.Mediator.IPipelineBehavior<TRequest, TResponse>.Handle(TRequest request, SharedKernel.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
-SharedKernel.Mediator.IPublisher
-SharedKernel.Mediator.IPublisher.Publish<TNotification>(TNotification notification, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.Mediator.IQuery<TResponse>
-SharedKernel.Mediator.IQueryHandler<TQuery, TResponse>
-SharedKernel.Mediator.IRequest<TResponse>
-SharedKernel.Mediator.IRequestHandler<TRequest, TResponse>
-SharedKernel.Mediator.IRequestHandler<TRequest, TResponse>.Handle(TRequest request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
-SharedKernel.Mediator.ISender
-SharedKernel.Mediator.ISender.Send<TResponse>(SharedKernel.Mediator.IRequest<TResponse>! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
-SharedKernel.Mediator.ISender.Send<TResponse>(SharedKernel.Mediator.IStreamRequest<TResponse>! request, System.Threading.CancellationToken ct) -> System.Collections.Generic.IAsyncEnumerable<TResponse>!
-SharedKernel.Mediator.IStreamCommand<TResponse>
-SharedKernel.Mediator.IStreamCommand<TRequestItem, TResponse>
-SharedKernel.Mediator.IStreamCommand<TRequestItem, TResponse>.Items.get -> System.Collections.Generic.IAsyncEnumerable<TRequestItem>!
-SharedKernel.Mediator.IStreamPipelineBehavior<TRequest, TResponse>
-SharedKernel.Mediator.IStreamPipelineBehavior<TRequest, TResponse>.Handle(TRequest request, SharedKernel.Mediator.StreamHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Collections.Generic.IAsyncEnumerable<TResponse>!
-SharedKernel.Mediator.IStreamQuery<TResponse>
-SharedKernel.Mediator.IStreamQuery<TRequestItem, TResponse>
-SharedKernel.Mediator.IStreamQuery<TRequestItem, TResponse>.Items.get -> System.Collections.Generic.IAsyncEnumerable<TRequestItem>!
-SharedKernel.Mediator.IStreamRequest<TResponse>
-SharedKernel.Mediator.IStreamRequestHandler<TRequest, TResponse>
-SharedKernel.Mediator.IStreamRequestHandler<TRequest, TResponse>.Handle(TRequest request, System.Threading.CancellationToken ct) -> System.Collections.Generic.IAsyncEnumerable<TResponse>!
-SharedKernel.Mediator.MediatorModuleAttribute
-SharedKernel.Mediator.MediatorModuleAttribute.MediatorModuleAttribute() -> void
-SharedKernel.Mediator.MediatorTelemetry
-static SharedKernel.Mediator.MediatorTelemetry.ActivityNotificationHandler.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.ActivityPublish.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.ActivitySend.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.ActivityStream.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.MetricNotificationDuration.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.MetricNotifications.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.MetricRequestDuration.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.MetricRequests.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.MetricStreams.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.Name.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.OutcomeCancelled.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.OutcomeError.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.OutcomeSuccess.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagErrorType.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagHandlerName.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagNotificationAssembly.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagNotificationHandlerCount.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagNotificationName.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagOutcome.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagPipelineDepth.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagRequestAssembly.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagRequestName.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagRequestType.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagResponseType.get -> string!
-static SharedKernel.Mediator.MediatorTelemetry.TagRuntimeOutcome.get -> string!
-SharedKernel.Mediator.PipelineOrderAttribute
-SharedKernel.Mediator.PipelineOrderAttribute.Order.get -> int
-SharedKernel.Mediator.PipelineOrderAttribute.Order.init -> void
-SharedKernel.Mediator.PipelineOrderAttribute.PipelineOrderAttribute(SharedKernel.Mediator.PipelineStage stage) -> void
-SharedKernel.Mediator.PipelineOrderAttribute.Stage.get -> SharedKernel.Mediator.PipelineStage
-SharedKernel.Mediator.PipelineStage
-SharedKernel.Mediator.PipelineStage.Authorization = -800 -> SharedKernel.Mediator.PipelineStage
-SharedKernel.Mediator.PipelineStage.Caching = -600 -> SharedKernel.Mediator.PipelineStage
-SharedKernel.Mediator.PipelineStage.Handler = 0 -> SharedKernel.Mediator.PipelineStage
-SharedKernel.Mediator.PipelineStage.Observability = 800 -> SharedKernel.Mediator.PipelineStage
-SharedKernel.Mediator.PipelineStage.PostProcessing = 400 -> SharedKernel.Mediator.PipelineStage
-SharedKernel.Mediator.PipelineStage.Transaction = -400 -> SharedKernel.Mediator.PipelineStage
-SharedKernel.Mediator.PipelineStage.Validation = -1000 -> SharedKernel.Mediator.PipelineStage
-SharedKernel.Mediator.RequestHandlerContinuation<TResponse>
-SharedKernel.Mediator.StreamHandlerContinuation<TResponse>
-SharedKernel.Mediator.Unit
-SharedKernel.Mediator.Unit.Unit() -> void
-static SharedKernel.Mediator.Unit.Value.get -> SharedKernel.Mediator.Unit
+PandaBear.Mediator.IDuplexStreamCommand<TRequestItem, TResponse>
+PandaBear.Mediator.IDuplexStreamCommand<TRequestItem, TResponse>.Items.get -> System.Collections.Generic.IAsyncEnumerable<TRequestItem>!
+PandaBear.Mediator.IDuplexStreamQuery<TRequestItem, TResponse>
+PandaBear.Mediator.IDuplexStreamQuery<TRequestItem, TResponse>.Items.get -> System.Collections.Generic.IAsyncEnumerable<TRequestItem>!
+PandaBear.Mediator.NotificationDispatchAttribute
+PandaBear.Mediator.NotificationDispatchAttribute.NotificationDispatchAttribute(PandaBear.Mediator.NotificationDispatchStrategy strategy) -> void
+PandaBear.Mediator.NotificationDispatchAttribute.Strategy.get -> PandaBear.Mediator.NotificationDispatchStrategy
+PandaBear.Mediator.NotificationDispatchStrategy
+PandaBear.Mediator.NotificationDispatchStrategy.Parallel = 1 -> PandaBear.Mediator.NotificationDispatchStrategy
+PandaBear.Mediator.NotificationDispatchStrategy.Sequential = 0 -> PandaBear.Mediator.NotificationDispatchStrategy
+PandaBear.Mediator.NotificationOrderAttribute
+PandaBear.Mediator.NotificationOrderAttribute.NotificationOrderAttribute(int order) -> void
+PandaBear.Mediator.NotificationOrderAttribute.Order.get -> int
+PandaBear.Mediator.ICommand
+PandaBear.Mediator.ICommand<TResponse>
+PandaBear.Mediator.ICommandHandler<TCommand, TResponse>
+PandaBear.Mediator.ICommandHandler<TCommand>
+PandaBear.Mediator.IMediator
+PandaBear.Mediator.INotification
+PandaBear.Mediator.INotificationHandler<TNotification>
+PandaBear.Mediator.INotificationHandler<TNotification>.Handle(TNotification notification, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Mediator.IPipelineBehavior<TRequest, TResponse>
+PandaBear.Mediator.IPipelineBehavior<TRequest, TResponse>.Handle(TRequest request, PandaBear.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+PandaBear.Mediator.IPublisher
+PandaBear.Mediator.IPublisher.Publish<TNotification>(TNotification notification, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Mediator.IQuery<TResponse>
+PandaBear.Mediator.IQueryHandler<TQuery, TResponse>
+PandaBear.Mediator.IRequest<TResponse>
+PandaBear.Mediator.IRequestHandler<TRequest, TResponse>
+PandaBear.Mediator.IRequestHandler<TRequest, TResponse>.Handle(TRequest request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+PandaBear.Mediator.ISender
+PandaBear.Mediator.ISender.Send<TResponse>(PandaBear.Mediator.IRequest<TResponse>! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+PandaBear.Mediator.ISender.Send<TResponse>(PandaBear.Mediator.IStreamRequest<TResponse>! request, System.Threading.CancellationToken ct) -> System.Collections.Generic.IAsyncEnumerable<TResponse>!
+PandaBear.Mediator.IStreamCommand<TResponse>
+PandaBear.Mediator.IStreamCommand<TRequestItem, TResponse>
+PandaBear.Mediator.IStreamCommand<TRequestItem, TResponse>.Items.get -> System.Collections.Generic.IAsyncEnumerable<TRequestItem>!
+PandaBear.Mediator.IStreamPipelineBehavior<TRequest, TResponse>
+PandaBear.Mediator.IStreamPipelineBehavior<TRequest, TResponse>.Handle(TRequest request, PandaBear.Mediator.StreamHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Collections.Generic.IAsyncEnumerable<TResponse>!
+PandaBear.Mediator.IStreamQuery<TResponse>
+PandaBear.Mediator.IStreamQuery<TRequestItem, TResponse>
+PandaBear.Mediator.IStreamQuery<TRequestItem, TResponse>.Items.get -> System.Collections.Generic.IAsyncEnumerable<TRequestItem>!
+PandaBear.Mediator.IStreamRequest<TResponse>
+PandaBear.Mediator.IStreamRequestHandler<TRequest, TResponse>
+PandaBear.Mediator.IStreamRequestHandler<TRequest, TResponse>.Handle(TRequest request, System.Threading.CancellationToken ct) -> System.Collections.Generic.IAsyncEnumerable<TResponse>!
+PandaBear.Mediator.MediatorModuleAttribute
+PandaBear.Mediator.MediatorModuleAttribute.MediatorModuleAttribute() -> void
+PandaBear.Mediator.MediatorTelemetry
+static PandaBear.Mediator.MediatorTelemetry.ActivityNotificationHandler.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.ActivityPublish.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.ActivitySend.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.ActivityStream.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.MetricNotificationDuration.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.MetricNotifications.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.MetricRequestDuration.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.MetricRequests.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.MetricStreams.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.Name.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.OutcomeCancelled.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.OutcomeError.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.OutcomeSuccess.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagErrorType.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagHandlerName.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagNotificationAssembly.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagNotificationHandlerCount.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagNotificationName.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagOutcome.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagPipelineDepth.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagRequestAssembly.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagRequestName.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagRequestType.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagResponseType.get -> string!
+static PandaBear.Mediator.MediatorTelemetry.TagRuntimeOutcome.get -> string!
+PandaBear.Mediator.PipelineOrderAttribute
+PandaBear.Mediator.PipelineOrderAttribute.Order.get -> int
+PandaBear.Mediator.PipelineOrderAttribute.Order.init -> void
+PandaBear.Mediator.PipelineOrderAttribute.PipelineOrderAttribute(PandaBear.Mediator.PipelineStage stage) -> void
+PandaBear.Mediator.PipelineOrderAttribute.Stage.get -> PandaBear.Mediator.PipelineStage
+PandaBear.Mediator.PipelineStage
+PandaBear.Mediator.PipelineStage.Authorization = -800 -> PandaBear.Mediator.PipelineStage
+PandaBear.Mediator.PipelineStage.Caching = -600 -> PandaBear.Mediator.PipelineStage
+PandaBear.Mediator.PipelineStage.Handler = 0 -> PandaBear.Mediator.PipelineStage
+PandaBear.Mediator.PipelineStage.Observability = 800 -> PandaBear.Mediator.PipelineStage
+PandaBear.Mediator.PipelineStage.PostProcessing = 400 -> PandaBear.Mediator.PipelineStage
+PandaBear.Mediator.PipelineStage.Transaction = -400 -> PandaBear.Mediator.PipelineStage
+PandaBear.Mediator.PipelineStage.Validation = -1000 -> PandaBear.Mediator.PipelineStage
+PandaBear.Mediator.RequestHandlerContinuation<TResponse>
+PandaBear.Mediator.StreamHandlerContinuation<TResponse>
+PandaBear.Mediator.Unit
+PandaBear.Mediator.Unit.Unit() -> void
+static PandaBear.Mediator.Unit.Value.get -> PandaBear.Mediator.Unit

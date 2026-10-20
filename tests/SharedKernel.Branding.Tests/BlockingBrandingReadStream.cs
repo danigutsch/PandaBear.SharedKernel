@@ -1,4 +1,4 @@
-namespace SharedKernel.Branding.Tests;
+namespace PandaBear.Branding.Tests;
 
 internal sealed class BlockingBrandingReadStream(Action? onReadStarted = null) : Stream
 {

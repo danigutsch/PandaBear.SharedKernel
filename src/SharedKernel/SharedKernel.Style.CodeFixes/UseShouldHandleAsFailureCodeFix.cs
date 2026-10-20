@@ -4,14 +4,14 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace SharedKernel.Style.CodeFixes;
+namespace PandaBear.Style.CodeFixes;
 
 /// <summary>
 /// Registers the cooperative cancellation catch-filter code fix.
 /// </summary>
 internal static class UseShouldHandleAsFailureCodeFix
 {
-    private const string SharedKernelBuildingBlocksNamespace = "SharedKernel.BuildingBlocks";
+    private const string SharedKernelBuildingBlocksNamespace = "PandaBear.BuildingBlocks";
     private const string CancellationTokenParameterName = "ct";
 
     /// <summary>

@@ -1,4 +1,4 @@
-namespace SharedKernel.AI;
+namespace PandaBear.AI;
 
 /// <summary>
 /// Contains an image and editorial context for AI-assisted accessibility text generation.

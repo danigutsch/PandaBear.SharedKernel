@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.PackageConsumptionTests;
+namespace PandaBear.Mediator.PackageConsumptionTests;
 
 internal static class MediatorConsumerSourceTemplates
 {
@@ -6,7 +6,7 @@ internal static class MediatorConsumerSourceTemplates
     {
         return $$"""
             using Microsoft.Extensions.DependencyInjection;
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             namespace {{@namespace}};
 

@@ -1,66 +1,66 @@
 #nullable enable
-SharedKernel.Testing.Assertions.ExceptionAssertions
-SharedKernel.Testing.Assertions.ShouldAssertionExtensions
-static SharedKernel.Testing.Assertions.ExceptionAssertions.ThrowsInner<TException>(System.Action! action) -> TException!
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldAllSatisfy<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Action<T>! action) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBe(this double actual, double expected, int precision) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBe(this double actual, double expected, int precision, System.MidpointRounding rounding) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T? expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeEquivalentTo<T>(this System.Collections.Generic.IEnumerable<T>! actual, params T[]! expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeAssignableTo<T>(this object? actual) -> T
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeEmpty<T>(this System.Collections.Generic.IEnumerable<T>! actual) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeFalse(this bool actual, string? userMessage = null) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeFalse(this bool? actual, string? userMessage = null) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeGreaterThan<T>(this T actual, T expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeGreaterThanOrEqualTo<T>(this T actual, T expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeInRange<T>(this T actual, T low, T high) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeLessThan<T>(this T actual, T expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeLessThanOrEqualTo<T>(this T actual, T expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeNull(this object? actual) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeOfType<T>(this object? actual) -> T
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeOfType<T>(this object? actual, bool exactMatch) -> T
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeOneOf<T>(this T actual, params T[]! expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeSameAs<T>(this T? actual, T? expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeTrue(this bool actual, string? userMessage = null) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeTrue(this bool? actual, string? userMessage = null) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldBeWellFormedHtmlDocument(this string? actual) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain(this string? actual, string! expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain(this string? actual, string! expected, System.StringComparison comparisonType) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContainInOrder(this string? actual, params string![]! expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldEndWith(this string? actual, string! expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldEndWith(this string? actual, string! expected, System.StringComparison comparisonType) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldHaveCount<T>(this System.Collections.Generic.IEnumerable<T>! actual, int expectedCount) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldHaveSingleItem<T>(this System.Collections.Generic.IEnumerable<T>! actual) -> T
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldHaveSingleItem<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> T
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldMatch(this string? actual, string! expectedRegexPattern) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldMatch(this string? actual, System.Text.RegularExpressions.Regex! expectedRegex) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldMatchCollection<T>(this System.Collections.Generic.IEnumerable<T>! actual, params System.Action<T>![]! inspectors) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBe<T>(this T actual, T expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBe<T>(this T actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeAssignableTo<T>(this object? actual) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeEmpty<T>(this System.Collections.Generic.IEnumerable<T>! actual) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeNull<T>(this T? actual) -> T
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeNull<T>(this T? actual) -> T!
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeOfType<T>(this object? actual) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeSameAs<T>(this T? actual, T? unexpected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain(this string? actual, string! expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain(this string? actual, string! expected, System.StringComparison comparisonType) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldNotMatch(this string? actual, System.Text.RegularExpressions.Regex! expectedRegex) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldStartWith(this string? actual, string! expected) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldStartWith(this string? actual, string! expected, System.StringComparison comparisonType) -> void
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Action! action) -> T!
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Action! action, string? paramName) -> T!
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<object?>! action) -> T!
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<object?>! action, string? paramName) -> T!
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<T!>!
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<System.Threading.Tasks.Task!>! action, string? paramName) -> System.Threading.Tasks.Task<T!>!
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldThrowAssignableTo<T>(this System.Func<System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<T!>!
-static SharedKernel.Testing.Assertions.ShouldAssertionExtensions.ShouldThrowInner<T>(this System.Action! action) -> T!
+PandaBear.Testing.Assertions.ExceptionAssertions
+PandaBear.Testing.Assertions.ShouldAssertionExtensions
+static PandaBear.Testing.Assertions.ExceptionAssertions.ThrowsInner<TException>(System.Action! action) -> TException!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldAllSatisfy<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Action<T>! action) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe(this double actual, double expected, int precision) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe(this double actual, double expected, int precision, System.MidpointRounding rounding) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T? expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeEquivalentTo<T>(this System.Collections.Generic.IEnumerable<T>! actual, params T[]! expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeAssignableTo<T>(this object? actual) -> T
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeEmpty<T>(this System.Collections.Generic.IEnumerable<T>! actual) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeFalse(this bool actual, string? userMessage = null) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeFalse(this bool? actual, string? userMessage = null) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeGreaterThan<T>(this T actual, T expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeGreaterThanOrEqualTo<T>(this T actual, T expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeInRange<T>(this T actual, T low, T high) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeLessThan<T>(this T actual, T expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeLessThanOrEqualTo<T>(this T actual, T expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeNull(this object? actual) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeOfType<T>(this object? actual) -> T
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeOfType<T>(this object? actual, bool exactMatch) -> T
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeOneOf<T>(this T actual, params T[]! expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeSameAs<T>(this T? actual, T? expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeTrue(this bool actual, string? userMessage = null) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeTrue(this bool? actual, string? userMessage = null) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeWellFormedHtmlDocument(this string? actual) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContain(this string? actual, string! expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContain(this string? actual, string! expected, System.StringComparison comparisonType) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContainInOrder(this string? actual, params string![]! expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldEndWith(this string? actual, string! expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldEndWith(this string? actual, string! expected, System.StringComparison comparisonType) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldHaveCount<T>(this System.Collections.Generic.IEnumerable<T>! actual, int expectedCount) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldHaveSingleItem<T>(this System.Collections.Generic.IEnumerable<T>! actual) -> T
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldHaveSingleItem<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> T
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldMatch(this string? actual, string! expectedRegexPattern) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldMatch(this string? actual, System.Text.RegularExpressions.Regex! expectedRegex) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldMatchCollection<T>(this System.Collections.Generic.IEnumerable<T>! actual, params System.Action<T>![]! inspectors) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBe<T>(this T actual, T expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBe<T>(this T actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeAssignableTo<T>(this object? actual) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeEmpty<T>(this System.Collections.Generic.IEnumerable<T>! actual) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeNull<T>(this T? actual) -> T
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeNull<T>(this T? actual) -> T!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeOfType<T>(this object? actual) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeSameAs<T>(this T? actual, T? unexpected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain(this string? actual, string! expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain(this string? actual, string! expected, System.StringComparison comparisonType) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotMatch(this string? actual, System.Text.RegularExpressions.Regex! expectedRegex) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldStartWith(this string? actual, string! expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldStartWith(this string? actual, string! expected, System.StringComparison comparisonType) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Action! action) -> T!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Action! action, string? paramName) -> T!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<object?>! action) -> T!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<object?>! action, string? paramName) -> T!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<T!>!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<System.Threading.Tasks.Task!>! action, string? paramName) -> System.Threading.Tasks.Task<T!>!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrowAssignableTo<T>(this System.Func<System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<T!>!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrowInner<T>(this System.Action! action) -> T!

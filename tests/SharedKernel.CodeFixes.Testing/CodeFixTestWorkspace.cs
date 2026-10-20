@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 
-namespace SharedKernel.CodeFixes.Testing;
+namespace PandaBear.CodeFixes.Testing;
 
 public sealed class CodeFixTestWorkspace
 {

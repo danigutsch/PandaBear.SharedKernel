@@ -1,0 +1,37 @@
+# PandaBear.SharedKernel.AI
+
+Reusable AI-assisted image text generation contracts and LiteLLM client.
+
+## Usage
+
+Construct `LiteLlmImageTextGenerator` with an application-configured `HttpClient` and `LiteLlmImageTextGeneratorOptions`, then call `IImageTextGenerator.GenerateImageText` with an image request and cancellation token. The result contains alt text and an optional caption. The host owns endpoint/API credentials, model selection, consent, sensitive-image policy, and telemetry; do not commit credentials or image captures.
+
+## Install and example
+
+The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. No post-namespace candidate is advertised as available yet. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.
+
+```text
+dotnet add package PandaBear.SharedKernel.AI --version <validated-candidate-version> --source <private-candidate-feed>
+```
+
+```csharp
+using PandaBear.AI;
+
+public static class Example
+{
+    public static ValueTask<ImageTextGenerationResult> Generate(
+        IImageTextGenerator generator, Stream image, CancellationToken ct)
+        => generator.GenerateImageText(new ImageTextGenerationRequest
+        {
+            Image = image,
+            ContentType = "image/jpeg",
+            Language = "en"
+        }, ct);
+}
+```
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.AI`. C# namespace: `PandaBear.AI`. Assembly/project identity: `SharedKernel.AI`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

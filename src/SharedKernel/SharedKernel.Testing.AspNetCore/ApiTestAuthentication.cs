@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace SharedKernel.Testing.AspNetCore;
+namespace PandaBear.Testing.AspNetCore;
 
 /// <summary>
 /// Configures real JWT bearer validation and authenticated test clients for API host tests.

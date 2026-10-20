@@ -70,3 +70,9 @@ projects should not need this package.
 
 - [SharedKernel.Testing.CodeFixes](../SharedKernel.Testing.CodeFixes/README.md)
 - `tests/AGENTS.md`
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Testing.Analyzers`. C# namespace: `PandaBear.Testing.Analyzers`. Assembly/project identity: `SharedKernel.Testing.Analyzers`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

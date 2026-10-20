@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Creates synthetic notification publish benchmark sources for generated-style mediator comparisons.
@@ -40,7 +40,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(failureHandlerCount);
 
         var builder = new StringBuilder();
-        builder.AppendLine("using SharedKernel.Mediator;");
+        builder.AppendLine("using PandaBear.Mediator;");
         builder.AppendLine();
         builder.AppendLine("namespace BenchmarkApp;");
         builder.AppendLine();
@@ -225,7 +225,7 @@ internal static class NotificationPublishBenchmarkSourceFactory
         ArgumentOutOfRangeException.ThrowIfNegative(handlerCount);
 
         var builder = new StringBuilder();
-        builder.AppendLine("using SharedKernel.Mediator;");
+        builder.AppendLine("using PandaBear.Mediator;");
         builder.AppendLine();
         builder.AppendLine("[assembly: MediatorModule]");
         builder.AppendLine();

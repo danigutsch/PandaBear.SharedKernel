@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 
-namespace SharedKernel.Observability.Tests;
+namespace PandaBear.Observability.Tests;
 
 internal sealed class CapturingLoggerProvider : ILoggerProvider
 {

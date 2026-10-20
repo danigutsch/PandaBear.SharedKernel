@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.OpenApi;
 
-namespace SharedKernel.OpenApi.Tests;
+namespace PandaBear.OpenApi.Tests;
 
 /// <summary>
 /// Stores the runtime OpenAPI transformer context for test reuse.

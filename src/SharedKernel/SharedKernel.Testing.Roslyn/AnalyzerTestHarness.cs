@@ -3,7 +3,7 @@ using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace SharedKernel.Testing.Roslyn;
+namespace PandaBear.Testing.Roslyn;
 
 /// <summary>
 /// Creates Roslyn compilations for analyzer test suites.

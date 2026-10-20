@@ -1,4 +1,4 @@
-namespace SharedKernel.AspNetCore;
+namespace PandaBear.AspNetCore;
 
 /// <summary>
 /// Represents one URL entry in a sitemap XML document.

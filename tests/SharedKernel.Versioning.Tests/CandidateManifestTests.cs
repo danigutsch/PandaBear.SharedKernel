@@ -1,9 +1,9 @@
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
-using SharedKernel.Versioning.Tool;
+using PandaBear.Versioning.Tool;
 
-namespace SharedKernel.Versioning.Tests;
+namespace PandaBear.Versioning.Tests;
 
 public static class CandidateManifestTests
 {

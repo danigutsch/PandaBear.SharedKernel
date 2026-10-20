@@ -1,7 +1,7 @@
 using BenchmarkDotNet.Attributes;
 using System.Reflection;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Measures first-item latency for the stream-dispatch strategies under comparison.

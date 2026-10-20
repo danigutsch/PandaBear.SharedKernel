@@ -1,6 +1,6 @@
-using SharedKernel.Testing;
+using PandaBear.Testing;
 
-namespace SharedKernel.Versioning.Tests;
+namespace PandaBear.Versioning.Tests;
 
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public sealed class TemporaryGitRepositoryTests

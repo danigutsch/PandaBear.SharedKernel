@@ -1,9 +1,9 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
-using SharedKernel.Mediator.SourceGenerator;
+using PandaBear.Mediator.SourceGenerator;
 
-namespace SharedKernel.Mediator.CodeFixes;
+namespace PandaBear.Mediator.CodeFixes;
 
 /// <summary>
 /// Adds the assembly-level mediator module marker required for cross-assembly discovery.
@@ -54,7 +54,7 @@ internal static class MissingModuleMarkerCodeFix
 
         const string fileName = "MediatorModuleAssemblyInfo.cs";
         const string source = """
-            [assembly: global::SharedKernel.Mediator.MediatorModuleAttribute]
+            [assembly: global::PandaBear.Mediator.MediatorModuleAttribute]
             """;
         var filePath = document.FilePath is null
             ? fileName

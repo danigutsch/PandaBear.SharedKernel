@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SharedKernel.RepoConfig.Tool;
+namespace PandaBear.RepoConfig.Tool;
 
 // Each replacement is atomic; managed failures roll back the completed replacements.
 // Process termination can leave a completed prefix and is outside this batch's contract.

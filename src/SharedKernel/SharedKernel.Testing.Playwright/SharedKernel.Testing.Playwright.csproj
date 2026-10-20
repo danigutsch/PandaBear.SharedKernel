@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Testing.Playwright</PackageId>
         <Description>Reusable Playwright assertions for SharedKernel browser test suites.</Description>
-        <RootNamespace>SharedKernel.Testing.Playwright</RootNamespace>
+        <RootNamespace>PandaBear.Testing.Playwright</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;playwright;browser;assertions;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

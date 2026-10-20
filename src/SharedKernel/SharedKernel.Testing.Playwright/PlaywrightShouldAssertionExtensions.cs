@@ -1,7 +1,7 @@
 using Microsoft.Playwright;
 using static Microsoft.Playwright.Assertions;
 
-namespace SharedKernel.Testing.Playwright;
+namespace PandaBear.Testing.Playwright;
 
 /// <summary>
 /// Provides Playwright assertions for browser test suites.

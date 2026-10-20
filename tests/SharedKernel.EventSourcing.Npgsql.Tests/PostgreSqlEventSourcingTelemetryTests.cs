@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
-namespace SharedKernel.EventSourcing.Npgsql.Tests;
+namespace PandaBear.EventSourcing.Npgsql.Tests;
 
 public sealed class PostgreSqlEventSourcingTelemetryTests(PostgreSqlTestServerFixture fixture)
     : PostgreSqlDatabaseTestBase(fixture)

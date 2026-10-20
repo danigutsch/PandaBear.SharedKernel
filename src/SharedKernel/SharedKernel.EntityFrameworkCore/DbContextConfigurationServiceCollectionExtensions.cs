@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace SharedKernel.EntityFrameworkCore;
+namespace PandaBear.EntityFrameworkCore;
 
 /// <summary>
 /// Provides registration helpers for composable DbContext configuration.

@@ -45,6 +45,11 @@ jobs:
           echo "candidate_required=$(cat TestResults/selection/candidate-required.txt)" >> "$GITHUB_OUTPUT"
       - name: Validate selected projects and tests
         run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- validate
+      - name: Build candidate versioning tooling
+        if: steps.selection.outputs.candidate_required == 'true'
+        run: |
+          dotnet restore tools/SharedKernel.Versioning.Tool --locked-mode
+          dotnet build tools/SharedKernel.Versioning.Tool -c Release --no-restore
       - name: Calculate coordinated package version
         if: steps.selection.outputs.candidate_required == 'true'
         id: version
@@ -52,7 +57,7 @@ jobs:
           VERSION_KIND: ${{ github.event_name == 'workflow_dispatch' && inputs.prepare_stable && 'stable' || 'prerelease' }}
           VERSION_RUN: ${{ github.run_number }}.${{ github.run_attempt }}
         run: |
-          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-restore -- \
+          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- \
             calculate-release --version-kind "$VERSION_KIND" --run-number "$VERSION_RUN" \
             --github-output "$GITHUB_OUTPUT" --github-summary "$GITHUB_STEP_SUMMARY"
       - name: Validate immutable package candidate
@@ -111,3 +116,20 @@ jobs:
           name: windows-package-evidence
           path: artifacts/candidate/**/candidate.json
           if-no-files-found: error
+
+  repository-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+        with:
+          global-json-file: global.json
+      - name: Bootstrap from clean checkout
+        run: bash setup-dev.sh
+      - name: Verify formatting
+        run: dotnet format SharedKernel.slnx --verify-no-changes --no-restore
+      - name: Verify generated architecture
+        run: dotnet run --project tools/SharedKernel.Documentation.Tool -c Release --no-build --no-restore -- generate --config docs/architecture/generated-diagrams.json --check

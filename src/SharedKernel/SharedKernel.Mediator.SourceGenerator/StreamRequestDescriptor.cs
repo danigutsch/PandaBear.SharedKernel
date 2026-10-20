@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace SharedKernel.Mediator.SourceGenerator;
+namespace PandaBear.Mediator.SourceGenerator;
 
 /// <summary>
 /// Describes a discovered stream request contract.

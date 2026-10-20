@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Hosting;
 
-namespace SharedKernel.Npgsql.Tests;
+namespace PandaBear.Npgsql.Tests;
 
 internal sealed class SlowCleanupHostedService : IHostedService
 {

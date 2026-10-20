@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using OpenTelemetry;
 
-namespace SharedKernel.Observability;
+namespace PandaBear.Observability;
 
 /// <summary>Removes sensitive telemetry attributes before export.</summary>
 /// <param name="additionalSensitiveAttribute">Additional application attributes to remove.</param>

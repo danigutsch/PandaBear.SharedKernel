@@ -1,6 +1,6 @@
-using SharedKernel.Results;
+using PandaBear.Results;
 
-namespace SharedKernel.BuildingBlocks.Tests;
+namespace PandaBear.BuildingBlocks.Tests;
 
 public sealed class OptionResultExtensionsTests
 {

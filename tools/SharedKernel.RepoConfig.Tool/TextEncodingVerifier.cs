@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 
-namespace SharedKernel.RepoConfig.Tool;
+namespace PandaBear.RepoConfig.Tool;
 
 internal static class TextEncodingVerifier
 {

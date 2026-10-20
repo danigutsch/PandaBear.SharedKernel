@@ -17,3 +17,9 @@ the result type.
 `Compensation.CompleteOrCompensate` runs a follow-up operation and invokes a caller-provided
 compensation action if that operation fails. Use it for small best-effort cleanup around side
 effects that cannot share a transaction.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.BuildingBlocks`. C# namespace: `PandaBear.BuildingBlocks`. Assembly/project identity: `SharedKernel.BuildingBlocks`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

@@ -1,4 +1,4 @@
-namespace SharedKernel.Npgsql.Tests;
+namespace PandaBear.Npgsql.Tests;
 
 public abstract class PostgreSqlDatabaseTestBase(PostgreSqlTestServerFixture fixture) : IAsyncLifetime
 {

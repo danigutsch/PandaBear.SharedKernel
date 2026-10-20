@@ -2,12 +2,12 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>SharedKernel.Idempotency.Tests</RootNamespace>
+        <RootNamespace>PandaBear.Idempotency.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="SharedKernel.Idempotency" />
-        <Using Include="SharedKernel.Testing.Assertions" />
+        <Using Include="PandaBear.Idempotency" />
+        <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>
 

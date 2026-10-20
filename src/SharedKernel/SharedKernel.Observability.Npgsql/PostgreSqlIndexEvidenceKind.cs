@@ -1,4 +1,4 @@
-namespace SharedKernel.Observability.Npgsql;
+namespace PandaBear.Observability.Npgsql;
 
 /// <summary>Identifies the catalog object represented by index-health evidence.</summary>
 public enum PostgreSqlIndexEvidenceKind

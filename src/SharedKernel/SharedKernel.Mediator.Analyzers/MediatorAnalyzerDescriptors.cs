@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis;
 
-namespace SharedKernel.Mediator.Analyzers;
+namespace PandaBear.Mediator.Analyzers;
 
 /// <summary>
 /// Exposes the shared mediator diagnostics used by the analyzer package.

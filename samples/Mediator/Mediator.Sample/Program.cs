@@ -1,6 +1,6 @@
 using Mediator.Sample;
 using Microsoft.Extensions.DependencyInjection;
-using SharedKernel.Mediator;
+using PandaBear.Mediator;
 
 var services = new ServiceCollection();
 services.AddSharedKernelMediator();

@@ -1,7 +1,7 @@
-using SharedKernel.Testing.Mediator;
-using SharedKernel.Testing;
+using PandaBear.Testing.Mediator;
+using PandaBear.Testing;
 
-namespace SharedKernel.Mediator.Tests;
+namespace PandaBear.Mediator.Tests;
 
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ReferenceDispatcherCapability)]
 public sealed class ReferenceDispatcherTests

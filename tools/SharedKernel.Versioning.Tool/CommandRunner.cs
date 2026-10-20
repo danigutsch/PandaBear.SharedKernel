@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace SharedKernel.Versioning.Tool;
+namespace PandaBear.Versioning.Tool;
 
 internal static class CommandRunner
 {

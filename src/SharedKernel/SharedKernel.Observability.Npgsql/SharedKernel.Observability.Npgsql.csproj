@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>PandaBear.SharedKernel.Observability.Npgsql</PackageId>
     <Description>Read-only PostgreSQL observability helpers for shared-kernel diagnostics.</Description>
-    <RootNamespace>SharedKernel.Observability.Npgsql</RootNamespace>
+    <RootNamespace>PandaBear.Observability.Npgsql</RootNamespace>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>observability;npgsql;postgresql;shared-kernel;dotnet</PackageTags>
   </PropertyGroup>

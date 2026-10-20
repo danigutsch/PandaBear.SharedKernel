@@ -1,4 +1,4 @@
-namespace SharedKernel.Domain.GeneratorTests;
+namespace PandaBear.Domain.GeneratorTests;
 
 internal static class TestTraits
 {

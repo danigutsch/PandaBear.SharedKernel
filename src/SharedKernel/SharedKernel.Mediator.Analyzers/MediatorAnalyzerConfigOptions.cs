@@ -1,6 +1,6 @@
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace SharedKernel.Mediator.Analyzers;
+namespace PandaBear.Mediator.Analyzers;
 
 /// <summary>
 /// Reads mediator analyzer options from <c>.editorconfig</c>.

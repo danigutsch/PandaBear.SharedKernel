@@ -1,6 +1,6 @@
-using SharedKernel.Results;
+using PandaBear.Results;
 
-namespace SharedKernel.BuildingBlocks;
+namespace PandaBear.BuildingBlocks;
 
 /// <summary>
 /// Represents a validated date range.

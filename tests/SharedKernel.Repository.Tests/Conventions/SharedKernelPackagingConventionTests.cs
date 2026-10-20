@@ -1,4 +1,4 @@
-namespace SharedKernel.Repository.Tests.Conventions;
+namespace PandaBear.Repository.Tests.Conventions;
 
 public static class SharedKernelPackagingConventionTests
 {

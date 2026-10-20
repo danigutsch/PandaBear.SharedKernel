@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Reflection;
 
-namespace SharedKernel.Versioning.Tests;
+namespace PandaBear.Versioning.Tests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersionMetadataTests

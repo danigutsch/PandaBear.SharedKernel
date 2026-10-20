@@ -3,7 +3,7 @@ using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
 using System.Globalization;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Reports the synthetic generated benchmark-source size for each dispatch-scale benchmark case.

@@ -5,12 +5,13 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Messaging.IntegrationEvents.SourceGenerator</PackageId>
         <Description>Source generator for typed domain-event to integration-event messaging mappings.</Description>
-        <RootNamespace>SharedKernel.Messaging.IntegrationEvents.SourceGenerator</RootNamespace>
+        <RootNamespace>PandaBear.Messaging.IntegrationEvents.SourceGenerator</RootNamespace>
         <PackageTags>messaging;integration-events;source-generator;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <Nullable>enable</Nullable>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,6 +22,10 @@
     <ItemGroup>
         <None Include="_._" Pack="true" PackagePath="lib/netstandard2.0/" Visible="false" />
         <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

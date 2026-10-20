@@ -1,4 +1,4 @@
-namespace SharedKernel.EventSourcing.Npgsql.Tests;
+namespace PandaBear.EventSourcing.Npgsql.Tests;
 
 internal sealed class TrackingCleanupAction(
     string name,

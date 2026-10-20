@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Testing.Assertions</PackageId>
         <Description>Reusable assertion extensions for SharedKernel xUnit test suites.</Description>
-        <RootNamespace>SharedKernel.Testing.Assertions</RootNamespace>
+        <RootNamespace>PandaBear.Testing.Assertions</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;assertions;xunit;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

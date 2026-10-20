@@ -1,6 +1,6 @@
-using SharedKernel.EntityFrameworkCore;
+using PandaBear.EntityFrameworkCore;
 
-namespace SharedKernel.Idempotency.EntityFrameworkCore;
+namespace PandaBear.Idempotency.EntityFrameworkCore;
 
 /// <summary>
 /// Configures the relational storage owned by one idempotency DbContext.

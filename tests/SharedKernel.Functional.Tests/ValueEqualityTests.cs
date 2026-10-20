@@ -1,4 +1,4 @@
-namespace SharedKernel.Functional.Tests;
+namespace PandaBear.Functional.Tests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
 public sealed class ValueEqualityTests

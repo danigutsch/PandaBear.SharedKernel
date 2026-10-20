@@ -1,7 +1,7 @@
 using System.Text.Json;
-using SharedKernel.Versioning.Tool;
+using PandaBear.Versioning.Tool;
 
-namespace SharedKernel.Versioning.Tests;
+namespace PandaBear.Versioning.Tests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersioningToolTests
@@ -343,7 +343,7 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
@@ -364,7 +364,7 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
@@ -420,7 +420,7 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
@@ -455,7 +455,7 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
@@ -496,7 +496,7 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
@@ -606,7 +606,7 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
@@ -622,7 +622,7 @@ public static class VersioningToolTests
             TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "Sample.cs"),
-            "namespace SharedKernel.Sample; public sealed class Sample;",
+            "namespace PandaBear.Sample; public sealed class Sample;",
             TestContext.Current.CancellationToken);
 
         using var input = new StringReader(string.Empty);
@@ -1315,7 +1315,7 @@ public static class VersioningToolTests
             </Project>
             """,
             TestContext.Current.CancellationToken);
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
@@ -1365,14 +1365,14 @@ public static class VersioningToolTests
             </Project>
             """,
             TestContext.Current.CancellationToken);
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
             """
             <Project Sdk="Microsoft.NET.Sdk">
               <PropertyGroup>
-                <PackageID>SharedKernel.Sample</PackageID>
+                <PackageID>PandaBear.Sample</PackageID>
                 <Description>Sample package.</Description>
                 <PackageTags>sample;shared-kernel;dotnet</PackageTags>
               </PropertyGroup>
@@ -1411,7 +1411,7 @@ public static class VersioningToolTests
             </Project>
             """,
             TestContext.Current.CancellationToken);
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "SharedKernel.Sample");
+        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
         Directory.CreateDirectory(projectDirectory);
         await File.WriteAllTextAsync(
             Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),

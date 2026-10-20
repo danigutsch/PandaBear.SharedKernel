@@ -1,4 +1,4 @@
-namespace SharedKernel.EventSourcing.Tests;
+namespace PandaBear.EventSourcing.Tests;
 
 /// <summary>
 /// Shared trait constants for SharedKernel event-sourcing tests.

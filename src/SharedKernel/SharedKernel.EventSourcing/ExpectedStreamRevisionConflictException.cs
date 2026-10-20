@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace SharedKernel.EventSourcing;
+namespace PandaBear.EventSourcing;
 
 /// <summary>
 /// Represents an optimistic concurrency conflict while appending to an event stream.

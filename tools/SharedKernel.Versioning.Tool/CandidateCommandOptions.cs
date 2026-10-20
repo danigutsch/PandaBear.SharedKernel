@@ -1,4 +1,4 @@
-namespace SharedKernel.Versioning.Tool;
+namespace PandaBear.Versioning.Tool;
 
 internal sealed record CandidateCommandOptions(
     string Root, string? Feed, string? Version, string? Candidate, string? Output, string? Baseline, bool Aot)

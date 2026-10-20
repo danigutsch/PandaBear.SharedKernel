@@ -1,4 +1,4 @@
-namespace SharedKernel.Functional.Tests;
+namespace PandaBear.Functional.Tests;
 
 internal sealed class LoggedTourSummary(string code, string title)
 {

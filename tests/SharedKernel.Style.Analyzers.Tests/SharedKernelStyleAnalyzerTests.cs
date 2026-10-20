@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
-namespace SharedKernel.Style.Analyzers.Tests;
+namespace PandaBear.Style.Analyzers.Tests;
 
 public sealed class SharedKernelStyleAnalyzerTests
 {
@@ -1117,14 +1117,14 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Domain
+            namespace PandaBear.Domain
             {
                 public interface IDomainEvent;
             }
 
             namespace Demo
             {
-                public sealed record TourCreated(Guid TourId) : SharedKernel.Domain.IDomainEvent;
+                public sealed record TourCreated(Guid TourId) : PandaBear.Domain.IDomainEvent;
             }
             """;
 
@@ -1143,14 +1143,14 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Domain
+            namespace PandaBear.Domain
             {
                 public interface IDomainEvent;
             }
 
             namespace Demo
             {
-                public sealed record TourCreatedDomainEvent(Guid TourId) : SharedKernel.Domain.IDomainEvent;
+                public sealed record TourCreatedDomainEvent(Guid TourId) : PandaBear.Domain.IDomainEvent;
             }
             """;
 
@@ -1166,7 +1166,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Domain
+            namespace PandaBear.Domain
             {
                 public interface IDomainEvent;
             }
@@ -1174,7 +1174,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             namespace Demo
             {
                 public sealed class DomainEventNotification<TDomainEvent>
-                    where TDomainEvent : SharedKernel.Domain.IDomainEvent
+                    where TDomainEvent : PandaBear.Domain.IDomainEvent
                 {
                 }
             }
@@ -1192,7 +1192,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Domain
+            namespace PandaBear.Domain
             {
                 public interface IDomainEvent;
             }
@@ -1201,7 +1201,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed class TourEvents
                 {
-                    public sealed record Created(System.Guid TourId) : SharedKernel.Domain.IDomainEvent;
+                    public sealed record Created(System.Guid TourId) : PandaBear.Domain.IDomainEvent;
                 }
             }
             """;
@@ -1221,7 +1221,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         var source = $$"""
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1235,14 +1235,14 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public SharedKernel.Results.Result Replace(bool useAlternate)
+                    public PandaBear.Results.Result Replace(bool useAlternate)
                     {
                         if (useAlternate)
                         {
-                            return SharedKernel.Results.Result.{{factoryName}}();
+                            return PandaBear.Results.Result.{{factoryName}}();
                         }
 
-                        return SharedKernel.Results.Result.{{factoryName}}();
+                        return PandaBear.Results.Result.{{factoryName}}();
                     }
                 }
             }
@@ -1264,7 +1264,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         var source = $$"""
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1276,10 +1276,10 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public async {{taskType}}<SharedKernel.Results.Result> Replace()
+                    public async {{taskType}}<PandaBear.Results.Result> Replace()
                     {
                         await Task.Yield();
-                        return SharedKernel.Results.Result.Ok();
+                        return PandaBear.Results.Result.Ok();
                     }
                 }
             }
@@ -1299,7 +1299,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         var source = $$"""
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1315,10 +1315,10 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public async {{taskType}}<SharedKernel.Results.Result<string>> Find()
+                    public async {{taskType}}<PandaBear.Results.Result<string>> Find()
                     {
                         await Task.Yield();
-                        return SharedKernel.Results.Result.Ok("Theme");
+                        return PandaBear.Results.Result.Ok("Theme");
                     }
                 }
             }
@@ -1336,7 +1336,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1348,7 +1348,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public SharedKernel.Results.Result Replace() => SharedKernel.Results.Result.Ok();
+                    public PandaBear.Results.Result Replace() => PandaBear.Results.Result.Ok();
                 }
             }
             """;
@@ -1365,7 +1365,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1378,8 +1378,8 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public SharedKernel.Results.Result Replace(bool isValid) =>
-                        isValid ? SharedKernel.Results.Result.Ok() : SharedKernel.Results.Result.Error("Theme is invalid.");
+                    public PandaBear.Results.Result Replace(bool isValid) =>
+                        isValid ? PandaBear.Results.Result.Ok() : PandaBear.Results.Result.Error("Theme is invalid.");
                 }
             }
             """;
@@ -1398,7 +1398,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         var source = $$"""
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1411,12 +1411,12 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public async {{taskType}}<SharedKernel.Results.Result> Replace(bool isValid)
+                    public async {{taskType}}<PandaBear.Results.Result> Replace(bool isValid)
                     {
                         await Task.Yield();
                         return isValid
-                            ? SharedKernel.Results.Result.Ok()
-                            : SharedKernel.Results.Result.Error("Theme is invalid.");
+                            ? PandaBear.Results.Result.Ok()
+                            : PandaBear.Results.Result.Error("Theme is invalid.");
                     }
                 }
             }
@@ -1435,7 +1435,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         // Arrange
         const string source = """
             // <auto-generated/>
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1447,10 +1447,10 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public async Task<SharedKernel.Results.Result> Replace()
+                    public async Task<PandaBear.Results.Result> Replace()
                     {
                         await Task.Yield();
-                        return SharedKernel.Results.Result.Ok();
+                        return PandaBear.Results.Result.Ok();
                     }
                 }
             }
@@ -1468,7 +1468,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1480,10 +1480,10 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public SharedKernel.Results.Result Replace() => Validate();
+                    public PandaBear.Results.Result Replace() => Validate();
 
-                    private static SharedKernel.Results.Result Validate() =>
-                        SharedKernel.Results.Result.Error("Theme is invalid.");
+                    private static PandaBear.Results.Result Validate() =>
+                        PandaBear.Results.Result.Error("Theme is invalid.");
                 }
             }
             """;
@@ -1500,7 +1500,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1513,8 +1513,8 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public SharedKernel.Results.Result Replace(bool isChanged) =>
-                        isChanged ? SharedKernel.Results.Result.Ok() : SharedKernel.Results.Result.NoContent();
+                    public PandaBear.Results.Result Replace(bool isChanged) =>
+                        isChanged ? PandaBear.Results.Result.Ok() : PandaBear.Results.Result.NoContent();
                 }
             }
             """;
@@ -1531,7 +1531,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1545,16 +1545,16 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public SharedKernel.Results.Result Replace(int status) => status switch
+                    public PandaBear.Results.Result Replace(int status) => status switch
                     {
-                        0 => SharedKernel.Results.Result.Ok(),
-                        _ => SharedKernel.Results.Result.NoContent(),
+                        0 => PandaBear.Results.Result.Ok(),
+                        _ => PandaBear.Results.Result.NoContent(),
                     };
 
-                    public SharedKernel.Results.Result Validate(int status) => status switch
+                    public PandaBear.Results.Result Validate(int status) => status switch
                     {
-                        0 => SharedKernel.Results.Result.Ok(),
-                        _ => SharedKernel.Results.Result.Error("Theme is invalid."),
+                        0 => PandaBear.Results.Result.Ok(),
+                        _ => PandaBear.Results.Result.Error("Theme is invalid."),
                     };
                 }
             }
@@ -1574,7 +1574,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1587,14 +1587,14 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public SharedKernel.Results.Result Replace()
+                    public PandaBear.Results.Result Replace()
                     {
                         if (false)
                         {
-                            return SharedKernel.Results.Result.Error("Unreachable");
+                            return PandaBear.Results.Result.Error("Unreachable");
                         }
 
-                        return SharedKernel.Results.Result.Ok();
+                        return PandaBear.Results.Result.Ok();
                     }
                 }
             }
@@ -1612,7 +1612,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1624,12 +1624,12 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public partial interface IThemeSettings
                 {
-                    SharedKernel.Results.Result Replace();
+                    PandaBear.Results.Result Replace();
                 }
 
                 public sealed partial class ThemeSettings : IThemeSettings
                 {
-                    public SharedKernel.Results.Result Replace() => SharedKernel.Results.Result.Ok();
+                    public PandaBear.Results.Result Replace() => PandaBear.Results.Result.Ok();
                 }
             }
             """;
@@ -1646,7 +1646,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1658,12 +1658,12 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public abstract partial class ThemeSettings
                 {
-                    public abstract SharedKernel.Results.Result Replace();
+                    public abstract PandaBear.Results.Result Replace();
                 }
 
                 public sealed partial class PublicThemeSettings : ThemeSettings
                 {
-                    public override SharedKernel.Results.Result Replace() => SharedKernel.Results.Result.Ok();
+                    public override PandaBear.Results.Result Replace() => PandaBear.Results.Result.Ok();
                 }
             }
             """;
@@ -1680,7 +1680,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1697,14 +1697,14 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public SharedKernel.Results.Result<string> Find(bool exists)
+                    public PandaBear.Results.Result<string> Find(bool exists)
                     {
                         if (exists)
                         {
-                            return SharedKernel.Results.Result.Ok("Theme");
+                            return PandaBear.Results.Result.Ok("Theme");
                         }
 
-                        return SharedKernel.Results.Result.NotFound<string>("Theme was not found.");
+                        return PandaBear.Results.Result.NotFound<string>("Theme was not found.");
                     }
                 }
             }
@@ -1722,7 +1722,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1738,7 +1738,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public SharedKernel.Results.Result<string> Find() => SharedKernel.Results.Result.Ok("Theme");
+                    public PandaBear.Results.Result<string> Find() => PandaBear.Results.Result.Ok("Theme");
                 }
             }
             """;
@@ -1756,7 +1756,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1772,7 +1772,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public SharedKernel.Results.Result<string> Create() => SharedKernel.Results.Result.Created("Theme");
+                    public PandaBear.Results.Result<string> Create() => PandaBear.Results.Result.Created("Theme");
                 }
             }
             """;
@@ -1789,7 +1789,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1806,13 +1806,13 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public sealed partial class ThemeSettings
                 {
-                    public SharedKernel.Results.Result<string> Find(bool exists) =>
-                        exists ? SharedKernel.Results.Result.Ok("Theme") : SharedKernel.Results.Result.NotFound<string>("Theme was not found.");
+                    public PandaBear.Results.Result<string> Find(bool exists) =>
+                        exists ? PandaBear.Results.Result.Ok("Theme") : PandaBear.Results.Result.NotFound<string>("Theme was not found.");
 
-                    public SharedKernel.Results.Result<string> FindByStatus(int status) => status switch
+                    public PandaBear.Results.Result<string> FindByStatus(int status) => status switch
                     {
-                        0 => SharedKernel.Results.Result.Ok("Theme"),
-                        _ => SharedKernel.Results.Result.NotFound<string>("Theme was not found."),
+                        0 => PandaBear.Results.Result.Ok("Theme"),
+                        _ => PandaBear.Results.Result.NotFound<string>("Theme was not found."),
                     };
                 }
             }
@@ -1831,7 +1831,7 @@ public sealed class SharedKernelStyleAnalyzerTests
     {
         // Arrange
         const string source = """
-            namespace SharedKernel.Results
+            namespace PandaBear.Results
             {
                 public readonly partial struct Result
                 {
@@ -1849,38 +1849,38 @@ public sealed class SharedKernelStyleAnalyzerTests
             {
                 public partial interface IThemeSettings
                 {
-                    SharedKernel.Results.Result<string> Find();
+                    PandaBear.Results.Result<string> Find();
                 }
 
                 public abstract partial class ThemeSettingsBase
                 {
-                    public abstract SharedKernel.Results.Result<string> FindById();
+                    public abstract PandaBear.Results.Result<string> FindById();
                 }
 
                 public sealed partial class ThemeSettings : ThemeSettingsBase, IThemeSettings
                 {
-                    public SharedKernel.Results.Result<string> Find()
+                    public PandaBear.Results.Result<string> Find()
                     {
                         if (false)
                         {
-                            return SharedKernel.Results.Result.NotFound<string>("Unreachable");
+                            return PandaBear.Results.Result.NotFound<string>("Unreachable");
                         }
 
-                        return SharedKernel.Results.Result.Ok("Theme");
+                        return PandaBear.Results.Result.Ok("Theme");
                     }
 
-                    public override SharedKernel.Results.Result<string> FindById() =>
-                        SharedKernel.Results.Result.NotFound<string>("Theme was not found.");
+                    public override PandaBear.Results.Result<string> FindById() =>
+                        PandaBear.Results.Result.NotFound<string>("Theme was not found.");
 
-                    public SharedKernel.Results.Result<string> Propagated() => External();
+                    public PandaBear.Results.Result<string> Propagated() => External();
 
-                    public System.Threading.Tasks.Task<SharedKernel.Results.Result<string>> FindAsync() =>
-                        System.Threading.Tasks.Task.FromResult(SharedKernel.Results.Result.Ok("Theme"));
+                    public System.Threading.Tasks.Task<PandaBear.Results.Result<string>> FindAsync() =>
+                        System.Threading.Tasks.Task.FromResult(PandaBear.Results.Result.Ok("Theme"));
 
-                    public SharedKernel.Results.Result<string> Throws() => throw new System.InvalidOperationException();
+                    public PandaBear.Results.Result<string> Throws() => throw new System.InvalidOperationException();
 
-                    private static SharedKernel.Results.Result<string> External() =>
-                        SharedKernel.Results.Result.Error<string>("Theme failed.");
+                    private static PandaBear.Results.Result<string> External() =>
+                        PandaBear.Results.Result.Error<string>("Theme failed.");
                 }
             }
             """;

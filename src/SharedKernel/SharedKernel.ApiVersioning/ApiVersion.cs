@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace SharedKernel.ApiVersioning;
+namespace PandaBear.ApiVersioning;
 
 /// <summary>
 /// Represents a public API contract version.

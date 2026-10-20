@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging.IntegrationEvents.CloudEvents;
+namespace PandaBear.Messaging.IntegrationEvents.CloudEvents;
 
 /// <summary>
 /// Represents CloudEvents metadata for a typed integration event payload.

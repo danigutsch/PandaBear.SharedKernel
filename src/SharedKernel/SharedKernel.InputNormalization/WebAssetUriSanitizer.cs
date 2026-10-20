@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace SharedKernel.InputNormalization;
+namespace PandaBear.InputNormalization;
 
 /// <summary>
 /// Normalizes optional web asset URI values for safe storage and rendering.

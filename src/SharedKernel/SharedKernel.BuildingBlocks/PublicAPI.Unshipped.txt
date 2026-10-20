@@ -1,22 +1,22 @@
 #nullable enable
-SharedKernel.BuildingBlocks.DateRange
-SharedKernel.BuildingBlocks.DateRange.DurationDays.get -> double
-SharedKernel.BuildingBlocks.DateRange.EndDate.get -> System.DateTime
-SharedKernel.BuildingBlocks.DateRange.StartDate.get -> System.DateTime
-SharedKernel.BuildingBlocks.ExceptionCancellationExtensions
-SharedKernel.BuildingBlocks.IIdentified<TId>
-SharedKernel.BuildingBlocks.IIdentified<TId>.Id.get -> TId
-SharedKernel.BuildingBlocks.OptionResultExtensions
-SharedKernel.BuildingBlocks.ValueObject
-SharedKernel.BuildingBlocks.ValueObject.Equals(SharedKernel.BuildingBlocks.ValueObject? other) -> bool
-abstract SharedKernel.BuildingBlocks.ValueObject.GetEqualityComponents() -> System.Collections.Generic.IEnumerable<object?>!
-SharedKernel.BuildingBlocks.ValueObject.ValueObject() -> void
-override SharedKernel.BuildingBlocks.ValueObject.Equals(object? obj) -> bool
-override SharedKernel.BuildingBlocks.ValueObject.GetHashCode() -> int
-static SharedKernel.BuildingBlocks.DateRange.Create(System.DateTime startDate, System.DateTime endDate) -> SharedKernel.Results.Result<SharedKernel.BuildingBlocks.DateRange!>
-static SharedKernel.BuildingBlocks.ExceptionCancellationExtensions.ShouldHandleAsFailure(this System.Exception! exception, System.Threading.CancellationToken ct) -> bool
-static SharedKernel.BuildingBlocks.OptionResultExtensions.ToNotFoundResult<TEntity, TId>(this SharedKernel.Results.Option<TEntity> source, TId id, string? container = null) -> SharedKernel.Results.Result<TEntity>
-static SharedKernel.BuildingBlocks.ValueObject.operator !=(SharedKernel.BuildingBlocks.ValueObject? left, SharedKernel.BuildingBlocks.ValueObject? right) -> bool
-static SharedKernel.BuildingBlocks.ValueObject.operator ==(SharedKernel.BuildingBlocks.ValueObject? left, SharedKernel.BuildingBlocks.ValueObject? right) -> bool
-SharedKernel.BuildingBlocks.Compensation
-static SharedKernel.BuildingBlocks.Compensation.CompleteOrCompensate(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! operation, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! compensate, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.BuildingBlocks.DateRange
+PandaBear.BuildingBlocks.DateRange.DurationDays.get -> double
+PandaBear.BuildingBlocks.DateRange.EndDate.get -> System.DateTime
+PandaBear.BuildingBlocks.DateRange.StartDate.get -> System.DateTime
+PandaBear.BuildingBlocks.ExceptionCancellationExtensions
+PandaBear.BuildingBlocks.IIdentified<TId>
+PandaBear.BuildingBlocks.IIdentified<TId>.Id.get -> TId
+PandaBear.BuildingBlocks.OptionResultExtensions
+PandaBear.BuildingBlocks.ValueObject
+PandaBear.BuildingBlocks.ValueObject.Equals(PandaBear.BuildingBlocks.ValueObject? other) -> bool
+abstract PandaBear.BuildingBlocks.ValueObject.GetEqualityComponents() -> System.Collections.Generic.IEnumerable<object?>!
+PandaBear.BuildingBlocks.ValueObject.ValueObject() -> void
+override PandaBear.BuildingBlocks.ValueObject.Equals(object? obj) -> bool
+override PandaBear.BuildingBlocks.ValueObject.GetHashCode() -> int
+static PandaBear.BuildingBlocks.DateRange.Create(System.DateTime startDate, System.DateTime endDate) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.DateRange!>
+static PandaBear.BuildingBlocks.ExceptionCancellationExtensions.ShouldHandleAsFailure(this System.Exception! exception, System.Threading.CancellationToken ct) -> bool
+static PandaBear.BuildingBlocks.OptionResultExtensions.ToNotFoundResult<TEntity, TId>(this PandaBear.Results.Option<TEntity> source, TId id, string? container = null) -> PandaBear.Results.Result<TEntity>
+static PandaBear.BuildingBlocks.ValueObject.operator !=(PandaBear.BuildingBlocks.ValueObject? left, PandaBear.BuildingBlocks.ValueObject? right) -> bool
+static PandaBear.BuildingBlocks.ValueObject.operator ==(PandaBear.BuildingBlocks.ValueObject? left, PandaBear.BuildingBlocks.ValueObject? right) -> bool
+PandaBear.BuildingBlocks.Compensation
+static PandaBear.BuildingBlocks.Compensation.CompleteOrCompensate(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! operation, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! compensate, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask

@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace SharedKernel.Mediator.Benchmarks;
+namespace PandaBear.Mediator.Benchmarks;
 
 /// <summary>
 /// Creates synthetic mediator projects for discovery benchmarks.
@@ -19,7 +19,7 @@ internal static class DiscoveryBenchmarkSourceFactory
     public static string CreateSource(int requestCount, bool editFirstHandler = false)
     {
         var builder = new StringBuilder();
-        builder.AppendLine("using SharedKernel.Mediator;");
+        builder.AppendLine("using PandaBear.Mediator;");
         builder.AppendLine();
         builder.AppendLine("[assembly: MediatorModule]");
         builder.AppendLine();

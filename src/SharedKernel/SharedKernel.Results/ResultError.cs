@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace SharedKernel.Results;
+namespace PandaBear.Results;
 
 /// <summary>
 /// Represents error details for a failed result.

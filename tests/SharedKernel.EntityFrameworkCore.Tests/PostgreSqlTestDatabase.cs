@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Npgsql;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal sealed class PostgreSqlTestDatabase : IAsyncDisposable
 {

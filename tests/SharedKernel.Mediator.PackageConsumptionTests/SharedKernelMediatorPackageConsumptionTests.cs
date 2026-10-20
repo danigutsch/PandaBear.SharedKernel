@@ -1,6 +1,6 @@
-using SharedKernel.Testing;
+using PandaBear.Testing;
 
-namespace SharedKernel.Mediator.PackageConsumptionTests;
+namespace PandaBear.Mediator.PackageConsumptionTests;
 
 [Trait(SharedKernelTestTraitNames.CategoryName, "PackageConsumption")]
 public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)
@@ -29,7 +29,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             </Project>
             """,
             ("Consumer.cs", """
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             namespace Consumer;
 
@@ -102,7 +102,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             StringComparison.Ordinal);
         integrationEventGeneration.ShouldNotContain(GeneratedSynchronousScopeCreation, StringComparison.Ordinal);
         integrationEventGeneration.ShouldContain(
-            "TryAddScoped<global::SharedKernel.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Consumer.TourCreatedIntegrationEvent>, global::Consumer.TourCreatedIntegrationEventHandler>",
+            "TryAddScoped<global::PandaBear.Messaging.IntegrationEvents.IIntegrationEventHandler<global::Consumer.TourCreatedIntegrationEvent>, global::Consumer.TourCreatedIntegrationEventHandler>",
             StringComparison.Ordinal);
         integrationEventGeneration.ShouldNotContain("GeneratedIntegrationEventHandlerForwarder", StringComparison.Ordinal);
         integrationEventGeneration.ShouldNotContain("ContractRegistration", StringComparison.Ordinal);
@@ -191,7 +191,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             ("Consumer.cs", """
             using System.Threading;
             using System.Threading.Tasks;
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             namespace Consumer;
 
@@ -237,7 +237,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             ("Consumer.cs", """
             using System.Threading;
             using System.Threading.Tasks;
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             namespace Consumer;
 
@@ -286,11 +286,11 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             ("Consumer.cs", """
             using System.Threading;
             using System.Threading.Tasks;
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             namespace Consumer;
 
-            // IQuery<string> comes from SharedKernel.Mediator.Abstractions — transitively referenced
+            // IQuery<string> comes from PandaBear.Mediator.Abstractions — transitively referenced
             public sealed record LookupTour(string Code) : IQuery<string>;
 
             public sealed class LookupTourHandler : IQueryHandler<LookupTour, string>
@@ -337,14 +337,14 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             </Project>
             """,
             ("AssemblyInfo.cs", """
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             [assembly: MediatorModule]
             """),
             ("Handler.cs", """
             using System.Threading;
             using System.Threading.Tasks;
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             namespace MediatorLibraryModule;
 
@@ -428,14 +428,14 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             </Project>
             """,
             ("AssemblyInfo.cs", """
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             [assembly: MediatorModule]
             """),
             ("Handler.cs", """
             using System.Threading;
             using System.Threading.Tasks;
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             namespace MediatorModuleA;
 
@@ -453,7 +453,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             ("LookupTour.cs", """
             using System.Threading;
             using System.Threading.Tasks;
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             namespace MediatorComposedApp;
 

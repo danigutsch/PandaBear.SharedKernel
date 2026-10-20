@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace SharedKernel.Mediator.GeneratorTests;
+namespace PandaBear.Mediator.GeneratorTests;
 
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.DependencyInjectionCapability)]
 public sealed class GeneratorDependencyInjectionTests
@@ -63,10 +63,10 @@ public sealed class GeneratorDependencyInjectionTests
         generatedSource.ShouldContain("services.AddScoped<IPublisher>(static sp => sp.GetRequiredService<AppMediator>());", StringComparison.Ordinal);
         generatedSource.ShouldContain("services.AddScoped<IMediator>(static sp => sp.GetRequiredService<AppMediator>());", StringComparison.Ordinal);
         generatedSource.ShouldContain("services.AddScoped<global::Demo.CreateTourHandler>();", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.ICommandHandler<", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.IPipelineBehavior<", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.INotificationHandler<", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.IStreamRequestHandler<", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::PandaBear.Mediator.ICommandHandler<", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::PandaBear.Mediator.IPipelineBehavior<", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::PandaBear.Mediator.INotificationHandler<", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::PandaBear.Mediator.IStreamRequestHandler<", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -90,7 +90,7 @@ public sealed class GeneratorDependencyInjectionTests
 
         // Assert
         generatedSource.ShouldContain("services.AddScoped<global::Demo.ValidationBehavior<global::Demo.CreateTour, int>>();", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.IPipelineBehavior<", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::PandaBear.Mediator.IPipelineBehavior<", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -114,7 +114,7 @@ public sealed class GeneratorDependencyInjectionTests
 
         // Assert
         generatedSource.ShouldContain("services.AddScoped<global::Demo.ValidationBehavior<global::Demo.StreamTours, string>>();", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.IStreamPipelineBehavior<", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::PandaBear.Mediator.IStreamPipelineBehavior<", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public sealed class GeneratorDependencyInjectionTests
 
             """,
             """
-            namespace SharedKernel.Mediator.EntityFrameworkCore;
+            namespace PandaBear.Mediator.EntityFrameworkCore;
 
             public sealed class EfCoreCommandTransactionBehavior<TRequest, TResponse>
             {
@@ -167,7 +167,7 @@ public sealed class GeneratorDependencyInjectionTests
             "AddEfCoreCommandTransaction<TContext, global::Demo.CreateTour, int>(services);",
             StringComparison.Ordinal);
         generatedSource.ShouldContain(
-            "AddEfCoreCommandTransaction<TContext, global::Demo.DeleteTour, global::SharedKernel.Mediator.Unit>(services);",
+            "AddEfCoreCommandTransaction<TContext, global::Demo.DeleteTour, global::PandaBear.Mediator.Unit>(services);",
             StringComparison.Ordinal);
         generatedSource.ShouldNotContain("AddEfCoreCommandTransaction<TContext, global::Demo.GetTour", StringComparison.Ordinal);
     }
@@ -187,7 +187,7 @@ public sealed class GeneratorDependencyInjectionTests
         // Assert
         generatedSource.ShouldContain("services.AddScoped<global::Demo.CreateTourHandler>();", StringComparison.Ordinal);
         generatedSource.ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
-        generatedSource.ShouldNotContain("services.AddScoped<global::SharedKernel.Mediator.IQueryHandler<", StringComparison.Ordinal);
+        generatedSource.ShouldNotContain("services.AddScoped<global::PandaBear.Mediator.IQueryHandler<", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -215,7 +215,7 @@ public sealed class GeneratorDependencyInjectionTests
         diagnostics.ShouldBeEmpty();
         generatedSource.ShouldContain("services.AddScoped<global::Demo.TourCreatedHandler>();", StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddScoped<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourCreated>, global::Demo.TourCreatedHandler>();",
+            "services.AddScoped<global::PandaBear.Mediator.INotificationHandler<global::Demo.TourCreated>, global::Demo.TourCreatedHandler>();",
             StringComparison.Ordinal);
     }
 
@@ -251,7 +251,7 @@ public sealed class GeneratorDependencyInjectionTests
         diagnostics.ShouldBeEmpty();
         generatedSource.ShouldContain("services.AddScoped<global::Demo.StreamToursHandler>();", StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddScoped<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamTours, string>, global::Demo.StreamToursHandler>();",
+            "services.AddScoped<global::PandaBear.Mediator.IStreamRequestHandler<global::Demo.StreamTours, string>, global::Demo.StreamToursHandler>();",
             StringComparison.Ordinal);
     }
 
@@ -285,7 +285,7 @@ public sealed class GeneratorDependencyInjectionTests
     {
         // Arrange
         const string moduleSource = """
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
 
             [assembly: MediatorModule]
 
@@ -313,7 +313,7 @@ public sealed class GeneratorDependencyInjectionTests
                                  && diagnostic.GetMessage(CultureInfo.InvariantCulture).Contains("global::ModuleA.SearchToursHandler", StringComparison.Ordinal));
         generatedSource.ShouldNotContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddScoped<global::SharedKernel.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();",
+            "services.AddScoped<global::PandaBear.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();",
             StringComparison.Ordinal);
     }
 
@@ -322,7 +322,7 @@ public sealed class GeneratorDependencyInjectionTests
     {
         // Arrange
         const string moduleSource = """
-            using SharedKernel.Mediator;
+            using PandaBear.Mediator;
             using System.Runtime.CompilerServices;
 
             [assembly: MediatorModule]
@@ -350,7 +350,7 @@ public sealed class GeneratorDependencyInjectionTests
         diagnostics.ShouldNotContain(static diagnostic => diagnostic.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
         generatedSource.ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddScoped<global::SharedKernel.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();",
+            "services.AddScoped<global::PandaBear.Mediator.IQueryHandler<global::ModuleA.SearchTours, int>, global::ModuleA.SearchToursHandler>();",
             StringComparison.Ordinal);
     }
 
@@ -406,10 +406,10 @@ public sealed class GeneratorDependencyInjectionTests
         var registrationCount = generatedSource.Split("services.AddScoped<global::Demo.TourEventsHandler>();", StringSplitOptions.None).Length - 1;
         registrationCount.ShouldBe(1);
         generatedSource.ShouldNotContain(
-            "services.AddScoped<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourCreated>, global::Demo.TourEventsHandler>();",
+            "services.AddScoped<global::PandaBear.Mediator.INotificationHandler<global::Demo.TourCreated>, global::Demo.TourEventsHandler>();",
             StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddScoped<global::SharedKernel.Mediator.INotificationHandler<global::Demo.TourUpdated>, global::Demo.TourEventsHandler>();",
+            "services.AddScoped<global::PandaBear.Mediator.INotificationHandler<global::Demo.TourUpdated>, global::Demo.TourEventsHandler>();",
             StringComparison.Ordinal);
     }
 
@@ -451,10 +451,10 @@ public sealed class GeneratorDependencyInjectionTests
         var registrationCount = generatedSource.Split("services.AddScoped<global::Demo.SearchStreamHandler>();", StringSplitOptions.None).Length - 1;
         registrationCount.ShouldBe(1);
         generatedSource.ShouldNotContain(
-            "services.AddScoped<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamTours, string>, global::Demo.SearchStreamHandler>();",
+            "services.AddScoped<global::PandaBear.Mediator.IStreamRequestHandler<global::Demo.StreamTours, string>, global::Demo.SearchStreamHandler>();",
             StringComparison.Ordinal);
         generatedSource.ShouldNotContain(
-            "services.AddScoped<global::SharedKernel.Mediator.IStreamRequestHandler<global::Demo.StreamCities, string>, global::Demo.SearchStreamHandler>();",
+            "services.AddScoped<global::PandaBear.Mediator.IStreamRequestHandler<global::Demo.StreamCities, string>, global::Demo.SearchStreamHandler>();",
             StringComparison.Ordinal);
     }
 }

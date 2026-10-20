@@ -1,4 +1,4 @@
-[assembly: Trait(SharedKernel.Testing.TestTraitNames.ScopeName, SharedKernel.EventSourcing.Npgsql.Tests.TestTraits.IntegrationScope)]
-[assembly: Trait(SharedKernel.EventSourcing.Npgsql.Tests.TestTraits.ComponentName, SharedKernel.EventSourcing.Npgsql.Tests.TestTraits.PostgreSqlEventSourcingComponent)]
-[assembly: Trait(SharedKernel.Testing.TestTraitNames.HostName, SharedKernel.EventSourcing.Npgsql.Tests.TestTraits.AspireHost)]
-[assembly: AssemblyFixture(typeof(SharedKernel.EventSourcing.Npgsql.Tests.PostgreSqlTestServerFixture))]
+[assembly: Trait(PandaBear.Testing.TestTraitNames.ScopeName, PandaBear.EventSourcing.Npgsql.Tests.TestTraits.IntegrationScope)]
+[assembly: Trait(PandaBear.EventSourcing.Npgsql.Tests.TestTraits.ComponentName, PandaBear.EventSourcing.Npgsql.Tests.TestTraits.PostgreSqlEventSourcingComponent)]
+[assembly: Trait(PandaBear.Testing.TestTraitNames.HostName, PandaBear.EventSourcing.Npgsql.Tests.TestTraits.AspireHost)]
+[assembly: AssemblyFixture(typeof(PandaBear.EventSourcing.Npgsql.Tests.PostgreSqlTestServerFixture))]

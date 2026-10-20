@@ -1,17 +1,17 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using SharedKernel.BuildingBlocks;
-using SharedKernel.Domain.SourceGenerator;
-using SharedKernel.Testing.Roslyn;
+using PandaBear.BuildingBlocks;
+using PandaBear.Domain.SourceGenerator;
+using PandaBear.Testing.Roslyn;
 
-namespace SharedKernel.Domain.GeneratorTests;
+namespace PandaBear.Domain.GeneratorTests;
 
 internal static class GeneratorTestHarness
 {
     private const string DefaultUsings = """
-        using SharedKernel.BuildingBlocks;
-        using SharedKernel.Domain;
+        using PandaBear.BuildingBlocks;
+        using PandaBear.Domain;
 
         """;
 

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Routing.Patterns;
 
-namespace SharedKernel.OpenApi;
+namespace PandaBear.OpenApi;
 
 internal static class OpenApiOperationKey
 {

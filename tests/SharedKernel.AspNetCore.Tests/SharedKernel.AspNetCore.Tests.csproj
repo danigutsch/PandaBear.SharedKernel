@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <RootNamespace>SharedKernel.AspNetCore.Tests</RootNamespace>
+        <RootNamespace>PandaBear.AspNetCore.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,12 +17,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="SharedKernel.Testing.Assertions" />
-        <Using Include="SharedKernel.Testing.AspNetCore" />
+        <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.AspNetCore" />
         <Using Include="Xunit" />
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.HttpCaching.AspNetCore\SharedKernel.HttpCaching.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.AspNetCore\SharedKernel.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />

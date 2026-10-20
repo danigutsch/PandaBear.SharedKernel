@@ -1,6 +1,6 @@
-using SharedKernel.Messaging;
+using PandaBear.Messaging;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal sealed class DisposableEventEnvelopePublisher : IEventEnvelopePublisher, IDisposable
 {

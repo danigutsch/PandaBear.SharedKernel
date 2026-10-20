@@ -1,5 +1,5 @@
 
-namespace SharedKernel.InputNormalization.Tests;
+namespace PandaBear.InputNormalization.Tests;
 
 public sealed class NumericSanitizerTests
 {

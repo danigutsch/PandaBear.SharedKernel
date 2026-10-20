@@ -39,3 +39,9 @@ controls depend on the telemetry fields emitted by each application.
 Both accept an optional `Func<string, bool>` for additional application-sensitive attribute names.
 The shared baseline always applies; the callback cannot permit attributes rejected by the baseline.
 Application identifiers and business-specific redaction policy stay with the host.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Observability`. C# namespace: `PandaBear.Observability`. Assembly/project identity: `SharedKernel.Observability`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

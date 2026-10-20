@@ -67,3 +67,9 @@ can shift absolute timings, so compare trends more than raw milliseconds.
 
 - [SharedKernel.Mediator.Abstractions](../SharedKernel.Mediator.Abstractions/README.md)
 - [SharedKernel.Mediator.GeneratorTests](../../../tests/SharedKernel.Mediator.GeneratorTests/README.md)
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Mediator.SourceGenerator`. C# namespace: `PandaBear.Mediator.SourceGenerator`. Assembly/project identity: `SharedKernel.Mediator.SourceGenerator`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

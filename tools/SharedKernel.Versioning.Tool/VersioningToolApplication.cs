@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace SharedKernel.Versioning.Tool;
+namespace PandaBear.Versioning.Tool;
 
 internal static class VersioningToolApplication
 {

@@ -6,11 +6,16 @@
         <PackageId>PandaBear.SharedKernel.PlaywrightMcp.Tool</PackageId>
         <ToolCommandName>sharedkernel-playwright-mcp</ToolCommandName>
         <Description>Reusable Playwright MCP browser automation tool.</Description>
-        <RootNamespace>SharedKernel.PlaywrightMcp.Tool</RootNamespace>
+        <RootNamespace>PandaBear.PlaywrightMcp.Tool</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
         <InternalsVisibleTo Include="SharedKernel.PlaywrightMcp.Tool.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

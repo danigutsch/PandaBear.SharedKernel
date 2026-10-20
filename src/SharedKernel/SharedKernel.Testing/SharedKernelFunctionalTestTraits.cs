@@ -1,4 +1,4 @@
-namespace SharedKernel.Functional.Tests;
+namespace PandaBear.Functional.Tests;
 
 /// <summary>
 /// Shared trait constants for functional SharedKernel tests.

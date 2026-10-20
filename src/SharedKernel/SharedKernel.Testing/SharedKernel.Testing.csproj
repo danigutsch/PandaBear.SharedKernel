@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Testing</PackageId>
         <Description>Reusable test traits and attributes for SharedKernel test suites.</Description>
-        <RootNamespace>SharedKernel.Testing</RootNamespace>
+        <RootNamespace>PandaBear.Testing</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;traits;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

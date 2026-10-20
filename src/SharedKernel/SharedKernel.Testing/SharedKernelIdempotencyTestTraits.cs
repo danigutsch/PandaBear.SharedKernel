@@ -1,4 +1,4 @@
-namespace SharedKernel.Idempotency.Tests;
+namespace PandaBear.Idempotency.Tests;
 
 /// <summary>
 /// Shared trait constants for SharedKernel idempotency tests.

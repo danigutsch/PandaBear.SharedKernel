@@ -1,4 +1,4 @@
-namespace SharedKernel.EventSourcing.Tests;
+namespace PandaBear.EventSourcing.Tests;
 
 public sealed class EventSourcingValueTests
 {

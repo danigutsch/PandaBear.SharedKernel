@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.AspNetCore</PackageId>
         <Description>Reusable ASP.NET Core helpers for explicit application security and hosting defaults.</Description>
-        <RootNamespace>SharedKernel.AspNetCore</RootNamespace>
+        <RootNamespace>PandaBear.AspNetCore</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspnetcore;security;cors;rate-limiting;headers;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>
@@ -13,6 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Idempotency\SharedKernel.Idempotency.csproj" />
+        <ProjectReference Include="..\SharedKernel.Results\SharedKernel.Results.csproj" />
         <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
         <ProjectReference Include="..\SharedKernel.OpenApi\SharedKernel.OpenApi.csproj" />
     </ItemGroup>

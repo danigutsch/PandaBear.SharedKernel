@@ -1,14 +1,14 @@
 #nullable enable
-SharedKernel.InputNormalization.NumericSanitizer
-SharedKernel.InputNormalization.ObjectStorageKeyValidator
-SharedKernel.InputNormalization.StringSanitizer
-SharedKernel.InputNormalization.WebAssetUriSanitizer
-static SharedKernel.InputNormalization.NumericSanitizer.SanitizePrice(decimal value) -> decimal
-static SharedKernel.InputNormalization.ObjectStorageKeyValidator.IsValidRelativeKey(string? value, int maxLength) -> bool
-static SharedKernel.InputNormalization.StringSanitizer.NormalizeKey(string! value) -> string!
-static SharedKernel.InputNormalization.StringSanitizer.NormalizeKeyRemovingDiacritics(string! value) -> string!
-static SharedKernel.InputNormalization.StringSanitizer.Sanitize(string? value) -> string?
-static SharedKernel.InputNormalization.StringSanitizer.SanitizeCollection(System.Collections.Generic.IEnumerable<string!>? values) -> string![]!
-static SharedKernel.InputNormalization.StringSanitizer.SanitizeNotes(string? value) -> string?
-static SharedKernel.InputNormalization.WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(string? value, int maxLength) -> string?
-static SharedKernel.InputNormalization.WebAssetUriSanitizer.ToRootRelativeOrHttpsUri(string? value, int maxLength) -> System.Uri?
+PandaBear.InputNormalization.NumericSanitizer
+PandaBear.InputNormalization.ObjectStorageKeyValidator
+PandaBear.InputNormalization.StringSanitizer
+PandaBear.InputNormalization.WebAssetUriSanitizer
+static PandaBear.InputNormalization.NumericSanitizer.SanitizePrice(decimal value) -> decimal
+static PandaBear.InputNormalization.ObjectStorageKeyValidator.IsValidRelativeKey(string? value, int maxLength) -> bool
+static PandaBear.InputNormalization.StringSanitizer.NormalizeKey(string! value) -> string!
+static PandaBear.InputNormalization.StringSanitizer.NormalizeKeyRemovingDiacritics(string! value) -> string!
+static PandaBear.InputNormalization.StringSanitizer.Sanitize(string? value) -> string?
+static PandaBear.InputNormalization.StringSanitizer.SanitizeCollection(System.Collections.Generic.IEnumerable<string!>? values) -> string![]!
+static PandaBear.InputNormalization.StringSanitizer.SanitizeNotes(string? value) -> string?
+static PandaBear.InputNormalization.WebAssetUriSanitizer.NormalizeRootRelativeOrHttps(string? value, int maxLength) -> string?
+static PandaBear.InputNormalization.WebAssetUriSanitizer.ToRootRelativeOrHttpsUri(string? value, int maxLength) -> System.Uri?

@@ -1,4 +1,4 @@
-namespace SharedKernel.ImageProcessing;
+namespace PandaBear.ImageProcessing;
 
 /// <summary>
 /// Supported encoded image output formats.

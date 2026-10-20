@@ -1,4 +1,4 @@
-namespace SharedKernel.Mediator.EntityFrameworkCore.Tests;
+namespace PandaBear.Mediator.EntityFrameworkCore.Tests;
 
 internal sealed class TestCommandTransactionBehavior<TRequest, TResponse>(TestDbContext dbContext)
     : IPipelineBehavior<TRequest, TResponse>

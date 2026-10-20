@@ -4,7 +4,7 @@
         <IsPackable>true</IsPackable>
         <PackageId>PandaBear.SharedKernel.Documentation</PackageId>
         <Description>Reusable primitives for generated Markdown and source-backed documentation conformance checks.</Description>
-        <RootNamespace>SharedKernel.Documentation</RootNamespace>
+        <RootNamespace>PandaBear.Documentation</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

@@ -2,9 +2,9 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
-using SharedKernel.Testing.Roslyn;
+using PandaBear.Testing.Roslyn;
 
-namespace SharedKernel.Aspire.Analyzers.Tests;
+namespace PandaBear.Aspire.Analyzers.Tests;
 
 internal static class AnalyzerTestHarness
 {

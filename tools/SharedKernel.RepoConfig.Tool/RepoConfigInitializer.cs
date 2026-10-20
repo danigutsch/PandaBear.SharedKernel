@@ -1,4 +1,4 @@
-namespace SharedKernel.RepoConfig.Tool;
+namespace PandaBear.RepoConfig.Tool;
 
 internal static class RepoConfigInitializer
 {

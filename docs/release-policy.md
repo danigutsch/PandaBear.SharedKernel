@@ -58,3 +58,9 @@ The follow-up reconciliation from ViajantesTurismo commit `17586ece` retains the
 deadline, cancellation, and bounded-response regressions and applies namespace-aware MSBuild
 selection to the standalone repository selector. SDK bootstrap scripts and application CI
 selection remain consumer-owned.
+
+## Standalone namespace migration
+
+C# namespaces now use `PandaBear.*`; projects, assemblies, tool commands, and `PandaBear.SharedKernel.*` package IDs retain their existing identities. The [namespace ADR](adr/20261020-pandabear-namespaces.md) records the breaking source change. Keep API compatibility gates enabled and record breaking Conventional Commit evidence. Git repository publication is a separate, explicitly authorized operation to a verified private host/owner/name; package registry publication and stable tags remain deferred.
+
+The current reconciliation includes reusable changes from merged ViajantesTurismo donor `c5f48c521af5ccb14907960d52a8b34c0e7048ab` and the deliberate `PandaBear.*` namespace migration. Earlier donor revisions above remain extraction history; they do not imply that the standalone library still exposes the superseded HTTP outcome names. Validate a new immutable candidate for these changes before any separate application adoption.

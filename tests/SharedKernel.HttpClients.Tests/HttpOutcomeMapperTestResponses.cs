@@ -1,9 +1,9 @@
 using System.Net;
 using System.Text;
 
-namespace SharedKernel.HttpClients.Tests;
+namespace PandaBear.HttpClients.Tests;
 
-internal static class ContractCommandOutcomeTestResponses
+internal static class HttpOutcomeMapperTestResponses
 {
     public static HttpResponseMessage Json(HttpStatusCode statusCode, string json, string mediaType = "application/json")
     {

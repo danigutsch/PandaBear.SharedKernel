@@ -29,7 +29,7 @@ SharedKernel seed and should stay reusable outside this repository.
 
 ## Usage
 
-- Add a package reference to `SharedKernel.IntegrationTesting`.
+- Add a package reference to `PandaBear.SharedKernel.IntegrationTesting` at the validated private candidate version.
 - Start AppHost-backed tests through `AspireTestApplication.Start<TAppHost>(...)`; create resource-only test
   builders with `AspireTestApplication.CreateBuilder(...)` and pass them to `Start(...)`.
 - `AspireTestApplication` applies DCP suffixes and preserves Aspire testing defaults; do not bypass or recreate
@@ -52,3 +52,9 @@ still awaits all phases and reports failures; no resource-cleanup wait is disabl
 
 References: [Aspire networking](https://aspire.dev/fundamentals/networking-overview/) and
 [DCP environment settings](https://github.com/microsoft/dcp/blob/main/README.md#environment-variables-affecting-dcp-behavior).
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.IntegrationTesting`. C# namespace: `PandaBear.IntegrationTesting`. Assembly/project identity: `SharedKernel.IntegrationTesting`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

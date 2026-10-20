@@ -3,7 +3,7 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Testing.Web</PackageId>
         <Description>Reusable bUnit element assertions for SharedKernel web test suites.</Description>
-        <RootNamespace>SharedKernel.Testing.Web</RootNamespace>
+        <RootNamespace>PandaBear.Testing.Web</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;bunit;web;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>

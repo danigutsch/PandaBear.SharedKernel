@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>PandaBear.SharedKernel.EventSourcing.Npgsql</PackageId>
     <Description>Npgsql adapter for SharedKernel event-sourcing primitives.</Description>
-    <RootNamespace>SharedKernel.EventSourcing.Npgsql</RootNamespace>
+    <RootNamespace>PandaBear.EventSourcing.Npgsql</RootNamespace>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>

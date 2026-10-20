@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace SharedKernel.Observability;
+namespace PandaBear.Observability;
 
 internal static class ApplicationVersionProvider
 {

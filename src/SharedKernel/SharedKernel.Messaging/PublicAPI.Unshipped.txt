@@ -1,39 +1,39 @@
 #nullable enable
-const SharedKernel.Messaging.EventEnvelope.EventTypeMaxLength = 200 -> int
-SharedKernel.Messaging.EventEnvelope
-SharedKernel.Messaging.EventEnvelope.DataContentType.get -> string?
-SharedKernel.Messaging.EventEnvelope.DataSchema.get -> System.Uri?
-SharedKernel.Messaging.EventEnvelope.EnvelopeSpec.get -> string!
-SharedKernel.Messaging.EventEnvelope.EnvelopeSpecVersion.get -> string!
-SharedKernel.Messaging.EventEnvelope.EventEnvelope(string! envelopeSpec, string! envelopeSpecVersion, string! eventId, System.Uri! source, string! eventType, int? eventVersion, System.DateTimeOffset? time, string? subject, string? dataContentType, System.Uri? dataSchema, string? payload, SharedKernel.Messaging.EventPayloadEncoding payloadEncoding, string? extensionAttributesJson) -> void
-SharedKernel.Messaging.EventEnvelope.EventEnvelope() -> void
-SharedKernel.Messaging.EventEnvelope.EventId.get -> string!
-SharedKernel.Messaging.EventEnvelope.EventType.get -> string!
-SharedKernel.Messaging.EventEnvelope.EventVersion.get -> int?
-SharedKernel.Messaging.EventEnvelope.ExtensionAttributesJson.get -> string?
-SharedKernel.Messaging.EventEnvelope.Payload.get -> string?
-SharedKernel.Messaging.EventEnvelope.PayloadEncoding.get -> SharedKernel.Messaging.EventPayloadEncoding
-SharedKernel.Messaging.EventEnvelope.Source.get -> System.Uri!
-SharedKernel.Messaging.EventEnvelope.Subject.get -> string?
-SharedKernel.Messaging.EventEnvelope.Time.get -> System.DateTimeOffset?
-SharedKernel.Messaging.EventPayloadEncoding
-SharedKernel.Messaging.EventPayloadEncoding.Base64 = 1 -> SharedKernel.Messaging.EventPayloadEncoding
-SharedKernel.Messaging.EventPayloadEncoding.Json = 0 -> SharedKernel.Messaging.EventPayloadEncoding
-SharedKernel.Messaging.IEventEnvelopePublisher
-SharedKernel.Messaging.IEventEnvelopePublisher.Publish(SharedKernel.Messaging.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
-SharedKernel.Messaging.IEventEnvelope
-SharedKernel.Messaging.IEventEnvelope.EnvelopeSpec.get -> string!
-SharedKernel.Messaging.IEventEnvelope.EnvelopeSpecVersion.get -> string!
-SharedKernel.Messaging.IEventEnvelope.ExtensionAttributesJson.get -> string?
-SharedKernel.Messaging.IEventEnvelopeMetadata
-SharedKernel.Messaging.IEventEnvelopeMetadata.EventId.get -> string!
-SharedKernel.Messaging.IEventEnvelopeMetadata.EventType.get -> string!
-SharedKernel.Messaging.IEventEnvelopeMetadata.EventVersion.get -> int?
-SharedKernel.Messaging.IEventEnvelopeMetadata.Source.get -> System.Uri!
-SharedKernel.Messaging.IEventEnvelopeMetadata.Subject.get -> string?
-SharedKernel.Messaging.IEventEnvelopeMetadata.Time.get -> System.DateTimeOffset?
-SharedKernel.Messaging.IEventEnvelopePayload
-SharedKernel.Messaging.IEventEnvelopePayload.DataContentType.get -> string?
-SharedKernel.Messaging.IEventEnvelopePayload.DataSchema.get -> System.Uri?
-SharedKernel.Messaging.IEventEnvelopePayload.Payload.get -> string?
-SharedKernel.Messaging.IEventEnvelopePayload.PayloadEncoding.get -> SharedKernel.Messaging.EventPayloadEncoding
+const PandaBear.Messaging.EventEnvelope.EventTypeMaxLength = 200 -> int
+PandaBear.Messaging.EventEnvelope
+PandaBear.Messaging.EventEnvelope.DataContentType.get -> string?
+PandaBear.Messaging.EventEnvelope.DataSchema.get -> System.Uri?
+PandaBear.Messaging.EventEnvelope.EnvelopeSpec.get -> string!
+PandaBear.Messaging.EventEnvelope.EnvelopeSpecVersion.get -> string!
+PandaBear.Messaging.EventEnvelope.EventEnvelope(string! envelopeSpec, string! envelopeSpecVersion, string! eventId, System.Uri! source, string! eventType, int? eventVersion, System.DateTimeOffset? time, string? subject, string? dataContentType, System.Uri? dataSchema, string? payload, PandaBear.Messaging.EventPayloadEncoding payloadEncoding, string? extensionAttributesJson) -> void
+PandaBear.Messaging.EventEnvelope.EventEnvelope() -> void
+PandaBear.Messaging.EventEnvelope.EventId.get -> string!
+PandaBear.Messaging.EventEnvelope.EventType.get -> string!
+PandaBear.Messaging.EventEnvelope.EventVersion.get -> int?
+PandaBear.Messaging.EventEnvelope.ExtensionAttributesJson.get -> string?
+PandaBear.Messaging.EventEnvelope.Payload.get -> string?
+PandaBear.Messaging.EventEnvelope.PayloadEncoding.get -> PandaBear.Messaging.EventPayloadEncoding
+PandaBear.Messaging.EventEnvelope.Source.get -> System.Uri!
+PandaBear.Messaging.EventEnvelope.Subject.get -> string?
+PandaBear.Messaging.EventEnvelope.Time.get -> System.DateTimeOffset?
+PandaBear.Messaging.EventPayloadEncoding
+PandaBear.Messaging.EventPayloadEncoding.Base64 = 1 -> PandaBear.Messaging.EventPayloadEncoding
+PandaBear.Messaging.EventPayloadEncoding.Json = 0 -> PandaBear.Messaging.EventPayloadEncoding
+PandaBear.Messaging.IEventEnvelopePublisher
+PandaBear.Messaging.IEventEnvelopePublisher.Publish(PandaBear.Messaging.EventEnvelope! envelope, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.Messaging.IEventEnvelope
+PandaBear.Messaging.IEventEnvelope.EnvelopeSpec.get -> string!
+PandaBear.Messaging.IEventEnvelope.EnvelopeSpecVersion.get -> string!
+PandaBear.Messaging.IEventEnvelope.ExtensionAttributesJson.get -> string?
+PandaBear.Messaging.IEventEnvelopeMetadata
+PandaBear.Messaging.IEventEnvelopeMetadata.EventId.get -> string!
+PandaBear.Messaging.IEventEnvelopeMetadata.EventType.get -> string!
+PandaBear.Messaging.IEventEnvelopeMetadata.EventVersion.get -> int?
+PandaBear.Messaging.IEventEnvelopeMetadata.Source.get -> System.Uri!
+PandaBear.Messaging.IEventEnvelopeMetadata.Subject.get -> string?
+PandaBear.Messaging.IEventEnvelopeMetadata.Time.get -> System.DateTimeOffset?
+PandaBear.Messaging.IEventEnvelopePayload
+PandaBear.Messaging.IEventEnvelopePayload.DataContentType.get -> string?
+PandaBear.Messaging.IEventEnvelopePayload.DataSchema.get -> System.Uri?
+PandaBear.Messaging.IEventEnvelopePayload.Payload.get -> string?
+PandaBear.Messaging.IEventEnvelopePayload.PayloadEncoding.get -> PandaBear.Messaging.EventPayloadEncoding

@@ -1,12 +1,12 @@
-namespace SharedKernel.HttpClients;
+namespace PandaBear.HttpClients;
 
 /// <summary>
-/// Represents the RFC 7807 validation problem members used by contract-owned API clients.
+/// Represents the validation problem errors member consumed by contract-owned API clients.
 /// </summary>
 public sealed record ContractValidationProblemDto
 {
     /// <summary>
-    /// Gets the validation errors keyed by field name.
+    /// Gets validation errors keyed by field name, or by an empty string for a model-level error.
     /// </summary>
     public Dictionary<string, string[]>? Errors { get; init; }
 

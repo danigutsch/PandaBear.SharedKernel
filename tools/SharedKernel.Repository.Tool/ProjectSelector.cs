@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
 
-namespace SharedKernel.Repository.Tool;
+namespace PandaBear.Repository.Tool;
 
 internal static class ProjectSelector
 {

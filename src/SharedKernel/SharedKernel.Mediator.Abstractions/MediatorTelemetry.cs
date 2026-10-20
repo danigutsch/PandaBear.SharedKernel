@@ -1,7 +1,7 @@
-namespace SharedKernel.Mediator;
+namespace PandaBear.Mediator;
 
 /// <summary>
-/// Defines the stable telemetry names used by SharedKernel.Mediator.
+/// Defines the stable telemetry names used by PandaBear.Mediator.
 /// </summary>
 public static class MediatorTelemetry
 {

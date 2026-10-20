@@ -1,16 +1,16 @@
 #nullable enable
-SharedKernel.Mediator.ActivityBehavior<TRequest, TResponse>
-SharedKernel.Mediator.ActivityBehavior<TRequest, TResponse>.ActivityBehavior() -> void
-SharedKernel.Mediator.ActivityBehavior<TRequest, TResponse>.Handle(TRequest request, SharedKernel.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
-SharedKernel.Mediator.AppMediatorInstrumentation
-SharedKernel.Mediator.AppMediatorInstrumentation.ActivitySource.get -> System.Diagnostics.ActivitySource!
-SharedKernel.Mediator.AppMediatorInstrumentation.AppMediatorInstrumentation(System.Diagnostics.Metrics.IMeterFactory! meterFactory) -> void
-SharedKernel.Mediator.AppMediatorInstrumentation.Dispose() -> void
-SharedKernel.Mediator.AppMediatorInstrumentation.NotificationsDuration.get -> System.Diagnostics.Metrics.Histogram<double>!
-SharedKernel.Mediator.AppMediatorInstrumentation.NotificationsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
-SharedKernel.Mediator.AppMediatorInstrumentation.RequestsDuration.get -> System.Diagnostics.Metrics.Histogram<double>!
-SharedKernel.Mediator.AppMediatorInstrumentation.RequestsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
-SharedKernel.Mediator.AppMediatorInstrumentation.StreamsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
-SharedKernel.Mediator.SharedKernelMediatorActivitySource
-static SharedKernel.Mediator.SharedKernelMediatorActivitySource.ActivitySourceName.get -> string!
-static SharedKernel.Mediator.SharedKernelMediatorActivitySource.Source.get -> System.Diagnostics.ActivitySource!
+PandaBear.Mediator.ActivityBehavior<TRequest, TResponse>
+PandaBear.Mediator.ActivityBehavior<TRequest, TResponse>.ActivityBehavior() -> void
+PandaBear.Mediator.ActivityBehavior<TRequest, TResponse>.Handle(TRequest request, PandaBear.Mediator.RequestHandlerContinuation<TResponse>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+PandaBear.Mediator.AppMediatorInstrumentation
+PandaBear.Mediator.AppMediatorInstrumentation.ActivitySource.get -> System.Diagnostics.ActivitySource!
+PandaBear.Mediator.AppMediatorInstrumentation.AppMediatorInstrumentation(System.Diagnostics.Metrics.IMeterFactory! meterFactory) -> void
+PandaBear.Mediator.AppMediatorInstrumentation.Dispose() -> void
+PandaBear.Mediator.AppMediatorInstrumentation.NotificationsDuration.get -> System.Diagnostics.Metrics.Histogram<double>!
+PandaBear.Mediator.AppMediatorInstrumentation.NotificationsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
+PandaBear.Mediator.AppMediatorInstrumentation.RequestsDuration.get -> System.Diagnostics.Metrics.Histogram<double>!
+PandaBear.Mediator.AppMediatorInstrumentation.RequestsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
+PandaBear.Mediator.AppMediatorInstrumentation.StreamsTotal.get -> System.Diagnostics.Metrics.Counter<long>!
+PandaBear.Mediator.SharedKernelMediatorActivitySource
+static PandaBear.Mediator.SharedKernelMediatorActivitySource.ActivitySourceName.get -> string!
+static PandaBear.Mediator.SharedKernelMediatorActivitySource.Source.get -> System.Diagnostics.ActivitySource!

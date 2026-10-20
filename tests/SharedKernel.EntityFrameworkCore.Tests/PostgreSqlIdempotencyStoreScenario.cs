@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
-using SharedKernel.Idempotency;
-using SharedKernel.Idempotency.EntityFrameworkCore;
+using PandaBear.Idempotency;
+using PandaBear.Idempotency.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
 {

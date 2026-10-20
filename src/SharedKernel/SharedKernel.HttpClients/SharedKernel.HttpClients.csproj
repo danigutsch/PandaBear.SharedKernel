@@ -3,8 +3,9 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.HttpClients</PackageId>
         <Description>Reusable HTTP client helpers, validation responses, defaults, and telemetry.</Description>
-        <RootNamespace>SharedKernel.HttpClients</RootNamespace>
+        <RootNamespace>PandaBear.HttpClients</RootNamespace>
         <PackageTags>http-clients;resilience;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,6 +14,10 @@
         <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" />
         <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
 </Project>

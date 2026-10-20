@@ -1,4 +1,4 @@
-namespace SharedKernel.Aspire.Analyzers.Tests;
+namespace PandaBear.Aspire.Analyzers.Tests;
 
 internal static class TestTraits
 {

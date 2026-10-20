@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace SharedKernel.Mediator.GeneratorTests;
+namespace PandaBear.Mediator.GeneratorTests;
 
 internal static class GeneratorDiscoveryReportTestsHelpers
 {
@@ -30,7 +30,7 @@ internal static class GeneratorDiscoveryReportTestsHelpers
             [runtimeUsings + source, generatedCallGraphSource],
             assemblyName: "SharedKernel.Mediator.Tests.GeneratedCallGraphRuntime");
         var assembly = GeneratorTestHarness.LoadAssembly(compilation);
-        var callGraphType = assembly.GetType("SharedKernel.Mediator.Generated.MediatorCallGraph", throwOnError: true)!;
+        var callGraphType = assembly.GetType("PandaBear.Mediator.Generated.MediatorCallGraph", throwOnError: true)!;
         return (string)callGraphType
             .GetProperty("Json", BindingFlags.Public | BindingFlags.Static)!
             .GetValue(null)!;

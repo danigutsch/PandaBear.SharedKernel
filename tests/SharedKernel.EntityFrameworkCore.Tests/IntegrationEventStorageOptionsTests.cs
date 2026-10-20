@@ -1,8 +1,8 @@
-using SharedKernel.Idempotency.EntityFrameworkCore;
-using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
-using SharedKernel.Testing;
+using PandaBear.Idempotency.EntityFrameworkCore;
+using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
+using PandaBear.Testing;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 [Trait(SharedKernelTestTraitNames.CategoryName, TestTraits.ProviderGuardCategory)]
 [Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.IntegrationEventTransportCapability)]

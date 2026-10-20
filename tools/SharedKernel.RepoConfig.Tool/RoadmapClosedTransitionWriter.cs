@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace SharedKernel.RepoConfig.Tool;
+namespace PandaBear.RepoConfig.Tool;
 
 internal static class RoadmapClosedTransitionWriter
 {

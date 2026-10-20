@@ -32,3 +32,9 @@ deterministic, and safe for test source. Do not add production or optional-techn
 
 - [SharedKernel.Testing.Analyzers](../SharedKernel.Testing.Analyzers/README.md)
 - `tests/AGENTS.md`
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Testing.CodeFixes`. C# namespace: `PandaBear.Testing.CodeFixes`. Assembly/project identity: `SharedKernel.Testing.CodeFixes`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

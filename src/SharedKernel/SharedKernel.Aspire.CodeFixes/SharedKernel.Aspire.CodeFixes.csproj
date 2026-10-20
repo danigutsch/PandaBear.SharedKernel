@@ -5,7 +5,7 @@
         <IsAotCompatible>false</IsAotCompatible>
         <PackageId>PandaBear.SharedKernel.Aspire.CodeFixes</PackageId>
         <Description>Code fixes for SharedKernel Aspire conventions.</Description>
-        <RootNamespace>SharedKernel.Aspire.CodeFixes</RootNamespace>
+        <RootNamespace>PandaBear.Aspire.CodeFixes</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>aspire;code-fixes;shared-kernel;dotnet</PackageTags>
         <IsRoslynComponent>true</IsRoslynComponent>

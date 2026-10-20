@@ -1,4 +1,4 @@
-namespace SharedKernel.Documentation;
+namespace PandaBear.Documentation;
 
 internal sealed class DocumentationGeneratorBlock
 {

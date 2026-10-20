@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging.IntegrationEvents.CloudEvents.Tests;
+namespace PandaBear.Messaging.IntegrationEvents.CloudEvents.Tests;
 
 internal sealed record TestIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt, string Name) : IIntegrationEvent
 {

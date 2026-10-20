@@ -1,4 +1,4 @@
-namespace SharedKernel.Messaging;
+namespace PandaBear.Messaging;
 
 /// <summary>
 /// Exposes transport-neutral event identity and routing metadata.

@@ -17,18 +17,18 @@ sharedkernel-codefix [--diagnostic <id>] <project-or-solution>
 Install from a local package during development:
 
 ```text
-dotnet pack tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj -o /tmp/opencode/sharedkernel-tools
-dotnet tool install SharedKernel.Testing.CodeFixRunner --tool-path ./.tools --add-source /tmp/opencode/sharedkernel-tools
+dotnet pack tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj -o artifacts/local-tool-feed
+dotnet tool install PandaBear.SharedKernel.Testing.CodeFixRunner --tool-path ./.tools --version <validated-candidate-version> --add-source artifacts/local-tool-feed
 ./.tools/sharedkernel-codefix --help
 ```
 
 When installing from this repository, follow the local-feed source-mapping notes in
-`docs/SHAREDKERNEL_PACKAGING.md`.
+[release policy](../../docs/release-policy.md).
 
 Install as a global tool only from a trusted package source:
 
 ```text
-dotnet tool install --global SharedKernel.Testing.CodeFixRunner --add-source <trusted-package-source>
+dotnet tool install --global PandaBear.SharedKernel.Testing.CodeFixRunner --version <validated-candidate-version> --add-source <trusted-package-source>
 sharedkernel-codefix --help
 ```
 
@@ -49,7 +49,7 @@ functions, nested helper types, overloaded helpers, and instance-dependent helpe
 Run a specific diagnostic migration:
 
 ```text
-sharedkernel-codefix --diagnostic SKTEST006 ViajantesTurismo.slnx
+sharedkernel-codefix --diagnostic SKTEST006 SharedKernel.slnx
 ```
 
 ## Exit codes
@@ -64,3 +64,9 @@ Errors are written to standard error. Command output is written to standard outp
 - `PackAsTool=true` packages the console application as a .NET tool.
 - `ToolCommandName=sharedkernel-codefix` controls the command used after install.
 - `PackageReadmeFile=README.md` includes this usage guide in the NuGet package.
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Testing.CodeFixRunner`. C# namespace: `PandaBear.Testing.CodeFixRunner`. Assembly/project identity: `SharedKernel.Testing.CodeFixRunner`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

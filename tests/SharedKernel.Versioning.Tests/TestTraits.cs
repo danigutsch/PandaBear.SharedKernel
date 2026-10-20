@@ -1,4 +1,4 @@
-namespace SharedKernel.Versioning.Tests;
+namespace PandaBear.Versioning.Tests;
 
 internal static class TestTraits
 {

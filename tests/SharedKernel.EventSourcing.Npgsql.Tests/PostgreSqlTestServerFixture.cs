@@ -1,8 +1,8 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using SharedKernel.IntegrationTesting;
+using PandaBear.IntegrationTesting;
 
-namespace SharedKernel.EventSourcing.Npgsql.Tests;
+namespace PandaBear.EventSourcing.Npgsql.Tests;
 
 public sealed class PostgreSqlTestServerFixture : IAsyncLifetime
 {

@@ -1,4 +1,4 @@
-namespace SharedKernel.PlaywrightMcp.Tool;
+namespace PandaBear.PlaywrightMcp.Tool;
 
 internal enum ContainerEngine
 {

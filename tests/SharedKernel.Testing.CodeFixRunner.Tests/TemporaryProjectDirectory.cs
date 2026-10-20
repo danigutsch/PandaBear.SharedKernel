@@ -1,4 +1,4 @@
-namespace SharedKernel.Testing.CodeFixRunner.Tests;
+namespace PandaBear.Testing.CodeFixRunner.Tests;
 
 internal sealed class TemporaryProjectDirectory : IDisposable
 {

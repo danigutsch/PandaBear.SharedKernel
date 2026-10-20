@@ -1,4 +1,4 @@
-namespace SharedKernel.Documentation.Tests;
+namespace PandaBear.Documentation.Tests;
 
 public sealed class EndpointRoutePolicyTests
 {

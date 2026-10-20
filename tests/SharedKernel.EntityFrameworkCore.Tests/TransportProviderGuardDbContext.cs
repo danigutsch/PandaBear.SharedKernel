@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+using PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
-namespace SharedKernel.EntityFrameworkCore.Tests;
+namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal sealed class TransportProviderGuardDbContext(DbContextOptions<TransportProviderGuardDbContext> options) : DbContext(options)
 {

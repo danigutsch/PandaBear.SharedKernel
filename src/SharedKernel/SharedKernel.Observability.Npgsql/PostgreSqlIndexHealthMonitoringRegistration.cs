@@ -1,4 +1,4 @@
-namespace SharedKernel.Observability.Npgsql;
+namespace PandaBear.Observability.Npgsql;
 
 internal sealed class PostgreSqlIndexHealthMonitoringRegistration(
     IReadOnlyList<string> connectionStrings,

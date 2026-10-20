@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace SharedKernel.Repository.Tests;
+namespace PandaBear.Repository.Tests;
 
 internal sealed class RepositoryTestScope : IDisposable
 {

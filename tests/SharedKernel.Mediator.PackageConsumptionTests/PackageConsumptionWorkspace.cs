@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace SharedKernel.Mediator.PackageConsumptionTests;
+namespace PandaBear.Mediator.PackageConsumptionTests;
 
 /// <summary>
 /// Creates isolated consumer projects that restore packages from the temporary mediator feed.

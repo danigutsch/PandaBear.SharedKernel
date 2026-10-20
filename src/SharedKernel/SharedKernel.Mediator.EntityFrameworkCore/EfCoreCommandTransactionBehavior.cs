@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using SharedKernel.EntityFrameworkCore;
+using PandaBear.EntityFrameworkCore;
 
-namespace SharedKernel.Mediator.EntityFrameworkCore;
+namespace PandaBear.Mediator.EntityFrameworkCore;
 
 /// <summary>
 /// Wraps mediator commands in an EF Core execution-strategy-compatible transaction.

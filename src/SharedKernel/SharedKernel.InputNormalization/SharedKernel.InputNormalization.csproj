@@ -3,8 +3,13 @@
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.InputNormalization</PackageId>
         <Description>Reusable input normalization helpers for shared-kernel workflows.</Description>
-        <RootNamespace>SharedKernel.InputNormalization</RootNamespace>
+        <RootNamespace>PandaBear.InputNormalization</RootNamespace>
         <PackageTags>input-normalization;validation;shared-kernel;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
 </Project>

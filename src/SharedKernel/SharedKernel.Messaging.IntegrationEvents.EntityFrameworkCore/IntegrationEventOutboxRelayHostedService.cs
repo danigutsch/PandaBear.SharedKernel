@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SharedKernel.Scheduling;
+using PandaBear.Scheduling;
 
-namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 internal sealed class IntegrationEventOutboxRelayHostedService<TContext>(
     EfIntegrationEventOutboxRelay<TContext> relay,

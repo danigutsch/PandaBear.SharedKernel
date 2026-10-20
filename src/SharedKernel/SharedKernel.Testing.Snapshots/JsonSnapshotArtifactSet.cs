@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace SharedKernel.Testing.Snapshots;
+namespace PandaBear.Testing.Snapshots;
 
 /// <summary>
 /// Compares generated JSON artifacts with committed canonical snapshots.

@@ -6,34 +6,34 @@ using System.Text;
 using Polly.CircuitBreaker;
 using Polly.Timeout;
 
-namespace SharedKernel.HttpClients.Tests;
+namespace PandaBear.HttpClients.Tests;
 
 [Trait(Testing.SharedKernelTestTraitNames.ScopeName, Testing.SharedKernelTestTraitNames.UnitScope)]
-public sealed class ContractCommandOutcomeTests
+public sealed class HttpOutcomeMapperTests
 {
-    private static readonly ContractCommandOutcomeTestsJsonContext Json = ContractCommandOutcomeTestsJsonContext.Default;
+    private static readonly HttpOutcomeMapperTestsJsonContext Json = HttpOutcomeMapperTestsJsonContext.Default;
 
     [Fact]
     public async Task Send_returns_success_with_materialized_body_and_propagates_the_exact_token()
     {
         // Arrange
         using var cts = new CancellationTokenSource();
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
-            ContractCommandOutcomeTestResponses.Json(HttpStatusCode.OK, "{\"name\":\"Lisbon\"}")));
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
+            HttpOutcomeMapperTestResponses.Json(HttpStatusCode.OK, "{\"name\":\"Lisbon\"}")));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
         var request = new HttpRequestMessage(HttpMethod.Get, "/tours");
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             request,
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             cts.Token);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.Succeeded);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.Succeeded);
         outcome.StatusCode.ShouldBe(HttpStatusCode.OK);
         var value = outcome.Value.ShouldNotBeNull();
         value.Name.ShouldBe("Lisbon");
@@ -47,7 +47,7 @@ public sealed class ContractCommandOutcomeTests
     {
         // Arrange
         using var responseBody = new TrackingReadStream("sensitive missing resource"u8.ToArray());
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
             new HttpResponseMessage(HttpStatusCode.NotFound)
             {
                 Content = new StreamContent(responseBody)
@@ -55,16 +55,16 @@ public sealed class ContractCommandOutcomeTests
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/tours/missing"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.NotFound);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.NotFound);
         outcome.StatusCode.ShouldBe(HttpStatusCode.NotFound);
         outcome.Value.ShouldBeNull();
         responseBody.ReadCount.ShouldBe(0);
@@ -72,24 +72,24 @@ public sealed class ContractCommandOutcomeTests
     }
 
     [Theory]
-    [InlineData(HttpStatusCode.Unauthorized, ContractCommandOutcomeKind.Unauthorized)]
-    [InlineData(HttpStatusCode.Forbidden, ContractCommandOutcomeKind.Forbidden)]
-    [InlineData(HttpStatusCode.Conflict, ContractCommandOutcomeKind.Conflict)]
+    [InlineData(HttpStatusCode.Unauthorized, HttpOutcomeKind.Unauthorized)]
+    [InlineData(HttpStatusCode.Forbidden, HttpOutcomeKind.Forbidden)]
+    [InlineData(HttpStatusCode.Conflict, HttpOutcomeKind.Conflict)]
     public async Task Send_returns_bounded_kind_for_known_non_success_status(
         HttpStatusCode statusCode,
-        ContractCommandOutcomeKind expectedKind)
+        HttpOutcomeKind expectedKind)
     {
         // Arrange
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
             new HttpResponseMessage(statusCode)));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
@@ -105,24 +105,24 @@ public sealed class ContractCommandOutcomeTests
     public async Task Send_returns_validation_problem_from_problem_json(string fieldName)
     {
         // Arrange
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
-            ContractCommandOutcomeTestResponses.Json(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
+            HttpOutcomeMapperTestResponses.Json(
                 HttpStatusCode.BadRequest,
                 $$$"""{"errors":{"{{{fieldName}}}":["Name is required."]}}""",
                 "application/problem+json")));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://admin.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Post, "/customers"),
             HttpStatusCode.Created,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.ValidationProblem);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.ValidationProblem);
         outcome.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         var errors = outcome.ValidationErrors.ShouldNotBeNull();
         errors[fieldName].ShouldBeEquivalentTo("Name is required.");
@@ -132,21 +132,21 @@ public sealed class ContractCommandOutcomeTests
     public async Task Send_returns_empty_body_for_whitespace_success_content()
     {
         // Arrange
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
-            ContractCommandOutcomeTestResponses.Json(HttpStatusCode.OK, "   ")));
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
+            HttpOutcomeMapperTestResponses.Json(HttpStatusCode.OK, "   ")));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.EmptyBody);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.EmptyBody);
         outcome.Message.ShouldBe("HTTP response body was empty.");
     }
 
@@ -156,21 +156,21 @@ public sealed class ContractCommandOutcomeTests
     public async Task Send_returns_malformed_body_for_invalid_or_null_json(string content)
     {
         // Arrange
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
-            ContractCommandOutcomeTestResponses.Json(HttpStatusCode.OK, content)));
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
+            HttpOutcomeMapperTestResponses.Json(HttpStatusCode.OK, content)));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.MalformedBody);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.MalformedBody);
         outcome.Value.ShouldBeNull();
         outcome.Message.ShouldNotContain(content, StringComparison.Ordinal);
     }
@@ -181,7 +181,7 @@ public sealed class ContractCommandOutcomeTests
         // Arrange
         const string sensitiveBody = "{\"name\":\"alice@example.test\"}";
         using var responseBody = new TrackingReadStream(Encoding.UTF8.GetBytes(sensitiveBody));
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
             new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StreamContent(responseBody)
@@ -192,16 +192,16 @@ public sealed class ContractCommandOutcomeTests
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.UnsupportedContentType);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.UnsupportedContentType);
         outcome.Message.ShouldBe("HTTP response content type was not JSON.");
         outcome.Message.ShouldNotContain("alice@example.test", StringComparison.Ordinal);
         responseBody.ReadCount.ShouldBe(0);
@@ -213,7 +213,7 @@ public sealed class ContractCommandOutcomeTests
     {
         // Arrange
         using var responseBody = new TrackingReadStream("ignored response"u8.ToArray());
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
             new HttpResponseMessage(HttpStatusCode.Created)
             {
                 Content = new StreamContent(responseBody)
@@ -221,7 +221,7 @@ public sealed class ContractCommandOutcomeTests
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://admin.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Post, "/customers"),
             HttpStatusCode.Created,
@@ -229,7 +229,7 @@ public sealed class ContractCommandOutcomeTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.Succeeded);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.Succeeded);
         responseBody.ReadCount.ShouldBe(0);
         responseBody.IsDisposed.ShouldBeTrue();
     }
@@ -242,7 +242,7 @@ public sealed class ContractCommandOutcomeTests
         const int responseBodyLimit = 64;
         var oversizedJson = Encoding.UTF8.GetBytes($"{{\"name\":\"{new string('x', responseBodyLimit * 2)}\"}}");
         using var responseBody = new TrackingReadStream(oversizedJson);
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
             new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StreamContent(responseBody)
@@ -257,16 +257,16 @@ public sealed class ContractCommandOutcomeTests
         };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.MalformedBody);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.MalformedBody);
         outcome.StatusCode.ShouldBe(HttpStatusCode.OK);
         outcome.Value.ShouldBeNull();
         outcome.Message.ShouldBe("HTTP response body was malformed.");
@@ -283,24 +283,24 @@ public sealed class ContractCommandOutcomeTests
     public async Task Send_returns_malformed_body_for_invalid_validation_error_entries(string content)
     {
         // Arrange
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
-            ContractCommandOutcomeTestResponses.Json(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
+            HttpOutcomeMapperTestResponses.Json(
                 HttpStatusCode.BadRequest,
                 content,
                 "application/problem+json")));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://admin.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Post, "/customers"),
             HttpStatusCode.Created,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.MalformedBody);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.MalformedBody);
         outcome.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         outcome.ValidationErrors.ShouldBeNull();
         outcome.Message.ShouldBe("Validation problem response body was malformed.");
@@ -310,20 +310,20 @@ public sealed class ContractCommandOutcomeTests
     public async Task Send_returns_timed_out_when_transport_cancels_without_caller_cancellation()
     {
         // Arrange
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => throw new TaskCanceledException("secret timeout details"));
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => throw new TaskCanceledException("secret timeout details"));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.TimedOut);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.TimedOut);
         outcome.StatusCode.ShouldBeNull();
         outcome.Message.ShouldBe("HTTP request timed out.");
     }
@@ -332,20 +332,20 @@ public sealed class ContractCommandOutcomeTests
     public async Task Send_returns_timed_out_when_the_resilience_pipeline_times_out()
     {
         // Arrange
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => throw new TimeoutRejectedException("secret timeout details"));
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => throw new TimeoutRejectedException("secret timeout details"));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.TimedOut);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.TimedOut);
         outcome.StatusCode.ShouldBeNull();
         outcome.Message.ShouldBe("HTTP request timed out.");
     }
@@ -355,7 +355,7 @@ public sealed class ContractCommandOutcomeTests
     {
         // Arrange
         using var responseBody = new BlockingReadStream();
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
             new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StreamContent(responseBody)
@@ -370,17 +370,17 @@ public sealed class ContractCommandOutcomeTests
         };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
         responseBody.ReadStarted.IsCompletedSuccessfully.ShouldBeTrue();
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.TimedOut);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.TimedOut);
         outcome.StatusCode.ShouldBeNull();
         outcome.Message.ShouldBe("HTTP request timed out.");
         responseBody.IsDisposed.ShouldBeTrue();
@@ -392,15 +392,15 @@ public sealed class ContractCommandOutcomeTests
         // Arrange
         using var cts = new CancellationTokenSource();
         await cts.CancelAsync();
-        using var handler = new ContractCommandOutcomeTestHandler((_, token) => throw new OperationCanceledException(token));
+        using var handler = new HttpOutcomeMapperTestHandler((_, token) => throw new OperationCanceledException(token));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
 
         // Act
-        Func<Task> action = async () => await ContractCommandOutcome.Send(
+        Func<Task> action = async () => await HttpOutcomeMapper.Send(
                 client,
                 new HttpRequestMessage(HttpMethod.Get, "/content"),
                 HttpStatusCode.OK,
-                Json.ContractCommandOutcomeTestPayload,
+                Json.HttpOutcomeMapperTestPayload,
                 Json.ContractValidationProblemDto,
                 cts.Token)
             .ConfigureAwait(false);
@@ -415,7 +415,7 @@ public sealed class ContractCommandOutcomeTests
         // Arrange
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         using var responseBody = new BlockingReadStream(cts.Cancel);
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
             new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new StreamContent(responseBody)
@@ -429,11 +429,11 @@ public sealed class ContractCommandOutcomeTests
             Timeout = TimeSpan.FromMinutes(1)
         };
         // Act
-        Func<Task> action = async () => await ContractCommandOutcome.Send(
+        Func<Task> action = async () => await HttpOutcomeMapper.Send(
                 client,
                 new HttpRequestMessage(HttpMethod.Get, "/content"),
                 HttpStatusCode.OK,
-                Json.ContractCommandOutcomeTestPayload,
+                Json.HttpOutcomeMapperTestPayload,
                 Json.ContractValidationProblemDto,
                 cts.Token)
             .ConfigureAwait(false);
@@ -452,7 +452,7 @@ public sealed class ContractCommandOutcomeTests
         // Arrange
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         using var responseBody = new BlockingReadStream(cts.Cancel);
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
             new HttpResponseMessage(HttpStatusCode.BadRequest)
             {
                 Content = new StreamContent(responseBody)
@@ -465,7 +465,7 @@ public sealed class ContractCommandOutcomeTests
             BaseAddress = new Uri("https://admin.example.test"),
             Timeout = TimeSpan.FromMinutes(1)
         };
-        Func<Task> action = async () => await ContractCommandOutcome.Send(
+        Func<Task> action = async () => await HttpOutcomeMapper.Send(
                 client,
                 new HttpRequestMessage(HttpMethod.Post, "/customers"),
                 HttpStatusCode.Created,
@@ -491,7 +491,7 @@ public sealed class ContractCommandOutcomeTests
         var content = new StreamContent(responseBody);
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         content.Headers.ContentLength = responseBodyLimit + 1;
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
             new HttpResponseMessage(HttpStatusCode.OK) { Content = content }));
         using var client = new HttpClient(handler, disposeHandler: false)
         {
@@ -500,16 +500,16 @@ public sealed class ContractCommandOutcomeTests
         };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.MalformedBody);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.MalformedBody);
         outcome.StatusCode.ShouldBe(HttpStatusCode.OK);
         responseBody.ReadCount.ShouldBe(0);
         responseBody.IsDisposed.ShouldBeTrue();
@@ -520,7 +520,7 @@ public sealed class ContractCommandOutcomeTests
     {
         // Arrange
         var requestContent = new TrackingStringContent("request", "application/octet-stream");
-        using var handler = new ContractCommandOutcomeTestHandler((request, _) =>
+        using var handler = new HttpOutcomeMapperTestHandler((request, _) =>
         {
             request.Content.ShouldNotBeNull();
             throw new IOException("The local upload stream could not be read.");
@@ -529,11 +529,11 @@ public sealed class ContractCommandOutcomeTests
         using var request = new HttpRequestMessage(HttpMethod.Post, "/images") { Content = requestContent };
 
         // Act
-        Func<Task> action = async () => await ContractCommandOutcome.Send(
+        Func<Task> action = async () => await HttpOutcomeMapper.Send(
                 client,
                 request,
                 HttpStatusCode.Created,
-                Json.ContractCommandOutcomeTestPayload,
+                Json.HttpOutcomeMapperTestPayload,
                 Json.ContractValidationProblemDto,
                 TestContext.Current.CancellationToken)
             .ConfigureAwait(false);
@@ -548,21 +548,21 @@ public sealed class ContractCommandOutcomeTests
     public async Task Send_returns_redacted_transport_failure()
     {
         // Arrange
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => throw new HttpRequestException(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => throw new HttpRequestException(
             "Bearer secret-token failed for alice@example.test"));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content?token=secret-token"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.TransportFailure);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.TransportFailure);
         outcome.StatusCode.ShouldBeNull();
         outcome.Message.ShouldBe("HTTP transport failed.");
         outcome.Message.ShouldNotContain("secret-token", StringComparison.Ordinal);
@@ -573,20 +573,20 @@ public sealed class ContractCommandOutcomeTests
     public async Task Send_returns_transport_failure_when_the_circuit_is_open()
     {
         // Arrange
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => throw new BrokenCircuitException("secret circuit details"));
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => throw new BrokenCircuitException("secret circuit details"));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.TransportFailure);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.TransportFailure);
         outcome.StatusCode.ShouldBeNull();
         outcome.Message.ShouldBe("HTTP transport failed.");
     }
@@ -595,21 +595,21 @@ public sealed class ContractCommandOutcomeTests
     public async Task Send_returns_unexpected_status_for_an_unowned_response_status()
     {
         // Arrange
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
             new HttpResponseMessage(HttpStatusCode.Accepted)));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             new HttpRequestMessage(HttpMethod.Get, "/content"),
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.UnexpectedStatus);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.UnexpectedStatus);
         outcome.StatusCode.ShouldBe(HttpStatusCode.Accepted);
     }
 
@@ -619,22 +619,22 @@ public sealed class ContractCommandOutcomeTests
         // Arrange
         var responseContent = new TrackingStringContent("{\"name\":\"Lisbon\"}", "application/json");
         var requestContent = new TrackingStringContent("request", "application/json");
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
             new HttpResponseMessage(HttpStatusCode.OK) { Content = responseContent }));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
         var request = new HttpRequestMessage(HttpMethod.Post, "/content") { Content = requestContent };
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             request,
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.Succeeded);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.Succeeded);
         requestContent.IsDisposed.ShouldBeTrue();
         responseContent.IsDisposed.ShouldBeTrue();
     }
@@ -645,11 +645,11 @@ public sealed class ContractCommandOutcomeTests
     {
         // Arrange
         var stoppedActivities = new ConcurrentQueue<Activity>();
-        using var parentSource = new ActivitySource($"ContractCommandOutcomeTests.{Guid.NewGuid():N}");
+        using var parentSource = new ActivitySource($"HttpOutcomeMapperTests.{Guid.NewGuid():N}");
         using var listener = new ActivityListener
         {
             ShouldListenTo = source => ReferenceEquals(source, parentSource)
-                || source.Name == ContractCommandOutcome.ActivitySourceName,
+                || source.Name == HttpOutcomeMapper.ActivitySourceName,
             Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
             ActivityStopped = activity => stoppedActivities.Enqueue(activity)
         };
@@ -657,26 +657,26 @@ public sealed class ContractCommandOutcomeTests
         using var parent = parentSource.StartActivity("test-parent");
         parent.ShouldNotBeNull();
 
-        using var handler = new ContractCommandOutcomeTestHandler((_, _) => Task.FromResult(
-            ContractCommandOutcomeTestResponses.Json(HttpStatusCode.OK, "{\"name\":\"Lisbon\"}")));
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
+            HttpOutcomeMapperTestResponses.Json(HttpStatusCode.OK, "{\"name\":\"Lisbon\"}")));
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
         var request = new HttpRequestMessage(HttpMethod.Get, "/content?token=secret-token");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", "secret-token");
 
         // Act
-        var outcome = await ContractCommandOutcome.Send(
+        var outcome = await HttpOutcomeMapper.Send(
             client,
             request,
             HttpStatusCode.OK,
-            Json.ContractCommandOutcomeTestPayload,
+            Json.HttpOutcomeMapperTestPayload,
             Json.ContractValidationProblemDto,
             TestContext.Current.CancellationToken);
 
         // Assert
-        outcome.Kind.ShouldBe(ContractCommandOutcomeKind.Succeeded);
+        outcome.Kind.ShouldBe(HttpOutcomeKind.Succeeded);
         handler.ObservedAuthorizationScheme.ShouldBe("Bearer");
         var activity = stoppedActivities
-            .Where(candidate => candidate.Source.Name == ContractCommandOutcome.ActivitySourceName
+            .Where(candidate => candidate.Source.Name == HttpOutcomeMapper.ActivitySourceName
                 && candidate.ParentSpanId == parent.SpanId)
             .ShouldHaveSingleItem();
         var tags = activity.TagObjects.OrderBy(tag => tag.Key, StringComparer.Ordinal).ToArray();
@@ -686,7 +686,7 @@ public sealed class ContractCommandOutcomeTests
             "http.response.status_code");
         tags.Single(tag => tag.Key == "http.request.method").Value.ShouldBe("GET");
         tags.Single(tag => tag.Key == "http.response.status_code").Value.ShouldBe(200);
-        tags.Single(tag => tag.Key == "http.outcome.kind").Value.ShouldBe(nameof(ContractCommandOutcomeKind.Succeeded));
+        tags.Single(tag => tag.Key == "http.outcome.kind").Value.ShouldBe(nameof(HttpOutcomeKind.Succeeded));
         var telemetryText = string.Join('|', tags.Select(tag => $"{tag.Key}={tag.Value}"));
         telemetryText.ShouldNotContain("secret-token", StringComparison.Ordinal);
         telemetryText.ShouldNotContain("alice@example.test", StringComparison.Ordinal);

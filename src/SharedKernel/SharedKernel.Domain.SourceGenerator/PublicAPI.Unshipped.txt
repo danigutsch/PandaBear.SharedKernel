@@ -1,7 +1,7 @@
 #nullable enable
-SharedKernel.Domain.SourceGenerator.ModelIdentityGenerator
-SharedKernel.Domain.SourceGenerator.ModelIdentityGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void
-SharedKernel.Domain.SourceGenerator.ModelIdentityGenerator.ModelIdentityGenerator() -> void
-SharedKernel.Domain.SourceGenerator.ValueObjectGenerator
-SharedKernel.Domain.SourceGenerator.ValueObjectGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void
-SharedKernel.Domain.SourceGenerator.ValueObjectGenerator.ValueObjectGenerator() -> void
+PandaBear.Domain.SourceGenerator.ModelIdentityGenerator
+PandaBear.Domain.SourceGenerator.ModelIdentityGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void
+PandaBear.Domain.SourceGenerator.ModelIdentityGenerator.ModelIdentityGenerator() -> void
+PandaBear.Domain.SourceGenerator.ValueObjectGenerator
+PandaBear.Domain.SourceGenerator.ValueObjectGenerator.Initialize(Microsoft.CodeAnalysis.IncrementalGeneratorInitializationContext context) -> void
+PandaBear.Domain.SourceGenerator.ValueObjectGenerator.ValueObjectGenerator() -> void

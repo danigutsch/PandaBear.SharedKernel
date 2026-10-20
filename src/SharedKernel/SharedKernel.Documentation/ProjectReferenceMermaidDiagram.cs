@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace SharedKernel.Documentation;
+namespace PandaBear.Documentation;
 
 /// <summary>
 /// Builds Mermaid diagrams from SDK-style project references.

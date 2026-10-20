@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 
-namespace SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore;
+namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 
 internal sealed class IntegrationEventOutboxRelayOptionsValidator : IValidateOptions<IntegrationEventOutboxRelayOptions>
 {

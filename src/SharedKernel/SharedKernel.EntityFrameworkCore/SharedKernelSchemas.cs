@@ -1,4 +1,4 @@
-namespace SharedKernel.EntityFrameworkCore;
+namespace PandaBear.EntityFrameworkCore;
 
 /// <summary>
 /// Defines shared database schema names used by reusable persistence providers.

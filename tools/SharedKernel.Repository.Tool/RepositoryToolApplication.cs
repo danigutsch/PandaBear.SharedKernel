@@ -1,6 +1,6 @@
-using SharedKernel.Versioning.Tool;
+using PandaBear.Versioning.Tool;
 
-namespace SharedKernel.Repository.Tool;
+namespace PandaBear.Repository.Tool;
 
 internal static class RepositoryToolApplication
 {

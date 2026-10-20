@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Npgsql;
 
-namespace SharedKernel.Observability.Npgsql;
+namespace PandaBear.Observability.Npgsql;
 
 internal sealed class PostgreSqlIndexHealthHostedService(
     PostgreSqlIndexHealthMonitoringRegistration registration) : BackgroundService

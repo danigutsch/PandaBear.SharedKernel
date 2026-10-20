@@ -21,3 +21,9 @@ Use `SharedKernel.Results` instead.
 ## See also
 
 - [SharedKernel.Results](../SharedKernel.Results/README.md)
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Functional`. C# namespace: `PandaBear.Functional`. Assembly/project identity: `SharedKernel.Functional`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

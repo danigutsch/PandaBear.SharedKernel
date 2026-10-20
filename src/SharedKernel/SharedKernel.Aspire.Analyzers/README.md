@@ -30,4 +30,10 @@ rules in `SharedKernel.Mediator.Analyzers`.
 ## See Also
 
 - [SharedKernel.Aspire.CodeFixes](../SharedKernel.Aspire.CodeFixes/README.md)
-- `src/ViajantesTurismo.AppHost/README.md`
+- [Aspire official documentation](https://aspire.dev)
+
+## Package identity and availability
+
+Package ID: `PandaBear.SharedKernel.Aspire.Analyzers`. C# namespace: `PandaBear.Aspire.Analyzers`. Assembly/project identity: `SharedKernel.Aspire.Analyzers`.
+
+Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.

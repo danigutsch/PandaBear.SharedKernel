@@ -1,4 +1,4 @@
-namespace SharedKernel.BuildingBlocks;
+namespace PandaBear.BuildingBlocks;
 
 /// <summary>
 /// Exposes a stable identifier for a model.

@@ -1,4 +1,4 @@
-namespace SharedKernel.Domain.Tests;
+namespace PandaBear.Domain.Tests;
 
 internal sealed class ThrowingDomainEventDispatchHandler : IDomainEventDispatchHandler
 {
