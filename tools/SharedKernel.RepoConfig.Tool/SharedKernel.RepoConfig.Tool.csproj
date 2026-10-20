@@ -1,0 +1,29 @@
+<Project>
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <EnableSharedKernelAnalyzers>false</EnableSharedKernelAnalyzers>
+    </PropertyGroup>
+    <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>SharedKernel.RepoConfig.Tool</RootNamespace>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>sharedkernel-repo</ToolCommandName>
+        <PackageId>PandaBear.SharedKernel.RepoConfig.Tool</PackageId>
+        <Description>Repository structure, roadmap, and project configuration verification.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>repository-configuration;roadmap;gitops;dotnet-tool</PackageTags>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.RepoConfig.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+</Project>

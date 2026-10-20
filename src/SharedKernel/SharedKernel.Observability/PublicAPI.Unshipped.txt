@@ -18,3 +18,9 @@ static SharedKernel.Observability.PrivacyDataClassifications.Credential.get -> M
 static SharedKernel.Observability.PrivacyDataClassifications.Financial.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
 static SharedKernel.Observability.PrivacyDataClassifications.Personal.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
 static SharedKernel.Observability.PrivacyDataClassifications.Sensitive.get -> Microsoft.Extensions.Compliance.Classification.DataClassification
+SharedKernel.Observability.ActivityPrivacyProcessor
+SharedKernel.Observability.ActivityPrivacyProcessor.ActivityPrivacyProcessor(System.Func<string!, bool>? additionalSensitiveAttribute = null) -> void
+override SharedKernel.Observability.ActivityPrivacyProcessor.OnEnd(System.Diagnostics.Activity! data) -> void
+SharedKernel.Observability.LogRecordPrivacyProcessor
+SharedKernel.Observability.LogRecordPrivacyProcessor.LogRecordPrivacyProcessor(System.Func<string!, bool>? additionalSensitiveAttribute = null) -> void
+override SharedKernel.Observability.LogRecordPrivacyProcessor.OnEnd(OpenTelemetry.Logs.LogRecord! data) -> void

@@ -1,0 +1,8 @@
+#nullable enable
+SharedKernel.Documentation.DocumentationConformanceChecker
+static SharedKernel.Documentation.DocumentationConformanceChecker.Check(string! rootPath, string! configPath) -> int
+SharedKernel.Documentation.DocumentationGenerationResult
+SharedKernel.Documentation.DocumentationGenerationResult.ChangedFiles.get -> System.Collections.Generic.IReadOnlyList<string!>!
+SharedKernel.Documentation.DocumentationGenerationResult.DocumentationGenerationResult(System.Collections.Generic.IReadOnlyList<string!>! changedFiles) -> void
+SharedKernel.Documentation.DocumentationGenerator
+static SharedKernel.Documentation.DocumentationGenerator.Run(string! rootPath, string! configPath, bool checkOnly) -> SharedKernel.Documentation.DocumentationGenerationResult!

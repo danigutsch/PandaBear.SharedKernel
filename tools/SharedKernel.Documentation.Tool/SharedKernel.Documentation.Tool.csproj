@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>SharedKernel.Documentation.Tool</RootNamespace>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>sharedkernel-docs</ToolCommandName>
+        <PackageId>PandaBear.SharedKernel.Documentation.Tool</PackageId>
+        <Description>Reusable generated Markdown and diagram automation for repositories.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>documentation;markdown;diagrams;mermaid;dotnet-tool;shared-kernel</PackageTags>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Documentation.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Documentation\SharedKernel.Documentation.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

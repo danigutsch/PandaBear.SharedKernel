@@ -32,3 +32,10 @@ controls depend on the telemetry fields emitted by each application.
 - [OpenTelemetry.Extensions.Hosting](https://www.nuget.org/packages/OpenTelemetry.Extensions.Hosting)
 - [OpenTelemetry.Instrumentation.Runtime](https://www.nuget.org/packages/OpenTelemetry.Instrumentation.Runtime)
 - [Microsoft.Extensions.Compliance.Redaction](https://www.nuget.org/packages/Microsoft.Extensions.Compliance.Redaction)
+
+## Telemetry privacy processors
+
+`ActivityPrivacyProcessor` and `LogRecordPrivacyProcessor` remove sensitive telemetry before export.
+Both accept an optional `Func<string, bool>` for additional application-sensitive attribute names.
+The shared baseline always applies; the callback cannot permit attributes rejected by the baseline.
+Application identifiers and business-specific redaction policy stay with the host.
