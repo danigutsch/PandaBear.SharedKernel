@@ -53,3 +53,8 @@ ViajantesTurismo commit `daa099e0`; roadmap automation and bounded GitHub reconc
 reconciled from `298e3c2d`. Application code and workflow policy remain consumer-owned. The older
 July dependency branch does not override the newer platform versions here; Roslyn retains the
 intentional compiler API baseline documented in the root README.
+
+The follow-up reconciliation from ViajantesTurismo commit `17586ece` retains the newer roadmap
+deadline, cancellation, and bounded-response regressions and applies namespace-aware MSBuild
+selection to the standalone repository selector. SDK bootstrap scripts and application CI
+selection remain consumer-owned.

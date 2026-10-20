@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Net;
 using System.Text.Json;
+using Microsoft.Extensions.Time.Testing;
 
 namespace SharedKernel.RepoConfig.Tests;
 
@@ -759,4 +760,64 @@ public sealed class GitHubRoadmapReconcileTests
         // Assert
         exception.Message.ShouldBe("GitHub reconciliation response exceeded the allowed size.");
     }
+
+    [Fact]
+    public async Task Snapshot_deadline_cancels_a_stalled_request_without_waiting_in_real_time()
+    {
+        // Arrange
+        var timeProvider = new FakeTimeProvider();
+        using var handler = new TimingOutHttpMessageHandler(timeProvider, TimeSpan.FromMinutes(2));
+        using var httpClient = new HttpClient(handler);
+        var client = new GitHubRoadmapReconcileClient(httpClient, timeProvider);
+
+        // Act
+        Func<Task> action = async () => _ = await client.ReadSnapshot(
+            "owner/repository", [], TestContext.Current.CancellationToken);
+        var exception = await action.ShouldThrow<TimeoutException>();
+
+        // Assert
+        exception.Message.ShouldBe("GitHub reconciliation snapshot timed out after 120 seconds.");
+    }
+
+    [Fact]
+    public async Task Snapshot_preserves_caller_cancellation_instead_of_reporting_a_timeout()
+    {
+        // Arrange
+        using var cancellation = new CancellationTokenSource();
+        await cancellation.CancelAsync();
+        using var handler = TestHttpMessageHandler.FromException(new OperationCanceledException(cancellation.Token));
+        using var httpClient = new HttpClient(handler);
+        var client = new GitHubRoadmapReconcileClient(httpClient);
+
+        // Act
+        Func<Task> action = async () => _ = await client.ReadSnapshot(
+            "owner/repository", [], cancellation.Token);
+        var exception = await action.ShouldThrow<OperationCanceledException>();
+
+        // Assert
+        exception.CancellationToken.ShouldBe(cancellation.Token);
+    }
+
+    [Fact]
+    public async Task Snapshot_rejects_an_oversized_body_even_when_content_length_understates_it()
+    {
+        // Arrange
+        using var response = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new ByteArrayContent(new byte[(8 * 1024 * 1024) + 1])
+        };
+        response.Content.Headers.ContentLength = 0;
+        using var handler = new TestHttpMessageHandler(response);
+        using var httpClient = new HttpClient(handler);
+        var client = new GitHubRoadmapReconcileClient(httpClient);
+
+        // Act
+        Func<Task> action = async () => _ = await client.ReadSnapshot(
+            "owner/repository", [], TestContext.Current.CancellationToken);
+        var exception = await action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldBe("GitHub reconciliation response exceeded the allowed size.");
+    }
+
 }

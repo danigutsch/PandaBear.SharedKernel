@@ -40,11 +40,31 @@ public sealed class ProjectSelectorTests : IDisposable
         ProjectSelector.Select(scope.Root, null).BuildProjects.Length.ShouldBe(3);
     }
 
-    [Fact]
-    public void Imported_project_inputs_select_every_project()
+    [Theory]
+    [InlineData("")]
+    [InlineData("http://schemas.microsoft.com/developer/msbuild/2003")]
+    public void Imported_project_inputs_select_every_project(string xmlNamespace)
     {
-        File.WriteAllText(Path.Combine(scope.Root, "src/Core/Core.csproj"), """<Project><Import Project="custom.build" /></Project>""");
+        File.WriteAllText(Path.Combine(scope.Root, "src/Core/Core.csproj"), $"""<Project xmlns="{xmlNamespace}"><Import Project="custom.build" /></Project>""");
         ProjectSelector.Select(scope.Root, ["src/Dependent/Changed.cs"]).BuildProjects.Length.ShouldBe(3);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("http://schemas.microsoft.com/developer/msbuild/2003")]
+    public void Namespaced_project_references_select_transitive_test_dependents(string xmlNamespace)
+    {
+        File.WriteAllText(
+            Path.Combine(scope.Root, "src/Dependent/Dependent.csproj"),
+            $"""<Project xmlns="{xmlNamespace}"><ProjectReference Include="../Core/Core.csproj" /></Project>""");
+        File.WriteAllText(
+            Path.Combine(scope.Root, "tests/Core.Tests/Core.Tests.csproj"),
+            $"""<Project xmlns="{xmlNamespace}"><PackageReference Include="xunit.v3.mtp-v2" /><ProjectReference Include="../../src/Dependent/Dependent.csproj" /></Project>""");
+
+        var result = ProjectSelector.Select(scope.Root, ["src/Core/Changed.cs"]);
+
+        result.BuildProjects.Length.ShouldBe(3);
+        result.TestProjects.ShouldBe(["tests/Core.Tests/Core.Tests.csproj"]);
     }
 
     [Fact]

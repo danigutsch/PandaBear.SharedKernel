@@ -10,8 +10,8 @@ internal static class ProjectSelector
         var solution = XDocument.Load(Path.Combine(root, "SharedKernel.slnx"));
         var projects = solution.Descendants("Project").Select(x => (string)x.Attribute("Path")!).Order(StringComparer.Ordinal).ToArray();
         var documents = projects.ToDictionary(p => p, p => XDocument.Load(Path.Combine(root, p)), StringComparer.Ordinal);
-        var tests = projects.Where(p => documents[p].Descendants("PackageReference").Any(x => (string?)x.Attribute("Include") == "xunit.v3.mtp-v2")
-            || documents[p].Descendants("IsTestProject").Any(x => x.Value == "true")).ToArray();
+        var tests = projects.Where(p => documents[p].Descendants().Where(static element => element.Name.LocalName == "PackageReference").Any(x => (string?)x.Attribute("Include") == "xunit.v3.mtp-v2")
+            || documents[p].Descendants().Where(static element => element.Name.LocalName == "IsTestProject").Any(x => x.Value == "true")).ToArray();
         if (changes is null)
         {
             return new ProjectSelection(projects, tests, ["Full validation requested or comparison history unavailable."]);
@@ -22,13 +22,13 @@ internal static class ProjectSelector
             var graph = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
             foreach (var (project, document) in documents)
             {
-                if (document.Descendants("Import").Any())
+                if (document.Descendants().Where(static element => element.Name.LocalName == "Import").Any())
                 {
                     throw new ArgumentException("Unevaluated import: " + project);
                 }
 
                 var dependencies = new HashSet<string>(StringComparer.Ordinal);
-                foreach (var reference in document.Descendants("ProjectReference"))
+                foreach (var reference in document.Descendants().Where(static element => element.Name.LocalName == "ProjectReference"))
                 {
                     var include = (string?)reference.Attribute("Include") ?? string.Empty;
                     if (string.IsNullOrWhiteSpace(include) || include.IndexOfAny(['$', '*', ';']) >= 0)
