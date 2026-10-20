@@ -31,3 +31,9 @@ The repository-wide build badge links to the [main validation workflow](https://
 Document stable caller-visible guards, cancellation, and deliberate adapter failures using the [exception documentation policy](EXCEPTION_DOCUMENTATION.md). Review diagnostic enforcement and scoped exceptions using the [warning policy](ci/warning-policy.md). Review upstream Action SHAs and hosting/tool image digests using the [pin-update workflow](ci/pin-update-review.md).
 
 These generic policies were reconciled from documentation-only donor `68ce1876d69af7dd9527330af845a84a6c3df434`. Its application vertical-slice migration inventory, runtime topology, application CI thresholds, Dev Container/updater configuration, and feature moves remain application-owned and are not imported into this library.
+
+## NativeAOT and reflection policy
+
+Prefer NativeAOT and trimming compatibility where practical. Use explicit typed APIs, existing source generators, and supplied JSON metadata instead of runtime type discovery or reflection-based serialization when they meet the current use case. Do not add speculative generators or abstractions merely to avoid a small, justified use of reflection.
+
+`src/Directory.Build.targets` enables `IsAotCompatible` by default for compatible target frameworks. Keep its analyzers enabled; an explicit opt-out must explain the actual dependency or host limitation beside the project setting. When reflection is necessary, preserve the required trim annotations and document the supported boundary. SDK compatibility analysis is not execution proof: validate promised NativeAOT behavior through packed consumers on each claimed platform and keep untested packages or scenarios explicit.

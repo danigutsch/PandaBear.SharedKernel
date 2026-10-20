@@ -13,4 +13,6 @@ not cap parallel test modules. Use Conventional Commits.
 
 Read docs/development.md and docs/README.md. Run formatting and generated-diagram drift checks before review. Git publication is authorized to the public danigutsch/PandaBear.SharedKernel repository. Registry publication, stable tags, and consumer adoption remain separate actions requiring their own authorization. Sign commits with the existing user configuration.
 
-All packages remain preview (prerelease) for now. CI must calculate prerelease candidates only; do not create stable packages, tags, or releases without separate authorization. This policy has no application-completion milestone.
+All packages remain preview (prerelease) for now. CI must calculate prerelease candidates only; do not create stable packages, tags, or releases without separate authorization.
+
+Prefer NativeAOT- and trimming-compatible library APIs where practical. Prefer explicit typed code and existing source generators over runtime reflection or dynamic code. Preserve inherited AOT/trim analysis; document justified project opt-outs and reflection requirements, and validate promised support with packed consumers on each claimed platform. Do not introduce a generator or abstraction solely to satisfy this preference.
