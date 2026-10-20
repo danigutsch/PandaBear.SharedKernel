@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using SharedKernel.HttpClients;
 using SharedKernel.Testing;
 
@@ -139,5 +140,71 @@ public sealed class BrandingApiClientTests
         // Assert
         var exception = await act.ShouldThrow<ContractValidationException>();
         exception.ValidationErrors.ContainsKey(nameof(BrandingSettingsDto.BrandName)).ShouldBeTrue();
+    }
+
+    [Theory]
+    [InlineData(HttpStatusCode.OK, "application/json")]
+    [InlineData(HttpStatusCode.BadRequest, "application/problem+json")]
+    public async Task SaveSettings_times_out_while_reading_a_stalled_response_body(
+        HttpStatusCode statusCode,
+        string mediaType)
+    {
+        // Arrange
+        using var responseBody = new BlockingBrandingReadStream();
+        using var response = new HttpResponseMessage(statusCode)
+        {
+            Content = new StreamContent(responseBody)
+            {
+                Headers = { ContentType = new MediaTypeHeaderValue(mediaType) }
+            }
+        };
+        using var handler = new TestHttpMessageHandler(response);
+        using var httpClient = new HttpClient(handler, disposeHandler: false)
+        {
+            BaseAddress = new Uri("https://branding.example.test"),
+            Timeout = TimeSpan.FromMilliseconds(100)
+        };
+        var sut = new ManagementBrandingApiClient(httpClient);
+        Func<Task> save = async () => await sut.SaveSettings(
+            BrandingSettingsTestData.ValidRequest(),
+            TestContext.Current.CancellationToken);
+
+        // Act
+        await save.ShouldThrowAssignableTo<OperationCanceledException>();
+
+        // Assert
+        responseBody.ReadStarted.IsCompletedSuccessfully.ShouldBeTrue();
+        responseBody.IsDisposed.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task SaveSettings_preserves_caller_cancellation_while_reading_the_response_body()
+    {
+        // Arrange
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        using var responseBody = new BlockingBrandingReadStream(cts.Cancel);
+        using var response = new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StreamContent(responseBody)
+            {
+                Headers = { ContentType = new MediaTypeHeaderValue("application/json") }
+            }
+        };
+        using var handler = new TestHttpMessageHandler(response);
+        using var httpClient = new HttpClient(handler, disposeHandler: false)
+        {
+            BaseAddress = new Uri("https://branding.example.test"),
+            Timeout = TimeSpan.FromMinutes(1)
+        };
+        var sut = new ManagementBrandingApiClient(httpClient);
+        Func<Task> save = async () => await sut.SaveSettings(BrandingSettingsTestData.ValidRequest(), cts.Token);
+
+        // Act
+        var exception = await save.ShouldThrowAssignableTo<OperationCanceledException>();
+
+        // Assert
+        exception.CancellationToken.ShouldBe(cts.Token);
+        responseBody.ReadStarted.IsCompletedSuccessfully.ShouldBeTrue();
+        responseBody.IsDisposed.ShouldBeTrue();
     }
 }

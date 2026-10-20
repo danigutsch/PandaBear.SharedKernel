@@ -8,12 +8,28 @@ namespace SharedKernel.RepoConfig.Tool;
 internal static class RepoConfigToolApplication
 {
     private const decimal ParetoFraction = 0.2m;
-    private const string Usage = "Usage: sharedkernel-repo <init|verify|diff|text-encoding|podman-dns-preflight|set|get|sync|reconcile|intake> [--root <path>]";
+    private const string Usage = "Usage: sharedkernel-repo <init|verify|diff|text-encoding|podman-dns-preflight|set|get|sync|reconcile|intake|automation> [--root <path>]";
 
     public static Task<int> Run(string[] args, TextWriter output, TextWriter error, string workingDirectory, CancellationToken cancellationToken) =>
-        Run(args, output, error, workingDirectory, httpClient: null, cancellationToken);
+        Run(args, output, error, workingDirectory, httpClient: null, gitRepository: null, cancellationToken);
 
-    internal static async Task<int> Run(string[] args, TextWriter output, TextWriter error, string workingDirectory, HttpClient? httpClient, CancellationToken cancellationToken)
+    internal static Task<int> Run(
+        string[] args,
+        TextWriter output,
+        TextWriter error,
+        string workingDirectory,
+        HttpClient? httpClient,
+        CancellationToken cancellationToken) =>
+        Run(args, output, error, workingDirectory, httpClient, gitRepository: null, cancellationToken);
+
+    internal static async Task<int> Run(
+        string[] args,
+        TextWriter output,
+        TextWriter error,
+        string workingDirectory,
+        HttpClient? httpClient,
+        RoadmapGitRepository? gitRepository,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(args);
         ArgumentNullException.ThrowIfNull(output);
@@ -23,7 +39,7 @@ internal static class RepoConfigToolApplication
         if (args is [] or ["--help"] or ["-h"])
         {
             await output.WriteLineAsync(Usage.AsMemory(), cancellationToken).ConfigureAwait(false);
-            await output.WriteLineAsync("Commands: init, verify, diff, text-encoding, podman-dns-preflight, set github.repository <owner/repo>, get <query>, sync github, reconcile github, intake github.".AsMemory(), cancellationToken).ConfigureAwait(false);
+            await output.WriteLineAsync("Commands: init, verify, diff, text-encoding, podman-dns-preflight, set github.repository <owner/repo>, get <query>, sync github, reconcile github, intake github, automation <command>.".AsMemory(), cancellationToken).ConfigureAwait(false);
             return 0;
         }
 
@@ -35,6 +51,7 @@ internal static class RepoConfigToolApplication
                 "reconcile" => await RunGitHubReconciliation(args[1..], output, error, workingDirectory, httpClient, cancellationToken).ConfigureAwait(false),
                 "intake" => await RunGitHubIntake(args[1..], output, error, workingDirectory, httpClient, cancellationToken).ConfigureAwait(false),
                 "podman-dns-preflight" => await PodmanDnsPreflightCommand.Run(args[1..], output, error, cancellationToken).ConfigureAwait(false),
+                "automation" => await RunRoadmapAutomation(args[1..], output, error, workingDirectory, httpClient, gitRepository, cancellationToken).ConfigureAwait(false),
                 _ => await RunCommand(args, output, error, workingDirectory, cancellationToken).ConfigureAwait(false)
             };
         }
@@ -368,6 +385,149 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
+    private static async Task<int> RunRoadmapAutomation(
+        string[] args,
+        TextWriter output,
+        TextWriter error,
+        string workingDirectory,
+        HttpClient? httpClient,
+        RoadmapGitRepository? gitRepository,
+        CancellationToken cancellationToken)
+    {
+        if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining))
+        {
+            return 2;
+        }
+
+        if (remaining.Length == 0)
+        {
+            return WriteUsageError(error, "Missing automation command.");
+        }
+
+        if (remaining.Length > 1)
+        {
+            return WriteUsageError(error, $"Unknown automation argument: {remaining[1]}");
+        }
+
+        if (remaining[0] is not "plan-github"
+            and not "validate-plan"
+            and not "apply-plan"
+            and not "seal-result"
+            and not "verify-result"
+            and not "publish-result")
+        {
+            return WriteUsageError(error, $"Unknown automation command: {remaining[0]}");
+        }
+
+        var service = new RoadmapAutomationService(rootPath, httpClient, gitRepository);
+        var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
+        switch (remaining[0])
+        {
+            case "plan-github":
+                var runIdValue = RequireEnvironmentVariable("GITHUB_RUN_ID");
+                if (!long.TryParse(runIdValue, NumberStyles.None, CultureInfo.InvariantCulture, out var runId) || runId < 1)
+                {
+                    throw new InvalidOperationException("Roadmap automation requires a positive GITHUB_RUN_ID.");
+                }
+
+                var plan = await service.CreatePlan(runId, repository, cancellationToken).ConfigureAwait(false);
+                await AppendWorkflowOutput(
+                    [
+                        ("plan_digest", plan.PlanDigest),
+                        ("has_changes", FormatBoolean(plan.HasChanges)),
+                        ("branch_name", plan.BranchName),
+                        ("base_sha", plan.BaseSha)
+                    ],
+                    cancellationToken).ConfigureAwait(false);
+                await AppendWorkflowSummary(
+                    "Roadmap maintenance plan",
+                    [
+                        ("Plan digest", plan.PlanDigest),
+                        ("Base SHA", plan.BaseSha),
+                        ("Proposed changes", plan.HasChanges ? "yes" : "no")
+                    ],
+                    cancellationToken).ConfigureAwait(false);
+                await output.WriteLineAsync("Roadmap automation plan created.".AsMemory(), cancellationToken).ConfigureAwait(false);
+                return 0;
+
+            case "validate-plan":
+                await service.ValidatePlan(
+                    RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
+                    repository,
+                    cancellationToken).ConfigureAwait(false);
+                await output.WriteLineAsync("Roadmap automation plan validated.".AsMemory(), cancellationToken).ConfigureAwait(false);
+                return 0;
+
+            case "apply-plan":
+                await service.ApplyPlan(
+                    RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
+                    repository,
+                    cancellationToken).ConfigureAwait(false);
+                await output.WriteLineAsync("Roadmap automation closure approvals applied.".AsMemory(), cancellationToken).ConfigureAwait(false);
+                return 0;
+
+            case "seal-result":
+                var seal = await service.SealResult(
+                    RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
+                    RequireEnvironmentVariable("ROADMAP_ARTIFACT_DIGEST"),
+                    repository,
+                    cancellationToken).ConfigureAwait(false);
+                await AppendWorkflowOutput(
+                    [
+                        ("result_digest", seal.ResultDigest),
+                        ("has_changes", FormatBoolean(seal.HasChanges)),
+                        ("path_count", seal.PathCount.ToString(CultureInfo.InvariantCulture))
+                    ],
+                    cancellationToken).ConfigureAwait(false);
+                await AppendWorkflowSummary(
+                    "Roadmap maintenance result",
+                    [
+                        ("Result digest", seal.ResultDigest),
+                        ("Changed paths", seal.PathCount.ToString(CultureInfo.InvariantCulture)),
+                        ("Changes retained", seal.HasChanges ? "yes" : "no")
+                    ],
+                    cancellationToken).ConfigureAwait(false);
+                await output.WriteLineAsync("Roadmap automation result sealed.".AsMemory(), cancellationToken).ConfigureAwait(false);
+                return 0;
+
+            case "verify-result":
+                await service.VerifyResult(
+                    RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
+                    RequireEnvironmentVariable("ROADMAP_ARTIFACT_DIGEST"),
+                    RequireEnvironmentVariable("ROADMAP_RESULT_DIGEST"),
+                    repository,
+                    cancellationToken).ConfigureAwait(false);
+                await output.WriteLineAsync("Roadmap automation result verified.".AsMemory(), cancellationToken).ConfigureAwait(false);
+                return 0;
+
+            case "publish-result":
+                var publication = await service.PublishResult(
+                    RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
+                    RequireEnvironmentVariable("ROADMAP_ARTIFACT_DIGEST"),
+                    RequireEnvironmentVariable("ROADMAP_RESULT_DIGEST"),
+                    repository,
+                    cancellationToken).ConfigureAwait(false);
+                await AppendWorkflowOutput(
+                    [
+                        ("pull_request_url", publication.PullRequestUrl),
+                        ("publication_commit", publication.CommitSha)
+                    ],
+                    cancellationToken).ConfigureAwait(false);
+                await AppendWorkflowSummary(
+                    "Roadmap maintenance publication",
+                    [
+                        ("Pull request", publication.PullRequestUrl),
+                        ("Commit SHA", publication.CommitSha)
+                    ],
+                    cancellationToken).ConfigureAwait(false);
+                await output.WriteLineAsync("Roadmap automation pull request published.".AsMemory(), cancellationToken).ConfigureAwait(false);
+                return 0;
+
+            default:
+                return WriteUsageError(error, $"Unknown automation command: {remaining[0]}");
+        }
+    }
+
     private static (string RootPath, bool DryRun)? TryParseGitHubProjection(string[] args, string workingDirectory, TextWriter error)
     {
         if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining))
@@ -652,5 +812,47 @@ internal static class RepoConfigToolApplication
         }
 
         return escaped?.ToString() ?? value;
+    }
+
+    private static async Task AppendWorkflowOutput(
+        IEnumerable<(string Name, string Value)> values,
+        CancellationToken cancellationToken)
+    {
+        var path = RequireEnvironmentVariable("GITHUB_OUTPUT");
+        var content = string.Join(
+            Environment.NewLine,
+            values.Select(value => $"{value.Name}={value.Value}")) + Environment.NewLine;
+        await File.AppendAllTextAsync(path, content, Encoding.UTF8, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task AppendWorkflowSummary(
+        string heading,
+        IEnumerable<(string Name, string Value)> values,
+        CancellationToken cancellationToken)
+    {
+        var path = RequireEnvironmentVariable("GITHUB_STEP_SUMMARY");
+        var content = new StringBuilder()
+            .Append("## ").AppendLine(heading)
+            .AppendLine();
+        foreach (var value in values)
+        {
+            content.Append("- ").Append(value.Name).Append(": `").Append(value.Value).AppendLine("`");
+        }
+
+        content.AppendLine();
+        await File.AppendAllTextAsync(path, content.ToString(), Encoding.UTF8, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static string FormatBoolean(bool value) => value ? "true" : "false";
+
+    private static string RequireEnvironmentVariable(string name)
+    {
+        var value = Environment.GetEnvironmentVariable(name);
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new InvalidOperationException($"Roadmap automation requires {name}.");
+        }
+
+        return value;
     }
 }

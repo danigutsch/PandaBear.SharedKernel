@@ -4,8 +4,12 @@ using System.Text.Json;
 
 namespace SharedKernel.RepoConfig.Tool;
 
-internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
+internal sealed class GitHubRoadmapReconcileClient
 {
+    private const int MaxConnectionPages = 100;
+    private const int MaxIssuePages = 100;
+    private const int MaxResponseBytes = 8 * 1024 * 1024;
+    private const int MaxSupplementalIssues = 2000;
     private const string ReconcileQuery = """
         query($owner:String!,$name:String!,$after:String){
           repository(owner:$owner,name:$name){
@@ -29,6 +33,23 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
         """;
 
     private const string IssueQuery = "query($owner:String!,$name:String!,$number:Int!){repository(owner:$owner,name:$name){issueOrPullRequest(number:$number){__typename ... on Issue{number title state labels(first:100){nodes{name}pageInfo{hasNextPage endCursor}} parent{number state repository{nameWithOwner}} subIssues(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blockedBy(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blocking(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}}}}}}";
+    private const string RepositoryCommitQuery = "query($owner:String!,$name:String!){repository(owner:$owner,name:$name){defaultBranchRef{target{oid}}}}";
+    private static readonly TimeSpan SnapshotTimeout = TimeSpan.FromMinutes(2);
+    private readonly HttpClient _httpClient;
+    private readonly TimeProvider _timeProvider;
+
+    public GitHubRoadmapReconcileClient(HttpClient httpClient)
+        : this(httpClient, TimeProvider.System)
+    {
+    }
+
+    internal GitHubRoadmapReconcileClient(HttpClient httpClient, TimeProvider timeProvider)
+    {
+        ArgumentNullException.ThrowIfNull(httpClient);
+        ArgumentNullException.ThrowIfNull(timeProvider);
+        _httpClient = httpClient;
+        _timeProvider = timeProvider;
+    }
 
     public async Task<GitHubRoadmapReconcileSnapshot> ReadSnapshot(
         string repository,
@@ -37,12 +58,40 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
     {
         ArgumentNullException.ThrowIfNull(requiredIssueNumbers);
 
+        using var timeout = new CancellationTokenSource(SnapshotTimeout, _timeProvider);
+        using var snapshotCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken,
+            timeout.Token);
+        try
+        {
+            return await ReadSnapshotCore(
+                repository,
+                requiredIssueNumbers,
+                snapshotCancellation.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw new OperationCanceledException(cancellationToken);
+        }
+        catch (OperationCanceledException) when (timeout.IsCancellationRequested)
+        {
+            throw new TimeoutException("GitHub reconciliation snapshot timed out after 120 seconds.");
+        }
+    }
+
+    private async Task<GitHubRoadmapReconcileSnapshot> ReadSnapshotCore(
+        string repository,
+        int[] requiredIssueNumbers,
+        CancellationToken cancellationToken)
+    {
         var (owner, name) = SplitRepository(repository);
         var (repositoryCommit, issuesByNumber) = await ReadOpenIssues(owner, name, cancellationToken).ConfigureAwait(false);
         var supplementalIssueNumbers = DiscoverSupplementalIssueNumbers(requiredIssueNumbers, issuesByNumber.Values, repository);
         await AddSupplementalIssues(owner, name, supplementalIssueNumbers, issuesByNumber, cancellationToken).ConfigureAwait(false);
+        var finalRepositoryCommit = await ReadCurrentRepositoryCommit(owner, name, cancellationToken).ConfigureAwait(false);
+        RequireStableRepositoryCommit(repositoryCommit, finalRepositoryCommit);
 
-        return new GitHubRoadmapReconcileSnapshot(repositoryCommit, issuesByNumber.Values.OrderBy(issue => issue.Number).ToArray());
+        return new GitHubRoadmapReconcileSnapshot(finalRepositoryCommit, issuesByNumber.Values.OrderBy(issue => issue.Number).ToArray());
     }
 
     private async Task<(string? RepositoryCommit, Dictionary<int, GitHubRoadmapReconcileIssue> IssuesByNumber)> ReadOpenIssues(
@@ -52,23 +101,44 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
     {
         Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber = [];
         string? repositoryCommit = null;
+        var repositoryCommitRead = false;
+        HashSet<string> cursors = new(StringComparer.Ordinal);
+        var pageCount = 0;
         string? cursor = null;
         while (true)
         {
+            pageCount++;
+            if (pageCount > MaxIssuePages)
+            {
+                throw new InvalidOperationException("GitHub reconciliation response exceeded the issue page limit.");
+            }
+
             var page = await ReadOpenIssuePage(
                 owner,
                 name,
                 cursor,
-                readRepositoryCommit: repositoryCommit is null,
                 issuesByNumber,
                 cancellationToken).ConfigureAwait(false);
-            repositoryCommit ??= page.RepositoryCommit;
+            if (!repositoryCommitRead)
+            {
+                repositoryCommit = page.RepositoryCommit;
+                repositoryCommitRead = true;
+            }
+            else
+            {
+                RequireStableRepositoryCommit(repositoryCommit, page.RepositoryCommit);
+            }
+
             if (!page.HasNextPage)
             {
                 return (repositoryCommit, issuesByNumber);
             }
 
             cursor = RequireNextCursor(page.EndCursor);
+            if (!cursors.Add(cursor))
+            {
+                throw new InvalidOperationException("GitHub reconciliation response repeated an issue page cursor.");
+            }
         }
     }
 
@@ -76,7 +146,6 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
         string owner,
         string name,
         string? cursor,
-        bool readRepositoryCommit,
         Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber,
         CancellationToken cancellationToken)
     {
@@ -85,7 +154,7 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
             writer => WriteReconcileVariables(writer, owner, name, cursor),
             cancellationToken).ConfigureAwait(false);
         var repositoryElement = GetRepository(document.RootElement);
-        var repositoryCommit = readRepositoryCommit ? ReadRepositoryCommit(repositoryElement) : null;
+        var repositoryCommit = ReadRepositoryCommit(repositoryElement);
         var connection = GetRequiredObject(repositoryElement, "issues");
         foreach (var node in GetRequiredArray(connection, "nodes").EnumerateArray())
         {
@@ -158,7 +227,13 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
         Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber,
         CancellationToken cancellationToken)
     {
-        foreach (var issueNumber in supplementalIssueNumbers.Order())
+        var orderedIssueNumbers = supplementalIssueNumbers.Order().ToArray();
+        if (orderedIssueNumbers.Length > MaxSupplementalIssues)
+        {
+            throw new InvalidOperationException("GitHub reconciliation response exceeded the supplemental issue limit.");
+        }
+
+        foreach (var issueNumber in orderedIssueNumbers)
         {
             if (issuesByNumber.ContainsKey(issueNumber))
             {
@@ -197,6 +272,30 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
         return await ReadIssue(node, owner, name, cancellationToken).ConfigureAwait(false);
     }
 
+    private async Task<string?> ReadCurrentRepositoryCommit(
+        string owner,
+        string name,
+        CancellationToken cancellationToken)
+    {
+        using var document = await Send(
+            RepositoryCommitQuery,
+            writer =>
+            {
+                writer.WriteString("owner", owner);
+                writer.WriteString("name", name);
+            },
+            cancellationToken).ConfigureAwait(false);
+        return ReadRepositoryCommit(GetRepository(document.RootElement));
+    }
+
+    private static void RequireStableRepositoryCommit(string? expected, string? actual)
+    {
+        if (!string.Equals(expected, actual, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException("GitHub reconciliation default branch changed while reading the snapshot.");
+        }
+    }
+
     private static void AddClosedRelation(
         GitHubRoadmapReconcileRelation? relation,
         string repository,
@@ -212,7 +311,7 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
 
     private async Task<JsonDocument> Send(string query, Action<Utf8JsonWriter> writeVariables, CancellationToken cancellationToken)
     {
-        using var timeout = new CancellationTokenSource(GitHubRequestTimeout.Duration);
+        using var timeout = new CancellationTokenSource(GitHubRequestTimeout.Duration, _timeProvider);
         using var requestCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeout.Token);
         try
         {
@@ -251,7 +350,10 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
         HttpResponseMessage response;
         try
         {
-            response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+            response = await _httpClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken).ConfigureAwait(false);
         }
         catch (HttpRequestException exception)
         {
@@ -268,10 +370,14 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
             JsonDocument document;
             try
             {
-                using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-                document = await JsonDocument.ParseAsync(responseStream, cancellationToken: cancellationToken).ConfigureAwait(false);
+                var content = await BoundedHttpContentReader.Read(
+                    response.Content,
+                    MaxResponseBytes,
+                    "GitHub reconciliation response exceeded the allowed size.",
+                    cancellationToken).ConfigureAwait(false);
+                document = JsonDocument.Parse(content);
             }
-            catch (JsonException exception)
+            catch (Exception exception) when (exception is JsonException or HttpRequestException or IOException)
             {
                 throw new InvalidOperationException("GitHub reconciliation response could not be read.", exception);
             }
@@ -325,9 +431,18 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
         HashSet<string> values = new(StringComparer.Ordinal);
         AddLabels(labels, values);
         var (hasNextPage, cursor) = ReadPageInfo(labels);
+        HashSet<string> cursors = new(StringComparer.Ordinal);
+        var pageCount = 1;
         while (hasNextPage)
         {
-            using var document = await ReadConnectionPage(owner, name, issueNumber, "labels", cursor, cancellationToken).ConfigureAwait(false);
+            pageCount++;
+            if (pageCount > MaxConnectionPages)
+            {
+                throw new InvalidOperationException("GitHub reconciliation response exceeded the labels page limit.");
+            }
+
+            var requestCursor = RequireConnectionCursor(cursor, "labels", cursors);
+            using var document = await ReadConnectionPage(owner, name, issueNumber, "labels", requestCursor, cancellationToken).ConfigureAwait(false);
             var connection = GetIssueConnection(document.RootElement, "labels");
             AddLabels(connection, values);
             (hasNextPage, cursor) = ReadPageInfo(connection);
@@ -370,9 +485,18 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
         Dictionary<(string Repository, int Number), GitHubRoadmapReconcileRelation> relations = [];
         AddRelations(connection, relations);
         var (hasNextPage, cursor) = ReadPageInfo(connection);
+        HashSet<string> cursors = new(StringComparer.Ordinal);
+        var pageCount = 1;
         while (hasNextPage)
         {
-            using var document = await ReadConnectionPage(owner, name, issueNumber, propertyName, cursor, cancellationToken).ConfigureAwait(false);
+            pageCount++;
+            if (pageCount > MaxConnectionPages)
+            {
+                throw new InvalidOperationException($"GitHub reconciliation response exceeded the {propertyName} page limit.");
+            }
+
+            var requestCursor = RequireConnectionCursor(cursor, propertyName, cursors);
+            using var document = await ReadConnectionPage(owner, name, issueNumber, propertyName, requestCursor, cancellationToken).ConfigureAwait(false);
             connection = GetIssueConnection(document.RootElement, propertyName);
             AddRelations(connection, relations);
             (hasNextPage, cursor) = ReadPageInfo(connection);
@@ -431,6 +555,24 @@ internal sealed class GitHubRoadmapReconcileClient(HttpClient httpClient)
                 writer.WriteString("after", cursor);
             },
             cancellationToken).ConfigureAwait(false);
+    }
+
+    private static string RequireConnectionCursor(
+        string? cursor,
+        string connectionName,
+        HashSet<string> cursors)
+    {
+        if (string.IsNullOrWhiteSpace(cursor))
+        {
+            throw new InvalidOperationException($"GitHub reconciliation response has incomplete {connectionName} metadata.");
+        }
+
+        if (!cursors.Add(cursor))
+        {
+            throw new InvalidOperationException($"GitHub reconciliation response repeated a {connectionName} page cursor.");
+        }
+
+        return cursor;
     }
 
     private static string CreateConnectionQuery(string connectionName)

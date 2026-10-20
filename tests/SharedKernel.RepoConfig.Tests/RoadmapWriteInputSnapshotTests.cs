@@ -6,6 +6,27 @@ namespace SharedKernel.RepoConfig.Tests;
 public sealed class RoadmapWriteInputSnapshotTests
 {
     [Fact]
+    public async Task Digest_changes_when_a_repository_owned_input_changes()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        (await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken)).ShouldBe(0);
+        var first = RoadmapWriteInputSnapshot.Capture(workspace.RootPath);
+        var config = workspace.ReadFile("roadmap/config.json");
+        workspace.WriteFile("roadmap/config.json", config + Environment.NewLine);
+
+        // Act
+        var second = RoadmapWriteInputSnapshot.Capture(workspace.RootPath);
+
+        // Assert
+        first.Digest.ShouldMatch("^[0-9a-f]{64}$");
+        second.Digest.ShouldMatch("^[0-9a-f]{64}$");
+        second.Digest.ShouldNotBe(first.Digest);
+    }
+
+    [Fact]
     public async Task Verify_reports_a_deleted_required_file_as_a_stale_plan()
     {
         // Arrange

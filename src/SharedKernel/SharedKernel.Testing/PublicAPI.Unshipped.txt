@@ -37,12 +37,30 @@ const SharedKernel.Testing.TestTraitValues.DependencyInjectionCategory = "depend
 const SharedKernel.Testing.TestTraitValues.EndpointCategory = "endpoint" -> string!
 const SharedKernel.Testing.TestTraitValues.SecurityCategory = "security" -> string!
 const SharedKernel.Testing.TestTraitValues.TestServerHost = "test-server" -> string!
+override SharedKernel.Testing.GatedCountingReadStream.CanRead.get -> bool
+override SharedKernel.Testing.GatedCountingReadStream.CanSeek.get -> bool
+override SharedKernel.Testing.GatedCountingReadStream.CanWrite.get -> bool
+override SharedKernel.Testing.GatedCountingReadStream.Flush() -> void
+override SharedKernel.Testing.GatedCountingReadStream.Length.get -> long
+override SharedKernel.Testing.GatedCountingReadStream.Position.get -> long
+override SharedKernel.Testing.GatedCountingReadStream.Position.set -> void
+override SharedKernel.Testing.GatedCountingReadStream.Read(byte[]! buffer, int offset, int count) -> int
+override SharedKernel.Testing.GatedCountingReadStream.ReadAsync(byte[]! buffer, int offset, int count, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+override SharedKernel.Testing.GatedCountingReadStream.ReadAsync(System.Memory<byte> buffer, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<int>
+override SharedKernel.Testing.GatedCountingReadStream.Seek(long offset, System.IO.SeekOrigin origin) -> long
+override SharedKernel.Testing.GatedCountingReadStream.SetLength(long value) -> void
+override SharedKernel.Testing.GatedCountingReadStream.Write(byte[]! buffer, int offset, int count) -> void
 SharedKernel.Domain.Tests.TestTraits
 SharedKernel.EventSourcing.Tests.TestTraits
 SharedKernel.Functional.Tests.TestTraits
 SharedKernel.Idempotency.Tests.TestTraits
 SharedKernel.Mediator.GeneratorTests.TestTraits
 SharedKernel.Mediator.Tests.TestTraits
+SharedKernel.Testing.GatedCountingReadStream
+SharedKernel.Testing.GatedCountingReadStream.BytesRead.get -> long
+SharedKernel.Testing.GatedCountingReadStream.GatedCountingReadStream(byte[]! content) -> void
+SharedKernel.Testing.GatedCountingReadStream.ReadStarted.get -> System.Threading.Tasks.Task!
+SharedKernel.Testing.GatedCountingReadStream.Release() -> void
 SharedKernel.Testing.SerialTestJustificationAttribute
 SharedKernel.Testing.SerialTestJustificationAttribute.Reason.get -> string!
 SharedKernel.Testing.SerialTestJustificationAttribute.SerialTestJustificationAttribute(string! reason) -> void

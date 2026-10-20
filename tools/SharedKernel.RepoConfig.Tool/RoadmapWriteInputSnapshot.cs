@@ -1,3 +1,6 @@
+using System.Security.Cryptography;
+using System.Text.Json;
+
 namespace SharedKernel.RepoConfig.Tool;
 
 internal sealed class RoadmapWriteInputSnapshot
@@ -9,7 +12,10 @@ internal sealed class RoadmapWriteInputSnapshot
     {
         _rootPath = rootPath;
         _files = files;
+        Digest = ComputeDigest();
     }
+
+    public string Digest { get; }
 
     public static RoadmapWriteInputSnapshot Capture(string rootPath)
     {
@@ -89,5 +95,27 @@ internal sealed class RoadmapWriteInputSnapshot
                 yield return Path.GetFullPath(file);
             }
         }
+    }
+
+    private string ComputeDigest()
+    {
+        using var stream = new MemoryStream();
+        using (var writer = new Utf8JsonWriter(stream))
+        {
+            writer.WriteStartArray();
+            foreach (var file in _files.OrderBy(file => file.Key, StringComparer.Ordinal))
+            {
+                writer.WriteStartObject();
+                writer.WriteString(
+                    "path",
+                    Path.GetRelativePath(_rootPath, file.Key).Replace(Path.DirectorySeparatorChar, '/'));
+                writer.WriteString("content", file.Value);
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndArray();
+        }
+
+        return Convert.ToHexStringLower(SHA256.HashData(stream.ToArray()));
     }
 }

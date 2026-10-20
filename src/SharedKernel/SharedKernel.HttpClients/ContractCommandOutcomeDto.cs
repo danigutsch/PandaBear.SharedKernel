@@ -13,9 +13,9 @@ public sealed record ContractCommandOutcomeDto
     public required ContractCommandOutcomeKind Kind { get; init; }
 
     /// <summary>
-    /// Gets the HTTP status code returned by the API.
+    /// Gets the HTTP status code returned by the API, or <see langword="null" /> when no response was received.
     /// </summary>
-    public required HttpStatusCode StatusCode { get; init; }
+    public HttpStatusCode? StatusCode { get; init; }
 
     /// <summary>
     /// Gets the created resource location when supplied by the API.

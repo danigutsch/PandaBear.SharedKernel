@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http.Resilience;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
@@ -20,13 +21,15 @@ public static class HttpServiceCollectionExtensions
 
         services.ConfigureHttpClientDefaults(http =>
         {
-            http.AddStandardResilienceHandler();
+            http.AddStandardResilienceHandler(options => options.Retry.DisableForUnsafeHttpMethods());
             http.AddServiceDiscovery();
         });
 
         services.AddOpenTelemetry()
             .WithMetrics(metrics => metrics.AddHttpClientInstrumentation())
-            .WithTracing(tracing => tracing.AddHttpClientInstrumentation());
+            .WithTracing(tracing => tracing
+                .AddSource(ContractCommandOutcome.ActivitySourceName)
+                .AddHttpClientInstrumentation());
 
         return services;
     }

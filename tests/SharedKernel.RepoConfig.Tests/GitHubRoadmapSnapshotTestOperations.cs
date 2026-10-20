@@ -37,6 +37,8 @@ internal static class GitHubRoadmapSnapshotTestOperations
         {
             EnqueueIssue(handler, issue);
         }
+
+        handler.Enqueue(CreateRepositoryCommitResponse());
     }
 
     public static HttpResponseMessage CreateOpenIssuesResponse(IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot)
@@ -82,6 +84,15 @@ internal static class GitHubRoadmapSnapshotTestOperations
             Content = new StringContent(System.Text.Encoding.UTF8.GetString(stream.ToArray()), System.Text.Encoding.UTF8, "application/json")
         };
     }
+
+    public static HttpResponseMessage CreateRepositoryCommitResponse() =>
+        new(HttpStatusCode.OK)
+        {
+            Content = new StringContent(
+                "{\"data\":{\"repository\":{\"defaultBranchRef\":{\"target\":{\"oid\":\"1111111111111111111111111111111111111111\"}}}}}",
+                System.Text.Encoding.UTF8,
+                "application/json")
+        };
 
     public static GitHubRoadmapReconcileIssue Issue(
         int number,

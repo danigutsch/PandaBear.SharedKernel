@@ -14,12 +14,30 @@ public sealed class ContractHttpClientTestHelper : HttpClient
         BaseAddress = new UriBuilder(Uri.UriSchemeHttps, "contracts.example").Uri;
     }
 
+    private ContractHttpClientTestHelper(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFactory)
+        : base(new AsyncResponseHandler(responseFactory), disposeHandler: true)
+    {
+        BaseAddress = new UriBuilder(Uri.UriSchemeHttps, "contracts.example").Uri;
+    }
+
     /// <summary>
     /// Creates an HTTP client backed by a deterministic response factory.
     /// </summary>
     /// <param name="responseFactory">Creates the response for each request.</param>
     /// <returns>An HTTP client with a stable base address.</returns>
     public static HttpClient CreateClient(Func<HttpRequestMessage, HttpResponseMessage> responseFactory)
+    {
+        ArgumentNullException.ThrowIfNull(responseFactory);
+
+        return new ContractHttpClientTestHelper(responseFactory);
+    }
+
+    /// <summary>
+    /// Creates an HTTP client backed by a deterministic asynchronous response factory.
+    /// </summary>
+    /// <param name="responseFactory">Creates the response for each request and observes request cancellation.</param>
+    /// <returns>An HTTP client with a stable base address.</returns>
+    public static HttpClient CreateClient(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFactory)
     {
         ArgumentNullException.ThrowIfNull(responseFactory);
 
@@ -48,6 +66,15 @@ public sealed class ContractHttpClientTestHelper : HttpClient
         {
             cancellationToken.ThrowIfCancellationRequested();
             return Task.FromResult(responseFactory(request));
+        }
+    }
+
+    private sealed class AsyncResponseHandler(Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responseFactory) : HttpMessageHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return responseFactory(request, cancellationToken);
         }
     }
 }

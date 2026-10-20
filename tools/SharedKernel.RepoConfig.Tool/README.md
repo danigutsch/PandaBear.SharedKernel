@@ -16,3 +16,7 @@ It is packaged privately as `PandaBear.SharedKernel.RepoConfig.Tool`.
 Use `--root <path>` for repository commands that target another checkout. Initialization leaves
 GitHub integration disabled. Explicit configuration and `--apply` are required for remote changes.
 Application CI slices, coverage exclusions, bootstrap, and consumer compatibility remain consumer-owned.
+
+## Roadmap automation
+
+Use `automation plan-github` for an integrity-bound plan. Application workflow configuration and protected-environment approval remain consumer-owned. Applying and publishing require the reviewed plan and artifact digests; publication also requires a sealed result.

@@ -185,7 +185,7 @@ public sealed class GitHubRoadmapIntakeTests
         var outputText = output.ToString();
         var errorText = error.ToString();
         var stateAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
-        var request = handler.LastRequest.ShouldNotBeNull();
+        var request = handler.Requests[0];
         var requestBody = request.Body.ShouldNotBeNull();
 
         // Assert
@@ -1131,6 +1131,7 @@ public sealed class GitHubRoadmapIntakeTests
               }
             }
             """);
+        handler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateRepositoryCommitResponse());
         using var httpClient = new HttpClient(handler);
 
         // Act
@@ -1216,6 +1217,7 @@ public sealed class GitHubRoadmapIntakeTests
               }
             }
             """);
+        handler.Enqueue(GitHubRoadmapSnapshotTestOperations.CreateRepositoryCommitResponse());
         using var httpClient = new HttpClient(handler);
 
         // Act

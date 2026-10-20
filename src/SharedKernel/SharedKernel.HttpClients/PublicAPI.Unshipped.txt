@@ -1,4 +1,5 @@
 #nullable enable
+const SharedKernel.HttpClients.ContractCommandOutcome.ActivitySourceName = "SharedKernel.HttpClients.ContractOutcomes" -> string!
 SharedKernel.HttpClients.ContractCommandOutcome
 SharedKernel.HttpClients.ContractCommandOutcomeDto
 SharedKernel.HttpClients.ContractCommandOutcomeDto.Kind.get -> SharedKernel.HttpClients.ContractCommandOutcomeKind
@@ -7,10 +8,23 @@ SharedKernel.HttpClients.ContractCommandOutcomeDto.Location.get -> System.Uri?
 SharedKernel.HttpClients.ContractCommandOutcomeDto.Location.init -> void
 SharedKernel.HttpClients.ContractCommandOutcomeDto.Message.get -> string?
 SharedKernel.HttpClients.ContractCommandOutcomeDto.Message.init -> void
-SharedKernel.HttpClients.ContractCommandOutcomeDto.StatusCode.get -> System.Net.HttpStatusCode
+SharedKernel.HttpClients.ContractCommandOutcomeDto.StatusCode.get -> System.Net.HttpStatusCode?
 SharedKernel.HttpClients.ContractCommandOutcomeDto.StatusCode.init -> void
 SharedKernel.HttpClients.ContractCommandOutcomeDto.ValidationErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
 SharedKernel.HttpClients.ContractCommandOutcomeDto.ValidationErrors.init -> void
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Kind.get -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Kind.init -> void
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Location.get -> System.Uri?
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Location.init -> void
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Message.get -> string?
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Message.init -> void
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.StatusCode.get -> System.Net.HttpStatusCode?
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.StatusCode.init -> void
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.ValidationErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.ValidationErrors.init -> void
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Value.get -> TValue?
+SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>.Value.init -> void
 SharedKernel.HttpClients.ContractCommandOutcomeKind
 SharedKernel.HttpClients.ContractCommandOutcomeKind.Conflict = 5 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
 SharedKernel.HttpClients.ContractCommandOutcomeKind.EmptyBody = 6 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
@@ -18,8 +32,11 @@ SharedKernel.HttpClients.ContractCommandOutcomeKind.Forbidden = 4 -> SharedKerne
 SharedKernel.HttpClients.ContractCommandOutcomeKind.MalformedBody = 7 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
 SharedKernel.HttpClients.ContractCommandOutcomeKind.NotFound = 2 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
 SharedKernel.HttpClients.ContractCommandOutcomeKind.Succeeded = 0 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.TimedOut = 10 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.TransportFailure = 11 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
 SharedKernel.HttpClients.ContractCommandOutcomeKind.Unauthorized = 3 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
 SharedKernel.HttpClients.ContractCommandOutcomeKind.UnexpectedStatus = 8 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
+SharedKernel.HttpClients.ContractCommandOutcomeKind.UnsupportedContentType = 9 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
 SharedKernel.HttpClients.ContractCommandOutcomeKind.ValidationProblem = 1 -> SharedKernel.HttpClients.ContractCommandOutcomeKind
 SharedKernel.HttpClients.ContractHttpValidation
 SharedKernel.HttpClients.ContractValidationException
@@ -33,8 +50,16 @@ SharedKernel.HttpClients.ContractValidationProblemDto
 SharedKernel.HttpClients.ContractValidationProblemDto.Errors.get -> System.Collections.Generic.Dictionary<string!, string![]!>?
 SharedKernel.HttpClients.ContractValidationProblemDto.Errors.init -> void
 SharedKernel.HttpClients.HttpServiceCollectionExtensions
+static SharedKernel.HttpClients.ContractCommandOutcome.FromResponse(System.Net.Http.HttpResponseMessage! response, System.Net.HttpStatusCode successStatusCode, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.HttpClients.ContractCommandOutcomeDto!>!
+SharedKernel.HttpClients.ProgressStreamContent
+SharedKernel.HttpClients.ProgressStreamContent.ProgressStreamContent(System.IO.Stream! content, long contentLength, System.IProgress<long>? progress) -> void
 static SharedKernel.HttpClients.ContractCommandOutcome.FromResponse(System.Net.Http.HttpResponseMessage! response, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.HttpClients.ContractCommandOutcomeDto!>!
+static SharedKernel.HttpClients.ContractCommandOutcome.FromResponse<TValue>(System.Net.Http.HttpResponseMessage! response, System.Net.HttpStatusCode successStatusCode, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TValue>! valueJson, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>!>!
+static SharedKernel.HttpClients.ContractCommandOutcome.Send(System.Net.Http.HttpClient! httpClient, System.Net.Http.HttpRequestMessage! request, System.Net.HttpStatusCode successStatusCode, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.HttpClients.ContractCommandOutcomeDto!>!
+static SharedKernel.HttpClients.ContractCommandOutcome.Send<TValue>(System.Net.Http.HttpClient! httpClient, System.Net.Http.HttpRequestMessage! request, System.Net.HttpStatusCode successStatusCode, System.Text.Json.Serialization.Metadata.JsonTypeInfo<TValue>! valueJson, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! validationProblemJson, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>!>!
 static SharedKernel.HttpClients.ContractCommandOutcome.Status(SharedKernel.HttpClients.ContractCommandOutcomeKind kind, System.Net.HttpStatusCode statusCode, string? message = null) -> SharedKernel.HttpClients.ContractCommandOutcomeDto!
+static SharedKernel.HttpClients.ContractCommandOutcome.Status<TValue>(SharedKernel.HttpClients.ContractCommandOutcomeKind kind, System.Net.HttpStatusCode statusCode, string? message = null) -> SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>!
 static SharedKernel.HttpClients.ContractCommandOutcome.Succeeded(System.Net.HttpStatusCode statusCode, System.Uri? location) -> SharedKernel.HttpClients.ContractCommandOutcomeDto!
+static SharedKernel.HttpClients.ContractCommandOutcome.Succeeded<TValue>(System.Net.HttpStatusCode statusCode, TValue value, System.Uri? location = null) -> SharedKernel.HttpClients.ContractCommandOutcomeDto<TValue>!
 static SharedKernel.HttpClients.ContractHttpValidation.EnsureSuccessOrThrowValidationException(System.Net.Http.HttpResponseMessage! response, System.Text.Json.Serialization.Metadata.JsonTypeInfo<SharedKernel.HttpClients.ContractValidationProblemDto!>! jsonTypeInfo, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 static SharedKernel.HttpClients.HttpServiceCollectionExtensions.AddHttpClientDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

@@ -159,7 +159,25 @@ internal sealed class GitHubRoadmapReconciler
 
     private void ValidateClosedTransitions(GitHubRoadmapReconciliation reconciliation, Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber)
     {
-        var itemsByIssue = _project.Items.Where(item => item.GitHubIssue is int).ToDictionary(item => item.GitHubIssue.GetValueOrDefault());
+        var requiredTransitions = GetRequiredClosedTransitions(_project, reconciliation, issuesByNumber.Values);
+        if (requiredTransitions.Length > 0)
+        {
+            var required = requiredTransitions.Select(transition => $"#{transition.Issue} -> {transition.RoadmapItem}");
+            throw new InvalidOperationException($"Add closedItemTransitions to {Path.GetRelativePath(_project.RootPath, reconciliation.ManifestPath)}: {string.Join(", ", required)}.");
+        }
+    }
+
+    internal static RoadmapClosedItemTransition[] GetRequiredClosedTransitions(
+        RoadmapProject project,
+        GitHubRoadmapReconciliation reconciliation,
+        IEnumerable<GitHubRoadmapReconcileIssue> issues)
+    {
+        ArgumentNullException.ThrowIfNull(project);
+        ArgumentNullException.ThrowIfNull(reconciliation);
+        ArgumentNullException.ThrowIfNull(issues);
+
+        var issuesByNumber = issues.ToDictionary(issue => issue.Number);
+        var itemsByIssue = project.Items.Where(item => item.GitHubIssue is int).ToDictionary(item => item.GitHubIssue.GetValueOrDefault());
         foreach (var (issueNumber, roadmapItemId) in reconciliation.ClosedItemTransitions)
         {
             if (!issuesByNumber.TryGetValue(issueNumber, out var issue) || !IsClosed(issue)
@@ -170,19 +188,15 @@ internal sealed class GitHubRoadmapReconciler
             }
         }
 
-        var requiredTransitions = itemsByIssue.Values
+        return itemsByIssue.Values
             .Where(item => item.GitHubIssue is int issueNumber
                 && issuesByNumber.TryGetValue(issueNumber, out var issue)
                 && IsClosed(issue)
-                && !_project.IsClosed(item)
+                && !project.IsClosed(item)
                 && !reconciliation.ClosedItemTransitions.ContainsKey(issueNumber))
             .OrderBy(item => item.GitHubIssue)
-            .Select(item => $"#{item.GitHubIssue} -> {item.Id}")
+            .Select(item => new RoadmapClosedItemTransition(item.GitHubIssue.GetValueOrDefault(), item.Id))
             .ToArray();
-        if (requiredTransitions.Length > 0)
-        {
-            throw new InvalidOperationException($"Add closedItemTransitions to {Path.GetRelativePath(_project.RootPath, reconciliation.ManifestPath)}: {string.Join(", ", requiredTransitions)}.");
-        }
     }
 
     private static ReconcileDispositions DeriveDispositions(

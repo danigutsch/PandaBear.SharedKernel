@@ -1,4 +1,6 @@
 using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 
 namespace SharedKernel.HttpClients.Tests;
@@ -42,7 +44,7 @@ public sealed class ContractHttpValidationTests
                     "Email": ["Email is invalid."]
                   }
                 }
-                """)
+                """, Encoding.UTF8, "application/problem+json")
         };
 
         var exception = await ((Func<Task>)(() => ContractHttpValidation.EnsureSuccessOrThrowValidationException(
@@ -61,7 +63,7 @@ public sealed class ContractHttpValidationTests
     {
         using var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
         {
-            Content = new StringContent("{ not json")
+            Content = new StringContent("{ not json", Encoding.UTF8, "application/problem+json")
         };
 
         var exception = await ((Func<Task>)(() => ContractHttpValidation.EnsureSuccessOrThrowValidationException(
@@ -75,11 +77,12 @@ public sealed class ContractHttpValidationTests
     }
 
     [Fact]
-    public async Task Ensure_success_preserves_not_supported_exception_for_non_json_validation_problem()
+    public async Task Ensure_success_rejects_unsupported_validation_content_without_reading_it()
     {
+        var content = new ContractHttpValidationNotSupportedContent();
         using var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
         {
-            Content = new ContractHttpValidationNotSupportedContent()
+            Content = content
         };
 
         var exception = await ((Func<Task>)(() => ContractHttpValidation.EnsureSuccessOrThrowValidationException(
@@ -87,9 +90,10 @@ public sealed class ContractHttpValidationTests
             ContractHttpValidationTestsJsonContext.Default.ContractValidationProblemDto,
             TestContext.Current.CancellationToken))).ShouldThrow<ContractValidationException>();
         exception.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
-        exception.InnerException.ShouldBeOfType<NotSupportedException>();
+        exception.InnerException.ShouldBeNull();
         exception.ValidationErrors.ShouldBeEmpty();
         exception.Message.ShouldBe("Validation problem response body was not JSON.");
+        content.WasRead.ShouldBeFalse();
     }
 
     [Fact]
@@ -101,7 +105,7 @@ public sealed class ContractHttpValidationTests
                 {
                   "title": "One or more validation errors occurred."
                 }
-                """)
+                """, Encoding.UTF8, "application/problem+json")
         };
 
         var exception = await ((Func<Task>)(() => ContractHttpValidation.EnsureSuccessOrThrowValidationException(
@@ -113,12 +117,62 @@ public sealed class ContractHttpValidationTests
         exception.Message.ShouldBe("Validation problem response body did not contain errors.");
     }
 
+    [Theory]
+    [InlineData("{\"errors\":{\"Name\":null}}")]
+    [InlineData("{\"errors\":{\"Name\":[]}}")]
+    [InlineData("{\"errors\":{\" \":[\"Name is required.\"]}}")]
+    [InlineData("{\"errors\":{\"Name\":[\" \"]}}")]
+    [InlineData("{\"errors\":{\"Name\":[\"Valid message\",null]}}")]
+    public async Task Ensure_success_rejects_invalid_validation_error_entries(string content)
+    {
+        // Arrange
+        using var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
+        {
+            Content = new StringContent(content, Encoding.UTF8, "application/problem+json")
+        };
+
+        // Act
+        var exception = await ((Func<Task>)(() => ContractHttpValidation.EnsureSuccessOrThrowValidationException(
+            response,
+            ContractHttpValidationTestsJsonContext.Default.ContractValidationProblemDto,
+            TestContext.Current.CancellationToken))).ShouldThrow<ContractValidationException>();
+
+        // Assert
+        exception.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        exception.ValidationErrors.ShouldBeEmpty();
+        exception.Message.ShouldBe("Validation problem response body was malformed.");
+    }
+
+    [Fact]
+    [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
+    public async Task Ensure_success_bounds_oversized_validation_content()
+    {
+        // Arrange
+        var oversizedContent = Encoding.UTF8.GetBytes(new string('x', 2 * 1024 * 1024));
+        using var responseBody = new TrackingReadStream(oversizedContent);
+        var content = new StreamContent(responseBody);
+        content.Headers.ContentType = new MediaTypeHeaderValue("application/problem+json");
+        using var response = new HttpResponseMessage(HttpStatusCode.BadRequest) { Content = content };
+
+        // Act
+        var exception = await ((Func<Task>)(() => ContractHttpValidation.EnsureSuccessOrThrowValidationException(
+            response,
+            ContractHttpValidationTestsJsonContext.Default.ContractValidationProblemDto,
+            TestContext.Current.CancellationToken))).ShouldThrow<ContractValidationException>();
+
+        // Assert
+        exception.Message.ShouldBe("Validation problem response body was malformed.");
+        exception.ValidationErrors.ShouldBeEmpty();
+        responseBody.BytesRead.ShouldBeLessThanOrEqualTo((1024 * 1024) + 1);
+        responseBody.IsDisposed.ShouldBeTrue();
+    }
+
     [Fact]
     public async Task FromResponse_returns_generic_malformed_body_message_for_invalid_validation_problem_json()
     {
         using var response = new HttpResponseMessage(HttpStatusCode.BadRequest)
         {
-            Content = new StringContent("not json alice@example.test")
+            Content = new StringContent("not json alice@example.test", Encoding.UTF8, "application/problem+json")
         };
 
         var outcome = await ContractCommandOutcome.FromResponse(

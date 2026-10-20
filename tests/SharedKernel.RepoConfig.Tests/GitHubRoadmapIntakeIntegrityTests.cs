@@ -66,7 +66,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         var requestBodies = string.Join('\n', handler.Requests.Select(request => request.Body ?? string.Empty));
 
         // Assert
-        handler.Requests.Count.ShouldBe(2);
+        handler.Requests.Count.ShouldBe(3);
         requestBodies.ShouldNotContain("body", StringComparison.Ordinal);
         requestBodies.ShouldNotContain("comments", StringComparison.Ordinal);
         requestBodies.ShouldNotContain("token", StringComparison.Ordinal);

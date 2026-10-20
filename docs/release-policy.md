@@ -45,3 +45,11 @@ installations belong in the normal Codex skills directory. They do not authorize
 References: [library versioning](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning),
 [NuGet versions](https://learn.microsoft.com/en-us/nuget/concepts/package-versioning), and
 [package authoring](https://learn.microsoft.com/en-us/nuget/create-packages/package-authoring-best-practices).
+
+## Reconciled application work
+
+The reusable HTTP outcome, bounded-response, and upload-progress changes were reconciled from
+ViajantesTurismo commit `daa099e0`; roadmap automation and bounded GitHub reconciliation were
+reconciled from `298e3c2d`. Application code and workflow policy remain consumer-owned. The older
+July dependency branch does not override the newer platform versions here; Roslyn retains the
+intentional compiler API baseline documented in the root README.

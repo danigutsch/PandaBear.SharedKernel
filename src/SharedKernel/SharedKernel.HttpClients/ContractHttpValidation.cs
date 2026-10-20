@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
@@ -36,23 +35,43 @@ public static class ContractHttpValidation
             return;
         }
 
+        if (!ContractCommandOutcome.HasJsonContentType(response.Content))
+        {
+            throw new ContractValidationException("Validation problem response body was not JSON.");
+        }
+
+        var body = await ContractCommandOutcome.ReadResponseBody(
+            response.Content,
+            ContractCommandOutcome.MaximumJsonResponseBodyBytes,
+            ct).ConfigureAwait(false);
+        if (body.TransportFailed)
+        {
+            throw new HttpRequestException("HTTP transport failed.");
+        }
+
+        if (body.Malformed || string.IsNullOrWhiteSpace(body.Content))
+        {
+            throw new ContractValidationException("Validation problem response body was malformed.");
+        }
+
         ContractValidationProblemDto? problem;
         try
         {
-            problem = await response.Content.ReadFromJsonAsync(jsonTypeInfo, ct).ConfigureAwait(false);
+            problem = JsonSerializer.Deserialize(body.Content, jsonTypeInfo);
         }
         catch (JsonException exception)
         {
             throw new ContractValidationException("Validation problem response body was malformed.", exception);
         }
-        catch (NotSupportedException exception)
-        {
-            throw new ContractValidationException("Validation problem response body was not JSON.", exception);
-        }
 
         if (problem?.Errors is null || problem.Errors.Count == 0)
         {
             throw new ContractValidationException("Validation problem response body did not contain errors.");
+        }
+
+        if (!problem.HasWellFormedErrors())
+        {
+            throw new ContractValidationException("Validation problem response body was malformed.");
         }
 
         var message = string.Join(Environment.NewLine, problem.Errors.SelectMany(error => error.Value));

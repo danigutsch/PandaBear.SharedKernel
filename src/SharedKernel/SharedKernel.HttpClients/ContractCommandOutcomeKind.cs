@@ -48,5 +48,20 @@ public enum ContractCommandOutcomeKind
     /// <summary>
     /// The API returned a status code not explicitly modeled by this client contract.
     /// </summary>
-    UnexpectedStatus
+    UnexpectedStatus,
+
+    /// <summary>
+    /// The API returned a body with a content type that is not JSON.
+    /// </summary>
+    UnsupportedContentType,
+
+    /// <summary>
+    /// The HTTP operation timed out before a response was available.
+    /// </summary>
+    TimedOut,
+
+    /// <summary>
+    /// The HTTP transport failed before a usable response was available.
+    /// </summary>
+    TransportFailure
 }
