@@ -8,7 +8,9 @@ SharedKernel seed and should stay reusable outside this repository.
 - Aspire application startup and cleanup.
 - Unique DCP resource-name suffixes for test-created Aspire AppHosts.
 - Aspire testing defaults that disable the dashboard and randomize resource ports for concurrent test hosts.
+- Direct container endpoints with Aspire-allocated dynamic ports; project endpoints retain Aspire proxies.
 - Resource health waits with explicit timeouts and cancellation.
+- A two-minute host shutdown budget aligned with DCP resource cleanup, with cleanup failures preserved.
 - PostgreSQL public-schema resets for known-baseline tests.
 
 ## Boundaries
@@ -36,3 +38,17 @@ SharedKernel seed and should stay reusable outside this repository.
 - Reset PostgreSQL with `PostgreSqlPublicSchemaReset.Reset(connection, ct)` before serial tests that need
   a known database baseline.
 - Pass explicit excluded table names when immutable test evidence must survive the reset.
+
+## Concurrent container ports and cleanup
+
+Aspire 13.6 allocates dynamic proxyless container ports outside the OS ephemeral range. Test applications
+use those direct endpoints so Podman cannot assign another container a port already reserved as a DCP
+proxy target. Do not add fixed host ports or custom port leases to consuming fixtures. Project endpoints
+retain their normal proxy behavior. This policy applies to resource-only and AppHost-backed starts.
+
+The host and helper both allow two minutes for teardown, matching DCP's default cleanup budget. The
+previous 30-second host deadline could cancel valid cleanup before the orchestrator finished. Cleanup
+still awaits all phases and reports failures; no resource-cleanup wait is disabled.
+
+References: [Aspire networking](https://aspire.dev/fundamentals/networking-overview/) and
+[DCP environment settings](https://github.com/microsoft/dcp/blob/main/README.md#environment-variables-affecting-dcp-behavior).

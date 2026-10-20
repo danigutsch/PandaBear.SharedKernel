@@ -1,5 +1,8 @@
 using Aspire.Hosting;
 using Aspire.Hosting.Testing;
+using Aspire.Hosting.ApplicationModel;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
@@ -11,7 +14,7 @@ namespace SharedKernel.IntegrationTesting;
 public sealed class AspireTestApplication : IAsyncDisposable
 {
     private static int _dcpResourceNameSuffixSequence;
-    private static readonly TimeSpan DefaultResourceTeardownTimeout = TimeSpan.FromSeconds(30);
+    private static readonly TimeSpan DefaultResourceTeardownTimeout = TimeSpan.FromMinutes(2);
 
     /// <summary>
     /// Gets the default timeout for resource startup waits.
@@ -86,6 +89,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
                 appBuilder = await DistributedApplicationTestingBuilder
                     .CreateAsync<TAppHost>(CreateAppHostArguments(appHostArguments), startupCt)
                     .ConfigureAwait(false);
+                ConfigureTestResources(appBuilder);
                 var builtApp = await appBuilder.BuildAsync(startupCt).ConfigureAwait(false);
                 app = builtApp;
 
@@ -134,6 +138,7 @@ public sealed class AspireTestApplication : IAsyncDisposable
         {
             await RunWithResourceStartupTimeout(async startupCt =>
             {
+                ConfigureTestResources(builder);
                 var builtApp = await builder.BuildAsync(startupCt).ConfigureAwait(false);
                 app = builtApp;
 
@@ -157,6 +162,23 @@ public sealed class AspireTestApplication : IAsyncDisposable
 
             throw;
         }
+    }
+
+    private static void ConfigureTestResources(IDistributedApplicationTestingBuilder builder)
+    {
+        // DCP allows up to two minutes for resource cleanup; the host must not cancel it at 30 seconds.
+        builder.Services.Configure<HostOptions>(options => options.ShutdownTimeout = DefaultResourceTeardownTimeout);
+        builder.Eventing.Subscribe<BeforeStartEvent>((beforeStart, _) =>
+        {
+            // Aspire allocates proxyless ports outside the OS ephemeral range. Mixing DCP-reserved
+            // proxy target ports with runtime-assigned container ports lets Podman claim the same port.
+            foreach (var container in beforeStart.Model.Resources.OfType<ContainerResource>())
+            {
+                builder.CreateResourceBuilder(container).WithEndpointProxySupport(false);
+            }
+
+            return Task.CompletedTask;
+        });
     }
 
     private static async Task RunWithResourceStartupTimeout(
