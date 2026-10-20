@@ -1,65 +1,25 @@
-# SharedKernel release policy
+# Release policy
 
-The repository prepares versioned artifacts locally and in CI. All packages remain preview (prerelease) until stable artifacts are separately authorized. Registry publication is deferred.
-No workflow creates a remote, release tag, public NuGet package, or automatic application upgrade.
+All packages remain preview (prerelease) until stable artifacts are separately authorized. Source hosting is public at `https://github.com/danigutsch/PandaBear.SharedKernel`; registry publication remains deferred. Git source publication does not authorize publishing packages, stable tags, or releases.
 
 ## Candidates and versions
 
-Successful package-affecting changes on main produce prerelease candidates. Pull requests validate
-candidate artifacts before merge. Repository documentation-only changes skip packing; a README
-inside a package project remains an artifact input. Unknown history and uncertain inputs select
-full validation. Nightly validation covers the complete library and package consumers.
+Successful package-affecting changes on main produce prerelease candidates. Pull requests validate candidate artifacts before merge. Repository documentation-only changes skip packing; a README inside a package project remains an artifact input. Unknown history and uncertain inputs select full validation. Nightly validation covers the complete library and package consumers.
 
-The existing C# `calculate-release` command uses the latest reachable `v*` release tag and the highest
-Conventional Commit impact since it: breaking markers select major, `feat` selects minor, and
-`fix`, `perf`, or `refactor` select patch. Multiple commits cause one release bump. Without a release
-tag, the calculator uses its existing `0.1.0` base and retained history; review that first release
-before creating any stable tag. All packages use one coordinated version initially.
+Use the existing C# `calculate-release` command. It selects the highest Conventional Commit impact since the latest reachable `v*` release tag: breaking markers select major, `feat` selects minor, and `fix`, `perf`, or `refactor` select patch. Multiple commits cause one coordinated release bump. Without a release tag, the existing calculator uses its `0.1.0` base and retained history; review the first stable release explicitly. Do not change the calculator merely to relabel an alpha suffix: alpha is already prerelease.
 
-CI appends the workflow run number and attempt as an ordered prerelease identifier. Build metadata
-alone does not create another NuGet identity. Repository release versions describe meaningful
-releases; build identifiers distinguish candidates without bumping the release core on every build.
+CI appends workflow run number and attempt as an ordered prerelease identifier. Build metadata alone does not distinguish NuGet identities. One coordinated package version describes the release; unique candidate identifiers distinguish artifacts without incrementing the release core for every build.
 
-## Preview validation and future stable preparation
+## Immutable validation
 
-Build once per version and retain the exact packages, symbol archives, candidate manifest, and
-SHA-256 hashes. Ordinary packages use isolated restore checks; .NET tools use tool installation.
-The Windows job consumes the same artifacts produced on Linux. Keep platform and NativeAOT evidence
-separate, and retain unavailable evidence as pending. Never overwrite an existing package version.
+Build once per version and retain exact packages, symbol archives, candidate manifest, revision, and SHA-256 hashes. Never overwrite an existing package version. Validate ordinary packages through isolated restore/locked restore/build/run checks and tools through installation. The Windows job consumes the same artifacts produced on Linux; keep platform and NativeAOT evidence separate and mark unavailable evidence pending.
 
-CI always calculates prerelease candidates, including manual dispatch; it exposes no stable-preparation input. An alpha suffix is a prerelease identifier, so existing alpha candidate naming satisfies this preview policy without changing the version calculator. Do not create stable packages, tags, or releases now.
+CI always calculates prerelease candidates, including manual dispatch; there is no stable-preparation input. Do not create stable packages, tags, or releases now. Generic CLI stable-version capabilities remain available for future separately authorized work. A future stable identity needs its own artifacts and validation; never relabel a prerelease archive.
 
-The reusable CLI retains its stable-version capabilities for future authorized work. A future stable identity requires separate authorization, its own artifacts, and validation; never relabel a prerelease archive. Registry publication remains a separate action.
+## API and source compatibility
 
-ViajantesTurismo adopts a candidate through a separate dependency change with reviewed central
-versions, local-tool pins, lock files, and application compatibility evidence. Library merges do
-not silently upgrade consumers. Preserve previous artifacts and pins for rollback.
+C# namespaces use `PandaBear.*`; projects, assemblies, command names, and `PandaBear.SharedKernel.*` package IDs retain their documented identities. The [namespace decision](adr/20261020-pandabear-namespaces.md) records the breaking source change. Preserve API compatibility and breaking-change gates and mark deliberate breaks in Conventional Commit history. Keep previous candidates and evidence for rollback.
 
-## Tools and agent guidance
+Release tooling is documented in the root README and [versioning tool guide](../tools/SharedKernel.Versioning.Tool/README.md). Release preparation itself does not authorize registry publication.
 
-Use the C# tools documented in the root README and the versioning tool README. Agent skills
-`pandabear-release` and `pandabear-consumer` describe release preparation and application adoption;
-installations belong in the normal Codex skills directory. They do not authorize publication.
-
-References: [library versioning](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning),
-[NuGet versions](https://learn.microsoft.com/en-us/nuget/concepts/package-versioning), and
-[package authoring](https://learn.microsoft.com/en-us/nuget/create-packages/package-authoring-best-practices).
-
-## Reconciled application work
-
-The reusable HTTP outcome, bounded-response, and upload-progress changes were reconciled from
-ViajantesTurismo commit `daa099e0`; roadmap automation and bounded GitHub reconciliation were
-reconciled from `298e3c2d`. Application code and workflow policy remain consumer-owned. The older
-July dependency branch does not override the newer platform versions here; Roslyn retains the
-intentional compiler API baseline documented in the root README.
-
-The follow-up reconciliation from ViajantesTurismo commit `17586ece` retains the newer roadmap
-deadline, cancellation, and bounded-response regressions and applies namespace-aware MSBuild
-selection to the standalone repository selector. SDK bootstrap scripts and application CI
-selection remain consumer-owned.
-
-## Standalone namespace migration
-
-C# namespaces now use `PandaBear.*`; projects, assemblies, tool commands, and `PandaBear.SharedKernel.*` package IDs retain their existing identities. The [namespace ADR](adr/20261020-pandabear-namespaces.md) records the breaking source change. Keep API compatibility gates enabled and record breaking Conventional Commit evidence. Git repository publication is explicitly authorized to the public `danigutsch/PandaBear.SharedKernel` GitHub repository; package registry publication and stable tags remain separate actions.
-
-The current reconciliation includes reusable changes from merged ViajantesTurismo donor `c5f48c521af5ccb14907960d52a8b34c0e7048ab` and the deliberate `PandaBear.*` namespace migration. Earlier donor revisions above remain extraction history; they do not imply that the standalone library still exposes the superseded HTTP outcome names. Validate a new immutable candidate for these changes before any separate application adoption.
+References: [library versioning](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning), [NuGet versions](https://learn.microsoft.com/en-us/nuget/concepts/package-versioning), and [package authoring](https://learn.microsoft.com/en-us/nuget/create-packages/package-authoring-best-practices).

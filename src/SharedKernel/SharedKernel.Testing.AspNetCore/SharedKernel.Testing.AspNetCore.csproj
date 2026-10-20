@@ -21,9 +21,4 @@
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
-    <!-- Transitional consumer test access; remove after moving internal tests behind public contracts. -->
-    <ItemGroup>
-        <InternalsVisibleTo Include="ViajantesTurismo.Management.WebTests" />
-        <InternalsVisibleTo Include="ViajantesTurismo.Public.WebTests" />
-    </ItemGroup>
 </Project>

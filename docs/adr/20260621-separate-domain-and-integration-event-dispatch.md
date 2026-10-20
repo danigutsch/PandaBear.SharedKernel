@@ -1,59 +1,17 @@
-# ADR-023: Separate Domain and Integration Event Dispatch
+# ADR-023: Separate domain and integration-event dispatch
 
-**Status**: Superseded - 2026-07-19
+Initial decision: 2026-06-21. Status: superseded — 2026-07-19 by [generated messaging dispatch ownership](20260719-generated-messaging-dispatch-ownership.md).
 
-**Superseded by**: [ADR-039: Generated Messaging Dispatch Ownership](20260719-generated-messaging-dispatch-ownership.md)
+## Context and original decision
 
-ADR-039 preserves the conceptual separation between domain and integration events while replacing the
-dispatcher and handler adapters described here with direct generated domain-event-to-outbox mapping and
-closed typed integration-event delivery.
+Domain events describe facts within an aggregate boundary; integration events are explicit versioned contracts crossing process or module boundaries. Their public APIs must remain distinct and compiler-safe. A domain event must not automatically publish an integration event.
 
-## Context
+The original design used separate dispatcher/handler adapters over mediator capabilities. This reused generated dispatch rather than introducing a disconnected event bus, but adapter registration and runtime lookup duplicated ownership already known at compile time.
 
-Domain events and integration events have different roles. Domain events describe facts inside one
-bounded context and belong to aggregate/application logic. Integration events are explicit contracts
-for crossing bounded-context or process boundaries.
+## Superseding decision
 
-The repository already has `SharedKernel.Mediator` with generated dispatch, notification handlers,
-module discovery, ordering, and dispatch strategy support. New event dispatch should extend this
-model instead of introducing a disconnected event bus.
+Preserve the conceptual event distinction while using direct generated domain-to-outbox mappings and closed typed integration-event delivery. Domain dispatch belongs in `PandaBear.Domain`; transport-neutral integration contracts belong in `PandaBear.Messaging.IntegrationEvents`. Durable outbox/inbox mechanics and external transport composition remain explicit provider responsibilities.
 
-## Decision
+Do not restore superseded runtime adapters merely to retain the historical implementation. Reusing a generic notification contract for every event was rejected because it hides lifecycle differences; automatic conversion was rejected because internal facts do not define external contracts.
 
-Create separate typed dispatch modules for domain events and integration events.
-
-- A dedicated domain-event module owns `IDomainEventDispatcher` and
-  `IDomainEventHandler<TDomainEvent>`.
-- `SharedKernel.Messaging.IntegrationEvents` owns `IIntegrationEventDispatcher` and
-  `IIntegrationEventHandler<TIntegrationEvent>`.
-
-Both modules may adapt to `SharedKernel.Mediator` internally, but their public abstractions stay
-separate and compiler-safe. Domain events do not automatically publish integration events.
-
-## Consequences
-
-- Code cannot accidentally handle an integration event through the domain event API or vice versa.
-- Domain event handlers remain local to bounded contexts.
-- Integration event publishing remains an explicit application/infrastructure decision.
-- Existing mediator source generation can remain the shared dispatch mechanism.
-- Additional adapters are needed for durable outbox/inbox and external transports.
-
-## Alternatives Considered
-
-1. **Use `INotification` directly for all events**
-   Rejected because it hides the lifecycle difference between domain and integration events.
-
-2. **Create a separate event bus unrelated to `SharedKernel.Mediator`**
-   Rejected because it duplicates existing generated dispatch capabilities.
-
-3. **Automatically convert domain events to integration events**
-   Rejected because it couples internal aggregate facts to cross-context contracts.
-
-## Links
-
-- [Back to ADR Index](../README.md)
-- Related: [Events and Messaging](https://github.com/danigutsch/ViajantesTurismo/blob/9116ad887459172c4ad15a65259ffe587bcbb902/docs/domain/EVENTS_AND_MESSAGING.md)
-
-## Standalone ownership update (2026-10-20)
-
-Copied from ViajantesTurismo commit `9116ad887459172c4ad15a65259ffe587bcbb902`. Historical application examples and API names preserve the decision rationale. Reusable result, mediator, generator, and event-dispatch behavior now belongs here; application business policy and composition remain consumer-owned. [PandaBear namespaces](20261020-pandabear-namespaces.md) supersede historical namespace examples. Current module APIs and tests take precedence over historical API shapes.
+[Decision index](../README.md).

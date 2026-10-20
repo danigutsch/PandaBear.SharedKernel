@@ -5,8 +5,8 @@
 ## Context
 
 The repository separates domain events from integration events, and treats CloudEvents as a transport
-adapter. The `SharedKernel.Messaging.IntegrationEvents.CloudEvents` name keeps that adapter scoped to
-typed integration events; `SharedKernel.Messaging.CloudEvents` stays reserved for a future neutral
+adapter. The `PandaBear.Messaging.IntegrationEvents.CloudEvents` name keeps that adapter scoped to
+typed integration events; `PandaBear.Messaging.CloudEvents` stays reserved for a future neutral
 envelope adapter.
 
 The EF Core outbox persists durable message records that contain serialized event metadata, payload,
@@ -18,18 +18,18 @@ transport adapters. The language must separate facts, envelopes, messages, and p
 Use messaging language for transport/runtime abstractions and event language for facts/contracts.
 
 - Keep typed event contracts in explicit conceptual modules:
-    - `SharedKernel.Domain` for domain event contracts, recording, and in-process dispatch.
-    - `SharedKernel.Messaging.IntegrationEvents` for typed cross-boundary event contracts and handlers.
-    - `SharedKernel.EventSourcing` for event-stream persistence and projections.
-- Introduce `SharedKernel.Messaging` as the storage-neutral home for message and envelope concepts
+    - `PandaBear.Domain` for domain event contracts, recording, and in-process dispatch.
+    - `PandaBear.Messaging.IntegrationEvents` for typed cross-boundary event contracts and handlers.
+    - `PandaBear.EventSourcing` for event-stream persistence and projections.
+- Introduce `PandaBear.Messaging` as the storage-neutral home for message and envelope concepts
   that are not specific to one event contract family.
 - Move the typed integration-event CloudEvents adapter naming toward
-  `SharedKernel.Messaging.IntegrationEvents.CloudEvents`.
-- Reserve `SharedKernel.Messaging.CloudEvents` for a future neutral `EventEnvelope` to `CloudEvent`
+  `PandaBear.Messaging.IntegrationEvents.CloudEvents`.
+- Reserve `PandaBear.Messaging.CloudEvents` for a future neutral `EventEnvelope` to `CloudEvent`
   adapter if one is needed.
 - Keep provider-specific persistence in provider modules such as
-  `SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore` and
-  `SharedKernel.Idempotency.EntityFrameworkCore`. EF entities are storage records, not the public event
+  `PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore` and
+  `PandaBear.Idempotency.EntityFrameworkCore`. EF entities are storage records, not the public event
   contracts.
 - Model common event metadata and payload shape once as an `EventEnvelope` concept, then compose it into
   durable records such as outbox and inbox messages.
@@ -54,15 +54,15 @@ and serialized data. Avoid using one class as all three.
 
 Use capability-oriented namespaces:
 
-- `SharedKernel.Messaging` for neutral message/envelope abstractions.
-- `SharedKernel.Messaging.IntegrationEvents` for typed integration event contracts and dispatch.
-- `SharedKernel.Messaging.IntegrationEvents.CloudEvents` for typed integration-event CloudEvents mapping.
-- `SharedKernel.Messaging.CloudEvents` only for neutral envelope CloudEvents mapping.
-- `SharedKernel.Messaging.IntegrationEvents.EntityFrameworkCore` for EF-specific outbox/inbox
+- `PandaBear.Messaging` for neutral message/envelope abstractions.
+- `PandaBear.Messaging.IntegrationEvents` for typed integration event contracts and dispatch.
+- `PandaBear.Messaging.IntegrationEvents.CloudEvents` for typed integration-event CloudEvents mapping.
+- `PandaBear.Messaging.CloudEvents` only for neutral envelope CloudEvents mapping.
+- `PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore` for EF-specific outbox/inbox
   persistence.
-- `SharedKernel.Idempotency.EntityFrameworkCore` for EF-specific idempotency persistence.
+- `PandaBear.Idempotency.EntityFrameworkCore` for EF-specific idempotency persistence.
 
-Avoid `SharedKernel.Events` for messaging runtime abstractions because `Events` is ambiguous in this
+Avoid `PandaBear.Events` for messaging runtime abstractions because `Events` is ambiguous in this
 solution: it can mean domain events, integration events, event-sourced stream events, or CloudEvents.
 Do not keep integration-event contracts at a root integration-events namespace now that the messaging
 parent module exists.
@@ -110,12 +110,12 @@ Non-candidates for now:
 - CloudEvents becomes an adapter for message envelopes, not a dependency of bounded-context code.
 - Outbox and inbox records can share envelope validation without sharing persistence state.
 - EF provider code remains internal and replaceable.
-- Existing code is migrated by:
-  1. Adding `SharedKernel.Messaging` envelope abstractions.
-  2. Renaming integration-event packages under `SharedKernel.Messaging.IntegrationEvents`.
-  3. Moving EF providers into focused provider packages.
-  4. Renaming EF records to message/entity language.
-  5. Composing the shared envelope into outbox/inbox records.
+- The resulting module boundaries are:
+  1. Neutral `PandaBear.Messaging` envelope abstractions.
+  2. Typed integration-event contracts under `PandaBear.Messaging.IntegrationEvents`.
+  3. Focused EF provider packages.
+  4. Message/entity language for EF records.
+  5. Shared envelopes composed into outbox/inbox records.
 
 ## Research notes
 
@@ -148,9 +148,7 @@ Non-candidates for now:
 ## Links
 
 - [Back to ADR Index](../README.md)
-- Related: [Events and Messaging](https://github.com/danigutsch/ViajantesTurismo/blob/9116ad887459172c4ad15a65259ffe587bcbb902/docs/domain/EVENTS_AND_MESSAGING.md)
 - Related: [ADR-024: CloudEvents as Integration Event Adapter](20260621-cloudevents-as-integration-event-adapter.md)
 
-## Standalone ownership update (2026-10-20)
 
-Copied from ViajantesTurismo commit `9116ad887459172c4ad15a65259ffe587bcbb902`. Historical application examples and API names preserve the decision rationale. Reusable result, mediator, generator, and event-dispatch behavior now belongs here; application business policy and composition remain consumer-owned. [PandaBear namespaces](20261020-pandabear-namespaces.md) supersede historical namespace examples. Current module APIs and tests take precedence over historical API shapes.
+Reviewed for the standalone library: 2026-10-20. Project and assembly identities retain `SharedKernel.*`; package IDs use `PandaBear.SharedKernel.*`.

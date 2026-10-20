@@ -1,5 +1,7 @@
-# Historical extraction tools
+# Historical tooling records
 
-This archive records the one-time extraction workflow and its subsequent helper fixes before ongoing automation moved to C#. It is retained for provenance only; current CI and development use the C# tools under `tools/`. Reproducing the original extraction requires the application revision recorded in `../source.json`. Do not use these scripts to validate current development.
+Retained tooling records describe earlier repository preparation and the move to C# maintenance tools. Current CI and development use the tools under `tools/`; archived records are not a validation path for current development.
 
-`../source.json` records hashes from the original extraction at commit `8014d52`; those hashes identify that historical state, not necessarily every later archived helper version. In particular, `compatibility.py` includes the legitimate pre-C# fixes from `8fb40db` and `b74ac1e`. Commit `4e3eb73` moved that latest helper into this archive without changing it. Preserve the original provenance hashes and use Git history to inspect the corresponding versions.
+Historical hashes identify the revisions where they were recorded and need not match later corrected helper versions. Preserve original provenance records and inspect Git history for the corresponding versions. Updating public documentation does not rewrite history or license attribution.
+
+The obsolete one-time `extract.py` and `compatibility.py` helpers are no longer present in the current tree. Their prior versions remain available in Git history. Removing those helpers does not rewrite historical revisions or change the recorded hashes.

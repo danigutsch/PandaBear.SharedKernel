@@ -24,4 +24,4 @@ Restore the previous reviewed pin when an update fails before rollout. After per
 
 Reference: [GitHub secure use of Actions](https://docs.github.com/en/actions/reference/security/secure-use).
 
-Adapted from ViajantesTurismo commit `68ce1876d69af7dd9527330af845a84a6c3df434` (2026-10-20). Library maintainers own this guidance; application workflows and feature migration plans remain consumer-owned.
+Reviewed 2026-10-20. Library maintainers own this guidance and its enforcement boundaries.

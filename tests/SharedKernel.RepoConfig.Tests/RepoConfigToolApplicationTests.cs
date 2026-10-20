@@ -68,10 +68,10 @@ public sealed class RepoConfigToolApplicationTests
         exitCode.ShouldBe(0);
         configSchemaText.ShouldContain("\"required\": [", StringComparison.Ordinal);
         configSchemaText.ShouldContain("\"$schema\": \"https://json-schema.org/draft/2020-12/schema\"", StringComparison.Ordinal);
-        configSchemaText.ShouldNotContain("github.com/danigutsch/ViajantesTurismo", StringComparison.Ordinal);
+        configSchemaText.ShouldNotContain("github.com/", StringComparison.Ordinal);
         configSchemaText.ShouldContain("\"integrations\"", StringComparison.Ordinal);
         itemSchemaText.ShouldContain("\"$schema\": \"https://json-schema.org/draft/2020-12/schema\"", StringComparison.Ordinal);
-        itemSchemaText.ShouldNotContain("github.com/danigutsch/ViajantesTurismo", StringComparison.Ordinal);
+        itemSchemaText.ShouldNotContain("github.com/", StringComparison.Ordinal);
         itemSchemaText.ShouldContain("\"size\"", StringComparison.Ordinal);
         itemSchemaText.ShouldContain("\"uniqueItems\": true", StringComparison.Ordinal);
         itemSchemaText.ShouldContain("\"minimum\": 0.1", StringComparison.Ordinal);

@@ -23,4 +23,4 @@ A baseline is a reviewed fixed set or count, not permission for growth. Do not r
 
 Review exceptions at expiry and when the owning SDK, analyzer, package, or generator changes. For new findings, identify the producer and rule, reproduce safely, classify impact/confidence, and fix or record a narrow reviewed exception. Keep evidence sanitized and preserve the original check's exit status. This guidance changes no severity, required check, dependency, or runtime behavior.
 
-Adapted from ViajantesTurismo commit `68ce1876d69af7dd9527330af845a84a6c3df434` (2026-10-20). Library maintainers own this guidance; application workflows and feature migration plans remain consumer-owned.
+Reviewed 2026-10-20. Library maintainers own this guidance and its enforcement boundaries.

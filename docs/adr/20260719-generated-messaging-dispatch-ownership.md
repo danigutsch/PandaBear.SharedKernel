@@ -25,8 +25,8 @@ adoption of another mediator framework or generation of business logic.
   scoped resolution until dispatch, avoiding constructor cycles without a general runtime registry.
 - Domain-event provider generators emit closed `IDomainEventDispatchHandler` implementations. The
   scoped `CompositeDomainEventDispatcher` composes outbox and audit handlers without registration-order
-  ownership of `IDomainEventDispatcher`. These APIs belong to `SharedKernel.Domain`; the EF integration
-  belongs to `SharedKernel.Domain.EntityFrameworkCore`.
+  ownership of `IDomainEventDispatcher`. These APIs belong to `PandaBear.Domain`; the EF integration
+  belongs to `PandaBear.Domain.EntityFrameworkCore`.
 - Each host supplies explicit `JsonTypeInfo<T>` metadata. Generated serializers and envelope publishers
   use closed typed cases instead of contract registration objects or dictionaries.
 - Background consumers retain the genuine scope boundaries. One consumer scope owns each claimed
@@ -37,14 +37,9 @@ adoption of another mediator framework or generation of business logic.
 - Outbox and inbox registration remain separate. Producer contexts do not acquire inbox schema or
   idempotency services implicitly.
 
-### Breaking package migration
+### Contract ownership
 
-- Replace `SharedKernel.DomainEvents` package and project references with `SharedKernel.Domain`.
-- Replace `SharedKernel.DomainEvents` namespace imports with `SharedKernel.Domain`.
-- Replace `SharedKernel.DomainEvents.EntityFrameworkCore` package, project, and namespace references
-  with `SharedKernel.Domain.EntityFrameworkCore`.
-- No forwarding package, type forwarder, or compatibility namespace remains. Consumers must update
-  their references and `using` directives as part of the migration.
+Domain dispatch contracts live in the `PandaBear.Domain` namespace, with EF integration in `PandaBear.Domain.EntityFrameworkCore`. The corresponding package IDs are `PandaBear.SharedKernel.Domain` and `PandaBear.SharedKernel.Domain.EntityFrameworkCore`; namespaces and package identities are distinct. Superseded dispatch adapters are not retained through forwarding packages or compatibility namespaces. Review deliberate source breaks using the existing API gates and [namespace decision](20261020-pandabear-namespaces.md).
 
 ## Measured shape
 
@@ -71,7 +66,7 @@ changes from one concrete registration plus two generated forwarders to two dire
 closed handler-resolution site in each event case.
 
 Generated delivery resolves the closed handler interface rather than bypassing it for the concrete
-implementation. Catalog composes idempotency at that closed interface, so concrete-type resolution would
+implementation. Consumers compose idempotency at that closed interface, so concrete-type resolution would
 skip the decorator and weaken duplicate-delivery protection.
 
 ## Consequences
@@ -88,10 +83,7 @@ skip the decorator and weaken duplicate-delivery protection.
 ## Links
 
 - [Back to ADR Index](../README.md)
-- [Events and Messaging](https://github.com/danigutsch/ViajantesTurismo/blob/9116ad887459172c4ad15a65259ffe587bcbb902/docs/domain/EVENTS_AND_MESSAGING.md)
-- [SharedKernel Packaging](https://github.com/danigutsch/ViajantesTurismo/blob/9116ad887459172c4ad15a65259ffe587bcbb902/docs/SHAREDKERNEL_PACKAGING.md)
 - [Separate Domain and Integration Event Dispatch](20260621-separate-domain-and-integration-event-dispatch.md)
 
-## Standalone ownership update (2026-10-20)
 
-Copied from ViajantesTurismo commit `9116ad887459172c4ad15a65259ffe587bcbb902`. Historical application examples and API names preserve the decision rationale. Reusable result, mediator, generator, and event-dispatch behavior now belongs here; application business policy and composition remain consumer-owned. [PandaBear namespaces](20261020-pandabear-namespaces.md) supersede historical namespace examples. Current module APIs and tests take precedence over historical API shapes.
+Reviewed for the standalone library: 2026-10-20. Namespaces above use `PandaBear.*`; project/assembly identities remain `SharedKernel.*` and package IDs remain `PandaBear.SharedKernel.*`.

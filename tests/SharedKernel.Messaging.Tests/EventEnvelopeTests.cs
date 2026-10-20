@@ -9,7 +9,7 @@ public sealed class EventEnvelopeTests
     [Fact]
     public void Creates_envelope_when_values_are_valid()
     {
-        var source = new Uri("urn:viajantes:admin");
+        var source = new Uri("urn:example:admin");
         var occurredAt = DateTimeOffset.UtcNow;
 
         var envelope = new EventEnvelope(

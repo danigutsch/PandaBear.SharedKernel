@@ -3,7 +3,7 @@
   <metadata>
     <id>PandaBear.SharedKernel.AuditTrail.SourceGenerator</id>
     <version>$packageVersion$</version>
-    <authors>ViajantesTurismo contributors</authors>
+    <authors>Dani Giurizatto Utsch</authors>
     <description>Source generator for typed domain-event to audit-trail mappings.</description>
     <license type="expression">MIT</license>
     <readme>README.md</readme>

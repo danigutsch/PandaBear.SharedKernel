@@ -1305,11 +1305,11 @@ public static class VersioningToolTests
             """
             <Project>
               <PropertyGroup>
-                <Authors>ViajantesTurismo contributors</Authors>
-                <Company>ViajantesTurismo</Company>
-                <Copyright>Copyright (c) 2025 ViajantesTurismo contributors</Copyright>
+                <Authors>PandaBear contributors</Authors>
+                <Company>PandaBear</Company>
+                <Copyright>Copyright (c) 2025 PandaBear contributors</Copyright>
                 <PackageLicenseExpression>MIT</PackageLicenseExpression>
-                <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
+                <RepositoryUrl>https://github.com/danigutsch/PandaBear.SharedKernel</RepositoryUrl>
                 <PublishRepositoryUrl>true</PublishRepositoryUrl>
               </PropertyGroup>
             </Project>
@@ -1355,11 +1355,11 @@ public static class VersioningToolTests
             """
             <Project>
               <PropertyGroup>
-                <Authors>ViajantesTurismo contributors</Authors>
-                <Company>ViajantesTurismo</Company>
-                <Copyright>Copyright (c) 2025 ViajantesTurismo contributors</Copyright>
+                <Authors>PandaBear contributors</Authors>
+                <Company>PandaBear</Company>
+                <Copyright>Copyright (c) 2025 PandaBear contributors</Copyright>
                 <PackageLicenseExpression>MIT</PackageLicenseExpression>
-                <RepositoryURL>https://github.com/danigutsch/ViajantesTurismo</RepositoryURL>
+                <RepositoryURL>https://github.com/danigutsch/PandaBear.SharedKernel</RepositoryURL>
                 <PublishRepositoryURL>true</PublishRepositoryURL>
               </PropertyGroup>
             </Project>
@@ -1405,7 +1405,7 @@ public static class VersioningToolTests
             """
             <Project>
               <PropertyGroup>
-                <Authors>ViajantesTurismo contributors</Authors>
+                <Authors>PandaBear contributors</Authors>
                 <Company />
               </PropertyGroup>
             </Project>
@@ -1477,11 +1477,11 @@ public static class VersioningToolTests
             """
             <Project>
               <PropertyGroup>
-                <Authors>ViajantesTurismo contributors</Authors>
-                <Company>ViajantesTurismo</Company>
-                <Copyright>Copyright (c) 2025 ViajantesTurismo contributors</Copyright>
+                <Authors>PandaBear contributors</Authors>
+                <Company>PandaBear</Company>
+                <Copyright>Copyright (c) 2025 PandaBear contributors</Copyright>
                 <PackageLicenseExpression>MIT</PackageLicenseExpression>
-                <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
+                <RepositoryUrl>https://github.com/danigutsch/PandaBear.SharedKernel</RepositoryUrl>
                 <PublishRepositoryUrl>true</PublishRepositoryUrl>
               </PropertyGroup>
             </Project>

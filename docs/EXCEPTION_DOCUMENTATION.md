@@ -17,4 +17,4 @@ The compiler checks XML structure/references and configured missing-public-docum
 
 Reference: [Microsoft recommended XML documentation tags](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags).
 
-Adapted from ViajantesTurismo commit `68ce1876d69af7dd9527330af845a84a6c3df434` (2026-10-20). Library maintainers own this guidance; application workflows and feature migration plans remain consumer-owned.
+Reviewed 2026-10-20. Library maintainers own this guidance and its enforcement boundaries.

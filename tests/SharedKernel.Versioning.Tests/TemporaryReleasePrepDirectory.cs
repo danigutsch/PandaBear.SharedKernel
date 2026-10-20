@@ -13,7 +13,7 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
             """
             <Project>
               <PropertyGroup>
-                <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
+                <RepositoryUrl>https://github.com/danigutsch/PandaBear.SharedKernel</RepositoryUrl>
               </PropertyGroup>
             </Project>
             """ + Environment.NewLine);

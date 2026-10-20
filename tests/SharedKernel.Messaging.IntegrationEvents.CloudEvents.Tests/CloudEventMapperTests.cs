@@ -9,8 +9,8 @@ public sealed class CloudEventMapperTests
         var eventId = Guid.NewGuid();
         var occurredAt = DateTimeOffset.UtcNow;
         var integrationEvent = new TestIntegrationEvent(eventId, occurredAt, "tour-created");
-        var source = new Uri("https://viajantes.example/admin/tours");
-        var dataSchema = new Uri("https://viajantes.example/schemas/admin.tour.created.v1.json");
+        var source = new Uri("https://events.example/admin/tours");
+        var dataSchema = new Uri("https://events.example/schemas/admin.tour.created.v1.json");
         var metadata = new CloudEventMetadata(source, "tour-42", "application/json", dataSchema);
 
         var envelope = CloudEventMapper.ToCloudEvent(integrationEvent, metadata);
@@ -32,7 +32,7 @@ public sealed class CloudEventMapperTests
     {
         // Arrange
         var integrationEvent = new TestIntegrationEvent(Guid.NewGuid(), DateTimeOffset.UtcNow, "tour-created");
-        var metadata = new CloudEventMetadata(new Uri("https://viajantes.example/admin/tours"));
+        var metadata = new CloudEventMetadata(new Uri("https://events.example/admin/tours"));
 
         // Act
         var envelope = CloudEventMapper.ToCloudEvent(integrationEvent, metadata);
@@ -47,7 +47,7 @@ public sealed class CloudEventMapperTests
     public void ToCloudEvent_rejects_null_integration_events()
     {
         // Arrange
-        var metadata = new CloudEventMetadata(new Uri("https://viajantes.example/admin/tours"));
+        var metadata = new CloudEventMetadata(new Uri("https://events.example/admin/tours"));
         var method = typeof(CloudEventMapper).GetMethod(nameof(CloudEventMapper.ToCloudEvent)).ShouldNotBeNull();
         var genericMethod = method.MakeGenericMethod(typeof(TestIntegrationEvent));
 

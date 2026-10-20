@@ -151,7 +151,7 @@ internal static class DocumentationTestContent
               "targetPath": "overview.md",
               "kind": "endpoint-routes",
               "endpointNameMethods": ["WithAdminMetadata", "WithName"],
-              "sourceAudiences": { "ViajantesTurismo.Public.Web/": "public web" },
+              "sourceAudiences": { "ExampleApplication.Public.Web/": "public web" },
               "routeAudiences": { "^/public/": "public API", "^/api/v[0-9]+(?:[.][0-9]+)?/public/": "public API" },
               "defaultAudience": "management/internal",
               "sourcePath": "src",

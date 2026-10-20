@@ -1,5 +1,7 @@
-# Attribution and extraction provenance
+# Attribution and provenance
 
-Reusable code was extracted from ViajantesTurismo. Retain the MIT copyright and permission notice in `LICENSE.txt`. The extraction manifest, revision mapping, and archived extraction tooling under `provenance/` record the original ownership and history. Adapted ADRs identify their donor revision; historical application examples explain the original rationale.
+Copyright (c) 2025-2026 Dani Giurizatto Utsch. Repository-owned code is provided under the MIT License.
 
-NuGet dependencies retain their own licenses and notices. Package and dependency review must preserve applicable obligations; this notice does not replace upstream license terms. Application-private traces, credentials, and local captures are not distributable repository content.
+Retain the MIT copyright and permission notice in `LICENSE.txt`. Revision history and retained provenance records document code ownership and development history; documentation updates do not rewrite that history or change license obligations.
+
+NuGet dependencies retain their own licenses and notices. Package and dependency review must preserve applicable obligations; this notice does not replace upstream license terms. Credentials, private traces, local feeds, and customer data are not distributable repository content.

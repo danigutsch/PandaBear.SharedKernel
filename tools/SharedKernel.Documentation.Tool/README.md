@@ -27,7 +27,7 @@ The standalone repository invokes the .NET command directly; generated configura
   writing documents.
 
 The tool is a thin CLI over `src/SharedKernel/SharedKernel.Documentation`; it contains no parsing or
-ViajantesTurismo-specific rules. Repository-specific system maps, labels, source paths, and
+host-specific rules. Repository-specific system maps, labels, source paths, and
 conformance checks belong in config.
 
 ## Package identity and availability

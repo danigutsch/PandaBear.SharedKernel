@@ -24,7 +24,7 @@ public sealed class OpenApiGenerationModeTests
 
         // Act
         var trustedGeneration = OpenApiGenerationMode.IsEnabled(generationBuilder.Environment, "GetDocument.Insider");
-        var ordinaryApplication = OpenApiGenerationMode.IsEnabled(generationBuilder.Environment, "ViajantesTurismo.Admin.ApiService");
+        var ordinaryApplication = OpenApiGenerationMode.IsEnabled(generationBuilder.Environment, "ExampleApplication.Admin.ApiService");
         var missingEnvironment = OpenApiGenerationMode.IsEnabled(normalBuilder.Environment, "GetDocument.Insider");
 
         // Assert

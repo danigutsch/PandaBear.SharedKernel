@@ -18,6 +18,25 @@ public sealed class SharedKernelBoundaryTests
         unexpectedReferences.ShouldBeEmpty();
     }
 
+    [Theory]
+    [InlineData("../ExampleApplication/ExampleApplication.csproj", 1)]
+    [InlineData("..\\ExampleApplication\\ExampleApplication.csproj", 1)]
+    [InlineData("../SharedKernel.Results/SharedKernel.Results.csproj", 0)]
+    [InlineData("..\\SharedKernel.Results\\SharedKernel.Results.csproj", 0)]
+    public void Library_boundary_checks_project_identity_independently_of_consumer_name(string reference, int expectedCount)
+    {
+        // Arrange
+        using var scope = new RepositoryTestScope();
+        scope.AddProject("src/SharedKernel/SharedKernel.Probe/SharedKernel.Probe.csproj",
+            $"<Project><ProjectReference Include=\"{reference}\" /></Project>");
+
+        // Act
+        var unexpectedReferences = FindSharedKernelProductReferences(scope.Root);
+
+        // Assert
+        unexpectedReferences.Length.ShouldBe(expectedCount);
+    }
+
     [Fact]
     public void Provider_neutral_sharedkernel_projects_should_not_reference_adapter_packages()
     {
@@ -147,8 +166,8 @@ public sealed class SharedKernelBoundaryTests
         seaweedFsText.ShouldContain("persist: true", StringComparison.Ordinal);
         seaweedFsText.ShouldContain("AWS_ACCESS_KEY_ID", StringComparison.Ordinal);
         seaweedFsText.ShouldContain("AWS_SECRET_ACCESS_KEY", StringComparison.Ordinal);
-        seaweedFsText.ShouldContain("$\"{name}-bucket\"", StringComparison.Ordinal);
-        seaweedFsText.ShouldNotContain("viajantes-media", StringComparison.Ordinal);
+        seaweedFsText.ShouldContain("builder.AddParameter($\"{name}-bucket\", bucketDefault)", StringComparison.Ordinal);
+        seaweedFsText.ShouldContain("string bucketDefault)", StringComparison.Ordinal);
         seaweedFsText.ShouldNotContain("Catalog__MediaObjectStorage", StringComparison.Ordinal);
         seaweedFsText.ShouldContain("DcpPublisher:ResourceNameSuffix", StringComparison.Ordinal);
     }

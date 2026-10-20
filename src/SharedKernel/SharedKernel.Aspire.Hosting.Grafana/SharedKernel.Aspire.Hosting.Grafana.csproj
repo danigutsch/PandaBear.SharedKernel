@@ -22,8 +22,4 @@
     <ItemGroup>
     </ItemGroup>
 
-    <!-- Transitional consumer test access; remove after moving internal tests behind public contracts. -->
-    <ItemGroup>
-        <InternalsVisibleTo Include="ViajantesTurismo.ArchitectureTests" />
-    </ItemGroup>
 </Project>

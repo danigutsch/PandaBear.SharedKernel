@@ -8,13 +8,9 @@ Run `dotnet format SharedKernel.slnx --verify-no-changes --no-restore`, then `do
 
 Use file-scoped namespaces, nullable references, four spaces, one top-level type per new file, and XML documentation on public APIs. Do not append `Async` to methods. Preserve warnings-as-errors, vulnerability auditing, public API validation, authorization, validation, privacy, and meaningful regressions. Prove actionable behavior gaps with failing tests before production changes. Prefer existing .NET tools and platform APIs; review any new dependency, including transitives.
 
-## Windows ESLint report
+## JavaScript tooling
 
-The reported missing-configuration error has not been reproduced: the exact Windows command, working directory, ESLint version, and full error were not supplied. Inspection found no tracked ESLint configuration, Node package manifest/lock, ESLint task, editor recommendation, or CI invocation in either repository. ViajantesTurismo tracks two authored k6 JavaScript scenarios and ten vendored Bootstrap JavaScript files; its `docs/CODE_QUALITY.md` mentions ESLint although `scripts/lint-all.sh` does not invoke it. That claim does not establish an installed lint workflow. This standalone repository contains no tracked JavaScript/TypeScript sources.
-
-Linux has no `eslint` executable in the inspected environment. An editor extension, global command, or external configuration remains a hypothesis, not a demonstrated cause. Capture the exact error, command/editor Output channel, version, and working directory before changing the application lint scope or choosing a version-specific configuration. No empty ESLint configuration or blanket ignore is added here.
-
-The user's follow-up identifies a Git-hook suspicion. The application has an untracked archived `.git/hooks/pre-commit.backup-opencode` at lines 103–113 that explicitly invokes `eslint` against JSON with `--fix`; the current `.git/hooks/pre-commit` invokes `scripts/lint-all.sh`, which has no ESLint step. On inspected Linux, effective global `core.hooksPath` points to `~/.config/git/hooks-disabled`, an empty directory. Inspected Windows global Git configuration has no `core.hooksPath`; repository access through the UNC path fails Git's dubious-ownership guard, so the effective Windows repository hook was not established. This proves a stale archived invocation exists, not that it produced the original error. Do not change global Git configuration or add an empty ESLint configuration. Capture the active Windows hook path and exact error once normal trusted repository access is established.
+This repository contains no tracked JavaScript/TypeScript sources and declares no ESLint or Node toolchain. Setup and CI use the pinned .NET SDK and explicit platform prerequisites. An inherited editor or Git-hook command requiring ESLint is not a library requirement; identify the effective hook/configuration and its exact error before changing lint scope. Do not add empty lint configuration or blanket ignores to hide an external invocation.
 
 ## NativeAOT prerequisites
 
@@ -30,7 +26,6 @@ The repository-wide build badge links to the [main validation workflow](https://
 
 Document stable caller-visible guards, cancellation, and deliberate adapter failures using the [exception documentation policy](EXCEPTION_DOCUMENTATION.md). Review diagnostic enforcement and scoped exceptions using the [warning policy](ci/warning-policy.md). Review upstream Action SHAs and hosting/tool image digests using the [pin-update workflow](ci/pin-update-review.md).
 
-These generic policies were reconciled from documentation-only donor `68ce1876d69af7dd9527330af845a84a6c3df434`. Its application vertical-slice migration inventory, runtime topology, application CI thresholds, Dev Container/updater configuration, and feature moves remain application-owned and are not imported into this library.
 
 ## NativeAOT and reflection policy
 

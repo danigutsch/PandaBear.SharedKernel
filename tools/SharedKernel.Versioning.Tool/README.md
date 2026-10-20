@@ -168,7 +168,7 @@ Native AOT publish property is not applied to analyzer projects.
 `validate-candidate [--version <unique-prerelease>] [--aot]` packs and validates a clean committed repository, recording revisions and package hashes.
 `consume-candidate --candidate <candidate.json> [--output <evidence.json>] [--aot]` verifies those hashes and consumes the same packages from their
 current location with isolated caches. `smoke-packages --feed <directory> --version <version> [--aot]` performs package checks directly. Application
-compatibility is owned by ViajantesTurismo tooling.
+compatibility evidence is recorded separately from library validation.
 
 ## Stage a pinned local candidate
 

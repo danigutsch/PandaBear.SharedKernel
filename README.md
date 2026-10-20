@@ -1,81 +1,72 @@
 # PandaBear.SharedKernel
 
-[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+[![Build](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
 
-Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+Reusable .NET building blocks for services and libraries: explicit results, generated mediation, typed HTTP outcomes, persistence integrations, and testing helpers.
 
-Reusable .NET libraries extracted from ViajantesTurismo, with public source hosted at [danigutsch/PandaBear.SharedKernel](https://github.com/danigutsch/PandaBear.SharedKernel). Registry publication remains deferred. Package IDs use `PandaBear.SharedKernel.*`; C# namespaces use `PandaBear.*`, while project and assembly identities remain `SharedKernel.*`. The extraction manifest, history
-mapping, and archived extraction tools are in `provenance/`.
+**Preview:** APIs may change. Packages are not published to NuGet.org yet; use a validated preview candidate from a [successful build](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml).
 
-## Development
+## Find the right package
 
-Install the SDK pinned in `global.json`. Provider integration tests require a working container runtime; NativeAOT checks also require the platform
-native build toolchain.
+Choose the packages your project needs. Each package has its own README with requirements and examples.
 
-Analyzer and source-generator packages retain the Roslyn 5.6 compiler API baseline so consumers can use compatible .NET 10 SDKs without upgrading
-to this repository's development SDK. The repository SDK and runtime dependencies can advance independently of that compiler compatibility floor.
+| What you need | Start here |
+| --- | --- |
+| Represent success, validation failures, and optional values | [Results](src/SharedKernel/SharedKernel.Results/README.md) · [Functional](src/SharedKernel/SharedKernel.Functional/README.md) |
+| Model domains and dispatch requests or events | [Domain](src/SharedKernel/SharedKernel.Domain/README.md) · [Mediator](src/SharedKernel/SharedKernel.Mediator/README.md) |
+| Handle HTTP outcomes, uploads, caching, and API versions | [HttpClients](src/SharedKernel/SharedKernel.HttpClients/README.md) · [HTTP caching](src/SharedKernel/SharedKernel.HttpCaching.AspNetCore/README.md) · [API versioning](src/SharedKernel/SharedKernel.ApiVersioning/README.md) |
+| Add database-specific persistence and coordination | [Entity Framework Core](src/SharedKernel/SharedKernel.EntityFrameworkCore/README.md) · [PostgreSQL](src/SharedKernel/SharedKernel.Npgsql/README.md) · [Idempotency](src/SharedKernel/SharedKernel.Idempotency/README.md) |
+| Work with durable events and integration messages | [Event sourcing](src/SharedKernel/SharedKernel.EventSourcing/README.md) · [Integration events](src/SharedKernel/SharedKernel.Messaging.IntegrationEvents/README.md) |
+| Build focused tests and container-backed integration tests | [Testing](src/SharedKernel/SharedKernel.Testing/README.md) · [Integration testing](src/SharedKernel/SharedKernel.IntegrationTesting/README.md) |
+| Automate documentation and package maintenance | [Documentation tool](tools/SharedKernel.Documentation.Tool/README.md) · [Versioning tool](tools/SharedKernel.Versioning.Tool/README.md) |
+
+## Try it
+
+Download the `candidate-packages` artifact from a successful build and extract it to a local directory. Replace the placeholders below with that candidate's version and directory:
+
+```text
+dotnet add package PandaBear.SharedKernel.Results --version <preview-version> --source <candidate-feed>
+```
+
+Make expected outcomes explicit:
+
+```csharp
+using PandaBear.Results;
+
+public static class Example
+{
+    public static Result<int> ParseCount(string text)
+        => int.TryParse(text, out var value) && value >= 0
+            ? Result.Ok(value)
+            : Result.Invalid<int>("Count is invalid.", "count", "Use a non-negative integer.");
+}
+```
+
+Package IDs start with `PandaBear.SharedKernel.`; C# namespaces start with `PandaBear.`. The [Results sample](samples/Results/BasicResults.Sample/README.md) shows composition, optional values, and asynchronous flows.
+
+## Build from source
+
+Install the .NET SDK pinned in [global.json](global.json), then clone and build:
 
 ```sh
-dotnet restore SharedKernel.slnx --locked-mode
-dotnet build SharedKernel.slnx -c Release --no-restore
+git clone https://github.com/danigutsch/PandaBear.SharedKernel.git
+cd PandaBear.SharedKernel
+bash setup-dev.sh
+```
+
+On Windows, run `pwsh -File setup-dev.ps1` instead. Run the tests with:
+
+```sh
 dotnet test --solution SharedKernel.slnx -c Release --no-build --no-restore
 ```
 
-Coverage uses the MIT-licensed `coverlet.MTP` extension. To collect Cobertura for a project, run:
+Provider integration tests need Docker or a compatible Podman runtime. NativeAOT checks also need the platform's native build tools; see [development prerequisites](docs/development.md).
 
-```sh
-dotnet test --project tests/SharedKernel.HttpClients.Tests/SharedKernel.HttpClients.Tests.csproj -c Release --no-build --no-restore --coverlet --results-directory TestResults/coverage
-```
+The libraries favor typed APIs and existing source generators over runtime reflection where practical. AOT and trimming support depend on the package and its providers; check the package README for its supported boundary.
 
-`tests/testconfig.json` defines the coverage filters and is copied beside test executables. It excludes test assemblies, migrations, intermediate and
-generated source files, and explicitly marked generated/excluded code. Compiler-generated async and iterator code remains measurable. Coverlet
-measures instrumented managed modules in the test process; separate application/container processes are not covered automatically. Selected-project
-reports are evidence for those projects, not whole-repository coverage trends. This repository does not currently enforce a coverage percentage.
+## Learn more
 
-Build gates retain SDK analyzers (`AnalysisMode=All`), SharedKernel analyzers, warnings as errors, public API checks, dependency vulnerability auditing,
-and package-consumption checks. These checks do not replace every former Sonar rule, security hotspot review, or SonarCloud new-code metric; code
-review remains necessary for those gaps. No remote SonarCloud upload or proprietary coverage collector is required.
-
-Ongoing automation uses C# tools. `SharedKernel.Repository.Tool` is repository-only and is not packaged. Selection reads the live solution, includes
-reverse transitive dependents and whole test projects, and falls back to full validation when history or dependencies are uncertain. Full runs happen
-nightly; selection reasons are retained in CI.
-
-```sh
-dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- select --base <base-revision>
-dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- validate --pack --aot
-```
-
-Commit changes before creating candidate evidence. Candidates receive unique ordered prerelease versions and are never overwritten.
-`SharedKernel.Versioning.Tool` validates APIs, packs once, records the library revision and SHA-256 package hashes, then checks isolated package
-restore, locked restore, build, run, generators, and optional NativeAOT. Candidate manifests mark unavailable consumer, baseline, and platform
-evidence as pending.
-
-```sh
-dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- validate-candidate --aot
-dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- consume-candidate --candidate <candidate.json> --aot
-```
-
-Candidate packages and their manifest can be copied together to another machine; consumption regenerates configuration for the current feed location.
-Linux and Windows consume the same hashed artifacts before stable promotion. Repository and Source Link metadata target the public repository; candidate validation records source and symbol evidence separately.
-Transitional application test friend assemblies remain until a separate consumer cutover removes their need.
-
-## Consume changes in ViajantesTurismo
-
-Copy candidate `.nupkg` files into the application's ignored `.local/sharedkernel-feed`. Set the SharedKernel versions in `Directory.Packages.props`,
-restore to update committed lock files, and review the resulting changes in an application worktree. Internal packages map exclusively to that feed.
-Ordinary dependency declarations use minimum compatible versions without upper bounds; exact artifact versions are used only in package-consumption
-checks. Locked CI restores make adoption deliberate without preventing future upgrades.
-
-Run application-owned compatibility against the candidate manifest:
-
-```sh
-dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release -- verify-sharedkernel-candidate --candidate <candidate.json> --output <compatibility.json>
-```
-
-Compatibility records both repository revisions and package hashes. Failures block application adoption and stable promotion, independently of library
-merge. Keep the previous application dependency configuration for rollback. Promote the same tested artifacts; package registry publication, dependency
-replacements, and application cutover remain separate actions.
-
-Release cadence and coordinated SemVer are documented in [release policy](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/release-policy.md).
-
-[Documentation index](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/README.md), [contribution guide](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/CONTRIBUTING.md), [security reporting](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/SECURITY.md), and [attribution](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/NOTICE.md) describe repository ownership and portable setup.
+- [Documentation and architecture](docs/README.md)
+- [Package development, coverage, and validation](docs/package-development.md)
+- [Preview versions and release policy](docs/release-policy.md)
+- [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [License](LICENSE.txt)

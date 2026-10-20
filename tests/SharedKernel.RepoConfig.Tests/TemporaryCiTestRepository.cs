@@ -122,7 +122,7 @@ internal sealed class TemporaryCiTestRepository : IDisposable
             new XElement(
                 "Solution",
                 _projectPaths.Select(path => new XElement("Project", new XAttribute("Path", path)))));
-        solution.Save(Path.Combine(RootPath, "ViajantesTurismo.slnx"));
+        solution.Save(Path.Combine(RootPath, "SharedKernel.slnx"));
     }
 
     private static string Normalize(string path) => path.Replace('\\', '/');

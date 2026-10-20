@@ -19,8 +19,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
-            "https://identity.example.test/realms/viajantes");
+            "https://identity.example.test/realms/example",
+            "https://identity.example.test/realms/example");
         var permissions = new Dictionary<string, IReadOnlyCollection<string>>(StringComparer.Ordinal)
         {
             ["Admin"] = ["tours.read", "tours.write"]
@@ -39,12 +39,12 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         var authorization = host.AuthorizationOptions;
 
         // Assert
-        jwt.Authority.ShouldBe("https://identity.example.test/realms/viajantes");
+        jwt.Authority.ShouldBe("https://identity.example.test/realms/example");
         jwt.RequireHttpsMetadata.ShouldBeTrue();
         jwt.ConfigurationManager.ShouldNotBeNull();
         jwt.Audience.ShouldBe("admin-api");
         jwt.MapInboundClaims.ShouldBeFalse();
-        jwt.TokenValidationParameters.ValidIssuer.ShouldBe("https://identity.example.test/realms/viajantes");
+        jwt.TokenValidationParameters.ValidIssuer.ShouldBe("https://identity.example.test/realms/example");
         jwt.TokenValidationParameters.ValidAudience.ShouldBe("admin-api");
         jwt.TokenValidationParameters.ValidateIssuer.ShouldBeTrue();
         jwt.TokenValidationParameters.ValidateAudience.ShouldBeTrue();
@@ -83,8 +83,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
-                [ApiAuthenticationDefaults.AuthorityConfigurationKey] = "https://identity.example.test/realms/viajantes",
-                [ApiAuthenticationDefaults.IssuerConfigurationKey] = "https://identity.example.test/realms/viajantes",
+                [ApiAuthenticationDefaults.AuthorityConfigurationKey] = "https://identity.example.test/realms/example",
+                [ApiAuthenticationDefaults.IssuerConfigurationKey] = "https://identity.example.test/realms/example",
                 ["OpenApi:BuildGeneration"] = bool.TrueString
             })
             .Build();
@@ -126,8 +126,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
-            "https://identity.example.test/realms/viajantes");
+            "https://identity.example.test/realms/example",
+            "https://identity.example.test/realms/example");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
             new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
@@ -137,7 +137,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         var signingKey = new RsaSecurityKey(rsa);
         var token = ApiAuthenticationTokenFactory.Create(
             signingKey,
-            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/example",
             ["admin-api"]);
         var validationParameters = host.BearerOptions.TokenValidationParameters.Clone();
         validationParameters.IssuerSigningKey = signingKey;
@@ -157,8 +157,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
-            "https://identity.example.test/realms/viajantes");
+            "https://identity.example.test/realms/example",
+            "https://identity.example.test/realms/example");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
             new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
@@ -168,7 +168,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         var signingKey = new RsaSecurityKey(rsa);
         var token = ApiAuthenticationTokenFactory.Create(
             signingKey,
-            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/example",
             []);
         var validationParameters = host.BearerOptions.TokenValidationParameters.Clone();
         validationParameters.IssuerSigningKey = signingKey;
@@ -187,8 +187,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
-            "https://identity.example.test/realms/viajantes");
+            "https://identity.example.test/realms/example",
+            "https://identity.example.test/realms/example");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
             new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
@@ -198,7 +198,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         var signingKey = new RsaSecurityKey(rsa);
         var token = ApiAuthenticationTokenFactory.Create(
             signingKey,
-            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/example",
             ["catalog-api"]);
         var validationParameters = host.BearerOptions.TokenValidationParameters.Clone();
         validationParameters.IssuerSigningKey = signingKey;
@@ -217,8 +217,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
-            "https://identity.example.test/realms/viajantes");
+            "https://identity.example.test/realms/example",
+            "https://identity.example.test/realms/example");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
             new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
@@ -228,7 +228,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
         var signingKey = new RsaSecurityKey(rsa);
         var token = ApiAuthenticationTokenFactory.Create(
             signingKey,
-            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/example",
             ["admin-api", "catalog-api"]);
         var validationParameters = host.BearerOptions.TokenValidationParameters.Clone();
         validationParameters.IssuerSigningKey = signingKey;
@@ -247,8 +247,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
-            "https://identity.example.test/realms/viajantes");
+            "https://identity.example.test/realms/example",
+            "https://identity.example.test/realms/example");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
             new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
@@ -289,7 +289,7 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
+            "https://identity.example.test/realms/example",
             string.Empty);
 
         // Act
@@ -308,8 +308,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
-            "ftp://identity.example.test/realms/viajantes");
+            "https://identity.example.test/realms/example",
+            "ftp://identity.example.test/realms/example");
 
         // Act
         Action action = () => ApiAuthenticationTestHost.Create(
@@ -345,8 +345,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "http://localhost:8080/realms/viajantes",
-            "http://localhost:8080/realms/viajantes",
+            "http://localhost:8080/realms/example",
+            "http://localhost:8080/realms/example",
             allowHttpDevelopmentAuthority: true);
         var environment = new TestHostEnvironment("SharedKernel.AspNetCore.Tests") { EnvironmentName = Environments.Development };
 
@@ -367,8 +367,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "http://localhost:8080/realms/viajantes",
-            "http://localhost:8080/realms/viajantes");
+            "http://localhost:8080/realms/example",
+            "http://localhost:8080/realms/example");
         var environment = new TestHostEnvironment("SharedKernel.AspNetCore.Tests") { EnvironmentName = Environments.Development };
 
         // Act
@@ -387,8 +387,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "ftp://identity.example.test/realms/viajantes",
-            "ftp://identity.example.test/realms/viajantes",
+            "ftp://identity.example.test/realms/example",
+            "ftp://identity.example.test/realms/example",
             allowHttpDevelopmentAuthority: true);
         var environment = new TestHostEnvironment("SharedKernel.AspNetCore.Tests") { EnvironmentName = Environments.Development };
 
@@ -408,8 +408,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
-            "https://identity.example.test/realms/viajantes");
+            "https://identity.example.test/realms/example",
+            "https://identity.example.test/realms/example");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
             new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
@@ -429,8 +429,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
-            "https://identity.example.test/realms/viajantes");
+            "https://identity.example.test/realms/example",
+            "https://identity.example.test/realms/example");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
             new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
@@ -454,8 +454,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
-            "https://identity.example.test/realms/viajantes");
+            "https://identity.example.test/realms/example",
+            "https://identity.example.test/realms/example");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
             new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),
@@ -481,8 +481,8 @@ public sealed class ApiAuthenticationServiceCollectionExtensionsTests
     {
         // Arrange
         var configuration = ApiAuthenticationTestConfiguration.Create(
-            "https://identity.example.test/realms/viajantes",
-            "https://identity.example.test/realms/viajantes");
+            "https://identity.example.test/realms/example",
+            "https://identity.example.test/realms/example");
         await using var host = ApiAuthenticationTestHost.Create(
             configuration,
             new TestHostEnvironment("SharedKernel.AspNetCore.Tests"),

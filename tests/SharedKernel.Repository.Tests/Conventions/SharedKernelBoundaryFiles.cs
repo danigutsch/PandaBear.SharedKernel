@@ -1,9 +1,8 @@
-using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace PandaBear.Repository.Tests.Conventions;
 
-internal static partial class SharedKernelBoundaryFiles
+internal static class SharedKernelBoundaryFiles
 {
     private static readonly string[] OptionalSubmoduleSegmentNames =
     [
@@ -25,7 +24,6 @@ internal static partial class SharedKernelBoundaryFiles
 
     private static readonly string[] ProductSpecificSharedKernelTestingTerms =
     [
-        "ViajantesTurismo.",
         "\"bookings\"",
         "\"customers\"",
         "\"tours\"",
@@ -279,31 +277,14 @@ internal static partial class SharedKernelBoundaryFiles
     public static string[] FindSharedKernelProductReferences(string repositoryRoot)
     {
         return SharedKernelSourceFiles(repositoryRoot)
-            .SelectMany(filePath => FindProductReferenceLines(repositoryRoot, filePath))
+            .Where(filePath => filePath.EndsWith(".csproj", StringComparison.Ordinal))
+            .SelectMany(filePath => XDocument.Load(filePath).Descendants("ProjectReference")
+                .Select(reference => reference.Attribute("Include")?.Value
+                    ?? throw new InvalidOperationException($"ProjectReference in {filePath} is missing Include."))
+                .Where(include => !IsSharedKernelProjectName(Path.GetFileNameWithoutExtension(include.Replace('\\', '/'))))
+                .Select(include => $"{Path.GetRelativePath(repositoryRoot, filePath).Replace('\\', '/')}: ProjectReference Include=\"{include}\""))
             .ToArray();
     }
-
-    private static IEnumerable<string> FindProductReferenceLines(string repositoryRoot, string filePath)
-    {
-        var relativePath = Path.GetRelativePath(repositoryRoot, filePath)
-            .Replace(Path.DirectorySeparatorChar, '/');
-
-        return File.ReadLines(filePath)
-            .Select((line, index) => new { Line = line, LineNumber = index + 1 })
-            .Where(entry => IsProductReference(filePath, entry.Line))
-            .Select(entry => $"{relativePath}:{entry.LineNumber}: {entry.Line.Trim()}");
-    }
-
-    private static bool IsProductReference(string filePath, string line)
-    {
-        return filePath.EndsWith(".csproj", StringComparison.Ordinal)
-            ? line.Contains("<ProjectReference", StringComparison.Ordinal)
-                && line.Contains("ViajantesTurismo", StringComparison.Ordinal)
-            : ProductUsingDirectiveRegex().IsMatch(line);
-    }
-
-    [GeneratedRegex(@"^\s*(global\s+)?using\s+(?:(static\s+)?(global::)?ViajantesTurismo(\.|;)|[A-Za-z_][A-Za-z0-9_]*\s*=\s*(global::)?ViajantesTurismo(\.|;))")]
-    private static partial Regex ProductUsingDirectiveRegex();
 
     private static IEnumerable<string> SharedKernelSourceFiles(string repositoryRoot)
     {
