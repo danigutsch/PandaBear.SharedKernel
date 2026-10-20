@@ -1,5 +1,9 @@
 # SharedKernel.Mediator.Analyzers
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Analyzer project for `SharedKernel.Mediator`.
 
 ## Purpose
@@ -147,11 +151,11 @@ rules or test-only rules here.
 
 ## See Also
 
-- [SharedKernel.Mediator.CodeFixes](../SharedKernel.Mediator.CodeFixes/README.md)
-- [SharedKernel.Mediator.SourceGenerator](../SharedKernel.Mediator.SourceGenerator/README.md)
+- [SharedKernel.Mediator.CodeFixes](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Mediator.CodeFixes/README.md)
+- [SharedKernel.Mediator.SourceGenerator](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Mediator.SourceGenerator/README.md)
 
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Mediator.Analyzers`. C# namespace: `PandaBear.Mediator.Analyzers`. Assembly/project identity: `SharedKernel.Mediator.Analyzers`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

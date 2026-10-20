@@ -1,10 +1,14 @@
 # PandaBear.SharedKernel.Results
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Transport-neutral result and option primitives make expected success/failure paths explicit. Use `Result` or `Result<T>` for operations, `Option<T>` for optional values, and the composition extensions for synchronous, task, and value-task flows. `ResultError`, `ResultStatus`, validation errors, and stable error codes carry failure details. The package bundles its error-catalog generator; do not also install the separate Results.SourceGenerator package.
 
 ## Install
 
-Replace both placeholders with an actually validated candidate version and its private feed; no new post-namespace candidate is advertised yet.
+Replace both placeholders with an actually validated candidate version and its private feed; the placeholders do not identify a published package version.
 
 ```text
 dotnet add package PandaBear.SharedKernel.Results --version <validated-candidate-version> --source <private-candidate-feed>

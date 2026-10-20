@@ -7,7 +7,7 @@
     <description>Source generator for typed domain-event to audit-trail mappings.</description>
     <license type="expression">MIT</license>
     <readme>README.md</readme>
-    <repository type="git" url="https://github.com/danigutsch/ViajantesTurismo" />
+    <repository type="git" url="$repositoryUrl$" commit="$repositoryCommit$" />
     <tags>audit-trail domain-events source-generator shared-kernel dotnet</tags>
     <dependencies>
       <group targetFramework="net10.0">

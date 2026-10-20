@@ -1,5 +1,9 @@
 # SharedKernel.Versioning.Tool
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Local and CI versioning automation for SharedKernel release flows.
 
 This package is a .NET tool. The command name is `sharedkernel-version`.
@@ -45,7 +49,7 @@ dotnet tool install PandaBear.SharedKernel.Versioning.Tool --tool-path ./.tools 
 ```
 
 When installing from this repository, follow the local-feed source-mapping notes in
-[release policy](../../docs/release-policy.md).
+[release policy](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/release-policy.md).
 
 Install as a global tool only from a trusted package source:
 
@@ -178,4 +182,4 @@ by staging. Assemblies remain `SharedKernel.*`; C# namespaces use `PandaBear.*`;
 
 Package ID: `PandaBear.SharedKernel.Versioning.Tool`. C# namespace: `PandaBear.Versioning.Tool`. Assembly/project identity: `SharedKernel.Versioning.Tool`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

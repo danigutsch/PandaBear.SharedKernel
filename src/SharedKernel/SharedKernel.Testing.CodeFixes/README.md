@@ -1,5 +1,9 @@
 # SharedKernel.Testing.CodeFixes
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Code-fix project for repository-wide test conventions.
 
 ## Purpose
@@ -30,11 +34,11 @@ deterministic, and safe for test source. Do not add production or optional-techn
 
 ## See Also
 
-- [SharedKernel.Testing.Analyzers](../SharedKernel.Testing.Analyzers/README.md)
+- [SharedKernel.Testing.Analyzers](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Testing.Analyzers/README.md)
 - `tests/AGENTS.md`
 
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing.CodeFixes`. C# namespace: `PandaBear.Testing.CodeFixes`. Assembly/project identity: `SharedKernel.Testing.CodeFixes`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

@@ -6,7 +6,6 @@
         <RootNamespace>PandaBear.Aspire.Hosting.Grafana</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageTags>aspire;grafana;observability;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

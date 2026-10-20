@@ -1,5 +1,9 @@
 # SharedKernel.Testing.Analyzers
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Analyzer project for repository-wide test conventions.
 
 ## Purpose
@@ -68,11 +72,11 @@ projects should not need this package.
 
 ## See Also
 
-- [SharedKernel.Testing.CodeFixes](../SharedKernel.Testing.CodeFixes/README.md)
+- [SharedKernel.Testing.CodeFixes](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Testing.CodeFixes/README.md)
 - `tests/AGENTS.md`
 
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Testing.Analyzers`. C# namespace: `PandaBear.Testing.Analyzers`. Assembly/project identity: `SharedKernel.Testing.Analyzers`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

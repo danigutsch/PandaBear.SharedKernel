@@ -1,5 +1,9 @@
 # SharedKernel.Npgsql
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Small raw-Npgsql primitives with a stable, provider-specific boundary.
 
 ## Contract
@@ -24,4 +28,4 @@ Small raw-Npgsql primitives with a stable, provider-specific boundary.
 
 Package ID: `PandaBear.SharedKernel.Npgsql`. C# namespace: `PandaBear.Npgsql`. Assembly/project identity: `SharedKernel.Npgsql`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

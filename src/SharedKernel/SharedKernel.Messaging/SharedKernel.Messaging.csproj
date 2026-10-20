@@ -6,7 +6,6 @@
         <RootNamespace>PandaBear.Messaging</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageTags>messaging;events;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

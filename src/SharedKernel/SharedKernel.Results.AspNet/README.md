@@ -1,10 +1,14 @@
 # PandaBear.SharedKernel.Results.AspNet
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Map transport-neutral result statuses to conventional ASP.NET Core HTTP status codes without placing HTTP dependencies in the Results contract package. Use the mapping at an endpoint boundary; application policy still owns the response body, problem details, and authorization. Undefined statuses throw rather than silently selecting a success code.
 
 ## Install
 
-Replace both placeholders with an actually validated candidate version and its private feed; no new post-namespace candidate is advertised yet.
+Replace both placeholders with an actually validated candidate version and its private feed; the placeholders do not identify a published package version.
 
 ```text
 dotnet add package PandaBear.SharedKernel.Results.AspNet --version <validated-candidate-version> --source <private-candidate-feed>

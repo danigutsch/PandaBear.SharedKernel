@@ -1,6 +1,10 @@
-# SharedKernel
+# PandaBear.SharedKernel
 
-Private reusable .NET libraries extracted from ViajantesTurismo. Package IDs use `PandaBear.SharedKernel.*`; C# namespaces use `PandaBear.*`, while project and assembly identities remain `SharedKernel.*`. The extraction manifest, history
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
+Reusable .NET libraries extracted from ViajantesTurismo, with public source hosted at [danigutsch/PandaBear.SharedKernel](https://github.com/danigutsch/PandaBear.SharedKernel). Registry publication remains deferred. Package IDs use `PandaBear.SharedKernel.*`; C# namespaces use `PandaBear.*`, while project and assembly identities remain `SharedKernel.*`. The extraction manifest, history
 mapping, and archived extraction tools are in `provenance/`.
 
 ## Development
@@ -52,7 +56,7 @@ dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- consume-ca
 ```
 
 Candidate packages and their manifest can be copied together to another machine; consumption regenerates configuration for the current feed location.
-Linux and Windows consume the same hashed artifacts before stable promotion. Source Link remains pending until a repository remote is configured.
+Linux and Windows consume the same hashed artifacts before stable promotion. Repository and Source Link metadata target the public repository; candidate validation records source and symbol evidence separately.
 Transitional application test friend assemblies remain until a separate consumer cutover removes their need.
 
 ## Consume changes in ViajantesTurismo
@@ -69,9 +73,9 @@ dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release -- verify-sha
 ```
 
 Compatibility records both repository revisions and package hashes. Failures block application adoption and stable promotion, independently of library
-merge. Keep the previous application dependency configuration for rollback. Promote the same tested artifacts; no public publishing, dependency
-replacements, or application cutover are part of this setup.
+merge. Keep the previous application dependency configuration for rollback. Promote the same tested artifacts; package registry publication, dependency
+replacements, and application cutover remain separate actions.
 
-Release cadence and coordinated SemVer are documented in [release policy](docs/release-policy.md).
+Release cadence and coordinated SemVer are documented in [release policy](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/release-policy.md).
 
-[Documentation index](docs/README.md), [contribution guide](CONTRIBUTING.md), [security reporting](SECURITY.md), and [attribution](NOTICE.md) describe repository ownership and portable setup.
+[Documentation index](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/README.md), [contribution guide](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/CONTRIBUTING.md), [security reporting](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/SECURITY.md), and [attribution](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/NOTICE.md) describe repository ownership and portable setup.

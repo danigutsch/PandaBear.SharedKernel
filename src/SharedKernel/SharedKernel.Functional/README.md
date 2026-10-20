@@ -1,5 +1,9 @@
 # SharedKernel.Functional
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Transition package during the `SharedKernel.Results` extraction.
 
 ## Purpose
@@ -20,10 +24,10 @@ Use `SharedKernel.Results` instead.
 
 ## See also
 
-- [SharedKernel.Results](../SharedKernel.Results/README.md)
+- [SharedKernel.Results](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Results/README.md)
 
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Functional`. C# namespace: `PandaBear.Functional`. Assembly/project identity: `SharedKernel.Functional`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

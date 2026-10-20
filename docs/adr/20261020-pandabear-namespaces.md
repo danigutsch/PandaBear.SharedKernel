@@ -8,4 +8,4 @@ Projects, directories, assembly identities, solution name, tool command names, a
 
 Public API baselines must record the removals and additions intentionally. Existing API compatibility and breaking-change gates remain enabled. Conventional Commit history must mark the namespace migration as breaking; the release calculator chooses the highest impact since the latest reachable release tag. Existing immutable candidate packages remain available for rollback.
 
-This supersedes earlier extraction guidance retaining `SharedKernel.*` namespaces. Git repository publication is authorized only to a verified private destination. Registry publication, stable tags, and ViajantesTurismo adoption remain separate actions.
+This supersedes earlier extraction guidance retaining `SharedKernel.*` namespaces. The earlier private-Git restriction is superseded by the [public hosting decision](20261020-public-git-hosting.md). Registry publication, stable tags, and ViajantesTurismo adoption remain separate actions.

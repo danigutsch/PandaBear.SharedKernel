@@ -1,5 +1,9 @@
 # SharedKernel.EventSourcing
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Storage-neutral event-sourcing primitives for aggregates, append/load operations, stream versions, and projections.
 
 This project intentionally contains abstractions only. Reusable provider implementations belong in
@@ -10,4 +14,4 @@ composition, schema names, migrations, read models, and context-specific project
 
 Package ID: `PandaBear.SharedKernel.EventSourcing`. C# namespace: `PandaBear.EventSourcing`. Assembly/project identity: `SharedKernel.EventSourcing`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

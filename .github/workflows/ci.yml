@@ -6,11 +6,6 @@ on:
   schedule:
     - cron: '23 2 * * *'
   workflow_dispatch:
-    inputs:
-      prepare_stable:
-        description: Prepare and validate stable artifacts without publishing or tagging.
-        type: boolean
-        default: false
 permissions:
   contents: read
 concurrency:
@@ -54,11 +49,10 @@ jobs:
         if: steps.selection.outputs.candidate_required == 'true'
         id: version
         env:
-          VERSION_KIND: ${{ github.event_name == 'workflow_dispatch' && inputs.prepare_stable && 'stable' || 'prerelease' }}
           VERSION_RUN: ${{ github.run_number }}.${{ github.run_attempt }}
         run: |
           dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- \
-            calculate-release --version-kind "$VERSION_KIND" --run-number "$VERSION_RUN" \
+            calculate-release --version-kind prerelease --run-number "$VERSION_RUN" \
             --github-output "$GITHUB_OUTPUT" --github-summary "$GITHUB_STEP_SUMMARY"
       - name: Validate immutable package candidate
         if: steps.selection.outputs.candidate_required == 'true'

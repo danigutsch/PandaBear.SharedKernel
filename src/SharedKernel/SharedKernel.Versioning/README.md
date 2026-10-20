@@ -1,5 +1,9 @@
 # SharedKernel.Versioning
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Reusable SemVer and Conventional Commit release-impact primitives.
 
 The package keeps version policy independent from CI, release workflows, and application hosts.
@@ -12,4 +16,4 @@ outside this package.
 
 Package ID: `PandaBear.SharedKernel.Versioning`. C# namespace: `PandaBear.Versioning`. Assembly/project identity: `SharedKernel.Versioning`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

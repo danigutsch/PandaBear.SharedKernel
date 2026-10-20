@@ -8,7 +8,6 @@
         <Description>Image decoding and responsive variant generation for shared-kernel workflows.</Description>
         <RootNamespace>PandaBear.ImageProcessing</RootNamespace>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageTags>image-processing;shared-kernel;imagemagick;dotnet</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>

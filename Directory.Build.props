@@ -46,8 +46,10 @@
 		<Company Condition="'$(Company)' == ''">ViajantesTurismo</Company>
 		<Copyright Condition="'$(Copyright)' == ''">Copyright (c) 2025 ViajantesTurismo contributors</Copyright>
 		<PackageLicenseExpression Condition="'$(PackageLicenseExpression)' == ''">MIT</PackageLicenseExpression>
-		<RepositoryUrl Condition="'$(RepositoryUrl)' == ''">https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
+		<RepositoryUrl Condition="'$(RepositoryUrl)' == ''">https://github.com/danigutsch/PandaBear.SharedKernel</RepositoryUrl>
 		<PublishRepositoryUrl Condition="'$(PublishRepositoryUrl)' == ''">true</PublishRepositoryUrl>
+		<RepositoryType Condition="'$(RepositoryType)' == ''">git</RepositoryType>
+		<PackageProjectUrl Condition="'$(PackageProjectUrl)' == ''">$(RepositoryUrl)</PackageProjectUrl>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj' and '$(IsRoslynComponent)' != 'true'">

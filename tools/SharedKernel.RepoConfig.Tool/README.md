@@ -1,5 +1,9 @@
 # SharedKernel repository configuration tool
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 `sharedkernel-repo` maintains repository configuration, roadmap structure, and optional GitHub projection.
 It is packaged privately as `PandaBear.SharedKernel.RepoConfig.Tool`.
 
@@ -25,4 +29,4 @@ Use `automation plan-github` for an integrity-bound plan. Application workflow c
 
 Package ID: `PandaBear.SharedKernel.RepoConfig.Tool`. C# namespace: `PandaBear.RepoConfig.Tool`. Assembly/project identity: `SharedKernel.RepoConfig.Tool`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

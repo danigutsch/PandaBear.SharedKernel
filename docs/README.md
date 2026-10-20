@@ -10,6 +10,7 @@
 - [Domain materialization and persistence boundaries](adr/20260621-domain-materialization-and-sharedkernel-persistence-boundaries.md)
 - [Provider-specific modules](adr/20260624-provider-specific-sharedkernel-infrastructure-modules.md)
 - [Breaking namespace decision](adr/20261020-pandabear-namespaces.md)
+- [Public Git hosting decision](adr/20261020-public-git-hosting.md)
 
 Module README files beside source own API usage and examples. Samples and benchmarks remain under `samples/` and `benchmarks/`. Historical extraction records remain under `provenance/`. Application runtime and deployment diagrams stay in ViajantesTurismo.
 

@@ -6,7 +6,6 @@
         <RootNamespace>PandaBear.Results</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageTags>results;shared-kernel;functional;dotnet</PackageTags>
         <ResultsSourceGeneratorPackageFile Condition="'$(REMOTE_CONTAINERS)' != 'true'">..\SharedKernel.Results.SourceGenerator\bin\$(Configuration)\netstandard2.0\SharedKernel.Results.SourceGenerator.dll</ResultsSourceGeneratorPackageFile>

@@ -1,5 +1,9 @@
 # SharedKernel.Mediator.SourceGenerator
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Incremental source generator for `SharedKernel.Mediator`.
 
 ## Purpose
@@ -65,11 +69,11 @@ can shift absolute timings, so compare trends more than raw milliseconds.
 
 ## See Also
 
-- [SharedKernel.Mediator.Abstractions](../SharedKernel.Mediator.Abstractions/README.md)
-- [SharedKernel.Mediator.GeneratorTests](../../../tests/SharedKernel.Mediator.GeneratorTests/README.md)
+- [SharedKernel.Mediator.Abstractions](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Mediator.Abstractions/README.md)
+- [SharedKernel.Mediator.GeneratorTests](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tests/SharedKernel.Mediator.GeneratorTests/README.md)
 
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Mediator.SourceGenerator`. C# namespace: `PandaBear.Mediator.SourceGenerator`. Assembly/project identity: `SharedKernel.Mediator.SourceGenerator`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

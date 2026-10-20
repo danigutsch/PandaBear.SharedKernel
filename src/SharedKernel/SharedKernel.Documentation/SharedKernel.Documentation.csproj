@@ -7,7 +7,6 @@
         <RootNamespace>PandaBear.Documentation</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageTags>documentation;markdown;mermaid;automation;shared-kernel;dotnet</PackageTags>
     </PropertyGroup>

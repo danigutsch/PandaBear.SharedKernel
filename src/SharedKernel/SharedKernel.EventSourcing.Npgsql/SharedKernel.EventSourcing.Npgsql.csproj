@@ -6,7 +6,6 @@
     <RootNamespace>PandaBear.EventSourcing.Npgsql</RootNamespace>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageTags>event-sourcing;npgsql;postgresql;shared-kernel;dotnet</PackageTags>
   </PropertyGroup>

@@ -8,7 +8,6 @@
         <PackageId>PandaBear.SharedKernel.Versioning.Tool</PackageId>
         <Description>Local and CI versioning automation for SharedKernel release flows.</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/danigutsch/ViajantesTurismo</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageTags>versioning;semver;conventional-commits;dotnet-tool</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>

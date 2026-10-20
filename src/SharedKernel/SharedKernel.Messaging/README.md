@@ -1,5 +1,9 @@
 # SharedKernel.Messaging
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Storage-neutral messaging primitives for event envelopes and message metadata.
 
 This package owns concepts that are not specific to domain events, typed integration events, event
@@ -13,4 +17,4 @@ Use `EventEnvelope` for storage-neutral metadata and encoded payloads. Implement
 
 Package ID: `PandaBear.SharedKernel.Messaging`. C# namespace: `PandaBear.Messaging`. Assembly/project identity: `SharedKernel.Messaging`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

@@ -29,4 +29,11 @@
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
+    <!-- Custom nuspec tokens must be populated after the SDK reads source control metadata. -->
+    <Target Name="SetAuditTrailRepositoryMetadata" BeforeTargets="GenerateNuspec" DependsOnTargets="InitializeSourceControlInformation">
+        <PropertyGroup>
+            <NuspecProperties>$(NuspecProperties);repositoryUrl=$(RepositoryUrl);repositoryCommit=$(SourceRevisionId)</NuspecProperties>
+        </PropertyGroup>
+    </Target>
+
 </Project>

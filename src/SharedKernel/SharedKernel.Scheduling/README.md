@@ -1,5 +1,9 @@
 # SharedKernel.Scheduling
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Lightweight scheduling primitives for hosted .NET services.
 
 ## What it provides
@@ -27,4 +31,4 @@ The polling loop emits:
 
 Package ID: `PandaBear.SharedKernel.Scheduling`. C# namespace: `PandaBear.Scheduling`. Assembly/project identity: `SharedKernel.Scheduling`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.

@@ -1,5 +1,9 @@
 # SharedKernel.Testing.Snapshots
 
+[![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
+
+Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+
 Reusable snapshot helpers for SharedKernel test suites.
 
 - `SnapshotText` normalizes snapshot text before comparison.
@@ -13,4 +17,4 @@ Configure `JsonSnapshotArtifactSet` with canonical/generated directories and art
 
 Package ID: `PandaBear.SharedKernel.Testing.Snapshots`. C# namespace: `PandaBear.Testing.Snapshots`. Assembly/project identity: `SharedKernel.Testing.Snapshots`.
 
-Consume a validated private candidate at an explicitly selected version. Registry publication is deferred; no public NuGet availability is implied.
+Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
