@@ -57,6 +57,7 @@ internal static class RepositoryToolApplication
                 File.WriteAllLines(Path.Combine(directory, "build-projects.txt"), result.BuildProjects);
                 File.WriteAllLines(Path.Combine(directory, "test-projects.txt"), result.TestProjects);
                 File.WriteAllLines(Path.Combine(directory, "selection-reasons.txt"), result.Reasons);
+                File.WriteAllText(Path.Combine(directory, "candidate-required.txt"), result.BuildProjects.Length > 0 ? "true" : "false");
                 output.WriteLine(string.Join(Environment.NewLine, result.Reasons));
                 return 0;
             }

@@ -6,6 +6,11 @@ on:
   schedule:
     - cron: '23 2 * * *'
   workflow_dispatch:
+    inputs:
+      prepare_stable:
+        description: Prepare and validate stable artifacts without publishing or tagging.
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -15,6 +20,8 @@ jobs:
   library:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    outputs:
+      candidate_required: ${{ steps.selection.outputs.candidate_required }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
@@ -28,14 +35,31 @@ jobs:
           dotnet restore tools/SharedKernel.Repository.Tool --locked-mode
           dotnet build tools/SharedKernel.Repository.Tool -c Release --no-restore
       - name: Select affected projects
+        id: selection
         env:
-          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || '' }}
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'push' && github.event.before || '' }}
         run: |
           args=()
           if [[ -n "${BASE_SHA}" ]]; then args+=(--base "${BASE_SHA}"); fi
           dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- select "${args[@]}"
-      - name: Build, test, validate APIs and candidate packages
-        run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- validate --pack --aot
+          echo "candidate_required=$(cat TestResults/selection/candidate-required.txt)" >> "$GITHUB_OUTPUT"
+      - name: Validate selected projects and tests
+        run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- validate
+      - name: Calculate coordinated package version
+        if: steps.selection.outputs.candidate_required == 'true'
+        id: version
+        env:
+          VERSION_KIND: ${{ github.event_name == 'workflow_dispatch' && inputs.prepare_stable && 'stable' || 'prerelease' }}
+          VERSION_RUN: ${{ github.run_number }}.${{ github.run_attempt }}
+        run: |
+          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-restore -- \
+            calculate-release --version-kind "$VERSION_KIND" --run-number "$VERSION_RUN" \
+            --github-output "$GITHUB_OUTPUT" --github-summary "$GITHUB_STEP_SUMMARY"
+      - name: Validate immutable package candidate
+        if: steps.selection.outputs.candidate_required == 'true'
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}
+        run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- validate-candidate --version "$PACKAGE_VERSION" --aot
       - name: Upload selection reasons
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -44,6 +68,7 @@ jobs:
           path: TestResults/selection/*.txt
           if-no-files-found: error
       - name: Retain candidate artifacts for separate consumer compatibility
+        if: steps.selection.outputs.candidate_required == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: candidate-packages
@@ -55,6 +80,7 @@ jobs:
           retention-days: 14
   windows-package-consumption:
     needs: library
+    if: needs.library.outputs.candidate_required == 'true'
     runs-on: windows-latest
     timeout-minutes: 30
     steps:

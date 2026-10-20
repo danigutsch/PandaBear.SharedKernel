@@ -71,3 +71,5 @@ dotnet run --project tools/SharedKernel.RepoConfig.Tool -c Release -- verify-sha
 Compatibility records both repository revisions and package hashes. Failures block application adoption and stable promotion, independently of library
 merge. Keep the previous application dependency configuration for rollback. Promote the same tested artifacts; no public publishing, dependency
 replacements, or application cutover are part of this setup.
+
+Release cadence and coordinated SemVer are documented in [release policy](docs/release-policy.md).
