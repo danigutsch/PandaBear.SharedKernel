@@ -25,3 +25,9 @@ These commands and workload requirements follow the [official NativeAOT prerequi
 ## Status evidence
 
 Build badges await a verified private remote and real workflow URL. Coverage is collected locally with `coverlet.MTP`; no hosted coverage service or percentage is configured. Registry publication is deferred, so no version/publication badge may claim a public package exists. Add badges only when intended readers can access their actual evidence without credentials in URLs.
+
+## Engineering review guidance
+
+Document stable caller-visible guards, cancellation, and deliberate adapter failures using the [exception documentation policy](EXCEPTION_DOCUMENTATION.md). Review diagnostic enforcement and scoped exceptions using the [warning policy](ci/warning-policy.md). Review upstream Action SHAs and hosting/tool image digests using the [pin-update workflow](ci/pin-update-review.md).
+
+These generic policies were reconciled from documentation-only donor `68ce1876d69af7dd9527330af845a84a6c3df434`. Its application vertical-slice migration inventory, runtime topology, application CI thresholds, Dev Container/updater configuration, and feature moves remain application-owned and are not imported into this library.

@@ -2,6 +2,9 @@
 
 - [Architecture and generated diagrams](architecture/README.md)
 - [Development and quality](development.md)
+- [Exception documentation](EXCEPTION_DOCUMENTATION.md)
+- [Warning policy](ci/warning-policy.md)
+- [Action and image pin review](ci/pin-update-review.md)
 - [Release policy and consumer adoption](release-policy.md)
 - [Domain and building-block split](adr/20260621-split-sharedkernel-domain-and-building-blocks.md)
 - [Domain materialization and persistence boundaries](adr/20260621-domain-materialization-and-sharedkernel-persistence-boundaries.md)
