@@ -24,6 +24,7 @@ This Roslyn component reports diagnostics for rules that only make sense in test
 | `SKTEST007` | Warning | Complete explicit Arrange/Act/Assert marker sets in xUnit test methods should stay ordered. |
 | `SKTEST008` | Warning | xUnit test methods should not use manual `try`/`catch`/`finally` control flow. |
 | `SKTEST009` | Warning | xUnit trait metadata should use canonical constants when they exist. |
+| `SKTEST011` | Suggestion | Inline adjacent one-use assertion lambdas when overload binding is unchanged. |
 
 ## Configuration
 
@@ -39,6 +40,7 @@ dotnet_diagnostic.SKTEST006.severity = warning
 dotnet_diagnostic.SKTEST007.severity = warning
 dotnet_diagnostic.SKTEST008.severity = warning
 dotnet_diagnostic.SKTEST009.severity = warning
+dotnet_diagnostic.SKTEST011.severity = suggestion
 sharedkernel_testing_required_traits = Category=Smoke
 sharedkernel_testing_strict_test_method_casing = false
 ```
@@ -55,7 +57,7 @@ does not report production code or non-test helper methods.
 matching constant can be identified from `SharedKernel.Testing` trait constants or a project-local
 `TestTraits` type in the current namespace chain.
 
-Keep `SKTEST*` diagnostics at `warning`; repository warning-as-error settings make violations fail
+Keep existing `SKTEST001`–`SKTEST009` diagnostics at `warning`; repository warning-as-error settings make violations fail
 the build without changing analyzer descriptor severity.
 
 `sharedkernel_testing_strict_test_method_casing` defaults to `true` and requires sentence-style
@@ -80,3 +82,32 @@ projects should not need this package.
 Package ID: `PandaBear.SharedKernel.Testing.Analyzers`. C# namespace: `PandaBear.Testing.Analyzers`. Assembly/project identity: `SharedKernel.Testing.Analyzers`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## SKTEST011
+
+This suggestion applies inside xUnit facts and theories to an adjacent, single-variable lambda
+local used exactly once by `PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow`
+or `ShouldThrowAssignableTo`. The diagnostic and code fix share the same semantic checks.
+The fix removes the local and calls the existing static extension method with the inline lambda.
+Roslyn must bind that call to the exact same constructed overload before a suggestion is offered.
+
+```csharp
+Action action = () => service.Execute();
+action.ShouldThrow<InvalidOperationException>();
+
+// When overload binding is identical:
+ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>(() => service.Execute());
+```
+
+`Action`, `Func<object?>`, and `Func<Task>` keep their original synchronous, property-accessor,
+and asynchronous contracts. Async assertions remain awaited. Named arguments, lambda comments,
+and surrounding comments are retained. Calls must be direct statements, returns, or single-local
+initializers, optionally awaited. Method groups, casts, reassigned or reused locals,
+intervening statements, nested functions, switch arms, conditional calls, declaration-interior
+comments, directives, and overload changes receive no suggestion. In particular, a throw-only
+lambda can select a different delegate overload when inlined; keep the typed local in that case.
+Unrelated assertion APIs and production methods are excluded. Fix All remains unavailable.
+
+Use `dotnet_diagnostic.SKTEST011.severity = none` to retain named delegates throughout a project,
+or a narrow suppression when a particular name explains assertion intent. The default is a
+non-blocking suggestion; this rule does not require an application migration.

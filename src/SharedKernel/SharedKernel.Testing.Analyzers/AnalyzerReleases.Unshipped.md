@@ -11,3 +11,4 @@ SKTEST006 | Testing | Warning | Test code should use repository assertion wrappe
 SKTEST007 | Testing | Warning | Complete explicit Arrange/Act/Assert marker sets in xUnit test methods should stay ordered
 SKTEST008 | Testing | Warning | xUnit test methods should not use manual try/catch/finally control flow
 SKTEST009 | Testing | Warning | xUnit trait metadata should use canonical constants when they exist
+SKTEST011 | Testing | Info | Inline adjacent one-use assertion lambdas only when overload binding is preserved

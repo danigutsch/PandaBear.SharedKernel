@@ -147,9 +147,19 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         isEnabledByDefault: true,
         description: "Repository testing rules keep trait filters stable by requiring canonical constants when they exist for a trait name or value.");
 
+    private static readonly DiagnosticDescriptor AssertionDelegateInliningRule = new(
+        TestingDiagnosticIds.AssertionDelegateInlining,
+        title: "Inline one-use assertion delegates",
+        messageFormat: "Inline the one-use lambda into the assertion call",
+        category: TestingCategory,
+        defaultSeverity: DiagnosticSeverity.Info,
+        isEnabledByDefault: true,
+        description: "Inline adjacent one-use lambda delegates only when the repository assertion overload remains unchanged.",
+        helpLinkUri: "https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Testing.Analyzers/README.md#sktest011");
+
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule];
+        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -339,6 +349,10 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         }
 
         AnalyzeAssertionInvocation(context, invocationExpression);
+        if (AssertionDelegateInlining.TryRewrite(context.SemanticModel, invocationExpression, context.CancellationToken, out _, out _))
+        {
+            context.ReportDiagnostic(Diagnostic.Create(AssertionDelegateInliningRule, invocationExpression.GetLocation()));
+        }
     }
 
     private static void AnalyzeAssertionInvocation(
