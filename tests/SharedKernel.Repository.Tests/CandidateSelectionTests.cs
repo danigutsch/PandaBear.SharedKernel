@@ -28,7 +28,7 @@ public static class CandidateSelectionTests
         // Assert
         result.ShouldBe(0);
         var expected = hasProjects ? "true" : "false";
-        File.ReadAllText(githubOutput).ShouldBe(previousOutput + "candidate_required=" + expected + Environment.NewLine);
+        File.ReadAllText(githubOutput).ShouldStartWith(previousOutput + "candidate_required=" + expected + Environment.NewLine, StringComparison.Ordinal);
         File.ReadAllText(Path.Combine(repository.Root, "TestResults", "selection", "candidate-required.txt")).ShouldBe(expected);
     }
 
@@ -64,5 +64,23 @@ public static class CandidateSelectionTests
 
         // Assert
         (result.BuildProjects.Length > 0).ShouldBe(required);
+    }
+    [Fact]
+    public static void Newly_added_hosted_tests_are_emitted_into_the_workflow_matrix()
+    {
+        // Arrange
+        using var repository = new RepositoryTestScope();
+        repository.AddProject("tests/NewHosted/NewHosted.csproj", """<Project Sdk="Aspire.AppHost.Sdk"><PropertyGroup><IsTestProject>true</IsTestProject></PropertyGroup></Project>""");
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+        var githubOutput = Path.Combine(repository.Root, "github-output.txt");
+
+        // Act
+        var result = RepositoryToolApplication.Run(["select", "--root", repository.Root, "--github-output", githubOutput], output, error);
+
+        // Assert
+        result.ShouldBe(0);
+        File.ReadAllText(githubOutput).ShouldContain("hosted_required=true", StringComparison.Ordinal);
+        File.ReadAllText(githubOutput).ShouldContain("NewHosted.csproj", StringComparison.Ordinal);
     }
 }
