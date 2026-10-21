@@ -8,7 +8,7 @@ public sealed class WorkflowContractTests
     [InlineData("tools/SharedKernel.Repository.Tool", "select")]
     [InlineData("tools/SharedKernel.Repository.Tool", "validate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "calculate-release")]
-    [InlineData("tools/SharedKernel.Versioning.Tool", "validate-candidate")]
+    [InlineData("tools/SharedKernel.Versioning.Tool", "create-candidate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "consume-candidate")]
     [InlineData("tools/SharedKernel.Documentation.Tool", "generate")]
     public void Active_ci_delegates_repository_operations_to_existing_dotnet_tools(string project, string command)

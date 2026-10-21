@@ -1,0 +1,24 @@
+name: PR Metadata
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review, labeled]
+permissions:
+  contents: read
+concurrency:
+  group: pr-metadata-${{ github.event.pull_request.number }}-${{ github.event.action == 'labeled' && github.event.label.name != 'ci:rerun' && github.run_id || 'metadata' }}
+  cancel-in-progress: true
+jobs:
+  metadata:
+    name: ${{ github.event.action == 'labeled' && github.event.label.name != 'ci:rerun' && 'Ignored label event' || 'PR Metadata' }}
+    if: ${{ github.event.action != 'labeled' || github.event.label.name == 'ci:rerun' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5
+        with:
+          global-json-file: global.json
+      - name: Validate squash header
+        run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- verify-pr-title --event "$GITHUB_EVENT_PATH"

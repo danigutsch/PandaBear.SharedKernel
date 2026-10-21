@@ -61,11 +61,21 @@ flowchart TB
 ```mermaid
 flowchart TB
     trigger[Pull request, main push, nightly, or manual run]
+    selection[selection]
     library[library]
+    hosted_tests[hosted-tests]
+    candidate[candidate]
+    linux_package_consumption[linux-package-consumption]
     windows_package_consumption[windows-package-consumption]
     repository_quality[repository-quality]
-    trigger --> library
-    library --> windows_package_consumption
+    validation_summary[validation-summary]
+    trigger --> selection
+    selection --> library
+    selection --> hosted_tests
+    selection --> candidate
+    candidate --> linux_package_consumption
+    candidate --> windows_package_consumption
     trigger --> repository_quality
+    trigger --> validation_summary
 ```
 <!-- generated:library-ci:end -->
