@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using Npgsql;
 
-namespace PandaBear.Npgsql.Tests;
+namespace PandaBear.Npgsql.Testing;
 
 internal sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
 {
@@ -12,17 +13,21 @@ internal sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
 
     private PostgreSqlTestDatabaseLease(
         string administrativeConnectionString,
+        string connectionString,
         string databaseName,
         NpgsqlDataSource dataSource,
         Action<string> onDropped)
     {
         _administrativeConnectionString = administrativeConnectionString;
+        ConnectionString = connectionString;
         _onDropped = onDropped;
         DatabaseName = databaseName;
         DataSource = dataSource;
     }
 
     internal string DatabaseName { get; }
+
+    internal string ConnectionString { get; }
 
     internal NpgsqlDataSource DataSource { get; }
 
@@ -63,6 +68,7 @@ internal sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
 
             return new PostgreSqlTestDatabaseLease(
                 administrativeConnectionString,
+                databaseConnectionString,
                 databaseName,
                 NpgsqlDataSource.Create(databaseConnectionString),
                 onDropped);
