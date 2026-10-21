@@ -69,6 +69,9 @@ internal static class VersioningToolApplication
                     finally { Console.CancelKeyPress -= Cancel; }
                 }
                 return 0;
+            case ["create-candidate", .. var createArgs]:
+                await CandidateCommand.Create(CandidateCommandOptions.Parse(createArgs), output).ConfigureAwait(false);
+                return 0;
             case ["validate-candidate", .. var candidateArgs]:
                 await CandidateCommand.Run(CandidateCommandOptions.Parse(candidateArgs), output).ConfigureAwait(false);
                 return 0;
@@ -137,6 +140,7 @@ internal static class VersioningToolApplication
           sharedkernel-version --help
           sharedkernel-version --version
           sharedkernel-version stage-candidate --candidate <manifest> --feed <packages> --output <local-feed> [--repo-root <library>]
+          sharedkernel-version create-candidate [--version <unique-prerelease>] [--repo-root <path>]
           sharedkernel-version validate-candidate [--version <semver>] [--repo-root <path>] [--baseline-version <semver>] [--aot]
           sharedkernel-version smoke-packages --feed <path> --version <semver> [--repo-root <path>] [--aot]
           sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--repo-root <path>] [--output <path>] [--aot]

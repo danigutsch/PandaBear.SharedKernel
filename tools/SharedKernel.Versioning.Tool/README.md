@@ -183,3 +183,10 @@ by staging. Assemblies remain `SharedKernel.*`; C# namespaces use `PandaBear.*`;
 Package ID: `PandaBear.SharedKernel.Versioning.Tool`. C# namespace: `PandaBear.Versioning.Tool`. Assembly/project identity: `SharedKernel.Versioning.Tool`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+
+`create-candidate [--version <unique-prerelease>]` performs API/package checks and writes the immutable
+candidate manifest without platform consumption. CI calls it once and sends those same hashed
+packages to Linux and Windows `consume-candidate --candidate-directory <directory> --aot` jobs.
+`validate-candidate` retains its combined create-and-consume behavior for local callers. Candidate
+creation still requires a clean committed checkout; platform evidence remains pending until consumed.

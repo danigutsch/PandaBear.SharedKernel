@@ -9,6 +9,12 @@ internal static class CandidateCommand
 {
     public static async Task Run(CandidateCommandOptions options, TextWriter output)
     {
+        var manifest = await Create(options, output).ConfigureAwait(false);
+        await Consume(options with { Candidate = manifest }, output).ConfigureAwait(false);
+    }
+
+    public static async Task<string> Create(CandidateCommandOptions options, TextWriter output)
+    {
         if (CommandRunner.Run("git", ["status", "--porcelain"], options.Root).Length != 0)
         {
             throw new ArgumentException("Commit library changes before creating candidate evidence.");
@@ -59,7 +65,7 @@ internal static class CandidateCommand
         };
         var manifest = Path.Combine(feed, "candidate.json");
         CandidateManifest.Write(manifest, evidence);
-        await Consume(options with { Feed = feed, Version = version, Candidate = manifest }, output).ConfigureAwait(false);
+        return manifest;
     }
 
     public static async Task Consume(CandidateCommandOptions options, TextWriter output)
