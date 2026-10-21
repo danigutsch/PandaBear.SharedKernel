@@ -16,7 +16,8 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        (await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken)).ShouldBe(0);
+        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
         var config = workspace.ReadFile("roadmap/config.json")
             .Replace("\"itemIdPrefix\": \"RM\"", $"\"itemIdPrefix\": \"{itemIdPrefix}\"", StringComparison.Ordinal);
         workspace.WriteFile("roadmap/config.json", config);
@@ -36,7 +37,8 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        (await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken)).ShouldBe(0);
+        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.Configure(
             workspace,
             """
@@ -88,7 +90,8 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        (await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken)).ShouldBe(0);
+        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
         var config = workspace.ReadFile("roadmap/config.json")
             .Replace("\"itemIdPrefix\": \"RM\"", "\"itemIdPrefix\": \"RD\"", StringComparison.Ordinal)
             .Replace("\"theme\": \"repo-operations\"", "\"theme\": \"custom-theme\"", StringComparison.Ordinal)

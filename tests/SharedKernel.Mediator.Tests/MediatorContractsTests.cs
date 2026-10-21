@@ -13,7 +13,7 @@ public sealed class MediatorContractsTests
         var isAssignable = typeof(IRequest<Unit>).IsAssignableFrom(commandType);
 
         // Assert
-        (isAssignable).ShouldBeTrue();
+        isAssignable.ShouldBeTrue();
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public sealed class MediatorContractsTests
         var isAssignable = typeof(IRequest<string>).IsAssignableFrom(queryType);
 
         // Assert
-        (isAssignable).ShouldBeTrue();
+        isAssignable.ShouldBeTrue();
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public sealed class MediatorContractsTests
         var isAssignable = typeof(IRequest<int>).IsAssignableFrom(commandType);
 
         // Assert
-        (isAssignable).ShouldBeTrue();
+        isAssignable.ShouldBeTrue();
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public sealed class MediatorContractsTests
         var isAssignable = handlerContractType.IsAssignableFrom(typeof(BaseQueryHandler));
 
         // Assert
-        (isAssignable).ShouldBeTrue();
+        isAssignable.ShouldBeTrue();
     }
 
     [Fact]
@@ -67,8 +67,8 @@ public sealed class MediatorContractsTests
         var structConstraintHolds = structNotificationType.IsAssignableFrom(typeof(StructNotificationHandler));
 
         // Assert
-        (classConstraintHolds).ShouldBeTrue();
-        (structConstraintHolds).ShouldBeTrue();
+        classConstraintHolds.ShouldBeTrue();
+        structConstraintHolds.ShouldBeTrue();
     }
 
     [Fact]
@@ -78,13 +78,13 @@ public sealed class MediatorContractsTests
         var attribute = typeof(OrderedClassNotificationHandler)
             .GetCustomAttributes(typeof(NotificationOrderAttribute), inherit: false)
             .Cast<NotificationOrderAttribute>()
-            .Single();
+            .ShouldHaveSingleItem();
 
         // Act
         var order = attribute.Order;
 
         // Assert
-        (order).ShouldBe(5);
+        order.ShouldBe(5);
     }
 
     [Fact]
@@ -94,13 +94,13 @@ public sealed class MediatorContractsTests
         var attribute = typeof(ParallelClassNotification)
             .GetCustomAttributes(typeof(NotificationDispatchAttribute), inherit: false)
             .Cast<NotificationDispatchAttribute>()
-            .Single();
+            .ShouldHaveSingleItem();
 
         // Act
         var strategy = attribute.Strategy;
 
         // Assert
-        (strategy).ShouldBe(NotificationDispatchStrategy.Parallel);
+        strategy.ShouldBe(NotificationDispatchStrategy.Parallel);
     }
 
     [Fact]
@@ -121,11 +121,11 @@ public sealed class MediatorContractsTests
         var pipelineConstraintHolds = pipelineType.IsAssignableFrom(typeof(TestPipelineBehavior));
 
         // Assert
-        (streamConstraintHolds).ShouldBeTrue();
-        (streamPipelineConstraintHolds).ShouldBeTrue();
-        (streamCommandConstraintHolds).ShouldBeTrue();
-        (duplexStreamConstraintHolds).ShouldBeTrue();
-        (pipelineConstraintHolds).ShouldBeTrue();
+        streamConstraintHolds.ShouldBeTrue();
+        streamPipelineConstraintHolds.ShouldBeTrue();
+        streamCommandConstraintHolds.ShouldBeTrue();
+        duplexStreamConstraintHolds.ShouldBeTrue();
+        pipelineConstraintHolds.ShouldBeTrue();
     }
 
     [Fact]
@@ -150,15 +150,15 @@ public sealed class MediatorContractsTests
         var isResponseStreamQuery = typeof(IStreamRequest<string>).IsAssignableFrom(streamQueryType);
 
         // Assert
-        (isStreamCommand).ShouldBeTrue();
-        (isStreamQuery).ShouldBeTrue();
-        (isStreamInputQuery).ShouldBeTrue();
-        (isDuplexStreamCommand).ShouldBeTrue();
-        (isDuplexStreamQuery).ShouldBeTrue();
-        (isUnaryRequest).ShouldBeTrue();
-        (isResponseOnlyStream).ShouldBeFalse();
-        (isResponseStreamCommand).ShouldBeTrue();
-        (isResponseStreamQuery).ShouldBeTrue();
+        isStreamCommand.ShouldBeTrue();
+        isStreamQuery.ShouldBeTrue();
+        isStreamInputQuery.ShouldBeTrue();
+        isDuplexStreamCommand.ShouldBeTrue();
+        isDuplexStreamQuery.ShouldBeTrue();
+        isUnaryRequest.ShouldBeTrue();
+        isResponseOnlyStream.ShouldBeFalse();
+        isResponseStreamCommand.ShouldBeTrue();
+        isResponseStreamQuery.ShouldBeTrue();
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public sealed class MediatorContractsTests
         // Arrange
         var method = typeof(ISender)
             .GetMethods()
-            .Single(
+            .ShouldHaveSingleItem(
                 candidate => candidate.Name == nameof(ISender.Send)
                     && candidate.GetParameters()[0].ParameterType.IsGenericType
                     && candidate.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == typeof(IStreamRequest<>));
@@ -177,7 +177,7 @@ public sealed class MediatorContractsTests
         var genericReturnType = returnType?.GetGenericTypeDefinition();
 
         // Assert
-        _ = (method).ShouldNotBeNull();
-        (genericReturnType).ShouldBe(typeof(IAsyncEnumerable<>));
+        _ = method.ShouldNotBeNull();
+        genericReturnType.ShouldBe(typeof(IAsyncEnumerable<>));
     }
 }

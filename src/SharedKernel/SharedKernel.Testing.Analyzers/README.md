@@ -25,6 +25,13 @@ This Roslyn component reports diagnostics for rules that only make sense in test
 | `SKTEST008` | Warning | xUnit test methods should not use manual `try`/`catch`/`finally` control flow. |
 | `SKTEST009` | Warning | xUnit trait metadata should use canonical constants when they exist. |
 | `SKTEST011` | Suggestion | Inline adjacent one-use assertion lambdas when overload binding is unchanged. |
+| `SKTEST012` | Warning | Use uniqueness assertions instead of assertion-like LINQ Single calls. |
+| `SKTEST013` | Warning | Use semantic assertions or named values instead of parenthesized assertion receivers. |
+| `SKTEST014` | Warning | Prevent conditional access from silently skipping ShouldBe assertions. |
+| `SKTEST015` | Warning | Use the specialized Playwright wrapper for default string title assertions. |
+
+See [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for migrations, exception-testing
+exemptions, and the supported code-fix boundaries.
 
 ## Configuration
 
@@ -62,7 +69,7 @@ the build without changing analyzer descriptor severity.
 
 `sharedkernel_testing_strict_test_method_casing` defaults to `true` and requires sentence-style
 underscore names like `Creates_a_tour_when_the_request_is_valid` while allowing known terms such as
-`SKTEST004`, `xUnit`, `IDs`, `Task`, `ValueTask`, `HttpClient`, `OpenApi`, `UI`,
+`API`, `AsyncAPI`, `HTTP2`, `SKTEST004`, `xUnit`, `IDs`, `Task`, `ValueTask`, `HttpClient`, `OpenApi`, `UI`,
 `NavMenu`, `NavLink`, and `DataAnnotationsValidator`. Set it to `false` only for temporary
 migration windows.
 

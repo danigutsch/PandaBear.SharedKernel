@@ -70,7 +70,7 @@ public sealed class RoadmapAutomationCommandTests
         var plan = RoadmapAutomationPlan.Load(
             RoadmapAutomationService.GetPlanPath(workspace.RootPath),
             workflowOutputs.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
-                .Single(line => line.StartsWith("plan_digest=", StringComparison.Ordinal))["plan_digest=".Length..]);
+                .ShouldHaveSingleItem(line => line.StartsWith("plan_digest=", StringComparison.Ordinal))["plan_digest=".Length..]);
 
         // Assert
         exitCode.ShouldBe(0);

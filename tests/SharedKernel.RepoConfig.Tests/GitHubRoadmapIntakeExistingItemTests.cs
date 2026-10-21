@@ -15,7 +15,8 @@ public sealed class GitHubRoadmapIntakeExistingItemTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        (await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken)).ShouldBe(0);
+        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
         var closedItem = workspace.ReadFile("roadmap/items/RM-018-github-100.json")
             .Replace(
@@ -100,7 +101,8 @@ public sealed class GitHubRoadmapIntakeExistingItemTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        (await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken)).ShouldBe(0);
+        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
         var itemWithStaleStatus = workspace.ReadFile("roadmap/items/RM-018-github-100.json")
             .Replace("\"status\": \"proposed\"", "\"status\": \"ready\"", StringComparison.Ordinal);

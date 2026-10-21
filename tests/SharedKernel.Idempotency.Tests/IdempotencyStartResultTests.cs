@@ -11,8 +11,8 @@ public sealed class IdempotencyStartResultTests
         var result = IdempotencyStartResult.StartedNew();
 
         // Assert
-        (result.Started).ShouldBeTrue();
-        (result.ExistingEntry).ShouldBeNull();
+        result.Started.ShouldBeTrue();
+        result.ExistingEntry.ShouldBeNull();
     }
 
     [Fact]
@@ -33,8 +33,8 @@ public sealed class IdempotencyStartResultTests
         var result = IdempotencyStartResult.AlreadyStarted(entry);
 
         // Assert
-        (result.Started).ShouldBeFalse();
-        (result.ExistingEntry).ShouldBeSameAs(entry);
+        result.Started.ShouldBeFalse();
+        result.ExistingEntry.ShouldBeSameAs(entry);
     }
 
     [Fact]
@@ -44,9 +44,9 @@ public sealed class IdempotencyStartResultTests
         dynamic? entry = null;
 
         // Act, Assert
-        ((Action)(() =>
+        ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Action)(() =>
         {
             _ = IdempotencyStartResult.AlreadyStarted(entry);
-        })).ShouldThrow<ArgumentNullException>();
+        }));
     }
 }

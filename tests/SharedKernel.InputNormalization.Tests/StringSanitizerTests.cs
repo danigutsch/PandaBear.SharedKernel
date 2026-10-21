@@ -11,7 +11,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(null);
 
         // Assert
-        (result).ShouldBeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(string.Empty);
 
         // Assert
-        (result).ShouldBe(string.Empty);
+        result.ShouldBe(string.Empty);
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("   Hello");
 
         // Assert
-        (result).ShouldBe("Hello");
+        result.ShouldBe("Hello");
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello   ");
 
         // Assert
-        (result).ShouldBe("Hello");
+        result.ShouldBe("Hello");
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("   Hello   ");
 
         // Assert
-        (result).ShouldBe("Hello");
+        result.ShouldBe("Hello");
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello    World");
 
         // Assert
-        (result).ShouldBe("Hello World");
+        result.ShouldBe("Hello World");
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello \t\n  World");
 
         // Assert
-        (result).ShouldBe("Hello World");
+        result.ShouldBe("Hello World");
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello" + "\x00\x01\x02" + "World");
 
         // Assert
-        (result).ShouldBe("HelloWorld");
+        result.ShouldBe("HelloWorld");
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello" + "\0" + "World");
 
         // Assert
-        (result).ShouldBe("HelloWorld");
+        result.ShouldBe("HelloWorld");
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello" + "\x07" + "World");
 
         // Assert
-        (result).ShouldBe("HelloWorld");
+        result.ShouldBe("HelloWorld");
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello" + "\x7F" + "World");
 
         // Assert
-        (result).ShouldBe("HelloWorld");
+        result.ShouldBe("HelloWorld");
     }
 
     [Fact]
@@ -132,7 +132,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello\tWorld");
 
         // Assert
-        (result).ShouldBe("Hello World");
+        result.ShouldBe("Hello World");
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("Hello\nWorld");
 
         // Assert
-        (result).ShouldBe("Hello World");
+        result.ShouldBe("Hello World");
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("  Hello" + "\x00" + "\t\t  World" + "\x01" + "  ");
 
         // Assert
-        (result).ShouldBe("Hello World");
+        result.ShouldBe("Hello World");
     }
 
     [Fact]
@@ -167,7 +167,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        (result).ShouldBe(input);
+        result.ShouldBe(input);
     }
 
     [Fact]
@@ -178,7 +178,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize("   \t\n   ");
 
         // Assert
-        (result).ShouldBe(string.Empty);
+        result.ShouldBe(string.Empty);
     }
 
     [Fact]
@@ -191,7 +191,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        (result).ShouldBe(input);
+        result.ShouldBe(input);
     }
 
     [Fact]
@@ -204,7 +204,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        (result).ShouldBe(input);
+        result.ShouldBe(input);
     }
 
     [Fact]
@@ -217,7 +217,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        (result).ShouldBe(input);
+        result.ShouldBe(input);
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        (result).ShouldBe("Café");
+        result.ShouldBe("Café");
     }
 
     [Fact]
@@ -243,7 +243,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.Sanitize(input);
 
         // Assert
-        (result).ShouldBe(input);
+        result.ShouldBe(input);
     }
 
     [Fact]
@@ -254,7 +254,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(null);
 
         // Assert
-        (result).ShouldBeNull();
+        result.ShouldBeNull();
     }
 
     [Fact]
@@ -265,7 +265,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(string.Empty);
 
         // Assert
-        (result).ShouldBe(string.Empty);
+        result.ShouldBe(string.Empty);
     }
 
     [Fact]
@@ -276,7 +276,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes("   Hello World   ");
 
         // Assert
-        (result).ShouldBe("Hello World");
+        result.ShouldBe("Hello World");
     }
 
     [Fact]
@@ -289,7 +289,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(input);
 
         // Assert
-        (result).ShouldBe(input);
+        result.ShouldBe(input);
     }
 
     [Fact]
@@ -302,7 +302,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(input);
 
         // Assert
-        (result).ShouldBe(input);
+        result.ShouldBe(input);
     }
 
     [Fact]
@@ -315,7 +315,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(input);
 
         // Assert
-        (result).ShouldBe(input);
+        result.ShouldBe(input);
     }
 
     [Fact]
@@ -328,7 +328,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(input);
 
         // Assert
-        (result).ShouldBe(input);
+        result.ShouldBe(input);
     }
 
     [Fact]
@@ -341,7 +341,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes(input);
 
         // Assert
-        (result).ShouldBe(input);
+        result.ShouldBe(input);
     }
 
     [Fact]
@@ -352,7 +352,7 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeNotes("   \t\n   ");
 
         // Assert
-        (result).ShouldBe(string.Empty);
+        result.ShouldBe(string.Empty);
     }
 
     [Fact]
@@ -363,8 +363,8 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(null);
 
         // Assert
-        _ = (result).ShouldNotBeNull();
-        (result).ShouldBeEmpty();
+        _ = result.ShouldNotBeNull();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -375,8 +375,8 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection([]);
 
         // Assert
-        _ = (result).ShouldNotBeNull();
-        (result).ShouldBeEmpty();
+        _ = result.ShouldNotBeNull();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -389,9 +389,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input!);
 
         // Assert
-        (result.Length).ShouldBe(2);
-        (result).ShouldContain("Hello");
-        (result).ShouldContain("World");
+        result.Length.ShouldBe(2);
+        result.ShouldContain("Hello");
+        result.ShouldContain("World");
     }
 
     [Fact]
@@ -404,9 +404,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        (result.Length).ShouldBe(2);
-        (result).ShouldContain("Hello");
-        (result).ShouldContain("World");
+        result.Length.ShouldBe(2);
+        result.ShouldContain("Hello");
+        result.ShouldContain("World");
     }
 
     [Fact]
@@ -419,9 +419,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        (result.Length).ShouldBe(2);
-        (result).ShouldContain("Hello");
-        (result).ShouldContain("World");
+        result.Length.ShouldBe(2);
+        result.ShouldContain("Hello");
+        result.ShouldContain("World");
     }
 
     [Fact]
@@ -434,9 +434,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        (result.Length).ShouldBe(2);
-        (result).ShouldContain("Hello");
-        (result).ShouldContain("World");
+        result.Length.ShouldBe(2);
+        result.ShouldContain("Hello");
+        result.ShouldContain("World");
     }
 
     [Fact]
@@ -449,9 +449,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        (result.Length).ShouldBe(2);
-        (result).ShouldContain("Hello");
-        (result).ShouldContain("World");
+        result.Length.ShouldBe(2);
+        result.ShouldContain("Hello");
+        result.ShouldContain("World");
     }
 
     [Fact]
@@ -464,8 +464,8 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        (result).ShouldHaveSingleItem();
-        (result[0]).ShouldBe("Hello");
+        result.ShouldHaveSingleItem();
+        result[0].ShouldBe("Hello");
     }
 
     [Fact]
@@ -478,9 +478,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        (result.Length).ShouldBe(2);
-        (result).ShouldContain("Hello");
-        (result).ShouldContain("World");
+        result.Length.ShouldBe(2);
+        result.ShouldContain("Hello");
+        result.ShouldContain("World");
     }
 
     [Fact]
@@ -493,10 +493,10 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input!);
 
         // Assert
-        (result.Length).ShouldBe(3);
-        (result).ShouldContain("Item1");
-        (result).ShouldContain("Item2");
-        (result).ShouldContain("Item3");
+        result.Length.ShouldBe(3);
+        result.ShouldContain("Item1");
+        result.ShouldContain("Item2");
+        result.ShouldContain("Item3");
     }
 
     [Fact]
@@ -509,8 +509,8 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input!);
 
         // Assert
-        _ = (result).ShouldNotBeNull();
-        (result).ShouldBeEmpty();
+        _ = result.ShouldNotBeNull();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -523,10 +523,10 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        (result.Length).ShouldBe(3);
-        (result[0]).ShouldBe("Zebra");
-        (result[1]).ShouldBe("Apple");
-        (result[2]).ShouldBe("Banana");
+        result.Length.ShouldBe(3);
+        result[0].ShouldBe("Zebra");
+        result[1].ShouldBe("Apple");
+        result[2].ShouldBe("Banana");
     }
 
     [Fact]
@@ -539,10 +539,10 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        (result.Length).ShouldBe(3);
-        (result).ShouldContain("Item@1");
-        (result).ShouldContain("Item#2");
-        (result).ShouldContain("Item$3");
+        result.Length.ShouldBe(3);
+        result.ShouldContain("Item@1");
+        result.ShouldContain("Item#2");
+        result.ShouldContain("Item$3");
     }
 
     [Fact]
@@ -555,9 +555,9 @@ public class StringSanitizerTests
         var result = StringSanitizer.SanitizeCollection(input);
 
         // Assert
-        (result.Length).ShouldBe(2);
-        (result).ShouldContain("José");
-        (result).ShouldContain("María");
+        result.Length.ShouldBe(2);
+        result.ShouldContain("José");
+        result.ShouldContain("María");
     }
 
     [Fact]
@@ -570,6 +570,6 @@ public class StringSanitizerTests
         var result = StringSanitizer.NormalizeKey(input);
 
         // Assert
-        (result).ShouldBe("CAFÉ NAME");
+        result.ShouldBe("CAFÉ NAME");
     }
 }

@@ -56,9 +56,9 @@ public sealed class PostgreSqlProjectionCheckpointStoreTests(PostgreSqlTestServe
         var checkpoint = new ProjectionCheckpoint(projectionName, 12);
 
         // Act
-        var exception = await ((Func<Task>)(() => store.Save(
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<Task>)(() => store.Save(
             checkpoint,
-            TestContext.Current.CancellationToken).AsTask())).ShouldThrow<ArgumentException>();
+            TestContext.Current.CancellationToken).AsTask()));
 
         // Assert
         exception.ParamName.ShouldBe("checkpoint.ProjectionName");
@@ -74,9 +74,9 @@ public sealed class PostgreSqlProjectionCheckpointStoreTests(PostgreSqlTestServe
         var checkpoint = new ProjectionCheckpoint("catalog-public-listing", -1);
 
         // Act
-        var exception = await ((Func<Task>)(() => store.Save(
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentOutOfRangeException>((Func<Task>)(() => store.Save(
             checkpoint,
-            TestContext.Current.CancellationToken).AsTask())).ShouldThrow<ArgumentOutOfRangeException>();
+            TestContext.Current.CancellationToken).AsTask()));
 
         // Assert
         exception.ParamName.ShouldBe("checkpoint.Position");

@@ -45,7 +45,7 @@ public sealed class NoStoreResponseMiddlewareTests
         app.MapGroup("/protected").WithNoStoreResponses("/protected").MapGet("/ok", () => "ok");
         app.MapGet("/unrelated", () => "ok");
         await app.StartAsync(TestContext.Current.CancellationToken);
-        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.Single()) };
+        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.ShouldHaveSingleItem()) };
         using var request = new HttpRequestMessage(
             statusCode == StatusCodes.Status405MethodNotAllowed ? HttpMethod.Post : HttpMethod.Get, path);
 
@@ -54,6 +54,7 @@ public sealed class NoStoreResponseMiddlewareTests
 
         // Assert
         response.StatusCode.ShouldBe((HttpStatusCode)statusCode);
-        (response.Headers.CacheControl?.NoStore == true).ShouldBe(protectedResponse);
+        var areEqual = response.Headers.CacheControl?.NoStore == true;
+        areEqual.ShouldBe(protectedResponse);
     }
 }

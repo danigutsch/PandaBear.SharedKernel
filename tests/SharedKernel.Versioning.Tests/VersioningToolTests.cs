@@ -25,7 +25,7 @@ public static class VersioningToolTests
             currentDirectory = currentDirectory.Parent;
         }
 
-        var root = (repositoryRoot).ShouldNotBeNull();
+        var root = repositoryRoot.ShouldNotBeNull();
         var projectPath = Path.Combine(
             root,
             "tools",
@@ -45,7 +45,7 @@ public static class VersioningToolTests
         properties["ToolCommandName"].ShouldBe("sharedkernel-version");
         properties["PackageId"].ShouldBe("PandaBear.SharedKernel.Versioning.Tool");
         properties["PackageReadmeFile"].ShouldBe("README.md");
-        (readmeItem).ShouldNotBeNull();
+        readmeItem.ShouldNotBeNull();
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public static class VersioningToolTests
             currentDirectory = currentDirectory.Parent;
         }
 
-        var root = (repositoryRoot).ShouldNotBeNull();
+        var root = repositoryRoot.ShouldNotBeNull();
         string[] packageIds =
         [
             "PandaBear.SharedKernel.Testing",
@@ -96,7 +96,7 @@ public static class VersioningToolTests
             properties["PackageId"].ShouldBe(packageId);
             properties["PackageReadmeFile"].ShouldBe("README.md");
             properties["IsAotCompatible"].ShouldBe("false");
-            (readmeItem).ShouldNotBeNull();
+            readmeItem.ShouldNotBeNull();
         }
     }
 
@@ -182,7 +182,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static void Parses_api_compatibility_options()
+    public static void Parses_API_compatibility_options()
     {
         // Arrange
         string[] args =
@@ -265,7 +265,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static void Defines_api_compatibility_environment_variable_names()
+    public static void Defines_API_compatibility_environment_variable_names()
     {
         // Assert
         ApiCompatibilityEnvironmentVariables.EnablePackageValidation.ShouldBe("API_COMPAT_ENABLE_PACKAGE_VALIDATION");
@@ -328,7 +328,7 @@ public static class VersioningToolTests
             currentDirectory = currentDirectory.Parent;
         }
 
-        var root = (repositoryRoot).ShouldNotBeNull();
+        var root = repositoryRoot.ShouldNotBeNull();
         var props = File.ReadAllText(Path.Combine(root, "src", "Directory.Build.props"));
 
         // Act
@@ -340,7 +340,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Checks_public_api_baseline_files()
+    public static async Task Checks_public_API_baseline_files()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
@@ -361,7 +361,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Runs_check_public_api_baselines_command()
+    public static async Task Runs_check_public_API_baselines_command()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
@@ -390,7 +390,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static void Rejects_missing_sharedkernel_directory_for_public_api_baselines()
+    public static void Rejects_missing_sharedkernel_directory_for_public_API_baselines()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
@@ -403,7 +403,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static void Rejects_sharedkernel_directory_without_projects_for_public_api_baselines()
+    public static void Rejects_sharedkernel_directory_without_projects_for_public_API_baselines()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
@@ -417,7 +417,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Restores_api_compatibility_environment_variables_after_report_only_failure()
+    public static async Task Restores_API_compatibility_environment_variables_after_report_only_failure()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
@@ -452,7 +452,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Runs_api_compatibility_command_as_report_only_for_alpha_failures()
+    public static async Task Runs_API_compatibility_command_as_report_only_for_alpha_failures()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
@@ -493,7 +493,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Returns_error_for_stable_api_compatibility_failure()
+    public static async Task Returns_error_for_stable_API_compatibility_failure()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
@@ -1929,7 +1929,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Returns_error_for_api_compatibility_option_without_value()
+    public static async Task Returns_error_for_API_compatibility_option_without_value()
     {
         // Arrange
         using var input = new StringReader(string.Empty);
@@ -1945,7 +1945,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Returns_error_for_unknown_api_compatibility_option()
+    public static async Task Returns_error_for_unknown_API_compatibility_option()
     {
         // Arrange
         using var input = new StringReader(string.Empty);

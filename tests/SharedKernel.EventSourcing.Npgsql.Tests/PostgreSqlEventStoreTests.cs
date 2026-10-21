@@ -29,18 +29,18 @@ public sealed class PostgreSqlEventStoreTests(PostgreSqlTestServerFixture fixtur
         persistedEnvelopes[0].Position.ShouldBe(loadedEnvelopes[0].Position);
         persistedEnvelopes[1].EventId.ShouldBe(loadedEnvelopes[1].EventId);
         persistedEnvelopes[1].Position.ShouldBe(loadedEnvelopes[1].Position);
-        (envelopes).ShouldMatchCollection(first =>
+        envelopes.ShouldMatchCollection(first =>
             {
-                (first.Revision.Value).ShouldBe(1);
-                (first.EventType).ShouldBe(TestEventSerializer.EventType);
-                var eventData = (first.Data).ShouldBeOfType<TestEvent>();
-                (eventData.Name).ShouldBe("draft-created");
+                first.Revision.Value.ShouldBe(1);
+                first.EventType.ShouldBe(TestEventSerializer.EventType);
+                var eventData = first.Data.ShouldBeOfType<TestEvent>();
+                eventData.Name.ShouldBe("draft-created");
             }, second =>
             {
-                (second.Revision.Value).ShouldBe(2);
-                (second.EventType).ShouldBe(TestEventSerializer.EventType);
-                var eventData = (second.Data).ShouldBeOfType<TestEvent>();
-                (eventData.Name).ShouldBe("published");
+                second.Revision.Value.ShouldBe(2);
+                second.EventType.ShouldBe(TestEventSerializer.EventType);
+                var eventData = second.Data.ShouldBeOfType<TestEvent>();
+                eventData.Name.ShouldBe("published");
             });
     }
 
@@ -80,17 +80,17 @@ public sealed class PostgreSqlEventStoreTests(PostgreSqlTestServerFixture fixtur
             TestContext.Current.CancellationToken);
 
         // Act
-        var exception = await ((Func<Task>)(() => store.Append(
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ExpectedStreamRevisionConflictException>((Func<Task>)(() => store.Append(
                 streamId,
                 ExpectedStreamRevision.NoStream,
                 [new TestEvent("published")],
-                TestContext.Current.CancellationToken).AsTask())).ShouldThrow<ExpectedStreamRevisionConflictException>();
+                TestContext.Current.CancellationToken).AsTask()));
 
         // Assert
-        (exception.StreamId).ShouldBe(streamId);
-        (exception.ExpectedRevision.RequiresEmptyStream).ShouldBeTrue();
-        var actualRevision = (exception.ActualRevision).ShouldBeOfType<StreamRevision>();
-        (actualRevision.Value).ShouldBe(1);
+        exception.StreamId.ShouldBe(streamId);
+        exception.ExpectedRevision.RequiresEmptyStream.ShouldBeTrue();
+        var actualRevision = exception.ActualRevision.ShouldBeOfType<StreamRevision>();
+        actualRevision.Value.ShouldBe(1);
     }
 
     [Fact]
@@ -109,12 +109,12 @@ public sealed class PostgreSqlEventStoreTests(PostgreSqlTestServerFixture fixtur
         var results = await Task.WhenAll(appendTasks);
 
         // Assert
-        (results.Count(result => result is null)).ShouldBe(1);
-        (results.OfType<ExpectedStreamRevisionConflictException>().Count()).ShouldBe(9);
+        results.Count(result => result is null).ShouldBe(1);
+        results.OfType<ExpectedStreamRevisionConflictException>().Count().ShouldBe(9);
         var envelopes = await store.Load(streamId, afterRevision: null, TestContext.Current.CancellationToken);
-        var envelope = (envelopes).ShouldHaveSingleItem();
-        (envelope.Position).ShouldBe(1);
-        (envelope.Revision.Value).ShouldBe(1);
+        var envelope = envelopes.ShouldHaveSingleItem();
+        envelope.Position.ShouldBe(1);
+        envelope.Revision.Value.ShouldBe(1);
     }
 
     [Fact]
@@ -138,8 +138,8 @@ public sealed class PostgreSqlEventStoreTests(PostgreSqlTestServerFixture fixtur
 
         // Assert
         var envelopes = await store.Load(streamId, afterRevision: null, TestContext.Current.CancellationToken);
-        (envelopes.Count).ShouldBe(10);
-        (envelopes.Select(envelope => (int)envelope.Revision.Value)).ShouldBe(Enumerable.Range(1, 10));
+        envelopes.Count.ShouldBe(10);
+        envelopes.Select(envelope => (int)envelope.Revision.Value).ShouldBe(Enumerable.Range(1, 10));
     }
 
     [Fact]
@@ -152,14 +152,14 @@ public sealed class PostgreSqlEventStoreTests(PostgreSqlTestServerFixture fixtur
         var streamId = StreamId.From("catalog-tour-empty-conflict");
 
         // Act
-        var exception = await ((Func<Task>)(() => store.Append(
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ExpectedStreamRevisionConflictException>((Func<Task>)(() => store.Append(
                 streamId,
                 ExpectedStreamRevision.From(StreamRevision.From(1)),
                 [new TestEvent("published")],
-                TestContext.Current.CancellationToken).AsTask())).ShouldThrow<ExpectedStreamRevisionConflictException>();
+                TestContext.Current.CancellationToken).AsTask()));
 
         // Assert
-        (exception.ActualRevision).ShouldBeNull();
+        exception.ActualRevision.ShouldBeNull();
     }
 
     [Fact]
@@ -181,17 +181,19 @@ public sealed class PostgreSqlEventStoreTests(PostgreSqlTestServerFixture fixtur
             ExpectedStreamRevision.NoStream,
             [new TestEvent("second")],
             TestContext.Current.CancellationToken);
-        var firstEnvelope = (await store.Load(firstStreamId, afterRevision: null, TestContext.Current.CancellationToken)).ShouldHaveSingleItem();
+        var actualResult = await store.Load(firstStreamId, afterRevision: null, TestContext.Current.CancellationToken);
+        var firstEnvelope = actualResult.ShouldHaveSingleItem();
 
         // Act
         var envelopes = await store.LoadAfter(firstEnvelope.Position, maxCount: 10, TestContext.Current.CancellationToken);
 
         // Assert
-        var envelope = (envelopes).ShouldHaveSingleItem();
-        (envelope.StreamId).ShouldBe(secondStreamId);
-        (envelope.Position > firstEnvelope.Position).ShouldBeTrue();
-        var eventData = (envelope.Data).ShouldBeOfType<TestEvent>();
-        (eventData.Name).ShouldBe("second");
+        var envelope = envelopes.ShouldHaveSingleItem();
+        envelope.StreamId.ShouldBe(secondStreamId);
+        var actualValue = envelope.Position > firstEnvelope.Position;
+        actualValue.ShouldBeTrue();
+        var eventData = envelope.Data.ShouldBeOfType<TestEvent>();
+        eventData.Name.ShouldBe("second");
     }
 
     [Fact]
@@ -216,9 +218,9 @@ public sealed class PostgreSqlEventStoreTests(PostgreSqlTestServerFixture fixtur
         var secondBatch = await store.LoadAfter(checkpoint, maxCount: 10, TestContext.Current.CancellationToken);
 
         // Assert
-        (firstBatch.Count).ShouldBe(5);
-        (secondBatch.Count).ShouldBe(5);
-        (firstBatch.Concat(secondBatch).Select(envelope => envelope.EventId).Distinct().Count()).ShouldBe(10);
+        firstBatch.Count.ShouldBe(5);
+        secondBatch.Count.ShouldBe(5);
+        firstBatch.Concat(secondBatch).Select(envelope => envelope.EventId).Distinct().Count().ShouldBe(10);
     }
 
 }

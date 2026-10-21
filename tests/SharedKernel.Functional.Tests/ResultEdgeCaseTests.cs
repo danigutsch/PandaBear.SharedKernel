@@ -11,10 +11,10 @@ public sealed class ResultEdgeCaseTests
         var result = Result.Error<string>("Unexpected failure");
 
         // Act
-        var exception = ((Action)(() =>
+        var exception = ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Action)(() =>
             {
                 _ = result.Value;
-            })).ShouldThrow<InvalidOperationException>();
+            }));
 
         // Assert
         exception.Message.ShouldContain("failed result", StringComparison.Ordinal);
@@ -39,7 +39,7 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = ((Func<object?>)(() => Result.Ok(NullArgumentData.String()))).ShouldThrow<ArgumentNullException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<object?>)(() => Result.Ok(NullArgumentData.String())));
 
         // Assert
         exception.ParamName.ShouldBe("value");
@@ -50,7 +50,7 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = ((Func<object?>)(() => Result.Created(NullArgumentData.String()))).ShouldThrow<ArgumentNullException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<object?>)(() => Result.Created(NullArgumentData.String())));
 
         // Assert
         exception.ParamName.ShouldBe("value");
@@ -61,7 +61,7 @@ public sealed class ResultEdgeCaseTests
     {
         // Arrange
         // Act
-        var exception = ((Func<object?>)(() => Result.Accepted(NullArgumentData.String()))).ShouldThrow<ArgumentNullException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<object?>)(() => Result.Accepted(NullArgumentData.String())));
 
         // Assert
         exception.ParamName.ShouldBe("value");
@@ -165,7 +165,7 @@ public sealed class ResultEdgeCaseTests
         var result = ResultEdgeCaseTestsHelpers.CreateMalformedGenericResult(ResultStatus.Ok, value: null, error: null);
 
         // Act
-        var exception = ((Func<object?>)(() => result.TryGetValue(out _))).ShouldThrow<InvalidOperationException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Func<object?>)(() => result.TryGetValue(out _)));
 
         // Assert
         exception.Message.ShouldBe("Successful results must contain a value.");
@@ -178,7 +178,7 @@ public sealed class ResultEdgeCaseTests
         var result = ResultEdgeCaseTestsHelpers.CreateMalformedNonGenericResult(ResultStatus.Error, error: null);
 
         // Act
-        var exception = ((Func<object?>)(() => result.TryGetError(out _))).ShouldThrow<InvalidOperationException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Func<object?>)(() => result.TryGetError(out _)));
 
         // Assert
         exception.Message.ShouldBe("Failed results must contain error details.");
@@ -192,7 +192,7 @@ public sealed class ResultEdgeCaseTests
         var error = new ResultError("Validation failed", ResultErrorCodes.Invalid);
 
         // Act
-        var exception = ((Func<object?>)(() => result.Ensure(static _ => false, error))).ShouldThrow<ArgumentException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<object?>)(() => result.Ensure(static _ => false, error)));
 
         // Assert
         exception.Message.ShouldContain("Validation errors must include field details.", StringComparison.Ordinal);
@@ -207,7 +207,7 @@ public sealed class ResultEdgeCaseTests
         var error = new ResultError("Validation failed", ResultErrorCodes.Invalid);
 
         // Act
-        var exception = await ((Func<Task>)(() => result.Ensure(static _ => Task.FromResult(false), error))).ShouldThrow<ArgumentException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<Task>)(() => result.Ensure(static _ => Task.FromResult(false), error)));
 
         // Assert
         exception.Message.ShouldContain("Validation errors must include field details.", StringComparison.Ordinal);
@@ -222,7 +222,7 @@ public sealed class ResultEdgeCaseTests
         var error = new ResultError("Validation failed", ResultErrorCodes.Invalid);
 
         // Act
-        var exception = await ((Func<Task>)(() => result.Ensure(static _ => ValueTask.FromResult(false), error).AsTask())).ShouldThrow<ArgumentException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<Task>)(() => result.Ensure(static _ => ValueTask.FromResult(false), error).AsTask()));
 
         // Assert
         exception.Message.ShouldContain("Validation errors must include field details.", StringComparison.Ordinal);

@@ -12,10 +12,10 @@ public class CsvRowParsingTests
         var result = CsvRow.Parse(csvLine);
 
         // Assert
-        _ = (result).ShouldNotBeNull();
-        (result[0]).ShouldBe("John");
-        (result[1]).ShouldBe("Doe");
-        (result[2]).ShouldBe("john.doe@example.com");
+        _ = result.ShouldNotBeNull();
+        result[0].ShouldBe("John");
+        result[1].ShouldBe("Doe");
+        result[2].ShouldBe("john.doe@example.com");
     }
 
     [Fact]
@@ -28,9 +28,9 @@ public class CsvRowParsingTests
         var result = CsvRow.Parse(csvLine);
 
         // Assert
-        (result[0]).ShouldBe("John");
-        (result[1]).ShouldBe("Doe");
-        (result[2]).ShouldBe("john.doe@example.com");
+        result[0].ShouldBe("John");
+        result[1].ShouldBe("Doe");
+        result[2].ShouldBe("john.doe@example.com");
     }
 
     [Fact]
@@ -40,6 +40,6 @@ public class CsvRowParsingTests
         var row = CsvRow.Parse("John,Doe,john.doe@example.com");
 
         // Act & Assert
-        ((Func<object?>)(() => row[99])).ShouldThrow<IndexOutOfRangeException>();
+        ShouldAssertionExtensions.ShouldThrow<IndexOutOfRangeException>((Func<object?>)(() => row[99]));
     }
 }

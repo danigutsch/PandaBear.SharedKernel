@@ -34,7 +34,7 @@ public sealed class ResultCoreTests
         error.Code.ShouldBe(ResultErrorCodes.Invalid);
         error.Detail.ShouldBe("Validation failed");
         error.ValidationErrors.ShouldNotBeNull();
-        (error.ValidationErrors["name"]).ShouldBe(["Name is required"]);
+        error.ValidationErrors["name"].ShouldBe(["Name is required"]);
     }
 
     [Fact]
@@ -56,8 +56,8 @@ public sealed class ResultCoreTests
         error.ShouldNotBeNull();
         error.Code.ShouldBe(ResultErrorCodes.Invalid);
         error.ValidationErrors.ShouldNotBeNull();
-        (error.ValidationErrors["name"]).ShouldBe(["Name is required"]);
-        (error.ValidationErrors["email"]).ShouldBe(["Email is invalid"]);
+        error.ValidationErrors["name"].ShouldBe(["Name is required"]);
+        error.ValidationErrors["email"].ShouldBe(["Email is invalid"]);
     }
 
     [Fact]
@@ -190,7 +190,7 @@ public sealed class ResultCoreTests
         var validationErrors = new Dictionary<string, string[]>();
 
         // Act
-        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentOutOfRangeException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentOutOfRangeException>((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors)));
 
         // Assert
         exception.ParamName.ShouldBe("validationErrors");
@@ -206,7 +206,7 @@ public sealed class ResultCoreTests
         };
 
         // Act
-        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors)));
 
         // Assert
         exception.ParamName.ShouldBe("field");
@@ -222,7 +222,7 @@ public sealed class ResultCoreTests
         };
 
         // Act
-        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentOutOfRangeException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentOutOfRangeException>((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors)));
 
         // Assert
         exception.ParamName.ShouldBe("validationErrors");
@@ -238,7 +238,7 @@ public sealed class ResultCoreTests
         };
 
         // Act
-        var exception = ((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors))).ShouldThrow<ArgumentNullException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<object?>)(() => Result.Invalid("Validation failed", validationErrors)));
 
         // Assert
         exception.ParamName.ShouldBe("messages");

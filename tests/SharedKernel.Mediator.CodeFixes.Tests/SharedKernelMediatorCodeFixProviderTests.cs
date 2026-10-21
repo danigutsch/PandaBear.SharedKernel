@@ -37,7 +37,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     private const string MissingArgumentDiagnosticId = "CS7036";
@@ -59,15 +59,16 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
         var diagnosticsAfterFix = await workspace.GetGeneratorDiagnostics();
 
         // Assert
-        (generatedHandlerSource).ShouldContain("public sealed class MissingTourHandler", StringComparison.Ordinal);
-        (generatedHandlerSource).ShouldContain("IQueryHandler<global::Demo.MissingTour, string>", StringComparison.Ordinal);
-        (diagnosticsAfterFix).ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.MissingHandler);
+        generatedHandlerSource.ShouldContain("public sealed class MissingTourHandler", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("IQueryHandler<global::Demo.MissingTour, string>", StringComparison.Ordinal);
+        diagnosticsAfterFix.ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.MissingHandler);
     }
 
     [Fact]
@@ -82,7 +83,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             .ToArray();
 
         // Assert
-        (diagnosticIds).ShouldBe([
+        diagnosticIds.ShouldBe([
                 InvalidRequestArgumentDiagnosticId,
                 MissingArgumentDiagnosticId,
                 MediatorDiagnosticIds.MissingHandler,
@@ -108,7 +109,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             .ToArray();
 
         // Assert
-        (supportedDiagnosticIds).ShouldBe([
+        supportedDiagnosticIds.ShouldBe([
                 InvalidRequestArgumentDiagnosticId,
                 MissingArgumentDiagnosticId,
                 MediatorDiagnosticIds.MissingHandler,
@@ -116,16 +117,16 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
                 MediatorDiagnosticIds.MissingEnumeratorCancellation,
                 MediatorDiagnosticIds.MissingModuleMarker,
             ]);
-        (supportedDiagnosticIds).ShouldNotContain(MediatorDiagnosticIds.InvalidHandlerSignature);
-        (supportedDiagnosticIds).ShouldNotContain(MediatorDiagnosticIds.MissingCancellationForwarding);
-        (supportedDiagnosticIds).ShouldNotContain(MediatorDiagnosticIds.InaccessibleRegistrationType);
-        (supportedDiagnosticIds).ShouldNotContain(MediatorDiagnosticIds.NotificationHandlersRequireExplicitOrder);
-        (supportedDiagnosticIds).ShouldNotContain(MediatorDiagnosticIds.DuplicateNotificationHandlerOrder);
-        (supportedDiagnosticIds).ShouldNotContain(MediatorDiagnosticIds.InvalidPipelineGenericArity);
-        (supportedDiagnosticIds).ShouldNotContain(MediatorDiagnosticIds.DuplicatePipelineOrder);
-        (supportedDiagnosticIds).ShouldNotContain(MediatorDiagnosticIds.NeverAppliesPipeline);
-        (supportedDiagnosticIds).ShouldNotContain(MediatorDiagnosticIds.UnboundPipelineConstraints);
-        (supportedDiagnosticIds).ShouldNotContain(MediatorDiagnosticIds.HandlerShouldNotCallSender);
+        supportedDiagnosticIds.ShouldNotContain(MediatorDiagnosticIds.InvalidHandlerSignature);
+        supportedDiagnosticIds.ShouldNotContain(MediatorDiagnosticIds.MissingCancellationForwarding);
+        supportedDiagnosticIds.ShouldNotContain(MediatorDiagnosticIds.InaccessibleRegistrationType);
+        supportedDiagnosticIds.ShouldNotContain(MediatorDiagnosticIds.NotificationHandlersRequireExplicitOrder);
+        supportedDiagnosticIds.ShouldNotContain(MediatorDiagnosticIds.DuplicateNotificationHandlerOrder);
+        supportedDiagnosticIds.ShouldNotContain(MediatorDiagnosticIds.InvalidPipelineGenericArity);
+        supportedDiagnosticIds.ShouldNotContain(MediatorDiagnosticIds.DuplicatePipelineOrder);
+        supportedDiagnosticIds.ShouldNotContain(MediatorDiagnosticIds.NeverAppliesPipeline);
+        supportedDiagnosticIds.ShouldNotContain(MediatorDiagnosticIds.UnboundPipelineConstraints);
+        supportedDiagnosticIds.ShouldNotContain(MediatorDiagnosticIds.HandlerShouldNotCallSender);
     }
 
     [Fact]
@@ -135,8 +136,8 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var fixAllProvider = new SharedKernelMediatorCodeFixProvider().GetFixAllProvider();
 
         // Assert
-        var exception = ((Func<object?>)(() => fixAllProvider.GetSupportedFixAllDiagnosticIds(null!))).ShouldThrow<ArgumentNullException>();
-        (exception.ParamName).ShouldBe("originalCodeFixProvider");
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<object?>)(() => fixAllProvider.GetSupportedFixAllDiagnosticIds(null!)));
+        exception.ParamName.ShouldBe("originalCodeFixProvider");
     }
 
     [Fact]
@@ -155,7 +156,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             .ToArray();
 
         // Assert
-        (supportedScopes).ShouldBe(expectedScopes);
+        supportedScopes.ShouldBe(expectedScopes);
     }
 
     [Fact]
@@ -185,12 +186,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "MissingTour(42)");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -228,12 +230,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "MissingTour(42)");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IQuery<string>"), StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IQuery<string>"), StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IQuery<string>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IQuery<string>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -271,12 +274,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "CreateTour(\"Rome\")");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("ICommand<int>"), StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("ICommand<int>"), StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public sealed record CreateTour(string Name) : global::PandaBear.Mediator.ICommand<int>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record CreateTour(string Name) : global::PandaBear.Mediator.ICommand<int>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -314,12 +318,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "ArchiveTour(42)");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("ICommand"), StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("ICommand"), StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public sealed record ArchiveTour(int Id) : global::PandaBear.Mediator.ICommand;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record ArchiveTour(int Id) : global::PandaBear.Mediator.ICommand;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -352,7 +357,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -390,7 +395,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -410,13 +415,14 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
 
         // Assert
-        (generatedHandlerSource).ShouldContain("namespace Demo;", StringComparison.Ordinal);
-        (generatedHandlerSource).ShouldContain("public sealed class MissingTourHandler", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("namespace Demo;", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public sealed class MissingTourHandler", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -438,13 +444,14 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
 
         // Assert
-        (generatedHandlerSource).ShouldContain("namespace Demo;", StringComparison.Ordinal);
-        (generatedHandlerSource).ShouldContain("public sealed class MissingTourHandler", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("namespace Demo;", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public sealed class MissingTourHandler", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -463,13 +470,14 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var generatedHandlerSource = await workspace.GetAdditionalDocumentText("MissingTourHandler.cs");
 
         // Assert
-        (generatedHandlerSource).ShouldContain("IQueryHandler<global::Demo.MissingTour, string?>", StringComparison.Ordinal);
-        (generatedHandlerSource).ShouldContain("ValueTask<string?>", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("IQueryHandler<global::Demo.MissingTour, string?>", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("ValueTask<string?>", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -488,13 +496,14 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var generatedHandlerSource = await workspace.GetAdditionalDocumentText("LookupTourHandler.cs");
 
         // Assert
-        (generatedHandlerSource).ShouldContain("public sealed class LookupTourHandler : global::PandaBear.Mediator.IRequestHandler<global::Demo.LookupTour, string>", StringComparison.Ordinal);
-        (generatedHandlerSource).ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public sealed class LookupTourHandler : global::PandaBear.Mediator.IRequestHandler<global::Demo.LookupTour, string>", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -513,13 +522,14 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var generatedHandlerSource = await workspace.GetAdditionalDocumentText("CreateTourHandler.cs");
 
         // Assert
-        (generatedHandlerSource).ShouldContain("public sealed class CreateTourHandler : global::PandaBear.Mediator.ICommandHandler<global::Demo.CreateTour, int>", StringComparison.Ordinal);
-        (generatedHandlerSource).ShouldContain("public global::System.Threading.Tasks.ValueTask<int> Handle(", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public sealed class CreateTourHandler : global::PandaBear.Mediator.ICommandHandler<global::Demo.CreateTour, int>", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public global::System.Threading.Tasks.ValueTask<int> Handle(", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -538,13 +548,14 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.MissingHandler);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var generatedHandlerSource = await workspace.GetAdditionalDocumentText("ArchiveTourHandler.cs");
 
         // Assert
-        (generatedHandlerSource).ShouldContain("public sealed class ArchiveTourHandler : global::PandaBear.Mediator.ICommandHandler<global::Demo.ArchiveTour>", StringComparison.Ordinal);
-        (generatedHandlerSource).ShouldContain("public global::System.Threading.Tasks.ValueTask<global::PandaBear.Mediator.Unit> Handle(", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public sealed class ArchiveTourHandler : global::PandaBear.Mediator.ICommandHandler<global::Demo.ArchiveTour>", StringComparison.Ordinal);
+        generatedHandlerSource.ShouldContain("public global::System.Threading.Tasks.ValueTask<global::PandaBear.Mediator.Unit> Handle(", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -577,7 +588,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -605,13 +616,14 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        (updatedDocumentText).ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -641,13 +653,14 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        (updatedDocumentText).ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -674,13 +687,14 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public global::System.Threading.Tasks.ValueTask<string?> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        (updatedDocumentText).ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string?>)this).Handle(request, ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<string?> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string?>)this).Handle(request, ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -711,12 +725,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "MissingTour(42)");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -749,12 +764,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "MissingTour(42)");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string>"), StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -784,12 +800,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "MissingTour(42)");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string?>"), StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddRequestInterface("IRequest<string?>"), StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string?>;", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public sealed record MissingTour(int Id) : global::PandaBear.Mediator.IRequest<string?>;", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -816,13 +833,14 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        (updatedDocumentText).ShouldContain("return ((global::PandaBear.Mediator.IRequestHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.IRequestHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -849,13 +867,14 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public global::System.Threading.Tasks.ValueTask<global::PandaBear.Mediator.Unit> Handle(global::Demo.ArchiveTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        (updatedDocumentText).ShouldContain("return ((global::PandaBear.Mediator.ICommandHandler<global::Demo.ArchiveTour>)this).Handle(request, ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<global::PandaBear.Mediator.Unit> Handle(global::Demo.ArchiveTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.ICommandHandler<global::Demo.ArchiveTour>)this).Handle(request, ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -893,7 +912,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -920,16 +939,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var diagnostic = await workspace.GetSingleGeneratorDiagnostic(MediatorDiagnosticIds.InvalidHandlerSignature);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
         var diagnosticsAfterFix = await workspace.GetGeneratorDiagnostics();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
-        (updatedDocumentText).ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
-        (diagnosticsAfterFix).ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.InvalidHandlerSignature);
-        (diagnosticsAfterFix).ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.MissingHandler);
+        updatedDocumentText.ShouldContain("public global::System.Threading.Tasks.ValueTask<string> Handle(global::Demo.LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return ((global::PandaBear.Mediator.IQueryHandler<global::Demo.LookupTour, string>)this).Handle(request, ct);", StringComparison.Ordinal);
+        diagnosticsAfterFix.ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.InvalidHandlerSignature);
+        diagnosticsAfterFix.ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.MissingHandler);
     }
 
     [Fact]
@@ -971,16 +991,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             ImmutableDictionary<string, string?>.Empty.Add("PrimaryAssemblyName", "SharedKernel.Mediator.CodeFixes.Tests.Primary"));
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.MakeTypePublic, StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.MakeTypePublic, StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedModuleSource = await workspace.GetDocumentText("Module.cs");
         var diagnosticsAfterFix = await workspace.GetGeneratorDiagnostics();
         var generatedSource = await workspace.GetGeneratedSource("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
-        (updatedModuleSource).ShouldContain("public sealed class SearchToursHandler", StringComparison.Ordinal);
-        (diagnosticsAfterFix).ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
-        (generatedSource).ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
+        updatedModuleSource.ShouldContain("public sealed class SearchToursHandler", StringComparison.Ordinal);
+        diagnosticsAfterFix.ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
+        generatedSource.ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1015,12 +1036,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "Handle(LookupTour request)");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddCancellationTokenParameter, StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddCancellationTokenParameter, StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public ValueTask<string> Handle(LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public ValueTask<string> Handle(LookupTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1051,12 +1073,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "sender.Send(new SearchTour(request.Code))");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("return await sender.Send(new SearchTour(request.Code), ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return await sender.Send(new SearchTour(request.Code), ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1087,12 +1110,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "CancellationToken ct");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("[global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("[global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1126,12 +1150,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "CancellationToken ct");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("[global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("[global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken ct", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1162,12 +1187,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "CancellationToken.None");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("return await sender.Send(new SearchTour(request.Code), ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return await sender.Send(new SearchTour(request.Code), ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1209,7 +1235,8 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             ImmutableDictionary<string, string?>.Empty.Add("PrimaryAssemblyName", "SharedKernel.Mediator.CodeFixes.Tests.Primary"));
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => candidate.Title.Contains("InternalsVisibleTo", StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => candidate.Title.Contains("InternalsVisibleTo", StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var friendAssemblySource = await workspace.GetDocumentText(
             "MediatorInternalsVisibleTo.SharedKernel.Mediator.CodeFixes.Tests.Primary.cs");
@@ -1217,9 +1244,9 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var generatedSource = await workspace.GetGeneratedSource("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
-        (friendAssemblySource).ShouldContain("[assembly: global::System.Runtime.CompilerServices.InternalsVisibleTo(\"SharedKernel.Mediator.CodeFixes.Tests.Primary\")]", StringComparison.Ordinal);
-        (diagnosticsAfterFix).ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
-        (generatedSource).ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
+        friendAssemblySource.ShouldContain("[assembly: global::System.Runtime.CompilerServices.InternalsVisibleTo(\"SharedKernel.Mediator.CodeFixes.Tests.Primary\")]", StringComparison.Ordinal);
+        diagnosticsAfterFix.ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.InaccessibleRegistrationType);
+        generatedSource.ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1258,16 +1285,17 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "SearchTours");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddMediatorModuleAttribute, StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddMediatorModuleAttribute, StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var markerSource = await workspace.GetDocumentText("MediatorModuleAssemblyInfo.cs");
         var diagnosticsAfterFix = await workspace.GetGeneratorDiagnostics();
         var generatedSource = await workspace.GetGeneratedSource("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
-        (markerSource).ShouldContain("[assembly: global::PandaBear.Mediator.MediatorModuleAttribute]", StringComparison.Ordinal);
-        (diagnosticsAfterFix).ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.MissingModuleMarker);
-        (generatedSource).ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
+        markerSource.ShouldContain("[assembly: global::PandaBear.Mediator.MediatorModuleAttribute]", StringComparison.Ordinal);
+        diagnosticsAfterFix.ShouldNotContain(static candidate => candidate.Id == MediatorDiagnosticIds.MissingModuleMarker);
+        generatedSource.ShouldContain("services.AddScoped<global::ModuleA.SearchToursHandler>();", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1298,12 +1326,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "sender.Send(new SearchTour(request.Code))");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("cancellationToken"), StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("cancellationToken"), StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("return await sender.Send(new SearchTour(request.Code), cancellationToken);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("return await sender.Send(new SearchTour(request.Code), cancellationToken);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1342,7 +1371,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -1373,12 +1402,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "CancellationToken cancellationToken");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddEnumeratorCancellation, StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("[global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("[global::System.Runtime.CompilerServices.EnumeratorCancellation] CancellationToken cancellationToken", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1413,12 +1443,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "Handle(ArchiveTour request)");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddCancellationTokenParameter, StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.AddCancellationTokenParameter, StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("public ValueTask<Unit> Handle(ArchiveTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("public ValueTask<Unit> Handle(ArchiveTour request, global::System.Threading.CancellationToken ct)", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1456,7 +1487,7 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -1488,12 +1519,13 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
             "publisher.Publish(new TourArchived(request.Code))");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem(static candidate => string.Equals(candidate.Title, CodeFixTitles.ForwardCancellationToken("ct"), StringComparison.Ordinal));
         await workspace.ApplyCodeAction(codeAction);
         var updatedDocumentText = await workspace.GetDocumentText();
 
         // Assert
-        (updatedDocumentText).ShouldContain("await publisher.Publish(new TourArchived(request.Code), ct);", StringComparison.Ordinal);
+        updatedDocumentText.ShouldContain("await publisher.Publish(new TourArchived(request.Code), ct);", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1526,6 +1558,6 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 }

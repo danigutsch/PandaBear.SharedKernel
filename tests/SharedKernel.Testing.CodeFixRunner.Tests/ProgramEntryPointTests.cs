@@ -18,9 +18,9 @@ public sealed class ProgramEntryPointTests
 
         var exitCode = await ProgramEntryPoint.Run(["--diagnostic", "SKTEST006", projectPath], output, error);
 
-        (exitCode).ShouldBe(0);
-        (output.ToString()).ShouldContain("Fixed 1 SKTEST006 diagnostic(s).", StringComparison.Ordinal);
-        (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
+        exitCode.ShouldBe(0);
+        output.ToString().ShouldContain("Fixed 1 SKTEST006 diagnostic(s).", StringComparison.Ordinal);
+        string.IsNullOrWhiteSpace(error.ToString()).ShouldBeTrue(error.ToString());
     }
 
     [Fact]
@@ -31,8 +31,8 @@ public sealed class ProgramEntryPointTests
 
         var exitCode = await ProgramEntryPoint.Run([], output, error);
 
-        (exitCode).ShouldBe(2);
-        (error.ToString()).ShouldContain(CodeFixRunnerOptions.Usage, StringComparison.Ordinal);
-        (string.IsNullOrWhiteSpace(output.ToString())).ShouldBeTrue(output.ToString());
+        exitCode.ShouldBe(2);
+        error.ToString().ShouldContain(CodeFixRunnerOptions.Usage, StringComparison.Ordinal);
+        string.IsNullOrWhiteSpace(output.ToString()).ShouldBeTrue(output.ToString());
     }
 }

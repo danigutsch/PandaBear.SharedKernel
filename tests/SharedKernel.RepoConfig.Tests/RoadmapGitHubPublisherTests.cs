@@ -25,10 +25,10 @@ public sealed class RoadmapGitHubPublisherTests
 
         // Act
         var publication = await publisher.Publish(plan, changes, TestContext.Current.CancellationToken);
-        var treeRequest = handler.Requests.Single(request => request.PathAndQuery.EndsWith("/git/trees", StringComparison.Ordinal));
-        var commitRequest = handler.Requests.Single(request => request.PathAndQuery.EndsWith("/git/commits", StringComparison.Ordinal));
-        var refRequest = handler.Requests.Single(request => request.PathAndQuery.EndsWith("/git/refs", StringComparison.Ordinal));
-        var pullRequest = handler.Requests.Single(request => request.PathAndQuery.EndsWith("/pulls", StringComparison.Ordinal));
+        var treeRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/git/trees", StringComparison.Ordinal));
+        var commitRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/git/commits", StringComparison.Ordinal));
+        var refRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/git/refs", StringComparison.Ordinal));
+        var pullRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/pulls", StringComparison.Ordinal));
         using var treeBody = JsonDocument.Parse(treeRequest.Body.ShouldNotBeNull());
         using var commitBody = JsonDocument.Parse(commitRequest.Body.ShouldNotBeNull());
         using var refBody = JsonDocument.Parse(refRequest.Body.ShouldNotBeNull());
@@ -108,7 +108,7 @@ public sealed class RoadmapGitHubPublisherTests
             RoadmapAutomationTestPlan.Create(),
             changes,
             TestContext.Current.CancellationToken);
-        var treeRequest = handler.Requests.Single(request => request.PathAndQuery.EndsWith("/git/trees", StringComparison.Ordinal));
+        var treeRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/git/trees", StringComparison.Ordinal));
         using var treeBody = JsonDocument.Parse(treeRequest.Body.ShouldNotBeNull());
         var entries = treeBody.RootElement.GetProperty("tree");
 

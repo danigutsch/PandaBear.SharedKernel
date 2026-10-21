@@ -40,7 +40,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         // Assert
         fixableDiagnosticIds.ShouldNotContain(diagnosticId);
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -67,7 +67,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -94,7 +95,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Some_Title()");
 
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -127,7 +129,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -153,7 +155,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -177,7 +179,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -199,11 +201,12 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "UsesHTTP2TimeoutFallback()");
 
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
-        updatedText.ShouldContain("Uses_http2_timeout_fallback()", StringComparison.Ordinal);
+        updatedText.ShouldContain("Uses_HTTP2_timeout_fallback()", StringComparison.Ordinal);
         updatedText.ShouldNotContain("UsesHTTP2TimeoutFallback", StringComparison.Ordinal);
     }
 
@@ -212,7 +215,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     {
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        (provider.GetFixAllProvider().GetSupportedFixAllScopes()).ShouldBeEmpty();
+        provider.GetFixAllProvider().GetSupportedFixAllScopes().ShouldBeEmpty();
     }
 
     [Fact]
@@ -247,7 +250,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var diagnostic = await workspace.CreateDocumentDiagnostic(WarningSuppressionDiagnosticId, "#pragma warning disable CA1822");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -283,7 +287,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             properties);
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -317,7 +322,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -386,7 +391,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             "private static int CreateTourId()");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var testDocumentText = await workspace.GetDocumentText();
         var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
@@ -432,7 +438,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             "static int CreateTourId()");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var testDocumentText = await workspace.GetDocumentText();
         var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
@@ -472,7 +479,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             "private static int @switch()");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var testDocumentText = await workspace.GetDocumentText();
         var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
@@ -514,7 +522,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             "private static int CreateTourId()");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
 
@@ -554,7 +563,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             "private static int CreateTourId()");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var helperDocumentText = await workspace.GetDocumentText("TourLoaderTestsHelpers.cs");
         var normalizedHelperDocumentText = helperDocumentText.ReplaceLineEndings("\n");
@@ -917,7 +927,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         diagnostic.Properties["Replacement"].ShouldBe("global::PandaBear.Testing.TestTraitNames.CategoryName");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -1002,7 +1013,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             .ShouldHaveSingleItem(candidate => string.Equals(sourceText.Substring(candidate.Location.SourceSpan.Start, candidate.Location.SourceSpan.Length), assertion, StringComparison.Ordinal));
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -1062,7 +1074,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -1089,7 +1101,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
         // Assert
-        (codeActions).ShouldBeEmpty();
+        codeActions.ShouldBeEmpty();
     }
 
     [Fact]
@@ -1112,7 +1124,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             "SerialDatabaseCollection");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
@@ -1142,7 +1155,8 @@ public sealed class SharedKernelTestingCodeFixProviderTests
             "SerialDatabaseCollection");
 
         // Act
-        var codeAction = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 

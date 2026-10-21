@@ -48,7 +48,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         var buildOutput = await workspace.Build();
 
         // Assert
-        (buildOutput).ShouldContain("Build succeeded.", StringComparison.Ordinal);
+        buildOutput.ShouldContain("Build succeeded.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -65,12 +65,12 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         var dependencyInjectionFiles = workspace.GetGeneratedFiles("SharedKernel.Mediator.Generated.DependencyInjection.g.cs");
 
         // Assert
-        (buildOutput).ShouldContain("Build succeeded.", StringComparison.Ordinal);
-        (runOutput).ShouldContain("result=VT-42", StringComparison.Ordinal);
+        buildOutput.ShouldContain("Build succeeded.", StringComparison.Ordinal);
+        runOutput.ShouldContain("result=VT-42", StringComparison.Ordinal);
         runOutput.ShouldContain("handler-pipeline-same-within-scope=true", StringComparison.Ordinal);
         runOutput.ShouldContain("handler-pipeline-different-across-scopes=true", StringComparison.Ordinal);
-        (appMediatorFiles).ShouldNotBeEmpty();
-        (dependencyInjectionFiles).ShouldNotBeEmpty();
+        appMediatorFiles.ShouldNotBeEmpty();
+        dependencyInjectionFiles.ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -121,9 +121,9 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         var publishDirectoryExists = Directory.Exists(publishDirectory);
 
         // Assert
-        (publishOutput).ShouldNotBeEmpty();
-        (publishDirectoryExists).ShouldBeTrue();
-        (Directory.GetFiles(publishDirectory, "*", SearchOption.TopDirectoryOnly)).ShouldNotBeEmpty();
+        publishOutput.ShouldNotBeEmpty();
+        publishDirectoryExists.ShouldBeTrue();
+        Directory.GetFiles(publishDirectory, "*", SearchOption.TopDirectoryOnly).ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -154,19 +154,24 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         var publishedExecutableExists = File.Exists(publishedExecutable);
 
         // Assert
-        (publishOutput).ShouldNotBeEmpty();
-        (publishDirectoryExists).ShouldBeTrue();
-        (publishedExecutableExists).ShouldBeTrue();
-        (trimWarningCount).ShouldBe(0);
-        (nativeBinarySize > 0).ShouldBeTrue("Native binary size must be greater than zero.");
-        (coldStartMeasurement.Duration > TimeSpan.Zero).ShouldBeTrue("Cold start time must be measurable.");
-        (runtimeMetrics.FirstDispatch > TimeSpan.Zero).ShouldBeTrue("First dispatch time must be measurable.");
-        (runtimeMetrics.SteadyStateDispatch > TimeSpan.Zero).ShouldBeTrue("Steady-state dispatch time must be measurable.");
-        (generatedSourceSize > 0).ShouldBeTrue("Generated source size must be greater than zero.");
-        (coldStartMeasurement.Output).ShouldContain("pipeline-before=LookupTour", StringComparison.Ordinal);
-        (coldStartMeasurement.Output).ShouldContain("pipeline-after=LookupTour", StringComparison.Ordinal);
-        (coldStartMeasurement.Output).ShouldContain("notification-handled=VT-42", StringComparison.Ordinal);
-        (coldStartMeasurement.Output).ShouldContain("stream-count=3", StringComparison.Ordinal);
+        publishOutput.ShouldNotBeEmpty();
+        publishDirectoryExists.ShouldBeTrue();
+        publishedExecutableExists.ShouldBeTrue();
+        trimWarningCount.ShouldBe(0);
+        var actualValue = nativeBinarySize > 0;
+        actualValue.ShouldBeTrue("Native binary size must be greater than zero.");
+        var actualValue2 = coldStartMeasurement.Duration > TimeSpan.Zero;
+        actualValue2.ShouldBeTrue("Cold start time must be measurable.");
+        var actualValue3 = runtimeMetrics.FirstDispatch > TimeSpan.Zero;
+        actualValue3.ShouldBeTrue("First dispatch time must be measurable.");
+        var actualValue4 = runtimeMetrics.SteadyStateDispatch > TimeSpan.Zero;
+        actualValue4.ShouldBeTrue("Steady-state dispatch time must be measurable.");
+        var actualValue5 = generatedSourceSize > 0;
+        actualValue5.ShouldBeTrue("Generated source size must be greater than zero.");
+        coldStartMeasurement.Output.ShouldContain("pipeline-before=LookupTour", StringComparison.Ordinal);
+        coldStartMeasurement.Output.ShouldContain("pipeline-after=LookupTour", StringComparison.Ordinal);
+        coldStartMeasurement.Output.ShouldContain("notification-handled=VT-42", StringComparison.Ordinal);
+        coldStartMeasurement.Output.ShouldContain("stream-count=3", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -211,7 +216,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         var buildOutput = await workspace.Build();
 
         // Assert
-        (buildOutput).ShouldContain("SKMED006", StringComparison.Ordinal);
+        buildOutput.ShouldContain("SKMED006", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -254,15 +259,15 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
             """));
 
         var buildOutputBefore = await workspace.Build();
-        (buildOutputBefore).ShouldContain("SKMED006", StringComparison.Ordinal);
+        buildOutputBefore.ShouldContain("SKMED006", StringComparison.Ordinal);
 
         // Act
         await workspace.Format("SKMED006");
         var buildOutputAfter = await workspace.Build();
 
         // Assert
-        (buildOutputAfter).ShouldNotContain("SKMED006", StringComparison.Ordinal);
-        (buildOutputAfter).ShouldContain("Build succeeded.", StringComparison.Ordinal);
+        buildOutputAfter.ShouldNotContain("SKMED006", StringComparison.Ordinal);
+        buildOutputAfter.ShouldContain("Build succeeded.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -304,7 +309,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         var buildOutput = await workspace.Build();
 
         // Assert
-        (buildOutput).ShouldContain("Build succeeded.", StringComparison.Ordinal);
+        buildOutput.ShouldContain("Build succeeded.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -395,13 +400,13 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         var consumerBuildOutput = await workspace.Build();
 
         // Assert
-        (consumerBuildOutput).ShouldContain("Build succeeded.", StringComparison.Ordinal);
+        consumerBuildOutput.ShouldContain("Build succeeded.", StringComparison.Ordinal);
 
         var libraryGeneratedFiles = workspace.GetAdditionalProjectGeneratedFiles(libraryName, "SharedKernel.Mediator.Generated.AppMediator.g.cs");
         var consumerGeneratedFiles = workspace.GetGeneratedFiles("SharedKernel.Mediator.Generated.AppMediator.g.cs");
 
-        (libraryGeneratedFiles).ShouldNotBeEmpty();
-        (consumerGeneratedFiles).ShouldBeEmpty();
+        libraryGeneratedFiles.ShouldNotBeEmpty();
+        consumerGeneratedFiles.ShouldBeEmpty();
     }
 
     [Fact]
@@ -505,9 +510,9 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         var runOutput = await workspace.Run();
 
         // Assert
-        (buildOutput).ShouldContain("Build succeeded.", StringComparison.Ordinal);
-        (runOutput).ShouldContain("lookup=VT-42", StringComparison.Ordinal);
-        (runOutput).ShouldContain("getTour=Tour-7", StringComparison.Ordinal);
+        buildOutput.ShouldContain("Build succeeded.", StringComparison.Ordinal);
+        runOutput.ShouldContain("lookup=VT-42", StringComparison.Ordinal);
+        runOutput.ShouldContain("getTour=Tour-7", StringComparison.Ordinal);
     }
 
 }

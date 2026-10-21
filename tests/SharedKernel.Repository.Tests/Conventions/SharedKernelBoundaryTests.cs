@@ -128,7 +128,8 @@ public sealed class SharedKernelBoundaryTests
         sharedHostingText.ShouldContain("AddOpenTelemetryCollectorGateway(", StringComparison.Ordinal);
         sharedHostingText.ShouldContain("ConfigureAppForwarding(collector)", StringComparison.Ordinal);
         sharedHostingText.ShouldContain("ResolveCollectorEndpointName", StringComparison.Ordinal);
-        (sharedHostingText.Split("ExcludeFromManifest()").Length - 1).ShouldBe(5);
+        var actualValue = sharedHostingText.Split("ExcludeFromManifest()").Length - 1;
+        actualValue.ShouldBe(5);
         sharedHostingText.ShouldNotContain("AddContainer(", StringComparison.Ordinal);
         sharedHostingText.ShouldContain("AddGrafana(resourceNames.Grafana", StringComparison.Ordinal);
         sharedHostingText.ShouldContain("AddLoki(resourceNames.Loki", StringComparison.Ordinal);
@@ -362,7 +363,8 @@ public sealed class SharedKernelBoundaryTests
             .SelectMany(FindProductSpecificSharedKernelTestingCoupling)
             .ToArray();
 
-        (offendingLines.Length != 0).ShouldBeFalse(
+        var areDifferent = offendingLines.Length != 0;
+        areDifferent.ShouldBeFalse(
             $"Expected PandaBear.Testing to stay neutral and leave product or area-specific trait values local, but found:{Environment.NewLine}{string.Join(Environment.NewLine, offendingLines)}");
     }
 

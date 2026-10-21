@@ -38,9 +38,9 @@ public sealed class CloudEventMapperTests
         var envelope = CloudEventMapper.ToCloudEvent(integrationEvent, metadata);
 
         // Assert
-        (envelope.Subject).ShouldBeNull();
-        (envelope.DataContentType).ShouldBeNull();
-        (envelope.DataSchema).ShouldBeNull();
+        envelope.Subject.ShouldBeNull();
+        envelope.DataContentType.ShouldBeNull();
+        envelope.DataSchema.ShouldBeNull();
     }
 
     [Fact]

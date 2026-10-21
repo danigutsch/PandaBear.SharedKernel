@@ -8,10 +8,12 @@ public sealed class BuildingBlockTests
         var first = new TestValueObject("Lisbon", 3);
         var second = new TestValueObject("Lisbon", 3);
 
-        (second).ShouldBe(first);
-        (first == second).ShouldBeTrue();
-        (first != second).ShouldBeFalse();
-        (second.GetHashCode()).ShouldBe(first.GetHashCode());
+        second.ShouldBe(first);
+        var areEqual = first == second;
+        areEqual.ShouldBeTrue();
+        var areDifferent = first != second;
+        areDifferent.ShouldBeFalse();
+        second.GetHashCode().ShouldBe(first.GetHashCode());
     }
 
     [Fact]
@@ -19,8 +21,8 @@ public sealed class BuildingBlockTests
     {
         var valueObject = new TestValueObject("Lisbon", 3);
 
-        (valueObject.Equals(valueObject)).ShouldBeTrue();
-        (valueObject.Equals(new OtherTestValueObject("Lisbon", 3))).ShouldBeFalse();
+        valueObject.Equals(valueObject).ShouldBeTrue();
+        valueObject.Equals(new OtherTestValueObject("Lisbon", 3)).ShouldBeFalse();
     }
 
     [Fact]
@@ -29,7 +31,7 @@ public sealed class BuildingBlockTests
         var first = new TestValueObject("Lisbon", 3);
         var second = new TestValueObject("Porto", 3);
 
-        (second).ShouldNotBe(first);
+        second.ShouldNotBe(first);
     }
 
     [Fact]
@@ -43,8 +45,8 @@ public sealed class BuildingBlockTests
         var areEqual = first.Equals(second);
 
         // Assert
-        (areEqual).ShouldBeFalse();
-        (second).ShouldNotBe(first);
+        areEqual.ShouldBeFalse();
+        second.ShouldNotBe(first);
     }
 
     [Fact]
@@ -60,8 +62,8 @@ public sealed class BuildingBlockTests
         var areNotEqual = left != right;
 
         // Assert
-        (areEqual).ShouldBeTrue();
-        (areNotEqual).ShouldBeFalse();
+        areEqual.ShouldBeTrue();
+        areNotEqual.ShouldBeFalse();
     }
 
     [Fact]
@@ -77,8 +79,8 @@ public sealed class BuildingBlockTests
         var areNotEqual = left != right;
 
         // Assert
-        (areEqual).ShouldBeFalse();
-        (areNotEqual).ShouldBeTrue();
+        areEqual.ShouldBeFalse();
+        areNotEqual.ShouldBeTrue();
     }
 
     [Fact]
@@ -94,8 +96,8 @@ public sealed class BuildingBlockTests
         var areNotEqual = left != right;
 
         // Assert
-        (areEqual).ShouldBeFalse();
-        (areNotEqual).ShouldBeTrue();
+        areEqual.ShouldBeFalse();
+        areNotEqual.ShouldBeTrue();
     }
 
     [Fact]
@@ -109,10 +111,10 @@ public sealed class BuildingBlockTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        (result.IsSuccess).ShouldBeTrue();
-        (result.Value.StartDate).ShouldBe(startDate);
-        (result.Value.EndDate).ShouldBe(endDate);
-        (result.Value.DurationDays).ShouldBe(7);
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.StartDate.ShouldBe(startDate);
+        result.Value.EndDate.ShouldBe(endDate);
+        result.Value.DurationDays.ShouldBe(7);
     }
 
     [Fact]
@@ -125,12 +127,12 @@ public sealed class BuildingBlockTests
         var result = DateRange.Create(date, date);
 
         // Assert
-        (result.IsSuccess).ShouldBeFalse();
+        result.IsSuccess.ShouldBeFalse();
         var error = result.ErrorDetails;
-        _ = (error).ShouldNotBeNull();
-        (error.ValidationErrors).ShouldNotBeNull();
-        (error.ValidationErrors.ContainsKey("schedule")).ShouldBeTrue();
-        (error.ValidationErrors["schedule"]).ShouldBe(["End date must be after start date."]);
+        _ = error.ShouldNotBeNull();
+        error.ValidationErrors.ShouldNotBeNull();
+        error.ValidationErrors.ContainsKey("schedule").ShouldBeTrue();
+        error.ValidationErrors["schedule"].ShouldBe(["End date must be after start date."]);
     }
 
     [Fact]
@@ -144,11 +146,11 @@ public sealed class BuildingBlockTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        (result.IsSuccess).ShouldBeFalse();
+        result.IsSuccess.ShouldBeFalse();
         var error = result.ErrorDetails;
-        _ = (error).ShouldNotBeNull();
-        (error.ValidationErrors).ShouldNotBeNull();
-        (error.ValidationErrors.ContainsKey("schedule")).ShouldBeTrue();
-        (error.ValidationErrors["schedule"]).ShouldBe(["End date must be after start date."]);
+        _ = error.ShouldNotBeNull();
+        error.ValidationErrors.ShouldNotBeNull();
+        error.ValidationErrors.ContainsKey("schedule").ShouldBeTrue();
+        error.ValidationErrors["schedule"].ShouldBe(["End date must be after start date."]);
     }
 }

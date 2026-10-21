@@ -21,13 +21,17 @@ public sealed class SharedKernelTestingAnalyzerTests
             TestingDiagnosticIds.XunitTryFinallyCleanup,
             TestingDiagnosticIds.XunitTraitConstantUsage,
             TestingDiagnosticIds.AssertionDelegateInlining,
+            TestingDiagnosticIds.LinqSingleAssertion,
+            TestingDiagnosticIds.ParenthesizedAssertion,
+            TestingDiagnosticIds.ConditionalAssertion,
+            TestingDiagnosticIds.PlaywrightAssertion,
         ];
 
         // Act
         var diagnosticIds = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id).OrderBy(static id => id, StringComparer.Ordinal);
 
         // Assert
-        (diagnosticIds).ShouldBe(expectedDiagnosticIds.OrderBy(static id => id, StringComparer.Ordinal));
+        diagnosticIds.ShouldBe(expectedDiagnosticIds.OrderBy(static id => id, StringComparer.Ordinal));
     }
 
     [Fact]
@@ -49,7 +53,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, path: "Generated.g.cs");
 
         // Assert
-        (diagnostics).ShouldBeEmpty();
+        diagnostics.ShouldBeEmpty();
     }
 
     private const string WarningSuppressionDiagnosticId = TestingDiagnosticIds.TestMethodWarningSuppression;
@@ -63,7 +67,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     private const string XunitTraitConstantUsageDiagnosticId = TestingDiagnosticIds.XunitTraitConstantUsage;
 
     [Fact]
-    public async Task Direct_xunit_assertion_reports_s_k_t_e_s_t006()
+    public async Task Direct_xunit_assertion_reports_SKTEST006()
     {
         const string source = """
             namespace Demo;
@@ -84,7 +88,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Repository_assertion_wrapper_does_not_report_s_k_t_e_s_t006()
+    public async Task Repository_assertion_wrapper_does_not_report_SKTEST006()
     {
         const string source = """
             namespace Demo;
@@ -132,7 +136,7 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        (diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId)).ShouldBe(2);
+        diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId).ShouldBe(2);
     }
 
     [Fact]
@@ -200,11 +204,11 @@ public sealed class SharedKernelTestingAnalyzerTests
 
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
-        (diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId)).ShouldBe(2);
+        diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId).ShouldBe(2);
     }
 
     [Fact]
-    public async Task Test_naming_without_underscores_reports_s_k_t_e_s_t002()
+    public async Task Test_naming_without_underscores_reports_SKTEST002()
     {
         const string source = """
             namespace Demo;
@@ -224,7 +228,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Default_test_naming_with_underscores_does_not_report_s_k_t_e_s_t002()
+    public async Task Default_test_naming_with_underscores_does_not_report_SKTEST002()
     {
         const string source = """
             namespace Demo;
@@ -244,7 +248,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Strict_test_naming_with_title_cased_later_segment_reports_s_k_t_e_s_t002()
+    public async Task Strict_test_naming_with_title_cased_later_segment_reports_SKTEST002()
     {
         // Arrange
         const string source = """
@@ -266,7 +270,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Strict_test_naming_with_uppercase_later_segment_reports_s_k_t_e_s_t002()
+    public async Task Strict_test_naming_with_uppercase_later_segment_reports_SKTEST002()
     {
         // Arrange
         const string source = """
@@ -288,7 +292,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Strict_test_naming_with_mixed_case_later_segment_reports_s_k_t_e_s_t002()
+    public async Task Strict_test_naming_with_mixed_case_later_segment_reports_SKTEST002()
     {
         // Arrange
         const string source = """
@@ -311,7 +315,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Strict_test_naming_with_sentence_style_segments_does_not_report_s_k_t_e_s_t002()
+    public async Task Strict_test_naming_with_sentence_style_segments_does_not_report_SKTEST002()
     {
         // Arrange
         const string source = """
@@ -414,7 +418,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Fact_attribute_form_without_underscores_reports_s_k_t_e_s_t002()
+    public async Task Fact_attribute_form_without_underscores_reports_SKTEST002()
     {
         const string source = """
             namespace Demo;
@@ -434,7 +438,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Required_trait_config_missing_from_test_method_reports_s_k_t_e_s_t003()
+    public async Task Required_trait_config_missing_from_test_method_reports_SKTEST003()
     {
         // Arrange
         const string source = """
@@ -459,7 +463,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Absent_required_trait_config_does_not_report_s_k_t_e_s_t003()
+    public async Task Absent_required_trait_config_does_not_report_SKTEST003()
     {
         // Arrange
         const string source = """
@@ -482,7 +486,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Required_trait_config_already_on_method_does_not_report_s_k_t_e_s_t003()
+    public async Task Required_trait_config_already_on_method_does_not_report_SKTEST003()
     {
         // Arrange
         const string source = """
@@ -508,7 +512,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Required_trait_config_already_on_class_does_not_report_s_k_t_e_s_t003()
+    public async Task Required_trait_config_already_on_class_does_not_report_SKTEST003()
     {
         // Arrange
         const string source = """
@@ -534,7 +538,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     }
 
     [Fact]
-    public async Task Required_trait_config_already_on_assembly_does_not_report_s_k_t_e_s_t003()
+    public async Task Required_trait_config_already_on_assembly_does_not_report_SKTEST003()
     {
         // Arrange
         const string source = """
@@ -582,7 +586,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, analyzerOptions: options);
 
         // Assert
-        (diagnostics.Count(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId)).ShouldBe(2);
+        diagnostics.Count(static candidate => candidate.Id == XunitRequiredTraitDiagnosticId).ShouldBe(2);
     }
 
     [Fact]
@@ -1170,7 +1174,7 @@ public sealed class SharedKernelTestingAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId)).ShouldHaveSingleItem();
+        diagnostics.Where(static candidate => candidate.Id == XunitHelperMethodDiagnosticId).ShouldHaveSingleItem();
     }
 
     [Fact]
