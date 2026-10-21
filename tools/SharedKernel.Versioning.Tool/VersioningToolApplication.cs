@@ -63,9 +63,16 @@ internal static class VersioningToolApplication
             case ["stage-candidate", .. var stageArgs]:
                 using (var cancellation = new CancellationTokenSource())
                 {
-                    void Cancel(object? sender, ConsoleCancelEventArgs e) { e.Cancel = true; cancellation.Cancel(); }
+                    void Cancel(object? sender, ConsoleCancelEventArgs e)
+                    {
+                        e.Cancel = true;
+                        cancellation.Cancel();
+                    }
                     Console.CancelKeyPress += Cancel;
-                    try { await CandidateStagingCommand.Run(CandidateCommandOptions.Parse(stageArgs), output, cancellation.Token).ConfigureAwait(false); }
+                    try
+                    {
+                        await CandidateStagingCommand.Run(CandidateCommandOptions.Parse(stageArgs), output, cancellation.Token).ConfigureAwait(false);
+                    }
                     finally { Console.CancelKeyPress -= Cancel; }
                 }
                 return 0;

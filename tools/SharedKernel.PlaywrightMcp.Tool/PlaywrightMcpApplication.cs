@@ -129,7 +129,10 @@ internal static class PlaywrightMcpApplication
                 throw new InvalidOperationException("Docker returned an invalid current context name.");
             }
 
-            options = options with { DockerContext = dockerContext };
+            options = options with
+            {
+                DockerContext = dockerContext
+            };
             var probeResult = await runProcess(
                 PlaywrightMcpCommand.CreateDockerContextProbeStartInfo(options),
                 cancellationToken).ConfigureAwait(false);
@@ -146,7 +149,10 @@ internal static class PlaywrightMcpApplication
                     $"Refusing non-local Docker context '{dockerContext}': {dockerEndpoint}");
             }
 
-            return options with { DockerEndpoint = dockerEndpoint };
+            return options with
+            {
+                DockerEndpoint = dockerEndpoint
+            };
         }
 
         var podmanProbeResult = await runProcess(

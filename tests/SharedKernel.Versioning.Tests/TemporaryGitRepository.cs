@@ -14,7 +14,10 @@ internal sealed class TemporaryGitRepository : IDisposable
         CommandRunner.Run("git", ["config", "user.name", "Versioning Test"], Root);
     }
 
-    public string Root { get; }
+    public string Root
+    {
+        get;
+    }
 
     public void Commit(string fileName, string content, string message)
     {

@@ -13,17 +13,26 @@ public sealed record LiteLlmImageTextGeneratorOptions
     /// <summary>
     /// Gets the LiteLLM proxy base endpoint.
     /// </summary>
-    public Uri? Endpoint { get; init; }
+    public Uri? Endpoint
+    {
+        get; init;
+    }
 
     /// <summary>
     /// Gets the optional bearer key for the LiteLLM proxy.
     /// </summary>
-    public string? ApiKey { get; init; }
+    public string? ApiKey
+    {
+        get; init;
+    }
 
     /// <summary>
     /// Gets the vision-capable model name configured in LiteLLM.
     /// </summary>
-    public string? Model { get; init; }
+    public string? Model
+    {
+        get; init;
+    }
 
     /// <summary>
     /// Gets the chat-completions path exposed by the LiteLLM proxy.

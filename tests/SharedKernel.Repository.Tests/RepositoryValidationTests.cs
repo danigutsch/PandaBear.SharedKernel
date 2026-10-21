@@ -20,7 +20,10 @@ public sealed class RepositoryValidationTests
         var result = RepositoryToolApplication.Run(["validate", "--root", scope.Root], output, error,
             (executable, arguments, directory) =>
             {
-                if (executable == "git") { return "fixture"; }
+                if (executable == "git")
+                {
+                    return "fixture";
+                }
                 commands.Add(string.Join(' ', arguments));
                 return string.Empty;
             });
@@ -45,7 +48,10 @@ public sealed class RepositoryValidationTests
         var result = RepositoryToolApplication.Run(["validate", "--root", scope.Root], output, error,
             (executable, arguments, directory) =>
             {
-                if (executable == "git") { return "current"; }
+                if (executable == "git")
+                {
+                    return "current";
+                }
                 executed = true;
                 return string.Empty;
             });
@@ -70,9 +76,18 @@ public sealed class RepositoryValidationTests
         var result = RepositoryToolApplication.Run(["validate", "--root", scope.Root], output, error,
             (executable, arguments, directory) =>
             {
-                if (executable == "git") { return "fixture"; }
-                if (arguments[0] == "build") { throw new InvalidOperationException("Build failed."); }
-                if (arguments[0] == "test") { ranTests = true; }
+                if (executable == "git")
+                {
+                    return "fixture";
+                }
+                if (arguments[0] == "build")
+                {
+                    throw new InvalidOperationException("Build failed.");
+                }
+                if (arguments[0] == "test")
+                {
+                    ranTests = true;
+                }
                 return string.Empty;
             });
 
@@ -98,7 +113,10 @@ public sealed class RepositoryValidationTests
         var result = RepositoryToolApplication.Run(["validate", "--root", scope.Root, "--test-group", "ordinary"], output, error,
             (executable, arguments, directory) =>
             {
-                if (executable == "git") { return "fixture"; }
+                if (executable == "git")
+                {
+                    return "fixture";
+                }
                 commands.Add(string.Join(' ', arguments));
                 return string.Empty;
             });

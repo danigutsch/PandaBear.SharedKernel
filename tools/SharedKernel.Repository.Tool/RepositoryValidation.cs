@@ -30,10 +30,17 @@ internal static class RepositoryValidation
             throw new ArgumentException("Selection must contain distinct projects and include every test build.");
         }
         var hosted = tests.Where(project => IsHosted(root, project)).ToArray();
-        if (group != "all" && group != "ordinary" && !known.Contains(group)) { throw new ArgumentException("Unknown test group."); }
+        if (group != "all" && group != "ordinary" && !known.Contains(group))
+        {
+            throw new ArgumentException("Unknown test group.");
+        }
         var selectedTests = group == "all" ? tests : group == "ordinary" ? tests.Except(hosted, StringComparer.Ordinal).ToArray() : tests.Where(project => project == group).ToArray();
         var selectedBuild = group == "all" ? build : group == "ordinary" ? build.Except(hosted, StringComparer.Ordinal).ToArray() : selectedTests;
-        if (selectedBuild.Length == 0) { output.WriteLine("No projects selected for " + group); return; }
+        if (selectedBuild.Length == 0)
+        {
+            output.WriteLine("No projects selected for " + group);
+            return;
+        }
         var directory = Path.Combine(selection, "execution-" + (group is "all" or "ordinary" ? group : Path.GetFileNameWithoutExtension(group)));
         Directory.CreateDirectory(directory);
         var graph = WriteSolution(root, directory, "build", selectedBuild);

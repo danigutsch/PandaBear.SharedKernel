@@ -17,7 +17,10 @@ internal sealed class MediatorAnalyzerConfigOptions(bool cqrsStrict, bool allowH
 
     public bool EnableCancellationAnalysis { get; } = enableCancellationAnalysis;
 
-    public static MediatorAnalyzerConfigOptions Default { get; } = new(
+    public static MediatorAnalyzerConfigOptions Default
+    {
+        get;
+    } = new(
         cqrsStrict: true,
         allowHandlerToHandlerCalls: false,
         enableCancellationAnalysis: true);

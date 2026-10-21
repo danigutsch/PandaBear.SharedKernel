@@ -10,7 +10,10 @@ internal static class CandidateCommand
     public static async Task Run(CandidateCommandOptions options, TextWriter output)
     {
         var manifest = await Create(options, output).ConfigureAwait(false);
-        await Consume(options with { Candidate = manifest }, output).ConfigureAwait(false);
+        await Consume(options with
+        {
+            Candidate = manifest
+        }, output).ConfigureAwait(false);
     }
 
     public static async Task<string> Create(CandidateCommandOptions options, TextWriter output)
@@ -77,7 +80,11 @@ internal static class CandidateCommand
         evidence[platform] = "failed";
         try
         {
-            await PackageSmokeCommand.Run(options with { Feed = Path.GetDirectoryName(manifest), Version = evidence["packageVersion"]!.GetValue<string>() }, output).ConfigureAwait(false);
+            await PackageSmokeCommand.Run(options with
+            {
+                Feed = Path.GetDirectoryName(manifest),
+                Version = evidence["packageVersion"]!.GetValue<string>()
+            }, output).ConfigureAwait(false);
             evidence[platform] = "passed";
             if (options.Aot)
             {

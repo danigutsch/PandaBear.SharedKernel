@@ -8,7 +8,10 @@ public sealed class Iban : ValueObject
     private Iban(string value) => Value = value;
 
     /// <summary>Gets the sensitive electronic-format IBAN. Do not log or expose it without authorization.</summary>
-    public string Value { get; }
+    public string Value
+    {
+        get;
+    }
 
     /// <summary>Creates an IBAN from uppercase ASCII electronic format without spaces.</summary>
     /// <param name="value">The canonical candidate.</param>

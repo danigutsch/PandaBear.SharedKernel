@@ -325,9 +325,15 @@ internal static class RollbackFileWriteBatch
 
     private sealed class StagedWrite(AtomicFileWrite write, string temporaryPath)
     {
-        public bool Applied { get; set; }
+        public bool Applied
+        {
+            get; set;
+        }
 
-        public string? BackupPath { get; set; }
+        public string? BackupPath
+        {
+            get; set;
+        }
 
         public string TemporaryPath { get; } = temporaryPath;
 

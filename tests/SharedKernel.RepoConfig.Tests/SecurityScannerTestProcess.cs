@@ -4,7 +4,10 @@ namespace PandaBear.RepoConfig.Tests;
 
 internal sealed class SecurityScannerTestProcess(int exitCode, string? report)
 {
-    public ProcessStartInfo? StartInfo { get; private set; }
+    public ProcessStartInfo? StartInfo
+    {
+        get; private set;
+    }
 
     public async Task<int> Run(ProcessStartInfo startInfo, CancellationToken cancellationToken)
     {

@@ -12,7 +12,10 @@ internal sealed class TemporaryDocumentationWorkspace : IDisposable
         Directory.CreateDirectory(Path.Combine(RootPath, "docs", "architecture"));
     }
 
-    public string RootPath { get; }
+    public string RootPath
+    {
+        get;
+    }
 
     public void WriteArchitectureDoc(string fileName, string content) =>
         File.WriteAllText(Path.Combine(RootPath, "docs", "architecture", fileName), content);

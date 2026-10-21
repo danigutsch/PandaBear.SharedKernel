@@ -5,7 +5,10 @@ namespace PandaBear.HttpClients.Tests;
 
 internal sealed class TransientAfterCommitHandler : HttpMessageHandler
 {
-    public int AttemptCount { get; private set; }
+    public int AttemptCount
+    {
+        get; private set;
+    }
 
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,

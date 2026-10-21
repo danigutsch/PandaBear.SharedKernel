@@ -9,25 +9,40 @@ public sealed class GenerateValueObjectAttribute : Attribute
     /// <summary>
     /// Gets or sets the scalar type stored by the generated value object.
     /// </summary>
-    public Type? UnderlyingType { get; set; }
+    public Type? UnderlyingType
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether parse helpers should be generated.
     /// </summary>
-    public bool Parsing { get; set; }
+    public bool Parsing
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether a System.Text.Json converter should be generated.
     /// </summary>
-    public bool Json { get; set; }
+    public bool Json
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether an EF Core value converter should be generated.
     /// </summary>
-    public bool EfCore { get; set; }
+    public bool EfCore
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets or sets the reusable technical template applied to the generated value object.
     /// </summary>
-    public ValueObjectTemplate Template { get; set; }
+    public ValueObjectTemplate Template
+    {
+        get; set;
+    }
 }

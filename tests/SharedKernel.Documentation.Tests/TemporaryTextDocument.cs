@@ -8,7 +8,10 @@ internal sealed class TemporaryTextDocument : IDisposable
         File.WriteAllText(Path, content);
     }
 
-    public string Path { get; }
+    public string Path
+    {
+        get;
+    }
 
     public void Dispose()
     {

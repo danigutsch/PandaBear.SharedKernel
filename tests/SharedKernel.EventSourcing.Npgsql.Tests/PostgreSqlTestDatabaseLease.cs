@@ -24,11 +24,20 @@ internal sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
         DataSource = dataSource;
     }
 
-    internal string DatabaseName { get; }
+    internal string DatabaseName
+    {
+        get;
+    }
 
-    internal string ConnectionString { get; }
+    internal string ConnectionString
+    {
+        get;
+    }
 
-    internal NpgsqlDataSource DataSource { get; }
+    internal NpgsqlDataSource DataSource
+    {
+        get;
+    }
 
     [SuppressMessage(
         "Security",

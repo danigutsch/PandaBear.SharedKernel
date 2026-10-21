@@ -52,8 +52,14 @@ public static class CandidateStagingTests
         using var temporary = new TemporaryReleasePrepDirectory();
         var manifest = temporary.WriteCandidate();
         var package = Directory.GetFiles(temporary.PackageDirectory, "*.nupkg").Single();
-        if (tampered) { await File.WriteAllTextAsync(package, "tampered", TestContext.Current.CancellationToken); }
-        else { File.Delete(package); }
+        if (tampered)
+        {
+            await File.WriteAllTextAsync(package, "tampered", TestContext.Current.CancellationToken);
+        }
+        else
+        {
+            File.Delete(package);
+        }
 
         // Act
         Func<Task> stage = () => CandidateStagingCommand.Stage(manifest, temporary.PackageDirectory, temporary.OutputDirectory, TestContext.Current.CancellationToken);

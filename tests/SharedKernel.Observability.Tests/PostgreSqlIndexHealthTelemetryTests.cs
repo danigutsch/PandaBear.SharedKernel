@@ -27,9 +27,18 @@ public sealed class PostgreSqlIndexHealthTelemetryTests
             IsSimple = true,
             StatisticsAreReliable = true,
         };
-        var statisticsUnavailableEvidence = tableTooSmallEvidence with { TableName = "customers" };
-        var secondTableTooSmallEvidence = tableTooSmallEvidence with { TableName = "tours" };
-        var thirdTableTooSmallEvidence = tableTooSmallEvidence with { TableName = "destinations" };
+        var statisticsUnavailableEvidence = tableTooSmallEvidence with
+        {
+            TableName = "customers"
+        };
+        var secondTableTooSmallEvidence = tableTooSmallEvidence with
+        {
+            TableName = "tours"
+        };
+        var thirdTableTooSmallEvidence = tableTooSmallEvidence with
+        {
+            TableName = "destinations"
+        };
         var result = new PostgreSqlIndexHealthCollectionResult(
             PostgreSqlIndexHealthCollectionOutcome.Collected,
             [

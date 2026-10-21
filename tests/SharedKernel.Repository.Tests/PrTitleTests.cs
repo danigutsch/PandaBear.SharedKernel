@@ -15,7 +15,14 @@ public sealed class PrTitleTests
         // Arrange
         using var scope = new RepositoryTestScope();
         var path = Path.Combine(scope.Root, "event.json");
-        File.WriteAllText(path, JsonSerializer.Serialize(new { pull_request = new { title, body } }));
+        File.WriteAllText(path, JsonSerializer.Serialize(new
+        {
+            pull_request = new
+            {
+                title,
+                body
+            }
+        }));
         using var output = new StringWriter();
         using var error = new StringWriter();
 

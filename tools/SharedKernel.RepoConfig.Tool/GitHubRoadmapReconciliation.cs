@@ -39,33 +39,75 @@ internal sealed class GitHubRoadmapReconciliation
         SourceContent = sourceContent;
     }
 
-    public IReadOnlyList<GitHubRoadmapBlockerEdge> BlockerEdges { get; }
+    public IReadOnlyList<GitHubRoadmapBlockerEdge> BlockerEdges
+    {
+        get;
+    }
 
-    public IReadOnlyDictionary<int, string> ClosedEndpointStates { get; }
+    public IReadOnlyDictionary<int, string> ClosedEndpointStates
+    {
+        get;
+    }
 
-    public IReadOnlyDictionary<int, string> ClosedItemTransitions { get; }
+    public IReadOnlyDictionary<int, string> ClosedItemTransitions
+    {
+        get;
+    }
 
-    public IReadOnlyList<int> ChildrenOfCanonicalPrimaries { get; }
+    public IReadOnlyList<int> ChildrenOfCanonicalPrimaries
+    {
+        get;
+    }
 
-    public IReadOnlyDictionary<int, string> DirectCanonicalPrimaries { get; }
+    public IReadOnlyDictionary<int, string> DirectCanonicalPrimaries
+    {
+        get;
+    }
 
-    public IReadOnlyList<int> ExpectedOpenIssueNumbers { get; }
+    public IReadOnlyList<int> ExpectedOpenIssueNumbers
+    {
+        get;
+    }
 
-    public string ManifestPath { get; }
+    public string ManifestPath
+    {
+        get;
+    }
 
-    public string Repository { get; }
+    public string Repository
+    {
+        get;
+    }
 
-    public string? RepositoryCommit { get; }
+    public string? RepositoryCommit
+    {
+        get;
+    }
 
-    public string? RuleVersion { get; }
+    public string? RuleVersion
+    {
+        get;
+    }
 
-    public string? SnapshotDigest { get; }
+    public string? SnapshotDigest
+    {
+        get;
+    }
 
-    public string SourceContent { get; }
+    public string SourceContent
+    {
+        get;
+    }
 
-    public GitHubRoadmapPriorityPolicy PriorityPolicy { get; }
+    public GitHubRoadmapPriorityPolicy PriorityPolicy
+    {
+        get;
+    }
 
-    public IReadOnlyList<int> UnmappedOpenIssueNumbers { get; }
+    public IReadOnlyList<int> UnmappedOpenIssueNumbers
+    {
+        get;
+    }
 
     public int[] GetRequiredIssueNumbers(RoadmapProject project)
     {

@@ -28,9 +28,14 @@ internal static class SecurityCommand
 
                 switch (args[index])
                 {
-                    case "--root": root = Path.GetFullPath(args[index + 1], workingDirectory); break;
-                    case "--output" when args[0] == "scan": destination = args[index + 1]; break;
-                    default: throw new ArgumentException(Usage);
+                    case "--root":
+                        root = Path.GetFullPath(args[index + 1], workingDirectory);
+                        break;
+                    case "--output" when args[0] == "scan":
+                        destination = args[index + 1];
+                        break;
+                    default:
+                        throw new ArgumentException(Usage);
                 }
             }
 

@@ -121,7 +121,10 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         helpLinkUri: "https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Style.Analyzers/README.md#skstyle011");
 
     /// <inheritdoc />
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+    {
+        get;
+    } =
         ImmutableArray.Create(
             AsyncSuffixRule,
             CancellationTokenParameterNameRule,

@@ -27,14 +27,29 @@ internal sealed record CandidateCommandOptions(
             var value = args[index++];
             switch (option)
             {
-                case "--repo-root": root = Path.GetFullPath(value); break;
-                case "--feed": feed = Path.GetFullPath(value); break;
-                case "--version": version = SemanticVersion.Parse(value).ToString(); break;
-                case "--candidate": candidate = Path.GetFullPath(value); break;
-                case "--candidate-directory": candidateDirectory = Path.GetFullPath(value); break;
-                case "--output": output = Path.GetFullPath(value); break;
-                case "--baseline-version": baseline = SemanticVersion.Parse(value).ToString(); break;
-                default: throw new ArgumentException($"Unknown option: {option}.");
+                case "--repo-root":
+                    root = Path.GetFullPath(value);
+                    break;
+                case "--feed":
+                    feed = Path.GetFullPath(value);
+                    break;
+                case "--version":
+                    version = SemanticVersion.Parse(value).ToString();
+                    break;
+                case "--candidate":
+                    candidate = Path.GetFullPath(value);
+                    break;
+                case "--candidate-directory":
+                    candidateDirectory = Path.GetFullPath(value);
+                    break;
+                case "--output":
+                    output = Path.GetFullPath(value);
+                    break;
+                case "--baseline-version":
+                    baseline = SemanticVersion.Parse(value).ToString();
+                    break;
+                default:
+                    throw new ArgumentException($"Unknown option: {option}.");
             }
         }
 

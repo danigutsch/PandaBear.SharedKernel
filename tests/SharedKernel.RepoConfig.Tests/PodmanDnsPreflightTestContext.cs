@@ -28,13 +28,25 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
             $"Name:\ttest{Environment.NewLine}Uid:\t{CurrentUserId}\t{CurrentUserId}\t{CurrentUserId}\t{CurrentUserId}{Environment.NewLine}");
     }
 
-    public string RootPath { get; }
+    public string RootPath
+    {
+        get;
+    }
 
-    public string ProcRoot { get; }
+    public string ProcRoot
+    {
+        get;
+    }
 
-    public string RunRoot { get; }
+    public string RunRoot
+    {
+        get;
+    }
 
-    public string AardvarkDirectory { get; }
+    public string AardvarkDirectory
+    {
+        get;
+    }
 
     public string Networks { get; set; } = string.Empty;
 

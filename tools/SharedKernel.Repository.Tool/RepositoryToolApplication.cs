@@ -19,7 +19,10 @@ internal static class RepositoryToolApplication
 
         try
         {
-            if (args is ["verify-pr-title", .. var titleArgs]) { return PrTitleCommand.Run(titleArgs); }
+            if (args is ["verify-pr-title", .. var titleArgs])
+            {
+                return PrTitleCommand.Run(titleArgs);
+            }
             var root = Environment.CurrentDirectory;
             string? baseline = null, version = null, apiBaseline = null, githubOutput = null;
             var testGroup = "all";
@@ -30,20 +33,46 @@ internal static class RepositoryToolApplication
             while (index < args.Length)
             {
                 var option = args[index++];
-                if (option == "--pack") { pack = true; continue; }
-                if (option == "--aot") { aot = true; continue; }
-                if (index == args.Length) { throw new ArgumentException("Missing value for " + option); }
+                if (option == "--pack")
+                {
+                    pack = true;
+                    continue;
+                }
+                if (option == "--aot")
+                {
+                    aot = true;
+                    continue;
+                }
+                if (index == args.Length)
+                {
+                    throw new ArgumentException("Missing value for " + option);
+                }
                 var value = args[index++];
                 switch (option)
                 {
-                    case "--root": root = Path.GetFullPath(value); break;
-                    case "--test-group": testGroup = value; break;
-                    case "--base": baseline = value; break;
-                    case "--selection": selection = value; break;
-                    case "--github-output": githubOutput = value; break;
-                    case "--version": version = value; break;
-                    case "--baseline-version": apiBaseline = value; break;
-                    default: throw new ArgumentException("Unknown option: " + option);
+                    case "--root":
+                        root = Path.GetFullPath(value);
+                        break;
+                    case "--test-group":
+                        testGroup = value;
+                        break;
+                    case "--base":
+                        baseline = value;
+                        break;
+                    case "--selection":
+                        selection = value;
+                        break;
+                    case "--github-output":
+                        githubOutput = value;
+                        break;
+                    case "--version":
+                        version = value;
+                        break;
+                    case "--baseline-version":
+                        apiBaseline = value;
+                        break;
+                    default:
+                        throw new ArgumentException("Unknown option: " + option);
                 }
             }
 
@@ -64,7 +93,10 @@ internal static class RepositoryToolApplication
                 var result = ProjectSelector.Select(root, changes);
                 Directory.CreateDirectory(directory);
                 var revision = "unavailable";
-                try { revision = run("git", ["rev-parse", "HEAD"], root).Trim(); }
+                try
+                {
+                    revision = run("git", ["rev-parse", "HEAD"], root).Trim();
+                }
                 catch (InvalidOperationException) { output.WriteLine("Selection revision unavailable; execution requires a Git checkout."); }
                 File.WriteAllText(Path.Combine(directory, "revision.txt"), revision);
                 File.WriteAllLines(Path.Combine(directory, "build-projects.txt"), result.BuildProjects);
@@ -78,13 +110,22 @@ internal static class RepositoryToolApplication
                         writer.WriteString("revision", revision);
                         writer.WriteString("comparisonBase", baseline);
                         writer.WriteStartArray("buildProjects");
-                        foreach (var project in result.BuildProjects) { writer.WriteStringValue(project); }
+                        foreach (var project in result.BuildProjects)
+                        {
+                            writer.WriteStringValue(project);
+                        }
                         writer.WriteEndArray();
                         writer.WriteStartArray("testProjects");
-                        foreach (var project in result.TestProjects) { writer.WriteStringValue(project); }
+                        foreach (var project in result.TestProjects)
+                        {
+                            writer.WriteStringValue(project);
+                        }
                         writer.WriteEndArray();
                         writer.WriteStartArray("reasons");
-                        foreach (var reason in result.Reasons) { writer.WriteStringValue(reason); }
+                        foreach (var reason in result.Reasons)
+                        {
+                            writer.WriteStringValue(reason);
+                        }
                         writer.WriteEndArray();
                         writer.WriteEndObject();
                     }
@@ -116,15 +157,27 @@ internal static class RepositoryToolApplication
                 return 0;
             }
 
-            if (args[0] != "validate") { throw new ArgumentException("Unknown command: " + args[0]); }
+            if (args[0] != "validate")
+            {
+                throw new ArgumentException("Unknown command: " + args[0]);
+            }
             RepositoryValidation.Run(root, directory, testGroup, run, output);
 
             if (pack)
             {
                 var candidateArgs = new List<string> { "run", "--project", "tools/SharedKernel.Versioning.Tool", "-c", "Release", "--no-restore", "--", "validate-candidate", "--repo-root", root };
-                if (version is not null) { candidateArgs.AddRange(["--version", version]); }
-                if (apiBaseline is not null) { candidateArgs.AddRange(["--baseline-version", apiBaseline]); }
-                if (aot) { candidateArgs.Add("--aot"); }
+                if (version is not null)
+                {
+                    candidateArgs.AddRange(["--version", version]);
+                }
+                if (apiBaseline is not null)
+                {
+                    candidateArgs.AddRange(["--baseline-version", apiBaseline]);
+                }
+                if (aot)
+                {
+                    candidateArgs.Add("--aot");
+                }
                 output.Write(run("dotnet", candidateArgs.ToArray(), root));
             }
 

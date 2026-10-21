@@ -176,7 +176,11 @@ internal sealed class GitHubRoadmapSyncer
             var mapping = PrepareIssueMapping(item);
             if (TryGetMappedIssueNumber(mapping.GitHub, out var existingIssueNumber))
             {
-                return item with { GitHubIssue = existingIssueNumber, CreateGitHubIssue = false };
+                return item with
+                {
+                    GitHubIssue = existingIssueNumber,
+                    CreateGitHubIssue = false
+                };
             }
 
             EnsureCreateIntent(mapping.GitHub, item.Path);
@@ -192,7 +196,11 @@ internal sealed class GitHubRoadmapSyncer
             issueCreated = true;
             PersistCreatedIssueMapping(item, issueNumber);
             messages.Add($"created {repository}#{issueNumber} from {item.Id}");
-            return item with { GitHubIssue = issueNumber, CreateGitHubIssue = false };
+            return item with
+            {
+                GitHubIssue = issueNumber,
+                CreateGitHubIssue = false
+            };
         }
         catch (Exception exception) when (issueCreated || (creationRequestStarted && IsAmbiguousIssueCreationFailure(exception)))
         {
@@ -494,7 +502,10 @@ internal sealed class GitHubRoadmapSyncer
 
         public bool ValuesAreKnown { get; set; } = valuesAreKnown;
 
-        public bool IsBlocked { get; set; }
+        public bool IsBlocked
+        {
+            get; set;
+        }
 
         public List<string> Conflicts { get; } = [];
 

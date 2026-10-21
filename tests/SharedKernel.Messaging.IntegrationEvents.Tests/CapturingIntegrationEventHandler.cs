@@ -5,19 +5,40 @@ internal sealed class CapturingIntegrationEventHandler :
     IIntegrationEventHandler<TestUpdatedIntegrationEvent>,
     IAsyncDisposable
 {
-    public TestIntegrationEvent? IntegrationEvent { get; private set; }
+    public TestIntegrationEvent? IntegrationEvent
+    {
+        get; private set;
+    }
 
-    public CancellationToken CancellationToken { get; private set; }
+    public CancellationToken CancellationToken
+    {
+        get; private set;
+    }
 
-    public TestUpdatedIntegrationEvent? UpdatedIntegrationEvent { get; private set; }
+    public TestUpdatedIntegrationEvent? UpdatedIntegrationEvent
+    {
+        get; private set;
+    }
 
-    public int InvocationCount { get; private set; }
+    public int InvocationCount
+    {
+        get; private set;
+    }
 
-    public int DisposeAsyncCount { get; private set; }
+    public int DisposeAsyncCount
+    {
+        get; private set;
+    }
 
-    public bool ThrowWhenCancelled { get; set; }
+    public bool ThrowWhenCancelled
+    {
+        get; set;
+    }
 
-    public bool IsDisposedAsynchronously { get; private set; }
+    public bool IsDisposedAsynchronously
+    {
+        get; private set;
+    }
 
     public ValueTask Handle(TestIntegrationEvent integrationEvent, CancellationToken ct)
     {

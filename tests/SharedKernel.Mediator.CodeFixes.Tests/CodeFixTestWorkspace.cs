@@ -31,11 +31,20 @@ internal sealed class CodeFixTestWorkspace
     /// <summary>
     /// Gets the mutable Roslyn workspace.
     /// </summary>
-    public AdhocWorkspace Workspace { get; }
+    public AdhocWorkspace Workspace
+    {
+        get;
+    }
 
-    private ProjectId ProjectId { get; }
+    private ProjectId ProjectId
+    {
+        get;
+    }
 
-    private DocumentId DocumentId { get; }
+    private DocumentId DocumentId
+    {
+        get;
+    }
 
     private Project Project => Workspace.CurrentSolution.GetProject(ProjectId)!;
 

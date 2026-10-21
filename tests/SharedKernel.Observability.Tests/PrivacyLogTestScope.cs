@@ -28,7 +28,10 @@ internal sealed class PrivacyLogTestScope : IDisposable
 
     public ConcurrentQueue<CapturedPrivacyLogRecord> Records { get; } = new();
 
-    public ILogger Logger { get; }
+    public ILogger Logger
+    {
+        get;
+    }
 
     public void Dispose() => host.Dispose();
 }
