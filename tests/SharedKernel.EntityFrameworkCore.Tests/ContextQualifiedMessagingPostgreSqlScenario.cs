@@ -49,22 +49,18 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
             var services = new ServiceCollection();
             services.AddLogging();
             services.AddSingleton<IIntegrationEventSerializer, ComposedMessagingTestIntegrationEventSerializer>();
-            services.AddIntegrationEventOutbox<FirstMessagingDbContext>(options =>
+            services.AddIntegrationEvents<FirstMessagingDbContext>().WithOutbox(options =>
             {
                 options.Schema = "first_messaging";
                 options.OutboxTableName = "first_outbox";
                 options.TransportTableName = "first_transport";
-            });
-            services.AddIntegrationEventOutbox<SecondMessagingDbContext>(options =>
+            }).WithOutboxRelay().WithPostgreSqlAtomicClaims().WithPostgreSqlTransportProducer(FirstConsumerName);
+            services.AddIntegrationEvents<SecondMessagingDbContext>().WithOutbox(options =>
             {
                 options.Schema = "second_messaging";
                 options.OutboxTableName = "second_outbox";
                 options.TransportTableName = "second_transport";
-            });
-            services.AddPostgreSqlIntegrationEventTransportProducer<FirstMessagingDbContext>(FirstConsumerName);
-            services.AddIntegrationEventOutboxRelay<FirstMessagingDbContext>();
-            services.AddIntegrationEventOutboxRelay<SecondMessagingDbContext>();
-            services.AddPostgreSqlIntegrationEventTransportConsumer<SecondMessagingDbContext>(SecondConsumerName);
+            }).WithOutboxRelay().WithPostgreSqlAtomicClaims().WithPostgreSqlTransportConsumer(SecondConsumerName);
             services.AddDbContext<FirstMessagingDbContext>(options => options.UseNpgsql(dataSource));
             services.AddDbContext<SecondMessagingDbContext>(options => options.UseNpgsql(dataSource));
             provider = services.BuildServiceProvider(new ServiceProviderOptions

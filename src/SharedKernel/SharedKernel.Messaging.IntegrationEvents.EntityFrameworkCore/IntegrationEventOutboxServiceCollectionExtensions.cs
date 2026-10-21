@@ -13,6 +13,21 @@ namespace PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore;
 public static class IntegrationEventOutboxServiceCollectionExtensions
 {
     /// <summary>
+    /// Begins explicit integration-event composition for one owning context.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <typeparam name="TContext">The context that owns the selected messaging components.</typeparam>
+    /// <returns>A context-qualified registration builder.</returns>
+    /// <exception cref="ArgumentNullException">The service collection is null.</exception>
+    public static IntegrationEventRegistration<TContext> AddIntegrationEvents<TContext>(this IServiceCollection services)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        return new IntegrationEventRegistration<TContext>(services);
+    }
+
+    /// <summary>
     /// Adds an EF Core integration event outbox whose migrations own the shared messaging table.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
@@ -240,6 +255,18 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
         Action<IntegrationEventOutboxRelayOptions>? configureOptions = null)
         where TContext : DbContext
     {
+        AddPostgreSqlIntegrationEventTransportConsumerCore<TContext>(services, consumerName, configureOptions);
+        services.AddHostedService<PostgreSqlIntegrationEventTransportConsumerHostedService<TContext>>();
+
+        return services;
+    }
+
+    internal static void AddPostgreSqlIntegrationEventTransportConsumerCore<TContext>(
+        IServiceCollection services,
+        string consumerName,
+        Action<IntegrationEventOutboxRelayOptions>? configureOptions)
+        where TContext : DbContext
+    {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentException.ThrowIfNullOrWhiteSpace(consumerName);
 
@@ -261,9 +288,6 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
             sp.GetRequiredService<TimeProvider>(),
             sp.GetRequiredService<IOptionsMonitor<IntegrationEventOutboxRelayOptions>>(),
             consumerName));
-        services.AddHostedService<PostgreSqlIntegrationEventTransportConsumerHostedService<TContext>>();
-
-        return services;
     }
 
     /// <summary>
