@@ -865,6 +865,15 @@
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
+      "sharedkernel.npgsql.testing": {
+        "type": "Project",
+        "dependencies": {
+          "Aspire.Hosting.PostgreSQL": "[13.6.1, )",
+          "Npgsql": "[10.0.3, )",
+          "PandaBear.SharedKernel.IntegrationTesting": "[0.1.0-alpha.0, )",
+          "xunit.v3.extensibility.core": "[4.0.2, )"
+        }
+      },
       "Aspire.Hosting": {
         "type": "CentralTransitive",
         "requested": "[13.6.1, )",
