@@ -95,8 +95,8 @@ Source is public; registry publication remains deferred. Consume a validated can
 
 ## SKSTYLE011
 
-This section defines the library IO policy and completes epic #53's specification (#54),
-whole-read diagnostic (#55), and safe-code-fix assessment (#56). The rule lives in the existing
+This section defines the library IO policy, whole-read diagnostic, and safe-code-fix assessment.
+The rule lives in the existing
 Style analyzer package; no IO analyzer package, runtime primitive, or dependency is necessary.
 Application adoption and input-size policy remain with each application.
 
@@ -167,13 +167,13 @@ behavior until a consumer deliberately enables the rule. No application migratio
 | Missing cancellation forwarding | Reuse SDK CA2016 | Already covers eligible token forwarding. |
 | Disposable ownership | Reuse SDK CA2000 | Existing disposal analysis should remain enabled/configured. |
 | Whole-input allocation in selected scopes | Add SKSTYLE011 | The rules above do not establish a size budget for whole-input materialization. |
-| General synchronous IO in async methods | No additional diagnostic in this epic | Requires a separate scope and semantic review; changing to async still leaves unbounded allocation. |
+| General synchronous IO in async methods | No additional diagnostic | Requires a separate scope and semantic review; changing to async still leaves unbounded allocation. |
 
 For the chosen diagnostic, no mechanical rewrite can infer a correct size limit, unit, parser,
 error contract, or ownership policy. Replacing a whole read with a truncated read loses data;
 adding an arbitrary limit changes accepted input; replacing it with an async read leaves the
-allocation unbounded. #56 therefore ships an explicit no-code-fix decision and regression tests
-that reject individual and bulk actions for these invocations. There is no placeholder fix or
+allocation unbounded. Regression tests enforce the no-code-fix decision by rejecting individual
+and bulk actions for these invocations. There is no placeholder fix or
 empty IO code-fix package. Existing style code fixes remain available for their own diagnostics.
 
 Sources reviewed on 2026-10-21:
