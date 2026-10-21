@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\src\SharedKernel\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
         <ProjectReference Include="..\..\..\src\SharedKernel\SharedKernel.Results\SharedKernel.Results.csproj" />
     </ItemGroup>
 

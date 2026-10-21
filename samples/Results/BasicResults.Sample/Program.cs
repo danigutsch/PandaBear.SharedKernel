@@ -1,3 +1,4 @@
+using PandaBear.BuildingBlocks;
 using PandaBear.Results;
 
 var bookingResult = CreateBooking("VT-42", "Ada Lovelace");
@@ -30,6 +31,21 @@ var asyncPassengerMessage = await asyncPassengerOption.Match(
 var invalidBookingMessage = CreateBooking("", "").Match(
     static confirmation => $"Created booking: {confirmation}",
     static error => FormatValidationFailure(error));
+
+var iban = Iban.Create("DE89370400440532013000");
+var bic = Bic.Create("DEUTDEFF");
+var cpf = Cpf.Create("01234567890");
+var cnpj = Cnpj.Create("12ABC34501DE35");
+var pix = PixKey.Create(PixKeyType.Cnpj, "12ABC34501DE35");
+if (iban.IsFailure || bic.IsFailure || cpf.IsFailure || cnpj.IsFailure || pix.IsFailure
+    || cpf.Value.Value != "01234567890" || pix.Value.Type != PixKeyType.Cnpj
+    || !cnpj.Value.Equals(Cnpj.Create("12ABC34501DE35").Value)
+    || iban.Value.ToString() != "Iban [redacted]"
+    || Cpf.Create("11122233300").IsSuccess
+    || PixKey.Create(PixKeyType.Email, "Pix@bcb.gov.br").IsSuccess)
+{
+    throw new InvalidOperationException("Payment identifier package checks failed.");
+}
 
 Console.WriteLine(bookingMessage);
 Console.WriteLine(lookupMessage);

@@ -75,13 +75,13 @@ internal static class PackageSmokeCommand
                 await output.WriteAsync(CommandRunner.Run("dotnet", command, target)).ConfigureAwait(false);
             }
 
-            if (options.Aot && Path.GetFileName(relative) == "Mediator.Sample")
+            if (options.Aot)
             {
                 var rid = OperatingSystem.IsWindows() ? "win-x64" : "linux-x64";
                 var native = Path.Combine(target, "native");
                 await output.WriteAsync(CommandRunner.Run("dotnet", ["publish", projectPath, "-c", "Release", "-r", rid,
                     "-p:PublishAot=true", "--configfile", config, "--packages", cache, "-o", native], target)).ConfigureAwait(false);
-                await output.WriteAsync(CommandRunner.Run(Path.Combine(native, "Mediator.Sample" + (OperatingSystem.IsWindows() ? ".exe" : string.Empty)), [], target)).ConfigureAwait(false);
+                await output.WriteAsync(CommandRunner.Run(Path.Combine(native, Path.GetFileName(relative) + (OperatingSystem.IsWindows() ? ".exe" : string.Empty)), [], target)).ConfigureAwait(false);
             }
         }
 
