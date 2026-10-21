@@ -32,7 +32,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnosticIds = analyzer.SupportedDiagnostics.Select(static descriptor => descriptor.Id).OrderBy(static id => id, StringComparer.Ordinal);
 
         // Assert
-        (diagnosticIds).ShouldBe(expectedDiagnosticIds.OrderBy(static id => id, StringComparer.Ordinal));
+        diagnosticIds.ShouldBe(expectedDiagnosticIds.OrderBy(static id => id, StringComparer.Ordinal));
     }
 
     [Fact]
@@ -56,9 +56,9 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        var diagnostic = (diagnostics).ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
-        (diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)).ShouldContain("LoadAsync", StringComparison.Ordinal);
-        (diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)).ShouldContain("Load", StringComparison.Ordinal);
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("LoadAsync", StringComparison.Ordinal);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("Load", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, options);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
     }
 
     [Fact]
@@ -170,7 +170,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.AsyncSuffix);
     }
 
     [Fact]
@@ -194,8 +194,8 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        var diagnostic = (diagnostics).ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
-        (diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)).ShouldContain("cancellationToken", StringComparison.Ordinal);
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("cancellationToken", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -219,7 +219,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
     }
 
     [Fact]
@@ -242,8 +242,8 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        var diagnostic = (diagnostics).ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenDefaultValue);
-        (diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)).ShouldContain("ct", StringComparison.Ordinal);
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenDefaultValue);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("ct", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -273,7 +273,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
     }
 
     [Fact]
@@ -301,7 +301,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.CancellationTokenParameterName);
     }
 
     [Fact]
@@ -325,8 +325,8 @@ public sealed class SharedKernelStyleAnalyzerTests
         var options = StyleAnalyzerConfigOptions.Parse(provider, syntaxTree);
 
         // Assert
-        (options.AllowAsyncSuffixOverrides).ShouldBeTrue();
-        (options.AllowAsyncSuffixInterfaceImplementations).ShouldBeFalse();
+        options.AllowAsyncSuffixOverrides.ShouldBeTrue();
+        options.AllowAsyncSuffixInterfaceImplementations.ShouldBeFalse();
     }
 
     [Fact]
@@ -341,8 +341,8 @@ public sealed class SharedKernelStyleAnalyzerTests
         var options = StyleAnalyzerConfigOptions.Parse(provider, syntaxTree: null);
 
         // Assert
-        (options.AllowAsyncSuffixOverrides).ShouldBeTrue();
-        (options.AllowAsyncSuffixInterfaceImplementations).ShouldBeTrue();
+        options.AllowAsyncSuffixOverrides.ShouldBeTrue();
+        options.AllowAsyncSuffixInterfaceImplementations.ShouldBeTrue();
     }
 
     [Fact]
@@ -365,8 +365,8 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        var diagnostic = (diagnostics).ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
-        (diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)).ShouldContain("TourWriter", StringComparison.Ordinal);
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("TourWriter", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -385,7 +385,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
     }
 
     [Fact]
@@ -408,8 +408,8 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        var diagnostic = (diagnostics).ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
-        (diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)).ShouldContain("MappingInputs", StringComparison.Ordinal);
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("MappingInputs", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -432,7 +432,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
     }
 
     [Fact]
@@ -620,8 +620,8 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        var diagnostic = (diagnostics).ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
-        (diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)).ShouldContain("TourLoaderHelpers", StringComparison.Ordinal);
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("TourLoaderHelpers", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -644,7 +644,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, path: "GeneratedModels.g.cs");
 
         // Assert
-        (diagnostics).ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
     }
 
     [Fact]
@@ -666,7 +666,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
     }
 
     [Fact]
@@ -693,7 +693,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.MultipleTopLevelTypesPerFile);
     }
 
     [Fact]
@@ -721,7 +721,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
     }
 
     [Fact]
@@ -749,7 +749,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
     }
 
     [Fact]
@@ -777,7 +777,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
     }
 
     [Fact]
@@ -805,7 +805,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
     }
 
     [Fact]
@@ -833,7 +833,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
     }
 
     [Fact]
@@ -864,7 +864,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
     }
 
     [Fact]
@@ -895,7 +895,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
     }
 
     [Fact]
@@ -923,7 +923,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
     }
 
     [Fact]
@@ -951,7 +951,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
+        diagnostics.ShouldContain(static candidate => candidate.Id == StyleDiagnosticIds.BroadOperationCanceledExceptionFilter);
     }
 
     [Fact]
@@ -991,8 +991,8 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        var diagnostic = (diagnostics).ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
-        (diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)).ShouldContain("LogInformation", StringComparison.Ordinal);
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("LogInformation", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1043,8 +1043,8 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        var diagnostic = (diagnostics).ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
-        (diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture)).ShouldContain("Log", StringComparison.Ordinal);
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
+        diagnostic.GetMessage(System.Globalization.CultureInfo.InvariantCulture).ShouldContain("Log", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1082,7 +1082,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
     }
 
     [Fact]
@@ -1112,7 +1112,7 @@ public sealed class SharedKernelStyleAnalyzerTests
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
         // Assert
-        (diagnostics).ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.NonSourceGeneratedLogging);
     }
 
     [Fact]

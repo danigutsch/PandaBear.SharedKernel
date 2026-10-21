@@ -16,7 +16,7 @@ public sealed class AspireTestApplicationTests
         // Act
         await using var app = await AspireTestApplication.Start(
             builder, [postgres.Resource.Name], null, TestContext.Current.CancellationToken);
-        var endpoint = postgres.Resource.Annotations.OfType<EndpointAnnotation>().Single();
+        var endpoint = postgres.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem();
         var connectionString = await app.GetConnectionString(postgres.Resource.Name, TestContext.Current.CancellationToken);
         await using var connection = new NpgsqlConnection(connectionString);
         await connection.OpenAsync(TestContext.Current.CancellationToken);

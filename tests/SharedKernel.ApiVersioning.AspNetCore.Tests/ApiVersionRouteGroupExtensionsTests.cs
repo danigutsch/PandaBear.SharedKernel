@@ -9,7 +9,7 @@ namespace PandaBear.ApiVersioning.AspNetCore.Tests;
 public sealed class ApiVersionRouteGroupExtensionsTests
 {
     [Fact]
-    public void Maps_api_version_route_group_with_metadata()
+    public void Maps_API_version_route_group_with_metadata()
     {
         // Arrange
         var builder = WebApplication.CreateSlimBuilder();
@@ -26,7 +26,7 @@ public sealed class ApiVersionRouteGroupExtensionsTests
     }
 
     [Fact]
-    public void Maps_api_version_route_group_with_normalized_prefix()
+    public void Maps_API_version_route_group_with_normalized_prefix()
     {
         // Arrange
         var builder = WebApplication.CreateSlimBuilder();
@@ -42,7 +42,7 @@ public sealed class ApiVersionRouteGroupExtensionsTests
     }
 
     [Fact]
-    public void Adds_api_version_metadata_to_endpoint()
+    public void Adds_API_version_metadata_to_endpoint()
     {
         // Arrange
         var builder = WebApplication.CreateSlimBuilder();
@@ -58,7 +58,7 @@ public sealed class ApiVersionRouteGroupExtensionsTests
     }
 
     [Fact]
-    public void With_api_version_returns_original_builder()
+    public void With_API_version_returns_original_builder()
     {
         // Arrange
         var builder = WebApplication.CreateSlimBuilder();

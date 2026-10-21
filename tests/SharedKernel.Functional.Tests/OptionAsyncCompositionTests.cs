@@ -270,7 +270,7 @@ public sealed class OptionAsyncCompositionTests
         var source = NullArgumentData.Task<Option<string>>();
 
         // Act
-        var exception = await ((Func<Task>)(() => source.Map(static value => value.Length))).ShouldThrow<ArgumentNullException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => source.Map(static value => value.Length)));
 
         // Assert
         exception.ParamName.ShouldBe("source");
@@ -283,7 +283,7 @@ public sealed class OptionAsyncCompositionTests
         var source = NullArgumentData.Task<Option<string>>();
 
         // Act
-        var exception = await ((Func<Task>)(() => source.Bind(static value => Option.Some(value.Length)))).ShouldThrow<ArgumentNullException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => source.Bind(static value => Option.Some(value.Length))));
 
         // Assert
         exception.ParamName.ShouldBe("source");
@@ -296,7 +296,7 @@ public sealed class OptionAsyncCompositionTests
         var source = NullArgumentData.Task<Option<string>>();
 
         // Act
-        var exception = await ((Func<Task>)(() => source.Match(static value => value.Length, static () => 0))).ShouldThrow<ArgumentNullException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => source.Match(static value => value.Length, static () => 0)));
 
         // Assert
         exception.ParamName.ShouldBe("source");
@@ -310,7 +310,7 @@ public sealed class OptionAsyncCompositionTests
         var map = NullArgumentData.TaskFunc<string, int>();
 
         // Act
-        var exception = await ((Func<Task>)(() => option.Map(map))).ShouldThrow<ArgumentNullException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => option.Map(map)));
 
         // Assert
         exception.ParamName.ShouldBe("map");
@@ -324,7 +324,7 @@ public sealed class OptionAsyncCompositionTests
         var map = NullArgumentData.ValueTaskFunc<string, int>();
 
         // Act
-        var exception = await ((Func<Task>)(async () => await option.Map(map))).ShouldThrow<ArgumentNullException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(async () => await option.Map(map)));
 
         // Assert
         exception.ParamName.ShouldBe("map");
@@ -338,7 +338,7 @@ public sealed class OptionAsyncCompositionTests
         var bind = NullArgumentData.TaskFunc<string, Option<int>>();
 
         // Act
-        var exception = await ((Func<Task>)(() => option.Bind(bind))).ShouldThrow<ArgumentNullException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => option.Bind(bind)));
 
         // Assert
         exception.ParamName.ShouldBe("bind");
@@ -352,7 +352,7 @@ public sealed class OptionAsyncCompositionTests
         var bind = NullArgumentData.ValueTaskFunc<string, Option<int>>();
 
         // Act
-        var exception = await ((Func<Task>)(async () => await option.Bind(bind))).ShouldThrow<ArgumentNullException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(async () => await option.Bind(bind)));
 
         // Assert
         exception.ParamName.ShouldBe("bind");
@@ -366,7 +366,7 @@ public sealed class OptionAsyncCompositionTests
         var whenSome = NullArgumentData.TaskFunc<string, int>();
 
         // Act
-        var exception = await ((Func<Task>)(() => option.Match(whenSome, static () => Task.FromResult(0)))).ShouldThrow<ArgumentNullException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => option.Match(whenSome, static () => Task.FromResult(0))));
 
         // Assert
         exception.ParamName.ShouldBe("whenSome");
@@ -380,7 +380,7 @@ public sealed class OptionAsyncCompositionTests
         var whenSome = NullArgumentData.ValueTaskFunc<string, int>();
 
         // Act
-        var exception = await ((Func<Task>)(async () => await option.Match(whenSome, static () => ValueTask.FromResult(0)))).ShouldThrow<ArgumentNullException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(async () => await option.Match(whenSome, static () => ValueTask.FromResult(0))));
 
         // Assert
         exception.ParamName.ShouldBe("whenSome");

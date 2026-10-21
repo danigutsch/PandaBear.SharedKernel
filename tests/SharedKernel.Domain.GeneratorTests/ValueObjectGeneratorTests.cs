@@ -293,7 +293,7 @@ public sealed class ValueObjectGeneratorTests
     }
 
     [Fact]
-    public void Generates_api_version_template_route_segment_and_comparison()
+    public void Generates_API_version_template_route_segment_and_comparison()
     {
         // Arrange
         const string source = """
@@ -800,7 +800,7 @@ public sealed class ValueObjectGeneratorTests
     }
 
     [Fact]
-    public void Does_not_report_conflict_when_api_version_attributes_differ_only_by_redundant_parsing_option()
+    public void Does_not_report_conflict_when_API_version_attributes_differ_only_by_redundant_parsing_option()
     {
         // Arrange
         const string source = """

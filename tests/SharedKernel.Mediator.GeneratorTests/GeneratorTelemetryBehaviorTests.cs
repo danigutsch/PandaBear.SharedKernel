@@ -17,7 +17,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var response = await mediator.Send((IRequest<string>)request, CancellationToken.None);
 
         // Assert
-        (response).ShouldBe("tour:5");
+        response.ShouldBe("tour:5");
     }
 
     [Fact]
@@ -33,18 +33,18 @@ public sealed class GeneratorTelemetryBehaviorTests
         var request = ctx.CreateInstance("Demo.GetTour", 1);
 
         // Act
-        await ((Func<Task>)(() => mediator.Send((IRequest<string>)request, CancellationToken.None).AsTask())).ShouldThrowAssignableTo<InvalidOperationException>();
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<InvalidOperationException>((Func<Task>)(() => mediator.Send((IRequest<string>)request, CancellationToken.None).AsTask()));
 
         // Assert
-        var span = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivitySend);
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivitySend);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
-        (span.Status).ShouldBe(ActivityStatusCode.Error);
-        (span.StatusDescription).ShouldBeNull();
-        (outcome).ShouldBe(MediatorTelemetry.OutcomeError);
-        (errorType).ShouldBe("InvalidOperationException");
+        span.Status.ShouldBe(ActivityStatusCode.Error);
+        span.StatusDescription.ShouldBeNull();
+        outcome.ShouldBe(MediatorTelemetry.OutcomeError);
+        errorType.ShouldBe("InvalidOperationException");
 
-        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -63,15 +63,15 @@ public sealed class GeneratorTelemetryBehaviorTests
         var response = await mediator.Send((IRequest<string>)request, CancellationToken.None);
 
         // Assert
-        (response).ShouldBe("tour:7");
-        var span = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivitySend);
+        response.ShouldBe("tour:7");
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivitySend);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
-        (span.Status).ShouldBe(ActivityStatusCode.Ok);
-        (span.StatusDescription).ShouldBeNull();
-        (outcome).ShouldBe(MediatorTelemetry.OutcomeSuccess);
-        (errorType).ShouldBeNull();
-        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        span.Status.ShouldBe(ActivityStatusCode.Ok);
+        span.StatusDescription.ShouldBeNull();
+        outcome.ShouldBe(MediatorTelemetry.OutcomeSuccess);
+        errorType.ShouldBeNull();
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -90,14 +90,14 @@ public sealed class GeneratorTelemetryBehaviorTests
         var response = await mediator.Send((IRequest<string>)request, CancellationToken.None);
 
         // Assert
-        (response).ShouldBe("fallback");
-        var span = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivitySend);
+        response.ShouldBe("fallback");
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivitySend);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
-        (span.Status).ShouldBe(ActivityStatusCode.Ok);
-        (outcome).ShouldBe(MediatorTelemetry.OutcomeSuccess);
-        (errorType).ShouldBeNull();
-        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        span.Status.ShouldBe(ActivityStatusCode.Ok);
+        outcome.ShouldBe(MediatorTelemetry.OutcomeSuccess);
+        errorType.ShouldBeNull();
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -115,17 +115,17 @@ public sealed class GeneratorTelemetryBehaviorTests
         var request = ctx.CreateInstance("Demo.GetTour", 1);
 
         // Act
-        await ((Func<Task>)(() => mediator.Send((IRequest<string>)request, cts.Token).AsTask())).ShouldThrowAssignableTo<OperationCanceledException>();
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<OperationCanceledException>((Func<Task>)(() => mediator.Send((IRequest<string>)request, cts.Token).AsTask()));
 
         // Assert
-        var span = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivitySend);
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivitySend);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
-        (span.Status).ShouldBe(ActivityStatusCode.Unset);
-        (span.StatusDescription).ShouldBeNull();
-        (outcome).ShouldBe(MediatorTelemetry.OutcomeCancelled);
-        (errorType).ShouldBeNull();
-        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        span.Status.ShouldBe(ActivityStatusCode.Unset);
+        span.StatusDescription.ShouldBeNull();
+        outcome.ShouldBe(MediatorTelemetry.OutcomeCancelled);
+        errorType.ShouldBeNull();
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var request = ctx.CreateInstance("Demo.GetTour", 1);
 
         // Act
-        await ((Func<Task>)(() => mediator.Send((IRequest<string>)request, CancellationToken.None).AsTask())).ShouldThrowAssignableTo<OperationCanceledException>();
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<OperationCanceledException>((Func<Task>)(() => mediator.Send((IRequest<string>)request, CancellationToken.None).AsTask()));
 
         // Assert
         var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivitySend);
@@ -167,17 +167,17 @@ public sealed class GeneratorTelemetryBehaviorTests
         var notification = ctx.CreateInstance("Demo.TourCreated", 1);
 
         // Act
-        await ((Func<Task>)(() => mediator.Publish((INotification)notification, cts.Token).AsTask())).ShouldThrowAssignableTo<OperationCanceledException>();
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<OperationCanceledException>((Func<Task>)(() => mediator.Publish((INotification)notification, cts.Token).AsTask()));
 
         // Assert
-        var span = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityPublish);
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityPublish);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
-        (span.Status).ShouldBe(ActivityStatusCode.Unset);
-        (span.StatusDescription).ShouldBeNull();
-        (outcome).ShouldBe(MediatorTelemetry.OutcomeCancelled);
-        (errorType).ShouldBeNull();
-        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        span.Status.ShouldBe(ActivityStatusCode.Unset);
+        span.StatusDescription.ShouldBeNull();
+        outcome.ShouldBe(MediatorTelemetry.OutcomeCancelled);
+        errorType.ShouldBeNull();
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
 
     }
 
@@ -194,7 +194,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var notification = ctx.CreateInstance("Demo.TourCreated", 1);
 
         // Act
-        await ((Func<Task>)(() => mediator.Publish((INotification)notification, CancellationToken.None).AsTask())).ShouldThrowAssignableTo<OperationCanceledException>();
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<OperationCanceledException>((Func<Task>)(() => mediator.Publish((INotification)notification, CancellationToken.None).AsTask()));
 
         // Assert
         var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityPublish);
@@ -221,14 +221,14 @@ public sealed class GeneratorTelemetryBehaviorTests
         await mediator.Publish((INotification)notification, CancellationToken.None);
 
         // Assert
-        var span = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityPublish);
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityPublish);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
-        (span.Status).ShouldBe(ActivityStatusCode.Ok);
-        (span.StatusDescription).ShouldBeNull();
-        (outcome).ShouldBe(MediatorTelemetry.OutcomeSuccess);
-        (errorType).ShouldBeNull();
-        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        span.Status.ShouldBe(ActivityStatusCode.Ok);
+        span.StatusDescription.ShouldBeNull();
+        outcome.ShouldBe(MediatorTelemetry.OutcomeSuccess);
+        errorType.ShouldBeNull();
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
 
     }
 
@@ -245,18 +245,18 @@ public sealed class GeneratorTelemetryBehaviorTests
         var notification = ctx.CreateInstance("Demo.TourCreated", 1);
 
         // Act
-        await ((Func<Task>)(() => mediator.Publish((INotification)notification, CancellationToken.None).AsTask())).ShouldThrowAssignableTo<InvalidOperationException>();
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<InvalidOperationException>((Func<Task>)(() => mediator.Publish((INotification)notification, CancellationToken.None).AsTask()));
 
         // Assert
-        var span = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityPublish);
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityPublish);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
-        (span.Status).ShouldBe(ActivityStatusCode.Error);
-        (span.StatusDescription).ShouldBeNull();
-        (outcome).ShouldBe(MediatorTelemetry.OutcomeError);
-        (errorType).ShouldBe("InvalidOperationException");
+        span.Status.ShouldBe(ActivityStatusCode.Error);
+        span.StatusDescription.ShouldBeNull();
+        outcome.ShouldBe(MediatorTelemetry.OutcomeError);
+        errorType.ShouldBe("InvalidOperationException");
 
-        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
 
     }
 
@@ -279,19 +279,19 @@ public sealed class GeneratorTelemetryBehaviorTests
 
         // Assert
         var handlerSpans = stopped.Where(a => a.OperationName == MediatorTelemetry.ActivityNotificationHandler).ToArray();
-        (handlerSpans.Length).ShouldBe(2);
-        (handlerSpans).ShouldAllSatisfy(static handlerSpan =>
+        handlerSpans.Length.ShouldBe(2);
+        handlerSpans.ShouldAllSatisfy(static handlerSpan =>
         {
             var handlerOutcome = handlerSpan.GetTagItem(MediatorTelemetry.TagOutcome);
             var handlerErrorType = handlerSpan.GetTagItem(MediatorTelemetry.TagErrorType);
-            (handlerSpan.Status).ShouldBe(ActivityStatusCode.Ok);
-            (handlerSpan.StatusDescription).ShouldBeNull();
-            (handlerOutcome).ShouldBe(MediatorTelemetry.OutcomeSuccess);
-            (handlerErrorType).ShouldBeNull();
-            (handlerSpan.Events).ShouldNotContain(static evt => evt.Name == "exception");
+            handlerSpan.Status.ShouldBe(ActivityStatusCode.Ok);
+            handlerSpan.StatusDescription.ShouldBeNull();
+            handlerOutcome.ShouldBe(MediatorTelemetry.OutcomeSuccess);
+            handlerErrorType.ShouldBeNull();
+            handlerSpan.Events.ShouldNotContain(static evt => evt.Name == "exception");
         });
-        (handlerSpans).ShouldContain(static span => string.Equals(span.GetTagItem(MediatorTelemetry.TagHandlerName) as string, "TourCreatedHandlerOne", StringComparison.Ordinal));
-        (handlerSpans).ShouldContain(static span => string.Equals(span.GetTagItem(MediatorTelemetry.TagHandlerName) as string, "TourCreatedHandlerTwo", StringComparison.Ordinal));
+        handlerSpans.ShouldContain(static span => string.Equals(span.GetTagItem(MediatorTelemetry.TagHandlerName) as string, "TourCreatedHandlerOne", StringComparison.Ordinal));
+        handlerSpans.ShouldContain(static span => string.Equals(span.GetTagItem(MediatorTelemetry.TagHandlerName) as string, "TourCreatedHandlerTwo", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -311,19 +311,19 @@ public sealed class GeneratorTelemetryBehaviorTests
         var notification = ctx.CreateInstance("Demo.TourCreated", 1);
 
         // Act
-        await ((Func<Task>)(() => mediator.Publish((INotification)notification, cts.Token).AsTask())).ShouldThrowAssignableTo<OperationCanceledException>();
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<OperationCanceledException>((Func<Task>)(() => mediator.Publish((INotification)notification, cts.Token).AsTask()));
 
         // Assert
-        var handlerSpan = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityNotificationHandler);
+        var handlerSpan = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityNotificationHandler);
         var handlerOutcome = handlerSpan.GetTagItem(MediatorTelemetry.TagOutcome);
         var handlerErrorType = handlerSpan.GetTagItem(MediatorTelemetry.TagErrorType);
         var handlerName = handlerSpan.GetTagItem(MediatorTelemetry.TagHandlerName);
-        (handlerSpan.Status).ShouldBe(ActivityStatusCode.Unset);
-        (handlerSpan.StatusDescription).ShouldBeNull();
-        (handlerOutcome).ShouldBe(MediatorTelemetry.OutcomeCancelled);
-        (handlerErrorType).ShouldBeNull();
-        (handlerName).ShouldBe("TourCreatedHandlerOne");
-        (handlerSpan.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        handlerSpan.Status.ShouldBe(ActivityStatusCode.Unset);
+        handlerSpan.StatusDescription.ShouldBeNull();
+        handlerOutcome.ShouldBe(MediatorTelemetry.OutcomeCancelled);
+        handlerErrorType.ShouldBeNull();
+        handlerName.ShouldBe("TourCreatedHandlerOne");
+        handlerSpan.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -341,20 +341,20 @@ public sealed class GeneratorTelemetryBehaviorTests
         var notification = ctx.CreateInstance("Demo.TourCreated", 1);
 
         // Act
-        await ((Func<Task>)(() => mediator.Publish((INotification)notification, CancellationToken.None).AsTask())).ShouldThrowAssignableTo<InvalidOperationException>();
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<InvalidOperationException>((Func<Task>)(() => mediator.Publish((INotification)notification, CancellationToken.None).AsTask()));
 
         // Assert
-        var handlerSpan = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityNotificationHandler);
+        var handlerSpan = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityNotificationHandler);
         var handlerOutcome = handlerSpan.GetTagItem(MediatorTelemetry.TagOutcome);
         var handlerErrorType = handlerSpan.GetTagItem(MediatorTelemetry.TagErrorType);
         var handlerName = handlerSpan.GetTagItem(MediatorTelemetry.TagHandlerName);
-        (handlerSpan.Status).ShouldBe(ActivityStatusCode.Error);
-        (handlerSpan.StatusDescription).ShouldBeNull();
-        (handlerOutcome).ShouldBe(MediatorTelemetry.OutcomeError);
-        (handlerErrorType).ShouldBe("InvalidOperationException");
-        (handlerName).ShouldBe("TourCreatedHandlerOne");
+        handlerSpan.Status.ShouldBe(ActivityStatusCode.Error);
+        handlerSpan.StatusDescription.ShouldBeNull();
+        handlerOutcome.ShouldBe(MediatorTelemetry.OutcomeError);
+        handlerErrorType.ShouldBe("InvalidOperationException");
+        handlerName.ShouldBe("TourCreatedHandlerOne");
 
-        (handlerSpan.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        handlerSpan.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -370,24 +370,24 @@ public sealed class GeneratorTelemetryBehaviorTests
         var request = ctx.CreateInstance("Demo.StreamTours", 2);
 
         // Act
-        await ((Func<Task>)(async () =>
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<InvalidOperationException>((Func<Task>)(async () =>
         {
             await foreach (var _ in mediator.Send((IStreamRequest<string>)request, CancellationToken.None))
             {
                 // consume until exception
             }
-        })).ShouldThrowAssignableTo<InvalidOperationException>();
+        }));
 
         // Assert
-        var span = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityStream);
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityStream);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
-        (span.Status).ShouldBe(ActivityStatusCode.Error);
-        (span.StatusDescription).ShouldBeNull();
-        (outcome).ShouldBe(MediatorTelemetry.OutcomeError);
-        (errorType).ShouldBe("InvalidOperationException");
+        span.Status.ShouldBe(ActivityStatusCode.Error);
+        span.StatusDescription.ShouldBeNull();
+        outcome.ShouldBe(MediatorTelemetry.OutcomeError);
+        errorType.ShouldBe("InvalidOperationException");
 
-        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -404,23 +404,23 @@ public sealed class GeneratorTelemetryBehaviorTests
         var request = ctx.CreateInstance("Demo.StreamTours", 10);
 
         // Act
-        await ((Func<Task>)(async () =>
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<OperationCanceledException>((Func<Task>)(async () =>
         {
             await foreach (var _ in mediator.Send((IStreamRequest<string>)request, cts.Token))
             {
                 await cts.CancelAsync();
             }
-        })).ShouldThrowAssignableTo<OperationCanceledException>();
+        }));
 
         // Assert
-        var span = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityStream);
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityStream);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
-        (span.Status).ShouldBe(ActivityStatusCode.Unset);
-        (span.StatusDescription).ShouldBeNull();
-        (outcome).ShouldBe(MediatorTelemetry.OutcomeCancelled);
-        (errorType).ShouldBeNull();
-        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        span.Status.ShouldBe(ActivityStatusCode.Unset);
+        span.StatusDescription.ShouldBeNull();
+        outcome.ShouldBe(MediatorTelemetry.OutcomeCancelled);
+        errorType.ShouldBeNull();
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
     [Fact]
@@ -439,7 +439,7 @@ public sealed class GeneratorTelemetryBehaviorTests
         var stream = mediator.Send((IStreamRequest<string>)request, CancellationToken.None);
 
         // The span must NOT be stopped yet — Send() just returns IAsyncEnumerable
-        (stopped).ShouldNotContain(a => a.OperationName == MediatorTelemetry.ActivityStream);
+        stopped.ShouldNotContain(a => a.OperationName == MediatorTelemetry.ActivityStream);
 
         await foreach (var _ in stream)
         {
@@ -447,13 +447,13 @@ public sealed class GeneratorTelemetryBehaviorTests
         }
 
         // Assert — span closed after full enumeration
-        var span = (stopped).ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityStream);
+        var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityStream);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
-        (span.StatusDescription).ShouldBeNull();
-        (outcome).ShouldBe(MediatorTelemetry.OutcomeSuccess);
-        (errorType).ShouldBeNull();
-        (span.Events).ShouldNotContain(static evt => evt.Name == "exception");
+        span.StatusDescription.ShouldBeNull();
+        outcome.ShouldBe(MediatorTelemetry.OutcomeSuccess);
+        errorType.ShouldBeNull();
+        span.Events.ShouldNotContain(static evt => evt.Name == "exception");
     }
 
 }

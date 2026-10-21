@@ -15,10 +15,10 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 namespace PandaBear.Testing.CodeFixes;
 
 /// <summary>
-/// Placeholder code-fix provider for implemented SharedKernel testing diagnostics.
+/// Provides focused code fixes for supported SharedKernel testing diagnostics.
 /// </summary>
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SharedKernelTestingCodeFixProvider))]
-public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
+public sealed partial class SharedKernelTestingCodeFixProvider : CodeFixProvider
 {
     private const string ContainsAssertionName = "Contains";
     private const string EqualAssertionName = "Equal";
@@ -28,7 +28,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
-        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitTestClassHelperMethod, TestingDiagnosticIds.XunitSerialCollectionJustification, TestingDiagnosticIds.XunitAssertionWrapper, TestingDiagnosticIds.XunitTraitConstantUsage, TestingDiagnosticIds.AssertionDelegateInlining];
+        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitTestClassHelperMethod, TestingDiagnosticIds.XunitSerialCollectionJustification, TestingDiagnosticIds.XunitAssertionWrapper, TestingDiagnosticIds.XunitTraitConstantUsage, TestingDiagnosticIds.AssertionDelegateInlining, TestingDiagnosticIds.LinqSingleAssertion, TestingDiagnosticIds.ConditionalAssertion];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -49,6 +49,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
         if (syntaxRoot is null)
         {
+            return;
+        }
+
+        if (diagnostic.Id is TestingDiagnosticIds.LinqSingleAssertion or TestingDiagnosticIds.ConditionalAssertion)
+        {
+            await RegisterSafeInvocationFix(context, document, diagnostic, syntaxRoot).ConfigureAwait(false);
             return;
         }
 
@@ -833,14 +839,12 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
             return null;
         }
 
-        var tokens = Regex.Matches(
-                methodName,
-                @"[A-Z]+[0-9]*(?=$|[A-Z][a-z])|[A-Z]?[a-z0-9]+",
-                RegexOptions.CultureInvariant,
-                RegexTimeout)
-            .Cast<Match>()
-            .Select(static match => match.Value)
-            .Where(static value => !string.IsNullOrWhiteSpace(value))
+        var tokens = methodName.Split('_').SelectMany(segment =>
+                TestMethodNameSegments.Canonical(segment) is { } canonical
+                    ? new[] { canonical }
+                    : Regex.Matches(segment,
+                        @"AsyncAPI|AsyncApi|HTTP2|ValueTask|HttpClient|OpenApi|xUnit|SKTEST[0-9]+|[A-Z]+[0-9]*(?=$|[A-Z][a-z])|[A-Z]?[a-z0-9]+",
+                        RegexOptions.CultureInvariant, RegexTimeout).Cast<Match>().Select(static match => match.Value))
             .ToArray();
 
         if (tokens.Length < 2)
@@ -853,6 +857,11 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     private static string NormalizeToken(string token, int index)
     {
+        if (TestMethodNameSegments.Canonical(token) is { } canonical)
+        {
+            return canonical;
+        }
+
         if (token.All(char.IsDigit))
         {
             return token;

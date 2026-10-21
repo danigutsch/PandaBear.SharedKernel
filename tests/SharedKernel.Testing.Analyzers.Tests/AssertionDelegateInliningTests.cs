@@ -47,7 +47,8 @@ public sealed class AssertionDelegateInliningTests
         var workspace = CodeFixTestWorkspace.Create(source);
         var documentDiagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, $"action.{assertionMethod}<InvalidOperationException>()");
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
-        var action = (await workspace.GetCodeActions(provider, documentDiagnostic)).ShouldHaveSingleItem();
+        var offeredActions = await workspace.GetCodeActions(provider, documentDiagnostic);
+        var action = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(action);
         var updated = await workspace.GetDocumentText();
         var compilation = AnalyzerTestHarness.CreateCompilation(updated);
@@ -68,7 +69,8 @@ public sealed class AssertionDelegateInliningTests
         updated.ShouldContain("// Keep assertion explanation.", StringComparison.Ordinal);
         updated.ShouldContain($"ShouldAssertionExtensions.{assertionMethod}<InvalidOperationException>", StringComparison.Ordinal);
         compilation.GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
-        (await AnalyzerTestHarness.GetAnalyzerDiagnostics(updated)).ShouldNotContain(static d => d.Id == DiagnosticId);
+        var assertionDiagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(updated);
+        assertionDiagnostics.ShouldNotContain(static d => d.Id == DiagnosticId);
     }
 
     [Theory]
@@ -143,8 +145,10 @@ public sealed class AssertionDelegateInliningTests
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         // Act
-        (await AnalyzerTestHarness.GetAnalyzerDiagnostics(source)).ShouldContain(static diagnostic => diagnostic.Id == DiagnosticId);
-        var action = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var assertionDiagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+        assertionDiagnostics.ShouldContain(static diagnostic => diagnostic.Id == DiagnosticId);
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var action = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(action);
         var updated = await workspace.GetDocumentText();
 
@@ -244,8 +248,10 @@ public sealed class AssertionDelegateInliningTests
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         // Act
-        (await AnalyzerTestHarness.GetAnalyzerDiagnostics(source)).ShouldContain(static candidate => candidate.Id == DiagnosticId);
-        var action = (await workspace.GetCodeActions(provider, diagnostic)).ShouldHaveSingleItem();
+        var assertionDiagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+        assertionDiagnostics.ShouldContain(static candidate => candidate.Id == DiagnosticId);
+        var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
+        var action = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(action);
         var updated = await workspace.GetDocumentText();
 

@@ -15,3 +15,7 @@ const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodRequiredTr
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestClassHelperMethod = "SKTEST004" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitSerialCollectionJustification = "SKTEST005" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.AssertionDelegateInlining = "SKTEST011" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.LinqSingleAssertion = "SKTEST012" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.ParenthesizedAssertion = "SKTEST013" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.ConditionalAssertion = "SKTEST014" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.PlaywrightAssertion = "SKTEST015" -> string!

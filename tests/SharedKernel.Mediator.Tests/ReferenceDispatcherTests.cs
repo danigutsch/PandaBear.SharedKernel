@@ -19,8 +19,8 @@ public sealed class ReferenceDispatcherTests
         var response = await dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("vt-42"), CancellationToken.None);
 
         // Assert
-        (response).ShouldBe("VT-42");
-        (events).ShouldBe(["Handler:vt-42"]);
+        response.ShouldBe("VT-42");
+        events.ShouldBe(["Handler:vt-42"]);
     }
 
     [Fact]
@@ -36,8 +36,8 @@ public sealed class ReferenceDispatcherTests
         var response = await dispatcher.Send(new ReferenceDispatcherTestTypes.DeleteTour(7), CancellationToken.None);
 
         // Assert
-        (response).ShouldBe(Unit.Value);
-        (events).ShouldBe(["Delete:7"]);
+        response.ShouldBe(Unit.Value);
+        events.ShouldBe(["Delete:7"]);
     }
 
     [Fact]
@@ -48,11 +48,11 @@ public sealed class ReferenceDispatcherTests
             .Build();
 
         // Act
-        var exception = await ((Func<Task>)(() =>
-            dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("missing"), CancellationToken.None).AsTask())).ShouldThrow<NotSupportedException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<NotSupportedException>((Func<Task>)(() =>
+            dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("missing"), CancellationToken.None).AsTask()));
 
         // Assert
-        (exception.Message).ShouldContain(typeof(ReferenceDispatcherTestTypes.LookupTour).FullName!, StringComparison.Ordinal);
+        exception.Message.ShouldContain(typeof(ReferenceDispatcherTestTypes.LookupTour).FullName!, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -66,13 +66,13 @@ public sealed class ReferenceDispatcherTests
             .Build();
 
         // Act
-        var exception = await ((Func<Task>)(() =>
-            dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("duplicate"), CancellationToken.None).AsTask())).ShouldThrow<InvalidOperationException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Func<Task>)(() =>
+            dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("duplicate"), CancellationToken.None).AsTask()));
 
         // Assert
-        (exception.Message).ShouldContain("found 2 registered handlers", StringComparison.Ordinal);
-        (exception.Message).ShouldContain(typeof(ReferenceDispatcherTestTypes.LookupTour).FullName!, StringComparison.Ordinal);
-        (events).ShouldBeEmpty();
+        exception.Message.ShouldContain("found 2 registered handlers", StringComparison.Ordinal);
+        exception.Message.ShouldContain(typeof(ReferenceDispatcherTestTypes.LookupTour).FullName!, StringComparison.Ordinal);
+        events.ShouldBeEmpty();
     }
 
     [Fact]
@@ -90,8 +90,8 @@ public sealed class ReferenceDispatcherTests
         var response = await dispatcher.Send(new ReferenceDispatcherTestTypes.LookupTour("order"), CancellationToken.None);
 
         // Assert
-        (response).ShouldBe("ORDER");
-        (events).ShouldBe([
+        response.ShouldBe("ORDER");
+        events.ShouldBe([
                 "Validation:Before",
                 "Observability:Before",
                 "Handler:order",
@@ -112,7 +112,7 @@ public sealed class ReferenceDispatcherTests
         await dispatcher.Publish(new ReferenceDispatcherTestTypes.DerivedNotification("tour"), CancellationToken.None);
 
         // Assert
-        (events).ShouldBeEmpty();
+        events.ShouldBeEmpty();
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public sealed class ReferenceDispatcherTests
         await dispatcher.Publish(notification, CancellationToken.None);
 
         // Assert
-        (events).ShouldBe([
+        events.ShouldBe([
                 "Derived-1:tour",
                 "Derived-2:tour",
             ]);
@@ -153,7 +153,7 @@ public sealed class ReferenceDispatcherTests
         }
 
         // Assert
-        (items).ShouldBe(["Item-1", "Item-2", "Item-3"]);
+        items.ShouldBe(["Item-1", "Item-2", "Item-3"]);
     }
 
     [Fact]
@@ -164,16 +164,16 @@ public sealed class ReferenceDispatcherTests
             .Build();
 
         // Act
-        var exception = await ((Func<Task>)(async () =>
+        var exception = await ShouldAssertionExtensions.ShouldThrow<NotSupportedException>((Func<Task>)(async () =>
         {
             await using var enumerator =
                 dispatcher.Send(new ReferenceDispatcherTestTypes.StreamTours(1), CancellationToken.None)
                     .GetAsyncEnumerator(CancellationToken.None);
             await enumerator.MoveNextAsync();
-        })).ShouldThrow<NotSupportedException>();
+        }));
 
         // Assert
-        (exception.Message).ShouldContain(typeof(ReferenceDispatcherTestTypes.StreamTours).FullName!, StringComparison.Ordinal);
+        exception.Message.ShouldContain(typeof(ReferenceDispatcherTestTypes.StreamTours).FullName!, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -186,17 +186,17 @@ public sealed class ReferenceDispatcherTests
             .Build();
 
         // Act
-        var exception = await ((Func<Task>)(async () =>
+        var exception = await ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Func<Task>)(async () =>
         {
             await using var enumerator =
                 dispatcher.Send(new ReferenceDispatcherTestTypes.StreamTours(1), CancellationToken.None)
                     .GetAsyncEnumerator(CancellationToken.None);
             await enumerator.MoveNextAsync();
-        })).ShouldThrow<InvalidOperationException>();
+        }));
 
         // Assert
-        (exception.Message).ShouldContain("found 2 registered handlers", StringComparison.Ordinal);
-        (exception.Message).ShouldContain(typeof(ReferenceDispatcherTestTypes.StreamTours).FullName!, StringComparison.Ordinal);
+        exception.Message.ShouldContain("found 2 registered handlers", StringComparison.Ordinal);
+        exception.Message.ShouldContain(typeof(ReferenceDispatcherTestTypes.StreamTours).FullName!, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -217,7 +217,7 @@ public sealed class ReferenceDispatcherTests
         }
 
         // Assert
-        (items).ShouldBe(["Item-1", "Item-2"]);
-        (events).ShouldBe(["StreamValidation:Before", "StreamValidation:After"]);
+        items.ShouldBe(["Item-1", "Item-2"]);
+        events.ShouldBe(["StreamValidation:Before", "StreamValidation:After"]);
     }
 }

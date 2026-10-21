@@ -53,15 +53,15 @@ internal static class MultipartFormRequestBodyDocumentTransformerTestsHelpers
 
     public static OpenApiSchema GetMultipartSchema(OpenApiDocument document, string path)
     {
-        (document.Paths.TryGetValue(path, out var pathItem)).ShouldBeTrue($"Expected OpenAPI path '{path}' to exist.");
-        _ = (pathItem).ShouldNotBeNull();
-        (pathItem.Operations).ShouldNotBeNull();
-        (pathItem.Operations.TryGetValue(HttpMethod.Post, out var operation)).ShouldBeTrue($"Expected POST operation for '{path}'.");
-        _ = (operation).ShouldNotBeNull();
+        document.Paths.TryGetValue(path, out var pathItem).ShouldBeTrue($"Expected OpenAPI path '{path}' to exist.");
+        _ = pathItem.ShouldNotBeNull();
+        pathItem.Operations.ShouldNotBeNull();
+        pathItem.Operations.TryGetValue(HttpMethod.Post, out var operation).ShouldBeTrue($"Expected POST operation for '{path}'.");
+        _ = operation.ShouldNotBeNull();
 
         var schema = operation.RequestBody?.Content?["multipart/form-data"].Schema;
 
-        _ = (schema).ShouldNotBeNull();
-        return (schema).ShouldBeOfType<OpenApiSchema>();
+        _ = schema.ShouldNotBeNull();
+        return schema.ShouldBeOfType<OpenApiSchema>();
     }
 }

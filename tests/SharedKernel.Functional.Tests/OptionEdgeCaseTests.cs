@@ -8,7 +8,7 @@ public sealed class OptionEdgeCaseTests
     public void Rejects_null_values()
     {
         // Act
-        var exception = ((Func<object?>)(() => Option.Some(NullArgumentData.String()))).ShouldThrow<ArgumentNullException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<object?>)(() => Option.Some(NullArgumentData.String())));
 
         // Assert
         exception.ParamName.ShouldBe("value");

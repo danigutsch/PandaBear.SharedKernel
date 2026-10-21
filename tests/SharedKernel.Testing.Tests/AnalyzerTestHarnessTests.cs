@@ -19,6 +19,6 @@ public sealed class AnalyzerTestHarnessTests
         var diagnostics = compilation.GetDiagnostics(TestContext.Current.CancellationToken);
 
         // Assert
-        (diagnostics).ShouldBeEmpty();
+        diagnostics.ShouldBeEmpty();
     }
 }

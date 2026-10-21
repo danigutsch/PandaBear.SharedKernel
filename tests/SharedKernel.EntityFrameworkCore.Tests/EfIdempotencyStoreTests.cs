@@ -19,7 +19,8 @@ public sealed class EfIdempotencyStoreTests
         var result = await store.TryStart(operation, startedAt, TimeSpan.FromMinutes(5), CancellationToken.None);
 
         result.Started.ShouldBeTrue();
-        var entry = (await store.Get(operation, CancellationToken.None)).ShouldNotBeNull();
+        var actualResult = await store.Get(operation, CancellationToken.None);
+        var entry = actualResult.ShouldNotBeNull();
         entry.State.ShouldBe(IdempotencyEntryState.Started);
         entry.StartedAt.ShouldBe(startedAt);
     }
@@ -57,7 +58,8 @@ public sealed class EfIdempotencyStoreTests
         var restarted = await store.TryStart(operation, restartedAt, TimeSpan.FromMinutes(5), CancellationToken.None);
 
         restarted.Started.ShouldBeTrue();
-        var entry = (await store.Get(operation, CancellationToken.None)).ShouldNotBeNull();
+        var actualResult = await store.Get(operation, CancellationToken.None);
+        var entry = actualResult.ShouldNotBeNull();
         entry.State.ShouldBe(IdempotencyEntryState.Started);
         entry.StartedAt.ShouldBe(restartedAt);
     }
@@ -116,7 +118,8 @@ public sealed class EfIdempotencyStoreTests
 
         await store.Complete(operation, completedAt, "tour-42", CancellationToken.None);
 
-        var entry = (await store.Get(operation, CancellationToken.None)).ShouldNotBeNull();
+        var actualResult = await store.Get(operation, CancellationToken.None);
+        var entry = actualResult.ShouldNotBeNull();
         entry.State.ShouldBe(IdempotencyEntryState.Completed);
         entry.CompletedAt.ShouldBe(completedAt);
         entry.ResultFingerprint.ShouldBe("tour-42");

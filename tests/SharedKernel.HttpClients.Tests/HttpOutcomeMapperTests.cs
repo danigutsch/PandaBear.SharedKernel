@@ -684,9 +684,9 @@ public sealed class HttpOutcomeMapperTests
             "http.outcome.kind",
             "http.request.method",
             "http.response.status_code");
-        tags.Single(tag => tag.Key == "http.request.method").Value.ShouldBe("GET");
-        tags.Single(tag => tag.Key == "http.response.status_code").Value.ShouldBe(200);
-        tags.Single(tag => tag.Key == "http.outcome.kind").Value.ShouldBe(nameof(HttpOutcomeKind.Succeeded));
+        tags.ShouldHaveSingleItem(tag => tag.Key == "http.request.method").Value.ShouldBe("GET");
+        tags.ShouldHaveSingleItem(tag => tag.Key == "http.response.status_code").Value.ShouldBe(200);
+        tags.ShouldHaveSingleItem(tag => tag.Key == "http.outcome.kind").Value.ShouldBe(nameof(HttpOutcomeKind.Succeeded));
         var telemetryText = string.Join('|', tags.Select(tag => $"{tag.Key}={tag.Value}"));
         telemetryText.ShouldNotContain("secret-token", StringComparison.Ordinal);
         telemetryText.ShouldNotContain("alice@example.test", StringComparison.Ordinal);

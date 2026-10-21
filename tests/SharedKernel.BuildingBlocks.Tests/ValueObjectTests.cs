@@ -12,7 +12,7 @@ public sealed class ValueObjectTests
 
         var result = address1.Equals(address2);
 
-        (result).ShouldBeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public sealed class ValueObjectTests
 
         var result = address1.Equals(address2);
 
-        (result).ShouldBeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public sealed class ValueObjectTests
 
         var result = EqualsObject(address, null);
 
-        (result).ShouldBeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public sealed class ValueObjectTests
 
         var result = address.Equals(money);
 
-        (result).ShouldBeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public sealed class ValueObjectTests
 
         var result = address.Equals(other);
 
-        (result).ShouldBeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public sealed class ValueObjectTests
         var hash1 = address1.GetHashCode();
         var hash2 = address2.GetHashCode();
 
-        (hash2).ShouldBe(hash1);
+        hash2.ShouldBe(hash1);
     }
 
     [Fact]
@@ -79,7 +79,7 @@ public sealed class ValueObjectTests
         var hash1 = address1.GetHashCode();
         var hash2 = address2.GetHashCode();
 
-        (hash2).ShouldNotBe(hash1);
+        hash2.ShouldNotBe(hash1);
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public sealed class ValueObjectTests
 
         var hash = address.GetHashCode();
 
-        (hash).ShouldNotBe(0);
+        hash.ShouldNotBe(0);
     }
 
     [Fact]
@@ -100,7 +100,7 @@ public sealed class ValueObjectTests
 
         var result = address1 == address2;
 
-        (result).ShouldBeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public sealed class ValueObjectTests
 
         var result = address1 != address2;
 
-        (result).ShouldBeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public sealed class ValueObjectTests
 
         var result = address1 != address2;
 
-        (result).ShouldBeTrue();
+        result.ShouldBeTrue();
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public sealed class ValueObjectTests
 
         var result = value1.Equals(value2);
 
-        (result).ShouldBeFalse();
+        result.ShouldBeFalse();
     }
 
     [Fact]
@@ -143,8 +143,10 @@ public sealed class ValueObjectTests
         var person2 = new TestPerson("John", "Doe", 30);
         var person3 = new TestPerson("John", "Doe", 31);
 
-        (person1 == person2).ShouldBeTrue();
-        (person1 == person3).ShouldBeFalse();
+        var areEqual = person1 == person2;
+        areEqual.ShouldBeTrue();
+        var areEqual2 = person1 == person3;
+        areEqual2.ShouldBeFalse();
     }
 
     [Fact]
@@ -154,8 +156,10 @@ public sealed class ValueObjectTests
         var address2 = new TestAddress("123 Main St", null);
         var address3 = new TestAddress("123 Main St", "Springfield");
 
-        (address1 == address2).ShouldBeTrue();
-        (address1 == address3).ShouldBeFalse();
+        var areEqual = address1 == address2;
+        areEqual.ShouldBeTrue();
+        var areEqual2 = address1 == address3;
+        areEqual2.ShouldBeFalse();
     }
 
     [Fact]
@@ -167,7 +171,7 @@ public sealed class ValueObjectTests
 
         dictionary[address1] = "Home";
 
-        (dictionary[address2]).ShouldBe("Home");
+        dictionary[address2].ShouldBe("Home");
     }
 
     [Fact]
@@ -179,7 +183,7 @@ public sealed class ValueObjectTests
 
         hashSet.Add(address1);
 
-        (hashSet).ShouldContain(address2);
+        hashSet.ShouldContain(address2);
     }
 
     [Fact]
@@ -189,8 +193,10 @@ public sealed class ValueObjectTests
         var order2 = new TestOrder(new TestMoney(100m, "USD"), new TestAddress("123 Main St", "Springfield"));
         var order3 = new TestOrder(new TestMoney(100m, "USD"), new TestAddress("456 Oak Ave", "Springfield"));
 
-        (order1 == order2).ShouldBeTrue();
-        (order1 == order3).ShouldBeFalse();
+        var areEqual = order1 == order2;
+        areEqual.ShouldBeTrue();
+        var areEqual2 = order1 == order3;
+        areEqual2.ShouldBeFalse();
     }
 
 }

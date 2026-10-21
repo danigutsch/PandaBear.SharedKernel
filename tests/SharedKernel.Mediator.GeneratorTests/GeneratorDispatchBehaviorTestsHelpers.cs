@@ -9,7 +9,7 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
     {
         await using var enumerator = source.GetAsyncEnumerator(ct);
         var hasItem = await enumerator.MoveNextAsync();
-        (hasItem).ShouldBeTrue();
+        hasItem.ShouldBeTrue();
         return (enumerator.Current, readTrace());
     }
 
@@ -21,7 +21,7 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         await using var enumerator = createSource(cts.Token).GetAsyncEnumerator(cts.Token);
         var hasItem = await enumerator.MoveNextAsync();
-        (hasItem).ShouldBeTrue();
+        hasItem.ShouldBeTrue();
         var firstItem = enumerator.Current;
         await cts.CancelAsync();
 
@@ -41,7 +41,7 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
     {
         await using var enumerator = source.GetAsyncEnumerator(ct);
         var hasItem = await enumerator.MoveNextAsync();
-        (hasItem).ShouldBeTrue();
+        hasItem.ShouldBeTrue();
         var firstItem = enumerator.Current;
 
         async Task Act()
@@ -50,7 +50,7 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
         }
 
         var exception = await ((Func<Task>)Act).ShouldThrow<InvalidOperationException>();
-        (exception.Message).ShouldBe("boom");
+        exception.Message.ShouldBe("boom");
         return (firstItem, readTrace());
     }
 
@@ -64,7 +64,7 @@ internal static class GeneratorDispatchBehaviorTestsHelpers
         await using (var enumerator = source.GetAsyncEnumerator(ct))
         {
             var hasItem = await enumerator.MoveNextAsync();
-            (hasItem).ShouldBeTrue();
+            hasItem.ShouldBeTrue();
             firstItem = enumerator.Current;
         }
 
