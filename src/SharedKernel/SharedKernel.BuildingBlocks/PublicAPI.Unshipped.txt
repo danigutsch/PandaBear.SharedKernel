@@ -20,3 +20,31 @@ static PandaBear.BuildingBlocks.ValueObject.operator !=(PandaBear.BuildingBlocks
 static PandaBear.BuildingBlocks.ValueObject.operator ==(PandaBear.BuildingBlocks.ValueObject? left, PandaBear.BuildingBlocks.ValueObject? right) -> bool
 PandaBear.BuildingBlocks.Compensation
 static PandaBear.BuildingBlocks.Compensation.CompleteOrCompensate(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! operation, System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask>! compensate, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.BuildingBlocks.Bic
+PandaBear.BuildingBlocks.Bic.Value.get -> string!
+override PandaBear.BuildingBlocks.Bic.ToString() -> string!
+static PandaBear.BuildingBlocks.Bic.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Bic!>
+PandaBear.BuildingBlocks.Cnpj
+PandaBear.BuildingBlocks.Cnpj.Value.get -> string!
+override PandaBear.BuildingBlocks.Cnpj.ToString() -> string!
+static PandaBear.BuildingBlocks.Cnpj.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Cnpj!>
+PandaBear.BuildingBlocks.Cpf
+PandaBear.BuildingBlocks.Cpf.Value.get -> string!
+override PandaBear.BuildingBlocks.Cpf.ToString() -> string!
+static PandaBear.BuildingBlocks.Cpf.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Cpf!>
+PandaBear.BuildingBlocks.Iban
+PandaBear.BuildingBlocks.Iban.Value.get -> string!
+override PandaBear.BuildingBlocks.Iban.ToString() -> string!
+static PandaBear.BuildingBlocks.Iban.Create(string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.Iban!>
+PandaBear.BuildingBlocks.PixKey
+PandaBear.BuildingBlocks.PixKey.Value.get -> string!
+override PandaBear.BuildingBlocks.PixKey.ToString() -> string!
+static PandaBear.BuildingBlocks.PixKey.Create(PandaBear.BuildingBlocks.PixKeyType type, string? value) -> PandaBear.Results.Result<PandaBear.BuildingBlocks.PixKey!>
+PandaBear.BuildingBlocks.PixKey.Type.get -> PandaBear.BuildingBlocks.PixKeyType
+PandaBear.BuildingBlocks.PixKeyType
+PandaBear.BuildingBlocks.PixKeyType.None = 0 -> PandaBear.BuildingBlocks.PixKeyType
+PandaBear.BuildingBlocks.PixKeyType.Cpf = 1 -> PandaBear.BuildingBlocks.PixKeyType
+PandaBear.BuildingBlocks.PixKeyType.Cnpj = 2 -> PandaBear.BuildingBlocks.PixKeyType
+PandaBear.BuildingBlocks.PixKeyType.Phone = 3 -> PandaBear.BuildingBlocks.PixKeyType
+PandaBear.BuildingBlocks.PixKeyType.Email = 4 -> PandaBear.BuildingBlocks.PixKeyType
+PandaBear.BuildingBlocks.PixKeyType.Evp = 5 -> PandaBear.BuildingBlocks.PixKeyType
