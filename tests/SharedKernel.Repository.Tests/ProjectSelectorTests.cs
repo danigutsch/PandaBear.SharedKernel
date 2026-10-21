@@ -65,6 +65,27 @@ public sealed class ProjectSelectorTests : IDisposable
     }
 
     [Theory]
+    [InlineData("Sdk.props", "Microsoft.NET.Sdk", false)]
+    [InlineData("Sdk.targets", "Microsoft.NET.Sdk", false)]
+    [InlineData("custom.targets", "Microsoft.NET.Sdk", true)]
+    [InlineData("Sdk.targets", "Custom.Sdk", true)]
+    [InlineData("$(External)/Sdk.targets", "Microsoft.NET.Sdk", true)]
+    public void Standard_sdk_imports_allow_documentation_selection_while_unknown_imports_keep_full_validation(
+        string project, string sdk, bool full)
+    {
+        // Arrange
+        File.WriteAllText(Path.Combine(scope.Root, "src/Core/Core.csproj"),
+            $"""<Project><Import Project="{project}" Sdk="{sdk}" /></Project>""");
+
+        // Act
+        var selection = ProjectSelector.Select(scope.Root, ["docs/guide.md"]);
+
+        // Assert
+        selection.BuildProjects.Length.ShouldBe(full ? 3 : 0);
+        selection.TestProjects.Length.ShouldBe(full ? 1 : 0);
+    }
+
+    [Theory]
     [InlineData("")]
     [InlineData("http://schemas.microsoft.com/developer/msbuild/2003")]
     public void Namespaced_project_references_select_transitive_test_dependents(string xmlNamespace)

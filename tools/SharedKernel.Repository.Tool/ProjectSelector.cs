@@ -23,7 +23,9 @@ internal static class ProjectSelector
             var compileInputs = new List<(string Path, string Project)>();
             foreach (var (project, document) in documents)
             {
-                if (document.Descendants().Where(static element => element.Name.LocalName == "Import").Any())
+                if (document.Descendants().Where(static element => element.Name.LocalName == "Import")
+                    .Any(static import => (string?)import.Attribute("Sdk") != "Microsoft.NET.Sdk"
+                        || (string?)import.Attribute("Project") is not ("Sdk.props" or "Sdk.targets")))
                 {
                     throw new ArgumentException("Unevaluated import: " + project);
                 }
