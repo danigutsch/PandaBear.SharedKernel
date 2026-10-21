@@ -28,7 +28,7 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
 
     /// <inheritdoc />
     public override ImmutableArray<string> FixableDiagnosticIds =>
-        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitTestClassHelperMethod, TestingDiagnosticIds.XunitSerialCollectionJustification, TestingDiagnosticIds.XunitAssertionWrapper, TestingDiagnosticIds.XunitTraitConstantUsage];
+        [TestingDiagnosticIds.TestMethodWarningSuppression, TestingDiagnosticIds.XunitTestMethodNaming, TestingDiagnosticIds.XunitTestMethodRequiredTrait, TestingDiagnosticIds.XunitTestClassHelperMethod, TestingDiagnosticIds.XunitSerialCollectionJustification, TestingDiagnosticIds.XunitAssertionWrapper, TestingDiagnosticIds.XunitTraitConstantUsage, TestingDiagnosticIds.AssertionDelegateInlining];
 
     /// <inheritdoc />
     public override FixAllProvider GetFixAllProvider()
@@ -49,6 +49,26 @@ public sealed class SharedKernelTestingCodeFixProvider : CodeFixProvider
         var syntaxRoot = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
         if (syntaxRoot is null)
         {
+            return;
+        }
+
+        if (string.Equals(diagnostic.Id, TestingDiagnosticIds.AssertionDelegateInlining, StringComparison.Ordinal))
+        {
+            var invocation = syntaxRoot.FindNode(context.Span).FirstAncestorOrSelf<InvocationExpressionSyntax>();
+            var model = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+            if (invocation is not null && model is not null
+                && AssertionDelegateInlining.TryRewrite(model, invocation, context.CancellationToken, out var declaration, out var replacement)
+                && declaration is not null && replacement is not null)
+            {
+                var tracked = syntaxRoot.TrackNodes(invocation, declaration);
+                var updated = tracked.ReplaceNode(tracked.GetCurrentNode(invocation)!, replacement.WithAdditionalAnnotations(Formatter.Annotation));
+                updated = updated.RemoveNode(updated.GetCurrentNode(declaration)!, SyntaxRemoveOptions.KeepExteriorTrivia)!;
+                context.RegisterCodeFix(CodeAction.Create(
+                    "Inline one-use assertion delegate",
+                    _ => Task.FromResult(document.WithSyntaxRoot(updated)),
+                    equivalenceKey: "InlineAssertionDelegate"), diagnostic);
+            }
+
             return;
         }
 

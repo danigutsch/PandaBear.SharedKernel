@@ -19,6 +19,7 @@ This Roslyn component is reserved for focused fixes that pair with the diagnosti
 - `SKTEST004` extracts a static helper method to a dedicated helper file when it does not use test-instance state.
 - `SKTEST005` adds a placeholder serial collection justification attribute.
 - `SKTEST009` replaces trait string literals with the constant identified by the analyzer.
+- `SKTEST011` inlines an adjacent one-use assertion lambda and removes its declaration only when semantic rebinding preserves the exact overload. It preserves comments and named arguments; ambiguous or unsafe rewrites and Fix All are unavailable.
 
 ## Suppression policy
 

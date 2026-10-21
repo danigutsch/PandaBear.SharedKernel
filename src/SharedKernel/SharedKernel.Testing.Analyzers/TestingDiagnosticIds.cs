@@ -5,6 +5,9 @@ namespace PandaBear.Testing.Analyzers;
 /// </summary>
 public static class TestingDiagnosticIds
 {
+    /// <summary>Diagnostic emitted for a safely inlineable one-use assertion delegate.</summary>
+    public const string AssertionDelegateInlining = "SKTEST011";
+
     /// <summary>
     /// Diagnostic emitted when a test method uses local pragma warning suppression directives.
     /// </summary>

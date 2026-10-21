@@ -20,6 +20,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             TestingDiagnosticIds.XunitArrangeActAssertMarkers,
             TestingDiagnosticIds.XunitTryFinallyCleanup,
             TestingDiagnosticIds.XunitTraitConstantUsage,
+            TestingDiagnosticIds.AssertionDelegateInlining,
         ];
 
         // Act

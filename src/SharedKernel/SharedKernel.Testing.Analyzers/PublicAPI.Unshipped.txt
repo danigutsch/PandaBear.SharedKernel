@@ -13,3 +13,4 @@ const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodNaming = "
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestMethodRequiredTrait = "SKTEST003" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitTestClassHelperMethod = "SKTEST004" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.XunitSerialCollectionJustification = "SKTEST005" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.AssertionDelegateInlining = "SKTEST011" -> string!
