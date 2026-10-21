@@ -63,41 +63,41 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
             typeof(SecondMessagingDbContext),
             new ContextQualifiedMessagingTestIntegrationEventSerializer(
                 ContextQualifiedMessagingTestIntegrationEventSerializer.SecondPayload));
-        services.AddIntegrationEventOutbox<FirstMessagingDbContext>(options =>
+        var firstRegistration = services.AddIntegrationEvents<FirstMessagingDbContext>().WithOutbox(options =>
         {
             options.Schema = "first_messaging";
             options.OutboxTableName = "first_outbox";
             options.TransportTableName = "first_transport";
         });
-        services.AddIntegrationEventOutbox<SecondMessagingDbContext>(options =>
+        var secondRegistration = services.AddIntegrationEvents<SecondMessagingDbContext>().WithOutbox(options =>
         {
             options.Schema = "second_messaging";
             options.OutboxTableName = "second_outbox";
             options.TransportTableName = "second_transport";
         });
-        services.AddIntegrationEventInbox<FirstMessagingDbContext>(options =>
+        firstRegistration.WithInbox(options =>
         {
             options.Schema = "first_messaging";
             options.TableName = "first_inbox";
         });
-        services.AddIntegrationEventInbox<SecondMessagingDbContext>(options =>
+        secondRegistration.WithInbox(options =>
         {
             options.Schema = "second_messaging";
             options.TableName = "second_inbox";
         });
         if (addTransportProducers)
         {
-            services.AddPostgreSqlIntegrationEventTransportProducer<FirstMessagingDbContext>(FirstConsumerName);
-            services.AddPostgreSqlIntegrationEventTransportProducer<SecondMessagingDbContext>(SecondConsumerName);
+            firstRegistration.WithPostgreSqlTransportProducer(FirstConsumerName);
+            secondRegistration.WithPostgreSqlTransportProducer(SecondConsumerName);
         }
-        services.AddPostgreSqlIntegrationEventTransportConsumer<FirstMessagingDbContext>(FirstConsumerName, options => options.BatchSize = 3);
-        services.AddPostgreSqlIntegrationEventTransportConsumer<SecondMessagingDbContext>(SecondConsumerName, options => options.BatchSize = 4);
+        firstRegistration.WithPostgreSqlTransportConsumer(FirstConsumerName, options => options.BatchSize = 3);
+        secondRegistration.WithPostgreSqlTransportConsumer(SecondConsumerName, options => options.BatchSize = 4);
         if (firstPublisher is not null)
         {
             services.AddKeyedScoped(typeof(FirstMessagingDbContext), (_, _) => firstPublisher);
         }
-        services.AddIntegrationEventOutboxRelay<FirstMessagingDbContext>(options => options.BatchSize = 1);
-        services.AddIntegrationEventOutboxRelay<SecondMessagingDbContext>(options => options.BatchSize = 2);
+        firstRegistration.WithOutboxRelay(options => options.BatchSize = 1);
+        secondRegistration.WithOutboxRelay(options => options.BatchSize = 2);
         services.AddDbContext<FirstMessagingDbContext>(options =>
             options.UseInMemoryDatabase(firstDatabaseName));
         services.AddDbContext<SecondMessagingDbContext>(options =>
