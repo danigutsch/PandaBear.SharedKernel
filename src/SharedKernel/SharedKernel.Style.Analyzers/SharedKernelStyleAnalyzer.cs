@@ -110,6 +110,16 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true,
         description: "Methods returning Result<T> should use Option<T> when every reachable return is either OK or not found.");
+    private static readonly DiagnosticDescriptor UnboundedWholeReadRule = new(
+        StyleDiagnosticIds.UnboundedWholeRead,
+        title: "Review whole-input reads in size-sensitive code",
+        messageFormat: "Review '{0}': enforce an input-size limit during reading or document an already bounded source",
+        category: "IO",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: false,
+        description: "Whole-input reads can allocate in proportion to external input. Enable this rule in size-sensitive production scopes and document verified bounds using normal diagnostic suppressions.",
+        helpLinkUri: "https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Style.Analyzers/README.md#skstyle011");
+
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
         ImmutableArray.Create(
@@ -122,7 +132,8 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             NonSourceGeneratedLoggingRule,
             DomainEventSuffixRule,
             SuccessOnlyResultMethodRule,
-            OptionalResultMethodRule);
+            OptionalResultMethodRule,
+            UnboundedWholeReadRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -140,6 +151,9 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
     private static void InitializeCompilation(CompilationStartAnalysisContext context)
     {
         var cancellationTokenType = context.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken");
+        var fileType = context.Compilation.GetTypeByMetadataName("System.IO.File");
+        var textReaderType = context.Compilation.GetTypeByMetadataName("System.IO.TextReader");
+        var stringReaderType = context.Compilation.GetTypeByMetadataName("System.IO.StringReader");
         var domainEventType = context.Compilation.GetTypeByMetadataName("PandaBear.Domain.IDomainEvent");
         var resultType = context.Compilation.GetTypeByMetadataName("PandaBear.Results.Result");
         var genericResultType = context.Compilation.GetTypeByMetadataName("PandaBear.Results.Result`1");
@@ -170,6 +184,10 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 
         context.RegisterSyntaxNodeAction(
             AnalyzeLoggerInvocation,
+            SyntaxKind.InvocationExpression);
+
+        context.RegisterSyntaxNodeAction(
+            syntaxContext => AnalyzeUnboundedIoInvocation(syntaxContext, fileType, textReaderType, stringReaderType),
             SyntaxKind.InvocationExpression);
 
         if (resultType is not null)
@@ -644,6 +662,42 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         return expressionText.Contains(OperationCanceledExceptionTypeName, StringComparison.Ordinal)
             && (expressionText.Contains("is not", StringComparison.Ordinal)
                 || expressionText.Contains("!", StringComparison.Ordinal));
+    }
+
+    private static void AnalyzeUnboundedIoInvocation(
+        SyntaxNodeAnalysisContext context,
+        INamedTypeSymbol? fileType,
+        INamedTypeSymbol? textReaderType,
+        INamedTypeSymbol? stringReaderType)
+    {
+        if (context.Node is not InvocationExpressionSyntax invocation
+            || GetInvocationName(invocation) is not ("ReadToEnd" or "ReadToEndAsync" or "ReadAllText" or "ReadAllTextAsync" or "ReadAllBytes" or "ReadAllBytesAsync")
+            || context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol is not IMethodSymbol method)
+        {
+            return;
+        }
+
+        var wholeRead = fileType is { DeclaringSyntaxReferences.IsEmpty: true }
+            && SymbolEqualityComparer.Default.Equals(method.ContainingType, fileType)
+            && method.Name is "ReadAllText" or "ReadAllTextAsync" or "ReadAllBytes" or "ReadAllBytesAsync";
+        if (method.Name is "ReadToEnd" or "ReadToEndAsync"
+            && !SymbolEqualityComparer.Default.Equals(method.ContainingType, stringReaderType))
+        {
+            for (IMethodSymbol? candidate = method; candidate is not null; candidate = candidate.OverriddenMethod)
+            {
+                if (textReaderType is { DeclaringSyntaxReferences.IsEmpty: true }
+                    && SymbolEqualityComparer.Default.Equals(candidate.ContainingType, textReaderType))
+                {
+                    wholeRead = true;
+                    break;
+                }
+            }
+        }
+
+        if (wholeRead)
+        {
+            context.ReportDiagnostic(Diagnostic.Create(UnboundedWholeReadRule, invocation.GetLocation(), method.Name));
+        }
     }
 
     private static void AnalyzeLoggerInvocation(SyntaxNodeAnalysisContext context)
