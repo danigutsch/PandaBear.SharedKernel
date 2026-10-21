@@ -130,6 +130,15 @@ internal static class ProjectSelector
                 }
             }
             while (added);
+            const string governedGuard = "tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj";
+            if (documents.ContainsKey(governedGuard) && (affected.Contains(governedGuard) || affected.Any(project =>
+                documents[project].Descendants().Any(element => element.Name.LocalName == "PackageId"
+                    && element.Value.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal))
+                && !documents[project].Descendants().Any(element => element.Name.LocalName == "IsPackable" && element.Value == "false"))))
+            {
+                throw new ArgumentException("Governed library constants require the complete compiler inventory and repository guard.");
+            }
+
             return new ProjectSelection(affected.Order(StringComparer.Ordinal).ToArray(), tests.Where(affected.Contains).ToArray(), reasons.ToArray());
         }
         catch (Exception exception) when (exception is ArgumentException or IOException or System.Text.Json.JsonException)

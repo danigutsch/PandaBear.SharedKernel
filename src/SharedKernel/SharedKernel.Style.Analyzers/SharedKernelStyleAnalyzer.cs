@@ -133,7 +133,9 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             DomainEventSuffixRule,
             SuccessOnlyResultMethodRule,
             OptionalResultMethodRule,
-            UnboundedWholeReadRule);
+            UnboundedWholeReadRule,
+            GovernedLiteralAnalysis.LiteralRule,
+            GovernedLiteralAnalysis.CatalogRule);
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -150,6 +152,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 
     private static void InitializeCompilation(CompilationStartAnalysisContext context)
     {
+        GovernedLiteralAnalysis.Initialize(context);
         var cancellationTokenType = context.Compilation.GetTypeByMetadataName("System.Threading.CancellationToken");
         var fileType = context.Compilation.GetTypeByMetadataName("System.IO.File");
         var textReaderType = context.Compilation.GetTypeByMetadataName("System.IO.TextReader");

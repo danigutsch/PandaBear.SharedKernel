@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <None Include="../../src/SharedKernel/SharedKernel.Style.Analyzers/GovernedLiterals.txt" Link="GovernedLiterals.txt" CopyToOutputDirectory="PreserveNewest" />
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="Xunit" />
     </ItemGroup>

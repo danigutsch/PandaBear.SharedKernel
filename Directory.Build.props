@@ -67,6 +67,11 @@
 			Condition="Exists('$(MSBuildThisFileDirectory)src/SharedKernel/SharedKernel.Style.CodeFixes/SharedKernel.Style.CodeFixes.csproj')" />
 	</ItemGroup>
 
+    <!-- Govern only library production C#; application catalogs and test data stay consumer-owned. -->
+    <ItemGroup Condition="$([System.String]::Copy('$(MSBuildProjectDirectory)').StartsWith('$(MSBuildThisFileDirectory)src'))">
+        <AdditionalFiles Include="$(MSBuildThisFileDirectory)src/SharedKernel/SharedKernel.Style.Analyzers/GovernedLiterals.txt" />
+    </ItemGroup>
+
 	<PropertyGroup Condition="'$(CI)' == 'true' or '$(TF_BUILD)' == 'True' or '$(GITHUB_ACTIONS)' == 'true'">
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 		<RestoreLockedMode>true</RestoreLockedMode>

@@ -15,3 +15,5 @@ const PandaBear.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName = "SKSTYLE002" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.MultipleTopLevelTypesPerFile = "SKSTYLE004" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.UnboundedWholeRead = "SKSTYLE011" -> string!
+const PandaBear.Style.Analyzers.StyleDiagnosticIds.GovernedLiteral = "SKSTYLE012" -> string!
+const PandaBear.Style.Analyzers.StyleDiagnosticIds.InvalidGovernedLiteralCatalog = "SKSTYLE013" -> string!

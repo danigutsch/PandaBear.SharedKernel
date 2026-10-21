@@ -56,3 +56,6 @@ static PandaBear.AspNetCore.SitemapXmlSerializer.Serialize(System.Collections.Ge
 const PandaBear.AspNetCore.IdempotencyKeyHeader.Name = "Idempotency-Key" -> string!
 PandaBear.AspNetCore.IdempotencyKeyHeader
 static PandaBear.AspNetCore.IdempotencyKeyHeader.Create(string? value) -> PandaBear.Results.Result<PandaBear.Idempotency.IdempotencyKey>
+PandaBear.AspNetCore.HostEnvironmentVariableNames
+const PandaBear.AspNetCore.HostEnvironmentVariableNames.AspNetCoreEnvironment = "ASPNETCORE_ENVIRONMENT" -> string!
+const PandaBear.AspNetCore.HostEnvironmentVariableNames.DotNetEnvironment = "DOTNET_ENVIRONMENT" -> string!
