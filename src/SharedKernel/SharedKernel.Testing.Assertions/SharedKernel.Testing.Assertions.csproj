@@ -17,4 +17,8 @@
         <PackageReference Include="xunit.v3.assert" VersionOverride="4.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="../SharedKernel.Results/SharedKernel.Results.csproj" />
+    </ItemGroup>
+
 </Project>

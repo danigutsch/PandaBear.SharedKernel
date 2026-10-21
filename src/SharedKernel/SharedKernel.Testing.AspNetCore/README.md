@@ -46,3 +46,10 @@ Tests that specifically inspect binding exceptions can opt out with their normal
 `services.PostConfigure<RouteHandlerOptions>(options => options.ThrowOnBadRequest = true)`.
 The default is registered before caller overrides. This controls rejection behavior; it never
 accepts or retains an invalid body.
+
+## Output-cache eviction
+
+`RecordingOutputCacheStore` implements `IOutputCacheStore` for tests interested in eviction.
+It records `EvictionObserved`, the last `EvictionTag`, and `EvictionCancellationToken` before
+throwing an optional `EvictionException`. Reads always miss and writes do nothing; it does not
+simulate a functioning cache. Create a separate instance for each independently running scenario.
