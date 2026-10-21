@@ -4,6 +4,28 @@ namespace PandaBear.Repository.Tests;
 
 public sealed class WorkflowContractTests
 {
+    [Fact]
+    public void Documentation_only_validation_avoids_bootstrap_tests_and_full_solution_formatting()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+
+        // Act
+        var quality = workflow.Split("  repository-quality:", StringSplitOptions.None)[1]
+            .Split("\n  validation-summary:", StringSplitOptions.None)[0];
+
+        // Assert
+        workflow.ShouldContain("github.event_name == 'push' && github.event.before", StringComparison.Ordinal);
+        quality.ShouldContain("needs: selection", StringComparison.Ordinal);
+        quality.ShouldContain("if: needs.selection.outputs.candidate_required == 'true'\n        run: bash setup-dev.sh", StringComparison.Ordinal);
+        quality.ShouldContain("if: needs.selection.outputs.candidate_required == 'true'\n        run: |\n          dotnet test", StringComparison.Ordinal);
+        quality.ShouldContain("if: needs.selection.outputs.candidate_required == 'true'\n        run: dotnet format", StringComparison.Ordinal);
+        quality.ShouldContain("if: needs.selection.outputs.candidate_required == 'false'\n        uses: ./.github/actions/setup-dotnet-tool", StringComparison.Ordinal);
+        quality.ShouldContain("project: tools/SharedKernel.Documentation.Tool", StringComparison.Ordinal);
+        quality.ShouldContain("-- generate --config docs/architecture/generated-diagrams.json --check", StringComparison.Ordinal);
+    }
+
     [Theory]
     [InlineData("tools/SharedKernel.Repository.Tool", "select")]
     [InlineData("tools/SharedKernel.Repository.Tool", "validate")]

@@ -32,7 +32,7 @@ jobs:
       - name: Select affected projects
         id: selection
         env:
-          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || '' }}
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'push' && github.event.before || '' }}
         run: |
           args=()
           if [[ -n "$BASE_SHA" ]]; then args+=(--base "$BASE_SHA"); fi
@@ -203,6 +203,7 @@ jobs:
           if-no-files-found: error
 
   repository-quality:
+    needs: selection
     if: ${{ github.event.action != 'labeled' || github.event.label.name == 'ci:rerun' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -214,13 +215,21 @@ jobs:
         with:
           global-json-file: global.json
       - name: Bootstrap from clean checkout
+        if: needs.selection.outputs.candidate_required == 'true'
         run: bash setup-dev.sh
       - name: Validate setup and workflow contracts
+        if: needs.selection.outputs.candidate_required == 'true'
         run: |
           dotnet test --project tests/SharedKernel.RepoConfig.Tests/SharedKernel.RepoConfig.Tests.csproj -c Release --no-build --no-restore
           dotnet test --project tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj -c Release --no-build --no-restore
       - name: Verify formatting
+        if: needs.selection.outputs.candidate_required == 'true'
         run: dotnet format SharedKernel.slnx --verify-no-changes --no-restore
+      - name: Build only documentation tooling for documentation changes
+        if: needs.selection.outputs.candidate_required == 'false'
+        uses: ./.github/actions/setup-dotnet-tool
+        with:
+          project: tools/SharedKernel.Documentation.Tool
       - name: Verify generated architecture
         run: dotnet run --project tools/SharedKernel.Documentation.Tool -c Release --no-build --no-restore -- generate --config docs/architecture/generated-diagrams.json --check
 
