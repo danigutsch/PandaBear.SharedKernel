@@ -9,13 +9,17 @@ public sealed class RepoConfigToolCoverageTests
     public async Task Program_help_returns_success()
     {
         // Arrange
-        string[] args = ["--help"];
+        var root = CiTestSelectionTestProcess.GetRepositoryRoot();
+        var configuration = new DirectoryInfo(AppContext.BaseDirectory).Parent.ShouldNotBeNull().Name;
 
         // Act
-        var exitCode = await Program.Main(args);
+        var result = await CiTestSelectionTestProcess.Run("dotnet", root,
+            ["run", "--project", "tools/SharedKernel.RepoConfig.Tool", "-c", configuration, "--no-build", "--no-restore", "--", "--help"],
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(0);
+        result.ExitCode.ShouldBe(0);
+        result.StandardOutput.ShouldContain("Usage: sharedkernel-repo", StringComparison.Ordinal);
     }
 
     [Fact]

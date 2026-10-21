@@ -14,6 +14,9 @@ It is packaged privately as `PandaBear.SharedKernel.RepoConfig.Tool`.
 - `get <query>` reads the local roadmap queue and dependency information.
 - `sync github --dry-run` previews GitHub projection; `--apply` explicitly performs it.
 - `reconcile github` and `intake github` default to previews; `--apply` writes local roadmap state.
+- `security baseline --root <path>` checks repository-owned Markdown documentation contracts.
+- `security scan --root <path> --output <directory>` additionally scans current source with Gitleaks.
+  See the [security baseline](../../docs/security-baseline.md) for configuration and exit codes.
 - `text-encoding --root <path>` validates indexed UTF-8 text.
 - `podman-dns-preflight --check` diagnoses rootless Podman DNS state without modifying it.
 

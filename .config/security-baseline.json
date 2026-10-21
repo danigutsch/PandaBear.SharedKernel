@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "documents": [
+    {
+      "path": "docs/security-baseline.md",
+      "requiredText": ["## Ownership", "## Automated checks", "## Failure handling", "## Supply chain"]
+    }
+  ]
+}

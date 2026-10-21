@@ -1,7 +1,23 @@
-namespace PandaBear.RepoConfig.Tool;
+using PandaBear.RepoConfig.Tool;
 
-internal static class Program
+using var cancellation = new CancellationTokenSource();
+Console.CancelKeyPress += Cancel;
+try
 {
-    public static Task<int> Main(string[] args) =>
-        RepoConfigToolApplication.Run(args, Console.Out, Console.Error, Environment.CurrentDirectory, CancellationToken.None);
+    return await RepoConfigToolApplication.Run(args, Console.Out, Console.Error, Environment.CurrentDirectory, cancellation.Token).ConfigureAwait(false);
+}
+catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+{
+    await Console.Error.WriteLineAsync("sharedkernel-repo: Command canceled.").ConfigureAwait(false);
+    return 3;
+}
+finally
+{
+    Console.CancelKeyPress -= Cancel;
+}
+
+void Cancel(object? sender, ConsoleCancelEventArgs eventArgs)
+{
+    eventArgs.Cancel = true;
+    cancellation.Cancel();
 }
