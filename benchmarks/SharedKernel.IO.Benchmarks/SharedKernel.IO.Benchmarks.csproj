@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <IsPackable>false</IsPackable>
+        <RootNamespace>PandaBear.IO.Benchmarks</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../src/SharedKernel/SharedKernel.IO/SharedKernel.IO.csproj" />
+    </ItemGroup>
+</Project>

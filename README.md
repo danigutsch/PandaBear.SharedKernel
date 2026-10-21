@@ -17,6 +17,7 @@ Choose the packages your project needs. Each package has its own README with req
 | Handle HTTP outcomes, uploads, caching, and API versions | [HttpClients](src/SharedKernel/SharedKernel.HttpClients/README.md) · [HTTP caching](src/SharedKernel/SharedKernel.HttpCaching.AspNetCore/README.md) · [API versioning](src/SharedKernel/SharedKernel.ApiVersioning/README.md) |
 | Add database-specific persistence and coordination | [Entity Framework Core](src/SharedKernel/SharedKernel.EntityFrameworkCore/README.md) · [PostgreSQL](src/SharedKernel/SharedKernel.Npgsql/README.md) · [Idempotency](src/SharedKernel/SharedKernel.Idempotency/README.md) |
 | Work with durable events and integration messages | [Event sourcing](src/SharedKernel/SharedKernel.EventSourcing/README.md) · [Integration events](src/SharedKernel/SharedKernel.Messaging.IntegrationEvents/README.md) |
+| Rewind bounded uploads or imports for multiple passes | [IO](src/SharedKernel/SharedKernel.IO/README.md) |
 | Parse simple comma-delimited rows and detect duplicates | [Tabular](src/SharedKernel/SharedKernel.Tabular/README.md) |
 | Build focused tests and container-backed integration tests | [Testing](src/SharedKernel/SharedKernel.Testing/README.md) · [Integration testing](src/SharedKernel/SharedKernel.IntegrationTesting/README.md) |
 | Automate documentation and package maintenance | [Documentation tool](tools/SharedKernel.Documentation.Tool/README.md) · [Versioning tool](tools/SharedKernel.Versioning.Tool/README.md) |

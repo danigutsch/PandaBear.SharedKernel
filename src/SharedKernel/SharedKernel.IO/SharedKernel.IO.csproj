@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <PackageId>PandaBear.SharedKernel.IO</PackageId>
+        <Description>Bounded seekable stream spooling with explicit ownership and cleanup.</Description>
+        <PackageTags>io;streams;spooling;shared-kernel;dotnet</PackageTags>
+        <RootNamespace>PandaBear.IO</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+</Project>

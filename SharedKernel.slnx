@@ -129,4 +129,7 @@
   <Project Path="tests/SharedKernel.RepoConfig.Tests/SharedKernel.RepoConfig.Tests.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Tabular/SharedKernel.Tabular.csproj" />
   <Project Path="tests/SharedKernel.Tabular.Tests/SharedKernel.Tabular.Tests.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.IO/SharedKernel.IO.csproj" />
+  <Project Path="tests/SharedKernel.IO.Tests/SharedKernel.IO.Tests.csproj" />
+  <Project Path="benchmarks/SharedKernel.IO.Benchmarks/SharedKernel.IO.Benchmarks.csproj" />
 </Solution>

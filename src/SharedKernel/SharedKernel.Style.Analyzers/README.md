@@ -99,8 +99,10 @@ Source is public; registry publication remains deferred. Consume a validated can
 
 This section defines the library IO policy, whole-read diagnostic, and safe-code-fix assessment.
 The rule lives in the existing
-Style analyzer package; no IO analyzer package, runtime primitive, or dependency is necessary.
+Style analyzer package; the diagnostic requires no IO analyzer package or runtime dependency.
 Application adoption and input-size policy remain with each application.
+See the [stream intake policy](../../../docs/stream-intake.md) for streaming, bounded buffering,
+seekable spooling, memory-map decisions, and the optional `PandaBear.SharedKernel.IO` primitive.
 
 ### Policy and detection
 

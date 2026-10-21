@@ -1,0 +1,6 @@
+#nullable enable
+PandaBear.IO.SeekableContent
+PandaBear.IO.SeekableContent.Content.get -> System.IO.Stream!
+PandaBear.IO.SeekableContent.Dispose() -> void
+PandaBear.IO.SeekableContent.DisposeAsync() -> System.Threading.Tasks.ValueTask
+static PandaBear.IO.SeekableContent.Create(System.IO.Stream! source, long maxLength, int memoryThreshold, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.IO.SeekableContent!>
