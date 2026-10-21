@@ -1,6 +1,6 @@
 # Release policy
 
-All packages remain preview (prerelease) until stable artifacts are separately authorized. Source hosting is public at `https://github.com/danigutsch/PandaBear.SharedKernel`; registry publication remains deferred. Git source publication does not authorize publishing packages, stable tags, or releases.
+All packages remain preview (prerelease) until stable artifacts are separately authorized. Public source and the explicitly approved [GitHub preview `v1.0.0-alpha.20261021.2`](https://github.com/danigutsch/PandaBear.SharedKernel/releases/tag/v1.0.0-alpha.20261021.2) are available; its immutable packages and candidate manifest retain their original revision and SHA-256 identities. Verify those identities before consumption. This preview distribution does not authorize NuGet registry publication, stable packages, stable tags, or stable releases.
 
 ## Candidates and versions
 
