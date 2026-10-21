@@ -9,7 +9,7 @@ public static class ResultShouldAssertionExtensions
     /// <param name="actual">The operation result.</param>
     public static void ShouldBeSuccess(this Result actual)
     {
-        actual.IsSuccess.ShouldBeTrue($"Expected success but received {actual}.");
+        actual.IsSuccess.ShouldBeTrue(actual.IsSuccess ? null : $"Expected success but received status {actual.Status}.");
         actual.IsFailure.ShouldBeFalse();
         actual.ErrorDetails.ShouldBeNull();
     }
@@ -20,7 +20,7 @@ public static class ResultShouldAssertionExtensions
     /// <returns>The successful value.</returns>
     public static T ShouldBeSuccess<T>(this Result<T> actual) where T : notnull
     {
-        actual.IsSuccess.ShouldBeTrue($"Expected success but received {actual}.");
+        actual.IsSuccess.ShouldBeTrue(actual.IsSuccess ? null : $"Expected success but received status {actual.Status}.");
         actual.IsFailure.ShouldBeFalse();
         actual.ErrorDetails.ShouldBeNull();
         return actual.Value;
@@ -33,7 +33,7 @@ public static class ResultShouldAssertionExtensions
     /// <returns>The error for further assertions.</returns>
     public static ResultError ShouldBeFailure(this Result actual, ResultStatus expectedStatus, string expectedCode)
     {
-        actual.IsFailure.ShouldBeTrue($"Expected failure but received {actual}.");
+        actual.IsFailure.ShouldBeTrue(actual.IsFailure ? null : $"Expected failure but received status {actual.Status}.");
         actual.IsSuccess.ShouldBeFalse();
         actual.Status.ShouldBe(expectedStatus);
         var error = actual.ErrorDetails.ShouldNotBeNull();
@@ -49,7 +49,7 @@ public static class ResultShouldAssertionExtensions
     /// <returns>The error for further assertions.</returns>
     public static ResultError ShouldBeFailure<T>(this Result<T> actual, ResultStatus expectedStatus, string expectedCode) where T : notnull
     {
-        actual.IsFailure.ShouldBeTrue($"Expected failure but received {actual}.");
+        actual.IsFailure.ShouldBeTrue(actual.IsFailure ? null : $"Expected failure but received status {actual.Status}.");
         actual.TryGetValue(out _).ShouldBeFalse();
         return actual.ToResult().ShouldBeFailure(expectedStatus, expectedCode);
     }

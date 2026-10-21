@@ -5,6 +5,26 @@ namespace PandaBear.Testing.Tests;
 public sealed class ResultShouldAssertionTests
 {
     [Fact]
+    public void ShouldBeSuccess_does_not_format_the_successful_value()
+    {
+        var payload = new UnformattableResultPayload();
+        var result = Result.Ok(payload);
+
+        var value = result.ShouldBeSuccess();
+
+        value.ShouldBeSameAs(payload);
+    }
+
+    [Fact]
+    public void ShouldBeFailure_reports_the_outcome_without_formatting_the_value()
+    {
+        var result = Result.Ok(new UnformattableResultPayload());
+        Action assertion = () => result.ShouldBeFailure(ResultStatus.NotFound, ResultErrorCodes.NotFound);
+
+        assertion.ShouldThrow<Xunit.Sdk.TrueException>();
+    }
+
+    [Fact]
     public void ShouldBeSuccess_returns_the_generic_value()
     {
         var result = Result.Created("created");
