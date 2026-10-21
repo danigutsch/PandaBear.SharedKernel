@@ -26,6 +26,11 @@ This Roslyn component provides focused, safe code fixes for the diagnostics in
 - `SKSTYLE009` can convert a private command method that only returns `Result.Ok()` to `void`, `Task`,
   or `ValueTask` when all direct callers and result-composition callbacks can preserve the successful
   result.
+`SKSTYLE011` deliberately offers no code fix: a safe bound, unit, rejection policy, and ownership
+cannot be inferred from a whole-read invocation. Async conversion does not bound allocations;
+truncating input or choosing an arbitrary limit changes behavior. Regression tests protect the
+absence of individual and bulk actions. See the analyzer README's IO policy for manual remediation.
+
 Fix All is limited to `SKSTYLE001`.
 
 ## Suppression policy

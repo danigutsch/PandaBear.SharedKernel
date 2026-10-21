@@ -14,3 +14,4 @@ const PandaBear.Style.Analyzers.StyleDiagnosticIds.AsyncSuffix = "SKSTYLE001" ->
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.CancellationTokenDefaultValue = "SKSTYLE003" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.CancellationTokenParameterName = "SKSTYLE002" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.MultipleTopLevelTypesPerFile = "SKSTYLE004" -> string!
+const PandaBear.Style.Analyzers.StyleDiagnosticIds.UnboundedWholeRead = "SKSTYLE011" -> string!

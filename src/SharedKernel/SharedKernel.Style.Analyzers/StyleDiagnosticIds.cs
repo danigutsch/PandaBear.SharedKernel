@@ -55,4 +55,9 @@ public static class StyleDiagnosticIds
     /// </summary>
     public const string OptionalResultMethod = "SKSTYLE010";
 
+    /// <summary>
+    /// Diagnostic emitted for whole-input reads in explicitly enabled size-sensitive scopes.
+    /// </summary>
+    public const string UnboundedWholeRead = "SKSTYLE011";
+
 }

@@ -15,3 +15,4 @@ const PandaBear.Style.Analyzers.StyleDiagnosticIds.DomainEventSuffix = "SKSTYLE0
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.GenericTypeNameSuffix = "SKSTYLE005" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.MultipleTopLevelTypesPerFile = "SKSTYLE004" -> string!
 const PandaBear.Style.Analyzers.StyleDiagnosticIds.NonSourceGeneratedLogging = "SKSTYLE007" -> string!
+const PandaBear.Style.Analyzers.StyleDiagnosticIds.UnboundedWholeRead = "SKSTYLE011" -> string!

@@ -23,6 +23,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             StyleDiagnosticIds.DomainEventSuffix,
             StyleDiagnosticIds.SuccessOnlyResultMethod,
             StyleDiagnosticIds.OptionalResultMethod,
+            StyleDiagnosticIds.UnboundedWholeRead,
         ];
 
         // Act
