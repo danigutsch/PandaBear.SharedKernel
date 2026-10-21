@@ -15,7 +15,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.EntityFrameworkCore\SharedKernel.EntityFrameworkCore.csproj" />
-        <ProjectReference Include="..\SharedKernel.Idempotency\SharedKernel.Idempotency.csproj" />
+        <ProjectReference Include="..\SharedKernel.Idempotency.Abstractions\SharedKernel.Idempotency.Abstractions.csproj" />
     </ItemGroup>
 
     <ItemGroup>

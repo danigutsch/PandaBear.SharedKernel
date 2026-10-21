@@ -1,3 +1,5 @@
+using PandaBear.Idempotency;
+
 namespace PandaBear.HttpClients;
 
 /// <summary>Retains one explicit HTTP command and idempotency key while its commit outcome is unknown.</summary>
@@ -10,7 +12,7 @@ public sealed class IdempotentSubmission<T>
 {
     private readonly Lock _gate = new();
     private Func<string, CancellationToken, Task<HttpOutcome<T>>>? _pending;
-    private string? _key;
+    private IdempotencyKey? _key;
     private string _operation = string.Empty;
     private bool _isBusy;
 
@@ -35,7 +37,7 @@ public sealed class IdempotentSubmission<T>
         {
             if (_isBusy || _pending is not null) { return Task.FromResult<HttpOutcome<T>?>(null); }
             _pending = submit;
-            _key = Guid.CreateVersion7().ToString("N");
+            _key = IdempotencyKey.From(Guid.CreateVersion7().ToString("N"));
             _operation = operation;
             _isBusy = true;
         }
@@ -58,16 +60,16 @@ public sealed class IdempotentSubmission<T>
     private async Task<HttpOutcome<T>?> Execute(CancellationToken ct)
     {
         Func<string, CancellationToken, Task<HttpOutcome<T>>> pending;
-        string key;
+        IdempotencyKey key;
         lock (_gate)
         {
-            if (_pending is null || _key is null) { _isBusy = false; return null; }
+            if (_pending is null || _key is not { } retainedKey) { _isBusy = false; return null; }
             pending = _pending;
-            key = _key;
+            key = retainedKey;
         }
         try
         {
-            var result = await pending(key, ct).ConfigureAwait(false);
+            var result = await pending(key.Value, ct).ConfigureAwait(false);
             if (result.Kind is HttpOutcomeKind.Succeeded or HttpOutcomeKind.ValidationProblem or HttpOutcomeKind.NotFound
                 or HttpOutcomeKind.Unauthorized or HttpOutcomeKind.Forbidden or HttpOutcomeKind.Conflict)
             {

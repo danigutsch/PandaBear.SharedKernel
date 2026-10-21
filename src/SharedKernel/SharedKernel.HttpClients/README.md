@@ -44,7 +44,7 @@ Source is public; registry publication remains deferred. Consume a validated can
 
 ## Explicit idempotent submissions
 
-`IdempotentSubmission<T>` retains one callback and generated key when an HTTP outcome cannot
+`IdempotentSubmission<T>` retains one callback and a generated, validated `IdempotencyKey` value when an HTTP outcome cannot
 establish whether the server committed the command. `Retry` invokes that same callback with the
 same key. `Submit` and `Retry` return null while a request is busy; a pending command rejects
 replacement submissions. Terminal success, validation, missing-resource and authorization/conflict

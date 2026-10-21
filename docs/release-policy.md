@@ -23,3 +23,14 @@ C# namespaces use `PandaBear.*`; projects, assemblies, command names, and `Panda
 Release tooling is documented in the root README and [versioning tool guide](../tools/SharedKernel.Versioning.Tool/README.md). Release preparation itself does not authorize registry publication.
 
 References: [library versioning](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning), [NuGet versions](https://learn.microsoft.com/en-us/nuget/concepts/package-versioning), and [package authoring](https://learn.microsoft.com/en-us/nuget/create-packages/package-authoring-best-practices).
+
+## Idempotency contracts package migration
+
+The contracts package is now `PandaBear.SharedKernel.Idempotency.Abstractions`; the existing
+`PandaBear.Idempotency` namespace remains unchanged; the project and assembly become
+`SharedKernel.Idempotency.Abstractions`.
+This is a breaking preview package-identity change. Consumers must replace direct references
+and refresh their candidate pins and lock files together; do not install both identities.
+The separate `PandaBear.SharedKernel.Idempotency.EntityFrameworkCore` provider now depends on
+the renamed contracts package. HTTP retry state belongs to HttpClients; application request
+fingerprinting and transaction/replay policy remain in the consuming application.

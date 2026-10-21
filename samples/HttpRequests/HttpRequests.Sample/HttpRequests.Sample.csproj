@@ -8,6 +8,6 @@
     <ItemGroup>
         <ProjectReference Include="../../../src/SharedKernel/SharedKernel.AspNetCore/SharedKernel.AspNetCore.csproj" />
         <ProjectReference Include="../../../src/SharedKernel/SharedKernel.HttpClients/SharedKernel.HttpClients.csproj" />
-        <ProjectReference Include="../../../src/SharedKernel/SharedKernel.Idempotency/SharedKernel.Idempotency.csproj" />
+        <ProjectReference Include="../../../src/SharedKernel/SharedKernel.Idempotency.Abstractions/SharedKernel.Idempotency.Abstractions.csproj" />
     </ItemGroup>
 </Project>

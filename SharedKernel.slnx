@@ -22,7 +22,7 @@
   <Project Path="src/SharedKernel/SharedKernel.Functional/SharedKernel.Functional.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.HttpCaching.AspNetCore/SharedKernel.HttpCaching.AspNetCore.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.HttpClients/SharedKernel.HttpClients.csproj" />
-  <Project Path="src/SharedKernel/SharedKernel.Idempotency/SharedKernel.Idempotency.csproj" />
+  <Project Path="src/SharedKernel/SharedKernel.Idempotency.Abstractions/SharedKernel.Idempotency.Abstractions.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Idempotency.EntityFrameworkCore/SharedKernel.Idempotency.EntityFrameworkCore.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.ImageProcessing/SharedKernel.ImageProcessing.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.InputNormalization/SharedKernel.InputNormalization.csproj" />
@@ -81,7 +81,7 @@
   <Project Path="tests/SharedKernel.EventSourcing.Tests/SharedKernel.EventSourcing.Tests.csproj" />
   <Project Path="tests/SharedKernel.Functional.Tests/SharedKernel.Functional.Tests.csproj" />
   <Project Path="tests/SharedKernel.HttpClients.Tests/SharedKernel.HttpClients.Tests.csproj" />
-  <Project Path="tests/SharedKernel.Idempotency.Tests/SharedKernel.Idempotency.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Idempotency.Abstractions.Tests/SharedKernel.Idempotency.Abstractions.Tests.csproj" />
   <Project Path="tests/SharedKernel.ImageProcessing.Tests/SharedKernel.ImageProcessing.Tests.csproj" />
   <Project Path="tests/SharedKernel.InputNormalization.Tests/SharedKernel.InputNormalization.Tests.csproj" />
   <Project Path="tests/SharedKernel.MalwareScanning.ClamAv.Testing/SharedKernel.MalwareScanning.ClamAv.Testing.csproj" />

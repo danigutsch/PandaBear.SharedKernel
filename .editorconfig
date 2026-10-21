@@ -235,7 +235,7 @@ dotnet_diagnostic.CA2007.severity = none
 
 # CA1716 flags established C# domain terms and package contracts that are expensive to rename
 # across public API consumers. Owner: package/domain maintainers. Revisit on the next major API break.
-[src/SharedKernel/SharedKernel.Idempotency/IIdempotencyStore.cs]
+[src/SharedKernel/SharedKernel.Idempotency.Abstractions/IIdempotencyStore.cs]
 dotnet_diagnostic.CA1716.severity = none
 
 [src/SharedKernel/SharedKernel.Mediator.Abstractions/IPipelineBehavior.cs]
