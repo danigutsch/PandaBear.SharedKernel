@@ -26,15 +26,9 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+      - uses: ./.github/actions/setup-dotnet-tool
         with:
-          global-json-file: global.json
-          cache: true
-          cache-dependency-path: '**/packages.lock.json'
-      - name: Build repository tooling
-        run: |
-          dotnet restore tools/SharedKernel.Repository.Tool --locked-mode
-          dotnet build tools/SharedKernel.Repository.Tool -c Release --no-restore
+          project: tools/SharedKernel.Repository.Tool
       - name: Select affected projects
         id: selection
         env:
@@ -60,15 +54,9 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+      - uses: ./.github/actions/setup-dotnet-tool
         with:
-          global-json-file: global.json
-          cache: true
-          cache-dependency-path: '**/packages.lock.json'
-      - name: Build repository tooling
-        run: |
-          dotnet restore tools/SharedKernel.Repository.Tool --locked-mode
-          dotnet build tools/SharedKernel.Repository.Tool -c Release --no-restore
+          project: tools/SharedKernel.Repository.Tool
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: selection-and-reasons
@@ -97,15 +85,9 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+      - uses: ./.github/actions/setup-dotnet-tool
         with:
-          global-json-file: global.json
-          cache: true
-          cache-dependency-path: '**/packages.lock.json'
-      - name: Build repository tooling
-        run: |
-          dotnet restore tools/SharedKernel.Repository.Tool --locked-mode
-          dotnet build tools/SharedKernel.Repository.Tool -c Release --no-restore
+          project: tools/SharedKernel.Repository.Tool
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: selection-and-reasons
@@ -132,15 +114,9 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+      - uses: ./.github/actions/setup-dotnet-tool
         with:
-          global-json-file: global.json
-          cache: true
-          cache-dependency-path: '**/packages.lock.json'
-      - name: Build candidate versioning tooling
-        run: |
-          dotnet restore tools/SharedKernel.Versioning.Tool --locked-mode
-          dotnet build tools/SharedKernel.Versioning.Tool -c Release --no-restore
+          project: tools/SharedKernel.Versioning.Tool
       - name: Calculate coordinated package version
         id: version
         env:
@@ -170,15 +146,9 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+      - uses: ./.github/actions/setup-dotnet-tool
         with:
-          global-json-file: global.json
-          cache: true
-          cache-dependency-path: '**/packages.lock.json'
-      - name: Build candidate versioning tooling
-        run: |
-          dotnet restore tools/SharedKernel.Versioning.Tool --locked-mode
-          dotnet build tools/SharedKernel.Versioning.Tool -c Release --no-restore
+          project: tools/SharedKernel.Versioning.Tool
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: candidate-packages
@@ -201,15 +171,9 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+      - uses: ./.github/actions/setup-dotnet-tool
         with:
-          global-json-file: global.json
-          cache: true
-          cache-dependency-path: '**/packages.lock.json'
-      - name: Build candidate versioning tooling
-        run: |
-          dotnet restore tools/SharedKernel.Versioning.Tool --locked-mode
-          dotnet build tools/SharedKernel.Versioning.Tool -c Release --no-restore
+          project: tools/SharedKernel.Versioning.Tool
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: candidate-packages
