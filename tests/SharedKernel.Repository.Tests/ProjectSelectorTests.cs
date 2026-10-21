@@ -7,6 +7,21 @@ public sealed class ProjectSelectorTests : IDisposable
 {
     private readonly RepositoryTestScope scope = new();
 
+    [Theory]
+    [InlineData("src/Owned/Alias.cs")]
+    [InlineData("tests/SharedKernel.Style.Analyzers.Tests/Guard.cs")]
+    public void Governed_library_or_guard_changes_validate_complete_inventory(string change)
+    {
+        scope.AddProject("src/Owned/Owned.csproj", """<Project><PackageId>PandaBear.SharedKernel.Owned</PackageId></Project>""");
+        scope.AddProject("src/Other/Other.csproj", """<Project><PackageId>PandaBear.SharedKernel.Other</PackageId></Project>""");
+        scope.AddProject("tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj", """<Project><PackageReference Include="xunit.v3.mtp-v2" /></Project>""");
+
+        var result = ProjectSelector.Select(scope.Root, [change]);
+
+        result.BuildProjects.Length.ShouldBe(6);
+        result.TestProjects.ShouldContain("tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj");
+    }
+
     [Fact]
     public void Newly_added_solution_tests_are_selected_without_updating_provenance()
     {

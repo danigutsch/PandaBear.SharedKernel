@@ -21,6 +21,11 @@ Use `IdempotencyKeyHeader.Create(value)` to create a required `IdempotencyKey` f
 missing or invalid input with the standard `Idempotency-Key` validation field. It does not generate
 keys, coordinate operations, or log header values.
 
+Use `HostEnvironmentVariableNames.AspNetCoreEnvironment` and
+`HostEnvironmentVariableNames.DotNetEnvironment` for C# environment-variable lookups in web hosts.
+These constants name host integration inputs without choosing an environment or application policy.
+Their canonical ownership is registered in the [governed-literal catalog](../SharedKernel.Style.Analyzers/GovernedLiterals.txt).
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.AspNetCore`. C# namespace: `PandaBear.AspNetCore`. Assembly/project identity: `SharedKernel.AspNetCore`.

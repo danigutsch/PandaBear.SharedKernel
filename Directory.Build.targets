@@ -1,0 +1,18 @@
+<Project>
+    <!-- Export actual compiler inputs for the repository-wide governed-constant test. -->
+    <Target Name="RecordGovernedLiteralInputs" AfterTargets="CoreCompile"
+            Condition="$([System.String]::Copy('$(PackageId)').StartsWith('PandaBear.SharedKernel.')) and '$(IsPackable)' != 'false'">
+        <PropertyGroup>
+            <GovernedLiteralInputsDirectory>$(MSBuildThisFileDirectory)TestResults/governed-literals/$(Configuration)/$(MSBuildProjectName)</GovernedLiteralInputsDirectory>
+        </PropertyGroup>
+        <ItemGroup>
+            <GovernedLiteralInput Include="assembly|$(AssemblyName)" />
+            <GovernedLiteralInput Include="defines|$([System.String]::Copy('$(DefineConstants)').Replace(';', ','))" />
+            <GovernedLiteralInput Include="@(Compile->'source|%(FullPath)')" />
+            <GovernedLiteralInput Include="@(ReferencePath->'reference|%(FullPath)')" />
+        </ItemGroup>
+        <MakeDir Directories="$(GovernedLiteralInputsDirectory)" />
+        <WriteLinesToFile File="$(GovernedLiteralInputsDirectory)/$(TargetFramework).inputs"
+                          Lines="@(GovernedLiteralInput)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    </Target>
+</Project>

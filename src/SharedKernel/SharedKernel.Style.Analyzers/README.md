@@ -26,6 +26,8 @@ the default .NET analyzer set.
 | `SKSTYLE009` | Warning | Methods returning `SharedKernel.Results.Result` or `Result<T>`, including async `Task` or `ValueTask` wrappers, must be able to return a failure `Result`; use a non-`Result` return type when every reachable return is successful. Overrides and interface implementations are excluded. |
 | `SKSTYLE010` | Warning | Methods returning `SharedKernel.Results.Result<T>` only as `Ok` or `NotFound` should return `Option<T>`. |
 | `SKSTYLE011` | Disabled; opt-in warning | Review whole-input reads in size-sensitive production scopes. |
+| `SKSTYLE012` | Warning; requires catalog | Replace exact registered C# string literals with the named canonical field. |
+| `SKSTYLE013` | Warning; requires catalog | Correct malformed or ambiguous governed-literal metadata. |
 
 ## Configuration
 
@@ -180,3 +182,68 @@ Sources reviewed on 2026-10-21:
 
 - [CA1835](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1835), [CA2022](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2022), [CA2016](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2016), and [CA2000](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca2000) define the existing SDK responsibilities above.
 - [Meziantou.Analyzer](https://github.com/meziantou/Meziantou.Analyzer), [AsyncFixer](https://github.com/semihokur/AsyncFixer), [IDisposableAnalyzers](https://github.com/DotNetAnalyzers/IDisposableAnalyzers), and [ErrorProne.NET](https://github.com/SergeyTeplyakov/ErrorProne.NET) are research references for analyzer scope and conservative fixes, not dependencies or copied implementations.
+
+## Governed literals
+
+The opt-in catalog is [`GovernedLiterals.txt`](GovernedLiterals.txt), also packed under
+`governance/` in this analyzer package. It contains governance metadata, not runtime constants.
+No new package or dependency is introduced. Reference the existing owner package before replacing
+literals: `PandaBear.SharedKernel.AspNetCore` owns `HostEnvironmentVariableNames`;
+`PandaBear.SharedKernel.MalwareScanning.ClamAv` owns `ClamAvMalwareScannerConfigurationKeys`.
+The host names are web-host integration values; Domain has no hosting dependency. Existing ClamAV
+callers already use their provider-owned constants. There were no direct C# host-name callers to
+migrate in the library. Application callers and policy remain in their application repository.
+
+To adopt, copy the catalog to a consumer-owned location, review its owners and package prerequisites,
+and pass it as an additional file. Use the exact basename `GovernedLiterals.txt`:
+
+```xml
+<ItemGroup>
+  <AdditionalFiles Include="governance/GovernedLiterals.txt" />
+</ItemGroup>
+```
+
+Each nonblank, noncomment line has three pipe-separated columns:
+`literal|assembly simple name|fully.qualified.Type.Field`. Whitespace around columns is trimmed;
+values and symbols are case-sensitive. Lines beginning with `#` are comments. The format has no
+escaping for pipes or newlines. Multiple additional files with this basename are merged and must
+remain unambiguous. No additional file means no governed-literal diagnostics. Invalid input emits
+`SKSTYLE013` instead of silently skipping enforcement. Standard `.editorconfig` severity and narrow,
+justified Roslyn suppressions apply; applications own their rollout and extra entries.
+
+`SKSTYLE012` compares decoded ordinary, verbatim, escaped, and raw C# string literal tokens exactly.
+It does not infer interpolated strings, concatenate consumer expressions, scan configuration formats
+(JSON, YAML, shell, Markdown), or govern arbitrary routes, roles, claims, or test values. Generated
+code and the exact canonical `const string` declaration in its registered assembly are exempt;
+another field in the same type is not exempt. A symbol reference is allowed. The rule does not
+prove repository-wide uniqueness and offers no automatic import or package-reference code fix.
+SharedKernel passes its catalog only to production source projects; test data remains outside
+that rollout.
+
+`GovernedLiteralRepositoryTests` separately checks all packaged library projects in the solution, including
+reusable testing packages and explicitly linked source. The build records evaluated compiler inputs,
+resolved references, global usings, and conditional compilation symbols; excluded files, application
+samples, benchmarks, and test data are outside the inventory. It uses Roslyn constant values,
+so literal duplicates, concatenated duplicates, and redirected aliases across projects are checked.
+Local `const string` declarations with governed values are also rejected; compatibility exceptions
+apply only to named fields. Generated-code attributes on enclosing types or methods exempt nested
+declarations as well.
+Every registered canonical field must exist exactly once with its registered value.
+The repository selector conservatively requests full validation for packaged-library or guard-test
+changes so clean CI always builds the complete inventory and runs the guard. Unresolved
+string constants fail closed. Test projects and generated declarations are excluded. Unregistered values
+remain unrestricted. Run the guard with:
+
+```sh
+dotnet build SharedKernel.slnx -c Release --no-restore
+dotnet test --project tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj -c Release --no-build --no-restore -- --filter-class '*GovernedLiteralRepositoryTests'
+```
+
+A reviewed compatibility exception adds a fourth nonempty justification column to a row naming
+the exact exception field and assembly, using the same literal as its canonical row. This permits
+that field in the uniqueness guard; it does not create another canonical replacement or exempt
+a direct literal from `SKSTYLE012`. Prefer a redirected alias for a published API compatibility
+exception. Stale exceptions fail the guard. The library currently needs no compatibility exceptions;
+fixtures cover documented aliases and reject missing justifications. Consumers can reuse this
+catalog contract and the guard test pattern, while owning their own compilation inventory and
+application exceptions.

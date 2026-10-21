@@ -60,4 +60,9 @@ public static class StyleDiagnosticIds
     /// </summary>
     public const string UnboundedWholeRead = "SKSTYLE011";
 
+    /// <summary>Diagnostic emitted for a registered direct string literal.</summary>
+    public const string GovernedLiteral = "SKSTYLE012";
+
+    /// <summary>Diagnostic emitted for invalid governed-literal metadata.</summary>
+    public const string InvalidGovernedLiteralCatalog = "SKSTYLE013";
 }

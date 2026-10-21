@@ -24,6 +24,8 @@ public sealed class SharedKernelStyleAnalyzerTests
             StyleDiagnosticIds.SuccessOnlyResultMethod,
             StyleDiagnosticIds.OptionalResultMethod,
             StyleDiagnosticIds.UnboundedWholeRead,
+            StyleDiagnosticIds.GovernedLiteral,
+            StyleDiagnosticIds.InvalidGovernedLiteralCatalog,
         ];
 
         // Act
