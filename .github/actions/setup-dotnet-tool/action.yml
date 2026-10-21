@@ -1,0 +1,21 @@
+name: Set up repository tooling
+description: Restore the pinned SDK cache and build a repository-owned .NET CLI.
+inputs:
+  project:
+    description: Repository-relative tool project to restore and build.
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+      with:
+        global-json-file: global.json
+        cache: true
+        cache-dependency-path: '**/packages.lock.json'
+    - name: Build the selected repository tool
+      shell: bash
+      env:
+        CI_TOOL_PROJECT: ${{ inputs.project }}
+      run: |
+        dotnet restore "$CI_TOOL_PROJECT" --locked-mode
+        dotnet build "$CI_TOOL_PROJECT" -c Release --no-restore
