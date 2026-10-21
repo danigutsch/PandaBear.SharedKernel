@@ -231,7 +231,7 @@ public static class PackageLockInventory
         var sourceDateEpoch = Environment.GetEnvironmentVariable(SourceDateEpochVariableName);
         if (string.IsNullOrWhiteSpace(sourceDateEpoch))
         {
-            return DateTimeOffset.UtcNow;
+            return TimeProvider.System.GetUtcNow();
         }
 
         if (!long.TryParse(sourceDateEpoch, NumberStyles.Integer, CultureInfo.InvariantCulture, out var seconds))

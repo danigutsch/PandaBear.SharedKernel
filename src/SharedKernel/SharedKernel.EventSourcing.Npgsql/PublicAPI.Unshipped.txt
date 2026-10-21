@@ -50,3 +50,5 @@ PandaBear.EventSourcing.Npgsql.PostgreSqlProjectionCheckpointStore.DisposeAsync(
 PandaBear.EventSourcing.Npgsql.PostgreSqlProjectionCheckpointStore.GetCheckpoint(string! projectionName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<PandaBear.EventSourcing.ProjectionCheckpoint?>
 PandaBear.EventSourcing.Npgsql.PostgreSqlProjectionCheckpointStore.Initialize(System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
 PandaBear.EventSourcing.Npgsql.PostgreSqlProjectionCheckpointStore.Save(PandaBear.EventSourcing.ProjectionCheckpoint! checkpoint, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask
+PandaBear.EventSourcing.Npgsql.PostgreSqlEventSourcingOptions.TimeProvider.get -> System.TimeProvider!
+PandaBear.EventSourcing.Npgsql.PostgreSqlEventSourcingOptions.TimeProvider.set -> void

@@ -22,9 +22,9 @@ public sealed class PostgreSqlIntegrationEventTransportClaimSqlTests
             dbContext,
             "catalog",
             1,
-            DateTimeOffset.UtcNow,
+            TimeProvider.System.GetUtcNow(),
             "worker",
-            DateTimeOffset.UtcNow.AddMinutes(5),
+            TimeProvider.System.GetUtcNow().AddMinutes(5),
             TestContext.Current.CancellationToken);
 
         // Assert

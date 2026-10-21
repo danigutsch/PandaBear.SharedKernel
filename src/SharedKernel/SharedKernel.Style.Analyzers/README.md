@@ -28,6 +28,7 @@ the default .NET analyzer set.
 | `SKSTYLE011` | Disabled; opt-in warning | Review whole-input reads in size-sensitive production scopes. |
 | `SKSTYLE012` | Warning; requires catalog | Replace exact registered C# string literals with the named canonical field. |
 | `SKSTYLE013` | Warning; requires catalog | Correct malformed or ambiguous governed-literal metadata. |
+| `SKSTYLE014` | Warning | Use TimeProvider for wall-clock reads. |
 
 ## Configuration
 
@@ -249,3 +250,17 @@ exception. Stale exceptions fail the guard. The library currently needs no compa
 fixtures cover documented aliases and reject missing justifications. Consumers can reuse this
 catalog contract and the guard test pattern, while owning their own compilation inventory and
 application exceptions.
+
+## SKSTYLE014
+
+Replace direct `DateTime.Now`, `DateTime.UtcNow`, `DateTime.Today`, `DateTimeOffset.Now` and
+`DateTimeOffset.UtcNow` reads with an injected or passed `TimeProvider`. Construction, parsing and stored values
+are unaffected. Aliases, qualified names and static imports are resolved semantically; generated code is excluded.
+Use `TimeProvider.System` at an intentional system-clock boundary; pass a controlled provider into behavior that
+needs deterministic time. The Npgsql event-sourcing provider accepts it through its existing options object.
+
+The code fix uses exactly one accessible, non-nullable in-scope provider local, parameter, field or readable property,
+including derived provider types. It preserves `DateTimeOffset` via `GetUtcNow()`/`GetLocalNow()` and UTC `DateTime`
+via `GetUtcNow().UtcDateTime`, and checks that the edited project compiles. Missing or ambiguous providers receive
+no fix. Local `DateTime.Now`/`Today` conversions require a deliberate timezone and `DateTime.Kind` policy, so those
+remain diagnostic-only. Fix All is not offered for provider selection.

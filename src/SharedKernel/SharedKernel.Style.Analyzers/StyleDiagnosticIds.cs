@@ -5,6 +5,9 @@ namespace PandaBear.Style.Analyzers;
 /// </summary>
 public static class StyleDiagnosticIds
 {
+    /// <summary>Diagnostic for direct wall-clock reads.</summary>
+    public const string DirectCurrentTime = "SKSTYLE014";
+
     /// <summary>
     /// Diagnostic emitted when a method name ends with <c>Async</c> without requiring that suffix.
     /// </summary>

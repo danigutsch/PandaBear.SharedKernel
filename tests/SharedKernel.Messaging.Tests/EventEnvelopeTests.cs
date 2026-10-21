@@ -10,7 +10,7 @@ public sealed class EventEnvelopeTests
     public void Creates_envelope_when_values_are_valid()
     {
         var source = new Uri("urn:example:admin");
-        var occurredAt = DateTimeOffset.UtcNow;
+        var occurredAt = TimeProvider.System.GetUtcNow();
 
         var envelope = new EventEnvelope(
             EnvelopeSpec,
@@ -56,7 +56,7 @@ public sealed class EventEnvelopeTests
                 new Uri("urn:test"),
                 "catalog.media.original-stored.v1",
                 1,
-                DateTimeOffset.UtcNow,
+                TimeProvider.System.GetUtcNow(),
                 null,
                 JsonContentType,
                 null,
@@ -84,7 +84,7 @@ public sealed class EventEnvelopeTests
                 new Uri("urn:test"),
                 "catalog.media.original-stored.v1",
                 1,
-                DateTimeOffset.UtcNow,
+                TimeProvider.System.GetUtcNow(),
                 null,
                 JsonContentType,
                 null,
@@ -112,7 +112,7 @@ public sealed class EventEnvelopeTests
                 new Uri("urn:test"),
                 "catalog.media.original-stored.v1",
                 1,
-                DateTimeOffset.UtcNow,
+                TimeProvider.System.GetUtcNow(),
                 null,
                 JsonContentType,
                 null,
@@ -138,7 +138,7 @@ public sealed class EventEnvelopeTests
                 null!,
                 "catalog.media.original-stored.v1",
                 1,
-                DateTimeOffset.UtcNow,
+                TimeProvider.System.GetUtcNow(),
                 null,
                 JsonContentType,
                 null,
@@ -166,7 +166,7 @@ public sealed class EventEnvelopeTests
                 new Uri("urn:test"),
                 eventType!,
                 1,
-                DateTimeOffset.UtcNow,
+                TimeProvider.System.GetUtcNow(),
                 null,
                 JsonContentType,
                 null,
@@ -194,7 +194,7 @@ public sealed class EventEnvelopeTests
                 new Uri("urn:test"),
                 eventType,
                 1,
-                DateTimeOffset.UtcNow,
+                TimeProvider.System.GetUtcNow(),
                 null,
                 JsonContentType,
                 null,
@@ -222,7 +222,7 @@ public sealed class EventEnvelopeTests
                 new Uri("urn:test"),
                 "catalog.media.original-stored.v1",
                 eventVersion,
-                DateTimeOffset.UtcNow,
+                TimeProvider.System.GetUtcNow(),
                 null,
                 JsonContentType,
                 null,
@@ -250,7 +250,7 @@ public sealed class EventEnvelopeTests
                 new Uri("urn:test"),
                 "catalog.media.original-stored.v1",
                 1,
-                DateTimeOffset.UtcNow,
+                TimeProvider.System.GetUtcNow(),
                 null,
                 JsonContentType,
                 null,

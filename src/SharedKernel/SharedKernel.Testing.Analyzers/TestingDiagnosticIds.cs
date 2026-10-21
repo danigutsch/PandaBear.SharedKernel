@@ -5,6 +5,12 @@ namespace PandaBear.Testing.Analyzers;
 /// </summary>
 public static class TestingDiagnosticIds
 {
+    /// <summary>Diagnostic for name-based test activity subscriptions.</summary>
+    public const string ActivityListenerSourceIdentity = "SKTEST010";
+
+    /// <summary>Diagnostic for SUT construction in an explicit Act phase.</summary>
+    public const string SutConstructionInAct = "SKTEST016";
+
     /// <summary>Diagnostic for assertion-like LINQ Single calls in tests.</summary>
     public const string LinqSingleAssertion = "SKTEST012";
 

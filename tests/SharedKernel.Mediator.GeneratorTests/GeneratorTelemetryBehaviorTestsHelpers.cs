@@ -6,9 +6,10 @@ internal static class GeneratorTelemetryBehaviorTestsHelpers
 {
     public static ActivityListener CreateCapturingListener(List<Activity> stopped, ActivityTraceId traceId)
     {
+        var expectedSource = SharedKernelMediatorActivitySource.Source;
         var listener = new ActivityListener
         {
-            ShouldListenTo = source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
+            ShouldListenTo = source => ReferenceEquals(source, expectedSource),
             Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
             ActivityStopped = a =>
             {

@@ -646,10 +646,11 @@ public sealed class HttpOutcomeMapperTests
         // Arrange
         var stoppedActivities = new ConcurrentQueue<Activity>();
         using var parentSource = new ActivitySource($"HttpOutcomeMapperTests.{Guid.NewGuid():N}");
+        var outcomeSource = HttpOutcomeMapper.OutcomeActivitySource;
         using var listener = new ActivityListener
         {
             ShouldListenTo = source => ReferenceEquals(source, parentSource)
-                || source.Name == HttpOutcomeMapper.ActivitySourceName,
+                || ReferenceEquals(source, outcomeSource),
             Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
             ActivityStopped = activity => stoppedActivities.Enqueue(activity)
         };

@@ -127,9 +127,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
             dbContext,
             ConsumerName,
             3,
-            DateTimeOffset.UtcNow,
+            TimeProvider.System.GetUtcNow(),
             workerName,
-            DateTimeOffset.UtcNow.AddMinutes(5),
+            TimeProvider.System.GetUtcNow().AddMinutes(5),
             ct);
 
     private TransportDbContext CreateDbContext()
@@ -167,7 +167,7 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         Guid.CreateVersion7(),
         ConsumerName,
         TransportEnvelopeFactory.Create(eventId),
-        DateTimeOffset.UtcNow);
+        TimeProvider.System.GetUtcNow());
 
     private sealed class TransportDbContext(
         DbContextOptions<TransportDbContext> options,

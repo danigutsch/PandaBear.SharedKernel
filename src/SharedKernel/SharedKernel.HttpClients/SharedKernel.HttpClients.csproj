@@ -20,4 +20,7 @@
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.HttpClients.Tests" />
+    </ItemGroup>
 </Project>

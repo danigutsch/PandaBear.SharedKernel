@@ -40,7 +40,7 @@ internal static class CandidateCommand
 
         var revision = CommandRunner.Run("git", ["rev-parse", "HEAD"], options.Root).Trim();
         var configured = XDocument.Load(Path.Combine(options.Root, "Directory.Build.props")).Descendants("ComputedSemVer").First().Value;
-        var version = options.Version ?? configured.Split('-')[0] + "-alpha.local.t" + DateTimeOffset.UtcNow.ToString("yyyyMMddHHmmssfffffff", CultureInfo.InvariantCulture) + ".g" + revision[..12];
+        var version = options.Version ?? configured.Split('-')[0] + "-alpha.local.t" + TimeProvider.System.GetUtcNow().ToString("yyyyMMddHHmmssfffffff", CultureInfo.InvariantCulture) + ".g" + revision[..12];
         await ApiCompatibilityCommand.Run(new ApiCompatibilityOptions(version, Path.Combine(options.Root, "artifacts/api-compat"), "beta", options.Root, options.Baseline, false), output).ConfigureAwait(false);
         var feed = Path.Combine(options.Root, "artifacts/api-compat/packages", version);
         var hashes = new JsonObject();

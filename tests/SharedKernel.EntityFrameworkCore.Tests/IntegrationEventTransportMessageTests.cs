@@ -19,7 +19,7 @@ public sealed class IntegrationEventTransportMessageTests
             Guid.CreateVersion7(),
             "catalog",
             envelope!,
-            DateTimeOffset.UtcNow);
+            TimeProvider.System.GetUtcNow());
 
         // Assert
         var exception = create.ShouldThrow<ArgumentNullException>();
@@ -38,7 +38,7 @@ public sealed class IntegrationEventTransportMessageTests
             Guid.CreateVersion7(),
             consumerName,
             envelope,
-            DateTimeOffset.UtcNow);
+            TimeProvider.System.GetUtcNow());
 
         // Assert
         message.ConsumerName.Length.ShouldBe(IntegrationEventTransportMessage.ConsumerNameMaxLength);
@@ -52,7 +52,7 @@ public sealed class IntegrationEventTransportMessageTests
             Guid.CreateVersion7(),
             "catalog",
             TransportEnvelopeFactory.Create("event-2"),
-            DateTimeOffset.UtcNow);
+            TimeProvider.System.GetUtcNow());
         var attemptedAt = new DateTimeOffset(2026, 7, 6, 12, 0, 0, TimeSpan.Zero);
         var nextAttemptAt = attemptedAt.AddSeconds(2);
         var error = new string('x', IntegrationEventTransportMessage.LastConsumeErrorMaxLength + 1);
@@ -77,7 +77,7 @@ public sealed class IntegrationEventTransportMessageTests
             Guid.CreateVersion7(),
             "catalog",
             TransportEnvelopeFactory.Create("event-3"),
-            DateTimeOffset.UtcNow);
+            TimeProvider.System.GetUtcNow());
         var attemptedAt = new DateTimeOffset(2026, 7, 6, 12, 0, 0, TimeSpan.Zero);
         message.MarkConsumeFailed(attemptedAt, attemptedAt.AddSeconds(2), "failure");
         var processedAt = attemptedAt.AddSeconds(1);

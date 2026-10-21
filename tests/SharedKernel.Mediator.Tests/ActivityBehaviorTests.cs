@@ -6,6 +6,21 @@ namespace PandaBear.Mediator.Tests;
 public sealed class ActivityBehaviorTests
 {
     [Fact]
+    public void Listener_rejects_a_distinct_source_with_the_same_name()
+    {
+        var activities = new List<Activity>();
+        using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(activities);
+        using var impostor = new ActivitySource(SharedKernelMediatorActivitySource.ActivitySourceName);
+        var predicate = listener.ShouldListenTo.ShouldNotBeNull();
+
+        var acceptsImpostor = predicate(impostor);
+        var acceptsExpected = predicate(SharedKernelMediatorActivitySource.Source);
+
+        acceptsImpostor.ShouldBeFalse();
+        acceptsExpected.ShouldBeTrue();
+    }
+
+    [Fact]
     public void SharedKernel_mediator_activity_source_uses_stable_package_name()
     {
         // Arrange

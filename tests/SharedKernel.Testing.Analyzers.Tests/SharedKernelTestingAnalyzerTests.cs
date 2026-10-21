@@ -25,6 +25,8 @@ public sealed class SharedKernelTestingAnalyzerTests
             TestingDiagnosticIds.ParenthesizedAssertion,
             TestingDiagnosticIds.ConditionalAssertion,
             TestingDiagnosticIds.PlaywrightAssertion,
+            TestingDiagnosticIds.ActivityListenerSourceIdentity,
+            TestingDiagnosticIds.SutConstructionInAct,
         ];
 
         // Act
