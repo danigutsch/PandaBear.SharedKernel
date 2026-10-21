@@ -18,6 +18,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
     private readonly IEventSerializer serializer;
     private readonly PostgreSqlEventSourcingOptions options;
     private readonly bool ownsDataSource;
+    private readonly TimeProvider timeProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PostgreSqlEventStore" /> class.
@@ -83,6 +84,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         this.dataSource = dataSource;
         this.serializer = serializer;
         this.options = options ?? new PostgreSqlEventSourcingOptions();
+        timeProvider = this.options.TimeProvider ?? throw new ArgumentException("A TimeProvider is required.", nameof(options));
         this.ownsDataSource = ownsDataSource;
     }
 
@@ -117,17 +119,17 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
             await using var transaction = await connection.BeginTransactionAsync(ct);
             await PostgreSqlTransactionAdvisoryLock.Acquire(connection, transaction, appendLockKey, ct);
 
+            var recordedAt = timeProvider.GetUtcNow();
             var currentRevision = await GetCurrentRevision(connection, transaction, schema, streamId, ct);
             if (currentRevision is null)
             {
-                await CreateStream(connection, transaction, schema, streamId, ct);
+                await CreateStream(connection, transaction, schema, streamId, recordedAt, ct);
                 currentRevision = await GetCurrentRevision(connection, transaction, schema, streamId, ct)
                     ?? throw new InvalidOperationException("Event stream row could not be created or loaded.");
             }
 
             EnsureExpectedRevision(streamId, expectedRevision, currentRevision);
 
-            var recordedAt = DateTimeOffset.UtcNow;
             var appended = new List<EventEnvelope>(events.Count);
             foreach (var eventData in events)
             {
@@ -510,6 +512,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
         NpgsqlTransaction transaction,
         string schema,
         StreamId streamId,
+        DateTimeOffset recordedAt,
         CancellationToken ct)
     {
         var sql = $"""
@@ -520,7 +523,7 @@ public sealed class PostgreSqlEventStore : IEventStore, IAsyncDisposable
 
         await using var command = new NpgsqlCommand(sql, connection, transaction);
         command.Parameters.AddWithValue("streamId", streamId.Value);
-        command.Parameters.AddWithValue("recordedAt", DateTimeOffset.UtcNow);
+        command.Parameters.AddWithValue("recordedAt", recordedAt);
         _ = await command.ExecuteNonQueryAsync(ct);
     }
 

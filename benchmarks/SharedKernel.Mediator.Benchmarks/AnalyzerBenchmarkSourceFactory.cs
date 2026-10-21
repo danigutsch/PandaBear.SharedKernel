@@ -80,7 +80,7 @@ internal static class AnalyzerBenchmarkSourceFactory
                         .AppendLine("(request.Id), CancellationToken.None);")
                         .AppendLine(IndentedCloseBrace)
                         .AppendLine()
-                        .Append("    ValueTask<int> IQueryHandler<Request")
+                        .Append("    ValueTask<int> IRequestHandler<Request")
                         .Append(index.ToString(CultureInfo.InvariantCulture))
                         .Append(", int>.Handle(Request")
                         .Append(index.ToString(CultureInfo.InvariantCulture))

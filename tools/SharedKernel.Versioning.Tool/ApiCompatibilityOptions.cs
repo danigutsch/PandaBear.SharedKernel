@@ -10,7 +10,7 @@ internal sealed record ApiCompatibilityOptions(
 {
     public static ApiCompatibilityOptions Parse(string[] args)
     {
-        var version = "0.1.0-alpha.local." + DateTimeOffset.UtcNow.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
+        var version = "0.1.0-alpha.local." + TimeProvider.System.GetUtcNow().ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture);
         var outputRoot = "artifacts/api-compat";
         var releasePhase = "alpha";
         var repoRoot = ".";

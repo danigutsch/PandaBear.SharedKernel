@@ -54,7 +54,7 @@ internal sealed class GitHubRoadmapReconciler
         var content = CreateManifestContent(seed, repository, snapshot, seed.RetrievedOn);
         if (!string.Equals(currentContent, content, StringComparison.Ordinal))
         {
-            var retrievedOn = DateOnly.FromDateTime(DateTime.UtcNow).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            var retrievedOn = DateOnly.FromDateTime(TimeProvider.System.GetUtcNow().UtcDateTime).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             content = CreateManifestContent(seed, repository, snapshot, retrievedOn);
         }
 

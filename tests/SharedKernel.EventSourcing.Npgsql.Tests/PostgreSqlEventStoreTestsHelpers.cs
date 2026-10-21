@@ -64,12 +64,10 @@ internal static class PostgreSqlEventStoreTestsHelpers
         ArgumentNullException.ThrowIfNull(rootActivity);
         var traceId = rootActivity.TraceId;
         var parentSpanId = rootActivity.SpanId;
+        var expectedSource = PostgreSqlEventSourcingTelemetry.ActivitySource;
         var listener = new ActivityListener
         {
-            ShouldListenTo = static source => string.Equals(
-                source.Name,
-                PostgreSqlEventSourcingTelemetry.Name,
-                StringComparison.Ordinal),
+            ShouldListenTo = source => ReferenceEquals(source, expectedSource),
             Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
             ActivityStopped = activity =>
             {

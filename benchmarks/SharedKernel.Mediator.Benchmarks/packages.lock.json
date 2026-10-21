@@ -179,6 +179,9 @@
         "resolved": "4.7.0",
         "contentHash": "VybpaOQQhqE6siHppMktjfGBw1GCwvCqiufqmP8F1nj7fTUNtW35LOEt3UZTEsECfo+ELAl/9o9nJx3U91i7vA=="
       },
+      "PandaBear.SharedKernel.Aspire.Analyzers": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Mediator": {
         "type": "Project",
         "dependencies": {
@@ -194,6 +197,12 @@
         "type": "Project"
       },
       "PandaBear.SharedKernel.Mediator.SourceGenerator": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.Style.Analyzers": {
+        "type": "Project"
+      },
+      "PandaBear.SharedKernel.Testing.Analyzers": {
         "type": "Project"
       },
       "Microsoft.CodeAnalysis.Analyzers": {

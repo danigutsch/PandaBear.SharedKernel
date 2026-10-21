@@ -37,3 +37,11 @@ special keywords. Canonical terms are preserved by the underscore-name code fix.
 These diagnostics remain in the testing analyzer package; no Playwright dependency is added to
 neutral metadata or generic assertions. Production methods and unrelated same-named APIs are not
 subject to the new invocation rules. Existing public assertion signatures remain compatible.
+
+Initialize and capture the expected source before registering a test ActivityListener: source construction invokes
+existing global listeners, so resolving an uninitialized static source inside the predicate can miss its first activity.
+Use exact source identity in predicates, including helper files. Preserve trace or parent
+correlation when tests intentionally share a static source. SKTEST010 enforces direct name-based predicates;
+SKTEST016 keeps explicitly named SUT construction out of a complete explicit AAA Act block. Neither has an
+automatic move/inference fix. SKSTYLE014 requires TimeProvider for wall-clock reads; pass controlled providers
+for time-dependent assertions rather than depending on elapsed real time.

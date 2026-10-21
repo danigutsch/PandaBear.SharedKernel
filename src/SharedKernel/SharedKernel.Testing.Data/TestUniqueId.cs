@@ -16,7 +16,7 @@ public static class TestUniqueId
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(prefix);
 
-        var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString(CultureInfo.InvariantCulture);
+        var timestamp = TimeProvider.System.GetUtcNow().ToUnixTimeMilliseconds().ToString(CultureInfo.InvariantCulture);
         return string.Create(CultureInfo.InvariantCulture, $"{prefix}-{timestamp}-{Guid.NewGuid():N}");
     }
 }

@@ -133,7 +133,7 @@ public sealed class EfIdempotencyStoreTests
         var operation = IdempotencyOperationTestFactory.Create();
 
         Func<Task> complete = () => store
-            .Complete(operation, DateTimeOffset.UtcNow, resultFingerprint: null, CancellationToken.None)
+            .Complete(operation, TimeProvider.System.GetUtcNow(), resultFingerprint: null, CancellationToken.None)
             .AsTask();
 
         var exception = await complete.ShouldThrow<InvalidOperationException>();
@@ -162,7 +162,7 @@ public sealed class EfIdempotencyStoreTests
     {
         Action create = () =>
         {
-            _ = new IdempotencyEntryEntity(scope, key, DateTimeOffset.UtcNow);
+            _ = new IdempotencyEntryEntity(scope, key, TimeProvider.System.GetUtcNow());
         };
 
         var exception = create.ShouldThrow<ArgumentException>();
@@ -177,7 +177,7 @@ public sealed class EfIdempotencyStoreTests
     {
         Action create = () =>
         {
-            _ = new IdempotencyEntryEntity(scope!, key!, DateTimeOffset.UtcNow);
+            _ = new IdempotencyEntryEntity(scope!, key!, TimeProvider.System.GetUtcNow());
         };
 
         var exception = create.ShouldThrow<ArgumentNullException>();

@@ -12,7 +12,7 @@ namespace PandaBear.Testing.Analyzers;
 /// Reports diagnostics for repository-specific testing rules.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
+public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 {
     private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 
@@ -151,7 +151,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule, SingleAssertionRule, ParenthesizedAssertionRule, ConditionalAssertionRule, PlaywrightAssertionRule];
+        [ActivityListenerSourceIdentityRule, SutConstructionRule, TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule, SingleAssertionRule, ParenthesizedAssertionRule, ConditionalAssertionRule, PlaywrightAssertionRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -163,6 +163,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
+        context.RegisterOperationAction(AnalyzeListenerAssignment, OperationKind.SimpleAssignment);
         context.RegisterSyntaxNodeAction(
             AnalyzePragmaDirective,
             SyntaxKind.PragmaWarningDirectiveTrivia);
@@ -562,6 +563,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         }
 
         AnalyzeArrangeActAssertMarkers(context, methodDeclaration, methodSymbol);
+        AnalyzeSutConstruction(context, methodDeclaration);
     }
 
     private static void AnalyzeArrangeActAssertMarkers(

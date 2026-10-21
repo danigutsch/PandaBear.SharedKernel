@@ -32,7 +32,7 @@ public static class HttpOutcomeMapper
     private const string MethodTag = "http.request.method";
     private const string OutcomeKindTag = "http.outcome.kind";
     private const string StatusCodeTag = "http.response.status_code";
-    private static readonly ActivitySource OutcomeActivitySource = new(ActivitySourceName);
+    internal static readonly ActivitySource OutcomeActivitySource = new(ActivitySourceName);
 
     /// <summary>
     /// Creates a successful HTTP outcome.

@@ -59,3 +59,7 @@ not-found detail.
 Package ID: `PandaBear.SharedKernel.Style.CodeFixes`. C# namespace: `PandaBear.Style.CodeFixes`. Assembly/project identity: `SharedKernel.Style.CodeFixes`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+`SKSTYLE014` offers a TimeProvider replacement only when one accessible non-nullable provider is in scope and
+the edited project compiles. UTC DateTime and both DateTimeOffset clock reads are supported; local DateTime and
+Today require a manual timezone/Kind decision. Ambiguous provider selection has no automatic fix or Fix All.

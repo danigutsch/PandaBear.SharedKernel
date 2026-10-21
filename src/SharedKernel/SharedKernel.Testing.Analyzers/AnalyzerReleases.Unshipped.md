@@ -16,3 +16,5 @@ SKTEST012 | Testing | Warning | Use ShouldHaveSingleItem for assertion-like LINQ
 SKTEST013 | Testing | Warning | Use semantic assertions or named assertion targets instead of parenthesized receivers
 SKTEST014 | Testing | Warning | Prevent conditional access from skipping ShouldBe assertions
 SKTEST015 | Testing | Warning | Use ShouldHaveTitle for supported Playwright title assertions
+SKTEST010 | Testing | Warning | Test activity listeners should filter by source identity
+SKTEST016 | Testing | Warning | Construct the system under test in Arrange

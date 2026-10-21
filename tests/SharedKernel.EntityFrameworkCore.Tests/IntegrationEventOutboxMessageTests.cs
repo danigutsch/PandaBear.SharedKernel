@@ -72,14 +72,14 @@ public sealed class IntegrationEventOutboxMessageTests
                 new Uri("urn:test:source"),
                 ConsumerTestIntegrationEvent.EventType,
                 ConsumerTestIntegrationEvent.EventVersion,
-                DateTimeOffset.UtcNow,
+                TimeProvider.System.GetUtcNow(),
                 null,
                 JsonContentType,
                 null,
                 "{}",
                 EventPayloadEncoding.Json,
                 null,
-                DateTimeOffset.UtcNow);
+                TimeProvider.System.GetUtcNow());
         };
 
         var exception = create.ShouldThrow<ArgumentException>();

@@ -88,8 +88,8 @@ public static class ApiTestAuthentication
                 new Claim(JwtRegisteredClaimNames.Sub, "test-user"),
                 new Claim(RoleClaimType, role)
             ],
-            notBefore: DateTime.UtcNow.AddMinutes(-1),
-            expires: DateTime.UtcNow.AddMinutes(5),
+            notBefore: TimeProvider.System.GetUtcNow().UtcDateTime.AddMinutes(-1),
+            expires: TimeProvider.System.GetUtcNow().UtcDateTime.AddMinutes(5),
             signingCredentials: new SigningCredentials(SigningKey, SecurityAlgorithms.HmacSha256));
 
         return new JwtSecurityTokenHandler().WriteToken(token);
