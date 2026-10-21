@@ -75,7 +75,7 @@ flowchart TB
     selection --> candidate
     candidate --> linux_package_consumption
     candidate --> windows_package_consumption
-    trigger --> repository_quality
+    selection --> repository_quality
     trigger --> validation_summary
 ```
 <!-- generated:library-ci:end -->

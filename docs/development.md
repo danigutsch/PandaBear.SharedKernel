@@ -61,8 +61,19 @@ account. Unrelated labels use separate concurrency groups and cannot cancel vali
 The source workflow selects projects once, then overlaps ordinary graph validation, isolated hosted
 test jobs, and candidate creation. Hosted jobs are generated from selected Aspire projects. Linux
 and Windows consume the same candidate bytes in parallel. Repository quality checks remain intact.
-Standalone repository documentation skips candidates; package READMEs and uncertain inputs retain
-validation. Main, nightly, and manual runs select full validation.
+Standalone repository documentation skips candidates, tests, and full-solution bootstrap/formatting.
+Repository quality builds only the documentation tool and checks generated-document drift. Package
+READMEs, scripts, and uncertain inputs retain validation. Main pushes compare their before/after
+revisions; nightly and manual runs select full validation. Invalid comparison history falls back to
+full validation.
+
+Squash-only merge settings, PR title/body commit defaults, automatic branch deletion, and the
+`ci:rerun` label were applied on October 21, 2026. SharedKernel branch protection remains disabled.
+
+The first measured source-validation main run after rollout, [39670639814](https://github.com/danigutsch/PandaBear.SharedKernel/actions/runs/39670639814),
+completed in 385s: ordinary validation 248s, repository quality 301s, candidate creation 133s,
+and Windows package consumption 199s. This is one workload, not evidence of a general speedup.
+Measure documentation-only runs separately after the fast path lands.
 
 Historical timing collected on October 21, 2026 from the latest ten completed validation runs:
 eight succeeded, with successful-run median 1001.5s and nearest-rank p95 1440s; two were cancelled.
