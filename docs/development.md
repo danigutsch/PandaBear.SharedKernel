@@ -46,3 +46,26 @@ Workflow contract tests guard the active C# commands and their platform test wir
 and candidate manifest discovery belong to the C# commands, with regression tests for failure paths.
 A test pass does not imply line coverage of shell syntax; actual clean-checkout bootstrap and packed
 candidate jobs provide integration evidence.
+
+
+## CI throughput and squash merging
+
+PR validation remains advisory: this change does not add main-branch protection. Use squash merging
+with a Conventional Commit PR title of at most 100 characters, preserve breaking-change notes in the
+PR body, and start a fresh branch after merging. Registry publication remains deferred.
+
+Ordinary PR title/body edits run only the independent metadata workflow. Add `ci:rerun` to explicitly
+restart source validation; remove and reapply for another attempt using a human or authorized app
+account. Unrelated labels use separate concurrency groups and cannot cancel validation.
+
+The source workflow selects projects once, then overlaps ordinary graph validation, isolated hosted
+test jobs, and candidate creation. Hosted jobs are generated from selected Aspire projects. Linux
+and Windows consume the same candidate bytes in parallel. Repository quality checks remain intact.
+Standalone repository documentation skips candidates; package READMEs and uncertain inputs retain
+validation. Main, nightly, and manual runs select full validation.
+
+Historical timing collected on October 21, 2026 from the latest ten completed validation runs:
+eight succeeded, with successful-run median 1001.5s and nearest-rank p95 1440s; two were cancelled.
+Elapsed workflow times include queueing and postprocessing. Compare equivalent change classes and
+phase evidence after rollout before claiming an improvement. No additional runner purchase or
+native merge queue is part of this rollout; personal-account ownership is retained.

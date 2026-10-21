@@ -1,6 +1,7 @@
 name: SharedKernel validation
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled]
   push:
     branches: [main]
   schedule:
@@ -9,14 +10,17 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: library-${{ github.workflow }}-${{ github.ref }}
+  group: library-${{ github.workflow }}-${{ github.ref }}-${{ github.event.action == 'labeled' && github.event.label.name != 'ci:rerun' && github.run_id || 'validation' }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
-  library:
+  selection:
+    if: ${{ github.event.action != 'labeled' || github.event.label.name == 'ci:rerun' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 10
     outputs:
       candidate_required: ${{ steps.selection.outputs.candidate_required }}
+      hosted_required: ${{ steps.selection.outputs.hosted_required }}
+      hosted_matrix: ${{ steps.selection.outputs.hosted_matrix }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
@@ -25,6 +29,8 @@ jobs:
       - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
         with:
           global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
       - name: Build repository tooling
         run: |
           dotnet restore tools/SharedKernel.Repository.Tool --locked-mode
@@ -32,41 +38,119 @@ jobs:
       - name: Select affected projects
         id: selection
         env:
-          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'push' && github.event.before || '' }}
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || '' }}
         run: |
           args=()
-          if [[ -n "${BASE_SHA}" ]]; then args+=(--base "${BASE_SHA}"); fi
+          if [[ -n "$BASE_SHA" ]]; then args+=(--base "$BASE_SHA"); fi
           dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- select --github-output "$GITHUB_OUTPUT" "${args[@]}"
-      - name: Validate selected projects and tests
-        run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- validate
+      - name: Upload selection reasons
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: selection-and-reasons
+          path: TestResults/selection/*
+          if-no-files-found: error
+
+  library:
+    needs: selection
+    if: needs.selection.outputs.candidate_required == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+      - name: Build repository tooling
+        run: |
+          dotnet restore tools/SharedKernel.Repository.Tool --locked-mode
+          dotnet build tools/SharedKernel.Repository.Tool -c Release --no-restore
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: selection-and-reasons
+          path: TestResults/selection
+      - name: Validate selected ordinary projects and tests
+        run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- validate --test-group ordinary
+      - name: Retain validation evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: ordinary-validation-evidence
+          path: TestResults/selection/execution-ordinary/**
+          if-no-files-found: error
+
+  hosted-tests:
+    needs: selection
+    if: needs.selection.outputs.hosted_required == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.selection.outputs.hosted_matrix) }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+      - name: Build repository tooling
+        run: |
+          dotnet restore tools/SharedKernel.Repository.Tool --locked-mode
+          dotnet build tools/SharedKernel.Repository.Tool -c Release --no-restore
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: selection-and-reasons
+          path: TestResults/selection
+      - name: Validate isolated hosted test project
+        env:
+          TEST_PROJECT: ${{ matrix.project }}
+        run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- validate --test-group "$TEST_PROJECT"
+      - name: Retain hosted validation evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: hosted-${{ matrix.name }}-evidence
+          path: TestResults/selection/execution-*/**
+          if-no-files-found: ignore
+
+  candidate:
+    needs: selection
+    if: needs.selection.outputs.candidate_required == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
       - name: Build candidate versioning tooling
-        if: steps.selection.outputs.candidate_required == 'true'
         run: |
           dotnet restore tools/SharedKernel.Versioning.Tool --locked-mode
           dotnet build tools/SharedKernel.Versioning.Tool -c Release --no-restore
       - name: Calculate coordinated package version
-        if: steps.selection.outputs.candidate_required == 'true'
         id: version
         env:
           VERSION_RUN: ${{ github.run_number }}.${{ github.run_attempt }}
-        run: |
-          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- \
-            calculate-release --version-kind prerelease --run-number "$VERSION_RUN" \
-            --github-output "$GITHUB_OUTPUT" --github-summary "$GITHUB_STEP_SUMMARY"
-      - name: Validate immutable package candidate
-        if: steps.selection.outputs.candidate_required == 'true'
+        run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- calculate-release --version-kind prerelease --run-number "$VERSION_RUN" --github-output "$GITHUB_OUTPUT" --github-summary "$GITHUB_STEP_SUMMARY"
+      - name: Create immutable package candidate
         env:
           PACKAGE_VERSION: ${{ steps.version.outputs.package_version }}
-        run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- validate-candidate --version "$PACKAGE_VERSION" --aot
-      - name: Upload selection reasons
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: selection-and-reasons
-          path: TestResults/selection/*.txt
-          if-no-files-found: error
+        run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- create-candidate --version "$PACKAGE_VERSION"
       - name: Retain candidate artifacts for separate consumer compatibility
-        if: steps.selection.outputs.candidate_required == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: candidate-packages
@@ -76,31 +160,62 @@ jobs:
             artifacts/api-compat/packages/*/candidate.json
           if-no-files-found: error
           retention-days: 14
+
+  linux-package-consumption:
+    needs: candidate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+      - name: Build candidate versioning tooling
+        run: |
+          dotnet restore tools/SharedKernel.Versioning.Tool --locked-mode
+          dotnet build tools/SharedKernel.Versioning.Tool -c Release --no-restore
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
+        with:
+          name: candidate-packages
+          path: artifacts/candidate
+      - name: Consume the same candidate packages on Linux
+        run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- consume-candidate --candidate-directory artifacts/candidate --aot
+      - name: Retain Linux compatibility evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: linux-package-evidence
+          path: artifacts/candidate/**/candidate.json
+          if-no-files-found: error
+
   windows-package-consumption:
-    needs: library
-    if: needs.library.outputs.candidate_required == 'true'
+    needs: candidate
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
         with:
           global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+      - name: Build candidate versioning tooling
+        run: |
+          dotnet restore tools/SharedKernel.Versioning.Tool --locked-mode
+          dotnet build tools/SharedKernel.Versioning.Tool -c Release --no-restore
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: candidate-packages
           path: artifacts/candidate
       - name: Consume the same candidate packages on Windows
-        shell: pwsh
-        run: |
-          dotnet restore tools/SharedKernel.Versioning.Tool --locked-mode
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          dotnet build tools/SharedKernel.Versioning.Tool -c Release --no-restore
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- consume-candidate --candidate-directory artifacts/candidate --aot
-          exit $LASTEXITCODE
+        run: dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- consume-candidate --candidate-directory artifacts/candidate --aot
       - name: Validate Windows setup and workflow contracts
         shell: pwsh
         run: |
@@ -124,6 +239,7 @@ jobs:
           if-no-files-found: error
 
   repository-quality:
+    if: ${{ github.event.action != 'labeled' || github.event.label.name == 'ci:rerun' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -143,3 +259,38 @@ jobs:
         run: dotnet format SharedKernel.slnx --verify-no-changes --no-restore
       - name: Verify generated architecture
         run: dotnet run --project tools/SharedKernel.Documentation.Tool -c Release --no-build --no-restore -- generate --config docs/architecture/generated-diagrams.json --check
+
+  validation-summary:
+    name: ${{ github.event.action == 'labeled' && github.event.label.name != 'ci:rerun' && 'Ignored label event' || 'SharedKernel Validation' }}
+    needs: [selection, library, hosted-tests, candidate, linux-package-consumption, windows-package-consumption, repository-quality]
+    if: ${{ always() && (github.event.action != 'labeled' || github.event.label.name == 'ci:rerun') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require every applicable validation result
+        env:
+          SELECTION_RESULT: ${{ needs.selection.result }}
+          QUALITY_RESULT: ${{ needs.repository-quality.result }}
+          CANDIDATE_REQUIRED: ${{ needs.selection.outputs.candidate_required }}
+          LIBRARY_RESULT: ${{ needs.library.result }}
+          HOSTED_RESULT: ${{ needs.hosted-tests.result }}
+          HOSTED_REQUIRED: ${{ needs.selection.outputs.hosted_required }}
+          CANDIDATE_RESULT: ${{ needs.candidate.result }}
+          LINUX_RESULT: ${{ needs.linux-package-consumption.result }}
+          WINDOWS_RESULT: ${{ needs.windows-package-consumption.result }}
+        run: |
+          test "$SELECTION_RESULT" = success
+          test "$QUALITY_RESULT" = success
+          if [[ "$CANDIDATE_REQUIRED" == true ]]; then
+            for result in "$LIBRARY_RESULT" "$CANDIDATE_RESULT" "$LINUX_RESULT" "$WINDOWS_RESULT"; do
+              test "$result" = success || exit 1
+            done
+            case "$HOSTED_REQUIRED" in
+              true) test "$HOSTED_RESULT" = success ;;
+              false) test "$HOSTED_RESULT" = skipped ;;
+              *) echo "Missing hosted selection evidence." >&2; exit 1 ;;
+            esac
+          elif [[ "$CANDIDATE_REQUIRED" != false ]]; then
+            echo "Missing candidate selection evidence." >&2
+            exit 1
+          fi
