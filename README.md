@@ -23,7 +23,7 @@ Choose the packages your project needs. Each package has its own README with req
 
 ## Try it
 
-Download the `candidate-packages` artifact from a successful build and extract it to a local directory. Replace the placeholders below with that candidate's version and directory:
+Download the unchanged `.nupkg` files and `candidate.json` from [preview `v1.0.0-alpha.20261021.2`](https://github.com/danigutsch/PandaBear.SharedKernel/releases/tag/v1.0.0-alpha.20261021.2) into a local feed directory. These immutable candidate assets are available on GitHub; NuGet registry publication and stable promotion remain deferred. Verify the clean source checkout matches the manifest revision and every package SHA-256 matches the trusted candidate manifest before consumption. Replace the placeholders below with that candidate's version and directory:
 
 ```text
 dotnet add package PandaBear.SharedKernel.Results --version <preview-version> --source <candidate-feed>
