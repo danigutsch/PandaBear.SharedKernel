@@ -5,6 +5,9 @@ namespace PandaBear.AspNetCore;
 /// </summary>
 public static class ApiAuthenticationDefaults
 {
+    /// <summary>The standard JWT subject claim retained when inbound claim mapping is disabled.</summary>
+    public const string SubjectClaimType = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub;
+
     /// <summary>
     /// The configuration key for the OIDC discovery authority.
     /// </summary>

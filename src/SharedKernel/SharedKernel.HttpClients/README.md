@@ -41,3 +41,17 @@ public partial class ClientJson : JsonSerializerContext;
 Package ID: `PandaBear.SharedKernel.HttpClients`. C# namespace: `PandaBear.HttpClients`. Assembly/project identity: `SharedKernel.HttpClients`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Explicit idempotent submissions
+
+`IdempotentSubmission<T>` retains one callback and generated key when an HTTP outcome cannot
+establish whether the server committed the command. `Retry` invokes that same callback with the
+same key. `Submit` and `Retry` return null while a request is busy; a pending command rejects
+replacement submissions. Terminal success, validation, missing-resource and authorization/conflict
+outcomes release the pending command. Transport failures, timeouts and unusable response bodies
+retain it. Exceptions and cancellation also preserve the pending command while releasing the busy flag.
+
+Capture immutable input snapshots in the callback, use server-enforced idempotency, and keep operation
+labels free of sensitive data. Retries are explicit; the helper never schedules background requests
+and does not persist pending state across restart. UI presentation and business approval remain
+consumer responsibilities.

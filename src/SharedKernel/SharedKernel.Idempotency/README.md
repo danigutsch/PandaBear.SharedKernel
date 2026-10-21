@@ -38,3 +38,15 @@ low-entropy values from guessing. Do not use this API for password storage or au
 Package ID: `PandaBear.SharedKernel.Idempotency`. C# namespace: `PandaBear.Idempotency`. Assembly/project identity: `SharedKernel.Idempotency`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Typed JSON request fingerprints
+
+`IdempotencyRequestFingerprint.CreateJson(input, jsonTypeInfo, contextComponents)` serializes using
+caller-supplied source-generated metadata, sorts object properties ordinally, and normalizes
+decimal-representable numbers without rounding. It appends that JSON to the context components
+and uses the existing length-framed SHA-256 contract. The original string `Create` API is unchanged.
+
+Array order and exact string values remain significant. This normalization is not RFC 8785. Consumers
+choose domain-specific selection ordering and bind actor/resource identifiers explicitly. Temporary
+UTF-8 buffers are cleared after use; the fingerprint is not encryption and does not conceal
+low-entropy inputs. Do not log financial payloads or use fingerprints as access-control tokens.

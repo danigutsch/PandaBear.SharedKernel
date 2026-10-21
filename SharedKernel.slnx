@@ -117,6 +117,7 @@
   <Project Path="tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj" />
   <Project Path="tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj" />
   <Project Path="tools/SharedKernel.Versioning.Tool/SharedKernel.Versioning.Tool.csproj" />
+  <Project Path="samples/HttpRequests/HttpRequests.Sample/HttpRequests.Sample.csproj" />
   <Project Path="samples/Mediator/Mediator.Sample/Mediator.Sample.csproj" />
   <Project Path="samples/Results/BasicResults.Sample/BasicResults.Sample.csproj" />
   <Project Path="benchmarks/SharedKernel.Functional.Benchmarks/SharedKernel.Functional.Benchmarks.csproj" />

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>HttpRequests.Sample</RootNamespace>
+        <IsPackable>false</IsPackable>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../../src/SharedKernel/SharedKernel.AspNetCore/SharedKernel.AspNetCore.csproj" />
+        <ProjectReference Include="../../../src/SharedKernel/SharedKernel.HttpClients/SharedKernel.HttpClients.csproj" />
+        <ProjectReference Include="../../../src/SharedKernel/SharedKernel.Idempotency/SharedKernel.Idempotency.csproj" />
+    </ItemGroup>
+</Project>

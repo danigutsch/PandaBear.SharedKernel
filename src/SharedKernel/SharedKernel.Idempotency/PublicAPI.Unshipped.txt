@@ -46,3 +46,4 @@ static PandaBear.Idempotency.IdempotencyScope.From(string? value) -> PandaBear.I
 override PandaBear.Idempotency.IdempotencyScope.ToString() -> string!
 PandaBear.Idempotency.IdempotencyRequestFingerprint
 static PandaBear.Idempotency.IdempotencyRequestFingerprint.Create(params string![]! components) -> string!
+static PandaBear.Idempotency.IdempotencyRequestFingerprint.CreateJson<T>(T input, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>! type, params string![]! components) -> string!
