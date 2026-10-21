@@ -4,12 +4,11 @@ namespace PandaBear.Testing.Tests;
 
 internal sealed class TemporarySnapshotDirectory : IDisposable
 {
-    private readonly string rootDirectory;
+    private readonly TemporaryDirectory _directory = new();
 
-    private TemporarySnapshotDirectory(string rootDirectory)
+    private TemporarySnapshotDirectory()
     {
-        this.rootDirectory = rootDirectory;
-        CanonicalDirectory = Path.Combine(rootDirectory, "canonical");
+        CanonicalDirectory = Path.Combine(_directory.Path, "canonical");
         GeneratedDirectory = Path.Combine(CanonicalDirectory, ".generated");
         Directory.CreateDirectory(CanonicalDirectory);
         Directory.CreateDirectory(GeneratedDirectory);
@@ -21,7 +20,7 @@ internal sealed class TemporarySnapshotDirectory : IDisposable
 
     public static TemporarySnapshotDirectory Create()
     {
-        return new TemporarySnapshotDirectory(Path.Combine(Path.GetTempPath(), $"snapshot-{Guid.NewGuid():N}"));
+        return new TemporarySnapshotDirectory();
     }
 
     public void WriteCanonical(string fileName, string content)
@@ -46,11 +45,5 @@ internal sealed class TemporarySnapshotDirectory : IDisposable
             generatedFileNameOverrides);
     }
 
-    public void Dispose()
-    {
-        if (Directory.Exists(rootDirectory))
-        {
-            Directory.Delete(rootDirectory, recursive: true);
-        }
-    }
+    public void Dispose() => _directory.Dispose();
 }

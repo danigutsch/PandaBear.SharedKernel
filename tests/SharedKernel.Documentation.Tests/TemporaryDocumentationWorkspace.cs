@@ -1,10 +1,14 @@
+using PandaBear.Testing;
+
 namespace PandaBear.Documentation.Tests;
 
 internal sealed class TemporaryDocumentationWorkspace : IDisposable
 {
+    private readonly TemporaryDirectory _directory = new();
+
     public TemporaryDocumentationWorkspace()
     {
-        RootPath = Path.Combine(Path.GetTempPath(), "sharedkernel-documentation-tests", Guid.NewGuid().ToString("N"));
+        RootPath = _directory.Path;
         Directory.CreateDirectory(Path.Combine(RootPath, "docs", "architecture"));
     }
 
@@ -31,11 +35,5 @@ internal sealed class TemporaryDocumentationWorkspace : IDisposable
     public string ReadArchitectureDoc(string fileName) =>
         File.ReadAllText(Path.Combine(RootPath, "docs", "architecture", fileName));
 
-    public void Dispose()
-    {
-        if (Directory.Exists(RootPath))
-        {
-            Directory.Delete(RootPath, recursive: true);
-        }
-    }
+    public void Dispose() => _directory.Dispose();
 }

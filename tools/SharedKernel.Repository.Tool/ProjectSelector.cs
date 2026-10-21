@@ -20,6 +20,7 @@ internal static class ProjectSelector
         try
         {
             var graph = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
+            var compileInputs = new List<(string Path, string Project)>();
             foreach (var (project, document) in documents)
             {
                 if (document.Descendants().Where(static element => element.Name.LocalName == "Import").Any())
@@ -43,6 +44,18 @@ internal static class ProjectSelector
                     }
 
                     dependencies.Add(dependency);
+                }
+
+                foreach (var input in document.Descendants().Where(static element => element.Name.LocalName == "Compile" && element.Attribute("Include") is not null))
+                {
+                    var include = (string)input.Attribute("Include")!;
+                    if (string.IsNullOrWhiteSpace(include) || include.IndexOfAny(['$', '*', '?', ';']) >= 0)
+                    {
+                        throw new ArgumentException("Unevaluated compile input: " + project);
+                    }
+
+                    var inputPath = Path.GetRelativePath(root, Path.GetFullPath(Path.Combine(root, Path.GetDirectoryName(project)!, include.Replace('\\', '/')))).Replace('\\', '/');
+                    compileInputs.Add((inputPath, project));
                 }
 
                 graph[project] = dependencies;
@@ -82,6 +95,12 @@ internal static class ProjectSelector
                     || path.StartsWith("src/SharedKernel/SharedKernel.Testing.Analyzers/", StringComparison.Ordinal))
                 {
                     throw new ArgumentException("Global or imported build input: " + path);
+                }
+
+                foreach (var input in compileInputs.Where(input => string.Equals(input.Path, path, StringComparison.Ordinal)))
+                {
+                    affected.Add(input.Project);
+                    reasons.Add(path + ": explicit compile input for " + input.Project);
                 }
 
                 if (path.StartsWith("docs/", StringComparison.Ordinal) || path.StartsWith("provenance/", StringComparison.Ordinal) || path is "README.md" or "LICENSE.txt" or "AGENTS.md")

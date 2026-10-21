@@ -5,11 +5,11 @@ namespace PandaBear.RepoConfig.Tests;
 internal sealed class TemporaryCiTestRepository : IDisposable
 {
     private readonly List<string> _projectPaths = [];
+    private readonly TemporaryDirectory _directory = new();
 
     public TemporaryCiTestRepository()
     {
-        RootPath = Path.Combine(Path.GetTempPath(), $"sharedkernel-ci-selection-{Guid.NewGuid():N}");
-        Directory.CreateDirectory(RootPath);
+        RootPath = _directory.Path;
     }
 
     public string RootPath { get; }
@@ -113,7 +113,7 @@ internal sealed class TemporaryCiTestRepository : IDisposable
 
     public void Dispose()
     {
-        TemporaryRepositoryDirectory.Delete(RootPath);
+        _directory.Dispose();
     }
 
     private void WriteSolution()

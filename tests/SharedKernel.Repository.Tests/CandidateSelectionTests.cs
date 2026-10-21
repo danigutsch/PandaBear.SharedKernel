@@ -4,6 +4,34 @@ namespace PandaBear.Repository.Tests;
 
 public static class CandidateSelectionTests
 {
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public static void Selection_appends_github_candidate_output_for_the_selected_repository(bool hasProjects)
+    {
+        // Arrange
+        using var repository = new RepositoryTestScope();
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+        var githubOutput = Path.Combine(repository.Root, "github-output.txt");
+        var previousOutput = "existing=value" + Environment.NewLine;
+        File.WriteAllText(githubOutput, previousOutput);
+        if (!hasProjects)
+        {
+            File.WriteAllText(Path.Combine(repository.Root, "SharedKernel.slnx"), "<Solution />");
+        }
+
+        // Act
+        var result = RepositoryToolApplication.Run(
+            ["select", "--github-output", "github-output.txt", "--root", repository.Root], output, error);
+
+        // Assert
+        result.ShouldBe(0);
+        var expected = hasProjects ? "true" : "false";
+        File.ReadAllText(githubOutput).ShouldBe(previousOutput + "candidate_required=" + expected + Environment.NewLine);
+        File.ReadAllText(Path.Combine(repository.Root, "TestResults", "selection", "candidate-required.txt")).ShouldBe(expected);
+    }
+
     [Fact]
     public static void Selection_records_candidate_requirement_without_git_history()
     {

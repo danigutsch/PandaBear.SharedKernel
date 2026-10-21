@@ -224,6 +224,9 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
+      "PandaBear.SharedKernel.Testing": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {

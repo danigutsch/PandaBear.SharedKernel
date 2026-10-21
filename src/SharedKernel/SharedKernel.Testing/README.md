@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Reusable test traits and attributes for SharedKernel test suites.
+Reusable test traits, environment scopes, and temporary-directory lifetimes.
 
 ## Trait taxonomy
 
@@ -27,3 +27,21 @@ Use `SerialTestJustificationAttribute` on xUnit collection definitions that disa
 Package ID: `PandaBear.SharedKernel.Testing`. C# namespace: `PandaBear.Testing`. Assembly/project identity: `SharedKernel.Testing`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Temporary resources
+
+```csharp
+using PandaBear.Testing;
+
+using var directory = new TemporaryDirectory();
+File.WriteAllText(Path.Combine(directory.Path, "fixture.txt"), "fixture");
+using var variable = new EnvironmentVariableScope("EXAMPLE_SETTING", "test");
+```
+
+`EnvironmentVariableScope` restores the previous value, including null when originally unset.
+Dispose nested scopes in reverse order and serialize tests that modify process-wide environment
+variables. The helper does not provide concurrency isolation.
+
+`TemporaryDirectory` uses the platform temporary-directory API. Disposal removes nested read-only
+files, avoids traversing symbolic links, and accepts an already removed root. Cleanup failures
+propagate. Keep fixture-specific file writers in the owning tests.

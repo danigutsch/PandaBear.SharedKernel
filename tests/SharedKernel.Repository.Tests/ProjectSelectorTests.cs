@@ -77,6 +77,48 @@ public sealed class ProjectSelectorTests : IDisposable
         ProjectSelector.Select(scope.Root, ["src/Core/Changed.cs"]).TestProjects.ShouldContain("tests/Core.Tests/Core.Tests.csproj");
     }
 
+    [Theory]
+    [InlineData("", "../Core.Tests/SharedProcess.cs")]
+    [InlineData("", "..\\Core.Tests\\SharedProcess.cs")]
+    [InlineData("http://schemas.microsoft.com/developer/msbuild/2003", "../Core.Tests/SharedProcess.cs")]
+    [InlineData("http://schemas.microsoft.com/developer/msbuild/2003", "..\\Core.Tests\\SharedProcess.cs")]
+    public void Linked_compile_changes_select_the_owner_and_exact_consumers(string xmlNamespace, string include)
+    {
+        // Arrange
+        scope.AddProject("tests/Linked.Tests/Linked.Tests.csproj", $"""
+            <Project xmlns="{xmlNamespace}">
+              <PackageReference Include="xunit.v3.mtp-v2" />
+              <Compile Include="{include}" Link="SharedProcess.cs" />
+            </Project>
+            """);
+
+        // Act
+        var linkedChange = ProjectSelector.Select(scope.Root, ["tests/Core.Tests/SharedProcess.cs"]);
+        var unrelatedChange = ProjectSelector.Select(scope.Root, ["tests/Core.Tests/Other.cs"]);
+
+        // Assert
+        linkedChange.TestProjects.ShouldBe(["tests/Core.Tests/Core.Tests.csproj", "tests/Linked.Tests/Linked.Tests.csproj"]);
+        unrelatedChange.TestProjects.ShouldBe(["tests/Core.Tests/Core.Tests.csproj"]);
+    }
+
+    [Theory]
+    [InlineData("$(SharedSources)/Shared.cs")]
+    [InlineData("../Core.Tests/*.cs")]
+    [InlineData("../Core.Tests/Shared?.cs")]
+    [InlineData("../Core.Tests/First.cs;../Core.Tests/Second.cs")]
+    public void Unevaluated_compile_inputs_select_the_current_solution(string include)
+    {
+        // Arrange
+        scope.AddProject("tests/Linked.Tests/Linked.Tests.csproj", $"""<Project><Compile Include="{include}" /></Project>""");
+
+        // Act
+        var result = ProjectSelector.Select(scope.Root, ["tests/Core.Tests/SharedProcess.cs"]);
+
+        // Assert
+        result.BuildProjects.Length.ShouldBe(4);
+        result.Reasons.ShouldContain(reason => reason.StartsWith("Full validation fallback", StringComparison.Ordinal));
+    }
+
     /// <inheritdoc />
     public void Dispose() => scope.Dispose();
 }

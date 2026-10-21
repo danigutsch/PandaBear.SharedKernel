@@ -67,3 +67,10 @@ PandaBear.Testing.SerialTestJustificationAttribute.SerialTestJustificationAttrib
 PandaBear.Testing.SharedKernelTestTraitNames
 PandaBear.Testing.TestTraitNames
 PandaBear.Testing.TestTraitValues
+PandaBear.Testing.EnvironmentVariableScope
+PandaBear.Testing.EnvironmentVariableScope.EnvironmentVariableScope(string! name, string? value) -> void
+PandaBear.Testing.EnvironmentVariableScope.Dispose() -> void
+PandaBear.Testing.TemporaryDirectory
+PandaBear.Testing.TemporaryDirectory.TemporaryDirectory() -> void
+PandaBear.Testing.TemporaryDirectory.Path.get -> string!
+PandaBear.Testing.TemporaryDirectory.Dispose() -> void

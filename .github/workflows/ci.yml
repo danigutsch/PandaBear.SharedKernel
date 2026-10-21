@@ -36,8 +36,7 @@ jobs:
         run: |
           args=()
           if [[ -n "${BASE_SHA}" ]]; then args+=(--base "${BASE_SHA}"); fi
-          dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- select "${args[@]}"
-          echo "candidate_required=$(cat TestResults/selection/candidate-required.txt)" >> "$GITHUB_OUTPUT"
+          dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- select --github-output "$GITHUB_OUTPUT" "${args[@]}"
       - name: Validate selected projects and tests
         run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- validate
       - name: Build candidate versioning tooling
@@ -100,9 +99,22 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           dotnet build tools/SharedKernel.Versioning.Tool -c Release --no-restore
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          $manifests = @(Get-ChildItem artifacts/candidate -Filter candidate.json -Recurse)
-          if ($manifests.Count -ne 1) { throw "Expected exactly one candidate manifest." }
-          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- consume-candidate --candidate $manifests[0].FullName --aot
+          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- consume-candidate --candidate-directory artifacts/candidate --aot
+          exit $LASTEXITCODE
+      - name: Validate Windows setup and workflow contracts
+        shell: pwsh
+        run: |
+          dotnet restore tests/SharedKernel.Testing.Tests --locked-mode
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet test --project tests/SharedKernel.Testing.Tests/SharedKernel.Testing.Tests.csproj -c Release --no-restore
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet restore tests/SharedKernel.Versioning.Tests --locked-mode
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet test --project tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj -c Release --no-restore
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet restore tests/SharedKernel.Repository.Tests --locked-mode
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet test --project tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj -c Release --no-restore
           exit $LASTEXITCODE
       - name: Retain Windows compatibility evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -123,6 +135,10 @@ jobs:
           global-json-file: global.json
       - name: Bootstrap from clean checkout
         run: bash setup-dev.sh
+      - name: Validate setup and workflow contracts
+        run: |
+          dotnet test --project tests/SharedKernel.RepoConfig.Tests/SharedKernel.RepoConfig.Tests.csproj -c Release --no-build --no-restore
+          dotnet test --project tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj -c Release --no-build --no-restore
       - name: Verify formatting
         run: dotnet format SharedKernel.slnx --verify-no-changes --no-restore
       - name: Verify generated architecture

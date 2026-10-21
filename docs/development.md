@@ -32,3 +32,17 @@ Document stable caller-visible guards, cancellation, and deliberate adapter fail
 Prefer NativeAOT and trimming compatibility where practical. Use explicit typed APIs, existing source generators, and supplied JSON metadata instead of runtime type discovery or reflection-based serialization when they meet the current use case. Do not add speculative generators or abstractions merely to avoid a small, justified use of reflection.
 
 `src/Directory.Build.targets` enables `IsAotCompatible` by default for compatible target frameworks. Keep its analyzers enabled; an explicit opt-out must explain the actual dependency or host limitation beside the project setting. When reflection is necessary, preserve the required trim annotations and document the supported boundary. SDK compatibility analysis is not execution proof: validate promised NativeAOT behavior through packed consumers on each claimed platform and keep untested packages or scenarios explicit.
+
+## Required automation coverage
+
+Reusable repository automation lives in the C# repository, versioning, and documentation tools.
+The two setup scripts are deliberately thin platform entry points: they anchor the working directory,
+restore locked dependencies, build Release, and propagate failures before repository tools exist.
+C# process tests exercise each native wrapper from an unrelated working directory, including paths
+with spaces, successful execution, restore failure, and build failure. CI runs the contract tests on
+Linux and Windows. Historical Python records under `provenance/` are not required development tools.
+
+Workflow contract tests guard the active C# commands and their platform test wiring. Selection output
+and candidate manifest discovery belong to the C# commands, with regression tests for failure paths.
+A test pass does not imply line coverage of shell syntax; actual clean-checkout bootstrap and packed
+candidate jobs provide integration evidence.

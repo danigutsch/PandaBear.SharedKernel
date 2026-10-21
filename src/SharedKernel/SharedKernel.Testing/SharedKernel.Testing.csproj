@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <PackageId>PandaBear.SharedKernel.Testing</PackageId>
-        <Description>Reusable test traits and attributes for SharedKernel test suites.</Description>
+        <Description>Reusable test traits, environment scopes, and temporary-directory lifetimes.</Description>
         <RootNamespace>PandaBear.Testing</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;traits;shared-kernel;dotnet</PackageTags>

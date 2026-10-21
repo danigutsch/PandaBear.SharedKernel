@@ -139,7 +139,7 @@ internal static class VersioningToolApplication
           sharedkernel-version stage-candidate --candidate <manifest> --feed <packages> --output <local-feed> [--repo-root <library>]
           sharedkernel-version validate-candidate [--version <semver>] [--repo-root <path>] [--baseline-version <semver>] [--aot]
           sharedkernel-version smoke-packages --feed <path> --version <semver> [--repo-root <path>] [--aot]
-          sharedkernel-version consume-candidate --candidate <path> [--repo-root <path>] [--output <path>] [--aot]
+          sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--repo-root <path>] [--output <path>] [--aot]
           sharedkernel-version commit-impact <message>
           sharedkernel-version compute --base <version> [--prerelease <label>] [--sha <sha>] < commit-messages.txt
           sharedkernel-version calculate-release [--repo-root <path>] [--version-kind <prerelease|stable>] [--run-number <number>] [--sha <sha>] [--github-output <path>] [--github-summary <path>]

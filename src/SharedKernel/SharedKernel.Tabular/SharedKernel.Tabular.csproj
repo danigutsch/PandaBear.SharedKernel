@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>PandaBear.SharedKernel.Tabular</PackageId>
+        <Description>Simple comma-delimited documents, header lookup, and caller-defined duplicate row scanning.</Description>
+        <RootNamespace>PandaBear.Tabular</RootNamespace>
+        <PackageTags>tabular;comma-delimited;validation;dotnet</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\SharedKernel.Results\SharedKernel.Results.csproj" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

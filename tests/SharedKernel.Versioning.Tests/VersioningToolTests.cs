@@ -1,9 +1,10 @@
+using PandaBear.Testing;
 using System.Text.Json;
 using PandaBear.Versioning.Tool;
 
 namespace PandaBear.Versioning.Tests;
 
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.VersioningCapability)]
 public static class VersioningToolTests
 {
     [Fact]
@@ -648,7 +649,8 @@ public static class VersioningToolTests
         var packagePath = Path.Combine(packageDirectory, "PandaBear.SharedKernel.Sample.1.2.3.nupkg");
         exitCode.ShouldBe(0);
         File.Exists(packagePath).ShouldBeTrue();
-        output.ToString().ShouldContain(packageDirectory, StringComparison.Ordinal);
+        var normalizedOutput = output.ToString().Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        normalizedOutput.ShouldContain(packageDirectory, StringComparison.Ordinal);
     }
 
     [Fact]

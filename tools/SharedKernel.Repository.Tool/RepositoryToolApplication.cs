@@ -8,14 +8,14 @@ internal static class RepositoryToolApplication
     {
         if (args is [] or ["--help"] or ["-h"])
         {
-            output.WriteLine("Usage: repository-tool select|validate [--root path] [--base revision] [--selection path] [--pack] [--version version] [--baseline-version version] [--aot]");
+            output.WriteLine("Usage: repository-tool select|validate [--root path] [--base revision] [--selection path] [--github-output path] [--pack] [--version version] [--baseline-version version] [--aot]");
             return 0;
         }
 
         try
         {
             var root = Environment.CurrentDirectory;
-            string? baseline = null, version = null, apiBaseline = null;
+            string? baseline = null, version = null, apiBaseline = null, githubOutput = null;
             var selection = "TestResults/selection";
             var pack = false;
             var aot = false;
@@ -32,6 +32,7 @@ internal static class RepositoryToolApplication
                     case "--root": root = Path.GetFullPath(value); break;
                     case "--base": baseline = value; break;
                     case "--selection": selection = value; break;
+                    case "--github-output": githubOutput = value; break;
                     case "--version": version = value; break;
                     case "--baseline-version": apiBaseline = value; break;
                     default: throw new ArgumentException("Unknown option: " + option);
@@ -57,7 +58,12 @@ internal static class RepositoryToolApplication
                 File.WriteAllLines(Path.Combine(directory, "build-projects.txt"), result.BuildProjects);
                 File.WriteAllLines(Path.Combine(directory, "test-projects.txt"), result.TestProjects);
                 File.WriteAllLines(Path.Combine(directory, "selection-reasons.txt"), result.Reasons);
-                File.WriteAllText(Path.Combine(directory, "candidate-required.txt"), result.BuildProjects.Length > 0 ? "true" : "false");
+                var candidateRequired = result.BuildProjects.Length > 0 ? "true" : "false";
+                File.WriteAllText(Path.Combine(directory, "candidate-required.txt"), candidateRequired);
+                if (githubOutput is not null)
+                {
+                    File.AppendAllText(Path.GetFullPath(githubOutput, root), "candidate_required=" + candidateRequired + Environment.NewLine);
+                }
                 output.WriteLine(string.Join(Environment.NewLine, result.Reasons));
                 return 0;
             }
