@@ -15,3 +15,4 @@ SKSTYLE010 | Style | Warning | Result-returning methods should use Option for no
 SKSTYLE011 | IO | Disabled | Review whole-input reads in size-sensitive code; enable warning severity for selected production scopes
 SKSTYLE012 | Style | Warning | Replace registered direct C# string literals with their canonical constant
 SKSTYLE013 | Style | Warning | Governed literal catalog must be valid and unambiguous
+SKSTYLE014 | Style | Warning | Use TimeProvider for current time

@@ -37,7 +37,7 @@ public sealed class IntegrationEventDispatchTests
     {
         // Arrange
         var eventId = Guid.NewGuid();
-        var occurredAt = DateTimeOffset.UtcNow;
+        var occurredAt = TimeProvider.System.GetUtcNow();
 
         // Act
         var integrationEvent = new TestIntegrationEvent(eventId, occurredAt, "tour-created");

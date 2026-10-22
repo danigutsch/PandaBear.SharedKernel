@@ -25,6 +25,15 @@ This Roslyn component reports diagnostics for rules that only make sense in test
 | `SKTEST008` | Warning | xUnit test methods should not use manual `try`/`catch`/`finally` control flow. |
 | `SKTEST009` | Warning | xUnit trait metadata should use canonical constants when they exist. |
 | `SKTEST011` | Suggestion | Inline adjacent one-use assertion lambdas when overload binding is unchanged. |
+| `SKTEST012` | Warning | Use uniqueness assertions instead of assertion-like LINQ Single calls. |
+| `SKTEST013` | Warning | Use semantic assertions or named values instead of parenthesized assertion receivers. |
+| `SKTEST014` | Warning | Prevent conditional access from silently skipping ShouldBe assertions. |
+| `SKTEST015` | Warning | Use the specialized Playwright wrapper for default string title assertions. |
+| `SKTEST010` | Warning | Compare test activity source instances by identity. |
+| `SKTEST016` | Warning | Construct explicitly named SUTs in Arrange. |
+
+See [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for migrations, exception-testing
+exemptions, and the supported code-fix boundaries.
 
 ## Configuration
 
@@ -62,7 +71,7 @@ the build without changing analyzer descriptor severity.
 
 `sharedkernel_testing_strict_test_method_casing` defaults to `true` and requires sentence-style
 underscore names like `Creates_a_tour_when_the_request_is_valid` while allowing known terms such as
-`SKTEST004`, `xUnit`, `IDs`, `Task`, `ValueTask`, `HttpClient`, `OpenApi`, `UI`,
+`API`, `AsyncAPI`, `HTTP2`, `SKTEST004`, `xUnit`, `IDs`, `Task`, `ValueTask`, `HttpClient`, `OpenApi`, `UI`,
 `NavMenu`, `NavLink`, and `DataAnnotationsValidator`. Set it to `false` only for temporary
 migration windows.
 
@@ -111,3 +120,25 @@ Unrelated assertion APIs and production methods are excluded. Fix All remains un
 Use `dotnet_diagnostic.SKTEST011.severity = none` to retain named delegates throughout a project,
 or a narrow suppression when a particular name explains assertion intent. The default is a
 non-blocking suggestion; this rule does not require an application migration.
+
+## SKTEST010
+
+Test `ActivityListener.ShouldListenTo` lambdas must compare the intended `ActivitySource` instance, for example
+`source => ReferenceEquals(source, expectedSource)`. The analyzer reports the first read of the lambda parameter's
+`ActivitySource.Name`, including helper files, object initializers, later assignments, equality and `string.Equals`.
+Generated code, method groups and stored predicates are outside this rule's direct-lambda analysis. No code fix
+infers a source instance from a name. Ordinary assertions on `activity.Source.Name` remain valid.
+Identity isolates distinct same-name sources; tests sharing one static source must also correlate trace/parent IDs
+or retain justified serialization. An intentional process-global name-subscription test needs a documented,
+file-scoped `.editorconfig` exception.
+
+## SKTEST016
+
+Construct explicitly named `sut` or `systemUnderTest` variables in Arrange. This conservative rule analyzes semantic
+xUnit Fact/Theory methods only when they contain exactly one ordered `// Arrange`, `// Act`, `// Assert` marker set.
+It reports direct explicit or target-typed object creation assigned to these names in Act. Other variable names,
+factory calls, bUnit `Render<T>()`, nested lambdas and local functions are outside this rule. Moving construction
+can change evaluation order, so no code fix is registered.
+
+Issues #9 and #58 both originally requested SKTEST010. SKTEST010 retains the activity-listener contract;
+SUT construction uses the distinct SKTEST016 identifier.

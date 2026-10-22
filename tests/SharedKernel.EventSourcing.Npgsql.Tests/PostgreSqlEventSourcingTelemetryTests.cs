@@ -93,12 +93,11 @@ public sealed class PostgreSqlEventSourcingTelemetryTests(PostgreSqlTestServerFi
             TestContext.Current.CancellationToken);
 
         // Act
-        _ = await ((Func<Task>)(() => store.Append(
+        _ = await ShouldAssertionExtensions.ShouldThrow<ExpectedStreamRevisionConflictException>((Func<Task>)(() => store.Append(
                 streamId,
                 ExpectedStreamRevision.NoStream,
                 [new TestEvent("published")],
-                TestContext.Current.CancellationToken).AsTask()))
-            .ShouldThrow<ExpectedStreamRevisionConflictException>();
+                TestContext.Current.CancellationToken).AsTask()));
 
         // Assert
         stoppedActivities.ShouldContain(activity =>
@@ -162,25 +161,25 @@ public sealed class PostgreSqlEventSourcingTelemetryTests(PostgreSqlTestServerFi
         await cancellation.CancelAsync();
 
         // Act
-        await ((Func<Task>)(async () => await eventStore.Append(
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<OperationCanceledException>((Func<Task>)(async () => await eventStore.Append(
             StreamId.From("catalog-tour-cancelled-append"),
             ExpectedStreamRevision.NoStream,
             [new TestEvent("draft-created")],
-            cancellation.Token))).ShouldThrowAssignableTo<OperationCanceledException>();
-        await ((Func<Task>)(async () => await eventStore.Load(
+            cancellation.Token)));
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<OperationCanceledException>((Func<Task>)(async () => await eventStore.Load(
             StreamId.From("catalog-tour-cancelled-load"),
             afterRevision: null,
-            cancellation.Token))).ShouldThrowAssignableTo<OperationCanceledException>();
-        await ((Func<Task>)(async () => await eventStore.LoadAfter(
+            cancellation.Token)));
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<OperationCanceledException>((Func<Task>)(async () => await eventStore.LoadAfter(
             position: 0,
             maxCount: 1,
-            cancellation.Token))).ShouldThrowAssignableTo<OperationCanceledException>();
-        await ((Func<Task>)(async () => await checkpointStore.GetCheckpoint(
+            cancellation.Token)));
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<OperationCanceledException>((Func<Task>)(async () => await checkpointStore.GetCheckpoint(
             "catalog-cancelled-projection",
-            cancellation.Token))).ShouldThrowAssignableTo<OperationCanceledException>();
-        await ((Func<Task>)(async () => await checkpointStore.Save(
+            cancellation.Token)));
+        await ShouldAssertionExtensions.ShouldThrowAssignableTo<OperationCanceledException>((Func<Task>)(async () => await checkpointStore.Save(
             new ProjectionCheckpoint("catalog-cancelled-projection", 1),
-            cancellation.Token))).ShouldThrowAssignableTo<OperationCanceledException>();
+            cancellation.Token)));
 
         // Assert
         stoppedActivities.ShouldNotContain(activity =>

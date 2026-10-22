@@ -22,13 +22,13 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/commit");
 
         // Assert
-        (schema.Type).ShouldBe(JsonSchemaType.Object);
-        (schema.Properties).ShouldNotBeNull();
-        (schema.AllOf).ShouldBeNull();
-        (schema.Required).ShouldNotBeNull();
-        (schema.Required).ShouldContain("file");
-        (schema.Properties.Keys).ShouldContain("file");
-        (schema.Properties.Keys).ShouldContain("conflictResolutions");
+        schema.Type.ShouldBe(JsonSchemaType.Object);
+        schema.Properties.ShouldNotBeNull();
+        schema.AllOf.ShouldBeNull();
+        schema.Required.ShouldNotBeNull();
+        schema.Required.ShouldContain("file");
+        schema.Properties.Keys.ShouldContain("file");
+        schema.Properties.Keys.ShouldContain("conflictResolutions");
     }
 
     [Fact]
@@ -43,10 +43,10 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/commit/{id}");
 
         // Assert
-        (schema.Properties).ShouldNotBeNull();
-        (schema.AllOf).ShouldBeNull();
-        (schema.Properties.Keys).ShouldContain("file");
-        (schema.Properties.Keys).ShouldContain("conflictResolutions");
+        schema.Properties.ShouldNotBeNull();
+        schema.AllOf.ShouldBeNull();
+        schema.Properties.Keys.ShouldContain("file");
+        schema.Properties.Keys.ShouldContain("conflictResolutions");
     }
 
     [Fact]
@@ -61,10 +61,10 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/optional");
 
         // Assert
-        (schema.Type).ShouldBe(JsonSchemaType.Object);
-        (schema.Properties).ShouldNotBeNull();
-        (schema.AllOf).ShouldBeNull();
-        (schema.Required).ShouldBeNull();
+        schema.Type.ShouldBe(JsonSchemaType.Object);
+        schema.Properties.ShouldNotBeNull();
+        schema.AllOf.ShouldBeNull();
+        schema.Required.ShouldBeNull();
     }
 
     [Fact]
@@ -107,12 +107,12 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
 
         // Assert
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(normalizedDocument, "/uploads/commit");
-        (schema.Type).ShouldBe(JsonSchemaType.Object);
-        (schema.Properties).ShouldNotBeNull();
-        (schema.AllOf).ShouldBeNull();
-        (schema.Properties.Keys).ShouldContain("file");
-        (schema.Properties.Keys).ShouldContain("conflictResolutions");
-        (schema.Required).ShouldNotBeNull().ShouldContain("conflictResolutions");
+        schema.Type.ShouldBe(JsonSchemaType.Object);
+        schema.Properties.ShouldNotBeNull();
+        schema.AllOf.ShouldBeNull();
+        schema.Properties.Keys.ShouldContain("file");
+        schema.Properties.Keys.ShouldContain("conflictResolutions");
+        schema.Required.ShouldNotBeNull().ShouldContain("conflictResolutions");
         var conflictResolutionSchema = schema.Properties["conflictResolutions"].ShouldBeOfType<OpenApiSchema>();
         conflictResolutionSchema.Format.ShouldBe("preserved-format");
     }
@@ -136,9 +136,9 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
 
         // Assert
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(untouchedDocument, "/uploads/commit");
-        (schema.AllOf).ShouldNotBeNull();
-        (schema.AllOf).ShouldHaveSingleItem();
-        (schema.Properties).ShouldBeNull();
+        schema.AllOf.ShouldNotBeNull();
+        schema.AllOf.ShouldHaveSingleItem();
+        schema.Properties.ShouldBeNull();
     }
 
     [Fact]
@@ -165,8 +165,8 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             });
 
         // Assert
-        (normalizedSchema.AllOf).ShouldBeNull();
-        (normalizedSchema.Required).ShouldBeNull();
+        normalizedSchema.AllOf.ShouldBeNull();
+        normalizedSchema.Required.ShouldBeNull();
     }
 
     [Fact]
@@ -188,8 +188,8 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
 
         // Assert
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(normalizedDocument, "/uploads/optional");
-        (schema.AllOf).ShouldBeNull();
-        (schema.Required).ShouldBeNull();
+        schema.AllOf.ShouldBeNull();
+        schema.Required.ShouldBeNull();
     }
 
     [Fact]
@@ -204,11 +204,11 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
         var schema = MultipartFormRequestBodyDocumentTransformerTestsHelpers.GetMultipartSchema(document, "/uploads/files");
 
         // Assert
-        (schema.Type).ShouldBe(JsonSchemaType.Object);
-        (schema.Properties).ShouldNotBeNull();
-        (schema.AllOf).ShouldBeNull();
-        (schema.Properties.Keys).ShouldContain("firstFile");
-        (schema.Properties.Keys).ShouldContain("secondFile");
+        schema.Type.ShouldBe(JsonSchemaType.Object);
+        schema.Properties.ShouldNotBeNull();
+        schema.AllOf.ShouldBeNull();
+        schema.Properties.Keys.ShouldContain("firstFile");
+        schema.Properties.Keys.ShouldContain("secondFile");
     }
 
     [Fact]
@@ -235,6 +235,6 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
             });
 
         // Assert
-        (document.Paths.ContainsKey("/uploads/commit")).ShouldBeTrue();
+        document.Paths.ContainsKey("/uploads/commit").ShouldBeTrue();
     }
 }

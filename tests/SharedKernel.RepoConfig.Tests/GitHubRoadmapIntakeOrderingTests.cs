@@ -15,7 +15,8 @@ public sealed class GitHubRoadmapIntakeOrderingTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        (await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken)).ShouldBe(0);
+        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
         var reviewedItem = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json")
             .Replace("\"order\": 10", $"\"order\": {int.MaxValue.ToString(CultureInfo.InvariantCulture)}", StringComparison.Ordinal);
         workspace.WriteFile("roadmap/items/RM-001-roadmap-gitops.json", reviewedItem);
@@ -79,12 +80,13 @@ public sealed class GitHubRoadmapIntakeOrderingTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        (await RepoConfigToolApplication.Run(
+        var actualResult = await RepoConfigToolApplication.Run(
             ["init", "--root", workspace.RootPath],
             initOutput,
             initError,
             workspace.RootPath,
-            TestContext.Current.CancellationToken)).ShouldBe(0);
+            TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
         [

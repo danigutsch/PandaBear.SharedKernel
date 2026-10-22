@@ -268,7 +268,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
     {
         // Arrange
         var serializer = GeneratedIntegrationEventTestServices.CreateSerializer();
-        var integrationEvent = new UnknownIntegrationEvent(Guid.CreateVersion7(), DateTimeOffset.UtcNow);
+        var integrationEvent = new UnknownIntegrationEvent(Guid.CreateVersion7(), TimeProvider.System.GetUtcNow());
 
         // Act
         Action serialize = () => serializer.Serialize(integrationEvent);
@@ -286,7 +286,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
         var serializer = GeneratedIntegrationEventTestServices.CreateSerializer();
         var integrationEvent = new UnregisteredDerivedIntegrationEvent(
             Guid.CreateVersion7(),
-            DateTimeOffset.UtcNow,
+            TimeProvider.System.GetUtcNow(),
             "Rio de Janeiro",
             "must not be dropped");
 
@@ -306,7 +306,7 @@ public sealed class GeneratedIntegrationEventDispatchTests
         using var host = GeneratedIntegrationEventTestServices.CreateConsumerHost();
         using var delivery = host.OpenDelivery();
         var publisher = delivery.Publisher;
-        var integrationEvent = new TestIntegrationEvent(Guid.CreateVersion7(), DateTimeOffset.UtcNow, "unknown");
+        var integrationEvent = new TestIntegrationEvent(Guid.CreateVersion7(), TimeProvider.System.GetUtcNow(), "unknown");
         var envelope = TestEventEnvelopeFactory.Create(integrationEvent, "{}", "unknown.event");
 
         // Act

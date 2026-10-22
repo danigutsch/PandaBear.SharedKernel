@@ -19,7 +19,8 @@ public sealed class SeekableContentTests
         first.ToArray().SequenceEqual(second.ToArray()).ShouldBeTrue();
         first.Length.ShouldBe(8);
         first.ToArray().SequenceEqual(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }).ShouldBeTrue();
-        (lease.Content is FileStream).ShouldBe(threshold < 8);
+        var actualValue = lease.Content is FileStream;
+        actualValue.ShouldBe(threshold < 8);
         source.CanRead.ShouldBeTrue();
     }
 
@@ -51,7 +52,8 @@ public sealed class SeekableContentTests
         using var copy = new MemoryStream();
         await lease.Content.CopyToAsync(copy, TestContext.Current.CancellationToken);
         copy.ToArray().SequenceEqual(bytes).ShouldBeTrue();
-        (lease.Content is FileStream).ShouldBe(threshold < bytes.Length);
+        var actualValue = lease.Content is FileStream;
+        actualValue.ShouldBe(threshold < bytes.Length);
     }
 
     [Fact]

@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ExceptionServices;
 
-namespace PandaBear.Npgsql.Tests;
+namespace PandaBear.Npgsql.Testing;
 
 internal static class PostgreSqlTestCleanup
 {

@@ -10,6 +10,7 @@
         <Using Include="PandaBear.EventSourcing.Npgsql" />
         <Using Include="PandaBear.Testing.Assertions" />
         <Using Include="Npgsql" />
+        <Using Include="PandaBear.Npgsql.Testing" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -23,6 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="../SharedKernel.Npgsql.Testing/SharedKernel.Npgsql.Testing.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.IntegrationTesting\SharedKernel.IntegrationTesting.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" IsAspireProjectResource="false" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" IsAspireProjectResource="false" />

@@ -17,6 +17,9 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.Abstractions\SharedKernel.Mediator.Abstractions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.Analyzers\SharedKernel.Mediator.Analyzers.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj" />
+        <ProjectReference Include="../../src/SharedKernel/SharedKernel.Style.Analyzers/SharedKernel.Style.Analyzers.csproj" />
+        <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj" />
+        <ProjectReference Include="../../src/SharedKernel/SharedKernel.Aspire.Analyzers/SharedKernel.Aspire.Analyzers.csproj" />
     </ItemGroup>
 
 </Project>

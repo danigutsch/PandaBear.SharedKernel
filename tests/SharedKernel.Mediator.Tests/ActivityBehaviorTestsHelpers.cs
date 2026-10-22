@@ -6,9 +6,10 @@ internal static class ActivityBehaviorTestsHelpers
 {
     public static ActivityListener CreateCapturingListener(List<Activity> stoppedActivities)
     {
+        var expectedSource = SharedKernelMediatorActivitySource.Source;
         var listener = new ActivityListener
         {
-            ShouldListenTo = static source => source.Name == SharedKernelMediatorActivitySource.ActivitySourceName,
+            ShouldListenTo = source => ReferenceEquals(source, expectedSource),
             Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded,
             SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllDataAndRecorded,
             ActivityStopped = stoppedActivities.Add,

@@ -17,9 +17,9 @@ public sealed class EventSourcedAggregateRootTests
         aggregate.Replay(events);
 
         // Assert
-        (aggregate.Name).ShouldBe("Rota Romantica");
-        (aggregate.Version).ShouldBe(2);
-        (aggregate.GetUncommittedEvents()).ShouldBeEmpty();
+        aggregate.Name.ShouldBe("Rota Romantica");
+        aggregate.Version.ShouldBe(2);
+        aggregate.GetUncommittedEvents().ShouldBeEmpty();
     }
 
     [Fact]
@@ -30,9 +30,9 @@ public sealed class EventSourcedAggregateRootTests
         var events = new object?[] { null }.Cast<object>();
 
         // Act, Assert
-        ((Action)(() => aggregate.Replay(events))).ShouldThrow<ArgumentNullException>();
-        (aggregate.Version).ShouldBe(0);
-        (aggregate.GetUncommittedEvents()).ShouldBeEmpty();
+        ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Action)(() => aggregate.Replay(events)));
+        aggregate.Version.ShouldBe(0);
+        aggregate.GetUncommittedEvents().ShouldBeEmpty();
     }
 
     [Fact]
@@ -45,10 +45,10 @@ public sealed class EventSourcedAggregateRootTests
         aggregate.ChangeName("Rota Romantica");
 
         // Assert
-        var uncommittedEvent = (aggregate.GetUncommittedEvents()).ShouldHaveSingleItem();
-        (uncommittedEvent).ShouldBeOfType<NameChanged>();
-        (aggregate.Name).ShouldBe("Rota Romantica");
-        (aggregate.Version).ShouldBe(1);
+        var uncommittedEvent = aggregate.GetUncommittedEvents().ShouldHaveSingleItem();
+        uncommittedEvent.ShouldBeOfType<NameChanged>();
+        aggregate.Name.ShouldBe("Rota Romantica");
+        aggregate.Version.ShouldBe(1);
     }
 
     [Fact]
@@ -62,8 +62,8 @@ public sealed class EventSourcedAggregateRootTests
         aggregate.ClearUncommittedEvents();
 
         // Assert
-        (aggregate.GetUncommittedEvents()).ShouldBeEmpty();
-        (aggregate.Version).ShouldBe(1);
+        aggregate.GetUncommittedEvents().ShouldBeEmpty();
+        aggregate.Version.ShouldBe(1);
     }
 
 }

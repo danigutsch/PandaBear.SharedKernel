@@ -63,7 +63,8 @@ public static class CandidateSelectionTests
         var result = ProjectSelector.Select(repository.Root, [path]);
 
         // Assert
-        (result.BuildProjects.Length > 0).ShouldBe(required);
+        var actualValue = result.BuildProjects.Length > 0;
+        actualValue.ShouldBe(required);
     }
     [Fact]
     public static void Newly_added_hosted_tests_are_emitted_into_the_workflow_matrix()

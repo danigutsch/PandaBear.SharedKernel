@@ -12,7 +12,7 @@ internal static class TransportEnvelopeFactory
         new Uri("urn:test:admin"),
         "admin.tour.created",
         1,
-        DateTimeOffset.UtcNow,
+        TimeProvider.System.GetUtcNow(),
         null,
         "application/json",
         null,

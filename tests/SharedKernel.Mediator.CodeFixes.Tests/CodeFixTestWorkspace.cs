@@ -252,7 +252,7 @@ internal sealed class CodeFixTestWorkspace
     public async Task<ImmutableArray<Diagnostic>> GetGeneratorDiagnostics()
     {
         var compilation = (CSharpCompilation?)await Project.GetCompilationAsync().ConfigureAwait(false);
-        _ = (compilation).ShouldNotBeNull();
+        _ = compilation.ShouldNotBeNull();
 
         var generator = new SharedKernelMediatorGenerator();
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
@@ -269,7 +269,7 @@ internal sealed class CodeFixTestWorkspace
     public async Task<Diagnostic> GetSingleGeneratorDiagnostic(string diagnosticId)
     {
         var diagnostics = await GetGeneratorDiagnostics().ConfigureAwait(false);
-        return (diagnostics).ShouldHaveSingleItem(diagnostic => diagnostic.Id == diagnosticId);
+        return diagnostics.ShouldHaveSingleItem(diagnostic => diagnostic.Id == diagnosticId);
     }
 
     /// <summary>
@@ -286,13 +286,13 @@ internal sealed class CodeFixTestWorkspace
         string markerText,
         ImmutableDictionary<string, string?>? properties = null)
     {
-        var document = (Workspace.CurrentSolution.Projects.SelectMany(static project => project.Documents)).ShouldHaveSingleItem(candidate => string.Equals(candidate.Name, documentName, StringComparison.Ordinal));
+        var document = Workspace.CurrentSolution.Projects.SelectMany(static project => project.Documents).ShouldHaveSingleItem(candidate => string.Equals(candidate.Name, documentName, StringComparison.Ordinal));
         var text = await document.GetTextAsync().ConfigureAwait(false);
         var source = text.ToString();
         var start = source.IndexOf(markerText, StringComparison.Ordinal);
         (start >= 0).ShouldBeTrue($"Could not find marker text '{markerText}' in document '{documentName}'.");
         var syntaxTree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
-        _ = (syntaxTree).ShouldNotBeNull();
+        _ = syntaxTree.ShouldNotBeNull();
         var span = new TextSpan(start, markerText.Length);
         var descriptor = new DiagnosticDescriptor(
             diagnosticId,
@@ -321,7 +321,7 @@ internal sealed class CodeFixTestWorkspace
     /// <returns>The text from the requested document.</returns>
     public async Task<string> GetDocumentText(string documentName)
     {
-        var document = (Workspace.CurrentSolution.Projects.SelectMany(static project => project.Documents)).ShouldHaveSingleItem(candidate => string.Equals(candidate.Name, documentName, StringComparison.Ordinal));
+        var document = Workspace.CurrentSolution.Projects.SelectMany(static project => project.Documents).ShouldHaveSingleItem(candidate => string.Equals(candidate.Name, documentName, StringComparison.Ordinal));
         return (await document.GetTextAsync().ConfigureAwait(false)).ToString();
     }
 
@@ -343,13 +343,13 @@ internal sealed class CodeFixTestWorkspace
     public async Task<string> GetGeneratedSource(string hintName)
     {
         var compilation = (CSharpCompilation?)await Project.GetCompilationAsync().ConfigureAwait(false);
-        _ = (compilation).ShouldNotBeNull();
+        _ = compilation.ShouldNotBeNull();
 
         var generator = new SharedKernelMediatorGenerator();
         GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
         driver = driver.RunGenerators(compilation);
         var runResult = driver.GetRunResult();
-        var generatedSource = (runResult.Results.Single().GeneratedSources).ShouldHaveSingleItem(candidate => string.Equals(candidate.HintName, hintName, StringComparison.Ordinal));
+        var generatedSource = runResult.Results.Single().GeneratedSources.ShouldHaveSingleItem(candidate => string.Equals(candidate.HintName, hintName, StringComparison.Ordinal));
         return generatedSource.SourceText.ToString();
     }
 

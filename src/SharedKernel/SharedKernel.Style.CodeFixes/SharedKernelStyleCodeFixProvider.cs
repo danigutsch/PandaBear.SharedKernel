@@ -20,7 +20,8 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             StyleDiagnosticIds.GenericTypeNameSuffix,
             StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
             StyleDiagnosticIds.DomainEventSuffix,
-            StyleDiagnosticIds.SuccessOnlyResultMethod
+            StyleDiagnosticIds.SuccessOnlyResultMethod,
+            StyleDiagnosticIds.DirectCurrentTime
         ];
 
     /// <inheritdoc />
@@ -34,6 +35,11 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
     {
         foreach (var diagnostic in context.Diagnostics)
         {
+            if (diagnostic.Id == StyleDiagnosticIds.DirectCurrentTime)
+            {
+                await UseTimeProviderCodeFix.Register(context, diagnostic).ConfigureAwait(false);
+            }
+
             if (diagnostic.Id == StyleDiagnosticIds.AsyncSuffix)
             {
                 await RemoveAsyncSuffixCodeFix.Register(context, diagnostic).ConfigureAwait(false);

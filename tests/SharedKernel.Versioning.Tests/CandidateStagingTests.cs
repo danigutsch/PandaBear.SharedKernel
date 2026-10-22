@@ -18,7 +18,8 @@ public static class CandidateStagingTests
 
         // Assert
         var staged = CandidateManifest.ReadAndVerify(Path.Combine(temporary.OutputDirectory, "candidate.json"));
-        staged["packageVersion"]?.GetValue<string>().ShouldBe("1.0.0");
+        var stagedVersion = staged["packageVersion"].ShouldNotBeNull().GetValue<string>();
+        stagedVersion.ShouldBe("1.0.0");
         Directory.GetFiles(temporary.OutputDirectory, "*.tmp").ShouldBeEmpty();
     }
 
@@ -51,15 +52,9 @@ public static class CandidateStagingTests
         // Arrange
         using var temporary = new TemporaryReleasePrepDirectory();
         var manifest = temporary.WriteCandidate();
-        var package = Directory.GetFiles(temporary.PackageDirectory, "*.nupkg").Single();
-        if (tampered)
-        {
-            await File.WriteAllTextAsync(package, "tampered", TestContext.Current.CancellationToken);
-        }
-        else
-        {
-            File.Delete(package);
-        }
+        var package = Directory.GetFiles(temporary.PackageDirectory, "*.nupkg").ShouldHaveSingleItem();
+        if (tampered) { await File.WriteAllTextAsync(package, "tampered", TestContext.Current.CancellationToken); }
+        else { File.Delete(package); }
 
         // Act
         Func<Task> stage = () => CandidateStagingCommand.Stage(manifest, temporary.PackageDirectory, temporary.OutputDirectory, TestContext.Current.CancellationToken);

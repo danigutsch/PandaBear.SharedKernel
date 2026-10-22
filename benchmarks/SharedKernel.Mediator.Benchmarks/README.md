@@ -108,3 +108,32 @@ dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks/SharedKernel.Me
 ## See Also
 
 - [SharedKernel.Mediator.SourceGenerator](../../src/SharedKernel/SharedKernel.Mediator.SourceGenerator/README.md)
+
+## Repository analyzer regression baselines
+
+The existing benchmark executable also measures all four repository analyzer packages (Mediator, Style,
+Testing and Aspire) without adding dependencies. Each suite analyzes a valid representative compilation of
+100 declarations/operations that produces diagnostics. Compilation and semantic warmup are excluded. Ten
+warmups precede nine samples of five fresh analyzer-driver runs with concurrent analysis disabled. Results record median elapsed and process CPU
+milliseconds and median process-wide allocated bytes, plus a stable diagnostic count. Ordinary unit tests have
+no timing assertions.
+
+Run on an otherwise idle machine, using the pinned SDK and Release configuration:
+
+```sh
+dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks -c Release -- --analyzer-regression collect benchmarks/SharedKernel.Mediator.Benchmarks/analyzer-baseline.json
+dotnet run --project benchmarks/SharedKernel.Mediator.Benchmarks -c Release --no-build -- --analyzer-regression check benchmarks/SharedKernel.Mediator.Benchmarks/analyzer-baseline.json
+```
+
+`check` exits 1 for a diagnostic-count change, process CPU time above 150%, or allocation above 120% of a suite's
+baseline. It exits 2 for incomparable runtime, OS, architecture, schema, corpus size, sample count or limits.
+Analyzer failures, invalid source and zero/unstable diagnostic counts fail collection. Wall time is recorded for context; shared-host scheduling noise does not gate the result. Allocation measurement
+includes analyzer-driver scheduling and runtime work in this isolated process; compare repeated idle runs.
+This is a dedicated performance validation path, not a noisy ordinary CI unit-test gate. CI performance reviews
+must compare matching environments; a different runner must collect its own reviewed baseline first.
+
+Refresh the versioned baseline only after reviewing corpus/rule changes or measured intentional cost, recording
+the reason and before/after results in the PR. Repeat threshold breaches before attributing them to code; do not
+raise limits or refresh a baseline just to silence a regression. This baseline measures representative package
+cost, not exhaustive rule coverage or consumer compilation latency. Existing BenchmarkDotNet mediator scenarios
+remain available for deeper profiling.

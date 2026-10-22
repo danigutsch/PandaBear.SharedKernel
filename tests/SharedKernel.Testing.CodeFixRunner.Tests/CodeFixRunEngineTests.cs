@@ -23,11 +23,11 @@ public sealed class CodeFixRunEngineTests : IDisposable
         var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
         // Assert
-        (fixedCount).ShouldBe(1);
-        (updatedSource).ShouldContain("using PandaBear.Testing.Assertions;", StringComparison.Ordinal);
-        (updatedSource).ShouldContain("(true).ShouldBeTrue()", StringComparison.Ordinal);
-        (updatedSource).ShouldNotContain("Xunit.Assert.True", StringComparison.Ordinal);
-        (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
+        fixedCount.ShouldBe(1);
+        updatedSource.ShouldContain("using PandaBear.Testing.Assertions;", StringComparison.Ordinal);
+        updatedSource.ShouldContain("(true).ShouldBeTrue()", StringComparison.Ordinal);
+        updatedSource.ShouldNotContain("Xunit.Assert.True", StringComparison.Ordinal);
+        string.IsNullOrWhiteSpace(error.ToString()).ShouldBeTrue(error.ToString());
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         updatedSource.ShouldNotContain("private static int CreateTourId()", StringComparison.Ordinal);
         helperSource.ShouldContain("internal static class SampleTestsHelpers", StringComparison.Ordinal);
         helperSource.ShouldContain("internal static int CreateTourId()", StringComparison.Ordinal);
-        (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
+        string.IsNullOrWhiteSpace(error.ToString()).ShouldBeTrue(error.ToString());
     }
 
     [Fact]
@@ -74,9 +74,9 @@ public sealed class CodeFixRunEngineTests : IDisposable
         var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
         // Assert
-        (fixedCount).ShouldBe(0);
-        (updatedSource).ShouldContain("public void Execute()", StringComparison.Ordinal);
-        (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
+        fixedCount.ShouldBe(0);
+        updatedSource.ShouldContain("public void Execute()", StringComparison.Ordinal);
+        string.IsNullOrWhiteSpace(error.ToString()).ShouldBeTrue(error.ToString());
     }
 
     [Fact]
@@ -95,10 +95,11 @@ public sealed class CodeFixRunEngineTests : IDisposable
         var fixedCount = await CodeFixRunEngine.Run(options, error);
 
         // Assert
-        (fixedCount).ShouldBe(1);
+        fixedCount.ShouldBe(1);
         var messages = error.ToString();
-        (messages).ShouldContain("No code fix available", StringComparison.Ordinal);
-        (messages.Split("No code fix available", StringSplitOptions.None).Length - 1).ShouldBe(1);
+        messages.ShouldContain("No code fix available", StringComparison.Ordinal);
+        var actualValue = messages.Split("No code fix available", StringSplitOptions.None).Length - 1;
+        actualValue.ShouldBe(1);
     }
 
     [Fact]
@@ -118,12 +119,12 @@ public sealed class CodeFixRunEngineTests : IDisposable
         var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
         // Assert
-        (fixedCount).ShouldBe(2);
-        (updatedSource).ShouldContain("using PandaBear.Testing.Assertions;", StringComparison.Ordinal);
-        (updatedSource).ShouldContain("(true).ShouldBeTrue();", StringComparison.Ordinal);
-        (updatedSource).ShouldNotContain("Xunit.Assert.True", StringComparison.Ordinal);
-        (updatedSource).ShouldNotContain("True(  true )", StringComparison.Ordinal);
-        (string.IsNullOrWhiteSpace(error.ToString())).ShouldBeTrue(error.ToString());
+        fixedCount.ShouldBe(2);
+        updatedSource.ShouldContain("using PandaBear.Testing.Assertions;", StringComparison.Ordinal);
+        updatedSource.ShouldContain("(true).ShouldBeTrue();", StringComparison.Ordinal);
+        updatedSource.ShouldNotContain("Xunit.Assert.True", StringComparison.Ordinal);
+        updatedSource.ShouldNotContain("True(  true )", StringComparison.Ordinal);
+        string.IsNullOrWhiteSpace(error.ToString()).ShouldBeTrue(error.ToString());
     }
 
     [Fact]
@@ -135,9 +136,9 @@ public sealed class CodeFixRunEngineTests : IDisposable
 
         // Act
         // Assert
-        var exception = await ((Func<Task>)(() => CodeFixRunEngine.Run(options, error))).ShouldThrow<ArgumentException>();
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<Task>)(() => CodeFixRunEngine.Run(options, error)));
 
-        (exception.Message).ShouldContain("Expected a .csproj, .sln, or .slnx path.", StringComparison.Ordinal);
+        exception.Message.ShouldContain("Expected a .csproj, .sln, or .slnx path.", StringComparison.Ordinal);
     }
 
     public void Dispose()

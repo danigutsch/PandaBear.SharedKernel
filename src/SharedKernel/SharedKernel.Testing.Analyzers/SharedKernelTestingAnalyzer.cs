@@ -12,7 +12,7 @@ namespace PandaBear.Testing.Analyzers;
 /// Reports diagnostics for repository-specific testing rules.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
+public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 {
     private static readonly TimeSpan RegexTimeout = TimeSpan.FromSeconds(1);
 
@@ -25,46 +25,6 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         @"^[A-Z][A-Za-z0-9]*(?:_[A-Za-z0-9][A-Za-z0-9]*)+$",
         RegexOptions.Compiled | RegexOptions.CultureInvariant,
         RegexTimeout);
-
-    private static readonly string[] AllowedStrictNameSegments = [
-        "API",
-        "CSV",
-        "DTO",
-        "DataAnnotationsValidator",
-        "DateOnly",
-        "DateTime",
-        "EF",
-        "EditContext",
-        "GUID",
-        "Guid",
-        "HTTP",
-        "HttpClient",
-        "HttpContext",
-        "HttpRequest",
-        "HttpResponse",
-        "HttpStatusCode",
-        "ID",
-        "IDs",
-        "JSON",
-        "Json",
-        "NavLink",
-        "NavLinks",
-        "NavMenu",
-        "OpenApi",
-        "ProblemDetails",
-        "QuickGrid",
-        "SKTEST",
-        "Task",
-        "TimeOnly",
-        "TimeSpan",
-        "URI",
-        "URL",
-        "UI",
-        "UTC",
-        "ValidationMessage",
-        "ValueTask",
-        "xUnit",
-    ];
 
     private static readonly DiagnosticDescriptor TestMethodWarningSuppressionRule = new(
         TestingDiagnosticIds.TestMethodWarningSuppression,
@@ -157,9 +117,41 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         description: "Inline adjacent one-use lambda delegates only when the repository assertion overload remains unchanged.",
         helpLinkUri: "https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Testing.Analyzers/README.md#sktest011");
 
+    private static readonly DiagnosticDescriptor SingleAssertionRule = new(
+        TestingDiagnosticIds.LinqSingleAssertion,
+        title: "Use a uniqueness assertion in tests",
+        messageFormat: "Use ShouldHaveSingleItem instead of LINQ Single",
+        category: TestingCategory,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor ParenthesizedAssertionRule = new(
+        TestingDiagnosticIds.ParenthesizedAssertion,
+        title: "Give assertion targets an explicit meaning",
+        messageFormat: "Use a semantic assertion or name the parenthesized assertion target",
+        category: TestingCategory,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor ConditionalAssertionRule = new(
+        TestingDiagnosticIds.ConditionalAssertion,
+        title: "Conditional access must not skip assertions",
+        messageFormat: "Assert the nullable receiver explicitly before calling {0}",
+        category: TestingCategory,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
+    private static readonly DiagnosticDescriptor PlaywrightAssertionRule = new(
+        TestingDiagnosticIds.PlaywrightAssertion,
+        title: "Use the Playwright assertion boundary",
+        messageFormat: "Use ShouldHaveTitle instead of direct Playwright title assertions",
+        category: TestingCategory,
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule];
+        [ActivityListenerSourceIdentityRule, SutConstructionRule, TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule, SingleAssertionRule, ParenthesizedAssertionRule, ConditionalAssertionRule, PlaywrightAssertionRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -171,6 +163,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
+        context.RegisterOperationAction(AnalyzeListenerAssignment, OperationKind.SimpleAssignment);
         context.RegisterSyntaxNodeAction(
             AnalyzePragmaDirective,
             SyntaxKind.PragmaWarningDirectiveTrivia);
@@ -349,6 +342,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         }
 
         AnalyzeAssertionInvocation(context, invocationExpression);
+        AnalyzeUnsafeAssertion(context, invocationExpression);
         if (AssertionDelegateInlining.TryRewrite(context.SemanticModel, invocationExpression, context.CancellationToken, out _, out _))
         {
             context.ReportDiagnostic(Diagnostic.Create(AssertionDelegateInliningRule, invocationExpression.GetLocation()));
@@ -370,6 +364,94 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
                 XunitAssertionWrapperRule,
                 invocationExpression.GetLocation(),
                 methodSymbol.Name));
+    }
+
+    private static void AnalyzeUnsafeAssertion(SyntaxNodeAnalysisContext context, InvocationExpressionSyntax invocation)
+    {
+        var name = invocation.Expression switch
+        {
+            MemberAccessExpressionSyntax member => member.Name.Identifier.ValueText,
+            MemberBindingExpressionSyntax binding => binding.Name.Identifier.ValueText,
+            SimpleNameSyntax simple => simple.Identifier.ValueText,
+            _ => string.Empty,
+        };
+        if (name != "Single" && name != "ToHaveTitleAsync" && !name.StartsWith("Should", StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        if (invocation.FirstAncestorOrSelf<MethodDeclarationSyntax>() is not { } declaration
+            || context.SemanticModel.GetDeclaredSymbol(declaration, context.CancellationToken) is not IMethodSymbol test
+            || !IsXunitTestMethod(test)
+            || context.SemanticModel.GetSymbolInfo(invocation, context.CancellationToken).Symbol is not IMethodSymbol method)
+        {
+            return;
+        }
+
+        var owner = method.ContainingType.ToDisplayString();
+        if (name == "Single" && owner is "System.Linq.Enumerable" or "System.Linq.Queryable"
+            && !IsDeliberateExceptionAssertion(context, invocation, declaration))
+        {
+            context.ReportDiagnostic(Diagnostic.Create(SingleAssertionRule, invocation.GetLocation()));
+        }
+
+        if (name.StartsWith("Should", StringComparison.Ordinal)
+            && method.ContainingNamespace.ToDisplayString().StartsWith("PandaBear.Testing.", StringComparison.Ordinal))
+        {
+            if (invocation.Expression is MemberAccessExpressionSyntax { Expression: ParenthesizedExpressionSyntax })
+            {
+                context.ReportDiagnostic(Diagnostic.Create(ParenthesizedAssertionRule, invocation.GetLocation()));
+            }
+
+            if (name.StartsWith("ShouldBe", StringComparison.Ordinal)
+                && invocation.Ancestors().OfType<ConditionalAccessExpressionSyntax>().Any(conditional => conditional.WhenNotNull.Span.Contains(invocation.Span)))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(ConditionalAssertionRule, invocation.GetLocation(), name));
+            }
+        }
+
+        if (name == "ToHaveTitleAsync" && owner == "Microsoft.Playwright.IPageAssertions"
+            && invocation.ArgumentList.Arguments.Count == 1
+            && method.Parameters[0].Type.SpecialType == SpecialType.System_String
+            && context.Compilation.AssemblyName != "SharedKernel.Testing.Playwright")
+        {
+            context.ReportDiagnostic(Diagnostic.Create(PlaywrightAssertionRule, invocation.GetLocation()));
+        }
+    }
+
+    private static bool IsDeliberateExceptionAssertion(
+        SyntaxNodeAnalysisContext context,
+        InvocationExpressionSyntax invocation,
+        MethodDeclarationSyntax declaration)
+    {
+        if (invocation.Ancestors().OfType<LambdaExpressionSyntax>().FirstOrDefault() is not { } lambda)
+        {
+            return false;
+        }
+
+        var local = lambda.Parent is EqualsValueClauseSyntax { Parent: VariableDeclaratorSyntax variable }
+            ? context.SemanticModel.GetDeclaredSymbol(variable, context.CancellationToken)
+            : null;
+        foreach (var candidate in declaration.DescendantNodes().OfType<InvocationExpressionSyntax>())
+        {
+            if (context.SemanticModel.GetSymbolInfo(candidate, context.CancellationToken).Symbol is not IMethodSymbol method)
+            {
+                continue;
+            }
+
+            var isExceptionAssertion = method.ContainingType.ToDisplayString() == "Xunit.Assert"
+                    && method.Name.StartsWith("Throws", StringComparison.Ordinal)
+                || method.ContainingType.ToDisplayString() == "PandaBear.Testing.Assertions.ShouldAssertionExtensions"
+                    && method.Name.StartsWith("ShouldThrow", StringComparison.Ordinal);
+            if (isExceptionAssertion && (candidate.Span.Contains(lambda.Span)
+                || local is not null && candidate.DescendantNodes().OfType<IdentifierNameSyntax>().Any(identifier =>
+                    SymbolEqualityComparer.Default.Equals(context.SemanticModel.GetSymbolInfo(identifier, context.CancellationToken).Symbol, local))))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static void AnalyzeTryStatement(SyntaxNodeAnalysisContext context)
@@ -481,6 +563,7 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         }
 
         AnalyzeArrangeActAssertMarkers(context, methodDeclaration, methodSymbol);
+        AnalyzeSutConstruction(context, methodDeclaration);
     }
 
     private static void AnalyzeArrangeActAssertMarkers(
@@ -676,22 +759,17 @@ public sealed class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
             && segments.All(static segment => segment.Length != 0)
             && char.IsUpper(segments[0][0])
             && segments[0].All(char.IsLetterOrDigit)
+            && (TestMethodNameSegments.Canonical(segments[0]) is not { } firstCanonical || firstCanonical == segments[0])
             && segments.Skip(1).All(IsStrictSentenceStyleSegment);
     }
 
     private static bool IsStrictSentenceStyleSegment(string segment)
     {
+        var canonical = TestMethodNameSegments.Canonical(segment);
         return segment.All(char.IsLetterOrDigit)
-            && (segment.All(static character => char.IsLower(character) || char.IsDigit(character))
-                || IsAllowedStrictNameSegment(segment));
-    }
-
-    private static bool IsAllowedStrictNameSegment(string segment)
-    {
-        return Array.Exists(AllowedStrictNameSegments, allowedSegment => string.Equals(segment, allowedSegment, StringComparison.Ordinal))
-            || (segment.StartsWith("SKTEST", StringComparison.Ordinal)
-                && segment.Length > "SKTEST".Length
-                && segment.Substring("SKTEST".Length).All(char.IsDigit));
+            && (canonical is not null
+                ? canonical == segment
+                : segment.All(static character => char.IsLower(character) || char.IsDigit(character)));
     }
 
     private static bool IsXunitLifecycleMethod(IMethodSymbol methodSymbol)

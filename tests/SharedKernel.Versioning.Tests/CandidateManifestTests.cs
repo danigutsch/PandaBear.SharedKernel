@@ -124,7 +124,7 @@ public static class CandidateManifestTests
         using var temporary = new TemporaryReleasePrepDirectory();
         var manifest = temporary.WriteCandidate();
         var original = await File.ReadAllTextAsync(manifest, TestContext.Current.CancellationToken);
-        await File.AppendAllTextAsync(Directory.GetFiles(temporary.PackageDirectory, "*.nupkg").Single(), "changed", TestContext.Current.CancellationToken);
+        await File.AppendAllTextAsync(Directory.GetFiles(temporary.PackageDirectory, "*.nupkg").ShouldHaveSingleItem(), "changed", TestContext.Current.CancellationToken);
         using var input = new StringReader(string.Empty);
         using var output = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);
         using var error = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);

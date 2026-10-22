@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RootNamespace>PandaBear.Npgsql.Testing</RootNamespace>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+        <PackageReference Include="Npgsql" />
+        <PackageReference Include="xunit.v3.extensibility.core" VersionOverride="4.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="../../src/SharedKernel/SharedKernel.IntegrationTesting/SharedKernel.IntegrationTesting.csproj" />
+        <InternalsVisibleTo Include="SharedKernel.Npgsql.Tests" />
+        <InternalsVisibleTo Include="SharedKernel.EventSourcing.Npgsql.Tests" />
+    </ItemGroup>
+
+</Project>

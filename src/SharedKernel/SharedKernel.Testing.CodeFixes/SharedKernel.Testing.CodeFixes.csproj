@@ -23,6 +23,7 @@
     <ItemGroup>
         <ProjectReference Include="..\SharedKernel.Testing.Analyzers\SharedKernel.Testing.Analyzers.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
         <Compile Include="..\SharedKernel.Testing.Analyzers\AssertionDelegateInlining.cs" Link="AssertionDelegateInlining.cs" />
+        <Compile Include="../SharedKernel.Testing.Analyzers/TestMethodNameSegments.cs" Link="TestMethodNameSegments.cs" />
         <Compile Include="..\SharedKernel.Testing.Analyzers\TestingDiagnosticIds.cs" Link="TestingDiagnosticIds.cs" />
     </ItemGroup>
 

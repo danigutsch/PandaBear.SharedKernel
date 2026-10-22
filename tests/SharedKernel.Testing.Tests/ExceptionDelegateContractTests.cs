@@ -64,6 +64,7 @@ public sealed class ExceptionDelegateContractTests
         actual.ShouldBeSameAs(expected);
         await wrongType.ShouldThrow<Xunit.Sdk.ThrowsException>();
         await wrongParameter.ShouldThrow<Xunit.Sdk.ThrowsException>();
-        (await action.ShouldThrowAssignableTo<ArgumentException>()).ShouldBeSameAs(expected);
+        var actualResult = await action.ShouldThrowAssignableTo<ArgumentException>();
+        actualResult.ShouldBeSameAs(expected);
     }
 }

@@ -16,7 +16,7 @@ public sealed class DomainEventDispatchTests
 
         // Act
         var dispatcherMethod = typeof(IDomainEventDispatcher).GetMethods()
-            .Single(static method => method.Name == nameof(IDomainEventDispatcher.Dispatch) && method.IsGenericMethodDefinition);
+            .ShouldHaveSingleItem(static method => method.Name == nameof(IDomainEventDispatcher.Dispatch) && method.IsGenericMethodDefinition);
 
         // Assert
         referencedAssemblyNames.ShouldNotContain("SharedKernel.Mediator.Abstractions");
@@ -26,7 +26,7 @@ public sealed class DomainEventDispatchTests
         exportedTypeNames.ShouldNotContain("DomainEventNotificationHandler`1");
         exportedTypeNames.ShouldNotContain("MediatorDomainEventDispatcher");
         dispatcherMethod.IsGenericMethodDefinition.ShouldBeTrue();
-        dispatcherMethod.GetGenericArguments().Single().GetGenericParameterConstraints().ShouldContain(typeof(IDomainEvent));
+        dispatcherMethod.GetGenericArguments().ShouldHaveSingleItem().GetGenericParameterConstraints().ShouldContain(typeof(IDomainEvent));
         typeof(IDomainEventDispatcher).Assembly.ShouldBe(typeof(IDomainEvent).Assembly);
         typeof(IDomainEventDispatcher).Namespace.ShouldBe("PandaBear.Domain");
     }

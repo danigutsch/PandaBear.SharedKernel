@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using Npgsql;
 
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+namespace PandaBear.Npgsql.Testing;
 
 internal sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
 {

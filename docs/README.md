@@ -2,6 +2,7 @@
 
 - [Development and quality](development.md)
 - [Security baseline](security-baseline.md)
+- [Test assertion conventions](TEST_GUIDELINES.md)
 - [File and stream intake](stream-intake.md)
 - [Payment identifiers and payment epic handoff](plans/payment-identifiers.md)
 - [Architecture and generated diagrams](architecture/README.md)

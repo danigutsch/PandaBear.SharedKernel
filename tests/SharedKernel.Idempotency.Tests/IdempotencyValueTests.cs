@@ -12,8 +12,8 @@ public sealed class IdempotencyValueTests
         var key = IdempotencyKey.From(value);
 
         // Assert
-        (key.Value).ShouldBe("message-123");
-        (key.ToString()).ShouldBe("message-123");
+        key.Value.ShouldBe("message-123");
+        key.ToString().ShouldBe("message-123");
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public sealed class IdempotencyValueTests
         string? value = null;
 
         // Act, Assert
-        ((Func<object?>)(() => IdempotencyKey.From(value))).ShouldThrow<ArgumentNullException>();
+        ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<object?>)(() => IdempotencyKey.From(value)));
     }
 
     [Fact]
@@ -33,8 +33,8 @@ public sealed class IdempotencyValueTests
         var key = default(IdempotencyKey);
 
         // Act, Assert
-        ((Func<object?>)(() => key.Value)).ShouldThrow<InvalidOperationException>();
-        ((Func<object?>)(() => key.ToString())).ShouldThrow<InvalidOperationException>();
+        ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Func<object?>)(() => key.Value));
+        ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Func<object?>)(() => key.ToString()));
     }
 
     [Theory]
@@ -43,7 +43,7 @@ public sealed class IdempotencyValueTests
     public void Key_from_rejects_blank_values(string value)
     {
         // Arrange, Act, Assert
-        ((Func<object?>)(() => IdempotencyKey.From(value))).ShouldThrow<ArgumentException>();
+        ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<object?>)(() => IdempotencyKey.From(value)));
     }
 
     [Theory]
@@ -56,7 +56,7 @@ public sealed class IdempotencyValueTests
         var key = IdempotencyKey.From(value);
 
         // Assert
-        (key.Value).ShouldBe(value);
+        key.Value.ShouldBe(value);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public sealed class IdempotencyValueTests
     public void Key_from_rejects_values_outside_token_format(string value)
     {
         // Arrange, Act, Assert
-        ((Func<object?>)(() => IdempotencyKey.From(value))).ShouldThrow<ArgumentException>();
+        ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<object?>)(() => IdempotencyKey.From(value)));
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public sealed class IdempotencyValueTests
         var value = new string('a', 256);
 
         // Act, Assert
-        ((Func<object?>)(() => IdempotencyKey.From(value))).ShouldThrow<ArgumentException>();
+        ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<object?>)(() => IdempotencyKey.From(value)));
     }
 
     [Fact]
@@ -119,8 +119,8 @@ public sealed class IdempotencyValueTests
         var scope = IdempotencyScope.From(value);
 
         // Assert
-        (scope.Value).ShouldBe("inbox:tour-created");
-        (scope.ToString()).ShouldBe("inbox:tour-created");
+        scope.Value.ShouldBe("inbox:tour-created");
+        scope.ToString().ShouldBe("inbox:tour-created");
     }
 
     [Fact]
@@ -130,7 +130,7 @@ public sealed class IdempotencyValueTests
         string? value = null;
 
         // Act, Assert
-        ((Func<object?>)(() => IdempotencyScope.From(value))).ShouldThrow<ArgumentNullException>();
+        ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<object?>)(() => IdempotencyScope.From(value)));
     }
 
     [Theory]
@@ -139,7 +139,7 @@ public sealed class IdempotencyValueTests
     public void Scope_from_rejects_blank_values(string value)
     {
         // Arrange, Act, Assert
-        ((Func<object?>)(() => IdempotencyScope.From(value))).ShouldThrow<ArgumentException>();
+        ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<object?>)(() => IdempotencyScope.From(value)));
     }
 
     [Fact]
@@ -149,8 +149,8 @@ public sealed class IdempotencyValueTests
         var scope = default(IdempotencyScope);
 
         // Act, Assert
-        ((Func<object?>)(() => scope.Value)).ShouldThrow<InvalidOperationException>();
-        ((Func<object?>)(() => scope.ToString())).ShouldThrow<InvalidOperationException>();
+        ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Func<object?>)(() => scope.Value));
+        ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Func<object?>)(() => scope.ToString()));
     }
 
     [Fact]
@@ -164,7 +164,7 @@ public sealed class IdempotencyValueTests
         var operation = new IdempotencyOperation(scope, key);
 
         // Assert
-        (operation.Scope).ShouldBe(scope);
-        (operation.Key).ShouldBe(key);
+        operation.Scope.ShouldBe(scope);
+        operation.Key.ShouldBe(key);
     }
 }

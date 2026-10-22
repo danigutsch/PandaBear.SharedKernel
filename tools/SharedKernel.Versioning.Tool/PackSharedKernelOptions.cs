@@ -74,7 +74,7 @@ internal sealed record PackSharedKernelOptions(
         }
 
         return new PackSharedKernelOptions(
-            version ?? "0.1.0-alpha.local." + DateTimeOffset.UtcNow.ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture),
+            version ?? "0.1.0-alpha.local." + TimeProvider.System.GetUtcNow().ToString("yyyyMMddHHmmss", System.Globalization.CultureInfo.InvariantCulture),
             outputRoot,
             verifyRestore,
             repoRoot,

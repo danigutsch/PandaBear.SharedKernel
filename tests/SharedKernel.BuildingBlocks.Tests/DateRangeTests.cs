@@ -15,10 +15,10 @@ public sealed class DateRangeTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        (result.IsSuccess).ShouldBeTrue();
-        (result.Value).ShouldNotBeNull();
-        (result.Value.StartDate).ShouldBe(startDate);
-        (result.Value.EndDate).ShouldBe(endDate);
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldNotBeNull();
+        result.Value.StartDate.ShouldBe(startDate);
+        result.Value.EndDate.ShouldBe(endDate);
     }
 
     [Fact]
@@ -32,14 +32,14 @@ public sealed class DateRangeTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        (result.IsSuccess).ShouldBeFalse();
-        (result.IsFailure).ShouldBeTrue();
-        (result.Status).ShouldBe(ResultStatus.Invalid);
-        (result.ErrorDetails).ShouldNotBeNull();
-        (result.ErrorDetails.Detail).ShouldBe("End date must be after start date.");
-        (result.ErrorDetails.ValidationErrors).ShouldNotBeNull();
-        (result.ErrorDetails.ValidationErrors.Keys).ShouldContain("schedule");
-        (result.ErrorDetails.ValidationErrors["schedule"]).ShouldBe(["End date must be after start date."]);
+        result.IsSuccess.ShouldBeFalse();
+        result.IsFailure.ShouldBeTrue();
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ErrorDetails.ShouldNotBeNull();
+        result.ErrorDetails.Detail.ShouldBe("End date must be after start date.");
+        result.ErrorDetails.ValidationErrors.ShouldNotBeNull();
+        result.ErrorDetails.ValidationErrors.Keys.ShouldContain("schedule");
+        result.ErrorDetails.ValidationErrors["schedule"].ShouldBe(["End date must be after start date."]);
     }
 
     [Fact]
@@ -52,11 +52,11 @@ public sealed class DateRangeTests
         var result = DateRange.Create(date, date);
 
         // Assert
-        (result.IsSuccess).ShouldBeFalse();
-        (result.IsFailure).ShouldBeTrue();
-        (result.Status).ShouldBe(ResultStatus.Invalid);
-        (result.ErrorDetails).ShouldNotBeNull();
-        (result.ErrorDetails.Detail).ShouldBe("End date must be after start date.");
+        result.IsSuccess.ShouldBeFalse();
+        result.IsFailure.ShouldBeTrue();
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ErrorDetails.ShouldNotBeNull();
+        result.ErrorDetails.Detail.ShouldBe("End date must be after start date.");
     }
 
     [Fact]
@@ -70,8 +70,8 @@ public sealed class DateRangeTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        (result.IsSuccess).ShouldBeTrue();
-        (result.Value.DurationDays).ShouldBe(7.0);
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.DurationDays.ShouldBe(7.0);
     }
 
     [Fact]
@@ -85,8 +85,8 @@ public sealed class DateRangeTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        (result.IsSuccess).ShouldBeTrue();
-        (result.Value.DurationDays).ShouldBe(1.0);
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.DurationDays.ShouldBe(1.0);
     }
 
     [Fact]
@@ -100,8 +100,8 @@ public sealed class DateRangeTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        (result.IsSuccess).ShouldBeTrue();
-        (result.Value.DurationDays).ShouldBe(28.0 / 24.0, precision: 10);
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.DurationDays.ShouldBe(28.0 / 24.0, precision: 10);
     }
 
     [Fact]
@@ -115,8 +115,8 @@ public sealed class DateRangeTests
 
         // Act
         // Assert
-        (range2).ShouldBe(range1);
-        (range1.Equals(range2)).ShouldBeTrue();
+        range2.ShouldBe(range1);
+        range1.Equals(range2).ShouldBeTrue();
     }
 
     [Fact]
@@ -128,8 +128,8 @@ public sealed class DateRangeTests
 
         // Act
         // Assert
-        (range2).ShouldNotBe(range1);
-        (range1.Equals(range2)).ShouldBeFalse();
+        range2.ShouldNotBe(range1);
+        range1.Equals(range2).ShouldBeFalse();
     }
 
     [Fact]
@@ -143,9 +143,9 @@ public sealed class DateRangeTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        (result.IsSuccess).ShouldBeTrue();
-        (result.Value.StartDate.Kind).ShouldBe(DateTimeKind.Utc);
-        (result.Value.EndDate.Kind).ShouldBe(DateTimeKind.Utc);
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.StartDate.Kind.ShouldBe(DateTimeKind.Utc);
+        result.Value.EndDate.Kind.ShouldBe(DateTimeKind.Utc);
     }
 
     [Fact]
@@ -159,8 +159,8 @@ public sealed class DateRangeTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        (result.IsSuccess).ShouldBeTrue();
-        (result.Value.DurationDays).ShouldBe(364.0);
+        result.IsSuccess.ShouldBeTrue();
+        result.Value.DurationDays.ShouldBe(364.0);
     }
 
     [Fact]
@@ -175,9 +175,11 @@ public sealed class DateRangeTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        (result.IsSuccess).ShouldBeTrue();
-        (result.Value.DurationDays > 0).ShouldBeTrue();
-        (result.Value.DurationDays < 0.001).ShouldBeTrue();
+        result.IsSuccess.ShouldBeTrue();
+        var actualValue = result.Value.DurationDays > 0;
+        actualValue.ShouldBeTrue();
+        var actualValue2 = result.Value.DurationDays < 0.001;
+        actualValue2.ShouldBeTrue();
     }
 
 }

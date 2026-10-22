@@ -44,7 +44,7 @@ public sealed class ResultErrorTests
 
         // Assert
         error.ValidationErrors.ShouldNotBeNull();
-        (error.ValidationErrors["Name"]).ShouldBe(["Name is required"]);
+        error.ValidationErrors["Name"].ShouldBe(["Name is required"]);
     }
 
     [Fact]
@@ -65,9 +65,9 @@ public sealed class ResultErrorTests
         var messages = error.ValidationErrors["Name"];
 
         // Assert
-        (messages).ShouldNotBeOfType<List<string>>();
-        ((Action)(() => ((IList<string>)messages).Add("Changed after construction"))).ShouldThrow<NotSupportedException>();
-        (error.ValidationErrors["Name"]).ShouldBe(["Name is required"]);
+        messages.ShouldNotBeOfType<List<string>>();
+        ShouldAssertionExtensions.ShouldThrow<NotSupportedException>((Action)(() => ((IList<string>)messages).Add("Changed after construction")));
+        error.ValidationErrors["Name"].ShouldBe(["Name is required"]);
     }
 
     [Fact]

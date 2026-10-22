@@ -10,9 +10,9 @@ internal static class GeneratorIncrementalBehaviorTestsHelpers
         params IncrementalStepRunReason[] expectedReasons)
     {
         var trackedSteps = runResult.Results.Single().TrackedSteps;
-        var step = (trackedSteps[stepName]).ShouldHaveSingleItem();
+        var step = trackedSteps[stepName].ShouldHaveSingleItem();
 
-        (step.Outputs).ShouldNotBeEmpty();
-        (step.Outputs).ShouldAllSatisfy(output => (expectedReasons).ShouldContain(output.Reason));
+        step.Outputs.ShouldNotBeEmpty();
+        step.Outputs.ShouldAllSatisfy(output => expectedReasons.ShouldContain(output.Reason));
     }
 }

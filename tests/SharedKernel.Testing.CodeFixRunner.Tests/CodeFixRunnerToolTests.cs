@@ -59,7 +59,7 @@ public sealed class CodeFixRunnerToolTests
             currentDirectory = currentDirectory.Parent;
         }
 
-        var root = (repositoryRoot).ShouldNotBeNull();
+        var root = repositoryRoot.ShouldNotBeNull();
         var projectPath = Path.Combine(
             root,
             "tools",
@@ -79,7 +79,7 @@ public sealed class CodeFixRunnerToolTests
         properties["ToolCommandName"].ShouldBe("sharedkernel-codefix");
         properties["PackageId"].ShouldBe("PandaBear.SharedKernel.Testing.CodeFixRunner");
         properties["PackageReadmeFile"].ShouldBe("README.md");
-        (readmeItem).ShouldNotBeNull();
+        readmeItem.ShouldNotBeNull();
     }
 
     [Fact]
@@ -87,9 +87,9 @@ public sealed class CodeFixRunnerToolTests
     {
         var options = CodeFixRunnerOptions.Parse(["sample.csproj"]);
 
-        var parsedOptions = (options).ShouldNotBeNull();
-        (parsedOptions.TargetPath).ShouldBe(Path.GetFullPath("sample.csproj"));
-        (parsedOptions.DiagnosticId).ShouldBe("SKTEST004");
+        var parsedOptions = options.ShouldNotBeNull();
+        parsedOptions.TargetPath.ShouldBe(Path.GetFullPath("sample.csproj"));
+        parsedOptions.DiagnosticId.ShouldBe("SKTEST004");
     }
 
     [Fact]
@@ -97,9 +97,9 @@ public sealed class CodeFixRunnerToolTests
     {
         var options = CodeFixRunnerOptions.Parse(["--diagnostic", "SKTEST006", "sample.csproj"]);
 
-        var parsedOptions = (options).ShouldNotBeNull();
-        (parsedOptions.TargetPath).ShouldBe(Path.GetFullPath("sample.csproj"));
-        (parsedOptions.DiagnosticId).ShouldBe("SKTEST006");
+        var parsedOptions = options.ShouldNotBeNull();
+        parsedOptions.TargetPath.ShouldBe(Path.GetFullPath("sample.csproj"));
+        parsedOptions.DiagnosticId.ShouldBe("SKTEST006");
     }
 
     [Theory]
@@ -111,6 +111,6 @@ public sealed class CodeFixRunnerToolTests
     {
         var options = CodeFixRunnerOptions.Parse(args);
 
-        (options).ShouldBeNull();
+        options.ShouldBeNull();
     }
 }

@@ -1,0 +1,41 @@
+{
+  "SchemaVersion": 1,
+  "Runtime": ".NET 10.0.13",
+  "OperatingSystem": "Ubuntu 26.04.1 LTS",
+  "Architecture": "X64",
+  "SourceCount": 100,
+  "Samples": 9,
+  "Iterations": 5,
+  "MaximumTimeRatio": 1.5,
+  "MaximumAllocationRatio": 1.2,
+  "Measurements": [
+    {
+      "Suite": "SharedKernelMediatorAnalyzer",
+      "Milliseconds": 110.92295999999999,
+      "CpuMilliseconds": 382.5004,
+      "AllocatedBytes": 11159772,
+      "Diagnostics": 200
+    },
+    {
+      "Suite": "SharedKernelStyleAnalyzer",
+      "Milliseconds": 44.91674,
+      "CpuMilliseconds": 45.413799999999995,
+      "AllocatedBytes": 1574761,
+      "Diagnostics": 201
+    },
+    {
+      "Suite": "SharedKernelTestingAnalyzer",
+      "Milliseconds": 50.158280000000005,
+      "CpuMilliseconds": 63.5874,
+      "AllocatedBytes": 2178060,
+      "Diagnostics": 100
+    },
+    {
+      "Suite": "SharedKernelAspireAnalyzer",
+      "Milliseconds": 6.89958,
+      "CpuMilliseconds": 9.2072,
+      "AllocatedBytes": 270041,
+      "Diagnostics": 100
+    }
+  ]
+}

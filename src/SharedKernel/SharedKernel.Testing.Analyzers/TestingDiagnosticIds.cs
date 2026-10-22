@@ -5,6 +5,24 @@ namespace PandaBear.Testing.Analyzers;
 /// </summary>
 public static class TestingDiagnosticIds
 {
+    /// <summary>Diagnostic for name-based test activity subscriptions.</summary>
+    public const string ActivityListenerSourceIdentity = "SKTEST010";
+
+    /// <summary>Diagnostic for SUT construction in an explicit Act phase.</summary>
+    public const string SutConstructionInAct = "SKTEST016";
+
+    /// <summary>Diagnostic for assertion-like LINQ Single calls in tests.</summary>
+    public const string LinqSingleAssertion = "SKTEST012";
+
+    /// <summary>Diagnostic for parenthesized assertion targets.</summary>
+    public const string ParenthesizedAssertion = "SKTEST013";
+
+    /// <summary>Diagnostic for conditional access that skips an assertion.</summary>
+    public const string ConditionalAssertion = "SKTEST014";
+
+    /// <summary>Diagnostic for direct Playwright assertions with a repository replacement.</summary>
+    public const string PlaywrightAssertion = "SKTEST015";
+
     /// <summary>Diagnostic emitted for a safely inlineable one-use assertion delegate.</summary>
     public const string AssertionDelegateInlining = "SKTEST011";
 

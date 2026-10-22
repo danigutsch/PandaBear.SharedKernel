@@ -748,7 +748,7 @@ public sealed class IntegrationEventMappingGeneratorTests
     }
 
     [Fact]
-    public void Exact_registration_api_with_an_inferred_type_argument_is_discovered()
+    public void Exact_registration_API_with_an_inferred_type_argument_is_discovered()
     {
         // Arrange
         const string source = """

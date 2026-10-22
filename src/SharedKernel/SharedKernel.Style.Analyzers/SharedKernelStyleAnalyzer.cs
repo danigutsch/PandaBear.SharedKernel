@@ -12,7 +12,7 @@ namespace PandaBear.Style.Analyzers;
 /// Reports diagnostics for repository-specific style rules.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
+public sealed partial class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 {
     private const string AsyncSuffix = "Async";
     private const string CancellationTokenParameterName = "ct";
@@ -126,6 +126,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         get;
     } =
         ImmutableArray.Create(
+            CurrentTimeRule,
             AsyncSuffixRule,
             CancellationTokenParameterNameRule,
             CancellationTokenDefaultValueRule,
@@ -150,6 +151,7 @@ public sealed class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
 
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
+        context.RegisterOperationAction(AnalyzeCurrentTime, OperationKind.PropertyReference);
         context.RegisterCompilationStartAction(InitializeCompilation);
     }
 

@@ -21,6 +21,13 @@ This Roslyn component is reserved for focused fixes that pair with the diagnosti
 - `SKTEST009` replaces trait string literals with the constant identified by the analyzer.
 - `SKTEST011` inlines an adjacent one-use assertion lambda and removes its declaration only when semantic rebinding preserves the exact overload. It preserves comments and named arguments; ambiguous or unsafe rewrites and Fix All are unavailable.
 
+- `SKTEST012` rewrites compatible LINQ Single calls to `ShouldHaveSingleItem`, preserving the returned value. Delegate predicates capture their original target through `Invoke`; unsupported expression trees and ambiguous bindings receive no fix.
+- `SKTEST014` introduces a collision-free named local and an explicit `ShouldNotBeNull` guard before the assertion. It supports standalone block statements and checks that the rewritten invocation compiles and binds to the repository assertion API.
+- `SKTEST013` and `SKTEST015` provide diagnostic guidance; selecting a semantic target or browser assertion migration remains explicit.
+
+The naming fix preserves canonical keywords and diagnostic identifiers. See
+[test assertion conventions](../../../docs/TEST_GUIDELINES.md) for examples.
+
 ## Suppression policy
 
 - Prefer supported non-obsolete Roslyn APIs first.

@@ -12,6 +12,7 @@ public sealed class PostgreSqlProjectionCheckpointStore : IProjectionCheckpointS
     private readonly NpgsqlDataSource dataSource;
     private readonly PostgreSqlEventSourcingOptions options;
     private readonly bool ownsDataSource;
+    private readonly TimeProvider timeProvider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PostgreSqlProjectionCheckpointStore" /> class.
@@ -66,6 +67,7 @@ public sealed class PostgreSqlProjectionCheckpointStore : IProjectionCheckpointS
 
         this.dataSource = dataSource;
         this.options = options ?? new PostgreSqlEventSourcingOptions();
+        timeProvider = this.options.TimeProvider ?? throw new ArgumentException("A TimeProvider is required.", nameof(options));
         this.ownsDataSource = ownsDataSource;
     }
 
@@ -141,7 +143,7 @@ public sealed class PostgreSqlProjectionCheckpointStore : IProjectionCheckpointS
             await using var command = dataSource.CreateCommand(sql);
             command.Parameters.AddWithValue("projectionName", checkpoint.ProjectionName);
             command.Parameters.AddWithValue("position", checkpoint.Position);
-            command.Parameters.AddWithValue("updatedAt", DateTimeOffset.UtcNow);
+            command.Parameters.AddWithValue("updatedAt", timeProvider.GetUtcNow());
             _ = await command.ExecuteNonQueryAsync(ct);
 
             CompleteActivity(activity, PostgreSqlEventSourcingTelemetry.OutcomeSuccess);

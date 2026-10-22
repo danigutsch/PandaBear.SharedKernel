@@ -104,7 +104,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public async Task Includes_matching_api_version_paths_only()
+    public async Task Includes_matching_API_version_paths_only()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.CreateApiVersionDocument(
@@ -128,7 +128,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public async Task Includes_matching_api_version_paths_with_normalized_route_prefix_only()
+    public async Task Includes_matching_API_version_paths_with_normalized_route_prefix_only()
     {
         // Arrange
         var document = await OpenApiDocumentFactory.CreateApiVersionDocument(
@@ -363,7 +363,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void Throws_when_api_version_services_are_null()
+    public void Throws_when_API_version_services_are_null()
     {
         // Arrange
         IServiceCollection? services = null;
@@ -377,7 +377,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void Throws_when_api_version_collection_is_null()
+    public void Throws_when_API_version_collection_is_null()
     {
         // Arrange
         var services = OpenApiTestServiceCollectionFactory.Create();
@@ -391,7 +391,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void Throws_when_api_version_collection_contains_null()
+    public void Throws_when_API_version_collection_contains_null()
     {
         // Arrange
         var services = OpenApiTestServiceCollectionFactory.Create();
@@ -405,7 +405,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     }
 
     [Fact]
-    public void Throws_when_api_version_document_names_contain_duplicates()
+    public void Throws_when_API_version_document_names_contain_duplicates()
     {
         // Arrange
         var services = OpenApiTestServiceCollectionFactory.Create();
@@ -425,7 +425,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     [Theory]
     [InlineData("/")]
     [InlineData(" /// ")]
-    public void Throws_when_api_version_route_prefix_normalizes_to_empty(string routePrefix)
+    public void Throws_when_API_version_route_prefix_normalizes_to_empty(string routePrefix)
     {
         // Arrange
         var services = OpenApiTestServiceCollectionFactory.Create();

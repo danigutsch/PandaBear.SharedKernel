@@ -70,7 +70,7 @@ public sealed class ResultConvertErrorTests
         error.ShouldNotBeNull();
         error.Code.ShouldBe(ResultErrorCodes.Invalid);
         error.ValidationErrors.ShouldNotBeNull();
-        (error.ValidationErrors["Name"]).ShouldBe(["Name is required"]);
+        error.ValidationErrors["Name"].ShouldBe(["Name is required"]);
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public sealed class ResultConvertErrorTests
             new ResultError("Validation failed", ResultErrorCodes.Invalid));
 
         // Act
-        var exception = ((Func<object?>)(() => malformedResult.ConvertError<string>())).ShouldThrow<InvalidOperationException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Func<object?>)(() => malformedResult.ConvertError<string>()));
 
         // Assert
         exception.Message.ShouldBe("Validation errors must include field details.");
@@ -98,7 +98,7 @@ public sealed class ResultConvertErrorTests
         var malformedResult = ResultConvertErrorTestsHelpers.CreateMalformedResult((ResultStatus)statusValue, new ResultError("Malformed result status."));
 
         // Act
-        var exception = ((Func<object?>)(() => malformedResult.ConvertError<string>())).ShouldThrow<InvalidOperationException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Func<object?>)(() => malformedResult.ConvertError<string>()));
 
         // Assert
         exception.Message.ShouldBe(expectedMessage);
@@ -114,7 +114,7 @@ public sealed class ResultConvertErrorTests
         var malformedResult = ResultConvertErrorTestsHelpers.CreateMalformedGenericResult((ResultStatus)statusValue, "payload", new ResultError("Malformed result status."));
 
         // Act
-        var exception = ((Func<object?>)(() => malformedResult.ConvertError<string, int>())).ShouldThrow<InvalidOperationException>();
+        var exception = ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>((Func<object?>)(() => malformedResult.ConvertError<string, int>()));
 
         // Assert
         exception.Message.ShouldBe(expectedMessage);
