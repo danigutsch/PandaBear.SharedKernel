@@ -37,22 +37,23 @@ This guidance covers every tool under `tools/`. It follows upstream sources, whi
 
 ### Repository decisions
 
-Every tool in this repository builds its command tree with System.CommandLine. CI workflows and consumer
-repositories invoke these tools, so moving a tool to System.CommandLine must not break existing command lines.
+Every tool in this repository builds its command tree with System.CommandLine. Command lines are not a
+compatibility contract. A tool may change its command line to follow the design guidance, provided the same
+change updates every caller. Callers include CI workflows, scripts, documentation, tests, other tools, and the
+consuming application repository. Consumers pin tool package versions, so they adopt a changed command line
+together with the package version that introduces it.
 
-- Keep every existing command, option, alias, positional argument, default value, and exit code for valid input
-  and domain failures. Extra syntax that System.CommandLine adds for free is acceptable. That includes
-  `--option=value`, `--help`, and `-h`.
-- Disable response files by setting `ParserConfiguration.ResponseFileTokenReplacer` to `null`, so arguments
-  that start with `@` stay literal. Enable them per tool only when a command needs long argument lists.
-- Choose termination handling deliberately:
-  - If a tool runs child processes or must clean up, pass the action's `CancellationToken` into that work.
-  - If a tool still has its own console cancellation handling, either remove it in favor of the token or turn
-    off System.CommandLine's handling with `InvocationConfiguration.ProcessTerminationTimeout`.
-- Report parse errors on standard error with a non-zero exit code. Document a tool's exit codes in its README
-  when callers depend on them.
+- Use System.CommandLine defaults for help, version, response files, POSIX bundling, and parse-error
+  handling. If a tool changes a default, explain why in the code next to the change.
+- Let System.CommandLine handle Ctrl+C and SIGTERM. Pass the action's `CancellationToken` into child
+  processes and cleanup work, and remove tool-specific console cancellation handlers. If cleanup can take
+  longer than the default two-second termination timeout, set `InvocationConfiguration.ProcessTerminationTimeout`
+  and say why.
+- Parse errors exit with System.CommandLine's non-zero code and are reported on standard error. Document
+  domain-specific exit codes in the tool README.
 - Put the command tree in a factory that takes its writers and environment as parameters, so tests can invoke
   the real parser without touching the console.
+- Do not keep a hand-written parser, usage strings, or parsing helpers next to System.CommandLine.
 
 ## Behavior
 
