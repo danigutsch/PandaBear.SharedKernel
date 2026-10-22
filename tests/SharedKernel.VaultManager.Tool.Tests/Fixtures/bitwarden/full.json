@@ -86,7 +86,7 @@
       "type": 5,
       "name": "Fixture SSH key",
       "favorite": false,
-      "sshKey": { "privateKey": "-----BEGIN OPENSSH PRIVATE KEY-----\nfixture\n-----END OPENSSH PRIVATE KEY-----", "publicKey": "ssh-ed25519 AAAAfixture", "keyFingerprint": "SHA256:fixture" }
+      "sshKey": { "privateKey": "fixture-private-key", "publicKey": "ssh-ed25519 AAAAfixture", "keyFingerprint": "SHA256:fixture" }
     },
     {
       "id": "bank-1",

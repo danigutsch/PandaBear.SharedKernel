@@ -125,6 +125,31 @@ internal static class FieldDiff
         ((int)field.Type).ToString(CultureInfo.InvariantCulture),
         field.LinkedId?.ToString(CultureInfo.InvariantCulture) ?? string.Empty);
 
+    /// <summary>
+    /// Keeps one custom field per name, value, and link, in first-seen order. Fields that differ only in type
+    /// keep the strictest type: hidden, then boolean, then text.
+    /// </summary>
+    /// <param name="fields">Fields in priority order.</param>
+    /// <returns>The distinct fields.</returns>
+    public static IReadOnlyList<CustomField> DistinctFields(IEnumerable<CustomField> fields) =>
+    [
+        .. fields
+            .GroupBy(field => string.Join(
+                Separator,
+                field.Name ?? string.Empty,
+                ItemNormalizer.Notes(field.Value),
+                field.LinkedId?.ToString(CultureInfo.InvariantCulture) ?? string.Empty))
+            .Select(sameValue => sameValue.First() with { Type = sameValue.MinBy(field => TypeStrictness(field.Type))!.Type }),
+    ];
+
+    private static int TypeStrictness(CustomFieldType type) => type switch
+    {
+        CustomFieldType.Hidden => 0,
+        CustomFieldType.Boolean => 1,
+        CustomFieldType.Text => 2,
+        _ => 3,
+    };
+
     private static bool Differs(IReadOnlyList<VaultItem> members, Func<VaultItem, string> key)
     {
         string first = key(members[0]);

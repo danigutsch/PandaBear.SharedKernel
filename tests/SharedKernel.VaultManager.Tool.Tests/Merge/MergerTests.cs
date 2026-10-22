@@ -136,6 +136,33 @@ public sealed class MergerTests
     }
 
     [Fact]
+    public void Merge_fields_differing_only_in_type_are_kept_once_with_the_stricter_type()
+    {
+        var keeper = Keeper(Login(NewPassword)) with
+        {
+            Fields =
+            [
+                new CustomField("Account Number", "12345678", CustomFieldType.Hidden),
+                new CustomField("Remember", "true", CustomFieldType.Boolean),
+            ],
+        };
+        var bitwarden = Bitwarden(Login(NewPassword)) with
+        {
+            Fields =
+            [
+                new CustomField("Account Number", "12345678", CustomFieldType.Text),
+                new CustomField("Remember", "true", CustomFieldType.Text),
+            ],
+        };
+
+        var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
+
+        item.Fields.ShouldBeEquivalentTo(
+            new CustomField("Account Number", "12345678", CustomFieldType.Hidden),
+            new CustomField("Remember", "true", CustomFieldType.Boolean));
+    }
+
+    [Fact]
     public void Merge_passkeys_from_both_sides_are_kept()
     {
         var keeperPasskey = new Fido2Credential { CredentialId = "cred-k", KeyValue = "key-k", RpId = "example.com" };

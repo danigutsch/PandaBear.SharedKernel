@@ -93,7 +93,7 @@ internal sealed class GroupMerger
 
         return result with
         {
-            Fields = [.. fields.Concat(preservedFields).DistinctBy(FieldDiff.FieldKey)],
+            Fields = FieldDiff.DistinctFields(fields.Concat(preservedFields)),
             PasswordHistory =
             [
                 .. history.Concat(preservedHistory)
