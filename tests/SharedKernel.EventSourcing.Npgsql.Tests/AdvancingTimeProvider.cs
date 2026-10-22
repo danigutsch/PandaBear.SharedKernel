@@ -4,7 +4,10 @@ internal sealed class AdvancingTimeProvider(DateTimeOffset instant) : TimeProvid
 {
     public DateTimeOffset Instant { get; set; } = instant;
 
-    public int Reads { get; private set; }
+    public int Reads
+    {
+        get; private set;
+    }
 
     public override DateTimeOffset GetUtcNow()
     {
