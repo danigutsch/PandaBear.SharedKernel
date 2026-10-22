@@ -1,0 +1,56 @@
+using PandaBear.VaultManager.Tool.Secrets;
+
+namespace PandaBear.VaultManager.Tool.Tests.Secrets;
+
+public sealed class FindingsReportTests
+{
+    [Fact]
+    public void Findings_report_never_contains_secret_values()
+    {
+        string token = TestSecrets.GitHubToken("ghp", 70);
+        string card = TestSecrets.CardNumber("4", 16);
+        const string Password = "Tr0ub4dor&3x";
+        const string Answer = "Rex the dog";
+        var item = SecretTestItems.Login(name: "visible item", notes: $"token {token}\nPassword: {Password}\ncard {card}\nQ: First pet?\nA: {Answer}");
+        var findings = SecretScanner.Default.Scan(item);
+
+        string markdown = FindingsReport.Render([new ItemFindings(item.Name, findings)], ReportFormat.Markdown);
+        string text = FindingsReport.Render([new ItemFindings(item.Name, findings)], ReportFormat.Text);
+
+        findings.ShouldHaveCount(4);
+        string[] reports = [markdown, text];
+        reports.ShouldAllSatisfy(report =>
+        {
+            report.ShouldContain("visible item", StringComparison.Ordinal);
+            report.ShouldContain("ApiToken", StringComparison.Ordinal);
+            report.ShouldNotContain(token, StringComparison.Ordinal);
+            report.ShouldNotContain(card, StringComparison.Ordinal);
+            report.ShouldNotContain(card[..8], StringComparison.Ordinal);
+            report.ShouldNotContain(Password, StringComparison.Ordinal);
+            report.ShouldNotContain(Answer, StringComparison.Ordinal);
+            report.ShouldNotContain("First pet", StringComparison.Ordinal);
+        });
+        markdown.ShouldContain("| Item |", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Finding_to_string_never_contains_secret_values()
+    {
+        string token = TestSecrets.GitHubToken("ghp", 71);
+        const string Answer = "Springfield";
+        var item = SecretTestItems.Login(notes: $"{token}\nQuestion: City of birth?\nAnswer: {Answer}");
+
+        var findings = SecretScanner.Default.Scan(item);
+
+        findings.ShouldHaveCount(2);
+        findings.ShouldAllSatisfy(finding =>
+        {
+            string printed = finding.ToString();
+            printed.ShouldNotContain(token, StringComparison.Ordinal);
+            printed.ShouldNotContain(Answer, StringComparison.Ordinal);
+            printed.ShouldNotContain("City of birth", StringComparison.Ordinal);
+            finding.Message.ShouldNotContain(token, StringComparison.Ordinal);
+            finding.Location.ToString().ShouldNotContain(token, StringComparison.Ordinal);
+        });
+    }
+}
