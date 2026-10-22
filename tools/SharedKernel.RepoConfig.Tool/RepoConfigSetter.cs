@@ -27,13 +27,15 @@ internal static class RepoConfigSetter
             throw new ArgumentException("github.repository must be shaped as owner/repository.", nameof(value));
         }
 
-        var configPath = Path.Combine(rootPath, RepoConfigPaths.Config);
+        var configPath = Path.GetFullPath(Path.Combine(rootPath, RepoConfigPaths.Config));
+        RollbackFileWriteBatch.ValidateWritePath(rootPath, configPath);
         if (!File.Exists(configPath))
         {
             throw new FileNotFoundException("Roadmap config file was not found.", RepoConfigPaths.Config);
         }
 
-        var root = JsonNode.Parse(File.ReadAllText(configPath)) as JsonObject
+        var original = File.ReadAllText(configPath);
+        var root = JsonNode.Parse(original) as JsonObject
             ?? throw new InvalidOperationException("Roadmap config root must be a JSON object.");
 
         var integrations = GetOrCreateObject(root, "integrations");
@@ -46,7 +48,7 @@ internal static class RepoConfigSetter
             root.WriteTo(writer);
         }
 
-        File.WriteAllText(configPath, Encoding.UTF8.GetString(stream.ToArray()) + "\n");
+        RollbackFileWriteBatch.Apply(rootPath, [new(configPath, Encoding.UTF8.GetString(stream.ToArray()) + "\n", original)]);
     }
 
     private static JsonObject GetOrCreateObject(JsonObject parent, string propertyName)

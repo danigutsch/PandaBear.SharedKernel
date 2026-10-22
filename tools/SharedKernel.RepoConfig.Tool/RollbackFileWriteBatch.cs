@@ -226,8 +226,11 @@ internal static class RollbackFileWriteBatch
     private static string CreateUniqueSiblingPath(string path, string extension) =>
         $"{path}.{Guid.NewGuid():N}.{extension}";
 
-    private static void ValidateWritePath(string normalizedScope, string normalizedPath)
+    internal static void ValidateWritePath(string normalizedScope, string normalizedPath)
     {
+        normalizedScope = Path.TrimEndingDirectorySeparator(Path.GetFullPath(normalizedScope));
+        normalizedPath = Path.GetFullPath(normalizedPath);
+        ValidateWriteScope(normalizedScope);
         var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
         var relativePath = Path.GetRelativePath(normalizedScope, normalizedPath);
         if (Path.IsPathRooted(relativePath)
@@ -278,26 +281,20 @@ internal static class RollbackFileWriteBatch
 
     private static bool IsSymbolicLink(string path)
     {
-        string? linkTarget;
-        try
-        {
-            linkTarget = new FileInfo(path).LinkTarget;
-        }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or NotSupportedException)
-        {
-            linkTarget = null;
-        }
-
-        if (linkTarget is not null)
+        if (new FileInfo(path).LinkTarget is not null || new DirectoryInfo(path).LinkTarget is not null)
         {
             return true;
         }
 
         try
         {
-            return new DirectoryInfo(path).LinkTarget is not null;
+            return (File.GetAttributes(path) & FileAttributes.ReparsePoint) != 0;
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or NotSupportedException)
+        catch (FileNotFoundException)
+        {
+            return false;
+        }
+        catch (DirectoryNotFoundException)
         {
             return false;
         }

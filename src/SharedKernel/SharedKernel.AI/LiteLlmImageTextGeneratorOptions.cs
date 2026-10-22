@@ -38,4 +38,10 @@ public sealed record LiteLlmImageTextGeneratorOptions
     /// Gets the chat-completions path exposed by the LiteLLM proxy.
     /// </summary>
     public string ChatCompletionsPath { get; init; } = "/v1/chat/completions";
+
+    /// <summary>
+    /// Gets the maximum accepted remaining image bytes before base64 encoding or HTTP dispatch. Defaults to 5 MiB.
+    /// Hosts may configure another positive finite limit; the caller-owned input stream remains open.
+    /// </summary>
+    public int MaxImageBytes { get; init; } = 5 * 1024 * 1024;
 }

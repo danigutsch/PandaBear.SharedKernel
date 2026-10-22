@@ -6,7 +6,7 @@ namespace PandaBear.AI;
 public sealed record ImageTextGenerationRequest
 {
     /// <summary>
-    /// Gets the source image stream.
+    /// Gets the caller-owned source image stream, read from its current position and left open.
     /// </summary>
     public required Stream Image
     {

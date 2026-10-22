@@ -46,6 +46,26 @@ or retain and move prior evidence deliberately. Upload jobs have separate permis
 must not gain write tokens. Generated reports must remain outside tracked source.
 Symbolic links are rejected in report-directory paths to prevent writes through redirected directories.
 
+## Runtime boundaries
+
+Roadmap initialization, configuration updates, and issue mapping persistence reject symbolic links
+and junctions in the checkout root, its ancestors, and write destinations. Changes use exclusive,
+random staging files and expected-content checks. Operators must retain control of directory entries
+throughout a modifying command. A remote issue created before a local persistence failure is reported
+with its issue number for recovery; the creation lock remains in place.
+
+Parent and blocker cycle checks use iterative, linear graph traversal. Shared acyclic dependencies
+are processed once per traversal, deep chains do not consume recursive stack space, and every cycle
+member remains diagnostic.
+
+Image text generation enforces the finite `MaxImageBytes` budget before base64 encoding or HTTP
+submission. The default is 5 MiB; hosts can configure their own positive limit and retain ownership
+of the input stream. Successful branding-save responses are limited to the smaller of 1 MiB and
+`HttpClient.MaxResponseContentBufferSize`, counting actual streamed bytes before JSON parsing.
+Both boundaries preserve caller cancellation and existing body-timeout behavior. See the
+[AI contract](../src/SharedKernel/SharedKernel.AI/README.md) and
+[branding contract](../src/SharedKernel/SharedKernel.Branding/README.md).
+
 ## Supply chain
 
 Gitleaks `8.30.1` replaces the application's older `8.9.0` scanner. This executable upgrade is a
