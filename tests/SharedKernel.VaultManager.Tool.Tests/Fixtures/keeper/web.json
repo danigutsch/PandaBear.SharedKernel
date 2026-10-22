@@ -1,0 +1,25 @@
+{
+  "shared_folders": [ { "path": "Shared\\\\Literal\\Nested/Name" } ],
+  "records": [
+    {
+      "title": "Web login",
+      "uid": 1,
+      "login": "web-user",
+      "password": "fixture-web-password",
+      "login_url": "https://web.example.com",
+      "$type": "login",
+      "custom_fields": {
+        "$oneTimeCode::1": "otpauth://totp/Web:web-user?secret=JBSWY3DPEHPK3PXP&issuer=Web",
+        "$url:account:1": "https://account.web.example.com",
+        "$name::1": { "first": "Web", "middle": "", "last": "User" },
+        "TFC:Keeper": "otpauth://totp/Legacy:web-user?secret=KRSXG5CTMVRXEZLU&issuer=Legacy"
+      },
+      "folders": [ { "shared_folder": "Shared\\\\Literal\\Nested/Name" } ]
+    },
+    {
+      "title": "",
+      "uid": 2,
+      "notes": "untitled note"
+    }
+  ]
+}
