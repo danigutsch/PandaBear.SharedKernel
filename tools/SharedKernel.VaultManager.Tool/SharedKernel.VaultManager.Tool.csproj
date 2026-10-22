@@ -23,6 +23,14 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.BuildingBlocks\SharedKernel.BuildingBlocks.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Secrets\bip39-english.txt" LogicalName="PandaBear.VaultManager.Tool.Secrets.bip39-english.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
