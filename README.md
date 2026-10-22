@@ -21,6 +21,7 @@ Choose the packages your project needs. Each package has its own README with req
 | Parse simple comma-delimited rows and detect duplicates | [Tabular](src/SharedKernel/SharedKernel.Tabular/README.md) |
 | Build focused tests and container-backed integration tests | [Testing](src/SharedKernel/SharedKernel.Testing/README.md) · [Integration testing](src/SharedKernel/SharedKernel.IntegrationTesting/README.md) |
 | Automate documentation and package maintenance | [Documentation tool](tools/SharedKernel.Documentation.Tool/README.md) · [Versioning tool](tools/SharedKernel.Versioning.Tool/README.md) |
+| Merge and migrate password vault exports offline | [Vault manager tool](tools/SharedKernel.VaultManager.Tool/README.md) |
 
 ## Try it
 

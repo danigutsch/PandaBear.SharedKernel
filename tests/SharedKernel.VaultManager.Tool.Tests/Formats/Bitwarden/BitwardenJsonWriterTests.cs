@@ -1,0 +1,129 @@
+using System.Text.Json.Nodes;
+using PandaBear.VaultManager.Tool.Crypto;
+using PandaBear.VaultManager.Tool.Formats.Bitwarden;
+using PandaBear.VaultManager.Tool.Model;
+
+namespace PandaBear.VaultManager.Tool.Tests.Formats.Bitwarden;
+
+public sealed class BitwardenJsonWriterTests
+{
+    private static readonly ItemOrigin Origin = new("test", "test.json", null, null);
+
+    [Fact]
+    public void Write_then_read_round_trips_every_item_type()
+    {
+        var original = Fixture.ReadBitwardenFull();
+
+        var result = BitwardenJsonWriter.Write(original);
+        var reread = BitwardenJsonReader.Read(result.Json, "written.json");
+
+        result.Errors.ShouldBeEmpty();
+        reread.Items.Count.ShouldBe(original.Items.Count);
+        foreach (var (before, after) in original.Items.Zip(reread.Items))
+        {
+            after.Type.ShouldBe(before.Type);
+            after.Name.ShouldBe(before.Name);
+            after.FolderPath.ShouldBe(before.FolderPath);
+            after.Notes.ShouldBe(before.Notes);
+            after.Favorite.ShouldBe(before.Favorite);
+            after.Reprompt.ShouldBe(before.Reprompt);
+            after.Fields.ShouldBe(before.Fields);
+            var afterPassword = after.Login?.Password;
+            afterPassword.ShouldBe(before.Login?.Password);
+            var afterTotp = after.Login?.Totp;
+            afterTotp.ShouldBe(before.Login?.Totp);
+            var afterUris = after.Login?.Uris ?? [];
+            afterUris.ShouldBe(before.Login?.Uris ?? []);
+            var afterPasskeys = after.Login?.Fido2Credentials ?? [];
+            afterPasskeys.ShouldBe(before.Login?.Fido2Credentials ?? []);
+            after.Card.ShouldBe(before.Card);
+            after.Identity.ShouldBe(before.Identity);
+            after.SshKey.ShouldBe(before.SshKey);
+            after.PasswordHistory.ShouldBe(before.PasswordHistory);
+        }
+    }
+
+    [Fact]
+    public void Write_emits_shared_folder_IDs_and_secure_note_object()
+    {
+        VaultItem[] items =
+        [
+            new() { Type = VaultItemType.SecureNote, Name = "a", FolderPath = "Work", Origin = Origin },
+            new() { Type = VaultItemType.SecureNote, Name = "b", FolderPath = "Work", Origin = Origin },
+        ];
+
+        var document = JsonNode.Parse(BitwardenJsonWriter.Write(new VaultExport(items)).Json).ShouldNotBeNull();
+
+        var folder = document["folders"].ShouldNotBeNull().AsArray().ShouldHaveSingleItem().ShouldNotBeNull();
+        folder["name"].ShouldNotBeNull().GetValue<string>().ShouldBe("Work");
+        var folderId = folder["id"].ShouldNotBeNull().GetValue<string>();
+        document["items"].ShouldNotBeNull().AsArray().ShouldAllSatisfy(item =>
+        {
+            var element = item.ShouldNotBeNull();
+            element["folderId"].ShouldNotBeNull().GetValue<string>().ShouldBe(folderId);
+            element["secureNote"].ShouldNotBeNull()["type"].ShouldNotBeNull().GetValue<int>().ShouldBe(0);
+        });
+        document["encrypted"].ShouldNotBeNull().GetValue<bool>().ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Write_moves_history_beyond_five_entries_into_hidden_fields()
+    {
+        var start = new DateTimeOffset(2020, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        PasswordHistoryEntry[] history = [.. Enumerable.Range(0, 7).Select(day => new PasswordHistoryEntry($"old-{day}", start.AddDays(day)))];
+        var item = new VaultItem { Type = VaultItemType.Login, Name = "many", Login = new LoginData(), PasswordHistory = history, Origin = Origin };
+
+        var result = BitwardenJsonWriter.Write(new VaultExport([item]));
+        var written = BitwardenJsonReader.Read(result.Json, "w.json").Items.ShouldHaveSingleItem();
+
+        written.PasswordHistory.Select(entry => entry.Password).ShouldBe(["old-6", "old-5", "old-4", "old-3", "old-2"]);
+        written.Fields.Select(field => field.Value).ShouldBe(["old-1", "old-0"]);
+        written.Fields.ShouldAllSatisfy(field => field.Type.ShouldBe(CustomFieldType.Hidden));
+        result.Warnings.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void Write_reports_values_over_encrypted_limits_without_truncating()
+    {
+        var longNotes = new string('n', 8_000);
+        var item = new VaultItem { Type = VaultItemType.SecureNote, Name = "long", Notes = longNotes, Origin = Origin };
+
+        var result = BitwardenJsonWriter.Write(new VaultExport([item]));
+
+        result.Errors.ShouldHaveSingleItem().ShouldContain("notes", StringComparison.Ordinal);
+        BitwardenJsonReader.Read(result.Json, "w.json").Items.ShouldHaveSingleItem().Notes.ShouldBe(longNotes);
+    }
+
+    [Fact]
+    public void Write_errors_never_contain_values()
+    {
+        var secret = new string('s', 4_000);
+        var item = new VaultItem
+        {
+            Type = VaultItemType.Login,
+            Name = "secretive",
+            Login = new LoginData { Password = secret },
+            Fields = [new CustomField("token", secret, CustomFieldType.Hidden)],
+            Origin = Origin,
+        };
+
+        var result = BitwardenJsonWriter.Write(new VaultExport([item]));
+
+        result.Errors.Count.ShouldBe(2);
+        result.Errors.ShouldAllSatisfy(error => error.ShouldNotContain(secret, StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("short")]
+    [InlineData("exactly sixteen!")]
+    [InlineData("ünïcødé value with multibyte characters")]
+    public void EncryptedLength_matches_actual_encrypted_string_length(string value)
+    {
+        var envelope = PasswordProtectedExport.Encrypt(value, "pw", new KdfConfig(KdfType.Pbkdf2Sha256, 5_000));
+
+        var data = JsonNode.Parse(envelope).ShouldNotBeNull()["data"].ShouldNotBeNull().GetValue<string>();
+
+        BitwardenLimits.EncryptedLength(value).ShouldBe(data.Length);
+    }
+}

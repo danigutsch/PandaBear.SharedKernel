@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <OutputType>Exe</OutputType>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>sharedkernel-vault</ToolCommandName>
+        <PackageId>PandaBear.SharedKernel.VaultManager.Tool</PackageId>
+        <RootNamespace>PandaBear.VaultManager.Tool</RootNamespace>
+        <Description>Offline review, secret detection, deduplication, and merging of Keeper and Bitwarden vault exports for Bitwarden or Vaultwarden import.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>password-manager;bitwarden;vaultwarden;keeper;migration;dotnet-tool;shared-kernel</PackageTags>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.VaultManager.Tool.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Konscious.Security.Cryptography.Argon2" />
+        <PackageReference Include="System.CommandLine" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

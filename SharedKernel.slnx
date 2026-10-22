@@ -113,9 +113,11 @@
   <Project Path="tests/SharedKernel.Testing.Scenarios/SharedKernel.Testing.Scenarios.csproj" />
   <Project Path="tests/SharedKernel.Testing.System/SharedKernel.Testing.System.csproj" />
   <Project Path="tests/SharedKernel.Testing.Tests/SharedKernel.Testing.Tests.csproj" />
+  <Project Path="tests/SharedKernel.VaultManager.Tool.Tests/SharedKernel.VaultManager.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj" />
   <Project Path="tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj" />
   <Project Path="tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj" />
+  <Project Path="tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj" />
   <Project Path="tools/SharedKernel.Versioning.Tool/SharedKernel.Versioning.Tool.csproj" />
   <Project Path="samples/Mediator/Mediator.Sample/Mediator.Sample.csproj" />
   <Project Path="samples/Results/BasicResults.Sample/BasicResults.Sample.csproj" />
