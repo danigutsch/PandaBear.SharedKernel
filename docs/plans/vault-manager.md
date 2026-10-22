@@ -28,6 +28,10 @@ The tool never contacts a vault service. The user imports the output.
   - Existing repository modules where they fit: `SharedKernel.BuildingBlocks` for IBAN and BIC validation.
 - Packaging is framework-dependent. RID-specific and NativeAOT tool packages wait until CI can validate each
   claimed platform. See [command-line tool guidance](../command-line-tools.md).
+- On 2026-10-22, a NativeAOT spike published Terminal.Gui 2.5.0 and System.CommandLine 2.0.13 for linux-x64,
+  with warnings treated as errors, and the build reported no trim or AOT warnings. The resulting binary
+  rendered a two-pane window. The build linked with `CppCompilerAndLinker=gcc` because clang was not installed.
+  `libonigwrap.so` ships beside the executable. No other platform has been validated.
 
 ## Upstream facts the design depends on
 
