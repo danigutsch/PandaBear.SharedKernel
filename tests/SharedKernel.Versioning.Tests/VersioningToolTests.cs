@@ -750,15 +750,23 @@ public static class VersioningToolTests
         json.ShouldContain("\"informationalVersion\":\"0.2.0-alpha.1", StringComparison.Ordinal);
     }
 
-    [Fact]
-    public static async Task Runs_calculate_release_command_from_git_history()
+    [Theory]
+    [InlineData("feat: add public capability", "prerelease", "0.0.0-alpha.7", "minor")]
+    [InlineData("refactor(api)!: rename package", "prerelease", "0.0.0-alpha.7", "major")]
+    [InlineData("fix: correct behavior", "prerelease", "0.0.0-alpha.7", "patch")]
+    [InlineData("feat: add public capability", "stable", "1.3.0", "minor")]
+    public static async Task Runs_calculate_release_command_from_git_history(
+        string message,
+        string versionKind,
+        string expectedVersion,
+        string expectedImpact)
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
         repository.Commit("file.txt", "base", "fix: base release");
         repository.Tag("v1.2.3");
-        repository.Commit("file.txt", "next", "feat: add public capability");
+        repository.Commit("file.txt", "next", message);
 
         var outputPath = Path.Combine(temporaryDirectory.OutputDirectory, "github-output.txt");
         var summaryPath = Path.Combine(temporaryDirectory.OutputDirectory, "summary.md");
@@ -772,7 +780,7 @@ public static class VersioningToolTests
             "--repo-root",
             repository.Root,
             "--version-kind",
-            "prerelease",
+            versionKind,
             "--run-number",
             "7",
             "--sha",
@@ -791,11 +799,29 @@ public static class VersioningToolTests
         var json = output.ToString();
         var githubOutput = await File.ReadAllTextAsync(outputPath, TestContext.Current.CancellationToken);
         var summary = await File.ReadAllTextAsync(summaryPath, TestContext.Current.CancellationToken);
-        json.ShouldContain("\"packageVersion\":\"1.3.0-alpha.7\"", StringComparison.Ordinal);
+        json.ShouldContain($"\"packageVersion\":\"{expectedVersion}\"", StringComparison.Ordinal);
         githubOutput.ShouldContain("source_tag=v1.2.3", StringComparison.Ordinal);
-        githubOutput.ShouldContain("package_version=1.3.0-alpha.7", StringComparison.Ordinal);
-        githubOutput.ShouldContain("release_impact=minor", StringComparison.Ordinal);
+        githubOutput.ShouldContain("package_version=" + expectedVersion, StringComparison.Ordinal);
+        githubOutput.ShouldContain("release_impact=" + expectedImpact, StringComparison.Ordinal);
         summary.ShouldContain("- Base version: `1.2.3`", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Rejects_prerelease_calculation_without_run_number()
+    {
+        // Arrange
+        using var input = new StringReader(string.Empty);
+        using var output = new StringWriter();
+        using var error = new StringWriter();
+
+        // Act
+        var exitCode = await VersioningToolApplication.Run(
+            ["calculate-release", "--version-kind", "prerelease"], input, output, error);
+
+        // Assert
+        exitCode.ShouldNotBe(0);
+        output.ToString().ShouldBeEmpty();
+        error.ToString().ShouldContain("RunNumber", StringComparison.Ordinal);
     }
 
     [Fact]
