@@ -133,7 +133,7 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )"
         }
       },
-      "PandaBear.SharedKernel.Idempotency": {
+      "PandaBear.SharedKernel.Idempotency.Abstractions": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.Idempotency.EntityFrameworkCore": {
@@ -142,7 +142,7 @@
           "Microsoft.EntityFrameworkCore.Relational": "[10.0.13, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.13, )",
           "PandaBear.SharedKernel.EntityFrameworkCore": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Idempotency": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Idempotency.Abstractions": "[0.1.0-alpha.0, )"
         }
       },
       "PandaBear.SharedKernel.Messaging": {

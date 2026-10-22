@@ -44,5 +44,3 @@ static PandaBear.Idempotency.IdempotencyKey.From(string? value) -> PandaBear.Ide
 override PandaBear.Idempotency.IdempotencyKey.ToString() -> string!
 static PandaBear.Idempotency.IdempotencyScope.From(string? value) -> PandaBear.Idempotency.IdempotencyScope
 override PandaBear.Idempotency.IdempotencyScope.ToString() -> string!
-PandaBear.Idempotency.IdempotencyRequestFingerprint
-static PandaBear.Idempotency.IdempotencyRequestFingerprint.Create(params string![]! components) -> string!
