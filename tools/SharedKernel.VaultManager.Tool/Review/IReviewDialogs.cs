@@ -1,0 +1,25 @@
+namespace PandaBear.VaultManager.Tool.Review;
+
+/// <summary>Modal questions and messages of the review window. Messages hold no vault values.</summary>
+internal interface IReviewDialogs
+{
+    /// <summary>Asks what to do with unsaved decisions before quitting.</summary>
+    /// <param name="canSave">Whether the review has a decisions file to save to.</param>
+    /// <returns>The choice; <see cref="QuitChoice.Cancel"/> when the question is dismissed.</returns>
+    QuitChoice AskQuit(bool canSave);
+
+    /// <summary>
+    /// Asks twice, in masked fields, for the password of a new export of at least
+    /// <see cref="PasswordReader.MinimumNewPasswordLength"/> characters.
+    /// </summary>
+    /// <returns>The password, or <see langword="null"/> when the user cancels.</returns>
+    string? AskExportPassword();
+
+    /// <summary>Shows every key of the review.</summary>
+    /// <param name="keys">Keys, in the order to show them.</param>
+    void ShowHelp(IReadOnlyList<ReviewKey> keys);
+
+    /// <summary>Shows a problem.</summary>
+    /// <param name="message">Value-free message.</param>
+    void ShowError(string message);
+}

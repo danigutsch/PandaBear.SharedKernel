@@ -199,7 +199,7 @@ so every attachment stays on a manual upload list in the report.
   nothing. Each input is parsed and scanned once, and each password asked once; format detection reads each input
   before that. With `--report`, the merge names the written vault on standard output before it writes the report.
 - `sharedkernel-vault review <inputs...> [--decisions <file>] [--output <file>] [--plaintext] [--force]` opens the
-  full-screen review UI: groups, a side-by-side field diff, findings, and decisions.
+  full-screen review UI: groups, a side-by-side field diff, findings, and decisions. See [Review UI](#review-ui).
 
 An argument that starts with `@` is a file name: the tool turns off System.CommandLine's response files, which would
 split an export into arguments and print its values in parse errors. Empty or blank file names are rejected while
@@ -229,6 +229,50 @@ the `scan` and `merge` summaries go to standard output; diagnostics, warnings, e
 error. Every control character (C0, DEL, and C1) in a printed name, path, prompt, or message is shown as a space,
 so a crafted export cannot send escape sequences to the terminal. Report and decisions files are created readable
 only by their owner.
+
+## Review UI
+
+`review` is the interactive alternative to editing pending entries. It is built with Terminal.Gui 2.5.0, through the
+instance model of the [command-line tool guidance](../command-line-tools.md#terminal-uis).
+
+- **Start.** Standard input and standard output must be terminals; otherwise `review` exits with code 3 before it
+  reads any input and points to `merge --decisions`. It then runs the checks of `merge`: the output and decisions paths
+  through the shared output checks, the input formats, and the password prompts of protected inputs, which it asks at
+  the console before the UI starts. Warnings go to standard error before the UI takes over the screen.
+- **State.** `ReviewSession` holds the state and has no Terminal.Gui types. It reads and scans the vault once, keeps
+  the current decisions, and merges again without output after every change, with the `newest` policy. Pending
+  entries of the decisions file count as no decision. It lists groups by status (pending, conflict, suggested,
+  identical, unique, has findings) and by a search over item names, and shows each field with every member's value
+  and the current decision. Its operations take a member's value for one field or for every conflicting field, drop a
+  field, accept or reject a finding, link two items, split an item out of its group, and reveal or mask a value.
+- **Masking.** Passwords, TOTP keys, password history, hidden custom fields, card numbers and security codes, SSH
+  private keys, finding values, and every field of a member that holds one of its findings, such as notes, a user
+  name, or a custom field, are masked until revealed. Revealed values reach only the screen.
+- **Save and write.** Saving writes the decisions file through `DecisionsFile`, readable only by its owner, with
+  pending entries for what is left, so `merge` continues from it. Writing goes through `VaultPipeline.Merge` with an
+  output, only when no field or proposed finding is pending and the writer reports no error, never over an input, and
+  over an existing file only with `--force`. The password of an encrypted output is asked inside the UI, twice, in
+  masked fields, with at least `PasswordReader.MinimumNewPasswordLength` characters.
+- **Summary.** `review` writes no report. After the UI, it prints the decisions it saved, the vault it wrote, the
+  pending counts, and the number of attachments to upload after the import, with each attachment listed once it wrote
+  the vault. Write warnings and the placement problems of accepted findings go to standard error. They come from the
+  merge that wrote the vault, or from the latest merge when it wrote none. The findings tab shows an accepted finding
+  as applied only when placement moved it, and shows its placement problem otherwise.
+- **Views.** The window only shows the session and forwards keys: groups on the left, tabs with the field diff and the
+  findings on the right, and a status bar with the main keys. `F1` lists every key, and every action has one. Errors
+  show value-free messages, and quitting with unsaved decisions asks first.
+- **Cancellation.** Inside the UI, Ctrl+C is a key, not a signal. SIGTERM or SIGINT cancels the command's token; the
+  window then asks every running dialog to stop, top first, and stops itself without asking about unsaved decisions,
+  so the UI restores the terminal and the command exits with code 1. Merging and writing run on the UI thread, so a
+  signal during that work takes effect when it ends. When that takes longer than System.CommandLine's two-second
+  `ProcessTerminationTimeout`, the process ends with exit code 130 or 143 without restoring the terminal.
+- **Tests.** `ReviewSession` has unit tests for every operation and for the save and write rules. View tests run
+  headless with `Application.Create(new VirtualTimeProvider())`, the ANSI driver, and injected keys, and assert on the
+  session and on the dialogs asked. They set `DisableRealDriverIO=1`, because Terminal.Gui otherwise attaches to the
+  controlling terminal through `/dev/tty` even when standard input and output are redirected, and they replace the
+  driver's clipboard with `FakeClipboard`, because the driver otherwise uses the system clipboard. They share one test
+  collection, so a test process never runs two Terminal.Gui applications at once. Cancellation tests run the window
+  through the same entry point as the command, with the real dialogs, and cancel while each kind of dialog is open.
 
 ## Verification
 

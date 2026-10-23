@@ -22,6 +22,7 @@ internal static class VaultCommandLine
             InspectCommand.Create(environment),
             ScanCommand.Create(environment),
             MergeCommand.Create(environment),
+            ReviewCommand.Create(environment),
         };
     }
 

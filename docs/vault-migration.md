@@ -707,9 +707,39 @@ seed that you deleted in one vault:
 
 ## The review UI
 
-`sharedkernel-vault review` is the planned interactive alternative to editing the decisions file: a full-screen
-terminal UI that shows each group side by side with its findings and records your choices in the same decisions
-file. It is not available in this version; edit the decisions file instead.
+`sharedkernel-vault review` is the interactive alternative to editing the decisions file: a full-screen terminal UI
+that shows each group of matched items side by side, with its findings, and saves your choices to the same decisions
+file. Run it in a terminal with the inputs of your merge:
+
+```bash
+sharedkernel-vault review keeper.zip bitwarden.json --decisions decisions.json --output merged.json
+```
+
+Before the UI opens, the review checks the files as merge does and asks for the password of each password-protected
+input. It needs a terminal: when its input or output is redirected, it stops with exit code 3, and you edit the
+decisions file as [The decisions file](#the-decisions-file) describes instead. The review resolves conflicts with the
+default `newest` policy.
+
+1. Press `F7` until the groups list shows the `pending` groups, the groups with a field or a finding that needs your
+   decision. `Ctrl+F` searches the groups by item name.
+2. Select a group and press `F3` for its fields. Each item of the group has a column; move to the column of the item
+   whose value you keep. `Enter` takes that value for the selected field, `a` takes it for every field whose items hold
+   different values, `e` drops the field from every item, and `Delete` removes your decision. Passwords, TOTP keys,
+   and other secrets show as `********`; `v` reveals and masks the selected field.
+3. Press `F4` for the findings of the group. `a` accepts a finding and moves the secret to its proposed place, `r`
+   rejects it and leaves it where it is, and `v` reveals and masks its value.
+4. To correct the matching, mark a group with `m` in the groups list, select another group, and press `l` to link
+   them. In the fields, `s` splits the item of the selected column out of its group.
+5. Press `Ctrl+S` to save the decisions file. A merge with the same decisions file continues from it.
+6. When nothing needs a decision, `Ctrl+W` asks twice for the password of the new export, at least 12 characters, and
+   writes `merged.json` as merge does. Without `--output`, the review saves decisions only. A JSON import cannot carry
+   files, so after you quit, the review lists each attachment to upload and where to find it, as the **Attachments to
+   upload** table of the merge report does. Use that list in [8. Upload attachments](#8-upload-attachments).
+7. `Ctrl+Q` or `Esc` quits; `Ctrl+C` does not. With unsaved decisions, the review asks whether to save them first. `F1`
+   lists every key.
+
+Revealed values appear only on the screen. The decisions file, the messages, and what the review prints after you
+quit hold no secret values.
 
 ## Exit codes
 
