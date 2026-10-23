@@ -105,6 +105,7 @@ public static class VersioningCommandLineTests
     [InlineData("Option '--output' is required.", "stage-candidate", "--candidate", "candidate.json", "--feed", "packages")]
     [InlineData("Argument 'beta' not recognized.", "calculate-release", "--version-kind", "beta")]
     [InlineData("Argument 'production' not recognized.", "calculate-release", "--version-kind", "production")]
+    [InlineData("Option '--run-number' is required when '--version-kind' is prerelease.", "calculate-release")]
     [InlineData("Argument 'gamma' not recognized.", "check-api-compatibility", "--release-phase", "gamma")]
     [InlineData("Option '--base' expects a semantic version, but got 'not-a-version'.", "compute", "--base", "not-a-version")]
     [InlineData("Option '--version' expects a semantic version, but got '1.2'.", "create-candidate", "--version", "1.2")]
@@ -151,12 +152,12 @@ public static class VersioningCommandLineTests
     }
 
     [Theory]
-    [InlineData("--version-kind", "prerelease", "calculate-release")]
+    [InlineData("--version-kind", "prerelease", "calculate-release", "--run-number", "7")]
     [InlineData("--version-kind", "stable", "calculate-release", "--version-kind", "stable")]
     [InlineData("--run-number", "7.1", "calculate-release", "--run-number", "7.1")]
-    [InlineData("--sha", "abc123", "calculate-release", "--sha", "abc123")]
+    [InlineData("--sha", "abc123", "calculate-release", "--run-number", "7", "--sha", "abc123")]
     [InlineData("--sha", "abc123", "compute", "--base", "0.1.0", "--sha", "abc123")]
-    [InlineData("--repo-root", ".", "calculate-release")]
+    [InlineData("--repo-root", ".", "calculate-release", "--run-number", "7")]
     [InlineData("--repo-root", ".", "stage-candidate", "--candidate", "candidate.json", "--feed", "packages", "--output", "feed")]
     [InlineData("--release-phase", "alpha", "check-api-compatibility")]
     [InlineData("--output-root", "artifacts/api-compat", "check-api-compatibility")]

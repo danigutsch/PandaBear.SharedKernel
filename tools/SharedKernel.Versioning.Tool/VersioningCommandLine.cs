@@ -84,7 +84,7 @@ internal static class VersioningCommandLine
     {
         var versionKind = new Option<string>("--version-kind")
         {
-            Description = "Version kind. prerelease adds alpha.<run-number> when a run number is given.",
+            Description = "Version kind. prerelease prints 0.0.0-alpha.<run-number> and requires --run-number.",
             DefaultValueFactory = static _ => "prerelease",
         };
         versionKind.AcceptOnlyFromAmong("prerelease", "stable");
@@ -102,6 +102,15 @@ internal static class VersioningCommandLine
             gitHubSummary,
             repoRoot,
         };
+        command.Validators.Add(result =>
+        {
+            // Read the token, not the value: an unknown kind already has its own parse error.
+            var kind = result.GetResult(versionKind)?.Tokens is [.., var token] ? token.Value : "prerelease";
+            if (kind == "prerelease" && string.IsNullOrWhiteSpace(result.GetValue(runNumber)))
+            {
+                result.AddError($"Option '{runNumber.Name}' is required when '{versionKind.Name}' is prerelease.");
+            }
+        });
         SetAction(command, (parseResult, output, ct) => ReleaseVersionCommand.Run(
             new CalculateReleaseOptions(
                 parseResult.GetRequiredValue(repoRoot),

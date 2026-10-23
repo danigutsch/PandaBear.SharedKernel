@@ -13,7 +13,7 @@ internal static class PackageConsumptionCommand
         var external = XDocument.Load(Path.Combine(root, "Directory.Packages.props"))
             .Descendants("PackageVersion").ToDictionary(x => (string)x.Attribute("Include")!, x => (string)x.Attribute("Version")!, StringComparer.Ordinal);
         var scratch = Path.Combine(Path.GetTempPath(), "sharedkernel-package-check-" + Guid.NewGuid().ToString("N"));
-        foreach (var relative in new[] { "samples/Results/BasicResults.Sample", "samples/Mediator/Mediator.Sample" })
+        foreach (var relative in new[] { "samples/Results/BasicResults.Sample", "samples/Mediator/Mediator.Sample", "samples/HttpRequests/HttpRequests.Sample" })
         {
             var source = Path.Combine(root, relative);
             var target = Path.Combine(scratch, Path.GetFileName(relative));

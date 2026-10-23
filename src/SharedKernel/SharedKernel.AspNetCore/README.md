@@ -31,3 +31,11 @@ Their canonical ownership is registered in the [governed-literal catalog](../Sha
 Package ID: `PandaBear.SharedKernel.AspNetCore`. C# namespace: `PandaBear.AspNetCore`. Assembly/project identity: `SharedKernel.AspNetCore`.
 
 Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+
+## Subject identity
+
+Use `principal.GetSubjectId()` to read the opaque subject from a validated principal.
+`ApiAuthenticationDefaults.SubjectClaimType` supplies the standard JWT claim name. Missing or
+blank subjects return null; name identifiers, email and display names are never fallback audit IDs.
+The helper does not authenticate or authorize requests. Keep token validation, claim mapping and
+permission policies in the host, and pass the extracted identifier explicitly into application commands.

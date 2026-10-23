@@ -87,7 +87,7 @@
       "PandaBear.SharedKernel.ApiVersioning": {
         "type": "Project"
       },
-      "PandaBear.SharedKernel.Idempotency": {
+      "PandaBear.SharedKernel.Idempotency.Abstractions": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.InputNormalization": {

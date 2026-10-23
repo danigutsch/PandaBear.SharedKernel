@@ -2,7 +2,7 @@
 
 [![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
 
-Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+Packages remain experimental `0.0.0-alpha.<run>.<attempt>` previews; stable packages, tags, and releases require separate authorization. `calculate-release --version-kind prerelease` requires `--run-number` and reports commit impact without advancing the preview core. The generic `compute` command retains normal SemVer behavior.
 
 `sharedkernel-version` calculates SharedKernel versions from Conventional Commits, checks package APIs and
 metadata, packs SharedKernel, and creates, consumes, and stages hashed package candidates.

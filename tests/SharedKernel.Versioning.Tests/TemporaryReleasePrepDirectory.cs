@@ -42,7 +42,7 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
     {
         File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(Root, "global.json"));
         await File.WriteAllTextAsync(Path.Combine(Root, "Directory.Packages.props"), "<Project />", ct);
-        foreach (var sample in new[] { "samples/Results/BasicResults.Sample", "samples/Mediator/Mediator.Sample" })
+        foreach (var sample in new[] { "samples/Results/BasicResults.Sample", "samples/Mediator/Mediator.Sample", "samples/HttpRequests/HttpRequests.Sample" })
         {
             var sampleDirectory = Path.Combine(Root, sample);
             Directory.CreateDirectory(sampleDirectory);
