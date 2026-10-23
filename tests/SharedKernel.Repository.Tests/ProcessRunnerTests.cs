@@ -71,4 +71,17 @@ public sealed class ProcessRunnerTests
         var lookup = () => Process.GetProcessById(processId);
         lookup.ShouldThrow<ArgumentException>();
     }
+
+    [Fact]
+    public async Task Termination_ignores_a_process_object_without_a_running_process()
+    {
+        // Arrange
+        using Process process = new();
+
+        // Act
+        var exception = await Record.ExceptionAsync(() => ProcessRunner.Terminate(process));
+
+        // Assert
+        exception.ShouldBeNull();
+    }
 }

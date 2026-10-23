@@ -21,6 +21,7 @@ internal static class RepositoryToolInvocation
 
         using var output = new StringWriter();
         using var error = new StringWriter();
+
         // Signal handlers are process-wide, so test invocations leave Ctrl+C and SIGTERM to the test host.
         var configuration = new InvocationConfiguration { Output = output, Error = error, ProcessTerminationTimeout = null };
         var exitCode = await command.Parse(args).InvokeAsync(configuration, ct);

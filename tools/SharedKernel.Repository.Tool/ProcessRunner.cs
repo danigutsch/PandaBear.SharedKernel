@@ -6,6 +6,8 @@ namespace PandaBear.Repository.Tool;
 /// <summary>Runs child processes and stops them when the command is cancelled.</summary>
 internal static class ProcessRunner
 {
+    private static readonly TimeSpan TerminationTimeout = TimeSpan.FromSeconds(2);
+
     /// <summary>Runs a process and returns its standard output.</summary>
     /// <exception cref="InvalidOperationException">The process could not start or exited with a non-zero code.</exception>
     /// <exception cref="OperationCanceledException"><paramref name="ct"/> was cancelled; the process tree is terminated first.</exception>
@@ -32,8 +34,7 @@ internal static class ProcessRunner
         }
         catch (OperationCanceledException)
         {
-            process.Kill(entireProcessTree: true);
-            await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
+            await Terminate(process).ConfigureAwait(false);
             throw;
         }
 
@@ -46,6 +47,29 @@ internal static class ProcessRunner
         }
 
         return output;
+    }
+
+    /// <summary>Kills the process tree unless the process has exited, and waits up to two seconds for it to exit.</summary>
+    /// <remarks>Termination failures are ignored, so the cancellation that started cleanup reaches the caller.</remarks>
+    internal static async Task Terminate(Process process)
+    {
+        try
+        {
+            if (!process.HasExited)
+            {
+                process.Kill(entireProcessTree: true);
+                using var termination = new CancellationTokenSource(TerminationTimeout);
+                await process.WaitForExitAsync(termination.Token).ConfigureAwait(false);
+            }
+        }
+        catch (Exception exception) when (exception is InvalidOperationException
+            or Win32Exception
+            or NotSupportedException
+            or AggregateException
+            or OperationCanceledException)
+        {
+            // Best-effort cleanup must not replace the caller's cancellation.
+        }
     }
 
     private static Process Start(ProcessStartInfo startInfo)
