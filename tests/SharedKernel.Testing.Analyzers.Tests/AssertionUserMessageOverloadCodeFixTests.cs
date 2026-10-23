@@ -242,6 +242,249 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
     [Theory]
     [InlineData(
         """
+        /// <summary>Verifies that the value is ready.</summary>
+        public static void ShouldBeReady(this int actual)
+        {
+        }
+        """,
+        "ShouldBeReady(this")]
+    [InlineData(
+        """
+        /// <summary>Verifies that the value has the kind.</summary>
+        /// <typeparam name="T">The expected kind.</typeparam>
+        /// <returns>The value as the kind.</returns>
+        public static T ShouldBeKind<T>(this object? actual)
+            where T : class => (T)actual!;
+        """,
+        "ShouldBeKind<T>(this")]
+    [InlineData(
+        """
+        /// <summary>Verifies that the value equals the expected value.</summary>
+        /// <param name="actual">The actual value.</param>
+        /// <param name="expected">The expected value.</param>
+        public static void ShouldEqual(this int actual, int expected)
+        {
+        }
+
+        /// <inheritdoc cref="ShouldEqual(int, int)"/>
+        public static void ShouldMatch(this int actual, int expected)
+        {
+        }
+        """,
+        "ShouldMatch(this")]
+    public async Task Fix_documents_only_the_exception_when_the_assertion_documents_no_parameters(string members, string marker)
+    {
+        // Arrange
+        ArgumentNullException.ThrowIfNull(members);
+        var workspace = CodeFixTestWorkspace.Create(
+            AssertionUserMessageOverloadCodeFixTestSource.Create(members),
+            includeDefaultUsings: false,
+            documentationMode: DocumentationMode.Diagnose);
+        var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, marker);
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        // Act
+        var actions = await workspace.GetCodeActions(provider, diagnostic);
+        await workspace.ApplyCodeAction(actions.ShouldHaveSingleItem());
+        var updated = await workspace.GetDocumentText();
+        var compilation = await workspace.Workspace.CurrentSolution.Projects.ShouldHaveSingleItem().GetCompilationAsync(TestContext.Current.CancellationToken);
+
+        // Assert
+        updated.ShouldContain(
+            "/// <exception cref=\"ArgumentNullException\">Thrown when <paramref name=\"userMessage\"/> is null.</exception>",
+            StringComparison.Ordinal);
+        updated.ShouldNotContain("<param name=\"userMessage\">", StringComparison.Ordinal);
+        compilation.ShouldNotBeNull().GetDiagnostics(TestContext.Current.CancellationToken)
+            .Where(static compilerDiagnostic => compilerDiagnostic.Severity >= DiagnosticSeverity.Warning)
+            .ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(
+        """
+        /// <summary>Verifies that the values include the expected value.</summary>
+        /// <param name="actual">The actual values.</param>
+        /// <param name="expected">The expected value.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="expected"/> is null.</exception>
+        public static void ShouldInclude(this string[] actual, string expected) => ArgumentNullException.ThrowIfNull(expected);
+        """,
+        """
+            /// <exception cref="ArgumentNullException">Thrown when <paramref name="expected"/> is null. Also thrown when <paramref name="userMessage"/> is null.</exception>
+            public static void ShouldInclude(this string[] actual, string expected, string userMessage) =>
+        """)]
+    [InlineData(
+        """
+        /// <summary>Verifies that the values include the expected value.</summary>
+        /// <param name="actual">The actual values.</param>
+        /// <param name="expected">The expected value.</param>
+        /// <exception cref="System.ArgumentNullException"><paramref name="actual"/> or <paramref name="expected"/> is null.</exception>
+        public static void ShouldInclude(this string[] actual, string expected) => ArgumentNullException.ThrowIfNull(expected);
+        """,
+        """
+            /// <exception cref="System.ArgumentNullException"><paramref name="actual"/> or <paramref name="expected"/> is null. Also thrown when <paramref name="userMessage"/> is null.</exception>
+            public static void ShouldInclude(this string[] actual, string expected, string userMessage) =>
+        """)]
+    [InlineData(
+        """
+        /// <summary>Verifies that the values include the expected value.</summary>
+        /// <param name="actual">The actual values.</param>
+        /// <param name="expected">The expected value.</param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <paramref name="expected"/> is null.
+        /// </exception>
+        public static void ShouldInclude(this string[] actual, string expected) => ArgumentNullException.ThrowIfNull(expected);
+        """,
+        """
+            /// <exception cref="ArgumentNullException">
+            /// Thrown when <paramref name="expected"/> is null.
+            /// Also thrown when <paramref name="userMessage"/> is null.
+            /// </exception>
+            public static void ShouldInclude(this string[] actual, string expected, string userMessage) =>
+        """)]
+    public async Task Fix_adds_the_user_message_to_an_existing_argument_null_exception_tag(string members, string expected)
+    {
+        // Arrange
+        ArgumentNullException.ThrowIfNull(members);
+        ArgumentNullException.ThrowIfNull(expected);
+        var workspace = CodeFixTestWorkspace.Create(
+            AssertionUserMessageOverloadCodeFixTestSource.Create(members),
+            includeDefaultUsings: false,
+            documentationMode: DocumentationMode.Diagnose);
+        var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "ShouldInclude(this");
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        // Act
+        var actions = await workspace.GetCodeActions(provider, diagnostic);
+        await workspace.ApplyCodeAction(actions.ShouldHaveSingleItem());
+        var updated = (await workspace.GetDocumentText()).ReplaceLineEndings("\n");
+
+        // Assert
+        updated.ShouldContain(expected.ReplaceLineEndings("\n"), StringComparison.Ordinal);
+        updated.Split("<exception cref=", StringSplitOptions.None).Length.ShouldBe(3);
+    }
+
+    [Theory]
+    [InlineData(
+        """
+        public static void ShouldBeNear(this int actual, // receiver
+            int expected) // expected
+        {
+        }
+        """,
+        "ShouldBeNear(this",
+        """
+            public static void ShouldBeNear(this int actual, // receiver
+                int expected,
+                string userMessage) =>
+                WithUserMessage(userMessage, () => actual.ShouldBeNear(expected));
+        """)]
+    [InlineData(
+        """
+        public static void ShouldHaveStatus(this string actual,
+            int expected, // HTTP status code
+            CancellationToken cancellationToken = default)
+        {
+        }
+        """,
+        "ShouldHaveStatus(this",
+        """
+            public static void ShouldHaveStatus(this string actual,
+                int expected, // HTTP status code
+                string userMessage,
+                CancellationToken cancellationToken = default) =>
+                WithUserMessage(userMessage, () => actual.ShouldHaveStatus(expected, cancellationToken));
+        """)]
+    [InlineData(
+        """
+        public static void ShouldBeSpread<T>(this T actual, // the actual value
+            /* the expected value */ T expected)
+            where T : class // reference types only
+        {
+        }
+        """,
+        "ShouldBeSpread<T>(this",
+        """
+            public static void ShouldBeSpread<T>(this T actual, // the actual value
+                /* the expected value */ T expected,
+                string userMessage)
+                where T : class =>
+                WithUserMessage(userMessage, () => actual.ShouldBeSpread(expected));
+        """)]
+    [InlineData(
+        """
+        public static void ShouldBePositive(
+            this int actual
+        )
+        {
+        }
+        """,
+        "ShouldBePositive(",
+        """
+            public static void ShouldBePositive(
+                this int actual,
+                string userMessage
+            ) =>
+                WithUserMessage(userMessage, () => actual.ShouldBePositive());
+        """)]
+    [InlineData(
+        """
+        public static void ShouldBeAbove(
+            this int actual,
+            int expected
+        )
+        {
+        }
+        """,
+        "ShouldBeAbove(",
+        """
+            public static void ShouldBeAbove(
+                this int actual,
+                int expected,
+                string userMessage
+            ) =>
+                WithUserMessage(userMessage, () => actual.ShouldBeAbove(expected));
+        """)]
+    [InlineData(
+        """
+        public static void ShouldBeBelow(
+            this int actual,
+            int expected // the bound
+        )
+        {
+        }
+        """,
+        "ShouldBeBelow(",
+        """
+            public static void ShouldBeBelow(
+                this int actual,
+                int expected, // the bound
+                string userMessage
+            ) =>
+                WithUserMessage(userMessage, () => actual.ShouldBeBelow(expected));
+        """)]
+    public async Task Fix_keeps_the_comments_and_line_breaks_of_the_parameter_list(string members, string marker, string expectedOverload)
+    {
+        // Arrange
+        ArgumentNullException.ThrowIfNull(members);
+        ArgumentNullException.ThrowIfNull(expectedOverload);
+        var source = AssertionUserMessageOverloadCodeFixTestSource.Create(members).ReplaceLineEndings("\n");
+        var expectedStart = source[..source.IndexOf("\n}\n", StringComparison.Ordinal)] + "\n\n" + expectedOverload.ReplaceLineEndings("\n") + "\n}\n";
+        var workspace = CodeFixTestWorkspace.Create(source, includeDefaultUsings: false);
+        var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, marker);
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        // Act
+        var actions = await workspace.GetCodeActions(provider, diagnostic);
+        await workspace.ApplyCodeAction(actions.ShouldHaveSingleItem());
+        var updated = (await workspace.GetDocumentText()).ReplaceLineEndings("\n");
+
+        // Assert
+        updated.ShouldStartWith(expectedStart, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData(
+        """
         public static T ShouldFail<T>(this Action action) where T : Exception => throw new InvalidOperationException();
         public static T ShouldFail<T>(this Action action, string? paramName) where T : ArgumentException => throw new InvalidOperationException();
         """,
@@ -260,6 +503,81 @@ public sealed class AssertionUserMessageOverloadCodeFixTests
         """,
         "ShouldInclude(this")]
     [InlineData("public static void ShouldBeNear(this double actual, double expected, int precision = 2) { }", "ShouldBeNear(this")]
+    [InlineData(
+        """
+        public static void ShouldMatchCount(this int actual, int expected) { }
+        public static void ShouldMatchCount(this int actual, int expected, int tolerance = 0) { }
+        """,
+        "ShouldMatchCount(this")]
+    [InlineData(
+        """
+        public static Task ShouldEventually(this Task actual, int timeoutMilliseconds) => actual;
+        public static Task ShouldEventually(this Task actual, int timeoutMilliseconds, CancellationToken cancellationToken = default) => actual;
+        """,
+        "ShouldEventually(this")]
+    [InlineData(
+        """
+        public static void ShouldBeKind<T>(this int actual) { }
+        public static void ShouldBeKind(this int actual, int expected = 0) { }
+        """,
+        "ShouldBeKind<T>(this")]
+    [InlineData(
+        """
+        public static void ShouldFormatAs(this decimal actual, string expected) { }
+        public static void ShouldFormatAs(this decimal actual, string expected, IFormatProvider provider) { }
+        """,
+        "ShouldFormatAs(this")]
+    [InlineData(
+        """
+        public static void ShouldLowerTo(this string actual, string expected) { }
+        public static void ShouldLowerTo(this string actual, string expected, System.Globalization.CultureInfo culture) { }
+        """,
+        "ShouldLowerTo(this")]
+    [InlineData(
+        """
+        [SuppressMessage("Design", "CA1054:URI parameters should not be strings", Justification = "Tests compare relative URL text.")]
+        public static void ShouldLinkTo(this string actual, string expectedUrl) { }
+        """,
+        "ShouldLinkTo(this")]
+    [InlineData(
+        """
+        [UnconditionalSuppressMessage("Design", "CA1054:URI parameters should not be strings", Justification = "Tests compare relative URL text.")]
+        public static void ShouldLinkTo(this string actual, string expectedUrl) { }
+        """,
+        "ShouldLinkTo(this")]
+    [InlineData(
+        """
+        public static void ShouldContain<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> actual, TKey key) { }
+        public static void ShouldContain<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> actual, TKey key, TValue value) { }
+        """,
+        "ShouldContain<TKey, TValue>(this")]
+    [InlineData(
+        """
+        public static void ShouldBeEither<T>(this T actual, T first, T second) { }
+        public static void ShouldBeEither<T>(this T actual, T first, T second, T third) { }
+        """,
+        "ShouldBeEither<T>(this")]
+    [InlineData("public static void ShouldContainItems(this IEnumerable<object?> actual, params object?[] expected) { }", "ShouldContainItems(this")]
+    [InlineData("public static TTask ShouldComplete<TTask>(this TTask actual) where TTask : Task => actual;", "ShouldComplete<TTask>(this")]
+    [InlineData(
+        """
+        public struct EventualCheck
+        {
+        }
+
+        public static EventualCheck ShouldEventuallyHold(this int actual) => default;
+
+        public static System.Runtime.CompilerServices.TaskAwaiter GetAwaiter(this EventualCheck check) => Task.CompletedTask.GetAwaiter();
+        """,
+        "ShouldEventuallyHold(this")]
+    [InlineData(
+        "public static IEnumerable<int> ShouldAllBePositive(this IEnumerable<int> actual) => System.Linq.Enumerable.Select(actual, static value => value > 0 ? value : throw new InvalidOperationException());",
+        "ShouldAllBePositive(this")]
+    [InlineData("public static void ShouldBeDefault<T>(this T actual) where T : allows ref struct { }", "ShouldBeDefault<T>(this")]
+    [InlineData("public static T ShouldConvert<T>(this int actual) where T : allows ref struct => throw new InvalidOperationException();", "ShouldConvert<T>(this")]
+    [InlineData("[DoesNotReturn] public static void ShouldNotBeReached(this string reason) => throw new InvalidOperationException(reason);", "ShouldNotBeReached(this")]
+    [InlineData("public static T ShouldBeOr<T>(this T actual, [AllowNull] T fallback) => actual;", "ShouldBeOr<T>(this")]
+    [InlineData("public static void ShouldMatchArguments(this int actual, __arglist) { }", "ShouldMatchArguments(this")]
     public async Task Fix_is_not_offered_for_blocked_assertions(string members, string marker)
     {
         // Arrange

@@ -5,10 +5,13 @@ namespace PandaBear.Testing.CodeFixRunner.Tests;
 public sealed class CodeFixRunnerCallerTests
 {
     private const string ReadmePath = "tools/SharedKernel.Testing.CodeFixRunner/README.md";
+    private const string TestingAnalyzerReadmePath = "src/SharedKernel/SharedKernel.Testing.Analyzers/README.md";
+    private const string ProjectRun = "tools/SharedKernel.Testing.CodeFixRunner -c Release -- ";
 
     // The target must be an existing file, so the placeholder target is replaced with one. The synopsis is not a
     // command line.
     private const string TargetPlaceholder = "<project-or-solution>";
+    private const string ProjectPlaceholder = "<project>";
     private const string ExistingTarget = "SharedKernel.slnx";
     private const string Synopsis = TargetPlaceholder + " [--diagnostic <id>]";
 
@@ -22,7 +25,7 @@ public sealed class CodeFixRunnerCallerTests
 
         // Act
         var commandLines = RepositoryFiles.FindToolArguments(ReadmePath, "sharedkernel-codefix ");
-        var projectRunCommandLines = RepositoryFiles.FindToolArguments(ReadmePath, "tools/SharedKernel.Testing.CodeFixRunner -c Release -- ");
+        var projectRunCommandLines = RepositoryFiles.FindToolArguments(ReadmePath, ProjectRun);
         var localToolCommandLines = RepositoryFiles.FindToolArguments(ReadmePath, "dotnet tool run sharedkernel-codefix -- ");
         var parseErrors = commandLines
             .Concat(projectRunCommandLines)
@@ -46,6 +49,29 @@ public sealed class CodeFixRunnerCallerTests
         ]);
         projectRunCommandLines.ShouldBe([TargetPlaceholder]);
         localToolCommandLines.ShouldBe([TargetPlaceholder]);
+        parseErrors.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Testing_analyzer_readme_command_lines_parse_against_the_repository_root()
+    {
+        // Arrange
+        var rootCommand = CodeFixRunnerCommandLine.Create(
+            RepositoryFiles.GetRootPath(),
+            static (_, _, _) => Task.FromResult<int?>(0));
+
+        // Act
+        var commandLines = RepositoryFiles.FindToolArguments(TestingAnalyzerReadmePath, ProjectRun);
+        var parseErrors = commandLines
+            .Select(static commandLine => commandLine.Replace(ProjectPlaceholder, ExistingTarget, StringComparison.Ordinal))
+            .SelectMany(commandLine => rootCommand
+                .Parse([.. CommandLineParser.SplitCommandLine(commandLine)])
+                .Errors
+                .Select(parseError => $"{commandLine}: {parseError.Message}"))
+            .ToArray();
+
+        // Assert
+        commandLines.ShouldBe([ProjectPlaceholder + " --diagnostic SKTEST017"]);
         parseErrors.ShouldBeEmpty();
     }
 }

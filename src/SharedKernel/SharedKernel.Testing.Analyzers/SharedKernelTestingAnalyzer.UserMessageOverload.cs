@@ -15,10 +15,11 @@ public sealed partial class SharedKernelTestingAnalyzer
         description: "Assertion libraries give every public Should* extension method an overload that takes the reason the test expects the assertion to hold, after its other parameters and before a trailing CancellationToken. Enable this rule only in projects that declare assertions.",
         helpLinkUri: "https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/src/SharedKernel/SharedKernel.Testing.Analyzers/README.md#sktest017");
 
+    // A partial method is reported once, at its definition; its implementation part is skipped.
     private static void AnalyzeAssertionUserMessageOverload(SymbolAnalysisContext context)
     {
-        if (context.Symbol is not IMethodSymbol method
-            || !AssertionUserMessageOverload.IsMissing(method, out _, out var blocker)
+        if (context.Symbol is not IMethodSymbol { PartialDefinitionPart: null } method
+            || !AssertionUserMessageOverload.IsMissing(method, context.Compilation, out _, out var blocker)
             || method.Locations.FirstOrDefault(static location => location.IsInSource) is not { } location)
         {
             return;

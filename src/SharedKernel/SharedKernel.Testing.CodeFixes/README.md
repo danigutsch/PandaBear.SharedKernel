@@ -24,7 +24,7 @@ This Roslyn component is reserved for focused fixes that pair with the diagnosti
 - `SKTEST012` rewrites compatible LINQ Single calls to `ShouldHaveSingleItem`, preserving the returned value. Delegate predicates capture their original target through `Invoke`; unsupported expression trees and ambiguous bindings receive no fix.
 - `SKTEST014` introduces a collision-free named local and an explicit `ShouldNotBeNull` guard before the assertion. It supports standalone block statements and checks that the rewritten invocation compiles and binds to the repository assertion API.
 - `SKTEST013` and `SKTEST015` provide diagnostic guidance; selecting a semantic target or browser assertion migration remains explicit.
-- `SKTEST017` adds the forwarding `userMessage` overload after the assertion. It is offered only when the overload binds to the original and to a static `WithUserMessage` helper of the matching shape, adds no compiler warnings or errors, and covers the assertion; Fix All is unavailable.
+- `SKTEST017` adds the forwarding `userMessage` overload after the assertion. It is offered only when the overload binds to the original and to a static `WithUserMessage` helper of the matching shape, no extension `GetAwaiter` makes the result awaitable, the overload adds no compiler warnings or errors, and it covers the assertion; Fix All is unavailable.
 
 The naming fix preserves canonical keywords and diagnostic identifiers. See
 [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for examples.

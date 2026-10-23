@@ -19,6 +19,10 @@ public sealed partial class SharedKernelTestingCodeFixProvider
     private const string UserMessageParameterDocumentation =
         "/// <param name=\"userMessage\">Why the test expects the assertion to hold; the failure message starts with it.</param>";
 
+    private const string UserMessageNullCondition = "Also thrown when <paramref name=\"userMessage\"/> is null.";
+
+    private static readonly string[] CrefPrefixes = ["T:", "global::", "System."];
+
     private static async Task RegisterUserMessageOverloadFix(
         CodeFixContext context,
         Document document,
@@ -26,16 +30,19 @@ public sealed partial class SharedKernelTestingCodeFixProvider
         SyntaxNode root)
     {
         var ct = context.CancellationToken;
+
+        // The overload copies a declaration with a body and forwards each parameter by name, which __arglist does not have.
         if (root.FindNode(context.Span).FirstAncestorOrSelf<MethodDeclarationSyntax>() is not { } declaration
             || (declaration.Body is null && declaration.ExpressionBody is null)
-            || declaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PartialKeyword) || modifier.IsKind(SyntaxKind.ExternKeyword)))
+            || declaration.Modifiers.Any(static modifier => modifier.IsKind(SyntaxKind.PartialKeyword) || modifier.IsKind(SyntaxKind.ExternKeyword))
+            || declaration.ParameterList.Parameters.Any(static parameter => !parameter.Identifier.IsKind(SyntaxKind.IdentifierToken)))
         {
             return;
         }
 
         var model = await document.GetSemanticModelAsync(ct).ConfigureAwait(false);
         if (model?.GetDeclaredSymbol(declaration, ct) is not IMethodSymbol assertion
-            || !AssertionUserMessageOverload.IsMissing(assertion, out var messageIndex, out var blocker)
+            || !AssertionUserMessageOverload.IsMissing(assertion, model.Compilation, out var messageIndex, out var blocker)
             || blocker is not null)
         {
             return;
@@ -170,24 +177,65 @@ public sealed partial class SharedKernelTestingCodeFixProvider
         model.GetSymbolInfo(attribute, ct).Symbol?.ContainingType is { Name: "SuppressMessageAttribute" or "UnconditionalSuppressMessageAttribute" } attributeType
         && string.Equals(attributeType.ContainingNamespace?.ToDisplayString(), "System.Diagnostics.CodeAnalysis", StringComparison.Ordinal);
 
-    // Inserts string userMessage at the message index. Parameters before it lose params and default values; the new parameter
-    // copies the layout of its neighbor and of the comma before it, which keeps the list's line breaks.
+    // Inserts string userMessage at the message index. Parameters before it lose params and default values. The new parameter
+    // takes the line indentation of its neighbor and the layout of the comma before it without its comments, which keeps the
+    // list's line breaks. When the close parenthesis has a line of its own, the new parameter gets one too.
     private static SeparatedSyntaxList<ParameterSyntax> InsertUserMessageParameter(SeparatedSyntaxList<ParameterSyntax> parameters, int messageIndex)
     {
-        var neighbor = parameters[messageIndex < parameters.Count ? messageIndex : parameters.Count - 1];
-        var messageParameter = Parameter(Identifier(AssertionUserMessageOverload.ParameterName))
-            .WithType(PredefinedType(Token(SyntaxKind.StringKeyword)).WithTrailingTrivia(Space))
-            .WithLeadingTrivia(parameters.Count > 1 ? neighbor.GetLeadingTrivia().Where(static trivia => trivia.IsKind(SyntaxKind.WhitespaceTrivia)) : []);
-        var separators = parameters.GetSeparators().ToList();
-        var separator = separators.Count > 0
-            ? separators[Math.Min(messageIndex, separators.Count) - 1]
-            : Token(TriviaList(), SyntaxKind.CommaToken, TriviaList(Space));
         var nodes = parameters.Select((parameter, index) => index < messageIndex ? WithoutParamsOrDefault(parameter) : parameter).ToList();
+        var separators = parameters.GetSeparators().ToList();
+        var neighbor = nodes[messageIndex < nodes.Count ? messageIndex : nodes.Count - 1];
+        var messageParameter = Parameter(Identifier(AssertionUserMessageOverload.ParameterName))
+            .WithType(PredefinedType(Token(SyntaxKind.StringKeyword)).WithTrailingTrivia(Space));
+        var lastLineEnd = messageIndex == nodes.Count ? neighbor.GetTrailingTrivia() : TriviaList();
+        SyntaxToken separator;
+        if (lastLineEnd.Any(SyntaxKind.EndOfLineTrivia))
+        {
+            // The comma takes over the end of the last parameter's line, comments included.
+            nodes[nodes.Count - 1] = neighbor.WithoutTrailingTrivia();
+            separator = Token(TriviaList(), SyntaxKind.CommaToken, lastLineEnd);
+            messageParameter = messageParameter
+                .WithLeadingTrivia(GetLineIndentation(neighbor.GetLeadingTrivia()))
+                .WithTrailingTrivia(lastLineEnd.Last(static trivia => trivia.IsKind(SyntaxKind.EndOfLineTrivia)));
+        }
+        else
+        {
+            separator = separators.Count > 0
+                ? WithoutComments(separators[Math.Min(messageIndex, separators.Count) - 1])
+                : Token(TriviaList(), SyntaxKind.CommaToken, TriviaList(Space));
+            messageParameter = messageParameter.WithLeadingTrivia(parameters.Count > 1 ? GetLineIndentation(neighbor.GetLeadingTrivia()) : TriviaList());
+        }
+
         nodes.Insert(messageIndex, messageParameter);
         separators.Insert(Math.Min(messageIndex, separators.Count), separator);
 
         return SeparatedList(nodes, separators);
     }
+
+    // The whitespace that starts the line of a token with this leading trivia: after its last line break, else at its start.
+    private static SyntaxTriviaList GetLineIndentation(SyntaxTriviaList leadingTrivia)
+    {
+        var lineStart = 0;
+        for (var index = 0; index < leadingTrivia.Count; index++)
+        {
+            if (leadingTrivia[index].IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                lineStart = index + 1;
+            }
+        }
+
+        return lineStart < leadingTrivia.Count && leadingTrivia[lineStart].IsKind(SyntaxKind.WhitespaceTrivia)
+            ? TriviaList(leadingTrivia[lineStart])
+            : TriviaList();
+    }
+
+    // The token with the indentation of its line and its line break, or a space, but without comments.
+    private static SyntaxToken WithoutComments(SyntaxToken token) =>
+        token
+            .WithLeadingTrivia(GetLineIndentation(token.LeadingTrivia))
+            .WithTrailingTrivia(token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia)
+                ? TriviaList(token.TrailingTrivia.Last(static trivia => trivia.IsKind(SyntaxKind.EndOfLineTrivia)))
+                : TriviaList(Space));
 
     private static ParameterSyntax WithoutParamsOrDefault(ParameterSyntax parameter)
     {
@@ -206,8 +254,9 @@ public sealed partial class SharedKernelTestingCodeFixProvider
                 .WithType(type.WithLeadingTrivia(parameter.Modifiers[paramsIndex].LeadingTrivia));
     }
 
-    // One blank line, a copy of the assertion's documentation with the userMessage parameter and its exception, and then the
-    // assertion's indentation. Other comments and directives stay with the assertion.
+    // One blank line, a copy of the assertion's documentation with the userMessage exception condition and, when the assertion
+    // documents its parameters, the userMessage parameter, and then the assertion's indentation. Other comments and directives
+    // stay with the assertion.
     private static SyntaxTriviaList CreateOverloadLeadingTrivia(
         SemanticModel model,
         MethodDeclarationSyntax declaration,
@@ -247,31 +296,76 @@ public sealed partial class SharedKernelTestingCodeFixProvider
             documentation += endOfLine;
         }
 
-        // The parameter line follows the line that closes the anchor element, with that line's indentation and line break.
+        // The parameter line follows the line that closes the anchor element, with that line's indentation and line break. A
+        // comment that documents no parameter gets none, because CS1573 reports a comment that documents only some of them.
         var anchorEnd = FindUserMessageDocumentationAnchor(documentation, precedingParameterName);
-        var insertAt = anchorEnd < 0 ? documentation.Length : GetNextLineStart(documentation, anchorEnd);
-        documentation = documentation.Insert(insertAt, CreateDocumentationLine(documentation, insertAt, UserMessageParameterDocumentation));
+        if (anchorEnd >= 0)
+        {
+            var insertAt = GetNextLineStart(documentation, anchorEnd);
+            documentation = documentation.Insert(insertAt, CreateDocumentationLine(documentation, insertAt, UserMessageParameterDocumentation));
+        }
+
+        // Each exception type has one element, so an existing ArgumentNullException element gains the userMessage condition,
+        // on a line of its own when its end tag starts a line.
+        var endTagStart = FindArgumentNullExceptionEndTag(documentation);
+        if (endTagStart >= 0)
+        {
+            var lineStart = documentation.LastIndexOf('\n', endTagStart - 1) + 1;
+            return string.Equals(documentation.Substring(lineStart, endTagStart - lineStart).Trim(), "///", StringComparison.Ordinal)
+                ? documentation.Insert(lineStart, CreateDocumentationLine(documentation, lineStart, "/// " + UserMessageNullCondition))
+                : documentation.Insert(endTagStart, " " + UserMessageNullCondition);
+        }
 
         var exception = "/// <exception cref=\"" + exceptionCref + "\">Thrown when <paramref name=\"userMessage\"/> is null.</exception>";
         return documentation + CreateDocumentationLine(documentation, documentation.Length, exception);
     }
 
-    // The line after the parameter before userMessage, else after the last param, the last typeparam, or the summary; -1 when
-    // none exists, which appends the line.
+    // The end of the param element of the parameter before userMessage, else of the last param element; -1 when the comment
+    // documents no parameter.
     private static int FindUserMessageDocumentationAnchor(string documentation, string precedingParameterName)
     {
-        var elements = ParseLeadingTrivia(documentation)
-            .Select(static trivia => trivia.GetStructure())
-            .OfType<DocumentationCommentTriviaSyntax>()
-            .SelectMany(static comment => comment.Content)
-            .ToList();
+        var elements = GetDocumentationElements(documentation).ToList();
         var anchor = elements.LastOrDefault(element => IsXmlElement(element, "param", precedingParameterName))
-            ?? elements.LastOrDefault(static element => IsXmlElement(element, "param", nameAttribute: null))
-            ?? elements.LastOrDefault(static element => IsXmlElement(element, "typeparam", nameAttribute: null))
-            ?? elements.FirstOrDefault(static element => IsXmlElement(element, "summary", nameAttribute: null));
+            ?? elements.LastOrDefault(static element => IsXmlElement(element, "param", nameAttribute: null));
 
         return anchor?.Span.End ?? -1;
     }
+
+    // The start of the end tag of the comment's ArgumentNullException element, or -1.
+    private static int FindArgumentNullExceptionEndTag(string documentation) =>
+        GetDocumentationElements(documentation)
+            .OfType<XmlElementSyntax>()
+            .FirstOrDefault(static element => string.Equals(element.StartTag.Name.LocalName.ValueText, "exception", StringComparison.Ordinal)
+                && element.StartTag.Attributes.Any(static attribute => attribute switch
+                {
+                    XmlCrefAttributeSyntax crefAttribute => NamesArgumentNullException(crefAttribute.Cref.ToString()),
+                    XmlTextAttributeSyntax { Name.LocalName.ValueText: "cref" } textAttribute =>
+                        NamesArgumentNullException(string.Concat(textAttribute.TextTokens.Select(static token => token.ValueText))),
+                    _ => false,
+                })) is { } element
+            ? element.EndTag.SpanStart
+            : -1;
+
+    // Matches ArgumentNullException as a short name, as System.ArgumentNullException with or without global::, and as T: ID.
+    private static bool NamesArgumentNullException(string cref)
+    {
+        var name = cref.Trim();
+        foreach (var prefix in CrefPrefixes)
+        {
+            if (name.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                name = name.Substring(prefix.Length);
+            }
+        }
+
+        return string.Equals(name, "ArgumentNullException", StringComparison.Ordinal);
+    }
+
+    private static IEnumerable<XmlNodeSyntax> GetDocumentationElements(string documentation) =>
+        ParseLeadingTrivia(documentation)
+            .Select(static trivia => trivia.GetStructure())
+            .OfType<DocumentationCommentTriviaSyntax>()
+            .SelectMany(static comment => comment.Content);
 
     private static bool IsXmlElement(XmlNodeSyntax node, string name, string? nameAttribute) => node switch
     {
@@ -339,8 +433,8 @@ public sealed partial class SharedKernelTestingCodeFixProvider
     }
 
     // The fix registers only when the forwarded call binds to the assertion, the helper is a static method that takes the message
-    // first and has the shape that awaits a task result, the assertion is covered afterwards, and the project gains no compiler
-    // warning or error.
+    // first and has the shape that awaits a task result, no extension GetAwaiter makes another result awaitable, the assertion
+    // is covered afterwards, and the project gains no compiler warning or error.
     private static async Task<bool> IsSafeUserMessageOverload(
         Document document,
         Document updatedDocument,
@@ -363,13 +457,22 @@ public sealed partial class SharedKernelTestingCodeFixProvider
             || helper.Parameters.Length == 0
             || helper.Parameters[0].Type.SpecialType != SpecialType.System_String
             || !AwaitsTaskResult(helper, assertion)
-            || AssertionUserMessageOverload.IsMissing(assertion, out _, out _))
+            || IsAwaitableThroughExtension(model, forwardedCall, forwarded)
+            || AssertionUserMessageOverload.IsMissing(assertion, model.Compilation, out _, out _))
         {
             return false;
         }
 
         return !await AddsCompilerDiagnostics(document.Project, updatedDocument.Project, ct).ConfigureAwait(false);
     }
+
+    // The analyzer blocks results with an instance GetAwaiter other than Task and Task<T>. A result that an extension
+    // GetAwaiter makes awaitable binds the lambda to Func<T>, which returns it without awaiting it.
+    private static bool IsAwaitableThroughExtension(SemanticModel model, InvocationExpressionSyntax forwardedCall, IMethodSymbol forwarded) =>
+        !forwarded.ReturnsVoid
+        && !IsTaskType(forwarded.ReturnType)
+        && model.LookupSymbols(forwardedCall.SpanStart, forwarded.ReturnType, "GetAwaiter", includeReducedExtensionMethods: true)
+            .Any(static symbol => symbol is IMethodSymbol { Parameters.IsEmpty: true });
 
     // A task-returning lambda also binds to a Func<T> helper, which returns the task without awaiting it, so a failure would
     // complete without the message. Such an assertion needs the helper shape whose delegate returns a task.
