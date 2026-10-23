@@ -16,13 +16,25 @@ internal sealed class StreamDispatchTestScenario : IDisposable
         Mediator = mediator;
     }
 
-    public GeneratedMediatorRuntimeContext Runtime { get; }
+    public GeneratedMediatorRuntimeContext Runtime
+    {
+        get;
+    }
 
-    public IStreamRequest<string> Request { get; }
+    public IStreamRequest<string> Request
+    {
+        get;
+    }
 
-    public ReferenceMediator ReferenceDispatcher { get; }
+    public ReferenceMediator ReferenceDispatcher
+    {
+        get;
+    }
 
-    public IMediator Mediator { get; }
+    public IMediator Mediator
+    {
+        get;
+    }
 
     public static StreamDispatchTestScenario Create(string source, int requestCount)
     {

@@ -16,12 +16,18 @@ public sealed class DateRange : ValueObject
     /// <summary>
     /// Gets the start date of the range.
     /// </summary>
-    public DateTime StartDate { get; }
+    public DateTime StartDate
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the end date of the range.
     /// </summary>
-    public DateTime EndDate { get; }
+    public DateTime EndDate
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the duration of the date range in days.

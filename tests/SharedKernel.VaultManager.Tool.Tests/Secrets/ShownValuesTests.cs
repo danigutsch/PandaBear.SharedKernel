@@ -41,7 +41,10 @@ public sealed class ShownValuesTests
 
         ShownValues.IsAdditionalFolders(field).ShouldBeTrue();
         ShownValues.IsShown(field, 0, []).ShouldBeFalse();
-        ShownValues.IsAdditionalFolders(field with { Type = CustomFieldType.Hidden }).ShouldBeFalse();
+        ShownValues.IsAdditionalFolders(field with
+        {
+            Type = CustomFieldType.Hidden
+        }).ShouldBeFalse();
     }
 
     [Theory]
@@ -105,6 +108,10 @@ public sealed class ShownValuesTests
 
         ShownValues.Username(item, [FindingSamples.At(SecretLocation.Notes)]).ShouldBe("alice");
         ShownValues.Username(item, [FindingSamples.At(SecretLocation.LoginUsername)]).ShouldBeNull();
-        ShownValues.Username(item with { Login = null, Type = VaultItemType.SecureNote }, []).ShouldBeNull();
+        ShownValues.Username(item with
+        {
+            Login = null,
+            Type = VaultItemType.SecureNote
+        }, []).ShouldBeNull();
     }
 }

@@ -16,8 +16,14 @@ public sealed class DecisionsFileTests : IDisposable
     [Fact]
     public void Decisions_round_trip_and_contain_no_values()
     {
-        var keeper = Keeper(Login(OldPassword)) with { Notes = "fixture-old-notes" };
-        var bitwarden = Bitwarden(Login(NewPassword)) with { Notes = "fixture-new-notes" };
+        var keeper = Keeper(Login(OldPassword)) with
+        {
+            Notes = "fixture-old-notes"
+        };
+        var bitwarden = Bitwarden(Login(NewPassword)) with
+        {
+            Notes = "fixture-new-notes"
+        };
         var unresolved = Run(new MergePolicy(MergePolicyKind.Ask), keeper, bitwarden).Unresolved;
         var decisions = new MergeDecisions(
             [new GroupDecision(unresolved[0].GroupKey, [.. unresolved.Select(conflict => FieldChoice.Member(conflict.FieldPath, conflict.MemberOriginKeys[0])), FieldChoice.Empty(FieldPaths.LoginTotp)])],
@@ -39,7 +45,10 @@ public sealed class DecisionsFileTests : IDisposable
     [Fact]
     public void Notes_decisions_round_trip_and_files_without_them_still_read()
     {
-        var decisions = MergeDecisions.None with { Notes = [new ItemNotesDecision("a|b|c", NotesDecision.Share, "GitHub", 2, ItemNotesDecision.HashOf("shared notes")), new ItemNotesDecision("a|b|d", NotesDecision.Hidden)] };
+        var decisions = MergeDecisions.None with
+        {
+            Notes = [new ItemNotesDecision("a|b|c", NotesDecision.Share, "GitHub", 2, ItemNotesDecision.HashOf("shared notes")), new ItemNotesDecision("a|b|d", NotesDecision.Hidden)]
+        };
 
         string json = DecisionsFile.Serialize(decisions);
 

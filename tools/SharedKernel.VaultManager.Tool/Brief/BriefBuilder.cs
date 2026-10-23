@@ -254,17 +254,35 @@ internal static class BriefBuilder
     // it is the one the merge keeps.
     private sealed record Shown
     {
-        public bool? Newest { get; init; }
+        public bool? Newest
+        {
+            get; init;
+        }
 
-        public string? Value { get; init; }
+        public string? Value
+        {
+            get; init;
+        }
 
-        public IReadOnlyList<string>? Values { get; init; }
+        public IReadOnlyList<string>? Values
+        {
+            get; init;
+        }
 
-        public bool? Weak { get; init; }
+        public bool? Weak
+        {
+            get; init;
+        }
 
-        public bool? Reused { get; init; }
+        public bool? Reused
+        {
+            get; init;
+        }
 
-        public bool? InOtherHistory { get; init; }
+        public bool? InOtherHistory
+        {
+            get; init;
+        }
     }
 
     // Lookups shared by the groups of one brief.
@@ -293,13 +311,25 @@ internal static class BriefBuilder
             PendingFindingItems = [.. result.PendingFindings.Select(item => item.OriginKey)];
         }
 
-        public HashSet<string> UnresolvedGroups { get; }
+        public HashSet<string> UnresolvedGroups
+        {
+            get;
+        }
 
-        public HashSet<(string GroupKey, string FieldPath)> UnresolvedFields { get; }
+        public HashSet<(string GroupKey, string FieldPath)> UnresolvedFields
+        {
+            get;
+        }
 
-        public HashSet<(string OriginKey, string FindingId)> PendingFindings { get; }
+        public HashSet<(string OriginKey, string FindingId)> PendingFindings
+        {
+            get;
+        }
 
-        public HashSet<string> PendingFindingItems { get; }
+        public HashSet<string> PendingFindingItems
+        {
+            get;
+        }
 
         public ScannedItem? SourceOf(string originKey) => sources.GetValueOrDefault(originKey);
 

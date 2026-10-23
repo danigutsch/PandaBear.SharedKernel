@@ -255,17 +255,35 @@ public sealed class AuditTrailMappingGenerator : IIncrementalGenerator
             AuditTrailEntryType = auditTrailEntryType;
         }
 
-        public string MethodName { get; }
+        public string MethodName
+        {
+            get;
+        }
 
-        public string SortKey { get; }
+        public string SortKey
+        {
+            get;
+        }
 
-        public Location? Location { get; }
+        public Location? Location
+        {
+            get;
+        }
 
-        public string? ContainingType { get; }
+        public string? ContainingType
+        {
+            get;
+        }
 
-        public string? DomainEventType { get; }
+        public string? DomainEventType
+        {
+            get;
+        }
 
-        public string? AuditTrailEntryType { get; }
+        public string? AuditTrailEntryType
+        {
+            get;
+        }
 
         public bool IsValid => ContainingType is not null && DomainEventType is not null && AuditTrailEntryType is not null;
 

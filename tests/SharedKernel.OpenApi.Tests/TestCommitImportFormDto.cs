@@ -12,11 +12,17 @@ internal readonly record struct TestCommitImportFormDto
     /// Gets or sets the uploaded file.
     /// </summary>
     [FromForm(Name = "file")]
-    public required IFormFile File { get; init; }
+    public required IFormFile File
+    {
+        get; init;
+    }
 
     /// <summary>
     /// Gets or sets a serialized conflict-resolution payload.
     /// </summary>
     [FromForm(Name = "conflictResolutions")]
-    public string? ConflictResolutions { get; init; }
+    public string? ConflictResolutions
+    {
+        get; init;
+    }
 }

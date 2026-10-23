@@ -2,7 +2,10 @@ namespace PandaBear.RepoConfig.Tests;
 
 internal sealed class ChangingAtomicWritePrecondition(TemporaryRepoConfigWorkspace workspace)
 {
-    public int VerificationCount { get; private set; }
+    public int VerificationCount
+    {
+        get; private set;
+    }
 
     public void Verify()
     {

@@ -9,7 +9,10 @@ public static class GrafanaLgtmStackDefaults
     public const string EnableObservabilityStackVariable = "ASPIRE_ENABLE_OBSERVABILITY_STACK";
 
     /// <summary>Default resource names for the local stack.</summary>
-    public static GrafanaLgtmStackResourceNames ResourceNames { get; } = new(
+    public static GrafanaLgtmStackResourceNames ResourceNames
+    {
+        get;
+    } = new(
         "opentelemetry-collector",
         "grafana",
         "loki",

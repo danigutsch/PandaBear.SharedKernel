@@ -59,13 +59,43 @@ internal sealed class RoadmapGitRepository
         return result.StandardOutput;
     }
 
+    public async Task<string[]> ReadCommittedRootPaths(string rootPath, string revision, CancellationToken cancellationToken)
+    {
+        var prefix = await RunOffline(rootPath, ["rev-parse", "--show-prefix"], cancellationToken).ConfigureAwait(false);
+        if (StrictUtf8.GetString(prefix.StandardOutput).Trim().Length != 0)
+        {
+            throw new InvalidOperationException("Committed dependency inputs require the repository root.");
+        }
+
+        var result = await RunOffline(rootPath, ["ls-tree", "-z", "--name-only", "--full-tree", revision], cancellationToken).ConfigureAwait(false);
+        return StrictUtf8.GetString(result.StandardOutput).Split('\0', StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    public async Task<byte[]> ReadCommittedFile(string rootPath, string revision, string relativePath, CancellationToken cancellationToken)
+    {
+        var result = await RunOffline(rootPath, ["cat-file", "blob", revision + ":" + relativePath], cancellationToken).ConfigureAwait(false);
+        return result.StandardOutput;
+    }
+
+    private Task<RoadmapGitCommandResult> RunOffline(string rootPath, string[] arguments, CancellationToken cancellationToken)
+    {
+        var startInfo = CreateStartInfo(rootPath, arguments);
+        startInfo.Environment["GIT_NO_LAZY_FETCH"] = "1";
+        startInfo.Environment["GIT_NO_REPLACE_OBJECTS"] = "1";
+        return Run(startInfo, cancellationToken);
+    }
+
     private async Task<RoadmapGitCommandResult> Run(
         string rootPath,
         string[] arguments,
         CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
-        var startInfo = CreateStartInfo(rootPath, arguments);
+        return await Run(CreateStartInfo(rootPath, arguments), cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<RoadmapGitCommandResult> Run(ProcessStartInfo startInfo, CancellationToken cancellationToken)
+    {
         var result = await _run(startInfo, cancellationToken).ConfigureAwait(false);
         if (result.OutputLimitExceeded || result.ErrorLimitExceeded || result.ExitCode != 0)
         {

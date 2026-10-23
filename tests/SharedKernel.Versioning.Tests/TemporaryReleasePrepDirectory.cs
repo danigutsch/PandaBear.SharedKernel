@@ -19,11 +19,20 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
             """ + Environment.NewLine);
     }
 
-    public string Root { get; }
+    public string Root
+    {
+        get;
+    }
 
-    public string PackageDirectory { get; }
+    public string PackageDirectory
+    {
+        get;
+    }
 
-    public string OutputDirectory { get; }
+    public string OutputDirectory
+    {
+        get;
+    }
 
     public string WriteCandidate()
     {

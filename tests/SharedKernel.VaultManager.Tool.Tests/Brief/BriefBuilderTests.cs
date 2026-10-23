@@ -67,7 +67,10 @@ public sealed class BriefBuilderTests : IDisposable
         var export = JsonNode.Parse(BitwardenJson(bitwarden)).ShouldNotBeNull();
         export["folders"] = new JsonArray(new JsonObject { ["id"] = "folder-work", ["name"] = "Work" });
         string[] inputs = [Write(directory, "keeper.json", KeeperJson(keeper)), Write(directory, "bitwarden.json", export.ToJsonString())];
-        var decisions = BriefRun.Linked(KeeperKey, BitwardenKey) with { Notes = [new ItemNotesDecision(KeeperKey, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf(KeeperNotes))] };
+        var decisions = BriefRun.Linked(KeeperKey, BitwardenKey) with
+        {
+            Notes = [new ItemNotesDecision(KeeperKey, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf(KeeperNotes))]
+        };
 
         var group = BriefRun.Build(inputs, decisions).Brief.Groups.ShouldHaveSingleItem();
 

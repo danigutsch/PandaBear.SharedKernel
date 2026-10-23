@@ -72,7 +72,10 @@ public sealed class SafeArchiveTests
     public void Open_rejects_expanded_size_above_the_limit()
     {
         byte[] zip = TestZip.Create(("a", TestZip.RandomBytes(600)), ("b", TestZip.RandomBytes(600)));
-        var limits = ArchiveLimits.Default with { MaxExpandedBytes = 1000 };
+        var limits = ArchiveLimits.Default with
+        {
+            MaxExpandedBytes = 1000
+        };
 
         var action = () => SafeArchive.Open(new MemoryStream(zip), limits);
 

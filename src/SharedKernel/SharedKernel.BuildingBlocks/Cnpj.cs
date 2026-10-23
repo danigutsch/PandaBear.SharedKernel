@@ -8,7 +8,10 @@ public sealed class Cnpj : ValueObject
     private Cnpj(string value) => Value = value;
 
     /// <summary>Gets the sensitive, fourteen-character value. Do not log or expose it without authorization.</summary>
-    public string Value { get; }
+    public string Value
+    {
+        get;
+    }
 
     /// <summary>Creates a CNPJ from twelve uppercase ASCII alphanumeric characters and two check digits.</summary>
     /// <param name="value">The canonical candidate without display punctuation.</param>

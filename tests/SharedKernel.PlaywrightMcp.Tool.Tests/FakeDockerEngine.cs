@@ -37,7 +37,10 @@ internal sealed class FakeDockerEngine : IDisposable
 
     public string DirectoryPath => _directory.Path;
 
-    public string LogPath { get; }
+    public string LogPath
+    {
+        get;
+    }
 
     public string ReadLog()
     {

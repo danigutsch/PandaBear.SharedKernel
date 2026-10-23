@@ -29,7 +29,10 @@ public sealed class GatedCountingReadStream : Stream
     /// <summary>
     /// Gets the cumulative number of bytes returned to readers.
     /// </summary>
-    public long BytesRead { get; private set; }
+    public long BytesRead
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Opens the read gate.

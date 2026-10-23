@@ -34,8 +34,17 @@ public sealed class IdempotentSubmissionTests
         submission.IsBusy.ShouldBeFalse();
         submission.Operation.ShouldBe("save");
         var retry = await submission.Retry(TestContext.Current.CancellationToken);
-        if (pending) { retry.ShouldNotBeNull(); keys.Count.ShouldBe(2); keys[1].ShouldBe(keys[0]); }
-        else { retry.ShouldBeNull(); keys.Count.ShouldBe(1); }
+        if (pending)
+        {
+            retry.ShouldNotBeNull();
+            keys.Count.ShouldBe(2);
+            keys[1].ShouldBe(keys[0]);
+        }
+        else
+        {
+            retry.ShouldBeNull();
+            keys.Count.ShouldBe(1);
+        }
     }
 
     [Fact]

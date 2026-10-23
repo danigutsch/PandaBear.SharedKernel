@@ -26,7 +26,10 @@ internal sealed class PostgreSqlTestDatabase : IAsyncDisposable
         DatabaseName = databaseName;
     }
 
-    internal string DatabaseName { get; }
+    internal string DatabaseName
+    {
+        get;
+    }
 
     [SuppressMessage(
         "Security",

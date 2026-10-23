@@ -2,7 +2,10 @@ namespace PandaBear.Observability;
 
 internal static class TelemetryPrivacyAttributeClassifier
 {
-    private static HashSet<string> SensitiveAttributeNames { get; } = new(StringComparer.OrdinalIgnoreCase)
+    private static HashSet<string> SensitiveAttributeNames
+    {
+        get;
+    } = new(StringComparer.OrdinalIgnoreCase)
     {
         "authorization",
         "commandText",

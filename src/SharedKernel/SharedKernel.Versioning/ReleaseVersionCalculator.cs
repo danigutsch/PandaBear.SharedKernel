@@ -34,7 +34,10 @@ public static class ReleaseVersionCalculator
         if (string.IsNullOrWhiteSpace(input.SourceTag) || parsedBaseVersion.Prerelease is not null)
         {
             versionOutput = VersionOutput.Create(
-                parsedBaseVersion.StableCore with { Prerelease = prerelease },
+                parsedBaseVersion.StableCore with
+                {
+                    Prerelease = prerelease
+                },
                 versionOutput.ReleaseImpact,
                 input.SourceSha);
         }

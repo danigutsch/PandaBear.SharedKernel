@@ -1,3 +1,5 @@
+using PandaBear.Results;
+
 namespace PandaBear.BuildingBlocks.Tests;
 
 public sealed class BuildingBlockTests
@@ -111,7 +113,7 @@ public sealed class BuildingBlockTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        result.IsSuccess.ShouldBeTrue();
+        result.ShouldBeSuccess();
         result.Value.StartDate.ShouldBe(startDate);
         result.Value.EndDate.ShouldBe(endDate);
         result.Value.DurationDays.ShouldBe(7);
@@ -127,12 +129,8 @@ public sealed class BuildingBlockTests
         var result = DateRange.Create(date, date);
 
         // Assert
-        result.IsSuccess.ShouldBeFalse();
-        var error = result.ErrorDetails;
-        _ = error.ShouldNotBeNull();
-        error.ValidationErrors.ShouldNotBeNull();
-        error.ValidationErrors.ContainsKey("schedule").ShouldBeTrue();
-        error.ValidationErrors["schedule"].ShouldBe(["End date must be after start date."]);
+        var error = result.ShouldBeFailure(ResultStatus.Invalid, ResultErrorCodes.Invalid);
+        error.ShouldHaveValidationError("schedule", "End date must be after start date.");
     }
 
     [Fact]
@@ -146,11 +144,7 @@ public sealed class BuildingBlockTests
         var result = DateRange.Create(startDate, endDate);
 
         // Assert
-        result.IsSuccess.ShouldBeFalse();
-        var error = result.ErrorDetails;
-        _ = error.ShouldNotBeNull();
-        error.ValidationErrors.ShouldNotBeNull();
-        error.ValidationErrors.ContainsKey("schedule").ShouldBeTrue();
-        error.ValidationErrors["schedule"].ShouldBe(["End date must be after start date."]);
+        var error = result.ShouldBeFailure(ResultStatus.Invalid, ResultErrorCodes.Invalid);
+        error.ShouldHaveValidationError("schedule", "End date must be after start date.");
     }
 }

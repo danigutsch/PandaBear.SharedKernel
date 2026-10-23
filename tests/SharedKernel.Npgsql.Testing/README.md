@@ -11,7 +11,8 @@ preserves host ownership during shared async initialization, including Release b
 The shared fixture composes the existing `AspireTestApplication` lifecycle. Database leases retain bounded,
 cancellation-independent cleanup, forced connection termination, fixture-owned name validation,
 and aggregation of operation and cleanup failures. Failed lease cleanup remains registered for
-assembly teardown. Consumer tests retain their domain-specific setup and test base classes.
+assembly teardown. `PostgreSqlDatabaseTestBase` shares per-test database leasing and disposal and exposes protected
+`DataSource` and `ConnectionString` properties. Consumer tests retain domain-specific setup.
 
 Dependencies are the repository's existing Aspire PostgreSQL, Npgsql, and xUnit core versions.
 This project introduces no package publication or generic host/scenario framework. Keep application

@@ -17,7 +17,10 @@ public class NotificationPublishGenerationBenchmarks
     /// Gets or sets the number of notification handlers under test.
     /// </summary>
     [Params(1, 3, 10, 50)]
-    public int HandlerCount { get; set; }
+    public int HandlerCount
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Prepares the ordered and unordered generator inputs used by the benchmark scenarios.

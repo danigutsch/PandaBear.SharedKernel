@@ -4,7 +4,10 @@ namespace PandaBear.Npgsql.Tests;
 
 internal sealed class SlowCleanupHostedService : IHostedService
 {
-    public bool Completed { get; private set; }
+    public bool Completed
+    {
+        get; private set;
+    }
 
     public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 

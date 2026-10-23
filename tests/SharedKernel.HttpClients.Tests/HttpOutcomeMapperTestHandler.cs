@@ -3,13 +3,25 @@ namespace PandaBear.HttpClients.Tests;
 internal sealed class HttpOutcomeMapperTestHandler(
     Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> send) : HttpMessageHandler
 {
-    public CancellationToken ObservedCancellationToken { get; private set; }
+    public CancellationToken ObservedCancellationToken
+    {
+        get; private set;
+    }
 
-    public HttpMethod? ObservedMethod { get; private set; }
+    public HttpMethod? ObservedMethod
+    {
+        get; private set;
+    }
 
-    public Uri? ObservedRequestUri { get; private set; }
+    public Uri? ObservedRequestUri
+    {
+        get; private set;
+    }
 
-    public string? ObservedAuthorizationScheme { get; private set; }
+    public string? ObservedAuthorizationScheme
+    {
+        get; private set;
+    }
 
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {

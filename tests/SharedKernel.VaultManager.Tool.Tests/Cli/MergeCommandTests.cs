@@ -102,7 +102,10 @@ public sealed class MergeCommandTests : IDisposable
         var prompts = new TestPrompts(ExportPassword);
         string[] args = plaintext ? ["merge", .. inputs, "--output", output, "--plaintext"] : ["merge", .. inputs, "--output", output];
 
-        var run = await CommandLineRun.Invoke(prompts.Environment() with { Time = new CancelingTimeProvider(cancellation) }, args, cancellation.Token);
+        var run = await CommandLineRun.Invoke(prompts.Environment() with
+        {
+            Time = new CancelingTimeProvider(cancellation)
+        }, args, cancellation.Token);
 
         run.ExitCode.ShouldBe(1);
         run.Output.ShouldBeEmpty();

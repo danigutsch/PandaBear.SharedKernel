@@ -5,7 +5,10 @@ internal sealed class BlockingReadStream(Action? onReadStarted = null) : Stream
     private readonly TaskCompletionSource _readStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private Action? _onReadStarted = onReadStarted;
 
-    public bool IsDisposed { get; private set; }
+    public bool IsDisposed
+    {
+        get; private set;
+    }
 
     public Task ReadStarted => _readStarted.Task;
 

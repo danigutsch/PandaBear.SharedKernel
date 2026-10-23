@@ -11,12 +11,18 @@ public abstract class EventSourcedAggregateRoot<TId>
     /// <summary>
     /// Gets the aggregate identifier.
     /// </summary>
-    public abstract TId Id { get; }
+    public abstract TId Id
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the current aggregate version after replayed and pending events.
     /// </summary>
-    public long Version { get; private set; }
+    public long Version
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets events that have been applied but not yet persisted.

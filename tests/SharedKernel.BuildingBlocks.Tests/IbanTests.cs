@@ -15,7 +15,7 @@ public sealed class IbanTests
         var result = Iban.Create(value);
 
         // Assert
-        result.IsSuccess.ShouldBeTrue();
+        result.ShouldBeSuccess();
         result.Value.Value.ShouldBe(value);
     }
 

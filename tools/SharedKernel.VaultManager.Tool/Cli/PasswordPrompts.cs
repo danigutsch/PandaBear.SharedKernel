@@ -30,7 +30,10 @@ internal sealed class PasswordPrompts
     }
 
     /// <summary>The environment with every prompt going through this instance.</summary>
-    public VaultCommandEnvironment Environment { get; }
+    public VaultCommandEnvironment Environment
+    {
+        get;
+    }
 
     /// <summary>Whether standard input is a terminal, so a password can be asked.</summary>
     public bool IsInteractive => environment.IsInteractive;

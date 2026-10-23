@@ -14,13 +14,22 @@ namespace PandaBear.VaultManager.Tool.Pipeline;
 internal sealed record PipelineResult
 {
     /// <summary>Merged vault: one item per match group, in group order.</summary>
-    public required VaultExport Merged { get; init; }
+    public required VaultExport Merged
+    {
+        get; init;
+    }
 
     /// <summary>Match groups, aligned with <see cref="Merged"/>, and the weak matches that were only suggested.</summary>
-    public required MatchResult Match { get; init; }
+    public required MatchResult Match
+    {
+        get; init;
+    }
 
     /// <summary>Fields that need a user decision.</summary>
-    public required IReadOnlyList<UnresolvedConflict> Unresolved { get; init; }
+    public required IReadOnlyList<UnresolvedConflict> Unresolved
+    {
+        get; init;
+    }
 
     /// <summary>
     /// Findings that are not pre-accepted and have no accept or reject decision, per input item, as pending entries for
@@ -29,22 +38,37 @@ internal sealed record PipelineResult
     public IReadOnlyList<ItemFindingDecisions> PendingFindings { get; init; } = [];
 
     /// <summary>Value-free merge summary.</summary>
-    public required MergeReport MergeReport { get; init; }
+    public required MergeReport MergeReport
+    {
+        get; init;
+    }
 
     /// <summary>Secret findings of every input item that has any.</summary>
-    public required IReadOnlyList<ItemFindingsResult> Findings { get; init; }
+    public required IReadOnlyList<ItemFindingsResult> Findings
+    {
+        get; init;
+    }
 
     /// <summary>Problems placement reported for accepted findings.</summary>
-    public required IReadOnlyList<PlacementProblem> PlacementProblems { get; init; }
+    public required IReadOnlyList<PlacementProblem> PlacementProblems
+    {
+        get; init;
+    }
 
     /// <summary>Reused or weak passwords of the merged vault.</summary>
-    public required PasswordHealthReport PasswordHealth { get; init; }
+    public required PasswordHealthReport PasswordHealth
+    {
+        get; init;
+    }
 
     /// <summary>
     /// Attachments the user uploads after the import: every attachment of every item, except that a file found on several
     /// merged items with the same name and content is listed once, from the newest item.
     /// </summary>
-    public required IReadOnlyList<ManualAttachment> ManualAttachments { get; init; }
+    public required IReadOnlyList<ManualAttachment> ManualAttachments
+    {
+        get; init;
+    }
 
     /// <summary>
     /// Attachment folders of Bitwarden zip inputs whose files belong to no item, because the folder matches no item or
@@ -59,19 +83,34 @@ internal sealed record PipelineResult
     public int AttachmentUploadCount => ManualAttachments.Count + UnassignedAttachmentFolders.Sum(folder => folder.Files.Count);
 
     /// <summary>Problems that make Bitwarden or Vaultwarden reject the whole import. Any of them blocks writing.</summary>
-    public required IReadOnlyList<string> WriteErrors { get; init; }
+    public required IReadOnlyList<string> WriteErrors
+    {
+        get; init;
+    }
 
     /// <summary>Adjustments the writer made, or risks that do not block the import.</summary>
-    public required IReadOnlyList<string> WriteWarnings { get; init; }
+    public required IReadOnlyList<string> WriteWarnings
+    {
+        get; init;
+    }
 
     /// <summary>Warnings raised while reading the inputs and scanning their attachments.</summary>
-    public required IReadOnlyList<string> ReadWarnings { get; init; }
+    public required IReadOnlyList<string> ReadWarnings
+    {
+        get; init;
+    }
 
     /// <summary>Requested output, or <see langword="null"/> when none was requested.</summary>
-    public PipelineOutput? Output { get; init; }
+    public PipelineOutput? Output
+    {
+        get; init;
+    }
 
     /// <summary>Whether the merged vault was written to <see cref="Output"/>.</summary>
-    public bool OutputWritten { get; init; }
+    public bool OutputWritten
+    {
+        get; init;
+    }
 
     /// <summary>Whether a field still needs a decision. The merged vault is then not written.</summary>
     public bool HasUnresolvedConflicts => Unresolved.Count > 0;

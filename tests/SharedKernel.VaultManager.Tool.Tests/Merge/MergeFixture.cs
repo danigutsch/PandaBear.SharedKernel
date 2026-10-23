@@ -23,7 +23,13 @@ internal static class MergeFixture
     public static readonly DateTimeOffset Now = new(2026, 10, 22, 12, 0, 0, TimeSpan.Zero);
 
     public static LoginData Login(string? password = null, string? totp = null, string? username = Username) =>
-        new() { Username = username, Password = password, Totp = totp, Uris = [new LoginUri(ExampleUri)] };
+        new()
+        {
+            Username = username,
+            Password = password,
+            Totp = totp,
+            Uris = [new LoginUri(ExampleUri)]
+        };
 
     public static VaultItem Keeper(LoginData login) => new()
     {
@@ -43,7 +49,14 @@ internal static class MergeFixture
     };
 
     public static VaultItem WithoutTimestamp(VaultItem item) =>
-        item with { RevisionDate = null, Origin = item.Origin with { Modified = null } };
+        item with
+        {
+            RevisionDate = null,
+            Origin = item.Origin with
+            {
+                Modified = null
+            }
+        };
 
     public static VaultItem Card(ItemOrigin origin, DateTimeOffset revision, CardData card) => new()
     {

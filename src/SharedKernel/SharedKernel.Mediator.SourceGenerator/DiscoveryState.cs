@@ -25,31 +25,73 @@ internal sealed class DiscoveryState
         DiagnosedUnmarkedAssemblies = new HashSet<string>(StringComparer.Ordinal);
     }
 
-    public Dictionary<string, RawRequestContract> RequestContracts { get; }
+    public Dictionary<string, RawRequestContract> RequestContracts
+    {
+        get;
+    }
 
-    public List<HandlerDescriptor> RequestHandlers { get; }
+    public List<HandlerDescriptor> RequestHandlers
+    {
+        get;
+    }
 
-    public List<RawPipelineDescriptor> Pipelines { get; }
+    public List<RawPipelineDescriptor> Pipelines
+    {
+        get;
+    }
 
-    public Dictionary<string, RawNotificationContract> NotificationContracts { get; }
+    public Dictionary<string, RawNotificationContract> NotificationContracts
+    {
+        get;
+    }
 
-    public List<RawNotificationHandlerDescriptor> NotificationHandlers { get; }
+    public List<RawNotificationHandlerDescriptor> NotificationHandlers
+    {
+        get;
+    }
 
-    public Dictionary<string, RawStreamRequestContract> StreamRequestContracts { get; }
+    public Dictionary<string, RawStreamRequestContract> StreamRequestContracts
+    {
+        get;
+    }
 
-    public List<StreamHandlerDescriptor> StreamHandlers { get; }
+    public List<StreamHandlerDescriptor> StreamHandlers
+    {
+        get;
+    }
 
-    public List<RawPipelineDescriptor> StreamPipelines { get; }
+    public List<RawPipelineDescriptor> StreamPipelines
+    {
+        get;
+    }
 
-    public List<Diagnostic> Diagnostics { get; }
+    public List<Diagnostic> Diagnostics
+    {
+        get;
+    }
 
-    public HashSet<string> DiagnosedInaccessibleTypes { get; }
+    public HashSet<string> DiagnosedInaccessibleTypes
+    {
+        get;
+    }
 
-    public HashSet<string> GeneratedRegistrationKeys { get; }
+    public HashSet<string> GeneratedRegistrationKeys
+    {
+        get;
+    }
 
-    public Dictionary<string, DuplicateRegistrationDiagnostic> DuplicateRegistrationDiagnostics { get; }
+    public Dictionary<string, DuplicateRegistrationDiagnostic> DuplicateRegistrationDiagnostics
+    {
+        get;
+    }
 
-    public HashSet<string> DiagnosedInvalidHandlerKeys { get; }
+    public HashSet<string> DiagnosedInvalidHandlerKeys
+    {
+        get;
+    }
 
-    public HashSet<string> DiagnosedUnmarkedAssemblies { get; }
+    public HashSet<string> DiagnosedUnmarkedAssemblies
+    {
+        get;
+    }
 }

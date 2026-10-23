@@ -17,7 +17,7 @@ public sealed class CnpjTests
         var result = Cnpj.Create(value);
 
         // Assert
-        result.IsSuccess.ShouldBeTrue();
+        result.ShouldBeSuccess();
         result.Value.Value.ShouldBe(value);
     }
 

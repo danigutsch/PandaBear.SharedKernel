@@ -70,7 +70,10 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
             }
         }
 
-        return this with { Notes = [.. notes, .. updates.Where(item => byKey.ContainsKey(item.OriginKey))] };
+        return this with
+        {
+            Notes = [.. notes, .. updates.Where(item => byKey.ContainsKey(item.OriginKey))]
+        };
     }
 
     /// <summary>Finds the decision for a field of a group. The first matching decision counts; pending entries are skipped.</summary>
@@ -205,7 +208,10 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
             int position = string.Equals(group.GroupKey, conflict.GroupKey, StringComparison.Ordinal) ? IndexOf(group.Choices, ignored) : -1;
             if (position >= 0)
             {
-                groups[index] = group with { Choices = [.. group.Choices.Take(position), PendingEntry(conflict), .. group.Choices.Skip(position + 1)] };
+                groups[index] = group with
+                {
+                    Choices = [.. group.Choices.Take(position), PendingEntry(conflict), .. group.Choices.Skip(position + 1)]
+                };
                 return;
             }
         }
@@ -234,7 +240,10 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
         }
         else if (!groups[index].Choices.Any(choice => string.Equals(choice.FieldPath, conflict.FieldPath, StringComparison.Ordinal)))
         {
-            groups[index] = groups[index] with { Choices = [.. groups[index].Choices, pending] };
+            groups[index] = groups[index] with
+            {
+                Choices = [.. groups[index].Choices, pending]
+            };
         }
     }
 
@@ -248,7 +257,11 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
         }
         else if (!items[index].Choices.Any(choice => string.Equals(choice.FindingId, findingId, StringComparison.Ordinal)))
         {
-            items[index] = items[index] with { Choices = [.. items[index].Choices, pending], ItemName = items[index].ItemName ?? item.ItemName };
+            items[index] = items[index] with
+            {
+                Choices = [.. items[index].Choices, pending],
+                ItemName = items[index].ItemName ?? item.ItemName
+            };
         }
     }
 }

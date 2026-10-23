@@ -17,7 +17,10 @@ public sealed class SharedKernelMediatorAnalyzer : DiagnosticAnalyzer
     private const string HandleMethodName = "Handle";
 
     /// <inheritdoc />
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+    {
+        get;
+    } = ImmutableArray.Create(
         MediatorAnalyzerDescriptors.InvalidHandlerSignature,
         MediatorAnalyzerDescriptors.MissingCancellationToken,
         MediatorAnalyzerDescriptors.HandlerReturnTypeMismatch,

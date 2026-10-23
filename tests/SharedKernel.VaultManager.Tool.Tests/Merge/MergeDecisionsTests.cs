@@ -8,7 +8,7 @@ public sealed class MergeDecisionsTests
 {
     private const string OriginKey = "keeper|keeper.json|rec-1";
     private const string OtherOriginKey = "bitwarden|bitwarden.json|bw-1";
-    private const string GroupKey = "0123456789abcdef";
+    private const string GroupKey = "0000000000000000";
 
     [Fact]
     public void Applies_pre_accepted_finding_unless_the_decisions_reject_it()
@@ -53,7 +53,10 @@ public sealed class MergeDecisionsTests
     public void Pending_finding_decision_counts_as_no_decision()
     {
         var proposed = FindingSamples.Finding(Confidence.Medium);
-        var preAccepted = FindingSamples.Finding(Confidence.High) with { RuleId = "fixture-pre-accepted" };
+        var preAccepted = FindingSamples.Finding(Confidence.High) with
+        {
+            RuleId = "fixture-pre-accepted"
+        };
         var decisions = new MergeDecisions([], MatchOverrides.None)
         {
             Findings = [new ItemFindingDecisions(OriginKey, [new FindingChoice(proposed.Id, FindingDecision.Pending), new FindingChoice(preAccepted.Id, FindingDecision.Pending)])],
