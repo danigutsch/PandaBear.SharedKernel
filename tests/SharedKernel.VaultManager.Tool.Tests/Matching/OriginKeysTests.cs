@@ -49,6 +49,19 @@ public sealed class OriginKeysTests
         secretKey.ShouldBe(guessedKey);
     }
 
+    [Theory]
+    [InlineData("postgres://app:fixture-db-secret@db.internal/prod", "postgres://app:fixture-guess@db.internal/prod")]
+    [InlineData("admin:fixture-router-secret@192.168.1.1", "admin:fixture-guess@192.168.1.1")]
+    [InlineData("ftp://files.example.com/in?token=fixture-token", "ftp://files.example.com/in?token=fixture-guess")]
+    public void Compute_content_key_does_not_depend_on_credentials_in_the_first_address(string stored, string guessed)
+    {
+        string storedKey = OriginKeys.Compute([Login(string.Empty, "Database", "app", stored)]).ShouldHaveSingleItem();
+        string guessedKey = OriginKeys.Compute([Login(string.Empty, "Database", "app", guessed)]).ShouldHaveSingleItem();
+
+        storedKey.ShouldStartWith("bitwarden|vault.json|content:", StringComparison.Ordinal);
+        storedKey.ShouldBe(guessedKey);
+    }
+
     [Fact]
     public void Match_groups_items_whose_original_IDs_end_with_number_suffixes()
     {

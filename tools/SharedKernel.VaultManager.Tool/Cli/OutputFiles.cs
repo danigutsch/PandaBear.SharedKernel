@@ -1,3 +1,4 @@
+using System.Text;
 using PandaBear.VaultManager.Tool.IO;
 
 namespace PandaBear.VaultManager.Tool.Cli;
@@ -7,6 +8,8 @@ internal static class OutputFiles
 {
     // Case is ignored on every platform, so paths that differ only in case are refused even where they name two files.
     private const string ReportFile = "report file";
+
+    private const string BriefFileName = "brief file";
 
     private const string SameFileRule = "paths are compared after resolving symbolic links and ignoring case";
 
@@ -67,6 +70,61 @@ internal static class OutputFiles
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Checks that the brief can be written, as <see cref="CanWrite"/> does, and that an existing file it would replace is a
+    /// brief, so a mistyped path cannot replace a file such as an export.
+    /// </summary>
+    /// <param name="path">Brief file.</param>
+    /// <param name="inputs">Input files, which are never written.</param>
+    /// <param name="others">Other files the command writes, with what each is.</param>
+    /// <param name="error">Receives the problem.</param>
+    /// <returns><see langword="true"/> when the brief can be written.</returns>
+    /// <exception cref="IOException">A path holds more than <see cref="FilePaths.MaxLinks"/> symbolic links.</exception>
+    public static bool CanWriteBrief(string path, IReadOnlyList<string> inputs, IReadOnlyList<(string Path, string Name)> others, TextWriter error)
+    {
+        if (!CanWrite(path, BriefFileName, inputs, others, replaceExisting: true, error))
+        {
+            return false;
+        }
+
+        string fullPath = Path.GetFullPath(path);
+        if (File.Exists(fullPath) && !IsBrief(fullPath))
+        {
+            error.WriteLine(PrintableText.OneLine($"The {BriefFileName} '{fullPath}' exists and is not a brief. Choose another path, or delete the file first."));
+            return false;
+        }
+
+        return true;
+    }
+
+    // A brief starts with its version and its inputs, whatever byte order mark and white space an editor left. A file that
+    // cannot be read counts as no brief.
+    private static bool IsBrief(string fullPath)
+    {
+        const string Version = "{\"version\":";
+        Span<byte> start = stackalloc byte[256];
+        int read;
+        try
+        {
+            using var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            read = stream.ReadAtLeast(start, start.Length, throwOnEndOfStream: false);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
+
+        string text = string.Concat(Encoding.UTF8.GetString(start[..read]).TrimStart('\uFEFF').Where(character => !char.IsWhiteSpace(character)));
+        if (!text.StartsWith(Version, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        ReadOnlySpan<char> afterVersion = text.AsSpan(Version.Length);
+        ReadOnlySpan<char> afterNumber = afterVersion.TrimStart("0123456789");
+        return afterNumber.Length < afterVersion.Length && afterNumber.StartsWith(",\"inputs\":[", StringComparison.Ordinal);
     }
 
     // A report starts with the heading VaultReport writes. A file that cannot be read counts as no report.

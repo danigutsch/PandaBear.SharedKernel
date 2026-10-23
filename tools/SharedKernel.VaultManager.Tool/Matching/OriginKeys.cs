@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using PandaBear.VaultManager.Tool.Model;
+using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Matching;
 
@@ -85,9 +86,11 @@ internal static class OriginKeys
         return string.IsNullOrEmpty(origin.OriginalId) ? prefix + "content:" + ContentHash(item) : prefix + origin.OriginalId;
     }
 
+    // The host is read from the masked address: ItemNormalizer keeps an address whole when its scheme is not http or https,
+    // user info and query included, and a key that hashes a credential would let a reader confirm a guessed one.
     private static string ContentHash(VaultItem item)
     {
-        string? firstHost = item.Login?.Uris.Select(uri => ItemNormalizer.Host(uri.Value)).FirstOrDefault(host => host is not null);
+        string? firstHost = item.Login?.Uris.Select(uri => ItemNormalizer.Host(ShownValues.MaskUri(uri.Value))).FirstOrDefault(host => host is not null);
         string content = string.Join(
             '\n',
             ((int)item.Type).ToString(CultureInfo.InvariantCulture),

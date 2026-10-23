@@ -23,7 +23,8 @@ Anything marked unverified could not be confirmed in those sources.
 - Vaultwarden adds every imported item as a new item, so the merged export goes into an empty vault.
 - Reports and the decisions file hold no secret values. They do hold item names, folder names, attachment file
   names, and origin keys, and they can name the websites of your passkeys. An origin key holds the record or item
-  ID of your export, or, for an item without one, such as a CSV row, a hash of its type, title, and first host.
+  ID of your export, or, for an item without one, such as a CSV row, a hash of its type, title, and the host of its
+  first website address, with any user name and password in that address left out.
 - The tool reads passwords only from a terminal prompt that does not echo, never from arguments or environment
   variables. Wait for the prompt before you type a password: the terminal shows what you type earlier. Without a
   terminal, a command that needs a password stops with exit code 3 before it does any work and names the input or
@@ -602,7 +603,7 @@ that holds no secret value; you run the two commands that read and write the vau
    ```
 
    The catalog holds names, folders, favorites, website addresses with their user info, query, and fragment masked,
-   text custom fields without secret findings, user names, and attachment names. It withholds every note until you
+   text custom fields without secret findings, user names without secret findings, and attachment names. It withholds every note until you
    decide on it, and `notes.json` lists a `Pending` entry for each item with notes and the number of secret findings
    in them.
 2. Decide which notes the catalog may show. Open the review of the same file and press `n` (show), `p` (keep
@@ -650,7 +651,7 @@ the file and run merge again; until then, no choice in the file takes effect.
 
 An origin key names one input item as `<provider>|<input file name>|<ID in that export>`, for example
 `keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA`. Items without an ID, such as CSV rows, get a key from a hash of their
-type, title, and first host instead. A group key names a set of matched items. After a merge that
+type, title, and the host of their first website address instead. A group key names a set of matched items. After a merge that
 needs two decisions, the file holds:
 
 ```json

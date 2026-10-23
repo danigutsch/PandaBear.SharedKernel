@@ -52,6 +52,87 @@ internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
         return new PasswordHealthReport(issues);
     }
 
+    /// <summary>
+    /// Checks the password of every member of every match group, for a reader who decides between the members of a group
+    /// without seeing their passwords. A password is weak as <see cref="Analyze"/> reports it, and reused when a member of
+    /// another group, on other hosts, has it too: the members of one group are one account, so they never reuse each
+    /// other's password. Members are grouped once per password, and nothing is persisted.
+    /// </summary>
+    /// <param name="groups">Members of each match group.</param>
+    /// <returns>For each group, the check of each member in member order. A member without a password gets no flag.</returns>
+    public static IReadOnlyList<IReadOnlyList<PasswordCheck>> CheckMembers(IReadOnlyList<IReadOnlyList<VaultItem>> groups)
+    {
+        ArgumentNullException.ThrowIfNull(groups);
+
+        var entries = new List<(int Group, int Member, string Password, string Hosts)>();
+        for (int group = 0; group < groups.Count; group++)
+        {
+            for (int member = 0; member < groups[group].Count; member++)
+            {
+                VaultItem item = groups[group][member];
+                if (!ItemNormalizer.IsAbsent(item.Login?.Password))
+                {
+                    entries.Add((group, member, item.Login!.Password!, HostKey(item)));
+                }
+            }
+        }
+
+        var reused = new HashSet<(int Group, int Member)>();
+        foreach (IGrouping<string, (int Group, int Member, string Password, string Hosts)> samePassword in entries.GroupBy(entry => entry.Password, StringComparer.Ordinal))
+        {
+            // An entry is reused when another hosts key holds a member of another group. Hosts keys whose members all belong
+            // to one group are counted per group, so each entry is checked without comparing it with every other entry.
+            Dictionary<string, HashSet<int>> groupsByHosts = [];
+            foreach (var entry in samePassword)
+            {
+                if (!groupsByHosts.TryGetValue(entry.Hosts, out HashSet<int>? groupSet))
+                {
+                    groupSet = [];
+                    groupsByHosts.Add(entry.Hosts, groupSet);
+                }
+
+                groupSet.Add(entry.Group);
+            }
+
+            Dictionary<int, int> singleGroupHosts = groupsByHosts.Values.Where(groupSet => groupSet.Count == 1).CountBy(groupSet => groupSet.First()).ToDictionary();
+            foreach (var entry in samePassword)
+            {
+                HashSet<int> own = groupsByHosts[entry.Hosts];
+                int otherHosts = groupsByHosts.Count - 1;
+                int otherHostsOfOwnGroupOnly = singleGroupHosts.GetValueOrDefault(entry.Group) - (own.Count == 1 ? 1 : 0);
+                if (otherHosts > otherHostsOfOwnGroupOnly)
+                {
+                    reused.Add((entry.Group, entry.Member));
+                }
+            }
+        }
+
+        var checks = new List<IReadOnlyList<PasswordCheck>>(groups.Count);
+        for (int group = 0; group < groups.Count; group++)
+        {
+            IReadOnlyList<VaultItem> members = groups[group];
+            var memberChecks = new PasswordCheck[members.Count];
+            for (int member = 0; member < members.Count; member++)
+            {
+                string? password = members[member].Login?.Password;
+                if (ItemNormalizer.IsAbsent(password))
+                {
+                    memberChecks[member] = new PasswordCheck(Weak: false, Reused: false, InOtherHistory: false);
+                    continue;
+                }
+
+                bool inOtherHistory = members
+                    .Where((_, other) => other != member)
+                    .Any(other => other.PasswordHistory.Any(entry => string.Equals(entry.Password, password, StringComparison.Ordinal)));
+                memberChecks[member] = new PasswordCheck(IsWeak(members[member], password!), reused.Contains((group, member)), inOtherHistory);
+            }
+
+            checks.Add(memberChecks);
+        }
+
+        return checks;
+    }
+
     // Groups the items once per password. An item shares its password with the items of its group on other hosts: their
     // number is the group size minus the items on its own hosts, and their first names are found once per hosts key and
     // shared by the items with that key. The work therefore grows with the number of items, not with its square.

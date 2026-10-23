@@ -7,15 +7,12 @@ namespace PandaBear.VaultManager.Tool.Catalog;
 
 /// <summary>
 /// Makes the catalog of a vault. A catalog holds names, folders, favorites, website addresses with their credential
-/// parts masked, the notes the user shared, text custom fields without secret findings, user names without secret
-/// findings, and attachment names. It never holds passwords, TOTPs, passkeys, password history, hidden fields, card,
-/// identity, or SSH key values, withheld notes, or any text that holds a secret finding.
+/// parts masked, the notes the user shared as they are, text custom fields without secret findings, user names without
+/// secret findings, and attachment names. It never holds passwords, TOTPs, passkeys, password history, hidden fields, card,
+/// identity, or SSH key values, withheld notes, or user names and custom fields that hold a secret finding.
 /// </summary>
 internal static class CatalogBuilder
 {
-    /// <summary>Text that replaces the masked parts of a website address.</summary>
-    public const string Mask = "***";
-
     /// <summary>Makes the catalog of a vault read from one file.</summary>
     /// <param name="vault">Items read from the file.</param>
     /// <param name="sha256">SHA-256 of the file, from <see cref="CatalogFile.Hash"/>.</param>
@@ -56,12 +53,12 @@ internal static class CatalogBuilder
             for (int index = 0; index < item.Fields.Count; index++)
             {
                 CustomField field = item.Fields[index];
-                if (IsAdditionalFolders(field))
+                if (ShownValues.IsAdditionalFolders(field))
                 {
                     continue;
                 }
 
-                if (IsShown(field, index, findings))
+                if (ShownValues.IsShown(field, index, findings))
                 {
                     fields.Add(new CatalogField(field.Name ?? string.Empty, field.Value ?? string.Empty));
                 }
@@ -124,34 +121,6 @@ internal static class CatalogBuilder
             : (decision, null);
     }
 
-    /// <summary>
-    /// Whether the catalog shows a custom field: a text field that is not the additional folders field and in whose name
-    /// and value no secret finding lies.
-    /// </summary>
-    /// <param name="field">Custom field.</param>
-    /// <param name="index">Position of the field in the item.</param>
-    /// <param name="findings">Secret findings of the item.</param>
-    /// <returns><see langword="true"/> when the field may be shown and edited.</returns>
-    public static bool IsShown(CustomField field, int index, IReadOnlyList<SecretFinding> findings)
-    {
-        ArgumentNullException.ThrowIfNull(field);
-        ArgumentNullException.ThrowIfNull(findings);
-
-        return field.Type == CustomFieldType.Text
-            && !IsAdditionalFolders(field)
-            && !findings.Any(finding => SecretLocation.TryParseField(finding.Location.FieldPath, out int inField, out _) && inField == index);
-    }
-
-    /// <summary>Whether a custom field is the additional folders field, which the catalog shows as a list of folders.</summary>
-    /// <param name="field">Custom field.</param>
-    /// <returns><see langword="true"/> for a text field named <see cref="AdditionalFolders.FieldName"/>.</returns>
-    public static bool IsAdditionalFolders(CustomField field)
-    {
-        ArgumentNullException.ThrowIfNull(field);
-
-        return field.Type == CustomFieldType.Text && string.Equals(field.Name, AdditionalFolders.FieldName, StringComparison.Ordinal);
-    }
-
     /// <summary>Converts a website address, masking it when it holds user info, a query, or a fragment.</summary>
     /// <param name="uri">Address.</param>
     /// <param name="index">Position of the address in the item.</param>
@@ -160,7 +129,7 @@ internal static class CatalogBuilder
     {
         ArgumentNullException.ThrowIfNull(uri);
 
-        string masked = UriMasking.Mask(uri.Value, Mask);
+        string masked = ShownValues.MaskUri(uri.Value);
         return string.Equals(masked, uri.Value, StringComparison.Ordinal)
             ? new CatalogUri(uri.Value, uri.Match)
             : new CatalogUri(Masked: masked, Index: index);
@@ -169,10 +138,9 @@ internal static class CatalogBuilder
     private static CatalogInfo Info(VaultItem item, IReadOnlyList<SecretFinding> findings, IReadOnlyList<string> protectedFields)
     {
         LoginData? login = item.Login;
-        bool usernameHasFinding = findings.Any(finding => string.Equals(finding.Location.FieldPath, SecretLocation.LoginUsername, StringComparison.Ordinal));
         return new CatalogInfo(
             item.Type,
-            usernameHasFinding ? null : login?.Username,
+            ShownValues.Username(item, findings),
             !string.IsNullOrEmpty(login?.Password),
             !string.IsNullOrEmpty(login?.Totp),
             login?.Fido2Credentials.Count ?? 0,

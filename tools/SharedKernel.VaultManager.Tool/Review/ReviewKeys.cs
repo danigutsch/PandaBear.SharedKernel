@@ -33,7 +33,7 @@ internal static class ReviewKeys
     public static ReviewKey Write { get; } = new(Key.W.WithCtrl, ReviewArea.Everywhere, "Write the merged vault once nothing needs a decision");
 
     /// <summary>Shares the notes of every item whose notes hold no finding.</summary>
-    public static ReviewKey ShareNotes { get; } = new(Key.F8, ReviewArea.Everywhere, "Show the notes of every item whose notes hold no finding in catalogs; asks first");
+    public static ReviewKey ShareNotes { get; } = new(Key.F8, ReviewArea.Everywhere, "Show the notes of every item whose notes hold no finding in catalogs and merge briefs; asks first");
 
     /// <summary>Quits.</summary>
     public static ReviewKey Quit { get; } = new(Key.Q.WithCtrl, ReviewArea.Everywhere, "Quit; asks first when decisions are not saved");
@@ -68,11 +68,11 @@ internal static class ReviewKeys
     /// <summary>Splits the selected member out of the group.</summary>
     public static ReviewKey Split { get; } = new(Key.S, ReviewArea.Fields, "Split the selected member out of the group");
 
-    /// <summary>Shows the selected member's notes in catalogs.</summary>
-    public static ReviewKey ShareMemberNotes { get; } = new(Key.N, ReviewArea.Fields, "Show the selected item's notes in catalogs");
+    /// <summary>Shows the selected member's notes in catalogs, and in merge briefs while they hold no finding.</summary>
+    public static ReviewKey ShareMemberNotes { get; } = new(Key.N, ReviewArea.Fields, "Show the selected item's notes in catalogs and merge briefs");
 
-    /// <summary>Keeps the selected member's notes out of catalogs.</summary>
-    public static ReviewKey PrivateMemberNotes { get; } = new(Key.P, ReviewArea.Fields, "Keep the selected item's notes out of catalogs");
+    /// <summary>Keeps the selected member's notes out of catalogs and merge briefs.</summary>
+    public static ReviewKey PrivateMemberNotes { get; } = new(Key.P, ReviewArea.Fields, "Keep the selected item's notes out of catalogs and merge briefs");
 
     /// <summary>Moves the selected member's notes into a hidden field when a catalog is applied.</summary>
     public static ReviewKey HideMemberNotes { get; } = new(Key.H, ReviewArea.Fields, "Move the selected item's notes into a hidden field when a catalog is applied");
