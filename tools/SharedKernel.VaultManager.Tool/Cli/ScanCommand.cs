@@ -85,8 +85,7 @@ internal static class ScanCommand
         PasswordIssueKind.Reused => "Reused on other sites",
         PasswordIssueKind.TooShort => string.Create(CultureInfo.InvariantCulture, $"Shorter than {PasswordHealthReport.MinimumLength} characters"),
         PasswordIssueKind.SingleCharacterClass => "Only one kind of character",
-        PasswordIssueKind.EqualsUsername => "Same as the user name",
-        PasswordIssueKind.EqualsItemName => "Same as the item name",
+        PasswordIssueKind.EasilyGuessed => "Easily guessed",
         _ => kind.ToString(),
     };
 }
