@@ -16,30 +16,39 @@ public sealed class LargeTextScanTests
     [Fact(Timeout = LargeTexts.ScanBudget)]
     public async Task ScanText_finds_every_question_and_answer_pair_of_a_large_text()
     {
+        // Arrange
         var (text, answers) = LargeTexts.Questions(TextExtractor.MaxBytes);
 
+        // Act
         var findings = await Task.Run(() => SecretScanner.Default.ScanText(text, FieldPath, "notes.txt"), TestContext.Current.CancellationToken);
 
+        // Assert
         ScanCoverage.ShouldReportEverySecretOrFlagItForReview(findings, answers, SecretKind.SecurityQuestion);
     }
 
     [Fact(Timeout = LargeTexts.ScanBudget)]
     public async Task ScanText_finds_every_access_key_ID_of_a_large_log()
     {
+        // Arrange
         var (text, keys) = LargeTexts.AccessKeyLog(TextExtractor.MaxBytes);
 
+        // Act
         var findings = await Task.Run(() => SecretScanner.Default.ScanText(text, FieldPath, "access.log"), TestContext.Current.CancellationToken);
 
+        // Assert
         ScanCoverage.ShouldReportEverySecretOrFlagItForReview(findings, keys, SecretKind.AccessKeyId);
     }
 
     [Fact(Timeout = LargeTexts.ScanBudget)]
     public async Task ScanText_finds_questions_separated_by_long_runs_of_blank_lines()
     {
+        // Arrange
         var (text, answers) = LargeTexts.QuestionsBetweenBlankLines(TextExtractor.MaxBytes, pairs: 20);
 
+        // Act
         var findings = await Task.Run(() => SecretScanner.Default.ScanText(text, FieldPath, "notes.txt"), TestContext.Current.CancellationToken);
 
+        // Assert
         ScanCoverage.ShouldReportEverySecretOrFlagItForReview(findings, answers, SecretKind.SecurityQuestion);
     }
 }

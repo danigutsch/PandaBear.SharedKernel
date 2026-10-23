@@ -9,8 +9,10 @@ public sealed class KeeperCsvReaderTests
     [Fact]
     public void Read_commander_login_row_maps_typed_pairs_folders_and_quoted_notes()
     {
+        // Act
         var result = KeeperCsvReader.Read(Fixture.Read("keeper/commander.csv"), "commander.csv");
 
+        // Assert
         var item = result.Export.Items.ShouldHaveSingleItem(item => item.Name == "Example login");
         item.Type.ShouldBe(VaultItemType.Login);
         item.Origin.ShouldBe(new ItemOrigin("keeper", "commander.csv", "rec-login", null));
@@ -33,8 +35,10 @@ public sealed class KeeperCsvReaderTests
     [Fact]
     public void Read_commander_card_and_passport_rows_fill_typed_slots()
     {
+        // Act
         var items = KeeperCsvReader.Read(Fixture.Read("keeper/commander.csv"), "commander.csv").Export.Items;
 
+        // Assert
         var card = items.ShouldHaveSingleItem(item => item.Name == "Example card");
         card.Card.ShouldBe(new CardData
         {
@@ -54,8 +58,10 @@ public sealed class KeeperCsvReaderTests
     [Fact]
     public void Read_web_rows_map_english_labels_and_combined_values()
     {
+        // Act
         var items = KeeperCsvReader.Read(Fixture.Read("keeper/web.csv"), "web.csv").Export.Items;
 
+        // Assert
         var login = items.ShouldHaveSingleItem(item => item.Name == "Web login");
         login.Origin.ShouldBe(new ItemOrigin("keeper", "web.csv", null, null));
         login.FolderPath.ShouldBe("Personal");
@@ -74,16 +80,20 @@ public sealed class KeeperCsvReaderTests
     [Fact]
     public void Read_warns_that_csv_loses_structure_and_recommends_JSON()
     {
+        // Act
         var result = KeeperCsvReader.Read(Fixture.Read("keeper/web.csv"), "web.csv");
 
+        // Assert
         result.Warnings.ShouldContain(warning => warning.Contains("JSON", StringComparison.Ordinal));
     }
 
     [Fact]
     public void Read_short_rows_are_skipped_with_line_number_warning_and_no_value()
     {
+        // Act
         var result = KeeperCsvReader.Read("folder,secret-value\n", "short.csv");
 
+        // Assert
         result.Export.Items.ShouldBeEmpty();
         result.Warnings.ShouldContain(warning => warning.Contains("line 1", StringComparison.Ordinal));
         result.Warnings.ShouldAllSatisfy(warning => warning.ShouldNotContain("secret-value", StringComparison.Ordinal));
@@ -92,8 +102,10 @@ public sealed class KeeperCsvReaderTests
     [Fact]
     public void Read_unterminated_quote_throws_invalid_data()
     {
+        // Arrange
         var action = () => KeeperCsvReader.Read("a,b,c,d,e,\"open", "bad.csv");
 
+        // Act, Assert
         action.ShouldThrow<InvalidDataException>();
     }
 }
