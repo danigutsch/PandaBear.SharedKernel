@@ -23,7 +23,7 @@ public sealed class WorkflowContractTests
         quality.ShouldContain("if: needs.selection.outputs.candidate_required == 'true'\n        run: dotnet format", StringComparison.Ordinal);
         quality.ShouldContain("if: needs.selection.outputs.candidate_required == 'false'\n        uses: ./.github/actions/setup-dotnet-tool", StringComparison.Ordinal);
         quality.ShouldContain("project: tools/SharedKernel.Documentation.Tool", StringComparison.Ordinal);
-        quality.ShouldContain("-- generate --config docs/architecture/generated-diagrams.json --check", StringComparison.Ordinal);
+        quality.ShouldContain("-- verify --config docs/architecture/generated-diagrams.json\n", StringComparison.Ordinal);
     }
 
     [Theory]
@@ -32,7 +32,7 @@ public sealed class WorkflowContractTests
     [InlineData("tools/SharedKernel.Versioning.Tool", "calculate-release")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "create-candidate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "consume-candidate")]
-    [InlineData("tools/SharedKernel.Documentation.Tool", "generate")]
+    [InlineData("tools/SharedKernel.Documentation.Tool", "verify")]
     public void Active_ci_delegates_repository_operations_to_existing_dotnet_tools(string project, string command)
     {
         // Arrange

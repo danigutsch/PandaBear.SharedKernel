@@ -2,6 +2,6 @@ namespace PandaBear.Documentation.Tool;
 
 internal static class Program
 {
-    public static Task<int> Main(string[] args) =>
-        DocumentationToolApplication.Run(args, Console.Out, Console.Error, Environment.CurrentDirectory);
+    public static int Main(string[] args) =>
+        DocumentationCommandLine.Create(Environment.CurrentDirectory).Parse(args).Invoke();
 }

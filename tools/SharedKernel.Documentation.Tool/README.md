@@ -4,31 +4,46 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Local .NET tool for generated documentation checks and refreshes.
+.NET tool that refreshes generated Markdown blocks, detects stale blocks, and checks documented facts
+against source files.
 
 ## Usage
 
+Run from the repository root: the configuration path, and every path inside the configuration, resolve
+against the current directory.
+
 ```text
-dotnet run --project tools/SharedKernel.Documentation.Tool -- generate --config docs/architecture/generated-diagrams.json
-dotnet run --project tools/SharedKernel.Documentation.Tool -- generate --config docs/architecture/generated-diagrams.json --check
+sharedkernel-docs generate --config <path>
+sharedkernel-docs verify --config <path>
+sharedkernel-docs check --config <path>
 ```
 
-The standalone repository invokes the .NET command directly; generated configuration belongs to this repository. Application-only conformance rules remain consumer-owned.
+| Command | Behavior |
+| --- | --- |
+| `generate` | Writes the generated Markdown blocks declared by a generator configuration and lists the changed files. |
+| `verify` | Writes nothing. Lists stale files on standard error when any block differs from its generated content. |
+| `check` | Writes nothing. Validates marked documentation facts against the sources a conformance configuration names. |
 
-## Command behavior
+`--config` is required. Add `--help` to any command to describe its options.
 
-- `generate` refreshes all configured generated Markdown blocks.
-- `--check` detects drift and exits non-zero without writing files.
-- `--config` points to the repository-owned generator config file.
+## Limits and safety
+
 - Every block declares one target Markdown file relative to the configured `docsPath`.
 - Missing, duplicate, reversed, split, or misplaced generated markers fail before any file is written.
 - Rooted targets, symbolic-link or junction paths, and generated marker text are rejected.
-- `check` validates machine-readable documentation facts against the configured source files without
-  writing documents.
+- `generate` replaces each changed file atomically.
 
-The tool is a thin CLI over `src/SharedKernel/SharedKernel.Documentation`; it contains no parsing or
-host-specific rules. Repository-specific system maps, labels, source paths, and
-conformance checks belong in config.
+The tool is a thin command line over `PandaBear.SharedKernel.Documentation`. Repository-specific system
+maps, labels, source paths, and conformance checks belong in configuration.
+
+## Exit codes
+
+| Code | Meaning |
+| --- | --- |
+| 0 | Documentation was refreshed or is current, or every conformance check passed. |
+| 1 | `verify` found stale documentation, generation or a conformance check failed, or the command line is invalid. |
+
+Results go to standard output. Failures, stale-file lists, and command-line errors go to standard error.
 
 ## Package identity and availability
 
