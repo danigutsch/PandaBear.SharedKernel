@@ -4,22 +4,60 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Reusable Playwright MCP browser automation tool.
+Runs the pinned [Playwright MCP](https://github.com/microsoft/playwright-mcp) container image as a local stdio MCP server
+through Docker or rootless Podman.
+
+## Prerequisites
+
+Docker whose current context uses a local endpoint, or rootless Podman, running Linux containers.
+
+## Installation
+
+Install a validated candidate from a trusted private feed:
+
+```text
+dotnet tool install PandaBear.SharedKernel.PlaywrightMcp.Tool --tool-path .tools --version <validated-candidate-version> --add-source <private-candidate-feed>
+```
 
 ## Usage
 
-Install from a trusted private candidate feed using `dotnet tool install PandaBear.SharedKernel.PlaywrightMcp.Tool --tool-path .tools --version <validated-candidate-version> --add-source <private-candidate-feed>`. Run `sharedkernel-playwright-mcp prepare` explicitly to pull the pinned container image, then configure the MCP client to launch `sharedkernel-playwright-mcp`. Docker or Podman must be available locally. Set `PLAYWRIGHT_MCP_ENGINE=docker` or `podman` when both exist. Network access defaults off; `PLAYWRIGHT_MCP_NETWORK_ACCESS=1` enables it deliberately. Image responses default to `omit`; `PLAYWRIGHT_MCP_IMAGE_RESPONSES=allow` enables them. Remote engine overrides are rejected. `clean` removes the prepared image; inspect other local uses before running it.
-
-## Run
-
-After installing the explicitly selected private candidate and configuring the local engine:
-
 ```text
-sharedkernel-playwright-mcp prepare
+sharedkernel-playwright-mcp prepare    # pull the pinned image
+sharedkernel-playwright-mcp serve      # run the stdio MCP server
+sharedkernel-playwright-mcp clean      # remove the pinned image
+sharedkernel-playwright-mcp --help
 sharedkernel-playwright-mcp --version
 ```
 
-`prepare` downloads the pinned container image; normal execution uses `--pull=never`. Start the command without arguments from the MCP client for its stdio session.
+Run `prepare` first; `serve` starts the image with `--pull=never`. Configure the MCP client to start
+`sharedkernel-playwright-mcp serve`. `serve` writes only the MCP protocol to standard output and diagnostics to
+standard error. `clean` removes the image from the local engine cache; check other local uses before running it.
+
+Configuration comes from the environment:
+
+| Variable | Values |
+| --- | --- |
+| `PLAYWRIGHT_MCP_ENGINE` | `docker` or `podman`; required when both are installed. |
+| `PLAYWRIGHT_MCP_NETWORK_ACCESS` | `1` enables container networking; default `0`. |
+| `PLAYWRIGHT_MCP_IMAGE_RESPONSES` | `allow` sends images to the MCP client; default `omit`. |
+
+## Exit codes
+
+| Code | Meaning |
+| --- | --- |
+| `0` | Success. |
+| `1` | Invalid command line, failed engine check, runtime or container cleanup failure, or cancellation. |
+| `2` | Invalid configuration: unsupported environment value, missing or ambiguous engine, or a remote engine override. |
+| `130`, `143` | Ctrl+C or SIGTERM, and container cleanup did not finish within 20 seconds. |
+| Other | Exit code of the container engine or the MCP server. |
+
+## Security
+
+- Remote engine overrides are rejected: `DOCKER_HOST` and `DOCKER_CONTEXT` for Docker, `CONTAINER_HOST` and
+  `CONTAINER_CONNECTION` for Podman. The current Docker context must use a local socket or pipe, and Podman must run
+  rootless.
+- Command-line arguments never reach the container. Networking and image responses stay off unless enabled.
+- Ctrl+C or SIGTERM stops the server and force-removes its container before the tool exits.
 
 ## Package identity and availability
 
