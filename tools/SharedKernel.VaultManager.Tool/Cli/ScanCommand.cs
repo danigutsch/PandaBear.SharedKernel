@@ -1,5 +1,4 @@
 using System.CommandLine;
-using System.Globalization;
 using PandaBear.VaultManager.Tool.Analysis;
 using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.IO;
@@ -83,9 +82,7 @@ internal static class ScanCommand
     private static string Describe(PasswordIssueKind kind) => kind switch
     {
         PasswordIssueKind.Reused => "Reused on other sites",
-        PasswordIssueKind.TooShort => string.Create(CultureInfo.InvariantCulture, $"Shorter than {PasswordHealthReport.MinimumLength} characters"),
-        PasswordIssueKind.SingleCharacterClass => "Only one kind of character",
-        PasswordIssueKind.EasilyGuessed => "Easily guessed",
+        PasswordIssueKind.Weak => "Weak",
         _ => kind.ToString(),
     };
 }

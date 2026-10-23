@@ -250,8 +250,9 @@ this merge. If you exported a zip, write `bitwarden.zip` wherever this guide wri
    sharedkernel-vault scan keeper.zip bitwarden.json --report scan-report.md
    ```
 
-   It prints a summary and writes the full report to `scan-report.md`. Merge runs the same scan, so this step is
-   optional.
+   It prints a summary and writes the full report to `scan-report.md`. A password shorter than 12 characters, of
+   one character class, or equal to the item's user name or name is listed once per item as weak, without the
+   check that failed. Merge runs the same scan, so this step is optional.
 
 ### When a zip breaks a limit
 

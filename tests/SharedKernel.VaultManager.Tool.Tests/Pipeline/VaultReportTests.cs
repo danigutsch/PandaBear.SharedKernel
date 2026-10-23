@@ -94,7 +94,7 @@ public sealed class VaultReportTests : IDisposable
             "| GitHub backup | RecoveryCodes |",
             "## Password health",
             "| Bank | reused on other sites | Mail |",
-            "| Bank | shorter than 12 characters |",
+            "| Bank | weak |",
             "## Attachments to upload",
             "| GitHub backup | github-recovery-codes.txt | keeper.zip, `files/file-codes` |",
             "## Warnings",
@@ -186,7 +186,7 @@ public sealed class VaultReportTests : IDisposable
     }
 
     [Fact]
-    public void Report_lists_a_password_equal_to_the_item_name_or_user_name_only_as_easily_guessed()
+    public void Report_lists_a_password_equal_to_the_item_name_or_user_name_only_as_weak()
     {
         string input = Write(directory, "bitwarden.json", BitwardenJson(
             BitwardenLogin("bw-router", "Router-Admin-Panel", "admin", "Router-Admin-Panel", "http://192.168.1.1"),
@@ -196,9 +196,24 @@ public sealed class VaultReportTests : IDisposable
         var result = pipeline.Run(new PipelineRequest([input]));
 
         string report = VaultReport.ToMarkdown(result);
-        report.ShouldContainInOrder("## Password health", "| Router-Admin-Panel | easily guessed |", "| Printer | easily guessed |");
+        report.ShouldContainInOrder("## Password health", "| Router-Admin-Panel | weak |", "| Printer | weak |");
         report.ShouldNotContain("same as the", StringComparison.Ordinal);
         result.PasswordHealth.Issues.ShouldAllSatisfy(issue => issue.ToString().ShouldNotContain("Equals", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Report_lists_a_short_single_class_password_equal_to_the_user_name_once_without_naming_the_reason()
+    {
+        string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-router", "Router", "admin", "admin", "http://192.168.1.1")));
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+
+        var result = pipeline.Run(new PipelineRequest([input]));
+
+        string report = VaultReport.ToMarkdown(result);
+        report.Split('\n').ShouldHaveSingleItem(line => line.StartsWith("| Router |", StringComparison.Ordinal)).ShouldBe("| Router | weak |  |");
+        string[] reasons = ["shorter than", "kind of character", "guessed", "same as", "user name"];
+        string health = report[report.IndexOf("## Password health", StringComparison.Ordinal)..report.IndexOf("## Attachments to upload", StringComparison.Ordinal)];
+        reasons.ShouldAllSatisfy(reason => health.ShouldNotContain(reason, StringComparison.Ordinal));
     }
 
     [Fact]

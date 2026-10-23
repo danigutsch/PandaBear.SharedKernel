@@ -90,7 +90,8 @@ standard output and shows no vault values. Items without a modification time can
 ### `scan <inputs>... [--report <file>]`
 
 Finds secrets stored outside their fields, such as TOTP seeds, recovery codes, or keys in notes, and weak or
-reused passwords. It writes a summary to standard output.
+reused passwords. A password shorter than 12 characters, of one character class, or equal to the item's user name or
+name is reported once per item as weak, without the check that failed. It writes a summary to standard output.
 
 | Option | Description |
 | --- | --- |

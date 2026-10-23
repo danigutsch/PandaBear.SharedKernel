@@ -126,7 +126,7 @@ internal static class VaultReport
         builder.Append("\n## Password health\n\n");
         if (health.Issues.Count == 0)
         {
-            builder.Append("No reused, short, or easily guessed passwords were found.\n");
+            builder.Append("No reused or weak passwords were found.\n");
             return;
         }
 
@@ -207,9 +207,7 @@ internal static class VaultReport
     private static string Describe(PasswordIssueKind kind) => kind switch
     {
         PasswordIssueKind.Reused => "reused on other sites",
-        PasswordIssueKind.TooShort => string.Create(CultureInfo.InvariantCulture, $"shorter than {PasswordHealthReport.MinimumLength} characters"),
-        PasswordIssueKind.SingleCharacterClass => "only one kind of character",
-        PasswordIssueKind.EasilyGuessed => "easily guessed",
+        PasswordIssueKind.Weak => "weak",
         _ => kind.ToString(),
     };
 

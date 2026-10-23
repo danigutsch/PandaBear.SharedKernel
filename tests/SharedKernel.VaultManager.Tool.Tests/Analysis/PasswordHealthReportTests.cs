@@ -27,9 +27,8 @@ public sealed class PasswordHealthReportTests
         var mailReuse = issues.ShouldHaveSingleItem(issue => issue.ItemName == "Mail" && issue.Kind == PasswordIssueKind.Reused);
         mailReuse.RelatedItemNames.ShouldBe(["Bank"]);
         issues.ShouldHaveSingleItem(issue => issue.ItemName == "Bank" && issue.Kind == PasswordIssueKind.Reused).RelatedItemNames.ShouldBe(["Mail", "Mail copy"]);
-        issues.ShouldContain(issue => issue.ItemName == "Router" && issue.Kind == PasswordIssueKind.EasilyGuessed);
-        issues.ShouldContain(issue => issue.ItemName == "Weak" && issue.Kind == PasswordIssueKind.TooShort);
-        issues.ShouldContain(issue => issue.ItemName == "Weak" && issue.Kind == PasswordIssueKind.SingleCharacterClass);
+        issues.ShouldHaveSingleItem(issue => issue.ItemName == "Router").Kind.ShouldBe(PasswordIssueKind.Weak);
+        issues.ShouldHaveSingleItem(issue => issue.ItemName == "Weak").Kind.ShouldBe(PasswordIssueKind.Weak);
         issues.ShouldNotContain(issue => issue.ItemName == "Strong");
         issues.ShouldAllSatisfy(issue => issue.ToString().ShouldNotContain(Reused, StringComparison.Ordinal));
     }
@@ -82,7 +81,7 @@ public sealed class PasswordHealthReportTests
     }
 
     [Fact]
-    public void Password_health_reports_a_password_equal_to_the_item_name_or_user_name_once_as_easily_guessed()
+    public void Password_health_reports_a_password_equal_to_the_item_name_or_user_name_once_as_weak()
     {
         VaultItem[] items =
         [
@@ -95,9 +94,23 @@ public sealed class PasswordHealthReportTests
 
         issues.Select(issue => (issue.ItemName, issue.Kind)).ShouldBe(
         [
-            ("Router-Admin-Panel", PasswordIssueKind.EasilyGuessed),
-            ("Printer", PasswordIssueKind.EasilyGuessed),
-            ("Camera-Admin-Panel", PasswordIssueKind.EasilyGuessed),
+            ("Router-Admin-Panel", PasswordIssueKind.Weak),
+            ("Printer", PasswordIssueKind.Weak),
+            ("Camera-Admin-Panel", PasswordIssueKind.Weak),
         ]);
+    }
+
+    [Fact]
+    public void Password_health_reports_a_short_single_class_password_equal_to_the_user_name_as_one_weak_issue()
+    {
+        VaultItem[] items = [Item("Router", "admin", "admin", "http://192.168.1.1")];
+
+        var issues = PasswordHealthReport.Analyze(new VaultExport(items)).Issues;
+
+        var issue = issues.ShouldHaveSingleItem();
+        issue.ItemName.ShouldBe("Router");
+        issue.Kind.ShouldBe(PasswordIssueKind.Weak);
+        issue.RelatedItemNames.ShouldBeEmpty();
+        issue.RelatedItemCount.ShouldBe(0);
     }
 }

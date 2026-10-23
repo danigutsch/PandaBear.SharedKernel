@@ -7,7 +7,7 @@ namespace PandaBear.VaultManager.Tool.Analysis;
 /// <param name="Issues">Issues in item order.</param>
 internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
 {
-    /// <summary>Minimum password length that is not reported as too short.</summary>
+    /// <summary>Minimum password length that is not reported as weak.</summary>
     public const int MinimumLength = 12;
 
     /// <summary>
@@ -17,10 +17,10 @@ internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
     public const int MaxRelatedItemNames = 3;
 
     /// <summary>
-    /// Reports reuse of one password on items with different normalized hosts, passwords shorter than
-    /// <see cref="MinimumLength"/>, passwords of a single character class, and easily guessed passwords: those equal to the
-    /// user name or item name, reported once per item without saying which. Reuse is found by grouping the items once per
-    /// password in memory; nothing is persisted.
+    /// Reports reuse of one password on items with different normalized hosts, and weak passwords: those shorter than
+    /// <see cref="MinimumLength"/>, of a single character class, or equal to the user name or item name. A weak password
+    /// is reported once per item without saying which check failed. Reuse is found by grouping the items once per password
+    /// in memory; nothing is persisted.
     /// </summary>
     /// <param name="export">Vault to analyze.</param>
     /// <returns>The report.</returns>
@@ -43,21 +43,9 @@ internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
                 issues.Add(reuse);
             }
 
-            if (password.Length < MinimumLength)
+            if (IsWeak(item, password))
             {
-                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.TooShort, [], 0));
-            }
-
-            if (CharacterClasses(password) == 1)
-            {
-                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.SingleCharacterClass, [], 0));
-            }
-
-            string trimmed = password.Trim();
-            if (string.Equals(trimmed, item.Login!.Username?.Trim(), StringComparison.OrdinalIgnoreCase)
-                || string.Equals(trimmed, item.Name.Trim(), StringComparison.OrdinalIgnoreCase))
-            {
-                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.EasilyGuessed, [], 0));
+                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.Weak, [], 0));
             }
         }
 
@@ -100,6 +88,15 @@ internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
         }
 
         return issues;
+    }
+
+    private static bool IsWeak(VaultItem item, string password)
+    {
+        string trimmed = password.Trim();
+        return password.Length < MinimumLength
+            || CharacterClasses(password) == 1
+            || string.Equals(trimmed, item.Login!.Username?.Trim(), StringComparison.OrdinalIgnoreCase)
+            || string.Equals(trimmed, item.Name.Trim(), StringComparison.OrdinalIgnoreCase);
     }
 
     private static string HostKey(VaultItem item) => string.Join(

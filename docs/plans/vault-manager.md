@@ -103,10 +103,11 @@ Read, map, scan, apply accepted placements, match, merge, analyze, write.
 4. **Match.** The matcher groups items by normalized host plus username, then by normalized title plus type, and
    suggests weaker matches without applying them.
 5. **Merge.** The merger works one field at a time (rules below).
-6. **Analyze.** The tool reports reused, short, or trivially guessable passwords. It groups the items once per
-   password, and each reuse issue names at most three other items on other hosts and counts the rest, such as
-   `Mail, Bank, Shop, and 2 more`, so the analysis and the password health table grow linearly with the vault. The
-   report holds no password, hash, or length.
+6. **Analyze.** The tool reports reused and weak passwords. A password shorter than 12 characters, of one character
+   class, or equal to the item's user name or name is reported once per item as weak, without the check that failed,
+   like Bitwarden's weak-password report. The tool groups the items once per password, and each reuse issue names at
+   most three other items on other hosts and counts the rest, such as `Mail, Bank, Shop, and 2 more`, so the analysis
+   and the password health table grow linearly with the vault. The report holds no password, hash, length, or reason.
 7. **Write.** By default the output is a Bitwarden password-protected export (PBKDF2-SHA256, 600,000 iterations).
    A plaintext export requires an explicit flag. The output file is created with mode 0600 and is never
    overwritten without `--force`, and it may not be one of the inputs. The vault is not written while a field needs a

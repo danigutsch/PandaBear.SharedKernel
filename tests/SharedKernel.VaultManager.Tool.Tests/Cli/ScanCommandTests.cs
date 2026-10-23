@@ -28,9 +28,8 @@ public sealed class ScanCommandTests : IDisposable
               Proposed: 1
               Needs review: 0
             Items with findings: 1
-            Password issues: 2
-              Shorter than 12 characters: 1
-              Only one kind of character: 1
+            Password issues: 1
+              Weak: 1
             Attachments to upload after the import: 0
 
             """.ReplaceLineEndings("\n"), StringComparer.Ordinal);

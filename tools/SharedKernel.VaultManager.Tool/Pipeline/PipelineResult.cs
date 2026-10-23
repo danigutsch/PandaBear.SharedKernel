@@ -37,7 +37,7 @@ internal sealed record PipelineResult
     /// <summary>Problems placement reported for accepted findings.</summary>
     public required IReadOnlyList<PlacementProblem> PlacementProblems { get; init; }
 
-    /// <summary>Reused, short, or easily guessed passwords of the merged vault.</summary>
+    /// <summary>Reused or weak passwords of the merged vault.</summary>
     public required PasswordHealthReport PasswordHealth { get; init; }
 
     /// <summary>
