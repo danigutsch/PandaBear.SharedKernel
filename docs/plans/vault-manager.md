@@ -85,16 +85,25 @@ Read, map, scan, apply accepted placements, match, merge, analyze, write.
    The reader detects the format by content rather than file extension. Readers return items and warnings.
 2. **Map.** Every source maps to one item model shaped like a Bitwarden export item, plus provenance (provider,
    file, original ID, modification time). Every source value lands in a typed slot or a custom field. Hidden
-   fields hold secrets.
-3. **Scan and place.** Secret detection runs on each source item before matching. That way a TOTP seed found in
-   Keeper notes is already the login's TOTP when it is compared with Bitwarden.
+   fields hold secrets. Each item gets its origin key as read, and decisions name the item by that key even after
+   placement changes the item. An SSH key item without a public key or fingerprint is completed from the first
+   PEM block of its private key; other text stored with the key, such as a second key, moves to a hidden field,
+   where secret detection finds it. If the key cannot be converted, for example because it is encrypted, the item
+   becomes a secure note that keeps the key in a hidden field.
+3. **Scan and place.** Secret detection runs on each source item, and on text attachments inside Keeper Commander
+   and Bitwarden zips, before matching. That way a TOTP seed found in Keeper notes is already the login's TOTP
+   when it is compared with Bitwarden. Items that placement creates, such as SSH key items, are named after their
+   source item, with a number when one source item creates several, and their origin key is built from the source
+   item and finding. They match and merge like any other item, and items created from one source item never match
+   each other by title.
 4. **Match.** The matcher groups items by normalized host plus username, then by normalized title plus type, and
    suggests weaker matches without applying them.
 5. **Merge.** The merger works one field at a time (rules below).
 6. **Analyze.** The tool reports reused, short, or trivially guessable passwords.
 7. **Write.** By default the output is a Bitwarden password-protected export (PBKDF2-SHA256, 600,000 iterations).
    A plaintext export requires an explicit flag. The output file is created with mode 0600 and is never
-   overwritten without `--force`.
+   overwritten without `--force`, and it may not be one of the inputs. Nothing is written while a field needs a
+   decision or while the writer reports a value that Bitwarden would reject.
 
 ## Merge rules
 
@@ -115,7 +124,9 @@ has a TOTP. The result has the new password, the Keeper TOTP, and the old passwo
    this is how a user drops a value that was intentionally removed on one side.
 6. The newest member's folder, name, and type are used. The other members' values are recorded.
 
-The decisions file stores group keys, field paths, source identities, and choices. It never stores values.
+The decisions file stores group keys, field paths, source identities, and choices, plus finding identifiers that
+the user accepted or rejected, per item origin key. It never stores values. A pre-accepted finding is applied
+unless the file rejects it; another finding is applied only when the file accepts it.
 
 ## Secret detection and placement
 

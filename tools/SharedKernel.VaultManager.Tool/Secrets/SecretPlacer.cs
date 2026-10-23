@@ -189,14 +189,16 @@ internal static class SecretPlacer
             return AddField(state, finding, "Private key", value, CustomFieldType.Hidden);
         }
 
-        state.NewItems.Add(new VaultItem
-        {
-            Type = VaultItemType.SshKey,
-            Name = state.Source.Name + " SSH key",
-            FolderPath = state.Source.FolderPath,
-            SshKey = conversion.Key,
-            Origin = state.Source.Origin,
-        });
+        state.AddNewItem(
+            new VaultItem
+            {
+                Type = VaultItemType.SshKey,
+                Name = state.Source.Name + " SSH key",
+                FolderPath = state.Source.FolderPath,
+                SshKey = conversion.Key,
+                Origin = state.Source.Origin,
+            },
+            finding.Id);
         return true;
     }
 
@@ -209,14 +211,16 @@ internal static class SecretPlacer
             return false;
         }
 
-        state.NewItems.Add(new VaultItem
-        {
-            Type = VaultItemType.Card,
-            Name = state.Source.Name,
-            FolderPath = state.Source.FolderPath,
-            Card = new CardData { Number = digits, Brand = brand },
-            Origin = state.Source.Origin,
-        });
+        state.AddNewItem(
+            new VaultItem
+            {
+                Type = VaultItemType.Card,
+                Name = state.Source.Name,
+                FolderPath = state.Source.FolderPath,
+                Card = new CardData { Number = digits, Brand = brand },
+                Origin = state.Source.Origin,
+            },
+            finding.Id);
         return true;
     }
 

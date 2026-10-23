@@ -14,8 +14,22 @@ internal sealed record PemBlock(string Label, IReadOnlyList<string> Headers, str
     /// <returns><see langword="true"/> when a complete block was found.</returns>
     public static bool TryParse(string text, out PemBlock? block)
     {
+        return TryParse(text, out block, out _);
+    }
+
+    /// <summary>Parses the first PEM block in text and reports where it sits.</summary>
+    /// <param name="text">PEM text.</param>
+    /// <param name="block">Parsed block.</param>
+    /// <param name="extent">
+    /// Characters of <paramref name="text"/> from the first dash of the <c>BEGIN</c> line through the last dash of the
+    /// matching <c>END</c> line.
+    /// </param>
+    /// <returns><see langword="true"/> when a complete block was found.</returns>
+    public static bool TryParse(string text, out PemBlock? block, out Range extent)
+    {
         ArgumentNullException.ThrowIfNull(text);
         block = null;
+        extent = default;
         int begin = text.IndexOf(Dashes + "BEGIN ", StringComparison.Ordinal);
         if (begin < 0)
         {
@@ -53,6 +67,7 @@ internal sealed record PemBlock(string Label, IReadOnlyList<string> Headers, str
         }
 
         block = new PemBlock(label, headers, body.ToString());
+        extent = begin..(end + footer.Length);
         return true;
     }
 
