@@ -24,6 +24,7 @@ public sealed class CommandSecrecyTests : IDisposable
     [Fact]
     public async Task Command_output_reports_and_decisions_never_contain_vault_values()
     {
+        // Arrange
         string totpSecret = PipelineSecrets.TotpSecret(1100);
         string totp = PipelineSecrets.TotpUri(totpSecret);
         string[] notesCodes = PipelineSecrets.GitHubRecoveryCodes(1110);
@@ -47,6 +48,7 @@ public sealed class CommandSecrecyTests : IDisposable
         string[] mergeArgs = ["merge", zip, bitwarden, "--output", output, "--decisions", decisionsPath, "--report", mergeReport];
         var ct = TestContext.Current.CancellationToken;
 
+        // Act
         var inspect = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", zip, bitwarden], ct);
         var scan = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", zip, bitwarden, "--report", scanReport], ct);
         var pendingMerge = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), mergeArgs, ct);
@@ -55,6 +57,7 @@ public sealed class CommandSecrecyTests : IDisposable
         DecisionsFile.Write(decisionsPath, PendingAnswers.AcceptAll(DecisionsFile.Read(decisionsPath)));
         var merge = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), mergeArgs, ct);
 
+        // Assert
         pendingMerge.ExitCode.ShouldBe(2);
         merge.ExitCode.ShouldBe(0);
         pendingDecisions.ShouldContain("\"Pending\"", StringComparison.Ordinal);
@@ -76,6 +79,7 @@ public sealed class CommandSecrecyTests : IDisposable
     [Fact]
     public async Task Merge_brief_never_contains_secret_values()
     {
+        // Arrange
         const string HistoryPassword = "fixture-history-password";
         const string HiddenValue = "fixture-hidden-api-key";
         const string BitwardenNotes = "fixture unshared bitwarden notes";
@@ -136,8 +140,10 @@ public sealed class CommandSecrecyTests : IDisposable
             "--brief", briefPath, "--policy", "ask",
         ];
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(2);
         string json = await File.ReadAllTextAsync(briefPath, TestContext.Current.CancellationToken);
         var brief = BriefFile.Deserialize(json);

@@ -13,11 +13,14 @@ public sealed class InspectCommandTests : IDisposable
     [Fact]
     public async Task Inspect_reports_format_counts_folders_times_attachments_and_warnings_per_input()
     {
+        // Arrange
         string zip = CliInputs.KeeperZipWithFolderAndAttachments(directory);
         string bitwarden = CliInputs.BitwardenWithFolder(directory);
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", zip, bitwarden], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         run.Error.ShouldBeEmpty();
         run.Output.ShouldBe("""
@@ -56,10 +59,13 @@ public sealed class InspectCommandTests : IDisposable
     [Fact]
     public async Task Inspect_lists_declared_folders_that_hold_no_item()
     {
+        // Arrange
         string input = PipelineInputs.Write(directory, "bitwarden.json", """{"encrypted":false,"folders":[{"id":"f","name":"Archive/Old"}],"items":[]}""");
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", input], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         run.Output.ShouldContain("  Folders: 1\n    Archive/Old\n  Folders without items: 1\n", StringComparison.Ordinal);
     }
@@ -67,11 +73,14 @@ public sealed class InspectCommandTests : IDisposable
     [Fact]
     public async Task Inspect_asks_once_for_the_password_of_a_protected_input()
     {
+        // Arrange
         string input = CliInputs.ProtectedBitwarden(directory, FilePassword);
         var prompts = new TestPrompts(ExportPassword, FilePassword);
 
+        // Act
         var run = await CommandLineRun.Invoke(prompts.Environment(), ["inspect", input], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         run.Output.ShouldContain("Format: Bitwarden password-protected JSON", StringComparison.Ordinal);
         prompts.FilePasswordPrompts.ShouldBe(["Password for protected.json"]);
@@ -80,11 +89,14 @@ public sealed class InspectCommandTests : IDisposable
     [Fact]
     public async Task Inspect_reports_the_readable_inputs_and_exits_3_for_an_unreadable_one()
     {
+        // Arrange
         string bitwarden = CliInputs.BitwardenWithFolder(directory);
         string missing = Path.Combine(directory, "missing.json");
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", missing, bitwarden], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(3);
         run.Output.ShouldStartWith("bitwarden.json\n", StringComparison.Ordinal);
         run.Output.ShouldNotContain("missing.json", StringComparison.Ordinal);
@@ -94,10 +106,13 @@ public sealed class InspectCommandTests : IDisposable
     [Fact]
     public async Task Inspect_takes_an_argument_starting_with_at_as_a_file_name_and_shows_no_vault_values()
     {
+        // Arrange
         string export = CliInputs.BitwardenWithFolder(directory);
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", "@" + export], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(3);
         run.Output.ShouldBeEmpty();
         run.Error.ShouldContain("@" + export, StringComparison.Ordinal);
@@ -108,11 +123,14 @@ public sealed class InspectCommandTests : IDisposable
     [Fact]
     public async Task Inspect_replaces_control_characters_in_folder_names()
     {
+        // Arrange
         string folder = string.Concat("Work", (char)0x1B, "[2J", (char)0x9B, "31m", (char)0x7F, (char)0x07, "end");
         string bitwarden = CliInputs.BitwardenWithFolder(directory, folder);
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", bitwarden], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         run.Output.ShouldContain("\n    Work\uFFFD[2J\uFFFD31m\uFFFD\uFFFDend\n", StringComparison.Ordinal);
         char[] controls = [(char)0x1B, (char)0x9B, (char)0x7F, (char)0x07];
@@ -124,10 +142,13 @@ public sealed class InspectCommandTests : IDisposable
     [InlineData("restricted.json", """{"encrypted":true,"encKeyValidation_DO_NOT_EDIT":"2.x","data":"2.x"}""", "account-restricted")]
     public async Task Inspect_names_an_input_it_cannot_read(string name, string content, string reason)
     {
+        // Arrange
         string input = PipelineInputs.Write(directory, name, content);
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", input], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(3);
         run.Output.ShouldBeEmpty();
         run.Error.ShouldStartWith(name + ": ", StringComparison.Ordinal);

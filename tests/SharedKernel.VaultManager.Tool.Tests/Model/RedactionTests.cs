@@ -9,6 +9,7 @@ public sealed class RedactionTests
     [Fact]
     public void ToString_of_secret_bearing_records_never_contains_values()
     {
+        // Arrange
         var login = new LoginData
         {
             Username = "user",
@@ -30,6 +31,7 @@ public sealed class RedactionTests
             Origin = new ItemOrigin("test", "file.json", "id", null),
         };
 
+        // Act
         string[] printed =
         [
             item.ToString(),
@@ -42,6 +44,7 @@ public sealed class RedactionTests
             item.PasswordHistory[0].ToString(),
         ];
 
+        // Assert
         printed.ShouldAllSatisfy(text => text.ShouldNotContain(Secret, StringComparison.Ordinal));
         printed[0].ShouldContain("visible name", StringComparison.Ordinal);
     }
@@ -49,11 +52,14 @@ public sealed class RedactionTests
     [Fact]
     public void ToString_of_an_attachment_never_contains_its_content_hash()
     {
+        // Arrange
         const string Hash = "3f79bb7b435b05321651daefd374cdc681dc06faa65e374e38337b88ca046dea";
         var attachment = new AttachmentRef("codes.txt", 20, "files/file-1") { ContentHash = Hash };
 
+        // Act
         string printed = attachment.ToString();
 
+        // Assert
         printed.ShouldNotContain(Hash, StringComparison.Ordinal);
         printed.ShouldContain("codes.txt", StringComparison.Ordinal);
     }

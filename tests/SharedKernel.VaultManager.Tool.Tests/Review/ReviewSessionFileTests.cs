@@ -22,6 +22,7 @@ public sealed class ReviewSessionFileTests : IDisposable
     [Fact]
     public void Saved_decisions_read_back_as_the_same_decisions_with_pending_entries_for_what_is_left()
     {
+        // Arrange
         string decisionsPath = Path.Combine(directory, "decisions.json");
         VaultItem github = CodesAndPasswordInNotes("rec-github", PipelineSecrets.GitHubRecoveryCodes(600), NotesPassword);
         VaultItem work = BitwardenLogin("bw-github", "GitHub", "bob", BitwardenPassword, "https://github.com", PipelineInputs.BitwardenRevision);
@@ -38,10 +39,12 @@ public sealed class ReviewSessionFileTests : IDisposable
         session.DecideFinding(OriginKey(github), codesId, FindingDecision.Rejected);
         session.Link(OriginKey(github), OriginKey(work));
 
+        // Act
         session.Save();
         var saved = DecisionsFile.Read(decisionsPath);
         var reopened = Session(scanned, saved, new ReviewFiles(decisionsPath, null));
 
+        // Assert
         session.IsDirty.ShouldBeFalse();
         saved.Find(groupKey, FieldPaths.LoginPassword).ShouldBe(FieldChoice.Member(FieldPaths.LoginPassword, BitwardenKey));
         saved.FindFinding(OriginKey(github), codesId).ShouldBe(FindingDecision.Rejected);
@@ -58,6 +61,7 @@ public sealed class ReviewSessionFileTests : IDisposable
     [Fact]
     public void Saved_decisions_file_is_readable_only_by_its_owner_and_holds_no_values()
     {
+        // Arrange
         string decisionsPath = Path.Combine(directory, "decisions.json");
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(610);
         var session = Session(
@@ -65,8 +69,10 @@ public sealed class ReviewSessionFileTests : IDisposable
             files: new ReviewFiles(decisionsPath, null));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
 
+        // Act
         session.Save();
 
+        // Assert
         string text = File.ReadAllText(decisionsPath);
         string[] secrets = [KeeperPassword, BitwardenPassword, NotesPassword, .. codes];
         secrets.ShouldAllSatisfy(secret => text.ShouldNotContain(secret, StringComparison.Ordinal));
@@ -79,48 +85,63 @@ public sealed class ReviewSessionFileTests : IDisposable
     [Fact]
     public void Saving_without_a_decisions_file_is_refused()
     {
+        // Arrange
         var session = Session(ConflictingLogins(directory));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
-
         var action = () => session.Save();
 
-        action.ShouldThrow<InvalidOperationException>().Message.ShouldContain("--decisions", StringComparison.Ordinal);
+        // Act
+        var exception = action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldContain("--decisions", StringComparison.Ordinal);
         session.IsDirty.ShouldBeTrue();
     }
 
     [Fact]
     public void Nothing_is_written_while_a_field_needs_a_decision()
     {
+        // Arrange
         string output = Path.Combine(directory, "merged.json");
         var session = Session(ConflictingLogins(directory), files: new ReviewFiles(null, new PipelineOutput(output)));
-
         var action = () => session.Write(ExportPassword);
 
-        action.ShouldThrow<InvalidOperationException>().Message.ShouldContain("1 field(s) and 0 finding(s)", StringComparison.Ordinal);
+        // Act
+        var exception = action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldContain("1 field(s) and 0 finding(s)", StringComparison.Ordinal);
         File.Exists(output).ShouldBeFalse();
     }
 
     [Fact]
     public void Nothing_is_written_while_a_proposed_finding_needs_a_decision()
     {
+        // Arrange
         string output = Path.Combine(directory, "merged.json");
         var session = Session(Scan(directory, CodesAndPasswordInNotes("rec-github", PipelineSecrets.GitHubRecoveryCodes(620), NotesPassword)), files: new ReviewFiles(null, new PipelineOutput(output)));
-
         var action = () => session.Write(ExportPassword);
 
-        action.ShouldThrow<InvalidOperationException>().Message.ShouldContain("0 field(s) and 1 finding(s)", StringComparison.Ordinal);
+        // Act
+        var exception = action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldContain("0 field(s) and 1 finding(s)", StringComparison.Ordinal);
         File.Exists(output).ShouldBeFalse();
     }
 
     [Fact]
     public void Written_export_decrypts_with_the_entered_password_and_is_readable_only_by_its_owner()
     {
+        // Arrange
         string output = Path.Combine(directory, "merged.json");
         var session = Session(ConflictingLogins(directory), files: new ReviewFiles(null, new PipelineOutput(output)));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, BitwardenKey);
 
+        // Act
         session.Write(ExportPassword);
 
+        // Assert
         string json = PasswordProtectedExport.Decrypt(File.ReadAllText(output), ExportPassword);
         var item = BitwardenJsonReader.Read(json, "merged.json").Items.ShouldHaveSingleItem();
         item.Login.ShouldNotBeNull().Password.ShouldBe(BitwardenPassword);
@@ -134,12 +155,15 @@ public sealed class ReviewSessionFileTests : IDisposable
     [Fact]
     public void Plaintext_output_is_written_as_unencrypted_json_without_a_password()
     {
+        // Arrange
         string output = Path.Combine(directory, "merged.json");
         var session = Session(ConflictingLogins(directory), files: new ReviewFiles(null, new PipelineOutput(output, Plaintext: true)));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
 
+        // Act
         session.Write(null);
 
+        // Assert
         FormatDetector.Detect(output).ShouldBe(VaultFileFormat.BitwardenJson);
         BitwardenJsonReader.Read(File.ReadAllText(output), "merged.json").Items.ShouldHaveSingleItem().Login.ShouldNotBeNull().Password.ShouldBe(KeeperPassword);
     }
@@ -150,31 +174,39 @@ public sealed class ReviewSessionFileTests : IDisposable
     [InlineData("short-pass")]
     public void Encrypted_output_needs_a_long_enough_password(string? password)
     {
+        // Arrange
         string output = Path.Combine(directory, "merged.json");
         var session = Session(ConflictingLogins(directory), files: new ReviewFiles(null, new PipelineOutput(output)));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
-
         var action = () => session.Write(password);
 
-        action.ShouldThrow<ArgumentException>().Message.ShouldContain("at least 12 characters", StringComparison.Ordinal);
+        // Act
+        var exception = action.ShouldThrow<ArgumentException>();
+
+        // Assert
+        exception.Message.ShouldContain("at least 12 characters", StringComparison.Ordinal);
         File.Exists(output).ShouldBeFalse();
     }
 
     [Fact]
     public void Existing_output_is_kept_without_force_and_replaced_with_force()
     {
+        // Arrange
         string output = Path.Combine(directory, "merged.json");
         File.WriteAllText(output, "fixture existing output");
         var kept = Session(ConflictingLogins(directory), files: new ReviewFiles(null, new PipelineOutput(output, Plaintext: true)));
         kept.ChooseMember(GroupOf(kept, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
         var replaced = Session(ConflictingLogins(directory), files: new ReviewFiles(null, new PipelineOutput(output, Plaintext: true, Force: true)));
         replaced.ChooseMember(GroupOf(replaced, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
-
         var refused = () => kept.Write(null);
-        refused.ShouldThrow<IOException>().Message.ShouldContain("already exists", StringComparison.Ordinal);
+
+        // Act
+        var exception = refused.ShouldThrow<IOException>();
         string afterRefusal = File.ReadAllText(output);
         replaced.Write(null);
 
+        // Assert
+        exception.Message.ShouldContain("already exists", StringComparison.Ordinal);
         afterRefusal.ShouldBe("fixture existing output");
         FormatDetector.Detect(output).ShouldBe(VaultFileFormat.BitwardenJson);
     }
@@ -182,27 +214,35 @@ public sealed class ReviewSessionFileTests : IDisposable
     [Fact]
     public void Output_that_is_an_input_is_never_written()
     {
+        // Arrange
         var scanned = ConflictingLogins(directory);
         string input = scanned.InputPaths[0];
         File.WriteAllText(input, "fixture input");
         var session = Session(scanned, files: new ReviewFiles(null, new PipelineOutput(input, Plaintext: true, Force: true)));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
-
         var action = () => session.Write(null);
 
-        action.ShouldThrow<IOException>().Message.ShouldContain("is also an input file", StringComparison.Ordinal);
+        // Act
+        var exception = action.ShouldThrow<IOException>();
+
+        // Assert
+        exception.Message.ShouldContain("is also an input file", StringComparison.Ordinal);
         File.ReadAllText(input).ShouldBe("fixture input");
     }
 
     [Fact]
     public void Writing_without_an_output_file_is_refused()
     {
+        // Arrange
         var session = Session(ConflictingLogins(directory));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
-
         var action = () => session.Write(ExportPassword);
 
-        action.ShouldThrow<InvalidOperationException>().Message.ShouldContain("--output", StringComparison.Ordinal);
+        // Act
+        var exception = action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldContain("--output", StringComparison.Ordinal);
         Directory.GetFiles(directory).ShouldBeEmpty();
     }
 }
