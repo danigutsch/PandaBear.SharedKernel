@@ -113,4 +113,58 @@ public sealed class PasswordHealthReportTests
         issue.RelatedItemNames.ShouldBeEmpty();
         issue.RelatedItemCount.ShouldBe(0);
     }
+
+    [Fact]
+    public void Member_checks_count_reuse_only_by_members_of_other_groups_on_other_hosts()
+    {
+        VaultItem keeper = Item("Mail", "alice", Reused, "https://mail.example.com");
+        VaultItem bitwarden = Item("Mail (Bitwarden)", "alice", Reused, "https://mail.example.com");
+        VaultItem bank = Item("Bank", "alice", Reused, "https://bank.example.org");
+        VaultItem sameHost = Item("Mail alias", "bob", "Other-Strong-Password-7", "https://mail.example.com");
+        VaultItem strong = Item("Strong", "bob", "Unique-Strong-Password-9", "https://strong.example.com");
+
+        var checks = PasswordHealthReport.CheckMembers([[keeper, bitwarden], [bank], [sameHost], [strong]]);
+
+        checks.Select(group => group.Select(check => check.Reused).ToArray()).ShouldBe([[true, true], [true], [false], [false]]);
+        checks.SelectMany(group => group).ShouldAllSatisfy(check => check.Weak.ShouldBeFalse());
+    }
+
+    [Fact]
+    public void Member_checks_do_not_count_members_of_one_group_as_reuse_on_other_hosts()
+    {
+        VaultItem first = Item("Mail", "alice", Reused, "https://mail.example.com");
+        VaultItem second = Item("Mail", "alice", Reused, "https://webmail.example.net");
+        VaultItem sameHostElsewhere = Item("Mail too", "alice", Reused, "https://mail.example.com");
+
+        var checks = PasswordHealthReport.CheckMembers([[first, second], [sameHostElsewhere]]);
+
+        // The first member shares its password only with its own group and with an item on its own host.
+        checks[0].Select(check => check.Reused).ShouldBe([false, true]);
+        checks[1].ShouldHaveSingleItem().Reused.ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Member_checks_find_weak_passwords_and_passwords_in_another_member_history()
+    {
+        VaultItem older = Item("Router", "admin", "Older-Strong-Password-1", "http://192.168.1.1");
+        VaultItem newer = Item("Router", "admin", "admin", "http://192.168.1.1") with
+        {
+            PasswordHistory = [new PasswordHistoryEntry("Older-Strong-Password-1", DateTimeOffset.UnixEpoch)],
+        };
+        VaultItem note = new()
+        {
+            Type = VaultItemType.SecureNote,
+            Name = "Note",
+            Origin = new ItemOrigin("bitwarden", "vault.json", "note", null),
+        };
+
+        var checks = PasswordHealthReport.CheckMembers([[older, newer, note]]).ShouldHaveSingleItem();
+
+        checks.ShouldBe(
+        [
+            new PasswordCheck(Weak: false, Reused: false, InOtherHistory: true),
+            new PasswordCheck(Weak: true, Reused: false, InOtherHistory: false),
+            new PasswordCheck(Weak: false, Reused: false, InOtherHistory: false),
+        ]);
+    }
 }

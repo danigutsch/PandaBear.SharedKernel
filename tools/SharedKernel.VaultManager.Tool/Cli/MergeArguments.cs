@@ -10,6 +10,7 @@ namespace PandaBear.VaultManager.Tool.Cli;
 /// <param name="Plaintext">Whether to write unencrypted JSON instead of a password-protected export.</param>
 /// <param name="Report">Markdown report file, or <see langword="null"/>.</param>
 /// <param name="Force">Whether an existing output may be replaced.</param>
+/// <param name="Brief">Brief file to write, or <see langword="null"/>.</param>
 internal sealed record MergeArguments(
     IReadOnlyList<string> Inputs,
     string Output,
@@ -17,4 +18,5 @@ internal sealed record MergeArguments(
     MergePolicy Policy,
     bool Plaintext,
     string? Report,
-    bool Force);
+    bool Force,
+    string? Brief);

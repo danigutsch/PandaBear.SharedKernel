@@ -1,0 +1,108 @@
+using System.Globalization;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
+using PandaBear.VaultManager.Tool.IO;
+using PandaBear.VaultManager.Tool.Merge;
+
+namespace PandaBear.VaultManager.Tool.Brief;
+
+/// <summary>
+/// Reads and writes the versioned brief file:
+/// <c>{"version":1,"summary":{...},"groups":[...],"suggestions":[...]}</c>. A property the format does not define, a
+/// property given twice in one object, and a missing property are rejected. Text is written as typed, with control and
+/// format characters escaped.
+/// </summary>
+internal static class BriefFile
+{
+    /// <summary>Format version written by this tool, and the only version it reads.</summary>
+    public const int CurrentVersion = 1;
+
+    // Names, folders, and shared notes keep accented letters and apostrophes as typed, as in the catalog.
+    private static readonly JsonTypeInfo<BriefDocument> ReadableDocument = (JsonTypeInfo<BriefDocument>)new JsonSerializerOptions(BriefJsonContext.Default.Options)
+    {
+        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+    }.GetTypeInfo(typeof(BriefDocument));
+
+    /// <summary>Reads a brief file.</summary>
+    /// <param name="path">Brief file.</param>
+    /// <returns>The brief.</returns>
+    /// <exception cref="InvalidDataException">
+    /// The file is not a valid brief of a supported version. The message starts with the full path of the file and names
+    /// the JSON path of the problem, never a value.
+    /// </exception>
+    /// <exception cref="IOException">The file does not exist or cannot be read.</exception>
+    public static BriefDocument Read(string path)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(path);
+
+        string json = File.ReadAllText(path);
+        try
+        {
+            return Deserialize(json);
+        }
+        catch (InvalidDataException exception)
+        {
+            throw new InvalidDataException(Path.GetFullPath(path) + ": " + exception.Message, exception);
+        }
+    }
+
+    /// <summary>Writes a brief to a file readable and writable only by the current user on Unix, replacing an existing file.</summary>
+    /// <param name="path">Brief file.</param>
+    /// <param name="brief">Brief.</param>
+    /// <param name="ct">Observed before the written file is moved into place.</param>
+    /// <exception cref="IOException">The file cannot be written.</exception>
+    public static void Write(string path, BriefDocument brief, CancellationToken ct = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(path);
+        ArgumentNullException.ThrowIfNull(brief);
+
+        SecureFile.WriteAllText(path, Serialize(brief), overwrite: true, ct);
+    }
+
+    /// <summary>Serializes a brief.</summary>
+    /// <param name="brief">Brief.</param>
+    /// <returns>Indented JSON with text as typed, except for escaped control and format characters.</returns>
+    public static string Serialize(BriefDocument brief)
+    {
+        ArgumentNullException.ThrowIfNull(brief);
+
+        return DecisionsFile.EscapeFormatCharacters(JsonSerializer.Serialize(brief, ReadableDocument));
+    }
+
+    /// <summary>Parses and validates a brief.</summary>
+    /// <param name="json">Brief file text.</param>
+    /// <returns>The brief.</returns>
+    /// <exception cref="InvalidDataException">
+    /// The text is not a valid brief of a supported version. The message names the JSON path of the problem, never a value.
+    /// </exception>
+    public static BriefDocument Deserialize(string json)
+    {
+        ArgumentNullException.ThrowIfNull(json);
+
+        BriefDocument? brief;
+        try
+        {
+            brief = JsonSerializer.Deserialize(json, BriefJsonContext.Default.BriefDocument);
+        }
+        catch (JsonException exception)
+        {
+            // The parser's message can quote the text around the problem, so only its location is reported.
+            long line = (exception.LineNumber ?? 0) + 1;
+            throw new InvalidDataException(
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"The brief is not valid at {exception.Path ?? "$"} (line {line}). Look there for a misspelled, unknown, missing, or repeated property, a value of the wrong type, or broken JSON syntax."),
+                exception);
+        }
+
+        if (brief is null)
+        {
+            throw new InvalidDataException("The brief is empty.");
+        }
+
+        return brief.Version == CurrentVersion
+            ? brief
+            : throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"The brief has version {brief.Version}; only version {CurrentVersion} is supported."));
+    }
+}

@@ -2,6 +2,8 @@ using System.CommandLine;
 using System.CommandLine.Parsing;
 using System.Globalization;
 using System.Text;
+using PandaBear.VaultManager.Tool.Brief;
+using PandaBear.VaultManager.Tool.Catalog;
 using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.IO;
 using PandaBear.VaultManager.Tool.Merge;
@@ -19,6 +21,7 @@ internal static class MergeCommand
     private const string PreferPrefix = "prefer:";
     private const string OutputFile = "output file";
     private const string DecisionsFileName = "decisions file";
+    private const string ReportFileName = "report file";
 
     /// <summary>Creates the command.</summary>
     /// <param name="environment">Password prompts, terminal state, and clock.</param>
@@ -57,6 +60,11 @@ internal static class MergeCommand
         };
         Option<string> report = CommandSymbols.Report();
         var force = new Option<bool>("--force") { Description = "Replace an existing output file." };
+        Option<string> brief = CommandSymbols.FilePath(new Option<string>("--brief")
+        {
+            Description = "Write the brief: a JSON file without secret values that lists what needs a decision, for an agent that proposes decisions. An existing brief is replaced; any other existing file and an input never are.",
+            HelpName = "file",
+        });
         var command = new Command("merge", "Merge the inputs into one Bitwarden export, protected by a password unless --plaintext is given.")
         {
             inputs,
@@ -66,6 +74,7 @@ internal static class MergeCommand
             plaintext,
             report,
             force,
+            brief,
         };
         command.Validators.Add(result => ValidatePreferredInput(result, inputs, policy));
         CommandAction.Set(command, environment, (parseResult, prompts, ct) => Run(
@@ -76,7 +85,8 @@ internal static class MergeCommand
                 ParsePolicy(parseResult.GetRequiredValue(policy))!,
                 parseResult.GetValue(plaintext),
                 parseResult.GetValue(report),
-                parseResult.GetValue(force)),
+                parseResult.GetValue(force),
+                parseResult.GetValue(brief)),
             parseResult.InvocationConfiguration,
             prompts,
             ct));
@@ -148,6 +158,14 @@ internal static class MergeCommand
         // second merge writes the vault once nothing is pending. Both merge the same scanned vault, so each input is read
         // and each password asked once.
         PipelineResult result = pipeline.Merge(scanned, request, ct);
+        if (arguments.Brief is { } briefPath)
+        {
+            // Written before the vault, so a brief that cannot be written stops the merge before anything else is written.
+            ct.ThrowIfCancellationRequested();
+            BriefInput[] briefInputs = [.. arguments.Inputs.Select(input => new BriefInput(Path.GetFileName(input), CatalogFile.Hash(input)))];
+            BriefFile.Write(briefPath, BriefBuilder.Build(briefInputs, scanned, result, decisions), ct);
+        }
+
         if (PendingDecisions.Find(result, decisions).IsEmpty && !result.HasWriteErrors)
         {
             result = pipeline.Merge(scanned, request with { Output = RequestedOutput(arguments) }, ct);
@@ -156,19 +174,26 @@ internal static class MergeCommand
         return Finish(arguments, decisions, result, output, error, ct);
     }
 
+    // Each file is checked against the inputs and the files checked before it, so no two of them are one file.
     private static bool CanWriteFiles(MergeArguments arguments, TextWriter error)
     {
-        (string Path, string Name) mergedVault = (arguments.Output, OutputFile);
+        var written = new List<(string Path, string Name)> { (arguments.Output, OutputFile) };
         bool canWrite = OutputFiles.CanWrite(arguments.Output, OutputFile, arguments.Inputs, [], arguments.Force, error);
         if (arguments.Decisions is { } decisionsPath)
         {
-            canWrite &= OutputFiles.CanWrite(decisionsPath, DecisionsFileName, arguments.Inputs, [mergedVault], replaceExisting: true, error);
+            canWrite &= OutputFiles.CanWrite(decisionsPath, DecisionsFileName, arguments.Inputs, [.. written], replaceExisting: true, error);
+            written.Add((decisionsPath, DecisionsFileName));
         }
 
         if (arguments.Report is { } reportPath)
         {
-            (string Path, string Name)[] others = arguments.Decisions is { } decisionsFile ? [mergedVault, (decisionsFile, DecisionsFileName)] : [mergedVault];
-            canWrite &= OutputFiles.CanWriteReport(reportPath, arguments.Inputs, others, error);
+            canWrite &= OutputFiles.CanWriteReport(reportPath, arguments.Inputs, [.. written], error);
+            written.Add((reportPath, ReportFileName));
+        }
+
+        if (arguments.Brief is { } briefPath)
+        {
+            canWrite &= OutputFiles.CanWriteBrief(briefPath, arguments.Inputs, [.. written], error);
         }
 
         return canWrite;
@@ -214,6 +239,11 @@ internal static class MergeCommand
         else
         {
             exitCode = NotWritten(arguments, result, pending, error);
+        }
+
+        if (arguments.Brief is { } briefPath)
+        {
+            output.WriteLine("Brief: " + PrintableText.OneLine(briefPath));
         }
 
         if (arguments.Report is { } reportPath)

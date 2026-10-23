@@ -569,8 +569,8 @@ internal sealed class ReviewWindow : Window
             session.DecideNotes(member.OriginKey, decision);
             return Header(member) + decision switch
             {
-                NotesDecision.Share => ": notes are shown in catalogs.",
-                NotesDecision.Private => ": notes stay out of catalogs.",
+                NotesDecision.Share => ": notes are shown in catalogs, and in merge briefs while they hold no finding.",
+                NotesDecision.Private => ": notes stay out of catalogs and merge briefs.",
                 _ => ": notes move into a hidden field when a catalog is applied.",
             };
         });
@@ -584,12 +584,12 @@ internal sealed class ReviewWindow : Window
             return;
         }
 
-        if (!dialogs.Confirm("Share notes", "Show the notes of every item whose notes hold no finding in catalogs, where agents can read and edit them? The scanner can miss a secret."))
+        if (!dialogs.Confirm("Share notes", "Show the notes of every item whose notes hold no finding in catalogs and merge briefs, where agents can read them? The scanner can miss a secret."))
         {
             return;
         }
 
-        TryRun(() => string.Create(CultureInfo.InvariantCulture, $"Notes of {session.ShareNotesWithoutFindings()} item(s) are shown in catalogs now."));
+        TryRun(() => string.Create(CultureInfo.InvariantCulture, $"Notes of {session.ShareNotesWithoutFindings()} item(s) are shown in catalogs and merge briefs now."));
     }
 
     private void Decide(FindingDecision decision)
