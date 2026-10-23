@@ -16,7 +16,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var config = workspace.ReadFile("roadmap/config.json")
             .Replace("\"itemIdPrefix\": \"RM\"", $"\"itemIdPrefix\": \"{itemIdPrefix}\"", StringComparison.Ordinal);
@@ -31,13 +31,13 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
     }
 
     [Fact]
-    public async Task Intake_github_rejects_an_impact_cap_below_one()
+    public async Task Github_import_rejects_an_impact_cap_below_one()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.Configure(
             workspace,
@@ -82,7 +82,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
     }
 
     [Fact]
-    public async Task Intake_github_uses_configured_identity_scoring_theme_and_status_defaults()
+    public async Task Github_import_uses_configured_identity_scoring_theme_and_status_defaults()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -90,7 +90,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var config = workspace.ReadFile("roadmap/config.json")
             .Replace("\"itemIdPrefix\": \"RM\"", "\"itemIdPrefix\": \"RD\"", StringComparison.Ordinal)
@@ -168,7 +168,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         using var openItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RD-040-github-100.json"));
         using var closedItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RD-041-github-99.json"));
         var openItemRoot = openItem.RootElement;

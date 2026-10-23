@@ -7,7 +7,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class GitHubRoadmapIntakeOrderingTests
 {
     [Fact]
-    public async Task Intake_github_rejects_order_exhaustion()
+    public async Task Github_import_rejects_order_exhaustion()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -15,7 +15,7 @@ public sealed class GitHubRoadmapIntakeOrderingTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var reviewedItem = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json")
             .Replace("\"order\": 10", $"\"order\": {int.MaxValue.ToString(CultureInfo.InvariantCulture)}", StringComparison.Ordinal);
@@ -62,7 +62,7 @@ public sealed class GitHubRoadmapIntakeOrderingTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
@@ -72,7 +72,7 @@ public sealed class GitHubRoadmapIntakeOrderingTests
     }
 
     [Fact]
-    public async Task Intake_github_places_a_new_blocker_before_an_existing_imported_item()
+    public async Task Github_import_places_a_new_blocker_before_an_existing_imported_item()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -80,7 +80,7 @@ public sealed class GitHubRoadmapIntakeOrderingTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(
+        var actualResult = await RepoConfigToolRunner.Run(
             ["init", "--root", workspace.RootPath],
             initOutput,
             initError,
@@ -140,8 +140,8 @@ public sealed class GitHubRoadmapIntakeOrderingTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(
-            ["intake", "github", "--apply", "--root", workspace.RootPath],
+        var exitCode = await RepoConfigToolRunner.Run(
+            ["github", "import", "--force", "--root", workspace.RootPath],
             output,
             error,
             workspace.RootPath,

@@ -12,7 +12,7 @@ public sealed class RoadmapWriteInputSnapshotTests
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var first = RoadmapWriteInputSnapshot.Capture(workspace.RootPath);
         var config = workspace.ReadFile("roadmap/config.json");
@@ -34,7 +34,7 @@ public sealed class RoadmapWriteInputSnapshotTests
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var snapshot = RoadmapWriteInputSnapshot.Capture(workspace.RootPath);
         var deletedPath = Path.Combine(workspace.RootPath, "roadmap", "config.json");

@@ -39,7 +39,7 @@ internal sealed class GitHubRoadmapIntake
         var reconciliation = GitHubRoadmapReconciliation.Load(_project.RootPath);
         if (string.IsNullOrWhiteSpace(reconciliation.SnapshotDigest))
         {
-            throw new InvalidOperationException("GitHub intake requires snapshotDigest; run reconcile github --apply first.");
+            throw new InvalidOperationException("GitHub intake requires snapshotDigest; run github reconcile --force first.");
         }
 
         if (!string.Equals(reconciliation.Repository, repository, StringComparison.OrdinalIgnoreCase))

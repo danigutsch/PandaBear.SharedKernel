@@ -104,8 +104,8 @@ internal sealed class TemporaryGitRepository : IDisposable
         using var error = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);
         try
         {
-            var exitCode = await RepoConfigToolApplication.Run(
-                [.. arguments],
+            var exitCode = await RepoConfigToolRunner.Run(
+                arguments,
                 output,
                 error,
                 workingDirectory ?? RootPath,

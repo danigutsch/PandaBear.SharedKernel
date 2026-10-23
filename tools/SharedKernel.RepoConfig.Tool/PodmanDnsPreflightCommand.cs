@@ -8,78 +8,45 @@ namespace PandaBear.RepoConfig.Tool;
 internal static class PodmanDnsPreflightCommand
 {
     private const int MaximumPodmanOutputLength = 1_048_576;
-    private const string Usage = "Usage: sharedkernel-repo podman-dns-preflight [--check] [--quiet]";
     private static readonly TimeSpan PodmanTimeout = TimeSpan.FromSeconds(30);
     private static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
-    public static Task<int> Run(
-        string[] args,
+    /// <summary>
+    /// Inspects the host's rootless Podman DNS state without changing it.
+    /// </summary>
+    /// <returns>0 when the state is healthy or the check does not apply; 1 when it is stale or cannot be verified.</returns>
+    public static async Task<int> Run(
+        PodmanDnsHost host,
+        bool quiet,
         TextWriter output,
         TextWriter error,
         CancellationToken cancellationToken)
     {
-        var podmanExecutable = ExecutableResolver.Resolve(
-            "podman",
-            Environment.GetEnvironmentVariable("PATH"),
-            OperatingSystem.IsWindows());
-        var statExecutable = ExecutableResolver.Resolve(
-            "stat",
-            string.Concat("/usr/bin", Path.PathSeparator, "/bin"),
-            isWindows: false);
-        return Run(
-            args,
-            output,
-            error,
-            podmanExecutable,
-            statExecutable,
-            "/proc",
-            OperatingSystem.IsLinux(),
-            RunProcess,
-            cancellationToken);
-    }
-
-    internal static async Task<int> Run(
-        string[] args,
-        TextWriter output,
-        TextWriter error,
-        string? podmanExecutable,
-        string? statExecutable,
-        string procRoot,
-        bool isLinux,
-        Func<ProcessStartInfo, CancellationToken, Task<PodmanCommandResult>> runProcess,
-        CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(args);
+        ArgumentNullException.ThrowIfNull(host);
         ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(error);
-        ArgumentException.ThrowIfNullOrWhiteSpace(procRoot);
-        ArgumentNullException.ThrowIfNull(runProcess);
+        ArgumentException.ThrowIfNullOrWhiteSpace(host.ProcRoot);
+        ArgumentNullException.ThrowIfNull(host.RunProcess);
 
-        var argumentResult = await ParseArguments(args, output, error, cancellationToken).ConfigureAwait(false);
-        if (!argumentResult.ShouldRun)
+        if (host.PodmanExecutable is null)
         {
-            return argumentResult.ExitCode;
+            return await WriteHealthy(output, quiet, "podman is not installed; nothing to check", cancellationToken).ConfigureAwait(false);
         }
 
-        if (podmanExecutable is null)
-        {
-            return await WriteHealthy(output, argumentResult.Quiet, "podman is not installed; nothing to check", cancellationToken).ConfigureAwait(false);
-        }
-
-        if (!Path.IsPathFullyQualified(podmanExecutable))
+        if (!Path.IsPathFullyQualified(host.PodmanExecutable))
         {
             return await WriteFailure(error, "podman executable path is not absolute", cancellationToken).ConfigureAwait(false);
         }
 
-        if (!isLinux)
+        if (!host.IsLinux)
         {
             return await WriteFailure(error, "local Podman state can be inspected only on Linux", cancellationToken).ConfigureAwait(false);
         }
 
-        InspectionDependencies dependencies = new(podmanExecutable, statExecutable, procRoot, runProcess);
+        InspectionDependencies dependencies = new(host.PodmanExecutable, host.StatExecutable, host.ProcRoot, host.RunProcess);
         try
         {
-            return await Inspect(dependencies, output, error, argumentResult.Quiet, cancellationToken).ConfigureAwait(false);
+            return await Inspect(dependencies, output, error, quiet, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -93,38 +60,6 @@ internal static class PodmanDnsPreflightCommand
         {
             return await WriteFailure(error, exception.Message, cancellationToken).ConfigureAwait(false);
         }
-    }
-
-    private static async Task<(bool ShouldRun, bool Quiet, int ExitCode)> ParseArguments(
-        string[] args,
-        TextWriter output,
-        TextWriter error,
-        CancellationToken cancellationToken)
-    {
-        var quiet = false;
-        foreach (var argument in args)
-        {
-            switch (argument)
-            {
-                case "--check":
-                    break;
-
-                case "--quiet":
-                    quiet = true;
-                    break;
-
-                case "-h" or "--help":
-                    await output.WriteLineAsync(Usage.AsMemory(), cancellationToken).ConfigureAwait(false);
-                    return (false, quiet, 0);
-
-                default:
-                    await error.WriteLineAsync($"Unknown argument: {RepoConfigToolApplication.EscapeControlCharacters(argument)}".AsMemory(), cancellationToken).ConfigureAwait(false);
-                    await error.WriteLineAsync(Usage.AsMemory(), cancellationToken).ConfigureAwait(false);
-                    return (false, quiet, 2);
-            }
-        }
-
-        return (true, quiet, 0);
     }
 
     private static async Task<int> Inspect(
