@@ -3,17 +3,16 @@ using PandaBear.VaultManager.Tool.Pipeline;
 namespace PandaBear.VaultManager.Tool.Cli;
 
 /// <summary>
-/// Password prompts of one command run. Each prompt observes cancellation, and a prompt that fails, for example without
-/// a terminal, is recognized as an input or output problem. File passwords are remembered for the run, so a merge that
-/// reads its inputs a second time does not ask again.
+/// Password prompts of one command run. Each prompt observes cancellation and shows its text on one line, a prompt
+/// that fails, for example without a terminal, is recognized as an input or output problem, and the run can tell
+/// whether a prompt waits for the user.
 /// </summary>
 internal sealed class PasswordPrompts
 {
     private readonly VaultCommandEnvironment environment;
     private readonly CancellationToken ct;
-    private readonly Dictionary<string, List<string>> answers = new(StringComparer.Ordinal);
-    private readonly Dictionary<string, int> answered = new(StringComparer.Ordinal);
     private InvalidOperationException? failure;
+    private bool asking;
 
     /// <summary>Wraps the prompts of an environment for one run.</summary>
     /// <param name="environment">Environment whose prompts ask the user.</param>
@@ -22,7 +21,11 @@ internal sealed class PasswordPrompts
     {
         this.environment = environment;
         this.ct = ct;
-        Environment = environment with { ReadPassword = ReadPassword, ReadNewPassword = ReadNewPassword };
+        Environment = environment with
+        {
+            ReadPassword = prompt => Ask(environment.ReadPassword, prompt),
+            ReadNewPassword = prompt => Ask(environment.ReadNewPassword, prompt),
+        };
     }
 
     /// <summary>The environment with every prompt going through this instance.</summary>
@@ -31,48 +34,35 @@ internal sealed class PasswordPrompts
     /// <summary>Whether standard input is a terminal, so a password can be asked.</summary>
     public bool IsInteractive => environment.IsInteractive;
 
+    /// <summary>
+    /// Whether a prompt of this run waits for the user's answer. A canceled run writes nothing after such a prompt, so
+    /// the command can end without waiting for it.
+    /// </summary>
+    public bool IsAsking => Volatile.Read(ref asking);
+
     /// <summary>Whether an exception is the failure of a prompt of this run.</summary>
     /// <param name="exception">Exception.</param>
     /// <returns><see langword="true"/> when a prompt of this run threw it.</returns>
     public bool Failed(Exception exception) => ReferenceEquals(exception, failure);
 
-    /// <summary>Answers the file password prompts that follow with the passwords typed so far, in the order they were typed.</summary>
-    public void Replay() => answered.Clear();
-
-    private string ReadPassword(string prompt)
-    {
-        int position = answered.GetValueOrDefault(prompt);
-        answered[prompt] = position + 1;
-        if (!answers.TryGetValue(prompt, out List<string>? typed))
-        {
-            typed = [];
-            answers.Add(prompt, typed);
-        }
-
-        if (position < typed.Count)
-        {
-            return typed[position];
-        }
-
-        string password = Ask(environment.ReadPassword, prompt);
-        typed.Add(password);
-        return password;
-    }
-
-    private string ReadNewPassword(string prompt) => Ask(environment.ReadNewPassword, prompt);
-
     private string Ask(Func<string, string> read, string prompt)
     {
-        ct.ThrowIfCancellationRequested();
         string answer;
+        Volatile.Write(ref asking, true);
         try
         {
-            answer = read(prompt);
+            // Checked once the prompt counts as waiting, so Ctrl+C either finds the run at a prompt or ends it here.
+            ct.ThrowIfCancellationRequested();
+            answer = read(CommandText.OneLine(prompt));
         }
         catch (InvalidOperationException exception)
         {
             failure = exception;
             throw;
+        }
+        finally
+        {
+            Volatile.Write(ref asking, false);
         }
 
         // Ctrl+C during a prompt ends the run before the answer is used.

@@ -90,8 +90,10 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
 
     /// <summary>
     /// Returns these decisions with their pending entries replaced: every pending entry is dropped, and one is added for
-    /// each given field and finding without a decision. Decisions and match overrides stay as they are, and groups and
-    /// items left without entries are dropped.
+    /// each given field and finding without a decision. A <see cref="FieldChoiceKind.Member"/> choice that names no
+    /// member of its field's group is no decision, because the merge ignores it; the field's pending entry takes its
+    /// place. Other decisions and match overrides stay as they are, and groups and items left without entries are
+    /// dropped.
     /// </summary>
     /// <param name="fields">Fields that need a decision. The entry lists their members as options.</param>
     /// <param name="findings">Findings that need a decision, per item; their decisions are ignored.</param>
@@ -104,9 +106,14 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
         List<GroupDecision> groups = [.. Groups.Select(group => group with { Choices = [.. group.Choices.Where(choice => choice.Kind != FieldChoiceKind.Pending)] })];
         foreach (UnresolvedConflict conflict in fields)
         {
-            if (Find(conflict.GroupKey, conflict.FieldPath) is null)
+            FieldChoice? decision = Find(conflict.GroupKey, conflict.FieldPath);
+            if (decision is null)
             {
                 AddPending(groups, conflict);
+            }
+            else if (decision.Kind == FieldChoiceKind.Member && !conflict.MemberOriginKeys.Contains(decision.OriginKey, StringComparer.Ordinal))
+            {
+                ReplaceWithPending(groups, decision, conflict);
             }
         }
 
@@ -129,10 +136,41 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
         };
     }
 
+    private static FieldChoice PendingEntry(UnresolvedConflict conflict) =>
+        FieldChoice.Pending(conflict.FieldPath, [.. conflict.MemberOriginKeys.Select((originKey, index) => new FieldChoiceOption(originKey, conflict.MemberNames[index]))]);
+
+    // The choice is replaced where Find found it, the first decision on the field, so the decision the user writes into
+    // the pending entry is the one that counts.
+    private static void ReplaceWithPending(List<GroupDecision> groups, FieldChoice ignored, UnresolvedConflict conflict)
+    {
+        for (int index = 0; index < groups.Count; index++)
+        {
+            GroupDecision group = groups[index];
+            int position = string.Equals(group.GroupKey, conflict.GroupKey, StringComparison.Ordinal) ? IndexOf(group.Choices, ignored) : -1;
+            if (position >= 0)
+            {
+                groups[index] = group with { Choices = [.. group.Choices.Take(position), PendingEntry(conflict), .. group.Choices.Skip(position + 1)] };
+                return;
+            }
+        }
+    }
+
+    private static int IndexOf(IReadOnlyList<FieldChoice> choices, FieldChoice choice)
+    {
+        for (int index = 0; index < choices.Count; index++)
+        {
+            if (choices[index] == choice)
+            {
+                return index;
+            }
+        }
+
+        return -1;
+    }
+
     private static void AddPending(List<GroupDecision> groups, UnresolvedConflict conflict)
     {
-        FieldChoiceOption[] options = [.. conflict.MemberOriginKeys.Select((originKey, index) => new FieldChoiceOption(originKey, conflict.MemberNames[index]))];
-        FieldChoice pending = FieldChoice.Pending(conflict.FieldPath, options);
+        FieldChoice pending = PendingEntry(conflict);
         int index = groups.FindIndex(group => string.Equals(group.GroupKey, conflict.GroupKey, StringComparison.Ordinal));
         if (index < 0)
         {

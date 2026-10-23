@@ -53,7 +53,7 @@ internal static class InspectCommand
             }
             catch (Exception exception) when (CommandAction.IsFileProblem(exception))
             {
-                error.WriteLine($"{name}: {exception.Message}");
+                error.WriteLine(CommandText.OneLine($"{name}: {exception.Message}"));
                 failed = true;
                 continue;
             }

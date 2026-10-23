@@ -74,7 +74,7 @@ internal static class CliInputs
     }
 
     /// <summary>A Bitwarden export with a login in a folder and a note without a modification time.</summary>
-    public static string BitwardenWithFolder(string directory)
+    public static string BitwardenWithFolder(string directory, string folderName = "Work")
     {
         JsonObject mail = BitwardenLogin("bw-mail", "Mail", "bob", BitwardenPassword, "https://mail.example.com");
         mail["folderId"] = "folder-work";
@@ -83,7 +83,7 @@ internal static class CliInputs
         var export = new JsonObject
         {
             ["encrypted"] = false,
-            ["folders"] = new JsonArray(new JsonObject { ["id"] = "folder-work", ["name"] = "Work" }),
+            ["folders"] = new JsonArray(new JsonObject { ["id"] = "folder-work", ["name"] = folderName }),
             ["items"] = new JsonArray(mail, note),
         };
         return Write(directory, "bitwarden.json", export.ToJsonString());

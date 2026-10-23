@@ -58,10 +58,20 @@ public sealed class VaultCommandLineTests
     [InlineData("merge", "keeper.json", "--output", "merged.json", "--policy", "prefer:")]
     [InlineData("merge", "keeper.json", "--output", "merged.json", "--policy", "prefer:bitwarden.json")]
     [InlineData("merge", "keeper/export.json", "bitwarden/export.json", "--output", "merged.json", "--policy", "prefer:export.json")]
+    [InlineData("inspect", "")]
+    [InlineData("inspect", "keeper.json", " ")]
+    [InlineData("scan", "")]
+    [InlineData("scan", "keeper.json", "--report", "")]
+    [InlineData("scan", "keeper.json", "--report", "  ")]
+    [InlineData("merge", "", "--output", "merged.json")]
+    [InlineData("merge", "keeper.json", "--output", "")]
+    [InlineData("merge", "keeper.json", "--output", " ")]
+    [InlineData("merge", "keeper.json", "--output", "merged.json", "--decisions", "")]
+    [InlineData("merge", "keeper.json", "--output", "merged.json", "--report", " ")]
     public async Task Invalid_command_lines_exit_1_with_the_error_on_standard_error(params string[] args)
     {
         var prompts = new TestPrompts(ExportPassword);
-        var parseResult = VaultCommandLine.Create(prompts.Environment()).Parse(args);
+        var parseResult = VaultCommandLine.Parse(VaultCommandLine.Create(prompts.Environment()), args);
 
         var run = await CommandLineRun.Invoke(prompts.Environment(), args, TestContext.Current.CancellationToken);
 
@@ -80,9 +90,23 @@ public sealed class VaultCommandLineTests
     {
         var command = VaultCommandLine.Create(new TestPrompts(ExportPassword).Environment());
 
-        var parseResult = command.Parse(["merge", "exports/keeper.json", "exports/bitwarden.json", "--output", "merged.json", "--policy", policy]);
+        var parseResult = VaultCommandLine.Parse(command, ["merge", "exports/keeper.json", "exports/bitwarden.json", "--output", "merged.json", "--policy", policy]);
 
         parseResult.Errors.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("inspect", "@keeper.json")]
+    [InlineData("scan", "@keeper.json", "--report", "@scan.md")]
+    [InlineData("merge", "@keeper.json", "--output", "@merged.json", "--decisions", "@decisions.json")]
+    public void Arguments_starting_with_at_are_file_names_rather_than_response_files(params string[] args)
+    {
+        var command = VaultCommandLine.Create(new TestPrompts(ExportPassword).Environment());
+
+        var parseResult = VaultCommandLine.Parse(command, args);
+
+        parseResult.Errors.ShouldBeEmpty();
+        parseResult.Tokens.Select(token => token.Value).ShouldBe(args);
     }
 
     [Fact]
@@ -90,7 +114,7 @@ public sealed class VaultCommandLineTests
     {
         var command = VaultCommandLine.Create(new TestPrompts(ExportPassword).Environment());
 
-        var parseResult = command.Parse(["merge", "keeper.json", "--output", "merged.json"]);
+        var parseResult = VaultCommandLine.Parse(command, ["merge", "keeper.json", "--output", "merged.json"]);
 
         parseResult.Errors.ShouldBeEmpty();
         parseResult.GetValue<string>("--policy").ShouldBe("newest");

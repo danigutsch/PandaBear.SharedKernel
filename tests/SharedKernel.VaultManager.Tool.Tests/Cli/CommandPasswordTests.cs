@@ -77,6 +77,23 @@ public sealed class CommandPasswordTests : IDisposable
     }
 
     [Fact]
+    public async Task Merge_reads_each_input_once_and_asks_its_password_once()
+    {
+        string input = CliInputs.ProtectedBitwarden(directory, FilePassword);
+        string output = Path.Combine(directory, "merged.json");
+
+        // The input is gone once its password is typed, so a merge that read it again would fail.
+        var prompts = new TestPrompts(ExportPassword, FilePassword) { OnFilePassword = () => File.Delete(input) };
+
+        var run = await CommandLineRun.Invoke(prompts.Environment(), ["merge", input, "--output", output, "--plaintext"], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(0);
+        run.Error.ShouldBeEmpty();
+        prompts.FilePasswordPrompts.ShouldBe(["Password for protected.json"]);
+        FormatDetector.Detect(output).ShouldBe(VaultFileFormat.BitwardenJson);
+    }
+
+    [Fact]
     public async Task Wrong_input_password_exits_3()
     {
         string input = CliInputs.ProtectedBitwarden(directory, FilePassword);

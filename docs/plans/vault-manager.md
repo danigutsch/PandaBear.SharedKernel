@@ -103,7 +103,8 @@ Read, map, scan, apply accepted placements, match, merge, analyze, write.
 7. **Write.** By default the output is a Bitwarden password-protected export (PBKDF2-SHA256, 600,000 iterations).
    A plaintext export requires an explicit flag. The output file is created with mode 0600 and is never
    overwritten without `--force`, and it may not be one of the inputs. Nothing is written while a field needs a
-   decision or while the writer reports a value that Bitwarden would reject.
+   decision, while a proposed finding has no decision, or while the writer reports a value that Bitwarden would
+   reject.
 
 ## Merge rules
 
@@ -124,9 +125,18 @@ has a TOTP. The result has the new password, the Keeper TOTP, and the old passwo
    this is how a user drops a value that was intentionally removed on one side.
 6. The newest member's folder, name, and type are used. The other members' values are recorded.
 
-The decisions file stores group keys, field paths, source identities, and choices, plus finding identifiers that
-the user accepted or rejected, per item origin key. It never stores values. A pre-accepted finding is applied
-unless the file rejects it; another finding is applied only when the file accepts it.
+The decisions file stores group keys, field paths, origin keys, item names, and choices, plus finding identifiers
+with the user's decision, per item origin key. It never stores values. When a merge needs decisions, it adds a
+pending entry for each field and each proposed finding without a decision: a field entry lists the members to
+choose from by origin key and item name, and a finding entry names its item. A pending entry counts as no decision,
+and so does a member choice that names an item outside its group: the policy decides that field, and when the field
+needs a decision, its pending entry takes the choice's place. A pre-accepted finding is applied unless the file
+rejects it; a proposed finding is applied only when the file accepts it, and while a proposed finding has no
+decision, the merge writes no vault. Item names are written as typed, except that control and format characters,
+such as a right-to-left override, are escaped. The file is read strictly: a property that the format does not
+define, or a property given twice in one object, stops the merge, and the error names the file and the property's
+JSON path. A misspelled section therefore cannot drop the decisions it holds, and a repeated section cannot replace
+them.
 
 ## Secret detection and placement
 
@@ -186,24 +196,39 @@ so every attachment stays on a manual upload list in the report.
   `--decisions <file>`. Pending entries carry no values: a field entry lists the members to choose from by origin
   key and item name, and a finding entry names its item. They count as no decision, and an update keeps every
   other entry. The merge warns about decisions whose group, field, origin key, or finding identifier matches
-  nothing.
+  nothing. Each input is parsed and scanned once, and each password asked once; format detection reads each input
+  before that. With `--report`, the merge names the written vault on standard output before it writes the report.
 - `sharedkernel-vault review <inputs...> [--decisions <file>] [--output <file>] [--plaintext] [--force]` opens the
   full-screen review UI: groups, a side-by-side field diff, findings, and decisions.
+
+An argument that starts with `@` is a file name: the tool turns off System.CommandLine's response files, which would
+split an export into arguments and print its values in parse errors. Empty or blank file names are rejected while
+parsing.
 
 Exit codes:
 
 - 0: success.
-- 1: invalid command line, cancellation, or an unexpected error (System.CommandLine's code for these).
+- 1: invalid command line, cancellation, or an unexpected error (System.CommandLine's code for these). Canceled
+  at a password prompt, a command ends at once. Canceled elsewhere, it waits up to 1.5 seconds, less than
+  System.CommandLine's two-second process termination timeout, for its work to stop, so a short file write can
+  finish, and then ends even if a write is still running. A write cut off that way leaves its temporary file
+  behind.
 - 2: decisions needed: the merge wrote, or would write, pending decisions.
-- 3: an input or output problem: an unreadable, unsupported, or account-restricted input, a wrong password, an
-  output that exists without `--force` or is an input, a missing output directory, writer errors that block
-  writing, or a password needed without a terminal.
+- 3: an input or output problem: an unreadable, unsupported, or account-restricted input, a wrong password, a
+  decisions file that is not valid, an output that exists without `--force` or is an input, a missing output
+  directory, a report or decisions file that cannot be written, writer errors that block writing, or a password
+  needed without a terminal. When the report cannot be written after the vault, the error says that the vault is
+  written and the report is not.
+- 130 or 143: Ctrl+C or SIGTERM during start-up, before System.CommandLine handles it, or a canceled command that
+  did not end within the two-second process termination timeout.
 
 Passwords are read only from a terminal prompt without echo, never from arguments or environment variables.
 Password-protected inputs and an encrypted output need a terminal: without one, a command that needs a password
 fails with exit code 3 before doing any work and names the input or output that needs it. The `inspect` report and
 the `scan` and `merge` summaries go to standard output; diagnostics, warnings, errors, and prompts go to standard
-error. Report and decisions files are created readable only by their owner.
+error. Every control character (C0, DEL, and C1) in a printed name, path, prompt, or message is shown as a space,
+so a crafted export cannot send escape sequences to the terminal. Report and decisions files are created readable
+only by their owner.
 
 ## Verification
 

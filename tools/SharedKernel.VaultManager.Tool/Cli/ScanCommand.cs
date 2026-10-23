@@ -56,7 +56,7 @@ internal static class ScanCommand
         {
             ct.ThrowIfCancellationRequested();
             SecureFile.WriteAllText(reportPath, VaultReport.ToMarkdown(result), overwrite: true);
-            output.WriteLine("Report: " + reportPath);
+            output.WriteLine("Report: " + CommandText.OneLine(reportPath));
         }
 
         return ExitCodes.Success;

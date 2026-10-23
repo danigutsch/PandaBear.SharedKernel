@@ -31,7 +31,7 @@ internal static class InputChecks
             }
             catch (Exception exception) when (CommandAction.IsFileProblem(exception))
             {
-                error.WriteLine($"{Path.GetFileName(input)}: {exception.Message}");
+                error.WriteLine(CommandText.OneLine($"{Path.GetFileName(input)}: {exception.Message}"));
             }
         }
 
@@ -59,7 +59,7 @@ internal static class InputChecks
         {
             if (formats[index] == VaultFileFormat.BitwardenJsonPasswordProtected)
             {
-                error.WriteLine($"{Path.GetFileName(inputs[index])} is password-protected, and standard input is not a terminal to type its password in. Run the command in a terminal.");
+                error.WriteLine(CommandText.OneLine($"{Path.GetFileName(inputs[index])} is password-protected, and standard input is not a terminal to type its password in. Run the command in a terminal."));
                 canAsk = false;
             }
         }

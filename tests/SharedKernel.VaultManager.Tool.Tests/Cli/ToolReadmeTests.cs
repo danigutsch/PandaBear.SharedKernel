@@ -10,7 +10,7 @@ public sealed class ToolReadmeTests
         var command = VaultCommandLine.Create(new TestPrompts("fixture export password").Environment());
 
         var failures = ToolReadme.CommandLines()
-            .Select(args => (Line: string.Join(' ', args), Result: command.Parse(args)))
+            .Select(args => (Line: string.Join(' ', args), Result: VaultCommandLine.Parse(command, args)))
             .Where(parsed => parsed.Result.Errors.Count > 0)
             .Select(parsed => parsed.Line + " => " + string.Join("; ", parsed.Result.Errors.Select(error => error.Message)))
             .ToArray();
@@ -23,7 +23,7 @@ public sealed class ToolReadmeTests
     {
         var command = VaultCommandLine.Create(new TestPrompts("fixture export password").Environment());
 
-        string[] commandNames = [.. ToolReadme.CommandLines().Select(args => command.Parse(args).CommandResult.Command.Name).Distinct(StringComparer.Ordinal)];
+        string[] commandNames = [.. ToolReadme.CommandLines().Select(args => VaultCommandLine.Parse(command, args).CommandResult.Command.Name).Distinct(StringComparer.Ordinal)];
 
         commandNames.ShouldContain("inspect");
         commandNames.ShouldContain("scan");

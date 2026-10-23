@@ -135,6 +135,23 @@ public sealed class MergeDecisionsTests
     }
 
     [Fact]
+    public void Member_choice_naming_an_item_outside_its_group_is_no_decision_and_its_pending_entry_takes_its_place()
+    {
+        var stale = FieldChoice.Member(FieldPaths.LoginPassword, "keeper|keeper.json|rec-gone");
+        var empty = FieldChoice.Empty(FieldPaths.Notes);
+        var existing = new MergeDecisions([new GroupDecision(GroupKey, [stale, empty])], MatchOverrides.None);
+        string[] members = [OriginKey, OtherOriginKey];
+        UnresolvedConflict[] fields = [new(GroupKey, FieldPaths.LoginPassword, members, ["Example", "Example (Bitwarden)"])];
+
+        var updated = existing.WithPending(fields, []);
+
+        var choices = updated.Groups.ShouldHaveSingleItem().Choices;
+        choices.Select(choice => (choice.FieldPath, choice.Kind)).ShouldBe([(FieldPaths.LoginPassword, FieldChoiceKind.Pending), (FieldPaths.Notes, FieldChoiceKind.Empty)]);
+        choices[0].Options.ShouldNotBeNull().Select(option => option.OriginKey).ShouldBe(members);
+        choices[1].ShouldBe(empty);
+    }
+
+    [Fact]
     public void Pending_entries_are_dropped_from_groups_and_items_left_without_choices()
     {
         var existing = new MergeDecisions([new GroupDecision(GroupKey, [FieldChoice.Pending(FieldPaths.Notes, [])])], MatchOverrides.None)
