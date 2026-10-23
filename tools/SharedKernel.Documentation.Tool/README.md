@@ -18,8 +18,9 @@ relative paths inside the current directory.
 
 Install a validated candidate as a local tool from the feed that holds it, such as the folder that
 `sharedkernel-version stage-candidate` copies a candidate to. Add the feed to `NuGet.Config` and map
-`PandaBear.SharedKernel.*` to it; `dotnet tool install` rejects `--add-source` when package source
-mapping is enabled.
+`PandaBear.SharedKernel.*` to it. Map every other package, for example `*`, to the existing source, because
+a package without a mapping does not restore once source mapping is enabled. With the SDK pinned in
+`global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.
 
 ```text
 dotnet tool install PandaBear.SharedKernel.Documentation.Tool --version <validated-candidate-version>
