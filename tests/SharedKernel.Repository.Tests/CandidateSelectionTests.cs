@@ -60,6 +60,37 @@ public static class CandidateSelectionTests
         result.Output.ShouldNotContain("Selection revision unavailable", StringComparison.Ordinal);
     }
 
+    [Theory]
+    [InlineData("diff")]
+    [InlineData("rev-parse")]
+    public static async Task Selection_treats_a_git_failure_after_cancellation_as_the_cancellation(string gitCommand)
+    {
+        // Arrange
+        using var repository = new RepositoryTestScope();
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        var processes = new ProcessLog(async (_, arguments, _) =>
+        {
+            if (arguments[0] == gitCommand)
+            {
+                // Ctrl+C also stops Git, which can fail before the token is observed.
+                await cancellation.CancelAsync();
+                throw new InvalidOperationException("Command failed (130): git " + gitCommand);
+            }
+
+            return arguments[0] == "rev-parse" ? "fixture" : string.Empty;
+        });
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(repository.Root, ["select", "--base", "main"], processes.Run, cancellation.Token);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Output.ShouldBe(string.Empty);
+        result.Error.ShouldBe(string.Empty);
+        processes.Calls[^1].Arguments[0].ShouldBe(gitCommand);
+        File.Exists(Path.Combine(repository.Root, "TestResults", "selection", "revision.txt")).ShouldBeFalse();
+    }
+
     [Fact]
     public static async Task Selection_compares_the_base_revision_with_head_in_the_repository_root()
     {

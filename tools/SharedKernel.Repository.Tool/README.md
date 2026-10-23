@@ -34,7 +34,8 @@ Restores and builds the planned projects as one temporary solution graph, then r
 native MTP module scheduling and no module-parallelism cap. `--test-group` selects `all` (default), `ordinary`
 (everything except hosted Aspire test projects), or one hosted test project path. Validation rejects a plan recorded
 for another revision or naming projects outside the live solution, and keeps timings under `execution-*` in the plan
-directory. Package candidates are created with `SharedKernel.Versioning.Tool`; see
+directory. The `dotnet` restore, build, and test output goes to standard error. Standard output stays empty unless
+the plan selects no projects for the group. Package candidates are created with `SharedKernel.Versioning.Tool`; see
 [package development](../../docs/package-development.md).
 
 ### verify-pr-title
@@ -52,7 +53,8 @@ validation.
 | 2 | Selection, validation, or the pull request check failed; the reason is on standard error. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
-Ctrl+C or SIGTERM stops the running `git` or `dotnet` process tree.
+Ctrl+C or SIGTERM stops the running `git` or `dotnet` process tree. A process that fails after Ctrl+C or SIGTERM
+counts as the cancellation.
 
 ## Security
 
