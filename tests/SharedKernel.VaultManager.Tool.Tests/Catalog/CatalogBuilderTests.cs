@@ -57,7 +57,10 @@ public sealed class CatalogBuilderTests
     [Fact]
     public void Build_withholds_shared_notes_that_changed_since_they_were_shared()
     {
-        var changed = Login() with { Notes = "fixture notes edited after sharing" };
+        var changed = Login() with
+        {
+            Notes = "fixture notes edited after sharing"
+        };
 
         var built = CatalogBuilder.Build(Vault(changed), "abc", Notes(NotesDecision.Share));
 
@@ -71,7 +74,10 @@ public sealed class CatalogBuilderTests
     [Fact]
     public void Build_binds_a_share_decision_without_a_hash_to_the_current_notes()
     {
-        var decisions = MergeDecisions.None with { Notes = [new ItemNotesDecision(Key, NotesDecision.Share)] };
+        var decisions = MergeDecisions.None with
+        {
+            Notes = [new ItemNotesDecision(Key, NotesDecision.Share)]
+        };
 
         var built = CatalogBuilder.Build(Vault(Login()), "abc", decisions);
 
@@ -82,7 +88,13 @@ public sealed class CatalogBuilderTests
     [Fact]
     public void Build_withholds_a_user_name_that_holds_a_secret_finding()
     {
-        var item = Login() with { Login = Login().Login! with { Username = Totp } };
+        var item = Login() with
+        {
+            Login = Login().Login! with
+            {
+                Username = Totp
+            }
+        };
 
         CatalogBuilder.Build(Vault(item), "abc", MergeDecisions.None).Catalog.Items.ShouldHaveSingleItem().Info.Username.ShouldBeNull();
     }

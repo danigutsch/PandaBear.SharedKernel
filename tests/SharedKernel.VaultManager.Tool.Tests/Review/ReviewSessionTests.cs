@@ -41,7 +41,10 @@ public sealed class ReviewSessionTests : IDisposable
         VaultItem wifi = KeeperNote("rec-3", "Wifi", "fixture wifi note");
         VaultItem router = KeeperNote("rec-4", "Router", "fixture router note");
         VaultItem github = CodesAndPasswordInNotes("rec-github", PipelineSecrets.GitHubRecoveryCodes(720), NotesPassword);
-        var session = Session(Scan(directory, wifi, router, github), MergeDecisions.None with { Notes = [new ItemNotesDecision(OriginKey(router), NotesDecision.Private)] });
+        var session = Session(Scan(directory, wifi, router, github), MergeDecisions.None with
+        {
+            Notes = [new ItemNotesDecision(OriginKey(router), NotesDecision.Private)]
+        });
 
         session.ShareNotesWithoutFindings().ShouldBe(1);
 

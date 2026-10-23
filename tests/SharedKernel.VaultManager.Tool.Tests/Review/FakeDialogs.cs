@@ -36,7 +36,10 @@ internal sealed class FakeDialogs : IReviewDialogs
     public IReadOnlyList<IReadOnlyList<ReviewKey>> Help => help;
 
     /// <summary>Answer to every yes-or-no question.</summary>
-    public bool ConfirmAnswer { get; init; }
+    public bool ConfirmAnswer
+    {
+        get; init;
+    }
 
     /// <summary>Titles of the yes-or-no questions asked.</summary>
     public IReadOnlyList<string> Confirmations => confirmations;

@@ -53,7 +53,11 @@ internal static class CatalogFixture
     public static CatalogDocument CatalogWith(LoadedVault vault, IReadOnlyList<CatalogItem> items, IReadOnlyList<string>? folders = null)
     {
         CatalogDocument catalog = CatalogBuilder.Build(vault, "abc", MergeDecisions.None).Catalog;
-        return catalog with { Items = items, Folders = folders ?? catalog.Folders };
+        return catalog with
+        {
+            Items = items,
+            Folders = folders ?? catalog.Folders
+        };
     }
 
     public static MergeDecisions Notes(NotesDecision decision) =>

@@ -416,7 +416,10 @@ internal sealed class ReviewSession
             }
         }
 
-        Change(Decisions with { Notes = notes });
+        Change(Decisions with
+        {
+            Notes = notes
+        });
     }
 
     /// <summary>Shares the notes of every item whose notes hold no secret finding and have no decision yet.</summary>
@@ -449,7 +452,10 @@ internal sealed class ReviewSession
 
         if (shared > 0)
         {
-            Change(Decisions with { Notes = notes });
+            Change(Decisions with
+            {
+                Notes = notes
+            });
         }
 
         return shared;

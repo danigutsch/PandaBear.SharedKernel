@@ -70,7 +70,10 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
             }
         }
 
-        return this with { Notes = [.. notes, .. updates.Where(item => byKey.ContainsKey(item.OriginKey))] };
+        return this with
+        {
+            Notes = [.. notes, .. updates.Where(item => byKey.ContainsKey(item.OriginKey))]
+        };
     }
 
     /// <summary>Finds the decision for a field of a group. The first matching decision counts; pending entries are skipped.</summary>

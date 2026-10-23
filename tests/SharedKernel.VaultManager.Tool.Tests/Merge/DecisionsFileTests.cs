@@ -45,7 +45,10 @@ public sealed class DecisionsFileTests : IDisposable
     [Fact]
     public void Notes_decisions_round_trip_and_files_without_them_still_read()
     {
-        var decisions = MergeDecisions.None with { Notes = [new ItemNotesDecision("a|b|c", NotesDecision.Share, "GitHub", 2, ItemNotesDecision.HashOf("shared notes")), new ItemNotesDecision("a|b|d", NotesDecision.Hidden)] };
+        var decisions = MergeDecisions.None with
+        {
+            Notes = [new ItemNotesDecision("a|b|c", NotesDecision.Share, "GitHub", 2, ItemNotesDecision.HashOf("shared notes")), new ItemNotesDecision("a|b|d", NotesDecision.Hidden)]
+        };
 
         string json = DecisionsFile.Serialize(decisions);
 
