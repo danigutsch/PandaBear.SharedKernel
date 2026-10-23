@@ -18,9 +18,12 @@ internal static class RepositoryFiles
         throw new InvalidOperationException("Could not locate the repository root.");
     }
 
+    private const string LocalToolRun = "dotnet tool run ";
+
     /// <summary>
     /// Returns the text after each occurrence of <paramref name="invocation" />, up to the end of the line or
-    /// inline code span, in file order.
+    /// inline code span, in file order. An occurrence that follows <c>dotnet tool run</c> belongs to a local-tool
+    /// invocation, which callers find by passing an invocation that starts with <c>dotnet tool run</c>.
     /// </summary>
     public static IReadOnlyList<string> FindToolArguments(string relativePath, string invocation)
     {
@@ -33,7 +36,11 @@ internal static class RepositoryFiles
         {
             var start = index + invocation.Length;
             var length = text.AsSpan(start).IndexOfAny('\n', '`');
-            arguments.Add(length < 0 ? text[start..] : text.Substring(start, length));
+            if (!text.AsSpan(0, index).EndsWith(LocalToolRun, StringComparison.Ordinal))
+            {
+                arguments.Add(length < 0 ? text[start..] : text.Substring(start, length));
+            }
+
             index = text.IndexOf(invocation, start, StringComparison.Ordinal);
         }
 

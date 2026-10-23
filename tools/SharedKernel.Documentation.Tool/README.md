@@ -24,7 +24,7 @@ a package without a mapping does not restore once source mapping is enabled. Wit
 
 ```text
 dotnet tool install PandaBear.SharedKernel.Documentation.Tool --version <validated-candidate-version>
-dotnet tool run sharedkernel-docs verify --config <path>
+dotnet tool run sharedkernel-docs -- verify --config <path>
 ```
 
 In this repository, run the project without installing it:

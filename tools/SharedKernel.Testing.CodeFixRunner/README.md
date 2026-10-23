@@ -46,7 +46,7 @@ a package without a mapping does not restore once source mapping is enabled. Wit
 
 ```text
 dotnet tool install PandaBear.SharedKernel.Testing.CodeFixRunner --version <validated-candidate-version>
-dotnet tool run sharedkernel-codefix <project-or-solution>
+dotnet tool run sharedkernel-codefix -- <project-or-solution>
 ```
 
 In this repository, run the project without installing it:

@@ -12,10 +12,13 @@ public sealed class DocumentationToolCallerTests
     [InlineData(
         "tools/SharedKernel.Documentation.Tool/README.md",
         "sharedkernel-docs ",
-        "verify --config <path>",
         "generate --config <path>",
         "verify --config <path>",
         "check --config <path>")]
+    [InlineData(
+        "tools/SharedKernel.Documentation.Tool/README.md",
+        "dotnet tool run sharedkernel-docs -- ",
+        "verify --config <path>")]
     [InlineData(
         "tools/SharedKernel.Documentation.Tool/README.md",
         "tools/SharedKernel.Documentation.Tool -c Release -- ",

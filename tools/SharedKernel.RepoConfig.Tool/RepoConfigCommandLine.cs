@@ -67,6 +67,14 @@ internal static class RepoConfigCommandLine
                     return null;
                 }
 
+                // A response file can supply a null character, which Path.GetFullPath rejects with an exception that
+                // would escape parsing.
+                if (path.Contains('\0', StringComparison.Ordinal))
+                {
+                    result.AddError("--root path contains a null character.");
+                    return null;
+                }
+
                 return Path.GetFullPath(path, workingDirectory);
             },
         };
