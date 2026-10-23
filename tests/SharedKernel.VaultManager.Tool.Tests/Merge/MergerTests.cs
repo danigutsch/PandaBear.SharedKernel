@@ -406,7 +406,10 @@ public sealed class MergerTests
             FolderPath = "Finance",
             Fields = [new CustomField("Additional folders", "Personal\nImported", CustomFieldType.Text)],
         };
-        var bitwarden = Bitwarden(Login(NewPassword)) with { FolderPath = "Imported" };
+        var bitwarden = Bitwarden(Login(NewPassword)) with
+        {
+            FolderPath = "Imported"
+        };
 
         var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
 

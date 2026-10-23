@@ -234,7 +234,10 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         MatchResult match = DuplicateMatcher.Match(placed.Items, request.Decisions.Overrides, placed.OriginKeys);
         ct.ThrowIfCancellationRequested();
         MergeResult merge = new Merger(environment.Time).Merge(match.Groups, request.Policy, request.Decisions);
-        VaultExport merged = merge.Merged with { Folders = scanned.Folders };
+        VaultExport merged = merge.Merged with
+        {
+            Folders = scanned.Folders
+        };
         ct.ThrowIfCancellationRequested();
         PasswordHealthReport health = PasswordHealthReport.Analyze(merged);
         BitwardenWriteResult written = BitwardenJsonWriter.Write(merged);
