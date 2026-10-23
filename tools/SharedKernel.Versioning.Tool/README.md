@@ -2,7 +2,7 @@
 
 [![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
 
-Packages remain experimental `0.0.0-alpha.<run>.<attempt>` previews; stable packages, tags, and releases require separate authorization. `calculate-release --version-kind prerelease` requires `--run-number` and reports commit impact without advancing the preview core. The generic `compute` command retains normal SemVer behavior.
+Packages remain `<target>-alpha.<run>.<attempt>` previews; stable packages, tags, and releases require separate authorization. `calculate-release --version-kind prerelease` requires `--run-number`. Without a reachable `v*` tag the target is `0.1.0`. When the latest reachable `v*` tag is a prerelease, its version core is the fixed target and only the prerelease identifier advances; after a stable tag, the Conventional Commit impact selects the next target on each run until a prerelease tag fixes it. `--version-kind stable` releases the same target core. Commit impact is always reported. The generic `compute` command applies normal SemVer bumps.
 
 Local and CI versioning automation for SharedKernel release flows.
 
