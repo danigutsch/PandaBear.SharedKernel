@@ -105,7 +105,7 @@ public sealed class PlaywrightMcpCommandLineTests
         var rootCommand = PlaywrightMcpCommandLine.Create(
             environment.GetEnvironmentVariable,
             environment.ResolveExecutable,
-            static (_, _) => Task.FromResult(new ProcessResult(0, string.Empty, string.Empty)));
+            static (_, _, _) => Task.FromResult(new ProcessResult(0, string.Empty, string.Empty)));
         var commandLines = DocumentedCommandLines.Find(DocumentedCommandLines.ReadToolReadme());
 
         // Act
@@ -260,6 +260,135 @@ public sealed class PlaywrightMcpCommandLineTests
         var cleanupStartInfo = cleanup.ShouldNotBeNull();
         cleanupStartInfo.ArgumentList.ShouldContain("rm");
         cleanupStartInfo.ArgumentList.ShouldContain("--force");
+        environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled." + Environment.NewLine);
+        environment.Output.ToString().ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("prepare", false)]
+    [InlineData("prepare", true)]
+    [InlineData("clean", false)]
+    [InlineData("clean", true)]
+    public async Task Prepare_and_clean_report_cancellation_when_the_engine_stops_after_cancellation(string command, bool engineFails)
+    {
+        // Arrange
+        var environment = new PlaywrightMcpTestEnvironment();
+        environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(
+            TestContext.Current.CancellationToken);
+        var invocation = 0;
+
+        // Act
+        var exitCode = await environment.Invoke(
+            [command],
+            async (_, _) =>
+            {
+                invocation++;
+                switch (invocation)
+                {
+                    case 1:
+                        return new ProcessResult(0, "default", string.Empty);
+                    case 2:
+                        return new ProcessResult(0, "unix:///var/run/docker.sock", string.Empty);
+                    default:
+                        // The same Ctrl+C stops the engine, which exits or fails before the runner observes the token.
+                        await cancellation.CancelAsync();
+                        return engineFails
+                            ? throw new IOException("The pipe is broken.")
+                            : new ProcessResult(130, string.Empty, string.Empty);
+                }
+            },
+            cancellation.Token);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        invocation.ShouldBe(3);
+        environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled." + Environment.NewLine);
+        environment.Output.ToString().ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Serve_removes_the_container_and_reports_cancellation_when_the_runtime_stops_after_cancellation(bool runtimeFails)
+    {
+        // Arrange
+        var environment = new PlaywrightMcpTestEnvironment();
+        environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(
+            TestContext.Current.CancellationToken);
+        var invocation = 0;
+        ProcessStartInfo? cleanup = null;
+        var cleanupTokenWasCancelled = true;
+
+        // Act
+        var exitCode = await environment.Invoke(
+            ["serve"],
+            async (startInfo, ct) =>
+            {
+                invocation++;
+                switch (invocation)
+                {
+                    case 1:
+                        return new ProcessResult(0, "default", string.Empty);
+                    case 2:
+                        return new ProcessResult(0, "unix:///var/run/docker.sock", string.Empty);
+                    case 3:
+                        // The same Ctrl+C stops the runtime, which exits or fails before the runner observes the token.
+                        await cancellation.CancelAsync();
+                        return runtimeFails
+                            ? throw new IOException("The pipe is broken.")
+                            : new ProcessResult(130, string.Empty, string.Empty);
+                    default:
+                        cleanup = startInfo;
+                        cleanupTokenWasCancelled = ct.IsCancellationRequested;
+                        return new ProcessResult(0, string.Empty, string.Empty);
+                }
+            },
+            cancellation.Token);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        invocation.ShouldBe(4);
+        cleanupTokenWasCancelled.ShouldBeFalse();
+        var cleanupStartInfo = cleanup.ShouldNotBeNull();
+        cleanupStartInfo.ArgumentList.ShouldContain("rm");
+        cleanupStartInfo.ArgumentList.ShouldContain("--force");
+        cleanupStartInfo.ArgumentList.ShouldContain(static argument => argument.StartsWith("sharedkernel-playwright-mcp-", StringComparison.Ordinal));
+        environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled." + Environment.NewLine);
+        environment.Output.ToString().ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Engine_checks_report_cancellation_when_the_engine_stops_after_cancellation(bool engineFails)
+    {
+        // Arrange
+        var environment = new PlaywrightMcpTestEnvironment();
+        environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(
+            TestContext.Current.CancellationToken);
+        var invocation = 0;
+
+        // Act
+        var exitCode = await environment.Invoke(
+            ["serve"],
+            async (_, _) =>
+            {
+                invocation++;
+
+                // The same Ctrl+C stops the context check, which exits or fails before the runner observes the token.
+                await cancellation.CancelAsync();
+                return engineFails
+                    ? throw new InvalidOperationException("Could not start docker.")
+                    : new ProcessResult(130, string.Empty, "interrupted");
+            },
+            cancellation.Token);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        invocation.ShouldBe(1);
         environment.Error.ToString().ShouldBe("Error: Playwright MCP was cancelled." + Environment.NewLine);
         environment.Output.ToString().ShouldBeEmpty();
     }

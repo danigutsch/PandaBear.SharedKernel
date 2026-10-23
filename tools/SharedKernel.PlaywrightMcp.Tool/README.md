@@ -13,11 +13,15 @@ Docker whose current context uses a local endpoint, or rootless Podman, running 
 
 ## Installation
 
-Install a validated candidate from a trusted private feed:
+Install a validated candidate as a local tool from a trusted feed. Add the feed to `NuGet.Config`, map
+`PandaBear.SharedKernel.*` to it, and map every other package, for example `*`, to the existing source. With the
+SDK pinned in `global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.
 
 ```text
-dotnet tool install PandaBear.SharedKernel.PlaywrightMcp.Tool --tool-path .tools --version <validated-candidate-version> --add-source <private-candidate-feed>
+dotnet tool install PandaBear.SharedKernel.PlaywrightMcp.Tool --version <validated-candidate-version>
 ```
+
+A local tool runs as `dotnet tool run sharedkernel-playwright-mcp -- <command>`.
 
 ## Usage
 
@@ -31,9 +35,9 @@ sharedkernel-playwright-mcp --version
 
 Run `prepare` first; `serve` starts the image with `--pull=never`. Configure the MCP client to start
 `sharedkernel-playwright-mcp serve`. `serve` writes only the MCP protocol to standard output and diagnostics to
-standard error. `prepare` and `clean` write nothing to standard output; the container engine's output and errors go
-to standard error when the engine exits. `clean` removes the image from the local engine cache; check other local
-uses before running it.
+standard error. `prepare` and `clean` write nothing to standard output; each line of the container engine's output
+and errors goes to standard error as the engine writes it. `clean` removes the image from the local engine cache;
+check other local uses before running it.
 
 Configuration comes from the environment:
 
@@ -49,7 +53,7 @@ Configuration comes from the environment:
 
 - a read-only root file system;
 - 2 GiB of memory and 1 GiB of shared memory;
-- at most 256 processes;
+- at most 256 processes and threads (PIDs);
 - a 512 MiB `/tmp` tmpfs and a 128 MiB `/home/node` tmpfs;
 - a 10 MiB cap on Playwright output.
 
@@ -62,6 +66,9 @@ Configuration comes from the environment:
 | `2` | Invalid configuration: unsupported environment value, missing or ambiguous engine, or a remote engine override. |
 | `130`, `143` | Ctrl+C or SIGTERM during start-up, or container cleanup did not finish within 20 seconds. |
 | Other | Exit code of the container engine or the MCP server. |
+
+A container engine or MCP server that exits or fails after the tool has observed Ctrl+C or SIGTERM counts as the
+cancellation.
 
 ## Security
 

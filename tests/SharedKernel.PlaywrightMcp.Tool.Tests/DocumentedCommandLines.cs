@@ -10,6 +10,7 @@ internal static partial class DocumentedCommandLines
 {
     private const string ToolCommandName = "sharedkernel-playwright-mcp";
 
+    /// <summary>Reads the tool README from the repository that contains the test output directory.</summary>
     public static string ReadToolReadme()
     {
         for (var directory = new DirectoryInfo(AppContext.BaseDirectory); directory is not null; directory = directory.Parent)
