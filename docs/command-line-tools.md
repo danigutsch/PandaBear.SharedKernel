@@ -49,9 +49,9 @@ This guidance covers every tool under `tools/`.
   runner, or a clock. Actions write to `ParseResult.InvocationConfiguration.Output` and `Error`.
 - Tests parse and invoke the real tree through the factory, capture all output in one
   `InvocationConfiguration`, and set its `ProcessTerminationTimeout` to `null` so System.CommandLine registers
-  no signal handlers in the test host. Caller tests parse every command line in workflows, scripts, and tool READMEs with the real
-  tree. They do not read `docs/` prose, because documentation-only changes skip tests. Test projects keep
-  System.CommandLine's text English with
+  no signal handlers in the test host. Caller tests parse every command line in workflows, scripts, and tool
+  READMEs with the real tree. They do not read `docs/` prose, because documentation-only changes skip tests.
+  Test projects keep System.CommandLine's text English with
   [`SatelliteResourceLanguages`](https://learn.microsoft.com/dotnet/core/project-sdk/msbuild-props#satelliteresourcelanguages).
 - A command-line change updates every caller in the same change: CI workflows, scripts, documentation, tests,
   other tools, and consuming repositories. Consuming repositories adopt it with the tool package version that
