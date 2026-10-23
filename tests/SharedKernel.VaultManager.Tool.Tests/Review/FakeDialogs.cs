@@ -10,6 +10,9 @@ internal sealed class FakeDialogs : IReviewDialogs
     private readonly List<IReadOnlyList<ReviewKey>> help = [];
     private readonly List<string> errors = [];
 
+    /// <summary>Why the dialogs cannot be shown, or <see langword="null"/> when they can.</summary>
+    public string? Unavailable { get; init; }
+
     /// <summary>Password returned for the new export, or <see langword="null"/> to cancel.</summary>
     public string? Password { get; init; }
 

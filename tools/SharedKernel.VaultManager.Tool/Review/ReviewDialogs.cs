@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using Terminal.Gui.App;
 using Terminal.Gui.ViewBase;
 using Terminal.Gui.Views;
@@ -9,6 +10,22 @@ namespace PandaBear.VaultManager.Tool.Review;
 /// <param name="app">Application that runs the dialogs.</param>
 internal sealed class ReviewDialogs(IApplication app) : IReviewDialogs
 {
+    /// <summary>Fewest terminal columns the dialogs need; the password fields of the export dialog take 56.</summary>
+    public const int MinimumWidth = 60;
+
+    /// <summary>Fewest terminal rows the dialogs need.</summary>
+    public const int MinimumHeight = 15;
+
+    /// <inheritdoc/>
+    /// <remarks>
+    /// Terminal.Gui throws while it lays out a dialog on a terminal that is too narrow, for example one that reports a size
+    /// of 0x0, and leaves the dialog behind. The size is therefore checked before a dialog opens.
+    /// </remarks>
+    public string? Unavailable =>
+        app.Screen.Width < MinimumWidth || app.Screen.Height < MinimumHeight
+            ? string.Create(CultureInfo.InvariantCulture, $"The terminal is too small for dialogs; make it at least {MinimumWidth} columns by {MinimumHeight} rows.")
+            : null;
+
     /// <inheritdoc/>
     public QuitChoice AskQuit(bool canSave)
     {

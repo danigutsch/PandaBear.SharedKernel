@@ -731,7 +731,9 @@ sharedkernel-vault review keeper.zip bitwarden.json --decisions decisions.json -
 Before the UI opens, the review checks the files as merge does and asks for the password of each password-protected
 input. It needs a terminal: when its input or output is redirected, it stops with exit code 3, and you edit the
 decisions file as [The decisions file](#the-decisions-file) describes instead. The review resolves conflicts with the
-default `newest` policy.
+default `newest` policy. Its dialogs need a terminal of at least 60 columns by 15 rows; on a smaller one, the review
+shows their messages on its message line and stays open when you quit with unsaved decisions, so save with `Ctrl+S`
+or enlarge the terminal.
 
 1. Press `F7` until the groups list shows the `pending` groups, the groups with a field or a finding that needs your
    decision. `Ctrl+F` searches the groups by item name.

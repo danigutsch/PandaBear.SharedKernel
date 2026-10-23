@@ -87,6 +87,31 @@ public sealed class VaultCommandLineTests
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
+    [Fact]
+    public async Task Parse_errors_print_an_argument_without_its_escape_and_bidirectional_characters()
+    {
+        string[] unprintable = ["\u001B", "\u009B", "\u202E"];
+
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["x\u001B[2Jy\u009B31m\u202Ez"], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(1);
+        run.Error.ShouldContain("Unrecognized command or argument 'x\uFFFD[2Jy\uFFFD31m\uFFFDz'.", StringComparison.Ordinal);
+        run.Output.ShouldContain("Usage:", StringComparison.Ordinal);
+        string printed = run.Output + run.Error;
+        unprintable.ShouldAllSatisfy(character => printed.ShouldNotContain(character, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task Typo_corrections_print_an_argument_without_its_escape_characters()
+    {
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["revi\u001Bw"], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(1);
+        run.Output.ShouldContain("'revi\uFFFDw' was not matched. Did you mean one of the following?", StringComparison.Ordinal);
+        string printed = run.Output + run.Error;
+        printed.ShouldNotContain("\u001B", StringComparison.Ordinal);
+    }
+
     [Theory]
     [InlineData("newest")]
     [InlineData("ask")]

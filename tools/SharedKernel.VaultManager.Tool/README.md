@@ -143,6 +143,11 @@ checks the files and inputs as `merge` does and asks for the password of each pa
 terminal. A problem found then also exits with code 3. Ctrl+C or SIGTERM before the UI starts ends the review at once
 with code 1.
 
+Dialogs need a terminal of at least 60 columns by 15 rows. On a smaller terminal, including one that reports a size
+of 0x0, the review opens no dialog and shows on its message line what the dialog would have said and how large to
+make the terminal. Quitting with unsaved decisions then keeps the review open, so no decision is lost: enlarge the
+terminal, or save with `Ctrl+S` and quit again. Writing a password-protected export then writes nothing.
+
 The left side lists the groups of matched items. Each line starts with `!` when a field or finding of the group needs a
 decision, `~` when its items hold different values, and `=` when they are equal. The right side shows the selected
 group in two tabs: **Fields**, with one column per item, and **Findings**, with the secrets proposed for a better
@@ -268,7 +273,7 @@ property's JSON path.
 | Code | Meaning |
 | --- | --- |
 | 0 | Success. |
-| 1 | Invalid command line, with the error on standard error and help on standard output; canceled; or an unexpected error. Ctrl+C or SIGTERM cancels a command; inside the review UI, `Ctrl+C` is a key, and SIGTERM or SIGINT cancels, as described under `review`. Canceled at a password prompt or before the review UI starts, the command ends at once. Otherwise `inspect`, `scan`, and `merge` wait up to 1.5 seconds for their work to stop at its next check: no file write starts after the cancel, and a write already under way either completes or leaves its file unchanged, as described under Security. Work still running after 1.5 seconds ends with the process. An unexpected error shows the exception type and stack trace, but not its message, which can contain vault values. |
+| 1 | Invalid command line, with the error on standard error and help on standard output, both shown as described under Output; canceled; or an unexpected error. Ctrl+C or SIGTERM cancels a command; inside the review UI, `Ctrl+C` is a key, and SIGTERM or SIGINT cancels, as described under `review`. Canceled at a password prompt or before the review UI starts, the command ends at once. Otherwise `inspect`, `scan`, and `merge` wait up to 1.5 seconds for their work to stop at its next check: no file write starts after the cancel, and a write already under way either completes or leaves its file unchanged, as described under Security. Work still running after 1.5 seconds ends with the process. An unexpected error shows the exception type and stack trace, but not its message, which can contain vault values. |
 | 2 | `merge` only: fields or findings need a decision. No vault is written; with `--decisions`, the decisions file holds a pending entry for each. |
 | 3 | An input or output problem: an input that is unreadable, unsupported, malformed, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; an output that exists without `--force` or is an input; a missing output directory; a report path that names an existing file that is not a vault report; a report or decisions file that cannot be written; values that Bitwarden would reject; a password needed while standard input is not a terminal, or no acceptable new password in three attempts; or `review` started while standard input or output is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, before the tool handles it, or a canceled command that did not end within two seconds. |
@@ -281,7 +286,9 @@ Warnings, errors, and password prompts go to standard error. Messages name input
 finding IDs, never values. In the names, paths, keys, prompts, and messages that the commands print and the reports
 hold, carriage returns, line feeds, tabs, and the line and paragraph separators U+2028 and U+2029 show as spaces, and
 every other control character and every bidirectional embedding, override, and isolate shows as U+FFFD, so an export
-can neither send escape sequences to the terminal nor reorder the text around a name.
+can neither send escape sequences to the terminal nor reorder the text around a name. The error, typo corrections,
+and help of an invalid command line keep their line breaks and show other characters the same way, so an argument
+that System.CommandLine repeats cannot send escape sequences either.
 
 ## Limits
 

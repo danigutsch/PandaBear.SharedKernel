@@ -260,7 +260,9 @@ standard error. Every printed or reported name, path, key, warning, message, pro
 through `PrintableText`: carriage returns, line feeds, tabs, and the separators U+2028 and U+2029 become spaces, and
 every other control character (C0, DEL, and C1) and every bidirectional embedding, override, and isolate (U+202A to
 U+202E and U+2066 to U+2069) becomes U+FFFD. A crafted export can therefore neither send escape sequences to the
-terminal nor reorder the text around a name. Report table cells also escape `|`. Report and decisions files are
+terminal nor reorder the text around a name. `VaultCommandLine.Invoke` writes System.CommandLine's parse errors, typo
+corrections, and help through `PrintableTextWriter`, which keeps line breaks and replaces the same characters, because
+System.CommandLine repeats arguments verbatim. Report table cells also escape `|`. Report and decisions files are
 created readable only by their owner.
 
 ## Review UI
@@ -296,7 +298,10 @@ instance model of the [command-line tool guidance](../command-line-tools.md#term
   problem otherwise.
 - **Views.** The window only shows the session and forwards keys: groups on the left, tabs with the field diff and the
   findings on the right, and a status bar with the main keys. `F1` lists every key, and every action has one. Errors
-  show value-free messages, and quitting with unsaved decisions asks first. Names and values show on one line through
+  show value-free messages, and quitting with unsaved decisions asks first. Terminal.Gui 2.5.0 throws while it lays
+  out a dialog on a terminal narrower than a few columns, such as one that reports 0x0, so `ReviewDialogs` reports its
+  dialogs unavailable below `ReviewDialogs.MinimumWidth` by `ReviewDialogs.MinimumHeight` (60 by 15). The window then
+  shows the message on its message line instead, and quitting with unsaved decisions keeps the review open. Names and values show on one line through
   `ReviewText`: each line break that `string.ReplaceLineEndings` recognizes, form feed and NEL included, becomes
   ` ↵ `, and the rest goes through `PrintableText`.
 - **Cancellation.** Ctrl+C or SIGTERM before the UI starts, during the checks, the password prompts, or reading the

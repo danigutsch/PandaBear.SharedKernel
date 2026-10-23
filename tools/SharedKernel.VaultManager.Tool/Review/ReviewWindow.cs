@@ -160,6 +160,14 @@ internal sealed class ReviewWindow : Window
     {
         if (!newIsRunning && !stopping && session.IsDirty)
         {
+            // Without the question the decisions would be lost, so the review stays open until the question can be shown
+            // or the decisions are saved.
+            if (dialogs.Unavailable is { } unavailable)
+            {
+                Notify(unavailable + " The review stays open.");
+                return true;
+            }
+
             QuitChoice choice = dialogs.AskQuit(session.Files.DecisionsPath is not null);
             bool keepOpen = choice == QuitChoice.Cancel || (choice == QuitChoice.Save && !TryRun(SaveDecisions));
 
@@ -253,7 +261,7 @@ internal sealed class ReviewWindow : Window
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or IOException or UnauthorizedAccessException or InvalidDataException)
         {
-            dialogs.ShowError(ReviewText.OneLine(Describe(exception)));
+            ShowError(ReviewText.OneLine(Describe(exception)));
             RefreshGroups();
             return false;
         }
@@ -263,7 +271,28 @@ internal sealed class ReviewWindow : Window
         return true;
     }
 
-    private void ShowHelp() => dialogs.ShowHelp(ReviewKeys.All);
+    private void ShowHelp()
+    {
+        if (dialogs.Unavailable is { } unavailable)
+        {
+            Notify(unavailable);
+            return;
+        }
+
+        dialogs.ShowHelp(ReviewKeys.All);
+    }
+
+    // Shows a problem in a dialog, or on the message line when no dialog can be shown.
+    private void ShowError(string message)
+    {
+        if (dialogs.Unavailable is not null)
+        {
+            Notify(message);
+            return;
+        }
+
+        dialogs.ShowError(message);
+    }
 
     private void FocusGroups() => groupsList.SetFocus();
 
@@ -300,7 +329,7 @@ internal sealed class ReviewWindow : Window
     {
         if (session.WriteBlocker is { } blocker)
         {
-            dialogs.ShowError(blocker);
+            ShowError(blocker);
             return;
         }
 
@@ -308,6 +337,12 @@ internal sealed class ReviewWindow : Window
         string? password = null;
         if (!output.Plaintext)
         {
+            if (dialogs.Unavailable is { } unavailable)
+            {
+                Notify(unavailable + " Nothing was written.");
+                return;
+            }
+
             password = dialogs.AskExportPassword();
             if (password is null)
             {

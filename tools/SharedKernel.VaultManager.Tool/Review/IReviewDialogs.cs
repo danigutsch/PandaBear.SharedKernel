@@ -3,6 +3,12 @@ namespace PandaBear.VaultManager.Tool.Review;
 /// <summary>Modal questions and messages of the review window. Messages hold no vault values.</summary>
 internal interface IReviewDialogs
 {
+    /// <summary>
+    /// Why the dialogs cannot be shown now, such as a terminal smaller than they need, or <see langword="null"/> when they
+    /// can. The window checks it before each dialog and shows the reason on its message line instead. It holds no values.
+    /// </summary>
+    string? Unavailable { get; }
+
     /// <summary>Asks what to do with unsaved decisions before quitting.</summary>
     /// <param name="canSave">Whether the review has a decisions file to save to.</param>
     /// <returns>The choice; <see cref="QuitChoice.Cancel"/> when the question is dismissed.</returns>

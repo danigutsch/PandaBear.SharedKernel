@@ -27,7 +27,7 @@ internal sealed record CommandLineRun(int ExitCode, string Output, string Error)
 
         // Signal handlers are process-wide, so test invocations leave Ctrl+C and SIGTERM to the test host.
         var configuration = new InvocationConfiguration { Output = output, Error = error, ProcessTerminationTimeout = null };
-        int exitCode = await VaultCommandLine.Parse(command, args).InvokeAsync(configuration, ct);
+        int exitCode = await VaultCommandLine.Invoke(command, args, configuration, ct);
         return new CommandLineRun(exitCode, output.ToString(), error.ToString());
     }
 }

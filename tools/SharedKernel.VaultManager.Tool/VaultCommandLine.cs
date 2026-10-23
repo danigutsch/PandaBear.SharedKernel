@@ -1,5 +1,7 @@
 using System.CommandLine;
+using System.CommandLine.Invocation;
 using PandaBear.VaultManager.Tool.Cli;
+using PandaBear.VaultManager.Tool.IO;
 using PandaBear.VaultManager.Tool.Pipeline;
 
 namespace PandaBear.VaultManager.Tool;
@@ -46,5 +48,36 @@ internal static class VaultCommandLine
             ResponseFileTokenReplacer = null,
         };
         return rootCommand.Parse(args, configuration);
+    }
+
+    /// <summary>
+    /// Parses a command line with <see cref="Parse"/> and invokes it. A command line with parse errors gets
+    /// System.CommandLine's error output, typo corrections, and help, written through <see cref="PrintableTextWriter"/>.
+    /// </summary>
+    /// <param name="rootCommand">Root command from <see cref="Create"/>.</param>
+    /// <param name="args">Command-line arguments.</param>
+    /// <param name="configuration">Output and error writers, and signal handling, of the invocation.</param>
+    /// <param name="ct">Cancels the command.</param>
+    /// <returns>The exit code.</returns>
+    public static Task<int> Invoke(RootCommand rootCommand, IReadOnlyList<string> args, InvocationConfiguration configuration, CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        ParseResult parseResult = Parse(rootCommand, args);
+        if (parseResult.Action is ParseErrorAction)
+        {
+            // System.CommandLine's parse errors and typo corrections repeat the arguments verbatim, so an argument with an
+            // escape sequence or a bidirectional override would reach the terminal. Everything else the tool prints goes
+            // through PrintableText, so the error output does too; its text, exit code 1, and streams stay the default.
+            configuration = new InvocationConfiguration
+            {
+                Output = new PrintableTextWriter(configuration.Output),
+                Error = new PrintableTextWriter(configuration.Error),
+                EnableDefaultExceptionHandler = configuration.EnableDefaultExceptionHandler,
+                ProcessTerminationTimeout = configuration.ProcessTerminationTimeout,
+            };
+        }
+
+        return parseResult.InvokeAsync(configuration, ct);
     }
 }
