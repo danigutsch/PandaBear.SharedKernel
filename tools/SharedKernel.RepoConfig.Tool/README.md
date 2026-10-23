@@ -107,3 +107,33 @@ the options of each command.
 `security baseline --root <path>` verifies the configured repository document contracts.
 `security scan --root <path> --output <directory>` also scans current source with Gitleaks.
 See the [security baseline](../../docs/security-baseline.md) for configuration and exit codes.
+
+## Offline dependency snapshots
+
+Generate a GitHub dependency-submission snapshot from the exact clean reviewed commit, without restoring,
+loading, or downloading its packages:
+
+```sh
+sharedkernel-repo dependency snapshot --root /path/to/reviewed-checkout --sha <commit-sha> --ref refs/heads/main --job <run-id> --correlator solution-nuget --output TestResults/dependency-snapshot.json
+```
+
+The command reads the committed Git tree and blobs at the reviewed SHA, rather than trusting working-tree
+files or Git's status cache. It inventories every project in the root's unique `.slnx` and requires its
+committed `packages.lock.json` in the supported version 1 or 2 layout. Git lazy fetching and replacement
+objects are disabled for these reads. Input blobs are limited to 8 MiB each and 64 MiB in aggregate.
+Snapshot JSON is limited to 32 MiB; the budget is checked while writing package nodes and edges,
+before an amplified graph can be published.
+
+Snapshots contain only genuine NuGet package URLs. Every framework, exact resolved version, direct/transitive
+classification, and package edge is retained. Local Project nodes are connectors: any package dependency
+through them is expanded to its real package targets, without inventing external project packages.
+Centrally pinned transitive packages remain indirect. Project cycles are rejected, traversal is iterative,
+and dependency expansion is limited to one million edge visits. Package scope is conservatively `runtime`
+because lockfiles do not encode development-only asset usage.
+
+Missing committed locks, unresolved edges, ambiguous names, unsupported node kinds or lock versions,
+dirty/mislabeled commits, and unsafe output paths fail before publication. Existing output is not overwritten.
+Submit the JSON through GitHub's dependency-submission API using the reviewed workflow's existing
+contents-write permission. The command itself performs no network calls. One source-built tool can inspect
+both historical base and current head checkouts, so retired releases are unnecessary for dependency review.
+Actual application builds still require the current candidate's artifacts.

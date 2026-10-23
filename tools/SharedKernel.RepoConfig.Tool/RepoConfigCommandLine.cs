@@ -51,6 +51,7 @@ internal static class RepoConfigCommandLine
             CreateVerifyTextEncodingCommand(environment, root),
             CreateVerifyPodmanDnsCommand(environment),
             CreateSecurityCommand(environment, root),
+            CreateDependencyCommand(environment, root),
         };
     }
 
@@ -267,6 +268,51 @@ internal static class RepoConfigCommandLine
             error,
             ct));
         return command;
+    }
+
+    private static Command CreateDependencyCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Option<string> sha = new("--sha")
+        {
+            Required = true,
+            Description = "Exact reviewed commit SHA."
+        };
+        Option<string> reference = new("--ref")
+        {
+            Required = true,
+            Description = "Reviewed Git reference."
+        };
+        Option<string> job = new("--job")
+        {
+            Required = true,
+            Description = "External workflow run ID."
+        };
+        Option<string> correlator = new("--correlator")
+        {
+            Required = true,
+            Description = "Stable dependency snapshot stream identifier."
+        };
+        Option<string> destination = new("--output")
+        {
+            Required = true,
+            Description = "New snapshot JSON file within the reviewed repository."
+        };
+        Command snapshot = new("snapshot", "Generate a complete committed NuGet lockfile snapshot without restoring packages.")
+        {
+            root, sha, reference, job, correlator, destination
+        };
+        SetGuardedAction(snapshot, (parseResult, output, error, cancellationToken) => DependencySnapshotCommand.Run(
+            new DependencySnapshotOptions(
+                ResolveRoot(parseResult, root, environment),
+                parseResult.GetRequiredValue(sha),
+                parseResult.GetRequiredValue(reference),
+                parseResult.GetRequiredValue(job),
+                parseResult.GetRequiredValue(correlator),
+                parseResult.GetRequiredValue(destination)),
+            output,
+            error,
+            cancellationToken));
+        return new Command("dependency", "Generate repository dependency metadata.") { snapshot };
     }
 
     private static Command CreateSecurityCommand(RepoConfigToolEnvironment environment, Option<string> root)
