@@ -48,6 +48,31 @@ public sealed class WorkflowContractTests
     }
 
     [Fact]
+    public void Published_candidate_dispatch_consumes_exact_artifacts_on_both_platforms_without_repacking()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+        var consumption = workflow.Split("  published-candidate-consumption:", StringSplitOptions.None)[1]
+            .Split("\n  validation-summary:", StringSplitOptions.None)[0];
+
+        // Assert
+        workflow.ShouldContain("&& inputs.candidate_version == ''", StringComparison.Ordinal);
+        consumption.ShouldContain("os: [ubuntu-latest, windows-latest]", StringComparison.Ordinal);
+        consumption.ShouldContain("CANDIDATE_VERSION: ${{ inputs.candidate_version }}", StringComparison.Ordinal);
+        consumption.ShouldContain("--repo $env:GITHUB_REPOSITORY", StringComparison.Ordinal);
+        consumption.ShouldContain("$candidate.packageVersion -cne $env:CANDIDATE_VERSION", StringComparison.Ordinal);
+        consumption.ShouldContain("Compare-Object $expectedFiles $actualFiles", StringComparison.Ordinal);
+        consumption.ShouldContain("ref: ${{ steps.candidate.outputs.library_revision }}", StringComparison.Ordinal);
+        consumption.ShouldContain("$revision -cne $env:CANDIDATE_REVISION -or $dirty", StringComparison.Ordinal);
+        consumption.ShouldContain("-- consume-candidate --candidate $manifest --output $evidence --aot", StringComparison.Ordinal);
+        consumption.ShouldNotContain("-- create-candidate", StringComparison.Ordinal);
+        consumption.ShouldContain("if: always()", StringComparison.Ordinal);
+        consumption.ShouldContain("published-candidate/consumption.json", StringComparison.Ordinal);
+        workflow.ShouldContain("test \"$PUBLISHED_CANDIDATE_RESULT\" = success", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Active_workflows_do_not_execute_archived_extraction_scripts()
     {
         // Arrange

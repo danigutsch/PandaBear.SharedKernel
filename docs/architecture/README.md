@@ -68,6 +68,7 @@ flowchart TB
     linux_package_consumption[linux-package-consumption]
     windows_package_consumption[windows-package-consumption]
     repository_quality[repository-quality]
+    published_candidate_consumption[published-candidate-consumption]
     validation_summary[validation-summary]
     trigger --> selection
     selection --> library
@@ -76,6 +77,7 @@ flowchart TB
     candidate --> linux_package_consumption
     candidate --> windows_package_consumption
     selection --> repository_quality
+    trigger --> published_candidate_consumption
     trigger --> validation_summary
 ```
 <!-- generated:library-ci:end -->
