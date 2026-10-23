@@ -29,15 +29,37 @@ internal static class CodeFixRunEngine
     /// The number of fixed diagnostics, or <see langword="null"/> when the target did not load. Load failures are written
     /// to <paramref name="error"/> and no fix is applied.
     /// </returns>
-    public static async Task<int?> Run(CodeFixRunnerOptions options, TextWriter error, CancellationToken ct)
+    /// <exception cref="OperationCanceledException">
+    /// <paramref name="ct"/> was canceled. Load failures reported after cancellation are not written.
+    /// </exception>
+    public static Task<int?> Run(CodeFixRunnerOptions options, TextWriter error, CancellationToken ct)
+    {
+        return Run(options, error, OpenSolution, ct);
+    }
+
+    /// <inheritdoc cref="Run(CodeFixRunnerOptions, TextWriter, CancellationToken)"/>
+    /// <param name="options">The target and the diagnostic ID to fix.</param>
+    /// <param name="error">Receives load failures and diagnostics without an available fix.</param>
+    /// <param name="openSolution">Loads the target path into the workspace and returns the loaded solution.</param>
+    /// <param name="ct">Cancels loading and fixing.</param>
+    public static async Task<int?> Run(
+        CodeFixRunnerOptions options,
+        TextWriter error,
+        Func<MSBuildWorkspace, string, CancellationToken, Task<Solution>> openSolution,
+        CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(error);
+        ArgumentNullException.ThrowIfNull(openSolution);
 
         EnsureMSBuildRegistered();
 
         using var workspace = MSBuildWorkspace.Create();
-        var solution = await OpenSolution(workspace, options.TargetPath, ct).ConfigureAwait(false);
+        var solution = await openSolution(workspace, options.TargetPath, ct).ConfigureAwait(false);
+
+        // Ctrl+C and SIGTERM sent to the process group also stop the MSBuild build host. When that happens as loading ends,
+        // the workspace reports the lost build host as a load failure instead of throwing.
+        ct.ThrowIfCancellationRequested();
         if (await ReportLoadFailures(workspace, error).ConfigureAwait(false))
         {
             return null;
