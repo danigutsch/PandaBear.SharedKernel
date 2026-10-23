@@ -7,6 +7,8 @@ internal static class VersioningCommandLine
 {
     private const int CommandFailed = 2;
 
+    private const int NoBreakingChangeMarker = 3;
+
     private const string BaselineVersionDescription =
         "Published package version to compare APIs against. Requires PandaBear.SharedKernel.* mapped only to an existing local feed in NuGet.Config.";
 
@@ -158,11 +160,17 @@ internal static class VersioningCommandLine
             range,
             repoRoot,
         };
-        SetAction(command, (parseResult, output, ct) => BreakingChangeMarkerCommand.Run(
-            parseResult.GetRequiredValue(range),
-            parseResult.GetRequiredValue(repoRoot),
-            output,
-            ct));
+        SetAction(command, async (parseResult, output, ct) =>
+        {
+            var gitRange = parseResult.GetRequiredValue(range);
+            if (await BreakingChangeMarkerCommand.Run(gitRange, parseResult.GetRequiredValue(repoRoot), output, ct).ConfigureAwait(false))
+            {
+                return 0;
+            }
+
+            await parseResult.InvocationConfiguration.Error.WriteLineAsync($"No breaking-change marker found in {gitRange}.").ConfigureAwait(false);
+            return NoBreakingChangeMarker;
+        });
         return command;
     }
 
@@ -458,15 +466,21 @@ internal static class VersioningCommandLine
     private static string LocalAlphaVersion(TimeProvider timeProvider) =>
         "0.1.0-alpha.local." + timeProvider.GetUtcNow().ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
 
-    // Maps domain failures to exit code 2; parse errors and cancellation keep System.CommandLine's codes.
     private static void SetAction(Command command, Func<ParseResult, TextWriter, CancellationToken, Task> action) =>
+        SetAction(command, async (parseResult, output, ct) =>
+        {
+            await action(parseResult, output, ct).ConfigureAwait(false);
+            return 0;
+        });
+
+    // Maps domain failures to exit code 2; parse errors and cancellation keep System.CommandLine's codes.
+    private static void SetAction(Command command, Func<ParseResult, TextWriter, CancellationToken, Task<int>> action) =>
         command.SetAction(async (parseResult, ct) =>
         {
             var error = parseResult.InvocationConfiguration.Error;
             try
             {
-                await action(parseResult, parseResult.InvocationConfiguration.Output, ct).ConfigureAwait(false);
-                return 0;
+                return await action(parseResult, parseResult.InvocationConfiguration.Output, ct).ConfigureAwait(false);
             }
             catch (Exception exception) when (ct.IsCancellationRequested)
             {

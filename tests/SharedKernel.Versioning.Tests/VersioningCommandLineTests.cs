@@ -333,6 +333,49 @@ public static class VersioningCommandLineTests
     }
 
     [Fact]
+    public static void Readme_usage_synopsis_names_every_command_with_options_it_accepts()
+    {
+        // Arrange
+        var readme = Path.Combine(RepositoryRoot.Find(), "tools", "SharedKernel.Versioning.Tool", "README.md");
+        var rootCommand = VersioningCommandLineRunner.Create();
+
+        // Act
+        var synopses = CallerCommandLine.ReadReadmeSynopses(readme);
+        var unknown = CallerCommandLine.FindUnknownOptions(rootCommand, synopses);
+
+        // Assert
+        // A synopsis without placeholders is a runnable command line, which the README command line scan parses.
+        synopses.Select(static synopsis => synopsis.Command).ShouldBe(CommandNames.Except(["check-public-api-baselines", "validate-package-metadata"]));
+        unknown.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public static async Task Readme_synopsis_scan_reports_options_that_the_command_does_not_accept()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var readme = Path.Combine(directory.Path, "README.md");
+        await File.WriteAllLinesAsync(
+            readme,
+            [
+                "sharedkernel-version compute --base <version> [--prerelease <label>] [--missing <value>] < messages",
+                "sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--aot]",
+                "sharedkernel-version unknown-command [--sha <sha>]",
+                "`sharedkernel-version <command> --help` describes each option.",
+            ],
+            TestContext.Current.CancellationToken);
+        var rootCommand = VersioningCommandLineRunner.Create();
+
+        // Act
+        var synopses = CallerCommandLine.ReadReadmeSynopses(readme);
+        var unknown = CallerCommandLine.FindUnknownOptions(rootCommand, synopses);
+
+        // Assert
+        synopses.Select(static synopsis => synopsis.Command).ShouldBe(["compute", "consume-candidate", "unknown-command"]);
+        unknown.ShouldBe(["compute --missing", "unknown-command"]);
+    }
+
+    [Fact]
     public static async Task Readme_scan_reads_inline_code_and_local_tool_command_lines()
     {
         // Arrange

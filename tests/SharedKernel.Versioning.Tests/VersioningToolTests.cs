@@ -748,8 +748,28 @@ public static class VersioningToolTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        result.ExitCode.ShouldBe(2);
+        result.ExitCode.ShouldBe(3);
+        result.Output.ShouldBe(string.Empty);
         result.Error.ShouldContain("No breaking-change marker found", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Breaking_change_marker_check_exits_with_code_2_when_git_fails()
+    {
+        // Arrange
+        using var repository = new TemporaryGitRepository();
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "base", "fix: base release", TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(
+            ["has-breaking-change-marker", "missing-revision..HEAD", "--repo-root", repository.Root],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldStartWith("Error: ", StringComparison.Ordinal);
+        result.Error.ShouldNotContain("No breaking-change marker found", StringComparison.Ordinal);
     }
 
     [Fact]

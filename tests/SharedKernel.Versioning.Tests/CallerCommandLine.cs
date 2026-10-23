@@ -31,21 +31,50 @@ internal static partial class CallerCommandLine
 
     /// <summary>
     /// Returns the arguments of every README line and inline code span that runs the tool, from any segment of a
-    /// pipeline and without an input redirect. Text with <c>&lt;placeholders&gt;</c> describes syntax rather than
-    /// runnable command lines.
+    /// pipeline and without an input redirect. Text with <c>&lt;placeholders&gt;</c> is a synopsis, which
+    /// <see cref="ReadReadmeSynopses" /> reads.
     /// </summary>
     /// <exception cref="InvalidOperationException">Other text runs or names the tool but is not a runnable command line.</exception>
     public static string[] ReadReadmeCommandLines(string readmePath) =>
-        [.. File.ReadAllLines(readmePath)
-            .Select(static line => line.Trim())
-            .SelectMany(static line => InlineCode().Matches(line)
-                .Select(static match => match.Groups["code"].Value)
-                .Prepend(InlineCode().Replace(line, " ")))
+        [.. ReadReadmeTexts(readmePath)
             .Where(static text => !Placeholder().IsMatch(text))
             .SelectMany(static text => text.Split('|', StringSplitOptions.TrimEntries))
             .Select(ToolArguments)
             .OfType<string>()
             .Select(static arguments => InputRedirect().Replace(arguments, string.Empty))];
+
+    /// <summary>
+    /// Returns the command and option names of every README usage synopsis: a line or inline code span that runs the
+    /// tool with <c>&lt;placeholders&gt;</c>, <c>[optional]</c> options, and <c>(a | b)</c> alternatives. A synopsis
+    /// whose command is a placeholder names no command.
+    /// </summary>
+    public static (string Command, string[] Options)[] ReadReadmeSynopses(string readmePath) =>
+        [.. ReadReadmeTexts(readmePath)
+            .Where(static text => Placeholder().IsMatch(text))
+            .Select(static text => ToolCommands.FirstOrDefault(command => text.StartsWith(command, StringComparison.Ordinal)) is { } command
+                ? text[command.Length..]
+                : null)
+            .OfType<string>()
+            .Where(static arguments => !arguments.StartsWith('<'))
+            .Select(static arguments => (
+                arguments.Split(' ', 2)[0],
+                OptionName().Matches(arguments).Select(static match => match.Value).ToArray()))];
+
+    /// <summary>
+    /// Names each synopsis command that <paramref name="rootCommand" /> lacks, and each <c>command --option</c> that
+    /// the command does not accept.
+    /// </summary>
+    public static string[] FindUnknownOptions(RootCommand rootCommand, IEnumerable<(string Command, string[] Options)> synopses)
+    {
+        ArgumentNullException.ThrowIfNull(rootCommand);
+        ArgumentNullException.ThrowIfNull(synopses);
+        return [.. synopses.SelectMany(synopsis =>
+            rootCommand.Subcommands.FirstOrDefault(command => command.Name == synopsis.Command) is { } command
+                ? synopsis.Options
+                    .Where(option => !command.Options.Any(accepted => accepted.Name == option || accepted.Aliases.Contains(option)))
+                    .Select(option => synopsis.Command + " " + option)
+                : [synopsis.Command])];
+    }
 
     public static string[] Split(string commandLine)
     {
@@ -77,6 +106,14 @@ internal static partial class CallerCommandLine
         var command = parseResult.CommandResult.Command;
         return action is not null && ReferenceEquals(action, command.Action) ? command.Name : "(no command)";
     }
+
+    // Each line without its inline code spans, followed by the spans.
+    private static IEnumerable<string> ReadReadmeTexts(string readmePath) =>
+        File.ReadAllLines(readmePath)
+            .Select(static line => line.Trim())
+            .SelectMany(static line => InlineCode().Matches(line)
+                .Select(static match => match.Groups["code"].Value)
+                .Prepend(InlineCode().Replace(line, " ")));
 
     private static string? ToolArguments(string segment)
     {
@@ -114,6 +151,9 @@ internal static partial class CallerCommandLine
 
     [GeneratedRegex(@"<[^<>\s]+>", RegexOptions.CultureInvariant)]
     private static partial Regex Placeholder();
+
+    [GeneratedRegex(@"(?<![\w-])--[a-z][a-z0-9-]*", RegexOptions.CultureInvariant)]
+    private static partial Regex OptionName();
 
     [GeneratedRegex(@"\s+<\s*\S+$", RegexOptions.CultureInvariant)]
     private static partial Regex InputRedirect();

@@ -144,4 +144,50 @@ public static class CandidateManifestTests
         retained.ShouldBe(original);
     }
 
+    [Fact]
+    public static async Task Canceled_consumption_leaves_recorded_evidence_unchanged()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        var manifest = temporary.WriteCandidate();
+        var evidence = CandidateManifest.ReadAndVerify(manifest);
+        evidence["linuxPackageConsumption"] = "passed";
+        evidence["windowsPackageConsumption"] = "passed";
+        CandidateManifest.Write(manifest, evidence);
+        var original = await File.ReadAllTextAsync(manifest, TestContext.Current.CancellationToken);
+        await temporary.WriteConsumptionSamples("Canceled sample", TestContext.Current.CancellationToken);
+        using var cancellation = new CancellationTokenSource();
+        await cancellation.CancelAsync();
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(
+            ["consume-candidate", "--candidate", manifest, "--repo-root", temporary.Root],
+            cancellation.Token);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        var retained = await File.ReadAllTextAsync(manifest, TestContext.Current.CancellationToken);
+        retained.ShouldBe(original);
+        Directory.GetFiles(temporary.PackageDirectory, "candidate.json*").ShouldBe([manifest]);
+    }
+
+    [Fact]
+    public static async Task Failed_consumption_records_failed_evidence()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        var manifest = temporary.WriteCandidate();
+        var platform = OperatingSystem.IsWindows() ? "windowsPackageConsumption" : "linuxPackageConsumption";
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(
+            ["consume-candidate", "--candidate", manifest, "--repo-root", temporary.Root],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(2);
+        var evidence = CandidateManifest.ReadAndVerify(manifest);
+        evidence[platform].ShouldNotBeNull().GetValue<string>().ShouldBe("failed");
+        Directory.GetFiles(temporary.PackageDirectory, "candidate.json*").ShouldBe([manifest]);
+    }
 }

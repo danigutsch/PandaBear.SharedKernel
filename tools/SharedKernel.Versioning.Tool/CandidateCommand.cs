@@ -75,20 +75,25 @@ internal static class CandidateCommand
     {
         var evidence = CandidateManifest.ReadAndVerify(manifest);
         var platform = OperatingSystem.IsWindows() ? "windowsPackageConsumption" : "linuxPackageConsumption";
-        evidence[platform] = "failed";
         try
         {
             await PackageConsumptionCommand.Run(
                 root, Path.GetDirectoryName(manifest)!, evidence["packageVersion"]!.GetValue<string>(), aot, output, error, ct).ConfigureAwait(false);
-            evidence[platform] = "passed";
-            if (aot)
-            {
-                evidence[OperatingSystem.IsWindows() ? "windowsNativeAot" : "linuxNativeAot"] = "passed";
-            }
         }
-        finally
+        catch (Exception) when (!ct.IsCancellationRequested)
         {
+            // A canceled run proves nothing, so it leaves the recorded evidence unchanged.
+            evidence[platform] = "failed";
             CandidateManifest.Write(destination, evidence);
+            throw;
         }
+
+        evidence[platform] = "passed";
+        if (aot)
+        {
+            evidence[OperatingSystem.IsWindows() ? "windowsNativeAot" : "linuxNativeAot"] = "passed";
+        }
+
+        CandidateManifest.Write(destination, evidence);
     }
 }

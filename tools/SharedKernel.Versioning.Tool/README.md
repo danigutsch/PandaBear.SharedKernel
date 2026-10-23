@@ -99,8 +99,8 @@ sharedkernel-version check-api-compatibility --version 0.2.0-beta.1 --release-ph
 ```
 
 `has-breaking-change-marker` succeeds when a commit in the range has a `!` header or a `BREAKING CHANGE:` or
-`BREAKING-CHANGE:` footer. Arguments that start with `@` name response files, so write `HEAD@{u}..HEAD`
-instead of `@{u}..HEAD`.
+`BREAKING-CHANGE:` footer, and exits 3 when no commit has one. Arguments that start with `@` name response
+files, so write `HEAD@{u}..HEAD` instead of `@{u}..HEAD`.
 
 `check-api-compatibility` writes `<output-root>/<version>/api-compatibility-report.md` and packs into
 `<output-root>/packages/<version>`. With `--baseline-version`, packing runs .NET package validation against that
@@ -142,8 +142,10 @@ to an existing local feed in `NuGet.Config`.
 
 `consume-candidate` verifies the hashes, restores, builds, and runs the samples against those packages with
 isolated caches, and records `passed` or `failed` for this platform's package consumption, and its NativeAOT run
-with `--aot`, in the manifest or in `--output`. `--candidate-directory` must contain exactly one `candidate.json`,
-searched recursively. `consume-packages` runs the same checks against a feed without a manifest.
+with `--aot`, in the manifest or in `--output`. It replaces that file through a temporary file in the same
+directory, so an interrupted write never truncates it, and Ctrl+C or SIGTERM leaves the file unchanged.
+`--candidate-directory` must contain exactly one `candidate.json`, searched recursively. `consume-packages` runs
+the same checks against a feed without a manifest.
 `validate-candidate` runs `create-candidate` and then `consume-candidate` on the manifest it wrote.
 
 `stage-candidate` checks that the manifest records a clean library revision equal to `HEAD` of `--repo-root` and
@@ -162,6 +164,7 @@ does the output of the `dotnet` processes and samples that `consume-candidate`, 
 | `0` | Success. |
 | `1` | Invalid command line, cancellation, or an unexpected internal error. |
 | `2` | The command failed: invalid input, a failed check, or a failed `git` or `dotnet` process. |
+| `3` | `has-breaking-change-marker` found no breaking-change marker in the range. |
 | `130`, `143` | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
 Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or sample process tree. A process that fails after the tool has
