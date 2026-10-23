@@ -12,9 +12,14 @@ public sealed class DocumentationToolCallerTests
     [InlineData(
         "tools/SharedKernel.Documentation.Tool/README.md",
         "sharedkernel-docs ",
+        "verify --config <path>",
         "generate --config <path>",
         "verify --config <path>",
         "check --config <path>")]
+    [InlineData(
+        "tools/SharedKernel.Documentation.Tool/README.md",
+        "tools/SharedKernel.Documentation.Tool -c Release -- ",
+        "verify --config docs/architecture/generated-diagrams.json")]
     [InlineData(
         "src/SharedKernel/SharedKernel.Documentation/README.md",
         "sharedkernel-docs ",
