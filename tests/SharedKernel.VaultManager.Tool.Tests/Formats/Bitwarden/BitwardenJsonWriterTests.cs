@@ -113,6 +113,36 @@ public sealed class BitwardenJsonWriterTests
         result.Errors.ShouldAllSatisfy(error => error.ShouldNotContain(secret, StringComparison.Ordinal));
     }
 
+    [Fact]
+    public void Write_errors_name_custom_fields_with_long_names_by_position_only()
+    {
+        string pastedName = new('k', 800);
+        const string Question = "What was the name of the street where you lived in third grade?";
+        string longValue = new('v', 4_000);
+        var item = new VaultItem
+        {
+            Type = VaultItemType.SecureNote,
+            Name = "Keeper import",
+            Fields =
+            [
+                new CustomField("Short", "fixture-value", CustomFieldType.Text),
+                new CustomField(pastedName, "fixture-answer", CustomFieldType.Hidden),
+                new CustomField(Question, longValue, CustomFieldType.Hidden),
+                new CustomField("API key", longValue, CustomFieldType.Hidden),
+            ],
+            Origin = Origin,
+        };
+
+        var result = BitwardenJsonWriter.Write(new VaultExport([item]));
+
+        result.Errors.Count.ShouldBe(3);
+        result.Errors[0].ShouldStartWith("\"Keeper import\": the name of custom field 2 is too long", StringComparison.Ordinal);
+        result.Errors[1].ShouldStartWith("\"Keeper import\": the value of custom field 3 is too long", StringComparison.Ordinal);
+        result.Errors[2].ShouldStartWith("\"Keeper import\": the value of custom field 4 \"API key\" is too long", StringComparison.Ordinal);
+        result.Errors.ShouldAllSatisfy(error => error.ShouldNotContain("kkkk", StringComparison.Ordinal));
+        result.Errors.ShouldAllSatisfy(error => error.ShouldNotContain("third grade", StringComparison.Ordinal));
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData("short")]

@@ -45,4 +45,16 @@ public sealed class RedactionTests
         printed.ShouldAllSatisfy(text => text.ShouldNotContain(Secret, StringComparison.Ordinal));
         printed[0].ShouldContain("visible name", StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void ToString_of_an_attachment_never_contains_its_content_hash()
+    {
+        const string Hash = "3f79bb7b435b05321651daefd374cdc681dc06faa65e374e38337b88ca046dea";
+        var attachment = new AttachmentRef("codes.txt", 20, "files/file-1") { ContentHash = Hash };
+
+        string printed = attachment.ToString();
+
+        printed.ShouldNotContain(Hash, StringComparison.Ordinal);
+        printed.ShouldContain("codes.txt", StringComparison.Ordinal);
+    }
 }

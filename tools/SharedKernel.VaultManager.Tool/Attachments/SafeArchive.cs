@@ -1,6 +1,7 @@
 using System.Buffers.Binary;
 using System.Globalization;
 using System.IO.Compression;
+using System.Security.Cryptography;
 
 namespace PandaBear.VaultManager.Tool.Attachments;
 
@@ -87,17 +88,29 @@ internal sealed class SafeArchive : IDisposable
     {
         ArgumentNullException.ThrowIfNull(entry);
 
-        ZipArchiveEntry zipEntry = archive.GetEntry(entry.Path)
-            ?? throw new ArgumentException("Entry does not belong to this archive.", nameof(entry));
-        using Stream source = zipEntry.Open();
         using var buffer = new MemoryStream();
-        long read = CopyBounded(source, buffer, entry.Size, () => "Archive entry grew after validation.");
-        if (read != entry.Size)
+        CopyEntry(entry, buffer);
+        return buffer.ToArray();
+    }
+
+    /// <summary>
+    /// Computes the SHA-256 of an entry's bytes while streaming them, never reading more than the size measured during
+    /// validation, so a large binary file is not held in memory.
+    /// </summary>
+    /// <param name="entry">Entry of this archive.</param>
+    /// <returns>The 32-byte digest.</returns>
+    /// <exception cref="InvalidDataException">The entry changed size since validation.</exception>
+    public byte[] ComputeSha256(ArchiveEntryInfo entry)
+    {
+        ArgumentNullException.ThrowIfNull(entry);
+
+        using var sha256 = SHA256.Create();
+        using (var hashing = new CryptoStream(Stream.Null, sha256, CryptoStreamMode.Write))
         {
-            throw new InvalidDataException("Archive entry changed size after validation.");
+            CopyEntry(entry, hashing);
         }
 
-        return buffer.ToArray();
+        return sha256.Hash!;
     }
 
     /// <summary>Reads an entry as strict UTF-8 text, for example an export document inside the archive.</summary>
@@ -129,6 +142,18 @@ internal sealed class SafeArchive : IDisposable
 
     /// <inheritdoc/>
     public void Dispose() => archive.Dispose();
+
+    private void CopyEntry(ArchiveEntryInfo entry, Stream destination)
+    {
+        ZipArchiveEntry zipEntry = archive.GetEntry(entry.Path)
+            ?? throw new ArgumentException("Entry does not belong to this archive.", nameof(entry));
+        using Stream source = zipEntry.Open();
+        long read = CopyBounded(source, destination, entry.Size, () => "Archive entry grew after validation.");
+        if (read != entry.Size)
+        {
+            throw new InvalidDataException("Archive entry changed size after validation.");
+        }
+    }
 
     private static ZipArchive OpenZip(Stream stream, Budget budget, int depth)
     {

@@ -159,8 +159,7 @@ internal static class VaultReport
         PasswordIssueKind.Reused => "reused on other sites",
         PasswordIssueKind.TooShort => string.Create(CultureInfo.InvariantCulture, $"shorter than {PasswordHealthReport.MinimumLength} characters"),
         PasswordIssueKind.SingleCharacterClass => "only one kind of character",
-        PasswordIssueKind.EqualsUsername => "same as the user name",
-        PasswordIssueKind.EqualsItemName => "same as the item name",
+        PasswordIssueKind.EasilyGuessed => "easily guessed",
         _ => kind.ToString(),
     };
 

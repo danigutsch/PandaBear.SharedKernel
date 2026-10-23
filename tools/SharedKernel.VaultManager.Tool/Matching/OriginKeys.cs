@@ -18,30 +18,63 @@ namespace PandaBear.VaultManager.Tool.Matching;
 /// name, and first host, joined with line feeds. Only the hash is stored, never the values.
 /// </para>
 /// <para>
-/// When several items in one input share a key, the second and later ones, in input order, get the suffix <c>#2</c>,
-/// <c>#3</c>, and so on. The same files therefore produce the same keys on every run.
+/// When several items share a key, the first one in input order keeps it, and each later one gets the next free suffix
+/// of <c>#2</c>, <c>#3</c>, and so on. A suffixed key is free when no other item has it, either as its own key, for
+/// example because an original identifier ends in <c>#2</c>, or as the suffixed key of an item before it. The same
+/// files therefore produce the same unique keys on every run.
 /// </para>
 /// </remarks>
 internal static class OriginKeys
 {
     /// <summary>Computes the origin key of every item.</summary>
     /// <param name="items">Items in input order.</param>
-    /// <returns>Keys aligned with <paramref name="items"/>.</returns>
+    /// <returns>Unique keys aligned with <paramref name="items"/>.</returns>
     public static IReadOnlyList<string> Compute(IReadOnlyList<VaultItem> items)
     {
         ArgumentNullException.ThrowIfNull(items);
 
-        var seen = new Dictionary<string, int>(StringComparer.Ordinal);
-        string[] keys = new string[items.Count];
-        for (int index = 0; index < items.Count; index++)
+        string[] keys = [.. items.Select(BaseKey)];
+        var taken = new HashSet<string>(keys, StringComparer.Ordinal);
+        var kept = new HashSet<string>(StringComparer.Ordinal);
+        var nextSuffix = new Dictionary<string, int>(StringComparer.Ordinal);
+        for (int index = 0; index < keys.Length; index++)
         {
-            string key = BaseKey(items[index]);
-            int count = seen.TryGetValue(key, out int previous) ? previous + 1 : 1;
-            seen[key] = count;
-            keys[index] = count == 1 ? key : string.Create(CultureInfo.InvariantCulture, $"{key}#{count}");
+            string key = keys[index];
+            if (!kept.Add(key))
+            {
+                keys[index] = Unique(key, taken, nextSuffix.GetValueOrDefault(key, 2), out int suffix);
+                nextSuffix[key] = suffix + 1;
+            }
         }
 
         return keys;
+    }
+
+    /// <summary>
+    /// Returns <paramref name="key"/> when no other item has it, or else the key with the first free suffix of <c>#2</c>,
+    /// <c>#3</c>, and so on, and records the returned key as taken.
+    /// </summary>
+    /// <param name="key">Key the item would have.</param>
+    /// <param name="taken">Keys other items already have; receives the returned key.</param>
+    /// <returns>A key no other item has.</returns>
+    public static string MakeUnique(string key, ISet<string> taken)
+    {
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(taken);
+
+        return taken.Add(key) ? key : Unique(key, taken, 2, out _);
+    }
+
+    private static string Unique(string key, ISet<string> taken, int firstSuffix, out int suffix)
+    {
+        for (suffix = firstSuffix; ; suffix++)
+        {
+            string candidate = string.Create(CultureInfo.InvariantCulture, $"{key}#{suffix}");
+            if (taken.Add(candidate))
+            {
+                return candidate;
+            }
+        }
     }
 
     private static string BaseKey(VaultItem item)

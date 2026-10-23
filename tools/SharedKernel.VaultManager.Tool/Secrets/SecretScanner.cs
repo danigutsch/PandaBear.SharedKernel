@@ -12,6 +12,10 @@ namespace PandaBear.VaultManager.Tool.Secrets;
 /// structural detectors cover labeled notes lines, security questions, recovery code blocks, card numbers, IBANs, seed
 /// phrases, and misfiled core fields. Findings hold locations, never values.
 /// </summary>
+/// <remarks>
+/// Scanning time grows about linearly with the text: whole-text facts are computed once per field, line lookups use
+/// precomputed line starts, and overlapping findings are resolved through an <see cref="OverlapIndex"/>.
+/// </remarks>
 internal sealed class SecretScanner
 {
     /// <summary>Rule identifier of Steam Desktop Authenticator shared secrets, which are base64 rather than base32.</summary>
@@ -21,6 +25,10 @@ internal sealed class SecretScanner
     private const int WindowAfter = 3072;
     private const int MaxWindow = 4096;
     private const int AwsContextLines = 5;
+
+    // Overlapping windows of one rule are merged up to this length, so text with a keyword on every line is scanned about
+    // once instead of once per keyword. Every keyword hit still gets its whole window inside one scanned window.
+    private const int MaxMergedWindow = 16 * 1024;
 
     private static readonly string[] BankWords =
         ["bank", "card", "karte", "visa", "mastercard", "amex", "credit", "debit", "kredit", "sparkasse", "volksbank", "giro", "atm"];
@@ -196,14 +204,16 @@ internal sealed class SecretScanner
 
     private List<SecretFinding> ScanField(string text, string path, ScanContext context, bool fileNameHint)
     {
+        List<SecretFinding> seeds = ScanSeedPhrases(text, path);
         var raw = new List<SecretFinding>();
         raw.AddRange(ScanCatalog(text, path));
         raw.AddRange(ScanAwsContext(text, path, raw));
-        raw.AddRange(ScanLines(text, path, context, raw));
+        bool seedNearby = seeds.Count > 0 || raw.Any(finding => finding.Kind == SecretKind.SeedPhrase);
+        raw.AddRange(ScanLines(text, path, context, seedNearby));
         raw.AddRange(RecoveryCodeDetector.Detect(text, path, fileNameHint, context.Host));
         raw.AddRange(ScanCardNumbers(text, path));
         raw.AddRange(ScanIbans(text, path));
-        raw.AddRange(ScanSeedPhrases(text, path));
+        raw.AddRange(seeds);
         raw.AddRange(ScanHighEntropy(text, path));
         return Deduplicate(raw);
     }
@@ -282,7 +292,7 @@ internal sealed class SecretScanner
             windows.Add(rule, list);
         }
 
-        if (list.Count > 0 && start <= list[^1].End && end - list[^1].Start <= MaxWindow)
+        if (list.Count > 0 && start <= list[^1].End && end - list[^1].Start <= MaxMergedWindow)
         {
             list[^1] = (list[^1].Start, Math.Max(end, list[^1].End));
         }
@@ -369,13 +379,14 @@ internal sealed class SecretScanner
         }
 
         var lines = SecretText.Lines(text);
+        var scanned = new HashSet<int>();
         foreach (SecretFinding keyId in keyIds)
         {
-            int keyLine = SecretText.LineOf(text, keyId.Location.Start) - 1;
+            int keyLine = LineIndex(lines, keyId.Location.Start);
             for (int line = Math.Max(0, keyLine - AwsContextLines); line <= Math.Min(lines.Count - 1, keyLine + AwsContextLines); line++)
             {
                 var (lineStart, lineText) = lines[line];
-                if (lineText.Length > MaxWindow)
+                if (lineText.Length > MaxWindow || !scanned.Add(line))
                 {
                     continue;
                 }
@@ -401,15 +412,18 @@ internal sealed class SecretScanner
         return findings;
     }
 
-    private static List<SecretFinding> ScanLines(string text, string path, ScanContext context, List<SecretFinding> catalog)
+    // Lines that hold only whitespace never hold a finding, so the scan steps over them; "next" is the following line that
+    // holds text.
+    private static List<SecretFinding> ScanLines(string text, string path, ScanContext context, bool seedNearby)
     {
         var findings = new List<SecretFinding>();
-        var lines = SecretText.Lines(text);
+        var allLines = SecretText.Lines(text);
+        List<(int Start, string Text)> lines = [.. allLines.Where(line => !string.IsNullOrWhiteSpace(line.Text))];
         var parsed = new (string Key, int KeyStart, KeyClass Class, int ValueStart, string Value)?[lines.Count];
         for (int index = 0; index < lines.Count; index++)
         {
             string line = lines[index].Text;
-            if (line.Length is 0 or > MaxWindow)
+            if (line.Length > MaxWindow)
             {
                 continue;
             }
@@ -430,7 +444,7 @@ internal sealed class SecretScanner
             }
         }
 
-        bool seedNearby = catalog.Any(finding => finding.Kind == SecretKind.SeedPhrase) || ContainsSeedPhrase(text);
+        bool? questionContext = null;
         var consumed = new HashSet<int>();
         for (int index = 0; index < lines.Count; index++)
         {
@@ -439,12 +453,12 @@ internal sealed class SecretScanner
                 continue;
             }
 
-            int next = NextNonEmpty(lines, index + 1);
+            int next = index + 1 < lines.Count ? index + 1 : -1;
             if (parsed[index] is { Class: KeyClass.Question } question)
             {
                 if (next >= 0 && parsed[next] is { Class: KeyClass.Answer } answer && !CandidateFilter.IsPlaceholder(answer.Value))
                 {
-                    findings.Add(QuestionFinding(path, question.ValueStart, question.Value.Length, answer.ValueStart, answer.Value, index, next, Confidence.Medium));
+                    findings.Add(QuestionFinding(path, question.ValueStart, question.Value.Length, answer.ValueStart, answer.Value, LineNumber(allLines, lines[index].Start), LineNumber(allLines, lines[next].Start), Confidence.Medium));
                     consumed.Add(next);
                 }
 
@@ -453,7 +467,7 @@ internal sealed class SecretScanner
 
             if (parsed[index] is { } entry && entry.Class != KeyClass.None)
             {
-                if (LineFinding(entry.Key, entry.KeyStart, entry.Class, entry.ValueStart, entry.Value, index + 1, path, context, seedNearby) is { } finding)
+                if (LineFinding(entry.Key, entry.KeyStart, entry.Class, entry.ValueStart, entry.Value, LineNumber(allLines, lines[index].Start), path, context, seedNearby) is { } finding)
                 {
                     findings.Add(finding);
                 }
@@ -469,8 +483,9 @@ internal sealed class SecretScanner
                 {
                     int questionStart = lines[index].Start + lines[index].Text.IndexOf(trimmed, StringComparison.Ordinal);
                     int answerStart = lines[next].Start + lines[next].Text.IndexOf(answerLine, StringComparison.Ordinal);
-                    bool context2 = QuestionContextWords.Any(word => text.Contains(word, StringComparison.OrdinalIgnoreCase));
-                    findings.Add(QuestionFinding(path, questionStart, trimmed.Length, answerStart, answerLine, index, next, context2 ? Confidence.Medium : Confidence.Suggestion));
+                    questionContext ??= QuestionContextWords.Any(word => text.Contains(word, StringComparison.OrdinalIgnoreCase));
+                    Confidence confidence = questionContext.Value ? Confidence.Medium : Confidence.Suggestion;
+                    findings.Add(QuestionFinding(path, questionStart, trimmed.Length, answerStart, answerLine, LineNumber(allLines, lines[index].Start), LineNumber(allLines, lines[next].Start), confidence));
                     consumed.Add(next);
                 }
             }
@@ -481,14 +496,9 @@ internal sealed class SecretScanner
 
     private static SecretFinding QuestionFinding(string path, int questionStart, int questionLength, int answerStart, string answer, int questionLine, int answerLine, Confidence confidence)
     {
-        return Finding(
-            "security-question",
-            SecretKind.SecurityQuestion,
-            confidence,
-            new SecretLocation(path, answerStart, answer.Length, questionLine + 1, answerLine + 1),
-            PlacementTarget.HiddenNamedByLabel("Security answer"),
-            "Security question and answer",
-            answer) with { LabelLocation = new SecretLocation(path, questionStart, questionLength) };
+        var location = new SecretLocation(path, answerStart, answer.Length, questionLine, answerLine);
+        SecretFinding finding = Finding("security-question", SecretKind.SecurityQuestion, confidence, location, PlacementTarget.HiddenNamedByLabel("Security answer"), "Security question and answer", answer);
+        return finding with { LabelLocation = new SecretLocation(path, questionStart, questionLength) };
     }
 
     private static SecretFinding? LineFinding(string key, int keyStart, KeyClass keyClass, int start, string value, int line, string path, ScanContext context, bool seedNearby)
@@ -506,8 +516,8 @@ internal sealed class SecretScanner
             case KeyClass.Username when context.IsLogin && !context.HasUsername && !CandidateFilter.IsPlaceholder(value) && value.Length <= 256:
                 return Finding("notes-username", SecretKind.Username, Confidence.Medium, location, PlacementTarget.LoginUsername, "User name line", value);
             case KeyClass.Token when !rejected && value.Length is >= 8 and <= 512 && !SecretText.HasWhitespace(value) && SecretText.ShannonEntropy(value) >= 3.0:
-                return Finding("notes-token", SecretKind.ApiToken, Confidence.Low, location, PlacementTarget.HiddenNamedByLabel("Token"), "Token line", value)
-                    with { LabelLocation = new SecretLocation(path, keyStart, key.Length) };
+                var label = new SecretLocation(path, keyStart, key.Length);
+                return Finding("notes-token", SecretKind.ApiToken, Confidence.Low, location, PlacementTarget.HiddenNamedByLabel("Token"), "Token line", value) with { LabelLocation = label };
             case KeyClass.Recovery when context.IsBitwarden && IsBitwardenRecoveryCode(value):
                 return Finding("bitwarden-recovery-code", SecretKind.BitwardenRecoveryCode, Confidence.Medium, location, PlacementTarget.NotMoved("store the Bitwarden recovery code outside the vault it protects"), "Bitwarden account recovery code", value) with { NeedsReview = true };
             case KeyClass.Recovery when !rejected && value.Length >= 8:
@@ -621,11 +631,6 @@ internal sealed class SecretScanner
         }
 
         return findings;
-    }
-
-    private static bool ContainsSeedPhrase(string text)
-    {
-        return ScanSeedPhrases(text, string.Empty).Count > 0;
     }
 
     private static List<SecretFinding> ScanSeedPhrases(string text, string path)
@@ -802,11 +807,15 @@ internal sealed class SecretScanner
             .ThenByDescending(finding => Priority(finding.RuleId))
             .ThenByDescending(finding => finding.Location.Length)];
         var kept = new List<SecretFinding>();
+        var index = new OverlapIndex();
         foreach (SecretFinding finding in ordered)
         {
-            int overlap = kept.FindIndex(other => Overlaps(other.Location, finding.Location));
+            // Kept locations never overlap each other, so a kept finding with the same start and length as this one is
+            // the only kept finding it overlaps.
+            int overlap = index.FindOverlap(finding.Location);
             if (overlap < 0)
             {
+                index.Add(finding.Location);
                 kept.Add(finding);
                 continue;
             }
@@ -832,11 +841,6 @@ internal sealed class SecretScanner
             _ when ruleId.StartsWith("notes-", StringComparison.Ordinal) => 1,
             _ => 2,
         };
-    }
-
-    private static bool Overlaps(SecretLocation left, SecretLocation right)
-    {
-        return left.FieldPath == right.FieldPath && left.Start < right.End && right.Start < left.End;
     }
 
     private static List<SecretFinding> AssignTargets(List<SecretFinding> findings, ScanContext context)
@@ -945,18 +949,28 @@ internal sealed class SecretScanner
             && SecretText.ShannonEntropy(compact) >= 3.0;
     }
 
-    private static int NextNonEmpty(List<(int Start, string Text)> lines, int index)
+    // Zero-based index of the line that holds an offset, found by binary search over the line starts.
+    private static int LineIndex(List<(int Start, string Text)> lines, int offset)
     {
-        for (int next = index; next < lines.Count; next++)
+        int low = 0;
+        int high = lines.Count - 1;
+        while (low < high)
         {
-            if (lines[next].Text.Trim().Length > 0)
+            int middle = low + ((high - low + 1) / 2);
+            if (lines[middle].Start <= offset)
             {
-                return next;
+                low = middle;
+            }
+            else
+            {
+                high = middle - 1;
             }
         }
 
-        return -1;
+        return low;
     }
+
+    private static int LineNumber(List<(int Start, string Text)> lines, int lineStart) => LineIndex(lines, lineStart) + 1;
 
     private static bool Fits(string value)
     {

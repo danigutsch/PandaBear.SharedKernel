@@ -29,6 +29,21 @@ public sealed class SafeArchiveTests
     }
 
     [Fact]
+    public void ComputeSha256_returns_the_digest_of_the_entry_bytes_for_text_and_binaries()
+    {
+        byte[] text = TestZip.Utf8("hello\nworld");
+        byte[] binary = TestZip.RandomBytes(200_000);
+        byte[] zip = TestZip.Create(("a.txt", text), ("b.bin", binary));
+        using var archive = SafeArchive.Open(new MemoryStream(zip), ArchiveLimits.Default);
+
+        byte[] textDigest = archive.ComputeSha256(archive.Find("a.txt")!);
+        byte[] binaryDigest = archive.ComputeSha256(archive.Find("b.bin")!);
+
+        textDigest.ShouldBe(System.Security.Cryptography.SHA256.HashData(text));
+        binaryDigest.ShouldBe(System.Security.Cryptography.SHA256.HashData(binary));
+    }
+
+    [Fact]
     public void Open_rejects_compression_ratio_bomb_measured_on_actual_bytes()
     {
         byte[] zip = TestZip.Create(("bomb.txt", new byte[20 * 1024 * 1024]));

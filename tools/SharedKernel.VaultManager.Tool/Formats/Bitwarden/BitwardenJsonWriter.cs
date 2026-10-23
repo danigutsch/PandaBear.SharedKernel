@@ -8,9 +8,18 @@ namespace PandaBear.VaultManager.Tool.Formats.Bitwarden;
 /// <summary>Writes unencrypted Bitwarden JSON exports that Bitwarden and Vaultwarden can import.</summary>
 internal static class BitwardenJsonWriter
 {
+    /// <summary>
+    /// Longest custom field name that errors quote. A longer name, such as pasted text or a long security question, is
+    /// left out, and the field is named by its position on the item.
+    /// </summary>
+    public const int MaxQuotedFieldNameLength = 40;
+
     /// <summary>Writes items as an unencrypted individual-vault Bitwarden export.</summary>
     /// <param name="export">Items to write.</param>
-    /// <returns>Export JSON and problems that would affect the import. Values are never truncated.</returns>
+    /// <returns>
+    /// Export JSON and problems that would affect the import. Values are never truncated, and problems name custom fields
+    /// by position, quoting only names of at most <see cref="MaxQuotedFieldNameLength"/> characters.
+    /// </returns>
     public static BitwardenWriteResult Write(VaultExport export)
     {
         ArgumentNullException.ThrowIfNull(export);
@@ -80,12 +89,17 @@ internal static class BitwardenJsonWriter
         Check(item.Login?.Totp, BitwardenLimits.ShortEncryptedLength, "TOTP");
         Check(item.SshKey?.PrivateKey, BitwardenLimits.ValueEncryptedLength, "SSH private key");
         Check(item.SshKey?.PublicKey, BitwardenLimits.ValueEncryptedLength, "SSH public key");
-        foreach (CustomField field in item.Fields)
+        for (int index = 0; index < item.Fields.Count; index++)
         {
-            Check(field.Name, BitwardenLimits.ShortEncryptedLength, $"field name \"{field.Name}\"");
-            Check(field.Value, BitwardenLimits.ValueEncryptedLength, $"field \"{field.Name}\"");
+            CustomField field = item.Fields[index];
+            string position = string.Create(CultureInfo.InvariantCulture, $"custom field {index + 1}");
+            Check(field.Name, BitwardenLimits.ShortEncryptedLength, "the name of " + position);
+            Check(field.Value, BitwardenLimits.ValueEncryptedLength, "the value of " + FieldLabel(position, field.Name));
         }
     }
+
+    private static string FieldLabel(string position, string? name) =>
+        string.IsNullOrWhiteSpace(name) || name.Length > MaxQuotedFieldNameLength ? position : position + " \"" + name + "\"";
 
     private static BitwardenItemDto ToDto(VaultItem item, Dictionary<string, string> folderIds)
     {

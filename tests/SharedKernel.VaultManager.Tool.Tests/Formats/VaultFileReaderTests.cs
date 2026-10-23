@@ -63,6 +63,18 @@ public sealed class VaultFileReaderTests : IDisposable
     }
 
     [Fact]
+    public void Read_reports_an_input_that_is_a_directory_by_its_path()
+    {
+        string path = Directory.CreateDirectory(Path.Combine(directory, "export.json")).FullName;
+
+        var action = () => VaultFileReader.Read(path, _ => "unused");
+
+        var exception = action.ShouldThrow<IOException>();
+        exception.Message.ShouldContain(path, StringComparison.Ordinal);
+        exception.Message.ShouldContain("is a directory", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Read_rejects_files_larger_than_the_input_cap_before_reading()
     {
         string path = Path.Combine(directory, "large.json");

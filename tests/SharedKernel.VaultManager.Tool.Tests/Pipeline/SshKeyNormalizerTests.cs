@@ -117,6 +117,65 @@ public sealed class SshKeyNormalizerTests
     }
 
     [Fact]
+    public void Normalize_keeps_text_stored_before_and_after_the_key_in_one_hidden_field()
+    {
+        const string Label = "deploy key for git.example.com";
+        const string HostLine = "host: prod-db-1";
+        var item = SshKeyItems.Item(new SshKeyData { PrivateKey = Label + "\r\n\r\n" + PemFixtures.Ed25519OpenSsh() + "\r\n" + HostLine + "\r\n" });
+
+        var normalized = SshKeyNormalizer.Normalize(item);
+
+        var key = normalized.SshKey.ShouldNotBeNull();
+        key.PrivateKey.ShouldBe(PemFixtures.Ed25519OpenSsh());
+        key.KeyFingerprint.ShouldBe(PemFixtures.Ed25519Fingerprint);
+        normalized.Fields.ShouldBe([new CustomField(SshKeyNormalizer.OtherTextField, Label + "\n" + HostLine, CustomFieldType.Hidden)]);
+    }
+
+    [Fact]
+    public void Normalize_keeps_both_keys_when_the_first_key_cannot_be_converted()
+    {
+        using var second = RSA.Create(2048);
+        string stored = PemFixtures.EncryptedOpenSsh() + "\n" + PemFixtures.RsaPkcs1(second);
+        var item = SshKeyItems.Item(new SshKeyData { PrivateKey = stored });
+
+        var normalized = SshKeyNormalizer.Normalize(item);
+
+        normalized.Type.ShouldBe(VaultItemType.SecureNote);
+        normalized.Fields.ShouldBe([new CustomField(SshKeyNormalizer.PrivateKeyField, stored, CustomFieldType.Hidden)]);
+    }
+
+    [Fact]
+    public void Normalize_leaves_text_around_the_key_of_a_complete_ssh_key_item_in_its_key_slot()
+    {
+        using var second = RSA.Create(2048);
+        string stored = "deploy key\n" + PemFixtures.Ed25519OpenSsh() + "\n" + PemFixtures.RsaPkcs1(second);
+        var item = SshKeyItems.Item(new SshKeyData { PrivateKey = stored, PublicKey = PemFixtures.Ed25519PublicKey, KeyFingerprint = PemFixtures.Ed25519Fingerprint });
+
+        var normalized = SshKeyNormalizer.Normalize(item);
+
+        normalized.ShouldBeSameAs(item);
+        normalized.SshKey.ShouldNotBeNull().PrivateKey.ShouldBe(stored);
+    }
+
+    [Fact]
+    public void Normalize_turns_a_sec1_key_with_explicit_curve_parameters_into_a_secure_note_that_keeps_the_key()
+    {
+        using var named = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        using var explicitCurve = ECDsa.Create(named.ExportExplicitParameters(includePrivateParameters: true));
+        string pem = PemFixtures.Sec1(explicitCurve);
+        var item = SshKeyItems.Item(new SshKeyData { PrivateKey = pem });
+
+        var normalized = SshKeyNormalizer.Normalize(item);
+
+        normalized.Type.ShouldBe(VaultItemType.SecureNote);
+        normalized.SshKey.ShouldBeNull();
+        normalized.Fields.ShouldBe([new CustomField(SshKeyNormalizer.PrivateKeyField, pem, CustomFieldType.Hidden)]);
+        string note = normalized.ConversionNotes.ShouldHaveSingleItem();
+        note.ShouldContain("unsupported ECDSA curve", StringComparison.Ordinal);
+        pem.Split('\n').ShouldAllSatisfy(line => note.ShouldNotContain(line, StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void Normalize_turns_a_key_that_cannot_be_converted_into_a_secure_note_that_keeps_the_key()
     {
         string pem = PemFixtures.EncryptedOpenSsh();

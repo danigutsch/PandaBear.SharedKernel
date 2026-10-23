@@ -18,11 +18,32 @@ internal static class VaultFileReader
     /// <param name="passwordProvider">Returns the file password for a password-protected export, given its file name.</param>
     /// <returns>Items and warnings.</returns>
     /// <exception cref="InvalidDataException">The file is too large, unsupported, malformed, account-restricted, or the password is wrong.</exception>
+    /// <exception cref="IOException">
+    /// The file does not exist, is a directory, or cannot be read, also when access to it is denied.
+    /// </exception>
     public static VaultReadResult Read(string path, Func<string, string> passwordProvider)
     {
         ArgumentException.ThrowIfNullOrEmpty(path);
         ArgumentNullException.ThrowIfNull(passwordProvider);
 
+        // Opening a directory fails as access denied, which would hide the real mistake.
+        if (Directory.Exists(path))
+        {
+            throw new IOException($"Input file '{Path.GetFullPath(path)}' is a directory. Choose an export file.");
+        }
+
+        try
+        {
+            return ReadDetected(path, passwordProvider);
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            throw new IOException($"Input file '{Path.GetFullPath(path)}' cannot be read because access to it is denied.", exception);
+        }
+    }
+
+    private static VaultReadResult ReadDetected(string path, Func<string, string> passwordProvider)
+    {
         byte[] content = ReadCapped(path);
         string fileName = Path.GetFileName(path);
         switch (FormatDetector.Detect(content))
