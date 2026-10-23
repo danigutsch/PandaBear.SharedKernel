@@ -21,8 +21,12 @@ internal static class BriefBuilder
     /// <param name="scanned">Vault the merge read and scanned.</param>
     /// <param name="result">Result of merging <paramref name="scanned"/> with <paramref name="decisions"/>.</param>
     /// <param name="decisions">The user's decisions the merge ran with; notes are shown only when they share them.</param>
+    /// <param name="everyGroup">
+    /// Whether to list every group, also one that needs no decision, so agent decisions made from an earlier brief can be
+    /// checked against the inputs as they are.
+    /// </param>
     /// <returns>The brief.</returns>
-    public static BriefDocument Build(IReadOnlyList<string> inputs, ScannedVault scanned, PipelineResult result, MergeDecisions decisions)
+    public static BriefDocument Build(IReadOnlyList<string> inputs, ScannedVault scanned, PipelineResult result, MergeDecisions decisions, bool everyGroup = false)
     {
         ArgumentNullException.ThrowIfNull(inputs);
         ArgumentNullException.ThrowIfNull(scanned);
@@ -35,7 +39,7 @@ internal static class BriefBuilder
         for (int index = 0; index < result.Match.Groups.Count; index++)
         {
             MatchGroup group = result.Match.Groups[index];
-            if (context.UnresolvedGroups.Contains(group.Key) || group.MemberKeys.Any(context.PendingFindingItems.Contains))
+            if (everyGroup || context.UnresolvedGroups.Contains(group.Key) || group.MemberKeys.Any(context.PendingFindingItems.Contains))
             {
                 VaultItemType type = result.Merged.Items[index].Type;
                 groups.Add(new BriefGroup(group.Key, type, Members(group, context), Fields(group, type, passwords[index], context)));

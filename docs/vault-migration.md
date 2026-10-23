@@ -543,7 +543,7 @@ vault that it protects.
    cd ~/vault-merge
    rm -f keeper.zip keeper.json bitwarden.json bitwarden.zip merged.json check.json restore.json
    rm -f decisions.json all-conflicts.json scan-report.md merge-report.md
-   rm -f catalog.json notes.json organized.json
+   rm -f catalog.json notes.json organized.json brief.json agent.json
    ```
 
    Keep `vaultwarden-backup.zip` from step 6 only as long as you need it, on the encrypted disk. Bitwarden's
@@ -589,6 +589,49 @@ Exports carry no deletion markers, so the tool cannot tell a deletion from an en
   holds items in the trash anyway gets a warning that counts them, and the tool skips them.
 - Unverified: whether Commander exports records from Keeper's deleted items. Delete any that appear after the
   import.
+
+## Merge with an agent
+
+An AI agent can propose the decisions that a merge needs without seeing a password or another secret. It reads a
+brief, a JSON file without secret values, and writes its own decisions file; you run every command that reads or
+writes the vaults.
+
+1. Run the merge of [step 5](#5-merge) with a brief. Share the notes the agent may read before you do, as described
+   below, or run this command again after you share them: the brief shows the notes that `decisions.json` shares when
+   the brief is written.
+
+   ```bash
+   sharedkernel-vault merge keeper.zip bitwarden.json \
+     --output merged.json --decisions decisions.json --report merge-report.md --brief brief.json
+   ```
+
+   The brief lists the groups that need a decision: each item's name, folder, website host, and user name, which
+   members hold a value for each field that differs, flags such as `weak` and `reused` for passwords, and the secret
+   findings by kind and place, never a value. It shows notes only when you share them and they hold no secret
+   finding: in the review of the same inputs and decisions file, `n` shares the selected item's notes, and `F8`
+   shares the notes of every item without a finding.
+2. Give the agent a copy of `brief.json` to read, the format and limits in the tool README's **Agent decisions** section, and the name of
+   the file it writes, such as `agent.json`. Give it nothing else from the working folder: never `decisions.json`, an
+   export, the merged vault, or a report. Run the agent without network access, or treat the names, user names,
+   addresses, folders, and shared notes in the brief as disclosed: text in a name or a note can carry instructions that
+   lead the agent to bad decisions.
+3. Merge with the agent's decisions:
+
+   ```bash
+   sharedkernel-vault merge keeper.zip bitwarden.json \
+     --output merged.json --decisions decisions.json --report merge-report.md \
+     --brief brief.json --agent-decisions agent.json
+   ```
+
+   An agent may only take one item's value for a field, which keeps the other values, and accept or reject the
+   findings the brief allows. Where `decisions.json` decides the same field or finding, your decision wins. The merge
+   stops with exit code 3 and writes nothing when the agent file breaks a limit, when the brief belongs to other
+   exports, or when the agent's decisions do not fit the exports and your decisions as they are; write a new brief then.
+4. When the merge exits with code 2, decide the pending entries in `decisions.json`, as
+   [The decisions file](#the-decisions-file) describes, and run the same command again. The review UI does not see the
+   agent's decisions, so decide in the file. Before the import, read **Decided by agent** and **Rejected by agent** in
+   `merge-report.md`.
+5. Delete `brief.json` and `agent.json` in [step 10](#10-clean-up).
 
 ## Organize with an agent
 
@@ -818,7 +861,10 @@ quit hold no secret values.
   folders with one ID; the message names the first malformed entry by its position. The decisions file is not valid, for example
   because a property name is misspelled or a property appears twice in one object. The output exists and `--force`
   is missing, the output is also an input or differs from one only in case, or its folder does not exist. The report
-  path names an existing file that is not a vault report. The report or the decisions file cannot be written. A value would make Bitwarden reject the import; merge still adds pending
+  path names an existing file that is not a vault report, or the brief path names an existing file that is not a
+  brief. The agent decisions file is missing, not valid, outside the limits for agents, or does not fit the exports and
+  your decisions, or the brief was made from other exports. The report, the brief, or the decisions file cannot be
+  written. A value would make Bitwarden reject the import; merge still adds pending
   entries for the decisions it needs. A password is needed and no terminal is available, or three attempts at a new
   password fail. Merge writes no vault in these cases, except when it writes `merged.json` and then cannot write the
   report: it prints `Wrote the merged vault to merged.json` before it writes the report, and the error says that the

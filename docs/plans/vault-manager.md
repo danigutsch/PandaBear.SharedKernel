@@ -231,7 +231,7 @@ summaries count them with the other attachments to upload.
   writes this report to standard output and shows no values.
 - `sharedkernel-vault scan <inputs...> [--report <file>]` reports secret findings and password health without
   values. It writes a summary to standard output; `--report` writes the full Markdown report.
-- `sharedkernel-vault merge <inputs...> --output <file> [--decisions <file>] [--policy <newest|ask|prefer:<input file name>>] [--plaintext] [--report <file>] [--force] [--brief <file>]`
+- `sharedkernel-vault merge <inputs...> --output <file> [--decisions <file>] [--policy <newest|ask|prefer:<input file name>>] [--plaintext] [--report <file>] [--force] [--brief <file>] [--agent-decisions <file>]`
   merges without the UI. The default policy is `newest`. The output is a Bitwarden password-protected export, with
   the password asked twice at the terminal, unless `--plaintext` is given. `--force` allows replacing an existing
   output; an input is never replaced. When fields still need a decision, or proposed findings need accepting or
@@ -270,7 +270,9 @@ Exit codes:
 - 3: an input or output problem: an unreadable, unsupported, malformed, or account-restricted input, a wrong password, a
   decisions file that is not valid, an output that exists without `--force` or is an input, a missing output directory,
   a report path that names an existing file that is not a vault report, a brief path that names an existing file that
-  is not a brief, a report, brief, or decisions file that cannot be written, writer errors that block writing, a password needed without a
+  is not a brief, a brief of other input files, an agent decisions file that is missing, not valid, outside the limits
+  for agents, or that does not fit the inputs, a report, brief, or decisions file that cannot be written, writer errors
+  that block writing, a password needed without a
   terminal, no acceptable new password in three attempts, or `review` without a terminal. When the report cannot be
   written after the vault, the error says that the vault is written and the report is not.
 - 130 or 143: Ctrl+C or SIGTERM during start-up, before System.CommandLine handles it, or a canceled command that
@@ -358,6 +360,36 @@ scanned inputs, the result of the merge with the user's decisions, and those dec
   always allowed. Finding IDs and kinds say which rule matched and where, which can tell the kind of a secret field,
   such as a PIN stored as a password. Findings appear under the member whose origin key the finding decisions use, never under items that
   placement created.
+
+## Agent decisions
+
+`merge --agent-decisions <file> --brief <file>` combines a decisions file that an agent wrote from the brief with the
+user's decisions file. The agent decides blind, and the brief is in its hands, so the tool enforces the limits instead of
+trusting either file.
+
+- Combination: the user's field and finding decisions come first, so `MergeDecisions.Find` and `FindFinding` take the
+  user's decision on the same field or finding. Links, splits, and notes decisions are the user's only. The decisions file
+  gets pending entries for what neither file decides, and never the agent's decisions.
+- Limits, checked before any password prompt against the brief file as read once: no `Empty` choice, link, split, or
+  notes decision; one decision per field and per finding; only groups, fields with `agentMayDecide`, holders, items,
+  and findings that the brief lists; accepts and rejects only where `agentMayAccept` and `agentMayReject` allow. The
+  brief's input file names must match the inputs, so a brief of other files fails before any password. The brief holds
+  no hash of the inputs, because the hash of an unencrypted export would let a reader test guesses of its passwords.
+- Recheck: after the inputs are read, the limits are checked again against a brief of every group, built from the inputs
+  as read and the user's decisions. Fields, holders, findings, and what an agent may accept or reject therefore come
+  from the inputs, also when the brief was edited or made from another version of an input, and a group that the
+  user's later decisions resolved still accepts the agent's decisions on it, where the user's decision wins. A byte
+  comparison with the brief would refuse every change of the user's decisions, which is how the user finishes what the
+  agent leaves. Which groups an agent may decide comes from the brief file, so the user gives the agent a copy to read.
+- Placement runs before matching, so finding decisions can change groups and values. Accepts that fill or edit a user
+  name or addresses, or make an item, are outside the limits; as a second line, after the combined merge, the merge
+  refuses any change of which items share a group and any member choice whose member holds no value once the agent's finding decisions are placed.
+- Audit: the summary counts the agent decisions applied and overridden and names each pre-accepted finding the agent
+  rejects; the report lists them under **Decided by agent** and **Rejected by agent**.
+- Risks: names and notes can carry prompt injection. Its effect is bad decisions, which the limits keep lossless and
+  the report lists, not leaks of secret values, which the brief does not hold. The brief does hold names, user names,
+  addresses, folders, and shared notes, so an agent with network access could send those elsewhere. Accepting a line
+  finding moves its value and removes its label from the notes, so an accept loses that label text.
 
 ## Review UI
 

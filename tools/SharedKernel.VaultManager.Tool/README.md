@@ -80,7 +80,8 @@ and exits with code 3.
    ```
 
 6. Import the merged or organized vault into an empty Bitwarden or Vaultwarden vault with its file password, then
-   upload the attachments the report lists. Delete the exports, the vaults, the catalog, and the report afterwards.
+   upload the attachments the report lists. Delete the exports, the vaults, the catalog, the brief, the agent's decisions
+   file, and the report afterwards.
 
 ## Commands
 
@@ -118,7 +119,8 @@ Merges the inputs into one Bitwarden export and writes a summary to standard out
 | `--plaintext` | Writes unencrypted Bitwarden JSON instead of a password-protected export. Delete the file after the import. |
 | `--report <file>` | Writes the full Markdown report, including the decisions still needed. An existing vault report is replaced; any other existing file and an input never are. |
 | `--force` | Allows replacing an existing output file. |
-| `--brief <file>` | Writes the brief, a JSON file without secret values that lists what needs a decision, for an agent that proposes decisions. See [Brief](#brief). It is written also when the merge exits with code 2. An existing brief is replaced; any other existing file and an input never are. |
+| `--brief <file>` | Writes the brief, a JSON file without secret values that lists what needs a decision, for an agent that proposes decisions. See [Brief](#brief). It is written also when the merge exits with code 2. An existing brief is replaced; any other existing file and an input never are. With `--agent-decisions`, it names the brief the agent read, which the merge reads instead of writing. |
+| `--agent-decisions <file>` | Decisions file that an agent wrote from the brief given with `--brief`. Its decisions apply where the decisions file has none, within the limits for agents. See [Agent decisions](#agent-decisions). Needs `--brief`. |
 
 By default the output is a Bitwarden password-protected export. Its password is asked twice at the terminal and
 must have at least 12 characters. The merged vault is not written while a field or a proposed finding needs a
@@ -431,6 +433,87 @@ that need a decision with your decisions:
   pre-accepted finding, which changes nothing.
 - `suggestions`: weak matches that the merge did not apply. Only you can link items.
 
+## Agent decisions
+
+`merge --agent-decisions agent.json --brief brief.json` combines the decisions that an agent wrote from the brief with
+your decisions file. The agent's file has the format of the decisions file. On the same field or finding, your decisions file
+wins. The merge never copies the agent's decisions into your decisions file: its pending entries list only what neither
+file decides. This is an agent file that takes one member's password and accepts one finding:
+
+```json
+{
+  "version": 2,
+  "groups": [
+    {
+      "groupKey": "0000000000000000",
+      "choices": [
+        { "fieldPath": "login.password", "kind": "Member", "originKey": "bitwarden|bitwarden.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301" }
+      ]
+    }
+  ],
+  "links": [],
+  "splits": [],
+  "findings": [
+    { "originKey": "keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA", "choices": [{ "findingId": "notes-password@notes:42", "decision": "Accepted" }] }
+  ]
+}
+```
+
+An agent file may only take one holder's value for a field whose `agentMayDecide` is true, which keeps the other values
+as every merge does, and accept or reject the findings whose `agentMayAccept` or `agentMayReject` is true. Before any
+password is asked, the merge stops with exit code 3, writes nothing, and names each problem when:
+
+- the brief was made from other input files, as their names show;
+- the agent file is missing or is not a valid decisions file;
+- it holds an `Empty` choice, a link, a split, or a notes decision;
+- it decides one field or one finding twice;
+- it names a group, field, holder, item, or finding that the brief does not list, or accepts or rejects a finding that
+  the brief does not let an agent accept or reject.
+
+After it reads the inputs, the merge checks the agent's decisions again against every group of the inputs as they are:
+the fields, holders, and findings an agent may decide come from the inputs, not from the brief file, so a brief edited
+after it was written, or one made from another version of an input, lets the agent decide nothing those inputs do not
+allow. Which groups the agent may decide still comes from the brief file, so let the agent read a copy of it. Decisions you made since the brief was
+written may take a group out of the brief; your decision wins there. When your decisions changed what the agent decided
+on, for example a finding you accepted changed a user name and so the groups, the merge stops with exit code 3. After it
+places the agent's finding decisions, it stops with exit code 3 when they put an item in a group with other items, which
+only links and splits may do, or empty the value that a member choice takes. In each case, write a new brief and let the
+agent decide from it.
+
+The summary counts the agent decisions that took effect and those your decisions file overrides, and names each
+pre-accepted finding that the agent rejects as `Rejected by agent`. The report lists every agent decision that took
+effect under **Decided by agent** and the rejected pre-accepted findings under **Rejected by agent**. `review` reads only
+your decisions file, so it shows what the agent decided as pending; decide what is left in the decisions file and run
+the same merge again.
+
+## Agent workflow
+
+An agent can propose merge decisions without seeing a secret value, and you run every command that reads or writes the
+vault:
+
+1. Optionally, decide which notes the agent may read: in `review` of the inputs with your decisions file, `n` shares the
+   selected item's notes and `F8` the notes of every item without a secret finding; save with `Ctrl+S`. The brief
+   shows the notes that the decisions file shares when the brief is written, while they hold no secret finding, so
+   share them first, or write the brief again after you share them.
+2. Merge with a brief:
+
+   ```sh
+   sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --report merge-report.md --brief brief.json
+   ```
+
+3. Give the agent a copy of `brief.json` to read, the format and limits under [Agent decisions](#agent-decisions), and
+   the path of the file it writes, such as `agent.json`. Give it nothing else: never the decisions file, the exports,
+   the merged vault, or the report.
+4. Merge with the agent's decisions:
+
+   ```sh
+   sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --report merge-report.md --brief brief.json --agent-decisions agent.json
+   ```
+
+5. When it exits with code 2, decide the pending entries in `decisions.json` and run the same command again. Before the
+   import, read **Decided by agent** and **Rejected by agent** in `merge-report.md`, and delete `brief.json` and
+   `agent.json` with the exports afterwards.
+
 ## Exit codes
 
 | Code | Meaning |
@@ -438,7 +521,7 @@ that need a decision with your decisions:
 | 0 | Success. |
 | 1 | Invalid command line, with the error on standard error and help on standard output, both shown as described under Output; canceled; or an unexpected error. Ctrl+C or SIGTERM cancels a command; inside the review UI, `Ctrl+C` is a key, and SIGTERM or SIGINT cancels, as described under `review`. Canceled at a password prompt or before the review UI starts, the command ends at once. Otherwise `inspect`, `scan`, and `merge` wait up to 1.5 seconds for their work to stop at its next check: no file write starts after the cancel, and a write already under way either completes or leaves its file unchanged, as described under Security. Work still running after 1.5 seconds ends with the process. An unexpected error shows the exception type and stack trace, but not its message, which can contain vault values. |
 | 2 | `merge` only: fields or findings need a decision. No vault is written; with `--decisions`, the decisions file holds a pending entry for each. |
-| 3 | An input or output problem: an input that is unreadable, unsupported, malformed, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; a catalog that is not valid, was made from another file or another version of the input, or changes what it may not; an output that exists without `--force` or is an input; a missing output directory; a report path that names an existing file that is not a vault report, or a brief path that names an existing file that is not a brief; a report, brief, or decisions file that cannot be written; values that Bitwarden would reject; a password needed while standard input is not a terminal, or no acceptable new password in three attempts; or `review` started while standard input or output is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
+| 3 | An input or output problem: an input that is unreadable, unsupported, malformed, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; an agent decisions file that is missing, not valid, outside the limits for agents, or that does not fit the inputs, or a brief that is not valid or was made from other inputs; a catalog that is not valid, was made from another file or another version of the input, or changes what it may not; an output that exists without `--force` or is an input; a missing output directory; a report path that names an existing file that is not a vault report, or a brief path that names an existing file that is not a brief; a report, brief, or decisions file that cannot be written; values that Bitwarden would reject; a password needed while standard input is not a terminal, or no acceptable new password in three attempts; or `review` started while standard input or output is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, before the tool handles it, or a canceled command that did not end within two seconds. |
 
 ## Output
@@ -496,6 +579,13 @@ that System.CommandLine repeats cannot send escape sequences either.
 - A brief holds item names, folder names, user names and website addresses as the inputs hold them, with addresses
   masked and user names that hold a secret finding left out, the notes you shared that hold no secret finding, origin
   keys, the input file names, and the IDs and kinds of findings, and never secret values.
+- An agent that reads a brief sees no secret value, and one that reads a catalog sees none beyond the notes you shared.
+  Both show item names, user names, website addresses, and folders. Text in names and notes can carry instructions to
+  the agent (prompt injection). That risks bad decisions, not leaks of secret values, as long as the agent cannot send
+  what it reads elsewhere: run it without network access, or treat what it reads as disclosed. Give the agent only the
+  brief or the catalog and its own output file, never the decisions file, which shares notes and links items, nor an
+  export or a vault. Let it read a copy of the brief: the merge takes the groups an agent may decide from the brief
+  file. Check what it decided: the merge report lists its decisions, and `apply --dry-run` lists every change.
 - Reports, warnings, errors, and the decisions file never contain secret values. They do contain item names,
   folder names, file names, and origin keys. An origin key holds the record or item ID of an export, or, for an item
   without one, such as a CSV row, a hash of its type, title, and the host of its first website address, read from the
