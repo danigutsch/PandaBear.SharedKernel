@@ -6,13 +6,29 @@ namespace PandaBear.Testing.AspNetCore;
 public sealed class RecordingOutputCacheStore : IOutputCacheStore
 {
     /// <summary>Gets whether eviction was attempted.</summary>
-    public bool EvictionObserved { get; private set; }
+    public bool EvictionObserved
+    {
+        get;
+        private set;
+    }
     /// <summary>Gets the last eviction tag.</summary>
-    public string? EvictionTag { get; private set; }
+    public string? EvictionTag
+    {
+        get;
+        private set;
+    }
     /// <summary>Gets the last eviction cancellation token.</summary>
-    public CancellationToken EvictionCancellationToken { get; private set; }
+    public CancellationToken EvictionCancellationToken
+    {
+        get;
+        private set;
+    }
     /// <summary>Gets or sets the exception thrown after recording an eviction.</summary>
-    public Exception? EvictionException { get; set; }
+    public Exception? EvictionException
+    {
+        get;
+        set;
+    }
     /// <inheritdoc />
     public ValueTask<byte[]?> GetAsync(string key, CancellationToken cancellationToken) => ValueTask.FromResult<byte[]?>(null);
     /// <inheritdoc />
