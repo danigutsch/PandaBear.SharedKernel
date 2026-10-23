@@ -1,6 +1,4 @@
-namespace PandaBear.VaultManager.Tool;
+using PandaBear.VaultManager.Tool;
+using PandaBear.VaultManager.Tool.Pipeline;
 
-internal static class Program
-{
-    public static int Main(string[] args) => VaultManagerCommand.Create().Parse(args).Invoke();
-}
+return await VaultCommandLine.Create(VaultCommandEnvironment.FromConsole()).Parse(args).InvokeAsync().ConfigureAwait(false);

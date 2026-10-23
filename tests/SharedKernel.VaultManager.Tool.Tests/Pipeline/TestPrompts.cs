@@ -3,9 +3,13 @@ using PandaBear.VaultManager.Tool.Tests.Merge;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 
-/// <summary>Command environment for tests: records every prompt, answers new-password prompts, and refuses file passwords.</summary>
+/// <summary>
+/// Command environment for tests: records every prompt and answers new-password prompts. File password prompts are
+/// refused unless a file password is given.
+/// </summary>
 /// <param name="newPassword">Password returned for a new export.</param>
-internal sealed class TestPrompts(string newPassword)
+/// <param name="filePassword">Password returned for every password-protected input, or <see langword="null"/> to refuse.</param>
+internal sealed class TestPrompts(string newPassword, string? filePassword = null)
 {
     private readonly List<string> filePasswordPrompts = [];
     private readonly List<string> newPasswordPrompts = [];
@@ -14,19 +18,24 @@ internal sealed class TestPrompts(string newPassword)
 
     public IReadOnlyList<string> NewPasswordPrompts => newPasswordPrompts;
 
+    /// <summary>Whether the environment reports that standard input is a terminal.</summary>
+    public bool IsInteractive { get; init; } = true;
+
+    /// <summary>Runs at each new-password prompt before it is answered, for example to cancel the command or to fail.</summary>
+    public Action? OnNewPassword { get; init; }
+
     public VaultCommandEnvironment Environment() => new(
-        TextWriter.Null,
-        TextWriter.Null,
         prompt =>
         {
             filePasswordPrompts.Add(prompt);
-            throw new InvalidOperationException("The test inputs are not password-protected.");
+            return filePassword ?? throw new InvalidOperationException("The test inputs are not password-protected.");
         },
         prompt =>
         {
             newPasswordPrompts.Add(prompt);
+            OnNewPassword?.Invoke();
             return newPassword;
         },
-        IsInteractive: true,
+        IsInteractive,
         new FixedTimeProvider(PipelineInputs.Now));
 }

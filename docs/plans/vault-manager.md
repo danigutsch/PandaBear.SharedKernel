@@ -172,16 +172,38 @@ so every attachment stays on a manual upload list in the report.
 
 ## Commands
 
-- `sharedkernel-vault inspect <files...>` shows formats, counts, timestamps, attachments, and lossy conversions.
-- `sharedkernel-vault scan <files...>` reports secret findings and password health.
-- `sharedkernel-vault merge <files...> --output <file>` merges without the UI. Unresolved conflicts update the
-  decisions file and exit with code 2 without writing a vault.
-- `sharedkernel-vault review <files...>` opens the review UI: groups, a side-by-side field diff, findings, and
-  decisions.
+- `sharedkernel-vault inspect <inputs...>` shows, per input, the detected format, item counts by type, folders,
+  items with and without modification times, attachments in the export or missing from it, and read warnings. It
+  writes this report to standard output and shows no values.
+- `sharedkernel-vault scan <inputs...> [--report <file>]` reports secret findings and password health without
+  values. It writes a summary to standard output; `--report` writes the full Markdown report.
+- `sharedkernel-vault merge <inputs...> --output <file> [--decisions <file>] [--policy <newest|ask|prefer:<input file name>>] [--plaintext] [--report <file>] [--force]`
+  merges without the UI. The default policy is `newest`. The output is a Bitwarden password-protected export, with
+  the password asked twice at the terminal, unless `--plaintext` is given. `--force` allows replacing an existing
+  output; an input is never replaced. When fields still need a decision, or proposed findings need accepting or
+  rejecting, the merge writes no vault and exits with code 2. With `--decisions`, it first creates or updates the
+  decisions file with pending entries for the user to edit; without it, it asks to rerun with
+  `--decisions <file>`. Pending entries carry no values: a field entry lists the members to choose from by origin
+  key and item name, and a finding entry names its item. They count as no decision, and an update keeps every
+  other entry. The merge warns about decisions whose group, field, origin key, or finding identifier matches
+  nothing.
+- `sharedkernel-vault review <inputs...> [--decisions <file>] [--output <file>] [--plaintext] [--force]` opens the
+  full-screen review UI: groups, a side-by-side field diff, findings, and decisions.
 
-Passwords are read only from the terminal without echo, never from arguments or environment variables. Commands
-that need a password fail when standard input is not a terminal. Reports and errors go to standard error;
-machine-readable output goes to standard output.
+Exit codes:
+
+- 0: success.
+- 1: invalid command line, cancellation, or an unexpected error (System.CommandLine's code for these).
+- 2: decisions needed: the merge wrote, or would write, pending decisions.
+- 3: an input or output problem: an unreadable, unsupported, or account-restricted input, a wrong password, an
+  output that exists without `--force` or is an input, a missing output directory, writer errors that block
+  writing, or a password needed without a terminal.
+
+Passwords are read only from a terminal prompt without echo, never from arguments or environment variables.
+Password-protected inputs and an encrypted output need a terminal: without one, a command that needs a password
+fails with exit code 3 before doing any work and names the input or output that needs it. The `inspect` report and
+the `scan` and `merge` summaries go to standard output; diagnostics, warnings, errors, and prompts go to standard
+error. Report and decisions files are created readable only by their owner.
 
 ## Verification
 

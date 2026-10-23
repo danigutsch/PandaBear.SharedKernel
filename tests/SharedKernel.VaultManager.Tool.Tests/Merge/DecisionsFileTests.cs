@@ -4,10 +4,14 @@ using static PandaBear.VaultManager.Tool.Tests.Merge.MergeFixture;
 
 namespace PandaBear.VaultManager.Tool.Tests.Merge;
 
-public sealed class DecisionsFileTests
+public sealed class DecisionsFileTests : IDisposable
 {
     private const string OldPassword = "fixture-old-password";
     private const string NewPassword = "fixture-new-password";
+    private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
+    private readonly string directory = Directory.CreateTempSubdirectory("vault-decisions-file-").FullName;
+
+    public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]
     public void Decisions_round_trip_and_contain_no_values()
@@ -22,7 +26,7 @@ public sealed class DecisionsFileTests
         string json = DecisionsFile.Serialize(decisions);
         var reread = DecisionsFile.Deserialize(json);
 
-        json.ShouldContain("\"version\": 1", StringComparison.Ordinal);
+        json.ShouldContain("\"version\": 2", StringComparison.Ordinal);
         string[] values = [OldPassword, NewPassword, "fixture-old-notes", "fixture-new-notes"];
         values.ShouldAllSatisfy(value => json.ShouldNotContain(value, StringComparison.Ordinal));
         var group = reread.Groups.ShouldHaveSingleItem();
@@ -48,7 +52,7 @@ public sealed class DecisionsFileTests
         string json = DecisionsFile.Serialize(decisions);
         var reread = DecisionsFile.Deserialize(json);
 
-        json.ShouldContain("\"version\": 1", StringComparison.Ordinal);
+        json.ShouldContain("\"version\": 2", StringComparison.Ordinal);
         json.ShouldContain("\"findings\"", StringComparison.Ordinal);
         json.ShouldNotContain(NotesPassword, StringComparison.Ordinal);
         reread.Findings.Count.ShouldBe(2);
@@ -61,27 +65,74 @@ public sealed class DecisionsFileTests
     }
 
     [Fact]
+    public void Decisions_name_choice_kinds_and_finding_decisions_in_the_file()
+    {
+        var decisions = new MergeDecisions(
+            [new GroupDecision("0123456789abcdef", [FieldChoice.Member(FieldPaths.Notes, KeeperKey), FieldChoice.Empty(FieldPaths.LoginTotp), FieldChoice.Pending(FieldPaths.LoginPassword, [])])],
+            MatchOverrides.None)
+        {
+            Findings = [new ItemFindingDecisions(KeeperKey, [new FindingChoice("a@notes:0", FindingDecision.Accepted), new FindingChoice("b@notes:9", FindingDecision.Rejected), new FindingChoice("c@notes:20", FindingDecision.Pending)])],
+        };
+
+        string json = DecisionsFile.Serialize(decisions);
+
+        string[] names = ["\"kind\": \"Member\"", "\"kind\": \"Empty\"", "\"kind\": \"Pending\"", "\"decision\": \"Accepted\"", "\"decision\": \"Rejected\"", "\"decision\": \"Pending\""];
+        names.ShouldAllSatisfy(name => json.ShouldContain(name, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Pending_entries_round_trip_without_values_and_load_as_no_decision()
+    {
+        var keeper = WithoutTimestamp(Keeper(Login(OldPassword)));
+        var bitwarden = WithoutTimestamp(Bitwarden(Login(NewPassword)));
+        var conflict = Run(keeper, bitwarden).Unresolved.ShouldHaveSingleItem();
+        var options = conflict.MemberOriginKeys.Select((key, index) => new FieldChoiceOption(key, conflict.MemberNames[index])).ToArray();
+        var decisions = new MergeDecisions([new GroupDecision(conflict.GroupKey, [FieldChoice.Pending(conflict.FieldPath, options)])], MatchOverrides.None)
+        {
+            Findings = [new ItemFindingDecisions(KeeperKey, [new FindingChoice("notes-password@notes:42", FindingDecision.Pending)], "Example")],
+        };
+
+        string json = DecisionsFile.Serialize(decisions);
+        var reread = DecisionsFile.Deserialize(json);
+
+        json.ShouldNotContain(OldPassword, StringComparison.Ordinal);
+        json.ShouldNotContain(NewPassword, StringComparison.Ordinal);
+        var choice = reread.Groups.ShouldHaveSingleItem().Choices.ShouldHaveSingleItem();
+        choice.Kind.ShouldBe(FieldChoiceKind.Pending);
+        choice.OriginKey.ShouldBeNull();
+        choice.Options.ShouldNotBeNull().ShouldBe(options);
+        reread.Findings.ShouldHaveSingleItem().ItemName.ShouldBe("Example");
+        reread.Find(conflict.GroupKey, conflict.FieldPath).ShouldBeNull();
+        reread.FindFinding(KeeperKey, "notes-password@notes:42").ShouldBeNull();
+        Run(new MergePolicy(), reread, null, keeper, bitwarden).Unresolved.ShouldHaveSingleItem().FieldPath.ShouldBe(conflict.FieldPath);
+    }
+
+    [Fact]
     public void Decisions_written_without_a_findings_section_still_load()
     {
-        var decisions = DecisionsFile.Deserialize("""{"version":1,"groups":[],"links":[],"splits":[]}""");
+        var decisions = DecisionsFile.Deserialize("""{"version":2,"groups":[],"links":[],"splits":[]}""");
 
         decisions.Findings.ShouldBeEmpty();
     }
 
     [Fact]
-    public void Decisions_edited_by_hand_with_lowercase_finding_decisions_load()
+    public void Decisions_edited_by_hand_with_lowercase_names_load()
     {
-        var decisions = DecisionsFile.Deserialize("""{"version":1,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"f","decision":"rejected"}]}]}""");
+        var decisions = DecisionsFile.Deserialize("""
+            {"version":2,"groups":[{"groupKey":"g","choices":[{"fieldPath":"notes","kind":"member","originKey":"k"}]}],"links":[],"splits":[],
+             "findings":[{"originKey":"k","choices":[{"findingId":"f","decision":"rejected"}]}]}
+            """);
 
         decisions.FindFinding("k", "f").ShouldBe(FindingDecision.Rejected);
+        decisions.Find("g", "notes").ShouldBe(FieldChoice.Member("notes", "k"));
     }
 
     [Theory]
-    [InlineData("""{"version":1,"groups":[],"links":[],"splits":[],"findings":[{"originKey":" ","choices":[]}]}""")]
-    [InlineData("""{"version":1,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"","decision":"accepted"}]}]}""")]
-    [InlineData("""{"version":1,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"f","decision":7}]}]}""")]
-    [InlineData("""{"version":1,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"f"}]}]}""")]
-    [InlineData("""{"version":1,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":null}]}""")]
+    [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"findings":[{"originKey":" ","choices":[]}]}""")]
+    [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"","decision":"accepted"}]}]}""")]
+    [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"f","decision":7}]}]}""")]
+    [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"f"}]}]}""")]
+    [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":null}]}""")]
     public void Decisions_with_incomplete_finding_decisions_are_rejected(string json)
     {
         var action = () => DecisionsFile.Deserialize(json);
@@ -89,19 +140,56 @@ public sealed class DecisionsFileTests
         action.ShouldThrow<InvalidDataException>();
     }
 
-    [Fact]
-    public void Decisions_with_unsupported_version_are_rejected()
+    [Theory]
+    [InlineData("""{"version":1,"groups":[],"links":[],"splits":[]}""")]
+    [InlineData("""{"version":3,"groups":[],"links":[],"splits":[]}""")]
+    public void Decisions_with_unsupported_version_are_rejected(string json)
     {
-        var action = () => DecisionsFile.Deserialize("""{"version":2,"groups":[],"links":[],"splits":[]}""");
+        var action = () => DecisionsFile.Deserialize(json);
+
+        action.ShouldThrow<InvalidDataException>().Message.ShouldContain("version 2", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("""{"version":2,"groups":[{"groupKey":"g","choices":[{"fieldPath":"notes","kind":"member"}]}],"links":[],"splits":[]}""")]
+    [InlineData("""{"version":2,"groups":[{"groupKey":"g","choices":[{"fieldPath":"notes","kind":7}]}],"links":[],"splits":[]}""")]
+    [InlineData("""{"version":2,"groups":[{"groupKey":"g","choices":[{"fieldPath":"notes"}]}],"links":[],"splits":[]}""")]
+    public void Decisions_with_incomplete_field_choices_are_rejected(string json)
+    {
+        var action = () => DecisionsFile.Deserialize(json);
 
         action.ShouldThrow<InvalidDataException>();
     }
 
     [Fact]
-    public void Decisions_with_member_choice_without_origin_key_are_rejected()
+    public void Read_returns_no_decisions_when_the_file_does_not_exist()
     {
-        var action = () => DecisionsFile.Deserialize("""{"version":1,"groups":[{"groupKey":"g","choices":[{"fieldPath":"notes","kind":"member"}]}],"links":[],"splits":[]}""");
+        string path = Path.Combine(directory, "decisions.json");
 
-        action.ShouldThrow<InvalidDataException>();
+        var decisions = DecisionsFile.Read(path);
+
+        decisions.ShouldBeSameAs(MergeDecisions.None);
+        File.Exists(path).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Write_replaces_the_file_readable_only_by_its_owner_and_read_loads_it()
+    {
+        string path = Path.Combine(directory, "decisions.json");
+        File.WriteAllText(path, "{}");
+        if (!OperatingSystem.IsWindows())
+        {
+            File.SetUnixFileMode(path, OwnerOnly | UnixFileMode.GroupRead | UnixFileMode.OtherRead);
+        }
+
+        var decisions = Decide("0123456789abcdef", FieldChoice.Empty(FieldPaths.Notes));
+
+        DecisionsFile.Write(path, decisions);
+
+        DecisionsFile.Read(path).Groups.ShouldHaveSingleItem().Choices.ShouldBe(decisions.Groups[0].Choices);
+        if (!OperatingSystem.IsWindows())
+        {
+            File.GetUnixFileMode(path).ShouldBe(OwnerOnly);
+        }
     }
 }
