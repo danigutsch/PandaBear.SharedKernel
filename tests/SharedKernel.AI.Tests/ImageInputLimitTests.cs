@@ -3,7 +3,7 @@ using PandaBear.Testing;
 
 namespace PandaBear.AI.Tests;
 
-[Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ImageTextGenerationCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ImageTextGenerationCapability)]
 public sealed class ImageInputLimitTests
 {
     [Theory]

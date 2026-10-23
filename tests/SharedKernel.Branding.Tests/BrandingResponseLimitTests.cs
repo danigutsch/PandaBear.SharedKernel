@@ -1,10 +1,11 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using PandaBear.Testing;
 
 namespace PandaBear.Branding.Tests;
 
-[Trait(PandaBear.Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ApiClientCapability)]
+[Trait(SharedKernelTestTraitNames.CapabilityName, TestTraits.ApiClientCapability)]
 public sealed class BrandingResponseLimitTests
 {
     [Theory]
