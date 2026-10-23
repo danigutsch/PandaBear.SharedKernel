@@ -45,7 +45,8 @@ internal static class ScanCommand
             return ExitCodes.InputOutputProblem;
         }
 
-        PipelineResult result = new VaultPipeline(prompts.Environment).Run(new PipelineRequest(inputs));
+        var pipeline = new VaultPipeline(prompts.Environment);
+        PipelineResult result = pipeline.Merge(VaultPipeline.Scan(pipeline.Load(inputs, ct), ct), new MergeRequest(), ct);
         foreach (string warning in result.ReadWarnings)
         {
             error.WriteLine("Warning: " + CommandText.OneLine(warning));
@@ -54,8 +55,7 @@ internal static class ScanCommand
         WriteSummary(output, result);
         if (reportPath is not null)
         {
-            ct.ThrowIfCancellationRequested();
-            SecureFile.WriteAllText(reportPath, VaultReport.ToMarkdown(result), overwrite: true);
+            SecureFile.WriteAllText(reportPath, VaultReport.ToMarkdown(result), overwrite: true, ct);
             output.WriteLine("Report: " + CommandText.OneLine(reportPath));
         }
 

@@ -7,11 +7,11 @@ public sealed class VaultCommandLineTests
     private const string ExportPassword = "fixture export password";
 
     [Fact]
-    public void Root_command_offers_inspect_scan_and_merge()
+    public void Root_command_offers_inspect_scan_merge_and_review()
     {
         var command = VaultCommandLine.Create(new TestPrompts(ExportPassword).Environment());
 
-        command.Subcommands.Select(subcommand => subcommand.Name).ShouldBe(["inspect", "scan", "merge"]);
+        command.Subcommands.Select(subcommand => subcommand.Name).ShouldBe(["inspect", "scan", "merge", "review"]);
     }
 
     [Fact]
@@ -20,7 +20,7 @@ public sealed class VaultCommandLineTests
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["--help"], TestContext.Current.CancellationToken);
 
         run.ExitCode.ShouldBe(0);
-        string[] commands = ["inspect", "scan", "merge"];
+        string[] commands = ["inspect", "scan", "merge", "review"];
         commands.ShouldAllSatisfy(command => run.Output.ShouldContain(command, StringComparison.Ordinal));
         run.Error.ShouldBeEmpty();
     }
@@ -48,7 +48,8 @@ public sealed class VaultCommandLineTests
 
     [Theory]
     [InlineData]
-    [InlineData("review", "keeper.json")]
+    [InlineData("review")]
+    [InlineData("show", "keeper.json")]
     [InlineData("inspect")]
     [InlineData("scan")]
     [InlineData("scan", "keeper.json", "--report")]

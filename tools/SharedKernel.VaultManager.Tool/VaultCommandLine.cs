@@ -8,8 +8,8 @@ namespace PandaBear.VaultManager.Tool;
 internal static class VaultCommandLine
 {
     /// <summary>
-    /// Creates the root command with the <c>inspect</c>, <c>scan</c>, and <c>merge</c> commands. Commands write to the
-    /// invocation's output and error writers and ask for passwords through <paramref name="environment"/>.
+    /// Creates the root command with the <c>inspect</c>, <c>scan</c>, <c>merge</c>, and <c>review</c> commands. Commands
+    /// write to the invocation's output and error writers and ask for passwords through <paramref name="environment"/>.
     /// </summary>
     /// <param name="environment">Password prompts, terminal state, and clock of the commands.</param>
     /// <returns>The root command.</returns>
@@ -17,7 +17,7 @@ internal static class VaultCommandLine
     {
         ArgumentNullException.ThrowIfNull(environment);
 
-        return new RootCommand("Inspect, scan, and merge password vault exports offline.")
+        return new RootCommand("Inspect, scan, merge, and review password vault exports offline.")
         {
             InspectCommand.Create(environment),
             ScanCommand.Create(environment),

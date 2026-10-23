@@ -139,8 +139,7 @@ internal static class ReviewCommand
         }
 
         MergeDecisions decisions = arguments.Decisions is { } decisionsPath ? DecisionsFile.Read(decisionsPath) : MergeDecisions.None;
-        ScannedVault scanned = VaultPipeline.Scan(new VaultPipeline(prompts.Environment).Load(arguments.Inputs));
-        ct.ThrowIfCancellationRequested();
+        ScannedVault scanned = VaultPipeline.Scan(new VaultPipeline(prompts.Environment).Load(arguments.Inputs, ct), ct);
         PipelineOutput? output = arguments.Output is { } outputPath ? new PipelineOutput(outputPath, arguments.Plaintext, arguments.Force) : null;
         var session = new ReviewSession(prompts.Environment, scanned, decisions, new ReviewFiles(arguments.Decisions, output));
 

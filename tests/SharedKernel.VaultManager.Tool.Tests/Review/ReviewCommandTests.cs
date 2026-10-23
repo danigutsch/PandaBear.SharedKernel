@@ -107,7 +107,7 @@ public sealed class ReviewCommandTests : IDisposable
         var run = await ReviewRun.Invoke(prompts.Environment(), terminal, [input, "--output", input, "--force"], TestContext.Current.CancellationToken);
 
         run.ExitCode.ShouldBe(3);
-        run.Error.ShouldContain("is also an input file", StringComparison.Ordinal);
+        run.Error.ShouldContain("may be the same file as an input file", StringComparison.Ordinal);
         prompts.FilePasswordPrompts.ShouldBeEmpty();
         terminal.Sessions.ShouldBeEmpty();
     }

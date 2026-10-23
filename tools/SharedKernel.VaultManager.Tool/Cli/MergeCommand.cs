@@ -141,20 +141,16 @@ internal static class MergeCommand
 
         MergeDecisions decisions = arguments.Decisions is { } decisionsPath ? DecisionsFile.Read(decisionsPath) : MergeDecisions.None;
         var pipeline = new VaultPipeline(prompts.Environment);
-        LoadedVault loaded = pipeline.Load(arguments.Inputs);
-        ct.ThrowIfCancellationRequested();
-        ScannedVault scanned = VaultPipeline.Scan(loaded);
-        ct.ThrowIfCancellationRequested();
+        ScannedVault scanned = VaultPipeline.Scan(pipeline.Load(arguments.Inputs, ct), ct);
         var request = new MergeRequest { Policy = arguments.Policy, Decisions = decisions };
 
-        // The pipeline writes the vault whenever no field needs a decision, but a proposed finding without a decision also
-        // blocks writing. The first merge writes nothing; a second merge writes the vault once nothing is pending. Both
-        // merge the same scanned vault, so each input is read and each password asked once.
-        PipelineResult result = pipeline.Merge(scanned, request);
+        // The first merge requests no output, so the new export password is asked only when the vault will be written. The
+        // second merge writes the vault once nothing is pending. Both merge the same scanned vault, so each input is read
+        // and each password asked once.
+        PipelineResult result = pipeline.Merge(scanned, request, ct);
         if (PendingDecisions.Find(result, decisions).IsEmpty && !result.HasWriteErrors)
         {
-            ct.ThrowIfCancellationRequested();
-            result = pipeline.Merge(scanned, request with { Output = RequestedOutput(arguments) });
+            result = pipeline.Merge(scanned, request with { Output = RequestedOutput(arguments) }, ct);
         }
 
         return Finish(arguments, decisions, result, output, error, ct);
@@ -222,10 +218,9 @@ internal static class MergeCommand
 
         if (arguments.Report is { } reportPath)
         {
-            ct.ThrowIfCancellationRequested();
             try
             {
-                SecureFile.WriteAllText(reportPath, Report(result with { Output = RequestedOutput(arguments) }, pending), overwrite: true);
+                SecureFile.WriteAllText(reportPath, Report(result with { Output = RequestedOutput(arguments) }, pending), overwrite: true, ct);
             }
             catch (Exception exception) when (result.OutputWritten && CommandAction.IsFileProblem(exception))
             {
