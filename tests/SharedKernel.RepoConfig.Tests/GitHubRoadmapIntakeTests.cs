@@ -8,7 +8,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class GitHubRoadmapIntakeTests
 {
     [Fact]
-    public async Task Github_import_does_not_link_an_external_parent_with_a_matching_issue_number()
+    public async Task GitHub_import_does_not_link_an_external_parent_with_a_matching_issue_number()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -75,7 +75,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Github_import_rejects_a_manifest_without_snapshot_digest_before_network()
+    public async Task GitHub_import_rejects_a_manifest_without_snapshot_digest_before_network()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -126,12 +126,12 @@ public sealed class GitHubRoadmapIntakeTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldContain("GitHub intake requires snapshotDigest; run github reconcile --force first.", StringComparison.Ordinal);
+        error.ToString().ShouldContain("GitHub import requires snapshotDigest; run github reconcile --force first.", StringComparison.Ordinal);
         handler.Requests.ShouldBeEmpty();
     }
 
     [Fact]
-    public async Task Github_import_defaults_to_dry_run_and_fetches_only_safe_metadata()
+    public async Task GitHub_import_defaults_to_dry_run_and_fetches_only_safe_metadata()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -193,7 +193,7 @@ public sealed class GitHubRoadmapIntakeTests
 
         // Assert
         exitCode.ShouldBe(0);
-        outputText.ShouldContain("dry-run: GitHub intake would add 2 open roadmap items.", StringComparison.Ordinal);
+        outputText.ShouldContain("dry-run: GitHub import would add 2 open roadmap items.", StringComparison.Ordinal);
         errorText.ShouldBe(string.Empty);
         stateAfter.ShouldBe(stateBefore);
         request.Message.Method.ShouldBe(HttpMethod.Post);
@@ -210,7 +210,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Github_import_force_allocates_links_prioritizes_and_is_idempotent()
+    public async Task GitHub_import_force_allocates_links_prioritizes_and_is_idempotent()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -326,7 +326,7 @@ public sealed class GitHubRoadmapIntakeTests
 
         // Assert
         firstExitCode.ShouldBe(0);
-        firstOutput.ToString().ShouldContain("intake: added 3 open roadmap items.", StringComparison.Ordinal);
+        firstOutput.ToString().ShouldContain("import: added 3 open roadmap items.", StringComparison.Ordinal);
         firstError.ToString().ShouldBe(string.Empty);
         workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json").ShouldBe(reviewedItemBefore);
         firstItemRoot.GetProperty("id").GetString().ShouldBe("RM-018");
@@ -341,13 +341,13 @@ public sealed class GitHubRoadmapIntakeTests
         closedSupportBlocks.ShouldBe(["RM-018"]);
         orderedItems.ShouldBe(["RM-001", "RM-019", "RM-018", "RM-020"]);
         secondExitCode.ShouldBe(0);
-        secondOutput.ToString().ShouldContain("intake: roadmap already matches the reconciliation manifest.", StringComparison.Ordinal);
+        secondOutput.ToString().ShouldContain("import: roadmap already matches the reconciliation manifest.", StringComparison.Ordinal);
         secondError.ToString().ShouldBe(string.Empty);
         stateAfterSecondApply.ShouldBe(stateAfterFirstApply);
     }
 
     [Fact]
-    public async Task Github_import_rejects_issue_set_digest_drift_without_writing()
+    public async Task GitHub_import_rejects_issue_set_digest_drift_without_writing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -415,7 +415,71 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Github_import_rejects_pull_requests_without_writing()
+    public async Task GitHub_import_rejects_conflicting_type_labels_without_writing()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
+        [
+            GitHubRoadmapSnapshotTestOperations.Issue(100, "Conflicting types", "OPEN", labels: ["type: epic", "type: feature"])
+        ];
+        GitHubRoadmapSnapshotTestOperations.Configure(
+            workspace,
+            """
+            {
+              "repository": "owner/repository",
+              "mechanicalPriorityOverride": {
+                "firstItemNumber": 18,
+                "reach": 1,
+                "impact": "1 plus direct open blockers, capped at impactCap.",
+                "impactCap": 5,
+                "confidence": 0.1,
+                "effort": { "type: epic": 8, "type: feature": 5, "type: enabler": 3, "type: docs": 2, "type: chore": 2, "default": 3 },
+                "order": "Existing reviewed orders remain first; imported work uses topological order, score descending, then canonical ID."
+              },
+              "blockerEdges": [],
+              "closedItemTransitions": [],
+              "directCanonicalPrimaries": [],
+              "childrenOfCanonicalPrimaries": [],
+              "unmappedStructuralRoots": [],
+              "needsHuman": [100],
+              "integrity": {
+                "expectedIssueCount": 1,
+                "expectedDirectCanonicalPrimaryCount": 0,
+                "expectedChildrenOfCanonicalPrimaryCount": 0,
+                "expectedUnmappedStructuralRootCount": 0,
+                "expectedNeedsHumanCount": 1,
+                "expectedBlockerEdgeCount": 0,
+                "dispositionsAreDisjoint": true,
+                "dispositionsCoverSnapshot": true
+              }
+            }
+            """,
+            snapshot);
+        var stateBefore = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
+        using var handler = new TestHttpMessageHandler();
+        GitHubRoadmapSnapshotTestOperations.Enqueue(handler, snapshot);
+        using var httpClient = new HttpClient(handler);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var stateAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ToString().ShouldBe(string.Empty);
+        error.ToString().ShouldBe("sharedkernel-repo: GitHub import found an issue with conflicting type labels." + Environment.NewLine);
+        stateAfter.ShouldBe(stateBefore);
+    }
+
+    [Fact]
+    public async Task GitHub_import_rejects_pull_requests_without_writing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -507,7 +571,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Github_import_transitions_a_declared_imported_item_to_closed_support()
+    public async Task GitHub_import_transitions_a_declared_imported_item_to_closed_support()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -581,7 +645,7 @@ public sealed class GitHubRoadmapIntakeTests
 
         // Assert
         firstExitCode.ShouldBe(0);
-        firstOutput.ToString().ShouldContain("intake: transitioned 1 imported roadmap item to closed support.", StringComparison.Ordinal);
+        firstOutput.ToString().ShouldContain("import: transitioned 1 imported roadmap item to closed support.", StringComparison.Ordinal);
         firstError.ToString().ShouldBe(string.Empty);
         transitionedRoot.GetProperty("status").GetString().ShouldBe("done");
         transitionedRoot.GetProperty("triage").GetString().ShouldBe("untriaged");
@@ -591,13 +655,13 @@ public sealed class GitHubRoadmapIntakeTests
         newOpenBlockers.ShouldBe([]);
         orderedItems.ShouldBe(["RM-001", "RM-019"]);
         secondExitCode.ShouldBe(0);
-        secondOutput.ToString().ShouldContain("intake: roadmap already matches the reconciliation manifest.", StringComparison.Ordinal);
+        secondOutput.ToString().ShouldContain("import: roadmap already matches the reconciliation manifest.", StringComparison.Ordinal);
         secondError.ToString().ShouldBe(string.Empty);
         stateAfterSecondApply.ShouldBe(stateAfterFirstApply);
     }
 
     [Fact]
-    public async Task Github_import_preserves_exact_blocker_links_during_a_closed_transition()
+    public async Task GitHub_import_preserves_exact_blocker_links_during_a_closed_transition()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -676,7 +740,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Github_import_rejects_an_undeclared_imported_closed_transition_without_writing()
+    public async Task GitHub_import_rejects_an_undeclared_imported_closed_transition_without_writing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -749,7 +813,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Github_import_rejects_a_declared_transition_without_an_existing_mapping()
+    public async Task GitHub_import_rejects_a_declared_transition_without_an_existing_mapping()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -814,7 +878,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Github_import_rejects_a_closed_transition_for_a_reviewed_item()
+    public async Task GitHub_import_rejects_a_closed_transition_for_a_reviewed_item()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -874,12 +938,12 @@ public sealed class GitHubRoadmapIntakeTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldContain("GitHub closed item transition must reference an intake-generated item: #100 -> RM-001.", StringComparison.Ordinal);
+        error.ToString().ShouldContain("GitHub closed item transition must reference an imported item: #100 -> RM-001.", StringComparison.Ordinal);
         workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json").ShouldBe(reviewedItem);
     }
 
     [Fact]
-    public async Task Github_import_rejects_a_declared_transition_with_a_different_roadmap_item()
+    public async Task GitHub_import_rejects_a_declared_transition_with_a_different_roadmap_item()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -944,7 +1008,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Github_import_replaces_imported_relationships_with_exact_github_metadata()
+    public async Task GitHub_import_replaces_imported_relationships_with_exact_github_metadata()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1014,7 +1078,7 @@ public sealed class GitHubRoadmapIntakeTests
 
         // Assert
         exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("intake: updated 2 existing roadmap items with exact GitHub metadata.", StringComparison.Ordinal);
+        output.ToString().ShouldContain("import: updated 2 existing roadmap items with exact GitHub metadata.", StringComparison.Ordinal);
         error.ToString().ShouldBe(string.Empty);
         parentBlocks.ShouldBeEmpty();
         childBlockers.ShouldBeEmpty();
@@ -1022,7 +1086,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Github_import_links_only_mapped_open_parents_from_a_digest_snapshot()
+    public async Task GitHub_import_links_only_mapped_open_parents_from_a_digest_snapshot()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1153,14 +1217,14 @@ public sealed class GitHubRoadmapIntakeTests
 
         // Assert
         exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("intake: added 2 open roadmap items.", StringComparison.Ordinal);
+        output.ToString().ShouldContain("import: added 2 open roadmap items.", StringComparison.Ordinal);
         error.ToString().ShouldBe(string.Empty);
         using var childItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-018-github-100.json"));
         childItem.RootElement.GetProperty("parent").GetString().ShouldBe("RM-019");
     }
 
     [Fact]
-    public async Task Github_import_rejects_snapshot_metadata_drift_without_writing()
+    public async Task GitHub_import_rejects_snapshot_metadata_drift_without_writing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

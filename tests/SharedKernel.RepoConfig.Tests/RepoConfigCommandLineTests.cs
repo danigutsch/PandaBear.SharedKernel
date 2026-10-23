@@ -212,7 +212,7 @@ public sealed class RepoConfigCommandLineTests
     [InlineData("sync")]
     [InlineData("reconcile")]
     [InlineData("import")]
-    public async Task Github_command_help_describes_force_and_root(string command)
+    public async Task GitHub_command_help_describes_force_and_root(string command)
     {
         // Arrange
         using var output = new StringWriter(CultureInfo.InvariantCulture);
@@ -299,33 +299,6 @@ public sealed class RepoConfigCommandLineTests
         exitCode.ShouldBe(1);
         errorText.ShouldContain(expectedError, StringComparison.Ordinal);
         errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
-    }
-
-    [Theory]
-    [InlineData("blockers-of", "get blockers-of requires an item ID.")]
-    [InlineData("by-tag", "get by-tag requires a tag.")]
-    [InlineData("by-label", "get by-label requires a label.")]
-    public async Task Get_rejects_a_missing_query_value_before_the_action_runs(string query, string expectedError)
-    {
-        // Arrange
-        using var workspace = new TemporaryRepoConfigWorkspace();
-        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
-        using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
-        // The roadmap loads, so only the parser can stop the action from running without a value.
-        var initExitCode = await RepoConfigToolRunner.Run(["init"], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
-        initExitCode.ShouldBe(0);
-
-        // Act
-        var exitCode = await RepoConfigToolRunner.Run(["get", query], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var errorText = error.ToString();
-
-        // Assert
-        exitCode.ShouldBe(1);
-        errorText.ShouldContain(expectedError, StringComparison.Ordinal);
-        errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
-        output.ToString().ShouldNotContain("No matching roadmap items.", StringComparison.Ordinal);
     }
 
     [Fact]

@@ -490,7 +490,7 @@ internal static class PodmanDnsPreflightCommand
         List<string> reasons,
         CancellationToken cancellationToken)
     {
-        await error.WriteLineAsync("podman dns preflight: stale aardvark-dns state detected".AsMemory(), cancellationToken).ConfigureAwait(false);
+        await error.WriteLineAsync("verify-podman-dns: stale aardvark-dns state detected".AsMemory(), cancellationToken).ConfigureAwait(false);
         foreach (var reason in reasons)
         {
             await error.WriteLineAsync($"  - {RepoConfigToolApplication.EscapeControlCharacters(reason)}".AsMemory(), cancellationToken).ConfigureAwait(false);
@@ -876,6 +876,7 @@ internal static class PodmanDnsPreflightCommand
             RedirectStandardOutput = true,
             UseShellExecute = false
         };
+        ChildProcessEnvironment.RemoveGitHubTokens(startInfo);
         startInfo.Environment["LC_ALL"] = "C";
         startInfo.ArgumentList.Add("-L");
         startInfo.ArgumentList.Add("-c");
@@ -914,6 +915,7 @@ internal static class PodmanDnsPreflightCommand
             RedirectStandardOutput = true,
             UseShellExecute = false
         };
+        ChildProcessEnvironment.RemoveGitHubTokens(startInfo);
         startInfo.Environment.Remove("CONTAINER_CONNECTION");
         startInfo.Environment.Remove("CONTAINER_HOST");
         startInfo.ArgumentList.Add("--remote=false");
@@ -1022,7 +1024,7 @@ internal static class PodmanDnsPreflightCommand
     {
         if (!quiet)
         {
-            await output.WriteLineAsync($"podman dns preflight: {message}".AsMemory(), cancellationToken).ConfigureAwait(false);
+            await output.WriteLineAsync($"verify-podman-dns: {message}".AsMemory(), cancellationToken).ConfigureAwait(false);
         }
 
         return 0;
@@ -1031,7 +1033,7 @@ internal static class PodmanDnsPreflightCommand
     private static async Task<int> WriteFailure(TextWriter error, string message, CancellationToken cancellationToken)
     {
         var escapedMessage = RepoConfigToolApplication.EscapeControlCharacters(message);
-        await error.WriteLineAsync($"podman dns preflight: unable to verify safely: {escapedMessage}".AsMemory(), cancellationToken).ConfigureAwait(false);
+        await error.WriteLineAsync($"verify-podman-dns: unable to verify safely: {escapedMessage}".AsMemory(), cancellationToken).ConfigureAwait(false);
         return 1;
     }
 

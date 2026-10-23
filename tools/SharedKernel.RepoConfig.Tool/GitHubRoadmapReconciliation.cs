@@ -133,7 +133,7 @@ internal sealed class GitHubRoadmapReconciliation
         var reconciliationPath = Path.Combine(rootPath, RepoConfigPaths.Reconciliation);
         if (!Directory.Exists(reconciliationPath))
         {
-            throw new InvalidOperationException("GitHub intake requires one reconciliation manifest under roadmap/reconciliation.");
+            throw new InvalidOperationException("One GitHub reconciliation manifest is required under roadmap/reconciliation.");
         }
 
         var manifests = Directory.EnumerateFiles(reconciliationPath, "open-issues-*.json", SearchOption.TopDirectoryOnly)
@@ -142,8 +142,8 @@ internal sealed class GitHubRoadmapReconciliation
         return manifests.Length switch
         {
             1 => manifests[0],
-            0 => throw new InvalidOperationException("GitHub intake requires one reconciliation manifest under roadmap/reconciliation."),
-            _ => throw new InvalidOperationException("GitHub intake requires exactly one reconciliation manifest under roadmap/reconciliation.")
+            0 => throw new InvalidOperationException("One GitHub reconciliation manifest is required under roadmap/reconciliation."),
+            _ => throw new InvalidOperationException("Exactly one GitHub reconciliation manifest is required under roadmap/reconciliation.")
         };
     }
 

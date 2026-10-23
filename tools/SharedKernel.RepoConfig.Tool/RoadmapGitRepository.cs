@@ -93,8 +93,7 @@ internal sealed class RoadmapGitRepository
         startInfo.Environment["GIT_TERMINAL_PROMPT"] = "0";
         startInfo.Environment.Remove("GIT_ASKPASS");
         startInfo.Environment.Remove("SSH_ASKPASS");
-        startInfo.Environment.Remove("GH_TOKEN");
-        startInfo.Environment.Remove("GITHUB_TOKEN");
+        ChildProcessEnvironment.RemoveGitHubTokens(startInfo);
         return startInfo;
     }
 
@@ -195,6 +194,7 @@ internal sealed class RoadmapGitRepository
         catch (Exception exception) when (exception is InvalidOperationException
             or Win32Exception
             or NotSupportedException
+            or AggregateException
             or OperationCanceledException)
         {
             // Preserve the original cancellation or timeout after best-effort termination.

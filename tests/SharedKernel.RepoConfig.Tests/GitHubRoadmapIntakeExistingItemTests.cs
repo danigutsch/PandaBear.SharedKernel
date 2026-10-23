@@ -7,7 +7,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class GitHubRoadmapIntakeExistingItemTests
 {
     [Fact]
-    public async Task Github_import_rejects_a_reopened_imported_item_without_explicit_review()
+    public async Task GitHub_import_rejects_a_reopened_imported_item_without_explicit_review()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -88,12 +88,12 @@ public sealed class GitHubRoadmapIntakeExistingItemTests
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldContain("GitHub open issue #100 maps to closed roadmap item RM-018; review the reopening before intake.", StringComparison.Ordinal);
+        error.ToString().ShouldContain("GitHub open issue #100 maps to closed roadmap item RM-018; review the reopening before GitHub import.", StringComparison.Ordinal);
         stateAfter.ShouldBe(stateBefore);
     }
 
     [Fact]
-    public async Task Github_import_refreshes_existing_imported_snapshot_metadata()
+    public async Task GitHub_import_refreshes_existing_imported_snapshot_metadata()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

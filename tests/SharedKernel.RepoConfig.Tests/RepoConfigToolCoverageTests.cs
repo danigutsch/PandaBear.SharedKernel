@@ -198,7 +198,7 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public async Task Github_sync_rejects_invalid_arguments_and_previews_empty_mappings()
+    public async Task GitHub_sync_rejects_invalid_arguments_and_previews_empty_mappings()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -230,7 +230,7 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public async Task Sync_propagates_http_request_errors_for_application_boundary()
+    public async Task GitHub_roadmap_syncer_apply_propagates_http_request_errors_for_application_boundary()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -255,7 +255,7 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public async Task Github_sync_force_reports_safe_diagnostic_for_http_request_errors()
+    public async Task GitHub_sync_force_reports_safe_diagnostic_for_http_request_errors()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -300,7 +300,7 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public async Task Github_sync_force_reports_safe_diagnostic_for_timeouts()
+    public async Task GitHub_sync_force_reports_safe_diagnostic_for_timeouts()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

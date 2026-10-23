@@ -8,7 +8,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class PodmanDnsPreflightCommandTests
 {
     [Fact]
-    public async Task Tool_help_lists_the_podman_dns_command()
+    public async Task Help_lists_the_verify_podman_dns_command()
     {
         // Arrange
         using var output = new StringWriter(CultureInfo.InvariantCulture);
@@ -105,7 +105,7 @@ public sealed class PodmanDnsPreflightCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.StandardOutput.ShouldContain("podman dns preflight: podman is rootful", StringComparison.Ordinal);
+        result.StandardOutput.ShouldContain("verify-podman-dns: podman is rootful", StringComparison.Ordinal);
         result.StandardError.ShouldBe(string.Empty);
     }
 
@@ -365,6 +365,7 @@ public sealed class PodmanDnsPreflightCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(1);
+        result.StandardError.ShouldStartWith("verify-podman-dns: stale aardvark-dns state detected", StringComparison.Ordinal);
         result.StandardError.ShouldContain("different network namespace", StringComparison.Ordinal);
         after.ShouldBe(before);
     }
@@ -795,7 +796,7 @@ public sealed class PodmanDnsPreflightCommandTests
         // Assert
         result.ExitCode.ShouldBe(1);
         result.StandardError.ShouldBe(
-            $"podman dns preflight: unable to verify safely: podman info failed while reading remote-service mode{Environment.NewLine}");
+            $"verify-podman-dns: unable to verify safely: podman info failed while reading remote-service mode{Environment.NewLine}");
     }
 
     [Fact]
@@ -812,7 +813,7 @@ public sealed class PodmanDnsPreflightCommandTests
         // Assert
         result.ExitCode.ShouldBe(1);
         result.StandardError.ShouldBe(
-            $"podman dns preflight: unable to verify safely: podman info failed while reading remote-service mode{Environment.NewLine}");
+            $"verify-podman-dns: unable to verify safely: podman info failed while reading remote-service mode{Environment.NewLine}");
     }
 
     [Fact]

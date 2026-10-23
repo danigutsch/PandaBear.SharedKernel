@@ -39,7 +39,7 @@ internal sealed class GitHubRoadmapIntake
         var reconciliation = GitHubRoadmapReconciliation.Load(_project.RootPath);
         if (string.IsNullOrWhiteSpace(reconciliation.SnapshotDigest))
         {
-            throw new InvalidOperationException("GitHub intake requires snapshotDigest; run github reconcile --force first.");
+            throw new InvalidOperationException("GitHub import requires snapshotDigest; run github reconcile --force first.");
         }
 
         if (!string.Equals(reconciliation.Repository, repository, StringComparison.OrdinalIgnoreCase))
@@ -49,8 +49,8 @@ internal sealed class GitHubRoadmapIntake
 
         var (theme, openStatus, closedStatus) = ReadIntakeSettings();
 
-        using var ownedHttpClient = _httpClient is null ? GitHubHttpClient.Create("intake") : null;
-        var httpClient = (_httpClient ?? ownedHttpClient) ?? throw new InvalidOperationException("GitHub intake could not create an HTTP client.");
+        using var ownedHttpClient = _httpClient is null ? GitHubHttpClient.Create("import") : null;
+        var httpClient = (_httpClient ?? ownedHttpClient) ?? throw new InvalidOperationException("GitHub import could not create an HTTP client.");
         var snapshot = await new GitHubRoadmapReconcileClient(httpClient)
             .ReadSnapshot(repository, reconciliation.GetRequiredIssueNumbers(_project), cancellationToken)
             .ConfigureAwait(false);
@@ -88,11 +88,11 @@ internal sealed class GitHubRoadmapIntake
     {
         if (!_project.GitHubEnabled)
         {
-            throw new InvalidOperationException("GitHub intake is disabled in roadmap/config.json.");
+            throw new InvalidOperationException("GitHub import is disabled in roadmap/config.json.");
         }
 
         return string.IsNullOrWhiteSpace(_project.GitHubRepository)
-            ? throw new InvalidOperationException("roadmap/config.json must define integrations.github.repository before GitHub intake.")
+            ? throw new InvalidOperationException("roadmap/config.json must define integrations.github.repository before GitHub import.")
             : _project.GitHubRepository;
     }
 
@@ -102,7 +102,7 @@ internal sealed class GitHubRoadmapIntake
             || string.IsNullOrWhiteSpace(_project.GitHubIntakeOpenStatus)
             || string.IsNullOrWhiteSpace(_project.GitHubIntakeClosedStatus))
         {
-            throw new InvalidOperationException("roadmap/config.json must define integrations.github.intake before GitHub intake.");
+            throw new InvalidOperationException("roadmap/config.json must define integrations.github.intake before GitHub import.");
         }
 
         var theme = _project.GitHubIntakeTheme;
@@ -192,7 +192,7 @@ internal sealed class GitHubRoadmapIntake
         {
             if (existingItemsByIssue.TryGetValue(issueNumber, out var existingItem) && _project.IsClosed(existingItem))
             {
-                throw new InvalidOperationException($"GitHub open issue #{issueNumber} maps to closed roadmap item {existingItem.Id}; review the reopening before intake.");
+                throw new InvalidOperationException($"GitHub open issue #{issueNumber} maps to closed roadmap item {existingItem.Id}; review the reopening before GitHub import.");
             }
         }
 
@@ -264,7 +264,7 @@ internal sealed class GitHubRoadmapIntake
 
             if (!IsIntakeGenerated(item))
             {
-                throw new InvalidOperationException($"GitHub closed item transition must reference an intake-generated item: #{issueNumber} -> {roadmapItemId}.");
+                throw new InvalidOperationException($"GitHub closed item transition must reference an imported item: #{issueNumber} -> {roadmapItemId}.");
             }
         }
     }
@@ -385,7 +385,7 @@ internal sealed class GitHubRoadmapIntake
             .ToArray();
         if (classifications.Length > 1)
         {
-            throw new InvalidOperationException("GitHub intake issue has conflicting type labels.");
+            throw new InvalidOperationException("GitHub import found an issue with conflicting type labels.");
         }
 
         var (type, effortLabel) = classifications.SingleOrDefault() switch
@@ -1364,10 +1364,10 @@ internal sealed class GitHubRoadmapIntake
             {
                 return [dryRun
                     ? "dry-run: roadmap already matches the reconciliation manifest."
-                    : "intake: roadmap already matches the reconciliation manifest."];
+                    : "import: roadmap already matches the reconciliation manifest."];
             }
 
-            var prefix = dryRun ? "dry-run: GitHub intake would" : "intake:";
+            var prefix = dryRun ? "dry-run: GitHub import would" : "import:";
             List<string> messages = [];
             AddConditionalMessage(
                 messages,

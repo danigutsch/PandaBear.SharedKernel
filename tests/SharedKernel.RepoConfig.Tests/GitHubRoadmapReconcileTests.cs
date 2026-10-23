@@ -9,7 +9,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class GitHubRoadmapReconcileTests
 {
     [Fact]
-    public async Task Github_reconcile_rejects_a_missing_local_open_relation_target()
+    public async Task GitHub_reconcile_rejects_a_missing_local_open_relation_target()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -42,7 +42,7 @@ public sealed class GitHubRoadmapReconcileTests
     }
 
     [Fact]
-    public async Task Github_reconcile_distinguishes_same_number_relations_from_different_repositories()
+    public async Task GitHub_reconcile_distinguishes_same_number_relations_from_different_repositories()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -83,7 +83,7 @@ public sealed class GitHubRoadmapReconcileTests
     }
 
     [Fact]
-    public async Task Github_reconcile_digest_excludes_seed_only_closed_issues()
+    public async Task GitHub_reconcile_digest_excludes_seed_only_closed_issues()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -157,13 +157,13 @@ public sealed class GitHubRoadmapReconcileTests
         reconcileError.ToString().ShouldBe(string.Empty);
         importExitCode.ShouldBe(0);
         importError.ToString().ShouldBe(string.Empty);
-        importOutput.ToString().ShouldContain("dry-run: GitHub intake would add 1 open roadmap items.", StringComparison.Ordinal);
+        importOutput.ToString().ShouldContain("dry-run: GitHub import would add 1 open roadmap items.", StringComparison.Ordinal);
     }
 
 
 
     [Fact]
-    public async Task Github_reconcile_rejects_cross_repository_blocker_metadata()
+    public async Task GitHub_reconcile_rejects_cross_repository_blocker_metadata()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -230,7 +230,7 @@ public sealed class GitHubRoadmapReconcileTests
     }
 
     [Fact]
-    public async Task Github_reconcile_force_rejects_a_manifest_changed_during_the_request()
+    public async Task GitHub_reconcile_force_rejects_a_manifest_changed_during_the_request()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -295,7 +295,7 @@ public sealed class GitHubRoadmapReconcileTests
     }
 
     [Fact]
-    public async Task Github_reconcile_reports_the_seed_manifest_inputs_when_missing()
+    public async Task GitHub_reconcile_reports_the_seed_manifest_inputs_when_missing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -318,7 +318,7 @@ public sealed class GitHubRoadmapReconcileTests
     }
 
     [Fact]
-    public async Task Github_reconcile_treats_an_external_parent_as_needs_human_without_parent_chain_exit()
+    public async Task GitHub_reconcile_treats_an_external_parent_as_needs_human_without_parent_chain_exit()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -411,7 +411,7 @@ public sealed class GitHubRoadmapReconcileTests
     }
 
     [Fact]
-    public async Task Github_reconcile_defaults_to_dry_run_and_requests_only_structural_metadata()
+    public async Task GitHub_reconcile_defaults_to_dry_run_and_requests_only_structural_metadata()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -520,7 +520,7 @@ public sealed class GitHubRoadmapReconcileTests
     }
 
     [Fact]
-    public async Task Github_reconcile_force_derives_a_stable_manifest()
+    public async Task GitHub_reconcile_force_derives_a_stable_manifest()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

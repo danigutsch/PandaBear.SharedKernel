@@ -76,6 +76,7 @@ sharedkernel-repo verify-podman-dns --verbosity quiet
 ## Security
 
 - Tokens come only from the environment. GitHub transport failures are reported without request details.
+- Child processes (Git, Podman, and `stat`) start without `GH_TOKEN` and `GITHUB_TOKEN`.
 - Without `--force`, `github` commands only read; `--force` never skips validation.
 - `automation` steps after planning are bound to the reviewed plan digest; publication also requires a
   sealed result.
