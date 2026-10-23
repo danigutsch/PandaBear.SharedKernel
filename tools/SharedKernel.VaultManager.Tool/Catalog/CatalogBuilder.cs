@@ -103,7 +103,12 @@ internal static class CatalogBuilder
         NotesDecision decision = entry?.Decision ?? NotesDecision.Pending;
         if (decision == NotesDecision.Share && entry!.NotesSha256 is null)
         {
-            return (decision, entry with { ItemName = item.Name, Findings = inNotes, NotesSha256 = ItemNotesDecision.HashOf(notes) });
+            return (decision, entry with
+            {
+                ItemName = item.Name,
+                Findings = inNotes,
+                NotesSha256 = ItemNotesDecision.HashOf(notes)
+            });
         }
 
         if (decision == NotesDecision.Share && !decisions.SharesNotes(originKey, notes))

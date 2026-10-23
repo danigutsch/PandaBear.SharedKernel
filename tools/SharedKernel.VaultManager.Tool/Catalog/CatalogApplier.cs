@@ -299,7 +299,10 @@ internal static class CatalogApplier
 
         string? folder = string.IsNullOrWhiteSpace(entry.Folder) ? null : entry.Folder.Trim();
         (string? notes, CustomField? hiddenNotes) = Notes(source.OriginKey, item, entry.Notes, decisions, problems);
-        LoginData? login = item.Login is { } current ? current with { Uris = Uris(current.Uris, entry.Uris, problems) } : null;
+        LoginData? login = item.Login is { } current ? current with
+        {
+            Uris = Uris(current.Uris, entry.Uris, problems)
+        } : null;
         if (item.Login is null && entry.Uris.Count > 0)
         {
             problems.Add("only a login has website addresses.");

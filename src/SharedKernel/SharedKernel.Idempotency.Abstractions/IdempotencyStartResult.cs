@@ -14,12 +14,18 @@ public sealed record IdempotencyStartResult
     /// <summary>
     /// Gets a value indicating whether the caller acquired processing ownership.
     /// </summary>
-    public bool Started { get; }
+    public bool Started
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the existing entry when processing ownership was not acquired.
     /// </summary>
-    public IdempotencyEntry? ExistingEntry { get; }
+    public IdempotencyEntry? ExistingEntry
+    {
+        get;
+    }
 
     /// <summary>
     /// Creates a result for a newly started operation.

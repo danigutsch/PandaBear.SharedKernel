@@ -4,5 +4,8 @@ namespace PandaBear.AuditTrail;
 public interface IAuditTrailEntry
 {
     /// <summary>Gets when the auditable operation occurred in UTC.</summary>
-    DateTime OccurredAtUtc { get; }
+    DateTime OccurredAtUtc
+    {
+        get;
+    }
 }

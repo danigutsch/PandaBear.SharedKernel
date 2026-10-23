@@ -41,7 +41,10 @@ internal sealed record LiteLlmSchemaProperty
         Type = type;
     }
 
-    public object Type { get; }
+    public object Type
+    {
+        get;
+    }
 }
 
 internal sealed record LiteLlmChatCompletionResponse(IReadOnlyList<LiteLlmChoice> Choices);

@@ -17,7 +17,7 @@ public sealed class BicTests
         var result = Bic.Create(value);
 
         // Assert
-        result.IsSuccess.ShouldBeTrue();
+        result.ShouldBeSuccess();
         result.Value.Value.ShouldBe(value);
     }
 

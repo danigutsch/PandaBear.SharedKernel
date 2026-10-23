@@ -31,9 +31,15 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
         SecondCreateScript = secondCreateScript;
     }
 
-    public string FirstCreateScript { get; }
+    public string FirstCreateScript
+    {
+        get;
+    }
 
-    public string SecondCreateScript { get; }
+    public string SecondCreateScript
+    {
+        get;
+    }
 
     public static async ValueTask<ContextQualifiedMessagingPostgreSqlScenario> Create(
         PostgreSqlFixture fixture,

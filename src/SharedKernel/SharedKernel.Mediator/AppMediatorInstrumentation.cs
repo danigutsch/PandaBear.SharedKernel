@@ -36,27 +36,42 @@ public sealed class AppMediatorInstrumentation : IDisposable
     /// <summary>
     /// Gets the counter for total mediator requests.
     /// </summary>
-    public Counter<long> RequestsTotal { get; }
+    public Counter<long> RequestsTotal
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the histogram for mediator request duration.
     /// </summary>
-    public Histogram<double> RequestsDuration { get; }
+    public Histogram<double> RequestsDuration
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the counter for total mediator notifications.
     /// </summary>
-    public Counter<long> NotificationsTotal { get; }
+    public Counter<long> NotificationsTotal
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the histogram for mediator notification duration.
     /// </summary>
-    public Histogram<double> NotificationsDuration { get; }
+    public Histogram<double> NotificationsDuration
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the counter for total mediator stream requests.
     /// </summary>
-    public Counter<long> StreamsTotal { get; }
+    public Counter<long> StreamsTotal
+    {
+        get;
+    }
 
     /// <inheritdoc />
     public void Dispose()

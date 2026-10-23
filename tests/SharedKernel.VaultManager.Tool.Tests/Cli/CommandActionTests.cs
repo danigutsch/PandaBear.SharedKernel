@@ -19,7 +19,10 @@ public sealed class CommandActionTests
         using var stopWaitStarted = new ManualResetEventSlim();
         var time = new ManualTimeProvider { OnTimerCreated = stopWaitStarted.Set };
         int ended = 0;
-        RootCommand command = ActionCommands.Running(new TestPrompts(ExportPassword).Environment() with { Time = time }, _ =>
+        RootCommand command = ActionCommands.Running(new TestPrompts(ExportPassword).Environment() with
+        {
+            Time = time
+        }, _ =>
         {
             // Ctrl+C arrives while the work writes a file, away from any prompt; the write then completes.
             cancellation.Cancel();
@@ -42,7 +45,10 @@ public sealed class CommandActionTests
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         using var release = new ManualResetEventSlim();
         var time = new ManualTimeProvider();
-        RootCommand command = ActionCommands.Running(new TestPrompts(ExportPassword).Environment() with { Time = time }, _ =>
+        RootCommand command = ActionCommands.Running(new TestPrompts(ExportPassword).Environment() with
+        {
+            Time = time
+        }, _ =>
         {
             cancellation.Cancel();
             release.Wait(SafetyTimeout);

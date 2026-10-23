@@ -43,12 +43,18 @@ public sealed class ApiVersionCatalog
     /// <summary>
     /// Gets the known API contract versions in descending version order.
     /// </summary>
-    public IReadOnlyList<ApiVersionDefinition> Versions { get; }
+    public IReadOnlyList<ApiVersionDefinition> Versions
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets versions that are available for request selection.
     /// </summary>
-    public IReadOnlyList<ApiVersionDefinition> SelectableVersions { get; }
+    public IReadOnlyList<ApiVersionDefinition> SelectableVersions
+    {
+        get;
+    }
 
     /// <summary>
     /// Selects the requested API version, or the latest selectable version when no version is requested.

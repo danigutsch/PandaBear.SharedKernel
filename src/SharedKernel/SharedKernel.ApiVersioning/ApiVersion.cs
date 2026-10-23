@@ -25,12 +25,18 @@ public readonly record struct ApiVersion : IComparable<ApiVersion>
     /// <summary>
     /// Gets the major contract version.
     /// </summary>
-    public int Major { get; }
+    public int Major
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the minor contract version.
     /// </summary>
-    public int Minor { get; }
+    public int Minor
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the route segment for this version, such as <c>v1</c> or <c>v1.1</c>.

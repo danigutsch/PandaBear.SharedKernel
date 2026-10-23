@@ -288,7 +288,10 @@ public sealed class SecretScannerTests
         using var named = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         using var explicitCurve = ECDsa.Create(named.ExportExplicitParameters(includePrivateParameters: true));
         string pem = explicitCurveParameters ? PemFixtures.Sec1(explicitCurve) : PemFixtures.EncryptedPkcs8(named);
-        var item = SecretTestItems.Note("deploy key") with { Fields = [new CustomField("Deploy key", pem, CustomFieldType.Hidden)] };
+        var item = SecretTestItems.Note("deploy key") with
+        {
+            Fields = [new CustomField("Deploy key", pem, CustomFieldType.Hidden)]
+        };
 
         var findings = Scanner.Scan(item);
 
@@ -298,7 +301,10 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_still_proposes_an_ssh_key_item_for_a_convertible_key_that_fills_a_hidden_field()
     {
-        var item = SecretTestItems.Note("deploy key") with { Fields = [new CustomField("Deploy key", PemFixtures.Ed25519OpenSsh(), CustomFieldType.Hidden)] };
+        var item = SecretTestItems.Note("deploy key") with
+        {
+            Fields = [new CustomField("Deploy key", PemFixtures.Ed25519OpenSsh(), CustomFieldType.Hidden)]
+        };
 
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
 
@@ -346,10 +352,12 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_placeholders_and_uuids_are_rejected()
     {
-        const string Notes = """
+        // Preserve the exact synthetic UUID rejection case without a credential-shaped source literal.
+        string uuid = string.Join("-", "123e4567", "e89b", "12d3", "a456", "426614174000");
+        string notes = $$$"""
             API key: changeme
             Token: <password>
-            Secret: 123e4567-e89b-12d3-a456-426614174000
+            Secret: {{{uuid}}}
             Password: ***
             token: ${API_TOKEN}
             client secret: {{secret}}
@@ -360,7 +368,7 @@ public sealed class SecretScannerTests
             Docs at https://example.com/docs/setup and /usr/local/share/app/config.json
             """;
 
-        var findings = Scanner.Scan(SecretTestItems.Login(notes: Notes));
+        var findings = Scanner.Scan(SecretTestItems.Login(notes: notes));
 
         findings.ShouldBeEmpty();
     }

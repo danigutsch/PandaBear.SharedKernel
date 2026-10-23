@@ -24,13 +24,25 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
         File.WriteAllText(Path.Combine(RootPath, "NuGet.Config"), CreateNuGetConfig(packageFeed.FeedPath));
     }
 
-    private MediatorPackageFeedFixture PackageFeed { get; }
+    private MediatorPackageFeedFixture PackageFeed
+    {
+        get;
+    }
 
-    private string RootPath { get; }
+    private string RootPath
+    {
+        get;
+    }
 
-    private string ProjectDirectory { get; }
+    private string ProjectDirectory
+    {
+        get;
+    }
 
-    private string ProjectFilePath { get; }
+    private string ProjectFilePath
+    {
+        get;
+    }
 
     /// <summary>
     /// Writes the project file and source files for the consumer workspace.

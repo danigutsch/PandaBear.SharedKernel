@@ -15,8 +15,15 @@ internal static class MergeValueGenerator
 
     public static (VaultItem First, VaultItem Second) Pair(Random random)
     {
-        var first = Item(random) with { Origin = new ItemOrigin("keeper", MergeFixture.KeeperFile, "k1", Pick(random, Times)) };
-        var second = Item(random) with { Origin = new ItemOrigin("bitwarden", MergeFixture.BitwardenFile, "b1", null), RevisionDate = Pick(random, Times) };
+        var first = Item(random) with
+        {
+            Origin = new ItemOrigin("keeper", MergeFixture.KeeperFile, "k1", Pick(random, Times))
+        };
+        var second = Item(random) with
+        {
+            Origin = new ItemOrigin("bitwarden", MergeFixture.BitwardenFile, "b1", null),
+            RevisionDate = Pick(random, Times)
+        };
         return (first, second);
     }
 

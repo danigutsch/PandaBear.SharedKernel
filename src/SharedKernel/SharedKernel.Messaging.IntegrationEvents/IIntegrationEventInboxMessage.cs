@@ -8,15 +8,24 @@ public interface IIntegrationEventInboxMessage
     /// <summary>
     /// Gets the inbox message identifier.
     /// </summary>
-    Guid Id { get; }
+    Guid Id
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets when the message was received.
     /// </summary>
-    DateTimeOffset ReceivedAt { get; }
+    DateTimeOffset ReceivedAt
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets when the message was processed.
     /// </summary>
-    DateTimeOffset? ProcessedAt { get; }
+    DateTimeOffset? ProcessedAt
+    {
+        get;
+    }
 }

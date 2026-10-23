@@ -99,65 +99,104 @@ public class EventEnvelope : IEventEnvelope
     /// <summary>
     /// Gets the envelope specification name.
     /// </summary>
-    public string EnvelopeSpec { get; private set; }
+    public string EnvelopeSpec
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the envelope specification version.
     /// </summary>
-    public string EnvelopeSpecVersion { get; private set; }
+    public string EnvelopeSpecVersion
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the event identifier used for idempotency and tracing.
     /// </summary>
-    public string EventId { get; private set; }
+    public string EventId
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the event source.
     /// </summary>
-    public Uri Source { get; private set; }
+    public Uri Source
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the stable event type identifier.
     /// </summary>
-    public string EventType { get; private set; }
+    public string EventType
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the optional event contract version.
     /// </summary>
-    public int? EventVersion { get; private set; }
+    public int? EventVersion
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the time at which the event occurred.
     /// </summary>
-    public DateTimeOffset? Time { get; private set; }
+    public DateTimeOffset? Time
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the optional event subject.
     /// </summary>
-    public string? Subject { get; private set; }
+    public string? Subject
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the optional payload content type.
     /// </summary>
-    public string? DataContentType { get; private set; }
+    public string? DataContentType
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the optional payload schema.
     /// </summary>
-    public Uri? DataSchema { get; private set; }
+    public Uri? DataSchema
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the optional serialized event payload.
     /// </summary>
-    public string? Payload { get; private set; }
+    public string? Payload
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the payload encoding.
     /// </summary>
-    public EventPayloadEncoding PayloadEncoding { get; private set; }
+    public EventPayloadEncoding PayloadEncoding
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the optional serialized extension attribute object.
     /// </summary>
-    public string? ExtensionAttributesJson { get; private set; }
+    public string? ExtensionAttributesJson
+    {
+        get; private set;
+    }
 }

@@ -180,7 +180,10 @@ public sealed class SshKeyNormalizerTests
     {
         string pem = PemFixtures.EncryptedOpenSsh();
         var host = new CustomField("Hostname", "git.example.com", CustomFieldType.Text);
-        var item = SshKeyItems.Item(new SshKeyData { PrivateKey = pem, PublicKey = "ssh-ed25519 AAAAfixture" }) with { Fields = [host] };
+        var item = SshKeyItems.Item(new SshKeyData { PrivateKey = pem, PublicKey = "ssh-ed25519 AAAAfixture" }) with
+        {
+            Fields = [host]
+        };
 
         var normalized = SshKeyNormalizer.Normalize(item);
 
@@ -231,7 +234,11 @@ public sealed class SshKeyNormalizerTests
     public void Normalize_leaves_complete_ssh_keys_and_other_items_unchanged()
     {
         var complete = SshKeyItems.Item(new SshKeyData { PrivateKey = "fixture-private", PublicKey = "fixture-public", KeyFingerprint = "fixture-fingerprint" });
-        var note = complete with { Type = VaultItemType.SecureNote, SshKey = null };
+        var note = complete with
+        {
+            Type = VaultItemType.SecureNote,
+            SshKey = null
+        };
 
         var normalizedKey = SshKeyNormalizer.Normalize(complete);
         var normalizedNote = SshKeyNormalizer.Normalize(note);

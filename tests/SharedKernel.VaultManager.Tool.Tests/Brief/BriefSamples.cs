@@ -57,5 +57,8 @@ internal static class BriefSamples
 
     /// <summary>Agent decisions that accept one finding.</summary>
     public static MergeDecisions AgentFinding(string originKey, string findingId) =>
-        MergeDecisions.None with { Findings = [new ItemFindingDecisions(originKey, [new FindingChoice(findingId, FindingDecision.Accepted)])] };
+        MergeDecisions.None with
+        {
+            Findings = [new ItemFindingDecisions(originKey, [new FindingChoice(findingId, FindingDecision.Accepted)])]
+        };
 }

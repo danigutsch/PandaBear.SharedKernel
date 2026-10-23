@@ -47,12 +47,18 @@ public sealed class ResultError : IEquatable<ResultError>
     /// <summary>
     /// Gets the stable machine-readable error code.
     /// </summary>
-    public string Code { get; }
+    public string Code
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets specific explanation of the problem instance.
     /// </summary>
-    public string Detail { get; }
+    public string Detail
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets validation errors keyed by field name.

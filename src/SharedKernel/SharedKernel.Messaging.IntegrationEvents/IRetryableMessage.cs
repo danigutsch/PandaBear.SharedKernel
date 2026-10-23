@@ -8,20 +8,32 @@ public interface IRetryableMessage
     /// <summary>
     /// Gets the number of failed attempts.
     /// </summary>
-    int Attempts { get; }
+    int Attempts
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets when processing was last attempted.
     /// </summary>
-    DateTimeOffset? LastAttemptAt { get; }
+    DateTimeOffset? LastAttemptAt
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets when processing may be retried.
     /// </summary>
-    DateTimeOffset? NextAttemptAt { get; }
+    DateTimeOffset? NextAttemptAt
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the last failure description, if any.
     /// </summary>
-    string? LastError { get; }
+    string? LastError
+    {
+        get;
+    }
 }

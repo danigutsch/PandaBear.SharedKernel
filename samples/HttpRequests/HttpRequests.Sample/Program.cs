@@ -13,7 +13,10 @@ var first = true;
 await submission.Submit("sample request", (key, _) =>
 {
     originalKey ??= key;
-    if (key != originalKey) { throw new InvalidOperationException("Retry changed its idempotency key."); }
+    if (key != originalKey)
+    {
+        throw new InvalidOperationException("Retry changed its idempotency key.");
+    }
     var kind = first ? HttpOutcomeKind.TransportFailure : HttpOutcomeKind.Succeeded;
     first = false;
     return Task.FromResult(new HttpOutcome<string> { Kind = kind, Value = subject });

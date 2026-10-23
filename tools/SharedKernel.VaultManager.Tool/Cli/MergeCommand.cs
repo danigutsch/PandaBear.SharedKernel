@@ -201,7 +201,10 @@ internal static class MergeCommand
             }
 
             PipelineResult userOnly = result;
-            request = request with { Decisions = AgentDecisions.Combine(decisions, fromBrief.Decisions) };
+            request = request with
+            {
+                Decisions = AgentDecisions.Combine(decisions, fromBrief.Decisions)
+            };
             result = pipeline.Merge(scanned, request, ct);
             if (!Report(arguments.AgentDecisions!, AgentDecisions.Conflicts(userOnly, result, request.Decisions), "changes what the brief describes", error))
             {
@@ -217,7 +220,10 @@ internal static class MergeCommand
 
         if (PendingDecisions.Find(result, request.Decisions).IsEmpty && !result.HasWriteErrors)
         {
-            result = pipeline.Merge(scanned, request with { Output = RequestedOutput(arguments) }, ct);
+            result = pipeline.Merge(scanned, request with
+            {
+                Output = RequestedOutput(arguments)
+            }, ct);
         }
 
         return Finish(arguments, decisions, agent?.Decisions, result, output, error, ct);
@@ -349,7 +355,10 @@ internal static class MergeCommand
         {
             try
             {
-                SecureFile.WriteAllText(reportPath, Report(result with { Output = RequestedOutput(arguments) }, pending, audit), overwrite: true, ct);
+                SecureFile.WriteAllText(reportPath, Report(result with
+                {
+                    Output = RequestedOutput(arguments)
+                }, pending, audit), overwrite: true, ct);
             }
             catch (Exception exception) when (result.OutputWritten && CommandAction.IsFileProblem(exception))
             {

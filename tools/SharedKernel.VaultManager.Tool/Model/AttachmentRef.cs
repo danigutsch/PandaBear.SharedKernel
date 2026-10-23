@@ -13,7 +13,10 @@ internal sealed record AttachmentRef(string FileName, long? Size, string? Source
     /// Lowercase hexadecimal SHA-256 of the file, set when the scan read the file from the source export archive, or
     /// <see langword="null"/> when the content is unknown. Two attachments with the same name and hash hold the same file.
     /// </summary>
-    public string? ContentHash { get; init; }
+    public string? ContentHash
+    {
+        get; init;
+    }
 
     /// <summary>
     /// Prints the name, size, and archive path only, so a digest that could confirm a guessed file content never reaches

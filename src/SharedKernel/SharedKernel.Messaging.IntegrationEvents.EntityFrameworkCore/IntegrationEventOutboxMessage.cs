@@ -76,29 +76,56 @@ internal sealed class IntegrationEventOutboxMessage : EventEnvelope, IIntegratio
     }
 
     /// <inheritdoc />
-    public Guid Id { get; private set; }
+    public Guid Id
+    {
+        get; private set;
+    }
 
     /// <inheritdoc />
-    public DateTimeOffset EnqueuedAt { get; private set; }
+    public DateTimeOffset EnqueuedAt
+    {
+        get; private set;
+    }
 
     /// <inheritdoc />
-    public DateTimeOffset? PublishedAt { get; private set; }
+    public DateTimeOffset? PublishedAt
+    {
+        get; private set;
+    }
 
     /// <inheritdoc />
-    public int PublishAttempts { get; private set; }
+    public int PublishAttempts
+    {
+        get; private set;
+    }
 
     /// <inheritdoc />
-    public DateTimeOffset? LastPublishAttemptAt { get; private set; }
+    public DateTimeOffset? LastPublishAttemptAt
+    {
+        get; private set;
+    }
 
     /// <inheritdoc />
-    public DateTimeOffset? NextPublishAttemptAt { get; private set; }
+    public DateTimeOffset? NextPublishAttemptAt
+    {
+        get; private set;
+    }
 
     /// <inheritdoc />
-    public string? LastPublishError { get; private set; }
+    public string? LastPublishError
+    {
+        get; private set;
+    }
 
-    public string? ClaimedBy { get; private set; }
+    public string? ClaimedBy
+    {
+        get; private set;
+    }
 
-    public DateTimeOffset? ClaimedUntil { get; private set; }
+    public DateTimeOffset? ClaimedUntil
+    {
+        get; private set;
+    }
 
     int IRetryableMessage.Attempts => PublishAttempts;
 

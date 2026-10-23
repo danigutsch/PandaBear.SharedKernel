@@ -10,5 +10,8 @@ public interface IDuplexStreamCommand<TRequestItem, TResponse> : IStreamCommand<
     /// <summary>
     /// Gets the streamed input items consumed by the command.
     /// </summary>
-    IAsyncEnumerable<TRequestItem> Items { get; }
+    IAsyncEnumerable<TRequestItem> Items
+    {
+        get;
+    }
 }

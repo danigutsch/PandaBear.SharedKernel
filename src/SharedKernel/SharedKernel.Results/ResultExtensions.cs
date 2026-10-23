@@ -111,7 +111,10 @@ public static class ResultExtensions
 
     private static class NonGenericFactories
     {
-        internal static FailureResultFactories<Result> Instance { get; } =
+        internal static FailureResultFactories<Result> Instance
+        {
+            get;
+        } =
             new(
                 Result.Invalid,
                 Result.NotFound,

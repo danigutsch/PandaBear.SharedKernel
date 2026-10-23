@@ -11,9 +11,15 @@ internal sealed class PathTooLongExceptionCapture : IDisposable
         AppDomain.CurrentDomain.FirstChanceException += Capture;
     }
 
-    public IOException? FirstException { get; private set; }
+    public IOException? FirstException
+    {
+        get; private set;
+    }
 
-    public IOException? CleanupException { get; private set; }
+    public IOException? CleanupException
+    {
+        get; private set;
+    }
 
     public void Dispose()
     {

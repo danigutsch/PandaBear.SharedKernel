@@ -6,13 +6,22 @@ namespace PandaBear.VaultManager.Tool.Model;
 internal sealed record LoginData
 {
     /// <summary>User name.</summary>
-    public string? Username { get; init; }
+    public string? Username
+    {
+        get; init;
+    }
 
     /// <summary>Password.</summary>
-    public string? Password { get; init; }
+    public string? Password
+    {
+        get; init;
+    }
 
     /// <summary>Authenticator key: an <c>otpauth://</c> URI, <c>steam://</c> value, or base32 secret.</summary>
-    public string? Totp { get; init; }
+    public string? Totp
+    {
+        get; init;
+    }
 
     /// <summary>Website addresses.</summary>
     public IReadOnlyList<LoginUri> Uris { get; init; } = [];

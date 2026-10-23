@@ -31,7 +31,10 @@ public sealed record VersionOutput(
         var semanticVersion = version.ToString();
         var informationalVersion = string.IsNullOrWhiteSpace(sha)
             ? version
-            : version with { BuildMetadata = AppendBuildMetadata(version.BuildMetadata, $"sha.{sha}") };
+            : version with
+            {
+                BuildMetadata = AppendBuildMetadata(version.BuildMetadata, $"sha.{sha}")
+            };
 
         return new VersionOutput(
             semanticVersion,
