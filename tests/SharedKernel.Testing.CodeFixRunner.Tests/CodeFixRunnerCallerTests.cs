@@ -23,8 +23,10 @@ public sealed class CodeFixRunnerCallerTests
         // Act
         var commandLines = RepositoryFiles.FindToolArguments(ReadmePath, "sharedkernel-codefix ");
         var projectRunCommandLines = RepositoryFiles.FindToolArguments(ReadmePath, "tools/SharedKernel.Testing.CodeFixRunner -c Release -- ");
+        var localToolCommandLines = RepositoryFiles.FindToolArguments(ReadmePath, "dotnet tool run sharedkernel-codefix -- ");
         var parseErrors = commandLines
             .Concat(projectRunCommandLines)
+            .Concat(localToolCommandLines)
             .Where(static commandLine => commandLine != Synopsis)
             .Select(static commandLine => commandLine.Replace(TargetPlaceholder, ExistingTarget, StringComparison.Ordinal))
             .SelectMany(commandLine => rootCommand
@@ -39,11 +41,11 @@ public sealed class CodeFixRunnerCallerTests
             Synopsis,
             "--help",
             "--version",
-            TargetPlaceholder,
             "tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj",
             "SharedKernel.slnx --diagnostic SKTEST006",
         ]);
         projectRunCommandLines.ShouldBe([TargetPlaceholder]);
+        localToolCommandLines.ShouldBe([TargetPlaceholder]);
         parseErrors.ShouldBeEmpty();
     }
 }
