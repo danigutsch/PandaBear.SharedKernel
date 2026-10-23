@@ -1,27 +1,15 @@
-using System.Runtime.InteropServices;
+using System.CommandLine;
 using PandaBear.PlaywrightMcp.Tool;
 
-using var cancellation = new CancellationTokenSource();
-void CancelHandler(object? sender, ConsoleCancelEventArgs eventArgs)
+var configuration = new InvocationConfiguration
 {
-    eventArgs.Cancel = true;
-    cancellation.Cancel();
-}
-Console.CancelKeyPress += CancelHandler;
+    // After Ctrl+C or SIGTERM, stopping the runtime and force-removing its container can take up to
+    // 16 seconds. The 2-second default would exit before container removal finishes or reports failure.
+    ProcessTerminationTimeout = TimeSpan.FromSeconds(20)
+};
 
-using var terminationSignal = OperatingSystem.IsWindows()
-    ? null
-    : PosixSignalRegistration.Create(PosixSignal.SIGTERM, context =>
-    {
-        context.Cancel = true;
-        cancellation.Cancel();
-    });
-
-try
-{
-    return await PlaywrightMcpApplication.Run(args, Console.Error, cancellation.Token).ConfigureAwait(false);
-}
-finally
-{
-    Console.CancelKeyPress -= CancelHandler;
-}
+return await PlaywrightMcpCommandLine
+    .Create(Environment.GetEnvironmentVariable, PlaywrightMcpApplication.ResolveExecutable, PlaywrightMcpApplication.RunProcess)
+    .Parse(args)
+    .InvokeAsync(configuration)
+    .ConfigureAwait(false);
