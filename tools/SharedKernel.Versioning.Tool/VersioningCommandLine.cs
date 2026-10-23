@@ -84,7 +84,7 @@ internal static class VersioningCommandLine
     {
         var versionKind = new Option<string>("--version-kind")
         {
-            Description = "Version kind. prerelease prints 0.0.0-alpha.<run-number> and requires --run-number.",
+            Description = "Version kind. prerelease prints <target>-alpha.<run-number> and requires --run-number.",
             DefaultValueFactory = static _ => "prerelease",
         };
         versionKind.AcceptOnlyFromAmong("prerelease", "stable");

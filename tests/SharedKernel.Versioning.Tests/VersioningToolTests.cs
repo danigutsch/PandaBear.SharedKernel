@@ -668,9 +668,9 @@ public static class VersioningToolTests
     }
 
     [Theory]
-    [InlineData("feat: add public capability", "prerelease", "0.0.0-alpha.7", "minor")]
-    [InlineData("refactor(api)!: rename package", "prerelease", "0.0.0-alpha.7", "major")]
-    [InlineData("fix: correct behavior", "prerelease", "0.0.0-alpha.7", "patch")]
+    [InlineData("feat: add public capability", "prerelease", "1.3.0-alpha.7", "minor")]
+    [InlineData("refactor(api)!: rename package", "prerelease", "2.0.0-alpha.7", "major")]
+    [InlineData("fix: correct behavior", "prerelease", "1.2.4-alpha.7", "patch")]
     [InlineData("feat: add public capability", "stable", "1.3.0", "minor")]
     public static async Task Runs_calculate_release_command_from_git_history(
         string message,
@@ -720,6 +720,77 @@ public static class VersioningToolTests
         githubOutput.ShouldContain("package_version=" + expectedVersion, StringComparison.Ordinal);
         githubOutput.ShouldContain("release_impact=" + expectedImpact, StringComparison.Ordinal);
         summary.ShouldContain("- Base version: `1.2.3`", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("feat: add public capability", "prerelease", "1.3.0-alpha.7", "minor")]
+    [InlineData("refactor(api)!: rename package", "prerelease", "1.3.0-alpha.7", "major")]
+    [InlineData("fix: correct behavior", "prerelease", "1.3.0-alpha.7", "patch")]
+    [InlineData("feat: add public capability", "stable", "1.3.0", "minor")]
+    public static async Task Keeps_prerelease_tag_core_when_calculating_release(
+        string message,
+        string versionKind,
+        string expectedVersion,
+        string expectedImpact)
+    {
+        // Arrange
+        using var repository = new TemporaryGitRepository();
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "base", "feat: base preview", TestContext.Current.CancellationToken);
+        await repository.Tag("v1.3.0-alpha.5", TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "next", message, TestContext.Current.CancellationToken);
+
+        string[] args =
+        [
+            "calculate-release",
+            "--repo-root",
+            repository.Root,
+            "--version-kind",
+            versionKind,
+            "--run-number",
+            "7",
+            "--sha",
+            "abc123",
+        ];
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(args, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0);
+        var json = result.Output;
+        json.ShouldContain($"\"packageVersion\":\"{expectedVersion}\"", StringComparison.Ordinal);
+        json.ShouldContain("\"releaseImpact\":\"" + expectedImpact + "\"", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("prerelease", "0.1.0-alpha.7")]
+    [InlineData("stable", "0.1.0")]
+    public static async Task Starts_at_initial_development_version_without_tags(string versionKind, string expectedVersion)
+    {
+        // Arrange
+        using var repository = new TemporaryGitRepository();
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "base", "feat!: initial capability", TestContext.Current.CancellationToken);
+        string[] args =
+        [
+            "calculate-release",
+            "--repo-root",
+            repository.Root,
+            "--version-kind",
+            versionKind,
+            "--run-number",
+            "7",
+            "--sha",
+            "abc123",
+        ];
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(args, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0);
+        result.Output.ShouldContain($"\"packageVersion\":\"{expectedVersion}\"", StringComparison.Ordinal);
     }
 
     [Fact]
