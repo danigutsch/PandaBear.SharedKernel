@@ -14,7 +14,10 @@ public sealed class CatalogChangesTests
         VaultItem item = Login() with
         {
             Fields = [new CustomField(null, "nameless value", CustomFieldType.Text), new CustomField("Empty", null, CustomFieldType.Text), .. Login().Fields],
-            Login = Login().Login! with { Uris = [new LoginUri("  https://github.com/login  "), new LoginUri(MaskedUri)] },
+            Login = Login().Login! with
+            {
+                Uris = [new LoginUri("  https://github.com/login  "), new LoginUri(MaskedUri)]
+            },
         };
 
         var shared = Apply(item, entry => entry, Notes(NotesDecision.Share));
@@ -34,8 +37,14 @@ public sealed class CatalogChangesTests
     [Fact]
     public void An_unedited_catalog_keeps_shared_notes_that_hold_only_white_space()
     {
-        VaultItem item = Login() with { Notes = "\n" };
-        var decisions = MergeDecisions.None with { Notes = [new ItemNotesDecision(Key, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf("\n"))] };
+        VaultItem item = Login() with
+        {
+            Notes = "\n"
+        };
+        var decisions = MergeDecisions.None with
+        {
+            Notes = [new ItemNotesDecision(Key, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf("\n"))]
+        };
 
         var result = Apply(item, entry => entry, decisions);
 
@@ -82,7 +91,13 @@ public sealed class CatalogChangesTests
     public void Apply_describes_each_change_of_an_item(string change, string line, bool isRemoval)
     {
         VaultItem item = change == "match by default"
-            ? Login() with { Login = Login().Login! with { Uris = [new LoginUri("https://github.com/login", UriMatch.Exact), new LoginUri(MaskedUri)] } }
+            ? Login() with
+            {
+                Login = Login().Login! with
+                {
+                    Uris = [new LoginUri("https://github.com/login", UriMatch.Exact), new LoginUri(MaskedUri)]
+                }
+            }
             : Login();
         Func<CatalogItem, CatalogItem> edit = change switch
         {
@@ -126,7 +141,10 @@ public sealed class CatalogChangesTests
     [Fact]
     public void Apply_describes_an_item_that_is_no_longer_a_favorite()
     {
-        var result = Apply(Login() with { Favorite = true }, entry => entry with { Favorite = false });
+        var result = Apply(Login() with
+        {
+            Favorite = true
+        }, entry => entry with { Favorite = false });
 
         result.Changes.ShouldBe([Prefix + "no longer a favorite"]);
         result.Removals.ShouldBeEmpty();
@@ -137,7 +155,10 @@ public sealed class CatalogChangesTests
     {
         VaultItem item = Login() with
         {
-            Login = Login().Login! with { Uris = [new LoginUri("https://github.com/login"), new LoginUri("https://github.com")] },
+            Login = Login().Login! with
+            {
+                Uris = [new LoginUri("https://github.com/login"), new LoginUri("https://github.com")]
+            },
         };
 
         var result = Apply(item, entry => entry with { Uris = [entry.Uris[1], entry.Uris[0]] });
@@ -176,7 +197,10 @@ public sealed class CatalogChangesTests
     [Fact]
     public void Apply_describes_notes_added_to_an_item_without_notes()
     {
-        var result = Apply(Login() with { Notes = null }, entry => entry with { Notes = new CatalogNotes(NotesDecision.Share, "fixture added notes") });
+        var result = Apply(Login() with
+        {
+            Notes = null
+        }, entry => entry with { Notes = new CatalogNotes(NotesDecision.Share, "fixture added notes") });
 
         result.Changes.ShouldBe([Prefix + "notes added"]);
         result.Removals.ShouldBeEmpty();
