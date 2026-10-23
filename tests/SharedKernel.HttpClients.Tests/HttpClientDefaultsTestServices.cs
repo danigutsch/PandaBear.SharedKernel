@@ -1,6 +1,8 @@
 using System.Net;
+using Microsoft.Extensions.Http.Resilience;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+using Polly;
 
 namespace PandaBear.HttpClients.Tests;
 
@@ -42,12 +44,20 @@ internal static class HttpClientDefaultsTestServices
         long SourceBytesRead)> SendTransientAfterCommit(
         HttpMethod method,
         bool includeStreamingContent,
+        Action<HttpStandardResilienceOptions>? configureResilience,
         CancellationToken ct)
     {
         using var handler = new TransientAfterCommitHandler();
         var services = new ServiceCollection();
         services.AddServiceDiscovery();
-        services.AddHttpClientDefaults();
+        if (configureResilience is null)
+        {
+            services.AddHttpClientDefaults();
+        }
+        else
+        {
+            services.AddHttpClientDefaults(configureResilience);
+        }
         services.AddHttpClient(ClientName, client => client.BaseAddress = new Uri("https://admin.example.test"))
             .ConfigurePrimaryHttpMessageHandler(() => handler);
 
@@ -70,4 +80,71 @@ internal static class HttpClientDefaultsTestServices
             content?.SerializationCount ?? 0,
             source?.BytesRead ?? 0);
     }
+
+    public static async Task<(
+        HttpStatusCode[] QuotaStatuses,
+        int QuotaAttempts,
+        HttpStatusCode OrdinaryStatus,
+        int OrdinaryAttempts,
+        HttpStatusCode TransientStatus,
+        int TransientAttempts,
+        string[] ObservedPaths)> SendPathScopedQuotaResponses(CancellationToken ct)
+    {
+        const string quotaClientName = "quota-client";
+        const string ordinaryClientName = "ordinary-client";
+        using var quotaHandler = new TransientAfterCommitHandler(HttpStatusCode.TooManyRequests, failuresBeforeSuccess: 101);
+        using var ordinaryHandler = new TransientAfterCommitHandler(HttpStatusCode.TooManyRequests);
+        using var transientHandler = new TransientAfterCommitHandler();
+        List<string> observedPaths = [];
+        var services = new ServiceCollection();
+        services.AddServiceDiscovery();
+        services.AddHttpClientDefaults(options =>
+        {
+            var shouldRetry = options.Retry.ShouldHandle;
+            var shouldBreak = options.CircuitBreaker.ShouldHandle;
+            options.Retry.ShouldHandle = arguments =>
+            {
+                var path = arguments.Context.GetRequestMessage()?.RequestUri?.AbsolutePath;
+                if (path is not null)
+                {
+                    observedPaths.Add(path);
+                }
+
+                return arguments.Outcome.Result?.StatusCode == HttpStatusCode.TooManyRequests
+                    && path?.StartsWith("/visitor-quota/", StringComparison.Ordinal) == true
+                    ? ValueTask.FromResult(false)
+                    : shouldRetry(arguments);
+            };
+            options.CircuitBreaker.ShouldHandle = arguments =>
+                arguments.Outcome.Result?.StatusCode == HttpStatusCode.TooManyRequests
+                    && arguments.Context.GetRequestMessage()?.RequestUri?.AbsolutePath
+                        .StartsWith("/visitor-quota/", StringComparison.Ordinal) == true
+                    ? ValueTask.FromResult(false)
+                    : shouldBreak(arguments);
+        });
+        services.AddHttpClient(quotaClientName, client => client.BaseAddress = new Uri("https://quota.example.test"))
+            .ConfigurePrimaryHttpMessageHandler(() => quotaHandler);
+        services.AddHttpClient(ordinaryClientName, client => client.BaseAddress = new Uri("https://ordinary.example.test"))
+            .ConfigurePrimaryHttpMessageHandler(() => ordinaryHandler);
+        services.AddHttpClient("transient-client", client => client.BaseAddress = new Uri("https://quota.example.test"))
+            .ConfigurePrimaryHttpMessageHandler(() => transientHandler);
+        using var provider = services.BuildServiceProvider();
+        var factory = provider.GetRequiredService<IHttpClientFactory>();
+        using var quotaClient = factory.CreateClient(quotaClientName);
+        using var transientClient = factory.CreateClient("transient-client");
+        using var ordinaryClient = factory.CreateClient(ordinaryClientName);
+        List<HttpStatusCode> statuses = [];
+        for (var request = 0; request < 102; request++)
+        {
+            using var response = await quotaClient.GetAsync(new Uri("/visitor-quota/content", UriKind.Relative), ct).ConfigureAwait(false);
+            statuses.Add(response.StatusCode);
+        }
+
+        using var ordinaryResponse = await ordinaryClient.GetAsync(new Uri("/content", UriKind.Relative), ct).ConfigureAwait(false);
+        using var transientResponse = await transientClient.GetAsync(new Uri("/visitor-quota/transient", UriKind.Relative), ct).ConfigureAwait(false);
+        return (statuses.ToArray(), quotaHandler.AttemptCount, ordinaryResponse.StatusCode,
+            ordinaryHandler.AttemptCount, transientResponse.StatusCode, transientHandler.AttemptCount,
+            observedPaths.Distinct(StringComparer.Ordinal).ToArray());
+    }
+
 }

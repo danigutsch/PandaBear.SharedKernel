@@ -47,6 +47,7 @@ public sealed class HttpServiceCollectionExtensionsTests
         var observation = await HttpClientDefaultsTestServices.SendTransientAfterCommit(
             new HttpMethod(method),
             includeStreamingContent: false,
+            configureResilience: null,
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -62,6 +63,7 @@ public sealed class HttpServiceCollectionExtensionsTests
         var observation = await HttpClientDefaultsTestServices.SendTransientAfterCommit(
             HttpMethod.Post,
             includeStreamingContent: true,
+            configureResilience: null,
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -78,6 +80,7 @@ public sealed class HttpServiceCollectionExtensionsTests
         var observation = await HttpClientDefaultsTestServices.SendTransientAfterCommit(
             HttpMethod.Get,
             includeStreamingContent: false,
+            configureResilience: null,
             TestContext.Current.CancellationToken);
 
         // Assert

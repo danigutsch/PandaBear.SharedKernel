@@ -60,6 +60,7 @@ static PandaBear.HttpClients.HttpOutcomeMapper.Status<TValue>(PandaBear.HttpClie
 static PandaBear.HttpClients.HttpOutcomeMapper.Succeeded(System.Net.HttpStatusCode statusCode, System.Uri? location) -> PandaBear.HttpClients.HttpOutcome!
 static PandaBear.HttpClients.HttpOutcomeMapper.Succeeded<TValue>(System.Net.HttpStatusCode statusCode, TValue value, System.Uri? location = null) -> PandaBear.HttpClients.HttpOutcome<TValue>!
 static PandaBear.HttpClients.HttpServiceCollectionExtensions.AddHttpClientDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static PandaBear.HttpClients.HttpServiceCollectionExtensions.AddHttpClientDefaults(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Microsoft.Extensions.Http.Resilience.HttpStandardResilienceOptions!>? configureResilience) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 PandaBear.HttpClients.UploadOperationState
 PandaBear.HttpClients.UploadOperationState.UploadOperationState() -> void
 PandaBear.HttpClients.UploadOperationState.OperationId.get -> long

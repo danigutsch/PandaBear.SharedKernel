@@ -3,7 +3,9 @@ using System.Net.Http.Headers;
 
 namespace PandaBear.HttpClients.Tests;
 
-internal sealed class TransientAfterCommitHandler : HttpMessageHandler
+internal sealed class TransientAfterCommitHandler(
+    HttpStatusCode failureStatusCode = HttpStatusCode.ServiceUnavailable,
+    int failuresBeforeSuccess = 1) : HttpMessageHandler
 {
     public int AttemptCount
     {
@@ -21,7 +23,7 @@ internal sealed class TransientAfterCommitHandler : HttpMessageHandler
         }
 
         var response = new HttpResponseMessage(
-            AttemptCount == 1 ? HttpStatusCode.ServiceUnavailable : HttpStatusCode.OK);
+            AttemptCount <= failuresBeforeSuccess ? failureStatusCode : HttpStatusCode.OK);
         response.Headers.RetryAfter = new RetryConditionHeaderValue(TimeSpan.Zero);
         return response;
     }

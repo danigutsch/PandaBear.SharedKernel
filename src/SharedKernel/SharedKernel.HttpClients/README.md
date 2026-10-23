@@ -10,6 +10,20 @@ Reusable HTTP client helpers, validation responses, defaults, and telemetry.
 
 Call `AddHttpClientDefaults()` when composing reusable HTTP defaults. Use `HttpOutcomeMapper.Send` to map bounded HTTP responses into `HttpOutcome` or `HttpOutcome<T>`; `ContractHttpValidation` supports validation-error exceptions when that calling convention is required. `ProgressStreamContent` reports transferred bytes, while `UploadOperationState` tracks operation identity and terminal state. Keep credentials, endpoint configuration, and application retry policy in the consumer; propagate cancellation and retain response-size limits.
 
+## Standard resilience customization
+
+Use `AddHttpClientDefaults(options => ...)` to customize the existing shared standard resilience
+options without adding another handler. The callback configures defaults across clients; it does
+not receive a per-client builder. Keep request-specific classification inside resilience predicates,
+using the current request from `Polly.HttpResilienceContextExtensions.GetRequestMessage` rather
+than capturing an ambient HTTP request during registration.
+
+For example, an application can exclude a particular visitor-quota response from both retry and
+circuit-breaker predicates while delegating every other outcome to the original native predicates.
+Keep that route/status classification application-owned. Automatic retries for unsafe HTTP methods
+remain disabled after customization, including when a callback supplies a broader retry predicate.
+Service discovery, telemetry, cancellation, and the original zero-argument overload remain unchanged.
+
 ## Install and example
 
 The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. The placeholders do not identify a published package version. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.
