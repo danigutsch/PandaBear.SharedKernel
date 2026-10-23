@@ -419,7 +419,7 @@ that need a decision with your decisions:
   "summary": { "items": 412, "mergedGroups": 120, "conflictsResolvedByPolicy": 85, "fieldsNeedingDecision": 3, "findings": 14, "findingsApplied": 9, "findingsNeedingDecision": 2, "passwordIssues": 7, "attachmentsToUpload": 4 },
   "groups": [
     {
-      "key": "5d0c2e8f41a7b693",
+      "key": "0000000000000000",
       "type": "Login",
       "members": [
         {
@@ -492,7 +492,7 @@ neither file decides. This is an agent file that takes one member's password and
   "version": 2,
   "groups": [
     {
-      "groupKey": "5d0c2e8f41a7b693",
+      "groupKey": "0000000000000000",
       "choices": [
         { "fieldPath": "login.password", "kind": "Member", "originKey": "bitwarden|bitwarden.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301" }
       ]
