@@ -107,8 +107,8 @@ internal sealed class TemporaryGitRepository : IDisposable
         using var error = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);
         try
         {
-            var exitCode = await RepoConfigToolApplication.Run(
-                [.. arguments],
+            var exitCode = await RepoConfigToolRunner.Run(
+                arguments,
                 output,
                 error,
                 workingDirectory ?? RootPath,
@@ -176,6 +176,13 @@ internal sealed class TemporaryGitRepository : IDisposable
             shimPath,
             $$"""
             #!/bin/sh
+            if [ -n "${TEXT_ENCODING_GIT_SHIM_ENVIRONMENT_LOG:-}" ]; then
+              {
+                echo git-shim
+                [ -n "${GH_TOKEN+set}" ] && echo GH_TOKEN
+                [ -n "${GITHUB_TOKEN+set}" ] && echo GITHUB_TOKEN
+              } >> "$TEXT_ENCODING_GIT_SHIM_ENVIRONMENT_LOG"
+            fi
             case "${TEXT_ENCODING_GIT_SHIM_MODE:-}" in
               oversized-attributes)
                 case " $* " in

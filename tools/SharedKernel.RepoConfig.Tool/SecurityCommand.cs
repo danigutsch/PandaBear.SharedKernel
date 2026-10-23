@@ -4,46 +4,11 @@ namespace PandaBear.RepoConfig.Tool;
 
 internal static class SecurityCommand
 {
-    private const string Usage = "Usage: sharedkernel-repo security <baseline|scan> [--root <path>] [--output <directory>]";
-
-    public static async Task<int> Run(string[] args, TextWriter output, TextWriter error, string workingDirectory, CancellationToken cancellationToken)
+    public static async Task<int> Run(string root, string? destination, TextWriter output, TextWriter error, CancellationToken cancellationToken)
     {
-        if (args.Length == 0 || args[0] is not ("baseline" or "scan"))
-        {
-            await error.WriteLineAsync(Usage).ConfigureAwait(false);
-            return 2;
-        }
-
-        var root = Path.GetFullPath(workingDirectory);
-        string? destination = null;
         try
         {
-            HashSet<string> seen = new(StringComparer.Ordinal);
-            for (var index = 1; index < args.Length; index += 2)
-            {
-                if (index + 1 >= args.Length || string.IsNullOrWhiteSpace(args[index + 1]) || !seen.Add(args[index]))
-                {
-                    throw new ArgumentException(Usage);
-                }
-
-                switch (args[index])
-                {
-                    case "--root":
-                        root = Path.GetFullPath(args[index + 1], workingDirectory);
-                        break;
-                    case "--output" when args[0] == "scan":
-                        destination = args[index + 1];
-                        break;
-                    default:
-                        throw new ArgumentException(Usage);
-                }
-            }
-
-            if (args[0] == "scan" && destination is null)
-            {
-                throw new ArgumentException(Usage);
-            }
-
+            root = Path.GetFullPath(root);
             var issues = VerifyBaseline(root, cancellationToken);
             foreach (var issue in issues)
             {

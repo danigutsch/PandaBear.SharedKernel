@@ -20,31 +20,74 @@ internal static class CodeFixRunEngine
 
     private static readonly SharedKernelTestingCodeFixProvider CodeFixProvider = new();
 
-    public static async Task<int> Run(CodeFixRunnerOptions options, TextWriter error)
+    private static readonly Lock MSBuildRegistrationLock = new();
+
+    public static ImmutableArray<string> FixableDiagnosticIds => CodeFixProvider.FixableDiagnosticIds;
+
+    /// <summary>
+    /// Fixes the diagnostics with the requested ID in the target and formats the changed documents.
+    /// </summary>
+    /// <returns>
+    /// The number of fixed diagnostics, or <see langword="null"/> when MSBuild or the target did not load. Load failures
+    /// are written to <paramref name="error"/> and no fix is applied.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">
+    /// <paramref name="ct"/> was canceled. Load failures reported after cancellation are not written.
+    /// </exception>
+    public static Task<int?> Run(CodeFixRunnerOptions options, TextWriter error, CancellationToken ct)
+    {
+        return Run(options, error, OpenSolution, ct);
+    }
+
+    /// <inheritdoc cref="Run(CodeFixRunnerOptions, TextWriter, CancellationToken)"/>
+    /// <param name="options">The target and the diagnostic ID to fix.</param>
+    /// <param name="error">Receives load failures and diagnostics without an available fix.</param>
+    /// <param name="openSolution">Loads the target path into the workspace and returns the loaded solution.</param>
+    /// <param name="ct">Cancels loading and fixing.</param>
+    public static async Task<int?> Run(
+        CodeFixRunnerOptions options,
+        TextWriter error,
+        Func<MSBuildWorkspace, string, CancellationToken, Task<Solution>> openSolution,
+        CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(error);
+        ArgumentNullException.ThrowIfNull(openSolution);
 
-        EnsureMSBuildRegistered();
+        if (RegisterMSBuild() is { } registrationFailure)
+        {
+            ct.ThrowIfCancellationRequested();
+            await error.WriteLineAsync(registrationFailure).ConfigureAwait(false);
+            return null;
+        }
 
         using var workspace = MSBuildWorkspace.Create();
-        var solution = await OpenSolution(workspace, options.TargetPath).ConfigureAwait(false);
+        var solution = await openSolution(workspace, options.TargetPath, ct).ConfigureAwait(false);
+
+        // Ctrl+C and SIGTERM sent to the process group also stop the MSBuild build host. When that happens as loading ends,
+        // the workspace reports the lost build host as a load failure instead of throwing.
+        ct.ThrowIfCancellationRequested();
+        if (await ReportLoadFailures(workspace, error).ConfigureAwait(false))
+        {
+            return null;
+        }
+
         var initialSolution = solution;
         var fixedCount = 0;
         while (true)
         {
-            var fixAttempt = await ApplyFirstFix(workspace, solution, options.DiagnosticId).ConfigureAwait(false);
+            var fixAttempt = await ApplyFirstFix(workspace, solution, options.DiagnosticId, ct).ConfigureAwait(false);
             if (fixAttempt.ChangedSolution is null)
             {
                 var unsupportedDiagnostics = fixAttempt.Diagnostics;
 
                 if (fixedCount > 0)
                 {
-                    await FormatAndApplyChanges(workspace, initialSolution, solution).ConfigureAwait(false);
+                    await FormatAndApplyChanges(workspace, initialSolution, solution, ct).ConfigureAwait(false);
                     solution = workspace.CurrentSolution;
                     if (!unsupportedDiagnostics.IsEmpty)
                     {
-                        unsupportedDiagnostics = await FindDiagnostics(solution, options.DiagnosticId).ConfigureAwait(false);
+                        unsupportedDiagnostics = await FindDiagnostics(solution, options.DiagnosticId, ct).ConfigureAwait(false);
                     }
                 }
 
@@ -61,12 +104,12 @@ internal static class CodeFixRunEngine
         }
     }
 
-    private static async Task<FixAttempt> ApplyFirstFix(Workspace workspace, Solution solution, string diagnosticId)
+    private static async Task<FixAttempt> ApplyFirstFix(Workspace workspace, Solution solution, string diagnosticId, CancellationToken ct)
     {
         var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
         foreach (var project in GetCSharpProjects(solution))
         {
-            var projectDiagnostics = await GetProjectDiagnostics(project, diagnosticId).ConfigureAwait(false);
+            var projectDiagnostics = await GetProjectDiagnostics(project, diagnosticId, ct).ConfigureAwait(false);
             diagnostics.AddRange(projectDiagnostics);
             foreach (var diagnostic in projectDiagnostics)
             {
@@ -76,15 +119,34 @@ internal static class CodeFixRunEngine
                     continue;
                 }
 
-                var action = await GetFirstCodeAction(document, diagnostic).ConfigureAwait(false);
+                var action = await GetFirstCodeAction(document, diagnostic, ct).ConfigureAwait(false);
                 if (action is not null)
                 {
-                    return new FixAttempt(await ApplyAction(workspace, action).ConfigureAwait(false), []);
+                    return new FixAttempt(await ApplyAction(workspace, action, ct).ConfigureAwait(false), []);
                 }
             }
         }
 
         return new FixAttempt(null, diagnostics.ToImmutable());
+    }
+
+    private static async Task<bool> ReportLoadFailures(MSBuildWorkspace workspace, TextWriter error)
+    {
+        // MSBuildWorkspace reports MSBuild errors and warnings, missing projects, and unsupported project types with the
+        // same kind, so a harmless warning cannot be told apart from a project loaded without its sources or references.
+        var failed = false;
+        foreach (var diagnostic in workspace.Diagnostics.Where(static diagnostic => diagnostic.Kind == WorkspaceDiagnosticKind.Failure))
+        {
+            await error.WriteLineAsync(diagnostic.Message).ConfigureAwait(false);
+            failed = true;
+        }
+
+        if (failed)
+        {
+            await error.WriteLineAsync("No fixes were applied because the project or solution did not load.").ConfigureAwait(false);
+        }
+
+        return failed;
     }
 
     private static async Task ReportUnsupportedDiagnostics(Solution solution, ImmutableArray<Diagnostic> diagnostics, TextWriter error)
@@ -111,29 +173,39 @@ internal static class CodeFixRunEngine
             : null;
     }
 
-    private static void EnsureMSBuildRegistered()
+    /// <summary>Registers MSBuild from a .NET SDK found for the current directory.</summary>
+    /// <returns>A one-line error when no SDK provides MSBuild, or <see langword="null"/> when MSBuild can be used.</returns>
+    private static string? RegisterMSBuild()
     {
-        if (MSBuildLocator.IsRegistered)
+        // Runs in one process, such as parallel tests, must not interleave checking and registering.
+        lock (MSBuildRegistrationLock)
         {
-            return;
-        }
+            // MSBuild is already registered, or its assemblies are already loaded and cannot be replaced.
+            if (!MSBuildLocator.CanRegister)
+            {
+                return null;
+            }
 
-        try
-        {
-            MSBuildLocator.RegisterDefaults();
-        }
-        catch (InvalidOperationException)
-        {
-            // MSBuild can already be loaded by the test host when solution-wide tests run in parallel.
+            try
+            {
+                MSBuildLocator.RegisterDefaults();
+                return null;
+            }
+            catch (InvalidOperationException exception)
+            {
+                // The message can span lines, such as the .NET host's report of a global.json that names a missing SDK.
+                var details = string.Join(' ', exception.Message.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+                return $"No fixes were applied because MSBuild could not be loaded from a .NET SDK: {details}";
+            }
         }
     }
 
-    private static async Task<Solution> OpenSolution(MSBuildWorkspace workspace, string targetPath)
+    private static async Task<Solution> OpenSolution(MSBuildWorkspace workspace, string targetPath, CancellationToken ct)
     {
         return Path.GetExtension(targetPath) switch
         {
-            ".csproj" => (await workspace.OpenProjectAsync(targetPath).ConfigureAwait(false)).Solution,
-            ".sln" or ".slnx" => await workspace.OpenSolutionAsync(targetPath).ConfigureAwait(false),
+            ".csproj" => (await workspace.OpenProjectAsync(targetPath, cancellationToken: ct).ConfigureAwait(false)).Solution,
+            ".sln" or ".slnx" => await workspace.OpenSolutionAsync(targetPath, cancellationToken: ct).ConfigureAwait(false),
             _ => throw new ArgumentException("Expected a .csproj, .sln, or .slnx path.", nameof(targetPath)),
         };
     }
@@ -143,9 +215,9 @@ internal static class CodeFixRunEngine
             .Where(static project => project.Language == LanguageNames.CSharp)
             .OrderBy(static project => project.FilePath, StringComparer.Ordinal);
 
-    private static async Task<ImmutableArray<Diagnostic>> GetProjectDiagnostics(Project project, string diagnosticId)
+    private static async Task<ImmutableArray<Diagnostic>> GetProjectDiagnostics(Project project, string diagnosticId, CancellationToken ct)
     {
-        var compilation = await project.GetCompilationAsync().ConfigureAwait(false);
+        var compilation = await project.GetCompilationAsync(ct).ConfigureAwait(false);
         if (compilation is null)
         {
             return [];
@@ -153,7 +225,7 @@ internal static class CodeFixRunEngine
 
         var diagnostics = await compilation
             .WithAnalyzers(Analyzers)
-            .GetAnalyzerDiagnosticsAsync()
+            .GetAnalyzerDiagnosticsAsync(ct)
             .ConfigureAwait(false);
 
         return diagnostics
@@ -163,12 +235,12 @@ internal static class CodeFixRunEngine
             .ToImmutableArray();
     }
 
-    private static async Task<ImmutableArray<Diagnostic>> FindDiagnostics(Solution solution, string diagnosticId)
+    private static async Task<ImmutableArray<Diagnostic>> FindDiagnostics(Solution solution, string diagnosticId, CancellationToken ct)
     {
         var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
         foreach (var project in GetCSharpProjects(solution))
         {
-            diagnostics.AddRange(await GetProjectDiagnostics(project, diagnosticId).ConfigureAwait(false));
+            diagnostics.AddRange(await GetProjectDiagnostics(project, diagnosticId, ct).ConfigureAwait(false));
         }
 
         return diagnostics
@@ -179,38 +251,38 @@ internal static class CodeFixRunEngine
 
     private readonly record struct FixAttempt(Solution? ChangedSolution, ImmutableArray<Diagnostic> Diagnostics);
 
-    private static async Task<CodeAction?> GetFirstCodeAction(Document document, Diagnostic diagnostic)
+    private static async Task<CodeAction?> GetFirstCodeAction(Document document, Diagnostic diagnostic, CancellationToken ct)
     {
         var actions = new List<CodeAction>();
         var context = new CodeFixContext(
             document,
             diagnostic,
             (action, _) => actions.Add(action),
-            CancellationToken.None);
+            ct);
         await CodeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
 
         return actions.FirstOrDefault();
     }
 
-    private static async Task<Solution> ApplyAction(Workspace workspace, CodeAction action)
+    private static async Task<Solution> ApplyAction(Workspace workspace, CodeAction action, CancellationToken ct)
     {
-        var operations = await action.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false);
+        var operations = await action.GetOperationsAsync(ct).ConfigureAwait(false);
         var applyOperation = operations.OfType<ApplyChangesOperation>().Single();
         return workspace.TryApplyChanges(applyOperation.ChangedSolution)
             ? workspace.CurrentSolution
             : throw new InvalidOperationException("Failed to apply code fix changes.");
     }
 
-    private static async Task FormatAndApplyChanges(Workspace workspace, Solution initialSolution, Solution changedSolution)
+    private static async Task FormatAndApplyChanges(Workspace workspace, Solution initialSolution, Solution changedSolution, CancellationToken ct)
     {
-        var formattedSolution = await FormatChangedDocuments(initialSolution, changedSolution).ConfigureAwait(false);
+        var formattedSolution = await FormatChangedDocuments(initialSolution, changedSolution, ct).ConfigureAwait(false);
         if (!workspace.TryApplyChanges(formattedSolution))
         {
             throw new InvalidOperationException("Failed to apply formatted code fix changes.");
         }
     }
 
-    private static async Task<Solution> FormatChangedDocuments(Solution oldSolution, Solution newSolution)
+    private static async Task<Solution> FormatChangedDocuments(Solution oldSolution, Solution newSolution, CancellationToken ct)
     {
         foreach (var projectChanges in newSolution.GetChanges(oldSolution).GetProjectChanges())
         {
@@ -222,7 +294,7 @@ internal static class CodeFixRunEngine
                     continue;
                 }
 
-                document = await Formatter.FormatAsync(document).ConfigureAwait(false);
+                document = await Formatter.FormatAsync(document, cancellationToken: ct).ConfigureAwait(false);
                 newSolution = document.Project.Solution;
             }
         }

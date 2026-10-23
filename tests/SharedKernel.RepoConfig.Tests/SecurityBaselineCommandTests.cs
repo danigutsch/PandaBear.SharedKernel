@@ -16,7 +16,7 @@ public sealed class SecurityBaselineCommandTests
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var result = await RepoConfigToolApplication.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var result = await RepoConfigToolRunner.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBe(0);
@@ -39,7 +39,7 @@ public sealed class SecurityBaselineCommandTests
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var result = await RepoConfigToolApplication.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var result = await RepoConfigToolRunner.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBe(2);
@@ -56,7 +56,7 @@ public sealed class SecurityBaselineCommandTests
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var result = await RepoConfigToolApplication.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var result = await RepoConfigToolRunner.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBe(1);
@@ -74,7 +74,7 @@ public sealed class SecurityBaselineCommandTests
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var result = await RepoConfigToolApplication.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var result = await RepoConfigToolRunner.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBe(1);
@@ -95,10 +95,35 @@ public sealed class SecurityBaselineCommandTests
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var result = await RepoConfigToolApplication.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var result = await RepoConfigToolRunner.Run(["security", "baseline", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
 
         // Assert
         result.ShouldBe(2);
         error.ToString().ShouldNotContain("outside-private-value", StringComparison.Ordinal);
+    }
+    [Theory]
+    [InlineData("scan")]
+    [InlineData("scan", "--output")]
+    [InlineData("scan", "--output", " ")]
+    [InlineData("scan", "--output", "one", "--output", "two")]
+    [InlineData("baseline", "--output", "reports")]
+    [InlineData("baseline", "--unknown")]
+    public async Task Parser_rejects_invalid_security_command_options(params string[] arguments)
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        workspace.WriteFile(".config/security-baseline.json", """{"version":1,"documents":[{"path":"docs/security.md","requiredText":[]}]}""");
+        workspace.WriteFile("docs/security.md", "Policy");
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+
+        // Act
+        var result = await RepoConfigToolRunner.Run(["security", .. arguments], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ShouldBe(1);
+        error.ToString().ShouldNotBe(string.Empty);
+        output.ToString().ShouldNotContain("Security baseline is current.", StringComparison.Ordinal);
+        workspace.FileExists("reports/gitleaks.sarif").ShouldBeFalse();
     }
 }

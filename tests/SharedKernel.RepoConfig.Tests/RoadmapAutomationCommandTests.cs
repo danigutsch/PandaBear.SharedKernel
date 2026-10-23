@@ -16,7 +16,7 @@ public sealed class RoadmapAutomationCommandTests
         using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", null);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(
+        var exitCode = await RepoConfigToolRunner.Run(
             ["automation", "unknown", "--root", workspace.RootPath],
             output,
             error,
@@ -25,9 +25,38 @@ public sealed class RoadmapAutomationCommandTests
         var errorText = error.ToString();
 
         // Assert
-        exitCode.ShouldBe(2);
-        errorText.ShouldContain("Unknown automation command: unknown", StringComparison.Ordinal);
+        exitCode.ShouldBe(1);
+        errorText.ShouldContain("Unrecognized command or argument 'unknown'.", StringComparison.Ordinal);
         errorText.ShouldNotContain("GITHUB_REPOSITORY", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("plan-github")]
+    [InlineData("validate-plan")]
+    [InlineData("apply-plan")]
+    [InlineData("seal-result")]
+    [InlineData("verify-result")]
+    [InlineData("publish-result")]
+    public async Task Automation_steps_with_a_relative_root_require_the_repository_variable(string step)
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", null);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(
+            ["automation", step, "--root", "."],
+            output,
+            error,
+            workspace.RootPath,
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ToString().ShouldBe(string.Empty);
+        error.ToString().ShouldBe("sharedkernel-repo: Roadmap automation requires GITHUB_REPOSITORY." + Environment.NewLine);
     }
 
     [Fact]
@@ -57,7 +86,7 @@ public sealed class RoadmapAutomationCommandTests
         using var githubSummary = new EnvironmentVariableScope("GITHUB_STEP_SUMMARY", githubSummaryPath);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(
+        var exitCode = await RepoConfigToolRunner.Run(
             ["automation", "plan-github", "--root", workspace.RootPath],
             output,
             error,
@@ -85,41 +114,136 @@ public sealed class RoadmapAutomationCommandTests
     }
 
     [Fact]
-    public async Task Publish_command_requires_and_writes_a_nonempty_pull_request_url()
+    public async Task Publish_command_without_force_previews_the_pull_request_without_changes()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
-        RoadmapAutomationTestSetup.Configure(workspace);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
         [
             GitHubRoadmapSnapshotTestOperations.Issue(100, "Closed item", "CLOSED")
         ];
-        var plan = await RoadmapAutomationTestSetup.CreatePlan(
-            workspace,
-            snapshot,
-            TestContext.Current.CancellationToken);
-        await RoadmapAutomationTestSetup.ApplyPlan(
-            workspace,
-            plan,
-            snapshot,
-            TestContext.Current.CancellationToken);
-        await RoadmapAutomationTestSetup.RefreshReconciliation(
-            workspace,
-            snapshot,
-            TestContext.Current.CancellationToken);
         var status = RoadmapGitStatusTestData.Ordinary("roadmap/reconciliation/open-issues-test.json");
         var artifactDigest = new string('c', 64);
-        using var sealHandler = new TestHttpMessageHandler();
-        GitHubRoadmapSnapshotTestOperations.Enqueue(sealHandler, snapshot);
-        using var sealClient = new HttpClient(sealHandler);
-        var sealing = new RoadmapAutomationService(
-            workspace.RootPath,
-            sealClient,
-            RoadmapAutomationTestGit.Create(status));
-        var seal = await sealing.SealResult(
-            plan.PlanDigest,
+        var (plan, seal) = await RoadmapAutomationTestSetup.CreateSealedResult(
+            workspace,
+            snapshot,
+            status,
             artifactDigest,
-            "owner/repository",
+            TestContext.Current.CancellationToken);
+        var roadmapBefore = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
+        using var previewHandler = new TestHttpMessageHandler();
+        GitHubRoadmapSnapshotTestOperations.Enqueue(previewHandler, snapshot);
+        using var previewClient = new HttpClient(previewHandler);
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        var githubOutputPath = Path.Combine(workspace.RootPath, "publish-output.txt");
+        var githubSummaryPath = Path.Combine(workspace.RootPath, "publish-summary.md");
+        using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", "owner/repository");
+        using var planDigest = new EnvironmentVariableScope("ROADMAP_PLAN_DIGEST", plan.PlanDigest);
+        using var artifact = new EnvironmentVariableScope("ROADMAP_ARTIFACT_DIGEST", artifactDigest);
+        using var result = new EnvironmentVariableScope("ROADMAP_RESULT_DIGEST", seal.ResultDigest);
+        using var githubOutput = new EnvironmentVariableScope("GITHUB_OUTPUT", githubOutputPath);
+        using var githubSummary = new EnvironmentVariableScope("GITHUB_STEP_SUMMARY", githubSummaryPath);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(
+            ["automation", "publish-result", "--root", workspace.RootPath],
+            output,
+            error,
+            workspace.RootPath,
+            previewClient,
+            RoadmapAutomationTestGit.Create(status),
+            TestContext.Current.CancellationToken);
+        var roadmapAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        error.ToString().ShouldBe(string.Empty);
+        output.ToString().ShouldBe(
+            $"preview: roadmap publication would create branch {plan.BranchName} from {RoadmapAutomationTestPlan.BaseSha} in owner/repository and open a draft pull request.{Environment.NewLine}"
+            + $"preview: roadmap publication would change roadmap/reconciliation/open-issues-test.json.{Environment.NewLine}");
+        previewHandler.Requests.ShouldNotBeEmpty();
+        previewHandler.Requests.ShouldAllSatisfy(request =>
+        {
+            request.PathAndQuery.ShouldBe("/graphql");
+            request.Body.ShouldNotBeNull().ShouldNotContain("mutation", StringComparison.Ordinal);
+        });
+        File.Exists(githubOutputPath).ShouldBeFalse();
+        File.Exists(githubSummaryPath).ShouldBeFalse();
+        roadmapAfter.ShouldBe(roadmapBefore);
+    }
+
+    [Fact]
+    public async Task Publish_command_without_force_rejects_a_mismatched_result_digest()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
+        [
+            GitHubRoadmapSnapshotTestOperations.Issue(100, "Closed item", "CLOSED")
+        ];
+        var status = RoadmapGitStatusTestData.Ordinary("roadmap/reconciliation/open-issues-test.json");
+        var artifactDigest = new string('c', 64);
+        var (plan, _) = await RoadmapAutomationTestSetup.CreateSealedResult(
+            workspace,
+            snapshot,
+            status,
+            artifactDigest,
+            TestContext.Current.CancellationToken);
+        using var previewHandler = new TestHttpMessageHandler();
+        GitHubRoadmapSnapshotTestOperations.Enqueue(previewHandler, snapshot);
+        using var previewClient = new HttpClient(previewHandler);
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        var githubOutputPath = Path.Combine(workspace.RootPath, "publish-output.txt");
+        var githubSummaryPath = Path.Combine(workspace.RootPath, "publish-summary.md");
+        using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", "owner/repository");
+        using var planDigest = new EnvironmentVariableScope("ROADMAP_PLAN_DIGEST", plan.PlanDigest);
+        using var artifact = new EnvironmentVariableScope("ROADMAP_ARTIFACT_DIGEST", artifactDigest);
+        using var result = new EnvironmentVariableScope("ROADMAP_RESULT_DIGEST", new string('d', 64));
+        using var githubOutput = new EnvironmentVariableScope("GITHUB_OUTPUT", githubOutputPath);
+        using var githubSummary = new EnvironmentVariableScope("GITHUB_STEP_SUMMARY", githubSummaryPath);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(
+            ["automation", "publish-result", "--root", workspace.RootPath],
+            output,
+            error,
+            workspace.RootPath,
+            previewClient,
+            RoadmapAutomationTestGit.Create(status),
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ToString().ShouldBe(string.Empty);
+        error.ToString().ShouldBe(
+            "sharedkernel-repo: Roadmap automation result seal is invalid or was tampered with." + Environment.NewLine);
+        previewHandler.Requests.ShouldAllSatisfy(request =>
+        {
+            request.PathAndQuery.ShouldBe("/graphql");
+            request.Body.ShouldNotBeNull().ShouldNotContain("mutation", StringComparison.Ordinal);
+        });
+        File.Exists(githubOutputPath).ShouldBeFalse();
+        File.Exists(githubSummaryPath).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Publish_command_with_force_writes_a_nonempty_pull_request_url()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
+        [
+            GitHubRoadmapSnapshotTestOperations.Issue(100, "Closed item", "CLOSED")
+        ];
+        var status = RoadmapGitStatusTestData.Ordinary("roadmap/reconciliation/open-issues-test.json");
+        var artifactDigest = new string('c', 64);
+        var (plan, seal) = await RoadmapAutomationTestSetup.CreateSealedResult(
+            workspace,
+            snapshot,
+            status,
+            artifactDigest,
             TestContext.Current.CancellationToken);
         using var publishHandler = new TestHttpMessageHandler();
         GitHubRoadmapSnapshotTestOperations.Enqueue(publishHandler, snapshot);
@@ -141,8 +265,8 @@ public sealed class RoadmapAutomationCommandTests
         using var githubSummary = new EnvironmentVariableScope("GITHUB_STEP_SUMMARY", githubSummaryPath);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(
-            ["automation", "publish-result", "--root", workspace.RootPath],
+        var exitCode = await RepoConfigToolRunner.Run(
+            ["automation", "publish-result", "--force", "--root", workspace.RootPath],
             output,
             error,
             workspace.RootPath,
@@ -154,9 +278,13 @@ public sealed class RoadmapAutomationCommandTests
         // Assert
         exitCode.ShouldBe(0);
         error.ToString().ShouldBe(string.Empty);
+        output.ToString().ShouldBe("Roadmap automation pull request published." + Environment.NewLine);
         workflowOutputs.ShouldContain(
             $"pull_request_url={RoadmapGitHubPublicationTestOperations.PullRequestUrl}",
             StringComparison.Ordinal);
+        publishHandler.Requests.ShouldContain(request =>
+            request.Message.Method == HttpMethod.Post
+            && string.Equals(request.PathAndQuery, "/repos/owner/repository/pulls", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -173,7 +301,7 @@ public sealed class RoadmapAutomationCommandTests
         using var ghToken = new EnvironmentVariableScope("GH_TOKEN", "ghp_untrusted_fallback");
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(
+        var exitCode = await RepoConfigToolRunner.Run(
             ["automation", "plan-github", "--root", workspace.RootPath],
             output,
             error,

@@ -1,1 +1,3 @@
-return await PandaBear.Versioning.Tool.VersioningToolApplication.Run(args, Console.In, Console.Out, Console.Error).ConfigureAwait(false);
+using PandaBear.Versioning.Tool;
+
+return await VersioningCommandLine.Create(Console.In, TimeProvider.System).Parse(args).InvokeAsync().ConfigureAwait(false);

@@ -2,7 +2,7 @@
 
 Domain primitives and provider-neutral contracts depend inward. Provider modules own reusable integrations and their external dependencies. Consumers own business rules, authentication policy, schemas, migrations, application composition, and deployment.
 
-The library has no application AppHost or deployment topology. These diagrams are generated from this checkout's project references and workflow jobs. Generate with `dotnet run --project tools/SharedKernel.Documentation.Tool -c Release -- generate --config docs/architecture/generated-diagrams.json`; append `--check` to detect drift.
+The library has no application AppHost or deployment topology. These diagrams are generated from this checkout's project references and workflow jobs. Refresh them with `dotnet run --project tools/SharedKernel.Documentation.Tool -c Release -- generate --config docs/architecture/generated-diagrams.json`; detect drift with `dotnet run --project tools/SharedKernel.Documentation.Tool -c Release -- verify --config docs/architecture/generated-diagrams.json`.
 
 ## Library project dependencies
 

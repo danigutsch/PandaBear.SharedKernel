@@ -18,6 +18,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="System.CommandLine" />
+    </ItemGroup>
+
+    <ItemGroup>
         <InternalsVisibleTo Include="SharedKernel.RepoConfig.Tests" />
     </ItemGroup>
 

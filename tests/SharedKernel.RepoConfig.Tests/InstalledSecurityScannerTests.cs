@@ -20,10 +20,10 @@ public sealed class InstalledSecurityScannerTests
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var detected = await RepoConfigToolApplication.Run(["security", "scan", "--root", root, "--output", "reports"], output, error, root, TestContext.Current.CancellationToken);
+        var detected = await RepoConfigToolRunner.Run(["security", "scan", "--root", root, "--output", "reports"], output, error, root, TestContext.Current.CancellationToken);
         var report = workspace.ReadFile("repository with spaces/reports/gitleaks.sarif");
         workspace.WriteFile("repository with spaces/fixture.txt", "Clean source.\n");
-        var clean = await RepoConfigToolApplication.Run(["security", "scan", "--root", root, "--output", "clean reports"], output, error, root, TestContext.Current.CancellationToken);
+        var clean = await RepoConfigToolRunner.Run(["security", "scan", "--root", root, "--output", "clean reports"], output, error, root, TestContext.Current.CancellationToken);
         var console = output.ToString() + error.ToString();
 
         // Assert

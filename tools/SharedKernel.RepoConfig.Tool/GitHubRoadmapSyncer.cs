@@ -60,7 +60,7 @@ internal sealed class GitHubRoadmapSyncer
         var fields = await RunProjectOperation(token => projectClient.GetFields(target, token), cancellationToken).ConfigureAwait(false);
         foreach (var conflict in ValidateProjectSchema(fields))
         {
-            messages.Add($"dry-run: GitHub Project {target.Number} field {conflict} cannot be projected from roadmap source");
+            messages.Add($"preview: GitHub Project {target.Number} field {conflict} cannot be projected from roadmap source");
         }
 
         foreach (var item in itemsWithIssues.Where(item => item.GitHubIssue is not null))
@@ -317,22 +317,22 @@ internal sealed class GitHubRoadmapSyncer
         var projection = await RunProjectOperation(token => AssessProjectProjection(projectClient, target, repository, item, fields, appliesChanges: false, token), cancellationToken).ConfigureAwait(false);
         if (projection.IsBlocked)
         {
-            messages.Add($"dry-run: skipped projection of {repository}#{issueNumber} to GitHub Project {target.Number} because Roadmap status cannot be projected from roadmap source");
+            messages.Add($"preview: skipped projection of {repository}#{issueNumber} to GitHub Project {target.Number} because Roadmap status cannot be projected from roadmap source");
         }
         else
         {
             messages.Add(projection.HasExistingMembership
-                ? $"dry-run: GitHub Project {target.Number} already contains {repository}#{issueNumber}"
-                : $"dry-run: add {repository}#{issueNumber} to GitHub Project {target.Number}");
+                ? $"preview: GitHub Project {target.Number} already contains {repository}#{issueNumber}"
+                : $"preview: add {repository}#{issueNumber} to GitHub Project {target.Number}");
 
             foreach (var change in projection.ProposedChanges)
             {
-                messages.Add($"dry-run: set {repository}#{issueNumber} Project field {change}");
+                messages.Add($"preview: set {repository}#{issueNumber} Project field {change}");
             }
 
             foreach (var change in projection.DeferredChanges)
             {
-                messages.Add($"dry-run: set {repository}#{issueNumber} Project field {change} after adding it");
+                messages.Add($"preview: set {repository}#{issueNumber} Project field {change} after adding it");
             }
         }
 
@@ -699,10 +699,10 @@ internal sealed class GitHubRoadmapSyncer
     {
         if (item.CreateGitHubIssue)
         {
-            yield return $"dry-run: create GitHub issue for {_project.GitHubRepository} from {item.Id}";
+            yield return $"preview: create GitHub issue for {_project.GitHubRepository} from {item.Id}";
             if (_project.GitHubProjectTarget is not null)
             {
-                yield return $"dry-run: ensure the created issue from {item.Id} is in GitHub Project {_project.GitHubProjectTarget.Number}";
+                yield return $"preview: ensure the created issue from {item.Id} is in GitHub Project {_project.GitHubProjectTarget.Number}";
             }
 
             yield break;
@@ -710,16 +710,16 @@ internal sealed class GitHubRoadmapSyncer
 
         if (item.Labels.Count > 0)
         {
-            yield return $"dry-run: sync labels for {_project.GitHubRepository}#{item.GitHubIssue} from {item.Id}";
+            yield return $"preview: sync labels for {_project.GitHubRepository}#{item.GitHubIssue} from {item.Id}";
         }
         else if (_project.GitHubProjectTarget is null)
         {
-            yield return $"dry-run: skip {_project.GitHubRepository}#{item.GitHubIssue} from {item.Id} because it has no labels";
+            yield return $"preview: skip {_project.GitHubRepository}#{item.GitHubIssue} from {item.Id} because it has no labels";
         }
 
         if (_project.GitHubProjectTarget is not null)
         {
-            yield return $"dry-run: ensure {_project.GitHubRepository}#{item.GitHubIssue} is in GitHub Project {_project.GitHubProjectTarget.Number}";
+            yield return $"preview: ensure {_project.GitHubRepository}#{item.GitHubIssue} is in GitHub Project {_project.GitHubProjectTarget.Number}";
         }
     }
 

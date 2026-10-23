@@ -5,6 +5,19 @@ namespace PandaBear.Versioning.Tool;
 
 internal static class CandidateManifest
 {
+    public static string Find(string directory)
+    {
+        if (!Directory.Exists(directory))
+        {
+            throw new ArgumentException($"Candidate directory does not exist: {directory}.");
+        }
+
+        var manifests = Directory.EnumerateFiles(directory, "candidate.json", SearchOption.AllDirectories).Take(2).ToArray();
+        return manifests.Length == 1
+            ? manifests[0]
+            : throw new ArgumentException($"Candidate directory must contain exactly one candidate.json, searched recursively: {directory}.");
+    }
+
     public static JsonObject ReadAndVerify(string path, string? feed = null)
     {
         var evidence = JsonNode.Parse(File.ReadAllText(path))?.AsObject()
@@ -35,9 +48,23 @@ internal static class CandidateManifest
         return evidence;
     }
 
+    /// <summary>
+    /// Replaces <paramref name="path" /> through a temporary file in the same directory, so an interrupted write never
+    /// leaves a truncated manifest.
+    /// </summary>
     public static void Write(string path, JsonObject evidence)
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path))!);
-        File.WriteAllText(path, evidence.ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = true }) + Environment.NewLine);
+        var fullPath = Path.GetFullPath(path);
+        Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+        var temporary = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
+        {
+            File.WriteAllText(temporary, evidence.ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = true }) + Environment.NewLine);
+            File.Move(temporary, fullPath, overwrite: true);
+        }
+        finally
+        {
+            File.Delete(temporary);
+        }
     }
 }

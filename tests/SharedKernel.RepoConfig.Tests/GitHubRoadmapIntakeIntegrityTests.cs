@@ -6,7 +6,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class GitHubRoadmapIntakeIntegrityTests
 {
     [Fact]
-    public async Task Intake_github_verifies_a_mapped_closed_issue_that_is_not_a_blocker_endpoint()
+    public async Task GitHub_import_verifies_a_mapped_closed_issue_that_is_not_a_blocker_endpoint()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -14,7 +14,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var mappedItem = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json")
             .Replace("\"status\": \"ready\"", "\"status\": \"done\"", StringComparison.Ordinal)
@@ -63,7 +63,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var requestBodies = string.Join('\n', handler.Requests.Select(request => request.Body ?? string.Empty));
 
         // Assert
@@ -78,7 +78,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
     }
 
     [Fact]
-    public async Task Intake_github_rejects_a_generated_filename_owned_by_another_item()
+    public async Task GitHub_import_rejects_a_generated_filename_owned_by_another_item()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -86,7 +86,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         const string collidingPath = "roadmap/items/RM-1000-github-100.json";
         var collidingItem = RoadmapTestContent.UntriagedIssueJson
@@ -136,7 +136,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
@@ -146,7 +146,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
     }
 
     [Fact]
-    public async Task Intake_github_apply_rejects_a_manifest_changed_during_the_request()
+    public async Task GitHub_import_force_rejects_a_manifest_changed_during_the_request()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -154,7 +154,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
         [
@@ -201,7 +201,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
@@ -212,7 +212,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
     }
 
     [Fact]
-    public async Task Intake_github_apply_rejects_an_item_added_during_the_request()
+    public async Task GitHub_import_force_rejects_an_item_added_during_the_request()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -220,7 +220,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
         [
@@ -269,7 +269,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
@@ -280,7 +280,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
     }
 
     [Fact]
-    public async Task Intake_github_rejects_manifest_blocker_edges_not_present_in_the_verified_snapshot()
+    public async Task GitHub_import_rejects_manifest_blocker_edges_not_present_in_the_verified_snapshot()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -288,7 +288,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
         [
@@ -336,7 +336,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var stateAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
 
         // Assert

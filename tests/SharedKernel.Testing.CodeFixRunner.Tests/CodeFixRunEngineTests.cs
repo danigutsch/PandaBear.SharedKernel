@@ -19,7 +19,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var fixedCount = await CodeFixRunEngine.Run(options, error);
+        var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
         var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
         // Assert
@@ -31,7 +31,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
     }
 
     [Fact]
-    public async Task Run_applies_default_SKTEST004_code_fix_to_project_file()
+    public async Task Run_applies_SKTEST004_code_fix_to_project_file()
     {
         // Arrange
         var projectPath = Path.Combine(projectDirectory.Path, "Sample.Tests.csproj");
@@ -40,11 +40,11 @@ public sealed class CodeFixRunEngineTests : IDisposable
         await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.ProjectFile, TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(sourcePath, CodeFixRunnerTestProject.HelperSourceFile, TestContext.Current.CancellationToken);
 
-        var options = CodeFixRunnerOptions.Parse([projectPath]).ShouldNotBeNull();
+        var options = new CodeFixRunnerOptions(projectPath, "SKTEST004");
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var fixedCount = await CodeFixRunEngine.Run(options, error);
+        var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
 
         // Assert
         fixedCount.ShouldBe(1);
@@ -70,7 +70,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var fixedCount = await CodeFixRunEngine.Run(options, error);
+        var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
         var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
         // Assert
@@ -92,7 +92,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var fixedCount = await CodeFixRunEngine.Run(options, error);
+        var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
 
         // Assert
         fixedCount.ShouldBe(1);
@@ -115,7 +115,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var fixedCount = await CodeFixRunEngine.Run(options, error);
+        var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
         var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
         // Assert
@@ -136,7 +136,7 @@ public sealed class CodeFixRunEngineTests : IDisposable
 
         // Act
         // Assert
-        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<Task>)(() => CodeFixRunEngine.Run(options, error)));
+        var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<Task>)(() => CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken)));
 
         exception.Message.ShouldContain("Expected a .csproj, .sln, or .slnx path.", StringComparison.Ordinal);
     }

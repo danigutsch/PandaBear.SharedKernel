@@ -4,32 +4,106 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-`sharedkernel-repo` maintains repository configuration, roadmap structure, and optional GitHub projection.
-It is packaged privately as `PandaBear.SharedKernel.RepoConfig.Tool`.
+`sharedkernel-repo` maintains repository roadmap configuration, its optional GitHub projection, and
+repository checks. Application CI slices, coverage exclusions, bootstrap, consumer compatibility,
+workflow configuration, and protected-environment approval remain consumer-owned.
 
-## Commands
+## Prerequisites
 
-- `init`, `verify`, and `diff` initialize or inspect repository planning structure.
-- `set github.repository <owner/repo>` sets the configured GitHub repository.
-- `get <query>` reads the local roadmap queue and dependency information.
-- `sync github --dry-run` previews GitHub projection; `--apply` explicitly performs it.
-- `reconcile github` and `intake github` default to previews; `--apply` writes local roadmap state.
-- `security baseline --root <path>` checks repository-owned Markdown documentation contracts.
-- `security scan --root <path> --output <directory>` additionally scans current source with Gitleaks.
-  See the [security baseline](../../docs/security-baseline.md) for configuration and exit codes.
-- `text-encoding --root <path>` validates indexed UTF-8 text.
-- `podman-dns-preflight --check` diagnoses rootless Podman DNS state without modifying it.
+The tool runs on .NET 10; `verify-text-encoding` also needs Git.
 
-Use `--root <path>` for repository commands that target another checkout. Initialization leaves
-GitHub integration disabled. Explicit configuration and `--apply` are required for remote changes.
-Application CI slices, coverage exclusions, bootstrap, and consumer compatibility remain consumer-owned.
+## Installation
 
-## Roadmap automation
+Install a validated candidate as a local tool from the feed that holds it, such as the folder that
+`sharedkernel-version stage-candidate` copies a candidate to. Add the feed to `NuGet.Config` and map
+`PandaBear.SharedKernel.*` to it. Map every other package, for example `*`, to the existing source, because
+a package without a mapping does not restore once source mapping is enabled. With the SDK pinned in
+`global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.
 
-Use `automation plan-github` for an integrity-bound plan. Application workflow configuration and protected-environment approval remain consumer-owned. Applying and publishing require the reviewed plan and artifact digests; publication also requires a sealed result.
+```text
+dotnet tool install PandaBear.SharedKernel.RepoConfig.Tool --version <validated-candidate-version>
+dotnet tool run sharedkernel-repo -- <command>
+```
 
-## Package identity and availability
+.NET tools run in full trust. Install only from trusted manifests and package sources.
 
-Package ID: `PandaBear.SharedKernel.RepoConfig.Tool`. C# namespace: `PandaBear.RepoConfig.Tool`. Assembly/project identity: `SharedKernel.RepoConfig.Tool`.
+Package ID: `PandaBear.SharedKernel.RepoConfig.Tool`. C# namespace: `PandaBear.RepoConfig.Tool`.
+Assembly/project identity: `SharedKernel.RepoConfig.Tool`. Source is public; registry publication remains
+deferred, and nothing here implies availability on nuget.org.
 
-Source is public; registry publication remains deferred. Consume a validated candidate from an explicitly configured local/private feed. This README does not imply availability on nuget.org.
+## Usage
+
+```bash
+sharedkernel-repo init
+sharedkernel-repo verify --root path/to/repository
+sharedkernel-repo set github.repository owner/repository
+sharedkernel-repo get next-work --limit 5
+sharedkernel-repo get by-label "area: tooling"
+sharedkernel-repo github reconcile
+sharedkernel-repo github reconcile --force
+sharedkernel-repo automation publish-result --force
+sharedkernel-repo verify-podman-dns --verbosity quiet
+```
+
+| Command | Purpose |
+| --- | --- |
+| `init` | Creates missing roadmap structure files and keeps existing ones. GitHub integration starts disabled. |
+| `verify`, `diff` | Verify the roadmap structure, configuration, and items; `diff` reports failures as drift. |
+| `set <key> <value>` | Sets `github.repository`. |
+| `get <query> [<value>]` | Lists roadmap items for `next-priority`, `next-unblocked`, `next-work`, `next-blockers`, `next-enablers`, `low-hanging-fruit`, `pareto`, `blocking-overview`, `blockers-of <item-id>`, `by-tag <tag>`, or `by-label <label>`, and counts for `tags` or `labels`. `--type` filters by roadmap type; `--limit` caps the list at 10 by default. |
+| `github sync` | Projects roadmap items to GitHub issues and Projects. |
+| `github reconcile` | Updates the reconciliation manifest from the open GitHub issues. |
+| `github import` | Imports the reconciled issue snapshot into roadmap items. |
+| `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request. |
+| `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
+| `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
+
+`github` commands and `automation publish-result` preview their changes unless `--force` is given.
+Lines that describe previewed changes start with `preview:`. The `publish-result` preview names the
+repository, base SHA, branch, and changed paths. Every command except `verify-podman-dns` takes
+`--root <path>`, which defaults to the current directory. Run `sharedkernel-repo <command> --help` for
+the options of each command.
+
+## Environment
+
+| Variable | Read by |
+| --- | --- |
+| `GH_TOKEN`, then `GITHUB_TOKEN` | `github` commands. |
+| `GITHUB_TOKEN` | `automation` steps that call GitHub. |
+| `GITHUB_REPOSITORY` | `automation` steps. |
+| `GITHUB_RUN_ID` | `automation plan-github`. |
+| `ROADMAP_PLAN_DIGEST`, `ROADMAP_ARTIFACT_DIGEST`, `ROADMAP_RESULT_DIGEST` | `automation` steps after planning, as each step requires. |
+| `GITHUB_OUTPUT`, `GITHUB_STEP_SUMMARY` | `automation plan-github`, `seal-result`, and `publish-result --force`. |
+
+## Limits
+
+- `verify-podman-dns` inspects only local rootless Podman on Linux and fails closed for remote services.
+- `verify-text-encoding` checks staged regular files, skips files whose `binary` attribute is set, and
+  fails on blobs larger than 64 MiB.
+
+## Exit codes
+
+| Code | Meaning |
+| --- | --- |
+| 0 | Success, including previews and a healthy or inapplicable Podman state. |
+| 1 | Verification failure or drift, invalid text encoding, stale or unverifiable Podman DNS state, a file, Git, or GitHub error, a command-line error, or cancellation. |
+| 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within two seconds. |
+
+## Security
+
+- Tokens come only from the environment. GitHub transport failures are reported without request details.
+- Child processes (Git, Podman, and `stat`) start without `GH_TOKEN` and `GITHUB_TOKEN`.
+- Without `--force`, `github` commands and `automation publish-result` only read and change nothing in
+  GitHub or the checkout; `--force` never skips validation.
+- `automation` steps after planning are bound to the reviewed plan digest. `publish-result` requires a
+  sealed result with or without `--force`, and its preview reads GitHub only to validate. With `--force`
+  it creates Git objects, one new branch, and a draft pull request. When the branch already exists it
+  fails and leaves only unreferenced Git objects.
+- The `publish-result` preview prints no file contents.
+- Output escapes control characters from roadmap and GitHub data.
+
+## Security commands
+
+`security baseline --root <path>` verifies the configured repository document contracts.
+`security scan --root <path> --output <directory>` also scans current source with Gitleaks.
+See the [security baseline](../../docs/security-baseline.md) for configuration and exit codes.

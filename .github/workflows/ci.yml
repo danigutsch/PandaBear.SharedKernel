@@ -236,7 +236,7 @@ jobs:
         with:
           project: tools/SharedKernel.Documentation.Tool
       - name: Verify generated architecture
-        run: dotnet run --project tools/SharedKernel.Documentation.Tool -c Release --no-build --no-restore -- generate --config docs/architecture/generated-diagrams.json --check
+        run: dotnet run --project tools/SharedKernel.Documentation.Tool -c Release --no-build --no-restore -- verify --config docs/architecture/generated-diagrams.json
 
   published-candidate-consumption:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.candidate_version != '' }}

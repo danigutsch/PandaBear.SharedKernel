@@ -11,6 +11,7 @@
         <PackageReference Include="Microsoft.NET.StringTools" ExcludeAssets="runtime" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
         <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" />
+        <PackageReference Include="System.CommandLine" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -24,6 +25,7 @@
         <Description>Local code-fix runner for SharedKernel testing analyzer migrations.</Description>
         <PackageTags>testing;analyzers;codefix;dotnet-tool</PackageTags>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <!-- MSBuildLocator and MSBuildWorkspace load MSBuild and Roslyn workspace services through reflection at run time. -->
         <IsAotCompatible>false</IsAotCompatible>
     </PropertyGroup>
 

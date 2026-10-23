@@ -15,6 +15,27 @@ internal static class CodeFixRunnerTestProject
         </Project>
         """;
 
+    public const string MalformedProjectFile = """
+        <Project Sdk="Microsoft.NET.Sdk">
+          <PropertyGroup>
+        """;
+
+    public const string MissingSdkGlobalJsonFile = """
+        {
+          "sdk": {
+            "version": "10.0.999",
+            "rollForward": "disable"
+          }
+        }
+        """;
+
+    public const string SolutionWithMissingProjectFile = """
+        <Solution>
+          <Project Path="Sample.Tests.csproj" />
+          <Project Path="Missing/Missing.Tests.csproj" />
+        </Solution>
+        """;
+
     public const string SourceFile = """
         namespace Xunit
         {
@@ -132,10 +153,47 @@ internal static class CodeFixRunnerTestProject
         }
         """;
 
+    public const string UnorderedMarkersSourceFile = """
+        namespace Xunit
+        {
+            public sealed class FactAttribute : System.Attribute
+            {
+            }
+        }
+
+        namespace Sample.Tests
+        {
+            public sealed class SampleTests
+            {
+                [Xunit.Fact]
+                public void CreatesSample()
+                {
+                    // Act
+                    var value = 42;
+
+                    // Arrange
+                    var copy = value;
+
+                    // Assert
+                    _ = copy;
+                }
+            }
+        }
+        """;
+
     public static string CreateTemporaryProject()
     {
         var projectDirectory = Path.Combine(Path.GetTempPath(), "sk-codefix-runner-" + Guid.NewGuid().ToString("N", CultureInfo.InvariantCulture));
         Directory.CreateDirectory(projectDirectory);
         return projectDirectory;
+    }
+
+    public static async Task<(string ProjectPath, string SourcePath)> Write(string directory, string source, CancellationToken ct)
+    {
+        var projectPath = Path.Combine(directory, "Sample.Tests.csproj");
+        var sourcePath = Path.Combine(directory, "SampleTests.cs");
+        await File.WriteAllTextAsync(projectPath, ProjectFile, ct);
+        await File.WriteAllTextAsync(sourcePath, source, ct);
+        return (projectPath, sourcePath);
     }
 }

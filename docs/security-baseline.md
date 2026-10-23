@@ -35,8 +35,9 @@ then checks clean source. Ordinary library test runs leave this external-tool te
 
 ## Failure handling
 
-Exit codes are `0` for success, `1` for baseline violations or secret findings, `2` for invalid or
-unreadable baseline configuration/arguments, and `3` for scanner failures, cancellation, or invalid
+Command-line parse errors return `1`, matching the other repository commands. Security runtime
+exit codes are `0` for success, `1` for baseline violations or secret findings, `2` for invalid or
+unreadable baseline configuration/paths, and `3` for scanner failures, cancellation, or invalid
 reports. Missing tools never count as successful scans. Scanner execution has a ten-minute limit.
 Raw scanner stdout and stderr are not forwarded; bounded outcome diagnostics identify failures.
 

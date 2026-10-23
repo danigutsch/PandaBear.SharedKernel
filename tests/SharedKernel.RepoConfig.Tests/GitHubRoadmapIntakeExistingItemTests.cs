@@ -7,7 +7,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class GitHubRoadmapIntakeExistingItemTests
 {
     [Fact]
-    public async Task Intake_github_rejects_a_reopened_imported_item_without_explicit_review()
+    public async Task GitHub_import_rejects_a_reopened_imported_item_without_explicit_review()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -15,7 +15,7 @@ public sealed class GitHubRoadmapIntakeExistingItemTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
         var closedItem = workspace.ReadFile("roadmap/items/RM-018-github-100.json")
@@ -82,18 +82,18 @@ public sealed class GitHubRoadmapIntakeExistingItemTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var stateAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
 
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldContain("GitHub open issue #100 maps to closed roadmap item RM-018; review the reopening before intake.", StringComparison.Ordinal);
+        error.ToString().ShouldContain("GitHub open issue #100 maps to closed roadmap item RM-018; review the reopening before GitHub import.", StringComparison.Ordinal);
         stateAfter.ShouldBe(stateBefore);
     }
 
     [Fact]
-    public async Task Intake_github_refreshes_existing_imported_snapshot_metadata()
+    public async Task GitHub_import_refreshes_existing_imported_snapshot_metadata()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -101,7 +101,7 @@ public sealed class GitHubRoadmapIntakeExistingItemTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
         var itemWithStaleStatus = workspace.ReadFile("roadmap/items/RM-018-github-100.json")
@@ -153,7 +153,7 @@ public sealed class GitHubRoadmapIntakeExistingItemTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         using var item = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-018-github-100.json"));
         var root = item.RootElement;
         var labels = root.GetProperty("labels").EnumerateArray().Select(label => label.GetString() ?? string.Empty).ToArray();

@@ -5,70 +5,40 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>
+/// Implements the <c>sharedkernel-repo</c> commands and maps their failures to exit codes.
+/// </summary>
 internal static class RepoConfigToolApplication
 {
     private const decimal ParetoFraction = 0.2m;
-    private const string Usage = "Usage: sharedkernel-repo <init|verify|diff|security|text-encoding|podman-dns-preflight|set|get|sync|reconcile|intake|automation> [--root <path>]";
 
-    public static Task<int> Run(string[] args, TextWriter output, TextWriter error, string workingDirectory, CancellationToken cancellationToken) =>
-        Run(args, output, error, workingDirectory, httpClient: null, gitRepository: null, cancellationToken);
-
-    internal static Task<int> Run(
-        string[] args,
-        TextWriter output,
-        TextWriter error,
-        string workingDirectory,
-        HttpClient? httpClient,
-        CancellationToken cancellationToken) =>
-        Run(args, output, error, workingDirectory, httpClient, gitRepository: null, cancellationToken);
-
-    internal static async Task<int> Run(
-        string[] args,
-        TextWriter output,
-        TextWriter error,
-        string workingDirectory,
-        HttpClient? httpClient,
-        RoadmapGitRepository? gitRepository,
-        CancellationToken cancellationToken)
+    /// <summary>
+    /// Runs a command and reports expected failures on standard error with exit code 1.
+    /// Caller cancellation propagates so System.CommandLine handles it.
+    /// </summary>
+    public static async Task<int> Guard(TextWriter error, Func<Task<int>> command, CancellationToken ct)
     {
-        ArgumentNullException.ThrowIfNull(args);
-        ArgumentNullException.ThrowIfNull(output);
         ArgumentNullException.ThrowIfNull(error);
-        ArgumentException.ThrowIfNullOrWhiteSpace(workingDirectory);
-
-        if (args is [] or ["--help"] or ["-h"])
-        {
-            await output.WriteLineAsync(Usage.AsMemory(), cancellationToken).ConfigureAwait(false);
-            await output.WriteLineAsync("Commands: init, verify, diff, security <baseline|scan>, text-encoding, podman-dns-preflight, set github.repository <owner/repo>, get <query>, sync github, reconcile github, intake github, automation <command>.".AsMemory(), cancellationToken).ConfigureAwait(false);
-            return 0;
-        }
+        ArgumentNullException.ThrowIfNull(command);
 
         try
         {
-            return args[0] switch
-            {
-                "security" => await SecurityCommand.Run(args[1..], output, error, workingDirectory, cancellationToken).ConfigureAwait(false),
-                "sync" => await RunGitHubProjection(args[1..], output, error, workingDirectory, httpClient, cancellationToken).ConfigureAwait(false),
-                "reconcile" => await RunGitHubReconciliation(args[1..], output, error, workingDirectory, httpClient, cancellationToken).ConfigureAwait(false),
-                "intake" => await RunGitHubIntake(args[1..], output, error, workingDirectory, httpClient, cancellationToken).ConfigureAwait(false),
-                "podman-dns-preflight" => await PodmanDnsPreflightCommand.Run(args[1..], output, error, cancellationToken).ConfigureAwait(false),
-                "automation" => await RunRoadmapAutomation(args[1..], output, error, workingDirectory, httpClient, gitRepository, cancellationToken).ConfigureAwait(false),
-                _ => await RunCommand(args, output, error, workingDirectory, cancellationToken).ConfigureAwait(false)
-            };
+            return await command().ConfigureAwait(false);
         }
         catch (TimeoutException exception)
         {
-            await error.WriteLineAsync($"sharedkernel-repo: {EscapeControlCharacters(exception.Message)}".AsMemory(), cancellationToken).ConfigureAwait(false);
+            await WriteError(error, exception.Message, ct).ConfigureAwait(false);
             return 1;
         }
-        catch (OperationCanceledException exception) when (!cancellationToken.IsCancellationRequested)
+        catch (OperationCanceledException exception) when (!ct.IsCancellationRequested)
         {
-            await error.WriteLineAsync($"sharedkernel-repo: {EscapeControlCharacters(exception.Message)}".AsMemory(), cancellationToken).ConfigureAwait(false);
+            await WriteError(error, exception.Message, ct).ConfigureAwait(false);
             return 1;
         }
         catch (HttpRequestException)
         {
-            await error.WriteLineAsync("sharedkernel-repo: GitHub sync request failed.".AsMemory(), cancellationToken).ConfigureAwait(false);
+            // The transport message can carry request details, so it is never echoed.
+            await error.WriteLineAsync("sharedkernel-repo: GitHub sync request failed.".AsMemory(), ct).ConfigureAwait(false);
             return 1;
         }
         catch (Exception exception) when (exception is ArgumentException
@@ -78,67 +48,13 @@ internal static class RepoConfigToolApplication
             or UnauthorizedAccessException
             or InvalidOperationException)
         {
-            await error.WriteLineAsync($"sharedkernel-repo: {EscapeControlCharacters(exception.Message)}".AsMemory(), cancellationToken).ConfigureAwait(false);
+            await WriteError(error, exception.Message, ct).ConfigureAwait(false);
             return 1;
         }
     }
 
-    private static Task<int> RunCommand(
-        string[] args,
-        TextWriter output,
-        TextWriter error,
-        string workingDirectory,
-        CancellationToken cancellationToken)
+    public static int Init(string rootPath, TextWriter output)
     {
-        var command = args[0];
-        return command == "text-encoding"
-            ? RunTextEncoding(args[1..], output, error, workingDirectory, cancellationToken)
-            : Task.FromResult(command switch
-            {
-                "init" => RunInit(args[1..], output, error, workingDirectory),
-                "verify" => RunVerify(args[1..], output, error, workingDirectory),
-                "diff" => RunDiff(args[1..], output, error, workingDirectory),
-                "set" => RunSet(args[1..], output, error, workingDirectory),
-                "get" => RunGet(args[1..], output, error, workingDirectory),
-                _ => WriteUsageError(error, $"Unknown command: {command}")
-            });
-    }
-
-    private static async Task<int> RunTextEncoding(
-        string[] args,
-        TextWriter output,
-        TextWriter error,
-        string workingDirectory,
-        CancellationToken cancellationToken)
-    {
-        if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining))
-        {
-            return 2;
-        }
-
-        if (remaining.Length > 0)
-        {
-            return WriteUsageError(error, $"Unknown argument: {remaining[0]}");
-        }
-
-        var issues = await TextEncodingVerifier.Verify(rootPath, cancellationToken).ConfigureAwait(false);
-        if (issues.Count == 0)
-        {
-            await output.WriteLineAsync("Repository text encoding is valid.".AsMemory(), cancellationToken).ConfigureAwait(false);
-            return 0;
-        }
-
-        WriteIssues(error, "Repository text encoding verification failed:", issues);
-        return 1;
-    }
-
-    private static int RunInit(string[] args, TextWriter output, TextWriter error, string workingDirectory)
-    {
-        if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining) || remaining.Length > 0)
-        {
-            return 2;
-        }
-
         var createdPaths = RepoConfigInitializer.Initialize(rootPath);
         if (createdPaths.Count == 0)
         {
@@ -155,13 +71,8 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
-    private static int RunVerify(string[] args, TextWriter output, TextWriter error, string workingDirectory)
+    public static int Verify(string rootPath, TextWriter output, TextWriter error)
     {
-        if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining) || remaining.Length > 0)
-        {
-            return 2;
-        }
-
         var issues = RepoConfigVerifier.Verify(rootPath);
         if (issues.Count == 0)
         {
@@ -173,13 +84,8 @@ internal static class RepoConfigToolApplication
         return 1;
     }
 
-    private static int RunDiff(string[] args, TextWriter output, TextWriter error, string workingDirectory)
+    public static int Diff(string rootPath, TextWriter output, TextWriter error)
     {
-        if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining) || remaining.Length > 0)
-        {
-            return 2;
-        }
-
         var issues = RepoConfigVerifier.Verify(rootPath);
         if (issues.Count == 0)
         {
@@ -191,56 +97,17 @@ internal static class RepoConfigToolApplication
         return 1;
     }
 
-    private static int RunSet(string[] args, TextWriter output, TextWriter error, string workingDirectory)
+    public static int Set(string rootPath, string key, string value, TextWriter output)
     {
-        if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining))
-        {
-            return 2;
-        }
-
-        if (remaining.Length < 2)
-        {
-            return WriteUsageError(error, "Missing set key and value.");
-        }
-
-        if (remaining.Length > 2)
-        {
-            return WriteUsageError(error, $"Unknown argument: {remaining[2]}");
-        }
-
-        var key = remaining[0];
-        var value = remaining[1];
-
         RepoConfigSetter.Set(rootPath, key, value);
         output.WriteLine($"Updated {EscapeControlCharacters(key)}.");
         return 0;
     }
 
-    private static int RunGet(string[] args, TextWriter output, TextWriter error, string workingDirectory)
+    public static int Get(string rootPath, string query, string? value, string? type, int limit, TextWriter output)
     {
-        if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining))
-        {
-            return 2;
-        }
-
-        if (remaining.Length == 0)
-        {
-            return WriteUsageError(error, "Missing get query.");
-        }
-
-        var query = remaining[0];
-        if (!TryParseGetOptions(remaining[1..], error, out var positionalArgs, out var type, out var limit))
-        {
-            return 2;
-        }
-
-        if (!IsGetQueryShapeValid(query, positionalArgs))
-        {
-            return WriteUsageError(error, $"Unknown or incomplete get query: {query}");
-        }
-
+        // The command tree accepts only known queries and requires a value exactly for blockers-of, by-tag, and by-label.
         var project = RoadmapProject.Load(rootPath);
-
         switch (query)
         {
             case "next-priority":
@@ -266,12 +133,8 @@ internal static class RepoConfigToolApplication
                 return 0;
 
             case "blockers-of":
-                var itemId = positionalArgs[0];
-                if (!project.Items.Any(item => string.Equals(item.Id, itemId, StringComparison.Ordinal)))
-                {
-                    throw new InvalidOperationException($"Unknown roadmap item id: {itemId}");
-                }
-
+                var itemId = project.Items.FirstOrDefault(item => string.Equals(item.Id, value, StringComparison.Ordinal))?.Id
+                    ?? throw new InvalidOperationException($"Unknown roadmap item id: {value}");
                 WriteItems(output, project.BlockersOf(itemId).OrderByPriority().Take(limit));
                 return 0;
 
@@ -306,350 +169,244 @@ internal static class RepoConfigToolApplication
                 return 0;
 
             case "by-tag":
-                var tag = positionalArgs[0];
-                WriteItems(output, project.OpenItems(type).Where(item => item.Tags.Contains(tag, StringComparer.Ordinal)).OrderByPriority().Take(limit));
+                WriteItems(output, project.OpenItems(type).Where(item => item.Tags.Contains(value, StringComparer.Ordinal)).OrderByPriority().Take(limit));
                 return 0;
 
             case "by-label":
-                var label = positionalArgs[0];
-                WriteItems(output, project.OpenItems(type).Where(item => item.Labels.Contains(label, StringComparer.Ordinal)).OrderByPriority().Take(limit));
+                WriteItems(output, project.OpenItems(type).Where(item => item.Labels.Contains(value, StringComparer.Ordinal)).OrderByPriority().Take(limit));
                 return 0;
 
             default:
-                return WriteUsageError(error, $"Unknown or incomplete get query: {query}");
+                throw new ArgumentOutOfRangeException(nameof(query), query, "Unknown roadmap query.");
         }
     }
 
-    private static async Task<int> RunGitHubProjection(string[] args, TextWriter output, TextWriter error, string workingDirectory, HttpClient? httpClient, CancellationToken cancellationToken)
+    public static async Task<int> SyncGitHub(string rootPath, bool force, HttpClient? httpClient, TextWriter output, CancellationToken ct)
     {
-        var parsed = TryParseGitHubProjection(args, workingDirectory, error);
-        if (parsed is null)
-        {
-            return 2;
-        }
-
-        var (rootPath, dryRun) = parsed.Value;
-        var project = RoadmapProject.Load(rootPath);
-        var syncer = new GitHubRoadmapSyncer(project, httpClient);
-        var result = dryRun
-            ? await syncer.Preview(cancellationToken).ConfigureAwait(false)
-            : await syncer.Apply(cancellationToken).ConfigureAwait(false);
-        foreach (var message in result.Messages)
-        {
-            await output.WriteLineAsync(EscapeControlCharacters(message).AsMemory(), cancellationToken).ConfigureAwait(false);
-        }
-
+        var syncer = new GitHubRoadmapSyncer(RoadmapProject.Load(rootPath), httpClient);
+        var result = force
+            ? await syncer.Apply(ct).ConfigureAwait(false)
+            : await syncer.Preview(ct).ConfigureAwait(false);
+        await WriteMessages(output, result.Messages, ct).ConfigureAwait(false);
         return 0;
     }
 
-    private static async Task<int> RunGitHubIntake(string[] args, TextWriter output, TextWriter error, string workingDirectory, HttpClient? httpClient, CancellationToken cancellationToken)
+    public static async Task<int> ReconcileGitHub(string rootPath, bool force, HttpClient? httpClient, TextWriter output, CancellationToken ct)
     {
-        var parsed = TryParseGitHubIntake(args, workingDirectory, error);
-        if (parsed is null)
-        {
-            return 2;
-        }
-
-        var (rootPath, dryRun) = parsed.Value;
-        var project = RoadmapProject.Load(rootPath);
-        var intake = new GitHubRoadmapIntake(project, httpClient);
-        var messages = dryRun
-            ? await intake.Preview(cancellationToken).ConfigureAwait(false)
-            : await intake.Apply(cancellationToken).ConfigureAwait(false);
-        foreach (var message in messages)
-        {
-            await output.WriteLineAsync(EscapeControlCharacters(message).AsMemory(), cancellationToken).ConfigureAwait(false);
-        }
-
+        var reconciler = new GitHubRoadmapReconciler(RoadmapProject.Load(rootPath), httpClient);
+        var messages = force
+            ? await reconciler.Apply(ct).ConfigureAwait(false)
+            : await reconciler.Preview(ct).ConfigureAwait(false);
+        await WriteMessages(output, messages, ct).ConfigureAwait(false);
         return 0;
     }
 
-    private static async Task<int> RunGitHubReconciliation(string[] args, TextWriter output, TextWriter error, string workingDirectory, HttpClient? httpClient, CancellationToken cancellationToken)
+    public static async Task<int> ImportGitHub(string rootPath, bool force, HttpClient? httpClient, TextWriter output, CancellationToken ct)
     {
-        var parsed = TryParseGitHubReconciliation(args, workingDirectory, error);
-        if (parsed is null)
-        {
-            return 2;
-        }
-
-        var (rootPath, dryRun) = parsed.Value;
-        var project = RoadmapProject.Load(rootPath);
-        var reconciler = new GitHubRoadmapReconciler(project, httpClient);
-        var messages = dryRun
-            ? await reconciler.Preview(cancellationToken).ConfigureAwait(false)
-            : await reconciler.Apply(cancellationToken).ConfigureAwait(false);
-        foreach (var message in messages)
-        {
-            await output.WriteLineAsync(EscapeControlCharacters(message).AsMemory(), cancellationToken).ConfigureAwait(false);
-        }
-
+        var intake = new GitHubRoadmapIntake(RoadmapProject.Load(rootPath), httpClient);
+        var messages = force
+            ? await intake.Apply(ct).ConfigureAwait(false)
+            : await intake.Preview(ct).ConfigureAwait(false);
+        await WriteMessages(output, messages, ct).ConfigureAwait(false);
         return 0;
     }
 
-    private static async Task<int> RunRoadmapAutomation(
-        string[] args,
-        TextWriter output,
-        TextWriter error,
-        string workingDirectory,
-        HttpClient? httpClient,
-        RoadmapGitRepository? gitRepository,
-        CancellationToken cancellationToken)
+    public static async Task<int> VerifyTextEncoding(string rootPath, TextWriter output, TextWriter error, CancellationToken ct)
     {
-        if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining))
+        var issues = await TextEncodingVerifier.Verify(rootPath, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
         {
-            return 2;
+            await output.WriteLineAsync("Repository text encoding is valid.".AsMemory(), ct).ConfigureAwait(false);
+            return 0;
         }
 
-        if (remaining.Length == 0)
-        {
-            return WriteUsageError(error, "Missing automation command.");
-        }
+        WriteIssues(error, "Repository text encoding verification failed:", issues);
+        return 1;
+    }
 
-        if (remaining.Length > 1)
-        {
-            return WriteUsageError(error, $"Unknown automation argument: {remaining[1]}");
-        }
-
-        if (remaining[0] is not "plan-github"
-            and not "validate-plan"
-            and not "apply-plan"
-            and not "seal-result"
-            and not "verify-result"
-            and not "publish-result")
-        {
-            return WriteUsageError(error, $"Unknown automation command: {remaining[0]}");
-        }
-
-        var service = new RoadmapAutomationService(rootPath, httpClient, gitRepository);
+    public static async Task<int> PlanAutomation(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
+    {
         var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
-        switch (remaining[0])
+        var runIdValue = RequireEnvironmentVariable("GITHUB_RUN_ID");
+        if (!long.TryParse(runIdValue, NumberStyles.None, CultureInfo.InvariantCulture, out var runId) || runId < 1)
         {
-            case "plan-github":
-                var runIdValue = RequireEnvironmentVariable("GITHUB_RUN_ID");
-                if (!long.TryParse(runIdValue, NumberStyles.None, CultureInfo.InvariantCulture, out var runId) || runId < 1)
-                {
-                    throw new InvalidOperationException("Roadmap automation requires a positive GITHUB_RUN_ID.");
-                }
-
-                var plan = await service.CreatePlan(runId, repository, cancellationToken).ConfigureAwait(false);
-                await AppendWorkflowOutput(
-                    [
-                        ("plan_digest", plan.PlanDigest),
-                        ("has_changes", FormatBoolean(plan.HasChanges)),
-                        ("branch_name", plan.BranchName),
-                        ("base_sha", plan.BaseSha)
-                    ],
-                    cancellationToken).ConfigureAwait(false);
-                await AppendWorkflowSummary(
-                    "Roadmap maintenance plan",
-                    [
-                        ("Plan digest", plan.PlanDigest),
-                        ("Base SHA", plan.BaseSha),
-                        ("Proposed changes", plan.HasChanges ? "yes" : "no")
-                    ],
-                    cancellationToken).ConfigureAwait(false);
-                await output.WriteLineAsync("Roadmap automation plan created.".AsMemory(), cancellationToken).ConfigureAwait(false);
-                return 0;
-
-            case "validate-plan":
-                await service.ValidatePlan(
-                    RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
-                    repository,
-                    cancellationToken).ConfigureAwait(false);
-                await output.WriteLineAsync("Roadmap automation plan validated.".AsMemory(), cancellationToken).ConfigureAwait(false);
-                return 0;
-
-            case "apply-plan":
-                await service.ApplyPlan(
-                    RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
-                    repository,
-                    cancellationToken).ConfigureAwait(false);
-                await output.WriteLineAsync("Roadmap automation closure approvals applied.".AsMemory(), cancellationToken).ConfigureAwait(false);
-                return 0;
-
-            case "seal-result":
-                var seal = await service.SealResult(
-                    RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
-                    RequireEnvironmentVariable("ROADMAP_ARTIFACT_DIGEST"),
-                    repository,
-                    cancellationToken).ConfigureAwait(false);
-                await AppendWorkflowOutput(
-                    [
-                        ("result_digest", seal.ResultDigest),
-                        ("has_changes", FormatBoolean(seal.HasChanges)),
-                        ("path_count", seal.PathCount.ToString(CultureInfo.InvariantCulture))
-                    ],
-                    cancellationToken).ConfigureAwait(false);
-                await AppendWorkflowSummary(
-                    "Roadmap maintenance result",
-                    [
-                        ("Result digest", seal.ResultDigest),
-                        ("Changed paths", seal.PathCount.ToString(CultureInfo.InvariantCulture)),
-                        ("Changes retained", seal.HasChanges ? "yes" : "no")
-                    ],
-                    cancellationToken).ConfigureAwait(false);
-                await output.WriteLineAsync("Roadmap automation result sealed.".AsMemory(), cancellationToken).ConfigureAwait(false);
-                return 0;
-
-            case "verify-result":
-                await service.VerifyResult(
-                    RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
-                    RequireEnvironmentVariable("ROADMAP_ARTIFACT_DIGEST"),
-                    RequireEnvironmentVariable("ROADMAP_RESULT_DIGEST"),
-                    repository,
-                    cancellationToken).ConfigureAwait(false);
-                await output.WriteLineAsync("Roadmap automation result verified.".AsMemory(), cancellationToken).ConfigureAwait(false);
-                return 0;
-
-            case "publish-result":
-                var publication = await service.PublishResult(
-                    RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
-                    RequireEnvironmentVariable("ROADMAP_ARTIFACT_DIGEST"),
-                    RequireEnvironmentVariable("ROADMAP_RESULT_DIGEST"),
-                    repository,
-                    cancellationToken).ConfigureAwait(false);
-                await AppendWorkflowOutput(
-                    [
-                        ("pull_request_url", publication.PullRequestUrl),
-                        ("publication_commit", publication.CommitSha)
-                    ],
-                    cancellationToken).ConfigureAwait(false);
-                await AppendWorkflowSummary(
-                    "Roadmap maintenance publication",
-                    [
-                        ("Pull request", publication.PullRequestUrl),
-                        ("Commit SHA", publication.CommitSha)
-                    ],
-                    cancellationToken).ConfigureAwait(false);
-                await output.WriteLineAsync("Roadmap automation pull request published.".AsMemory(), cancellationToken).ConfigureAwait(false);
-                return 0;
-
-            default:
-                return WriteUsageError(error, $"Unknown automation command: {remaining[0]}");
+            throw new InvalidOperationException("Roadmap automation requires a positive GITHUB_RUN_ID.");
         }
+
+        var plan = await service.CreatePlan(runId, repository, ct).ConfigureAwait(false);
+        await AppendWorkflowOutput(
+            [
+                ("plan_digest", plan.PlanDigest),
+                ("has_changes", FormatBoolean(plan.HasChanges)),
+                ("branch_name", plan.BranchName),
+                ("base_sha", plan.BaseSha)
+            ],
+            ct).ConfigureAwait(false);
+        await AppendWorkflowSummary(
+            "Roadmap maintenance plan",
+            [
+                ("Plan digest", plan.PlanDigest),
+                ("Base SHA", plan.BaseSha),
+                ("Proposed changes", plan.HasChanges ? "yes" : "no")
+            ],
+            ct).ConfigureAwait(false);
+        await output.WriteLineAsync("Roadmap automation plan created.".AsMemory(), ct).ConfigureAwait(false);
+        return 0;
     }
 
-    private static (string RootPath, bool DryRun)? TryParseGitHubProjection(string[] args, string workingDirectory, TextWriter error)
+    public static async Task<int> ValidateAutomationPlan(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
     {
-        if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining))
-        {
-            return null;
-        }
-
-        if (remaining.Length == 0 || !string.Equals(remaining[0], "github", StringComparison.Ordinal))
-        {
-            WriteUsageError(error, "Missing sync target: github.");
-            return null;
-        }
-
-        var dryRun = !remaining.Contains("--apply", StringComparer.Ordinal);
-        if (remaining.Contains("--dry-run", StringComparer.Ordinal) && remaining.Contains("--apply", StringComparer.Ordinal))
-        {
-            WriteUsageError(error, "Use either --dry-run or --apply, not both.");
-            return null;
-        }
-
-        if (remaining.Any(argument => argument is not "github" and not "--dry-run" and not "--apply"))
-        {
-            WriteUsageError(error, "Unknown sync argument.");
-            return null;
-        }
-
-        return (rootPath, dryRun);
+        var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
+        await service.ValidatePlan(
+            RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
+            repository,
+            ct).ConfigureAwait(false);
+        await output.WriteLineAsync("Roadmap automation plan validated.".AsMemory(), ct).ConfigureAwait(false);
+        return 0;
     }
 
-    private static (string RootPath, bool DryRun)? TryParseGitHubIntake(string[] args, string workingDirectory, TextWriter error)
+    public static async Task<int> ApplyAutomationPlan(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
     {
-        if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining))
-        {
-            return null;
-        }
-
-        if (remaining.Length == 0 || !string.Equals(remaining[0], "github", StringComparison.Ordinal))
-        {
-            WriteUsageError(error, "Missing intake target: github.");
-            return null;
-        }
-
-        var dryRun = !remaining.Contains("--apply", StringComparer.Ordinal);
-        if (remaining.Contains("--dry-run", StringComparer.Ordinal) && remaining.Contains("--apply", StringComparer.Ordinal))
-        {
-            WriteUsageError(error, "Use either --dry-run or --apply, not both.");
-            return null;
-        }
-
-        if (remaining.Any(argument => argument is not "github" and not "--dry-run" and not "--apply"))
-        {
-            WriteUsageError(error, "Unknown intake argument.");
-            return null;
-        }
-
-        return (rootPath, dryRun);
+        var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
+        await service.ApplyPlan(
+            RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
+            repository,
+            ct).ConfigureAwait(false);
+        await output.WriteLineAsync("Roadmap automation closure approvals applied.".AsMemory(), ct).ConfigureAwait(false);
+        return 0;
     }
 
-    private static (string RootPath, bool DryRun)? TryParseGitHubReconciliation(string[] args, string workingDirectory, TextWriter error)
+    public static async Task<int> SealAutomationResult(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
     {
-        if (!TryParseRootOption(args, workingDirectory, error, out var rootPath, out var remaining))
-        {
-            return null;
-        }
-
-        if (remaining.Length == 0 || !string.Equals(remaining[0], "github", StringComparison.Ordinal))
-        {
-            WriteUsageError(error, "Missing reconciliation target: github.");
-            return null;
-        }
-
-        var dryRun = !remaining.Contains("--apply", StringComparer.Ordinal);
-        if (remaining.Contains("--dry-run", StringComparer.Ordinal) && remaining.Contains("--apply", StringComparer.Ordinal))
-        {
-            WriteUsageError(error, "Use either --dry-run or --apply, not both.");
-            return null;
-        }
-
-        if (remaining.Any(argument => argument is not "github" and not "--dry-run" and not "--apply"))
-        {
-            WriteUsageError(error, "Unknown reconciliation argument.");
-            return null;
-        }
-
-        return (rootPath, dryRun);
+        var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
+        var seal = await service.SealResult(
+            RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
+            RequireEnvironmentVariable("ROADMAP_ARTIFACT_DIGEST"),
+            repository,
+            ct).ConfigureAwait(false);
+        await AppendWorkflowOutput(
+            [
+                ("result_digest", seal.ResultDigest),
+                ("has_changes", FormatBoolean(seal.HasChanges)),
+                ("path_count", seal.PathCount.ToString(CultureInfo.InvariantCulture))
+            ],
+            ct).ConfigureAwait(false);
+        await AppendWorkflowSummary(
+            "Roadmap maintenance result",
+            [
+                ("Result digest", seal.ResultDigest),
+                ("Changed paths", seal.PathCount.ToString(CultureInfo.InvariantCulture)),
+                ("Changes retained", seal.HasChanges ? "yes" : "no")
+            ],
+            ct).ConfigureAwait(false);
+        await output.WriteLineAsync("Roadmap automation result sealed.".AsMemory(), ct).ConfigureAwait(false);
+        return 0;
     }
 
-    private static bool TryParseRootOption(string[] args, string workingDirectory, TextWriter error, out string rootPath, out string[] remaining)
+    public static async Task<int> VerifyAutomationResult(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
     {
-        rootPath = Path.GetFullPath(workingDirectory);
-        List<string> remainingArgs = [];
+        var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
+        await service.VerifyResult(
+            RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
+            RequireEnvironmentVariable("ROADMAP_ARTIFACT_DIGEST"),
+            RequireEnvironmentVariable("ROADMAP_RESULT_DIGEST"),
+            repository,
+            ct).ConfigureAwait(false);
+        await output.WriteLineAsync("Roadmap automation result verified.".AsMemory(), ct).ConfigureAwait(false);
+        return 0;
+    }
+
+    /// <summary>
+    /// Publishes the sealed result as a draft pull request when <paramref name="force"/> is set. Otherwise runs the same
+    /// validation and prints the repository, base SHA, branch, and changed paths without changing GitHub or local files.
+    /// </summary>
+    public static async Task<int> PublishAutomationResult(RoadmapAutomationService service, bool force, TextWriter output, CancellationToken ct)
+    {
+        var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
+        var planDigest = RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST");
+        var artifactDigest = RequireEnvironmentVariable("ROADMAP_ARTIFACT_DIGEST");
+        var resultDigest = RequireEnvironmentVariable("ROADMAP_RESULT_DIGEST");
+        if (!force)
+        {
+            var preview = await service.PreviewResult(planDigest, artifactDigest, resultDigest, repository, ct).ConfigureAwait(false);
+            await WriteMessages(
+                output,
+                [
+                    $"preview: roadmap publication would create branch {preview.BranchName} from {preview.BaseSha} in {preview.Repository} and open a draft pull request.",
+                    .. preview.Paths.Select(path => $"preview: roadmap publication would change {path}."),
+                ],
+                ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        var publication = await service.PublishResult(
+            planDigest,
+            artifactDigest,
+            resultDigest,
+            repository,
+            ct).ConfigureAwait(false);
+        await AppendWorkflowOutput(
+            [
+                ("pull_request_url", publication.PullRequestUrl),
+                ("publication_commit", publication.CommitSha)
+            ],
+            ct).ConfigureAwait(false);
+        await AppendWorkflowSummary(
+            "Roadmap maintenance publication",
+            [
+                ("Pull request", publication.PullRequestUrl),
+                ("Commit SHA", publication.CommitSha)
+            ],
+            ct).ConfigureAwait(false);
+        await output.WriteLineAsync("Roadmap automation pull request published.".AsMemory(), ct).ConfigureAwait(false);
+        return 0;
+    }
+
+    internal static string EscapeControlCharacters(string value)
+    {
+        StringBuilder? escaped = null;
         var index = 0;
-        while (index < args.Length)
+        while (index < value.Length)
         {
-            if (args[index] == "--root")
+            var status = Rune.DecodeFromUtf16(value.AsSpan(index), out var rune, out var consumed);
+            if (status != OperationStatus.Done)
             {
-                if (index + 1 >= args.Length || string.IsNullOrWhiteSpace(args[index + 1]))
-                {
-                    remaining = [];
-                    WriteUsageError(error, "Missing required value for --root.");
-                    return false;
-                }
-
-                rootPath = Path.GetFullPath(args[index + 1], workingDirectory);
-                index += 2;
+                escaped ??= new StringBuilder(value.Length + 6).Append(value, 0, index);
+                escaped.Append("\\u").Append(((int)value[index]).ToString("X4", CultureInfo.InvariantCulture));
+                index++;
                 continue;
             }
 
-            remainingArgs.Add(args[index]);
-            index++;
+            var category = Rune.GetUnicodeCategory(rune);
+            if (category is not UnicodeCategory.Control
+                    and not UnicodeCategory.Format
+                    and not UnicodeCategory.LineSeparator
+                    and not UnicodeCategory.ParagraphSeparator)
+            {
+                escaped?.Append(value, index, consumed);
+                index += consumed;
+                continue;
+            }
+
+            escaped ??= new StringBuilder(value.Length + 6).Append(value, 0, index);
+            escaped
+                .Append(rune.IsBmp ? "\\u" : "\\U")
+                .Append(rune.Value.ToString(rune.IsBmp ? "X4" : "X8", CultureInfo.InvariantCulture));
+            index += consumed;
         }
 
-        remaining = [.. remainingArgs];
-        return true;
+        return escaped?.ToString() ?? value;
     }
 
-    private static int WriteUsageError(TextWriter error, string message)
+    private static Task WriteError(TextWriter error, string message, CancellationToken ct) =>
+        error.WriteLineAsync($"sharedkernel-repo: {EscapeControlCharacters(message)}".AsMemory(), ct);
+
+    private static async Task WriteMessages(TextWriter output, IEnumerable<string> messages, CancellationToken ct)
     {
-        error.WriteLine(EscapeControlCharacters(message));
-        error.WriteLine(Usage);
-        return 2;
+        foreach (var message in messages)
+        {
+            await output.WriteLineAsync(EscapeControlCharacters(message).AsMemory(), ct).ConfigureAwait(false);
+        }
     }
 
     private static void WriteIssues(TextWriter error, string heading, IReadOnlyCollection<RepoConfigIssue> issues)
@@ -660,65 +417,6 @@ internal static class RepoConfigToolApplication
             error.WriteLine($"- {EscapeControlCharacters(issue.Path)}: {EscapeControlCharacters(issue.Message)}");
         }
     }
-
-    private static bool TryParseGetOptions(string[] args, TextWriter error, out string[] positionalArgs, out string? type, out int limit)
-    {
-        List<string> positionalValues = [];
-        type = null;
-        limit = 10;
-        var index = 0;
-        while (index < args.Length)
-        {
-            switch (args[index])
-            {
-                case "--type" when HasOptionValue(args, index):
-                    type = args[index + 1];
-                    index += 2;
-                    continue;
-
-                case "--type":
-                    WriteUsageError(error, "Missing required value for --type.");
-                    positionalArgs = [];
-                    return false;
-
-                case "--limit" when HasOptionValue(args, index) && int.TryParse(args[index + 1], NumberStyles.None, CultureInfo.InvariantCulture, out var parsedLimit) && parsedLimit > 0:
-                    limit = parsedLimit;
-                    index += 2;
-                    continue;
-
-                case "--limit":
-                    WriteUsageError(error, "Missing or invalid required value for --limit.");
-                    positionalArgs = [];
-                    return false;
-
-                default:
-                    if (args[index].StartsWith("--", StringComparison.Ordinal))
-                    {
-                        WriteUsageError(error, $"Unknown get option: {args[index]}");
-                        positionalArgs = [];
-                        return false;
-                    }
-
-                    positionalValues.Add(args[index]);
-                    index++;
-                    continue;
-            }
-        }
-
-        positionalArgs = [.. positionalValues];
-        return true;
-    }
-
-    private static bool HasOptionValue(string[] args, int index) =>
-        index + 1 < args.Length && !args[index + 1].StartsWith("--", StringComparison.Ordinal);
-
-    private static bool IsGetQueryShapeValid(string query, string[] positionalArgs) =>
-        query switch
-        {
-            "next-priority" or "next-unblocked" or "next-work" or "next-blockers" or "next-enablers" or "low-hanging-fruit" or "pareto" or "blocking-overview" or "tags" or "labels" => positionalArgs.Length == 0,
-            "blockers-of" or "by-tag" or "by-label" => positionalArgs.Length == 1,
-            _ => false
-        };
 
     private static void WriteItems(TextWriter output, IEnumerable<RoadmapItemSnapshot> items)
     {
@@ -779,57 +477,21 @@ internal static class RepoConfigToolApplication
         }
     }
 
-    internal static string EscapeControlCharacters(string value)
-    {
-        StringBuilder? escaped = null;
-        var index = 0;
-        while (index < value.Length)
-        {
-            var status = Rune.DecodeFromUtf16(value.AsSpan(index), out var rune, out var consumed);
-            if (status != OperationStatus.Done)
-            {
-                escaped ??= new StringBuilder(value.Length + 6).Append(value, 0, index);
-                escaped.Append("\\u").Append(((int)value[index]).ToString("X4", CultureInfo.InvariantCulture));
-                index++;
-                continue;
-            }
-
-            var category = Rune.GetUnicodeCategory(rune);
-            if (category is not UnicodeCategory.Control
-                    and not UnicodeCategory.Format
-                    and not UnicodeCategory.LineSeparator
-                    and not UnicodeCategory.ParagraphSeparator)
-            {
-                escaped?.Append(value, index, consumed);
-                index += consumed;
-                continue;
-            }
-
-            escaped ??= new StringBuilder(value.Length + 6).Append(value, 0, index);
-            escaped
-                .Append(rune.IsBmp ? "\\u" : "\\U")
-                .Append(rune.Value.ToString(rune.IsBmp ? "X4" : "X8", CultureInfo.InvariantCulture));
-            index += consumed;
-        }
-
-        return escaped?.ToString() ?? value;
-    }
-
     private static async Task AppendWorkflowOutput(
         IEnumerable<(string Name, string Value)> values,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var path = RequireEnvironmentVariable("GITHUB_OUTPUT");
         var content = string.Join(
             Environment.NewLine,
             values.Select(value => $"{value.Name}={value.Value}")) + Environment.NewLine;
-        await File.AppendAllTextAsync(path, content, Encoding.UTF8, cancellationToken).ConfigureAwait(false);
+        await File.AppendAllTextAsync(path, content, Encoding.UTF8, ct).ConfigureAwait(false);
     }
 
     private static async Task AppendWorkflowSummary(
         string heading,
         IEnumerable<(string Name, string Value)> values,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         var path = RequireEnvironmentVariable("GITHUB_STEP_SUMMARY");
         var content = new StringBuilder()
@@ -841,7 +503,7 @@ internal static class RepoConfigToolApplication
         }
 
         content.AppendLine();
-        await File.AppendAllTextAsync(path, content.ToString(), Encoding.UTF8, cancellationToken).ConfigureAwait(false);
+        await File.AppendAllTextAsync(path, content.ToString(), Encoding.UTF8, ct).ConfigureAwait(false);
     }
 
     private static string FormatBoolean(bool value) => value ? "true" : "false";
