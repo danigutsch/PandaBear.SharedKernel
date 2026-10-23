@@ -67,6 +67,8 @@ jobs:
           name: selection-and-reasons
           path: TestResults/selection
       - name: Validate selected ordinary projects and tests
+        env:
+          DOTNET_CLI_CONTEXT_VERBOSE: 'true'
         run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- validate --test-group ordinary
       - name: Retain validation evidence
         if: always()

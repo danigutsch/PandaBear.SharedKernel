@@ -119,6 +119,11 @@ internal static class GitHubRoadmapSnapshotTestOperations
     {
         writer.WriteStartObject();
         writer.WriteString("__typename", "Issue");
+        if (issue.NodeId is not null)
+        {
+            writer.WriteString("id", issue.NodeId);
+        }
+
         writer.WriteNumber("number", issue.Number);
         writer.WriteString("title", issue.Title);
         writer.WriteString("state", issue.State);

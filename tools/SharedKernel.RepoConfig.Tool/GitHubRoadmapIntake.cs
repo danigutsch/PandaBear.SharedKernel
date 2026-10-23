@@ -1271,6 +1271,11 @@ internal sealed class GitHubRoadmapIntake
             writer.WritePropertyName("github");
             writer.WriteStartObject();
             writer.WriteNumber("issue", candidate.Issue.Number);
+            if (candidate.Issue.NodeId is not null)
+            {
+                writer.WriteString("nodeId", candidate.Issue.NodeId);
+            }
+
             writer.WriteEndObject();
             writer.WriteEndObject();
             writer.WriteEndObject();
