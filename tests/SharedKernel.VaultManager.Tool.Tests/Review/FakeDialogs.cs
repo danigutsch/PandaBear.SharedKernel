@@ -12,16 +12,25 @@ internal sealed class FakeDialogs : IReviewDialogs
     private readonly List<string> confirmations = [];
 
     /// <summary>Why the dialogs cannot be shown, or <see langword="null"/> when they can.</summary>
-    public string? Unavailable { get; init; }
+    public string? Unavailable
+    {
+        get; init;
+    }
 
     /// <summary>Password returned for the new export, or <see langword="null"/> to cancel.</summary>
-    public string? Password { get; init; }
+    public string? Password
+    {
+        get; init;
+    }
 
     /// <summary>Whether the review could save, for each quit question asked.</summary>
     public IReadOnlyList<bool> QuitQuestions => quitQuestions;
 
     /// <summary>Number of export password questions asked.</summary>
-    public int PasswordQuestions { get; private set; }
+    public int PasswordQuestions
+    {
+        get; private set;
+    }
 
     /// <summary>Key lists shown as help.</summary>
     public IReadOnlyList<IReadOnlyList<ReviewKey>> Help => help;

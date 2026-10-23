@@ -12,11 +12,17 @@ internal readonly record struct TestOptionalCommitImportFormDto
     /// Gets the optional file payload.
     /// </summary>
     [FromForm(Name = "file")]
-    public IFormFile? File { get; init; }
+    public IFormFile? File
+    {
+        get; init;
+    }
 
     /// <summary>
     /// Gets the optional conflict resolutions payload.
     /// </summary>
     [FromForm(Name = "conflictResolutions")]
-    public string? ConflictResolutions { get; init; }
+    public string? ConflictResolutions
+    {
+        get; init;
+    }
 }

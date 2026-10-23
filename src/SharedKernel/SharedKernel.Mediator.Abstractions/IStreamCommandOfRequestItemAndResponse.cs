@@ -10,5 +10,8 @@ public interface IStreamCommand<TRequestItem, TResponse> : ICommand<TResponse>
     /// <summary>
     /// Gets the streamed input items consumed by the command.
     /// </summary>
-    IAsyncEnumerable<TRequestItem> Items { get; }
+    IAsyncEnumerable<TRequestItem> Items
+    {
+        get;
+    }
 }

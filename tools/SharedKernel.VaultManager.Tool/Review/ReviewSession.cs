@@ -73,22 +73,37 @@ internal sealed class ReviewSession
     }
 
     /// <summary>Decisions file and merged vault the review may write.</summary>
-    public ReviewFiles Files { get; }
+    public ReviewFiles Files
+    {
+        get;
+    }
 
     /// <summary>Current decisions, without pending entries.</summary>
-    public MergeDecisions Decisions { get; private set; }
+    public MergeDecisions Decisions
+    {
+        get; private set;
+    }
 
     /// <summary>Latest merge of the current decisions.</summary>
-    public PipelineResult Result { get; private set; }
+    public PipelineResult Result
+    {
+        get; private set;
+    }
 
     /// <summary>Fields and findings that need a decision before the merged vault can be written.</summary>
     public PendingDecisions Pending { get; private set; } = PendingDecisions.None;
 
     /// <summary>Whether the decisions changed since they were read or saved.</summary>
-    public bool IsDirty { get; private set; }
+    public bool IsDirty
+    {
+        get; private set;
+    }
 
     /// <summary>Whether this review saved the decisions file at least once.</summary>
-    public bool Saved { get; private set; }
+    public bool Saved
+    {
+        get; private set;
+    }
 
     /// <summary>Whether this review wrote the merged vault.</summary>
     public bool Written => WriteResult is not null;
@@ -97,7 +112,10 @@ internal sealed class ReviewSession
     /// The merge that wrote the merged vault last, with the attachments to upload after the import and the writer's
     /// warnings, or <see langword="null"/> when this review wrote nothing.
     /// </summary>
-    public PipelineResult? WriteResult { get; private set; }
+    public PipelineResult? WriteResult
+    {
+        get; private set;
+    }
 
     /// <summary>Number of match groups.</summary>
     public int GroupCount => groups.Count;
@@ -299,7 +317,10 @@ internal sealed class ReviewSession
             return;
         }
 
-        Change(Decisions with { Groups = [.. WithoutChoices(groupKey, [fieldPath]).Where(group => group.Choices.Count > 0)] });
+        Change(Decisions with
+        {
+            Groups = [.. WithoutChoices(groupKey, [fieldPath]).Where(group => group.Choices.Count > 0)]
+        });
     }
 
     /// <summary>Accepts or rejects a finding.</summary>
@@ -324,10 +345,17 @@ internal sealed class ReviewSession
         }
         else
         {
-            items[index] = items[index] with { Choices = [.. items[index].Choices, choice], ItemName = items[index].ItemName ?? item.ItemName };
+            items[index] = items[index] with
+            {
+                Choices = [.. items[index].Choices, choice],
+                ItemName = items[index].ItemName ?? item.ItemName
+            };
         }
 
-        Change(Decisions with { Findings = items });
+        Change(Decisions with
+        {
+            Findings = items
+        });
     }
 
     /// <summary>Removes the decision on a finding. Does nothing when there is none.</summary>
@@ -342,7 +370,10 @@ internal sealed class ReviewSession
             return;
         }
 
-        Change(Decisions with { Findings = [.. WithoutFinding(originKey, findingId).Where(item => item.Choices.Count > 0)] });
+        Change(Decisions with
+        {
+            Findings = [.. WithoutFinding(originKey, findingId).Where(item => item.Choices.Count > 0)]
+        });
     }
 
     /// <summary>
@@ -450,7 +481,10 @@ internal sealed class ReviewSession
         IReadOnlyList<OriginKeyPair> links = overrides.Links.Any(pair => SamePair(pair, originKey, otherOriginKey))
             ? overrides.Links
             : [.. overrides.Links, new OriginKeyPair(originKey, otherOriginKey)];
-        Change(Decisions with { Overrides = new MatchOverrides(links, [.. overrides.Splits.Where(pair => !SamePair(pair, originKey, otherOriginKey))]) });
+        Change(Decisions with
+        {
+            Overrides = new MatchOverrides(links, [.. overrides.Splits.Where(pair => !SamePair(pair, originKey, otherOriginKey))])
+        });
         return ReferenceEquals(GroupOf(originKey), GroupOf(otherOriginKey));
     }
 
@@ -477,7 +511,10 @@ internal sealed class ReviewSession
             .. others.Where(other => !overrides.Splits.Any(pair => SamePair(pair, originKey, other))).Select(other => new OriginKeyPair(originKey, other)),
         ];
         OriginKeyPair[] links = [.. overrides.Links.Where(pair => !others.Any(other => SamePair(pair, originKey, other)))];
-        Change(Decisions with { Overrides = new MatchOverrides(links, splits) });
+        Change(Decisions with
+        {
+            Overrides = new MatchOverrides(links, splits)
+        });
     }
 
     /// <summary>Reveals or masks the secret values of a field of a group.</summary>
@@ -552,7 +589,10 @@ internal sealed class ReviewSession
                 nameof(exportPassword));
         }
 
-        var writer = new VaultPipeline(environment with { ReadNewPassword = _ => exportPassword ?? string.Empty });
+        var writer = new VaultPipeline(environment with
+        {
+            ReadNewPassword = _ => exportPassword ?? string.Empty
+        });
         PipelineResult written = writer.Merge(scanned, new MergeRequest { Policy = Policy, Decisions = Decisions, Output = output });
         if (!written.OutputWritten)
         {
@@ -760,10 +800,16 @@ internal sealed class ReviewSession
         }
         else
         {
-            updated[index] = updated[index] with { Choices = [.. updated[index].Choices, .. choices] };
+            updated[index] = updated[index] with
+            {
+                Choices = [.. updated[index].Choices, .. choices]
+            };
         }
 
-        Change(Decisions with { Groups = updated });
+        Change(Decisions with
+        {
+            Groups = updated
+        });
     }
 
     // Removes the choices for some fields from every entry of a group, so the choice added next is the only one.

@@ -7,7 +7,10 @@ public sealed class TemporaryDirectory : IDisposable
     public TemporaryDirectory() => Path = Directory.CreateTempSubdirectory("pandabear-").FullName;
 
     /// <summary>Gets the absolute directory path.</summary>
-    public string Path { get; }
+    public string Path
+    {
+        get;
+    }
 
     /// <summary>Deletes the directory and nested read-only files without traversing symbolic links.</summary>
     /// <remarks>Cleanup failures propagate to the caller. An already removed directory is accepted.</remarks>

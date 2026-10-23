@@ -15,14 +15,14 @@ public sealed class PixKeyTests
     [InlineData(PixKeyType.Phone, "+123456789012345")]
     [InlineData(PixKeyType.Email, "pix@bcb.gov.br")]
     [InlineData(PixKeyType.Email, "a+b/c=d@bank")]
-    [InlineData(PixKeyType.Evp, "123e4567-e89b-12d3-a456-426655440000")]
+    [InlineData(PixKeyType.Evp, "aaaaaaaa-aaaa-1aaa-8aaa-aaaaaaaaaaaa")]
     public void Creates_explicitly_typed_dict_formats(PixKeyType type, string value)
     {
         // Act
         var result = PixKey.Create(type, value);
 
         // Assert
-        result.IsSuccess.ShouldBeTrue();
+        result.ShouldBeSuccess();
         result.Value.Type.ShouldBe(type);
         result.Value.Value.ShouldBe(value);
     }
@@ -48,10 +48,10 @@ public sealed class PixKeyTests
     [InlineData(PixKeyType.Email, "pix@bcb..gov.br")]
     [InlineData(PixKeyType.Email, "pix@éxample.com")]
     [InlineData(PixKeyType.Email, "pix@bcb.gov.br ")]
-    [InlineData(PixKeyType.Evp, "123E4567-e89b-12d3-a456-426655440000")]
-    [InlineData(PixKeyType.Evp, "{123e4567-e89b-12d3-a456-426655440000}")]
-    [InlineData(PixKeyType.Evp, "123e4567e89b12d3a456426655440000")]
-    [InlineData(PixKeyType.Evp, "123e4567-e89b-12d3-a456-426655440000\n")]
+    [InlineData(PixKeyType.Evp, "AAAAAAAA-AAAA-1AAA-8AAA-AAAAAAAAAAAA")]
+    [InlineData(PixKeyType.Evp, "{aaaaaaaa-aaaa-1aaa-8aaa-aaaaaaaaaaaa}")]
+    [InlineData(PixKeyType.Evp, "aaaaaaaaaaaa1aaa8aaaaaaaaaaaaaaa")]
+    [InlineData(PixKeyType.Evp, "aaaaaaaa-aaaa-1aaa-8aaa-aaaaaaaaaaaa\n")]
     [InlineData((PixKeyType)0, "pix@bcb.gov.br")]
     [InlineData((PixKeyType)99, "pix@bcb.gov.br")]
     public void Rejects_mismatched_types_and_noncanonical_values(PixKeyType type, string? value)

@@ -16,7 +16,7 @@ public sealed class CpfTests
         var result = Cpf.Create(value);
 
         // Assert
-        result.IsSuccess.ShouldBeTrue();
+        result.ShouldBeSuccess();
         result.Value.Value.ShouldBe(value);
     }
 

@@ -43,8 +43,14 @@ public sealed class ReviewWindowTests : IDisposable
     [Fact]
     public void Pressing_a_takes_the_selected_member_for_every_conflicting_field()
     {
-        VaultItem keeper = KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com") with { Notes = "fixture keeper notes" };
-        VaultItem bitwarden = BitwardenLogin("bw-1", "Example account", "alice", BitwardenPassword, "https://example.com") with { Notes = "fixture bitwarden notes" };
+        VaultItem keeper = KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com") with
+        {
+            Notes = "fixture keeper notes"
+        };
+        VaultItem bitwarden = BitwardenLogin("bw-1", "Example account", "alice", BitwardenPassword, "https://example.com") with
+        {
+            Notes = "fixture bitwarden notes"
+        };
         var session = Session(Scan(directory, keeper, bitwarden));
         using IApplication app = HeadlessTerminal.Start();
         using var window = new ReviewWindow(session, new FakeDialogs());

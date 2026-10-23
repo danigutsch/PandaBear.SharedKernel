@@ -46,5 +46,8 @@ public sealed class BrandingSettingsDto
     /// Gets or sets the optional logo URI.
     /// </summary>
     [SuppressMessage("Design", "CA1056:URI-like properties should not be strings", Justification = "The contract accepts root-relative paths and absolute HTTPS URIs.")]
-    public string? LogoUri { get; set; }
+    public string? LogoUri
+    {
+        get; set;
+    }
 }

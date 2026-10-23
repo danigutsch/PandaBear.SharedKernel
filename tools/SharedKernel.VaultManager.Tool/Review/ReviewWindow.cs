@@ -116,16 +116,25 @@ internal sealed class ReviewWindow : Window
     }
 
     /// <summary>Status filter of the groups list.</summary>
-    public GroupFilter Filter { get; private set; }
+    public GroupFilter Filter
+    {
+        get; private set;
+    }
 
     /// <summary>Groups the list shows, in list order.</summary>
     public IReadOnlyList<ReviewGroup> ShownGroups { get; private set; } = [];
 
     /// <summary>Selected group, or <see langword="null"/> when the list is empty.</summary>
-    public ReviewGroup? SelectedGroup { get; private set; }
+    public ReviewGroup? SelectedGroup
+    {
+        get; private set;
+    }
 
     /// <summary>Origin key of the item marked for a link, or <see langword="null"/> when none is marked.</summary>
-    public string? MarkedOriginKey { get; private set; }
+    public string? MarkedOriginKey
+    {
+        get; private set;
+    }
 
     /// <summary>Message line: what the last action did, without values.</summary>
     public string Message => messageLine.Text;

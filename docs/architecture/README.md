@@ -49,7 +49,9 @@ flowchart TB
     SharedKernel_Results_AspNet[SharedKernel.Results.AspNet] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Style_CodeFixes[SharedKernel.Style.CodeFixes] --> SharedKernel_Style_Analyzers[SharedKernel.Style.Analyzers]
     SharedKernel_Tabular[SharedKernel.Tabular] --> SharedKernel_Results[SharedKernel.Results]
+    SharedKernel_Testing_Assertions[SharedKernel.Testing.Assertions] --> SharedKernel_Results[SharedKernel.Results]
     SharedKernel_Testing_CodeFixes[SharedKernel.Testing.CodeFixes] --> SharedKernel_Testing_Analyzers[SharedKernel.Testing.Analyzers]
+    SharedKernel_Testing_Http[SharedKernel.Testing.Http] --> SharedKernel_Testing_Assertions[SharedKernel.Testing.Assertions]
     SharedKernel_Testing_Mediator[SharedKernel.Testing.Mediator] --> SharedKernel_Mediator_Abstractions[SharedKernel.Mediator.Abstractions]
 ```
 <!-- generated:library-dependencies:end -->
@@ -69,6 +71,7 @@ flowchart TB
     linux_package_consumption[linux-package-consumption]
     windows_package_consumption[windows-package-consumption]
     repository_quality[repository-quality]
+    published_candidate_consumption[published-candidate-consumption]
     validation_summary[validation-summary]
     trigger --> selection
     selection --> library
@@ -77,6 +80,7 @@ flowchart TB
     candidate --> linux_package_consumption
     candidate --> windows_package_consumption
     selection --> repository_quality
+    trigger --> published_candidate_consumption
     trigger --> validation_summary
 ```
 <!-- generated:library-ci:end -->

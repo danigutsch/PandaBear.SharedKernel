@@ -10,7 +10,10 @@ internal sealed class ContractHttpValidationNotSupportedContent : HttpContent
         Headers.ContentType = new MediaTypeHeaderValue("text/plain");
     }
 
-    public bool WasRead { get; private set; }
+    public bool WasRead
+    {
+        get; private set;
+    }
 
     protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
     {

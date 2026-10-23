@@ -55,7 +55,10 @@ internal sealed class PlacementState(VaultItem source, IReadOnlyDictionary<strin
         }
 
         nextNumbers[item.Name] = number;
-        newItems.Add((item with { Name = name }, findingId));
+        newItems.Add((item with
+        {
+            Name = name
+        }, findingId));
     }
 
     /// <summary>Adds a login URI unless an equal one exists.</summary>
@@ -159,15 +162,29 @@ internal sealed class PlacementState(VaultItem source, IReadOnlyDictionary<strin
             string? remaining = SourceTextEditor.Remove(field.Value ?? string.Empty, removals);
             if (remaining is not null)
             {
-                keptFields.Add(field with { Value = remaining });
+                keptFields.Add(field with
+                {
+                    Value = remaining
+                });
             }
         }
 
         keptFields.AddRange(Fields);
         LoginData? login = Source.Login is null && !IsLogin
             ? null
-            : (Source.Login ?? new LoginData()) with { Username = username, Password = password, Totp = totp, Uris = [.. uris] };
-        VaultItem item = Source with { Notes = notes, Fields = keptFields, Login = login };
+            : (Source.Login ?? new LoginData()) with
+            {
+                Username = username,
+                Password = password,
+                Totp = totp,
+                Uris = [.. uris]
+            };
+        VaultItem item = Source with
+        {
+            Notes = notes,
+            Fields = keptFields,
+            Login = login
+        };
         return new PlacementResult
         {
             Item = item,

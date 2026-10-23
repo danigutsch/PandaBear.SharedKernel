@@ -7,5 +7,8 @@ namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 internal static class PipelineDecisions
 {
     public static MergeDecisions Findings(string originKey, params FindingChoice[] choices) =>
-        new([], MatchOverrides.None) { Findings = [new ItemFindingDecisions(originKey, choices)] };
+        new([], MatchOverrides.None)
+        {
+            Findings = [new ItemFindingDecisions(originKey, choices)]
+        };
 }

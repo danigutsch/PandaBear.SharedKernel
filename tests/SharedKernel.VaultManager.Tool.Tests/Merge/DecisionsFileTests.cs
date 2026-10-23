@@ -16,8 +16,14 @@ public sealed class DecisionsFileTests : IDisposable
     [Fact]
     public void Decisions_round_trip_and_contain_no_values()
     {
-        var keeper = Keeper(Login(OldPassword)) with { Notes = "fixture-old-notes" };
-        var bitwarden = Bitwarden(Login(NewPassword)) with { Notes = "fixture-new-notes" };
+        var keeper = Keeper(Login(OldPassword)) with
+        {
+            Notes = "fixture-old-notes"
+        };
+        var bitwarden = Bitwarden(Login(NewPassword)) with
+        {
+            Notes = "fixture-new-notes"
+        };
         var unresolved = Run(new MergePolicy(MergePolicyKind.Ask), keeper, bitwarden).Unresolved;
         var decisions = new MergeDecisions(
             [new GroupDecision(unresolved[0].GroupKey, [.. unresolved.Select(conflict => FieldChoice.Member(conflict.FieldPath, conflict.MemberOriginKeys[0])), FieldChoice.Empty(FieldPaths.LoginTotp)])],

@@ -426,11 +426,15 @@
       "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )",
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
       "PandaBear.SharedKernel.Testing.Http": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "PandaBear.SharedKernel.Testing.Assertions": "[0.1.0-alpha.0, )"
+        }
       },
       "Microsoft.Extensions.Compliance.Abstractions": {
         "type": "CentralTransitive",

@@ -30,7 +30,10 @@ public class DependencyInjectionBenchmarks
     /// Gets or sets the configured number of handler constructor dependencies.
     /// </summary>
     [Params(0, 1, 5)]
-    public int HandlerDependencyCount { get; set; }
+    public int HandlerDependencyCount
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Builds the reusable provider and request used by resolution benchmarks.

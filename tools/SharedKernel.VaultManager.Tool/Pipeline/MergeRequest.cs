@@ -15,5 +15,8 @@ internal record MergeRequest
     public MergeDecisions Decisions { get; init; } = MergeDecisions.None;
 
     /// <summary>Where to write the merged vault, or <see langword="null"/> to write nothing.</summary>
-    public PipelineOutput? Output { get; init; }
+    public PipelineOutput? Output
+    {
+        get; init;
+    }
 }

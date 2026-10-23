@@ -138,7 +138,10 @@ internal static partial class EndpointRouteMarkdownTable
         {
             var match = Regex.Match(chain, @"\." + Regex.Escape(method) + @"\(""([^""]+)""",
                 RegexOptions.CultureInvariant, TimeSpan.FromSeconds(1));
-            if (match.Success) { return match.Groups[1].Value; }
+            if (match.Success)
+            {
+                return match.Groups[1].Value;
+            }
         }
 
         return handler.Contains("=>", StringComparison.Ordinal) ? "inline" : handler;
@@ -148,7 +151,10 @@ internal static partial class EndpointRouteMarkdownTable
     {
         foreach (var audience in configuration.SourceAudiences)
         {
-            if (source.StartsWith(audience.Key, StringComparison.Ordinal)) { return audience.Value; }
+            if (source.StartsWith(audience.Key, StringComparison.Ordinal))
+            {
+                return audience.Value;
+            }
         }
 
         foreach (var audience in configuration.RouteAudiences)

@@ -15,7 +15,10 @@ internal sealed class RoadmapWriteInputSnapshot
         Digest = ComputeDigest();
     }
 
-    public string Digest { get; }
+    public string Digest
+    {
+        get;
+    }
 
     public static RoadmapWriteInputSnapshot Capture(string rootPath)
     {

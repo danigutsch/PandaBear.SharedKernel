@@ -34,7 +34,10 @@ public readonly struct Result : IEquatable<Result>
     /// <summary>
     /// Gets the result status.
     /// </summary>
-    public ResultStatus Status { get; }
+    public ResultStatus Status
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the error details when the result failed.

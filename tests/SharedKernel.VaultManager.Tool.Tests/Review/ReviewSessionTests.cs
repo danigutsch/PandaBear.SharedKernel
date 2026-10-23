@@ -253,8 +253,14 @@ public sealed class ReviewSessionTests : IDisposable
     [Fact]
     public void Choosing_a_member_for_every_conflict_decides_each_conflicting_field()
     {
-        VaultItem keeper = KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com") with { Notes = "fixture keeper notes" };
-        VaultItem bitwarden = BitwardenLogin("bw-1", "Example account", "alice", BitwardenPassword, "https://example.com") with { Notes = "fixture bitwarden notes" };
+        VaultItem keeper = KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com") with
+        {
+            Notes = "fixture keeper notes"
+        };
+        VaultItem bitwarden = BitwardenLogin("bw-1", "Example account", "alice", BitwardenPassword, "https://example.com") with
+        {
+            Notes = "fixture bitwarden notes"
+        };
         var session = Session(Scan(directory, keeper, bitwarden));
         string groupKey = GroupOf(session, OriginKey(keeper)).Key;
 
@@ -275,7 +281,13 @@ public sealed class ReviewSessionTests : IDisposable
     {
         string totp = PipelineSecrets.TotpUri(PipelineSecrets.TotpSecret(520));
         VaultItem keeper = KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", PipelineInputs.KeeperModified);
-        keeper = keeper with { Login = keeper.Login! with { Totp = totp } };
+        keeper = keeper with
+        {
+            Login = keeper.Login! with
+            {
+                Totp = totp
+            }
+        };
         VaultItem bitwarden = BitwardenLogin("bw-1", "Example", "alice", KeeperPassword, "https://example.com", PipelineInputs.BitwardenRevision);
         var session = Session(Scan(directory, keeper, bitwarden));
         string groupKey = GroupOf(session, OriginKey(keeper)).Key;
@@ -419,7 +431,10 @@ public sealed class ReviewSessionTests : IDisposable
     public void An_accepted_finding_that_placement_leaves_in_place_shows_why_instead_of_applied()
     {
         string huge = TestSecrets.FromAlphabet(TestSecrets.Base64, 4000, 558);
-        VaultItem keeper = KeeperLogin("rec-long", "Long", "alice", null, "https://long.example.com", PipelineInputs.KeeperModified) with { Notes = "Password: " + huge };
+        VaultItem keeper = KeeperLogin("rec-long", "Long", "alice", null, "https://long.example.com", PipelineInputs.KeeperModified) with
+        {
+            Notes = "Password: " + huge
+        };
         var session = Session(Scan(directory, keeper));
         string groupKey = GroupOf(session, OriginKey(keeper)).Key;
         var finding = session.Findings(groupKey).ShouldHaveSingleItem(found => found.Kind == SecretKind.Password);

@@ -1286,35 +1286,80 @@ public sealed class ValueObjectGenerator : IIncrementalGenerator
 
     private sealed class ValueObjectModel
     {
-        public string? NamespaceName { get; set; }
+        public string? NamespaceName
+        {
+            get; set;
+        }
 
-        public string? TypeName { get; set; }
+        public string? TypeName
+        {
+            get; set;
+        }
 
-        public string? Accessibility { get; set; }
+        public string? Accessibility
+        {
+            get; set;
+        }
 
-        public string? UnderlyingTypeName { get; set; }
+        public string? UnderlyingTypeName
+        {
+            get; set;
+        }
 
-        public UnderlyingKind UnderlyingKind { get; set; }
+        public UnderlyingKind UnderlyingKind
+        {
+            get; set;
+        }
 
-        public bool Parsing { get; set; }
+        public bool Parsing
+        {
+            get; set;
+        }
 
-        public bool Json { get; set; }
+        public bool Json
+        {
+            get; set;
+        }
 
-        public bool EfCore { get; set; }
+        public bool EfCore
+        {
+            get; set;
+        }
 
-        public ValueObjectTemplate Template { get; set; }
+        public ValueObjectTemplate Template
+        {
+            get; set;
+        }
 
-        public string? CoreHintName { get; set; }
+        public string? CoreHintName
+        {
+            get; set;
+        }
 
-        public string? JsonHintName { get; set; }
+        public string? JsonHintName
+        {
+            get; set;
+        }
 
-        public string? EfCoreHintName { get; set; }
+        public string? EfCoreHintName
+        {
+            get; set;
+        }
 
-        public string? EfCoreExtensionsTypeName { get; set; }
+        public string? EfCoreExtensionsTypeName
+        {
+            get; set;
+        }
 
-        public Diagnostic? Diagnostic { get; set; }
+        public Diagnostic? Diagnostic
+        {
+            get; set;
+        }
 
-        public Location? Location { get; set; }
+        public Location? Location
+        {
+            get; set;
+        }
     }
 
     private readonly struct ModelSupportDefaults(

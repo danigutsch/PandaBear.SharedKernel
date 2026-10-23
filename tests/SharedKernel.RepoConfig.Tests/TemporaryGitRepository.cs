@@ -23,7 +23,10 @@ internal sealed class TemporaryGitRepository : IDisposable
         };
     }
 
-    public string RootPath { get; }
+    public string RootPath
+    {
+        get;
+    }
 
     public async Task Initialize(CancellationToken cancellationToken)
     {

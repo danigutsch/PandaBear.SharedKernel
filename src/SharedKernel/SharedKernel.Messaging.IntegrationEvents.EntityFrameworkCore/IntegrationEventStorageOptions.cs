@@ -18,7 +18,10 @@ public sealed class IntegrationEventStorageOptions
     /// <summary>
     /// Gets or sets the optional outbox schema override. When null, <see cref="Schema" /> is used.
     /// </summary>
-    public string? OutboxSchema { get; set; }
+    public string? OutboxSchema
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets or sets the outbox table name.
@@ -28,7 +31,10 @@ public sealed class IntegrationEventStorageOptions
     /// <summary>
     /// Gets or sets the optional transport schema override. When null, <see cref="Schema" /> is used.
     /// </summary>
-    public string? TransportSchema { get; set; }
+    public string? TransportSchema
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets or sets the transport table name.
@@ -38,7 +44,10 @@ public sealed class IntegrationEventStorageOptions
     /// <summary>
     /// Gets or sets a value indicating whether the transport table is mapped for runtime access but excluded from this context's migrations.
     /// </summary>
-    public bool ExcludeTransportFromMigrations { get; set; }
+    public bool ExcludeTransportFromMigrations
+    {
+        get; set;
+    }
 
     internal string EffectiveOutboxSchema => OutboxSchema ?? Schema;
 

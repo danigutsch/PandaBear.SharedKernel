@@ -14,5 +14,8 @@ public sealed class PipelineOrderAttribute(PipelineStage stage) : Attribute
     /// <summary>
     /// Gets or initializes the explicit order within the stage.
     /// </summary>
-    public int Order { get; init; }
+    public int Order
+    {
+        get; init;
+    }
 }

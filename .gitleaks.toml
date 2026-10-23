@@ -1,0 +1,14 @@
+title = "SharedKernel source secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated local build, candidate, and worktree outputs; source and tests remain scanned"
+paths = [
+  '''(^|/)\.git/''',
+  '''(^|/)\.worktrees/''',
+  '''(^|/)\.local/''',
+  '''(^|/)\.nuget/''',
+  '''(^|/)(bin|obj|artifacts|TestResults)/'''
+]

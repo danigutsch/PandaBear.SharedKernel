@@ -37,3 +37,5 @@ PandaBear.AI.LiteLlmImageTextGeneratorOptions.Endpoint.init -> void
 PandaBear.AI.LiteLlmImageTextGeneratorOptions.Model.get -> string?
 PandaBear.AI.LiteLlmImageTextGeneratorOptions.Model.init -> void
 const PandaBear.AI.LiteLlmImageTextGeneratorOptions.SectionName = "AI:ImageText:LiteLlm" -> string!
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.MaxImageBytes.get -> int
+PandaBear.AI.LiteLlmImageTextGeneratorOptions.MaxImageBytes.init -> void

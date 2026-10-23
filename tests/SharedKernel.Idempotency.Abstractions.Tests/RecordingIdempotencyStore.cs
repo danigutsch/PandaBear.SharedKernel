@@ -2,15 +2,30 @@ namespace PandaBear.Idempotency.Tests;
 
 internal sealed class RecordingIdempotencyStore : IIdempotencyStore
 {
-    public IdempotencyOperation? CompletedOperation { get; private set; }
+    public IdempotencyOperation? CompletedOperation
+    {
+        get; private set;
+    }
 
-    public DateTimeOffset? CompletedAt { get; private set; }
+    public DateTimeOffset? CompletedAt
+    {
+        get; private set;
+    }
 
-    public string? ResultFingerprint { get; private set; }
+    public string? ResultFingerprint
+    {
+        get; private set;
+    }
 
-    public CancellationToken CancellationToken { get; private set; }
+    public CancellationToken CancellationToken
+    {
+        get; private set;
+    }
 
-    public int CompleteCallCount { get; private set; }
+    public int CompleteCallCount
+    {
+        get; private set;
+    }
 
     public ValueTask<IdempotencyStartResult> TryStart(
         IdempotencyOperation operation,

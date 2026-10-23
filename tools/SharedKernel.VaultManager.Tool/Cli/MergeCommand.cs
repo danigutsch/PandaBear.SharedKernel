@@ -150,7 +150,10 @@ internal static class MergeCommand
         PipelineResult result = pipeline.Merge(scanned, request, ct);
         if (PendingDecisions.Find(result, decisions).IsEmpty && !result.HasWriteErrors)
         {
-            result = pipeline.Merge(scanned, request with { Output = RequestedOutput(arguments) }, ct);
+            result = pipeline.Merge(scanned, request with
+            {
+                Output = RequestedOutput(arguments)
+            }, ct);
         }
 
         return Finish(arguments, decisions, result, output, error, ct);
@@ -220,7 +223,10 @@ internal static class MergeCommand
         {
             try
             {
-                SecureFile.WriteAllText(reportPath, Report(result with { Output = RequestedOutput(arguments) }, pending), overwrite: true, ct);
+                SecureFile.WriteAllText(reportPath, Report(result with
+                {
+                    Output = RequestedOutput(arguments)
+                }, pending), overwrite: true, ct);
             }
             catch (Exception exception) when (result.OutputWritten && CommandAction.IsFileProblem(exception))
             {

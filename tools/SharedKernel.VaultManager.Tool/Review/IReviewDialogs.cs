@@ -7,7 +7,10 @@ internal interface IReviewDialogs
     /// Why the dialogs cannot be shown now, such as a terminal smaller than they need, or <see langword="null"/> when they
     /// can. The window checks it before each dialog and shows the reason on its message line instead. It holds no values.
     /// </summary>
-    string? Unavailable { get; }
+    string? Unavailable
+    {
+        get;
+    }
 
     /// <summary>Asks what to do with unsaved decisions before quitting.</summary>
     /// <param name="canSave">Whether the review has a decisions file to save to.</param>
