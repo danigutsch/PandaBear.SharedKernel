@@ -20,3 +20,4 @@ const PandaBear.Testing.Analyzers.TestingDiagnosticIds.ConditionalAssertion = "S
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.PlaywrightAssertion = "SKTEST015" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.ActivityListenerSourceIdentity = "SKTEST010" -> string!
 const PandaBear.Testing.Analyzers.TestingDiagnosticIds.SutConstructionInAct = "SKTEST016" -> string!
+const PandaBear.Testing.Analyzers.TestingDiagnosticIds.AssertionUserMessageOverload = "SKTEST017" -> string!

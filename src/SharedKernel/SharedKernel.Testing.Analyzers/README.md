@@ -8,8 +8,8 @@ Analyzer project for repository-wide test conventions.
 
 ## Purpose
 
-This Roslyn component reports diagnostics for rules that only make sense in test code and should not
- be applied to regular production projects.
+This Roslyn component reports diagnostics for rules that only make sense in test code and in libraries that declare
+test assertions. Do not apply it to regular production projects.
 
 ## Diagnostics
 
@@ -31,6 +31,7 @@ This Roslyn component reports diagnostics for rules that only make sense in test
 | `SKTEST015` | Warning | Use the specialized Playwright wrapper for default string title assertions. |
 | `SKTEST010` | Warning | Compare test activity source instances by identity. |
 | `SKTEST016` | Warning | Construct explicitly named SUTs in Arrange. |
+| `SKTEST017` | Disabled; opt-in warning | Give every public `Should*` assertion an overload that takes `userMessage`. |
 
 See [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for migrations, exception-testing
 exemptions, and the supported code-fix boundaries.
@@ -77,9 +78,9 @@ migration windows.
 
 ## Package boundary
 
-This package owns test-only diagnostics. Do not move `SKTEST*` rules into production analyzer
-packages, and do not add production-source conventions here. Consumers that do not build test
-projects should not need this package.
+This package owns diagnostics for test code and for libraries that declare test assertions. Do not move `SKTEST*` rules
+into production analyzer packages, and do not add conventions for regular production source here. Consumers that
+neither build test projects nor declare test assertions should not need this package.
 
 ## See Also
 
@@ -142,3 +143,102 @@ can change evaluation order, so no code fix is registered.
 
 Issues #9 and #58 both originally requested SKTEST010. SKTEST010 retains the activity-listener contract;
 SUT construction uses the distinct SKTEST016 identifier.
+
+## SKTEST017
+
+Assertion libraries give every public `Should*` assertion an overload that takes `string userMessage`, the reason the
+test expects the assertion to hold. The rule is disabled by default. Enable it only in projects that declare
+assertions, for example in the project's `.editorconfig`:
+
+```ini
+[*.cs]
+# Assertion libraries give every public Should* assertion a userMessage overload.
+dotnet_diagnostic.SKTEST017.severity = warning
+```
+
+A method is an assertion when all of these hold:
+
+- It is an ordinary static extension method with a `this` parameter. Members of C# 14 `extension` blocks are outside
+  this rule.
+- It and its containing type are public.
+- Its name is `Should` followed by an uppercase letter.
+- It returns neither `bool` nor `bool?`, which keeps predicates such as `ShouldHandleAsFailure` out.
+- It has no `[Obsolete]` attribute and is not generated code.
+
+Severity alone decides where the rule applies; there is no namespace, assembly, or test-framework heuristic.
+
+The overload takes `string userMessage` after the other parameters and before a trailing `CancellationToken`. The
+parameters before it keep their types, ref kinds, attributes, and `this`, but lose `params` and default values, so a
+`params` parameter becomes a plain array. A trailing token keeps its default. The name, type parameters, constraints,
+and return type stay the same. For example, these assertions take these overloads:
+
+```csharp
+public static void ShouldBeOneOf<T>(this T actual, params T[] expected)
+public static void ShouldBeOneOf<T>(this T actual, T[] expected, string userMessage)
+
+public static Task ShouldHaveStatus(this HttpResponseMessage actual, HttpStatusCode expected,
+    string? reason = null, CancellationToken cancellationToken = default)
+public static Task ShouldHaveStatus(this HttpResponseMessage actual, HttpStatusCode expected,
+    string? reason, string userMessage, CancellationToken cancellationToken = default)
+```
+
+An assertion with an optional trailing token, as in the second example, and its overload then both have optional
+parameters. PublicApiAnalyzers reports such a pair as RS0026 while either one is unshipped, and a required token would
+make RS0027 report the assertion instead, so no overload shape satisfies both rules. Projects that enforce RS0026
+suppress it for such pairs.
+
+An assertion is covered, and not reported, when either of these holds:
+
+- It has a `string` parameter named `userMessage` after its `this` parameter, optional or not, as `ShouldBeTrue` and
+  `ShouldBeFalse` have.
+- Its type declares a same-named public extension overload with as many type parameters, whose parameter types and ref
+  kinds match the overload shape and whose parameter at the message position is named `userMessage`. Types compare as
+  C# signatures do, so `dynamic` matches `object` and tuple element names do not matter. Other parameter names,
+  type-parameter names, constraints, return type, `params`, and default values do not matter either.
+
+A message after the trailing token, an overload in another type, or an overload that is not a public extension method
+does not cover an assertion. A partial assertion is reported once, at its definition.
+
+The diagnostic message names the reason when the code fix cannot add the overload:
+
+| Condition | Reason |
+| --- | --- |
+| Another overload already has the overload's parameter types and is not a public extension method with `userMessage` at the message position | The overload would not compile (CS0111). For example, `ShouldThrow<T>` on `Action`, `Func<object?>`, and `Func<Task>` cannot take a message because their `paramName` overloads already use the `(delegate, string)` signature. |
+| A partial method | The code fix does not copy partial declarations. |
+| A parameter named `userMessage` that does not cover the assertion, such as the `this` parameter | The overload's message parameter would have the same name. |
+| A `ref`, `in`, or `out` parameter, a ref struct, pointer, or function-pointer parameter, a parameter of a type parameter that allows ref structs, or `__arglist` | A lambda cannot capture or forward it. |
+| A by-reference return, a ref struct or a type parameter that allows ref structs, an iterator, `async void`, an awaitable other than `Task` and `Task<T>`, an `IEnumerable`, `IEnumerator`, `IAsyncEnumerable<T>`, or `IAsyncEnumerator<T>` result, or a delegate result | The helper cannot forward the result. A `ValueTask` lambda would bind to `Func<T>`, so the message would be lost without an error, and a sequence or a delegate can fail after the helper has returned it. An awaitable is found through base types, interfaces, and type-parameter constraints. |
+| A `[NotNull]` parameter | Its null state does not flow out of a lambda. |
+| A `[DoesNotReturn]` method | The forwarder returns, which CS8763 reports. |
+| An `[AllowNull]` parameter whose type is a type parameter without a `struct` constraint | A maybe-null argument makes the forwarded call infer a nullable type argument, which the compiler reports. |
+| A `[SuppressMessage]` or `[UnconditionalSuppressMessage]` for a rule other than `SKTEST017` | The suppression does not cover the overload, and a rule that inspects the signature would report it. |
+| An overload with the same parameters plus a trailing `StringComparison`, `IFormatProvider`, or `CultureInfo` | Forwarding to the assertion would omit the parameter that CA1307, CA1305, or CA1304 requires. |
+| An optional parameter before the message, without an optional trailing `CancellationToken` | Those parameters would become required in the overload, which RS0027 reports on the assertion. |
+| No optional parameter, and a public overload of any arity that has optional parameters and no more parameters than the overload | That overload would no longer have the most parameters, which RS0027 reports on it. |
+| Another overload with the overload's parameter types except at the message position, where it takes a string through a type parameter or an implicit conversion, or a last `params` array whose element type both a string and the array convert to, such as `object` | Existing calls that pass a string there would bind to the overload without a diagnostic. |
+
+Write the `[NotNull]`, CA1307, CA1305, and CA1304 overloads by hand: assign the checked value back to the `[NotNull]`
+parameter, and forward to the overload with the comparison, format provider, or culture that the assertion uses. Give a
+hand-written overload of a suppressed assertion its own justified suppression. Keep a same-signature assertion and
+suppress its diagnostic with a justification, or rename one of the overloads in a breaking change.
+
+The code fix adds the overload after the assertion with the expression body
+`WithUserMessage(userMessage, () => actual.Name(arguments))`, and writes type arguments only where inference cannot
+supply them. It copies the assertion's documentation, adds the `userMessage` condition to its `ArgumentNullException`
+exception element or adds that element, and adds a `userMessage` parameter line when the assertion documents its
+parameters; CS1573 reports a comment that documents only some of them. It needs an accessible static `WithUserMessage`
+method with the four shapes `(string, Action)`, `(string, Func<T>)`, `(string, Func<Task>)`, and
+`(string, Func<Task<T>>)`, for example through `using static`. Without one, the diagnostic is still reported but no
+fix is offered. The fix is offered only when the forwarded call binds to the assertion, the `WithUserMessage` call binds
+to a static method whose first parameter is a `string` and, for a `Task` or `Task<T>` result, whose delegate returns a
+task, no extension `GetAwaiter` makes another result awaitable, the project gains no compiler warning or error, and the
+assertion is covered afterwards. The fix assumes that the assertion completes its checks before it returns; write the
+overload by hand for any other lazily evaluated result.
+
+Fix All is unavailable. Apply the fix to a whole project with the code-fix runner, then add the public API lines that
+RS0016 reports:
+
+```bash
+dotnet run --project tools/SharedKernel.Testing.CodeFixRunner -c Release -- <project> --diagnostic SKTEST017
+dotnet format analyzers <project> --diagnostics RS0016 --severity warn
+```

@@ -27,6 +27,7 @@ public sealed class SharedKernelTestingAnalyzerTests
             TestingDiagnosticIds.PlaywrightAssertion,
             TestingDiagnosticIds.ActivityListenerSourceIdentity,
             TestingDiagnosticIds.SutConstructionInAct,
+            TestingDiagnosticIds.AssertionUserMessageOverload,
         ];
 
         // Act

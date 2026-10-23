@@ -11,6 +11,9 @@ public static class TestingDiagnosticIds
     /// <summary>Diagnostic for SUT construction in an explicit Act phase.</summary>
     public const string SutConstructionInAct = "SKTEST016";
 
+    /// <summary>Diagnostic for a public assertion without a userMessage overload.</summary>
+    public const string AssertionUserMessageOverload = "SKTEST017";
+
     /// <summary>Diagnostic for assertion-like LINQ Single calls in tests.</summary>
     public const string LinqSingleAssertion = "SKTEST012";
 

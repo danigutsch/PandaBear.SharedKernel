@@ -128,6 +128,93 @@ public sealed class CodeFixRunEngineTests : IDisposable
     }
 
     [Fact]
+    public async Task Run_applies_SKTEST017_code_fix_when_editorconfig_enables_it()
+    {
+        // Arrange
+        var (projectPath, sourcePath) = await CodeFixRunnerTestProject.Write(
+            projectDirectory.Path,
+            CodeFixRunnerTestProject.UserMessageOverloadSourceFile,
+            TestContext.Current.CancellationToken);
+        CodeFixRunnerTestProject.PinRepositorySdk(projectDirectory.Path);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory.Path, ".editorconfig"),
+            CodeFixRunnerTestProject.UserMessageOverloadEditorConfigFile,
+            TestContext.Current.CancellationToken);
+        var options = new CodeFixRunnerOptions(projectPath, "SKTEST017");
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var secondError = new StringWriter(CultureInfo.InvariantCulture);
+
+        // Act
+        var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
+        var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
+        var secondFixedCount = await CodeFixRunEngine.Run(options, secondError, TestContext.Current.CancellationToken);
+        var secondSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
+
+        // Assert
+        fixedCount.ShouldBe(2);
+        updatedSource.ShouldContain("public static void ShouldBePositive(this int actual, string userMessage) =>", StringComparison.Ordinal);
+        updatedSource.ShouldContain("WithUserMessage(userMessage, () => actual.ShouldBePositive());", StringComparison.Ordinal);
+        updatedSource.ShouldContain("public static int ShouldBeEven(this int actual, string userMessage) =>", StringComparison.Ordinal);
+        updatedSource.ShouldContain("WithUserMessage(userMessage, () => actual.ShouldBeEven());", StringComparison.Ordinal);
+        string.IsNullOrWhiteSpace(error.ToString()).ShouldBeTrue(error.ToString());
+        secondFixedCount.ShouldBe(0);
+        secondSource.ShouldBe(updatedSource);
+        string.IsNullOrWhiteSpace(secondError.ToString()).ShouldBeTrue(secondError.ToString());
+    }
+
+    [Fact]
+    public async Task Run_ignores_SKTEST017_without_editorconfig_severity()
+    {
+        // Arrange
+        var (projectPath, sourcePath) = await CodeFixRunnerTestProject.Write(
+            projectDirectory.Path,
+            CodeFixRunnerTestProject.UserMessageOverloadSourceFile,
+            TestContext.Current.CancellationToken);
+        CodeFixRunnerTestProject.PinRepositorySdk(projectDirectory.Path);
+        var options = new CodeFixRunnerOptions(projectPath, "SKTEST017");
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+
+        // Act
+        var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
+        var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
+
+        // Assert
+        fixedCount.ShouldBe(0);
+        updatedSource.ShouldBe(CodeFixRunnerTestProject.UserMessageOverloadSourceFile);
+        string.IsNullOrWhiteSpace(error.ToString()).ShouldBeTrue(error.ToString());
+    }
+
+    [Fact]
+    public async Task Run_reports_blocked_SKTEST017_without_fixing_it()
+    {
+        // Arrange
+        var (projectPath, sourcePath) = await CodeFixRunnerTestProject.Write(
+            projectDirectory.Path,
+            CodeFixRunnerTestProject.BlockedUserMessageOverloadSourceFile,
+            TestContext.Current.CancellationToken);
+        CodeFixRunnerTestProject.PinRepositorySdk(projectDirectory.Path);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory.Path, ".editorconfig"),
+            CodeFixRunnerTestProject.UserMessageOverloadEditorConfigFile,
+            TestContext.Current.CancellationToken);
+        var options = new CodeFixRunnerOptions(projectPath, "SKTEST017");
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+
+        // Act
+        var fixedCount = await CodeFixRunEngine.Run(options, error, TestContext.Current.CancellationToken);
+        var updatedSource = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
+
+        // Assert
+        fixedCount.ShouldBe(0);
+        updatedSource.ShouldBe(CodeFixRunnerTestProject.BlockedUserMessageOverloadSourceFile);
+        error.ToString().ShouldContain("No code fix available for SKTEST017", StringComparison.Ordinal);
+        error.ToString().ShouldContain(
+            "Assertion 'SampleAssertions.ShouldFail<T>(Action)' has no overload that takes 'string userMessage': "
+            + "'SampleAssertions.ShouldFail<T>(Action, string?)' already uses that signature",
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Run_rejects_non_project_or_solution_path()
     {
         // Arrange
