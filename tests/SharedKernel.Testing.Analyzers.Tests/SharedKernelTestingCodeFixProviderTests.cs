@@ -46,6 +46,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [Fact]
     public async Task Test_naming_fix_renames_method_and_reference_correctly()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -67,11 +68,13 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
+        // Act
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
         var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
+        // Assert
         updatedText.ShouldContain("Creates_a_tour_when_the_request_is_valid()", StringComparison.Ordinal);
         updatedText.ShouldNotContain("CreatesATourWhenTheRequestIsValid()", StringComparison.Ordinal);
     }
@@ -79,6 +82,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [Fact]
     public async Task Test_naming_fix_converts_title_cased_segments_to_sentence_style()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -95,11 +99,13 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Some_Title()");
 
+        // Act
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
         var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
+        // Assert
         updatedText.ShouldContain("Some_title()", StringComparison.Ordinal);
         updatedText.ShouldNotContain("Some_Title()", StringComparison.Ordinal);
     }
@@ -107,6 +113,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [Fact]
     public async Task Test_naming_fix_is_not_offered_when_target_name_would_conflict_with_existing_method()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -127,14 +134,17 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
+        // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
+        // Assert
         codeActions.ShouldBeEmpty();
     }
 
     [Fact]
     public async Task Test_naming_fix_is_not_offered_when_target_name_would_conflict_with_existing_property()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -153,14 +163,17 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "CreatesATourWhenTheRequestIsValid()");
 
+        // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
+        // Assert
         codeActions.ShouldBeEmpty();
     }
 
     [Fact]
     public async Task Test_naming_fix_is_not_offered_when_name_cannot_be_safely_split()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -177,14 +190,17 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "Tour()");
 
+        // Act
         var codeActions = await workspace.GetCodeActions(provider, diagnostic);
 
+        // Assert
         codeActions.ShouldBeEmpty();
     }
 
     [Fact]
     public async Task Test_naming_fix_splits_acronym_and_digits_into_underscore_form()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -201,11 +217,13 @@ public sealed class SharedKernelTestingCodeFixProviderTests
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
         var diagnostic = await workspace.CreateDocumentDiagnostic(XunitMethodNamingDiagnosticId, "UsesHTTP2TimeoutFallback()");
 
+        // Act
         var offeredActions = await workspace.GetCodeActions(provider, diagnostic);
         var codeAction = offeredActions.ShouldHaveSingleItem();
         await workspace.ApplyCodeAction(codeAction);
         var updatedText = await workspace.GetDocumentText();
 
+        // Assert
         updatedText.ShouldContain("Uses_HTTP2_timeout_fallback()", StringComparison.Ordinal);
         updatedText.ShouldNotContain("UsesHTTP2TimeoutFallback", StringComparison.Ordinal);
     }
@@ -213,17 +231,27 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [Fact]
     public void Fix_all_is_not_advertised_for_testing_code_fixes()
     {
+        // Arrange
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        provider.GetFixAllProvider().GetSupportedFixAllScopes().ShouldBeEmpty();
+        // Act
+        var supportedScopes = provider.GetFixAllProvider().GetSupportedFixAllScopes();
+
+        // Assert
+        supportedScopes.ShouldBeEmpty();
     }
 
     [Fact]
     public void Provider_advertises_warning_suppression_diagnostic()
     {
+        // Arrange
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        provider.FixableDiagnosticIds.ShouldContain(WarningSuppressionDiagnosticId);
+        // Act
+        var fixableDiagnosticIds = provider.FixableDiagnosticIds;
+
+        // Assert
+        fixableDiagnosticIds.ShouldContain(WarningSuppressionDiagnosticId);
     }
 
     [Fact]
@@ -328,33 +356,53 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     [Fact]
     public void Provider_advertises_serial_justification_diagnostic()
     {
+        // Arrange
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        provider.FixableDiagnosticIds.ShouldContain(XunitSerialJustificationDiagnosticId);
+        // Act
+        var fixableDiagnosticIds = provider.FixableDiagnosticIds;
+
+        // Assert
+        fixableDiagnosticIds.ShouldContain(XunitSerialJustificationDiagnosticId);
     }
 
     [Fact]
     public void Provider_advertises_assertion_wrapper_diagnostic()
     {
+        // Arrange
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        provider.FixableDiagnosticIds.ShouldContain(XunitAssertionWrapperDiagnosticId);
+        // Act
+        var fixableDiagnosticIds = provider.FixableDiagnosticIds;
+
+        // Assert
+        fixableDiagnosticIds.ShouldContain(XunitAssertionWrapperDiagnosticId);
     }
 
     [Fact]
     public void Provider_advertises_trait_constant_usage_diagnostic()
     {
+        // Arrange
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        provider.FixableDiagnosticIds.ShouldContain(XunitTraitConstantUsageDiagnosticId);
+        // Act
+        var fixableDiagnosticIds = provider.FixableDiagnosticIds;
+
+        // Assert
+        fixableDiagnosticIds.ShouldContain(XunitTraitConstantUsageDiagnosticId);
     }
 
     [Fact]
     public void Provider_advertises_helper_method_diagnostic()
     {
+        // Arrange
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
-        provider.FixableDiagnosticIds.ShouldContain(XunitHelperMethodDiagnosticId);
+        // Act
+        var fixableDiagnosticIds = provider.FixableDiagnosticIds;
+
+        // Assert
+        fixableDiagnosticIds.ShouldContain(XunitHelperMethodDiagnosticId);
     }
 
     [Fact]

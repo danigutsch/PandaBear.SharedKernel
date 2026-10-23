@@ -37,6 +37,8 @@ public sealed class WorkflowContractTests
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+
+        // Act
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"))
             .Replace("\\\n", string.Empty, StringComparison.Ordinal);
         var commands = workflow.Split('\n').Select(static line => string.Join(' ', line.Trim()
@@ -52,6 +54,8 @@ public sealed class WorkflowContractTests
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+
+        // Act
         var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
         var consumption = workflow.Split("  published-candidate-consumption:", StringSplitOptions.None)[1]
             .Split("\n  validation-summary:", StringSplitOptions.None)[0];
@@ -77,6 +81,8 @@ public sealed class WorkflowContractTests
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+
+        // Act
         var workflows = Directory.GetFiles(Path.Combine(root, ".github", "workflows"), "*.y*ml");
 
         // Assert

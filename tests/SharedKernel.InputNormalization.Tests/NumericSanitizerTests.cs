@@ -6,46 +6,50 @@ public sealed class NumericSanitizerTests
     [Fact]
     public void Sanitize_price_rounds_very_small_values()
     {
+        // Act
         var result = NumericSanitizer.SanitizePrice(0.001m);
 
+        // Assert
         result.ShouldBe(0.00m);
     }
 
     [Fact]
     public void Sanitize_price_rounds_very_small_values_up()
     {
+        // Act
         var result = NumericSanitizer.SanitizePrice(0.009m);
 
+        // Assert
         result.ShouldBe(0.01m);
     }
 
     [Fact]
     public void Sanitize_price_handles_banker_rounding_case_positive_even()
     {
-        // Arrange
         // Act
         var result = NumericSanitizer.SanitizePrice(2.225m);
 
+        // Assert
         result.ShouldBe(2.23m);
     }
 
     [Fact]
     public void Sanitize_price_handles_banker_rounding_case_positive_odd()
     {
-        // Arrange
         // Act
         var result = NumericSanitizer.SanitizePrice(2.215m);
 
+        // Assert
         result.ShouldBe(2.22m);
     }
 
     [Fact]
     public void Sanitize_price_handles_floating_point_precision_issue()
     {
-        // Arrange
         // Act
         var result = NumericSanitizer.SanitizePrice(0.1m + 0.2m);
 
+        // Assert
         result.ShouldBe(0.30m);
     }
 
@@ -64,8 +68,10 @@ public sealed class NumericSanitizerTests
     [InlineData(1.009, 1.01)]
     public void Sanitize_price_rounds_correctly_for_various_inputs(decimal input, decimal expected)
     {
+        // Act
         var result = NumericSanitizer.SanitizePrice(input);
 
+        // Assert
         result.ShouldBe(expected);
     }
 }

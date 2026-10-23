@@ -12,54 +12,94 @@ public sealed class GovernedConstantGuardTests
     [InlineData("class Unrelated {}")]
     public void Missing_duplicate_redirected_or_changed_owner_is_rejected(string source)
     {
+        // Arrange
         var compilation = AnalyzerTestHarness.CreateCompilation(source, assemblyName: "Production");
-        GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value").ShouldNotBeEmpty();
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value");
+
+        // Assert
+        errors.ShouldNotBeEmpty();
     }
 
     [Fact]
     public void Canonical_owner_and_unrelated_duplicates_are_allowed()
     {
+        // Arrange
         var compilation = AnalyzerTestHarness.CreateCompilation("namespace Demo; public static class Keys { public const string Value = \"registered\"; public const string One = \"unrelated\"; public const string Two = One; }", assemblyName: "Production");
-        GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value").ShouldBeEmpty();
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value");
+
+        // Assert
+        errors.ShouldBeEmpty();
     }
 
     [Fact]
     public void Documented_compatibility_alias_is_allowed()
     {
+        // Arrange
         var compilation = AnalyzerTestHarness.CreateCompilation("namespace Demo; public static class Keys { public const string Value = \"registered\"; public const string Alias = Value; }", assemblyName: "Production");
-        GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value\nregistered|Production|Demo.Keys.Alias|Preserve published API until the next major version.").ShouldBeEmpty();
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value\nregistered|Production|Demo.Keys.Alias|Preserve published API until the next major version.");
+
+        // Assert
+        errors.ShouldBeEmpty();
     }
 
     [Fact]
     public void Stale_exception_is_rejected()
     {
+        // Arrange
         var compilation = AnalyzerTestHarness.CreateCompilation("namespace Demo; public static class Keys { public const string Value = \"registered\"; }", assemblyName: "Production");
-        GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value\nregistered|Production|Demo.Keys.Alias|Preserve published API.").ShouldNotBeEmpty();
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value\nregistered|Production|Demo.Keys.Alias|Preserve published API.");
+
+        // Assert
+        errors.ShouldNotBeEmpty();
     }
     [Fact]
     public void Cross_assembly_redirects_are_rejected()
     {
+        // Arrange
         var owner = AnalyzerTestHarness.CreateCompilation("namespace Demo; public static class Keys { public const string Value = \"registered\"; }", assemblyName: "Owner");
         var consumer = AnalyzerTestHarness.CreateCompilation("public static class Redirect { public const string Value = Demo.Keys.Value; }", assemblyName: "Consumer")
             .AddReferences(owner.ToMetadataReference());
-        GovernedConstantGuard.Validate([owner, consumer], "registered|Owner|Demo.Keys.Value")
-            .ShouldContain(error => error.Contains("Consumer:Redirect.Value", StringComparison.Ordinal));
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([owner, consumer], "registered|Owner|Demo.Keys.Value");
+
+        // Assert
+        errors.ShouldContain(error => error.Contains("Consumer:Redirect.Value", StringComparison.Ordinal));
     }
 
     [Fact]
     public void Generated_duplicates_are_exempt()
     {
+        // Arrange
         var owner = AnalyzerTestHarness.CreateCompilation("namespace Demo; public static class Keys { public const string Value = \"registered\"; }", assemblyName: "Production");
         var generated = AnalyzerTestHarness.CreateCompilation("public static class Generated { public const string Value = \"registered\"; }", path: "Generated.g.cs");
-        GovernedConstantGuard.Validate([owner, generated], "registered|Production|Demo.Keys.Value").ShouldBeEmpty();
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([owner, generated], "registered|Production|Demo.Keys.Value");
+
+        // Assert
+        errors.ShouldBeEmpty();
     }
 
     [Fact]
     public void Unresolved_alias_fails_closed()
     {
+        // Arrange
         var compilation = AnalyzerTestHarness.CreateCompilation("namespace Demo; public static class Keys { public const string Value = Unknown.Value; }", assemblyName: "Production");
-        GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value")
-            .ShouldContain(error => error.Contains("Cannot resolve constant", StringComparison.Ordinal));
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value");
+
+        // Assert
+        errors.ShouldContain(error => error.Contains("Cannot resolve constant", StringComparison.Ordinal));
     }
 
     [Theory]
@@ -67,12 +107,16 @@ public sealed class GovernedConstantGuardTests
     [InlineData("unregistered|Production|Demo.Keys.Alias|Compatibility")]
     public void Invalid_exceptions_are_rejected(string catalog)
     {
+        // Act
         Action parse = () => GovernedLiteralCatalog.Parse(catalog);
+
+        // Assert
         parse.ShouldThrow<FormatException>();
     }
     [Fact]
     public void Conditional_production_redirect_is_rejected()
     {
+        // Arrange
         const string source = """
             namespace Demo;
             public static class Keys
@@ -86,32 +130,48 @@ public sealed class GovernedConstantGuardTests
         var compilation = AnalyzerTestHarness.CreateCompilation(source, assemblyName: "Production")
             .RemoveAllSyntaxTrees().AddSyntaxTrees(CSharpSyntaxTree.ParseText(source,
                 new CSharpParseOptions(LanguageVersion.Preview, preprocessorSymbols: ["NET10_0"]), cancellationToken: TestContext.Current.CancellationToken));
-        GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value")
-            .ShouldContain(error => error.Contains("Demo.Keys.Alias", StringComparison.Ordinal));
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value");
+
+        // Assert
+        errors.ShouldContain(error => error.Contains("Demo.Keys.Alias", StringComparison.Ordinal));
     }
 
     [Fact]
     public void Unrelated_external_constant_is_allowed_with_resolved_references()
     {
+        // Arrange
         var external = AnalyzerTestHarness.CreateCompilation("public static class External { public const string Value = \"unrelated\"; }", assemblyName: "External");
         var consumer = AnalyzerTestHarness.CreateCompilation("namespace Demo; public static class Keys { public const string Value = \"registered\"; public const string Other = External.Value; }", assemblyName: "Production")
             .AddReferences(external.ToMetadataReference());
-        GovernedConstantGuard.Validate([consumer], "registered|Production|Demo.Keys.Value").ShouldBeEmpty();
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([consumer], "registered|Production|Demo.Keys.Value");
+
+        // Assert
+        errors.ShouldBeEmpty();
     }
     [Theory]
     [InlineData("Value")]
     [InlineData("\"registered\"")]
     public void Local_governed_constants_are_rejected(string initializer)
     {
+        // Arrange
         var source = $"namespace Demo; public static class Keys {{ public const string Value = \"registered\"; public static string Read() {{ const string Alias = {initializer}; return Alias; }} }}";
         var compilation = AnalyzerTestHarness.CreateCompilation(source, assemblyName: "Production");
-        GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value")
-            .ShouldContain(error => error.Contains("Alias", StringComparison.Ordinal));
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value");
+
+        // Assert
+        errors.ShouldContain(error => error.Contains("Alias", StringComparison.Ordinal));
     }
 
     [Fact]
     public void Nested_types_in_generated_parent_are_exempt()
     {
+        // Arrange
         const string source = """
             namespace Demo;
             public static class Keys { public const string Value = "registered"; }
@@ -126,14 +186,25 @@ public sealed class GovernedConstantGuardTests
             }
             """;
         var compilation = AnalyzerTestHarness.CreateCompilation(source, assemblyName: "Production");
-        GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value").ShouldBeEmpty();
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value");
+
+        // Assert
+        errors.ShouldBeEmpty();
     }
 
     [Fact]
     public void Unregistered_local_constants_are_allowed()
     {
+        // Arrange
         const string source = "namespace Demo; public static class Keys { public const string Value = \"registered\"; public static string Read() { const string Other = \"unrelated\"; return Other; } }";
         var compilation = AnalyzerTestHarness.CreateCompilation(source, assemblyName: "Production");
-        GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value").ShouldBeEmpty();
+
+        // Act
+        var errors = GovernedConstantGuard.Validate([compilation], "registered|Production|Demo.Keys.Value");
+
+        // Assert
+        errors.ShouldBeEmpty();
     }
 }

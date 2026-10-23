@@ -9,16 +9,20 @@ public sealed class VaultCommandLineTests
     [Fact]
     public void Root_command_offers_inspect_scan_merge_review_catalog_and_apply()
     {
+        // Act
         var command = VaultCommandLine.Create(new TestPrompts(ExportPassword).Environment());
 
+        // Assert
         command.Subcommands.Select(subcommand => subcommand.Name).ShouldBe(["inspect", "scan", "merge", "review", "catalog", "apply"]);
     }
 
     [Fact]
     public async Task Help_lists_the_commands_on_standard_output()
     {
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["--help"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         string[] commands = ["inspect", "scan", "merge", "review"];
         commands.ShouldAllSatisfy(command => run.Output.ShouldContain(command, StringComparison.Ordinal));
@@ -28,8 +32,10 @@ public sealed class VaultCommandLineTests
     [Fact]
     public async Task Merge_help_shows_every_option()
     {
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", "--help"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         string[] options = ["--output", "-o", "--decisions", "--policy <newest|ask|prefer:<input file name>>", "[default: newest]", "--plaintext", "--report", "--force"];
         options.ShouldAllSatisfy(option => run.Output.ShouldContain(option, StringComparison.Ordinal));
@@ -39,8 +45,10 @@ public sealed class VaultCommandLineTests
     [Fact]
     public async Task Version_writes_to_standard_output()
     {
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["--version"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         run.Output.ShouldNotBeEmpty();
         run.Error.ShouldBeEmpty();
@@ -75,11 +83,14 @@ public sealed class VaultCommandLineTests
     [InlineData("review", "keeper.json", "--output", "  ")]
     public async Task Invalid_command_lines_exit_1_with_the_error_on_standard_error(params string[] args)
     {
+        // Arrange
         var prompts = new TestPrompts(ExportPassword);
         var parseResult = VaultCommandLine.Parse(VaultCommandLine.Create(prompts.Environment()), args);
 
+        // Act
         var run = await CommandLineRun.Invoke(prompts.Environment(), args, TestContext.Current.CancellationToken);
 
+        // Assert
         parseResult.Errors.ShouldNotBeEmpty();
         run.ExitCode.ShouldBe(1);
         run.Error.ShouldContain(parseResult.Errors[0].Message, StringComparison.Ordinal);
@@ -90,10 +101,13 @@ public sealed class VaultCommandLineTests
     [Fact]
     public async Task Parse_errors_print_an_argument_without_its_escape_and_bidirectional_characters()
     {
+        // Arrange
         string[] unprintable = ["\u001B", "\u009B", "\u202E"];
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["x\u001B[2Jy\u009B31m\u202Ez"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(1);
         run.Error.ShouldContain("Unrecognized command or argument 'x\uFFFD[2Jy\uFFFD31m\uFFFDz'.", StringComparison.Ordinal);
         run.Output.ShouldContain("Usage:", StringComparison.Ordinal);
@@ -104,8 +118,10 @@ public sealed class VaultCommandLineTests
     [Fact]
     public async Task Typo_corrections_print_an_argument_without_its_escape_characters()
     {
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["revi\u001Bw"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(1);
         run.Output.ShouldContain("'revi\uFFFDw' was not matched. Did you mean one of the following?", StringComparison.Ordinal);
         string printed = run.Output + run.Error;
@@ -118,10 +134,13 @@ public sealed class VaultCommandLineTests
     [InlineData("prefer:keeper.json")]
     public void Policy_option_accepts_newest_ask_and_an_input_file_to_prefer(string policy)
     {
+        // Arrange
         var command = VaultCommandLine.Create(new TestPrompts(ExportPassword).Environment());
 
+        // Act
         var parseResult = VaultCommandLine.Parse(command, ["merge", "exports/keeper.json", "exports/bitwarden.json", "--output", "merged.json", "--policy", policy]);
 
+        // Assert
         parseResult.Errors.ShouldBeEmpty();
     }
 
@@ -131,10 +150,13 @@ public sealed class VaultCommandLineTests
     [InlineData("merge", "@keeper.json", "--output", "@merged.json", "--decisions", "@decisions.json")]
     public void Arguments_starting_with_at_are_file_names_rather_than_response_files(params string[] args)
     {
+        // Arrange
         var command = VaultCommandLine.Create(new TestPrompts(ExportPassword).Environment());
 
+        // Act
         var parseResult = VaultCommandLine.Parse(command, args);
 
+        // Assert
         parseResult.Errors.ShouldBeEmpty();
         parseResult.Tokens.Select(token => token.Value).ShouldBe(args);
     }
@@ -142,10 +164,13 @@ public sealed class VaultCommandLineTests
     [Fact]
     public void Policy_option_defaults_to_newest()
     {
+        // Arrange
         var command = VaultCommandLine.Create(new TestPrompts(ExportPassword).Environment());
 
+        // Act
         var parseResult = VaultCommandLine.Parse(command, ["merge", "keeper.json", "--output", "merged.json"]);
 
+        // Assert
         parseResult.Errors.ShouldBeEmpty();
         parseResult.GetValue<string>("--policy").ShouldBe("newest");
     }

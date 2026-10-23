@@ -12,12 +12,15 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_github_recovery_codes_block_in_notes_proposes_hidden_recovery_codes_field()
     {
+        // Arrange
         string codes = string.Join('\n', Enumerable.Range(0, 16).Select(index =>
             TestSecrets.FromAlphabet(TestSecrets.LowerHex, 5, index) + "-" + TestSecrets.FromAlphabet(TestSecrets.LowerHex, 5, 100 + index)));
         var item = SecretTestItems.Login(notes: "GitHub recovery codes\n" + codes + "\n", uri: "https://github.com/login");
 
+        // Act
         var findings = Scanner.Scan(item);
 
+        // Assert
         var finding = findings.ShouldHaveSingleItem();
         finding.Kind.ShouldBe(SecretKind.RecoveryCodes);
         finding.Confidence.ShouldBe(Confidence.High);
@@ -28,24 +31,30 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_eight_digit_runs_without_keyword_or_block_are_not_recovery_codes()
     {
+        // Arrange
         string block = string.Join('\n', Enumerable.Range(0, 8).Select(index => TestSecrets.FromAlphabet("0123456789", 8, index)));
         var item = SecretTestItems.Note("Order 48151623 shipped on Monday.\nInvoice 42424242 is paid.\n\n" + block);
 
+        // Act
         var findings = Scanner.Scan(item);
 
+        // Assert
         findings.ShouldNotContain(finding => finding.Kind == SecretKind.RecoveryCodes);
     }
 
     [Fact]
     public void Scan_otpauth_uri_in_notes_proposes_login_totp_with_parameters_preserved()
     {
+        // Arrange
         string secret = TestSecrets.Base32Encode(TestSecrets.Bytes(1, 20));
         string uri = $"otpauth://totp/Example:alice@example.com?secret={secret}&issuer=Example&algorithm=SHA256&digits=8&period=60";
         var item = SecretTestItems.Login(notes: "Authenticator:\n" + uri);
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.Kind.ShouldBe(SecretKind.Totp);
         finding.Confidence.ShouldBe(Confidence.High);
         finding.ProposedTarget.ShouldBe(PlacementTarget.LoginTotp);
@@ -60,11 +69,15 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_base32_seed_under_2fa_key_proposes_login_totp()
     {
+        // Arrange
         string secret = TestSecrets.Base32Encode(TestSecrets.Bytes(2, 20));
         var item = SecretTestItems.Login(notes: "2FA: " + secret);
 
-        var finding = Scanner.Scan(item).ShouldHaveSingleItem();
+        // Act
+        var findings = Scanner.Scan(item);
 
+        // Assert
+        var finding = findings.ShouldHaveSingleItem();
         finding.Kind.ShouldBe(SecretKind.Totp);
         finding.ProposedTarget.ShouldBe(PlacementTarget.LoginTotp);
     }
@@ -72,24 +85,31 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_second_totp_goes_to_hidden_totp_field_when_login_totp_exists()
     {
+        // Arrange
         string existing = TestSecrets.Base32Encode(TestSecrets.Bytes(3, 20));
         string second = TestSecrets.Base32Encode(TestSecrets.Bytes(4, 20));
         var item = SecretTestItems.Login(totp: existing, notes: "otpauth://totp/Other?secret=" + second);
 
-        var finding = Scanner.Scan(item).ShouldHaveSingleItem();
+        // Act
+        var findings = Scanner.Scan(item);
 
+        // Assert
+        var finding = findings.ShouldHaveSingleItem();
         finding.ProposedTarget.ShouldBe(PlacementTarget.Hidden("TOTP (2)"));
     }
 
     [Fact]
     public void Scan_totp_seed_in_password_field_is_reported_as_misfiled()
     {
+        // Arrange
         string secret = TestSecrets.Base32Encode(TestSecrets.Bytes(5, 20));
         var item = SecretTestItems.Login(password: secret);
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.Kind.ShouldBe(SecretKind.Totp);
         finding.Location.FieldPath.ShouldBe(SecretLocation.LoginPassword);
         finding.ProposedTarget.ShouldBe(PlacementTarget.LoginTotp);
@@ -101,11 +121,14 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_password_line_in_notes_fills_empty_login_password()
     {
+        // Arrange
         var item = SecretTestItems.Login(notes: "Shared account\nPassword: Tr0ub4dor&3x\nAsk Bob first.");
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.Kind.ShouldBe(SecretKind.Password);
         finding.ProposedTarget.ShouldBe(PlacementTarget.LoginPassword);
         var password = placed.Item.Login?.Password;
@@ -116,11 +139,14 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_password_line_in_notes_becomes_hidden_field_when_password_exists()
     {
+        // Arrange
         var item = SecretTestItems.Login(password: "current-password", notes: "Passwort: altes-Kennwort-42");
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.ProposedTarget.ShouldBe(PlacementTarget.Hidden("Password (notes)"));
         var field = placed.Item.Fields.ShouldHaveSingleItem();
         field.Name.ShouldBe("Password (notes)");
@@ -132,11 +158,14 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_security_question_lines_become_question_named_hidden_fields()
     {
+        // Arrange
         var item = SecretTestItems.Login(notes: "Q: What was your first pet?\nA: Rex the dog\nQuestion: City of birth?\nAnswer: Springfield");
 
+        // Act
         var findings = Scanner.Scan(item);
         var placed = SecretPlacer.Apply(item, findings);
 
+        // Assert
         findings.ShouldHaveCount(2);
         findings.ShouldAllSatisfy(finding => finding.Kind.ShouldBe(SecretKind.SecurityQuestion));
         placed.Item.Fields.Select(field => (field.Name, field.Value, field.Type)).ShouldBe(
@@ -150,29 +179,37 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_luhn_valid_card_number_is_detected_and_luhn_invalid_is_not()
     {
+        // Arrange
         string valid = TestSecrets.CardNumber("4", 16);
         char last = valid[^1] == '9' ? '0' : (char)(valid[^1] + 1);
         string invalid = valid[..^1] + last;
         string notes = $"Card: {valid[..4]} {valid[4..8]} {valid[8..12]} {valid[12..]}\nOld card: {invalid}";
         var item = SecretTestItems.Note(notes);
 
-        var finding = Scanner.Scan(item).ShouldHaveSingleItem(found => found.Kind == SecretKind.CardNumber);
+        // Act
+        var findings = Scanner.Scan(item);
+        var rescanned = Scanner.Scan(item);
 
+        // Assert
+        var finding = findings.ShouldHaveSingleItem(found => found.Kind == SecretKind.CardNumber);
         finding.Confidence.ShouldBe(Confidence.High);
         finding.Location.Start.ShouldBe(6);
         finding.ProposedTarget.ShouldBe(PlacementTarget.NewCardItem);
-        Scanner.Scan(item).ShouldHaveCount(1);
+        rescanned.ShouldHaveCount(1);
     }
 
     [Fact]
     public void Scan_iban_with_bad_checksum_is_not_detected()
     {
+        // Arrange
         string valid = TestSecrets.Iban("DE", "370400440532013000");
         string broken = valid[..2] + (valid[2] == '9' ? '1' : (char)(valid[2] + 1)) + valid[3..];
 
+        // Act
         var good = Scanner.Scan(SecretTestItems.Note("IBAN " + valid));
         var bad = Scanner.Scan(SecretTestItems.Note("IBAN " + broken));
 
+        // Assert
         good.ShouldHaveSingleItem().Kind.ShouldBe(SecretKind.Iban);
         bad.ShouldNotContain(finding => finding.Kind == SecretKind.Iban);
     }
@@ -180,12 +217,15 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_bip39_phrase_with_valid_checksum_is_high_confidence_and_invalid_is_not()
     {
+        // Arrange
         string valid = Bip39Reference.Mnemonic(TestSecrets.Bytes(10, 16));
         string invalid = Bip39Reference.InvalidVariant(valid);
 
+        // Act
         var good = Scanner.Scan(SecretTestItems.Note("Wallet backup\n" + valid));
         var bad = Scanner.Scan(SecretTestItems.Note("Wallet backup\n" + invalid));
 
+        // Assert
         var finding = good.ShouldHaveSingleItem();
         finding.Kind.ShouldBe(SecretKind.SeedPhrase);
         finding.Confidence.ShouldBe(Confidence.High);
@@ -196,11 +236,14 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_openssh_private_key_in_notes_proposes_ssh_key_item_with_computed_public_key()
     {
+        // Arrange
         var item = SecretTestItems.Login(name: "build server", notes: "deploy key\n" + PemFixtures.Ed25519OpenSsh() + "\nrotate yearly");
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.Kind.ShouldBe(SecretKind.PrivateKey);
         finding.Confidence.ShouldBe(Confidence.High);
         finding.ProposedTarget.ShouldBe(PlacementTarget.NewSshKeyItem);
@@ -216,12 +259,15 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_pkcs1_rsa_key_is_converted_to_pkcs8_for_ssh_key_item()
     {
+        // Arrange
         using var rsa = RSA.Create(2048);
         var item = SecretTestItems.Note(PemFixtures.RsaPkcs1(rsa), "legacy host");
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.ProposedTarget.ShouldBe(PlacementTarget.NewSshKeyItem);
         var key = placed.NewItems.ShouldHaveSingleItem().SshKey.ShouldNotBeNull();
         key.PrivateKey.ShouldStartWith(PemFixtures.Boundary("BEGIN", "PRIVATE KEY"), StringComparison.Ordinal);
@@ -238,6 +284,7 @@ public sealed class SecretScannerTests
     [InlineData("openssh")]
     public void Scan_encrypted_private_key_is_flagged_not_converted(string variant)
     {
+        // Arrange
         using var rsa = RSA.Create(2048);
         string pem = variant switch
         {
@@ -247,9 +294,11 @@ public sealed class SecretScannerTests
         };
         var item = SecretTestItems.Note(pem);
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.Kind.ShouldBe(SecretKind.PrivateKey);
         finding.NeedsReview.ShouldBeTrue();
         finding.IsPreAccepted.ShouldBeFalse();
@@ -261,14 +310,17 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_ec_key_with_explicit_curve_parameters_in_notes_proposes_a_hidden_field_that_placement_fills_without_a_problem()
     {
+        // Arrange
         using var named = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         using var explicitCurve = ECDsa.Create(named.ExportExplicitParameters(includePrivateParameters: true));
         string pem = PemFixtures.Sec1(explicitCurve);
         var item = SecretTestItems.Note("deploy key\n" + pem, "build server");
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.Kind.ShouldBe(SecretKind.PrivateKey);
         finding.NeedsReview.ShouldBeTrue();
         finding.IsPreAccepted.ShouldBeFalse();
@@ -285,6 +337,7 @@ public sealed class SecretScannerTests
     [InlineData(false)]
     public void Scan_reports_nothing_for_a_key_that_fills_a_hidden_field_and_cannot_become_an_ssh_key_item(bool explicitCurveParameters)
     {
+        // Arrange
         using var named = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         using var explicitCurve = ECDsa.Create(named.ExportExplicitParameters(includePrivateParameters: true));
         string pem = explicitCurveParameters ? PemFixtures.Sec1(explicitCurve) : PemFixtures.EncryptedPkcs8(named);
@@ -293,21 +346,27 @@ public sealed class SecretScannerTests
             Fields = [new CustomField("Deploy key", pem, CustomFieldType.Hidden)]
         };
 
+        // Act
         var findings = Scanner.Scan(item);
 
+        // Assert
         findings.ShouldBeEmpty();
     }
 
     [Fact]
     public void Scan_still_proposes_an_ssh_key_item_for_a_convertible_key_that_fills_a_hidden_field()
     {
+        // Arrange
         var item = SecretTestItems.Note("deploy key") with
         {
             Fields = [new CustomField("Deploy key", PemFixtures.Ed25519OpenSsh(), CustomFieldType.Hidden)]
         };
 
-        var finding = Scanner.Scan(item).ShouldHaveSingleItem();
+        // Act
+        var findings = Scanner.Scan(item);
 
+        // Assert
+        var finding = findings.ShouldHaveSingleItem();
         finding.Kind.ShouldBe(SecretKind.PrivateKey);
         finding.ProposedTarget.ShouldBe(PlacementTarget.NewSshKeyItem);
     }
@@ -315,12 +374,17 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_github_token_with_valid_checksum_is_high_confidence()
     {
+        // Arrange
         string valid = TestSecrets.GitHubToken("ghp", 11);
         string invalid = valid[..^1] + (valid[^1] == 'A' ? 'B' : 'A');
 
-        var good = Scanner.Scan(SecretTestItems.Note("deploy " + valid)).ShouldHaveSingleItem();
-        var bad = Scanner.Scan(SecretTestItems.Note("deploy " + invalid)).ShouldHaveSingleItem();
+        // Act
+        var goodFindings = Scanner.Scan(SecretTestItems.Note("deploy " + valid));
+        var badFindings = Scanner.Scan(SecretTestItems.Note("deploy " + invalid));
 
+        // Assert
+        var good = goodFindings.ShouldHaveSingleItem();
+        var bad = badFindings.ShouldHaveSingleItem();
         good.RuleId.ShouldBe("github-token");
         good.Confidence.ShouldBe(Confidence.High);
         good.IsPreAccepted.ShouldBeTrue();
@@ -331,12 +395,15 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_postgres_uri_with_password_splits_into_login_fields()
     {
+        // Arrange
         const string Uri = "postgresql://app_user:s3cr3t-Pa55@db.internal.example:5432/orders?sslmode=require";
         var item = SecretTestItems.Login(name: "orders db", notes: "Primary database\n" + Uri);
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.Kind.ShouldBe(SecretKind.ConnectionString);
         finding.ProposedTarget.ShouldBe(PlacementTarget.LoginFromConnection);
         var login = placed.Item.Login.ShouldNotBeNull();
@@ -352,6 +419,7 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_placeholders_and_uuids_are_rejected()
     {
+        // Arrange
         // Preserve the exact synthetic UUID rejection case without a credential-shaped source literal.
         string uuid = string.Join("-", "123e4567", "e89b", "12d3", "a456", "426614174000");
         string notes = $$$"""
@@ -368,14 +436,17 @@ public sealed class SecretScannerTests
             Docs at https://example.com/docs/setup and /usr/local/share/app/config.json
             """;
 
+        // Act
         var findings = Scanner.Scan(SecretTestItems.Login(notes: notes));
 
+        // Assert
         findings.ShouldBeEmpty();
     }
 
     [Fact]
     public void Scan_regex_timeout_produces_needs_review_finding()
     {
+        // Arrange
         var rule = new SecretRule
         {
             Id = "slow-rule",
@@ -387,8 +458,10 @@ public sealed class SecretScannerTests
         };
         var scanner = new SecretScanner([rule]);
 
+        // Act
         var findings = scanner.Scan(SecretTestItems.Note(new string('a', 4000)));
 
+        // Assert
         var finding = findings.ShouldHaveSingleItem(found => found.RuleId == "slow-rule");
         finding.Kind.ShouldBe(SecretKind.NeedsReview);
         finding.NeedsReview.ShouldBeTrue();
@@ -398,6 +471,7 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_regex_timeout_in_one_window_still_flags_the_later_windows_of_the_rule()
     {
+        // Arrange
         var rule = new SecretRule
         {
             Id = "slow-rule",
@@ -412,8 +486,10 @@ public sealed class SecretScannerTests
         const int SecondRun = 24_000;
         string notes = run + new string('x', SecondRun - run.Length) + run;
 
+        // Act
         var findings = scanner.Scan(SecretTestItems.Note(notes));
 
+        // Assert
         SecretFinding[] timeouts = [.. findings.Where(found => found.RuleId == "slow-rule")];
         timeouts.ShouldAllSatisfy(found => found.Kind.ShouldBe(SecretKind.NeedsReview));
         timeouts.ShouldContain(found => found.Location.Start == 0);
@@ -423,6 +499,7 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_runs_a_window_whose_match_timed_out_once_again_and_reports_its_finding()
     {
+        // Arrange
         int checks = 0;
         var rule = new SecretRule
         {
@@ -438,8 +515,10 @@ public sealed class SecretScannerTests
         };
         var scanner = new SecretScanner([rule]);
 
+        // Act
         var findings = scanner.Scan(SecretTestItems.Note("deploy token tok_" + new string('k', 16)));
 
+        // Assert
         var finding = findings.ShouldHaveSingleItem(found => found.RuleId == "paused-rule");
         finding.Kind.ShouldBe(SecretKind.ApiToken);
         finding.NeedsReview.ShouldBeFalse();
@@ -449,6 +528,7 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_flags_the_remaining_windows_of_a_rule_as_one_finding_once_three_of_its_windows_time_out()
     {
+        // Arrange
         // Runs of "a" 10,000 characters apart give the rule five separate windows: each run's window starts 1024 characters
         // before it, and the last one ends with the text.
         const int Spacing = 10_000;
@@ -456,8 +536,10 @@ public sealed class SecretScannerTests
         string notes = string.Join(new string('x', Spacing - run.Length), Enumerable.Repeat(run, 5));
         var scanner = new SecretScanner([SlowPatterns.Rule()]);
 
+        // Act
         var findings = scanner.Scan(SecretTestItems.Note(notes));
 
+        // Assert
         findings.ShouldAllSatisfy(found =>
         {
             found.RuleId.ShouldBe("slow-rule");
@@ -474,13 +556,16 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_bitwarden_account_recovery_code_is_flagged_not_moved()
     {
+        // Arrange
         string code = TestSecrets.FromAlphabet("abcdefghijklmnopqrstuvwxyz0123456789", 32, 12);
         string notes = "Recovery code: " + code;
         var item = SecretTestItems.Login(name: "Bitwarden", uri: "https://vault.bitwarden.com", notes: notes);
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.Kind.ShouldBe(SecretKind.BitwardenRecoveryCode);
         finding.NeedsReview.ShouldBeTrue();
         finding.ProposedTarget.Kind.ShouldBe(PlacementTargetKind.NotMoved);
@@ -492,6 +577,7 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_otpauth_migration_payload_is_decoded()
     {
+        // Arrange
         byte[] first = TestSecrets.Bytes(20, 20);
         byte[] second = TestSecrets.Bytes(21, 20);
         string uri = MigrationPayloadBuilder.Uri(
@@ -500,9 +586,11 @@ public sealed class SecretScannerTests
             (TestSecrets.Bytes(22, 20), "counter", "Legacy", 1, 1, 1));
         var item = SecretTestItems.Login(notes: uri);
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.Kind.ShouldBe(SecretKind.Totp);
         finding.RuleId.ShouldBe("otpauth-migration");
         string totp = placed.Item.Login.ShouldNotBeNull().Totp.ShouldNotBeNull();
@@ -517,22 +605,28 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_prose_paragraphs_produce_nothing_above_suggestion()
     {
+        // Arrange
         string prose = Fixture.Read("secrets/prose.txt");
 
+        // Act
         var findings = Scanner.Scan(SecretTestItems.Note(prose));
 
+        // Assert
         findings.ShouldAllSatisfy(finding => finding.Confidence.ShouldBe(Confidence.Suggestion));
     }
 
     [Fact]
     public void Scan_luhn_valid_card_number_in_text_field_is_reported_as_misfiled()
     {
+        // Arrange
         string number = TestSecrets.CardNumber("51", 16);
         var item = SecretTestItems.Login(fields: [new CustomField("Card", number, CustomFieldType.Text)]);
 
+        // Act
         var finding = Scanner.Scan(item).ShouldHaveSingleItem();
         var placed = SecretPlacer.Apply(item, [finding]);
 
+        // Assert
         finding.Location.FieldPath.ShouldBe("fields[0].value");
         finding.ProposedTarget.ShouldBe(PlacementTarget.HiddenNamedByLabel("Card number"));
         var field = placed.Item.Fields.ShouldHaveSingleItem();
@@ -544,10 +638,14 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_pin_in_password_field_of_bank_item_is_reported_as_misfiled()
     {
+        // Arrange
         var item = SecretTestItems.Login(name: "Sparkasse Bank card", password: "4821");
 
-        var finding = Scanner.Scan(item).ShouldHaveSingleItem();
+        // Act
+        var findings = Scanner.Scan(item);
 
+        // Assert
+        var finding = findings.ShouldHaveSingleItem();
         finding.Kind.ShouldBe(SecretKind.Pin);
         finding.Location.FieldPath.ShouldBe(SecretLocation.LoginPassword);
         finding.ProposedTarget.ShouldBe(PlacementTarget.Hidden("PIN"));
@@ -556,11 +654,14 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_text_recovery_code_file_name_raises_confidence_for_digit_codes()
     {
+        // Arrange
         string codes = string.Join('\n', Enumerable.Range(0, 10).Select(index => TestSecrets.FromAlphabet("0123456789", 8, 300 + index)));
 
+        // Act
         var withName = Scanner.ScanText(codes, SecretLocation.Attachment("Backup-codes-alice.txt"), "Backup-codes-alice.txt");
         var withoutName = Scanner.ScanText(codes, SecretLocation.Attachment("numbers.txt"), "numbers.txt");
 
+        // Assert
         var finding = withName.ShouldHaveSingleItem();
         finding.Kind.ShouldBe(SecretKind.RecoveryCodes);
         finding.Location.FieldPath.ShouldBe("attachment:Backup-codes-alice.txt");

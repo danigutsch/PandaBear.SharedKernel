@@ -16,10 +16,13 @@ public sealed class ReviewAppTests : IDisposable
     [Fact]
     public void Canceling_while_the_key_list_is_open_closes_it_and_ends_the_review_with_exit_code_1()
     {
+        // Arrange
         var session = Session(ConflictingLogins(directory));
 
+        // Act
         var run = CanceledReview.Run(session, ReviewKeys.Help.Key);
 
+        // Assert
         run.DialogTitle.ShouldBe("Keys");
         run.DialogClosedByCancellation.ShouldBeTrue();
         run.ExitCode.ShouldBe(1);
@@ -29,10 +32,13 @@ public sealed class ReviewAppTests : IDisposable
     [Fact]
     public void Canceling_while_a_problem_is_shown_closes_it_and_ends_the_review_with_exit_code_1()
     {
+        // Arrange
         var session = Session(ConflictingLogins(directory), files: new ReviewFiles(null, new PipelineOutput(Path.Combine(directory, "merged.json"))));
 
+        // Act
         var run = CanceledReview.Run(session, ReviewKeys.Write.Key);
 
+        // Assert
         run.DialogTitle.ShouldBe("Problem");
         run.DialogClosedByCancellation.ShouldBeTrue();
         run.ExitCode.ShouldBe(1);
@@ -42,12 +48,15 @@ public sealed class ReviewAppTests : IDisposable
     [Fact]
     public void Canceling_while_the_quit_question_is_open_ends_the_review_without_saving()
     {
+        // Arrange
         string decisionsPath = Path.Combine(directory, "decisions.json");
         var session = Session(ConflictingLogins(directory), files: new ReviewFiles(decisionsPath, null));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
 
+        // Act
         var run = CanceledReview.Run(session, ReviewKeys.Quit.Key);
 
+        // Assert
         run.DialogTitle.ShouldBe("Unsaved decisions");
         run.DialogClosedByCancellation.ShouldBeTrue();
         run.ExitCode.ShouldBe(1);
@@ -59,12 +68,15 @@ public sealed class ReviewAppTests : IDisposable
     [Fact]
     public void Canceling_while_the_export_password_is_asked_writes_nothing()
     {
+        // Arrange
         string output = Path.Combine(directory, "merged.json");
         var session = Session(ConflictingLogins(directory), files: new ReviewFiles(null, new PipelineOutput(output)));
         session.ChooseMember(GroupOf(session, KeeperKey).Key, FieldPaths.LoginPassword, KeeperKey);
 
+        // Act
         var run = CanceledReview.Run(session, ReviewKeys.Write.Key);
 
+        // Assert
         run.DialogTitle.ShouldBe("Password for the new export");
         run.DialogClosedByCancellation.ShouldBeTrue();
         run.ExitCode.ShouldBe(1);

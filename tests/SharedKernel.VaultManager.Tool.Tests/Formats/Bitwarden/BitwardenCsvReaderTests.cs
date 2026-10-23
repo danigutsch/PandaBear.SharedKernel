@@ -8,8 +8,10 @@ public sealed class BitwardenCsvReaderTests
     [Fact]
     public void Read_individual_export_maps_login_fields_uris_and_flags()
     {
+        // Act
         var result = BitwardenCsvReader.Read(Fixture.Read("bitwarden-csv/individual.csv"), "individual.csv");
 
+        // Assert
         var item = result.Export.Items.ShouldHaveSingleItem(item => item.Name == "Example, login");
         item.Type.ShouldBe(VaultItemType.Login);
         item.FolderPath.ShouldBe("Work/Servers");
@@ -32,9 +34,11 @@ public sealed class BitwardenCsvReaderTests
     [Fact]
     public void Read_individual_export_maps_notes_and_records_archived_items()
     {
-        var item = BitwardenCsvReader.Read(Fixture.Read("bitwarden-csv/individual.csv"), "individual.csv").Export.Items
-            .ShouldHaveSingleItem(item => item.Name == "Plain note");
+        // Act
+        var items = BitwardenCsvReader.Read(Fixture.Read("bitwarden-csv/individual.csv"), "individual.csv").Export.Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem(item => item.Name == "Plain note");
         item.Type.ShouldBe(VaultItemType.SecureNote);
         item.Login.ShouldBeNull();
         item.FolderPath.ShouldBeNull();
@@ -46,8 +50,11 @@ public sealed class BitwardenCsvReaderTests
     [Fact]
     public void Read_organization_export_uses_first_collection_as_folder()
     {
-        var item = BitwardenCsvReader.Read(Fixture.Read("bitwarden-csv/organization.csv"), "organization.csv").Export.Items.ShouldHaveSingleItem();
+        // Act
+        var items = BitwardenCsvReader.Read(Fixture.Read("bitwarden-csv/organization.csv"), "organization.csv").Export.Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem();
         item.FolderPath.ShouldBe("Shared");
         item.Fields.ShouldBe([new CustomField("Additional folders", "Other", CustomFieldType.Text)]);
         item.ConversionNotes.ShouldContain(note => note.Contains("collections", StringComparison.Ordinal));
@@ -57,20 +64,24 @@ public sealed class BitwardenCsvReaderTests
     [Fact]
     public void Read_warns_that_csv_omits_data_and_recommends_JSON()
     {
+        // Act
         var result = BitwardenCsvReader.Read(Fixture.Read("bitwarden-csv/organization.csv"), "organization.csv");
 
+        // Assert
         result.Warnings.ShouldContain(warning => warning.Contains("JSON", StringComparison.Ordinal));
     }
 
     [Fact]
     public void Read_row_with_wrong_column_count_throws_with_line_number_and_no_value()
     {
+        // Arrange
         const string csv = "folder,favorite,type,name,notes,fields,reprompt,login_uri,login_username,login_password,login_totp\n,,login,n,,,0,,user,secret-value";
-
         var action = () => BitwardenCsvReader.Read(csv, "bad.csv");
 
+        // Act
         var exception = action.ShouldThrow<InvalidDataException>();
 
+        // Assert
         exception.Message.ShouldContain("line 2", StringComparison.Ordinal);
         exception.Message.ShouldNotContain("secret-value", StringComparison.Ordinal);
     }
@@ -78,8 +89,10 @@ public sealed class BitwardenCsvReaderTests
     [Fact]
     public void Read_without_bitwarden_header_throws_invalid_data()
     {
+        // Arrange
         var action = () => BitwardenCsvReader.Read("a,b,c\n1,2,3", "other.csv");
 
+        // Act, Assert
         action.ShouldThrow<InvalidDataException>();
     }
 }

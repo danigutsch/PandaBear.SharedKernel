@@ -12,6 +12,7 @@ public sealed class RepoConfigScopedWriteTests
     [InlineData("dangling-config")]
     public void Initialize_rejects_linked_paths_before_creating_files(string location)
     {
+        // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var outside = new TemporaryRepoConfigWorkspace();
         var root = workspace.RootPath;
@@ -37,7 +38,11 @@ public sealed class RepoConfigScopedWriteTests
         }
 
         Action initialize = () => RepoConfigInitializer.Initialize(root);
+
+        // Act
         initialize.ShouldThrow<InvalidOperationException>();
+
+        // Assert
         Directory.EnumerateFiles(outside.RootPath).Select(Path.GetFileName).ShouldBe(location == "config" ? ["target.json"] : []);
         if (location == "config")
         {
@@ -50,6 +55,7 @@ public sealed class RepoConfigScopedWriteTests
     [InlineData(true)]
     public void Set_rejects_linked_config_or_parent_without_mutating_target(bool linkedParent)
     {
+        // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var outside = new TemporaryRepoConfigWorkspace();
         RepoConfigInitializer.Initialize(outside.RootPath);
@@ -65,13 +71,18 @@ public sealed class RepoConfigScopedWriteTests
         }
 
         Action set = () => RepoConfigSetter.Set(workspace.RootPath, "github.repository", "new/repository");
+
+        // Act
         set.ShouldThrow<InvalidOperationException>();
+
+        // Assert
         outside.ReadFile("roadmap/config.json").ShouldBe(original);
     }
 
     [Fact]
     public async Task Sync_rejects_linked_item_before_creating_remote_issue()
     {
+        // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var outside = new TemporaryRepoConfigWorkspace();
         RepoConfigInitializer.Initialize(workspace.RootPath);
@@ -88,8 +99,11 @@ public sealed class RepoConfigScopedWriteTests
         using var client = new HttpClient(handler);
         var syncer = new GitHubRoadmapSyncer(project, client);
 
+        // Act
         Func<Task> sync = () => syncer.Apply(TestContext.Current.CancellationToken);
         await sync.ShouldThrow<InvalidOperationException>();
+
+        // Assert
         handler.Requests.ShouldBeEmpty();
         outside.ReadFile("target.json").ShouldBe(content);
     }
@@ -97,6 +111,7 @@ public sealed class RepoConfigScopedWriteTests
     [Fact]
     public async Task Sync_does_not_follow_predictable_temporary_mapping_link()
     {
+        // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var outside = new TemporaryRepoConfigWorkspace();
         RepoConfigInitializer.Initialize(workspace.RootPath);
@@ -113,8 +128,10 @@ public sealed class RepoConfigScopedWriteTests
         using var client = new HttpClient(handler);
         var syncer = new GitHubRoadmapSyncer(RoadmapProject.Load(workspace.RootPath), client);
 
+        // Act
         await syncer.Apply(TestContext.Current.CancellationToken);
 
+        // Assert
         outside.ReadFile("target.json").ShouldBe("outside-original");
         workspace.ReadFile(itemPath).ShouldContain("\"issue\": 1200", StringComparison.Ordinal);
     }
@@ -123,6 +140,7 @@ public sealed class RepoConfigScopedWriteTests
     [Fact]
     public async Task Sync_retains_recovery_lock_and_issue_number_when_destination_becomes_linked()
     {
+        // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var outside = new TemporaryRepoConfigWorkspace();
         RepoConfigInitializer.Initialize(workspace.RootPath);
@@ -142,9 +160,11 @@ public sealed class RepoConfigScopedWriteTests
         using var client = new HttpClient(handler);
         var syncer = new GitHubRoadmapSyncer(project, client);
 
+        // Act
         Func<Task> sync = () => syncer.Apply(TestContext.Current.CancellationToken);
         var exception = await sync.ShouldThrow<InvalidOperationException>();
 
+        // Assert
         exception.Message.ShouldContain("GitHub issue #1200 was created", StringComparison.Ordinal);
         exception.InnerException.ShouldNotBeNull();
         File.Exists(Path.Combine(workspace.RootPath, itemPath) + ".lock").ShouldBeTrue();

@@ -24,6 +24,8 @@ public sealed class GeneratorIncrementalBehaviorTests
 
         // Act
         var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
+
+        // Assert
         GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Cached, IncrementalStepRunReason.Unchanged);
     }
 
@@ -65,6 +67,8 @@ public sealed class GeneratorIncrementalBehaviorTests
 
         // Act
         var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
+
+        // Assert
         GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Cached, IncrementalStepRunReason.Unchanged);
     }
 
@@ -83,6 +87,8 @@ public sealed class GeneratorIncrementalBehaviorTests
 
         // Act
         var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
+
+        // Assert
         GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "DiscoveryModel", IncrementalStepRunReason.Modified);
         GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Modified);
     }
@@ -110,6 +116,8 @@ public sealed class GeneratorIncrementalBehaviorTests
 
         // Act
         var (_, updatedRun) = GeneratorTestHarness.RunTrackedGeneratorDriver(driver, updatedCompilation);
+
+        // Assert
         GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "DiscoveryModel", IncrementalStepRunReason.Modified);
         GeneratorIncrementalBehaviorTestsHelpers.AssertStepHasReason(updatedRun, "GeneratedSources", IncrementalStepRunReason.Modified);
     }

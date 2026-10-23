@@ -15,6 +15,7 @@ public sealed class CommandActionTests
     [Fact]
     public async Task Work_canceled_outside_a_password_prompt_ends_before_the_command_exits_1()
     {
+        // Arrange
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         using var stopWaitStarted = new ManualResetEventSlim();
         var time = new ManualTimeProvider { OnTimerCreated = stopWaitStarted.Set };
@@ -31,10 +32,12 @@ public sealed class CommandActionTests
             return ExitCodes.Success;
         });
 
+        // Act
         var run = await CommandLineRun.Invoke(command, [], cancellation.Token);
         bool endedBeforeExit = Volatile.Read(ref ended) == 1;
         stopWaitStarted.Set();
 
+        // Assert
         run.ExitCode.ShouldBe(1);
         endedBeforeExit.ShouldBeTrue();
     }
@@ -72,6 +75,7 @@ public sealed class CommandActionTests
     [Fact]
     public async Task Work_canceled_at_a_password_prompt_exits_1_without_waiting_for_the_answer()
     {
+        // Arrange
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         using var answer = new ManualResetEventSlim();
         var time = new ManualTimeProvider();
@@ -90,10 +94,12 @@ public sealed class CommandActionTests
         };
         RootCommand command = ActionCommands.Running(environment, prompts => prompts.Environment.ReadPassword("Password for protected.json").Length);
 
+        // Act
         var run = await CommandLineRun.Invoke(command, [], cancellation.Token);
         bool exitedWhilePromptWaited = Volatile.Read(ref promptReturned) == 0;
         answer.Set();
 
+        // Assert
         run.ExitCode.ShouldBe(1);
         exitedWhilePromptWaited.ShouldBeTrue();
         time.FirstTimer.IsCompleted.ShouldBeFalse();

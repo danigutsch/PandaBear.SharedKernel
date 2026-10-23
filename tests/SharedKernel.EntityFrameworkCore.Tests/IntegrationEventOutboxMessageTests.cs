@@ -18,12 +18,14 @@ public sealed class IntegrationEventOutboxMessageTests
     [Fact]
     public void Creates_message_with_envelope_fields_and_enqueue_time()
     {
+        // Arrange
         var id = Guid.CreateVersion7();
         var eventId = Guid.CreateVersion7();
         var occurredAt = new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero);
         var enqueuedAt = occurredAt.AddSeconds(1);
         var source = new Uri("urn:test:source");
 
+        // Act
         var message = new IntegrationEventOutboxMessage(
             id,
             CloudEventConstants.Spec,
@@ -41,6 +43,7 @@ public sealed class IntegrationEventOutboxMessageTests
             "{\"traceparent\":\"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-00\"}",
             enqueuedAt);
 
+        // Assert
         message.Id.ShouldBe(id);
         message.EnvelopeSpec.ShouldBe(CloudEventConstants.Spec);
         message.EnvelopeSpecVersion.ShouldBe(CloudEventConstants.SpecVersion);
@@ -62,6 +65,7 @@ public sealed class IntegrationEventOutboxMessageTests
     [Fact]
     public void Rejects_empty_message_id()
     {
+        // Arrange
         Action create = () =>
         {
             _ = new IntegrationEventOutboxMessage(
@@ -82,14 +86,17 @@ public sealed class IntegrationEventOutboxMessageTests
                 TimeProvider.System.GetUtcNow());
         };
 
+        // Act
         var exception = create.ShouldThrow<ArgumentException>();
 
+        // Assert
         exception.ParamName.ShouldBe("id");
     }
 
     [Fact]
     public void MarkPublished_sets_publication_time()
     {
+        // Arrange
         var occurredAt = new DateTimeOffset(2026, 6, 22, 12, 0, 0, TimeSpan.Zero);
         var publishedAt = occurredAt.AddMinutes(1);
         var message = new IntegrationEventOutboxMessage(
@@ -109,8 +116,10 @@ public sealed class IntegrationEventOutboxMessageTests
             null,
             occurredAt);
 
+        // Act
         message.MarkPublished(publishedAt);
 
+        // Assert
         message.PublishedAt.ShouldBe(publishedAt);
     }
 
@@ -171,6 +180,7 @@ public sealed class IntegrationEventOutboxMessageTests
     [Fact]
     public async Task Enqueue_adds_current_trace_extensions_when_activity_exists()
     {
+        // Arrange
         await using var scope = ConsumerMessagingTestServices.CreateOutboxScope();
         var dbContext = scope.DbContext;
         var outbox = new EfIntegrationEventOutbox<ConsumerOutboxDbContext>(
@@ -181,6 +191,7 @@ public sealed class IntegrationEventOutboxMessageTests
         activity.TraceStateString = "vendor=value";
         activity.Start();
 
+        // Act
         await outbox.Enqueue(new ConsumerTestIntegrationEvent(
             Guid.CreateVersion7(),
             new DateTimeOffset(2026, 6, 22, 11, 59, 0, TimeSpan.Zero),
@@ -189,6 +200,7 @@ public sealed class IntegrationEventOutboxMessageTests
             "Andes Trace 2026"), CancellationToken.None);
         _ = await dbContext.SaveChangesAsync(TestContext.Current.CancellationToken);
 
+        // Assert
         var outboxMessage = dbContext.Set<IntegrationEventOutboxMessage>().ShouldHaveSingleItem();
         outboxMessage.ExtensionAttributesJson.ShouldNotBeNull();
         outboxMessage.ExtensionAttributesJson.ShouldContain("traceparent", StringComparison.Ordinal);

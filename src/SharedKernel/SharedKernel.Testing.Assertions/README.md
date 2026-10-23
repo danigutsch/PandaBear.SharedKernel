@@ -8,7 +8,7 @@ Reusable xUnit assertion extensions for SharedKernel test suites.
 
 ## Usage
 
-Import `PandaBear.Testing.Assertions` for `ShouldBe` and collection assertions. Use `ExceptionAssertions.ThrowsInner<TException>` when validating wrapped failures. Keep assertions tied to observable behavior and use the comparer/precision overloads when equality semantics require them.
+Import `PandaBear.Testing.Assertions` for `ShouldBe` and collection assertions. Use `ExceptionAssertions.ThrowsInner<TException>` when validating wrapped failures. Keep assertions tied to observable behavior and use the comparer/precision overloads when equality semantics require them. Pass the reason that an assertion holds as `userMessage` to `ShouldBe`, `ShouldContain` and `ShouldNotContain` with a predicate, `ShouldBeTrue`, and `ShouldBeFalse`; the failure message starts with it.
 
 ## Package identity and availability
 

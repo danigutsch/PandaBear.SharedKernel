@@ -11,10 +11,12 @@ public sealed class PrintableTextWriterTests
     [InlineData("back\rto the start\tand a tab", "back to the start and a tab")]
     public void Writes_replace_control_and_bidirectional_characters_and_keep_line_breaks(string text, string expected)
     {
+        // Arrange
         char[] characters = [.. text];
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var writer = new PrintableTextWriter(output);
 
+        // Act
         writer.Write(text);
         writer.Write(characters);
         foreach (char character in "\u001B\n")
@@ -22,18 +24,22 @@ public sealed class PrintableTextWriterTests
             writer.Write(character);
         }
 
+        // Assert
         output.ToString().ShouldBe(expected + expected + "\uFFFD\n");
     }
 
     [Fact]
     public void Write_line_ends_with_the_line_break_of_the_other_writer()
     {
+        // Arrange
         using var output = new StringWriter(CultureInfo.InvariantCulture) { NewLine = "\r\n" };
         using var writer = new PrintableTextWriter(output);
 
+        // Act
         writer.WriteLine("x\u001By");
         writer.WriteLine();
 
+        // Assert
         output.ToString().ShouldBe("x\uFFFDy\r\n\r\n");
     }
 }

@@ -15,21 +15,30 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_keeps_shared_folders_and_record_folders_as_declared_folders()
     {
+        // Arrange
         const string json = """
             {"shared_folders":[{"uid":"s1","path":"Team\\Empty"}],
              "records":[{"uid":"r","title":"t","folders":[{"shared_folder":"Team","folder":"Web"},{"folder":"Personal"}]}]}
             """;
 
-        KeeperJsonReader.Read(json, "keeper.json").Export.Folders.ShouldBe(["Team/Empty", "Team/Web", "Personal"]);
+        // Act
+        var export = KeeperJsonReader.Read(json, "keeper.json").Export;
+
+        // Assert
+        export.Folders.ShouldBe(["Team/Empty", "Team/Web", "Personal"]);
     }
 
     [Fact]
     public void Read_replaces_a_slash_in_a_folder_name_and_notes_the_original_name()
     {
+        // Arrange
         const string json = """{"records":[{"uid":"r","title":"t","folders":[{"folder":"Bills\\A/B"}]}]}""";
 
-        var item = KeeperJsonReader.Read(json, "keeper.json").Export.Items.ShouldHaveSingleItem();
+        // Act
+        var items = KeeperJsonReader.Read(json, "keeper.json").Export.Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem();
         item.FolderPath.ShouldBe("Bills/A-B");
         item.ConversionNotes.ShouldContain(note => note.Contains("\"A/B\"", StringComparison.Ordinal));
     }
@@ -37,8 +46,11 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_commander_login_maps_login_totps_uris_fields_folders_and_timestamp()
     {
-        var item = ReadCommander().Items.ShouldHaveSingleItem(item => item.Name == "Example login");
+        // Act
+        var items = ReadCommander().Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem(item => item.Name == "Example login");
         item.Type.ShouldBe(VaultItemType.Login);
         item.Notes.ShouldBe("login notes");
         item.FolderPath.ShouldBe("Team/Shared/Web/Sites");
@@ -63,8 +75,11 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_commander_login_records_unrepresentable_data_in_conversion_notes()
     {
-        var item = ReadCommander().Items.ShouldHaveSingleItem(item => item.Name == "Example login");
+        // Act
+        var items = ReadCommander().Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem(item => item.Name == "Example login");
         item.ConversionNotes.ShouldContain(note => note.Contains("other folder", StringComparison.Ordinal));
         item.ConversionNotes.ShouldContain(note => note.Contains("permissions", StringComparison.Ordinal));
         item.ConversionNotes.ShouldContain(note => note.Contains("references", StringComparison.Ordinal));
@@ -74,8 +89,10 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_commander_export_warns_about_shared_folder_permissions_without_values()
     {
+        // Act
         var result = KeeperJsonReader.Read(Fixture.Read("keeper/commander.json"), "commander.json");
 
+        // Assert
         result.Warnings.ShouldContain(warning => warning.Contains("permissions", StringComparison.Ordinal));
         result.Warnings.ShouldAllSatisfy(warning => warning.ShouldNotContain("member@example.com", StringComparison.Ordinal));
     }
@@ -105,16 +122,22 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [InlineData("Custom API record", "SecureNote")]
     public void Read_maps_every_keeper_record_type(string title, string expected)
     {
-        var item = ReadCommander().Items.ShouldHaveSingleItem(item => item.Name == title);
+        // Act
+        var items = ReadCommander().Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem(item => item.Name == title);
         item.Type.ShouldBe(Enum.Parse<VaultItemType>(expected));
     }
 
     [Fact]
     public void Read_bank_card_fills_card_data_and_keeps_pin_and_login_as_fields()
     {
-        var item = ReadCommander().Items.ShouldHaveSingleItem(item => item.Name == "Example card");
+        // Act
+        var items = ReadCommander().Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem(item => item.Name == "Example card");
         var card = item.Card.ShouldNotBeNull();
         card.Number.ShouldBe("4111111111111111");
         card.Code.ShouldBe("123");
@@ -128,8 +151,11 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_bank_account_keeps_account_numbers_hidden_in_bitwarden_format()
     {
-        var item = ReadCommander().Items.ShouldHaveSingleItem(item => item.Name == "Checking account");
+        // Act
+        var items = ReadCommander().Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem(item => item.Name == "Checking account");
         item.Fields.ShouldBe(
         [
             Field("bankAccount", "Type: Checking, Account Number: 12345678, Routing Number: 021000021", CustomFieldType.Hidden),
@@ -140,8 +166,10 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_identity_records_fill_identity_slots()
     {
+        // Act
         var items = ReadCommander().Items;
 
+        // Assert
         var address = items.ShouldHaveSingleItem(item => item.Name == "Home address").Identity.ShouldNotBeNull();
         address.ShouldBe(new IdentityData
         {
@@ -175,8 +203,10 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_maps_hidden_text_and_date_fields_of_other_record_types()
     {
+        // Act
         var items = ReadCommander().Items;
 
+        // Assert
         items.ShouldHaveSingleItem(item => item.Name == "Secret note").Fields
             .ShouldBe([Field("note", "secured note text"), Field("date", "2025-06-30")]);
         items.ShouldHaveSingleItem(item => item.Name == "Editor license").Fields
@@ -198,8 +228,11 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_ssh_key_record_without_private_key_becomes_note_with_passphrase_and_public_key()
     {
-        var item = ReadCommander().Items.ShouldHaveSingleItem(item => item.Name == "Key without private part");
+        // Act
+        var items = ReadCommander().Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem(item => item.Name == "Key without private part");
         item.SshKey.ShouldBeNull();
         item.Fields.ShouldBe(
         [
@@ -212,11 +245,15 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_ssh_key_record_with_private_key_becomes_ssh_key_item()
     {
+        // Arrange
         using var key = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         string pem = key.ExportPkcs8PrivateKeyPem();
 
-        var item = KeeperJsonReader.Read(SshKeyRecord(pem, "ecdsa-sha2-nistp256 AAAAfixture"), "ssh.json").Export.Items.ShouldHaveSingleItem();
+        // Act
+        var items = KeeperJsonReader.Read(SshKeyRecord(pem, "ecdsa-sha2-nistp256 AAAAfixture"), "ssh.json").Export.Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem();
         item.Type.ShouldBe(VaultItemType.SshKey);
         item.SshKey.ShouldBe(new SshKeyData { PrivateKey = pem, PublicKey = "ecdsa-sha2-nistp256 AAAAfixture", KeyFingerprint = null });
         item.Fields.ShouldBe(
@@ -231,12 +268,16 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_passkey_becomes_fido2_credential_whose_key_signs_for_the_original_public_key()
     {
+        // Arrange
         using var original = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         ECParameters parameters = original.ExportParameters(includePrivateParameters: true);
         byte[] credentialId = RandomNumberGenerator.GetBytes(16);
 
-        var item = KeeperJsonReader.Read(LoginWithPasskey(PasskeyJwk(parameters), Base64Url(credentialId)), "passkey.json").Export.Items.ShouldHaveSingleItem();
+        // Act
+        var items = KeeperJsonReader.Read(LoginWithPasskey(PasskeyJwk(parameters), Base64Url(credentialId)), "passkey.json").Export.Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem();
         var credential = item.Login.ShouldNotBeNull().Fido2Credentials.ShouldHaveSingleItem();
         credential.CredentialId.ShouldBe("b64." + Base64Url(credentialId));
         credential.RpId.ShouldBe("passkey.example.com");
@@ -258,13 +299,16 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_invalid_passkey_is_kept_as_hidden_field_and_warns_without_values()
     {
+        // Arrange
         using var original = ECDsa.Create(ECCurve.NamedCurves.nistP256);
         var jwk = PasskeyJwk(original.ExportParameters(includePrivateParameters: true));
         string privateScalar = jwk["d"]!.GetValue<string>();
         jwk["d"] = "not-a-scalar";
 
+        // Act
         var result = KeeperJsonReader.Read(LoginWithPasskey(jwk, "AAAA"), "passkey.json");
 
+        // Assert
         var item = result.Export.Items.ShouldHaveSingleItem();
         item.Login.ShouldNotBeNull().Fido2Credentials.ShouldBeEmpty();
         var field = item.Fields.ShouldHaveSingleItem();
@@ -279,8 +323,10 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_web_export_parses_numbered_keys_legacy_totp_escaped_folders_and_has_no_timestamp()
     {
+        // Act
         var export = KeeperJsonReader.Read(Fixture.Read("keeper/web.json"), "web.json").Export;
 
+        // Assert
         var item = export.Items.ShouldHaveSingleItem(item => item.Name == "Web login");
         item.Origin.ShouldBe(new ItemOrigin("keeper", "web.json", "1", null));
         item.FolderPath.ShouldBe("Shared\\Literal/Nested-Name");
@@ -300,8 +346,11 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_accepts_bare_record_array()
     {
-        var item = KeeperJsonReader.Read("""[{"uid":"a","title":"Bare","login":"u"}]""", "bare.json").Export.Items.ShouldHaveSingleItem();
+        // Act
+        var items = KeeperJsonReader.Read("""[{"uid":"a","title":"Bare","login":"u"}]""", "bare.json").Export.Items;
 
+        // Assert
+        var item = items.ShouldHaveSingleItem();
         item.Name.ShouldBe("Bare");
         item.Type.ShouldBe(VaultItemType.Login);
     }
@@ -309,19 +358,24 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void Read_invalid_JSON_throws_invalid_data()
     {
+        // Arrange
         var action = () => KeeperJsonReader.Read("{ not json", "bad.json");
 
+        // Act, Assert
         action.ShouldThrow<InvalidDataException>();
     }
 
     [Fact]
     public void ReadZip_attaches_files_by_file_uid_and_warns_about_missing_files()
     {
+        // Arrange
         string path = Path.Combine(directory, "keeper.zip");
         File.WriteAllBytes(path, TestZip.Create(("export.json", TestZip.Utf8(CommanderZipExport())), ("files/file-1", "%PDF"u8.ToArray())));
 
+        // Act
         var result = KeeperJsonReader.ReadZip(path);
 
+        // Assert
         var item = result.Export.Items.ShouldHaveSingleItem();
         item.Origin.SourceFile.ShouldBe("keeper.zip");
         item.Attachments.ShouldBe([new AttachmentRef("scan.pdf", 4, "files/file-1"), new AttachmentRef("missing.txt", null, null)]);
@@ -331,6 +385,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void ReadZip_warns_about_files_no_record_lists_and_about_other_entries()
     {
+        // Arrange
         string path = Path.Combine(directory, "keeper.zip");
         File.WriteAllBytes(path, TestZip.Create(
             ("export.json", TestZip.Utf8(CommanderZipExport())),
@@ -338,8 +393,10 @@ public sealed class KeeperJsonReaderTests : IDisposable
             ("files/fu-orphan", TestZip.Utf8("fixture orphan")),
             ("other/stray.txt", TestZip.Utf8("fixture stray"))));
 
+        // Act
         var result = KeeperJsonReader.ReadZip(path);
 
+        // Assert
         result.Warnings.ShouldBe(
         [
             "\"Record with files\": attachment \"missing.txt\" is listed but not included in the zip.",
@@ -351,22 +408,26 @@ public sealed class KeeperJsonReaderTests : IDisposable
     [Fact]
     public void ReadZip_without_export_json_throws_invalid_data()
     {
+        // Arrange
         string path = Path.Combine(directory, "other.zip");
         File.WriteAllBytes(path, TestZip.Create(("data.json", TestZip.Utf8("{}"))));
-
         var action = () => KeeperJsonReader.ReadZip(path);
 
+        // Act, Assert
         action.ShouldThrow<InvalidDataException>();
     }
 
     [Fact]
     public void Read_warnings_and_errors_never_contain_values()
     {
-        var result = KeeperJsonReader.Read(Fixture.Read("keeper/commander.json"), "commander.json");
+        // Arrange
         var action = () => KeeperJsonReader.Read("""{"records":"fixture-password-1"}""", "bad.json");
 
+        // Act
+        var result = KeeperJsonReader.Read(Fixture.Read("keeper/commander.json"), "commander.json");
         var exception = action.ShouldThrow<InvalidDataException>();
 
+        // Assert
         exception.Message.ShouldNotContain("fixture-password-1", StringComparison.Ordinal);
         result.Warnings.ShouldAllSatisfy(warning => warning.ShouldNotContain("fixture", StringComparison.Ordinal));
         result.Export.Items.SelectMany(item => item.ConversionNotes)

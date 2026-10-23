@@ -6,6 +6,7 @@ public sealed class GeneratorDiagnosticIdsTests
     [Fact]
     public void Mediator_diagnostic_ids_remain_stable()
     {
+        // Act, Assert
         MediatorDiagnosticIds.MissingHandler.ShouldBe("SKMED001");
         MediatorDiagnosticIds.MultipleHandlers.ShouldBe("SKMED002");
         MediatorDiagnosticIds.InvalidHandlerSignature.ShouldBe("SKMED003");
@@ -30,6 +31,7 @@ public sealed class GeneratorDiagnosticIdsTests
     [Fact]
     public void Analyzer_releases_unshipped_lists_the_current_mediator_diagnostic_ids()
     {
+        // Act
         var analyzerReleaseIds = File.ReadAllLines(GeneratorDiagnosticIdsTestsHelpers.GetAnalyzerReleasesPath())
             .Select(static line => line.Trim())
             .Where(static line => line.StartsWith("SKMED", StringComparison.Ordinal))
@@ -48,6 +50,7 @@ public sealed class GeneratorDiagnosticIdsTests
             .OrderBy(static value => value, StringComparer.Ordinal)
             .ToArray();
 
+        // Assert
         orderedAnalyzerReleaseIds.ShouldBe(diagnosticIds);
     }
 

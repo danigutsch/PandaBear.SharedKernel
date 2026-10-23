@@ -16,10 +16,13 @@ public sealed class VaultFileReaderTests : IDisposable
     [InlineData("bitwarden-csv", "bitwarden")]
     public void Read_dispatches_to_the_reader_for_the_detected_format(string sample, string provider)
     {
+        // Arrange
         string path = FormatSamples.WriteSample(directory, sample);
 
+        // Act
         var result = VaultFileReader.Read(path, _ => throw new InvalidOperationException("No password expected."));
 
+        // Assert
         result.Export.Items.ShouldNotBeEmpty();
         result.Export.Items.ShouldAllSatisfy(item => item.Origin.Provider.ShouldBe(provider));
     }
@@ -29,13 +32,16 @@ public sealed class VaultFileReaderTests : IDisposable
     [InlineData(2, "2 items in the trash were skipped. Restore them in Bitwarden and export again to keep them.")]
     public void Read_warns_about_the_items_in_the_trash_that_it_skips(int deleted, string warning)
     {
+        // Arrange
         string trash = string.Concat(Enumerable.Range(0, deleted).Select(index =>
             ",{\"id\":\"old-" + index + "\",\"type\":2,\"name\":\"Old\",\"notes\":\"fixture keep me\",\"deletedDate\":\"2026-01-01T00:00:00Z\"}"));
         string path = Path.Combine(directory, "trash.json");
         File.WriteAllText(path, "{\"encrypted\":false,\"folders\":[],\"items\":[{\"id\":\"kept\",\"type\":2,\"name\":\"Kept\",\"notes\":\"fixture\"}" + trash + "]}");
 
+        // Act
         var result = VaultFileReader.Read(path, _ => throw new InvalidOperationException("No password expected."));
 
+        // Assert
         result.Export.Items.ShouldHaveSingleItem().Name.ShouldBe("Kept");
         result.Warnings.ShouldBe([warning]);
     }
@@ -43,15 +49,18 @@ public sealed class VaultFileReaderTests : IDisposable
     [Fact]
     public void Read_password_protected_export_asks_for_the_file_password_by_file_name()
     {
+        // Arrange
         string path = FormatSamples.WriteSample(directory, "bitwarden-protected");
         var asked = new List<string>();
 
+        // Act
         var result = VaultFileReader.Read(path, name =>
         {
             asked.Add(name);
             return "fixture password";
         });
 
+        // Assert
         asked.ShouldBe(["protected.json"]);
         result.Export.Items.ShouldNotBeEmpty();
     }
@@ -59,33 +68,39 @@ public sealed class VaultFileReaderTests : IDisposable
     [Fact]
     public void Read_account_restricted_export_throws_with_explanation()
     {
+        // Arrange
         string path = FormatSamples.WriteSample(directory, "bitwarden-restricted");
-
         var action = () => VaultFileReader.Read(path, _ => "unused");
 
+        // Act
         var exception = action.ShouldThrow<InvalidDataException>();
 
+        // Assert
         exception.Message.ShouldContain("account-restricted", StringComparison.Ordinal);
     }
 
     [Fact]
     public void Read_unknown_format_throws_invalid_data()
     {
+        // Arrange
         string path = FormatSamples.WriteSample(directory, "other-text");
-
         var action = () => VaultFileReader.Read(path, _ => "unused");
 
+        // Act, Assert
         action.ShouldThrow<InvalidDataException>();
     }
 
     [Fact]
     public void Read_reports_an_input_that_is_a_directory_by_its_path()
     {
+        // Arrange
         string path = Directory.CreateDirectory(Path.Combine(directory, "export.json")).FullName;
-
         var action = () => VaultFileReader.Read(path, _ => "unused");
 
+        // Act
         var exception = action.ShouldThrow<IOException>();
+
+        // Assert
         exception.Message.ShouldContain(path, StringComparison.Ordinal);
         exception.Message.ShouldContain("is a directory", StringComparison.Ordinal);
     }
@@ -93,6 +108,7 @@ public sealed class VaultFileReaderTests : IDisposable
     [Fact]
     public void Read_rejects_files_larger_than_the_input_cap_before_reading()
     {
+        // Arrange
         string path = Path.Combine(directory, "large.json");
         using (var stream = File.Create(path))
         {
@@ -101,19 +117,24 @@ public sealed class VaultFileReaderTests : IDisposable
 
         var action = () => VaultFileReader.Read(path, _ => "unused");
 
+        // Act
         var exception = action.ShouldThrow<InvalidDataException>();
 
+        // Assert
         exception.Message.ShouldContain("too large", StringComparison.Ordinal);
     }
 
     [Fact]
     public void Read_zip_exports_return_items_from_the_archive()
     {
+        // Arrange
         string keeper = FormatSamples.Write(directory, "keeper.zip", TestZip.Create(
             ("export.json", TestZip.Utf8("""{"records":[{"uid":"u","title":"Zipped","login":"x"}]}"""))));
 
+        // Act
         var result = VaultFileReader.Read(keeper, _ => "unused");
 
+        // Assert
         result.Export.Items.ShouldHaveSingleItem().Type.ShouldBe(VaultItemType.Login);
     }
 }

@@ -22,14 +22,17 @@ public sealed class PrintableOutputTests : IDisposable
     [Fact]
     public async Task Inspect_merge_and_the_merge_report_show_item_names_without_controls_line_separators_or_overrides()
     {
+        // Arrange
         string[] inputs = CliInputs.ConflictingLoginsAndMissingAttachment(directory, Name);
         string report = Path.Combine(directory, "merge.md");
         var ct = TestContext.Current.CancellationToken;
 
+        // Act
         var inspect = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", .. inputs], ct);
         var merge = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", Path.Combine(directory, "merged.json"), "--report", report], ct);
         string markdown = await File.ReadAllTextAsync(report, ct);
 
+        // Assert
         inspect.ExitCode.ShouldBe(0);
         merge.ExitCode.ShouldBe(2);
         markdown.ShouldContainInOrder("## Decisions needed", "` (" + PrintableName + ")");
@@ -44,6 +47,7 @@ public sealed class PrintableOutputTests : IDisposable
     [Fact]
     public async Task Review_summary_shows_item_names_without_controls_line_separators_or_overrides()
     {
+        // Arrange
         var terminal = new FakeTerminal
         {
             User = session =>
@@ -54,8 +58,10 @@ public sealed class PrintableOutputTests : IDisposable
             },
         };
 
+        // Act
         var run = await ReviewRun.Invoke(new TestPrompts(ExportPassword).Environment(), terminal, [.. CliInputs.ConflictingLoginsAndMissingAttachment(directory, Name), "-o", Path.Combine(directory, "merged.json"), "--plaintext"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         run.Output.ShouldContain("  " + PrintableName + ": photo.png, not included in keeper.zip", StringComparison.Ordinal);
         string[] texts = [run.Output, run.Error];
@@ -69,13 +75,16 @@ public sealed class PrintableOutputTests : IDisposable
     [Fact]
     public async Task Review_warns_about_decisions_that_match_nothing_without_controls_line_separators_or_overrides()
     {
+        // Arrange
         string[] inputs = CliInputs.NewerBitwardenLogin(directory);
         string groupKey = "0000\u001b[2J\r\u009b\u2028\u202E0000";
         string decisionsPath = Path.Combine(directory, "decisions.json");
         DecisionsFile.Write(decisionsPath, new MergeDecisions([new GroupDecision(groupKey, [FieldChoice.Empty(FieldPaths.Notes)])], MatchOverrides.None));
 
+        // Act
         var run = await ReviewRun.Invoke(new TestPrompts(ExportPassword).Environment(), new FakeTerminal(), [.. inputs, "--decisions", decisionsPath], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         run.Error.ShouldBe("Warning: decisions for group 0000\uFFFD[2J \uFFFD \uFFFD0000 match no merged group and are ignored.\n", StringComparer.Ordinal);
     }
@@ -83,6 +92,7 @@ public sealed class PrintableOutputTests : IDisposable
     [Fact]
     public async Task Review_summary_shows_the_files_it_saved_and_wrote_without_controls_line_separators_or_overrides()
     {
+        // Arrange
         string[] inputs = CliInputs.NewerBitwardenLogin(directory);
         string decisionsPath = Path.Combine(directory, "decisions\u009b\u2028\u202E.json");
         string output = Path.Combine(directory, "merged\u009b\u2028\u202E.json");
@@ -96,8 +106,10 @@ public sealed class PrintableOutputTests : IDisposable
             },
         };
 
+        // Act
         var run = await ReviewRun.Invoke(new TestPrompts(ExportPassword).Environment(), terminal, [.. inputs, "--decisions", decisionsPath, "-o", output, "--plaintext"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         run.Output.ShouldContain("Saved the decisions to " + Path.Combine(directory, "decisions\uFFFD \uFFFD.json") + ".\n", StringComparison.Ordinal);
         run.Output.ShouldContain("Wrote the merged vault to " + Path.Combine(directory, "merged\uFFFD \uFFFD.json") + " as unencrypted JSON.", StringComparison.Ordinal);

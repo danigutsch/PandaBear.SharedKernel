@@ -12,8 +12,10 @@ public sealed class ReviewTextTests
     [InlineData("a\tb", "a b")]
     public void One_line_replaces_terminal_controls_and_bidirectional_overrides(string text, string expected)
     {
+        // Act
         string shown = ReviewText.OneLine(text);
 
+        // Assert
         shown.ShouldBe(expected);
     }
 
@@ -25,8 +27,10 @@ public sealed class ReviewTextTests
     [InlineData("two\u2029lines")]
     public void One_line_marks_each_line_break(string text)
     {
+        // Act
         string shown = ReviewText.OneLine(text);
 
+        // Assert
         shown.ShouldBe("two" + ReviewText.LineBreak + "lines");
     }
 }

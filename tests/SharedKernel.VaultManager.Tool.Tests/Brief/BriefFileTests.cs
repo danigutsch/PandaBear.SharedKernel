@@ -15,6 +15,7 @@ public sealed class BriefFileTests : IDisposable
     [Fact]
     public void Brief_round_trips_and_is_written_readable_only_by_its_owner()
     {
+        // Arrange
         var brief = new BriefDocument(
             BriefFile.CurrentVersion,
             ["keeper.json", "bitwarden.json"],
@@ -38,10 +39,12 @@ public sealed class BriefFileTests : IDisposable
             [new MatchSuggestion(MatchSuggestionKind.SameTitle, "keeper|keeper.json|rec-2", "bitwarden|bitwarden.json|bw-2", "Mail", "Mail")]);
         string path = Path.Combine(directory, "brief.json");
 
+        // Act
         BriefFile.Write(path, brief, TestContext.Current.CancellationToken);
         string json = File.ReadAllText(path);
         var reread = BriefFile.Read(path);
 
+        // Assert
         BriefFile.Serialize(reread).ShouldBe(json);
         json.ShouldContain("Café \\u202Eexample", StringComparison.Ordinal);
         json.ShouldContain("\"kind\": \"Password\"", StringComparison.Ordinal);
@@ -58,6 +61,7 @@ public sealed class BriefFileTests : IDisposable
     [InlineData("finding", "lists finding notes-pin@notes:0 of keeper|keeper.json|rec-1 twice")]
     public void Brief_rejects_repeated_groups_members_and_findings(string repeated, string named)
     {
+        // Arrange
         var finding = new BriefFinding("notes-pin@notes:0", SecretKind.Pin, Confidence.Medium, "notes", 1, "hidden field 'PIN'", PreAccepted: false, NeedsDecision: true, AgentMayAccept: true, AgentMayReject: true);
         var member = new BriefMember("keeper|keeper.json|rec-1", "keeper.json", "Bank", null, null, null, null, Newest: false, repeated == "finding" ? [finding, finding] : [finding]);
         var group = new BriefGroup("g1", VaultItemType.Login, repeated == "member" ? [member, member] : [member], []);
@@ -65,7 +69,11 @@ public sealed class BriefFileTests : IDisposable
 
         var action = () => BriefFile.Deserialize(BriefFile.Serialize(brief));
 
-        action.ShouldThrow<InvalidDataException>().Message.ShouldContain(named, StringComparison.Ordinal);
+        // Act
+        var exception = action.ShouldThrow<InvalidDataException>();
+
+        // Assert
+        exception.Message.ShouldContain(named, StringComparison.Ordinal);
     }
 
     [Theory]
@@ -75,8 +83,13 @@ public sealed class BriefFileTests : IDisposable
     [InlineData("""{"version":2,"inputs":[],"summary":{"items":0,"mergedGroups":0,"conflictsResolvedByPolicy":0,"fieldsNeedingDecision":0,"findings":0,"findingsApplied":0,"findingsNeedingDecision":0,"passwordIssues":0,"attachmentsToUpload":0},"groups":[],"suggestions":[]}""", "version 2")]
     public void Brief_rejects_unknown_repeated_and_missing_properties_and_other_versions(string json, string named)
     {
+        // Arrange
         var action = () => BriefFile.Deserialize(json);
 
-        action.ShouldThrow<InvalidDataException>().Message.ShouldContain(named, StringComparison.Ordinal);
+        // Act
+        var exception = action.ShouldThrow<InvalidDataException>();
+
+        // Assert
+        exception.Message.ShouldContain(named, StringComparison.Ordinal);
     }
 }

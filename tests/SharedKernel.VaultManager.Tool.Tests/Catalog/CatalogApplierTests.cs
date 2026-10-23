@@ -10,11 +10,14 @@ public sealed class CatalogApplierTests
     [Fact]
     public void Apply_of_an_unedited_catalog_changes_nothing()
     {
+        // Arrange
         var vault = Vault(Login());
         var catalog = CatalogBuilder.Build(vault, "abc", MergeDecisions.None).Catalog;
 
+        // Act
         var result = CatalogApplier.Apply(vault, catalog, MergeDecisions.None);
 
+        // Assert
         result.Problems.ShouldBeEmpty();
         result.ChangedItems.ShouldBe(0);
         var item = result.Vault.ShouldNotBeNull().Items.ShouldHaveSingleItem();
@@ -30,6 +33,7 @@ public sealed class CatalogApplierTests
     [Fact]
     public void Apply_takes_the_edited_parts_and_keeps_every_secret()
     {
+        // Arrange
         var vault = Vault(Login());
         var entry = CatalogBuilder.Build(vault, "abc", Notes(NotesDecision.Share)).Catalog.Items[0];
         var edited = entry with
@@ -43,8 +47,10 @@ public sealed class CatalogApplierTests
             Fields = [new CatalogField("Plan", "Enterprise"), new CatalogField("Owner", "IT")],
         };
 
+        // Act
         var result = CatalogApplier.Apply(vault, CatalogWith(vault, [edited], ["Archive", "Empty"]), Notes(NotesDecision.Share));
 
+        // Assert
         result.Problems.ShouldBeEmpty();
         result.ChangedItems.ShouldBe(1);
         var item = result.Vault.ShouldNotBeNull().Items.ShouldHaveSingleItem();
@@ -71,11 +77,15 @@ public sealed class CatalogApplierTests
     [Fact]
     public void Apply_moves_notes_the_user_hides_into_a_hidden_field()
     {
+        // Arrange
         var vault = Vault(Login());
         var catalog = CatalogBuilder.Build(vault, "abc", Notes(NotesDecision.Hidden)).Catalog;
 
-        var item = CatalogApplier.Apply(vault, catalog, Notes(NotesDecision.Hidden)).Vault.ShouldNotBeNull().Items.ShouldHaveSingleItem();
+        // Act
+        var result = CatalogApplier.Apply(vault, catalog, Notes(NotesDecision.Hidden));
 
+        // Assert
+        var item = result.Vault.ShouldNotBeNull().Items.ShouldHaveSingleItem();
         item.Notes.ShouldBeNull();
         item.Fields.ShouldContain(new CustomField(CatalogApplier.HiddenNotesField, NotesText, CustomFieldType.Hidden));
     }
@@ -83,17 +93,22 @@ public sealed class CatalogApplierTests
     [Fact]
     public void Apply_keeps_withheld_notes_when_the_decision_changed_after_the_catalog()
     {
+        // Arrange
         var vault = Vault(Login());
         var catalog = CatalogBuilder.Build(vault, "abc", MergeDecisions.None).Catalog;
 
-        var item = CatalogApplier.Apply(vault, catalog, Notes(NotesDecision.Share)).Vault.ShouldNotBeNull().Items.ShouldHaveSingleItem();
+        // Act
+        var result = CatalogApplier.Apply(vault, catalog, Notes(NotesDecision.Share));
 
+        // Assert
+        var item = result.Vault.ShouldNotBeNull().Items.ShouldHaveSingleItem();
         item.Notes.ShouldBe(NotesText);
     }
 
     [Fact]
     public void Apply_refuses_notes_text_when_the_share_decision_is_bound_to_other_notes()
     {
+        // Arrange
         var vault = Vault(Login());
         var catalog = CatalogBuilder.Build(vault, "abc", Notes(NotesDecision.Share)).Catalog;
         var stale = MergeDecisions.None with
@@ -101,8 +116,10 @@ public sealed class CatalogApplierTests
             Notes = [new ItemNotesDecision(Key, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf("other notes"))]
         };
 
+        // Act
         var result = CatalogApplier.Apply(vault, catalog, stale);
 
+        // Assert
         result.Vault.ShouldBeNull();
         result.Problems.ShouldHaveSingleItem().ShouldContain("the decisions file does not", StringComparison.Ordinal);
     }
@@ -117,6 +134,7 @@ public sealed class CatalogApplierTests
     [InlineData("empty name")]
     public void Apply_rejects_a_catalog_that_changes_what_it_may_not(string change)
     {
+        // Arrange
         var vault = Vault(Login());
         var entry = CatalogBuilder.Build(vault, "abc", MergeDecisions.None).Catalog.Items[0];
         CatalogItem[] items = change switch
@@ -130,8 +148,10 @@ public sealed class CatalogApplierTests
             _ => [entry with { Name = " " }],
         };
 
+        // Act
         var result = CatalogApplier.Apply(vault, CatalogWith(vault, items), MergeDecisions.None);
 
+        // Assert
         result.Vault.ShouldBeNull();
         result.Problems.ShouldNotBeEmpty();
         result.Problems.ShouldAllSatisfy(problem =>

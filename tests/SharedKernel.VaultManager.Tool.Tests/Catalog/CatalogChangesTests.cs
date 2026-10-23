@@ -11,6 +11,7 @@ public sealed class CatalogChangesTests
     [Fact]
     public void An_unedited_catalog_gives_no_changes_and_no_removals()
     {
+        // Arrange
         VaultItem item = Login() with
         {
             Fields = [new CustomField(null, "nameless value", CustomFieldType.Text), new CustomField("Empty", null, CustomFieldType.Text), .. Login().Fields],
@@ -20,9 +21,11 @@ public sealed class CatalogChangesTests
             },
         };
 
+        // Act
         var shared = Apply(item, entry => entry, Notes(NotesDecision.Share));
         var withheld = Apply(item, entry => entry);
 
+        // Assert
         shared.Changes.ShouldBeEmpty();
         shared.Removals.ShouldBeEmpty();
         shared.ChangedItems.ShouldBe(0);
@@ -37,6 +40,7 @@ public sealed class CatalogChangesTests
     [Fact]
     public void An_unedited_catalog_keeps_shared_notes_that_hold_only_white_space()
     {
+        // Arrange
         VaultItem item = Login() with
         {
             Notes = "\n"
@@ -46,8 +50,10 @@ public sealed class CatalogChangesTests
             Notes = [new ItemNotesDecision(Key, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf("\n"))]
         };
 
+        // Act
         var result = Apply(item, entry => entry, decisions);
 
+        // Assert
         result.Changes.ShouldBeEmpty();
         result.Removals.ShouldBeEmpty();
         result.ChangedItems.ShouldBe(0);
@@ -57,13 +63,16 @@ public sealed class CatalogChangesTests
     [Fact]
     public void Apply_describes_reordered_text_fields_and_additional_folders()
     {
+        // Arrange
         VaultItem item = Login() with
         {
             Fields = [new CustomField("Owner", "IT", CustomFieldType.Text), .. Login().Fields.Select(field => field.Name == AdditionalFolders.FieldName ? field with { Value = "Personal\nArchive" } : field)],
         };
 
+        // Act
         var result = Apply(item, entry => entry with { Fields = [.. entry.Fields.Reverse()], AdditionalFolders = [.. entry.AdditionalFolders.Reverse()] });
 
+        // Assert
         result.Changes.ShouldBe([Prefix + "additional folders reordered", Prefix + "text fields reordered"]);
         result.Removals.ShouldBeEmpty();
         result.ChangedItems.ShouldBe(1);
@@ -90,6 +99,7 @@ public sealed class CatalogChangesTests
     [InlineData("remove field", "text field \"Plan\" removed", true)]
     public void Apply_describes_each_change_of_an_item(string change, string line, bool isRemoval)
     {
+        // Arrange
         VaultItem item = change == "match by default"
             ? Login() with
             {
@@ -120,8 +130,10 @@ public sealed class CatalogChangesTests
             _ => entry => entry with { Fields = [] },
         };
 
+        // Act
         var result = Apply(item, edit);
 
+        // Assert
         result.Changes.ShouldContain(Prefix + line);
         result.Removals.Contains(Prefix + line).ShouldBe(isRemoval);
         result.Removals.ShouldAllSatisfy(removal => result.Changes.ShouldContain(removal));
@@ -141,11 +153,13 @@ public sealed class CatalogChangesTests
     [Fact]
     public void Apply_describes_an_item_that_is_no_longer_a_favorite()
     {
+        // Act
         var result = Apply(Login() with
         {
             Favorite = true
         }, entry => entry with { Favorite = false });
 
+        // Assert
         result.Changes.ShouldBe([Prefix + "no longer a favorite"]);
         result.Removals.ShouldBeEmpty();
     }
@@ -153,6 +167,7 @@ public sealed class CatalogChangesTests
     [Fact]
     public void Apply_describes_reordered_addresses_without_adding_or_removing_them()
     {
+        // Arrange
         VaultItem item = Login() with
         {
             Login = Login().Login! with
@@ -161,8 +176,10 @@ public sealed class CatalogChangesTests
             },
         };
 
+        // Act
         var result = Apply(item, entry => entry with { Uris = [entry.Uris[1], entry.Uris[0]] });
 
+        // Assert
         result.Changes.ShouldBe([Prefix + "website addresses reordered"]);
         result.Removals.ShouldBeEmpty();
     }
@@ -170,6 +187,7 @@ public sealed class CatalogChangesTests
     [Fact]
     public void Apply_pairs_text_fields_by_value_then_by_name()
     {
+        // Arrange
         VaultItem item = Login() with
         {
             Fields =
@@ -180,11 +198,13 @@ public sealed class CatalogChangesTests
             ],
         };
 
+        // Act
         var result = Apply(item, entry => entry with
         {
             Fields = [new CatalogField("A", "fixture-a2"), new CatalogField("B", "fixture-b4"), new CatalogField("C", "fixture-c5")],
         });
 
+        // Assert
         result.Changes.ShouldBe(
         [
             Prefix + "text field \"A\" removed",
@@ -197,11 +217,13 @@ public sealed class CatalogChangesTests
     [Fact]
     public void Apply_describes_notes_added_to_an_item_without_notes()
     {
+        // Act
         var result = Apply(Login() with
         {
             Notes = null
         }, entry => entry with { Notes = new CatalogNotes(NotesDecision.Share, "fixture added notes") });
 
+        // Assert
         result.Changes.ShouldBe([Prefix + "notes added"]);
         result.Removals.ShouldBeEmpty();
     }
@@ -211,8 +233,10 @@ public sealed class CatalogChangesTests
     [InlineData(" ", "notes emptied", true)]
     public void Apply_describes_edited_shared_notes(string text, string line, bool isRemoval)
     {
+        // Act
         var result = Apply(Login(), entry => entry with { Notes = new CatalogNotes(NotesDecision.Share, text) }, Notes(NotesDecision.Share));
 
+        // Assert
         result.Changes.ShouldBe([Prefix + line]);
         result.Removals.Contains(Prefix + line).ShouldBe(isRemoval);
     }
@@ -220,8 +244,10 @@ public sealed class CatalogChangesTests
     [Fact]
     public void Apply_describes_notes_moved_into_a_hidden_field()
     {
+        // Act
         var result = Apply(Login(), entry => entry, Notes(NotesDecision.Hidden));
 
+        // Assert
         result.Changes.ShouldBe([Prefix + "notes moved into a hidden field named \"Notes\""]);
         result.Removals.ShouldBeEmpty();
     }
@@ -229,9 +255,11 @@ public sealed class CatalogChangesTests
     [Fact]
     public void Apply_describes_added_and_removed_folders_of_the_vault()
     {
+        // Act
         var added = Apply(Login(), entry => entry with { Folder = "Work/Code" }, folders: ["Archive", "Empty"]);
         var removed = Apply(Login(), entry => entry, folders: []);
 
+        // Assert
         added.Changes.ShouldBe(
         [
             Prefix + "moved from folder \"Work\" to \"Work/Code\"",

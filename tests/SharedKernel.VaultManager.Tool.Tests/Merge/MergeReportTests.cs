@@ -9,6 +9,7 @@ public sealed class MergeReportTests
     [Fact]
     public void Report_markdown_contains_no_values()
     {
+        // Arrange
         var keeper = Keeper(Login("fixture-old-password", "JBSWY3DPEHPK3PXP")) with
         {
             Notes = "fixture-old-notes",
@@ -36,9 +37,11 @@ public sealed class MergeReportTests
             Origin = new ItemOrigin("bitwarden", BitwardenFile, "b2", null),
         });
 
+        // Act
         var report = Run(keeper, bitwarden, unknown, unknownDuplicate).Report;
         string markdown = report.ToMarkdown();
 
+        // Assert
         report.DifferentGroups.ShouldBe(2);
         report.AutoResolvedConflicts.ShouldBe(3);
         report.UnresolvedConflicts.ShouldBe(1);

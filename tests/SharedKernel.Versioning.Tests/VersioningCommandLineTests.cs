@@ -323,9 +323,8 @@ public static class VersioningCommandLineTests
             .ToArray();
 
         // Assert
-        // The piped compute and redirected prepare-release examples read standard input.
-        commandLines.ShouldContain(static line => line.StartsWith("compute ", StringComparison.Ordinal));
-        commandLines.ShouldContain(static line => line.StartsWith("prepare-release ", StringComparison.Ordinal));
+        commandLines.ShouldContain(static line => line.StartsWith("compute ", StringComparison.Ordinal), "The piped compute example, which reads standard input, is a README command line.");
+        commandLines.ShouldContain(static line => line.StartsWith("prepare-release ", StringComparison.Ordinal), "The redirected prepare-release example, which reads standard input, is a README command line.");
         parsed.ShouldAllSatisfy(static entry =>
         {
             entry.Result.Errors.ShouldBeEmpty();
@@ -345,8 +344,7 @@ public static class VersioningCommandLineTests
         var unknown = CallerCommandLine.FindUnknownOptions(rootCommand, synopses);
 
         // Assert
-        // A synopsis without placeholders is a runnable command line, which the README command line scan parses.
-        synopses.Select(static synopsis => synopsis.Command).ShouldBe(CommandNames.Except(["check-public-api-baselines", "validate-package-metadata"]));
+        synopses.Select(static synopsis => synopsis.Command).ShouldBe(CommandNames.Except(["check-public-api-baselines", "validate-package-metadata"]), "A synopsis without placeholders is a runnable command line, which the README command line scan parses.");
         unknown.ShouldBeEmpty();
     }
 

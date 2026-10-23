@@ -10,11 +10,14 @@ public sealed class CatalogFileTests
     [Fact]
     public void Catalog_round_trips_items_without_folder_notes_user_name_or_addresses()
     {
+        // Arrange
         var note = new VaultItem { Type = VaultItemType.SecureNote, Name = "Wifi", Origin = new ItemOrigin("bitwarden", "vault.json", "item-2", null) };
         var catalog = CatalogBuilder.Build(Vault(Login(), note), "abc", MergeDecisions.None).Catalog;
 
+        // Act
         var reread = CatalogFile.Deserialize(CatalogFile.Serialize(catalog));
 
+        // Assert
         reread.Items.Count.ShouldBe(2);
         reread.Items[1].Folder.ShouldBeNull();
         reread.Items[1].Notes.ShouldBeNull();
@@ -29,8 +32,10 @@ public sealed class CatalogFileTests
     [InlineData("""{"version":1,"folders":[],"items":[]}""")]
     public void Catalog_rejects_unknown_missing_properties_and_other_versions(string json)
     {
+        // Arrange
         var action = () => CatalogFile.Deserialize(json);
 
+        // Act, Assert
         action.ShouldThrow<InvalidDataException>();
     }
 }

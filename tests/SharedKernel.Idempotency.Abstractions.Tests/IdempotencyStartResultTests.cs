@@ -7,7 +7,7 @@ public sealed class IdempotencyStartResultTests
     [Fact]
     public void StartedNew_creates_ownership_result()
     {
-        // Arrange, Act
+        // Act
         var result = IdempotencyStartResult.StartedNew();
 
         // Assert
