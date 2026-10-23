@@ -2,18 +2,19 @@ namespace PandaBear.Versioning.Tool;
 
 internal static class ReleaseVersionCommand
 {
-    public static async Task<VersionOutput> Run(CalculateReleaseOptions options, TextWriter output)
+    public static async Task<VersionOutput> Run(CalculateReleaseOptions options, TextWriter output, CancellationToken ct)
     {
         var sourceSha = string.IsNullOrWhiteSpace(options.Sha)
-            ? CommandRunner.Run("git", ["rev-parse", "HEAD"], options.RepoRoot).Trim()
+            ? (await CommandRunner.Run("git", ["rev-parse", "HEAD"], options.RepoRoot, ct).ConfigureAwait(false)).Trim()
             : options.Sha;
-        var sourceTag = CommandRunner.RunOrDefault(
+        var sourceTag = (await CommandRunner.RunOrDefault(
             "git",
             ["describe", "--tags", "--match", "v[0-9]*", "--abbrev=0"],
-            options.RepoRoot).Trim();
+            options.RepoRoot,
+            ct).ConfigureAwait(false)).Trim();
 
         var commitRange = ReleaseVersionCalculator.GetCommitRange(sourceTag);
-        var logOutput = CommandRunner.Run("git", ["log", "--format=%B%x00", commitRange], options.RepoRoot);
+        var logOutput = await CommandRunner.Run("git", ["log", "--format=%B%x00", commitRange], options.RepoRoot, ct).ConfigureAwait(false);
         var result = await ReleaseVersionCalculator.Calculate(
             new ReleaseVersionCalculationInput(
                 sourceSha,
@@ -26,12 +27,13 @@ internal static class ReleaseVersionCommand
         {
             await File.AppendAllLinesAsync(
                 options.GitHubOutput,
-                ReleaseVersionCalculator.CreateGitHubOutputs(result)).ConfigureAwait(false);
+                ReleaseVersionCalculator.CreateGitHubOutputs(result),
+                ct).ConfigureAwait(false);
         }
 
         if (!string.IsNullOrWhiteSpace(options.GitHubSummary))
         {
-            await File.AppendAllLinesAsync(options.GitHubSummary, ReleaseVersionCalculator.CreateSummary(result)).ConfigureAwait(false);
+            await File.AppendAllLinesAsync(options.GitHubSummary, ReleaseVersionCalculator.CreateSummary(result), ct).ConfigureAwait(false);
         }
 
         await output.WriteLineAsync(result.VersionJson).ConfigureAwait(false);

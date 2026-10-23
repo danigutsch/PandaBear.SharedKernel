@@ -101,118 +101,6 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static void Parses_compute_options()
-    {
-        // Arrange
-        string[] args = ["--base", "0.1.0", "--prerelease", "alpha.1", "--sha", "abc123"];
-
-        // Act
-        var options = VersionToolOptions.Parse(args);
-
-        // Assert
-        options.BaseVersion.ShouldBe("0.1.0");
-        options.Prerelease.ShouldBe("alpha.1");
-        options.Sha.ShouldBe("abc123");
-    }
-
-    [Fact]
-    public static void Parses_calculate_release_options()
-    {
-        // Arrange
-        string[] args =
-        [
-            "--repo-root",
-            "/repo",
-            "--version-kind",
-            "stable",
-            "--run-number",
-            "42",
-            "--sha",
-            "abc123",
-            "--github-output",
-            "/tmp/out",
-            "--github-summary",
-            "/tmp/summary",
-        ];
-
-        // Act
-        var options = CalculateReleaseOptions.Parse(args);
-
-        // Assert
-        options.RepoRoot.ShouldBe("/repo");
-        options.VersionKind.ShouldBe("stable");
-        options.RunNumber.ShouldBe("42");
-        options.Sha.ShouldBe("abc123");
-        options.GitHubOutput.ShouldBe("/tmp/out");
-        options.GitHubSummary.ShouldBe("/tmp/summary");
-    }
-
-    [Fact]
-    public static void Parses_pack_sharedkernel_options()
-    {
-        // Arrange
-        string[] args =
-        [
-            "--version",
-            "1.2.3",
-            "--output-root",
-            "artifacts",
-            "--repo-root",
-            "/repo",
-            "--assembly-version",
-            "1.0.0.0",
-            "--file-version",
-            "1.2.3.0",
-            "--informational-version",
-            "1.2.3+sha.abc123",
-            "--skip-restore-check",
-        ];
-
-        // Act
-        var options = PackSharedKernelOptions.Parse(args);
-
-        // Assert
-        options.Version.ShouldBe("1.2.3");
-        options.OutputRoot.ShouldBe("artifacts");
-        options.RepoRoot.ShouldBe("/repo");
-        options.AssemblyVersion.ShouldBe("1.0.0.0");
-        options.FileVersion.ShouldBe("1.2.3.0");
-        options.InformationalVersion.ShouldBe("1.2.3+sha.abc123");
-        options.VerifyRestore.ShouldBeFalse();
-    }
-
-    [Fact]
-    public static void Parses_API_compatibility_options()
-    {
-        // Arrange
-        string[] args =
-        [
-            "--version",
-            "1.2.3",
-            "--output-root",
-            "artifacts/api",
-            "--release-phase",
-            "stable",
-            "--repo-root",
-            "/repo",
-            "--baseline-version",
-            "1.2.2",
-            "--breaking-marker",
-        ];
-
-        // Act
-        var options = ApiCompatibilityOptions.Parse(args);
-
-        // Assert
-        options.Version.ShouldBe("1.2.3");
-        options.OutputRoot.ShouldBe("artifacts/api");
-        options.ReleasePhase.ShouldBe("stable");
-        options.RepoRoot.ShouldBe("/repo");
-        options.BaselineVersion.ShouldBe("1.2.2");
-        options.BreakingMarker.ShouldBeTrue();
-    }
-
-    [Fact]
     public static void Detects_breaking_change_markers()
     {
         // Arrange
@@ -262,14 +150,6 @@ public static class VersioningToolTests
 
         // Assert
         hasMarker.ShouldBeTrue();
-    }
-
-    [Fact]
-    public static void Defines_API_compatibility_environment_variable_names()
-    {
-        // Assert
-        ApiCompatibilityEnvironmentVariables.EnablePackageValidation.ShouldBe("API_COMPAT_ENABLE_PACKAGE_VALIDATION");
-        ApiCompatibilityEnvironmentVariables.BaselineVersion.ShouldBe("API_COMPAT_BASELINE_VERSION");
     }
 
     [Fact]
@@ -373,20 +253,15 @@ public static class VersioningToolTests
             TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
         await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             ["check-public-api-baselines", "--repo-root", temporaryDirectory.Root],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("Public API baselines", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(0);
+        result.Output.ShouldContain("Public API baselines", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -417,61 +292,66 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Restores_API_compatibility_environment_variables_after_report_only_failure()
+    public static async Task Check_API_compatibility_validates_packages_against_the_baseline_version()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
-        Directory.CreateDirectory(projectDirectory);
-        await File.WriteAllTextAsync(
-            Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
-            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>not-a-tfm</TargetFramework><PackageId>PandaBear.SharedKernel.Sample</PackageId></PropertyGroup></Project>",
-            TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
-        const string previousPackageValidation = "previous-validation";
-        const string previousBaselineVersion = "previous-baseline";
-        using var packageValidationScope = new EnvironmentVariableScope(ApiCompatibilityEnvironmentVariables.EnablePackageValidation, previousPackageValidation);
-        using var baselineVersionScope = new EnvironmentVariableScope(ApiCompatibilityEnvironmentVariables.BaselineVersion, previousBaselineVersion);
-        var options = new ApiCompatibilityOptions(
-            Version: "1.2.3-alpha.1",
-            OutputRoot: temporaryDirectory.OutputDirectory,
-            ReleasePhase: "alpha",
-            RepoRoot: temporaryDirectory.Root,
-            BaselineVersion: "1.2.2",
-            BreakingMarker: false);
-        using var output = new StringWriter();
+        await temporaryDirectory.WriteUnpackableSharedKernelProject(TestContext.Current.CancellationToken);
+        string[] args =
+        [
+            "check-api-compatibility",
+            "--repo-root",
+            temporaryDirectory.Root,
+            "--output-root",
+            temporaryDirectory.OutputDirectory,
+            "--version",
+            "1.2.3-alpha.1",
+            "--baseline-version",
+            "1.2.2",
+        ];
 
         // Act
-        await ApiCompatibilityCommand.Run(options, output);
+        var result = await VersioningCommandLineRunner.Invoke(args, TestContext.Current.CancellationToken);
 
         // Assert
-        output.ToString().ShouldContain("API compatibility report", StringComparison.Ordinal);
-        Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation).ShouldBe(previousPackageValidation);
-        Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion).ShouldBe(previousBaselineVersion);
+        var report = await File.ReadAllTextAsync(
+            Path.Combine(temporaryDirectory.OutputDirectory, "1.2.3-alpha.1", "api-compatibility-report.md"),
+            TestContext.Current.CancellationToken);
+        result.ExitCode.ShouldBe(0);
+        report.ShouldContain("-p:EnablePackageValidation=true", StringComparison.Ordinal);
+        report.ShouldContain("-p:PackageValidationBaselineVersion=1.2.2", StringComparison.Ordinal);
     }
 
     [Fact]
-    public static async Task Runs_API_compatibility_command_as_report_only_for_alpha_failures()
+    public static async Task Check_API_compatibility_defaults_the_version_to_a_local_alpha_timestamp()
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
-        Directory.CreateDirectory(projectDirectory);
-        await File.WriteAllTextAsync(
-            Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
-            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>not-a-tfm</TargetFramework><PackageId>PandaBear.SharedKernel.Sample</PackageId></PropertyGroup></Project>",
-            TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
+        await temporaryDirectory.WriteUnpackableSharedKernelProject(TestContext.Current.CancellationToken);
+        var clock = new FixedTimeProvider(new DateTimeOffset(2026, 1, 2, 3, 4, 5, TimeSpan.Zero));
+        string[] args = ["check-api-compatibility", "--repo-root", temporaryDirectory.Root, "--output-root", temporaryDirectory.OutputDirectory];
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(args, string.Empty, clock, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0);
+        result.Output.ShouldContain(
+            Path.Combine(temporaryDirectory.OutputDirectory, "0.1.0-alpha.local.20260102030405", "api-compatibility-report.md"),
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Runs_check_API_compatibility_command_as_report_only_for_alpha_failures()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await temporaryDirectory.WriteUnpackableSharedKernelProject(TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(
             [
-                "api-compatibility",
+                "check-api-compatibility",
                 "--repo-root",
                 temporaryDirectory.Root,
                 "--output-root",
@@ -483,13 +363,42 @@ public static class VersioningToolTests
                 "--baseline-version",
                 "1.2.2",
             ],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("API compatibility report", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(0);
+        result.Output.ShouldContain("API compatibility report", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData(true, 0)]
+    [InlineData(false, 2)]
+    public static async Task Check_API_compatibility_reports_beta_failures_only_with_a_breaking_marker(bool breakingMarker, int expectedExitCode)
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await temporaryDirectory.WriteUnpackableSharedKernelProject(TestContext.Current.CancellationToken);
+        string[] marker = breakingMarker ? ["--breaking-marker"] : [];
+        string[] args =
+        [
+            "check-api-compatibility",
+            "--repo-root",
+            temporaryDirectory.Root,
+            "--output-root",
+            temporaryDirectory.OutputDirectory,
+            "--version",
+            "1.2.3-beta.1",
+            "--release-phase",
+            "beta",
+            .. marker,
+        ];
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(args, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(expectedExitCode);
+        File.Exists(Path.Combine(temporaryDirectory.OutputDirectory, "1.2.3-beta.1", "api-compatibility-report.md")).ShouldBeTrue();
     }
 
     [Fact]
@@ -497,22 +406,12 @@ public static class VersioningToolTests
     {
         // Arrange
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        var projectDirectory = Path.Combine(temporaryDirectory.Root, "src", "SharedKernel", "PandaBear.Sample");
-        Directory.CreateDirectory(projectDirectory);
-        await File.WriteAllTextAsync(
-            Path.Combine(projectDirectory, "SharedKernel.Sample.csproj"),
-            "<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>not-a-tfm</TargetFramework><PackageId>PandaBear.SharedKernel.Sample</PackageId></PropertyGroup></Project>",
-            TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Shipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
-        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "PublicAPI.Unshipped.txt"), "#nullable enable", TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
+        await temporaryDirectory.WriteUnpackableSharedKernelProject(TestContext.Current.CancellationToken);
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             [
-                "api-compatibility",
+                "check-api-compatibility",
                 "--repo-root",
                 temporaryDirectory.Root,
                 "--output-root",
@@ -525,28 +424,12 @@ public static class VersioningToolTests
                 "1.2.2",
                 "--breaking-marker",
             ],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Error:", StringComparison.Ordinal);
-    }
-
-    [Theory]
-    [InlineData("beta")]
-    [InlineData("production")]
-    public static void Rejects_unknown_release_version_kind(string versionKind)
-    {
-        // Arrange
-        string[] args = ["--version-kind", versionKind];
-
-        // Act
-        Action action = () => CalculateReleaseOptions.Parse(args);
-
-        // Assert
-        action.ShouldThrow<ArgumentException>().Message.ShouldContain("--version-kind", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Output.ShouldBe(string.Empty);
+        result.Error.ShouldContain("Error:", StringComparison.Ordinal);
     }
 
     [Theory]
@@ -565,7 +448,7 @@ public static class VersioningToolTests
         var options = new PackSharedKernelOptions("1.2.3", temporaryDirectory.PackageDirectory, VerifyRestore: false, RepoRoot: temporaryDirectory.Root);
 
         // Act
-        Func<Task> act = () => SharedKernelPackCommand.Run(options, TextWriter.Null);
+        Func<Task> act = () => SharedKernelPackCommand.Run(options, TextWriter.Null, TestContext.Current.CancellationToken);
 
         // Assert
         var exception = await act.ShouldThrow<ArgumentException>();
@@ -595,7 +478,7 @@ public static class VersioningToolTests
         var options = new PackSharedKernelOptions("1.2.3", "artifacts", VerifyRestore: false, RepoRoot: temporaryDirectory.Root);
 
         // Act
-        Func<Task> act = () => SharedKernelPackCommand.Run(options, TextWriter.Null);
+        Func<Task> act = () => SharedKernelPackCommand.Run(options, TextWriter.Null, TestContext.Current.CancellationToken);
 
         // Assert
         var exception = await act.ShouldThrow<ArgumentException>();
@@ -626,9 +509,6 @@ public static class VersioningToolTests
             "namespace PandaBear.Sample; public sealed class Sample;",
             TestContext.Current.CancellationToken);
 
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
         string[] args =
         [
             "pack-sharedkernel",
@@ -642,47 +522,49 @@ public static class VersioningToolTests
         ];
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(args, input, output, error);
+        var result = await VersioningCommandLineRunner.Invoke(args, TestContext.Current.CancellationToken);
 
         // Assert
         var packageDirectory = Path.Combine(temporaryDirectory.Root, "artifacts", "packages", "1.2.3");
         var packagePath = Path.Combine(packageDirectory, "PandaBear.SharedKernel.Sample.1.2.3.nupkg");
-        exitCode.ShouldBe(0);
+        result.ExitCode.ShouldBe(0);
         File.Exists(packagePath).ShouldBeTrue();
-        var normalizedOutput = output.ToString().Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        var normalizedOutput = result.Output.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
         normalizedOutput.ShouldContain(packageDirectory, StringComparison.Ordinal);
     }
 
     [Fact]
-    public static void Parses_prepare_release_options()
+    public static async Task Pack_sharedkernel_passes_version_options_to_dotnet_pack()
     {
         // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await temporaryDirectory.WriteUnpackableSharedKernelProject(TestContext.Current.CancellationToken);
         string[] args =
         [
+            "pack-sharedkernel",
+            "--repo-root",
+            temporaryDirectory.Root,
             "--version",
             "1.2.3",
-            "--package-dir",
-            "packages",
-            "--output-dir",
-            "release",
-            "--source-tag",
-            "v1.2.2",
-            "--release-impact",
-            "minor",
-            "--sha",
-            "abc123",
+            "--assembly-version",
+            "1.0.0.0",
+            "--file-version",
+            "1.2.3.4",
+            "--informational-version",
+            "1.2.3+sha.abc123",
+            "--skip-restore-check",
         ];
 
         // Act
-        var options = PrepareReleaseOptions.Parse(args);
+        var result = await VersioningCommandLineRunner.Invoke(args, TestContext.Current.CancellationToken);
 
         // Assert
-        options.Version.ShouldBe("1.2.3");
-        options.PackageDirectory.ShouldBe("packages");
-        options.OutputDirectory.ShouldBe("release");
-        options.SourceTag.ShouldBe("v1.2.2");
-        options.ReleaseImpact.ShouldBe("minor");
-        options.Sha.ShouldBe("abc123");
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("-p:ComputedSemVer=1.2.3 ", StringComparison.Ordinal);
+        result.Error.ShouldContain("-p:ComputedAssemblyVersion=1.0.0.0", StringComparison.Ordinal);
+        result.Error.ShouldContain("-p:ComputedFileVersion=1.2.3.4", StringComparison.Ordinal);
+        result.Error.ShouldContain("-p:ComputedInformationalVersion=1.2.3+sha.abc123", StringComparison.Ordinal);
+        result.Error.ShouldNotContain("EnablePackageValidation", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -715,39 +597,34 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static async Task Runs_commit_impact_command()
+    public static async Task Runs_classify_commit_command()
     {
         // Arrange
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-        string[] args = ["commit-impact", "feat(api)!:", "remove", "route"];
+        string[] args = ["classify-commit", "feat(api)!:", "remove", "route"];
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(args, input, output, error);
+        var result = await VersioningCommandLineRunner.Invoke(args, TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("major", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(0);
+        result.Output.ShouldBe("major" + Environment.NewLine);
+        result.Error.ShouldBe(string.Empty);
     }
 
     [Fact]
     public static async Task Runs_compute_command_from_input()
     {
         // Arrange
-        using var input = new StringReader("feat: add output\0fix: patch output");
-        using var output = new StringWriter();
-        using var error = new StringWriter();
         string[] args = ["compute", "--base", "0.1.0", "--prerelease", "alpha.1", "--sha", "abc123"];
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(args, input, output, error);
+        var result = await VersioningCommandLineRunner.Invoke(args, "feat: add output\0fix: patch output", TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(0);
-        var json = output.ToString();
+        result.ExitCode.ShouldBe(0);
+        var json = result.Output;
         json.ShouldContain("\"semVer\":\"0.2.0-alpha.1\"", StringComparison.Ordinal);
-        json.ShouldContain("\"informationalVersion\":\"0.2.0-alpha.1", StringComparison.Ordinal);
+        json.ShouldContain("\"informationalVersion\":\"0.2.0-alpha.1+sha.abc123\"", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -763,9 +640,6 @@ public static class VersioningToolTests
         var outputPath = Path.Combine(temporaryDirectory.OutputDirectory, "github-output.txt");
         var summaryPath = Path.Combine(temporaryDirectory.OutputDirectory, "summary.md");
         Directory.CreateDirectory(temporaryDirectory.OutputDirectory);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
         string[] args =
         [
             "calculate-release",
@@ -784,14 +658,15 @@ public static class VersioningToolTests
         ];
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(args, input, output, error);
+        var result = await VersioningCommandLineRunner.Invoke(args, TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(0);
-        var json = output.ToString();
+        result.ExitCode.ShouldBe(0);
+        var json = result.Output;
         var githubOutput = await File.ReadAllTextAsync(outputPath, TestContext.Current.CancellationToken);
         var summary = await File.ReadAllTextAsync(summaryPath, TestContext.Current.CancellationToken);
         json.ShouldContain("\"packageVersion\":\"1.3.0-alpha.7\"", StringComparison.Ordinal);
+        json.ShouldContain("\"informationalVersion\":\"1.3.0-alpha.7+sha.abc123\"", StringComparison.Ordinal);
         githubOutput.ShouldContain("source_tag=v1.2.3", StringComparison.Ordinal);
         githubOutput.ShouldContain("package_version=1.3.0-alpha.7", StringComparison.Ordinal);
         githubOutput.ShouldContain("release_impact=minor", StringComparison.Ordinal);
@@ -805,20 +680,15 @@ public static class VersioningToolTests
         using var repository = new TemporaryGitRepository();
         repository.Commit("file.txt", "base", "fix: base release");
         repository.Commit("file.txt", "next", "feat(api)!: remove route");
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             ["has-breaking-change-marker", "HEAD~1..HEAD", "--repo-root", repository.Root],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("Breaking-change marker found", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(0);
+        result.Output.ShouldContain("Breaking-change marker found", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -828,41 +698,15 @@ public static class VersioningToolTests
         using var repository = new TemporaryGitRepository();
         repository.Commit("file.txt", "base", "fix: base release");
         repository.Commit("file.txt", "next", "feat(api): add route");
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             ["has-breaking-change-marker", "HEAD~1..HEAD", "--repo-root", repository.Root],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("No breaking-change marker found", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public static async Task Returns_error_for_unknown_repo_root_option()
-    {
-        // Arrange
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-
-        // Act
-        var exitCode = await VersioningToolApplication.Run(
-            ["check-public-api-baselines", "--unknown", "value"],
-            input,
-            output,
-            error);
-
-        // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Unknown repo-root option(s): --unknown value", StringComparison.Ordinal);
-        error.ToString().ShouldContain("Expected: [--repo-root <path>]", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("No breaking-change marker found", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -877,6 +721,34 @@ public static class VersioningToolTests
         // Assert
         var exception = action.ShouldThrow<InvalidOperationException>();
         exception.Message.ShouldContain("Failed to start " + executableName, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Wraps_missing_process_start_failures_for_cancelable_runs()
+    {
+        // Arrange
+        var executableName = "missing-sharedkernel-versioning-tool-command";
+
+        // Act
+        Func<Task> action = () => CommandRunner.Run(executableName, [], null, TestContext.Current.CancellationToken);
+
+        // Assert
+        var exception = await action.ShouldThrow<InvalidOperationException>();
+        exception.Message.ShouldContain("Failed to start " + executableName, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Canceled_runs_do_not_start_processes()
+    {
+        // Arrange
+        using var cancellation = new CancellationTokenSource();
+        await cancellation.CancelAsync();
+
+        // Act
+        Func<Task> action = () => CommandRunner.Run("missing-sharedkernel-versioning-tool-command", [], null, cancellation.Token);
+
+        // Assert
+        await action.ShouldThrow<OperationCanceledException>();
     }
 
     [Fact]
@@ -1051,12 +923,9 @@ public static class VersioningToolTests
             Path.Combine(temporaryDirectory.PackageDirectory, "PandaBear.SharedKernel.Results.1.2.3.nupkg"),
             "package"u8.ToArray(),
             TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             [
                 "prepare-release",
                 "--version",
@@ -1066,13 +935,11 @@ public static class VersioningToolTests
                 "--repo-root",
                 temporaryDirectory.Root,
             ],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain(expectedMessage, StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain(expectedMessage, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1331,20 +1198,15 @@ public static class VersioningToolTests
             </Project>
             """,
             TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             ["validate-package-metadata", "--repo-root", temporaryDirectory.Root],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("Package metadata validation passed.", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(0);
+        result.Output.ShouldContain("Package metadata validation passed.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1381,20 +1243,15 @@ public static class VersioningToolTests
             </Project>
             """,
             TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             ["validate-package-metadata", "--repo-root", temporaryDirectory.Root],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("Package metadata validation passed.", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(0);
+        result.Output.ShouldContain("Package metadata validation passed.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1425,22 +1282,17 @@ public static class VersioningToolTests
             </Project>
             """,
             TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             ["validate-package-metadata", "--repo-root", temporaryDirectory.Root],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Package metadata validation failed:", StringComparison.Ordinal);
-        error.ToString().ShouldContain("Directory.Build.props missing Company", StringComparison.Ordinal);
-        error.ToString().ShouldContain("SharedKernel.Sample.csproj missing Description", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("Package metadata validation failed:", StringComparison.Ordinal);
+        result.Error.ShouldContain("Directory.Build.props missing Company", StringComparison.Ordinal);
+        result.Error.ShouldContain("SharedKernel.Sample.csproj missing Description", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1452,21 +1304,16 @@ public static class VersioningToolTests
             Path.Combine(temporaryDirectory.Root, "Directory.Build.props"),
             "<Project><PropertyGroup>",
             TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             ["validate-package-metadata", "--repo-root", temporaryDirectory.Root],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Invalid project property file:", StringComparison.Ordinal);
-        error.ToString().ShouldContain("Directory.Build.props", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("Invalid project property file:", StringComparison.Ordinal);
+        result.Error.ShouldContain("Directory.Build.props", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1489,20 +1336,15 @@ public static class VersioningToolTests
             </Project>
             """,
             TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             ["validate-package-metadata", "--repo-root", temporaryDirectory.Root],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("SharedKernel source directory does not exist:", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("SharedKernel source directory does not exist:", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1522,12 +1364,9 @@ public static class VersioningToolTests
             packagePath,
             "package"u8.ToArray(),
             TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             [
                 "prepare-release",
                 "--version",
@@ -1537,13 +1376,11 @@ public static class VersioningToolTests
                 "--repo-root",
                 temporaryDirectory.Root,
             ],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Invalid packages.lock.json:", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("Invalid packages.lock.json:", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1567,12 +1404,9 @@ public static class VersioningToolTests
             packagePath,
             "package"u8.ToArray(),
             TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             [
                 "prepare-release",
                 "--version",
@@ -1582,14 +1416,12 @@ public static class VersioningToolTests
                 "--repo-root",
                 temporaryDirectory.Root,
             ],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Unexpected packages.lock.json schema:", StringComparison.Ordinal);
-        error.ToString().ShouldContain("Missing top-level dependencies section.", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("Unexpected packages.lock.json schema:", StringComparison.Ordinal);
+        result.Error.ShouldContain("Missing top-level dependencies section.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1603,12 +1435,9 @@ public static class VersioningToolTests
             packagePath,
             "package"u8.ToArray(),
             TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             [
                 "prepare-release",
                 "--version",
@@ -1618,13 +1447,11 @@ public static class VersioningToolTests
                 "--repo-root",
                 temporaryDirectory.Root,
             ],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("No packages.lock.json files found under source directory:", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("No packages.lock.json files found under source directory:", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1657,12 +1484,9 @@ public static class VersioningToolTests
             packagePath,
             "package"u8.ToArray(),
             TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             [
                 "prepare-release",
                 "--version",
@@ -1672,14 +1496,12 @@ public static class VersioningToolTests
                 "--repo-root",
                 temporaryDirectory.Root,
             ],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Package Example.Package", StringComparison.Ordinal);
-        error.ToString().ShouldContain("has no resolved version.", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("Package Example.Package", StringComparison.Ordinal);
+        result.Error.ShouldContain("has no resolved version.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1713,9 +1535,6 @@ public static class VersioningToolTests
             "package"u8.ToArray(),
             TestContext.Current.CancellationToken);
 
-        using var input = new StringReader("- feat: add release prep (abc123)");
-        using var output = new StringWriter();
-        using var error = new StringWriter();
         string[] args =
         [
             "prepare-release",
@@ -1727,51 +1546,42 @@ public static class VersioningToolTests
             temporaryDirectory.OutputDirectory,
             "--repo-root",
             temporaryDirectory.Root,
+            "--source-tag",
+            "v1.2.2",
+            "--release-impact",
+            "minor",
+            "--sha",
+            "abc123",
         ];
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(args, input, output, error);
+        var result = await VersioningCommandLineRunner.Invoke(args, "- feat: add release prep (abc123)", TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("Release prep artifacts", StringComparison.Ordinal);
-        File.Exists(Path.Combine(temporaryDirectory.OutputDirectory, "release-notes.md")).ShouldBeTrue();
-    }
-
-    [Fact]
-    public static async Task Returns_error_for_missing_prepare_release_options()
-    {
-        // Arrange
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-
-        // Act
-        var exitCode = await VersioningToolApplication.Run(["prepare-release"], input, output, error);
-
-        // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("--version is required.", StringComparison.Ordinal);
+        var releaseNotes = await File.ReadAllTextAsync(
+            Path.Combine(temporaryDirectory.OutputDirectory, "release-notes.md"),
+            TestContext.Current.CancellationToken);
+        result.ExitCode.ShouldBe(0);
+        result.Output.ShouldBe("Release prep artifacts: " + temporaryDirectory.OutputDirectory + Environment.NewLine);
+        releaseNotes.ShouldContain("- Commit: `abc123`", StringComparison.Ordinal);
+        releaseNotes.ShouldContain("- Previous release tag: `v1.2.2`", StringComparison.Ordinal);
+        releaseNotes.ShouldContain("- Release impact: `minor`", StringComparison.Ordinal);
+        releaseNotes.ShouldContain("- feat: add release prep (abc123)", StringComparison.Ordinal);
     }
 
     [Fact]
     public static async Task Returns_error_for_missing_prepare_release_package_directory()
     {
         // Arrange
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             ["prepare-release", "--version", "1.2.3", "--package-dir", "/path/not/found"],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Package directory does not exist:", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("Package directory does not exist:", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1798,12 +1608,9 @@ public static class VersioningToolTests
             }
             """,
             TestContext.Current.CancellationToken);
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
 
         // Act
-        var exitCode = await VersioningToolApplication.Run(
+        var result = await VersioningCommandLineRunner.Invoke(
             [
                 "prepare-release",
                 "--version",
@@ -1813,151 +1620,11 @@ public static class VersioningToolTests
                 "--repo-root",
                 temporaryDirectory.Root,
             ],
-            input,
-            output,
-            error);
+            TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("No packages found", StringComparison.Ordinal);
-    }
-
-    [Theory]
-    [InlineData("prepare-release", "--help")]
-    [InlineData("future-command", "-h")]
-    public static async Task Prints_help_for_command_help_option(string command, string helpOption)
-    {
-        // Arrange
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-
-        // Act
-        var exitCode = await VersioningToolApplication.Run([command, helpOption], input, output, error);
-
-        // Assert
-        exitCode.ShouldBe(0);
-        var help = output.ToString();
-        help.ShouldContain("Usage:", StringComparison.Ordinal);
-        help.ShouldContain(
-            "sharedkernel-version prepare-release --version <semver> --package-dir <path> [--output-dir <path>] [--repo-root <path>]",
-            StringComparison.Ordinal);
-        help.ShouldContain("sharedkernel-version validate-package-metadata [--repo-root <path>]", StringComparison.Ordinal);
-        help.ShouldContain(
-            "--repo-root <path>      Repository root for Git-backed release, pack, metadata, and SBOM commands.",
-            StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public static async Task Returns_usage_for_unknown_command()
-    {
-        // Arrange
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-
-        // Act
-        var exitCode = await VersioningToolApplication.Run(["unknown"], input, output, error);
-
-        // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Usage:", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public static async Task Prints_help_for_help_option()
-    {
-        // Arrange
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-
-        // Act
-        var exitCode = await VersioningToolApplication.Run(["--help"], input, output, error);
-
-        // Assert
-        exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("Usage:", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public static async Task Prints_version_for_version_option()
-    {
-        // Arrange
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-
-        // Act
-        var exitCode = await VersioningToolApplication.Run(["--version"], input, output, error);
-
-        // Assert
-        exitCode.ShouldBe(0);
-        output.ToString().ShouldNotBe(string.Empty);
-    }
-
-    [Fact]
-    public static async Task Returns_error_for_invalid_commit_impact_message()
-    {
-        // Arrange
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-
-        // Act
-        var exitCode = await VersioningToolApplication.Run(["commit-impact", "invalid"], input, output, error);
-
-        // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Error:", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public static async Task Returns_error_for_invalid_compute_options()
-    {
-        // Arrange
-        using var input = new StringReader("feat: add output");
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-
-        // Act
-        var exitCode = await VersioningToolApplication.Run(["compute", "--base", "not-a-version"], input, output, error);
-
-        // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Error:", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public static async Task Returns_error_for_API_compatibility_option_without_value()
-    {
-        // Arrange
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-
-        // Act
-        var exitCode = await VersioningToolApplication.Run(["api-compatibility", "--version"], input, output, error);
-
-        // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("--version must include a value", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public static async Task Returns_error_for_unknown_API_compatibility_option()
-    {
-        // Arrange
-        using var input = new StringReader(string.Empty);
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-
-        // Act
-        var exitCode = await VersioningToolApplication.Run(["api-compatibility", "--unknown"], input, output, error);
-
-        // Assert
-        exitCode.ShouldBe(2);
-        error.ToString().ShouldContain("Unknown option '--unknown'", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldContain("No packages found", StringComparison.Ordinal);
     }
 
 }

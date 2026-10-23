@@ -5,6 +5,19 @@ namespace PandaBear.Versioning.Tool;
 
 internal static class CandidateManifest
 {
+    public static string Find(string directory)
+    {
+        if (!Directory.Exists(directory))
+        {
+            throw new ArgumentException($"Candidate directory does not exist: {directory}.");
+        }
+
+        var manifests = Directory.EnumerateFiles(directory, "candidate.json", SearchOption.AllDirectories).Take(2).ToArray();
+        return manifests.Length == 1
+            ? manifests[0]
+            : throw new ArgumentException($"Candidate directory must contain exactly one candidate.json, searched recursively: {directory}.");
+    }
+
     public static JsonObject ReadAndVerify(string path, string? feed = null)
     {
         var evidence = JsonNode.Parse(File.ReadAllText(path))?.AsObject()
