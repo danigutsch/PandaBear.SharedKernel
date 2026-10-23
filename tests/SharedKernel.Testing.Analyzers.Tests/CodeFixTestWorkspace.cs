@@ -42,7 +42,8 @@ internal sealed class CodeFixTestWorkspace
         string source,
         string assemblyName = "SharedKernel.Testing.CodeFixes.Tests.Dynamic",
         string? filePath = null,
-        bool includeDefaultUsings = true)
+        bool includeDefaultUsings = true,
+        DocumentationMode documentationMode = DocumentationMode.Parse)
     {
         var documentFilePath = filePath
             ?? Path.Combine(Path.GetTempPath(), "PandaBear.Testing.CodeFixes.Tests", Guid.NewGuid().ToString("N"), "Test0.cs");
@@ -63,7 +64,7 @@ internal sealed class CodeFixTestWorkspace
             filePath: Path.Combine(projectDirectory, assemblyName + ".csproj"),
             outputFilePath: Path.Combine(projectDirectory, assemblyName + ".dll"),
             compilationOptions: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
-            parseOptions: new CSharpParseOptions(LanguageVersion.Preview),
+            parseOptions: new CSharpParseOptions(LanguageVersion.Preview, documentationMode),
             metadataReferences: GetMetadataReferences());
 
         workspace.AddProject(projectInfo);
@@ -118,10 +119,17 @@ internal sealed class CodeFixTestWorkspace
         return actions;
     }
 
-    public async Task<IReadOnlyList<Diagnostic>> GetAnalyzerDiagnostics(DiagnosticAnalyzer analyzer)
+    public async Task<IReadOnlyList<Diagnostic>> GetAnalyzerDiagnostics(DiagnosticAnalyzer analyzer, string? enabledDiagnosticId = null)
     {
         var project = Document.Project;
         var compilation = await project.GetCompilationAsync().ConfigureAwait(false) ?? throw new InvalidOperationException("Test compilation could not be created.");
+        if (enabledDiagnosticId is not null)
+        {
+            // A rule that is disabled by default reports only when the compilation options switch it on.
+            compilation = compilation.WithOptions(compilation.Options.WithSpecificDiagnosticOptions(
+                compilation.Options.SpecificDiagnosticOptions.SetItem(enabledDiagnosticId, ReportDiagnostic.Warn)));
+        }
+
         var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer]);
 
         return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);

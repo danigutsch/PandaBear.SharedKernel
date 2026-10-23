@@ -13,6 +13,7 @@ public sealed class SharedKernelTestingCodeFixProviderTests
     private const string XunitSerialJustificationDiagnosticId = TestingDiagnosticIds.XunitSerialCollectionJustification;
     private const string XunitAssertionWrapperDiagnosticId = TestingDiagnosticIds.XunitAssertionWrapper;
     private const string XunitTraitConstantUsageDiagnosticId = TestingDiagnosticIds.XunitTraitConstantUsage;
+    private const string AssertionUserMessageOverloadDiagnosticId = TestingDiagnosticIds.AssertionUserMessageOverload;
 
     [Theory]
     [InlineData(TestingDiagnosticIds.XunitArrangeActAssertMarkers)]
@@ -403,6 +404,19 @@ public sealed class SharedKernelTestingCodeFixProviderTests
 
         // Assert
         fixableDiagnosticIds.ShouldContain(XunitHelperMethodDiagnosticId);
+    }
+
+    [Fact]
+    public void Provider_advertises_user_message_overload_diagnostic()
+    {
+        // Arrange
+        var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
+
+        // Act
+        var fixableDiagnosticIds = provider.FixableDiagnosticIds;
+
+        // Assert
+        fixableDiagnosticIds.ShouldContain(AssertionUserMessageOverloadDiagnosticId);
     }
 
     [Fact]

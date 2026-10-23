@@ -199,6 +199,20 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
         result.Error.ShouldContain($"'{diagnosticId}'", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task Diagnostic_option_accepts_SKTEST017()
+    {
+        // Arrange
+        var targetPath = Path.Combine(projectDirectory.Path, "Sample.Tests.csproj");
+        await File.WriteAllTextAsync(targetPath, string.Empty, TestContext.Current.CancellationToken);
+
+        // Act
+        var parseResult = CodeFixRunnerCommandLine.Create(projectDirectory.Path, CodeFixRunEngine.Run).Parse(["--diagnostic", "SKTEST017", targetPath]);
+
+        // Assert
+        parseResult.Errors.ShouldBeEmpty();
+    }
+
     [Theory]
     [InlineData("--diagnostic", "SKTEST006", ProjectToken)]
     [InlineData(ProjectToken, "--diagnostic", "SKTEST006")]
