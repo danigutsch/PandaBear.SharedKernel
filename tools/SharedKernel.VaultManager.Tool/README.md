@@ -146,67 +146,6 @@ Opens a full-screen terminal UI for the decisions that `merge` leaves to the dec
 sharedkernel-vault review keeper.zip bitwarden.json --decisions decisions.json --output merged.json
 ```
 
-### `catalog <input> --output <file> [options]`
-
-Writes the catalog of one vault file: a JSON file that a person or an agent may read and edit without seeing any
-secret value. The input is any supported export, or a vault this tool wrote, such as `merged.json`. A
-password-protected input asks for its password at the terminal.
-
-| Option | Description |
-| --- | --- |
-| `-o`, `--output <file>` | Required. Catalog file to write. It is never the input, and an existing file is replaced only with `--force`. |
-| `--decisions <file>` | Decisions file with the notes decisions. Each item whose notes have no decision gets a pending entry in its `notes` list. |
-| `--force` | Allows replacing an existing catalog file. |
-
-```sh
-sharedkernel-vault catalog merged.json --output catalog.json --decisions notes.json
-```
-
-Each catalog item has a `key`, its origin key, which may not change, and these parts, which may be edited:
-
-- `name`, `folder` (with `/` between levels, or `null`), `additionalFolders`, and `favorite`;
-- `notes`: `{ "decision": "Pending" }` until the decisions file decides on them. Only notes whose decision is
-  `Share` show their `text`. An item without notes has no `notes`; set `{ "decision": "Share", "text": "..." }` to
-  give it some;
-- `uris`: website addresses as `{ "value": "...", "match": null }`. An address with user info, a query, or a
-  fragment shows as `{ "masked": "https://***@host/path?***", "index": 1 }`: it may be moved, but not changed or
-  removed;
-- `fields`: text custom fields whose name and value hold no secret finding, as `{ "name": "...", "value": "..." }`.
-
-The top-level `folders` list holds every folder of the vault, including empty ones. `info` lists, for reading only,
-the item type, the user name when it holds no secret finding, whether a password or TOTP is present, the number of
-passkeys and previous passwords, the names of the custom fields the catalog does not show, and the attachment names
-and sizes. The catalog never holds passwords, TOTPs, passkeys, password history, hidden fields, card, identity, or
-SSH key values, withheld notes, or any text that holds a secret finding.
-
-The command prints how many notes are shown, withheld, private, or hidden, how many custom fields are withheld, and
-how many addresses are masked, and exits with code 0, also while notes wait for a decision.
-
-### `apply <input> --catalog <file> --output <file> [options]`
-
-Applies an edited catalog to the vault file it was made from and writes a Bitwarden export, password-protected
-unless `--plaintext` is given.
-
-| Option | Description |
-| --- | --- |
-| `--catalog <file>` | Required. Edited catalog, made from the input by `catalog`. |
-| `-o`, `--output <file>` | Required. File to write the edited vault to. It is never the input or the catalog. |
-| `--decisions <file>` | Decisions file with the notes decisions. |
-| `--plaintext` | Writes unencrypted Bitwarden JSON instead of a password-protected export. Delete the file after the import. |
-| `--force` | Allows replacing an existing output file. |
-
-```sh
-sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
-```
-
-The catalog applies only to the exact file it was made from: a different file name or any change to the file, which
-the catalog records as a SHA-256, exits with code 3 before any password is asked. Secrets, protected fields, masked
-addresses, and withheld notes stay as they are. Notes change only when both the catalog and the decisions file
-share them; notes whose decision is `Hidden` move into a hidden field named `Notes`. Items cannot be added or
-removed. While the catalog changes something it may not, such as the text of withheld notes, a masked address, an
-item key, or an empty name, the command writes nothing, prints each problem by item key and name, and exits with code
-3. The output creates every folder of the catalog, including empty ones, and the parent of each.
-
 The review needs a terminal. When standard input or standard output is redirected, it exits with code 3 before it
 reads any input; run `merge` with `--decisions <file>` and edit the file instead. Before the UI starts, the review
 checks the files and inputs as `merge` does and asks for the password of each password-protected input at the
@@ -280,6 +219,67 @@ form feed, and NEL U+0085. It shows other control characters as described under 
   exits with code 1. A signal that arrives while the review merges or writes takes effect when that work ends. When
   that takes longer than two seconds, the process ends with code 130 or 143 and leaves the terminal in the UI's mode,
   which `reset` restores.
+
+### `catalog <input> --output <file> [options]`
+
+Writes the catalog of one vault file: a JSON file that a person or an agent may read and edit without seeing any
+secret value. The input is any supported export, or a vault this tool wrote, such as `merged.json`. A
+password-protected input asks for its password at the terminal.
+
+| Option | Description |
+| --- | --- |
+| `-o`, `--output <file>` | Required. Catalog file to write. It is never the input, and an existing file is replaced only with `--force`. |
+| `--decisions <file>` | Decisions file with the notes decisions. Each item whose notes have no decision gets a pending entry in its `notes` list. |
+| `--force` | Allows replacing an existing catalog file. |
+
+```sh
+sharedkernel-vault catalog merged.json --output catalog.json --decisions notes.json
+```
+
+Each catalog item has a `key`, its origin key, which may not change, and these parts, which may be edited:
+
+- `name`, `folder` (with `/` between levels, or `null`), `additionalFolders`, and `favorite`;
+- `notes`: `{ "decision": "Pending" }` until the decisions file decides on them. Only notes whose decision is
+  `Share` show their `text`. An item without notes has no `notes`; set `{ "decision": "Share", "text": "..." }` to
+  give it some;
+- `uris`: website addresses as `{ "value": "...", "match": null }`. An address with user info, a query, or a
+  fragment shows as `{ "masked": "https://***@host/path?***", "index": 1 }`: it may be moved, but not changed or
+  removed;
+- `fields`: text custom fields whose name and value hold no secret finding, as `{ "name": "...", "value": "..." }`.
+
+The top-level `folders` list holds every folder of the vault, including empty ones. `info` lists, for reading only,
+the item type, the user name when it holds no secret finding, whether a password or TOTP is present, the number of
+passkeys and previous passwords, the names of the custom fields the catalog does not show, and the attachment names
+and sizes. The catalog never holds passwords, TOTPs, passkeys, password history, hidden fields, card, identity, or
+SSH key values, withheld notes, or any text that holds a secret finding.
+
+The command prints how many notes are shown, withheld, private, or hidden, how many custom fields are withheld, and
+how many addresses are masked, and exits with code 0, also while notes wait for a decision.
+
+### `apply <input> --catalog <file> --output <file> [options]`
+
+Applies an edited catalog to the vault file it was made from and writes a Bitwarden export, password-protected
+unless `--plaintext` is given.
+
+| Option | Description |
+| --- | --- |
+| `--catalog <file>` | Required. Edited catalog, made from the input by `catalog`. |
+| `-o`, `--output <file>` | Required. File to write the edited vault to. It is never the input or the catalog. |
+| `--decisions <file>` | Decisions file with the notes decisions. |
+| `--plaintext` | Writes unencrypted Bitwarden JSON instead of a password-protected export. Delete the file after the import. |
+| `--force` | Allows replacing an existing output file. |
+
+```sh
+sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
+```
+
+The catalog applies only to the exact file it was made from: a different file name or any change to the file, which
+the catalog records as a SHA-256, exits with code 3 before any password is asked. Secrets, protected fields, masked
+addresses, and withheld notes stay as they are. Notes change only when both the catalog and the decisions file
+share them; notes whose decision is `Hidden` move into a hidden field named `Notes`. Items cannot be added or
+removed. While the catalog changes something it may not, such as the text of withheld notes, a masked address, an
+item key, or an empty name, the command writes nothing, prints each problem by item key and name, and exits with code
+3. The output creates every folder of the catalog, including empty ones, and the parent of each.
 
 ## Decisions file
 
