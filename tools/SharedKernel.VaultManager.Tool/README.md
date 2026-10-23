@@ -76,6 +76,7 @@ and exits with code 3.
 
    ```sh
    sharedkernel-vault catalog merged.json --output catalog.json --decisions notes.json
+   sharedkernel-vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
    sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
    ```
 
@@ -262,7 +263,7 @@ appear as they are, findings included, so read notes before you share them.
 The command prints how many notes are shown, withheld, private, or hidden, how many custom fields are withheld, and
 how many addresses are masked, and exits with code 0, also while notes wait for a decision.
 
-### `apply <input> --catalog <file> --output <file> [options]`
+### `apply <input> --catalog <file> [--output <file>] [options]`
 
 Applies an edited catalog to the vault file it was made from and writes a Bitwarden export, password-protected
 unless `--plaintext` is given.
@@ -270,12 +271,15 @@ unless `--plaintext` is given.
 | Option | Description |
 | --- | --- |
 | `--catalog <file>` | Required. Edited catalog, made from the input by `catalog`. |
-| `-o`, `--output <file>` | Required. File to write the edited vault to. It is never the input or the catalog. |
+| `-o`, `--output <file>` | File to write the edited vault to. It is never the input or the catalog. Required unless `--dry-run` is given. |
 | `--decisions <file>` | Decisions file with the notes decisions. |
 | `--plaintext` | Writes unencrypted Bitwarden JSON instead of a password-protected export. Delete the file after the import. |
 | `--force` | Allows replacing an existing output file. |
+| `--dry-run` | Prints every change the catalog makes, by item key and name, and writes nothing. |
+| `--allow-removals` | Applies a catalog that removes website addresses, shown text fields, shared notes, or declared folders. |
 
 ```sh
+sharedkernel-vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
 sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
 ```
 
@@ -286,6 +290,48 @@ share them; notes whose decision is `Hidden` move into a hidden field named `Not
 removed. While the catalog changes something it may not, such as the text of withheld notes, a masked address, an
 item key, or an empty name, the command writes nothing, prints each problem by item key and name, and exits with code
 3. The output creates every folder of the catalog, including empty ones, and the parent of each.
+
+`apply --dry-run` describes each change by item key and name, and names only items, fields, folders, and website
+addresses that are not masked, never a value. A normal `apply` prints only the counts, and each removal when it refuses
+them:
+
+```text
+Changes:
+  bitwarden|merged.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301 ("GitHub"): renamed to "GitHub (work)"
+  bitwarden|merged.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301 ("GitHub"): moved from folder "Work" to "Work/Code"
+  bitwarden|merged.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301 ("GitHub"): website address "https://github.com/login" removed
+  bitwarden|merged.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301 ("GitHub"): website address "https://github.com" added
+  folder "Archive" removed
+Removals, which apply refuses without --allow-removals:
+  bitwarden|merged.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301 ("GitHub"): website address "https://github.com/login" removed
+  folder "Archive" removed
+Items changed: 1
+Removals: 2
+The dry run wrote nothing. Apply refuses these removals without --allow-removals.
+```
+
+An item line can say that the item was renamed, moved to another folder, got or lost an additional folder or the
+favorite mark, got or lost a website address, kept an address with another match setting, had its addresses, text
+fields, or additional folders reordered, had a masked address moved (by its position, without the masked text), got,
+lost, or changed a text field (by its name), or had its notes added, edited, emptied, or moved into the hidden field
+`Notes`. A vault line says that a folder was added or removed. `Items changed` counts the items with a line. An address
+line ends with `(offers the login on more sites)` when its match setting is `RegularExpression` or `StartsWith`.
+Control characters and bidirectional embeddings, overrides, and isolates show as U+FFFD, line breaks and tabs as spaces,
+and other format characters, such as zero-width spaces, as `\uXXXX`, so a line cannot hide, reorder, or break text.
+In a website address, every character outside printable ASCII shows as `\uXXXX`, so a letter of another script cannot
+pass for a Latin one; names show such letters as they are. A value that the catalog keeps as shown, such as an address
+with surrounding white space, is written as the vault holds it.
+
+Removals are what the vault holds and the catalog drops: a website address that is not masked and that the catalog does
+not hold as it is, also when it was edited, compared after trimming white space; the old value of a shown text field
+that the catalog removes or changes; shared notes that the catalog empties; and a folder that the vault declares and the
+output would not have. Without `--allow-removals`, `apply` reads the input, asking for its password when it is
+protected, prints each removal, writes nothing, and exits with code 3 before it asks for the password of the new export.
+
+`--dry-run` prints the changes, the removals apart from them, and the counts, and writes nothing. It reads the input,
+asking for its password when it is protected, and asks for no new password. It checks the edited vault against
+Bitwarden's limits in memory, and checks `--output` when it is given, so a problem that `apply` would report exits with
+code 3 here too. It exits with code 0 when it lists removals, and its last line says whether `apply` refuses them.
 
 ## Decisions file
 
@@ -407,8 +453,8 @@ that need a decision with your decisions:
 - `inputs`: the file names of the inputs. The brief holds no hash of them, because the hash of an unencrypted export
   would let a reader test guesses of the passwords it holds.
 - `members`: every item of the group, with its origin key, input file, name, folder, the host of its first website
-  address that has a host name, its user name, its modification time, and `newest`, which is true when every member has a modification time
-  and this one alone has the latest.
+  address that has a host name, its user name, its modification time, and `newest`, which is true when every member has
+  a modification time and this one alone has the latest.
 - `fields`: the fields on which the members differ, with the members that hold a value as `holders`.
   `needsDecision` says that the policy leaves the field to a decision, and `agentMayDecide` that a decisions file
   written by an agent may take one holder's value for it: the name, the folder, and the single-value fields. Each holder
@@ -418,8 +464,9 @@ that need a decision with your decisions:
   `weak`, `reused`, and `inOtherHistory` for `login.password`.
 - Values appear only for names, folders, user names, website addresses, and notes. User names and addresses appear as
   the inputs hold them: a user name in which the scanner finds a secret, or that a finding filled in, is left out, and
-  so is an address that a finding added. Addresses are masked as in the catalog. Notes appear only when the decisions file
-  shares exactly those notes and they hold no secret finding; otherwise a notes field says only that the notes differ.
+  so is an address that a finding added. Addresses are masked as in the catalog. Notes appear only when the decisions
+  file shares exactly those notes and they hold no secret finding; otherwise a notes field says only that the notes
+  differ.
 - Passwords, TOTP keys, card, identity, and SSH key values, password history, passkeys, and custom fields show no
   value. A `login.password` holder shows `weak`, `reused` (an item of another group, on other hosts, has the same
   password), and `inOtherHistory` (the password is in another member's password history). The brief holds no value,
@@ -436,9 +483,9 @@ that need a decision with your decisions:
 ## Agent decisions
 
 `merge --agent-decisions agent.json --brief brief.json` combines the decisions that an agent wrote from the brief with
-your decisions file. The agent's file has the format of the decisions file. On the same field or finding, your decisions file
-wins. The merge never copies the agent's decisions into your decisions file: its pending entries list only what neither
-file decides. This is an agent file that takes one member's password and accepts one finding:
+your decisions file. The agent's file has the format of the decisions file. On the same field or finding, your decisions
+file wins. The merge never copies the agent's decisions into your decisions file: its pending entries list only what
+neither file decides. This is an agent file that takes one member's password and accepts one finding:
 
 ```json
 {
@@ -473,12 +520,12 @@ password is asked, the merge stops with exit code 3, writes nothing, and names e
 After it reads the inputs, the merge checks the agent's decisions again against every group of the inputs as they are:
 the fields, holders, and findings an agent may decide come from the inputs, not from the brief file, so a brief edited
 after it was written, or one made from another version of an input, lets the agent decide nothing those inputs do not
-allow. Which groups the agent may decide still comes from the brief file, so let the agent read a copy of it. Decisions you made since the brief was
-written may take a group out of the brief; your decision wins there. When your decisions changed what the agent decided
-on, for example a finding you accepted changed a user name and so the groups, the merge stops with exit code 3. After it
-places the agent's finding decisions, it stops with exit code 3 when they put an item in a group with other items, which
-only links and splits may do, or empty the value that a member choice takes. In each case, write a new brief and let the
-agent decide from it.
+allow. Which groups the agent may decide still comes from the brief file, so let the agent read a copy of it. Decisions
+you made since the brief was written may take a group out of the brief; your decision wins there. When your decisions
+changed what the agent decided on, for example a finding you accepted changed a user name and so the groups, the merge
+stops with exit code 3. After it places the agent's finding decisions, it stops with exit code 3 when they put an item
+in a group with other items, which only links and splits may do, or empty the value that a member choice takes. In each
+case, write a new brief and let the agent decide from it.
 
 The summary counts the agent decisions that took effect and those your decisions file overrides, and names each
 pre-accepted finding that the agent rejects as `Rejected by agent`. The report lists every agent decision that took
@@ -488,8 +535,10 @@ the same merge again.
 
 ## Agent workflow
 
-An agent can propose merge decisions without seeing a secret value, and you run every command that reads or writes the
-vault:
+An agent can propose merge decisions and organize the merged vault without seeing a secret value. You run every command
+that reads or writes a vault.
+
+### Merging with an agent
 
 1. Optionally, decide which notes the agent may read: in `review` of the inputs with your decisions file, `n` shares the
    selected item's notes and `F8` the notes of every item without a secret finding; save with `Ctrl+S`. The brief
@@ -514,6 +563,27 @@ vault:
    import, read **Decided by agent** and **Rejected by agent** in `merge-report.md`, and delete `brief.json` and
    `agent.json` with the exports afterwards.
 
+### Organizing with an agent
+
+An agent can rename items, move them between folders, fix website addresses, and edit shared notes and text fields in a
+catalog, and you apply it:
+
+1. Write the catalog, decide which notes it shows, and write it again with `--force` so that it shows them, as `catalog`
+   describes.
+2. Give the agent `catalog.json` and nothing else: never the decisions file, which shares notes, nor the vault.
+3. Preview what the edited catalog changes and check every line, also each address that was added or whose match setting
+   covers more sites, because Bitwarden offers a login's password on the sites its addresses match:
+
+   ```sh
+   sharedkernel-vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
+   ```
+
+4. Apply it. Add `--allow-removals` only when you agree with every removal the dry run lists:
+
+   ```sh
+   sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
+   ```
+
 ## Exit codes
 
 | Code | Meaning |
@@ -521,7 +591,7 @@ vault:
 | 0 | Success. |
 | 1 | Invalid command line, with the error on standard error and help on standard output, both shown as described under Output; canceled; or an unexpected error. Ctrl+C or SIGTERM cancels a command; inside the review UI, `Ctrl+C` is a key, and SIGTERM or SIGINT cancels, as described under `review`. Canceled at a password prompt or before the review UI starts, the command ends at once. Otherwise `inspect`, `scan`, and `merge` wait up to 1.5 seconds for their work to stop at its next check: no file write starts after the cancel, and a write already under way either completes or leaves its file unchanged, as described under Security. Work still running after 1.5 seconds ends with the process. An unexpected error shows the exception type and stack trace, but not its message, which can contain vault values. |
 | 2 | `merge` only: fields or findings need a decision. No vault is written; with `--decisions`, the decisions file holds a pending entry for each. |
-| 3 | An input or output problem: an input that is unreadable, unsupported, malformed, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; an agent decisions file that is missing, not valid, outside the limits for agents, or that does not fit the inputs, or a brief that is not valid or was made from other inputs; a catalog that is not valid, was made from another file or another version of the input, or changes what it may not; an output that exists without `--force` or is an input; a missing output directory; a report path that names an existing file that is not a vault report, or a brief path that names an existing file that is not a brief; a report, brief, or decisions file that cannot be written; values that Bitwarden would reject; a password needed while standard input is not a terminal, or no acceptable new password in three attempts; or `review` started while standard input or output is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
+| 3 | An input or output problem: an input that is unreadable, unsupported, malformed, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; an agent decisions file that is missing, not valid, outside the limits for agents, or that does not fit the inputs, or a brief that is not valid or was made from other inputs; a catalog that is not valid, was made from another file or another version of the input, or changes what it may not, or that removes what `apply` keeps without `--allow-removals`; an output that exists without `--force` or is an input; a missing output directory; a report path that names an existing file that is not a vault report, or a brief path that names an existing file that is not a brief; a report, brief, or decisions file that cannot be written; values that Bitwarden would reject; a password needed while standard input is not a terminal, or no acceptable new password in three attempts; or `review` started while standard input or output is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, before the tool handles it, or a canceled command that did not end within two seconds. |
 
 ## Output
@@ -560,11 +630,11 @@ that System.CommandLine repeats cannot send escape sequences either.
 - The tool makes no network calls. You import its output yourself.
 - Output is a Bitwarden password-protected export by default: PBKDF2-SHA256 with 600,000 iterations,
   AES-256-CBC, and HMAC-SHA256. A plaintext export needs `--plaintext`.
-- On Unix, the output, the report, the brief, and the decisions file are created readable only by you. Each is written to a
-  temporary file, `.<file name>.<random>.tmp`, in the same directory and then moved into place, so a file is either
-  written completely or left unchanged. A write that fails or is canceled deletes its temporary file. If the process
-  is killed during a write, or a canceled command ends while a write is still running, that file can remain and hold
-  part of the content, unencrypted with `--plaintext`. Delete it.
+- On Unix, the output, the report, the brief, and the decisions file are created readable only by you. Each is written
+  to a temporary file, `.<file name>.<random>.tmp`, in the same directory and then moved into place, so a file is either
+  written completely or left unchanged. A write that fails or is canceled deletes its temporary file. If the process is
+  killed during a write, or a canceled command ends while a write is still running, that file can remain and hold part
+  of the content, unencrypted with `--plaintext`. Delete it.
 - An existing output is replaced only with `--force`, and an input is never replaced. Paths are compared after
   resolving symbolic links and ignoring case, so a path that differs from an input only in case is refused too.
 - Passwords are read from the terminal without echo. They are never accepted as arguments or environment
@@ -586,6 +656,9 @@ that System.CommandLine repeats cannot send escape sequences either.
   brief or the catalog and its own output file, never the decisions file, which shares notes and links items, nor an
   export or a vault. Let it read a copy of the brief: the merge takes the groups an agent may decide from the brief
   file. Check what it decided: the merge report lists its decisions, and `apply --dry-run` lists every change.
+- An agent that edits a catalog can add a website address to a login or broaden its match setting, so that Bitwarden
+  offers the login's password on another site. `apply --dry-run` lists every added address and match change and marks
+  `RegularExpression` and `StartsWith` matches; check them before you apply the catalog.
 - Reports, warnings, errors, and the decisions file never contain secret values. They do contain item names,
   folder names, file names, and origin keys. An origin key holds the record or item ID of an export, or, for an item
   without one, such as a CSV row, a hash of its type, title, and the host of its first website address, read from the

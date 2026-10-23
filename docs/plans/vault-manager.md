@@ -86,15 +86,15 @@ Read, map, scan, apply accepted placements, match, merge, analyze, write.
    first malformed entry by its position, never by its content. Items in the Bitwarden trash are skipped with a
    warning that counts them. A Keeper Commander zip entry that no record lists, or that is not under `files/`, gets
    a warning that names it.
-2. **Map.** Every source maps to one item model shaped like a Bitwarden export item, plus provenance (provider,
-   file, original ID, modification time). Every source value lands in a typed slot or a custom field. Hidden
-   fields hold secrets. Each item gets its origin key as read, and decisions name the item by that key even after
-   placement changes the item. An item without an export ID, such as a CSV row, gets a key from a hash of its type,
-   title, and the host of its first address, read from the address masked as the catalog shows it; the user name and
-   any credential in the address stay out of the hash, so a decisions file or a brief cannot confirm a guessed one. An SSH key item without a public key or fingerprint is completed from the first
-   PEM block of its private key; other text stored with the key, such as a second key, moves to a hidden field,
-   where secret detection finds it. If the key cannot be converted, for example because it is encrypted, the item
-   becomes a secure note that keeps the key in a hidden field.
+2. **Map.** Every source maps to one item model shaped like a Bitwarden export item, plus provenance (provider, file,
+   original ID, modification time). Every source value lands in a typed slot or a custom field. Hidden fields hold
+   secrets. Each item gets its origin key as read, and decisions name the item by that key even after placement changes
+   the item. An item without an export ID, such as a CSV row, gets a key from a hash of its type, title, and the host of
+   its first address, read from the address masked as the catalog shows it; the user name and any credential in the
+   address stay out of the hash, so a decisions file or a brief cannot confirm a guessed one. An SSH key item without a
+   public key or fingerprint is completed from the first PEM block of its private key; other text stored with the key,
+   such as a second key, moves to a hidden field, where secret detection finds it. If the key cannot be converted, for
+   example because it is encrypted, the item becomes a secure note that keeps the key in a hidden field.
 3. **Scan and place.** Secret detection runs on each source item, and on text attachments inside Keeper Commander
    and Bitwarden zips, before matching. That way a TOTP seed found in Keeper notes is already the login's TOTP
    when it is compared with Bitwarden. Items that placement creates, such as SSH key items, are named after their
@@ -246,8 +246,9 @@ summaries count them with the other attachments to upload.
   written stops the merge before anything else is written.
 - `sharedkernel-vault catalog <input> --output <file> [--decisions <file>] [--force]` writes the catalog of one
   vault file and adds pending notes entries to the decisions file (see Catalog).
-- `sharedkernel-vault apply <input> --catalog <file> --output <file> [--decisions <file>] [--plaintext] [--force]`
-  applies an edited catalog to the file it was made from and writes a Bitwarden export.
+- `sharedkernel-vault apply <input> --catalog <file> [--output <file>] [--decisions <file>] [--plaintext] [--force] [--dry-run] [--allow-removals]`
+  applies an edited catalog to the file it was made from and writes a Bitwarden export, or with `--dry-run` lists every
+  change and writes nothing.
 - `sharedkernel-vault review <inputs...> [--decisions <file>] [--output <file>] [--plaintext] [--force]` opens the
   full-screen review UI: groups, a side-by-side field diff, findings, and decisions. See [Review UI](#review-ui).
 
@@ -271,8 +272,8 @@ Exit codes:
   decisions file that is not valid, an output that exists without `--force` or is an input, a missing output directory,
   a report path that names an existing file that is not a vault report, a brief path that names an existing file that
   is not a brief, a brief of other input files, an agent decisions file that is missing, not valid, outside the limits
-  for agents, or that does not fit the inputs, a report, brief, or decisions file that cannot be written, writer errors
-  that block writing, a password needed without a
+  for agents, or that does not fit the inputs, a catalog that removes what `apply` keeps without `--allow-removals`, a
+  report, brief, or decisions file that cannot be written, writer errors that block writing, a password needed without a
   terminal, no acceptable new password in three attempts, or `review` without a terminal. When the report cannot be
   written after the vault, the error says that the vault is written and the report is not.
 - 130 or 143: Ctrl+C or SIGTERM during start-up, before System.CommandLine handles it, or a canceled command that
@@ -320,6 +321,25 @@ file, the agent edits only the catalog, and `apply` writes the vault with the ed
   the places of the shown fields as read, and protected fields keep theirs.
 - The trust boundary is the vault password: only the user can run `catalog` and `apply` on a password-protected
   vault. An agent that can write the decisions file can share notes, so the commands print how many notes they show.
+- Changes: `CatalogApplier` describes each change while it applies the catalog, one value-free line per change by item
+  key and name: renames, folder moves, additional folders, the favorite mark, website addresses added, removed, with
+  another match setting, or reordered, masked addresses moved by position, text fields added, removed, or changed by
+  name, notes added, edited, emptied, or moved into the hidden `Notes` field, and vault folders added or removed.
+  Lines go through `PrintableText` and the format-character escaping of the decisions file, so a line cannot hide,
+  reorder, or break text, and an address shows every character outside printable ASCII as `\uXXXX`, so a look-alike
+  letter of another script cannot pass for a Latin one in a host. Reordered addresses, text fields, and additional
+  folders get a line too, and `Items changed` counts the items with a line. A value the catalog keeps as shown, such as
+  an address with surrounding white space or a field without a name, is written as the vault holds it. A match setting
+  of `RegularExpression` or `StartsWith` is marked, because it offers the login on more sites.
+- Removals: what the vault holds and the catalog drops, compared after the applier's own normalization (trimmed
+  addresses, a missing field name as empty): an unmasked address that the catalog does not hold as it is, the old value
+  of a shown text field it removes or changes, shared notes it empties, and a declared folder the output would not
+  have. Edits count as removals of the old value, because a replaced login address is the edit that harms most: it
+  offers the password on another site. Without `--allow-removals`, `apply` prints each removal and writes nothing
+  before the export password prompt. Additions are not removals; the dry run lists them for the user to check.
+- `--dry-run` runs the same steps in memory: it applies the catalog, checks the edited vault with the Bitwarden writer
+  without encryption, checks `--output` when it is given, asks no new password, writes nothing, lists the changes and,
+  apart, the removals, and exits with code 0 unless the catalog or the writer reports a problem.
 
 ## Brief
 
@@ -353,13 +373,13 @@ scanned inputs, the result of the merge with the user's decisions, and those dec
   member has a time, so for the name, `newest` marks that name.
 - Findings: ID, kind, confidence, field path, the 1-based line where the finding starts in its field as read, the
   proposed target, whether it is pre-accepted or needs a decision, and whether an agent may accept or reject it. An
-  agent decides without seeing the value, so it may not accept a finding that needs review, that moves text into a
-  place catalogs and briefs show (user name, addresses, text fields, and the names of hidden fields named after a
-  label), or that changes matching, which uses hosts, user names, titles, and types and runs after placement; and it
-  may not reject a pre-accepted finding that changes matching. Accepting a pre-accepted finding changes nothing and is
-  always allowed. Finding IDs and kinds say which rule matched and where, which can tell the kind of a secret field,
-  such as a PIN stored as a password. Findings appear under the member whose origin key the finding decisions use, never under items that
-  placement created.
+  agent decides without seeing the value, so it may not accept a finding that needs review, that moves text into a place
+  catalogs and briefs show (user name, addresses, text fields, and the names of hidden fields named after a label), or
+  that changes matching, which uses hosts, user names, titles, and types and runs after placement; and it may not reject
+  a pre-accepted finding that changes matching. Accepting a pre-accepted finding changes nothing and is always allowed.
+  Finding IDs and kinds say which rule matched and where, which can tell the kind of a secret field, such as a PIN
+  stored as a password. Findings appear under the member whose origin key the finding decisions use, never under items
+  that placement created.
 
 ## Agent decisions
 
@@ -368,8 +388,8 @@ user's decisions file. The agent decides blind, and the brief is in its hands, s
 trusting either file.
 
 - Combination: the user's field and finding decisions come first, so `MergeDecisions.Find` and `FindFinding` take the
-  user's decision on the same field or finding. Links, splits, and notes decisions are the user's only. The decisions file
-  gets pending entries for what neither file decides, and never the agent's decisions.
+  user's decision on the same field or finding. Links, splits, and notes decisions are the user's only. The decisions
+  file gets pending entries for what neither file decides, and never the agent's decisions.
 - Limits, checked before any password prompt against the brief file as read once: no `Empty` choice, link, split, or
   notes decision; one decision per field and per finding; only groups, fields with `agentMayDecide`, holders, items,
   and findings that the brief lists; accepts and rejects only where `agentMayAccept` and `agentMayReject` allow. The
@@ -383,7 +403,8 @@ trusting either file.
   agent leaves. Which groups an agent may decide comes from the brief file, so the user gives the agent a copy to read.
 - Placement runs before matching, so finding decisions can change groups and values. Accepts that fill or edit a user
   name or addresses, or make an item, are outside the limits; as a second line, after the combined merge, the merge
-  refuses any change of which items share a group and any member choice whose member holds no value once the agent's finding decisions are placed.
+  refuses any change of which items share a group and any member choice whose member holds no value once the agent's
+  finding decisions are placed.
 - Audit: the summary counts the agent decisions applied and overridden and names each pre-accepted finding the agent
   rejects; the report lists them under **Decided by agent** and **Rejected by agent**.
 - Risks: names and notes can carry prompt injection. Its effect is bad decisions, which the limits keep lossless and
