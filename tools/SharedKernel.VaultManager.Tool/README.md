@@ -118,6 +118,7 @@ Merges the inputs into one Bitwarden export and writes a summary to standard out
 | `--plaintext` | Writes unencrypted Bitwarden JSON instead of a password-protected export. Delete the file after the import. |
 | `--report <file>` | Writes the full Markdown report, including the decisions still needed. An existing vault report is replaced; any other existing file and an input never are. |
 | `--force` | Allows replacing an existing output file. |
+| `--brief <file>` | Writes the brief, a JSON file without secret values that lists what needs a decision, for an agent that proposes decisions. See [Brief](#brief). It is written also when the merge exits with code 2. An existing brief is replaced; any other existing file and an input never are. |
 
 By default the output is a Bitwarden password-protected export. Its password is asked twice at the terminal and
 must have at least 12 characters. The merged vault is not written while a field or a proposed finding needs a
@@ -172,7 +173,7 @@ place. The status bar shows the main keys, and `F1` lists them all:
 | `Ctrl+F` | anywhere | Search the groups by item name. |
 | `Ctrl+S` | anywhere | Save the decisions file. |
 | `Ctrl+W` | anywhere | Write the merged vault. |
-| `F8` | anywhere | Show the notes of every item whose notes hold no finding in catalogs. Asks first. |
+| `F8` | anywhere | Show the notes of every item whose notes hold no finding in catalogs and merge briefs. Asks first. |
 | `Ctrl+Q`, `Esc` | anywhere | Quit. With unsaved decisions, the review asks whether to save them first. |
 | `Enter` | groups | Go to the fields of the selected group. |
 | `m` | groups | Mark the selected group for a link. |
@@ -183,8 +184,8 @@ place. The status bar shows the main keys, and `F1` lists them all:
 | `Delete` | fields | Remove the decision on the field. |
 | `v` | fields | Reveal or mask the values of the field. |
 | `s` | fields | Split the selected item out of its group. |
-| `n` | fields | Show the selected item's notes in catalogs. |
-| `p` | fields | Keep the selected item's notes out of catalogs. |
+| `n` | fields | Show the selected item's notes in catalogs and merge briefs. |
+| `p` | fields | Keep the selected item's notes out of catalogs and merge briefs. |
 | `h` | fields | Move the selected item's notes into a hidden field when a catalog is applied. |
 | `a` | findings | Accept the finding. |
 | `r` | findings | Reject the finding. |
@@ -244,14 +245,16 @@ Each catalog item has a `key`, its origin key, which may not change, and these p
   give it some;
 - `uris`: website addresses as `{ "value": "...", "match": null }`. An address with user info, a query, or a
   fragment shows as `{ "masked": "https://***@host/path?***", "index": 1 }`: it may be moved, but not changed or
-  removed;
+  removed. An address that holds an `@` after its host, such as user info with a `/`, `\`, `?`, or `#` in it, shows
+  as `https://***`, because where its host starts is unclear;
 - `fields`: text custom fields whose name and value hold no secret finding, as `{ "name": "...", "value": "..." }`.
 
 The top-level `folders` list holds every folder of the vault, including empty ones. `info` lists, for reading only,
 the item type, the user name when it holds no secret finding, whether a password or TOTP is present, the number of
 passkeys and previous passwords, the names of the custom fields the catalog does not show, and the attachment names
 and sizes. The catalog never holds passwords, TOTPs, passkeys, password history, hidden fields, card, identity, or
-SSH key values, withheld notes, or any text that holds a secret finding.
+SSH key values, withheld notes, or user names and custom fields that hold a secret finding. Notes that you share
+appear as they are, findings included, so read notes before you share them.
 
 The command prints how many notes are shown, withheld, private, or hidden, how many custom fields are withheld, and
 how many addresses are masked, and exits with code 0, also while notes wait for a decision.
@@ -330,7 +333,8 @@ after a merge that needs two decisions:
   findings, which have a checksum or a strong validator, are applied unless a decision rejects them. Other findings
   are applied only when accepted. Replace `"decision": "Pending"` with `"Accepted"` or `"Rejected"`. To reject a
   pre-accepted finding, add an entry with its finding ID from the report to the `findings` list.
-- **Notes decisions.** The optional `notes` list decides, per item, how `catalog` and `apply` handle its notes:
+- **Notes decisions.** The optional `notes` list decides, per item, how `catalog`, `apply`, and `merge --brief` handle
+  its notes:
   `{ "originKey": "bitwarden|merged.json|3f2…", "decision": "Share", "itemName": "GitHub", "findings": 0 }`.
   `Share` shows the notes in catalogs and lets `apply` take the edited text, `Private` keeps them out of catalogs,
   and `Hidden` keeps them out and moves them into a hidden field named `Notes` when a catalog is applied. `catalog`
@@ -338,7 +342,9 @@ after a merge that needs two decisions:
   notes; a pending entry withholds the notes. A `Share` decision applies only to the notes it was made for: `review`
   records their SHA-256 in `notesSha256`, and `catalog` records it for a `Share` typed into the file without one.
   Notes that changed since then go back to `Pending`, so a decision never shows text you did not confirm. `merge`
-  ignores this list. In `review` of the same file, `n`, `p`, `h`, and `F8` set these decisions.
+  reads this list only for `--brief`: a `Share` entry with its `notesSha256`, as `review` of the merge inputs records
+  it, shows those notes in the brief while they hold no secret finding. In `review` of the same file, `n`, `p`, `h`,
+  and `F8` set these decisions.
 - **Links and splits.** `links` and `splits` take pairs of origin keys, such as
   `{ "first": "keeper|keeper.json|rec-1", "second": "bitwarden|bitwarden.json|bw-1" }`, that must or must never
   end up in one group. A split wins over a link.
@@ -351,6 +357,71 @@ its object. Any other property, such as a misspelled `findings`, and a repeated 
 list, stop the merge with exit code 3 before any password is asked, and the error names the file and the
 property's JSON path.
 
+## Brief
+
+`merge --brief <file>` writes the brief: what an agent needs to propose decisions for the merge, without secret
+values. It is JSON, readable only by you, and it is read strictly, as the decisions file is. It lists only the groups
+that need a decision with your decisions:
+
+```json
+{
+  "version": 1,
+  "inputs": [{ "file": "keeper.zip", "sha256": "4f2c…" }, { "file": "bitwarden.json", "sha256": "9a1b…" }],
+  "summary": { "items": 412, "mergedGroups": 120, "conflictsResolvedByPolicy": 85, "fieldsNeedingDecision": 3, "findings": 14, "findingsApplied": 9, "findingsNeedingDecision": 2, "passwordIssues": 7, "attachmentsToUpload": 4 },
+  "groups": [
+    {
+      "key": "5d0c2e8f41a7b693",
+      "type": "Login",
+      "members": [
+        {
+          "originKey": "keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA", "sourceFile": "keeper.zip", "name": "Example Bank",
+          "folder": "Finance", "host": "bank.example", "username": "alice", "modified": "2026-01-05T10:00:00+00:00",
+          "newest": false,
+          "findings": [
+            { "id": "notes-password@notes:42", "kind": "Password", "confidence": "Medium", "fieldPath": "notes", "line": 3,
+              "proposedTarget": "login.password", "preAccepted": false, "needsDecision": true, "agentMayAccept": true,
+              "agentMayReject": true }
+          ]
+        },
+        { "originKey": "bitwarden|bitwarden.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301", "…": "…" }
+      ],
+      "fields": [
+        { "fieldPath": "login.password", "needsDecision": true, "agentMayDecide": true, "holders": [
+            { "originKey": "keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA", "newest": false, "weak": false, "reused": false, "inOtherHistory": true },
+            { "originKey": "bitwarden|bitwarden.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301", "newest": true, "weak": false, "reused": true, "inOtherHistory": false } ] },
+        { "fieldPath": "name", "needsDecision": false, "agentMayDecide": true, "holders": [
+            { "originKey": "keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA", "newest": false, "value": "Example Bank" },
+            { "originKey": "bitwarden|bitwarden.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301", "newest": true, "value": "Bank" } ] }
+      ]
+    }
+  ],
+  "suggestions": [{ "kind": "SameTitle", "firstOriginKey": "…", "secondOriginKey": "…", "firstName": "Mail", "secondName": "Mail" }]
+}
+```
+
+- `inputs`: the input files and their SHA-256.
+- `members`: every item of the group, with its origin key, input file, name, folder, the host of its first website
+  address, its user name, its modification time, and `newest`, which is true when every member has a modification time
+  and this one alone has the latest.
+- `fields`: the fields on which the members differ, with the members that hold a value as `holders`.
+  `needsDecision` says that the policy leaves the field to a decision, and `agentMayDecide` that a decisions file
+  written by an agent may take one holder's value for it: the name, the folder, and the single-value fields. A holder's
+  `newest` says that it holds the value the newest policy takes.
+- Values appear only for names, folders, user names, website addresses, and notes. User names and addresses appear as
+  the inputs hold them: a user name that holds a secret finding, or that a finding filled in, is left out, and so is an
+  address that a finding added. Addresses are masked as in the catalog. Notes appear only when the decisions file
+  shares exactly those notes and they hold no secret finding; otherwise a notes field says only that the notes differ.
+- Passwords, TOTP keys, card, identity, and SSH key values, password history, passkeys, and custom fields show no
+  value. A `login.password` holder shows `weak`, `reused` (an item of another group, on other hosts, has the same
+  password), and `inOtherHistory` (the password is in another member's password history). The brief holds no value,
+  length, or hash of a secret.
+- `findings`: each secret finding of a member by its ID, kind, confidence, field, 1-based line, proposed target, and
+  whether it is pre-accepted or needs a decision, never its value. `agentMayAccept` and `agentMayReject` say what a
+  decisions file written by an agent may decide: an agent may not accept a finding that a person must review, that
+  moves text into a user name, an address, or a text field, which catalogs and briefs show, or that changes which items
+  match, and it may not reject a pre-accepted finding whose placement changes which items match.
+- `suggestions`: weak matches that the merge did not apply. Only you can link items.
+
 ## Exit codes
 
 | Code | Meaning |
@@ -358,13 +429,14 @@ property's JSON path.
 | 0 | Success. |
 | 1 | Invalid command line, with the error on standard error and help on standard output, both shown as described under Output; canceled; or an unexpected error. Ctrl+C or SIGTERM cancels a command; inside the review UI, `Ctrl+C` is a key, and SIGTERM or SIGINT cancels, as described under `review`. Canceled at a password prompt or before the review UI starts, the command ends at once. Otherwise `inspect`, `scan`, and `merge` wait up to 1.5 seconds for their work to stop at its next check: no file write starts after the cancel, and a write already under way either completes or leaves its file unchanged, as described under Security. Work still running after 1.5 seconds ends with the process. An unexpected error shows the exception type and stack trace, but not its message, which can contain vault values. |
 | 2 | `merge` only: fields or findings need a decision. No vault is written; with `--decisions`, the decisions file holds a pending entry for each. |
-| 3 | An input or output problem: an input that is unreadable, unsupported, malformed, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; a catalog that is not valid, was made from another file or another version of the input, or changes what it may not; an output that exists without `--force` or is an input; a missing output directory; a report path that names an existing file that is not a vault report; a report or decisions file that cannot be written; values that Bitwarden would reject; a password needed while standard input is not a terminal, or no acceptable new password in three attempts; or `review` started while standard input or output is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
+| 3 | An input or output problem: an input that is unreadable, unsupported, malformed, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; a catalog that is not valid, was made from another file or another version of the input, or changes what it may not; an output that exists without `--force` or is an input; a missing output directory; a report path that names an existing file that is not a vault report, or a brief path that names an existing file that is not a brief; a report, brief, or decisions file that cannot be written; values that Bitwarden would reject; a password needed while standard input is not a terminal, or no acceptable new password in three attempts; or `review` started while standard input or output is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, before the tool handles it, or a canceled command that did not end within two seconds. |
 
 ## Output
 
 `inspect` writes its report to standard output, and `scan` and `merge` write a summary there. `merge` names the
-written vault there before it writes the report, and `review` writes its summary there when the UI closes.
+written vault there before it writes the report, names the brief and the report it wrote, and `review` writes its
+summary there when the UI closes.
 Warnings, errors, and password prompts go to standard error. Messages name inputs, items, fields, origin keys, and
 finding IDs, never values. In the names, paths, keys, prompts, and messages that the commands print and the reports
 hold, carriage returns, line feeds, tabs, and the line and paragraph separators U+2028 and U+2029 show as spaces, and
@@ -396,7 +468,7 @@ that System.CommandLine repeats cannot send escape sequences either.
 - The tool makes no network calls. You import its output yourself.
 - Output is a Bitwarden password-protected export by default: PBKDF2-SHA256 with 600,000 iterations,
   AES-256-CBC, and HMAC-SHA256. A plaintext export needs `--plaintext`.
-- On Unix, the output, the report, and the decisions file are created readable only by you. Each is written to a
+- On Unix, the output, the report, the brief, and the decisions file are created readable only by you. Each is written to a
   temporary file, `.<file name>.<random>.tmp`, in the same directory and then moved into place, so a file is either
   written completely or left unchanged. A write that fails or is canceled deletes its temporary file. If the process
   is killed during a write, or a canceled command ends while a write is still running, that file can remain and hold
@@ -411,9 +483,13 @@ that System.CommandLine repeats cannot send escape sequences either.
   masked, text custom fields and notes without secret findings, and attachment names, and never secret values. The
   secret scanner can miss a secret, so notes appear only after you share them in the decisions file. An agent that
   can write the decisions file can share notes itself; keep that file out of its reach when it must not.
+- A brief holds item names, folder names, user names and website addresses as the inputs hold them, with addresses
+  masked, the notes you shared that hold no secret finding, origin keys, and the input files' SHA-256, and never secret
+  values.
 - Reports, warnings, errors, and the decisions file never contain secret values. They do contain item names,
   folder names, file names, and origin keys. An origin key holds the record or item ID of an export, or, for an item
-  without one, such as a CSV row, a hash of its type, title, and first host.
+  without one, such as a CSV row, a hash of its type, title, and the host of its first website address, read from the
+  masked address so that no credential in it is hashed.
 - .NET strings cannot be wiped from memory, so vault values remain in process memory until the runtime reclaims
   it. Work on an encrypted disk, keep exports out of synced folders, disable core dumps, and delete exports
   after a successful import.

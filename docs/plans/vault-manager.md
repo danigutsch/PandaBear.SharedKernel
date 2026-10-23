@@ -90,7 +90,8 @@ Read, map, scan, apply accepted placements, match, merge, analyze, write.
    file, original ID, modification time). Every source value lands in a typed slot or a custom field. Hidden
    fields hold secrets. Each item gets its origin key as read, and decisions name the item by that key even after
    placement changes the item. An item without an export ID, such as a CSV row, gets a key from a hash of its type,
-   title, and first host; the user name stays out of the hash, so a decisions file cannot confirm a guessed one. An SSH key item without a public key or fingerprint is completed from the first
+   title, and the host of its first address, read from the address masked as the catalog shows it; the user name and
+   any credential in the address stay out of the hash, so a decisions file or a brief cannot confirm a guessed one. An SSH key item without a public key or fingerprint is completed from the first
    PEM block of its private key; other text stored with the key, such as a second key, moves to a hidden field,
    where secret detection finds it. If the key cannot be converted, for example because it is encrypted, the item
    becomes a secure note that keeps the key in a hidden field.
@@ -230,7 +231,7 @@ summaries count them with the other attachments to upload.
   writes this report to standard output and shows no values.
 - `sharedkernel-vault scan <inputs...> [--report <file>]` reports secret findings and password health without
   values. It writes a summary to standard output; `--report` writes the full Markdown report.
-- `sharedkernel-vault merge <inputs...> --output <file> [--decisions <file>] [--policy <newest|ask|prefer:<input file name>>] [--plaintext] [--report <file>] [--force]`
+- `sharedkernel-vault merge <inputs...> --output <file> [--decisions <file>] [--policy <newest|ask|prefer:<input file name>>] [--plaintext] [--report <file>] [--force] [--brief <file>]`
   merges without the UI. The default policy is `newest`. The output is a Bitwarden password-protected export, with
   the password asked twice at the terminal, unless `--plaintext` is given. `--force` allows replacing an existing
   output; an input is never replaced. When fields still need a decision, or proposed findings need accepting or
@@ -241,6 +242,8 @@ summaries count them with the other attachments to upload.
   other entry. The merge warns about decisions whose group, field, origin key, or finding identifier matches
   nothing. Each input is parsed and scanned once, and each password asked once; format detection reads each input
   before that. With `--report`, the merge names the written vault on standard output before it writes the report.
+  With `--brief`, it writes the brief (see Brief) after the first merge and before the vault, so a brief that cannot be
+  written stops the merge before anything else is written.
 - `sharedkernel-vault catalog <input> --output <file> [--decisions <file>] [--force]` writes the catalog of one
   vault file and adds pending notes entries to the decisions file (see Catalog).
 - `sharedkernel-vault apply <input> --catalog <file> --output <file> [--decisions <file>] [--plaintext] [--force]`
@@ -266,8 +269,8 @@ Exit codes:
 - 2: decisions needed: the merge wrote, or would write, pending decisions.
 - 3: an input or output problem: an unreadable, unsupported, malformed, or account-restricted input, a wrong password, a
   decisions file that is not valid, an output that exists without `--force` or is an input, a missing output directory,
-  a report path that names an existing file that is not a vault report, a report or decisions file that cannot be
-  written, writer errors that block writing, a password needed without a
+  a report path that names an existing file that is not a vault report, a brief path that names an existing file that
+  is not a brief, a report, brief, or decisions file that cannot be written, writer errors that block writing, a password needed without a
   terminal, no acceptable new password in three attempts, or `review` without a terminal. When the report cannot be
   written after the vault, the error says that the vault is written and the report is not.
 - 130 or 143: Ctrl+C or SIGTERM during start-up, before System.CommandLine handles it, or a canceled command that
@@ -283,7 +286,7 @@ every other control character (C0, DEL, and C1) and every bidirectional embeddin
 U+202E and U+2066 to U+2069) becomes U+FFFD. A crafted export can therefore neither send escape sequences to the
 terminal nor reorder the text around a name. `VaultCommandLine.Invoke` writes System.CommandLine's parse errors, typo
 corrections, and help through `PrintableTextWriter`, which keeps line breaks and replaces the same characters, because
-System.CommandLine repeats arguments verbatim. Report table cells also escape `|`. Report and decisions files are
+System.CommandLine repeats arguments verbatim. Report table cells also escape `|`. Report, brief, and decisions files are
 created readable only by their owner.
 
 ## Catalog
@@ -295,9 +298,12 @@ file, the agent edits only the catalog, and `apply` writes the vault with the ed
   and text custom fields, plus read-only information: type, user name, which secrets are present, protected field
   names, and attachment names and sizes. It is plain JSON, owner-only on Unix, and read strictly: an unknown, missing,
   or repeated property fails.
-- Redaction: a website address with user info, a query, or a fragment is masked and can only be moved. A text custom
-  field or user name in which the scanner finds a secret is withheld; hidden, boolean, and linked fields show only
-  their names. Passwords, TOTPs, passkeys, password history, and card, identity, and SSH key values are never shown.
+- Redaction follows `ShownValues`, which the brief shares: a website address with user info, a query, or a fragment is
+  masked and can only be moved. The authority ends at the first `/`, `\`, `?`, or `#`, as browsers read it, and an
+  address with an `@` after that is masked after its scheme, because its user info may hold one of those characters.
+  A text custom field or user name in which the scanner finds a secret is withheld; hidden, boolean, and linked fields
+  show only their names. Passwords, TOTPs, passkeys, password history, and card, identity, and SSH key values are never
+  shown.
 - Notes are withheld until the user decides on them in the decisions file's `notes` list, by editing it or in
   `review` of the same file: `Share` shows them, `Private` keeps them out, and `Hidden` also moves them into a hidden
   field named `Notes` on `apply`. `catalog` rebuilds the pending entries, one for each item whose notes have no
@@ -311,6 +317,40 @@ file, the agent edits only the catalog, and `apply` writes the vault with the ed
   the places of the shown fields as read, and protected fields keep theirs.
 - The trust boundary is the vault password: only the user can run `catalog` and `apply` on a password-protected
   vault. An agent that can write the decisions file can share notes, so the commands print how many notes they show.
+
+## Brief
+
+`merge --brief` writes what an agent needs to propose decisions, without secret values. The merge builds it from the
+scanned inputs, the result of the merge with the user's decisions, and those decisions.
+
+- Format: versioned JSON, owner-only on Unix, written through `SecureFile`, and read strictly like the catalog. It
+  records each input's file name and SHA-256, the summary counts of the merge, the groups that need a decision, and the
+  matcher's suggestions.
+- Groups: a group needs a decision when a field of it is unresolved or a member has a finding that is neither
+  pre-accepted nor decided. Members are the items as the merge sees them, after accepted findings are placed.
+- Fields: the name and the folder when the members hold two or more different values, the single-value fields of the
+  merged type with two or more different values, and the lists whose members differ. Each lists its holders, whether
+  the policy leaves it to a decision, and whether an agent may take one holder's value: lists take only `Empty`
+  decisions, which drop values, so an agent may not decide them.
+- Redaction: a value appears only for names, folders, user names, website addresses, and notes. Placement can fill a
+  user name or addresses from a finding, such as a connection string, so user names and addresses appear only as the
+  inputs hold them, through `ShownValues`, and an item that placement creates shows none. Hosts come from the masked
+  addresses. Notes appear only when a `Share` decision matches the notes as read and no finding lies in them: a finding
+  that is pending, rejected, or that placement could not move stays in the text. Every other field shows only which
+  members hold a value.
+- Passwords: `PasswordHealthReport.CheckMembers` checks each member in process: weak as the report defines it, reused
+  when a member of another group on other hosts has the same password, and in another member's password history. The
+  brief holds these flags only, never a value, length, or hash.
+- Newest: a member is newest when every member has a modification time and it alone has the latest. A holder is newest
+  when it holds the value the newest policy takes: every holder has a time, and that value's newest holder is newer
+  than every other value's.
+- Findings: ID, kind, confidence, field path, the 1-based line where the finding starts in its field as read, the
+  proposed target, whether it is pre-accepted or needs a decision, and whether an agent may accept or reject it. An
+  agent decides without seeing the value, so it may not accept a finding that needs review, that moves text into a
+  place catalogs and briefs show (user name, addresses, text fields), or that changes matching, which uses hosts, user
+  names, titles, and types and runs after placement; and it may not reject a pre-accepted finding that changes
+  matching. Findings appear under the member whose origin key the finding decisions use, never under items that
+  placement created.
 
 ## Review UI
 
