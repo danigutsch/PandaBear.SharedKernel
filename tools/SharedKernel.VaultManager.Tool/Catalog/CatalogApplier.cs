@@ -101,12 +101,12 @@ internal static class CatalogApplier
         for (int index = 0; index < current.Count; index++)
         {
             CustomField field = current[index];
-            if (CatalogBuilder.IsAdditionalFolders(field))
+            if (ShownValues.IsAdditionalFolders(field))
             {
                 continue;
             }
 
-            if (!CatalogBuilder.IsShown(field, index, findings))
+            if (!ShownValues.IsShown(field, index, findings))
             {
                 fields.Add(field);
             }
