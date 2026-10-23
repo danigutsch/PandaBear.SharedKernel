@@ -1,7 +1,16 @@
 #nullable enable
+PandaBear.Testing.Assertions.EntityIdentityShouldAssertionExtensions
 PandaBear.Testing.Assertions.ExceptionAssertions
+PandaBear.Testing.Assertions.ResultShouldAssertionExtensions
 PandaBear.Testing.Assertions.ShouldAssertionExtensions
+static PandaBear.Testing.Assertions.EntityIdentityShouldAssertionExtensions.ShouldBeUuidV7(this System.Guid id) -> void
+static PandaBear.Testing.Assertions.EntityIdentityShouldAssertionExtensions.ShouldHaveGeneratedIdentitySemantics<T>(this T! first, T! second, T! different) -> void
 static PandaBear.Testing.Assertions.ExceptionAssertions.ThrowsInner<TException>(System.Action! action) -> TException!
+static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeFailure(this PandaBear.Results.Result actual, PandaBear.Results.ResultStatus expectedStatus, string! expectedCode) -> PandaBear.Results.ResultError!
+static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeFailure<T>(this PandaBear.Results.Result<T> actual, PandaBear.Results.ResultStatus expectedStatus, string! expectedCode) -> PandaBear.Results.ResultError!
+static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeSuccess(this PandaBear.Results.Result actual) -> void
+static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeSuccess<T>(this PandaBear.Results.Result<T> actual) -> T
+static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldHaveValidationError(this PandaBear.Results.ResultError! actual, string! field, params string![]! expectedMessages) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldAllSatisfy<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Action<T>! action) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe(this double actual, double expected, int precision) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe(this double actual, double expected, int precision, System.MidpointRounding rounding) -> void

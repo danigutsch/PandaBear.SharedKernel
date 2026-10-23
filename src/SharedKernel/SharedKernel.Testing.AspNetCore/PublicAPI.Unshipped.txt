@@ -1,6 +1,16 @@
 #nullable enable
 const PandaBear.Testing.AspNetCore.ApiTestAuthentication.Authority = "https://identity.test" -> string!
 PandaBear.Testing.AspNetCore.ApiTestAuthentication
+PandaBear.Testing.AspNetCore.RecordingOutputCacheStore
+PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictByTagAsync(string! tag, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
+PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionCancellationToken.get -> System.Threading.CancellationToken
+PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionException.get -> System.Exception?
+PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionException.set -> void
+PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionObserved.get -> bool
+PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.EvictionTag.get -> string?
+PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.GetAsync(string! key, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<byte[]?>
+PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.RecordingOutputCacheStore() -> void
+PandaBear.Testing.AspNetCore.RecordingOutputCacheStore.SetAsync(string! key, byte[]! value, string![]? tags, System.TimeSpan validFor, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask
 PandaBear.Testing.AspNetCore.TestHostEnvironment
 PandaBear.Testing.AspNetCore.TestHostEnvironment.ApplicationName.get -> string!
 PandaBear.Testing.AspNetCore.TestHostEnvironment.ApplicationName.set -> void

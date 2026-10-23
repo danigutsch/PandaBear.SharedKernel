@@ -22,7 +22,7 @@ public sealed class PixKeyTests
         var result = PixKey.Create(type, value);
 
         // Assert
-        result.IsSuccess.ShouldBeTrue();
+        result.ShouldBeSuccess();
         result.Value.Type.ShouldBe(type);
         result.Value.Value.ShouldBe(value);
     }
