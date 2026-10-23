@@ -157,7 +157,52 @@ internal sealed class RoadmapAutomationService
             expectedResultDigest);
     }
 
+    /// <summary>
+    /// Validates the sealed result as <see cref="PublishResult"/> does and describes the pull request it would create.
+    /// Reads the live GitHub snapshot but changes nothing in GitHub or the checkout.
+    /// </summary>
+    public async Task<RoadmapGitHubPublicationPreview> PreviewResult(
+        string expectedPlanDigest,
+        string expectedArtifactDigest,
+        string expectedResultDigest,
+        string expectedRepository,
+        CancellationToken cancellationToken)
+    {
+        var validation = await CreatePublicationValidation(
+            expectedPlanDigest,
+            expectedArtifactDigest,
+            expectedResultDigest,
+            expectedRepository,
+            cancellationToken).ConfigureAwait(false);
+        return await RoadmapGitHubPublisher
+            .Preview(_rootPath, validation.Plan, validation.Changes, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
     public async Task<RoadmapGitHubPublication> PublishResult(
+        string expectedPlanDigest,
+        string expectedArtifactDigest,
+        string expectedResultDigest,
+        string expectedRepository,
+        CancellationToken cancellationToken)
+    {
+        var validation = await CreatePublicationValidation(
+            expectedPlanDigest,
+            expectedArtifactDigest,
+            expectedResultDigest,
+            expectedRepository,
+            cancellationToken).ConfigureAwait(false);
+        using var ownedHttpClient = _httpClient is null
+            ? GitHubHttpClient.CreateFromGitHubToken("roadmap publication")
+            : null;
+        var httpClient = _httpClient ?? ownedHttpClient
+            ?? throw new InvalidOperationException("Roadmap automation could not create a GitHub client.");
+        return await new RoadmapGitHubPublisher(_rootPath, httpClient)
+            .Publish(validation.Plan, validation.Changes, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task<PostApplyValidation> CreatePublicationValidation(
         string expectedPlanDigest,
         string expectedArtifactDigest,
         string expectedResultDigest,
@@ -178,14 +223,7 @@ internal sealed class RoadmapAutomationService
             throw new InvalidOperationException("Roadmap publication requires a nonempty sealed result.");
         }
 
-        using var ownedHttpClient = _httpClient is null
-            ? GitHubHttpClient.CreateFromGitHubToken("roadmap publication")
-            : null;
-        var httpClient = _httpClient ?? ownedHttpClient
-            ?? throw new InvalidOperationException("Roadmap automation could not create a GitHub client.");
-        return await new RoadmapGitHubPublisher(_rootPath, httpClient)
-            .Publish(validation.Plan, validation.Changes, cancellationToken)
-            .ConfigureAwait(false);
+        return validation;
     }
 
     private async Task<PlanValidation> CreateValidation(

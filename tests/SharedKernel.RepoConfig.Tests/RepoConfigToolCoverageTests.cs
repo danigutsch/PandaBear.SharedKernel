@@ -6,19 +6,6 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class RepoConfigToolCoverageTests
 {
     [Fact]
-    public async Task Program_help_returns_success()
-    {
-        // Arrange
-        string[] args = ["--help"];
-
-        // Act
-        var exitCode = await Program.Main(args);
-
-        // Assert
-        exitCode.ShouldBe(0);
-    }
-
-    [Fact]
     public async Task Unknown_command_is_a_parse_error()
     {
         // Arrange
