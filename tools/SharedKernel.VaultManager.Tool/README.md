@@ -80,7 +80,8 @@ and exits with code 3.
    ```
 
 6. Import the merged or organized vault into an empty Bitwarden or Vaultwarden vault with its file password, then
-   upload the attachments the report lists. Delete the exports, the vaults, the catalog, and the report afterwards.
+   upload the attachments the report lists. Delete the exports, the vaults, the catalog, the brief, the agent's decisions
+   file, and the report afterwards.
 
 ## Commands
 
@@ -434,8 +435,8 @@ that need a decision with your decisions:
 
 ## Agent decisions
 
-`merge --agent-decisions agent.json --brief brief.json` adds the decisions that an agent wrote from the brief to your
-decisions file. The agent's file has the format of the decisions file. On the same field or finding, your decisions file
+`merge --agent-decisions agent.json --brief brief.json` combines the decisions that an agent wrote from the brief with
+your decisions file. The agent's file has the format of the decisions file. On the same field or finding, your decisions file
 wins. The merge never copies the agent's decisions into your decisions file: its pending entries list only what neither
 file decides. This is an agent file that takes one member's password and accepts one finding:
 
@@ -462,15 +463,17 @@ An agent file may only take one holder's value for a field whose `agentMayDecide
 as every merge does, and accept or reject the findings whose `agentMayAccept` or `agentMayReject` is true. Before any
 password is asked, the merge stops with exit code 3, writes nothing, and names each problem when:
 
-- the brief was made from other input files, or from other versions of them, as their SHA-256 shows;
+- the brief was made from other input files, as their names show;
 - the agent file is missing or is not a valid decisions file;
 - it holds an `Empty` choice, a link, a split, or a notes decision;
 - it decides one field or one finding twice;
 - it names a group, field, holder, item, or finding that the brief does not list, or accepts or rejects a finding that
   the brief does not let an agent accept or reject.
 
-After it reads the inputs, the merge checks the agent's decisions again against every group of the inputs as they are,
-so a brief edited after it was written lets the agent decide nothing more. Decisions you made since the brief was
+After it reads the inputs, the merge checks the agent's decisions again against every group of the inputs as they are:
+the fields, holders, and findings an agent may decide come from the inputs, not from the brief file, so a brief edited
+after it was written, or one made from another version of an input, lets the agent decide nothing those inputs do not
+allow. Which groups the agent may decide still comes from the brief file, so let the agent read a copy of it. Decisions you made since the brief was
 written may take a group out of the brief; your decision wins there. When your decisions changed what the agent decided
 on, for example a finding you accepted changed a user name and so the groups, the merge stops with exit code 3. After it
 places the agent's finding decisions, it stops with exit code 3 when they put an item in a group with other items, which
@@ -488,26 +491,28 @@ the same merge again.
 An agent can propose merge decisions without seeing a secret value, and you run every command that reads or writes the
 vault:
 
-1. Merge with a brief:
+1. Optionally, decide which notes the agent may read: in `review` of the inputs with your decisions file, `n` shares the
+   selected item's notes and `F8` the notes of every item without a secret finding; save with `Ctrl+S`. The brief
+   shows the notes that the decisions file shares when the brief is written, while they hold no secret finding, so
+   share them first, or write the brief again after you share them.
+2. Merge with a brief:
 
    ```sh
-   sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --brief brief.json
+   sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --report merge-report.md --brief brief.json
    ```
 
-2. Optionally, decide which notes the agent may read: in `review` of the same inputs and decisions file, `n` shares the
-   selected item's notes and `F8` the notes of every item without a secret finding. The brief shows shared notes only
-   while they hold no secret finding.
-3. Give the agent `brief.json`, the format and limits under [Agent decisions](#agent-decisions), and the path of the
-   file it writes, such as `agent.json`. Give it nothing else: never the decisions file, the exports, the merged vault,
-   or the report.
+3. Give the agent a copy of `brief.json` to read, the format and limits under [Agent decisions](#agent-decisions), and
+   the path of the file it writes, such as `agent.json`. Give it nothing else: never the decisions file, the exports,
+   the merged vault, or the report.
 4. Merge with the agent's decisions:
 
    ```sh
-   sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --brief brief.json --agent-decisions agent.json
+   sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --report merge-report.md --brief brief.json --agent-decisions agent.json
    ```
 
 5. When it exits with code 2, decide the pending entries in `decisions.json` and run the same command again. Before the
-   import, read **Decided by agent** in the report.
+   import, read **Decided by agent** and **Rejected by agent** in `merge-report.md`, and delete `brief.json` and
+   `agent.json` with the exports afterwards.
 
 ## Exit codes
 

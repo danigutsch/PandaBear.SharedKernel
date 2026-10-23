@@ -189,9 +189,11 @@ internal static class MergeCommand
         PipelineResult result = pipeline.Merge(scanned, request, ct);
         if (agent is { } fromBrief)
         {
-            // The agent's decisions are checked again against the inputs as read, with every group listed, so a brief edited
-            // after it was written cannot widen the limits, and decisions that no longer fit stop the merge. Decisions the
-            // user made since the brief was written may take a group out of the brief; the user's decision wins there.
+            // The agent's decisions are checked again against the inputs as read, with every group listed: fields, holders,
+            // findings, and what an agent may accept or reject come from the inputs, also when the brief was edited, and
+            // decisions that do not fit stop the merge. Which groups the agent may decide comes from the brief file.
+            // Decisions the user made since the brief was written may take a group out of the brief; the user's decision
+            // wins there.
             BriefDocument current = BriefBuilder.Build(fromBrief.Brief.Inputs, scanned, result, decisions, everyGroup: true);
             if (!Report(arguments.AgentDecisions!, AgentDecisions.Check(fromBrief.Decisions, current), "no longer fits these inputs and decisions. Write a new brief with merge --brief and let the agent decide from it", error))
             {

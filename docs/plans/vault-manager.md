@@ -270,7 +270,9 @@ Exit codes:
 - 3: an input or output problem: an unreadable, unsupported, malformed, or account-restricted input, a wrong password, a
   decisions file that is not valid, an output that exists without `--force` or is an input, a missing output directory,
   a report path that names an existing file that is not a vault report, a brief path that names an existing file that
-  is not a brief, a report, brief, or decisions file that cannot be written, writer errors that block writing, a password needed without a
+  is not a brief, a brief of other input files, an agent decisions file that is missing, not valid, outside the limits
+  for agents, or that does not fit the inputs, a report, brief, or decisions file that cannot be written, writer errors
+  that block writing, a password needed without a
   terminal, no acceptable new password in three attempts, or `review` without a terminal. When the report cannot be
   written after the vault, the error says that the vault is written and the report is not.
 - 130 or 143: Ctrl+C or SIGTERM during start-up, before System.CommandLine handles it, or a canceled command that
@@ -371,11 +373,14 @@ trusting either file.
 - Limits, checked before any password prompt against the brief file as read once: no `Empty` choice, link, split, or
   notes decision; one decision per field and per finding; only groups, fields with `agentMayDecide`, holders, items,
   and findings that the brief lists; accepts and rejects only where `agentMayAccept` and `agentMayReject` allow. The
-  brief's input SHA-256s must match the inputs, so a brief of other inputs fails before any password.
+  brief's input file names must match the inputs, so a brief of other files fails before any password. The brief holds
+  no hash of the inputs, because the hash of an unencrypted export would let a reader test guesses of its passwords.
 - Recheck: after the inputs are read, the limits are checked again against a brief of every group, built from the inputs
-  as read and the user's decisions. An edited brief therefore widens nothing, and a group that the user's later
-  decisions resolved still accepts the agent's decisions on it, where the user's decision wins. A byte comparison with
-  the brief would refuse every change of the user's decisions, which is how the user finishes what the agent leaves.
+  as read and the user's decisions. Fields, holders, findings, and what an agent may accept or reject therefore come
+  from the inputs, also when the brief was edited or made from another version of an input, and a group that the
+  user's later decisions resolved still accepts the agent's decisions on it, where the user's decision wins. A byte
+  comparison with the brief would refuse every change of the user's decisions, which is how the user finishes what the
+  agent leaves. Which groups an agent may decide comes from the brief file, so the user gives the agent a copy to read.
 - Placement runs before matching, so finding decisions can change groups and values. Accepts that fill or edit a user
   name or addresses, or make an item, are outside the limits; as a second line, after the combined merge, the merge
   refuses any change of which items share a group and any member choice whose member holds no value once the agent's finding decisions are placed.

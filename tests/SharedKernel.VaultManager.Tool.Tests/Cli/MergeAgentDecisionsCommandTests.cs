@@ -119,7 +119,7 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
     }
 
     [Fact]
-    public async Task Merge_checks_the_agent_decisions_against_the_inputs_as_read_so_an_edited_brief_widens_nothing()
+    public async Task Merge_checks_the_agent_decisions_against_the_inputs_as_read_so_an_edited_brief_adds_no_field()
     {
         string[] inputs = CliInputs.ConflictingLogins(directory);
         string output = Path.Combine(directory, "merged.json");
