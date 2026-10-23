@@ -35,6 +35,9 @@ then checks clean source. Ordinary library test runs leave this external-tool te
 
 ## Failure handling
 
+The scanner uses repository-relative targets and report paths. An ignored parent directory, including
+`.worktrees`, cannot exclude the selected repository; generated child directories remain excluded.
+
 Command-line parse errors return `1`, matching the other repository commands. Security runtime
 exit codes are `0` for success, `1` for baseline violations or secret findings, `2` for invalid or
 unreadable baseline configuration/paths, and `3` for scanner failures, cancellation, or invalid

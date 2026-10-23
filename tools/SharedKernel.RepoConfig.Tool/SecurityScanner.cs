@@ -41,7 +41,7 @@ internal static class SecurityScanner
                 RedirectStandardOutput = true,
                 RedirectStandardError = true
             };
-            foreach (var argument in new[] { "dir", root, "--redact=100", "--no-banner", "--exit-code", "10", "--report-format", "sarif", "--report-path", report })
+            foreach (var argument in new[] { "dir", ".", "--redact=100", "--no-banner", "--exit-code", "10", "--report-format", "sarif", "--report-path", report })
             {
                 startInfo.ArgumentList.Add(argument);
             }

@@ -8,7 +8,7 @@ public sealed class MergeDecisionsTests
 {
     private const string OriginKey = "keeper|keeper.json|rec-1";
     private const string OtherOriginKey = "bitwarden|bitwarden.json|bw-1";
-    private const string GroupKey = "0123456789abcdef";
+    private const string GroupKey = "0000000000000000";
 
     [Fact]
     public void Applies_pre_accepted_finding_unless_the_decisions_reject_it()

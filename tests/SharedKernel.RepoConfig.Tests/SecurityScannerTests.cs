@@ -72,7 +72,8 @@ public sealed class SecurityScannerTests
         var invocation = process.StartInfo.ShouldNotBeNull();
         invocation.UseShellExecute.ShouldBeFalse();
         invocation.ArgumentList.ShouldContain("--redact=100");
-        invocation.ArgumentList[1].ShouldBe(workspace.RootPath);
+        invocation.ArgumentList[1].ShouldBe(".");
+        invocation.WorkingDirectory.ShouldBe(workspace.RootPath);
     }
 
     [Fact]

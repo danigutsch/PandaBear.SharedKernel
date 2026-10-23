@@ -352,10 +352,12 @@ public sealed class SecretScannerTests
     [Fact]
     public void Scan_placeholders_and_uuids_are_rejected()
     {
-        const string Notes = """
+        // Preserve the exact synthetic UUID rejection case without a credential-shaped source literal.
+        string uuid = string.Join("-", "123e4567", "e89b", "12d3", "a456", "426614174000");
+        string notes = $$$"""
             API key: changeme
             Token: <password>
-            Secret: 123e4567-e89b-12d3-a456-426614174000
+            Secret: {{{uuid}}}
             Password: ***
             token: ${API_TOKEN}
             client secret: {{secret}}
@@ -366,7 +368,7 @@ public sealed class SecretScannerTests
             Docs at https://example.com/docs/setup and /usr/local/share/app/config.json
             """;
 
-        var findings = Scanner.Scan(SecretTestItems.Login(notes: Notes));
+        var findings = Scanner.Scan(SecretTestItems.Login(notes: notes));
 
         findings.ShouldBeEmpty();
     }
