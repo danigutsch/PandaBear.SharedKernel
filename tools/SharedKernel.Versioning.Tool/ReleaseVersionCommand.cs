@@ -27,15 +27,6 @@ internal static class ReleaseVersionCommand
                 options.VersionKind,
                 options.RunNumber)).ConfigureAwait(false);
 
-        if (options.VersionKind == "prerelease")
-        {
-            var preview = VersionOutput.Create(
-                new SemanticVersion(0, 0, 0, "alpha." + options.RunNumber),
-                result.VersionOutput.ReleaseImpact,
-                sourceSha);
-            result = result with { VersionOutput = preview, VersionJson = VersionOutputJson.Serialize(preview) };
-        }
-
         if (!string.IsNullOrWhiteSpace(options.GitHubOutput))
         {
             await File.AppendAllLinesAsync(

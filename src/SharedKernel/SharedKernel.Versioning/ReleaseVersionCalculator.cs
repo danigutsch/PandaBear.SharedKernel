@@ -26,7 +26,18 @@ public static class ReleaseVersionCalculator
         var prerelease = input.VersionKind == "stable" || string.IsNullOrWhiteSpace(input.RunNumber)
             ? null
             : "alpha." + input.RunNumber;
-        var versionOutput = VersionCalculation.Calculate(SemanticVersion.Parse(baseVersion), messages, prerelease, input.SourceSha);
+        var parsedBaseVersion = SemanticVersion.Parse(baseVersion);
+        var versionOutput = VersionCalculation.Calculate(parsedBaseVersion, messages, prerelease, input.SourceSha);
+
+        // A prerelease tag, or the initial development version without tags, fixes the target version;
+        // later prereleases advance only the prerelease identifier.
+        if (prerelease is not null && (string.IsNullOrWhiteSpace(input.SourceTag) || parsedBaseVersion.Prerelease is not null))
+        {
+            versionOutput = VersionOutput.Create(
+                parsedBaseVersion.StableCore with { Prerelease = prerelease },
+                versionOutput.ReleaseImpact,
+                input.SourceSha);
+        }
 
         return new ReleaseVersionCalculationResult(
             baseVersion,
