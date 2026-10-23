@@ -92,4 +92,25 @@ public sealed class CatalogCommandTests : IDisposable
         run.Error.ShouldNotContain(NotesText, StringComparison.Ordinal);
         File.Exists(output).ShouldBeFalse();
     }
+
+    [Fact]
+    public async Task Apply_names_the_attachments_to_upload_only_when_it_writes_the_vault()
+    {
+        string vault = CliInputs.KeeperZipWithFolderAndAttachments(directory);
+        string catalogPath = Path.Combine(directory, "catalog.json");
+        string output = Path.Combine(directory, "organized.json");
+        var environment = new TestPrompts(ExportPassword).Environment();
+        (await CommandLineRun.Invoke(environment, ["catalog", vault, "-o", catalogPath], TestContext.Current.CancellationToken)).ExitCode.ShouldBe(0);
+        var document = JsonNode.Parse(await File.ReadAllTextAsync(catalogPath, TestContext.Current.CancellationToken)).ShouldNotBeNull();
+        var backup = document["items"].ShouldNotBeNull().AsArray().ShouldHaveSingleItem(item => item!["name"]!.GetValue<string>() == "Backup").ShouldNotBeNull();
+        backup["name"] = new string('x', 1001);
+        await File.WriteAllTextAsync(catalogPath, document.ToJsonString(), TestContext.Current.CancellationToken);
+
+        var run = await CommandLineRun.Invoke(environment, ["apply", vault, "--catalog", catalogPath, "-o", output, "--plaintext"], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(3);
+        run.Error.ShouldContain("Bitwarden would reject the import", StringComparison.Ordinal);
+        run.Error.ShouldNotContain("is not in the written vault", StringComparison.Ordinal);
+        File.Exists(output).ShouldBeFalse();
+    }
 }

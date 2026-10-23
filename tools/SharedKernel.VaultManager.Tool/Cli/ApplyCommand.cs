@@ -128,14 +128,6 @@ internal static class ApplyCommand
             error.WriteLine("Warning: " + PrintableText.OneLine(warning));
         }
 
-        foreach (VaultItem item in edited.Items)
-        {
-            foreach (AttachmentRef attachment in item.Attachments)
-            {
-                error.WriteLine(PrintableText.OneLine($"Warning: \"{item.Name}\": attachment \"{attachment.FileName}\" is not in the written vault, because Bitwarden JSON imports cannot carry files. Upload it by hand after the import."));
-            }
-        }
-
         if (written.Errors.Count > 0)
         {
             foreach (string writeError in written.Errors)
@@ -145,6 +137,15 @@ internal static class ApplyCommand
 
             error.WriteLine("The vault was not written because Bitwarden would reject the import.");
             return ExitCodes.InputOutputProblem;
+        }
+
+        // Named only once the vault is written, because they are uploaded after its import.
+        foreach (VaultItem item in edited.Items)
+        {
+            foreach (AttachmentRef attachment in item.Attachments)
+            {
+                error.WriteLine(PrintableText.OneLine($"Warning: \"{item.Name}\": attachment \"{attachment.FileName}\" is not in the written vault, because Bitwarden JSON imports cannot carry files. Upload it by hand after the import."));
+            }
         }
 
         CommandText.Count(output, "Items", edited.Items.Count);
