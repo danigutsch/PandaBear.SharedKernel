@@ -5,6 +5,7 @@ namespace PandaBear.RepoConfig.Tests;
 /// <summary>Waits for a child process to report a process ID through a file.</summary>
 internal static class ChildProcessId
 {
+    /// <summary>Polls <paramref name="path"/> until it holds a process ID, for at most 30 seconds, and fails when <paramref name="running"/> completes first.</summary>
     public static async Task<int> Read(string path, Task running, CancellationToken ct)
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);

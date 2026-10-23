@@ -174,6 +174,61 @@ public sealed class RoadmapAutomationCommandTests
     }
 
     [Fact]
+    public async Task Publish_command_without_force_rejects_a_mismatched_result_digest()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
+        [
+            GitHubRoadmapSnapshotTestOperations.Issue(100, "Closed item", "CLOSED")
+        ];
+        var status = RoadmapGitStatusTestData.Ordinary("roadmap/reconciliation/open-issues-test.json");
+        var artifactDigest = new string('c', 64);
+        var (plan, _) = await RoadmapAutomationTestSetup.CreateSealedResult(
+            workspace,
+            snapshot,
+            status,
+            artifactDigest,
+            TestContext.Current.CancellationToken);
+        using var previewHandler = new TestHttpMessageHandler();
+        GitHubRoadmapSnapshotTestOperations.Enqueue(previewHandler, snapshot);
+        using var previewClient = new HttpClient(previewHandler);
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        var githubOutputPath = Path.Combine(workspace.RootPath, "publish-output.txt");
+        var githubSummaryPath = Path.Combine(workspace.RootPath, "publish-summary.md");
+        using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", "owner/repository");
+        using var planDigest = new EnvironmentVariableScope("ROADMAP_PLAN_DIGEST", plan.PlanDigest);
+        using var artifact = new EnvironmentVariableScope("ROADMAP_ARTIFACT_DIGEST", artifactDigest);
+        using var result = new EnvironmentVariableScope("ROADMAP_RESULT_DIGEST", new string('d', 64));
+        using var githubOutput = new EnvironmentVariableScope("GITHUB_OUTPUT", githubOutputPath);
+        using var githubSummary = new EnvironmentVariableScope("GITHUB_STEP_SUMMARY", githubSummaryPath);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(
+            ["automation", "publish-result", "--root", workspace.RootPath],
+            output,
+            error,
+            workspace.RootPath,
+            previewClient,
+            RoadmapAutomationTestGit.Create(status),
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ToString().ShouldBe(string.Empty);
+        error.ToString().ShouldBe(
+            "sharedkernel-repo: Roadmap automation result seal is invalid or was tampered with." + Environment.NewLine);
+        previewHandler.Requests.ShouldAllSatisfy(request =>
+        {
+            request.PathAndQuery.ShouldBe("/graphql");
+            request.Body.ShouldNotBeNull().ShouldNotContain("mutation", StringComparison.Ordinal);
+        });
+        File.Exists(githubOutputPath).ShouldBeFalse();
+        File.Exists(githubSummaryPath).ShouldBeFalse();
+    }
+
+    [Fact]
     public async Task Publish_command_with_force_writes_a_nonempty_pull_request_url()
     {
         // Arrange

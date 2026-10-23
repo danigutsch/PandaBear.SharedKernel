@@ -46,10 +46,10 @@ sharedkernel-repo verify-podman-dns --verbosity quiet
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
 
 `github` commands and `automation publish-result` preview their changes unless `--force` is given.
-Preview lines start with `preview:`. The `publish-result` preview names the repository, base SHA,
-branch, and changed paths. Every command except `verify-podman-dns` takes `--root <path>`, which
-defaults to the current directory. Run `sharedkernel-repo <command> --help` for the options of each
-command.
+Lines that describe previewed changes start with `preview:`. The `publish-result` preview names the
+repository, base SHA, branch, and changed paths. Every command except `verify-podman-dns` takes
+`--root <path>`, which defaults to the current directory. Run `sharedkernel-repo <command> --help` for
+the options of each command.
 
 ## Environment
 
@@ -82,8 +82,9 @@ command.
 - Child processes (Git, Podman, and `stat`) start without `GH_TOKEN` and `GITHUB_TOKEN`.
 - Without `--force`, `github` commands and `automation publish-result` only read and change nothing in
   GitHub or the checkout; `--force` never skips validation.
-- `automation` steps after planning are bound to the reviewed plan digest. `publish-result --force` also
-  requires a sealed result, creates only a new branch and a draft pull request, and fails when the branch
-  already exists.
+- `automation` steps after planning are bound to the reviewed plan digest. `publish-result` requires a
+  sealed result with or without `--force`, and its preview reads GitHub only to validate. With `--force`
+  it creates Git objects, one new branch, and a draft pull request. When the branch already exists it
+  fails and leaves only unreferenced Git objects.
 - The `publish-result` preview prints no file contents.
 - Output escapes control characters from roadmap and GitHub data.
