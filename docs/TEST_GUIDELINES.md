@@ -1,5 +1,16 @@
 # Test assertion conventions
 
+Mark the phases of every test with `// Arrange`, `// Act`, and `// Assert` comment lines, each once and in that order,
+with a blank line before `// Act` and `// Assert`. Omit `// Arrange` when a test needs no setup. Keep the result of the
+act in a named local and check it under `// Assert`; an exception assertion that returns the exception belongs under
+`// Act`. Use a single `// Act, Assert` line only when one call both acts and asserts and nothing else is checked.
+`SKTEST007` reports a complete marker set out of order.
+
+State why an assertion holds in its message instead of a comment. `ShouldBe(expected, userMessage)`,
+`ShouldContain(predicate, userMessage)`, `ShouldNotContain(predicate, userMessage)`, `ShouldBeTrue(userMessage)`, and
+`ShouldBeFalse(userMessage)` put the message before the failure that they report. Keep comments for setup and for how an
+act works.
+
 Use the capability-specific `Should*` APIs so failures describe the assertion that failed.
 Keep domain setup local and preserve cancellation, isolation, and cleanup assertions when migrating.
 
