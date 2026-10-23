@@ -108,4 +108,7 @@ non-interactive commands and to how they start a UI.
 - Test views headlessly with [input injection](https://github.com/tui-cs/Terminal.Gui/blob/develop/docfx/docs/input-injection.md):
   `Application.Create(new VirtualTimeProvider())`, the ANSI driver, `InjectKey`, and virtual time instead of
   sleeping. Assert on state and events, not screen text.
+- Headless view tests set the environment variable `DisableRealDriverIO=1` and replace the driver's clipboard with
+  `FakeClipboard`. Terminal.Gui 2.5.0 otherwise attaches to the controlling terminal through `/dev/tty`, even when
+  standard input and output are redirected, and uses the system clipboard.
 - Every action is reachable from the keyboard. Secret values are masked until the user reveals them.

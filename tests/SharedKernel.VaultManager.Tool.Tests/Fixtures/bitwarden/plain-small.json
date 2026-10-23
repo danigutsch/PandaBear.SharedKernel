@@ -1,0 +1,23 @@
+{
+  "encrypted": false,
+  "folders": [{ "id": "f1", "name": "Work" }],
+  "items": [
+    {
+      "id": "i1",
+      "organizationId": null,
+      "folderId": "f1",
+      "type": 1,
+      "reprompt": 0,
+      "name": "Example",
+      "notes": null,
+      "favorite": false,
+      "login": {
+        "uris": [{ "match": null, "uri": "https://example.com" }],
+        "username": "alice",
+        "password": "fixture-password-1",
+        "totp": null
+      },
+      "collectionIds": null
+    }
+  ]
+}

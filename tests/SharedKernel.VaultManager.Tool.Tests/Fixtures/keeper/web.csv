@@ -1,0 +1,5 @@
+Personal,Web login,web-user,fixture-web-password,https://web.example.com,"multi
+line notes",,TFC:Keeper,otpauth://totp/Web:web-user?secret=JBSWY3DPEHPK3PXP&issuer=Web,Security Code,9876
+,Web passport,,,,,,Name,Alice Example,Passport Number,X7654321,Date of Birth,01/15/1990
+,Web bank,,,,,,Bank Account,Checking | 12345678 | 021000021
+

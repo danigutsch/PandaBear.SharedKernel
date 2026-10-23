@@ -1,0 +1,4 @@
+Web\Sites,Example login,alice,fixture-password-1,https://example.com/login,"login notes, with ""quotes""",Team\Shared#edit#reshare,$record_uid,rec-login,$type,login,$oneTimeCode,"otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP&issuer=Example
+otpauth://totp/Example:backup?secret=KRSXG5CTMVRXEZLU&issuer=Example",$url:account,https://accounts.example.com,$text:Nickname,ali,$checkbox:Active,true,$securityQuestion,First pet? fixture-answer-1,Plain label,plain value
+,Example card,,,,,,$record_uid,rec-card,$type,bankCard,$paymentCard,4111111111111111 03/2030 123,$text:cardholderName,Alice Example,$pinCode,4321
+Identity,Passport,,,,,,$record_uid,rec-passport,$type,passport,$accountNumber:passportNumber,X1234567,$name,"Example, Alice Q",$birthDate,632361600000
