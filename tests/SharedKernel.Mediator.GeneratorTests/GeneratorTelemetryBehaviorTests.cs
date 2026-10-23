@@ -437,15 +437,14 @@ public sealed class GeneratorTelemetryBehaviorTests
 
         // Act
         var stream = mediator.Send((IStreamRequest<string>)request, CancellationToken.None);
-
-        stopped.ShouldNotContain(a => a.OperationName == MediatorTelemetry.ActivityStream, "The span stays open until the stream is enumerated, because Send only returns the IAsyncEnumerable.");
-
+        var stoppedBeforeEnumeration = stopped.ToList();
         await foreach (var _ in stream)
         {
             // consume
         }
 
-        // Assert — span closed after full enumeration
+        // Assert
+        stoppedBeforeEnumeration.ShouldNotContain(a => a.OperationName == MediatorTelemetry.ActivityStream, "The span stays open until the stream is enumerated, because Send only returns the IAsyncEnumerable.");
         var span = stopped.ShouldHaveSingleItem(a => a.OperationName == MediatorTelemetry.ActivityStream);
         var outcome = span.GetTagItem(MediatorTelemetry.TagOutcome);
         var errorType = span.GetTagItem(MediatorTelemetry.TagErrorType);
