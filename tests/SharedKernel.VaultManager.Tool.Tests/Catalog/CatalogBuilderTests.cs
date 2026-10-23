@@ -36,7 +36,7 @@ public sealed class CatalogBuilderTests
     {
         var built = CatalogBuilder.Build(Vault(Login()), "abc", MergeDecisions.None);
 
-        var pending = built.PendingNotes.ShouldHaveSingleItem();
+        var pending = built.NotesUpdates.ShouldHaveSingleItem();
         pending.OriginKey.ShouldBe(Key);
         pending.Decision.ShouldBe(NotesDecision.Pending);
         pending.ItemName.ShouldBe("GitHub");
@@ -50,8 +50,33 @@ public sealed class CatalogBuilderTests
         var hidden = CatalogBuilder.Build(Vault(Login()), "abc", Notes(NotesDecision.Hidden));
 
         shared.Catalog.Items.ShouldHaveSingleItem().Notes.ShouldBe(new CatalogNotes(NotesDecision.Share, NotesText));
-        shared.PendingNotes.ShouldBeEmpty();
+        shared.NotesUpdates.ShouldBeEmpty();
         hidden.Catalog.Items.ShouldHaveSingleItem().Notes.ShouldBe(new CatalogNotes(NotesDecision.Hidden));
+    }
+
+    [Fact]
+    public void Build_withholds_shared_notes_that_changed_since_they_were_shared()
+    {
+        var changed = Login() with { Notes = "fixture notes edited after sharing" };
+
+        var built = CatalogBuilder.Build(Vault(changed), "abc", Notes(NotesDecision.Share));
+
+        built.Catalog.Items.ShouldHaveSingleItem().Notes.ShouldBe(new CatalogNotes(NotesDecision.Pending));
+        var update = built.NotesUpdates.ShouldHaveSingleItem();
+        update.Decision.ShouldBe(NotesDecision.Pending);
+        update.NotesSha256.ShouldBeNull();
+        CatalogFile.Serialize(built.Catalog).ShouldNotContain("edited after sharing", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Build_binds_a_share_decision_without_a_hash_to_the_current_notes()
+    {
+        var decisions = MergeDecisions.None with { Notes = [new ItemNotesDecision(Key, NotesDecision.Share)] };
+
+        var built = CatalogBuilder.Build(Vault(Login()), "abc", decisions);
+
+        built.Catalog.Items.ShouldHaveSingleItem().Notes.ShouldBe(new CatalogNotes(NotesDecision.Share, NotesText));
+        built.NotesUpdates.ShouldHaveSingleItem().NotesSha256.ShouldBe(ItemNotesDecision.HashOf(NotesText));
     }
 
     [Fact]

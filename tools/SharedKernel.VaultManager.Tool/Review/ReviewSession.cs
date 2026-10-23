@@ -363,7 +363,12 @@ internal sealed class ReviewSession
 
         var notes = new List<ItemNotesDecision>(Decisions.Notes);
         int index = notes.FindIndex(entry => string.Equals(entry.OriginKey, originKey, StringComparison.Ordinal));
-        var entry = new ItemNotesDecision(originKey, decision, item.Source.Item.Name, NotesFindings(item));
+        var entry = new ItemNotesDecision(
+            originKey,
+            decision,
+            item.Source.Item.Name,
+            NotesFindings(item),
+            decision == NotesDecision.Share ? ItemNotesDecision.HashOf(item.Source.Item.Notes) : null);
         if (decision == NotesDecision.Pending && index >= 0)
         {
             notes.RemoveAt(index);
@@ -397,7 +402,7 @@ internal sealed class ReviewSession
                 continue;
             }
 
-            var entry = new ItemNotesDecision(originKey, NotesDecision.Share, item.Source.Item.Name, 0);
+            var entry = new ItemNotesDecision(originKey, NotesDecision.Share, item.Source.Item.Name, 0, ItemNotesDecision.HashOf(item.Source.Item.Notes));
             int index = notes.FindIndex(existing => string.Equals(existing.OriginKey, originKey, StringComparison.Ordinal));
             if (index >= 0)
             {

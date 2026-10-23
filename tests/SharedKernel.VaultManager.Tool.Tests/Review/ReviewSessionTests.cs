@@ -24,6 +24,7 @@ public sealed class ReviewSessionTests : IDisposable
         var session = Session(Scan(directory, wifi));
 
         session.DecideNotes(OriginKey(wifi), NotesDecision.Share);
+        session.Decisions.Notes.ShouldHaveSingleItem().NotesSha256.ShouldBe(ItemNotesDecision.HashOf("fixture wifi note"));
         session.DecideNotes(OriginKey(wifi), NotesDecision.Hidden);
 
         session.Decisions.Notes.ShouldBe([new ItemNotesDecision(OriginKey(wifi), NotesDecision.Hidden, "Wifi", 0)]);
@@ -45,6 +46,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.ShareNotesWithoutFindings().ShouldBe(1);
 
         session.Decisions.FindNotes(OriginKey(wifi)).ShouldBe(NotesDecision.Share);
+        session.Decisions.Notes.ShouldContain(entry => entry.OriginKey == OriginKey(wifi) && entry.NotesSha256 == ItemNotesDecision.HashOf("fixture wifi note"));
         session.Decisions.FindNotes(OriginKey(router)).ShouldBe(NotesDecision.Private);
         session.Decisions.FindNotes(OriginKey(github)).ShouldBe(NotesDecision.Pending);
     }

@@ -301,7 +301,10 @@ file, the agent edits only the catalog, and `apply` writes the vault with the ed
 - Notes are withheld until the user decides on them in the decisions file's `notes` list, by editing it or in
   `review` of the same file: `Share` shows them, `Private` keeps them out, and `Hidden` also moves them into a hidden
   field named `Notes` on `apply`. `catalog` rebuilds the pending entries, one for each item whose notes have no
-  decision, with the number of findings in them. The scanner can miss a secret, so no notes are shown without a decision.
+  decision, with the number of findings in them. The scanner can miss a secret, so no notes are shown without a decision. A
+  `Share` decision is bound to the SHA-256 of the notes it shares, recorded by `review` or, for a decision typed into
+  the file, by the first `catalog` run; notes that changed since go back to pending. The hash is of notes the catalog
+  already shows, so it reveals nothing new.
 - `apply` accepts a catalog only for the file it was made from, by file name and SHA-256. It reads the item set from
   the vault and refuses a catalog that adds, removes, or renames a key, empties a name, sets the text of notes that
   the decisions file does not share, or changes or removes a masked address. Field order is kept: shown fields fill

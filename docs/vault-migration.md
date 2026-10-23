@@ -614,7 +614,8 @@ that holds no secret value; you run the two commands that read and write the vau
    ```
 
    Or replace `"decision": "Pending"` in `notes.json` with `"Share"`, `"Private"`, or `"Hidden"`. The scanner can
-   miss a secret, so read notes before you share them. Then run `catalog` again with `--force` to show the shared
+   miss a secret, so read notes before you share them. A `Share` holds only for the notes it was made for: if an
+   item's notes change, for example in a later export, they go back to `Pending`. Then run `catalog` again with `--force` to show the shared
    notes.
 3. Give the agent `catalog.json` and nothing else from the working folder. It may change `name`, `folder`,
    `additionalFolders`, `favorite`, the `text` of shared notes, the `uris` that are not masked, the `fields`, and the

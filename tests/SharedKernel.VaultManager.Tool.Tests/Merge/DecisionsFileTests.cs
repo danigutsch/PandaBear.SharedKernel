@@ -39,7 +39,7 @@ public sealed class DecisionsFileTests : IDisposable
     [Fact]
     public void Notes_decisions_round_trip_and_files_without_them_still_read()
     {
-        var decisions = MergeDecisions.None with { Notes = [new ItemNotesDecision("a|b|c", NotesDecision.Share, "GitHub", 2), new ItemNotesDecision("a|b|d", NotesDecision.Hidden)] };
+        var decisions = MergeDecisions.None with { Notes = [new ItemNotesDecision("a|b|c", NotesDecision.Share, "GitHub", 2, ItemNotesDecision.HashOf("shared notes")), new ItemNotesDecision("a|b|d", NotesDecision.Hidden)] };
 
         string json = DecisionsFile.Serialize(decisions);
 
@@ -60,15 +60,18 @@ public sealed class DecisionsFileTests : IDisposable
     }
 
     [Fact]
-    public void Pending_notes_entries_are_rebuilt_for_items_without_a_decision()
+    public void Notes_updates_replace_entries_and_drop_stale_pending_ones()
     {
-        var decisions = MergeDecisions.None with { Notes = [new ItemNotesDecision("a|b|c", NotesDecision.Private), new ItemNotesDecision("a|b|old", NotesDecision.Pending)] };
+        var decisions = MergeDecisions.None with
+        {
+            Notes = [new ItemNotesDecision("a|b|c", NotesDecision.Private), new ItemNotesDecision("a|b|old", NotesDecision.Pending), new ItemNotesDecision("a|b|e", NotesDecision.Share)],
+        };
 
-        var updated = decisions.WithPendingNotes([new ItemNotesDecision("a|b|c", NotesDecision.Pending, "One"), new ItemNotesDecision("a|b|d", NotesDecision.Pending, "Two", 1)]);
+        var updated = decisions.WithNotes([new ItemNotesDecision("a|b|e", NotesDecision.Pending, "Changed"), new ItemNotesDecision("a|b|d", NotesDecision.Pending, "Two", 1)]);
 
-        updated.Notes.ShouldBe([new ItemNotesDecision("a|b|c", NotesDecision.Private), new ItemNotesDecision("a|b|d", NotesDecision.Pending, "Two", 1)]);
+        updated.Notes.ShouldBe([new ItemNotesDecision("a|b|c", NotesDecision.Private), new ItemNotesDecision("a|b|e", NotesDecision.Pending, "Changed"), new ItemNotesDecision("a|b|d", NotesDecision.Pending, "Two", 1)]);
         updated.FindNotes("a|b|c").ShouldBe(NotesDecision.Private);
-        updated.FindNotes("a|b|e").ShouldBe(NotesDecision.Pending);
+        updated.FindNotes("a|b|f").ShouldBe(NotesDecision.Pending);
     }
 
     [Fact]

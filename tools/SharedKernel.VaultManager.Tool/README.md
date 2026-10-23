@@ -335,8 +335,10 @@ after a merge that needs two decisions:
   `Share` shows the notes in catalogs and lets `apply` take the edited text, `Private` keeps them out of catalogs,
   and `Hidden` keeps them out and moves them into a hidden field named `Notes` when a catalog is applied. `catalog`
   rebuilds the `Pending` entries, one for each item whose notes have no decision, with the number of findings in the
-  notes; a pending entry withholds the notes. `merge` ignores this list. In `review` of the same file, `n`, `p`, `h`, and
-  `F8` set these decisions.
+  notes; a pending entry withholds the notes. A `Share` decision applies only to the notes it was made for: `review`
+  records their SHA-256 in `notesSha256`, and `catalog` records it for a `Share` typed into the file without one.
+  Notes that changed since then go back to `Pending`, so a decision never shows text you did not confirm. `merge`
+  ignores this list. In `review` of the same file, `n`, `p`, `h`, and `F8` set these decisions.
 - **Links and splits.** `links` and `splits` take pairs of origin keys, such as
   `{ "first": "keeper|keeper.json|rec-1", "second": "bitwarden|bitwarden.json|bw-1" }`, that must or must never
   end up in one group. A split wins over a link.

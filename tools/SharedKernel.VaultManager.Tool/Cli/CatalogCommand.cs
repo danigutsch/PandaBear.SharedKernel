@@ -85,9 +85,9 @@ internal static class CatalogCommand
 
         ct.ThrowIfCancellationRequested();
         CatalogFile.Write(catalogPath, built.Catalog, force);
-        if (decisionsPath is not null && (built.PendingNotes.Count > 0 || decisions.Notes.Any(entry => entry.Decision == NotesDecision.Pending)))
+        if (decisionsPath is not null && (built.NotesUpdates.Count > 0 || decisions.Notes.Any(entry => entry.Decision == NotesDecision.Pending)))
         {
-            DecisionsFile.Write(decisionsPath, decisions.WithPendingNotes(built.PendingNotes));
+            DecisionsFile.Write(decisionsPath, decisions.WithNotes(built.NotesUpdates));
         }
 
         CatalogCounts counts = built.Counts;

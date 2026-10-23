@@ -20,25 +20,57 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
     /// <summary>Decisions on the notes of catalog items, at most one per input item.</summary>
     public IReadOnlyList<ItemNotesDecision> Notes { get; init; } = [];
 
+    /// <summary>Finds the entry on the notes of an input item.</summary>
+    /// <param name="originKey">Origin key of the item.</param>
+    /// <returns>The entry, or <see langword="null"/> when there is none.</returns>
+    public ItemNotesDecision? FindNotesEntry(string originKey) =>
+        Notes.FirstOrDefault(item => string.Equals(item.OriginKey, originKey, StringComparison.Ordinal));
+
     /// <summary>Finds the decision on the notes of an input item.</summary>
     /// <param name="originKey">Origin key of the item.</param>
     /// <returns>The decision; <see cref="NotesDecision.Pending"/> when there is none.</returns>
-    public NotesDecision FindNotes(string originKey) =>
-        Notes.FirstOrDefault(item => string.Equals(item.OriginKey, originKey, StringComparison.Ordinal))?.Decision ?? NotesDecision.Pending;
+    public NotesDecision FindNotes(string originKey) => FindNotesEntry(originKey)?.Decision ?? NotesDecision.Pending;
 
     /// <summary>
-    /// Returns these decisions with their pending notes entries replaced: every pending entry is dropped, and one is added
-    /// for each given item without a notes decision. Other notes decisions stay as they are.
+    /// Whether the notes of an input item are shared: the decision is <see cref="NotesDecision.Share"/> and was made for
+    /// exactly these notes (<see cref="ItemNotesDecision.NotesSha256"/>).
     /// </summary>
-    /// <param name="items">Items whose notes need a decision.</param>
-    /// <returns>The updated decisions.</returns>
-    public MergeDecisions WithPendingNotes(IEnumerable<ItemNotesDecision> items)
+    /// <param name="originKey">Origin key of the item.</param>
+    /// <param name="notes">The item's current notes.</param>
+    /// <returns><see langword="true"/> when the notes may be shown and edited.</returns>
+    public bool SharesNotes(string originKey, string notes)
     {
-        ArgumentNullException.ThrowIfNull(items);
+        ArgumentNullException.ThrowIfNull(notes);
 
-        ItemNotesDecision[] decided = [.. Notes.Where(item => item.Decision != NotesDecision.Pending)];
-        var known = new HashSet<string>(decided.Select(item => item.OriginKey), StringComparer.Ordinal);
-        return this with { Notes = [.. decided, .. items.Where(item => known.Add(item.OriginKey)).Select(item => item with { Decision = NotesDecision.Pending })] };
+        return FindNotesEntry(originKey) is { Decision: NotesDecision.Share, NotesSha256: { } hash }
+            && string.Equals(hash, ItemNotesDecision.HashOf(notes), StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Returns these decisions with notes entries updated: every pending entry is dropped, each given entry replaces the
+    /// entry of its item in place or is added, and other entries stay as they are.
+    /// </summary>
+    /// <param name="updates">New entries, such as pending entries for notes that need a decision.</param>
+    /// <returns>The updated decisions.</returns>
+    public MergeDecisions WithNotes(IEnumerable<ItemNotesDecision> updates)
+    {
+        ArgumentNullException.ThrowIfNull(updates);
+
+        Dictionary<string, ItemNotesDecision> byKey = updates.ToDictionary(item => item.OriginKey, StringComparer.Ordinal);
+        var notes = new List<ItemNotesDecision>();
+        foreach (ItemNotesDecision entry in Notes)
+        {
+            if (byKey.Remove(entry.OriginKey, out ItemNotesDecision? update))
+            {
+                notes.Add(update);
+            }
+            else if (entry.Decision != NotesDecision.Pending)
+            {
+                notes.Add(entry);
+            }
+        }
+
+        return this with { Notes = [.. notes, .. updates.Where(item => byKey.ContainsKey(item.OriginKey))] };
     }
 
     /// <summary>Finds the decision for a field of a group. The first matching decision counts; pending entries are skipped.</summary>

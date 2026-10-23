@@ -91,6 +91,19 @@ public sealed class CatalogApplierTests
         item.Notes.ShouldBe(NotesText);
     }
 
+    [Fact]
+    public void Apply_refuses_notes_text_when_the_share_decision_is_bound_to_other_notes()
+    {
+        var vault = Vault(Login());
+        var catalog = CatalogBuilder.Build(vault, "abc", Notes(NotesDecision.Share)).Catalog;
+        var stale = MergeDecisions.None with { Notes = [new ItemNotesDecision(Key, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf("other notes"))] };
+
+        var result = CatalogApplier.Apply(vault, catalog, stale);
+
+        result.Vault.ShouldBeNull();
+        result.Problems.ShouldHaveSingleItem().ShouldContain("the decisions file does not", StringComparison.Ordinal);
+    }
+
     [Theory]
     [InlineData("withheld notes text")]
     [InlineData("notes shared only in the catalog")]

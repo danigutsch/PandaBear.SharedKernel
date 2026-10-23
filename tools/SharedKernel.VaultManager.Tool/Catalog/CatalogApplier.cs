@@ -47,7 +47,7 @@ internal static class CatalogApplier
             }
 
             var itemProblems = new List<string>();
-            VaultItem edited = Edit(source, entry, decisions.FindNotes(source.OriginKey), itemProblems);
+            VaultItem edited = Edit(source, entry, decisions, itemProblems);
             problems.AddRange(itemProblems.Select(problem => $"{source.OriginKey} (\"{source.Item.Name}\"): {problem}"));
             changed += Changed(source.Item, edited) ? 1 : 0;
             items.Add(edited);
@@ -58,7 +58,7 @@ internal static class CatalogApplier
             : new CatalogApplyResult(new VaultExport(items) { Folders = catalog.Folders }, changed, []);
     }
 
-    private static VaultItem Edit(SourceItem source, CatalogItem entry, NotesDecision decision, List<string> problems)
+    private static VaultItem Edit(SourceItem source, CatalogItem entry, MergeDecisions decisions, List<string> problems)
     {
         VaultItem item = source.Item;
         IReadOnlyList<SecretFinding> findings = SecretScanner.Default.Scan(item);
@@ -68,7 +68,7 @@ internal static class CatalogApplier
         }
 
         string? folder = string.IsNullOrWhiteSpace(entry.Folder) ? null : entry.Folder.Trim();
-        (string? notes, CustomField? hiddenNotes) = Notes(item, entry.Notes, decision, problems);
+        (string? notes, CustomField? hiddenNotes) = Notes(source.OriginKey, item, entry.Notes, decisions, problems);
         LoginData? login = item.Login is { } current ? current with { Uris = Uris(current.Uris, entry.Uris, problems) } : null;
         if (item.Login is null && entry.Uris.Count > 0)
         {
@@ -123,8 +123,9 @@ internal static class CatalogApplier
     private static CustomField ToField(CatalogField field) => new(field.Name, field.Value, CustomFieldType.Text);
 
     // Shared notes take the catalog's text; other notes stay as read, and hidden notes move into a hidden field. The
-    // decisions file, not the catalog, says which notes are shared, so editing the catalog cannot reveal or replace them.
-    private static (string? Notes, CustomField? Hidden) Notes(VaultItem item, CatalogNotes? entry, NotesDecision decision, List<string> problems)
+    // decisions file, not the catalog, says which notes are shared, and only for the notes it was made for, so editing the
+    // catalog cannot reveal or replace them.
+    private static (string? Notes, CustomField? Hidden) Notes(string originKey, VaultItem item, CatalogNotes? entry, MergeDecisions decisions, List<string> problems)
     {
         if (string.IsNullOrEmpty(item.Notes))
         {
@@ -139,7 +140,7 @@ internal static class CatalogApplier
 
         if (entry.Decision == NotesDecision.Share)
         {
-            if (decision != NotesDecision.Share)
+            if (!decisions.SharesNotes(originKey, item.Notes))
             {
                 problems.Add("the catalog shares the notes, but the decisions file does not. Share them in the decisions file and run catalog again.");
                 return (item.Notes, null);
@@ -153,7 +154,7 @@ internal static class CatalogApplier
             problems.Add("the notes are withheld, so their text cannot be set. Share them in the decisions file and run catalog again.");
         }
 
-        return decision == NotesDecision.Hidden
+        return decisions.FindNotes(originKey) == NotesDecision.Hidden
             ? (null, new CustomField(HiddenNotesField, item.Notes, CustomFieldType.Hidden))
             : (item.Notes, null);
     }

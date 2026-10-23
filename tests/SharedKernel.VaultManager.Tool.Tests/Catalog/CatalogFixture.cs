@@ -57,5 +57,8 @@ internal static class CatalogFixture
     }
 
     public static MergeDecisions Notes(NotesDecision decision) =>
-        MergeDecisions.None with { Notes = [new ItemNotesDecision(Key, decision)] };
+        MergeDecisions.None with
+        {
+            Notes = [new ItemNotesDecision(Key, decision, NotesSha256: decision == NotesDecision.Share ? ItemNotesDecision.HashOf(NotesText) : null)],
+        };
 }

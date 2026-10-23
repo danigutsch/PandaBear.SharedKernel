@@ -20,7 +20,7 @@ internal static class CatalogBuilder
     /// <param name="vault">Items read from the file.</param>
     /// <param name="sha256">SHA-256 of the file, from <see cref="CatalogFile.Hash"/>.</param>
     /// <param name="decisions">Decisions that hold the notes decisions.</param>
-    /// <returns>The catalog, the items whose notes need a decision, and counts for the summary.</returns>
+    /// <returns>The catalog, the notes entries to write to the decisions file, and counts for the summary.</returns>
     /// <exception cref="ArgumentException">The vault was not read from exactly one file.</exception>
     public static CatalogBuild Build(LoadedVault vault, string sha256, MergeDecisions decisions)
     {
@@ -33,7 +33,7 @@ internal static class CatalogBuilder
         }
 
         var items = new List<CatalogItem>(vault.Items.Count);
-        var pending = new List<ItemNotesDecision>();
+        var updates = new List<ItemNotesDecision>();
         var counts = new CatalogCounts();
         foreach (SourceItem source in vault.Items)
         {
@@ -42,13 +42,12 @@ internal static class CatalogBuilder
             CatalogNotes? notes = null;
             if (!string.IsNullOrEmpty(item.Notes))
             {
-                NotesDecision decision = decisions.FindNotes(source.OriginKey);
+                (NotesDecision decision, ItemNotesDecision? update) = NotesDecisionOf(source.OriginKey, item, findings, decisions);
                 notes = new CatalogNotes(decision, decision == NotesDecision.Share ? item.Notes : null);
                 counts.Count(decision);
-                if (decision == NotesDecision.Pending)
+                if (update is not null)
                 {
-                    int inNotes = findings.Count(finding => string.Equals(finding.Location.FieldPath, SecretLocation.Notes, StringComparison.Ordinal));
-                    pending.Add(new ItemNotesDecision(source.OriginKey, NotesDecision.Pending, item.Name, inNotes));
+                    updates.Add(update);
                 }
             }
 
@@ -92,7 +91,32 @@ internal static class CatalogBuilder
             new CatalogSource(Path.GetFileName(vault.InputPaths[0]), sha256),
             vault.Folders,
             items);
-        return new CatalogBuild(catalog, pending, counts);
+        return new CatalogBuild(catalog, updates, counts);
+    }
+
+    // A share decision shows the notes it was made for. One that names no notes, such as one typed into the decisions file,
+    // is bound to the current notes; one made for other notes falls back to pending, so changed notes are never shown
+    // without a new decision.
+    private static (NotesDecision Decision, ItemNotesDecision? Update) NotesDecisionOf(
+        string originKey, VaultItem item, IReadOnlyList<SecretFinding> findings, MergeDecisions decisions)
+    {
+        string notes = item.Notes!;
+        int inNotes = findings.Count(finding => string.Equals(finding.Location.FieldPath, SecretLocation.Notes, StringComparison.Ordinal));
+        ItemNotesDecision? entry = decisions.FindNotesEntry(originKey);
+        NotesDecision decision = entry?.Decision ?? NotesDecision.Pending;
+        if (decision == NotesDecision.Share && entry!.NotesSha256 is null)
+        {
+            return (decision, entry with { ItemName = item.Name, Findings = inNotes, NotesSha256 = ItemNotesDecision.HashOf(notes) });
+        }
+
+        if (decision == NotesDecision.Share && !decisions.SharesNotes(originKey, notes))
+        {
+            decision = NotesDecision.Pending;
+        }
+
+        return decision == NotesDecision.Pending
+            ? (decision, new ItemNotesDecision(originKey, NotesDecision.Pending, item.Name, inNotes))
+            : (decision, null);
     }
 
     /// <summary>
