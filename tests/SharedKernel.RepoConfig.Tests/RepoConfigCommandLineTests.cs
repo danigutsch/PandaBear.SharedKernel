@@ -194,6 +194,25 @@ public sealed class RepoConfigCommandLineTests
     }
 
     [Fact]
+    public async Task Root_option_with_a_null_character_from_a_response_file_is_a_parse_error()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        var responseFilePath = Path.Combine(workspace.RootPath, "arguments.rsp");
+        await File.WriteAllLinesAsync(responseFilePath, ["init", "--root", "a\0b"], TestContext.Current.CancellationToken);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["@" + responseFilePath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ToString().ShouldContain("--root path contains a null character.", StringComparison.Ordinal);
+        workspace.FileExists("roadmap/config.json").ShouldBeFalse();
+    }
+
+    [Fact]
     public async Task Root_option_without_a_value_is_a_parse_error()
     {
         // Arrange

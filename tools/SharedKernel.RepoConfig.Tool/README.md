@@ -8,15 +8,28 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 repository checks. Application CI slices, coverage exclusions, bootstrap, consumer compatibility,
 workflow configuration, and protected-environment approval remain consumer-owned.
 
-## Prerequisites and installation
+## Prerequisites
 
-The tool runs on .NET 10; `verify-text-encoding` also needs Git. Source is public and registry
-publication remains deferred, so install a validated candidate from an explicitly configured local or
-private feed as a local tool, then run `dotnet tool run sharedkernel-repo -- <command>`. Nothing here
-implies availability on nuget.org.
+The tool runs on .NET 10; `verify-text-encoding` also needs Git.
+
+## Installation
+
+Install a validated candidate as a local tool from the feed that holds it, such as the folder that
+`sharedkernel-version stage-candidate` copies a candidate to. Add the feed to `NuGet.Config` and map
+`PandaBear.SharedKernel.*` to it. Map every other package, for example `*`, to the existing source, because
+a package without a mapping does not restore once source mapping is enabled. With the SDK pinned in
+`global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.
+
+```text
+dotnet tool install PandaBear.SharedKernel.RepoConfig.Tool --version <validated-candidate-version>
+dotnet tool run sharedkernel-repo -- <command>
+```
+
+.NET tools run in full trust. Install only from trusted manifests and package sources.
 
 Package ID: `PandaBear.SharedKernel.RepoConfig.Tool`. C# namespace: `PandaBear.RepoConfig.Tool`.
-Assembly/project identity: `SharedKernel.RepoConfig.Tool`.
+Assembly/project identity: `SharedKernel.RepoConfig.Tool`. Source is public; registry publication remains
+deferred, and nothing here implies availability on nuget.org.
 
 ## Usage
 
