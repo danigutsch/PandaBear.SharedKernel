@@ -8,10 +8,15 @@
         <Description>Reusable Playwright MCP browser automation tool.</Description>
         <RootNamespace>PandaBear.PlaywrightMcp.Tool</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
     <ItemGroup>
         <InternalsVisibleTo Include="SharedKernel.PlaywrightMcp.Tool.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.CommandLine" />
     </ItemGroup>
 
     <ItemGroup>

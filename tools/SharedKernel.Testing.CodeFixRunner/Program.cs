@@ -1,1 +1,6 @@
-return await PandaBear.Testing.CodeFixRunner.ProgramEntryPoint.Run(args, Console.Out, Console.Error).ConfigureAwait(false);
+using PandaBear.Testing.CodeFixRunner;
+
+return await CodeFixRunnerCommandLine.Create(Environment.CurrentDirectory, CodeFixRunEngine.Run)
+    .Parse(args)
+    .InvokeAsync()
+    .ConfigureAwait(false);

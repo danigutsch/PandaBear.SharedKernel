@@ -4,13 +4,10 @@ namespace PandaBear.Versioning.Tool;
 
 internal static class CandidateStagingCommand
 {
-    public static async Task Run(CandidateCommandOptions options, TextWriter output, CancellationToken ct)
+    public static async Task Run(string root, string candidate, string feed, string destination, TextWriter output, CancellationToken ct)
     {
-        var candidate = options.Candidate ?? throw new ArgumentException("--candidate is required.");
-        var feed = options.Feed ?? throw new ArgumentException("--feed is required.");
-        var destination = options.Output ?? throw new ArgumentException("--output is required.");
         var evidence = CandidateManifest.ReadAndVerify(candidate, feed);
-        var revision = CommandRunner.Run("git", ["rev-parse", "HEAD"], options.Root).Trim();
+        var revision = (await CommandRunner.Run("git", ["rev-parse", "HEAD"], root, ct).ConfigureAwait(false)).Trim();
         if (evidence["libraryRevision"]?.GetValue<string>() != revision || evidence["libraryDirty"]?.GetValue<bool>() != false)
         {
             throw new ArgumentException("Candidate must identify the committed library revision used for bootstrap.");

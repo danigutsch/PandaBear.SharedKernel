@@ -2,24 +2,23 @@ using System.Xml.Linq;
 
 namespace PandaBear.Versioning.Tool;
 
-internal static class PackageSmokeCommand
+internal static class PackageConsumptionCommand
 {
-    public static async Task Run(CandidateCommandOptions options, TextWriter output)
+    /// <summary>Restores, builds, and runs the samples against the packages in <paramref name="feed" />, writing child process output to <paramref name="error" />.</summary>
+    public static async Task Run(string root, string feed, string version, bool aot, TextWriter output, TextWriter error, CancellationToken ct)
     {
-        var feed = options.Feed ?? throw new ArgumentException("--feed is required.");
-        var version = options.Version ?? throw new ArgumentException("--version is required.");
         var packages = Directory.GetFiles(feed, "*.nupkg");
         if (packages.Length == 0) { throw new ArgumentException("Candidate feed contains no packages."); }
         var packageIds = SharedKernelLocalFeed.ReadPackageIds(packages, version);
-        var external = XDocument.Load(Path.Combine(options.Root, "Directory.Packages.props"))
+        var external = XDocument.Load(Path.Combine(root, "Directory.Packages.props"))
             .Descendants("PackageVersion").ToDictionary(x => (string)x.Attribute("Include")!, x => (string)x.Attribute("Version")!, StringComparer.Ordinal);
         var scratch = Path.Combine(Path.GetTempPath(), "sharedkernel-package-check-" + Guid.NewGuid().ToString("N"));
         foreach (var relative in new[] { "samples/Results/BasicResults.Sample", "samples/Mediator/Mediator.Sample", "samples/HttpRequests/HttpRequests.Sample" })
         {
-            var source = Path.Combine(options.Root, relative);
+            var source = Path.Combine(root, relative);
             var target = Path.Combine(scratch, Path.GetFileName(relative));
             Directory.CreateDirectory(target);
-            File.Copy(Path.Combine(options.Root, "global.json"), Path.Combine(target, "global.json"));
+            File.Copy(Path.Combine(root, "global.json"), Path.Combine(target, "global.json"));
             foreach (var file in Directory.EnumerateFiles(source, "*", SearchOption.AllDirectories))
             {
                 var local = Path.GetRelativePath(source, file);
@@ -55,9 +54,9 @@ internal static class PackageSmokeCommand
                 new XElement("TreatWarningsAsErrors", "true"), new XElement("NuGetAudit", "true"),
                 new XElement("NuGetAuditMode", "all"), new XElement("NuGetAuditLevel", "high")));
             project.Save(projectPath);
-            await File.WriteAllTextAsync(Path.Combine(target, ".editorconfig"), "root = true\n").ConfigureAwait(false);
-            await File.WriteAllTextAsync(Path.Combine(target, "Directory.Build.props"), "<Project />\n").ConfigureAwait(false);
-            await File.WriteAllTextAsync(Path.Combine(target, "Directory.Build.targets"), "<Project />\n").ConfigureAwait(false);
+            await File.WriteAllTextAsync(Path.Combine(target, ".editorconfig"), "root = true\n", ct).ConfigureAwait(false);
+            await File.WriteAllTextAsync(Path.Combine(target, "Directory.Build.props"), "<Project />\n", ct).ConfigureAwait(false);
+            await File.WriteAllTextAsync(Path.Combine(target, "Directory.Build.targets"), "<Project />\n", ct).ConfigureAwait(false);
             new XDocument(new XElement("Project", new XElement("PropertyGroup", new XElement("ManagePackageVersionsCentrally", "true")),
                 new XElement("ItemGroup", versions.Select(pair => new XElement("PackageVersion", new XAttribute("Include", pair.Key), new XAttribute("Version", pair.Value))))))
                 .Save(Path.Combine(target, "Directory.Packages.props"));
@@ -72,19 +71,20 @@ internal static class PackageSmokeCommand
             ];
             foreach (var command in commands)
             {
-                await output.WriteAsync(CommandRunner.Run("dotnet", command, target)).ConfigureAwait(false);
+                await error.WriteAsync(await CommandRunner.Run("dotnet", command, target, ct).ConfigureAwait(false)).ConfigureAwait(false);
             }
 
-            if (options.Aot)
+            if (aot)
             {
                 var rid = OperatingSystem.IsWindows() ? "win-x64" : "linux-x64";
                 var native = Path.Combine(target, "native");
-                await output.WriteAsync(CommandRunner.Run("dotnet", ["publish", projectPath, "-c", "Release", "-r", rid,
-                    "-p:PublishAot=true", "--configfile", config, "--packages", cache, "-o", native], target)).ConfigureAwait(false);
-                await output.WriteAsync(CommandRunner.Run(Path.Combine(native, Path.GetFileName(relative) + (OperatingSystem.IsWindows() ? ".exe" : string.Empty)), [], target)).ConfigureAwait(false);
+                await error.WriteAsync(await CommandRunner.Run("dotnet", ["publish", projectPath, "-c", "Release", "-r", rid,
+                    "-p:PublishAot=true", "--configfile", config, "--packages", cache, "-o", native], target, ct).ConfigureAwait(false)).ConfigureAwait(false);
+                await error.WriteAsync(await CommandRunner.Run(
+                    Path.Combine(native, Path.GetFileName(relative) + (OperatingSystem.IsWindows() ? ".exe" : string.Empty)), [], target, ct).ConfigureAwait(false)).ConfigureAwait(false);
             }
         }
 
-        await output.WriteLineAsync("Package smoke checks passed. Evidence workspace: " + scratch).ConfigureAwait(false);
+        await output.WriteLineAsync("Package consumption checks passed. Evidence workspace: " + scratch).ConfigureAwait(false);
     }
 }

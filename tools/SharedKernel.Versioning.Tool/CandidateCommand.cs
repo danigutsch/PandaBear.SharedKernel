@@ -7,22 +7,24 @@ namespace PandaBear.Versioning.Tool;
 
 internal static class CandidateCommand
 {
-    public static async Task Run(CandidateCommandOptions options, TextWriter output)
+    public static async Task Run(
+        string root, string? version, string? baselineVersion, bool aot, TextWriter output, TextWriter error, TimeProvider timeProvider, CancellationToken ct)
     {
-        var manifest = await Create(options, output).ConfigureAwait(false);
-        await Consume(options with { Candidate = manifest }, output).ConfigureAwait(false);
+        var manifest = await Create(root, version, baselineVersion, output, timeProvider, ct).ConfigureAwait(false);
+        await Consume(root, manifest, manifest, aot, output, error, ct).ConfigureAwait(false);
     }
 
-    public static async Task<string> Create(CandidateCommandOptions options, TextWriter output)
+    public static async Task<string> Create(
+        string root, string? version, string? baselineVersion, TextWriter output, TimeProvider timeProvider, CancellationToken ct)
     {
-        if (CommandRunner.Run("git", ["status", "--porcelain"], options.Root).Length != 0)
+        if ((await CommandRunner.Run("git", ["status", "--porcelain"], root, ct).ConfigureAwait(false)).Length != 0)
         {
             throw new ArgumentException("Commit library changes before creating candidate evidence.");
         }
 
-        if (options.Baseline is not null)
+        if (baselineVersion is not null)
         {
-            var config = XDocument.Load(Path.Combine(options.Root, "NuGet.Config"));
+            var config = XDocument.Load(Path.Combine(root, "NuGet.Config"));
             var mappings = config.Descendants("packageSource").Where(x => x.Elements("package").Any(p => (string?)p.Attribute("pattern") == "PandaBear.SharedKernel.*")).ToArray();
             if (mappings.Length != 1)
             {
@@ -32,22 +34,22 @@ internal static class CandidateCommand
             var key = (string?)mappings[0].Attribute("key");
             var source = config.Descendants("packageSources").Elements("add").Single(x => (string?)x.Attribute("key") == key);
             var value = (string?)source.Attribute("value") ?? string.Empty;
-            if (!Directory.Exists(Path.GetFullPath(value, options.Root)) || config.Descendants("packageSource").Any(x => x != mappings[0] && x.Elements("package").Any(p => ((string?)p.Attribute("pattern"))?.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal) == true)))
+            if (!Directory.Exists(Path.GetFullPath(value, root)) || config.Descendants("packageSource").Any(x => x != mappings[0] && x.Elements("package").Any(p => ((string?)p.Attribute("pattern"))?.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal) == true)))
             {
                 throw new ArgumentException("Internal baseline packages must map exclusively to an existing local feed.");
             }
         }
 
-        var revision = CommandRunner.Run("git", ["rev-parse", "HEAD"], options.Root).Trim();
-        var configured = XDocument.Load(Path.Combine(options.Root, "Directory.Build.props")).Descendants("ComputedSemVer").First().Value;
-        var version = options.Version ?? configured.Split('-')[0] + "-alpha.local.t" + TimeProvider.System.GetUtcNow().ToString("yyyyMMddHHmmssfffffff", CultureInfo.InvariantCulture) + ".g" + revision[..12];
-        await ApiCompatibilityCommand.Run(new ApiCompatibilityOptions(version, Path.Combine(options.Root, "artifacts/api-compat"), "beta", options.Root, options.Baseline, false), output).ConfigureAwait(false);
-        var feed = Path.Combine(options.Root, "artifacts/api-compat/packages", version);
+        var revision = (await CommandRunner.Run("git", ["rev-parse", "HEAD"], root, ct).ConfigureAwait(false)).Trim();
+        var configured = XDocument.Load(Path.Combine(root, "Directory.Build.props")).Descendants("ComputedSemVer").First().Value;
+        version ??= configured.Split('-')[0] + "-alpha.local.t" + timeProvider.GetUtcNow().ToString("yyyyMMddHHmmssfffffff", CultureInfo.InvariantCulture) + ".g" + revision[..12];
+        await ApiCompatibilityCommand.Run(new ApiCompatibilityOptions(version, Path.Combine(root, "artifacts/api-compat"), "beta", root, baselineVersion, false), output, ct).ConfigureAwait(false);
+        var feed = Path.Combine(root, "artifacts/api-compat/packages", version);
         var hashes = new JsonObject();
         foreach (var path in Directory.GetFiles(feed, "*.nupkg").Order(StringComparer.Ordinal))
         {
             using var stream = File.OpenRead(path);
-            hashes[Path.GetFileName(path)] = Convert.ToHexStringLower((await SHA256.HashDataAsync(stream).ConfigureAwait(false)));
+            hashes[Path.GetFileName(path)] = Convert.ToHexStringLower((await SHA256.HashDataAsync(stream, ct).ConfigureAwait(false)));
         }
 
         var evidence = new JsonObject
@@ -59,7 +61,7 @@ internal static class CandidateCommand
             ["consumerCompatibility"] = "pending",
             ["linuxPackageConsumption"] = "pending",
             ["windowsPackageConsumption"] = "pending",
-            ["apiBaselineComparison"] = options.Baseline is null ? "pending" : "passed",
+            ["apiBaselineComparison"] = baselineVersion is null ? "pending" : "passed",
             ["apiValidation"] = "passed",
             ["stablePromotion"] = "pending"
         };
@@ -68,25 +70,30 @@ internal static class CandidateCommand
         return manifest;
     }
 
-    public static async Task Consume(CandidateCommandOptions options, TextWriter output)
+    public static async Task Consume(
+        string root, string manifest, string destination, bool aot, TextWriter output, TextWriter error, CancellationToken ct)
     {
-        var manifest = options.Candidate ?? throw new ArgumentException("--candidate is required.");
         var evidence = CandidateManifest.ReadAndVerify(manifest);
         var platform = OperatingSystem.IsWindows() ? "windowsPackageConsumption" : "linuxPackageConsumption";
-        var destination = options.Output ?? manifest;
-        evidence[platform] = "failed";
         try
         {
-            await PackageSmokeCommand.Run(options with { Feed = Path.GetDirectoryName(manifest), Version = evidence["packageVersion"]!.GetValue<string>() }, output).ConfigureAwait(false);
-            evidence[platform] = "passed";
-            if (options.Aot)
-            {
-                evidence[OperatingSystem.IsWindows() ? "windowsNativeAot" : "linuxNativeAot"] = "passed";
-            }
+            await PackageConsumptionCommand.Run(
+                root, Path.GetDirectoryName(manifest)!, evidence["packageVersion"]!.GetValue<string>(), aot, output, error, ct).ConfigureAwait(false);
         }
-        finally
+        catch (Exception) when (!ct.IsCancellationRequested)
         {
+            // A canceled run proves nothing, so it leaves the recorded evidence unchanged.
+            evidence[platform] = "failed";
             CandidateManifest.Write(destination, evidence);
+            throw;
         }
+
+        evidence[platform] = "passed";
+        if (aot)
+        {
+            evidence[OperatingSystem.IsWindows() ? "windowsNativeAot" : "linuxNativeAot"] = "passed";
+        }
+
+        CandidateManifest.Write(destination, evidence);
     }
 }

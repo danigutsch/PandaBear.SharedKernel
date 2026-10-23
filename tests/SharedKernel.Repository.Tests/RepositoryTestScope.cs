@@ -24,5 +24,16 @@ internal sealed class RepositoryTestScope : IDisposable
         solution.Save(solutionPath);
     }
 
+    /// <summary>Writes a validation plan and returns its directory.</summary>
+    public string WriteSelection(string[] buildProjects, string[] testProjects, string revision, string directory = "TestResults/selection")
+    {
+        var selection = Path.Combine(Root, directory);
+        Directory.CreateDirectory(selection);
+        File.WriteAllLines(Path.Combine(selection, "build-projects.txt"), buildProjects);
+        File.WriteAllLines(Path.Combine(selection, "test-projects.txt"), testProjects);
+        File.WriteAllText(Path.Combine(selection, "revision.txt"), revision);
+        return selection;
+    }
+
     public void Dispose() => Directory.Delete(Root, recursive: true);
 }

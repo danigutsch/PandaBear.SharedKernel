@@ -6,20 +6,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class RepoConfigToolCoverageTests
 {
     [Fact]
-    public async Task Program_help_returns_success()
-    {
-        // Arrange
-        string[] args = ["--help"];
-
-        // Act
-        var exitCode = await Program.Main(args);
-
-        // Assert
-        exitCode.ShouldBe(0);
-    }
-
-    [Fact]
-    public async Task Unknown_command_returns_usage_error()
+    public async Task Unknown_command_is_a_parse_error()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -27,12 +14,12 @@ public sealed class RepoConfigToolCoverageTests
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["unknown"], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["unknown"], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
         var errorText = error.ToString();
 
         // Assert
-        exitCode.ShouldBe(2);
-        errorText.ShouldContain("Unknown command: unknown", StringComparison.Ordinal);
+        exitCode.ShouldBe(1);
+        errorText.ShouldContain("Unrecognized command or argument 'unknown'.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -44,11 +31,11 @@ public sealed class RepoConfigToolCoverageTests
         using var firstError = new StringWriter(CultureInfo.InvariantCulture);
         using var secondOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var secondError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], firstOutput, firstError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], firstOutput, firstError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], secondOutput, secondError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], secondOutput, secondError, workspace.RootPath, TestContext.Current.CancellationToken);
         var outputText = secondOutput.ToString();
 
         // Assert
@@ -67,13 +54,13 @@ public sealed class RepoConfigToolCoverageTests
         using var validError = new StringWriter(CultureInfo.InvariantCulture);
         using var invalidOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var invalidError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
 
         // Act
-        var validExitCode = await RepoConfigToolApplication.Run(["diff", "--root", workspace.RootPath], validOutput, validError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var validExitCode = await RepoConfigToolRunner.Run(["diff", "--root", workspace.RootPath], validOutput, validError, workspace.RootPath, TestContext.Current.CancellationToken);
         workspace.DeleteFile("roadmap/config.json");
-        var invalidExitCode = await RepoConfigToolApplication.Run(["diff", "--root", workspace.RootPath], invalidOutput, invalidError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var invalidExitCode = await RepoConfigToolRunner.Run(["diff", "--root", workspace.RootPath], invalidOutput, invalidError, workspace.RootPath, TestContext.Current.CancellationToken);
 
         // Assert
         validExitCode.ShouldBe(0);
@@ -83,7 +70,7 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public async Task Set_reports_usage_and_unsupported_key_errors()
+    public async Task Set_rejects_missing_extra_and_unsupported_arguments_without_writing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -95,21 +82,25 @@ public sealed class RepoConfigToolCoverageTests
         using var extraError = new StringWriter(CultureInfo.InvariantCulture);
         using var unsupportedOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var unsupportedError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
+        var configBefore = workspace.ReadFile("roadmap/config.json");
 
         // Act
-        var missingExitCode = await RepoConfigToolApplication.Run(["set", "--root", workspace.RootPath], missingOutput, missingError, workspace.RootPath, TestContext.Current.CancellationToken);
-        var extraExitCode = await RepoConfigToolApplication.Run(["set", "github.repository", "owner/repo", "extra", "--root", workspace.RootPath], extraOutput, extraError, workspace.RootPath, TestContext.Current.CancellationToken);
-        var unsupportedExitCode = await RepoConfigToolApplication.Run(["set", "unknown", "value", "--root", workspace.RootPath], unsupportedOutput, unsupportedError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var missingExitCode = await RepoConfigToolRunner.Run(["set", "--root", workspace.RootPath], missingOutput, missingError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var extraExitCode = await RepoConfigToolRunner.Run(["set", "github.repository", "owner/repo", "extra", "--root", workspace.RootPath], extraOutput, extraError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var unsupportedExitCode = await RepoConfigToolRunner.Run(["set", "unknown", "value", "--root", workspace.RootPath], unsupportedOutput, unsupportedError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var configAfter = workspace.ReadFile("roadmap/config.json");
 
         // Assert
-        missingExitCode.ShouldBe(2);
-        missingError.ToString().ShouldContain("Missing set key and value.", StringComparison.Ordinal);
-        extraExitCode.ShouldBe(2);
-        extraError.ToString().ShouldContain("Unknown argument: extra", StringComparison.Ordinal);
+        missingExitCode.ShouldBe(1);
+        missingError.ToString().ShouldContain("Required argument missing for command: 'set'.", StringComparison.Ordinal);
+        extraExitCode.ShouldBe(1);
+        extraError.ToString().ShouldContain("Unrecognized command or argument 'extra'.", StringComparison.Ordinal);
         unsupportedExitCode.ShouldBe(1);
-        unsupportedError.ToString().ShouldContain("sharedkernel-repo: Unsupported config key: unknown", StringComparison.Ordinal);
+        unsupportedError.ToString().ShouldContain("Argument 'unknown' not recognized.", StringComparison.Ordinal);
+        unsupportedError.ToString().ShouldContain("'github.repository'", StringComparison.Ordinal);
+        configAfter.ShouldBe(configBefore);
     }
 
     [Fact]
@@ -119,7 +110,7 @@ public sealed class RepoConfigToolCoverageTests
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var epicText = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json");
         workspace.WriteFile("roadmap/items/RM-001-roadmap-gitops.json", epicText.Replace("\"blocks\": []", "\"blocks\": [\"RM-002\"]", StringComparison.Ordinal));
@@ -132,17 +123,17 @@ public sealed class RepoConfigToolCoverageTests
         using var nextIssueError = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var nextPriority = await RepoConfigToolApplication.Run(["get", "next-priority", "--limit", "2", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var nextBlockers = await RepoConfigToolApplication.Run(["get", "next-blockers", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var nextEnablers = await RepoConfigToolApplication.Run(["get", "next-enablers", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var lowHangingFruit = await RepoConfigToolApplication.Run(["get", "low-hanging-fruit", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var pareto = await RepoConfigToolApplication.Run(["get", "pareto", "--limit", "1", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var blockingOverview = await RepoConfigToolApplication.Run(["get", "blocking-overview", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var tags = await RepoConfigToolApplication.Run(["get", "tags", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var labels = await RepoConfigToolApplication.Run(["get", "labels", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var byTag = await RepoConfigToolApplication.Run(["get", "by-tag", "enabler", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var byLabel = await RepoConfigToolApplication.Run(["get", "by-label", "area: tooling", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var nextIssue = await RepoConfigToolApplication.Run(["get", "next-unblocked", "--type", "issue", "--root", workspace.RootPath], nextIssueOutput, nextIssueError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var nextPriority = await RepoConfigToolRunner.Run(["get", "next-priority", "--limit", "2", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var nextBlockers = await RepoConfigToolRunner.Run(["get", "next-blockers", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var nextEnablers = await RepoConfigToolRunner.Run(["get", "next-enablers", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var lowHangingFruit = await RepoConfigToolRunner.Run(["get", "low-hanging-fruit", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var pareto = await RepoConfigToolRunner.Run(["get", "pareto", "--limit", "1", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var blockingOverview = await RepoConfigToolRunner.Run(["get", "blocking-overview", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var tags = await RepoConfigToolRunner.Run(["get", "tags", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var labels = await RepoConfigToolRunner.Run(["get", "labels", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var byTag = await RepoConfigToolRunner.Run(["get", "by-tag", "enabler", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var byLabel = await RepoConfigToolRunner.Run(["get", "by-label", "area: tooling", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var nextIssue = await RepoConfigToolRunner.Run(["get", "next-unblocked", "--type", "issue", "--root", workspace.RootPath], nextIssueOutput, nextIssueError, workspace.RootPath, TestContext.Current.CancellationToken);
         var outputText = output.ToString();
         var nextIssueOutputText = nextIssueOutput.ToString();
 
@@ -167,7 +158,7 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public async Task Get_option_validation_reports_usage_before_loading_config()
+    public async Task Get_rejects_invalid_options_before_loading_config()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -175,60 +166,64 @@ public sealed class RepoConfigToolCoverageTests
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var missingType = await RepoConfigToolApplication.Run(["get", "next-priority", "--type", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var invalidLimit = await RepoConfigToolApplication.Run(["get", "next-priority", "--limit", "none", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var unknownOption = await RepoConfigToolApplication.Run(["get", "next-priority", "--unknown", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var missingType = await RepoConfigToolRunner.Run(["get", "next-priority", "--root", workspace.RootPath, "--type"], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var invalidLimit = await RepoConfigToolRunner.Run(["get", "next-priority", "--limit", "none", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var zeroLimit = await RepoConfigToolRunner.Run(["get", "next-priority", "--limit", "0", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var unknownOption = await RepoConfigToolRunner.Run(["get", "next-priority", "--unknown", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
         var errorText = error.ToString();
 
         // Assert
-        missingType.ShouldBe(2);
-        invalidLimit.ShouldBe(2);
-        unknownOption.ShouldBe(2);
-        errorText.ShouldContain("Missing required value for --type.", StringComparison.Ordinal);
-        errorText.ShouldContain("Missing or invalid required value for --limit.", StringComparison.Ordinal);
-        errorText.ShouldContain("Unknown get option: --unknown", StringComparison.Ordinal);
+        missingType.ShouldBe(1);
+        invalidLimit.ShouldBe(1);
+        zeroLimit.ShouldBe(1);
+        unknownOption.ShouldBe(1);
+        errorText.ShouldContain("Required argument missing for option: '--type'.", StringComparison.Ordinal);
+        errorText.ShouldContain("--limit must be a positive whole number: none", StringComparison.Ordinal);
+        errorText.ShouldContain("--limit must be a positive whole number: 0", StringComparison.Ordinal);
+        errorText.ShouldContain("get next-priority does not take a value; found '--unknown'.", StringComparison.Ordinal);
+        errorText.ShouldNotContain("sharedkernel-repo:", StringComparison.Ordinal);
     }
 
     [Fact]
-    public async Task Sync_reports_usage_errors_and_empty_mappings()
+    public async Task GitHub_sync_rejects_invalid_arguments_and_previews_empty_mappings()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        using var output = new StringWriter(CultureInfo.InvariantCulture);
-        using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        using var missingOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var missingError = new StringWriter(CultureInfo.InvariantCulture);
+        using var unknownOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var unknownError = new StringWriter(CultureInfo.InvariantCulture);
+        using var previewOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var previewError = new StringWriter(CultureInfo.InvariantCulture);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
 
         // Act
-        var missingTarget = await RepoConfigToolApplication.Run(["sync", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var conflictingFlags = await RepoConfigToolApplication.Run(["sync", "github", "--dry-run", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var unknownArgument = await RepoConfigToolApplication.Run(["sync", "github", "--unknown", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var emptyMappings = await RepoConfigToolApplication.Run(["sync", "github", "--dry-run", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
-        var errorText = error.ToString();
-        var outputText = output.ToString();
+        var missingCommand = await RepoConfigToolRunner.Run(["github", "--root", workspace.RootPath], missingOutput, missingError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var unknownOption = await RepoConfigToolRunner.Run(["github", "sync", "--unknown", "--root", workspace.RootPath], unknownOutput, unknownError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var emptyMappings = await RepoConfigToolRunner.Run(["github", "sync", "--root", workspace.RootPath], previewOutput, previewError, workspace.RootPath, TestContext.Current.CancellationToken);
 
         // Assert
-        missingTarget.ShouldBe(2);
-        conflictingFlags.ShouldBe(2);
-        unknownArgument.ShouldBe(2);
+        missingCommand.ShouldBe(1);
+        missingError.ToString().ShouldContain("Required command was not provided.", StringComparison.Ordinal);
+        unknownOption.ShouldBe(1);
+        unknownError.ToString().ShouldContain("Unrecognized command or argument '--unknown'.", StringComparison.Ordinal);
         emptyMappings.ShouldBe(0);
-        errorText.ShouldContain("Missing sync target: github.", StringComparison.Ordinal);
-        errorText.ShouldContain("Use either --dry-run or --apply, not both.", StringComparison.Ordinal);
-        errorText.ShouldContain("Unknown sync argument.", StringComparison.Ordinal);
-        outputText.ShouldContain("No roadmap items have GitHub issue mappings or explicit creation requests.", StringComparison.Ordinal);
+        previewOutput.ToString().ShouldContain("No roadmap items have GitHub issue mappings or explicit creation requests.", StringComparison.Ordinal);
+        previewError.ToString().ShouldBe(string.Empty);
     }
 
     [Fact]
-    public async Task Sync_propagates_http_request_errors_for_application_boundary()
+    public async Task GitHub_roadmap_syncer_apply_propagates_http_request_errors_for_application_boundary()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
         using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
         var itemText = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json");
@@ -247,7 +242,7 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public async Task Sync_github_apply_reports_safe_diagnostic_for_http_request_errors()
+    public async Task GitHub_sync_force_reports_safe_diagnostic_for_http_request_errors()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -255,7 +250,7 @@ public sealed class RepoConfigToolCoverageTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
         var itemText = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json");
@@ -264,7 +259,7 @@ public sealed class RepoConfigToolCoverageTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["sync", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "sync", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var outputText = output.ToString();
         var errorText = error.ToString();
 
@@ -292,7 +287,7 @@ public sealed class RepoConfigToolCoverageTests
     }
 
     [Fact]
-    public async Task Sync_github_apply_reports_safe_diagnostic_for_timeouts()
+    public async Task GitHub_sync_force_reports_safe_diagnostic_for_timeouts()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -300,7 +295,7 @@ public sealed class RepoConfigToolCoverageTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         RoadmapConfigTestOperations.EnableGitHubSync(workspace);
         var itemText = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json");
@@ -309,7 +304,7 @@ public sealed class RepoConfigToolCoverageTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["sync", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "sync", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var outputText = output.ToString();
         var errorText = error.ToString();
 
@@ -328,13 +323,13 @@ public sealed class RepoConfigToolCoverageTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         workspace.WriteFile("roadmap/config.json", RoadmapTestContent.InvalidConfigJson);
         workspace.WriteFile("roadmap/items/RM-001-roadmap-gitops.json", RoadmapTestContent.InvalidItemJson);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["verify", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["verify", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
         var errorText = error.ToString();
 
         // Assert

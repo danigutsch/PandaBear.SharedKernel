@@ -4,7 +4,7 @@ Install Git and the exact .NET SDK in `global.json`; SDK roll-forward is disable
 
 Run the complete tests with `dotnet test --solution SharedKernel.slnx -c Release --no-build --no-restore`. Integration tests require Docker or a compatible working Podman runtime. Keep parallel test modules enabled; inspect container diagnostics rather than masking startup or cleanup errors. NativeAOT consumption needs the platform native compiler/linker: install the SDK's supported C++ build prerequisites on Linux and Visual Studio C++ build tools on Windows.
 
-Run `dotnet format SharedKernel.slnx --verify-no-changes --no-restore`, then `dotnet run --project tools/SharedKernel.Documentation.Tool -c Release -- generate --config docs/architecture/generated-diagrams.json --check`. Hosted quality checks validate formatting and generated diagram drift on clean checkouts. Repository validation selects complete test projects; nightly runs cover all projects. Package CI builds immutable artifacts on Linux and consumes those same hashed packages on Windows, including NativeAOT.
+Run `dotnet format SharedKernel.slnx --verify-no-changes --no-restore`, then `dotnet run --project tools/SharedKernel.Documentation.Tool -c Release -- verify --config docs/architecture/generated-diagrams.json`. Hosted quality checks validate formatting and generated diagram drift on clean checkouts. Repository validation selects complete test projects; nightly runs cover all projects. Package CI builds immutable artifacts on Linux and consumes those same hashed packages on Windows, including NativeAOT.
 
 Use file-scoped namespaces, nullable references, four spaces, one top-level type per new file, and XML documentation on public APIs. Do not append `Async` to methods. Preserve warnings-as-errors, vulnerability auditing, public API validation, authorization, validation, privacy, and meaningful regressions. Prove actionable behavior gaps with failing tests before production changes. Prefer existing .NET tools and platform APIs; review any new dependency, including transitives.
 
@@ -50,9 +50,9 @@ candidate jobs provide integration evidence.
 
 ## CI throughput and squash merging
 
-PR validation remains advisory: this change does not add main-branch protection. Use squash merging
-with a Conventional Commit PR title of at most 100 characters, preserve breaking-change notes in the
-PR body, and start a fresh branch after merging. Registry publication remains deferred.
+PR validation is advisory because main has no branch protection. Use squash merging with a
+Conventional Commit PR title of at most 100 characters, preserve breaking-change notes in the PR
+body, and start a fresh branch after merging. Registry publication is deferred.
 
 Ordinary PR title/body edits run only the independent metadata workflow. Add `ci:rerun` to explicitly
 restart source validation; remove and reapply for another attempt using a human or authorized app
@@ -60,23 +60,17 @@ account. Unrelated labels use separate concurrency groups and cannot cancel vali
 
 The source workflow selects projects once, then overlaps ordinary graph validation, isolated hosted
 test jobs, and candidate creation. Hosted jobs are generated from selected Aspire projects. Linux
-and Windows consume the same candidate bytes in parallel. Repository quality checks remain intact.
+and Windows consume the same candidate bytes in parallel. Repository quality runs on every validation.
 Standalone repository documentation skips candidates, tests, and full-solution bootstrap/formatting.
 Repository quality builds only the documentation tool and checks generated-document drift. Package
-READMEs, scripts, and uncertain inputs retain validation. Main pushes compare their before/after
-revisions; nightly and manual runs select full validation. Invalid comparison history falls back to
-full validation.
+READMEs, scripts, and uncertain inputs are not documentation-only and select validation. Main pushes
+compare their before/after revisions; nightly and manual runs select full validation. Invalid
+comparison history falls back to full validation.
 
-Squash-only merge settings, PR title/body commit defaults, automatic branch deletion, and the
-`ci:rerun` label were applied on October 21, 2026. SharedKernel branch protection remains disabled.
+The repository allows only squash merging, uses the PR title and body as the default squash commit
+message, deletes merged branches automatically, and defines the `ci:rerun` label.
 
-The first measured source-validation main run after rollout, [39670639814](https://github.com/danigutsch/PandaBear.SharedKernel/actions/runs/39670639814),
-completed in 385s: ordinary validation 248s, repository quality 301s, candidate creation 133s,
-and Windows package consumption 199s. This is one workload, not evidence of a general speedup.
-Measure documentation-only runs separately after the fast path lands.
-
-Historical timing collected on October 21, 2026 from the latest ten completed validation runs:
-eight succeeded, with successful-run median 1001.5s and nearest-rank p95 1440s; two were cancelled.
-Elapsed workflow times include queueing and postprocessing. Compare equivalent change classes and
-phase evidence after rollout before claiming an improvement. No additional runner purchase or
-native merge queue is part of this rollout; personal-account ownership is retained.
+Elapsed workflow times include queueing and postprocessing. Before claiming a CI speedup, compare
+several runs of the same change class, such as documentation-only changes, and their per-phase
+timings; one run is not evidence of a general speedup. CI uses standard GitHub-hosted runners
+without a merge queue, and the repository belongs to a personal account.

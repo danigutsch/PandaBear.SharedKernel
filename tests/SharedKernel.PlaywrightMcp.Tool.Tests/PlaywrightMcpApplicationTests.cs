@@ -13,16 +13,12 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
         var invocation = 0;
         ProcessStartInfo? runtime = null;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (startInfo, _) =>
             {
                 invocation++;
@@ -43,14 +39,18 @@ public sealed class PlaywrightMcpApplicationTests
 
                 return Task.FromResult(new ProcessResult(0, string.Empty, string.Empty));
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(0);
         invocation.ShouldBe(4);
-        runtime.ShouldNotBeNull().ArgumentList.Take(2).ShouldBe(
+        var runtimeStartInfo = runtime.ShouldNotBeNull();
+        runtimeStartInfo.ArgumentList.Take(2).ShouldBe(
             ["--host", "unix:///home/test/.docker/desktop/docker.sock"]);
-        error.ToString().ShouldBeEmpty();
+        runtimeStartInfo.RedirectStandardInput.ShouldBeFalse();
+        runtimeStartInfo.RedirectStandardOutput.ShouldBeFalse();
+        environment.Output.ToString().ShouldBeEmpty();
+        environment.Error.ToString().ShouldBeEmpty();
     }
 
     [Fact]
@@ -59,23 +59,19 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             static (startInfo, _) => Task.FromResult(
                 startInfo.ArgumentList.Contains("show")
                     ? new ProcessResult(0, "remote-builder", string.Empty)
                     : new ProcessResult(0, "tcp://remote.example:2375", string.Empty)),
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
-        error.ToString().ShouldContain("Refusing non-local Docker context 'remote-builder'", StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain("Refusing non-local Docker context 'remote-builder'", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -84,15 +80,11 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
         var invocation = 0;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (_, _) =>
             {
                 invocation++;
@@ -105,12 +97,13 @@ public sealed class PlaywrightMcpApplicationTests
                     _ => new ProcessResult(0, string.Empty, string.Empty)
                 });
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(17);
         invocation.ShouldBe(5);
-        error.ToString().ShouldBeEmpty();
+        environment.Output.ToString().ShouldBeEmpty();
+        environment.Error.ToString().ShouldBeEmpty();
     }
 
     [Fact]
@@ -119,16 +112,12 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
         var invocation = 0;
         ProcessStartInfo? probe = null;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (startInfo, _) =>
             {
                 invocation++;
@@ -140,12 +129,12 @@ public sealed class PlaywrightMcpApplicationTests
                 probe = startInfo;
                 return Task.FromResult(new ProcessResult(1, "unix:///var/run/docker.sock", "context denied"));
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
         invocation.ShouldBe(2);
-        error.ToString().ShouldContain("Docker context inspection failed: context denied", StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain("Docker context inspection failed: context denied", StringComparison.Ordinal);
         var probeStartInfo = probe.ShouldNotBeNull();
         probeStartInfo.ArgumentList.ToArray().ShouldBe(
         [
@@ -165,17 +154,13 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
         var invocation = 0;
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (_, _) =>
             {
                 invocation++;
@@ -186,7 +171,7 @@ public sealed class PlaywrightMcpApplicationTests
         // Assert
         exitCode.ShouldBe(1);
         invocation.ShouldBe(0);
-        error.ToString().ShouldContain("Playwright MCP was cancelled", StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain("Playwright MCP was cancelled", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -205,26 +190,22 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("podman", PlaywrightMcpTestEnvironment.GetExecutablePath("podman"));
-        var error = new StringWriter();
         var invocation = 0;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (_, _) =>
             {
                 invocation++;
                 return Task.FromResult(new ProcessResult(0, "false", string.Empty));
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
         invocation.ShouldBe(1);
-        error.ToString().ShouldContain("requires local rootless Podman mode", StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain("requires local rootless Podman mode", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -233,16 +214,12 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
         var invocation = 0;
         ProcessStartInfo? cleanup = null;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (startInfo, _) =>
             {
                 invocation++;
@@ -264,7 +241,7 @@ public sealed class PlaywrightMcpApplicationTests
                 cleanup = startInfo;
                 return Task.FromResult(new ProcessResult(0, string.Empty, string.Empty));
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
@@ -281,15 +258,11 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
         var invocation = 0;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (_, _) =>
             {
                 invocation++;
@@ -302,13 +275,13 @@ public sealed class PlaywrightMcpApplicationTests
                     _ => Task.FromResult(new ProcessResult(0, "container-id", string.Empty))
                 };
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
         invocation.ShouldBe(5);
-        error.ToString().ShouldContain("Container cleanup failed for 'sharedkernel-playwright-mcp-", StringComparison.Ordinal);
-        error.ToString().ShouldContain("permission denied", StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain("Container cleanup failed for 'sharedkernel-playwright-mcp-", StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain("permission denied", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -317,16 +290,12 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
         var invocation = 0;
         ProcessStartInfo? maintenance = null;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
+        var exitCode = await environment.Invoke(
             ["prepare"],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
             (startInfo, _) =>
             {
                 invocation++;
@@ -342,7 +311,7 @@ public sealed class PlaywrightMcpApplicationTests
                     _ => new ProcessResult(17, string.Empty, string.Empty)
                 });
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(17);
@@ -354,7 +323,7 @@ public sealed class PlaywrightMcpApplicationTests
             "pull",
             PlaywrightMcpCommand.Image
         ]);
-        error.ToString().ShouldBeEmpty();
+        environment.Error.ToString().ShouldBeEmpty();
     }
 
     [Fact]
@@ -363,16 +332,12 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("podman", PlaywrightMcpTestEnvironment.GetExecutablePath("podman"));
-        var error = new StringWriter();
         var invocation = 0;
         ProcessStartInfo? maintenance = null;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
+        var exitCode = await environment.Invoke(
             ["clean"],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
             (startInfo, _) =>
             {
                 invocation++;
@@ -385,7 +350,7 @@ public sealed class PlaywrightMcpApplicationTests
                     ? new ProcessResult(0, "true", string.Empty)
                     : new ProcessResult(17, string.Empty, string.Empty));
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(17);
@@ -397,7 +362,40 @@ public sealed class PlaywrightMcpApplicationTests
             "rm",
             PlaywrightMcpCommand.Image
         ]);
-        error.ToString().ShouldBeEmpty();
+        environment.Error.ToString().ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData("prepare")]
+    [InlineData("clean")]
+    public async Task Prepare_and_clean_write_the_engine_output_to_standard_error(string command)
+    {
+        // Arrange
+        var environment = new PlaywrightMcpTestEnvironment();
+        environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
+        var invocation = 0;
+
+        // Act
+        var exitCode = await environment.Invoke(
+            [command],
+            (_, _) =>
+            {
+                invocation++;
+                return Task.FromResult(invocation switch
+                {
+                    1 => new ProcessResult(0, "default", string.Empty),
+                    2 => new ProcessResult(0, "unix:///var/run/docker.sock", string.Empty),
+                    _ => new ProcessResult(0, "engine output" + Environment.NewLine, "engine warning" + Environment.NewLine)
+                });
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        invocation.ShouldBe(3);
+        environment.Output.ToString().ShouldBeEmpty();
+        environment.Error.ToString().ShouldBe(
+            "engine output" + Environment.NewLine + "engine warning" + Environment.NewLine);
     }
 
     [Theory]
@@ -410,26 +408,22 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable(engine, PlaywrightMcpTestEnvironment.GetExecutablePath(engine));
-        var error = new StringWriter();
         var invocation = 0;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (_, _) =>
             {
                 invocation++;
                 return Task.FromResult(new ProcessResult(11, string.Empty, "preflight denied"));
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
         invocation.ShouldBe(1);
-        error.ToString().ShouldContain(expectedMessage, StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain(expectedMessage, StringComparison.Ordinal);
     }
 
     [Theory]
@@ -442,56 +436,22 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
         var invocation = 0;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (_, _) =>
             {
                 invocation++;
                 return Task.FromResult(new ProcessResult(0, contextName, string.Empty));
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
         invocation.ShouldBe(1);
-        error.ToString().ShouldContain("Docker returned an invalid current context name.", StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task Unapproved_runtime_arguments_return_usage_error_without_starting_runtime()
-    {
-        // Arrange
-        var environment = new PlaywrightMcpTestEnvironment();
-        environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
-        var invocation = 0;
-
-        // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            ["--allow-unrestricted-file-access"],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
-            (_, _) =>
-            {
-                invocation++;
-                return Task.FromResult(invocation == 1
-                    ? new ProcessResult(0, "default", string.Empty)
-                    : new ProcessResult(0, "unix:///var/run/docker.sock", string.Empty));
-            },
-            CancellationToken.None);
-
-        // Assert
-        exitCode.ShouldBe(2);
-        invocation.ShouldBe(2);
-        error.ToString().ShouldContain("Playwright MCP argument is not allowed", StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain("Docker returned an invalid current context name.", StringComparison.Ordinal);
     }
 
     [Theory]
@@ -505,16 +465,12 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
         var invocation = 0;
         ProcessStartInfo? cleanup = null;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (startInfo, _) =>
             {
                 invocation++;
@@ -542,13 +498,13 @@ public sealed class PlaywrightMcpApplicationTests
                 cleanup = startInfo;
                 return Task.FromResult(new ProcessResult(0, string.Empty, string.Empty));
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
         invocation.ShouldBe(4);
         cleanup.ShouldNotBeNull().ArgumentList.ShouldContain("--force");
-        error.ToString().ShouldContain(expectedMessage, StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain(expectedMessage, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -557,15 +513,11 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("podman", PlaywrightMcpTestEnvironment.GetExecutablePath("podman"));
-        var error = new StringWriter();
         var invocation = 0;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (_, _) =>
             {
                 invocation++;
@@ -576,13 +528,13 @@ public sealed class PlaywrightMcpApplicationTests
                     _ => new ProcessResult(1, string.Empty, "permission denied")
                 });
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
         invocation.ShouldBe(3);
-        error.ToString().ShouldContain("Container cleanup failed for 'sharedkernel-playwright-mcp-", StringComparison.Ordinal);
-        error.ToString().ShouldContain("permission denied", StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain("Container cleanup failed for 'sharedkernel-playwright-mcp-", StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain("permission denied", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -591,15 +543,11 @@ public sealed class PlaywrightMcpApplicationTests
         // Arrange
         var environment = new PlaywrightMcpTestEnvironment();
         environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
-        var error = new StringWriter();
         var invocation = 0;
 
         // Act
-        var exitCode = await PlaywrightMcpApplication.Run(
-            [],
-            error,
-            environment.GetEnvironmentVariable,
-            environment.ResolveExecutable,
+        var exitCode = await environment.Invoke(
+            ["serve"],
             (_, _) =>
             {
                 invocation++;
@@ -611,13 +559,13 @@ public sealed class PlaywrightMcpApplicationTests
                     _ => Task.FromException<ProcessResult>(new OperationCanceledException())
                 };
             },
-            CancellationToken.None);
+            TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
         invocation.ShouldBe(4);
-        error.ToString().ShouldContain("Container cleanup timed out for 'sharedkernel-playwright-mcp-", StringComparison.Ordinal);
-        error.ToString().ShouldContain("Remove it manually.", StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain("Container cleanup timed out for 'sharedkernel-playwright-mcp-", StringComparison.Ordinal);
+        environment.Error.ToString().ShouldContain("Remove it manually.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -651,6 +599,7 @@ public sealed class PlaywrightMcpApplicationTests
             RedirectStandardError = true,
             UseShellExecute = false
         };
+        startInfo.ArgumentList.Add("serve");
         startInfo.Environment["PATH"] = string.Empty;
         foreach (var variable in new[]
         {
@@ -669,6 +618,7 @@ public sealed class PlaywrightMcpApplicationTests
         // Act
         var result = await PlaywrightMcpApplication.RunProcess(
             startInfo,
+            null,
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -686,7 +636,7 @@ public sealed class PlaywrightMcpApplicationTests
             TestContext.Current.CancellationToken);
 
         // Act
-        var execution = PlaywrightMcpApplication.RunProcess(child.StartInfo, cancellation.Token);
+        var execution = PlaywrightMcpApplication.RunProcess(child.StartInfo, null, cancellation.Token);
         await child.WaitUntilReady(TestContext.Current.CancellationToken);
         await cancellation.CancelAsync();
         Func<Task> waitForExecution = async () => await execution;
@@ -694,5 +644,51 @@ public sealed class PlaywrightMcpApplicationTests
         // Assert
         await waitForExecution.ShouldThrowAssignableTo<OperationCanceledException>();
         child.IsRunning.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Run_process_forwards_each_output_line_while_the_child_runs()
+    {
+        // Arrange
+        if (!OperatingSystem.IsLinux())
+        {
+            return;
+        }
+
+        using var directory = new TemporaryDirectory();
+        var releasePath = Path.Combine(directory.Path, "release");
+        var startInfo = new ProcessStartInfo("/bin/sh")
+        {
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add(
+            "echo pulling; i=0; while [ ! -e \"$1\" ]; do i=$((i + 1)); if [ \"$i\" -gt 300 ]; then exit 3; fi; sleep 0.1; done; echo pulled >&2");
+        startInfo.ArgumentList.Add("sh");
+        startInfo.ArgumentList.Add(releasePath);
+        using var error = new FirstLineWriter();
+        var firstLine = error.FirstLine;
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        timeout.CancelAfter(TimeSpan.FromSeconds(30));
+
+        // Act
+        // The child exits only after the release file exists, which is created only after its first line reached the writer.
+        var release = Task.Run(
+            async () =>
+            {
+                var forwarded = await firstLine.WaitAsync(timeout.Token);
+                await File.WriteAllTextAsync(releasePath, string.Empty, timeout.Token);
+                return forwarded;
+            },
+            timeout.Token);
+        var result = await PlaywrightMcpApplication.RunProcess(startInfo, error, timeout.Token);
+        var forwardedWhileRunning = await release;
+
+        // Assert
+        forwardedWhileRunning.ShouldBe("pulling" + Environment.NewLine);
+        result.ShouldBe(new ProcessResult(0, string.Empty, string.Empty));
+        error.ToString().ShouldBe("pulling" + Environment.NewLine + "pulled" + Environment.NewLine);
     }
 }

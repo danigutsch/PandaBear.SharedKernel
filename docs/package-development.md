@@ -25,16 +25,15 @@ measures instrumented managed modules in the test process; separate application/
 reports are evidence for those projects, not whole-repository coverage trends. This repository does not currently enforce a coverage percentage.
 
 Build gates retain SDK analyzers (`AnalysisMode=All`), SharedKernel analyzers, warnings as errors, public API checks, dependency vulnerability auditing,
-and package-consumption checks. These checks do not replace every former Sonar rule, security hotspot review, or SonarCloud new-code metric; code
-review remains necessary for those gaps. No remote SonarCloud upload or proprietary coverage collector is required.
+and package-consumption checks. No remote SonarCloud upload or proprietary coverage collector is required.
 
-Ongoing automation uses C# tools. `SharedKernel.Repository.Tool` is repository-only and is not packaged. Selection reads the live solution, includes
+`SharedKernel.Repository.Tool` is repository-only and is not packaged. Selection reads the live solution, includes
 reverse transitive dependents and whole test projects, and falls back to full validation when history or dependencies are uncertain. Full runs happen
 nightly; selection reasons are retained in CI.
 
 ```sh
 dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- select --base <base-revision>
-dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- validate --pack --aot
+dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- validate
 ```
 
 Commit changes before creating candidate evidence. Candidates receive unique ordered prerelease versions and are never overwritten.
