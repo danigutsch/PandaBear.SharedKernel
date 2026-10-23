@@ -20,17 +20,26 @@ public class DiscoveryBenchmarks
     /// Gets or sets the number of generated request/handler/pipeline triplets in the test source.
     /// </summary>
     [Params(10, 100, 1000, 5000)]
-    public int RequestCount { get; set; }
+    public int RequestCount
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets the generated source size for the baseline input.
     /// </summary>
-    public int BaselineGeneratedSourceLength { get; private set; }
+    public int BaselineGeneratedSourceLength
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Gets the generated source size for the edited input.
     /// </summary>
-    public int EditedGeneratedSourceLength { get; private set; }
+    public int EditedGeneratedSourceLength
+    {
+        get; private set;
+    }
 
     /// <summary>
     /// Prepares the baseline and edited compilations used by the benchmark scenarios.

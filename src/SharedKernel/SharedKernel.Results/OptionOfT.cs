@@ -22,7 +22,10 @@ public readonly struct Option<T> : IEquatable<Option<T>>
     /// </summary>
     [MemberNotNullWhen(true, nameof(Value))]
     [MemberNotNullWhen(true, nameof(value))]
-    public bool HasValue { get; }
+    public bool HasValue
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets a value indicating whether the option is empty.

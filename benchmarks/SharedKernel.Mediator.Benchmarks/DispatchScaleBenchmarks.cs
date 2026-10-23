@@ -65,7 +65,10 @@ public class DispatchScaleBenchmarks
     /// Gets or sets the number of generated request types under test.
     /// </summary>
     [Params(1, 10, 100, 1000, 5000)]
-    public int RequestCount { get; set; }
+    public int RequestCount
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets or sets the request shape under test.

@@ -43,7 +43,10 @@ internal sealed class CancellableChildProcess : IAsyncDisposable
         StartInfo.Environment["PID_FILE"] = _pidFile;
     }
 
-    public ProcessStartInfo StartInfo { get; }
+    public ProcessStartInfo StartInfo
+    {
+        get;
+    }
 
     public bool IsRunning
     {

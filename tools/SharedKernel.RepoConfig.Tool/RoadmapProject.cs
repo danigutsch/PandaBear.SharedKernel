@@ -33,27 +33,60 @@ internal sealed class RoadmapProject
         _itemsById = Items.ToDictionary(item => item.Id, StringComparer.Ordinal);
     }
 
-    public IReadOnlyList<RoadmapItemSnapshot> Items { get; }
+    public IReadOnlyList<RoadmapItemSnapshot> Items
+    {
+        get;
+    }
 
-    public string RootPath { get; }
+    public string RootPath
+    {
+        get;
+    }
 
-    public IReadOnlySet<string> ClosedStatuses { get; }
+    public IReadOnlySet<string> ClosedStatuses
+    {
+        get;
+    }
 
-    public IReadOnlySet<string> AllowedStatuses { get; }
+    public IReadOnlySet<string> AllowedStatuses
+    {
+        get;
+    }
 
-    public string? GitHubRepository { get; }
+    public string? GitHubRepository
+    {
+        get;
+    }
 
-    public bool GitHubEnabled { get; }
+    public bool GitHubEnabled
+    {
+        get;
+    }
 
-    public string ItemIdPrefix { get; }
+    public string ItemIdPrefix
+    {
+        get;
+    }
 
-    public string? GitHubIntakeTheme { get; }
+    public string? GitHubIntakeTheme
+    {
+        get;
+    }
 
-    public string? GitHubIntakeOpenStatus { get; }
+    public string? GitHubIntakeOpenStatus
+    {
+        get;
+    }
 
-    public string? GitHubIntakeClosedStatus { get; }
+    public string? GitHubIntakeClosedStatus
+    {
+        get;
+    }
 
-    public GitHubProjectTarget? GitHubProjectTarget { get; }
+    public GitHubProjectTarget? GitHubProjectTarget
+    {
+        get;
+    }
 
     public static RoadmapProject Load(string rootPath)
     {

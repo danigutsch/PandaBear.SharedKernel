@@ -614,7 +614,7 @@ needs two decisions, the file holds:
   "version": 2,
   "groups": [
     {
-      "groupKey": "5d0c2e8f41a7b693",
+      "groupKey": "0000000000000000",
       "choices": [
         {
           "fieldPath": "login.password",
@@ -659,7 +659,7 @@ seed that you deleted in one vault:
   "version": 2,
   "groups": [
     {
-      "groupKey": "5d0c2e8f41a7b693",
+      "groupKey": "0000000000000000",
       "choices": [
         {
           "fieldPath": "login.password",

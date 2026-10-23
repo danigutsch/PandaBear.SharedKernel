@@ -62,3 +62,18 @@ Sources checked on 2026-10-21:
 - [xUnit v3 synchronous exception assertions](https://api.xunit.net/v3/3.0.0/v3.3.0.0-Xunit.Assert.Throws.html): exact exception types, typed actions, property accessors, and parameter names.
 - [xUnit v3 asynchronous exception assertions](https://api.xunit.net/v3/3.0.0/v3.3.0.0-Xunit.Assert.ThrowsAsync.html): awaited `Func<Task>` and exact exception types.
 - [C# lambda expressions](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/lambda-expressions): target delegate conversion, overload inference, and captured variables.
+
+## Results and entity identities
+
+Use `result.ShouldBeSuccess()` to verify success; for `Result<T>` it returns the value.
+Use `result.ShouldBeFailure(ResultStatus.Invalid, ResultErrorCodes.Invalid)` to verify both the
+status and stable code and retrieve the error. Then assert exact ordered field messages with
+`error.ShouldHaveValidationError("Id", "Id is required.")`. Both result assertions reject
+uninitialized results. Keep the Results library's own status and invariant tests explicit.
+
+`first.ShouldHaveGeneratedIdentitySemantics(second, different)` verifies generated GUID identity
+equality, hashes, collection membership, and empty identities. It mutates three test-owned instances
+through their `Id` setter, including private init setters. This test-only helper retains reflected
+property access because the existing domain models deliberately hide identity mutation. Generic
+metadata annotations preserve the property boundary; this package does not promise NativeAOT support.
+Use `id.ShouldBeUuidV7()` for generated identifier version and standard UUID variant checks.

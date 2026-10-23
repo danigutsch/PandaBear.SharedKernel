@@ -31,7 +31,10 @@ public static class VersionCalculation
             }
         }
 
-        var semanticVersion = baseVersion.Bump(impact) with { Prerelease = prerelease };
+        var semanticVersion = baseVersion.Bump(impact) with
+        {
+            Prerelease = prerelease
+        };
         return VersionOutput.Create(semanticVersion, impact, sha);
     }
 }

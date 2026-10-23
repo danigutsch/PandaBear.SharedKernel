@@ -80,6 +80,13 @@ internal sealed class GitHubRoadmapSyncer
             return EmptySyncResult();
         }
 
+        foreach (var item in itemsWithIssues.Where(item => item.CreateGitHubIssue))
+        {
+            var path = Path.Combine(_project.RootPath, item.Path);
+            RollbackFileWriteBatch.ValidateWritePath(_project.RootPath, path);
+            RollbackFileWriteBatch.ValidateWritePath(_project.RootPath, path + ".lock");
+        }
+
         List<string> messages = [];
         using var ownedHttpClient = _httpClient is null ? GitHubHttpClient.Create("sync") : null;
         var httpClient = _httpClient ?? ownedHttpClient;
@@ -176,7 +183,11 @@ internal sealed class GitHubRoadmapSyncer
             var mapping = PrepareIssueMapping(item);
             if (TryGetMappedIssueNumber(mapping.GitHub, out var existingIssueNumber))
             {
-                return item with { GitHubIssue = existingIssueNumber, CreateGitHubIssue = false };
+                return item with
+                {
+                    GitHubIssue = existingIssueNumber,
+                    CreateGitHubIssue = false
+                };
             }
 
             EnsureCreateIntent(mapping.GitHub, item.Path);
@@ -192,7 +203,11 @@ internal sealed class GitHubRoadmapSyncer
             issueCreated = true;
             PersistCreatedIssueMapping(item, issueNumber);
             messages.Add($"created {repository}#{issueNumber} from {item.Id}");
-            return item with { GitHubIssue = issueNumber, CreateGitHubIssue = false };
+            return item with
+            {
+                GitHubIssue = issueNumber,
+                CreateGitHubIssue = false
+            };
         }
         catch (Exception exception) when (issueCreated || (creationRequestStarted && IsAmbiguousIssueCreationFailure(exception)))
         {
@@ -212,7 +227,16 @@ internal sealed class GitHubRoadmapSyncer
 
     private void PersistCreatedIssueMapping(RoadmapItemSnapshot item, int issueNumber)
     {
-        var mapping = PrepareIssueMapping(item);
+        (string Path, JsonObject Root, JsonObject GitHub, string Original) mapping;
+        try
+        {
+            mapping = PrepareIssueMapping(item);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException or JsonException)
+        {
+            throw new InvalidOperationException($"GitHub issue #{issueNumber} was created but its roadmap mapping could not be loaded. Set integrations.github.issue to {issueNumber} in {item.Path} before retrying.", exception);
+        }
+
         try
         {
             EnsureCreateIntent(mapping.GitHub, item.Path);
@@ -224,9 +248,9 @@ internal sealed class GitHubRoadmapSyncer
 
         try
         {
-            PersistIssueMapping(mapping.Path, mapping.Root, issueNumber);
+            PersistIssueMapping(mapping.Path, mapping.Root, mapping.Original, issueNumber);
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
             throw new InvalidOperationException($"GitHub issue #{issueNumber} was created but its roadmap mapping could not be persisted. Set integrations.github.issue to {issueNumber} in {item.Path} before retrying.", exception);
         }
@@ -494,7 +518,10 @@ internal sealed class GitHubRoadmapSyncer
 
         public bool ValuesAreKnown { get; set; } = valuesAreKnown;
 
-        public bool IsBlocked { get; set; }
+        public bool IsBlocked
+        {
+            get; set;
+        }
 
         public List<string> Conflicts { get; } = [];
 
@@ -766,19 +793,23 @@ internal sealed class GitHubRoadmapSyncer
         return (issueNumber, null);
     }
 
-    private (string Path, JsonObject Root, JsonObject GitHub) PrepareIssueMapping(RoadmapItemSnapshot item)
+    private (string Path, JsonObject Root, JsonObject GitHub, string Original) PrepareIssueMapping(RoadmapItemSnapshot item)
     {
         var itemPath = Path.Combine(_project.RootPath, item.Path);
-        var root = JsonNode.Parse(File.ReadAllText(itemPath)) as JsonObject
+        RollbackFileWriteBatch.ValidateWritePath(_project.RootPath, itemPath);
+        var original = File.ReadAllText(itemPath);
+        var root = JsonNode.Parse(original) as JsonObject
             ?? throw new InvalidOperationException($"Roadmap item root must be a JSON object: {item.Path}.");
         var integrations = GetOrCreateObject(root, "integrations");
         var github = GetOrCreateObject(integrations, "github");
-        return (itemPath, root, github);
+        return (itemPath, root, github, original);
     }
 
     private FileStream AcquireIssueCreationLock(RoadmapItemSnapshot item)
     {
         var lockPath = Path.Combine(_project.RootPath, item.Path) + ".lock";
+        RollbackFileWriteBatch.ValidateWritePath(_project.RootPath, Path.Combine(_project.RootPath, item.Path));
+        RollbackFileWriteBatch.ValidateWritePath(_project.RootPath, lockPath);
         try
         {
             return new FileStream(lockPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None, 1, FileOptions.None);
@@ -805,25 +836,14 @@ internal sealed class GitHubRoadmapSyncer
         throw new InvalidOperationException($"GitHub issue mapping changed while synchronizing: {itemPath}.");
     }
 
-    private static void PersistIssueMapping(string itemPath, JsonObject root, int issueNumber)
+    private void PersistIssueMapping(string itemPath, JsonObject root, string original, int issueNumber)
     {
         var integrations = GetOrCreateObject(root, "integrations");
         var github = GetOrCreateObject(integrations, "github");
         github["issue"] = issueNumber;
 
-        var temporaryPath = itemPath + ".tmp";
-        try
-        {
-            File.WriteAllText(temporaryPath, root.ToJsonString(new JsonSerializerOptions { WriteIndented = true }) + "\n");
-            File.Move(temporaryPath, itemPath, overwrite: true);
-        }
-        finally
-        {
-            if (File.Exists(temporaryPath))
-            {
-                File.Delete(temporaryPath);
-            }
-        }
+        RollbackFileWriteBatch.Apply(_project.RootPath,
+            [new(itemPath, root.ToJsonString(new JsonSerializerOptions { WriteIndented = true }) + "\n", original)]);
     }
 
     private static JsonObject GetOrCreateObject(JsonObject parent, string propertyName)

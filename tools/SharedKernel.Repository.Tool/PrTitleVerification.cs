@@ -11,7 +11,10 @@ internal static partial class PrTitleVerification
     {
         using var document = JsonDocument.Parse(await File.ReadAllTextAsync(eventPath, ct).ConfigureAwait(false));
         var title = document.RootElement.GetProperty("pull_request").GetProperty("title").GetString() ?? string.Empty;
-        if (title.Length > 100 || title != title.Trim() || !TitlePattern().IsMatch(title)) { throw new ArgumentException("PR title must be a Conventional Commit header of at most 100 characters."); }
+        if (title.Length > 100 || title != title.Trim() || !TitlePattern().IsMatch(title))
+        {
+            throw new ArgumentException("PR title must be a Conventional Commit header of at most 100 characters.");
+        }
         var body = document.RootElement.GetProperty("pull_request").TryGetProperty("body", out var value) ? value.GetString() ?? string.Empty : string.Empty;
         foreach (var line in body.Split('\n'))
         {

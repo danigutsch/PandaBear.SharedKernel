@@ -13,7 +13,7 @@ public class CsvDocumentTests
         var documentResult = CsvDocument.Create(headers, rows);
 
         // Assert
-        documentResult.IsSuccess.ShouldBeTrue();
+        documentResult.ShouldBeSuccess();
 
         var document = documentResult.Value;
         document.Headers.Count.ShouldBe(3);
@@ -37,7 +37,7 @@ public class CsvDocumentTests
         var documentResult = CsvDocument.Parse(csvContent);
 
         // Assert
-        documentResult.IsSuccess.ShouldBeTrue();
+        documentResult.ShouldBeSuccess();
 
         var document = documentResult.Value;
         document.Headers.Count.ShouldBe(3);
@@ -61,7 +61,7 @@ public class CsvDocumentTests
         var documentResult = CsvDocument.Parse(csvContent);
 
         // Assert
-        documentResult.IsSuccess.ShouldBeTrue();
+        documentResult.ShouldBeSuccess();
 
         var document = documentResult.Value;
         document.Rows.Count.ShouldBe(3);
@@ -177,7 +177,7 @@ public class CsvDocumentTests
         var documentResult = CsvDocument.Parse(csvContent, requiredHeaders);
 
         // Assert
-        documentResult.IsSuccess.ShouldBeTrue();
+        documentResult.ShouldBeSuccess();
     }
 
     [Fact]
@@ -206,7 +206,7 @@ public class CsvDocumentTests
         var documentResult = CsvDocument.Parse(csvContent, requiredHeaders);
 
         // Assert
-        documentResult.IsSuccess.ShouldBeTrue();
+        documentResult.ShouldBeSuccess();
     }
 
     [Fact]

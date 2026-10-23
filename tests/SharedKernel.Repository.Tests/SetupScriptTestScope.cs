@@ -48,9 +48,15 @@ internal sealed class SetupScriptTestScope : IDisposable
         File.SetUnixFileMode(fakeDotnet, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
     }
 
-    public string Root { get; }
+    public string Root
+    {
+        get;
+    }
 
-    public string LogPath { get; }
+    public string LogPath
+    {
+        get;
+    }
 
     public Task<CiTestSelectionTestProcess.ProcessResult> Run(int restoreExitCode, int buildExitCode, CancellationToken ct)
     {

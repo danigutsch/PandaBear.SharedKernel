@@ -15,7 +15,7 @@ public sealed class OptionResultExtensionsTests
         var result = option.ToNotFoundResult(entity.Id);
 
         // Assert
-        result.IsSuccess.ShouldBeTrue();
+        result.ShouldBeSuccess();
         result.Value.ShouldBe(entity);
     }
 

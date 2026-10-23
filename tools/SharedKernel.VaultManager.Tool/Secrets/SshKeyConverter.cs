@@ -53,7 +53,11 @@ internal static class SshKeyConverter
         SshKeyInspection inspection = InspectBlock(block);
         if (inspection.CanConvert && !BitwardenLimits.Fits(pem, BitwardenLimits.ValueEncryptedLength))
         {
-            return inspection with { CanConvert = false, Problem = BudgetProblem };
+            return inspection with
+            {
+                CanConvert = false,
+                Problem = BudgetProblem
+            };
         }
 
         return inspection;

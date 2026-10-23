@@ -7,7 +7,10 @@ internal sealed class TemporaryProjectDirectory : IDisposable
         Path = path;
     }
 
-    public string Path { get; }
+    public string Path
+    {
+        get;
+    }
 
     public static TemporaryProjectDirectory Create()
     {

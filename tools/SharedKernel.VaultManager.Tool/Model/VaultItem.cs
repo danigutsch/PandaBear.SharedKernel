@@ -6,49 +6,88 @@ namespace PandaBear.VaultManager.Tool.Model;
 internal sealed record VaultItem
 {
     /// <summary>Item kind.</summary>
-    public required VaultItemType Type { get; init; }
+    public required VaultItemType Type
+    {
+        get; init;
+    }
 
     /// <summary>Item name.</summary>
-    public required string Name { get; init; }
+    public required string Name
+    {
+        get; init;
+    }
 
     /// <summary>Folder path with <c>/</c> separators, or <see langword="null"/> for no folder.</summary>
-    public string? FolderPath { get; init; }
+    public string? FolderPath
+    {
+        get; init;
+    }
 
     /// <summary>Whether the item is marked as favorite.</summary>
-    public bool Favorite { get; init; }
+    public bool Favorite
+    {
+        get; init;
+    }
 
     /// <summary>Whether the vault asks for the master password before showing the item.</summary>
-    public bool Reprompt { get; init; }
+    public bool Reprompt
+    {
+        get; init;
+    }
 
     /// <summary>Notes.</summary>
-    public string? Notes { get; init; }
+    public string? Notes
+    {
+        get; init;
+    }
 
     /// <summary>Custom fields.</summary>
     public IReadOnlyList<CustomField> Fields { get; init; } = [];
 
     /// <summary>Login data for <see cref="VaultItemType.Login"/> items.</summary>
-    public LoginData? Login { get; init; }
+    public LoginData? Login
+    {
+        get; init;
+    }
 
     /// <summary>Card data for <see cref="VaultItemType.Card"/> items.</summary>
-    public CardData? Card { get; init; }
+    public CardData? Card
+    {
+        get; init;
+    }
 
     /// <summary>Identity data for <see cref="VaultItemType.Identity"/> items.</summary>
-    public IdentityData? Identity { get; init; }
+    public IdentityData? Identity
+    {
+        get; init;
+    }
 
     /// <summary>Key data for <see cref="VaultItemType.SshKey"/> items.</summary>
-    public SshKeyData? SshKey { get; init; }
+    public SshKeyData? SshKey
+    {
+        get; init;
+    }
 
     /// <summary>Former passwords, newest first.</summary>
     public IReadOnlyList<PasswordHistoryEntry> PasswordHistory { get; init; } = [];
 
     /// <summary>Creation time reported by the source.</summary>
-    public DateTimeOffset? CreationDate { get; init; }
+    public DateTimeOffset? CreationDate
+    {
+        get; init;
+    }
 
     /// <summary>Last revision time reported by the source.</summary>
-    public DateTimeOffset? RevisionDate { get; init; }
+    public DateTimeOffset? RevisionDate
+    {
+        get; init;
+    }
 
     /// <summary>Where the item was read from.</summary>
-    public required ItemOrigin Origin { get; init; }
+    public required ItemOrigin Origin
+    {
+        get; init;
+    }
 
     /// <summary>Files attached in the source vault. Bitwarden JSON imports cannot carry them.</summary>
     public IReadOnlyList<AttachmentRef> Attachments { get; init; } = [];

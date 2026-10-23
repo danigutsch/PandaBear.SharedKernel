@@ -61,7 +61,10 @@ public sealed class SecretPlacerTests
     {
         var item = SecretTestItems.Login(notes: "PIN: 4821");
         var finding = SecretScanner.Default.Scan(item).ShouldHaveSingleItem();
-        var changed = item with { Notes = "PIN" };
+        var changed = item with
+        {
+            Notes = "PIN"
+        };
 
         var placed = SecretPlacer.Apply(changed, [finding]);
 

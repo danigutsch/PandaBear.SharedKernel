@@ -7,6 +7,11 @@ on:
   schedule:
     - cron: '23 2 * * *'
   workflow_dispatch:
+    inputs:
+      candidate_version:
+        description: Published prerelease to consume unchanged on Linux and Windows; leave empty for normal validation.
+        required: false
+        type: string
 permissions:
   contents: read
 concurrency:
@@ -14,7 +19,7 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   selection:
-    if: ${{ github.event.action != 'labeled' || github.event.label.name == 'ci:rerun' }}
+    if: ${{ (github.event.action != 'labeled' || github.event.label.name == 'ci:rerun') && inputs.candidate_version == '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
@@ -233,15 +238,91 @@ jobs:
       - name: Verify generated architecture
         run: dotnet run --project tools/SharedKernel.Documentation.Tool -c Release --no-build --no-restore -- verify --config docs/architecture/generated-diagrams.json
 
+  published-candidate-consumption:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.candidate_version != '' }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Download immutable published prerelease
+        id: candidate
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_VERSION: ${{ inputs.candidate_version }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:CANDIDATE_VERSION -cnotmatch '^[0-9]+\.[0-9]+\.[0-9]+-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*$') {
+            throw 'A prerelease package version is required.'
+          }
+          $releaseJson = gh release view "v$env:CANDIDATE_VERSION" --repo $env:GITHUB_REPOSITORY --json isPrerelease
+          if ($LASTEXITCODE -ne 0) { throw 'Could not read the published prerelease.' }
+          if (($releaseJson | ConvertFrom-Json).isPrerelease -ne $true) { throw 'The release must remain prerelease.' }
+          $feed = Join-Path $env:RUNNER_TEMP 'published-candidate'
+          New-Item -ItemType Directory -Path $feed | Out-Null
+          gh release download "v$env:CANDIDATE_VERSION" --repo $env:GITHUB_REPOSITORY --dir $feed --pattern candidate.json --pattern '*.nupkg'
+          if ($LASTEXITCODE -ne 0) { throw 'Could not download the immutable candidate.' }
+          $candidate = Get-Content -Raw (Join-Path $feed 'candidate.json') | ConvertFrom-Json
+          if ($candidate.packageVersion -cne $env:CANDIDATE_VERSION -or $candidate.libraryDirty -ne $false) {
+            throw 'The candidate must identify the requested version and a clean library revision.'
+          }
+          $expectedFiles = @($candidate.packageSha256.PSObject.Properties.Name | Sort-Object)
+          $actualFiles = @(Get-ChildItem -Path $feed -Filter '*.nupkg' -File | ForEach-Object Name | Sort-Object)
+          if ($expectedFiles.Count -eq 0 -or (Compare-Object $expectedFiles $actualFiles)) {
+            throw 'Downloaded packages must exactly match the immutable manifest.'
+          }
+          if ($candidate.libraryRevision -cnotmatch '^[0-9a-f]{40}$') { throw 'Invalid candidate source revision.' }
+          "library_revision=$($candidate.libraryRevision)" >> $env:GITHUB_OUTPUT
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: ${{ steps.candidate.outputs.library_revision }}
+          persist-credentials: false
+      - name: Verify exact clean source revision
+        shell: pwsh
+        env:
+          CANDIDATE_REVISION: ${{ steps.candidate.outputs.library_revision }}
+        run: |
+          $revision = git rev-parse HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Could not read the source revision.' }
+          $dirty = git status --porcelain
+          if ($LASTEXITCODE -ne 0) { throw 'Could not inspect source cleanliness.' }
+          if ($revision -cne $env:CANDIDATE_REVISION -or $dirty) {
+            throw 'Candidate consumption requires its exact clean source revision.'
+          }
+      - uses: ./.github/actions/setup-dotnet-tool
+        with:
+          project: tools/SharedKernel.Versioning.Tool
+      - name: Verify package hashes and consume the same candidate including NativeAOT
+        shell: pwsh
+        run: |
+          $manifest = Join-Path $env:RUNNER_TEMP 'published-candidate/candidate.json'
+          $evidence = Join-Path $env:RUNNER_TEMP 'published-candidate/consumption.json'
+          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- consume-candidate --candidate $manifest --output $evidence --aot
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Retain platform evidence without rewriting release assets
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: published-candidate-${{ matrix.os }}
+          path: |
+            ${{ runner.temp }}/published-candidate/candidate.json
+            ${{ runner.temp }}/published-candidate/consumption.json
+          if-no-files-found: ignore
+
   validation-summary:
     name: ${{ github.event.action == 'labeled' && github.event.label.name != 'ci:rerun' && 'Ignored label event' || 'SharedKernel Validation' }}
-    needs: [selection, library, hosted-tests, candidate, linux-package-consumption, windows-package-consumption, repository-quality]
+    needs: [selection, library, hosted-tests, candidate, linux-package-consumption, windows-package-consumption, repository-quality, published-candidate-consumption]
     if: ${{ always() && (github.event.action != 'labeled' || github.event.label.name == 'ci:rerun') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Require every applicable validation result
         env:
+          PUBLISHED_CANDIDATE_VERSION: ${{ inputs.candidate_version }}
+          PUBLISHED_CANDIDATE_RESULT: ${{ needs.published-candidate-consumption.result }}
           SELECTION_RESULT: ${{ needs.selection.result }}
           QUALITY_RESULT: ${{ needs.repository-quality.result }}
           CANDIDATE_REQUIRED: ${{ needs.selection.outputs.candidate_required }}
@@ -252,6 +333,10 @@ jobs:
           LINUX_RESULT: ${{ needs.linux-package-consumption.result }}
           WINDOWS_RESULT: ${{ needs.windows-package-consumption.result }}
         run: |
+          if [[ -n "$PUBLISHED_CANDIDATE_VERSION" ]]; then
+            test "$PUBLISHED_CANDIDATE_RESULT" = success
+            exit $?
+          fi
           test "$SELECTION_RESULT" = success
           test "$QUALITY_RESULT" = success
           if [[ "$CANDIDATE_REQUIRED" == true ]]; then

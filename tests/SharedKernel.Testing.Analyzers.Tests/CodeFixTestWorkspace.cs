@@ -26,9 +26,15 @@ internal sealed class CodeFixTestWorkspace
         DocumentId = documentId;
     }
 
-    public AdhocWorkspace Workspace { get; }
+    public AdhocWorkspace Workspace
+    {
+        get;
+    }
 
-    private DocumentId DocumentId { get; }
+    private DocumentId DocumentId
+    {
+        get;
+    }
 
     private Document Document => Workspace.CurrentSolution.GetDocument(DocumentId).ShouldBeOfType<Document>();
 

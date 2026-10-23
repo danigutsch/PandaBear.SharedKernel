@@ -7,7 +7,10 @@ internal sealed class TrackingAsyncDisposable(
 {
     private int disposed;
 
-    internal bool DisposeCalled { get; private set; }
+    internal bool DisposeCalled
+    {
+        get; private set;
+    }
 
     public ValueTask DisposeAsync()
     {

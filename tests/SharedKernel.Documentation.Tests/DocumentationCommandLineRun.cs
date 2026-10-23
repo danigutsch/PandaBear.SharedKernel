@@ -12,11 +12,20 @@ internal sealed class DocumentationCommandLineRun
         Error = error;
     }
 
-    public int ExitCode { get; }
+    public int ExitCode
+    {
+        get;
+    }
 
-    public string Output { get; }
+    public string Output
+    {
+        get;
+    }
 
-    public string Error { get; }
+    public string Error
+    {
+        get;
+    }
 
     public static DocumentationCommandLineRun Invoke(string rootPath, IReadOnlyList<string> args) =>
         Invoke(DocumentationCommandLine.Create(rootPath).Parse(args));

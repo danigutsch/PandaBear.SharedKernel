@@ -8,30 +8,48 @@ public interface IEventEnvelopeMetadata
     /// <summary>
     /// Gets the event identifier used for idempotency and tracing.
     /// </summary>
-    string EventId { get; }
+    string EventId
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the event source.
     /// </summary>
-    Uri Source { get; }
+    Uri Source
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the stable event type identifier.
     /// </summary>
-    string EventType { get; }
+    string EventType
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the optional event contract version.
     /// </summary>
-    int? EventVersion { get; }
+    int? EventVersion
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the time at which the event occurred.
     /// </summary>
-    DateTimeOffset? Time { get; }
+    DateTimeOffset? Time
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the optional event subject.
     /// </summary>
-    string? Subject { get; }
+    string? Subject
+    {
+        get;
+    }
 }

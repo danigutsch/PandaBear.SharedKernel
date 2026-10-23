@@ -204,9 +204,13 @@
       "PandaBear.SharedKernel.ApiVersioning": {
         "type": "Project"
       },
+      "PandaBear.SharedKernel.Results": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
+          "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )",
           "xunit.v3.assert": "[4.0.0, )"
         }
       },

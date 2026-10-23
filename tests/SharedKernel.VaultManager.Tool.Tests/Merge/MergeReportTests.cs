@@ -9,14 +9,28 @@ public sealed class MergeReportTests
     [Fact]
     public void Report_markdown_contains_no_values()
     {
-        var keeper = Keeper(Login("fixture-old-password", "JBSWY3DPEHPK3PXP")) with { Notes = "fixture-old-notes", FolderPath = "Personal" };
-        var bitwarden = Bitwarden(Login("fixture-new-password")) with { Notes = "fixture-new-notes", FolderPath = "Work" };
-        var unknown = WithoutTimestamp(Keeper(Login("fixture-other-password") with { Uris = [new LoginUri("https://bank.example.org")] }) with
+        var keeper = Keeper(Login("fixture-old-password", "JBSWY3DPEHPK3PXP")) with
+        {
+            Notes = "fixture-old-notes",
+            FolderPath = "Personal"
+        };
+        var bitwarden = Bitwarden(Login("fixture-new-password")) with
+        {
+            Notes = "fixture-new-notes",
+            FolderPath = "Work"
+        };
+        var unknown = WithoutTimestamp(Keeper(Login("fixture-other-password") with
+        {
+            Uris = [new LoginUri("https://bank.example.org")]
+        }) with
         {
             Name = "Bank",
             Origin = new ItemOrigin("keeper", KeeperFile, "k2", null),
         });
-        var unknownDuplicate = WithoutTimestamp(Bitwarden(Login("fixture-third-password") with { Uris = [new LoginUri("https://bank.example.org")] }) with
+        var unknownDuplicate = WithoutTimestamp(Bitwarden(Login("fixture-third-password") with
+        {
+            Uris = [new LoginUri("https://bank.example.org")]
+        }) with
         {
             Name = "Bank",
             Origin = new ItemOrigin("bitwarden", BitwardenFile, "b2", null),
