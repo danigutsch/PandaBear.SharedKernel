@@ -9,6 +9,7 @@ public sealed class GovernedLiteralRepositoryTests
     [Fact]
     public void Library_catalog_has_exact_canonical_owners_and_no_unapproved_aliases()
     {
+        // Arrange
         var root = new DirectoryInfo(AppContext.BaseDirectory);
         while (root is not null && !File.Exists(Path.Combine(root.FullName, "SharedKernel.slnx")))
         {
@@ -41,6 +42,11 @@ public sealed class GovernedLiteralRepositoryTests
         }
 
         var catalog = File.ReadAllText(Path.Combine(repository, "src", "SharedKernel", "SharedKernel.Style.Analyzers", "GovernedLiterals.txt"));
-        GovernedConstantGuard.Validate(compilations, catalog).ShouldBeEmpty();
+
+        // Act
+        var errors = GovernedConstantGuard.Validate(compilations, catalog);
+
+        // Assert
+        errors.ShouldBeEmpty();
     }
 }

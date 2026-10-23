@@ -71,6 +71,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     [Fact]
     public async Task Direct_xunit_assertion_reports_SKTEST006()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -84,14 +85,17 @@ public sealed class SharedKernelTestingAnalyzerTests
             }
             """;
 
+        // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
+        // Assert
         diagnostics.ShouldContain(static candidate => candidate.Id == XunitAssertionWrapperDiagnosticId);
     }
 
     [Fact]
     public async Task Repository_assertion_wrapper_does_not_report_SKTEST006()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -112,14 +116,17 @@ public sealed class SharedKernelTestingAnalyzerTests
             }
             """;
 
+        // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
+        // Assert
         diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitAssertionWrapperDiagnosticId);
     }
 
     [Fact]
     public async Task Pragma_warning_disable_inside_fact_method_reports_SKTEST001()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -136,14 +143,17 @@ public sealed class SharedKernelTestingAnalyzerTests
             }
             """;
 
+        // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
+        // Assert
         diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId).ShouldBe(2);
     }
 
     [Fact]
     public async Task Pragma_warning_disable_outside_test_method_does_not_report_SKTEST001()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -157,14 +167,17 @@ public sealed class SharedKernelTestingAnalyzerTests
             #pragma warning restore CA1822
             """;
 
+        // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
+        // Assert
         diagnostics.ShouldNotContain(static candidate => candidate.Id == WarningSuppressionDiagnosticId);
     }
 
     [Fact]
     public async Task Pragma_warning_disable_inside_non_test_method_does_not_report_SKTEST001()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -180,14 +193,17 @@ public sealed class SharedKernelTestingAnalyzerTests
             }
             """;
 
+        // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
+        // Assert
         diagnostics.ShouldNotContain(static candidate => candidate.Id == WarningSuppressionDiagnosticId);
     }
 
     [Fact]
     public async Task Pragma_warning_disable_inside_theory_method_reports_SKTEST001()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -204,14 +220,17 @@ public sealed class SharedKernelTestingAnalyzerTests
             }
             """;
 
+        // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
+        // Assert
         diagnostics.Count(static candidate => candidate.Id == WarningSuppressionDiagnosticId).ShouldBe(2);
     }
 
     [Fact]
     public async Task Test_naming_without_underscores_reports_SKTEST002()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -224,14 +243,17 @@ public sealed class SharedKernelTestingAnalyzerTests
             }
             """;
 
+        // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
+        // Assert
         diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
     [Fact]
     public async Task Default_test_naming_with_underscores_does_not_report_SKTEST002()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -244,8 +266,10 @@ public sealed class SharedKernelTestingAnalyzerTests
             }
             """;
 
+        // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
+        // Assert
         diagnostics.ShouldNotContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 
@@ -422,6 +446,7 @@ public sealed class SharedKernelTestingAnalyzerTests
     [Fact]
     public async Task Fact_attribute_form_without_underscores_reports_SKTEST002()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -434,8 +459,10 @@ public sealed class SharedKernelTestingAnalyzerTests
             }
             """;
 
+        // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
 
+        // Assert
         diagnostics.ShouldContain(static candidate => candidate.Id == XunitMethodNamingDiagnosticId);
     }
 

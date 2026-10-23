@@ -169,8 +169,10 @@ public sealed class GeneratorImplementationTests
     [InlineData("demo-admin.domain", "GenerateddemoadmindomainResultErrorCatalogProvider")]
     public void SanitizeProviderTypeName_removes_non_alphanumeric_characters(string assemblyName, string expected)
     {
+        // Act
         var actual = ResultErrorCatalogGenerator.SanitizeProviderTypeName(assemblyName);
 
+        // Assert
         actual.ShouldBe(expected);
     }
 }

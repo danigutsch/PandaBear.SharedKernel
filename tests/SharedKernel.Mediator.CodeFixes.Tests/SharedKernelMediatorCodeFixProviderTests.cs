@@ -135,8 +135,10 @@ public sealed class SharedKernelMediatorCodeFixProviderTests
         // Arrange
         var fixAllProvider = new SharedKernelMediatorCodeFixProvider().GetFixAllProvider();
 
-        // Assert
+        // Act
         var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<object?>)(() => fixAllProvider.GetSupportedFixAllDiagnosticIds(null!)));
+
+        // Assert
         exception.ParamName.ShouldBe("originalCodeFixProvider");
     }
 

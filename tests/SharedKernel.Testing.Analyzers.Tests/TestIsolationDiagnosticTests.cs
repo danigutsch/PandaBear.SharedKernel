@@ -12,6 +12,7 @@ public sealed class TestIsolationDiagnosticTests
     [InlineData("var sut = Build();", false)]
     public async Task Construction_in_explicit_act_reports_only_sut_targets(string statement, bool expected)
     {
+        // Arrange
         ArgumentNullException.ThrowIfNull(statement);
         var source = $$"""
             public class Widget { }
@@ -28,8 +29,13 @@ public sealed class TestIsolationDiagnosticTests
                 private Widget Build() => new();
             }
             """;
-        AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
+
+        // Act
+        var compilationErrors = AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error);
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        compilationErrors.ShouldBeEmpty();
         diagnostics.Any(static d => d.Id == "SKTEST016").ShouldBe(expected);
     }
 
@@ -40,6 +46,7 @@ public sealed class TestIsolationDiagnosticTests
     [InlineData("// Arrange", "// Act here", "// Assert", false)]
     public async Task Construction_requires_one_ordered_exact_marker_set(string arrange, string act, string assert, bool expected)
     {
+        // Arrange
         var source = $$"""
             public class Widget { }
             public class Tests
@@ -53,8 +60,13 @@ public sealed class TestIsolationDiagnosticTests
                 }
             }
             """;
-        AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
+
+        // Act
+        var compilationErrors = AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error);
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        compilationErrors.ShouldBeEmpty();
         diagnostics.Any(static d => d.Id == "SKTEST016").ShouldBe(expected);
     }
 
@@ -71,6 +83,7 @@ public sealed class TestIsolationDiagnosticTests
     [InlineData("source => source == expected", false)]
     public async Task Listener_predicates_require_source_identity(string predicate, bool expectedDiagnostic)
     {
+        // Arrange
         var source = $$"""
             using System.Diagnostics;
             public class Capture
@@ -81,8 +94,13 @@ public sealed class TestIsolationDiagnosticTests
                 }
             }
             """;
-        AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
+
+        // Act
+        var compilationErrors = AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error);
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        compilationErrors.ShouldBeEmpty();
         diagnostics.Count(static d => d.Id == "SKTEST010").ShouldBe(expectedDiagnostic ? 1 : 0);
     }
 
@@ -95,6 +113,7 @@ public sealed class TestIsolationDiagnosticTests
     [InlineData("[Fact]", "// Act", "var result = new Widget();", false)]
     public async Task Sut_detection_respects_test_and_execution_boundaries(string attribute, string marker, string statement, bool expected)
     {
+        // Arrange
         var source = $$"""
             public class Widget { }
             public class Tests
@@ -109,8 +128,13 @@ public sealed class TestIsolationDiagnosticTests
                 private T Render<T>() => default;
             }
             """;
-        AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
+
+        // Act
+        var compilationErrors = AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error);
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        compilationErrors.ShouldBeEmpty();
         diagnostics.Any(static d => d.Id == "SKTEST016").ShouldBe(expected);
     }
 
@@ -119,6 +143,7 @@ public sealed class TestIsolationDiagnosticTests
     [InlineData("TestSource.g.cs", false)]
     public async Task Listener_assignments_support_aliases_and_exclude_generated_code(string path, bool expected)
     {
+        // Arrange
         const string source = """
             using Listener = System.Diagnostics.ActivityListener;
             public class Capture
@@ -130,13 +155,18 @@ public sealed class TestIsolationDiagnosticTests
                 }
             }
             """;
+
+        // Act
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, path: path);
+
+        // Assert
         diagnostics.Any(static d => d.Id == "SKTEST010").ShouldBe(expected);
     }
 
     [Fact]
     public async Task Listener_method_groups_and_ordinary_source_name_reads_remain_valid()
     {
+        // Arrange
         const string source = """
             using System.Diagnostics;
             public class Capture
@@ -151,8 +181,13 @@ public sealed class TestIsolationDiagnosticTests
                 private static bool Matches(ActivitySource source) => source.Name == "test";
             }
             """;
-        AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
+
+        // Act
+        var compilationErrors = AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error);
         var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        compilationErrors.ShouldBeEmpty();
         diagnostics.ShouldNotContain(static d => d.Id == "SKTEST010");
     }
 }

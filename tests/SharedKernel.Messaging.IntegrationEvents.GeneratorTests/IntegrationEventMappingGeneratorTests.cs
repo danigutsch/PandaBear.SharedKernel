@@ -1060,6 +1060,7 @@ public sealed class IntegrationEventMappingGeneratorTests
     [Fact]
     public void Generates_domain_dispatcher_for_mapping_methods()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -1081,11 +1082,14 @@ public sealed class IntegrationEventMappingGeneratorTests
             """;
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
+        // Act
         var result = GeneratorTestHarness.RunGenerator(compilation);
         var generatedSource = GeneratorTestHarness.GetGeneratedSource(result.RunResult);
         var errors = result.OutputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
             .ToArray();
+
+        // Assert
         errors.ShouldBeEmpty();
         generatedSource.ShouldContain("GeneratedIntegrationEventDomainEventDispatcher", StringComparison.Ordinal);
         generatedSource.ShouldContain("Handle(global::PandaBear.Domain.IDomainEvent domainEvent", StringComparison.Ordinal);
@@ -1197,6 +1201,7 @@ public sealed class IntegrationEventMappingGeneratorTests
     [Fact]
     public void Reports_static_virtual_interface_mapping_methods()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -1219,11 +1224,13 @@ public sealed class IntegrationEventMappingGeneratorTests
             """;
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
+        // Act
         var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
         var diagnostics = runResult.Diagnostics
             .Where(static diagnostic => diagnostic.Id == "SKMSG004")
             .ToArray();
 
+        // Assert
         runResult.Results.Single().GeneratedSources.ShouldBeEmpty();
         diagnostics.Length.ShouldBe(1);
     }
@@ -1231,6 +1238,7 @@ public sealed class IntegrationEventMappingGeneratorTests
     [Fact]
     public void Dispatches_base_and_derived_event_mappings_by_exact_runtime_type()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -1262,9 +1270,11 @@ public sealed class IntegrationEventMappingGeneratorTests
             """;
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
+        // Act
         var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
         var generatedSource = GeneratorTestHarness.GetGeneratedSource(runResult);
 
+        // Assert
         generatedSource.ShouldContain("when domainEvent.GetType() == typeof(global::Demo.BaseDomainEvent)", StringComparison.Ordinal);
         generatedSource.ShouldContain("when domainEvent.GetType() == typeof(global::Demo.DerivedDomainEvent)", StringComparison.Ordinal);
     }
@@ -1272,6 +1282,7 @@ public sealed class IntegrationEventMappingGeneratorTests
     [Fact]
     public void Emits_global_escaped_identifiers()
     {
+        // Arrange
         const string source = """
             namespace @event;
 
@@ -1292,12 +1303,14 @@ public sealed class IntegrationEventMappingGeneratorTests
             """;
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
+        // Act
         var result = GeneratorTestHarness.RunGenerator(compilation);
         var generatedSource = GeneratorTestHarness.GetGeneratedSource(result.RunResult);
         var errors = result.OutputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
             .ToArray();
 
+        // Assert
         errors.ShouldBeEmpty();
         generatedSource.ShouldContain("global::@event.@internal.@return", StringComparison.Ordinal);
     }
@@ -1305,6 +1318,7 @@ public sealed class IntegrationEventMappingGeneratorTests
     [Fact]
     public void Ignores_unsafe_mapping_shapes()
     {
+        // Arrange
         const string source = """
             #nullable enable
             namespace Demo;
@@ -1366,11 +1380,13 @@ public sealed class IntegrationEventMappingGeneratorTests
             """;
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
+        // Act
         var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
         var diagnostics = runResult.Diagnostics
             .Where(static diagnostic => diagnostic.Id == "SKMSG004")
             .ToArray();
 
+        // Assert
         runResult.Results.Single().GeneratedSources.ShouldBeEmpty();
         diagnostics.Length.ShouldBe(5);
     }
@@ -1378,6 +1394,7 @@ public sealed class IntegrationEventMappingGeneratorTests
     [Fact]
     public void Reports_non_concrete_domain_event_mapping_parameters()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -1407,6 +1424,7 @@ public sealed class IntegrationEventMappingGeneratorTests
             """;
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
+        // Act
         var result = GeneratorTestHarness.RunGenerator(compilation);
         var diagnostics = result.RunResult.Diagnostics
             .Where(static diagnostic => diagnostic.Id == "SKMSG004")
@@ -1416,6 +1434,7 @@ public sealed class IntegrationEventMappingGeneratorTests
             .Where(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
             .ToArray();
 
+        // Assert
         result.RunResult.Results.Single().GeneratedSources.ShouldBeEmpty();
         diagnostics.Length.ShouldBe(2);
         compilationErrors.ShouldBeEmpty();
@@ -1424,6 +1443,7 @@ public sealed class IntegrationEventMappingGeneratorTests
     [Fact]
     public void Reports_non_concrete_integration_event_returns_as_errors()
     {
+        // Arrange
         const string source = """
             namespace Demo;
 
@@ -1453,11 +1473,13 @@ public sealed class IntegrationEventMappingGeneratorTests
             """;
         var compilation = GeneratorTestHarness.CreateCompilation(source);
 
+        // Act
         var runResult = GeneratorTestHarness.RunGeneratorDriver(compilation);
         var diagnostics = runResult.Diagnostics
             .Where(static diagnostic => diagnostic.Id == "SKMSG004")
             .ToArray();
 
+        // Assert
         runResult.Results.Single().GeneratedSources.ShouldBeEmpty();
         diagnostics.Length.ShouldBe(2);
         diagnostics.All(static diagnostic => diagnostic.Severity == DiagnosticSeverity.Error).ShouldBeTrue();
