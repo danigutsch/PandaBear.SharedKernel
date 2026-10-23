@@ -49,25 +49,52 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
     {
     }
 
-    public Guid Id { get; private set; }
+    public Guid Id
+    {
+        get; private set;
+    }
 
     public string ConsumerName { get; private set; } = string.Empty;
 
-    public DateTimeOffset ReceivedAt { get; private set; }
+    public DateTimeOffset ReceivedAt
+    {
+        get; private set;
+    }
 
-    public DateTimeOffset? ProcessedAt { get; private set; }
+    public DateTimeOffset? ProcessedAt
+    {
+        get; private set;
+    }
 
-    public int ConsumeAttempts { get; private set; }
+    public int ConsumeAttempts
+    {
+        get; private set;
+    }
 
-    public DateTimeOffset? LastConsumeAttemptAt { get; private set; }
+    public DateTimeOffset? LastConsumeAttemptAt
+    {
+        get; private set;
+    }
 
-    public DateTimeOffset? NextConsumeAttemptAt { get; private set; }
+    public DateTimeOffset? NextConsumeAttemptAt
+    {
+        get; private set;
+    }
 
-    public string? LastConsumeError { get; private set; }
+    public string? LastConsumeError
+    {
+        get; private set;
+    }
 
-    public string? ClaimedBy { get; private set; }
+    public string? ClaimedBy
+    {
+        get; private set;
+    }
 
-    public DateTimeOffset? ClaimedUntil { get; private set; }
+    public DateTimeOffset? ClaimedUntil
+    {
+        get; private set;
+    }
 
     public void MarkProcessed(DateTimeOffset processedAt)
     {

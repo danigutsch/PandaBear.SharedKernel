@@ -17,11 +17,38 @@ public sealed class IdempotentSubmission<T>
     private bool _isBusy;
 
     /// <summary>Gets whether a request is currently executing.</summary>
-    public bool IsBusy { get { lock (_gate) { return _isBusy; } } }
+    public bool IsBusy
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _isBusy;
+            }
+        }
+    }
     /// <summary>Gets whether the same command and key must be retried before accepting another command.</summary>
-    public bool HasPending { get { lock (_gate) { return _pending is not null; } } }
+    public bool HasPending
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _pending is not null;
+            }
+        }
+    }
     /// <summary>Gets the caller's non-sensitive label for the current or last operation.</summary>
-    public string Operation { get { lock (_gate) { return _operation; } } }
+    public string Operation
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _operation;
+            }
+        }
+    }
 
     /// <summary>Starts one command with a new opaque key, or returns null while another command is busy or pending.</summary>
     /// <param name="operation">A non-sensitive operation label.</param>
@@ -35,7 +62,10 @@ public sealed class IdempotentSubmission<T>
         ArgumentNullException.ThrowIfNull(submit);
         lock (_gate)
         {
-            if (_isBusy || _pending is not null) { return Task.FromResult<HttpOutcome<T>?>(null); }
+            if (_isBusy || _pending is not null)
+            {
+                return Task.FromResult<HttpOutcome<T>?>(null);
+            }
             _pending = submit;
             _key = IdempotencyKey.From(Guid.CreateVersion7().ToString("N"));
             _operation = operation;
@@ -51,7 +81,10 @@ public sealed class IdempotentSubmission<T>
     {
         lock (_gate)
         {
-            if (_isBusy || _pending is null) { return Task.FromResult<HttpOutcome<T>?>(null); }
+            if (_isBusy || _pending is null)
+            {
+                return Task.FromResult<HttpOutcome<T>?>(null);
+            }
             _isBusy = true;
         }
         return Execute(ct);
@@ -63,7 +96,11 @@ public sealed class IdempotentSubmission<T>
         IdempotencyKey key;
         lock (_gate)
         {
-            if (_pending is null || _key is not { } retainedKey) { _isBusy = false; return null; }
+            if (_pending is null || _key is not { } retainedKey)
+            {
+                _isBusy = false;
+                return null;
+            }
             pending = _pending;
             key = retainedKey;
         }
@@ -73,7 +110,11 @@ public sealed class IdempotentSubmission<T>
             if (result.Kind is HttpOutcomeKind.Succeeded or HttpOutcomeKind.ValidationProblem or HttpOutcomeKind.NotFound
                 or HttpOutcomeKind.Unauthorized or HttpOutcomeKind.Forbidden or HttpOutcomeKind.Conflict)
             {
-                lock (_gate) { _pending = null; _key = null; }
+                lock (_gate)
+                {
+                    _pending = null;
+                    _key = null;
+                }
             }
             return result;
         }

@@ -54,7 +54,10 @@ public sealed class ExpectedStreamRevisionConflictException : InvalidOperationEx
     /// <summary>
     /// Gets the stream identifier.
     /// </summary>
-    public StreamId StreamId { get; }
+    public StreamId StreamId
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the expected stream revision.
@@ -64,7 +67,10 @@ public sealed class ExpectedStreamRevisionConflictException : InvalidOperationEx
     /// <summary>
     /// Gets the actual stream revision, or <see langword="null" /> when the stream does not exist.
     /// </summary>
-    public StreamRevision? ActualRevision { get; }
+    public StreamRevision? ActualRevision
+    {
+        get;
+    }
 
     private static string CreateMessage(
         StreamId streamId,

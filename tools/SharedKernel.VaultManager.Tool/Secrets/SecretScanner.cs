@@ -162,7 +162,10 @@ internal sealed class SecretScanner
                 continue;
             }
 
-            findings.Add(whole && field.Name is { Length: > 0 } ? finding with { LabelLocation = label } : finding);
+            findings.Add(whole && field.Name is { Length: > 0 } ? finding with
+            {
+                LabelLocation = label
+            } : finding);
         }
 
         return findings;
@@ -209,13 +212,19 @@ internal sealed class SecretScanner
         {
             if (finding.Kind is SecretKind.PrivateKey or SecretKind.PgpPrivateKey or SecretKind.PuttyKey)
             {
-                findings.Add(finding with { Message = finding.Message + " stored in the password field" });
+                findings.Add(finding with
+                {
+                    Message = finding.Message + " stored in the password field"
+                });
             }
         }
 
         if (findings.Count == 0 && trimmed.Length > 256 && !SecretText.HasWhitespace(trimmed))
         {
-            findings.Add(Finding("long-token-in-password", SecretKind.GenericSecret, Confidence.Suggestion, whole, PlacementTarget.NotMoved("long token stored as the password"), "Long token stored in the password field", trimmed) with { NeedsReview = true });
+            findings.Add(Finding("long-token-in-password", SecretKind.GenericSecret, Confidence.Suggestion, whole, PlacementTarget.NotMoved("long token stored as the password"), "Long token stored in the password field", trimmed) with
+            {
+                NeedsReview = true
+            });
         }
 
         return findings;
@@ -397,7 +406,10 @@ internal sealed class SecretScanner
             review = true;
         }
 
-        return Finding(rule.Id, rule.Kind, confidence, new SecretLocation(path, start, end - start), target, message, value) with { NeedsReview = review || !Fits(value) };
+        return Finding(rule.Id, rule.Kind, confidence, new SecretLocation(path, start, end - start), target, message, value) with
+        {
+            NeedsReview = review || !Fits(value)
+        };
     }
 
     private List<SecretFinding> ScanAwsContext(string text, string path, List<SecretFinding> existing)
@@ -534,7 +546,10 @@ internal sealed class SecretScanner
     {
         var location = new SecretLocation(path, answerStart, answer.Length, questionLine, answerLine);
         SecretFinding finding = Finding("security-question", SecretKind.SecurityQuestion, confidence, location, PlacementTarget.HiddenNamedByLabel("Security answer"), "Security question and answer", answer);
-        return finding with { LabelLocation = new SecretLocation(path, questionStart, questionLength) };
+        return finding with
+        {
+            LabelLocation = new SecretLocation(path, questionStart, questionLength)
+        };
     }
 
     private static SecretFinding? LineFinding(string key, int keyStart, KeyClass keyClass, int start, string value, int line, string path, ScanContext context, bool seedNearby)
@@ -553,9 +568,15 @@ internal sealed class SecretScanner
                 return Finding("notes-username", SecretKind.Username, Confidence.Medium, location, PlacementTarget.LoginUsername, "User name line", value);
             case KeyClass.Token when !rejected && value.Length is >= 8 and <= 512 && !SecretText.HasWhitespace(value) && SecretText.ShannonEntropy(value) >= 3.0:
                 var label = new SecretLocation(path, keyStart, key.Length);
-                return Finding("notes-token", SecretKind.ApiToken, Confidence.Low, location, PlacementTarget.HiddenNamedByLabel("Token"), "Token line", value) with { LabelLocation = label };
+                return Finding("notes-token", SecretKind.ApiToken, Confidence.Low, location, PlacementTarget.HiddenNamedByLabel("Token"), "Token line", value) with
+                {
+                    LabelLocation = label
+                };
             case KeyClass.Recovery when context.IsBitwarden && IsBitwardenRecoveryCode(value):
-                return Finding("bitwarden-recovery-code", SecretKind.BitwardenRecoveryCode, Confidence.Medium, location, PlacementTarget.NotMoved("store the Bitwarden recovery code outside the vault it protects"), "Bitwarden account recovery code", value) with { NeedsReview = true };
+                return Finding("bitwarden-recovery-code", SecretKind.BitwardenRecoveryCode, Confidence.Medium, location, PlacementTarget.NotMoved("store the Bitwarden recovery code outside the vault it protects"), "Bitwarden account recovery code", value) with
+                {
+                    NeedsReview = true
+                };
             case KeyClass.Recovery when !rejected && value.Length >= 8:
                 return Finding("notes-recovery-code", SecretKind.RecoveryCodes, Confidence.Medium, location, PlacementTarget.Hidden("Recovery codes"), "Recovery code line", value);
             case KeyClass.Seed when value.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length >= 12:
@@ -859,7 +880,11 @@ internal sealed class SecretScanner
             if (winner.Location.FirstLine is null && finding.Location.FirstLine is not null && finding.LabelLocation is not null
                 && winner.Location.Start == finding.Location.Start && winner.Location.Length == finding.Location.Length)
             {
-                kept[overlap] = winner with { Location = finding.Location, LabelLocation = finding.LabelLocation };
+                kept[overlap] = winner with
+                {
+                    Location = finding.Location,
+                    LabelLocation = finding.LabelLocation
+                };
             }
         }
 
@@ -951,7 +976,10 @@ internal sealed class SecretScanner
                 target = PlacementTarget.HiddenNamedByLabel(target.FieldName ?? "Secret");
             }
 
-            result.Add(finding with { ProposedTarget = target });
+            result.Add(finding with
+            {
+                ProposedTarget = target
+            });
         }
 
         return result;
@@ -1058,21 +1086,45 @@ internal sealed class SecretScanner
             IsBankOrCard = item is not null && (item.Type == VaultItemType.Card || item.Card is not null || BankWords.Any(word => identity.Contains(word, StringComparison.OrdinalIgnoreCase)));
         }
 
-        public bool IsLogin { get; }
+        public bool IsLogin
+        {
+            get;
+        }
 
-        public bool IsSecureNote { get; }
+        public bool IsSecureNote
+        {
+            get;
+        }
 
-        public bool HasPassword { get; }
+        public bool HasPassword
+        {
+            get;
+        }
 
-        public bool HasUsername { get; }
+        public bool HasUsername
+        {
+            get;
+        }
 
-        public bool HasTotp { get; }
+        public bool HasTotp
+        {
+            get;
+        }
 
-        public string? Host { get; }
+        public string? Host
+        {
+            get;
+        }
 
-        public bool IsBitwarden { get; }
+        public bool IsBitwarden
+        {
+            get;
+        }
 
-        public bool IsBankOrCard { get; }
+        public bool IsBankOrCard
+        {
+            get;
+        }
 
         private static string? HostOf(string value)
         {

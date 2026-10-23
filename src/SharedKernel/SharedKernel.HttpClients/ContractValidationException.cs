@@ -53,7 +53,10 @@ public sealed class ContractValidationException : HttpRequestException
     /// <summary>
     /// Gets validation errors by field or model key; empty when the response did not provide usable errors.
     /// </summary>
-    public IReadOnlyDictionary<string, string[]> ValidationErrors { get; }
+    public IReadOnlyDictionary<string, string[]> ValidationErrors
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets all validation error messages as a single formatted string.

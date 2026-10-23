@@ -124,7 +124,10 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
                     continue;
                 }
 
-                attachments.Add(attachment with { ContentHash = content.Hash });
+                attachments.Add(attachment with
+                {
+                    ContentHash = content.Hash
+                });
                 if (content.Text is not { } text)
                 {
                     continue;
@@ -138,7 +141,13 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
 
             SourceItem scannedSource = attachments.SequenceEqual(source.Item.Attachments)
                 ? source
-                : source with { Item = source.Item with { Attachments = attachments } };
+                : source with
+                {
+                    Item = source.Item with
+                    {
+                        Attachments = attachments
+                    }
+                };
             items.Add(new ScannedItem(scannedSource, findings, texts));
         }
 
@@ -225,7 +234,10 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         MatchResult match = DuplicateMatcher.Match(placed.Items, request.Decisions.Overrides, placed.OriginKeys);
         ct.ThrowIfCancellationRequested();
         MergeResult merge = new Merger(environment.Time).Merge(match.Groups, request.Policy, request.Decisions);
-        VaultExport merged = merge.Merged with { Folders = scanned.Folders };
+        VaultExport merged = merge.Merged with
+        {
+            Folders = scanned.Folders
+        };
         ct.ThrowIfCancellationRequested();
         PasswordHealthReport health = PasswordHealthReport.Analyze(merged);
         BitwardenWriteResult written = BitwardenJsonWriter.Write(merged);
@@ -427,7 +439,10 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         string key = OriginKeys.MakeUnique(prefix + sourceId + "/" + findingId, takenKeys);
         VaultItem adopted = created with
         {
-            Origin = origin with { OriginalId = key[prefix.Length..] },
+            Origin = origin with
+            {
+                OriginalId = key[prefix.Length..]
+            },
             CreationDate = created.CreationDate ?? source.Item.CreationDate,
             RevisionDate = created.RevisionDate ?? source.Item.RevisionDate,
         };

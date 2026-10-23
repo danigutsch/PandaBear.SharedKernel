@@ -170,7 +170,11 @@ internal static class KeeperRecordMapper
                 string[] parts = expiry.Split('/');
                 if (parts.Length == 2)
                 {
-                    card = card with { ExpMonth = parts[0], ExpYear = parts[1] };
+                    card = card with
+                    {
+                        ExpMonth = parts[0],
+                        ExpYear = parts[1]
+                    };
                 }
                 else
                 {

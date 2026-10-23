@@ -77,22 +77,34 @@ public static class SchedulingTelemetry
 
     internal static Meter Meter { get; } = new(Name);
 
-    internal static Histogram<double> PollingCycleDuration { get; } = Meter.CreateHistogram<double>(
+    internal static Histogram<double> PollingCycleDuration
+    {
+        get;
+    } = Meter.CreateHistogram<double>(
         MetricPollingCycleDuration,
         "s",
         "Duration of one polling drain cycle.");
 
-    internal static Counter<long> PollingBatches { get; } = Meter.CreateCounter<long>(
+    internal static Counter<long> PollingBatches
+    {
+        get;
+    } = Meter.CreateCounter<long>(
         MetricPollingBatches,
         "{batch}",
         "Completed polling batches.");
 
-    internal static Counter<long> PollingItems { get; } = Meter.CreateCounter<long>(
+    internal static Counter<long> PollingItems
+    {
+        get;
+    } = Meter.CreateCounter<long>(
         MetricPollingItems,
         "{item}",
         "Processed polling work items.");
 
-    internal static Counter<long> PollingFailures { get; } = Meter.CreateCounter<long>(
+    internal static Counter<long> PollingFailures
+    {
+        get;
+    } = Meter.CreateCounter<long>(
         MetricPollingFailures,
         "{failure}",
         "Non-fatal polling failures.");

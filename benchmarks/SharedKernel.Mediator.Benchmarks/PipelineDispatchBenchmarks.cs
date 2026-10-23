@@ -34,7 +34,10 @@ public class PipelineDispatchBenchmarks
     /// Gets or sets the pipeline depth under comparison.
     /// </summary>
     [Params(0, 1, 3, 5, 10)]
-    public int PipelineDepth { get; set; }
+    public int PipelineDepth
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Builds the synthetic benchmark assembly and captures the exported strategy delegates.

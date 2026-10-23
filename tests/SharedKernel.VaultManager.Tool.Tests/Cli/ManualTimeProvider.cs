@@ -14,7 +14,10 @@ internal sealed class ManualTimeProvider : TimeProvider
     private TimeSpan elapsed;
 
     /// <summary>Runs each time a timer is created, before the timer is returned.</summary>
-    public Action? OnTimerCreated { get; init; }
+    public Action? OnTimerCreated
+    {
+        get; init;
+    }
 
     /// <summary>Completes with the due time of the first timer created.</summary>
     public Task<TimeSpan> FirstTimer => firstTimer.Task;
@@ -67,7 +70,10 @@ internal sealed class ManualTimeProvider : TimeProvider
         private int disposed;
 
         /// <summary>Time on the manual clock at which the timer fires.</summary>
-        public TimeSpan DueAt { get; set; }
+        public TimeSpan DueAt
+        {
+            get; set;
+        }
 
         /// <inheritdoc/>
         public bool Change(TimeSpan dueTime, TimeSpan period) => throw new NotSupportedException("The manual clock creates one-shot timers only.");

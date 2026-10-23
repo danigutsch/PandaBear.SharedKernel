@@ -527,46 +527,9 @@ internal static class RepoConfigVerifier
 
     private static void VerifyParentCycles(IReadOnlyCollection<RoadmapItemSnapshot> items, List<RepoConfigIssue> issues)
     {
-        var itemsById = items
-            .GroupBy(item => item.Id, StringComparer.Ordinal)
-            .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
-        HashSet<string> reported = new(StringComparer.Ordinal);
-        foreach (var item in items)
-        {
-            DetectParentCycle(item, itemsById, [], reported, issues);
-        }
-    }
-
-    private static void DetectParentCycle(
-        RoadmapItemSnapshot item,
-        IReadOnlyDictionary<string, RoadmapItemSnapshot> itemsById,
-        HashSet<string> path,
-        HashSet<string> reported,
-        List<RepoConfigIssue> issues)
-    {
-        if (!path.Add(item.Id))
-        {
-            if (reported.Add(item.Id))
-            {
-                issues.Add(new RepoConfigIssue(item.Path, $"parent cycle includes {item.Id}."));
-            }
-
-            return;
-        }
-
-        try
-        {
-            if (!string.IsNullOrWhiteSpace(item.Parent)
-                && !string.Equals(item.Id, item.Parent, StringComparison.Ordinal)
-                && itemsById.TryGetValue(item.Parent, out var parent))
-            {
-                DetectParentCycle(parent, itemsById, path, reported, issues);
-            }
-        }
-        finally
-        {
-            path.Remove(item.Id);
-        }
+        VerifyCycles(items, static item => !string.IsNullOrWhiteSpace(item.Parent) && item.Parent != item.Id
+            ? [item.Parent]
+            : [], "parent", issues);
     }
 
     private static void VerifyBlockerConsistency(IReadOnlyCollection<RoadmapItemSnapshot> items, List<RepoConfigIssue> issues)
@@ -598,47 +561,89 @@ internal static class RepoConfigVerifier
 
     private static void VerifyBlockedByCycles(IReadOnlyCollection<RoadmapItemSnapshot> items, List<RepoConfigIssue> issues)
     {
-        var itemsById = items
-            .GroupBy(item => item.Id, StringComparer.Ordinal)
-            .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
-        HashSet<string> reported = new(StringComparer.Ordinal);
-        foreach (var item in items)
-        {
-            DetectCycle(item, itemsById, [], reported, issues);
-        }
+        VerifyCycles(items, static item => item.BlockedBy, "blockedBy", issues);
     }
 
-    private static void DetectCycle(
-        RoadmapItemSnapshot item,
-        IReadOnlyDictionary<string, RoadmapItemSnapshot> itemsById,
-        HashSet<string> path,
-        HashSet<string> reported,
+    private static void VerifyCycles(
+        IReadOnlyCollection<RoadmapItemSnapshot> items,
+        Func<RoadmapItemSnapshot, IEnumerable<string>> getLinks,
+        string relation,
         List<RepoConfigIssue> issues)
     {
-        if (!path.Add(item.Id))
+        var itemsById = items.GroupBy(item => item.Id, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
+        var edges = itemsById.ToDictionary(pair => pair.Key,
+            pair => getLinks(pair.Value).Where(itemsById.ContainsKey), StringComparer.Ordinal);
+        var incoming = itemsById.Keys.ToDictionary(id => id, _ => new List<string>(), StringComparer.Ordinal);
+        foreach (var (id, links) in edges)
         {
-            ReportBlockedByCycle(item, reported, issues);
-            return;
-        }
-
-        try
-        {
-            foreach (var blockerId in item.BlockedBy.Where(itemsById.ContainsKey))
+            foreach (var link in links)
             {
-                DetectCycle(itemsById[blockerId], itemsById, path, reported, issues);
+                incoming[link].Add(id);
             }
         }
-        finally
-        {
-            path.Remove(item.Id);
-        }
-    }
 
-    private static void ReportBlockedByCycle(RoadmapItemSnapshot item, HashSet<string> reported, List<RepoConfigIssue> issues)
-    {
-        if (reported.Add(item.Id))
+        HashSet<string> visited = new(StringComparer.Ordinal);
+        List<string> postorder = [];
+        Stack<(string Id, bool Expanded)> pending = new();
+        foreach (var root in itemsById.Keys)
         {
-            issues.Add(new RepoConfigIssue(item.Path, $"blockedBy cycle includes {item.Id}."));
+            pending.Push((root, false));
+            while (pending.TryPop(out var entry))
+            {
+                if (entry.Expanded)
+                {
+                    postorder.Add(entry.Id);
+                    continue;
+                }
+
+                if (!visited.Add(entry.Id))
+                {
+                    continue;
+                }
+
+                pending.Push((entry.Id, true));
+                foreach (var link in edges[entry.Id])
+                {
+                    pending.Push((link, false));
+                }
+            }
+        }
+
+        // Reverse reachability in decreasing postorder identifies strongly connected components.
+        visited.Clear();
+        HashSet<string> cyclic = new(StringComparer.Ordinal);
+        Stack<string> componentPending = new();
+        foreach (var root in postorder.AsEnumerable().Reverse())
+        {
+            if (!visited.Add(root))
+            {
+                continue;
+            }
+
+            List<string> component = [];
+            componentPending.Push(root);
+            while (componentPending.TryPop(out var id))
+            {
+                component.Add(id);
+                foreach (var link in incoming[id])
+                {
+                    if (visited.Add(link))
+                    {
+                        componentPending.Push(link);
+                    }
+                }
+            }
+
+            if (component.Count > 1 || incoming[root].Contains(root, StringComparer.Ordinal))
+            {
+                cyclic.UnionWith(component);
+            }
+        }
+
+        foreach (var item in itemsById.Values.Where(item => cyclic.Contains(item.Id)))
+        {
+            issues.Add(new RepoConfigIssue(item.Path, $"{relation} cycle includes {item.Id}."));
         }
     }
 

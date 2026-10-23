@@ -8,7 +8,10 @@ public sealed class Bic : ValueObject
     private Bic(string value) => Value = value;
 
     /// <summary>Gets the canonical eight- or eleven-character BIC.</summary>
-    public string Value { get; }
+    public string Value
+    {
+        get;
+    }
 
     /// <summary>Creates a BIC from uppercase ASCII alphanumeric text with an alphabetic country segment.</summary>
     /// <param name="value">The canonical candidate without spaces.</param>

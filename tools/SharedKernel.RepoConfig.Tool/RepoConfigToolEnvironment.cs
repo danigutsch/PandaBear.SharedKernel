@@ -9,15 +9,24 @@ internal sealed record RepoConfigToolEnvironment(string WorkingDirectory)
     /// <summary>
     /// Gets the HTTP client for GitHub requests, or <see langword="null"/> to authenticate from the process environment.
     /// </summary>
-    public HttpClient? HttpClient { get; init; }
+    public HttpClient? HttpClient
+    {
+        get; init;
+    }
 
     /// <summary>
     /// Gets the Git repository adapter for automation steps, or <see langword="null"/> to run Git.
     /// </summary>
-    public RoadmapGitRepository? GitRepository { get; init; }
+    public RoadmapGitRepository? GitRepository
+    {
+        get; init;
+    }
 
     /// <summary>
     /// Gets the host that <c>verify-podman-dns</c> inspects, or <see langword="null"/> for the current machine.
     /// </summary>
-    public PodmanDnsHost? PodmanHost { get; init; }
+    public PodmanDnsHost? PodmanHost
+    {
+        get; init;
+    }
 }

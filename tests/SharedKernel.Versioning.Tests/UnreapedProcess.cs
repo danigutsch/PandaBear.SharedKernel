@@ -14,7 +14,10 @@ internal sealed class UnreapedProcess : IDisposable
         Process = process;
     }
 
-    public Process Process { get; }
+    public Process Process
+    {
+        get;
+    }
 
     /// <summary>Gets whether the process has terminated and still waits for its parent to reap it.</summary>
     public bool IsZombie

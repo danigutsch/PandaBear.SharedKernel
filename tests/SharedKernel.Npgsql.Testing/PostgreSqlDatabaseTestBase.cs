@@ -1,4 +1,7 @@
-namespace PandaBear.EventSourcing.Npgsql.Tests;
+using Npgsql;
+using Xunit;
+
+namespace PandaBear.Npgsql.Testing;
 
 public abstract class PostgreSqlDatabaseTestBase(PostgreSqlTestServerFixture fixture) : IAsyncLifetime
 {

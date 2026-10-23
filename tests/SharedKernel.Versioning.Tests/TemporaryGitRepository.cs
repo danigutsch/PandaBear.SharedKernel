@@ -10,7 +10,10 @@ internal sealed class TemporaryGitRepository : IDisposable
         Directory.CreateDirectory(Root);
     }
 
-    public string Root { get; }
+    public string Root
+    {
+        get;
+    }
 
     public async Task Initialize(CancellationToken ct)
     {

@@ -6,6 +6,21 @@ internal static class RepoConfigInitializer
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
 
+        var files = new (string Path, string Content)[]
+        {
+            (RepoConfigPaths.RoadmapReadme, RoadmapTemplates.RoadmapReadme),
+            (RepoConfigPaths.Config, RoadmapTemplates.ConfigJson),
+            (RepoConfigPaths.Order, RoadmapTemplates.OrderJson),
+            (RepoConfigPaths.ConfigSchema, RoadmapTemplates.ConfigSchemaJson),
+            (RepoConfigPaths.ItemSchema, RoadmapTemplates.ItemSchemaJson),
+            (RepoConfigPaths.DefaultTheme, RoadmapTemplates.DefaultThemeJson),
+            (RepoConfigPaths.DefaultItem, RoadmapTemplates.DefaultItemJson)
+        };
+        foreach (var relativePath in RepoConfigPaths.RequiredDirectories.Concat(files.Select(file => file.Path)))
+        {
+            RollbackFileWriteBatch.ValidateWritePath(rootPath, Path.Combine(rootPath, relativePath));
+        }
+
         List<string> createdPaths = [];
         foreach (var directory in RepoConfigPaths.RequiredDirectories)
         {
@@ -15,31 +30,16 @@ internal static class RepoConfigInitializer
                 continue;
             }
 
+            RollbackFileWriteBatch.ValidateWritePath(rootPath, fullPath);
             Directory.CreateDirectory(fullPath);
             createdPaths.Add(RepoConfigPaths.Normalize(directory));
         }
 
-        WriteMissingFile(rootPath, RepoConfigPaths.RoadmapReadme, RoadmapTemplates.RoadmapReadme, createdPaths);
-        WriteMissingFile(rootPath, RepoConfigPaths.Config, RoadmapTemplates.ConfigJson, createdPaths);
-        WriteMissingFile(rootPath, RepoConfigPaths.Order, RoadmapTemplates.OrderJson, createdPaths);
-        WriteMissingFile(rootPath, RepoConfigPaths.ConfigSchema, RoadmapTemplates.ConfigSchemaJson, createdPaths);
-        WriteMissingFile(rootPath, RepoConfigPaths.ItemSchema, RoadmapTemplates.ItemSchemaJson, createdPaths);
-        WriteMissingFile(rootPath, RepoConfigPaths.DefaultTheme, RoadmapTemplates.DefaultThemeJson, createdPaths);
-        WriteMissingFile(rootPath, RepoConfigPaths.DefaultItem, RoadmapTemplates.DefaultItemJson, createdPaths);
-
+        var writes = files.Where(file => !File.Exists(Path.Combine(rootPath, file.Path)))
+            .Select(file => new AtomicFileWrite(Path.Combine(rootPath, file.Path), file.Content, null))
+            .ToArray();
+        RollbackFileWriteBatch.Apply(rootPath, writes);
+        createdPaths.AddRange(writes.Select(write => RepoConfigPaths.RelativeTo(rootPath, write.Path)));
         return createdPaths;
-    }
-
-    private static void WriteMissingFile(string rootPath, string relativePath, string content, List<string> createdPaths)
-    {
-        var fullPath = Path.Combine(rootPath, relativePath);
-        if (File.Exists(fullPath))
-        {
-            return;
-        }
-
-        Directory.CreateDirectory(Path.GetDirectoryName(fullPath) ?? rootPath);
-        File.WriteAllText(fullPath, content);
-        createdPaths.Add(RepoConfigPaths.Normalize(relativePath));
     }
 }

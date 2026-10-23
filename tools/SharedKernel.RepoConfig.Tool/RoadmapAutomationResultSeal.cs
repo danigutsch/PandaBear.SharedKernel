@@ -29,21 +29,45 @@ internal sealed class RoadmapAutomationResultSeal
         SealDigest = sealDigest;
     }
 
-    public string ArtifactDigest { get; }
+    public string ArtifactDigest
+    {
+        get;
+    }
 
-    public string BaseSha { get; }
+    public string BaseSha
+    {
+        get;
+    }
 
-    public bool HasChanges { get; }
+    public bool HasChanges
+    {
+        get;
+    }
 
-    public int PathCount { get; }
+    public int PathCount
+    {
+        get;
+    }
 
-    public string PlanDigest { get; }
+    public string PlanDigest
+    {
+        get;
+    }
 
-    public string ResultDigest { get; }
+    public string ResultDigest
+    {
+        get;
+    }
 
-    public string SealDigest { get; }
+    public string SealDigest
+    {
+        get;
+    }
 
-    public string SnapshotDigest { get; }
+    public string SnapshotDigest
+    {
+        get;
+    }
 
     public static RoadmapAutomationResultSeal Create(
         RoadmapAutomationPlan plan,

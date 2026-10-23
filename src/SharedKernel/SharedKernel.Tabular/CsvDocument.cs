@@ -17,7 +17,10 @@ public sealed class CsvDocument
     }
 
     /// <summary>Gets the trimmed header columns.</summary>
-    public IReadOnlyList<string> Headers { get; }
+    public IReadOnlyList<string> Headers
+    {
+        get;
+    }
 
     /// <summary>Gets the data rows aligned with the header columns.</summary>
     public IReadOnlyList<CsvRow> Rows => _rows;

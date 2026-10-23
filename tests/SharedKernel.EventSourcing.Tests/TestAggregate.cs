@@ -4,7 +4,10 @@ internal sealed class TestAggregate(string id) : EventSourcedAggregateRoot<strin
 {
     public override string Id { get; } = id;
 
-    public string? Name { get; private set; }
+    public string? Name
+    {
+        get; private set;
+    }
 
     public void ChangeName(string name) => AddEvent(new NameChanged(name));
 

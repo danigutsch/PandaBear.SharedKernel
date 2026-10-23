@@ -12,6 +12,11 @@ namespace PandaBear.AI;
 public sealed class LiteLlmImageTextGenerator(HttpClient httpClient, LiteLlmImageTextGeneratorOptions options) : IImageTextGenerator
 {
     /// <inheritdoc />
+    /// <exception cref="ArgumentNullException">The request is null.</exception>
+    /// <exception cref="ArgumentException">The image, image content type, or language is missing or invalid.</exception>
+    /// <exception cref="InvalidOperationException">Required LiteLLM configuration is missing or the image byte limit is not positive.</exception>
+    /// <exception cref="ImageTextGenerationException">The image exceeds the configured byte budget, the HTTP request fails, or generated content is unusable.</exception>
+    /// <exception cref="OperationCanceledException">The supplied cancellation token is canceled.</exception>
     public async ValueTask<ImageTextGenerationResult> GenerateImageText(ImageTextGenerationRequest request, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(request);
@@ -32,7 +37,7 @@ public sealed class LiteLlmImageTextGenerator(HttpClient httpClient, LiteLlmImag
 
         var optionsSnapshot = ValidateOptions();
         var model = optionsSnapshot.Model ?? throw new InvalidOperationException("LiteLLM model is not configured.");
-        using var payload = await CreatePayload(request, model, ct).ConfigureAwait(false);
+        using var payload = await CreatePayload(request, model, optionsSnapshot.MaxImageBytes, ct).ConfigureAwait(false);
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, optionsSnapshot.ChatCompletionsPath)
         {
             Content = payload
@@ -112,6 +117,11 @@ public sealed class LiteLlmImageTextGenerator(HttpClient httpClient, LiteLlmImag
             throw new InvalidOperationException("LiteLLM chat-completions path must be relative to the endpoint root.");
         }
 
+        if (options.MaxImageBytes <= 0)
+        {
+            throw new InvalidOperationException("LiteLLM maximum image bytes must be positive.");
+        }
+
         httpClient.BaseAddress ??= options.Endpoint;
 
         return options with
@@ -121,10 +131,30 @@ public sealed class LiteLlmImageTextGenerator(HttpClient httpClient, LiteLlmImag
         };
     }
 
-    private static async Task<HttpContent> CreatePayload(ImageTextGenerationRequest request, string model, CancellationToken ct)
+    private static async Task<HttpContent> CreatePayload(ImageTextGenerationRequest request, string model, int maxImageBytes, CancellationToken ct)
     {
         using var imageBuffer = new MemoryStream();
-        await request.Image.CopyToAsync(imageBuffer, ct).ConfigureAwait(false);
+        var buffer = new byte[81920];
+        while (true)
+        {
+            ct.ThrowIfCancellationRequested();
+            var remaining = maxImageBytes - imageBuffer.Length;
+            var readLength = (int)Math.Min(buffer.Length, remaining + 1);
+            var bytesRead = await request.Image.ReadAsync(buffer.AsMemory(0, readLength), ct).ConfigureAwait(false);
+            ct.ThrowIfCancellationRequested();
+            if (bytesRead == 0)
+            {
+                break;
+            }
+
+            if (bytesRead > remaining)
+            {
+                throw new ImageTextGenerationException("Image exceeds the configured maximum image bytes.");
+            }
+
+            await imageBuffer.WriteAsync(buffer.AsMemory(0, bytesRead), ct).ConfigureAwait(false);
+        }
+
         var dataUrl = $"data:{request.ContentType};base64,{Convert.ToBase64String(imageBuffer.ToArray())}";
 
         var context = string.IsNullOrWhiteSpace(request.Context) ? "None supplied." : request.Context.Trim();

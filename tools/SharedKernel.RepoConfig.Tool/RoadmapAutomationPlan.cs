@@ -40,33 +40,75 @@ internal sealed class RoadmapAutomationPlan
         PlanDigest = planDigest;
     }
 
-    public string ApprovedClosedTransitionsDigest { get; }
+    public string ApprovedClosedTransitionsDigest
+    {
+        get;
+    }
 
-    public string BaseSha { get; }
+    public string BaseSha
+    {
+        get;
+    }
 
-    public string BaselineClosedTransitionsDigest { get; }
+    public string BaselineClosedTransitionsDigest
+    {
+        get;
+    }
 
-    public string BranchName { get; }
+    public string BranchName
+    {
+        get;
+    }
 
-    public string DefaultBranchOid { get; }
+    public string DefaultBranchOid
+    {
+        get;
+    }
 
-    public bool HasChanges { get; }
+    public bool HasChanges
+    {
+        get;
+    }
 
-    public string PlanDigest { get; }
+    public string PlanDigest
+    {
+        get;
+    }
 
-    public string ReconciliationManifest { get; }
+    public string ReconciliationManifest
+    {
+        get;
+    }
 
-    public IReadOnlyList<RoadmapClosedItemTransition> RequiredClosedTransitions { get; }
+    public IReadOnlyList<RoadmapClosedItemTransition> RequiredClosedTransitions
+    {
+        get;
+    }
 
-    public string Repository { get; }
+    public string Repository
+    {
+        get;
+    }
 
-    public string RepositoryInputDigest { get; }
+    public string RepositoryInputDigest
+    {
+        get;
+    }
 
-    public long RunId { get; }
+    public long RunId
+    {
+        get;
+    }
 
-    public string SnapshotDigest { get; }
+    public string SnapshotDigest
+    {
+        get;
+    }
 
-    public bool SnapshotChanged { get; }
+    public bool SnapshotChanged
+    {
+        get;
+    }
 
     public static RoadmapAutomationPlan Create(
         string repository,

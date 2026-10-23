@@ -2,7 +2,10 @@ namespace PandaBear.Domain.Tests;
 
 internal sealed class CancellationCapturingDomainEventDispatchHandler : IDomainEventDispatchHandler
 {
-    public CancellationToken CapturedToken { get; private set; }
+    public CancellationToken CapturedToken
+    {
+        get; private set;
+    }
 
     public ValueTask Handle(IDomainEvent domainEvent, CancellationToken ct)
     {

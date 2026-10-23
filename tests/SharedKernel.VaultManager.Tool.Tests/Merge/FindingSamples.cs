@@ -21,5 +21,8 @@ internal static class FindingSamples
     public static SecretFinding At(string fieldPath) => Finding(Confidence.Medium) with { Location = new SecretLocation(fieldPath, 0, 4) };
 
     public static MergeDecisions Decide(string originKey, SecretFinding finding, FindingDecision decision) =>
-        new([], MatchOverrides.None) { Findings = [new ItemFindingDecisions(originKey, [new FindingChoice(finding.Id, decision)])] };
+        new([], MatchOverrides.None)
+        {
+            Findings = [new ItemFindingDecisions(originKey, [new FindingChoice(finding.Id, decision)])]
+        };
 }

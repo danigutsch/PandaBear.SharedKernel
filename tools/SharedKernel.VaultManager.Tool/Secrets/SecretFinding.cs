@@ -9,34 +9,58 @@ internal sealed record SecretFinding
     public string Id => string.Create(CultureInfo.InvariantCulture, $"{RuleId}@{Location.FieldPath}:{Location.Start}");
 
     /// <summary>Identifier of the rule or detector that produced the finding.</summary>
-    public required string RuleId { get; init; }
+    public required string RuleId
+    {
+        get; init;
+    }
 
     /// <summary>Kind of secret.</summary>
-    public required SecretKind Kind { get; init; }
+    public required SecretKind Kind
+    {
+        get; init;
+    }
 
     /// <summary>How certain the finding is.</summary>
-    public required Confidence Confidence { get; init; }
+    public required Confidence Confidence
+    {
+        get; init;
+    }
 
     /// <summary>Where the value sits.</summary>
-    public required SecretLocation Location { get; init; }
+    public required SecretLocation Location
+    {
+        get; init;
+    }
 
     /// <summary>Where a label belonging to the value sits, such as a security question. Never part of the value.</summary>
-    public SecretLocation? LabelLocation { get; init; }
+    public SecretLocation? LabelLocation
+    {
+        get; init;
+    }
 
     /// <summary>Length of the value in characters.</summary>
     public int ValueLength => Location.Length;
 
     /// <summary>Proposed destination.</summary>
-    public required PlacementTarget ProposedTarget { get; init; }
+    public required PlacementTarget ProposedTarget
+    {
+        get; init;
+    }
 
     /// <summary>Whether the finding is accepted unless the user rejects it. True for high confidence only.</summary>
     public bool IsPreAccepted => Confidence == Confidence.High && !NeedsReview;
 
     /// <summary>Whether a person must look at the finding before anything happens.</summary>
-    public bool NeedsReview { get; init; }
+    public bool NeedsReview
+    {
+        get; init;
+    }
 
     /// <summary>Human-readable description. It never contains the value.</summary>
-    public required string Message { get; init; }
+    public required string Message
+    {
+        get; init;
+    }
 
     /// <summary>Describes the finding without its value.</summary>
     /// <returns>The description.</returns>

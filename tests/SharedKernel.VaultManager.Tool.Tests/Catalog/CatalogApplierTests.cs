@@ -96,7 +96,10 @@ public sealed class CatalogApplierTests
     {
         var vault = Vault(Login());
         var catalog = CatalogBuilder.Build(vault, "abc", Notes(NotesDecision.Share)).Catalog;
-        var stale = MergeDecisions.None with { Notes = [new ItemNotesDecision(Key, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf("other notes"))] };
+        var stale = MergeDecisions.None with
+        {
+            Notes = [new ItemNotesDecision(Key, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf("other notes"))]
+        };
 
         var result = CatalogApplier.Apply(vault, catalog, stale);
 

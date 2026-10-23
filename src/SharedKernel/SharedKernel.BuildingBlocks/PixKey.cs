@@ -13,10 +13,16 @@ public sealed partial class PixKey : ValueObject
     }
 
     /// <summary>Gets the explicitly selected key type.</summary>
-    public PixKeyType Type { get; }
+    public PixKeyType Type
+    {
+        get;
+    }
 
     /// <summary>Gets the sensitive key. Do not log or expose it without authorization.</summary>
-    public string Value { get; }
+    public string Value
+    {
+        get;
+    }
 
     /// <summary>Creates a typed key using BCB DICT API 2.12.1 formats and taxpayer check digits.</summary>
     /// <param name="type">The selected format; never inferred from the candidate.</param>

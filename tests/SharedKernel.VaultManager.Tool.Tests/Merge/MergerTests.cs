@@ -93,7 +93,10 @@ public sealed class MergerTests
     [Fact]
     public void Merge_whitespace_only_value_counts_as_absent()
     {
-        var keeper = Keeper(Login(OldPassword) with { Totp = KeeperTotp });
+        var keeper = Keeper(Login(OldPassword) with
+        {
+            Totp = KeeperTotp
+        });
         var bitwarden = Bitwarden(Login("   ", " \t "));
 
         var result = Run(keeper, bitwarden);
@@ -110,8 +113,14 @@ public sealed class MergerTests
     [Fact]
     public void Merge_uris_are_unioned_without_normalized_duplicates()
     {
-        var keeper = Keeper(Login(NewPassword) with { Uris = [new LoginUri(ExampleUri), new LoginUri("https://k-only.example.com")] });
-        var bitwarden = Bitwarden(Login(NewPassword) with { Uris = [new LoginUri("HTTPS://EXAMPLE.com/login/"), new LoginUri("androidapp://com.example")] });
+        var keeper = Keeper(Login(NewPassword) with
+        {
+            Uris = [new LoginUri(ExampleUri), new LoginUri("https://k-only.example.com")]
+        });
+        var bitwarden = Bitwarden(Login(NewPassword) with
+        {
+            Uris = [new LoginUri("HTTPS://EXAMPLE.com/login/"), new LoginUri("androidapp://com.example")]
+        });
 
         var login = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem().Login.ShouldNotBeNull();
 
@@ -167,8 +176,14 @@ public sealed class MergerTests
     {
         var keeperPasskey = new Fido2Credential { CredentialId = "cred-k", KeyValue = "key-k", RpId = "example.com" };
         var bitwardenPasskey = new Fido2Credential { CredentialId = "cred-b", KeyValue = "key-b", RpId = "example.com" };
-        var keeper = Keeper(Login(NewPassword) with { Fido2Credentials = [keeperPasskey] });
-        var bitwarden = Bitwarden(Login(NewPassword) with { Fido2Credentials = [bitwardenPasskey, keeperPasskey] });
+        var keeper = Keeper(Login(NewPassword) with
+        {
+            Fido2Credentials = [keeperPasskey]
+        });
+        var bitwarden = Bitwarden(Login(NewPassword) with
+        {
+            Fido2Credentials = [bitwardenPasskey, keeperPasskey]
+        });
 
         var login = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem().Login.ShouldNotBeNull();
 
@@ -195,8 +210,14 @@ public sealed class MergerTests
     [Fact]
     public void Merge_notes_conflict_keeps_newer_notes_and_older_notes_as_hidden_field()
     {
-        var keeper = Keeper(Login(NewPassword)) with { Notes = "older notes" };
-        var bitwarden = Bitwarden(Login(NewPassword)) with { Notes = "newer notes" };
+        var keeper = Keeper(Login(NewPassword)) with
+        {
+            Notes = "older notes"
+        };
+        var bitwarden = Bitwarden(Login(NewPassword)) with
+        {
+            Notes = "newer notes"
+        };
 
         var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
 
@@ -208,8 +229,14 @@ public sealed class MergerTests
     public void Merge_long_losing_notes_are_appended_to_winner_notes()
     {
         string longNotes = new('x', 4_000);
-        var keeper = Keeper(Login(NewPassword)) with { Notes = longNotes };
-        var bitwarden = Bitwarden(Login(NewPassword)) with { Notes = "newer notes" };
+        var keeper = Keeper(Login(NewPassword)) with
+        {
+            Notes = longNotes
+        };
+        var bitwarden = Bitwarden(Login(NewPassword)) with
+        {
+            Notes = "newer notes"
+        };
 
         var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
 
@@ -234,8 +261,14 @@ public sealed class MergerTests
     [Fact]
     public void Merge_reprompt_and_favorite_keep_stricter_or_true_value()
     {
-        var keeper = Keeper(Login(NewPassword)) with { Reprompt = true };
-        var bitwarden = Bitwarden(Login(NewPassword)) with { Favorite = true };
+        var keeper = Keeper(Login(NewPassword)) with
+        {
+            Reprompt = true
+        };
+        var bitwarden = Bitwarden(Login(NewPassword)) with
+        {
+            Favorite = true
+        };
 
         var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
 
@@ -275,8 +308,14 @@ public sealed class MergerTests
     [Fact]
     public void Merge_ask_policy_leaves_every_real_conflict_unresolved_but_fills_one_sided_values()
     {
-        var keeper = Keeper(Login(OldPassword, KeeperTotp)) with { Notes = "older notes" };
-        var bitwarden = Bitwarden(Login(NewPassword)) with { Notes = "newer notes" };
+        var keeper = Keeper(Login(OldPassword, KeeperTotp)) with
+        {
+            Notes = "older notes"
+        };
+        var bitwarden = Bitwarden(Login(NewPassword)) with
+        {
+            Notes = "newer notes"
+        };
 
         var result = Run(new MergePolicy(MergePolicyKind.Ask), keeper, bitwarden);
 
@@ -291,7 +330,10 @@ public sealed class MergerTests
     [Fact]
     public void Merge_keeps_a_one_sided_folder_when_the_newer_member_has_none()
     {
-        var keeper = Keeper(Login(NewPassword)) with { FolderPath = "Family/Finance/Shopping" };
+        var keeper = Keeper(Login(NewPassword)) with
+        {
+            FolderPath = "Family/Finance/Shopping"
+        };
         var bitwarden = Bitwarden(Login(NewPassword));
 
         var result = Run(keeper, bitwarden);
@@ -303,8 +345,14 @@ public sealed class MergerTests
     [Fact]
     public void Merge_folder_conflict_without_timestamps_is_unresolved_under_newest_policy()
     {
-        var keeper = WithoutTimestamp(Keeper(Login(NewPassword))) with { FolderPath = "Finance" };
-        var bitwarden = WithoutTimestamp(Bitwarden(Login(NewPassword))) with { FolderPath = "Imported" };
+        var keeper = WithoutTimestamp(Keeper(Login(NewPassword))) with
+        {
+            FolderPath = "Finance"
+        };
+        var bitwarden = WithoutTimestamp(Bitwarden(Login(NewPassword))) with
+        {
+            FolderPath = "Imported"
+        };
 
         var result = Run(keeper, bitwarden);
 
@@ -316,8 +364,14 @@ public sealed class MergerTests
     [Fact]
     public void Merge_ask_policy_leaves_a_folder_conflict_unresolved()
     {
-        var keeper = Keeper(Login(NewPassword)) with { FolderPath = "Finance" };
-        var bitwarden = Bitwarden(Login(NewPassword)) with { FolderPath = "Imported" };
+        var keeper = Keeper(Login(NewPassword)) with
+        {
+            FolderPath = "Finance"
+        };
+        var bitwarden = Bitwarden(Login(NewPassword)) with
+        {
+            FolderPath = "Imported"
+        };
 
         var result = Run(new MergePolicy(MergePolicyKind.Ask), keeper, bitwarden);
 
@@ -327,8 +381,14 @@ public sealed class MergerTests
     [Fact]
     public void Merge_folder_decision_takes_the_chosen_member_folder()
     {
-        var keeper = WithoutTimestamp(Keeper(Login(NewPassword))) with { FolderPath = "Finance" };
-        var bitwarden = WithoutTimestamp(Bitwarden(Login(NewPassword))) with { FolderPath = "Imported" };
+        var keeper = WithoutTimestamp(Keeper(Login(NewPassword))) with
+        {
+            FolderPath = "Finance"
+        };
+        var bitwarden = WithoutTimestamp(Bitwarden(Login(NewPassword))) with
+        {
+            FolderPath = "Imported"
+        };
         string groupKey = Run(keeper, bitwarden).Unresolved.ShouldHaveSingleItem().GroupKey;
         var decisions = Decide(groupKey, FieldChoice.Member(FieldPaths.Folder, KeeperKey));
 
@@ -346,7 +406,10 @@ public sealed class MergerTests
             FolderPath = "Finance",
             Fields = [new CustomField("Additional folders", "Personal\nImported", CustomFieldType.Text)],
         };
-        var bitwarden = Bitwarden(Login(NewPassword)) with { FolderPath = "Imported" };
+        var bitwarden = Bitwarden(Login(NewPassword)) with
+        {
+            FolderPath = "Imported"
+        };
 
         var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
 
@@ -404,8 +467,19 @@ public sealed class MergerTests
     public void Merge_three_way_group_applies_rules_across_all_members()
     {
         var keeper = Keeper(Login("p1", KeeperTotp));
-        var middle = Bitwarden(Login("p2")) with { Notes = "middle notes", RevisionDate = Middle, Origin = new ItemOrigin("bitwarden", BitwardenFile, "b2", null) };
-        var newest = Bitwarden(Login("p3") with { Uris = [new LoginUri(ExampleUri), new LoginUri("https://other.example.com")] }) with { Origin = new ItemOrigin("bitwarden", "second.json", "b3", null) };
+        var middle = Bitwarden(Login("p2")) with
+        {
+            Notes = "middle notes",
+            RevisionDate = Middle,
+            Origin = new ItemOrigin("bitwarden", BitwardenFile, "b2", null)
+        };
+        var newest = Bitwarden(Login("p3") with
+        {
+            Uris = [new LoginUri(ExampleUri), new LoginUri("https://other.example.com")]
+        }) with
+        {
+            Origin = new ItemOrigin("bitwarden", "second.json", "b3", null)
+        };
 
         var result = Run(keeper, middle, newest);
 
@@ -440,7 +514,13 @@ public sealed class MergerTests
     public void Merge_unmatched_items_pass_through_unchanged()
     {
         var keeper = Keeper(Login(OldPassword));
-        var other = Bitwarden(Login(NewPassword) with { Uris = [new LoginUri("https://another.example.org")] }) with { Name = "Other" };
+        var other = Bitwarden(Login(NewPassword) with
+        {
+            Uris = [new LoginUri("https://another.example.org")]
+        }) with
+        {
+            Name = "Other"
+        };
 
         var result = Run(keeper, other);
 
@@ -482,8 +562,14 @@ public sealed class MergerTests
     [Fact]
     public void Merge_keeps_two_files_with_one_name_and_size_whose_content_differs()
     {
-        var keeper = Keeper(Login(OldPassword)) with { Attachments = [new AttachmentRef("scan.pdf", 100, "files/keeper-scan") { ContentHash = "aa01" }] };
-        var bitwarden = Bitwarden(Login(OldPassword)) with { Attachments = [new AttachmentRef("scan.pdf", 100, "attachments/Example/scan.pdf") { ContentHash = "bb02" }] };
+        var keeper = Keeper(Login(OldPassword)) with
+        {
+            Attachments = [new AttachmentRef("scan.pdf", 100, "files/keeper-scan") { ContentHash = "aa01" }]
+        };
+        var bitwarden = Bitwarden(Login(OldPassword)) with
+        {
+            Attachments = [new AttachmentRef("scan.pdf", 100, "attachments/Example/scan.pdf") { ContentHash = "bb02" }]
+        };
 
         var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
 
@@ -493,7 +579,10 @@ public sealed class MergerTests
     [Fact]
     public void Merge_keeps_every_file_whose_content_is_unknown()
     {
-        var keeper = Keeper(Login(OldPassword)) with { Attachments = [new AttachmentRef("scan.pdf", 100, null)] };
+        var keeper = Keeper(Login(OldPassword)) with
+        {
+            Attachments = [new AttachmentRef("scan.pdf", 100, null)]
+        };
         var bitwarden = Bitwarden(Login(OldPassword)) with
         {
             Attachments = [new AttachmentRef("scan.pdf", 100, null), new AttachmentRef("scan.pdf", 100, null)],
@@ -511,7 +600,10 @@ public sealed class MergerTests
         {
             Attachments = [new AttachmentRef("scan.pdf", 100, "files/keeper-scan") { ContentHash = "aa01" }, new AttachmentRef("notes.txt", 7, "files/keeper-notes") { ContentHash = "cc03" }],
         };
-        var bitwarden = Bitwarden(Login(OldPassword)) with { Attachments = [new AttachmentRef("scan.pdf", 100, "attachments/Example/scan.pdf") { ContentHash = "aa01" }] };
+        var bitwarden = Bitwarden(Login(OldPassword)) with
+        {
+            Attachments = [new AttachmentRef("scan.pdf", 100, "attachments/Example/scan.pdf") { ContentHash = "aa01" }]
+        };
 
         var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
 

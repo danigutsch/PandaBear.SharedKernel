@@ -18,7 +18,10 @@ public sealed class ClaimsPrincipalExtensionsTests
             new(ClaimTypes.Name, "display-name"), new(ClaimTypes.NameIdentifier, "different-id"),
             new(ClaimTypes.Email, "staff@example.test")
         };
-        if (subject is not null) { claims.Add(new Claim(ApiAuthenticationDefaults.SubjectClaimType, subject)); }
+        if (subject is not null)
+        {
+            claims.Add(new Claim(ApiAuthenticationDefaults.SubjectClaimType, subject));
+        }
         var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, "test"));
 
         // Act

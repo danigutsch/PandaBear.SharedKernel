@@ -4,7 +4,10 @@ namespace PandaBear.HttpClients.Tests;
 
 internal sealed class TrackingStreamContent(Stream source) : HttpContent
 {
-    public int SerializationCount { get; private set; }
+    public int SerializationCount
+    {
+        get; private set;
+    }
 
     protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
     {
