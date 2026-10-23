@@ -105,6 +105,79 @@ sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisi
 sharedkernel-vault merge keeper.zip bitwarden.json -o merged.json --decisions decisions.json --policy prefer:keeper.zip
 ```
 
+### `review <inputs>... [options]`
+
+Opens a full-screen terminal UI for the decisions that `merge` leaves to the decisions file. It merges with the
+`newest` policy and merges again after each change, without writing anything until you save or write.
+
+| Option | Description |
+| --- | --- |
+| `--decisions <file>` | Decisions file to start from and to save to. Without it, the review cannot save decisions. |
+| `-o`, `--output <file>` | File to write the merged vault to. It is never an input, and its directory must exist. Without it, the review cannot write the vault. |
+| `--plaintext` | Writes unencrypted Bitwarden JSON instead of a password-protected export. Needs `--output`. |
+| `--force` | Allows replacing an existing output file. Needs `--output`. |
+
+```sh
+sharedkernel-vault review keeper.zip bitwarden.json --decisions decisions.json --output merged.json
+```
+
+The review needs a terminal. When standard input or standard output is redirected, it exits with code 3 before it
+reads any input; run `merge` with `--decisions <file>` and edit the file instead. Before the UI starts, the review
+checks the files and inputs as `merge` does and asks for the password of each password-protected input at the
+terminal. A problem found then also exits with code 3.
+
+The left side lists the groups of matched items. Each line starts with `!` when a field or finding of the group needs a
+decision, `~` when its items hold different values, and `=` when they are equal. The right side shows the selected
+group in two tabs: **Fields**, with one column per item, and **Findings**, with the secrets proposed for a better
+place. The status bar shows the main keys, and `F1` lists them all:
+
+| Key | Where | Action |
+| --- | --- | --- |
+| `F1` | anywhere | List every key. |
+| `F2` | anywhere | Go to the groups list. |
+| `F3` | anywhere | Go to the fields of the selected group. |
+| `F4` | anywhere | Go to the findings of the selected group. |
+| `F7` | anywhere | Show the next group filter: all, pending, conflict, suggested, identical, unique, has findings. |
+| `Ctrl+F` | anywhere | Search the groups by item name. |
+| `Ctrl+S` | anywhere | Save the decisions file. |
+| `Ctrl+W` | anywhere | Write the merged vault. |
+| `Ctrl+Q`, `Esc` | anywhere | Quit. With unsaved decisions, the review asks whether to save them first. |
+| `Enter` | groups | Go to the fields of the selected group. |
+| `m` | groups | Mark the selected group for a link. |
+| `l` | groups | Link the marked group with the selected group. |
+| `Enter` | fields | Take the value of the item whose column is selected. |
+| `a` | fields | Take the selected item's value for every field whose items hold different values. |
+| `e` | fields | Drop the field from every item. |
+| `Delete` | fields | Remove the decision on the field. |
+| `v` | fields | Reveal or mask the values of the field. |
+| `s` | fields | Split the selected item out of its group. |
+| `a` | findings | Accept the finding. |
+| `r` | findings | Reject the finding. |
+| `Delete` | findings | Remove the decision on the finding. |
+| `v` | findings | Reveal or mask the value of the finding. |
+
+Tab, Shift+Tab, and the arrow keys move between and inside the lists and tables.
+
+These values show as `********` until you reveal them: passwords, TOTP keys, password history, hidden custom fields,
+card numbers and security codes, SSH private keys, the values of findings, and every field that holds a finding, such
+as notes, a user name, or a custom field. Revealed values appear only on the screen; messages, the decisions file, and
+the command output never hold them.
+
+- `Ctrl+S` writes the decisions file, readable only by you, with a pending entry for each field and finding that still
+  needs a decision, so `merge` can continue from it.
+- `Ctrl+W` writes the merged vault only when no field or proposed finding needs a decision and Bitwarden would accept
+  every value. For a password-protected export, it asks twice for a password of at least 12 characters in masked
+  fields. It never writes over an input, and replaces an existing output only with `--force`. Bitwarden JSON imports
+  cannot carry files, so the merged vault holds no attachments.
+- After you quit, the review prints on standard output what it saved and wrote, how many fields and findings still
+  need a decision, and how many attachments to upload after the import. When it wrote the merged vault, it lists each
+  of these attachments and where to find it, as the report of `merge` does; upload them after the import. On standard
+  error, it prints the writer's warnings and each accepted finding that it could not move.
+- The review exits with code 0. Inside the UI, `Ctrl+C` does not end the review; quit with `Ctrl+Q` or `Esc`. SIGTERM
+  or SIGINT closes any open dialog, ends the review without saving, restores the terminal, and exits with code 1. A
+  signal that arrives while the review merges or writes takes effect when that work ends. When that takes longer than
+  two seconds, the process ends with code 130 or 143 and leaves the terminal in the UI's mode, which `reset` restores.
+
 ## Decisions file
 
 The decisions file is JSON. A merge with `--decisions` reads it. When something needs a decision, the merge
