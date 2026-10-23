@@ -82,8 +82,8 @@ split into arguments. An empty or blank file name is an invalid command line.
 
 ### `inspect <inputs>...`
 
-Shows, for each input, the detected format, item counts by type, folders, items with and without modification
-times, attachments included in the export or missing from it, and read warnings. It writes this report to
+Shows, for each input, the detected format, item counts by type, folders and how many of them hold no item, items
+with and without modification times, attachments included in the export or missing from it, and read warnings. It writes this report to
 standard output and shows no vault values. Items without a modification time cannot win a conflict under the
 `newest` policy.
 
@@ -298,6 +298,11 @@ that System.CommandLine repeats cannot send escape sequences either.
 - Bitwarden JSON imports cannot carry files. Attachments stay on the upload list of the report, which also lists the
   files of Bitwarden zip attachment folders that match no item or several items. The summaries of `scan`, `merge`, and
   `review` count them all.
+- A Bitwarden individual vault holds one folder per item. An item's other Keeper folders, other Bitwarden
+  collections, and the folders of merged items that lost are listed in its `Additional folders` text field. The
+  output creates every folder of the inputs, including empty ones, and the parent of each, so Bitwarden nests them.
+  A `/` inside a Keeper folder name becomes `-`. Keeper shared folder permissions, members, and teams are not
+  carried over.
 - Bitwarden saves one passkey per login. A merged login keeps the passkeys of all its items, so the merge warns
   about each login that holds more than one; split its group to keep each passkey on a login of its own.
 - Bitwarden and Vaultwarden reject a whole import when one item is invalid, so the merge writes no vault while a

@@ -14,13 +14,26 @@ internal static class KeeperFolderPath
         return components.Length == 0 ? null : string.Join('/', components);
     }
 
+    /// <summary>Returns the folder names of a placement that hold a <c>/</c>, which <see cref="Join"/> replaces.</summary>
+    /// <param name="folder">Keeper folder placement.</param>
+    /// <returns>Original names, in path order.</returns>
+    public static IEnumerable<string> NamesWithSlash(KeeperFolder folder)
+    {
+        ArgumentNullException.ThrowIfNull(folder);
+
+        return Split(folder.SharedFolder, keepSlash: true).Concat(Split(folder.Folder, keepSlash: true))
+            .Where(name => name.Contains('/', StringComparison.Ordinal));
+    }
+
     /// <summary>
     /// Splits a Keeper path on single backslashes. A doubled backslash is a literal backslash. A <c>/</c> inside a name
     /// becomes <c>-</c>, as Bitwarden's Keeper importer does, because <c>/</c> separates folder levels.
     /// </summary>
     /// <param name="path">Keeper path, or <see langword="null"/>.</param>
     /// <returns>Non-empty path components.</returns>
-    public static IReadOnlyList<string> Components(string? path)
+    public static IReadOnlyList<string> Components(string? path) => Split(path, keepSlash: false);
+
+    private static List<string> Split(string? path, bool keepSlash)
     {
         var components = new List<string>();
         if (string.IsNullOrWhiteSpace(path))
@@ -43,7 +56,7 @@ internal static class KeeperFolderPath
             }
             else
             {
-                current.Append(character == '/' ? '-' : character);
+                current.Append(character == '/' && !keepSlash ? '-' : character);
             }
         }
 

@@ -399,6 +399,25 @@ public sealed class MergerTests
     }
 
     [Fact]
+    public void Merge_keeps_the_losing_folder_and_every_additional_folder_in_one_field()
+    {
+        var keeper = Keeper(Login(NewPassword)) with
+        {
+            FolderPath = "Finance",
+            Fields = [new CustomField("Additional folders", "Personal\nImported", CustomFieldType.Text)],
+        };
+        var bitwarden = Bitwarden(Login(NewPassword)) with
+        {
+            FolderPath = "Imported"
+        };
+
+        var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
+
+        item.FolderPath.ShouldBe("Imported");
+        item.Fields.ShouldBe([new CustomField("Additional folders", "Personal\nFinance", CustomFieldType.Text)]);
+    }
+
+    [Fact]
     public void Merge_prefer_source_policy_picks_source_and_preserves_loser()
     {
         var keeper = Keeper(Login(OldPassword));

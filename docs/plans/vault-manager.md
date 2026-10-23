@@ -116,6 +116,23 @@ Read, map, scan, apply accepted placements, match, merge, analyze, write.
    export as compact JSON, with each value and folder name as an encrypted string and an encrypted SHA-256 checksum
    for each login URI. The tool does not split an export.
 
+## Folders
+
+A Bitwarden individual vault holds one folder per item, and `/` in a folder name separates levels. Bitwarden nests
+`A/B` under `A` only when a folder named exactly `A` exists, and its importer creates no missing parent.
+
+- Readers keep every folder an input declares, including folders that hold no item: Bitwarden folders and
+  collections, Keeper shared folder paths, and every Keeper record folder.
+- An item takes one folder: a Keeper record its first folder, a Bitwarden item its folder or else its first
+  collection. Its other folders and collections are listed, one per line, in a text field named
+  `Additional folders`, and a conversion note names them.
+- A Keeper path joins the shared folder and the folder inside it with `/`. A `/` inside a Keeper folder name becomes
+  `-`, as Bitwarden's Keeper importer does, and a conversion note names the original.
+- The writer creates every declared folder, every item folder, and the parent of each, so the import shows the same
+  tree.
+- Not carried over: Keeper shared folder permissions, members, and teams, which a warning counts and the conversion
+  notes name per item.
+
 ## Merge rules
 
 A newer item wins only the fields where both sides hold different non-empty values. A value present on one side
@@ -134,7 +151,7 @@ has a TOTP. The result has the new password, the Keeper TOTP, and the old passwo
 5. An explicit decision overrides rules 1 to 4, including choosing "empty". Exports carry no deletion markers, so
    this is how a user drops a value that was intentionally removed on one side.
 6. The folder is a single value under rules 2, 4, and 5: a folder on one side is kept, and different folders go
-   to the policy. The losing folder is noted in the report.
+   to the policy. The losing folder is listed in the `Additional folders` field and noted in the report.
 7. The newest member's name and type are used, or the first input's when no member has a modification time, under
    every policy. Each other name is kept in a text field named `"Name (from <source>)"`, and another type is noted
    in the report.
@@ -208,7 +225,8 @@ summaries count them with the other attachments to upload.
 
 ## Commands
 
-- `sharedkernel-vault inspect <inputs...>` shows, per input, the detected format, item counts by type, folders,
+- `sharedkernel-vault inspect <inputs...>` shows, per input, the detected format, item counts by type, folders and
+  how many hold no item,
   items with and without modification times, attachments in the export or missing from it, and read warnings. It
   writes this report to standard output and shows no values.
 - `sharedkernel-vault scan <inputs...> [--report <file>]` reports secret findings and password health without

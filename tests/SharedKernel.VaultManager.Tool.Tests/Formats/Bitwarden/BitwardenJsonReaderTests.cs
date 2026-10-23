@@ -81,7 +81,50 @@ public sealed class BitwardenJsonReaderTests
         var item = BitwardenJsonReader.Read(json, "org.json").Items.ShouldHaveSingleItem();
 
         item.FolderPath.ShouldBe("Shared");
+        item.Fields.ShouldBe([new CustomField("Additional folders", "Other", CustomFieldType.Text)]);
         item.ConversionNotes.ShouldHaveSingleItem();
+    }
+
+    [Fact]
+    public void Read_keeps_every_named_folder_including_folders_that_hold_no_item()
+    {
+        const string json = """
+            {"encrypted":false,"folders":[{"id":"f1","name":"Work"},{"id":"f2","name":"Empty"},{"id":"f3","name":" "}],
+             "items":[{"id":"i","type":2,"name":"n","secureNote":{"type":0},"folderId":"f1"}]}
+            """;
+
+        BitwardenJsonReader.Read(json, "personal.json").Folders.ShouldBe(["Work", "Empty"]);
+    }
+
+    [Fact]
+    public void Read_export_with_folders_and_collections_keeps_both()
+    {
+        const string json = """
+            {"encrypted":false,"folders":[{"id":"f1","name":"Personal"}],"collections":[{"id":"c1","name":"Team"}],
+             "items":[{"id":"a","type":2,"name":"a","secureNote":{"type":0},"folderId":"f1","collectionIds":["c1"]},
+                      {"id":"b","type":2,"name":"b","secureNote":{"type":0},"collectionIds":["c1"]}]}
+            """;
+
+        var export = BitwardenJsonReader.Read(json, "both.json");
+
+        export.Folders.ShouldBe(["Personal", "Team"]);
+        export.Items[0].FolderPath.ShouldBe("Personal");
+        export.Items[0].Fields.ShouldBe([new CustomField("Additional folders", "Team", CustomFieldType.Text)]);
+        export.Items[1].FolderPath.ShouldBe("Team");
+        export.Items[1].Fields.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Read_notes_a_folder_ID_that_names_no_folder()
+    {
+        const string json = """
+            {"encrypted":false,"folders":[],"items":[{"id":"i","type":2,"name":"n","secureNote":{"type":0},"folderId":"missing"}]}
+            """;
+
+        var item = BitwardenJsonReader.Read(json, "personal.json").Items.ShouldHaveSingleItem();
+
+        item.FolderPath.ShouldBeNull();
+        item.ConversionNotes.ShouldHaveSingleItem().ShouldContain("folder", StringComparison.Ordinal);
     }
 
     [Fact]

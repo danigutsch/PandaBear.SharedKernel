@@ -20,7 +20,10 @@ namespace PandaBear.VaultManager.Tool.Merge;
 /// ask, stay unresolved with the newest value, or the first member's value, as a provisional winner.
 /// </item>
 /// <item>An explicit decision overrides rules 1 to 4.</item>
-/// <item>Folder, name, type, and origin come from the newest member; other names become text fields and other folders conversion notes.</item>
+/// <item>
+/// Name, type, and origin come from the newest member, and other names become text fields. The folder is a single value
+/// under rules 2, 4, and 5; a folder that is not used is listed in the <see cref="AdditionalFolders"/> field.
+/// </item>
 /// <item>
 /// Every attachment of every member is kept. Copies on several members are kept once, from the newest member, only when
 /// their names and content hashes are equal (<see cref="GroupAttachments"/>).

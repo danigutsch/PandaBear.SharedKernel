@@ -102,6 +102,9 @@ internal static class KeeperJsonReader
             }
 
             var items = new List<VaultItem>();
+            List<string> folders = root.ValueKind == JsonValueKind.Object
+                ? [.. Objects(root, "shared_folders").Select(folder => KeeperFolderPath.Join(new KeeperFolder(Scalar(folder, "path"), null, false, false))).OfType<string>()]
+                : [];
             if (records.ValueKind == JsonValueKind.Array)
             {
                 int index = 0;
@@ -109,7 +112,9 @@ internal static class KeeperJsonReader
                 {
                     if (record.ValueKind == JsonValueKind.Object)
                     {
-                        items.Add(KeeperRecordMapper.Map(ParseRecord(record), sourceFile, zipFiles, warnings));
+                        KeeperRecord parsed = ParseRecord(record);
+                        folders.AddRange(parsed.Folders.Select(KeeperFolderPath.Join).OfType<string>());
+                        items.Add(KeeperRecordMapper.Map(parsed, sourceFile, zipFiles, warnings));
                     }
                     else
                     {
@@ -120,7 +125,7 @@ internal static class KeeperJsonReader
                 }
             }
 
-            return new VaultReadResult(new VaultExport(items), warnings);
+            return new VaultReadResult(new VaultExport(items) { Folders = [.. folders.Distinct(StringComparer.Ordinal)] }, warnings);
         }
     }
 

@@ -70,6 +70,7 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         var read = new List<(VaultItem Item, string InputPath)>();
         var warnings = new List<string>();
         var unassignedFolders = new List<UnassignedAttachmentFolder>();
+        var folders = new List<string>();
         foreach (string path in paths)
         {
             ct.ThrowIfCancellationRequested();
@@ -78,11 +79,16 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
             read.AddRange(result.Export.Items.Select(item => (item, path)));
             warnings.AddRange(result.Warnings.Select(warning => inputName + ": " + warning));
             unassignedFolders.AddRange(result.UnassignedAttachmentFolders);
+            folders.AddRange(result.Export.Folders);
         }
 
         IReadOnlyList<string> keys = OriginKeys.Compute([.. read.Select(entry => entry.Item)]);
         SourceItem[] items = [.. read.Select((entry, index) => new SourceItem(SshKeyNormalizer.Normalize(entry.Item), keys[index], entry.InputPath))];
-        return new LoadedVault(paths, items, warnings) { UnassignedAttachmentFolders = unassignedFolders };
+        return new LoadedVault(paths, items, warnings)
+        {
+            UnassignedAttachmentFolders = unassignedFolders,
+            Folders = [.. folders.Distinct(StringComparer.Ordinal)],
+        };
     }
 
     /// <summary>
@@ -145,7 +151,11 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
             items.Add(new ScannedItem(scannedSource, findings, texts));
         }
 
-        return new ScannedVault(vault.InputPaths, items, warnings) { UnassignedAttachmentFolders = vault.UnassignedAttachmentFolders };
+        return new ScannedVault(vault.InputPaths, items, warnings)
+        {
+            UnassignedAttachmentFolders = vault.UnassignedAttachmentFolders,
+            Folders = vault.Folders,
+        };
     }
 
     /// <summary>
@@ -224,9 +234,13 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         MatchResult match = DuplicateMatcher.Match(placed.Items, request.Decisions.Overrides, placed.OriginKeys);
         ct.ThrowIfCancellationRequested();
         MergeResult merge = new Merger(environment.Time).Merge(match.Groups, request.Policy, request.Decisions);
+        VaultExport merged = merge.Merged with
+        {
+            Folders = scanned.Folders
+        };
         ct.ThrowIfCancellationRequested();
-        PasswordHealthReport health = PasswordHealthReport.Analyze(merge.Merged);
-        BitwardenWriteResult written = BitwardenJsonWriter.Write(merge.Merged);
+        PasswordHealthReport health = PasswordHealthReport.Analyze(merged);
+        BitwardenWriteResult written = BitwardenJsonWriter.Write(merged);
         bool decided = merge.Unresolved.Count == 0 && pendingFindings.Length == 0;
         bool outputWritten = false;
         if (request.Output is { } output && decided && written.Errors.Count == 0)
@@ -238,7 +252,7 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
 
         return new PipelineResult
         {
-            Merged = merge.Merged,
+            Merged = merged,
             Match = match,
             Unresolved = merge.Unresolved,
             PendingFindings = pendingFindings,
@@ -246,7 +260,7 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
             Findings = placed.Findings,
             PlacementProblems = placed.Problems,
             PasswordHealth = health,
-            ManualAttachments = ManualAttachments(match, merge.Merged),
+            ManualAttachments = ManualAttachments(match, merged),
             UnassignedAttachmentFolders = scanned.UnassignedAttachmentFolders,
             WriteErrors = written.Errors,
             WriteWarnings = written.Warnings,

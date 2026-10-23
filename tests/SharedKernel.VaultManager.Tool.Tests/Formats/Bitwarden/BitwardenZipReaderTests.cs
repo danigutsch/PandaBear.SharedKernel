@@ -23,6 +23,22 @@ public sealed class BitwardenZipReaderTests : IDisposable
     }
 
     [Fact]
+    public void Read_keeps_the_folders_that_the_export_declares()
+    {
+        string path = Path.Combine(directory, "folders.zip");
+        File.WriteAllBytes(path, TestZip.Create(("data.json", TestZip.Utf8("""
+            {"encrypted":false,"folders":[{"id":"f1","name":"Work"},{"id":"f2","name":"Empty"}],"items":[
+              {"id":"i1","type":2,"name":"Note","folderId":"f1","secureNote":{"type":0}}
+            ]}
+            """))));
+
+        var result = BitwardenZipReader.Read(path);
+
+        result.Export.Folders.ShouldBe(["Work", "Empty"]);
+        result.Export.Items.ShouldHaveSingleItem().FolderPath.ShouldBe("Work");
+    }
+
+    [Fact]
     public void Read_does_not_guess_when_several_items_share_a_name()
     {
         var result = BitwardenZipReader.Read(BitwardenZipFixture.Write(directory));

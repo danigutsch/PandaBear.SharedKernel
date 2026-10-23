@@ -58,7 +58,7 @@ internal static class BitwardenZipReader
         VaultItem[] items = [.. export.Items.Select(item => attachments.TryGetValue(item, out List<AttachmentRef>? assigned)
             ? item with { Attachments = [.. item.Attachments, .. assigned] }
             : item)];
-        return new VaultReadResult(new VaultExport(items), warnings) { UnassignedAttachmentFolders = unassigned };
+        return new VaultReadResult(export with { Items = items }, warnings) { UnassignedAttachmentFolders = unassigned };
     }
 
     /// <summary>Folder name the Bitwarden export uses for an item: reserved characters become <c>_</c>, runs of <c>_</c> collapse.</summary>

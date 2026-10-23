@@ -20,6 +20,7 @@ internal sealed class GroupMerger
     private readonly List<PasswordHistoryEntry> preservedHistory = [];
     private readonly List<(string Source, string Notes)> appendedNotes = [];
     private readonly List<string> conversionNotes = [];
+    private readonly List<string> otherFolders = [];
 
     /// <summary>Prepares a group merge.</summary>
     /// <param name="group">Group with at least two members.</param>
@@ -96,7 +97,7 @@ internal sealed class GroupMerger
 
         return result with
         {
-            Fields = FieldDiff.DistinctFields(fields.Concat(preservedFields)),
+            Fields = AdditionalFolders.Add(FieldDiff.DistinctFields(fields.Concat(preservedFields)), otherFolders, result.FolderPath),
             PasswordHistory =
             [
                 .. history.Concat(preservedHistory)
@@ -144,7 +145,8 @@ internal sealed class GroupMerger
 
     private VaultItem MergeFolder(VaultItem result)
     {
-        // The folder is a single value: a folder on one side is kept, and different folders go through the policy.
+        // The folder is a single value: a folder on one side is kept, and different folders go through the policy. A folder
+        // that is not used is listed in the additional folders field.
         var values = new List<(string Key, List<VaultItem> Holders)>();
         foreach (var member in newestFirst.Where(member => !string.IsNullOrWhiteSpace(member.FolderPath)))
         {
@@ -196,7 +198,8 @@ internal sealed class GroupMerger
             if (!string.Equals(key, winner.FolderPath, StringComparison.Ordinal))
             {
                 string kept = winner.FolderPath is null ? "no folder" : "folder \"" + winner.FolderPath + "\"";
-                conversionNotes.Add($"Folder \"{key}\" from {Source(holders[0])} was not used; the item is in {kept}.");
+                conversionNotes.Add($"Folder \"{key}\" from {Source(holders[0])} was not used; the item is in {kept}, and the field \"{AdditionalFolders.FieldName}\" lists it.");
+                otherFolders.Add(key);
             }
         }
 
