@@ -131,7 +131,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task GitHub_import_defaults_to_dry_run_and_fetches_only_safe_metadata()
+    public async Task GitHub_import_defaults_to_preview_and_fetches_only_safe_metadata()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -193,7 +193,7 @@ public sealed class GitHubRoadmapIntakeTests
 
         // Assert
         exitCode.ShouldBe(0);
-        outputText.ShouldContain("dry-run: GitHub import would add 2 open roadmap items.", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: GitHub import would add 2 open roadmap items.", StringComparison.Ordinal);
         errorText.ShouldBe(string.Empty);
         stateAfter.ShouldBe(stateBefore);
         request.Message.Method.ShouldBe(HttpMethod.Post);

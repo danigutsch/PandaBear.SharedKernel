@@ -28,6 +28,7 @@ sharedkernel-repo get next-work --limit 5
 sharedkernel-repo get by-label "area: tooling"
 sharedkernel-repo github reconcile
 sharedkernel-repo github reconcile --force
+sharedkernel-repo automation publish-result --force
 sharedkernel-repo verify-podman-dns --verbosity quiet
 ```
 
@@ -40,13 +41,15 @@ sharedkernel-repo verify-podman-dns --verbosity quiet
 | `github sync` | Projects roadmap items to GitHub issues and Projects. |
 | `github reconcile` | Updates the reconciliation manifest from the open GitHub issues. |
 | `github import` | Imports the reconciled issue snapshot into roadmap items. |
-| `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. |
+| `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request. |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
 
-`github` commands preview their changes unless `--force` is given. Every command except
-`verify-podman-dns` takes `--root <path>`, which defaults to the current directory. Run
-`sharedkernel-repo <command> --help` for the options of each command.
+`github` commands and `automation publish-result` preview their changes unless `--force` is given.
+Preview lines start with `preview:`. The `publish-result` preview names the repository, base SHA,
+branch, and changed paths. Every command except `verify-podman-dns` takes `--root <path>`, which
+defaults to the current directory. Run `sharedkernel-repo <command> --help` for the options of each
+command.
 
 ## Environment
 
@@ -57,7 +60,7 @@ sharedkernel-repo verify-podman-dns --verbosity quiet
 | `GITHUB_REPOSITORY` | `automation` steps. |
 | `GITHUB_RUN_ID` | `automation plan-github`. |
 | `ROADMAP_PLAN_DIGEST`, `ROADMAP_ARTIFACT_DIGEST`, `ROADMAP_RESULT_DIGEST` | `automation` steps after planning, as each step requires. |
-| `GITHUB_OUTPUT`, `GITHUB_STEP_SUMMARY` | `automation plan-github`, `seal-result`, and `publish-result`. |
+| `GITHUB_OUTPUT`, `GITHUB_STEP_SUMMARY` | `automation plan-github`, `seal-result`, and `publish-result --force`. |
 
 ## Limits
 
@@ -77,7 +80,10 @@ sharedkernel-repo verify-podman-dns --verbosity quiet
 
 - Tokens come only from the environment. GitHub transport failures are reported without request details.
 - Child processes (Git, Podman, and `stat`) start without `GH_TOKEN` and `GITHUB_TOKEN`.
-- Without `--force`, `github` commands only read; `--force` never skips validation.
-- `automation` steps after planning are bound to the reviewed plan digest; publication also requires a
-  sealed result.
+- Without `--force`, `github` commands and `automation publish-result` only read and change nothing in
+  GitHub or the checkout; `--force` never skips validation.
+- `automation` steps after planning are bound to the reviewed plan digest. `publish-result --force` also
+  requires a sealed result, creates only a new branch and a draft pull request, and fails when the branch
+  already exists.
+- The `publish-result` preview prints no file contents.
 - Output escapes control characters from roadmap and GitHub data.

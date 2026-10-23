@@ -158,6 +158,8 @@ public sealed class RepoConfigCommandLineTests
     [InlineData("get by-label \"area: tooling\" --limit 3", "get")]
     [InlineData("set github.repository owner/repository --root .", "set")]
     [InlineData("automation plan-github --root .", "plan-github")]
+    [InlineData("automation publish-result --root .", "publish-result")]
+    [InlineData("automation publish-result --force --root .", "publish-result")]
     public void Command_lines_parse_to_their_command(string commandLine, string expectedCommand)
     {
         // Arrange
@@ -224,6 +226,25 @@ public sealed class RepoConfigCommandLineTests
 
         // Assert
         exitCode.ShouldBe(0);
+        outputText.ShouldContain("--force", StringComparison.Ordinal);
+        outputText.ShouldContain("--root <path>", StringComparison.Ordinal);
+        error.ToString().ShouldBe(string.Empty);
+    }
+
+    [Fact]
+    public async Task Publish_result_help_describes_force_and_root()
+    {
+        // Arrange
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["automation", "publish-result", "--help"], output, error, Path.GetTempPath(), TestContext.Current.CancellationToken);
+        var outputText = output.ToString();
+
+        // Assert
+        exitCode.ShouldBe(0);
+        outputText.ShouldContain("Previews", StringComparison.Ordinal);
         outputText.ShouldContain("--force", StringComparison.Ordinal);
         outputText.ShouldContain("--root <path>", StringComparison.Ordinal);
         error.ToString().ShouldBe(string.Empty);

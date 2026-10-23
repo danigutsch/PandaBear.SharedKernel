@@ -22,14 +22,14 @@ internal sealed class GitHubRoadmapReconciler
     public async Task<IReadOnlyList<string>> Preview(CancellationToken cancellationToken)
     {
         var plan = await CreatePlan(cancellationToken).ConfigureAwait(false);
-        return plan.Messages(dryRun: true);
+        return plan.Messages(preview: true);
     }
 
     public async Task<IReadOnlyList<string>> Apply(CancellationToken cancellationToken)
     {
         var plan = await CreatePlan(cancellationToken).ConfigureAwait(false);
         plan.Apply();
-        return plan.Messages(dryRun: false);
+        return plan.Messages(preview: false);
     }
 
     private async Task<ReconcilePlan> CreatePlan(CancellationToken cancellationToken)
@@ -517,18 +517,18 @@ internal sealed class GitHubRoadmapReconciler
             Matches ? [] : [new AtomicFileWrite(manifestPath, content, expectedContent)],
             inputSnapshot.Verify);
 
-        public IReadOnlyList<string> Messages(bool dryRun)
+        public IReadOnlyList<string> Messages(bool preview)
         {
             if (Matches)
             {
-                return [dryRun
-                    ? "dry-run: reconciliation manifest already matches the GitHub snapshot."
+                return [preview
+                    ? "preview: reconciliation manifest already matches the GitHub snapshot."
                     : "reconcile: reconciliation manifest already matches the GitHub snapshot."];
             }
 
-            var relativePath = Path.GetRelativePath(Directory.GetCurrentDirectory(), manifestPath);
-            return [dryRun
-                ? $"dry-run: GitHub reconciliation would update {relativePath}."
+            var relativePath = Path.GetRelativePath(rootPath, manifestPath);
+            return [preview
+                ? $"preview: GitHub reconciliation would update {relativePath}."
                 : $"reconcile: updated {relativePath}."];
         }
     }
