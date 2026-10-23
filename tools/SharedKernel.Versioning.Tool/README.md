@@ -9,7 +9,8 @@ metadata, packs SharedKernel, and creates, consumes, and stages hashed package c
 
 ## Prerequisites
 
-Git and the .NET SDK pinned in `global.json`. `--aot` also needs the platform
+Git 2.24 or later, which `has-breaking-change-marker` needs for `--end-of-options`, and the .NET SDK pinned in
+`global.json`. `--aot` also needs the platform
 [NativeAOT toolchain](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/development.md#nativeaot-prerequisites).
 
 ## Install
@@ -20,16 +21,32 @@ Run from this repository without installing:
 dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- --help
 ```
 
-Install from a local package:
+Install a validated candidate as a local tool. With the SDK pinned in `global.json`, `dotnet tool install` rejects
+`--add-source` under package source mapping, so add the candidate feed to `NuGet.Config`, map
+`PandaBear.SharedKernel.*` to it, and keep every other package (`*`) mapped to the existing source:
 
-```text
-dotnet pack tools/SharedKernel.Versioning.Tool/SharedKernel.Versioning.Tool.csproj -o artifacts/local-tool-feed
-dotnet tool install PandaBear.SharedKernel.Versioning.Tool --tool-path ./.tools --version <validated-candidate-version> --add-source artifacts/local-tool-feed
-./.tools/sharedkernel-version --help
+```xml
+<packageSources>
+  <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+  <add key="sharedkernel-candidates" value="<candidate-feed>" />
+</packageSources>
+<packageSourceMapping>
+  <packageSource key="nuget.org">
+    <package pattern="*" />
+  </packageSource>
+  <packageSource key="sharedkernel-candidates">
+    <package pattern="PandaBear.SharedKernel.*" />
+  </packageSource>
+</packageSourceMapping>
 ```
 
-Follow the local-feed source-mapping notes in the
-[release policy](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/release-policy.md).
+`dotnet tool install` adds the tool to the local tool manifest and creates the manifest when none exists. Put `--`
+before tool options, because `dotnet tool run` answers `--help` itself:
+
+```text
+dotnet tool install PandaBear.SharedKernel.Versioning.Tool --version <validated-candidate-version>
+dotnet tool run sharedkernel-version -- --help
+```
 
 ## Usage
 
@@ -147,12 +164,15 @@ does the output of the `dotnet` processes and samples that `consume-candidate`, 
 | `2` | The command failed: invalid input, a failed check, or a failed `git` or `dotnet` process. |
 | `130`, `143` | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
-Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or sample process tree.
+Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or sample process tree. A process that fails after the tool has
+observed Ctrl+C or SIGTERM counts as the cancellation.
 
 ## Security
 
 - .NET tools run in full trust. Install only from trusted manifests and package sources.
 - No option accepts a secret.
+- `has-breaking-change-marker` rejects an empty range or one that starts with `-`, and passes the range to Git after
+  `--end-of-options`, so Git cannot read it as an option.
 - Packing and consumption restore third-party packages from nuget.org. Generated NuGet configurations map
   `PandaBear.SharedKernel.*` only to the local feed, so internal packages never resolve from nuget.org.
 - Candidate commands verify SHA-256 package hashes before consuming or staging packages.

@@ -18,9 +18,17 @@ internal static class VersioningCommandLineRunner
     public static async Task<CommandLineInvocation> Invoke(string[] args, string input, TimeProvider timeProvider, CancellationToken ct)
     {
         using var reader = new StringReader(input);
+        return await Invoke(args, reader, timeProvider, ct);
+    }
+
+    public static Task<CommandLineInvocation> Invoke(string[] args, TextReader input, CancellationToken ct) =>
+        Invoke(args, input, TimeProvider.System, ct);
+
+    public static async Task<CommandLineInvocation> Invoke(string[] args, TextReader input, TimeProvider timeProvider, CancellationToken ct)
+    {
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var parseResult = VersioningCommandLine.Create(reader, timeProvider).Parse(args);
+        var parseResult = VersioningCommandLine.Create(input, timeProvider).Parse(args);
         var configuration = new InvocationConfiguration
         {
             Output = output,

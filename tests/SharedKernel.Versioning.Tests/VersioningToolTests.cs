@@ -372,6 +372,44 @@ public static class VersioningToolTests
         result.Output.ShouldContain("API compatibility report", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public static async Task Report_only_check_API_compatibility_exits_as_canceled_when_packing_fails_after_cancellation()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await temporaryDirectory.WriteUnpackableSharedKernelProject(TestContext.Current.CancellationToken);
+
+        // An existing package version makes packing fail before it starts a process, which checks the token first.
+        var packageDirectory = Path.Combine(temporaryDirectory.OutputDirectory, "packages", "1.2.3-alpha.1");
+        Directory.CreateDirectory(packageDirectory);
+        await File.WriteAllBytesAsync(
+            Path.Combine(packageDirectory, "PandaBear.SharedKernel.Sample.1.2.3-alpha.1.nupkg"),
+            "package"u8.ToArray(),
+            TestContext.Current.CancellationToken);
+        using var cancellation = new CancellationTokenSource();
+        await cancellation.CancelAsync();
+        string[] args =
+        [
+            "check-api-compatibility",
+            "--repo-root",
+            temporaryDirectory.Root,
+            "--output-root",
+            temporaryDirectory.OutputDirectory,
+            "--version",
+            "1.2.3-alpha.1",
+            "--release-phase",
+            "alpha",
+        ];
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(args, cancellation.Token);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Output.ShouldBe(string.Empty);
+        result.Error.ShouldBe(string.Empty);
+    }
+
     [Theory]
     [InlineData(true, 0)]
     [InlineData(false, 2)]
@@ -715,6 +753,24 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Breaking_change_marker_check_passes_the_range_to_git_after_the_end_of_options()
+    {
+        // Arrange
+        using var repository = new TemporaryGitRepository();
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "base", "feat(api)!: remove route", TestContext.Current.CancellationToken);
+        var root = repository.Root;
+
+        // Act
+        // Parsing rejects such a range; the command still keeps Git from reading it as an option.
+        var action = () => BreakingChangeMarkerCommand.Run("--output=log.txt", root, TextWriter.Null, TestContext.Current.CancellationToken);
+
+        // Assert
+        await action.ShouldThrow<InvalidOperationException>();
+        File.Exists(Path.Combine(root, "log.txt")).ShouldBeFalse();
+    }
+
+    [Fact]
     public static async Task Wraps_missing_process_start_failures()
     {
         // Arrange
@@ -740,6 +796,27 @@ public static class VersioningToolTests
 
         // Assert
         await action.ShouldThrow<OperationCanceledException>();
+    }
+
+    [Fact]
+    public static async Task Run_or_default_rethrows_a_failure_that_follows_cancellation()
+    {
+        // Arrange
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+
+        // Enumerating the arguments cancels the token after the run has checked it, so the start failure follows the
+        // cancellation, as a process that the same Ctrl+C stops fails before the run observes the token.
+        var arguments = Enumerable.Repeat("--version", 1).Select(argument =>
+        {
+            cancellation.Cancel();
+            return argument;
+        });
+
+        // Act
+        Func<Task> action = () => CommandRunner.RunOrDefault("missing-sharedkernel-versioning-tool-command", arguments, null, cancellation.Token);
+
+        // Assert
+        await action.ShouldThrow<InvalidOperationException>();
     }
 
     [Fact]

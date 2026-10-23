@@ -12,6 +12,7 @@ internal static class RepositoryValidation
         string group,
         Func<string, string[], string, CancellationToken, Task<string>> run,
         TextWriter output,
+        TextWriter error,
         CancellationToken ct)
     {
         var revision = (await run("git", ["rev-parse", "HEAD"], root, ct).ConfigureAwait(false)).Trim();
@@ -73,8 +74,9 @@ internal static class RepositoryValidation
                 + timer.Elapsed.TotalSeconds.ToString("F3", CultureInfo.InvariantCulture) + "\t" + status + "\n", CancellationToken.None).ConfigureAwait(false);
         }
 
+        // The restore, build, and test output is progress, so it goes to standard error.
         async Task Dotnet(params string[] arguments) =>
-            await output.WriteAsync(await run("dotnet", arguments, root, ct).ConfigureAwait(false)).ConfigureAwait(false);
+            await error.WriteAsync(await run("dotnet", arguments, root, ct).ConfigureAwait(false)).ConfigureAwait(false);
     }
 
     internal static bool IsHosted(string root, string project) =>

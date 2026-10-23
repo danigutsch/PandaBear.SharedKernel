@@ -366,6 +366,39 @@ public sealed class PlaywrightMcpApplicationTests
     }
 
     [Theory]
+    [InlineData("prepare")]
+    [InlineData("clean")]
+    public async Task Prepare_and_clean_write_the_engine_output_to_standard_error(string command)
+    {
+        // Arrange
+        var environment = new PlaywrightMcpTestEnvironment();
+        environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
+        var invocation = 0;
+
+        // Act
+        var exitCode = await environment.Invoke(
+            [command],
+            (_, _) =>
+            {
+                invocation++;
+                return Task.FromResult(invocation switch
+                {
+                    1 => new ProcessResult(0, "default", string.Empty),
+                    2 => new ProcessResult(0, "unix:///var/run/docker.sock", string.Empty),
+                    _ => new ProcessResult(0, "engine output" + Environment.NewLine, "engine warning" + Environment.NewLine)
+                });
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        invocation.ShouldBe(3);
+        environment.Output.ToString().ShouldBeEmpty();
+        environment.Error.ToString().ShouldBe(
+            "engine output" + Environment.NewLine + "engine warning" + Environment.NewLine);
+    }
+
+    [Theory]
     [InlineData("docker", "Docker current-context inspection failed: preflight denied")]
     [InlineData("podman", "Podman rootless inspection failed: preflight denied")]
     public async Task Engine_preflight_failures_stop_before_runtime_start(
@@ -585,6 +618,7 @@ public sealed class PlaywrightMcpApplicationTests
         // Act
         var result = await PlaywrightMcpApplication.RunProcess(
             startInfo,
+            null,
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -602,7 +636,7 @@ public sealed class PlaywrightMcpApplicationTests
             TestContext.Current.CancellationToken);
 
         // Act
-        var execution = PlaywrightMcpApplication.RunProcess(child.StartInfo, cancellation.Token);
+        var execution = PlaywrightMcpApplication.RunProcess(child.StartInfo, null, cancellation.Token);
         await child.WaitUntilReady(TestContext.Current.CancellationToken);
         await cancellation.CancelAsync();
         Func<Task> waitForExecution = async () => await execution;
@@ -610,5 +644,51 @@ public sealed class PlaywrightMcpApplicationTests
         // Assert
         await waitForExecution.ShouldThrowAssignableTo<OperationCanceledException>();
         child.IsRunning.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Run_process_forwards_each_output_line_while_the_child_runs()
+    {
+        // Arrange
+        if (!OperatingSystem.IsLinux())
+        {
+            return;
+        }
+
+        using var directory = new TemporaryDirectory();
+        var releasePath = Path.Combine(directory.Path, "release");
+        var startInfo = new ProcessStartInfo("/bin/sh")
+        {
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add(
+            "echo pulling; i=0; while [ ! -e \"$1\" ]; do i=$((i + 1)); if [ \"$i\" -gt 300 ]; then exit 3; fi; sleep 0.1; done; echo pulled >&2");
+        startInfo.ArgumentList.Add("sh");
+        startInfo.ArgumentList.Add(releasePath);
+        using var error = new FirstLineWriter();
+        var firstLine = error.FirstLine;
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        timeout.CancelAfter(TimeSpan.FromSeconds(30));
+
+        // Act
+        // The child exits only after the release file exists, which is created only after its first line reached the writer.
+        var release = Task.Run(
+            async () =>
+            {
+                var forwarded = await firstLine.WaitAsync(timeout.Token);
+                await File.WriteAllTextAsync(releasePath, string.Empty, timeout.Token);
+                return forwarded;
+            },
+            timeout.Token);
+        var result = await PlaywrightMcpApplication.RunProcess(startInfo, error, timeout.Token);
+        var forwardedWhileRunning = await release;
+
+        // Assert
+        forwardedWhileRunning.ShouldBe("pulling" + Environment.NewLine);
+        result.ShouldBe(new ProcessResult(0, string.Empty, string.Empty));
+        error.ToString().ShouldBe("pulling" + Environment.NewLine + "pulled" + Environment.NewLine);
     }
 }

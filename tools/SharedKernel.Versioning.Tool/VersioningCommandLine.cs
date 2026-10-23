@@ -142,6 +142,16 @@ internal static class VersioningCommandLine
     private static Command CreateHasBreakingChangeMarker()
     {
         var range = new Argument<string>("git-range") { Description = "Git revision range, such as origin/main..HEAD." };
+
+        // An empty range names no revision, and Git reads a leading '-' as an option: --output=<path> would write a file.
+        range.Validators.Add(static result =>
+        {
+            var value = result.GetValueOrDefault<string>();
+            if (string.IsNullOrWhiteSpace(value) || value.StartsWith('-'))
+            {
+                result.AddError("<git-range> requires a revision range that is not empty and does not start with '-'.");
+            }
+        });
         var repoRoot = RepoRootOption();
         var command = new Command("has-breaking-change-marker", "Succeeds when a commit in the range has a Conventional Commit breaking-change marker.")
         {
@@ -457,6 +467,12 @@ internal static class VersioningCommandLine
             {
                 await action(parseResult, parseResult.InvocationConfiguration.Output, ct).ConfigureAwait(false);
                 return 0;
+            }
+            catch (Exception exception) when (ct.IsCancellationRequested)
+            {
+                // Ctrl+C and SIGTERM sent to the process group also stop the running git, dotnet, or sample process, which
+                // can fail before the token is observed. System.CommandLine exits 1 without output for a cancellation.
+                throw new OperationCanceledException("The command was canceled.", exception, ct);
             }
             catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or IOException)
             {

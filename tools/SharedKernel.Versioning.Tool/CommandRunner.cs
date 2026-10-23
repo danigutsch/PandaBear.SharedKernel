@@ -38,7 +38,7 @@ internal static class CommandRunner
         {
             return await Run(fileName, arguments, workingDirectory, ct).ConfigureAwait(false);
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException) when (!ct.IsCancellationRequested)
         {
             return string.Empty;
         }

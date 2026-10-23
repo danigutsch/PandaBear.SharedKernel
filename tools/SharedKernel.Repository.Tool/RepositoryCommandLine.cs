@@ -52,19 +52,22 @@ internal static class RepositoryCommandLine
             rootOption,
             selectionOption,
         };
-        command.SetAction((parseResult, ct) => Execute(parseResult, (output, error) =>
-        {
-            var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
-            return ProjectSelectionPlan.Write(
-                root,
-                Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root),
-                parseResult.GetValue(baseOption),
-                parseResult.GetValue(githubOutputOption),
-                run,
-                output,
-                error,
-                ct);
-        }));
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            (output, error) =>
+            {
+                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                return ProjectSelectionPlan.Write(
+                    root,
+                    Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root),
+                    parseResult.GetValue(baseOption),
+                    parseResult.GetValue(githubOutputOption),
+                    run,
+                    output,
+                    error,
+                    ct);
+            },
+            ct));
         return command;
     }
 
@@ -84,17 +87,21 @@ internal static class RepositoryCommandLine
             rootOption,
             selectionOption,
         };
-        command.SetAction((parseResult, ct) => Execute(parseResult, (output, _) =>
-        {
-            var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
-            return RepositoryValidation.Run(
-                root,
-                Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root),
-                parseResult.GetRequiredValue(testGroupOption),
-                run,
-                output,
-                ct);
-        }));
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            (output, error) =>
+            {
+                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                return RepositoryValidation.Run(
+                    root,
+                    Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root),
+                    parseResult.GetRequiredValue(testGroupOption),
+                    run,
+                    output,
+                    error,
+                    ct);
+            },
+            ct));
         return command;
     }
 
@@ -110,7 +117,8 @@ internal static class RepositoryCommandLine
         };
         command.SetAction((parseResult, ct) => Execute(
             parseResult,
-            (_, _) => PrTitleVerification.Verify(Path.GetFullPath(parseResult.GetRequiredValue(eventOption), workingDirectory), ct)));
+            (_, _) => PrTitleVerification.Verify(Path.GetFullPath(parseResult.GetRequiredValue(eventOption), workingDirectory), ct),
+            ct));
         return command;
     }
 
@@ -138,13 +146,19 @@ internal static class RepositoryCommandLine
         return option;
     }
 
-    private static async Task<int> Execute(ParseResult parseResult, Func<TextWriter, TextWriter, Task> action)
+    private static async Task<int> Execute(ParseResult parseResult, Func<TextWriter, TextWriter, Task> action, CancellationToken ct)
     {
         var error = parseResult.InvocationConfiguration.Error;
         try
         {
             await action(parseResult.InvocationConfiguration.Output, error).ConfigureAwait(false);
             return 0;
+        }
+        catch (Exception exception) when (ct.IsCancellationRequested)
+        {
+            // Ctrl+C and SIGTERM sent to the process group also stop the running git or dotnet process, which can fail
+            // before the token is observed. System.CommandLine exits 1 without output for a cancellation.
+            throw new OperationCanceledException("The command was canceled.", exception, ct);
         }
         catch (Exception exception) when (exception is ArgumentException or IOException or InvalidOperationException or XmlException or JsonException or KeyNotFoundException)
         {

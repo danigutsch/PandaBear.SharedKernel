@@ -24,9 +24,9 @@ internal static class ProjectSelectionPlan
                 var diff = await run("git", ["diff", "--name-only", "--no-renames", baseRevision + "...HEAD", "--"], root, ct).ConfigureAwait(false);
                 changes = diff.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException) when (!ct.IsCancellationRequested)
             {
-                // Missing history deliberately selects full validation.
+                // Missing history deliberately selects full validation. A failure after cancellation is the cancellation.
             }
         }
 
@@ -37,7 +37,7 @@ internal static class ProjectSelectionPlan
         {
             revision = (await run("git", ["rev-parse", "HEAD"], root, ct).ConfigureAwait(false)).Trim();
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException) when (!ct.IsCancellationRequested)
         {
             await error.WriteLineAsync("Selection revision unavailable; execution requires a Git checkout.").ConfigureAwait(false);
         }
