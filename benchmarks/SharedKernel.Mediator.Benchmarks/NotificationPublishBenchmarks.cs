@@ -17,7 +17,10 @@ public class NotificationPublishBenchmarks
     /// Gets or sets the number of notification handlers under test.
     /// </summary>
     [Params(0, 1, 3, 10, 50)]
-    public int HandlerCount { get; set; }
+    public int HandlerCount
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Builds the synthetic benchmark assembly and captures the exported delegates.

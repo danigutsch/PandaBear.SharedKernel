@@ -1244,52 +1244,115 @@ internal sealed class GitHubRoadmapIntake
 
     private sealed class UpdatedItemOptions
     {
-        public required string[] BlockedBy { get; init; }
+        public required string[] BlockedBy
+        {
+            get; init;
+        }
 
-        public required string[] Blocks { get; init; }
+        public required string[] Blocks
+        {
+            get; init;
+        }
 
-        public required string ClosedStatus { get; init; }
+        public required string ClosedStatus
+        {
+            get; init;
+        }
 
-        public int DesiredOrder { get; init; }
+        public int DesiredOrder
+        {
+            get; init;
+        }
 
-        public string? DesiredParent { get; init; }
+        public string? DesiredParent
+        {
+            get; init;
+        }
 
-        public IntakeMetadata? DesiredMetadata { get; init; }
+        public IntakeMetadata? DesiredMetadata
+        {
+            get; init;
+        }
 
-        public IntakeScoring? DesiredScoring { get; init; }
+        public IntakeScoring? DesiredScoring
+        {
+            get; init;
+        }
 
-        public bool HasParentProperty { get; init; }
+        public bool HasParentProperty
+        {
+            get; init;
+        }
 
-        public bool TransitionsToClosedSupport { get; init; }
+        public bool TransitionsToClosedSupport
+        {
+            get; init;
+        }
 
-        public bool UpdatesMetadata { get; init; }
+        public bool UpdatesMetadata
+        {
+            get; init;
+        }
 
-        public bool UpdatesOrder { get; init; }
+        public bool UpdatesOrder
+        {
+            get; init;
+        }
 
-        public bool UpdatesParent { get; init; }
+        public bool UpdatesParent
+        {
+            get; init;
+        }
 
-        public bool UpdatesScoring { get; init; }
+        public bool UpdatesScoring
+        {
+            get; init;
+        }
     }
 
     private sealed class UpdatedItemWriteState
     {
         public bool WroteAllMetadata => WroteTitle && WroteType && WroteOpenStatus && WroteTheme && WroteLabels;
 
-        public bool WroteLabels { get; set; }
+        public bool WroteLabels
+        {
+            get; set;
+        }
 
-        public bool WroteOpenStatus { get; set; }
+        public bool WroteOpenStatus
+        {
+            get; set;
+        }
 
-        public bool WroteOrder { get; set; }
+        public bool WroteOrder
+        {
+            get; set;
+        }
 
-        public bool WroteScoring { get; set; }
+        public bool WroteScoring
+        {
+            get; set;
+        }
 
-        public bool WroteStatus { get; set; }
+        public bool WroteStatus
+        {
+            get; set;
+        }
 
-        public bool WroteTheme { get; set; }
+        public bool WroteTheme
+        {
+            get; set;
+        }
 
-        public bool WroteTitle { get; set; }
+        public bool WroteTitle
+        {
+            get; set;
+        }
 
-        public bool WroteType { get; set; }
+        public bool WroteType
+        {
+            get; set;
+        }
     }
 
     private sealed class IntakeCandidate(
@@ -1312,9 +1375,15 @@ internal sealed class GitHubRoadmapIntake
 
         public bool IsOpen { get; } = isOpen;
 
-        public int? Order { get; set; }
+        public int? Order
+        {
+            get; set;
+        }
 
-        public string? Parent { get; set; }
+        public string? Parent
+        {
+            get; set;
+        }
 
         public decimal Score => Scoring.Score;
 

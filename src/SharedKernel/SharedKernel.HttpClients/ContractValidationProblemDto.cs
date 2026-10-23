@@ -8,7 +8,10 @@ public sealed record ContractValidationProblemDto
     /// <summary>
     /// Gets validation errors keyed by field name, or by an empty string for a model-level error.
     /// </summary>
-    public Dictionary<string, string[]>? Errors { get; init; }
+    public Dictionary<string, string[]>? Errors
+    {
+        get; init;
+    }
 
     internal bool HasWellFormedErrors()
     {

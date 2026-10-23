@@ -10,5 +10,8 @@ public interface IDuplexStreamQuery<TRequestItem, TResponse> : IStreamQuery<TRes
     /// <summary>
     /// Gets the streamed input items consumed by the query.
     /// </summary>
-    IAsyncEnumerable<TRequestItem> Items { get; }
+    IAsyncEnumerable<TRequestItem> Items
+    {
+        get;
+    }
 }

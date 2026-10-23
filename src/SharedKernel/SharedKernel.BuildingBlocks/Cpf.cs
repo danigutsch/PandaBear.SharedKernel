@@ -8,7 +8,10 @@ public sealed class Cpf : ValueObject
     private Cpf(string value) => Value = value;
 
     /// <summary>Gets the sensitive, eleven-digit value. Do not log or expose it without authorization.</summary>
-    public string Value { get; }
+    public string Value
+    {
+        get;
+    }
 
     /// <summary>Creates a CPF from eleven ASCII digits without display punctuation.</summary>
     /// <param name="value">The canonical candidate.</param>

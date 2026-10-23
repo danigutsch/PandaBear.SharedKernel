@@ -34,43 +34,67 @@ public sealed class BrandingSettings
     /// <summary>
     /// Gets the display brand name.
     /// </summary>
-    public string BrandName { get; }
+    public string BrandName
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the normalized primary CSS color.
     /// </summary>
-    public string PrimaryColor { get; }
+    public string PrimaryColor
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the normalized accent CSS color.
     /// </summary>
-    public string AccentColor { get; }
+    public string AccentColor
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the normalized background CSS color.
     /// </summary>
-    public string BackgroundColor { get; }
+    public string BackgroundColor
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the normalized text CSS color.
     /// </summary>
-    public string TextColor { get; }
+    public string TextColor
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the canonical heading font family.
     /// </summary>
-    public string HeadingFontFamily { get; }
+    public string HeadingFontFamily
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the canonical body font family.
     /// </summary>
-    public string BodyFontFamily { get; }
+    public string BodyFontFamily
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the optional sanitized logo URI.
     /// </summary>
     [SuppressMessage("Design", "CA1056:URI-like properties should not be strings", Justification = "Branding settings support root-relative paths and absolute HTTPS URIs.")]
-    public string? LogoUri { get; }
+    public string? LogoUri
+    {
+        get;
+    }
 
     /// <summary>
     /// Creates validated branding settings from a request.

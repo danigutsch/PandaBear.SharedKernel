@@ -15,25 +15,40 @@ public sealed class UploadOperationState
     private bool _uploadStartedAnnounced;
 
     /// <summary>Gets the identifier of the latest begun operation; resetting state does not rewind this identifier.</summary>
-    public long OperationId { get; private set; }
+    public long OperationId
+    {
+        get; private set;
+    }
 
     /// <summary>Gets the current lifecycle status, initially <see cref="UploadOperationStatus.None" />.</summary>
-    public UploadOperationStatus Status { get; private set; }
+    public UploadOperationStatus Status
+    {
+        get; private set;
+    }
 
     /// <summary>Gets the current caller-supplied display file name, or an empty string after reset.</summary>
     public string FileName { get; private set; } = string.Empty;
 
     /// <summary>Gets cumulative file bytes reported as written to the HTTP transport.</summary>
-    public long BytesTransferred { get; private set; }
+    public long BytesTransferred
+    {
+        get; private set;
+    }
 
     /// <summary>Gets the declared positive file length for the current operation, or zero after reset.</summary>
-    public long TotalBytes { get; private set; }
+    public long TotalBytes
+    {
+        get; private set;
+    }
 
     /// <summary>Gets the current English status announcement, with upload percentages announced in ten-percent steps.</summary>
     public string Announcement { get; private set; } = string.Empty;
 
     /// <summary>Gets the caller-supplied failure message, or <see langword="null" /> before failure or after reset.</summary>
-    public string? FailureMessage { get; private set; }
+    public string? FailureMessage
+    {
+        get; private set;
+    }
 
     /// <summary>Gets whether the operation is queued, retrying, uploading, or awaiting server processing.</summary>
     public bool IsActive => Status is UploadOperationStatus.Queued

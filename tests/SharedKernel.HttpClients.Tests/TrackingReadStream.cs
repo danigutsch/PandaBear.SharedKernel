@@ -4,11 +4,20 @@ internal sealed class TrackingReadStream(byte[] content) : Stream
 {
     private readonly MemoryStream _inner = new(content, writable: false);
 
-    public long BytesRead { get; private set; }
+    public long BytesRead
+    {
+        get; private set;
+    }
 
-    public bool IsDisposed { get; private set; }
+    public bool IsDisposed
+    {
+        get; private set;
+    }
 
-    public int ReadCount { get; private set; }
+    public int ReadCount
+    {
+        get; private set;
+    }
 
     public override bool CanRead => true;
 

@@ -17,7 +17,10 @@ public class AnalyzerPerformanceBenchmarks
     /// Gets or sets the number of request/handler pairs emitted into the synthetic project.
     /// </summary>
     [Params(10, 100, 1000, 5000)]
-    public int RequestCount { get; set; }
+    public int RequestCount
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets or sets whether the source is clean or intentionally diagnostic-heavy.
@@ -29,13 +32,19 @@ public class AnalyzerPerformanceBenchmarks
     /// Gets or sets whether strict architecture rules are enabled.
     /// </summary>
     [Params(false, true)]
-    public bool StrictArchitectureRules { get; set; }
+    public bool StrictArchitectureRules
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Gets or sets whether cancellation analysis is enabled.
     /// </summary>
     [Params(false, true)]
-    public bool CancellationScan { get; set; }
+    public bool CancellationScan
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Runs the analyzer against the current synthetic project and returns the diagnostic count.

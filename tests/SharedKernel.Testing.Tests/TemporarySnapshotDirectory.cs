@@ -14,9 +14,15 @@ internal sealed class TemporarySnapshotDirectory : IDisposable
         Directory.CreateDirectory(GeneratedDirectory);
     }
 
-    private string CanonicalDirectory { get; }
+    private string CanonicalDirectory
+    {
+        get;
+    }
 
-    private string GeneratedDirectory { get; }
+    private string GeneratedDirectory
+    {
+        get;
+    }
 
     public static TemporarySnapshotDirectory Create()
     {

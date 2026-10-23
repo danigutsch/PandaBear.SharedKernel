@@ -8,7 +8,10 @@ internal static class PackageConsumptionCommand
     public static async Task Run(string root, string feed, string version, bool aot, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var packages = Directory.GetFiles(feed, "*.nupkg");
-        if (packages.Length == 0) { throw new ArgumentException("Candidate feed contains no packages."); }
+        if (packages.Length == 0)
+        {
+            throw new ArgumentException("Candidate feed contains no packages.");
+        }
         var packageIds = SharedKernelLocalFeed.ReadPackageIds(packages, version);
         var external = XDocument.Load(Path.Combine(root, "Directory.Packages.props"))
             .Descendants("PackageVersion").ToDictionary(x => (string)x.Attribute("Include")!, x => (string)x.Attribute("Version")!, StringComparer.Ordinal);

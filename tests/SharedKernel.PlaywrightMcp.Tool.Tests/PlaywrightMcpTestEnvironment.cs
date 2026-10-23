@@ -70,6 +70,10 @@ internal sealed class PlaywrightMcpTestEnvironment
 
         await forward.WriteAsync(result.StandardOutput);
         await forward.WriteAsync(result.StandardError);
-        return result with { StandardOutput = string.Empty, StandardError = string.Empty };
+        return result with
+        {
+            StandardOutput = string.Empty,
+            StandardError = string.Empty
+        };
     }
 }

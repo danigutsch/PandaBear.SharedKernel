@@ -14,12 +14,18 @@ public sealed class ConcurrentAspireTestApplications : IAsyncDisposable
     /// <summary>
     /// Gets the first started application.
     /// </summary>
-    public AspireTestApplication First { get; }
+    public AspireTestApplication First
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the second started application.
     /// </summary>
-    public AspireTestApplication Second { get; }
+    public AspireTestApplication Second
+    {
+        get;
+    }
 
     /// <summary>
     /// Starts two AppHost instances concurrently.

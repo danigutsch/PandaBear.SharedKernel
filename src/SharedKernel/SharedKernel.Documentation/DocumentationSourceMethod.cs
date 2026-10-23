@@ -6,5 +6,8 @@ internal sealed class DocumentationSourceMethod
 
     public string MethodName { get; set; } = string.Empty;
 
-    public int ParameterCount { get; set; }
+    public int ParameterCount
+    {
+        get; set;
+    }
 }

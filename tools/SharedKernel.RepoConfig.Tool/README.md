@@ -101,3 +101,9 @@ the options of each command.
   fails and leaves only unreferenced Git objects.
 - The `publish-result` preview prints no file contents.
 - Output escapes control characters from roadmap and GitHub data.
+
+## Security commands
+
+`security baseline --root <path>` verifies the configured repository document contracts.
+`security scan --root <path> --output <directory>` also scans current source with Gitleaks.
+See the [security baseline](../../docs/security-baseline.md) for configuration and exit codes.

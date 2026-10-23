@@ -46,7 +46,10 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         bool writtenWhilePending = File.Exists(output);
         var pending = DecisionsFile.Read(decisionsPath);
         var group = pending.Groups.ShouldHaveSingleItem();
-        DecisionsFile.Write(decisionsPath, pending with { Groups = [group with { Choices = [FieldChoice.Member(FieldPaths.LoginPassword, CliInputs.BitwardenKey)] }] });
+        DecisionsFile.Write(decisionsPath, pending with
+        {
+            Groups = [group with { Choices = [FieldChoice.Member(FieldPaths.LoginPassword, CliInputs.BitwardenKey)] }]
+        });
         var decidedRun = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken);
 
         pendingRun.ExitCode.ShouldBe(2);
@@ -83,7 +86,10 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         var pending = DecisionsFile.Read(decisionsPath);
         var item = pending.Findings.ShouldHaveSingleItem();
         var choice = item.Choices.ShouldHaveSingleItem();
-        DecisionsFile.Write(decisionsPath, pending with { Findings = [item with { Choices = [choice with { Decision = FindingDecision.Accepted }] }] });
+        DecisionsFile.Write(decisionsPath, pending with
+        {
+            Findings = [item with { Choices = [choice with { Decision = FindingDecision.Accepted }] }]
+        });
         var decidedRun = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken);
 
         pendingRun.ExitCode.ShouldBe(2);

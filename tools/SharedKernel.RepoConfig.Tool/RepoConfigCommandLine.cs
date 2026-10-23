@@ -50,6 +50,7 @@ internal static class RepoConfigCommandLine
             CreateAutomationCommand(environment, root),
             CreateVerifyTextEncodingCommand(environment, root),
             CreateVerifyPodmanDnsCommand(environment),
+            CreateSecurityCommand(environment, root),
         };
     }
 
@@ -106,9 +107,16 @@ internal static class RepoConfigCommandLine
     private static Command CreateSetCommand(RepoConfigToolEnvironment environment, Option<string> root)
     {
         string[] keys = [RepoConfigSetter.GitHubRepositoryKey];
-        Argument<string> key = new("key") { Description = $"Configuration key: {string.Join(", ", keys)}.", HelpName = "key" };
+        Argument<string> key = new("key")
+        {
+            Description = $"Configuration key: {string.Join(", ", keys)}.",
+            HelpName = "key"
+        };
         key.AcceptOnlyFromAmong(keys);
-        Argument<string> value = new("value") { Description = "Value to store, such as owner/repository." };
+        Argument<string> value = new("value")
+        {
+            Description = "Value to store, such as owner/repository."
+        };
         Command command = new("set", "Set a roadmap configuration value.") { key, value, root };
         SetGuardedAction(command, (parseResult, output, _, _) => Task.FromResult(RepoConfigToolApplication.Set(
             ResolveRoot(parseResult, root, environment),
@@ -120,14 +128,21 @@ internal static class RepoConfigCommandLine
 
     private static Command CreateGetCommand(RepoConfigToolEnvironment environment, Option<string> root)
     {
-        Argument<string> query = new("query") { Description = $"One of: {string.Join(", ", GetQueries)}.", HelpName = "query" };
+        Argument<string> query = new("query")
+        {
+            Description = $"One of: {string.Join(", ", GetQueries)}.",
+            HelpName = "query"
+        };
         query.AcceptOnlyFromAmong(GetQueries);
         Argument<string?> value = new("value")
         {
             Description = "The item ID for blockers-of, the tag for by-tag, or the label for by-label.",
             Arity = ArgumentArity.ZeroOrOne,
         };
-        Option<string> type = new("--type") { Description = "Only list items of this roadmap type." };
+        Option<string> type = new("--type")
+        {
+            Description = "Only list items of this roadmap type."
+        };
         Option<int> limit = new("--limit")
         {
             Description = "Maximum number of items to list.",
@@ -148,7 +163,10 @@ internal static class RepoConfigCommandLine
 
     private static Command CreateGitHubCommand(RepoConfigToolEnvironment environment, Option<string> root)
     {
-        Option<bool> force = new("--force") { Description = "Write the changes instead of previewing them. Validation still applies." };
+        Option<bool> force = new("--force")
+        {
+            Description = "Write the changes instead of previewing them. Validation still applies."
+        };
 
         Command sync = new("sync", "Project roadmap items to GitHub issues and Projects. Previews unless --force is given.") { force, root };
         SetGuardedAction(sync, (parseResult, output, _, ct) => RepoConfigToolApplication.SyncGitHub(
@@ -205,7 +223,10 @@ internal static class RepoConfigCommandLine
 
     private static Command CreatePublishResultCommand(RepoConfigToolEnvironment environment, Option<string> root)
     {
-        Option<bool> force = new("--force") { Description = "Publish the pull request instead of previewing it. Validation still applies." };
+        Option<bool> force = new("--force")
+        {
+            Description = "Publish the pull request instead of previewing it. Validation still applies."
+        };
         Command command = new("publish-result", "Publish the sealed result as a draft pull request. Previews unless --force is given.") { force, root };
         SetGuardedAction(command, (parseResult, output, _, ct) => RepoConfigToolApplication.PublishAutomationResult(
             CreateAutomationService(parseResult, root, environment),
@@ -246,6 +267,34 @@ internal static class RepoConfigCommandLine
             error,
             ct));
         return command;
+    }
+
+    private static Command CreateSecurityCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Command baseline = new("baseline", "Verify repository security document contracts.") { root };
+        SetGuardedAction(baseline, (parseResult, output, error, ct) => SecurityCommand.Run(
+            ResolveRoot(parseResult, root, environment), null, output, error, ct));
+        Option<string> destination = new("--output")
+        {
+            Description = "Repository-relative or absolute report directory. Existing reports are preserved.",
+            HelpName = "directory",
+            Required = true,
+            CustomParser = result =>
+            {
+                var path = result.Tokens.Count == 1 ? result.Tokens[0].Value : null;
+                if (string.IsNullOrWhiteSpace(path) || path.Contains('\0', StringComparison.Ordinal))
+                {
+                    result.AddError("--output requires a report directory path.");
+                    return null;
+                }
+
+                return path;
+            },
+        };
+        Command scan = new("scan", "Verify the baseline and scan current source with the pinned Gitleaks executable.") { root, destination };
+        SetGuardedAction(scan, (parseResult, output, error, ct) => SecurityCommand.Run(
+            ResolveRoot(parseResult, root, environment), parseResult.GetRequiredValue(destination), output, error, ct));
+        return new Command("security", "Verify security document contracts and scan current source.") { baseline, scan };
     }
 
     private static void SetGuardedAction(Command command, Func<ParseResult, TextWriter, TextWriter, CancellationToken, Task<int>> action) =>

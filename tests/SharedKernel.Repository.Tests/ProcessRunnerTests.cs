@@ -55,12 +55,17 @@ public sealed class ProcessRunnerTests
     {
         // Arrange
         using var directory = new TemporaryDirectory();
+        var processIdPath = Path.Combine(directory.Path, "child.pid");
+        var bashPath = processIdPath.Replace("'", "'\\''", StringComparison.Ordinal);
+        var powerShellPath = processIdPath.Replace("'", "''", StringComparison.Ordinal);
         var (fileName, arguments) = TestShell.Command(
-            "echo $$ > child.pid; exec sleep 60",
-            "Set-Content -LiteralPath child.pid -Value $PID; Start-Sleep -Seconds 60");
+            $"echo $$ > '{bashPath}'; exec sleep 60",
+            $"Set-Content -LiteralPath '{powerShellPath}' -Value $PID; Start-Sleep -Seconds 60");
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
-        var running = ProcessRunner.Run(fileName, arguments, directory.Path, cancellation.Token);
-        var processId = await ChildProcessId.Read(Path.Combine(directory.Path, "child.pid"), running, TestContext.Current.CancellationToken);
+        // Waiting for the shell does not guarantee that every Windows descendant has exited.
+        // Keep its working directory outside the fixture; the PID file still proves the child started.
+        var running = ProcessRunner.Run(fileName, arguments, Path.GetTempPath(), cancellation.Token);
+        var processId = await ChildProcessId.Read(processIdPath, running, TestContext.Current.CancellationToken);
 
         // Act
         await cancellation.CancelAsync();

@@ -12,7 +12,10 @@ internal sealed class TemporaryCiTestRepository : IDisposable
         RootPath = _directory.Path;
     }
 
-    public string RootPath { get; }
+    public string RootPath
+    {
+        get;
+    }
 
     public void AddProject(string relativePath, params string[] projectReferences)
     {

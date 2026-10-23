@@ -14,12 +14,18 @@ public readonly record struct ExpectedStreamRevision
     /// <summary>
     /// Gets the expected revision, or <see langword="null" /> when any revision is accepted.
     /// </summary>
-    public long? Value { get; }
+    public long? Value
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets a value indicating whether the append expects an empty stream.
     /// </summary>
-    public bool RequiresEmptyStream { get; }
+    public bool RequiresEmptyStream
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets an expectation that accepts any current stream revision.

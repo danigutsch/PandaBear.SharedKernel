@@ -31,10 +31,16 @@ public sealed class SitemapEntry
     /// <summary>
     /// Gets the absolute URL for the sitemap entry.
     /// </summary>
-    public Uri Location { get; }
+    public Uri Location
+    {
+        get;
+    }
 
     /// <summary>
     /// Gets the optional last modification timestamp.
     /// </summary>
-    public DateTimeOffset? LastModified { get; }
+    public DateTimeOffset? LastModified
+    {
+        get;
+    }
 }

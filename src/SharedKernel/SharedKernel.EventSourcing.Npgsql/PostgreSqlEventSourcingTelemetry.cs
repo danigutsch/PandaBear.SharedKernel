@@ -137,32 +137,50 @@ public static class PostgreSqlEventSourcingTelemetry
 
     internal static Meter Meter { get; } = new(Name);
 
-    internal static Histogram<double> AppendDuration { get; } = Meter.CreateHistogram<double>(
+    internal static Histogram<double> AppendDuration
+    {
+        get;
+    } = Meter.CreateHistogram<double>(
         MetricAppendDuration,
         unit: "ms",
         description: "Duration of PostgreSQL event stream append operations.");
 
-    internal static Histogram<double> LoadDuration { get; } = Meter.CreateHistogram<double>(
+    internal static Histogram<double> LoadDuration
+    {
+        get;
+    } = Meter.CreateHistogram<double>(
         MetricLoadDuration,
         unit: "ms",
         description: "Duration of PostgreSQL event stream load operations.");
 
-    internal static Histogram<double> CheckpointDuration { get; } = Meter.CreateHistogram<double>(
+    internal static Histogram<double> CheckpointDuration
+    {
+        get;
+    } = Meter.CreateHistogram<double>(
         MetricCheckpointDuration,
         unit: "ms",
         description: "Duration of PostgreSQL projection checkpoint operations.");
 
-    internal static Counter<long> EventsAppended { get; } = Meter.CreateCounter<long>(
+    internal static Counter<long> EventsAppended
+    {
+        get;
+    } = Meter.CreateCounter<long>(
         MetricEventsAppended,
         unit: "{event}",
         description: "Number of events appended to PostgreSQL event streams.");
 
-    internal static Counter<long> EventsLoaded { get; } = Meter.CreateCounter<long>(
+    internal static Counter<long> EventsLoaded
+    {
+        get;
+    } = Meter.CreateCounter<long>(
         MetricEventsLoaded,
         unit: "{event}",
         description: "Number of events loaded from PostgreSQL event streams.");
 
-    internal static Counter<long> AppendConflicts { get; } = Meter.CreateCounter<long>(
+    internal static Counter<long> AppendConflicts
+    {
+        get;
+    } = Meter.CreateCounter<long>(
         MetricAppendConflicts,
         unit: "{conflict}",
         description: "Number of PostgreSQL event stream append conflicts.");

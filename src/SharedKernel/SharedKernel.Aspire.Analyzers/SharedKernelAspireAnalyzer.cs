@@ -27,7 +27,10 @@ public sealed class SharedKernelAspireAnalyzer : DiagnosticAnalyzer
         description: "Repository Aspire resources must pin both a human-readable image tag and a verified SHA-256 digest. Do not commit placeholder digests or include the sha256: prefix in WithImageSHA256.");
 
     /// <inheritdoc />
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+    {
+        get;
+    } =
         ImmutableArray.Create(ImageTagAndDigestRule);
 
     /// <inheritdoc />

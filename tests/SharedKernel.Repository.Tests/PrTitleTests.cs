@@ -14,7 +14,14 @@ public sealed class PrTitleTests
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         using var scope = new RepositoryTestScope();
-        await File.WriteAllTextAsync(Path.Combine(scope.Root, "event.json"), JsonSerializer.Serialize(new { pull_request = new { title, body } }), ct);
+        await File.WriteAllTextAsync(Path.Combine(scope.Root, "event.json"), JsonSerializer.Serialize(new
+        {
+            pull_request = new
+            {
+                title,
+                body
+            }
+        }), ct);
         var processes = new ProcessLog();
 
         // Act
@@ -33,7 +40,14 @@ public sealed class PrTitleTests
         var ct = TestContext.Current.CancellationToken;
         using var scope = new RepositoryTestScope();
         var eventPath = Path.Combine(scope.Root, "event.json");
-        await File.WriteAllTextAsync(eventPath, JsonSerializer.Serialize(new { pull_request = new { title = "Update contract", body = "" } }), ct);
+        await File.WriteAllTextAsync(eventPath, JsonSerializer.Serialize(new
+        {
+            pull_request = new
+            {
+                title = "Update contract",
+                body = ""
+            }
+        }), ct);
         var processes = new ProcessLog();
 
         // Act

@@ -118,7 +118,10 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
                     continue;
                 }
 
-                attachments.Add(attachment with { ContentHash = content.Hash });
+                attachments.Add(attachment with
+                {
+                    ContentHash = content.Hash
+                });
                 if (content.Text is not { } text)
                 {
                     continue;
@@ -132,7 +135,13 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
 
             SourceItem scannedSource = attachments.SequenceEqual(source.Item.Attachments)
                 ? source
-                : source with { Item = source.Item with { Attachments = attachments } };
+                : source with
+                {
+                    Item = source.Item with
+                    {
+                        Attachments = attachments
+                    }
+                };
             items.Add(new ScannedItem(scannedSource, findings, texts));
         }
 
@@ -386,7 +395,10 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         string key = OriginKeys.MakeUnique(prefix + sourceId + "/" + findingId, takenKeys);
         VaultItem adopted = created with
         {
-            Origin = origin with { OriginalId = key[prefix.Length..] },
+            Origin = origin with
+            {
+                OriginalId = key[prefix.Length..]
+            },
             CreationDate = created.CreationDate ?? source.Item.CreationDate,
             RevisionDate = created.RevisionDate ?? source.Item.RevisionDate,
         };

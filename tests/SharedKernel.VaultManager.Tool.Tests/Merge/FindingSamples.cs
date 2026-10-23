@@ -18,5 +18,8 @@ internal static class FindingSamples
     };
 
     public static MergeDecisions Decide(string originKey, SecretFinding finding, FindingDecision decision) =>
-        new([], MatchOverrides.None) { Findings = [new ItemFindingDecisions(originKey, [new FindingChoice(finding.Id, decision)])] };
+        new([], MatchOverrides.None)
+        {
+            Findings = [new ItemFindingDecisions(originKey, [new FindingChoice(finding.Id, decision)])]
+        };
 }

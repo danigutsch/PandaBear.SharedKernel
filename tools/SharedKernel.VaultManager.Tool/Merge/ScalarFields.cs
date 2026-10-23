@@ -11,7 +11,10 @@ internal static class ScalarFields
     /// and authenticator keys by their <see cref="ItemNormalizer"/> keys, notes and keys by line-ending-normalized text,
     /// and other values trimmed.
     /// </summary>
-    public static IReadOnlyList<ScalarField> All { get; } =
+    public static IReadOnlyList<ScalarField> All
+    {
+        get;
+    } =
     [
         new(FieldPaths.Notes, "Notes", null, item => item.Notes, (item, value) => item with { Notes = value }, ItemNormalizer.Notes),
         Login(FieldPaths.LoginUsername, "Username", login => login.Username, (login, value) => login with { Username = value }, ItemNormalizer.Username),

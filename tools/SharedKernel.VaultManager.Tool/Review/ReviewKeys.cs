@@ -78,7 +78,10 @@ internal static class ReviewKeys
     public static ReviewKey RevealFinding { get; } = new(Key.V, ReviewArea.Findings, "Reveal or mask the value of the finding");
 
     /// <summary>Every key, in the order the help lists them.</summary>
-    public static IReadOnlyList<ReviewKey> All { get; } =
+    public static IReadOnlyList<ReviewKey> All
+    {
+        get;
+    } =
     [
         Help, Groups, Fields, Findings, NextFilter, Search, Save, Write, Quit, Escape,
         OpenGroup, Mark, Link,

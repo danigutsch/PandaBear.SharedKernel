@@ -41,7 +41,10 @@ internal static class CandidateStagingCommand
         {
             ct.ThrowIfCancellationRequested();
             var target = Path.Combine(destination, name);
-            if (File.Exists(target)) { continue; }
+            if (File.Exists(target))
+            {
+                continue;
+            }
             var temporary = target + "." + Guid.NewGuid().ToString("N") + ".tmp";
             try
             {
@@ -61,7 +64,10 @@ internal static class CandidateStagingCommand
             }
             finally
             {
-                if (File.Exists(temporary)) { File.Delete(temporary); }
+                if (File.Exists(temporary))
+                {
+                    File.Delete(temporary);
+                }
             }
         }
 

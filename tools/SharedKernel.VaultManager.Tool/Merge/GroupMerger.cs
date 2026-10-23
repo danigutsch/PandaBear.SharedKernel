@@ -44,7 +44,10 @@ internal sealed class GroupMerger
     public List<FieldResolution> Resolutions { get; } = [];
 
     /// <summary>Conflicts resolved by the policy without a decision.</summary>
-    public int AutoResolved { get; private set; }
+    public int AutoResolved
+    {
+        get; private set;
+    }
 
     /// <summary>Merges the group.</summary>
     /// <returns>The merged item.</returns>
@@ -133,7 +136,10 @@ internal sealed class GroupMerger
         }
 
         Record(FieldPaths.Name, winner == primary ? ResolutionKind.Newest : ResolutionKind.Decision);
-        return result with { Name = winner.Name };
+        return result with
+        {
+            Name = winner.Name
+        };
     }
 
     private VaultItem MergeFolder(VaultItem result)
@@ -162,7 +168,10 @@ internal sealed class GroupMerger
         }
         else if (values.Count == 0)
         {
-            return result with { FolderPath = null };
+            return result with
+            {
+                FolderPath = null
+            };
         }
         else if (values.Count == 1)
         {
@@ -192,7 +201,10 @@ internal sealed class GroupMerger
         }
 
         Record(FieldPaths.Folder, resolution, always: resolution == ResolutionKind.Decision);
-        return result with { FolderPath = winner.FolderPath };
+        return result with
+        {
+            FolderPath = winner.FolderPath
+        };
     }
 
     private VaultItem MergeScalar(VaultItem result, ScalarField field)
@@ -336,7 +348,14 @@ internal sealed class GroupMerger
 
         if (result.Login is { } login)
         {
-            return result with { Login = login with { Uris = uris, Fido2Credentials = passkeys } };
+            return result with
+            {
+                Login = login with
+                {
+                    Uris = uris,
+                    Fido2Credentials = passkeys
+                }
+            };
         }
 
         foreach (var uri in uris)
@@ -373,7 +392,10 @@ internal sealed class GroupMerger
             notes.Append("--- Notes from ").Append(source).Append(" ---\n").Append(text);
         }
 
-        return result with { Notes = notes.ToString() };
+        return result with
+        {
+            Notes = notes.ToString()
+        };
     }
 
     private FieldChoice? Choose(string path) => decisions.Find(group.Key, path);

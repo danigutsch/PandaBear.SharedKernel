@@ -6,9 +6,15 @@ internal sealed class DisposableEventEnvelopePublisher : IEventEnvelopePublisher
 {
     private int disposeCount;
 
-    public Exception? Failure { get; init; }
+    public Exception? Failure
+    {
+        get; init;
+    }
 
-    public int Attempts { get; private set; }
+    public int Attempts
+    {
+        get; private set;
+    }
 
     public int DisposeCount => Volatile.Read(ref disposeCount);
 

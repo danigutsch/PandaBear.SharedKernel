@@ -8,7 +8,10 @@ internal sealed class TemporaryRepoConfigWorkspace : IDisposable
         Directory.CreateDirectory(RootPath);
     }
 
-    public string RootPath { get; }
+    public string RootPath
+    {
+        get;
+    }
 
     public bool FileExists(string relativePath) =>
         File.Exists(Path.Combine(RootPath, relativePath));

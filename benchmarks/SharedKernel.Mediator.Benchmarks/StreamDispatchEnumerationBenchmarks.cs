@@ -21,7 +21,10 @@ public class StreamDispatchEnumerationBenchmarks
     /// Gets or sets the number of stream items yielded by the synthetic source.
     /// </summary>
     [Params(0, 1, 10, 1000, 100000)]
-    public int ItemCount { get; set; }
+    public int ItemCount
+    {
+        get; set;
+    }
 
     /// <summary>
     /// Builds the synthetic benchmark assembly and captures the exported delegates.

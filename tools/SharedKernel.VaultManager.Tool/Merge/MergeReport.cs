@@ -8,22 +8,40 @@ namespace PandaBear.VaultManager.Tool.Merge;
 internal sealed record MergeReport
 {
     /// <summary>Groups with one member.</summary>
-    public int UniqueGroups { get; init; }
+    public int UniqueGroups
+    {
+        get; init;
+    }
 
     /// <summary>Groups whose members are equal after normalization.</summary>
-    public int IdenticalGroups { get; init; }
+    public int IdenticalGroups
+    {
+        get; init;
+    }
 
     /// <summary>Groups whose members differ.</summary>
-    public int DifferentGroups { get; init; }
+    public int DifferentGroups
+    {
+        get; init;
+    }
 
     /// <summary>Output items produced from groups with more than one member.</summary>
-    public int MergedItems { get; init; }
+    public int MergedItems
+    {
+        get; init;
+    }
 
     /// <summary>Conflicts the policy resolved without a decision.</summary>
-    public int AutoResolvedConflicts { get; init; }
+    public int AutoResolvedConflicts
+    {
+        get; init;
+    }
 
     /// <summary>Conflicts that need a decision.</summary>
-    public int UnresolvedConflicts { get; init; }
+    public int UnresolvedConflicts
+    {
+        get; init;
+    }
 
     /// <summary>Groups with changed fields.</summary>
     public IReadOnlyList<GroupReport> Groups { get; init; } = [];
