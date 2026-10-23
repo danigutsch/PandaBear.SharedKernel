@@ -278,9 +278,10 @@ internal static class SshKeyConverter
     {
         ECParameters parameters = ecdsa.ExportParameters(false);
 
-        // SSH names the curve, so a key with explicit curve parameters, which has no curve OID, is not converted.
+        // SSH names the curve, so a key with explicit curve parameters, which has no curve OID, is not converted. The OID
+        // is read null-safely because platforms differ in what they report for such keys.
         string? curve = parameters.Curve.IsNamed
-            ? parameters.Curve.Oid.Value switch
+            ? parameters.Curve.Oid?.Value switch
             {
                 "1.2.840.10045.3.1.7" => "nistp256",
                 "1.3.132.0.34" => "nistp384",

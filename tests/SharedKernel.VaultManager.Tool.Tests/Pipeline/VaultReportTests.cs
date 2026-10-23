@@ -101,4 +101,20 @@ public sealed class VaultReportTests : IDisposable
         report.ShouldNotContain("other-mail-password", StringComparison.Ordinal);
         report.ShouldNotContain("\r", StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void Report_lists_a_password_equal_to_the_item_name_or_user_name_only_as_easily_guessed()
+    {
+        string input = Write(directory, "bitwarden.json", BitwardenJson(
+            BitwardenLogin("bw-router", "Router-Admin-Panel", "admin", "Router-Admin-Panel", "http://192.168.1.1"),
+            BitwardenLogin("bw-printer", "Printer", "printer-admin-01", "printer-admin-01", "http://192.168.1.2")));
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+
+        var result = pipeline.Run(new PipelineRequest([input]));
+
+        string report = VaultReport.ToMarkdown(result);
+        report.ShouldContainInOrder("## Password health", "| Router-Admin-Panel | easily guessed |", "| Printer | easily guessed |");
+        report.ShouldNotContain("same as the", StringComparison.Ordinal);
+        result.PasswordHealth.Issues.ShouldAllSatisfy(issue => issue.ToString().ShouldNotContain("Equals", StringComparison.Ordinal));
+    }
 }

@@ -12,7 +12,9 @@ namespace PandaBear.VaultManager.Tool.Pipeline;
 /// <remarks>
 /// Bitwarden holds one key per item, so only the first PEM block of the stored private key text is converted. Any other
 /// text stored with it, such as a second key or a host name, moves to the hidden field <see cref="OtherTextField"/>,
-/// where secret detection finds further keys.
+/// where secret detection finds further keys. That field keeps the content of the text before and after the block, not
+/// its exact layout: CR LF line breaks become line feeds, whitespace at the start and end of each part is dropped, and
+/// when both parts hold text they are joined by one line feed.
 /// </remarks>
 internal static class SshKeyNormalizer
 {

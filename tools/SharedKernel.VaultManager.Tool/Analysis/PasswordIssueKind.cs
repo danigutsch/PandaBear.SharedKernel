@@ -12,9 +12,9 @@ internal enum PasswordIssueKind
     /// <summary>The password uses only one of lowercase, uppercase, digits, or symbols.</summary>
     SingleCharacterClass = 2,
 
-    /// <summary>The password equals the user name.</summary>
-    EqualsUsername = 3,
-
-    /// <summary>The password equals the item name.</summary>
-    EqualsItemName = 4,
+    /// <summary>
+    /// The password equals the item's user name or name, ignoring case and surrounding whitespace. The issue does not say
+    /// which one, because a report that names the field also discloses the password.
+    /// </summary>
+    EasilyGuessed = 3,
 }

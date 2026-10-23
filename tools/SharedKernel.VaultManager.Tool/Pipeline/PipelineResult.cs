@@ -33,7 +33,10 @@ internal sealed record PipelineResult
     /// <summary>Reused, short, or easily guessed passwords of the merged vault.</summary>
     public required PasswordHealthReport PasswordHealth { get; init; }
 
-    /// <summary>Attachments the user uploads after the import.</summary>
+    /// <summary>
+    /// Attachments the user uploads after the import: every attachment of every item, except that a file found on several
+    /// merged items with the same name and content is listed once, from the newest item.
+    /// </summary>
     public required IReadOnlyList<ManualAttachment> ManualAttachments { get; init; }
 
     /// <summary>Problems that make Bitwarden or Vaultwarden reject the whole import. Any of them blocks writing.</summary>

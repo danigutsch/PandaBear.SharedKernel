@@ -4,7 +4,9 @@ using PandaBear.VaultManager.Tool.Secrets;
 namespace PandaBear.VaultManager.Tool.Pipeline;
 
 /// <summary>Input item with its secret findings.</summary>
-/// <param name="Source">Item as loaded.</param>
+/// <param name="Source">
+/// Item as loaded, with <see cref="Model.AttachmentRef.ContentHash"/> set on each attachment read from the input archive.
+/// </param>
 /// <param name="Findings">Findings in the item and in its text attachments stored in the input archive.</param>
 /// <param name="AttachmentTexts">
 /// Text of each scanned attachment by its <c>attachment:</c> field path. Placement reads finding values from it.

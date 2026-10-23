@@ -72,16 +72,6 @@ internal static class SecretText
         return value.IndexOfAny(" \t\r\n") >= 0;
     }
 
-    /// <summary>1-based line number of a character offset.</summary>
-    /// <param name="text">Text.</param>
-    /// <param name="offset">Character offset.</param>
-    /// <returns>Line number.</returns>
-    public static int LineOf(string text, int offset)
-    {
-        ArgumentNullException.ThrowIfNull(text);
-        return text.AsSpan(0, Math.Min(offset, text.Length)).Count('\n') + 1;
-    }
-
     /// <summary>Splits text into lines with their start offsets, without line terminators.</summary>
     /// <param name="text">Text.</param>
     /// <returns>Lines in order.</returns>

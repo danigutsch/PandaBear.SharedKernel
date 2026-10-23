@@ -12,8 +12,9 @@ internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
 
     /// <summary>
     /// Reports reuse of one password on items with different normalized hosts, passwords shorter than
-    /// <see cref="MinimumLength"/>, passwords of a single character class, and passwords equal to the user name or item
-    /// name. Reuse is found by grouping passwords in memory; nothing is persisted.
+    /// <see cref="MinimumLength"/>, passwords of a single character class, and easily guessed passwords: those equal to the
+    /// user name or item name, reported once per item without saying which. Reuse is found by grouping passwords in
+    /// memory; nothing is persisted.
     /// </summary>
     /// <param name="export">Vault to analyze.</param>
     /// <returns>The report.</returns>
@@ -46,14 +47,11 @@ internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
                 issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.SingleCharacterClass, []));
             }
 
-            if (string.Equals(password.Trim(), item.Login!.Username?.Trim(), StringComparison.OrdinalIgnoreCase))
+            string trimmed = password.Trim();
+            if (string.Equals(trimmed, item.Login!.Username?.Trim(), StringComparison.OrdinalIgnoreCase)
+                || string.Equals(trimmed, item.Name.Trim(), StringComparison.OrdinalIgnoreCase))
             {
-                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.EqualsUsername, []));
-            }
-
-            if (string.Equals(password.Trim(), item.Name.Trim(), StringComparison.OrdinalIgnoreCase))
-            {
-                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.EqualsItemName, []));
+                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.EasilyGuessed, []));
             }
         }
 

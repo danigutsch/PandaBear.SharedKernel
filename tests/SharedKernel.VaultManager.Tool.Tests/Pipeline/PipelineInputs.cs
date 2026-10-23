@@ -79,14 +79,23 @@ internal static class PipelineInputs
         },
     };
 
-    public static JsonObject KeeperFileRecord(string uid, string title, string fileUid, string fileName) => new()
+    public static JsonObject KeeperFileRecord(string uid, string title, string fileUid, string fileName) =>
+        KeeperFileRecord(uid, title, (fileUid, fileName));
+
+    public static JsonObject KeeperFileRecord(string uid, string title, params (string FileUid, string FileName)[] files) => new()
     {
         ["uid"] = uid,
         ["title"] = title,
         ["$type"] = "file",
         ["last_modified"] = KeeperModified.ToUnixTimeSeconds(),
-        ["attachments"] = new JsonArray(new JsonObject { ["file_uid"] = fileUid, ["name"] = fileName }),
+        ["attachments"] = Attachments(files),
     };
+
+    public static JsonObject WithAttachments(JsonObject record, params (string FileUid, string FileName)[] files)
+    {
+        record["attachments"] = Attachments(files);
+        return record;
+    }
 
     public static string BitwardenJson(params JsonObject[] items) =>
         new JsonObject { ["encrypted"] = false, ["folders"] = new JsonArray(), ["items"] = new JsonArray([.. items]) }.ToJsonString();
@@ -119,6 +128,9 @@ internal static class PipelineInputs
         ["secureNote"] = new JsonObject { ["type"] = 0 },
         ["revisionDate"] = BitwardenRevision.ToString("O", CultureInfo.InvariantCulture),
     };
+
+    private static JsonArray Attachments((string FileUid, string FileName)[] files) =>
+        new([.. files.Select(file => new JsonObject { ["file_uid"] = file.FileUid, ["name"] = file.FileName })]);
 
     private static void SetIfPresent(JsonObject target, string name, string? value)
     {
