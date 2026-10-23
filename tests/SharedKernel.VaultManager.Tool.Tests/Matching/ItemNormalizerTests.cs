@@ -22,7 +22,11 @@ public sealed class ItemNormalizerTests
     [InlineData("1password://open", "1password")]
     public void Host_normalizes_web_addresses_and_keeps_other_schemes_whole(string value, string expected)
     {
-        ItemNormalizer.Host(value).ShouldBe(expected);
+        // Act
+        var host = ItemNormalizer.Host(value);
+
+        // Assert
+        host.ShouldBe(expected);
     }
 
     [Theory]
@@ -31,23 +35,35 @@ public sealed class ItemNormalizerTests
     [InlineData("https://")]
     public void Host_of_blank_address_is_null(string value)
     {
-        ItemNormalizer.Host(value).ShouldBeNull();
+        // Act
+        var host = ItemNormalizer.Host(value);
+
+        // Assert
+        host.ShouldBeNull();
     }
 
     [Fact]
     public void Username_title_and_notes_are_normalized()
     {
-        ItemNormalizer.Username("  Alice@Example.COM ").ShouldBe("alice@example.com");
-        ItemNormalizer.Title("  Home \t  WiFi\n").ShouldBe("home wifi");
-        ItemNormalizer.Notes("one\r\ntwo\rthree  \n\n").ShouldBe("one\ntwo\nthree");
+        // Act
+        var username = ItemNormalizer.Username("  Alice@Example.COM ");
+        var title = ItemNormalizer.Title("  Home \t  WiFi\n");
+        var notes = ItemNormalizer.Notes("one\r\ntwo\rthree  \n\n");
+
+        // Assert
+        username.ShouldBe("alice@example.com");
+        title.ShouldBe("home wifi");
+        notes.ShouldBe("one\ntwo\nthree");
     }
 
     [Fact]
     public void Title_equates_unicode_forms_and_drops_control_characters()
     {
+        // Act
         string decomposed = ItemNormalizer.Title("Café \u0007Wi\u0000Fi");
         string composed = ItemNormalizer.Title("Café WiFi");
 
+        // Assert
         decomposed.ShouldBe("café wifi");
         composed.ShouldBe("café wifi");
     }
@@ -59,7 +75,11 @@ public sealed class ItemNormalizerTests
     [InlineData("otpauth://totp/no-secret", "OTPAUTH://TOTP/NOSECRET")]
     public void Totp_comparison_key_uses_secret_and_ignores_formatting(string value, string expected)
     {
-        ItemNormalizer.Totp(value).ShouldBe(expected);
+        // Act
+        var key = ItemNormalizer.Totp(value);
+
+        // Assert
+        key.ShouldBe(expected);
     }
 
     [Theory]
@@ -68,9 +88,11 @@ public sealed class ItemNormalizerTests
     [InlineData("steam://jbsw y3dp ehpk 3pxp", "STEAM://JBSWY3DPEHPK3PXP")]
     public void Totp_keys_of_values_that_generate_the_same_codes_are_equal(string first, string second)
     {
+        // Act
         string firstKey = ItemNormalizer.Totp(first);
         string secondKey = ItemNormalizer.Totp(second);
 
+        // Assert
         firstKey.ShouldBe(secondKey);
     }
 
@@ -81,9 +103,11 @@ public sealed class ItemNormalizerTests
     [InlineData("steam://JBSWY3DPEHPK3PXP", "JBSWY3DPEHPK3PXP")]
     public void Totp_keys_differ_when_code_settings_differ(string first, string second)
     {
+        // Act
         string firstKey = ItemNormalizer.Totp(first);
         string secondKey = ItemNormalizer.Totp(second);
 
+        // Assert
         firstKey.ShouldNotBe(secondKey);
     }
 }
