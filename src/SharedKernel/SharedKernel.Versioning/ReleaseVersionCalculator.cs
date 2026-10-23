@@ -30,8 +30,8 @@ public static class ReleaseVersionCalculator
         var versionOutput = VersionCalculation.Calculate(parsedBaseVersion, messages, prerelease, input.SourceSha);
 
         // A prerelease tag, or the initial development version without tags, fixes the target version;
-        // later prereleases advance only the prerelease identifier.
-        if (prerelease is not null && (string.IsNullOrWhiteSpace(input.SourceTag) || parsedBaseVersion.Prerelease is not null))
+        // prereleases advance only the prerelease identifier and the stable release keeps that core.
+        if (string.IsNullOrWhiteSpace(input.SourceTag) || parsedBaseVersion.Prerelease is not null)
         {
             versionOutput = VersionOutput.Create(
                 parsedBaseVersion.StableCore with { Prerelease = prerelease },

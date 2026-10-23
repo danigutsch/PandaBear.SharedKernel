@@ -807,10 +807,15 @@ public static class VersioningToolTests
     }
 
     [Theory]
-    [InlineData("feat: add public capability", "minor")]
-    [InlineData("refactor(api)!: rename package", "major")]
-    [InlineData("fix: correct behavior", "patch")]
-    public static async Task Keeps_prerelease_tag_core_when_calculating_prerelease(string message, string expectedImpact)
+    [InlineData("feat: add public capability", "prerelease", "1.3.0-alpha.7", "minor")]
+    [InlineData("refactor(api)!: rename package", "prerelease", "1.3.0-alpha.7", "major")]
+    [InlineData("fix: correct behavior", "prerelease", "1.3.0-alpha.7", "patch")]
+    [InlineData("feat: add public capability", "stable", "1.3.0", "minor")]
+    public static async Task Keeps_prerelease_tag_core_when_calculating_release(
+        string message,
+        string versionKind,
+        string expectedVersion,
+        string expectedImpact)
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -827,7 +832,7 @@ public static class VersioningToolTests
             "--repo-root",
             repository.Root,
             "--version-kind",
-            "prerelease",
+            versionKind,
             "--run-number",
             "7",
             "--sha",
@@ -840,12 +845,14 @@ public static class VersioningToolTests
         // Assert
         exitCode.ShouldBe(0);
         var json = output.ToString();
-        json.ShouldContain("\"packageVersion\":\"1.3.0-alpha.7\"", StringComparison.Ordinal);
+        json.ShouldContain($"\"packageVersion\":\"{expectedVersion}\"", StringComparison.Ordinal);
         json.ShouldContain("\"releaseImpact\":\"" + expectedImpact + "\"", StringComparison.Ordinal);
     }
 
-    [Fact]
-    public static async Task Starts_prerelease_at_initial_development_version_without_tags()
+    [Theory]
+    [InlineData("prerelease", "0.1.0-alpha.7")]
+    [InlineData("stable", "0.1.0")]
+    public static async Task Starts_at_initial_development_version_without_tags(string versionKind, string expectedVersion)
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -859,7 +866,7 @@ public static class VersioningToolTests
             "--repo-root",
             repository.Root,
             "--version-kind",
-            "prerelease",
+            versionKind,
             "--run-number",
             "7",
             "--sha",
@@ -871,7 +878,7 @@ public static class VersioningToolTests
 
         // Assert
         exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("\"packageVersion\":\"0.1.0-alpha.7\"", StringComparison.Ordinal);
+        output.ToString().ShouldContain($"\"packageVersion\":\"{expectedVersion}\"", StringComparison.Ordinal);
     }
 
     [Fact]
