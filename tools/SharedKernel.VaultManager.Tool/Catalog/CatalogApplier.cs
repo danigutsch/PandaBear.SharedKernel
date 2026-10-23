@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Model;
 using PandaBear.VaultManager.Tool.Pipeline;
@@ -52,8 +53,10 @@ internal static class CatalogApplier
             IReadOnlyList<SecretFinding> findings = SecretScanner.Default.Scan(source.Item);
             VaultItem edited = Edit(source, entry, findings, decisions, itemProblems);
             problems.AddRange(itemProblems.Select(problem => $"{source.OriginKey} (\"{source.Item.Name}\"): {problem}"));
-            changed += Changed(source.Item, edited) ? 1 : 0;
+            // An item counts as changed when a line describes a change of it.
+            int lines = changes.Count;
             DescribeItem(changes.For($"{source.OriginKey} (\"{source.Item.Name}\"): "), source, entry, edited, findings, decisions);
+            changed += changes.Count > lines ? 1 : 0;
             items.Add(edited);
         }
 
@@ -94,6 +97,11 @@ internal static class CatalogApplier
         foreach (string folder in foldersBefore.Except(foldersAfter, StringComparer.Ordinal))
         {
             describe($"additional folder \"{folder}\" removed", false);
+        }
+
+        if (!foldersBefore.Intersect(foldersAfter, StringComparer.Ordinal).SequenceEqual(foldersAfter.Intersect(foldersBefore, StringComparer.Ordinal), StringComparer.Ordinal))
+        {
+            describe("additional folders reordered", false);
         }
 
         if (item.Favorite != edited.Favorite)
@@ -140,18 +148,18 @@ internal static class CatalogApplier
         {
             if (!paired[index])
             {
-                describe($"website address \"{before[index].Value}\" removed", true);
+                describe($"website address \"{Visible(before[index].Value)}\" removed", true);
             }
         }
 
         foreach (LoginUri uri in added)
         {
-            describe($"website address \"{uri.Value}\" added{Wider(uri.Match)}", false);
+            describe($"website address \"{Visible(uri.Value)}\" added{Wider(uri.Match)}", false);
         }
 
         foreach ((_, LoginUri now) in kept.Where(pair => before[pair.Before].Match != pair.After.Match))
         {
-            describe($"website address \"{now.Value}\" now matches by {now.Match?.ToString() ?? "the default"}{Wider(now.Match)}", false);
+            describe($"website address \"{Visible(now.Value)}\" now matches by {now.Match?.ToString() ?? "the default"}{Wider(now.Match)}", false);
         }
 
         if (!kept.Select(pair => pair.Before).SequenceEqual(kept.Select(pair => pair.Before).Order()))
@@ -168,6 +176,26 @@ internal static class CatalogApplier
         }
     }
 
+    // Letters of other scripts can look like Latin ones, so an address shows every character outside printable ASCII as
+    // \uXXXX: a look-alike host cannot pass for the one it replaces.
+    private static string Visible(string address)
+    {
+        var visible = new StringBuilder(address.Length);
+        foreach (char character in address)
+        {
+            if (character is >= ' ' and <= '~')
+            {
+                visible.Append(character);
+            }
+            else
+            {
+                visible.Append(CultureInfo.InvariantCulture, $"\\u{(int)character:X4}");
+            }
+        }
+
+        return visible.ToString();
+    }
+
     private static string Wider(UriMatch? match) =>
         match is UriMatch.RegularExpression or UriMatch.StartsWith ? " (offers the login on more sites)" : "";
 
@@ -180,12 +208,25 @@ internal static class CatalogApplier
             .Select(pair => (pair.Field.Name ?? "", pair.Field.Value ?? ""))];
         List<(string Name, string Value)> after = [.. shown.Select(field => (field.Name ?? "", field.Value ?? ""))];
         var remainingBefore = new List<(string Name, string Value)>();
+        var kept = new List<(string Name, string Value)>();
         foreach ((string Name, string Value) field in before)
         {
-            if (!after.Remove(field))
+            if (after.Remove(field))
+            {
+                kept.Add(field);
+            }
+            else
             {
                 remainingBefore.Add(field);
             }
+        }
+
+        // The fields kept as they are, in the order the catalog lists them.
+        var keptAfter = new List<(string Name, string Value)>(kept);
+        List<(string Name, string Value)> listed = [.. shown.Select(field => (field.Name ?? "", field.Value ?? ""))];
+        if (!listed.Where(field => keptAfter.Remove(field)).SequenceEqual(kept))
+        {
+            describe("text fields reordered", false);
         }
 
         foreach ((string name, _) in remainingBefore)
@@ -301,7 +342,11 @@ internal static class CatalogApplier
             }
             else if (next < shown.Count)
             {
-                fields.Add(ToField(shown[next++]));
+                // A field the catalog keeps as shown stays as read, so a missing name or value is not written as empty.
+                CatalogField placed = shown[next++];
+                bool unchanged = string.Equals(field.Name ?? string.Empty, placed.Name, StringComparison.Ordinal)
+                    && string.Equals(field.Value ?? string.Empty, placed.Value, StringComparison.Ordinal);
+                fields.Add(unchanged ? field : ToField(placed));
             }
         }
 
@@ -335,7 +380,8 @@ internal static class CatalogApplier
                 return (item.Notes, null);
             }
 
-            return (NonBlank(entry.Text), null);
+            // Notes the catalog keeps as shown stay as read, also when they hold only white space.
+            return (string.Equals(entry.Text, item.Notes, StringComparison.Ordinal) ? item.Notes : NonBlank(entry.Text), null);
         }
 
         if (entry.Text is not null)
@@ -364,7 +410,9 @@ internal static class CatalogApplier
                 }
                 else
                 {
-                    result.Add(new LoginUri(entry.Value.Trim(), entry.Match));
+                    // An address the catalog keeps as shown stays as read, white space included.
+                    result.Add(current.FirstOrDefault(uri => string.Equals(uri.Value, entry.Value, StringComparison.Ordinal) && uri.Match == entry.Match)
+                        ?? new LoginUri(entry.Value.Trim(), entry.Match));
                 }
 
                 continue;
@@ -395,14 +443,6 @@ internal static class CatalogApplier
 
     private static string? NonBlank(string? text) => string.IsNullOrWhiteSpace(text) ? null : text;
 
-    private static bool Changed(VaultItem before, VaultItem after) =>
-        !string.Equals(before.Name, after.Name, StringComparison.Ordinal)
-        || !string.Equals(before.FolderPath, after.FolderPath, StringComparison.Ordinal)
-        || before.Favorite != after.Favorite
-        || !string.Equals(before.Notes, after.Notes, StringComparison.Ordinal)
-        || !before.Fields.SequenceEqual(after.Fields)
-        || !(before.Login?.Uris ?? []).SequenceEqual(after.Login?.Uris ?? []);
-
     // Collects change lines and the removals among them.
     private sealed class Changes
     {
@@ -410,6 +450,8 @@ internal static class CatalogApplier
         private readonly List<string> removals = [];
 
         public IReadOnlyList<string> Lines => lines;
+
+        public int Count => lines.Count;
 
         public IReadOnlyList<string> RemovalLines => removals;
 

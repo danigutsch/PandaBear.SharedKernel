@@ -143,6 +143,20 @@ public sealed class ApplyPreviewCommandTests : IDisposable
     }
 
     [Fact]
+    public async Task Dry_run_shows_letters_outside_ascii_in_an_address_escaped()
+    {
+        var environment = new TestPrompts(ExportPassword).Environment();
+        (string vault, string catalog, string decisions) = await SharedCatalog(directory, environment, TestContext.Current.CancellationToken);
+        await EditItem(catalog, item => item["uris"]!.AsArray().Add(new JsonObject { ["value"] = "https://p\u0430ypal.com" }), TestContext.Current.CancellationToken);
+
+        var run = await CommandLineRun.Invoke(environment, ["apply", vault, "--catalog", catalog, "--decisions", decisions, "--dry-run"], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(0);
+        run.Output.ShouldContain("website address \"https://p\\u0430ypal.com\" added", StringComparison.Ordinal);
+        run.Output.ShouldNotContain("\u0430", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Apply_refuses_removals_without_allow_removals_and_writes_nothing()
     {
         var prompts = new TestPrompts(ExportPassword);

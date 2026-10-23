@@ -13,7 +13,7 @@ public sealed class CatalogChangesTests
     {
         VaultItem item = Login() with
         {
-            Fields = [.. Login().Fields, new CustomField(null, "nameless value", CustomFieldType.Text)],
+            Fields = [new CustomField(null, "nameless value", CustomFieldType.Text), new CustomField("Empty", null, CustomFieldType.Text), .. Login().Fields],
             Login = Login().Login! with { Uris = [new LoginUri("  https://github.com/login  "), new LoginUri(MaskedUri)] },
         };
 
@@ -22,8 +22,42 @@ public sealed class CatalogChangesTests
 
         shared.Changes.ShouldBeEmpty();
         shared.Removals.ShouldBeEmpty();
+        shared.ChangedItems.ShouldBe(0);
         withheld.Changes.ShouldBeEmpty();
         withheld.Removals.ShouldBeEmpty();
+        withheld.ChangedItems.ShouldBe(0);
+        var written = withheld.Vault.ShouldNotBeNull().Items.ShouldHaveSingleItem();
+        written.Fields.ShouldBe(item.Fields);
+        written.Login.ShouldNotBeNull().Uris.ShouldBe(item.Login!.Uris);
+    }
+
+    [Fact]
+    public void An_unedited_catalog_keeps_shared_notes_that_hold_only_white_space()
+    {
+        VaultItem item = Login() with { Notes = "\n" };
+        var decisions = MergeDecisions.None with { Notes = [new ItemNotesDecision(Key, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf("\n"))] };
+
+        var result = Apply(item, entry => entry, decisions);
+
+        result.Changes.ShouldBeEmpty();
+        result.Removals.ShouldBeEmpty();
+        result.ChangedItems.ShouldBe(0);
+        result.Vault.ShouldNotBeNull().Items.ShouldHaveSingleItem().Notes.ShouldBe("\n");
+    }
+
+    [Fact]
+    public void Apply_describes_reordered_text_fields_and_additional_folders()
+    {
+        VaultItem item = Login() with
+        {
+            Fields = [new CustomField("Owner", "IT", CustomFieldType.Text), .. Login().Fields.Select(field => field.Name == AdditionalFolders.FieldName ? field with { Value = "Personal\nArchive" } : field)],
+        };
+
+        var result = Apply(item, entry => entry with { Fields = [.. entry.Fields.Reverse()], AdditionalFolders = [.. entry.AdditionalFolders.Reverse()] });
+
+        result.Changes.ShouldBe([Prefix + "additional folders reordered", Prefix + "text fields reordered"]);
+        result.Removals.ShouldBeEmpty();
+        result.ChangedItems.ShouldBe(1);
     }
 
     [Theory]
