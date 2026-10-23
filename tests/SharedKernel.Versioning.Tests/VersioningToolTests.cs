@@ -1,4 +1,6 @@
 using PandaBear.Testing;
+using System.Diagnostics;
+using System.Globalization;
 using System.Text.Json;
 using PandaBear.Versioning.Tool;
 
@@ -633,9 +635,10 @@ public static class VersioningToolTests
         // Arrange
         using var repository = new TemporaryGitRepository();
         using var temporaryDirectory = new TemporaryReleasePrepDirectory();
-        repository.Commit("file.txt", "base", "fix: base release");
-        repository.Tag("v1.2.3");
-        repository.Commit("file.txt", "next", "feat: add public capability");
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "base", "fix: base release", TestContext.Current.CancellationToken);
+        await repository.Tag("v1.2.3", TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "next", "feat: add public capability", TestContext.Current.CancellationToken);
 
         var outputPath = Path.Combine(temporaryDirectory.OutputDirectory, "github-output.txt");
         var summaryPath = Path.Combine(temporaryDirectory.OutputDirectory, "summary.md");
@@ -678,8 +681,9 @@ public static class VersioningToolTests
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
-        repository.Commit("file.txt", "base", "fix: base release");
-        repository.Commit("file.txt", "next", "feat(api)!: remove route");
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "base", "fix: base release", TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "next", "feat(api)!: remove route", TestContext.Current.CancellationToken);
 
         // Act
         var result = await VersioningCommandLineRunner.Invoke(
@@ -696,8 +700,9 @@ public static class VersioningToolTests
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
-        repository.Commit("file.txt", "base", "fix: base release");
-        repository.Commit("file.txt", "next", "feat(api): add route");
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "base", "fix: base release", TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "next", "feat(api): add route", TestContext.Current.CancellationToken);
 
         // Act
         var result = await VersioningCommandLineRunner.Invoke(
@@ -710,21 +715,7 @@ public static class VersioningToolTests
     }
 
     [Fact]
-    public static void Wraps_missing_process_start_failures()
-    {
-        // Arrange
-        var executableName = "missing-sharedkernel-versioning-tool-command";
-
-        // Act
-        Action action = () => CommandRunner.Run(executableName, []);
-
-        // Assert
-        var exception = action.ShouldThrow<InvalidOperationException>();
-        exception.Message.ShouldContain("Failed to start " + executableName, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public static async Task Wraps_missing_process_start_failures_for_cancelable_runs()
+    public static async Task Wraps_missing_process_start_failures()
     {
         // Arrange
         var executableName = "missing-sharedkernel-versioning-tool-command";
@@ -749,6 +740,72 @@ public static class VersioningToolTests
 
         // Assert
         await action.ShouldThrow<OperationCanceledException>();
+    }
+
+    [Fact]
+    public static async Task Cancellation_terminates_the_running_process()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var directory = new TemporaryDirectory();
+        var processIdPath = Path.Combine(directory.Path, "child.pid");
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        var running = CommandRunner.Run(
+            "/bin/sh",
+            ["-c", "echo $$ > child.pid.tmp && mv child.pid.tmp child.pid && exec sleep 60"],
+            directory.Path,
+            cancellation.Token);
+        while (!File.Exists(processIdPath) && !running.IsCompleted)
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(20), TestContext.Current.CancellationToken);
+        }
+
+        var processId = int.Parse(await File.ReadAllTextAsync(processIdPath, TestContext.Current.CancellationToken), CultureInfo.InvariantCulture);
+
+        // Act
+        await cancellation.CancelAsync();
+        var action = () => running.WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
+        await action.ShouldThrowAssignableTo<OperationCanceledException>();
+
+        // Assert
+        var lookup = () => Process.GetProcessById(processId);
+        lookup.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
+    public static async Task Termination_ignores_a_process_object_without_a_running_process()
+    {
+        // Arrange
+        using Process process = new();
+
+        // Act
+        var exception = await Record.ExceptionAsync(() => CommandRunner.Terminate(process));
+
+        // Assert
+        exception.ShouldBeNull();
+    }
+
+    [Fact]
+    public static async Task Termination_stops_waiting_when_a_killed_process_never_reports_its_exit()
+    {
+        // Arrange
+        if (!OperatingSystem.IsLinux())
+        {
+            return;
+        }
+
+        using var unreaped = await UnreapedProcess.Start(TestContext.Current.CancellationToken);
+
+        // Act
+        await CommandRunner.Terminate(unreaped.Process).WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
+
+        // Assert
+        unreaped.IsZombie.ShouldBeTrue();
+        unreaped.Process.HasExited.ShouldBeFalse();
     }
 
     [Fact]
