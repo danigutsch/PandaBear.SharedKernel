@@ -7,17 +7,18 @@ namespace PandaBear.Testing.CodeFixRunner.Tests;
 /// <summary>Parses and invokes the real code-fix runner command tree with captured output.</summary>
 internal static class CodeFixRunnerInvocation
 {
-    public static Task<CodeFixRunnerInvocationResult> Invoke(IReadOnlyList<string> args, CancellationToken ct)
+    public static Task<CodeFixRunnerInvocationResult> Invoke(string workingDirectory, IReadOnlyList<string> args, CancellationToken ct)
     {
-        return Invoke(args, CodeFixRunEngine.Run, ct);
+        return Invoke(workingDirectory, args, CodeFixRunEngine.Run, ct);
     }
 
     public static async Task<CodeFixRunnerInvocationResult> Invoke(
+        string workingDirectory,
         IReadOnlyList<string> args,
         Func<CodeFixRunnerOptions, TextWriter, CancellationToken, Task<int?>> run,
         CancellationToken ct)
     {
-        var command = CodeFixRunnerCommandLine.Create(run);
+        var command = CodeFixRunnerCommandLine.Create(workingDirectory, run);
 
         // Help wraps at the width of the terminal running the tests; unwrapped help keeps assertions independent of it.
         var help = (HelpAction)command.Options.OfType<HelpOption>().First().Action!;

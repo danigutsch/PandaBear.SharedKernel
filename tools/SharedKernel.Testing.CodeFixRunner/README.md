@@ -16,27 +16,46 @@ sharedkernel-codefix --help
 sharedkernel-codefix --version
 ```
 
-## Restore or install
+## Prerequisites
 
-Install from a local package during development:
+The tool runs on .NET 10 and loads the target through MSBuildLocator and MSBuildWorkspace. Each starts from
+the .NET SDK that `dotnet` selects for a directory, honoring `global.json`:
+
+- A .NET 10 SDK. MSBuildLocator loads MSBuild into the tool from the SDK selected for the current
+  directory, or from the newest installed .NET 10 SDK when the selected SDK is newer than .NET 10.
+- An SDK that can build the target. MSBuildWorkspace loads the target in a separate build host with the
+  SDK selected for the target's directory.
+- A restored target. Without restored packages, symbols such as xUnit's `[Fact]` do not resolve, and the
+  run finds fewer diagnostics without reporting an error.
+
+A `global.json` that applies to either directory must resolve to an installed SDK:
+
+- For the current directory, commands that start the tool through the .NET SDK (`dotnet tool run`,
+  `dotnet sharedkernel-codefix`, `dotnet run`) fail before the tool starts. The host reports that no compatible
+  .NET SDK was found, or prints the `errorMessage` set in `global.json`, and exits 155 on Linux and macOS.
+  Started directly, for example from a `--tool-path` install, the tool exits 2.
+- For the target's directory, the run fails with exit code 1.
+
+## Installation
+
+Install a validated candidate as a local tool from the feed that holds it, such as the folder that
+`sharedkernel-version stage-candidate` copies a candidate to. Add the feed to `NuGet.Config` and map
+`PandaBear.SharedKernel.*` to it. Map every other package, for example `*`, to the existing source, because
+a package without a mapping does not restore once source mapping is enabled. With the SDK pinned in
+`global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.
 
 ```text
-dotnet pack tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj -o artifacts/local-tool-feed
-dotnet tool install PandaBear.SharedKernel.Testing.CodeFixRunner --tool-path ./.tools --version <validated-candidate-version> --add-source artifacts/local-tool-feed
-./.tools/sharedkernel-codefix --help
+dotnet tool install PandaBear.SharedKernel.Testing.CodeFixRunner --version <validated-candidate-version>
+dotnet tool run sharedkernel-codefix <project-or-solution>
 ```
 
-When installing from this repository, follow the local-feed source-mapping notes in
-[release policy](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/release-policy.md).
-
-Install as a global tool only from a trusted package source:
+In this repository, run the project without installing it:
 
 ```text
-dotnet tool install --global PandaBear.SharedKernel.Testing.CodeFixRunner --version <validated-candidate-version> --add-source <trusted-package-source>
-sharedkernel-codefix --help
+dotnet run --project tools/SharedKernel.Testing.CodeFixRunner -c Release -- <project-or-solution>
 ```
 
-`.NET` tools run in full trust. Restore or install only from trusted manifests and package sources.
+.NET tools run in full trust. Restore or install only from trusted manifests and package sources.
 
 ## Usage
 
@@ -65,13 +84,15 @@ sharedkernel-codefix SharedKernel.slnx --diagnostic SKTEST006
   `.csproj` to fix one project of such a solution.
 - Ctrl+C or SIGTERM stops the run. Fixes already written stay on disk and may be unformatted.
 - Standard output receives `Fixed <count> <id> diagnostic(s).`. Diagnostics without an available
-  fix and errors go to standard error.
+  fix and errors go to standard error. When MSBuild cannot be loaded, the .NET host also writes its
+  installed-SDK list to standard output.
 
 ## Exit codes
 
 - `0`: the run finished, including when diagnostics without an available fix remain.
 - `1`: invalid arguments, an unexpected error while loading or fixing the target, or cancellation.
-- `2`: the project or solution did not load. No fix was applied.
+- `2`: the project or solution did not load, or MSBuild could not be loaded from a .NET SDK for the current
+  directory. No fix was applied.
 - `130` (SIGINT) or `143` (SIGTERM): the signal arrived during start-up, or the run did not stop within two
   seconds of it.
 

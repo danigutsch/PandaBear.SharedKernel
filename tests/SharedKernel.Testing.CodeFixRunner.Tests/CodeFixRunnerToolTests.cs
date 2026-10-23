@@ -7,23 +7,8 @@ public sealed class CodeFixRunnerToolTests
     public void Project_is_packaged_as_dotnet_tool()
     {
         // Arrange
-        var currentDirectory = new DirectoryInfo(AppContext.BaseDirectory);
-        string? repositoryRoot = null;
-        while (currentDirectory is not null)
-        {
-            var solutionPath = Path.Combine(currentDirectory.FullName, "SharedKernel.slnx");
-            if (File.Exists(solutionPath))
-            {
-                repositoryRoot = currentDirectory.FullName;
-                break;
-            }
-
-            currentDirectory = currentDirectory.Parent;
-        }
-
-        var root = repositoryRoot.ShouldNotBeNull();
         var projectPath = Path.Combine(
-            root,
+            RepositoryFiles.GetRootPath(),
             "tools",
             "SharedKernel.Testing.CodeFixRunner",
             "SharedKernel.Testing.CodeFixRunner.csproj");
