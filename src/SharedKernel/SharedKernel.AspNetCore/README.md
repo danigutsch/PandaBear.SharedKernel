@@ -39,3 +39,25 @@ Use `principal.GetSubjectId()` to read the opaque subject from a validated princ
 blank subjects return null; name identifiers, email and display names are never fallback audit IDs.
 The helper does not authenticate or authorize requests. Keep token validation, claim mapping and
 permission policies in the host, and pass the extracted identifier explicitly into application commands.
+
+## Forward resolved visitor identity
+
+Opt an individual downstream client into `AddForwardedClientIp()` when the receiving service
+explicitly trusts this application's proxy address:
+
+```csharp
+builder.AddConfiguredTrustedForwardedHeaders();
+builder.Services.AddHttpClient<IPublicCatalogClient, PublicCatalogClient>()
+    .AddForwardedClientIp();
+```
+
+Run inbound forwarded-header middleware before endpoints call the client. The handler reads the
+current resolved `HttpContext.Connection.RemoteIpAddress` on every send, overwrites outgoing
+`X-Forwarded-For`, and never copies raw incoming forwarding headers. IPv4-mapped IPv6 addresses
+are normalized to IPv4. Without a current HTTP request or remote address, stale outgoing forwarding
+is removed and the downstream service retains its bounded peer-IP policy.
+
+The receiving service must independently configure its trusted proxy addresses/networks and run
+forwarded-header middleware before rate limiting. This helper does not authenticate a service,
+trust arbitrary peers, set policy budgets, or change other HTTP clients. Keep visitor admission,
+aggregate capacity limits, and treatment of per-visitor quota responses in the consuming application.

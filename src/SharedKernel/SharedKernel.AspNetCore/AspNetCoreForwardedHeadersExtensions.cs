@@ -20,6 +20,27 @@ public static class AspNetCoreForwardedHeadersExtensions
 
     private const string ForwardLimitSectionName = "ForwardLimit";
 
+    /// <summary>Forwards the resolved client IP address on requests made by this HTTP client.</summary>
+    /// <remarks>
+    /// Opt in only for downstream services that explicitly trust this application's proxy address.
+    /// The handler overwrites the outgoing X-Forwarded-For header with the current request's resolved
+    /// remote IP address; it never copies raw incoming forwarding headers. Configure trusted inbound
+    /// forwarded headers before making outbound requests. Without a current request or remote address,
+    /// the outgoing header is removed and the downstream service retains its ordinary peer identity.
+    /// This registration does not authenticate the proxy, broaden downstream trust, or log addresses.
+    /// </remarks>
+    /// <param name="builder">The HTTP client builder to configure.</param>
+    /// <returns>The same HTTP client builder.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> is null.</exception>
+    public static IHttpClientBuilder AddForwardedClientIp(this IHttpClientBuilder builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddTransient<ResolvedClientIpForwardingHandler>();
+        return builder.AddHttpMessageHandler<ResolvedClientIpForwardingHandler>();
+    }
+
     /// <summary>
     /// Registers forwarded-header options from the standard trusted-proxy configuration section.
     /// </summary>
