@@ -8,13 +8,16 @@ namespace PandaBear.VaultManager.Tool.Brief;
 /// the members differ.
 /// </summary>
 /// <param name="Version">Format version; <see cref="BriefFile.CurrentVersion"/>.</param>
-/// <param name="Inputs">Input files the brief was made from, in order.</param>
+/// <param name="Inputs">
+/// File names of the inputs the brief was made from, in order. The brief holds no hash of them: an unencrypted export's
+/// hash would let a reader test guesses of the passwords it holds.
+/// </param>
 /// <param name="Summary">Counts of the merge.</param>
 /// <param name="Groups">Groups that need a decision, in group order.</param>
 /// <param name="Suggestions">Weak matches that were not applied. Only the user can link items.</param>
 internal sealed record BriefDocument(
     int Version,
-    IReadOnlyList<BriefInput> Inputs,
+    IReadOnlyList<string> Inputs,
     BriefSummary Summary,
     IReadOnlyList<BriefGroup> Groups,
     IReadOnlyList<MatchSuggestion> Suggestions);

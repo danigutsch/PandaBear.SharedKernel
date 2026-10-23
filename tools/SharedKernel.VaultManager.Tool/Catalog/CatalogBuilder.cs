@@ -7,9 +7,9 @@ namespace PandaBear.VaultManager.Tool.Catalog;
 
 /// <summary>
 /// Makes the catalog of a vault. A catalog holds names, folders, favorites, website addresses with their credential
-/// parts masked, the notes the user shared, text custom fields without secret findings, user names without secret
-/// findings, and attachment names. It never holds passwords, TOTPs, passkeys, password history, hidden fields, card,
-/// identity, or SSH key values, withheld notes, or any text that holds a secret finding.
+/// parts masked, the notes the user shared as they are, text custom fields without secret findings, user names without
+/// secret findings, and attachment names. It never holds passwords, TOTPs, passkeys, password history, hidden fields, card,
+/// identity, or SSH key values, withheld notes, or user names and custom fields that hold a secret finding.
 /// </summary>
 internal static class CatalogBuilder
 {

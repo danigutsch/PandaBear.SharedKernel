@@ -17,7 +17,7 @@ public sealed class BriefFileTests : IDisposable
     {
         var brief = new BriefDocument(
             BriefFile.CurrentVersion,
-            [new BriefInput("keeper.json", "4f2c"), new BriefInput("bitwarden.json", "9a1b")],
+            ["keeper.json", "bitwarden.json"],
             new BriefSummary(3, 1, 0, 1, 1, 0, 1, 2, 0),
             [
                 new BriefGroup(
@@ -50,6 +50,22 @@ public sealed class BriefFileTests : IDisposable
         {
             File.GetUnixFileMode(path).ShouldBe(OwnerOnly);
         }
+    }
+
+    [Theory]
+    [InlineData("group", "two groups with the key g1")]
+    [InlineData("member", "lists keeper|keeper.json|rec-1 twice")]
+    [InlineData("finding", "lists finding notes-pin@notes:0 of keeper|keeper.json|rec-1 twice")]
+    public void Brief_rejects_repeated_groups_members_and_findings(string repeated, string named)
+    {
+        var finding = new BriefFinding("notes-pin@notes:0", SecretKind.Pin, Confidence.Medium, "notes", 1, "hidden field 'PIN'", PreAccepted: false, NeedsDecision: true, AgentMayAccept: true, AgentMayReject: true);
+        var member = new BriefMember("keeper|keeper.json|rec-1", "keeper.json", "Bank", null, null, null, null, Newest: false, repeated == "finding" ? [finding, finding] : [finding]);
+        var group = new BriefGroup("g1", VaultItemType.Login, repeated == "member" ? [member, member] : [member], []);
+        var brief = new BriefDocument(BriefFile.CurrentVersion, ["keeper.json"], new BriefSummary(1, 0, 0, 0, 1, 0, 1, 0, 0), repeated == "group" ? [group, group] : [group], []);
+
+        var action = () => BriefFile.Deserialize(BriefFile.Serialize(brief));
+
+        action.ShouldThrow<InvalidDataException>().Message.ShouldContain(named, StringComparison.Ordinal);
     }
 
     [Theory]

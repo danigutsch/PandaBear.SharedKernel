@@ -58,6 +58,23 @@ public sealed class MergeBriefCommandTests : IDisposable
     }
 
     [Fact]
+    public async Task Merge_replaces_a_brief_that_an_editor_saved_with_a_byte_order_mark()
+    {
+        string[] inputs = CliInputs.ConflictingLogins(directory);
+        string output = Path.Combine(directory, "merged.json");
+        string briefPath = Path.Combine(directory, "brief.json");
+        string[] args = ["merge", .. inputs, "--output", output, "--brief", briefPath];
+        (await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken)).ExitCode.ShouldBe(2);
+        string text = await File.ReadAllTextAsync(briefPath, TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(briefPath, text, new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: true), TestContext.Current.CancellationToken);
+
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(2);
+        run.Output.ShouldContain("Brief: " + briefPath, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Merge_refuses_a_brief_path_that_names_a_file_that_is_not_a_brief()
     {
         string[] inputs = CliInputs.ConflictingLogins(directory);

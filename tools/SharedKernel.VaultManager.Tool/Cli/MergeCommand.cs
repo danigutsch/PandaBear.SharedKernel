@@ -3,7 +3,6 @@ using System.CommandLine.Parsing;
 using System.Globalization;
 using System.Text;
 using PandaBear.VaultManager.Tool.Brief;
-using PandaBear.VaultManager.Tool.Catalog;
 using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.IO;
 using PandaBear.VaultManager.Tool.Merge;
@@ -162,8 +161,7 @@ internal static class MergeCommand
         {
             // Written before the vault, so a brief that cannot be written stops the merge before anything else is written.
             ct.ThrowIfCancellationRequested();
-            BriefInput[] briefInputs = [.. arguments.Inputs.Select(input => new BriefInput(Path.GetFileName(input), CatalogFile.Hash(input)))];
-            BriefFile.Write(briefPath, BriefBuilder.Build(briefInputs, scanned, result, decisions), ct);
+            BriefFile.Write(briefPath, BriefBuilder.Build([.. arguments.Inputs.Select(Path.GetFileName).OfType<string>()], scanned, result, decisions), ct);
         }
 
         if (PendingDecisions.Find(result, decisions).IsEmpty && !result.HasWriteErrors)

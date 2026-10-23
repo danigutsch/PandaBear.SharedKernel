@@ -300,7 +300,8 @@ file, the agent edits only the catalog, and `apply` writes the vault with the ed
   or repeated property fails.
 - Redaction follows `ShownValues`, which the brief shares: a website address with user info, a query, or a fragment is
   masked and can only be moved. The authority ends at the first `/`, `\`, `?`, or `#`, as browsers read it, and an
-  address with an `@` after that is masked after its scheme, because its user info may hold one of those characters.
+  address with an `@` after that is masked after its scheme, because its user info may hold one of those characters,
+  and so is an address in which the scanner finds a secret.
   A text custom field or user name in which the scanner finds a secret is withheld; hidden, boolean, and linked fields
   show only their names. Passwords, TOTPs, passkeys, password history, and card, identity, and SSH key values are never
   shown.
@@ -323,9 +324,10 @@ file, the agent edits only the catalog, and `apply` writes the vault with the ed
 `merge --brief` writes what an agent needs to propose decisions, without secret values. The merge builds it from the
 scanned inputs, the result of the merge with the user's decisions, and those decisions.
 
-- Format: versioned JSON, owner-only on Unix, written through `SecureFile`, and read strictly like the catalog. It
-  records each input's file name and SHA-256, the summary counts of the merge, the groups that need a decision, and the
-  matcher's suggestions.
+- Format: versioned JSON, owner-only on Unix, written through `SecureFile`, and read strictly like the catalog; a
+  group, member, or finding of a member listed twice is rejected too. It records the input file names, the summary
+  counts of the merge, the groups that need a decision, and the matcher's suggestions. It records no hash of the
+  inputs: the hash of an unencrypted export would let a reader test guesses of its passwords.
 - Groups: a group needs a decision when a field of it is unresolved or a member has a finding that is neither
   pre-accepted nor decided. Members are the items as the merge sees them, after accepted findings are placed.
 - Fields: the name and the folder when the members hold two or more different values, the single-value fields of the
@@ -334,7 +336,9 @@ scanned inputs, the result of the merge with the user's decisions, and those dec
   decisions, which drop values, so an agent may not decide them.
 - Redaction: a value appears only for names, folders, user names, website addresses, and notes. Placement can fill a
   user name or addresses from a finding, such as a connection string, so user names and addresses appear only as the
-  inputs hold them, through `ShownValues`, and an item that placement creates shows none. Hosts come from the masked
+  inputs hold them, through `ShownValues`, and an item that placement creates shows none. The scanner checks user names
+  only for misfiled TOTP keys and never scans addresses, so `ShownValues` scans their text as it scans notes: a user name
+  in which it finds a secret is withheld, and an address is masked after its scheme. Hosts come from the masked
   addresses. Notes appear only when a `Share` decision matches the notes as read and no finding lies in them: a finding
   that is pending, rejected, or that placement could not move stays in the text. Every other field shows only which
   members hold a value.
@@ -343,13 +347,16 @@ scanned inputs, the result of the merge with the user's decisions, and those dec
   brief holds these flags only, never a value, length, or hash.
 - Newest: a member is newest when every member has a modification time and it alone has the latest. A holder is newest
   when it holds the value the newest policy takes: every holder has a time, and that value's newest holder is newer
-  than every other value's.
+  than every other value's. The name comes from the newest member under every policy, or from the first member when no
+  member has a time, so for the name, `newest` marks that name.
 - Findings: ID, kind, confidence, field path, the 1-based line where the finding starts in its field as read, the
   proposed target, whether it is pre-accepted or needs a decision, and whether an agent may accept or reject it. An
   agent decides without seeing the value, so it may not accept a finding that needs review, that moves text into a
-  place catalogs and briefs show (user name, addresses, text fields), or that changes matching, which uses hosts, user
-  names, titles, and types and runs after placement; and it may not reject a pre-accepted finding that changes
-  matching. Findings appear under the member whose origin key the finding decisions use, never under items that
+  place catalogs and briefs show (user name, addresses, text fields, and the names of hidden fields named after a
+  label), or that changes matching, which uses hosts, user names, titles, and types and runs after placement; and it
+  may not reject a pre-accepted finding that changes matching. Accepting a pre-accepted finding changes nothing and is
+  always allowed. Finding IDs and kinds say which rule matched and where, which can tell the kind of a secret field,
+  such as a PIN stored as a password. Findings appear under the member whose origin key the finding decisions use, never under items that
   placement created.
 
 ## Review UI

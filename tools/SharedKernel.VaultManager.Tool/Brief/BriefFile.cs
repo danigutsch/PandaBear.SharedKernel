@@ -9,9 +9,9 @@ namespace PandaBear.VaultManager.Tool.Brief;
 
 /// <summary>
 /// Reads and writes the versioned brief file:
-/// <c>{"version":1,"summary":{...},"groups":[...],"suggestions":[...]}</c>. A property the format does not define, a
-/// property given twice in one object, and a missing property are rejected. Text is written as typed, with control and
-/// format characters escaped.
+/// <c>{"version":1,"inputs":[...],"summary":{...},"groups":[...],"suggestions":[...]}</c>. A property the format does not
+/// define, a property given twice in one object, a missing property, and a group, member, or finding of a member listed
+/// twice are rejected. Text is written as typed, with control and format characters escaped.
 /// </summary>
 internal static class BriefFile
 {
@@ -101,8 +101,40 @@ internal static class BriefFile
             throw new InvalidDataException("The brief is empty.");
         }
 
-        return brief.Version == CurrentVersion
-            ? brief
-            : throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"The brief has version {brief.Version}; only version {CurrentVersion} is supported."));
+        if (brief.Version != CurrentVersion)
+        {
+            throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"The brief has version {brief.Version}; only version {CurrentVersion} is supported."));
+        }
+
+        CheckUnique(brief);
+        return brief;
+    }
+
+    // Each group, member, and finding of a member appears once, so every check finds one entry for it.
+    private static void CheckUnique(BriefDocument brief)
+    {
+        var groups = new HashSet<string>(StringComparer.Ordinal);
+        var members = new HashSet<string>(StringComparer.Ordinal);
+        foreach (BriefGroup group in brief.Groups)
+        {
+            if (!groups.Add(group.Key))
+            {
+                throw new InvalidDataException($"The brief has two groups with the key {group.Key}.");
+            }
+
+            foreach (BriefMember member in group.Members)
+            {
+                if (!members.Add(member.OriginKey))
+                {
+                    throw new InvalidDataException($"The brief lists {member.OriginKey} twice.");
+                }
+
+                var findings = new HashSet<string>(StringComparer.Ordinal);
+                foreach (BriefFinding finding in member.Findings.Where(finding => !findings.Add(finding.Id)))
+                {
+                    throw new InvalidDataException($"The brief lists finding {finding.Id} of {member.OriginKey} twice.");
+                }
+            }
+        }
     }
 }

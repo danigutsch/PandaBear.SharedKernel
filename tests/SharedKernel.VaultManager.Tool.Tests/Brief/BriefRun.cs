@@ -1,5 +1,4 @@
 using PandaBear.VaultManager.Tool.Brief;
-using PandaBear.VaultManager.Tool.Catalog;
 using PandaBear.VaultManager.Tool.Matching;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Pipeline;
@@ -16,8 +15,7 @@ internal static class BriefRun
         var pipeline = new VaultPipeline(new TestPrompts("fixture export password").Environment());
         ScannedVault scanned = VaultPipeline.Scan(pipeline.Load(inputs));
         PipelineResult result = pipeline.Merge(scanned, new MergeRequest { Policy = policy ?? new MergePolicy(), Decisions = decisions });
-        BriefInput[] files = [.. inputs.Select(input => new BriefInput(Path.GetFileName(input), CatalogFile.Hash(input)))];
-        return (BriefBuilder.Build(files, scanned, result, decisions), result);
+        return (BriefBuilder.Build([.. inputs.Select(Path.GetFileName).OfType<string>()], scanned, result, decisions), result);
     }
 
     /// <summary>The field of a brief group with the given path; it must be listed exactly once.</summary>

@@ -246,7 +246,8 @@ Each catalog item has a `key`, its origin key, which may not change, and these p
 - `uris`: website addresses as `{ "value": "...", "match": null }`. An address with user info, a query, or a
   fragment shows as `{ "masked": "https://***@host/path?***", "index": 1 }`: it may be moved, but not changed or
   removed. An address that holds an `@` after its host, such as user info with a `/`, `\`, `?`, or `#` in it, shows
-  as `https://***`, because where its host starts is unclear;
+  as `https://***`, because where its host starts is unclear, and so does an address in which the scanner finds a
+  secret, such as a webhook or a connection string;
 - `fields`: text custom fields whose name and value hold no secret finding, as `{ "name": "...", "value": "..." }`.
 
 The top-level `folders` list holds every folder of the vault, including empty ones. `info` lists, for reading only,
@@ -366,7 +367,7 @@ that need a decision with your decisions:
 ```json
 {
   "version": 1,
-  "inputs": [{ "file": "keeper.zip", "sha256": "4f2c…" }, { "file": "bitwarden.json", "sha256": "9a1b…" }],
+  "inputs": ["keeper.zip", "bitwarden.json"],
   "summary": { "items": 412, "mergedGroups": 120, "conflictsResolvedByPolicy": 85, "fieldsNeedingDecision": 3, "findings": 14, "findingsApplied": 9, "findingsNeedingDecision": 2, "passwordIssues": 7, "attachmentsToUpload": 4 },
   "groups": [
     {
@@ -386,12 +387,14 @@ that need a decision with your decisions:
         { "originKey": "bitwarden|bitwarden.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301", "…": "…" }
       ],
       "fields": [
+        { "fieldPath": "name", "needsDecision": false, "agentMayDecide": true, "holders": [
+            { "originKey": "keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA", "newest": false, "value": "Example Bank" },
+            { "originKey": "bitwarden|bitwarden.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301", "newest": true, "value": "Bank" } ] },
         { "fieldPath": "login.password", "needsDecision": true, "agentMayDecide": true, "holders": [
             { "originKey": "keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA", "newest": false, "weak": false, "reused": false, "inOtherHistory": true },
             { "originKey": "bitwarden|bitwarden.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301", "newest": true, "weak": false, "reused": true, "inOtherHistory": false } ] },
-        { "fieldPath": "name", "needsDecision": false, "agentMayDecide": true, "holders": [
-            { "originKey": "keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA", "newest": false, "value": "Example Bank" },
-            { "originKey": "bitwarden|bitwarden.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301", "newest": true, "value": "Bank" } ] }
+        { "fieldPath": "login.uris", "needsDecision": false, "agentMayDecide": false, "holders": [
+            { "originKey": "bitwarden|bitwarden.json|3f2504e0-4f89-11d3-9a0c-0305e82c3301", "newest": false, "values": ["https://bank.example/login"] } ] }
       ]
     }
   ],
@@ -399,27 +402,33 @@ that need a decision with your decisions:
 }
 ```
 
-- `inputs`: the input files and their SHA-256.
+- `inputs`: the file names of the inputs. The brief holds no hash of them, because the hash of an unencrypted export
+  would let a reader test guesses of the passwords it holds.
 - `members`: every item of the group, with its origin key, input file, name, folder, the host of its first website
-  address, its user name, its modification time, and `newest`, which is true when every member has a modification time
+  address that has a host name, its user name, its modification time, and `newest`, which is true when every member has a modification time
   and this one alone has the latest.
 - `fields`: the fields on which the members differ, with the members that hold a value as `holders`.
   `needsDecision` says that the policy leaves the field to a decision, and `agentMayDecide` that a decisions file
-  written by an agent may take one holder's value for it: the name, the folder, and the single-value fields. A holder's
-  `newest` says that it holds the value the newest policy takes.
+  written by an agent may take one holder's value for it: the name, the folder, and the single-value fields. Each holder
+  has its `originKey` and `newest`, which says that it holds the value the newest policy takes; for the name, which the
+  merge takes from the newest member under every policy, it marks that name. A holder also has `value` for a name, a
+  folder, a user name, or notes that may be shown, `values` for the masked website addresses of `login.uris`, and
+  `weak`, `reused`, and `inOtherHistory` for `login.password`.
 - Values appear only for names, folders, user names, website addresses, and notes. User names and addresses appear as
-  the inputs hold them: a user name that holds a secret finding, or that a finding filled in, is left out, and so is an
-  address that a finding added. Addresses are masked as in the catalog. Notes appear only when the decisions file
+  the inputs hold them: a user name in which the scanner finds a secret, or that a finding filled in, is left out, and
+  so is an address that a finding added. Addresses are masked as in the catalog. Notes appear only when the decisions file
   shares exactly those notes and they hold no secret finding; otherwise a notes field says only that the notes differ.
 - Passwords, TOTP keys, card, identity, and SSH key values, password history, passkeys, and custom fields show no
   value. A `login.password` holder shows `weak`, `reused` (an item of another group, on other hosts, has the same
   password), and `inOtherHistory` (the password is in another member's password history). The brief holds no value,
   length, or hash of a secret.
 - `findings`: each secret finding of a member by its ID, kind, confidence, field, 1-based line, proposed target, and
-  whether it is pre-accepted or needs a decision, never its value. `agentMayAccept` and `agentMayReject` say what a
-  decisions file written by an agent may decide: an agent may not accept a finding that a person must review, that
-  moves text into a user name, an address, or a text field, which catalogs and briefs show, or that changes which items
-  match, and it may not reject a pre-accepted finding whose placement changes which items match.
+  whether it is pre-accepted or needs a decision, never its value. The ID and the kind do say which rule matched and
+  where, such as a PIN stored as a password. `agentMayAccept` and `agentMayReject` say what a decisions file written by
+  an agent may decide: an agent may not accept a finding that a person must review, that moves text into a user name, an
+  address, a text field, or the name of a hidden field, which catalogs and briefs show, or that changes which items
+  match, and it may not reject a pre-accepted finding whose placement changes which items match. It may always accept a
+  pre-accepted finding, which changes nothing.
 - `suggestions`: weak matches that the merge did not apply. Only you can link items.
 
 ## Exit codes
@@ -479,13 +488,14 @@ that System.CommandLine repeats cannot send escape sequences either.
   variables. Wait for the prompt before you type a password: the terminal shows what is typed earlier. When
   standard input is not a terminal, a command that needs a password exits with code 3 before it reads any vault,
   and names the input or output that needs the password.
-- A catalog holds item names, folder names, user names, website addresses with their user info, query, and fragment
-  masked, text custom fields and notes without secret findings, and attachment names, and never secret values. The
-  secret scanner can miss a secret, so notes appear only after you share them in the decisions file. An agent that
-  can write the decisions file can share notes itself; keep that file out of its reach when it must not.
+- A catalog holds item names, folder names, user names and text custom fields without secret findings, website
+  addresses masked as described under `catalog`, attachment names, and the notes you share, exactly as they are,
+  findings included. It holds no other secret value. The secret scanner can miss a secret, so notes appear only after
+  you share them in the decisions file. An agent that can write the decisions file can share notes itself; keep that
+  file out of its reach when it must not.
 - A brief holds item names, folder names, user names and website addresses as the inputs hold them, with addresses
-  masked, the notes you shared that hold no secret finding, origin keys, and the input files' SHA-256, and never secret
-  values.
+  masked and user names that hold a secret finding left out, the notes you shared that hold no secret finding, origin
+  keys, the input file names, and the IDs and kinds of findings, and never secret values.
 - Reports, warnings, errors, and the decisions file never contain secret values. They do contain item names,
   folder names, file names, and origin keys. An origin key holds the record or item ID of an export, or, for an item
   without one, such as a CSV row, a hash of its type, title, and the host of its first website address, read from the

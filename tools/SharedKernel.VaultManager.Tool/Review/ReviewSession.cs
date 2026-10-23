@@ -347,8 +347,8 @@ internal sealed class ReviewSession
 
     /// <summary>
     /// Sets how a catalog handles the notes of an item: shown and editable, private, or moved into a hidden field when the
-    /// catalog is applied. The merge ignores these decisions; <c>catalog</c> and <c>apply</c> read them for the item's own
-    /// file.
+    /// catalog is applied. <c>catalog</c> and <c>apply</c> read these decisions for the item's own file, and
+    /// <c>merge --brief</c> shows the shared notes of the merge inputs that hold no finding; the merge itself ignores them.
     /// </summary>
     /// <param name="originKey">Origin key of the item.</param>
     /// <param name="decision">The decision; <see cref="NotesDecision.Pending"/> removes it.</param>

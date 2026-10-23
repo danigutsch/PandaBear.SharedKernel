@@ -99,8 +99,8 @@ internal static class OutputFiles
         return true;
     }
 
-    // A brief starts with its version and its inputs, whatever white space an editor left between them. A file that cannot
-    // be read counts as no brief.
+    // A brief starts with its version and its inputs, whatever byte order mark and white space an editor left. A file that
+    // cannot be read counts as no brief.
     private static bool IsBrief(string fullPath)
     {
         const string Version = "{\"version\":";
@@ -116,7 +116,7 @@ internal static class OutputFiles
             return false;
         }
 
-        string text = string.Concat(Encoding.UTF8.GetString(start[..read]).Where(character => !char.IsWhiteSpace(character)));
+        string text = string.Concat(Encoding.UTF8.GetString(start[..read]).TrimStart('\uFEFF').Where(character => !char.IsWhiteSpace(character)));
         if (!text.StartsWith(Version, StringComparison.Ordinal))
         {
             return false;

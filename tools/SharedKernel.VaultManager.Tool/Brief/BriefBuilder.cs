@@ -17,12 +17,12 @@ namespace PandaBear.VaultManager.Tool.Brief;
 internal static class BriefBuilder
 {
     /// <summary>Makes the brief of a merge.</summary>
-    /// <param name="inputs">Input files the merge read, with their SHA-256.</param>
+    /// <param name="inputs">File names of the inputs the merge read, in order.</param>
     /// <param name="scanned">Vault the merge read and scanned.</param>
     /// <param name="result">Result of merging <paramref name="scanned"/> with <paramref name="decisions"/>.</param>
     /// <param name="decisions">The user's decisions the merge ran with; notes are shown only when they share them.</param>
     /// <returns>The brief.</returns>
-    public static BriefDocument Build(IReadOnlyList<BriefInput> inputs, ScannedVault scanned, PipelineResult result, MergeDecisions decisions)
+    public static BriefDocument Build(IReadOnlyList<string> inputs, ScannedVault scanned, PipelineResult result, MergeDecisions decisions)
     {
         ArgumentNullException.ThrowIfNull(inputs);
         ArgumentNullException.ThrowIfNull(scanned);
@@ -67,7 +67,7 @@ internal static class BriefBuilder
                 member.Origin.SourceFile,
                 member.Name,
                 member.FolderPath,
-                context.Addresses(member, originKey).Select(ItemNormalizer.Host).FirstOrDefault(host => host is not null && !host.Contains(ShownValues.Mask, StringComparison.Ordinal)),
+                context.Addresses(member, originKey).Select(ItemNormalizer.Host).FirstOrDefault(IsHostName),
                 context.Username(member, originKey),
                 member.LastModified,
                 IsNewest(member, group.Members),
@@ -76,6 +76,10 @@ internal static class BriefBuilder
 
         return members;
     }
+
+    // ItemNormalizer keeps an address whole when it has no http or https host, so only a DNS name or an IP address counts as
+    // a host; a masked part never does.
+    private static bool IsHostName(string? host) => host is not null && Uri.CheckHostName(host) != UriHostNameType.Unknown;
 
     // Newest only when every member has a modification time and one alone has the latest.
     private static bool IsNewest(VaultItem member, IReadOnlyList<VaultItem> members)
@@ -101,9 +105,11 @@ internal static class BriefBuilder
         finding.IsPreAccepted || (!finding.NeedsReview && !MovesIntoShownPlace(finding) && !ChangesMatching(finding)),
         !finding.IsPreAccepted || !ChangesMatching(finding));
 
-    // Catalogs and briefs show user names, website addresses, and text fields, so text moved there is no longer withheld.
+    // Catalogs and briefs show user names, website addresses, text fields, and the names of hidden fields, so text moved
+    // there, such as the label that names a field after it, is withheld no more.
     private static bool MovesIntoShownPlace(SecretFinding finding) =>
-        finding.ProposedTarget.Kind is PlacementTargetKind.LoginUsername or PlacementTargetKind.LoginUris or PlacementTargetKind.LoginFromConnection or PlacementTargetKind.TextField;
+        finding.ProposedTarget.Kind is PlacementTargetKind.LoginUsername or PlacementTargetKind.LoginUris or PlacementTargetKind.LoginFromConnection or PlacementTargetKind.TextField
+        || finding.ProposedTarget.NameFromLabel;
 
     // Matching uses hosts, user names, titles, and types, and placement runs before it: a finding that fills or edits a user
     // name or an address, or that makes a new item, changes which items match.
@@ -153,7 +159,10 @@ internal static class BriefBuilder
 
         if (members.Select(member => ItemNormalizer.Title(member.Name)).Distinct(StringComparer.Ordinal).Skip(1).Any())
         {
-            fields.Add(Field(group, FieldPaths.Name, decidable: true, _ => true, member => ItemNormalizer.Title(member.Name), (member, _, _) => new() { Value = member.Name }, context));
+            // Under every policy, the merge keeps the name of the newest member, or of the first one when no member has a
+            // modification time.
+            string kept = ItemNormalizer.Title(members.OrderByDescending(member => member.LastModified.HasValue).ThenByDescending(member => member.LastModified).First().Name);
+            fields.Add(Field(group, FieldPaths.Name, decidable: true, _ => true, null, (member, _, _) => new() { Value = member.Name, Newest = string.Equals(ItemNormalizer.Title(member.Name), kept, StringComparison.Ordinal) }, context));
         }
 
         if (members.Select(member => member.FolderPath).Where(folder => !string.IsNullOrWhiteSpace(folder)).Distinct(StringComparer.Ordinal).Skip(1).Any())
@@ -214,7 +223,7 @@ internal static class BriefBuilder
         foreach (int index in holderIndexes)
         {
             Shown shown = show(group.Members[index], index, group.MemberKeys[index]);
-            holders.Add(new BriefHolder(group.MemberKeys[index], newest.Contains(index), shown.Value, shown.Values, shown.Weak, shown.Reused, shown.InOtherHistory));
+            holders.Add(new BriefHolder(group.MemberKeys[index], shown.Newest ?? newest.Contains(index), shown.Value, shown.Values, shown.Weak, shown.Reused, shown.InOtherHistory));
         }
 
         return new BriefField(fieldPath, context.UnresolvedFields.Contains((group.Key, fieldPath)), decidable, holders);
@@ -237,9 +246,12 @@ internal static class BriefBuilder
         return byValue.Length > 1 && byValue[0].Newest == byValue[1].Newest ? [] : [.. byValue[0].Holders];
     }
 
-    // What a holder shows besides its origin key: a value that may be shown, or the password flags.
+    // What a holder shows besides its origin key: a value that may be shown, or the password flags, and for the name whether
+    // it is the one the merge keeps.
     private sealed record Shown
     {
+        public bool? Newest { get; init; }
+
         public string? Value { get; init; }
 
         public IReadOnlyList<string>? Values { get; init; }

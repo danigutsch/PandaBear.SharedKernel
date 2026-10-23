@@ -1,6 +1,5 @@
 using System.Text.Json.Nodes;
 using PandaBear.VaultManager.Tool.Brief;
-using PandaBear.VaultManager.Tool.Catalog;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Model;
 using PandaBear.VaultManager.Tool.Secrets;
@@ -240,6 +239,50 @@ public sealed class BriefBuilderTests : IDisposable
     }
 
     [Fact]
+    public void Brief_gives_a_host_only_for_an_address_with_a_host_name()
+    {
+        string[] inputs =
+        [
+            Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "App", "alice", KeeperPassword, "androidapp://com.example.app", modified: false))),
+            Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "App", "alice", BitwardenPassword, "androidapp://com.example.app", revised: false))),
+        ];
+
+        var members = BriefRun.Build(inputs).Brief.Groups.ShouldHaveSingleItem().Members;
+
+        members.ShouldAllSatisfy(member => member.Host.ShouldBeNull());
+    }
+
+    [Fact]
+    public void An_agent_may_not_accept_a_finding_whose_field_takes_its_name_from_withheld_text()
+    {
+        string notes = "Which street did we live on?\nfixture-street-answer";
+        string[] inputs =
+        [
+            Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Bank", "alice", KeeperPassword, "https://bank.example.com", notes, modified: false))),
+        ];
+        var question = BriefRun.Build(inputs).Result.Findings.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.SecurityQuestion);
+
+        var finding = BriefRun.Build(inputs).Brief.Groups.ShouldHaveSingleItem().Members.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem(candidate => candidate.Id == question.Id);
+
+        question.ProposedTarget.NameFromLabel.ShouldBeTrue();
+        finding.AgentMayAccept.ShouldBeFalse();
+    }
+
+    [Fact]
+    public void The_name_field_marks_the_name_the_merge_keeps()
+    {
+        string[] inputs =
+        [
+            Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", modified: false))),
+            Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example Bank", "alice", BitwardenPassword, "https://example.com"))),
+        ];
+
+        var group = BriefRun.Build(inputs).Brief.Groups.ShouldHaveSingleItem();
+
+        BriefRun.Field(group, FieldPaths.Name).Holders.Select(holder => (holder.Value, holder.Newest)).ShouldBe([((string?)"Example", false), ("Example Bank", true)]);
+    }
+
+    [Fact]
     public void Brief_records_the_input_files_it_was_made_from()
     {
         string[] inputs =
@@ -250,7 +293,7 @@ public sealed class BriefBuilderTests : IDisposable
 
         (BriefDocument brief, _) = BriefRun.Build(inputs);
 
-        brief.Inputs.ShouldBe([new BriefInput("keeper.json", CatalogFile.Hash(inputs[0])), new BriefInput("bitwarden.json", CatalogFile.Hash(inputs[1]))]);
+        brief.Inputs.ShouldBe(["keeper.json", "bitwarden.json"]);
     }
 
     [Fact]
