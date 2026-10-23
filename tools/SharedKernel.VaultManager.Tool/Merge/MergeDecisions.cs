@@ -3,7 +3,10 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Merge;
 
-/// <summary>User decisions that steer secret placement, matching, and merging. Holds keys and choices, never values.</summary>
+/// <summary>
+/// User decisions that steer secret placement, matching, and merging. Holds keys and choices, never values. Pending
+/// entries mark fields and findings that still need a decision; they count as no decision.
+/// </summary>
 /// <param name="Groups">Field decisions per group.</param>
 /// <param name="Overrides">Forced links and splits.</param>
 internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, MatchOverrides Overrides)
@@ -14,7 +17,7 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
     /// <summary>Decisions on secret findings, per input item.</summary>
     public IReadOnlyList<ItemFindingDecisions> Findings { get; init; } = [];
 
-    /// <summary>Finds the decision for a field of a group.</summary>
+    /// <summary>Finds the decision for a field of a group. The first matching decision counts; pending entries are skipped.</summary>
     /// <param name="groupKey">Group key.</param>
     /// <param name="fieldPath">Field path.</param>
     /// <returns>The decision, or <see langword="null"/> when there is none.</returns>
@@ -29,7 +32,7 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
 
             foreach (var choice in group.Choices)
             {
-                if (string.Equals(choice.FieldPath, fieldPath, StringComparison.Ordinal))
+                if (choice.Kind != FieldChoiceKind.Pending && string.Equals(choice.FieldPath, fieldPath, StringComparison.Ordinal))
                 {
                     return choice;
                 }
@@ -39,10 +42,12 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
         return null;
     }
 
-    /// <summary>Finds the decision on a finding of an input item. The first matching decision counts.</summary>
+    /// <summary>
+    /// Finds the decision on a finding of an input item. The first matching decision counts; pending entries are skipped.
+    /// </summary>
     /// <param name="originKey">Origin key of the item.</param>
     /// <param name="findingId">Finding identifier.</param>
-    /// <returns>The decision, or <see langword="null"/> when there is none.</returns>
+    /// <returns><see cref="FindingDecision.Accepted"/>, <see cref="FindingDecision.Rejected"/>, or <see langword="null"/> when there is none.</returns>
     public FindingDecision? FindFinding(string originKey, string findingId)
     {
         foreach (var item in Findings)
@@ -54,7 +59,7 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
 
             foreach (var choice in item.Choices)
             {
-                if (string.Equals(choice.FindingId, findingId, StringComparison.Ordinal))
+                if (choice.Decision != FindingDecision.Pending && string.Equals(choice.FindingId, findingId, StringComparison.Ordinal))
                 {
                     return choice.Decision;
                 }
@@ -81,5 +86,75 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
             FindingDecision.Rejected => false,
             _ => finding.IsPreAccepted,
         };
+    }
+
+    /// <summary>
+    /// Returns these decisions with their pending entries replaced: every pending entry is dropped, and one is added for
+    /// each given field and finding without a decision. Decisions and match overrides stay as they are, and groups and
+    /// items left without entries are dropped.
+    /// </summary>
+    /// <param name="fields">Fields that need a decision. The entry lists their members as options.</param>
+    /// <param name="findings">Findings that need a decision, per item; their decisions are ignored.</param>
+    /// <returns>The updated decisions.</returns>
+    public MergeDecisions WithPending(IReadOnlyList<UnresolvedConflict> fields, IReadOnlyList<ItemFindingDecisions> findings)
+    {
+        ArgumentNullException.ThrowIfNull(fields);
+        ArgumentNullException.ThrowIfNull(findings);
+
+        List<GroupDecision> groups = [.. Groups.Select(group => group with { Choices = [.. group.Choices.Where(choice => choice.Kind != FieldChoiceKind.Pending)] })];
+        foreach (UnresolvedConflict conflict in fields)
+        {
+            if (Find(conflict.GroupKey, conflict.FieldPath) is null)
+            {
+                AddPending(groups, conflict);
+            }
+        }
+
+        List<ItemFindingDecisions> items = [.. Findings.Select(item => item with { Choices = [.. item.Choices.Where(choice => choice.Decision != FindingDecision.Pending)] })];
+        foreach (ItemFindingDecisions item in findings)
+        {
+            foreach (FindingChoice choice in item.Choices)
+            {
+                if (FindFinding(item.OriginKey, choice.FindingId) is null)
+                {
+                    AddPending(items, item, choice.FindingId);
+                }
+            }
+        }
+
+        return this with
+        {
+            Groups = [.. groups.Where(group => group.Choices.Count > 0)],
+            Findings = [.. items.Where(item => item.Choices.Count > 0)],
+        };
+    }
+
+    private static void AddPending(List<GroupDecision> groups, UnresolvedConflict conflict)
+    {
+        FieldChoiceOption[] options = [.. conflict.MemberOriginKeys.Select((originKey, index) => new FieldChoiceOption(originKey, conflict.MemberNames[index]))];
+        FieldChoice pending = FieldChoice.Pending(conflict.FieldPath, options);
+        int index = groups.FindIndex(group => string.Equals(group.GroupKey, conflict.GroupKey, StringComparison.Ordinal));
+        if (index < 0)
+        {
+            groups.Add(new GroupDecision(conflict.GroupKey, [pending]));
+        }
+        else if (!groups[index].Choices.Any(choice => string.Equals(choice.FieldPath, conflict.FieldPath, StringComparison.Ordinal)))
+        {
+            groups[index] = groups[index] with { Choices = [.. groups[index].Choices, pending] };
+        }
+    }
+
+    private static void AddPending(List<ItemFindingDecisions> items, ItemFindingDecisions item, string findingId)
+    {
+        var pending = new FindingChoice(findingId, FindingDecision.Pending);
+        int index = items.FindIndex(existing => string.Equals(existing.OriginKey, item.OriginKey, StringComparison.Ordinal));
+        if (index < 0)
+        {
+            items.Add(new ItemFindingDecisions(item.OriginKey, [pending], item.ItemName));
+        }
+        else if (!items[index].Choices.Any(choice => string.Equals(choice.FindingId, findingId, StringComparison.Ordinal)))
+        {
+            items[index] = items[index] with { Choices = [.. items[index].Choices, pending], ItemName = items[index].ItemName ?? item.ItemName };
+        }
     }
 }
