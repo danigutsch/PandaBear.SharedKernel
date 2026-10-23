@@ -17,6 +17,30 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
     /// <summary>Decisions on secret findings, per input item.</summary>
     public IReadOnlyList<ItemFindingDecisions> Findings { get; init; } = [];
 
+    /// <summary>Decisions on the notes of catalog items, at most one per input item.</summary>
+    public IReadOnlyList<ItemNotesDecision> Notes { get; init; } = [];
+
+    /// <summary>Finds the decision on the notes of an input item.</summary>
+    /// <param name="originKey">Origin key of the item.</param>
+    /// <returns>The decision; <see cref="NotesDecision.Pending"/> when there is none.</returns>
+    public NotesDecision FindNotes(string originKey) =>
+        Notes.FirstOrDefault(item => string.Equals(item.OriginKey, originKey, StringComparison.Ordinal))?.Decision ?? NotesDecision.Pending;
+
+    /// <summary>
+    /// Returns these decisions with their pending notes entries replaced: every pending entry is dropped, and one is added
+    /// for each given item without a notes decision. Other notes decisions stay as they are.
+    /// </summary>
+    /// <param name="items">Items whose notes need a decision.</param>
+    /// <returns>The updated decisions.</returns>
+    public MergeDecisions WithPendingNotes(IEnumerable<ItemNotesDecision> items)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+
+        ItemNotesDecision[] decided = [.. Notes.Where(item => item.Decision != NotesDecision.Pending)];
+        var known = new HashSet<string>(decided.Select(item => item.OriginKey), StringComparer.Ordinal);
+        return this with { Notes = [.. decided, .. items.Where(item => known.Add(item.OriginKey)).Select(item => item with { Decision = NotesDecision.Pending })] };
+    }
+
     /// <summary>Finds the decision for a field of a group. The first matching decision counts; pending entries are skipped.</summary>
     /// <param name="groupKey">Group key.</param>
     /// <param name="fieldPath">Field path.</param>

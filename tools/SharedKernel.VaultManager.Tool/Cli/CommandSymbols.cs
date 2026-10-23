@@ -24,6 +24,24 @@ internal static class CommandSymbols
         return inputs;
     }
 
+    /// <summary>Creates the argument that takes one vault file.</summary>
+    /// <returns>The argument.</returns>
+    public static Argument<string> Input()
+    {
+        Argument<string> input = new Argument<string>("input")
+        {
+            Description = "Vault file: a Keeper or Bitwarden export, or a vault this tool wrote. The format is detected from the content.",
+        }.AcceptLegalFilePathsOnly();
+        input.Validators.Add(static result =>
+        {
+            if (result.Tokens.Any(token => string.IsNullOrWhiteSpace(token.Value)))
+            {
+                result.AddError("The input needs a file path, not an empty or blank value.");
+            }
+        });
+        return input;
+    }
+
     /// <summary>Creates the option that names the Markdown report file.</summary>
     /// <returns>The option.</returns>
     public static Option<string> Report() => FilePath(new Option<string>("--report")

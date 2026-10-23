@@ -71,12 +71,21 @@ and exits with code 3.
    sharedkernel-vault review keeper.zip bitwarden.json --decisions decisions.json
    ```
 
-5. Import `merged.json` into an empty Bitwarden or Vaultwarden vault with its file password, then upload the
-   attachments the report lists. Delete the exports, the merged vault, and the report afterwards.
+5. Optionally, organize the merged vault with a person or an agent who must not see its secrets: write a catalog,
+   decide which notes it may show, let them edit only the catalog, and apply it:
+
+   ```sh
+   sharedkernel-vault catalog merged.json --output catalog.json --decisions notes.json
+   sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
+   ```
+
+6. Import the merged or organized vault into an empty Bitwarden or Vaultwarden vault with its file password, then
+   upload the attachments the report lists. Delete the exports, the vaults, the catalog, and the report afterwards.
 
 ## Commands
 
-Every command takes one or more input files and accepts `--help`. The root command also accepts `--version`. An
+`inspect`, `scan`, `merge`, and `review` take one or more input files, and `catalog` and `apply` take one. Every
+command accepts `--help`. The root command also accepts `--version`. An
 argument that starts with `@` is a file name like any other: the tool reads no response files, so an export is never
 split into arguments. An empty or blank file name is an invalid command line.
 
@@ -137,6 +146,67 @@ Opens a full-screen terminal UI for the decisions that `merge` leaves to the dec
 sharedkernel-vault review keeper.zip bitwarden.json --decisions decisions.json --output merged.json
 ```
 
+### `catalog <input> --output <file> [options]`
+
+Writes the catalog of one vault file: a JSON file that a person or an agent may read and edit without seeing any
+secret value. The input is any supported export, or a vault this tool wrote, such as `merged.json`. A
+password-protected input asks for its password at the terminal.
+
+| Option | Description |
+| --- | --- |
+| `-o`, `--output <file>` | Required. Catalog file to write. It is never the input, and an existing file is replaced only with `--force`. |
+| `--decisions <file>` | Decisions file with the notes decisions. Each item whose notes have no decision gets a pending entry in its `notes` list. |
+| `--force` | Allows replacing an existing catalog file. |
+
+```sh
+sharedkernel-vault catalog merged.json --output catalog.json --decisions notes.json
+```
+
+Each catalog item has a `key`, its origin key, which may not change, and these parts, which may be edited:
+
+- `name`, `folder` (with `/` between levels, or `null`), `additionalFolders`, and `favorite`;
+- `notes`: `{ "decision": "Pending" }` until the decisions file decides on them. Only notes whose decision is
+  `Share` show their `text`. An item without notes has no `notes`; set `{ "decision": "Share", "text": "..." }` to
+  give it some;
+- `uris`: website addresses as `{ "value": "...", "match": null }`. An address with user info, a query, or a
+  fragment shows as `{ "masked": "https://***@host/path?***", "index": 1 }`: it may be moved, but not changed or
+  removed;
+- `fields`: text custom fields whose name and value hold no secret finding, as `{ "name": "...", "value": "..." }`.
+
+The top-level `folders` list holds every folder of the vault, including empty ones. `info` lists, for reading only,
+the item type, the user name when it holds no secret finding, whether a password or TOTP is present, the number of
+passkeys and previous passwords, the names of the custom fields the catalog does not show, and the attachment names
+and sizes. The catalog never holds passwords, TOTPs, passkeys, password history, hidden fields, card, identity, or
+SSH key values, withheld notes, or any text that holds a secret finding.
+
+The command prints how many notes are shown, withheld, private, or hidden, how many custom fields are withheld, and
+how many addresses are masked, and exits with code 0, also while notes wait for a decision.
+
+### `apply <input> --catalog <file> --output <file> [options]`
+
+Applies an edited catalog to the vault file it was made from and writes a Bitwarden export, password-protected
+unless `--plaintext` is given.
+
+| Option | Description |
+| --- | --- |
+| `--catalog <file>` | Required. Edited catalog, made from the input by `catalog`. |
+| `-o`, `--output <file>` | Required. File to write the edited vault to. It is never the input or the catalog. |
+| `--decisions <file>` | Decisions file with the notes decisions. |
+| `--plaintext` | Writes unencrypted Bitwarden JSON instead of a password-protected export. Delete the file after the import. |
+| `--force` | Allows replacing an existing output file. |
+
+```sh
+sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
+```
+
+The catalog applies only to the exact file it was made from: a different file name or any change to the file, which
+the catalog records as a SHA-256, exits with code 3 before any password is asked. Secrets, protected fields, masked
+addresses, and withheld notes stay as they are. Notes change only when both the catalog and the decisions file
+share them; notes whose decision is `Hidden` move into a hidden field named `Notes`. Items cannot be added or
+removed. While the catalog changes something it may not, such as the text of withheld notes, a masked address, an
+item key, or an empty name, the command writes nothing, prints each problem by item key and name, and exits with code
+3. The output creates every folder of the catalog, including empty ones, and the parent of each.
+
 The review needs a terminal. When standard input or standard output is redirected, it exits with code 3 before it
 reads any input; run `merge` with `--decisions <file>` and edit the file instead. Before the UI starts, the review
 checks the files and inputs as `merge` does and asks for the password of each password-protected input at the
@@ -163,6 +233,7 @@ place. The status bar shows the main keys, and `F1` lists them all:
 | `Ctrl+F` | anywhere | Search the groups by item name. |
 | `Ctrl+S` | anywhere | Save the decisions file. |
 | `Ctrl+W` | anywhere | Write the merged vault. |
+| `F8` | anywhere | Show the notes of every item whose notes hold no finding in catalogs. Asks first. |
 | `Ctrl+Q`, `Esc` | anywhere | Quit. With unsaved decisions, the review asks whether to save them first. |
 | `Enter` | groups | Go to the fields of the selected group. |
 | `m` | groups | Mark the selected group for a link. |
@@ -173,6 +244,9 @@ place. The status bar shows the main keys, and `F1` lists them all:
 | `Delete` | fields | Remove the decision on the field. |
 | `v` | fields | Reveal or mask the values of the field. |
 | `s` | fields | Split the selected item out of its group. |
+| `n` | fields | Show the selected item's notes in catalogs. |
+| `p` | fields | Keep the selected item's notes out of catalogs. |
+| `h` | fields | Move the selected item's notes into a hidden field when a catalog is applied. |
 | `a` | findings | Accept the finding. |
 | `r` | findings | Reject the finding. |
 | `Delete` | findings | Remove the decision on the finding. |
@@ -256,6 +330,13 @@ after a merge that needs two decisions:
   findings, which have a checksum or a strong validator, are applied unless a decision rejects them. Other findings
   are applied only when accepted. Replace `"decision": "Pending"` with `"Accepted"` or `"Rejected"`. To reject a
   pre-accepted finding, add an entry with its finding ID from the report to the `findings` list.
+- **Notes decisions.** The optional `notes` list decides, per item, how `catalog` and `apply` handle its notes:
+  `{ "originKey": "bitwarden|merged.json|3f2…", "decision": "Share", "itemName": "GitHub", "findings": 0 }`.
+  `Share` shows the notes in catalogs and lets `apply` take the edited text, `Private` keeps them out of catalogs,
+  and `Hidden` keeps them out and moves them into a hidden field named `Notes` when a catalog is applied. `catalog`
+  rebuilds the `Pending` entries, one for each item whose notes have no decision, with the number of findings in the
+  notes; a pending entry withholds the notes. `merge` ignores this list. In `review` of the same file, `n`, `p`, `h`, and
+  `F8` set these decisions.
 - **Links and splits.** `links` and `splits` take pairs of origin keys, such as
   `{ "first": "keeper|keeper.json|rec-1", "second": "bitwarden|bitwarden.json|bw-1" }`, that must or must never
   end up in one group. A split wins over a link.
@@ -275,7 +356,7 @@ property's JSON path.
 | 0 | Success. |
 | 1 | Invalid command line, with the error on standard error and help on standard output, both shown as described under Output; canceled; or an unexpected error. Ctrl+C or SIGTERM cancels a command; inside the review UI, `Ctrl+C` is a key, and SIGTERM or SIGINT cancels, as described under `review`. Canceled at a password prompt or before the review UI starts, the command ends at once. Otherwise `inspect`, `scan`, and `merge` wait up to 1.5 seconds for their work to stop at its next check: no file write starts after the cancel, and a write already under way either completes or leaves its file unchanged, as described under Security. Work still running after 1.5 seconds ends with the process. An unexpected error shows the exception type and stack trace, but not its message, which can contain vault values. |
 | 2 | `merge` only: fields or findings need a decision. No vault is written; with `--decisions`, the decisions file holds a pending entry for each. |
-| 3 | An input or output problem: an input that is unreadable, unsupported, malformed, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; an output that exists without `--force` or is an input; a missing output directory; a report path that names an existing file that is not a vault report; a report or decisions file that cannot be written; values that Bitwarden would reject; a password needed while standard input is not a terminal, or no acceptable new password in three attempts; or `review` started while standard input or output is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
+| 3 | An input or output problem: an input that is unreadable, unsupported, malformed, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; a catalog that is not valid, was made from another file or another version of the input, or changes what it may not; an output that exists without `--force` or is an input; a missing output directory; a report path that names an existing file that is not a vault report; a report or decisions file that cannot be written; values that Bitwarden would reject; a password needed while standard input is not a terminal, or no acceptable new password in three attempts; or `review` started while standard input or output is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, before the tool handles it, or a canceled command that did not end within two seconds. |
 
 ## Output
@@ -324,6 +405,10 @@ that System.CommandLine repeats cannot send escape sequences either.
   variables. Wait for the prompt before you type a password: the terminal shows what is typed earlier. When
   standard input is not a terminal, a command that needs a password exits with code 3 before it reads any vault,
   and names the input or output that needs the password.
+- A catalog holds item names, folder names, user names, website addresses with their user info, query, and fragment
+  masked, text custom fields and notes without secret findings, and attachment names, and never secret values. The
+  secret scanner can miss a secret, so notes appear only after you share them in the decisions file. An agent that
+  can write the decisions file can share notes itself; keep that file out of its reach when it must not.
 - Reports, warnings, errors, and the decisions file never contain secret values. They do contain item names,
   folder names, file names, and origin keys. An origin key holds the record or item ID of an export, or, for an item
   without one, such as a CSV row, a hash of its type, title, and first host.

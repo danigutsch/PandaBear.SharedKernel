@@ -7,11 +7,11 @@ public sealed class VaultCommandLineTests
     private const string ExportPassword = "fixture export password";
 
     [Fact]
-    public void Root_command_offers_inspect_scan_merge_and_review()
+    public void Root_command_offers_inspect_scan_merge_review_catalog_and_apply()
     {
         var command = VaultCommandLine.Create(new TestPrompts(ExportPassword).Environment());
 
-        command.Subcommands.Select(subcommand => subcommand.Name).ShouldBe(["inspect", "scan", "merge", "review"]);
+        command.Subcommands.Select(subcommand => subcommand.Name).ShouldBe(["inspect", "scan", "merge", "review", "catalog", "apply"]);
     }
 
     [Fact]

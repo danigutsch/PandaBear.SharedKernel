@@ -542,6 +542,7 @@ vault that it protects.
    cd ~/vault-merge
    rm -f keeper.zip keeper.json bitwarden.json bitwarden.zip merged.json check.json restore.json
    rm -f decisions.json all-conflicts.json scan-report.md merge-report.md
+   rm -f catalog.json notes.json organized.json
    ```
 
    Keep `vaultwarden-backup.zip` from step 6 only as long as you need it, on the encrypted disk. Bitwarden's
@@ -587,6 +588,48 @@ Exports carry no deletion markers, so the tool cannot tell a deletion from an en
   holds items in the trash anyway gets a warning that counts them, and the tool skips them.
 - Unverified: whether Commander exports records from Keeper's deleted items. Delete any that appear after the
   import.
+
+## Organize with an agent
+
+You can let a person or an AI agent rename items, move them between folders, fix website addresses, and edit
+descriptions before the import, without giving them any password or other secret. They edit a catalog, a JSON file
+that holds no secret value; you run the two commands that read and write the vault.
+
+1. Write the catalog of the merged vault. It asks for the password of `merged.json`:
+
+   ```bash
+   sharedkernel-vault catalog merged.json --output catalog.json --decisions notes.json
+   ```
+
+   The catalog holds names, folders, favorites, website addresses with their user info, query, and fragment masked,
+   text custom fields without secret findings, user names, and attachment names. It withholds every note until you
+   decide on it, and `notes.json` lists a `Pending` entry for each item with notes and the number of secret findings
+   in them.
+2. Decide which notes the catalog may show. Open the review of the same file and press `n` (show), `p` (keep
+   private), or `h` (move into a hidden field named `Notes`) on the item's column in the **Fields** tab, or `F8` to
+   show every note without a finding, then save with `Ctrl+S`:
+
+   ```bash
+   sharedkernel-vault review merged.json --decisions notes.json
+   ```
+
+   Or replace `"decision": "Pending"` in `notes.json` with `"Share"`, `"Private"`, or `"Hidden"`. The scanner can
+   miss a secret, so read notes before you share them. Then run `catalog` again with `--force` to show the shared
+   notes.
+3. Give the agent `catalog.json` and nothing else from the working folder. It may change `name`, `folder`,
+   `additionalFolders`, `favorite`, the `text` of shared notes, the `uris` that are not masked, the `fields`, and the
+   top-level `folders` list. It must keep each `key` and each masked address, and leave withheld notes without
+   text. Keep `notes.json` out of its reach: an agent that can write it can share notes.
+4. Apply the catalog. It asks for the password of `merged.json` and for a new password for `organized.json`:
+
+   ```bash
+   sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
+   ```
+
+   `apply` refuses a catalog made from another file or from `merged.json` before a later merge, and writes nothing
+   while the catalog changes something it may not; each problem names the item. Fix the catalog and run it again.
+5. Import `organized.json` instead of `merged.json` in step 7, and delete `catalog.json`, `notes.json`, and
+   `organized.json` in step 10.
 
 ## The decisions file
 

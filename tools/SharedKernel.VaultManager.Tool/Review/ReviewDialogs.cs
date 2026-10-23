@@ -50,6 +50,9 @@ internal sealed class ReviewDialogs(IApplication app) : IReviewDialogs
     }
 
     /// <inheritdoc/>
+    public bool Confirm(string title, string message) => MessageBox.Query(app, title, message, "Cancel", "Yes") == 1;
+
+    /// <inheritdoc/>
     public string? AskExportPassword()
     {
         using var dialog = new ExportPasswordDialog();

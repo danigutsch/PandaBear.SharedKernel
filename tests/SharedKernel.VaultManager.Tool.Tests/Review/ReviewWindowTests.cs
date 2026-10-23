@@ -120,6 +120,27 @@ public sealed class ReviewWindowTests : IDisposable
     }
 
     [Fact]
+    public void Notes_keys_decide_on_the_selected_member_and_the_share_key_asks_before_sharing_the_rest()
+    {
+        VaultItem wifi = KeeperNote("rec-3", "Wifi", "fixture wifi note");
+        VaultItem router = KeeperNote("rec-4", "Router", "fixture router note");
+        var session = Session(Scan(directory, wifi, router));
+        var dialogs = new FakeDialogs { ConfirmAnswer = true };
+        using IApplication app = HeadlessTerminal.Start();
+        using var window = new ReviewWindow(session, dialogs);
+        SessionToken token = app.Begin(window).ShouldNotBeNull();
+        string selected = window.SelectedGroup.ShouldNotBeNull().MemberKeys.ShouldHaveSingleItem();
+        string other = selected == OriginKey(wifi) ? OriginKey(router) : OriginKey(wifi);
+
+        HeadlessTerminal.Press(app, ReviewKeys.Fields.Key, ReviewKeys.HideMemberNotes.Key, ReviewKeys.ShareNotes.Key);
+        app.End(token);
+
+        dialogs.Confirmations.ShouldBe(["Share notes"]);
+        session.Decisions.FindNotes(selected).ShouldBe(NotesDecision.Hidden);
+        session.Decisions.FindNotes(other).ShouldBe(NotesDecision.Share);
+    }
+
+    [Fact]
     public void Finding_keys_accept_reject_clear_and_reveal_the_selected_finding()
     {
         VaultItem github = CodesAndPasswordInNotes("rec-github", PipelineSecrets.GitHubRecoveryCodes(700), NotesPassword);

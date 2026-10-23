@@ -18,6 +18,38 @@ public sealed class ReviewSessionTests : IDisposable
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]
+    public void Notes_decisions_are_set_replaced_and_removed_per_item()
+    {
+        VaultItem wifi = KeeperNote("rec-3", "Wifi", "fixture wifi note");
+        var session = Session(Scan(directory, wifi));
+
+        session.DecideNotes(OriginKey(wifi), NotesDecision.Share);
+        session.DecideNotes(OriginKey(wifi), NotesDecision.Hidden);
+
+        session.Decisions.Notes.ShouldBe([new ItemNotesDecision(OriginKey(wifi), NotesDecision.Hidden, "Wifi", 0)]);
+        session.IsDirty.ShouldBeTrue();
+        session.DecideNotes(OriginKey(wifi), NotesDecision.Pending);
+        session.Decisions.Notes.ShouldBeEmpty();
+        var missing = () => session.DecideNotes("keeper|keeper.json|missing", NotesDecision.Share);
+        missing.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
+    public void Sharing_notes_without_findings_skips_notes_that_hold_a_finding_or_a_decision()
+    {
+        VaultItem wifi = KeeperNote("rec-3", "Wifi", "fixture wifi note");
+        VaultItem router = KeeperNote("rec-4", "Router", "fixture router note");
+        VaultItem github = CodesAndPasswordInNotes("rec-github", PipelineSecrets.GitHubRecoveryCodes(720), NotesPassword);
+        var session = Session(Scan(directory, wifi, router, github), MergeDecisions.None with { Notes = [new ItemNotesDecision(OriginKey(router), NotesDecision.Private)] });
+
+        session.ShareNotesWithoutFindings().ShouldBe(1);
+
+        session.Decisions.FindNotes(OriginKey(wifi)).ShouldBe(NotesDecision.Share);
+        session.Decisions.FindNotes(OriginKey(router)).ShouldBe(NotesDecision.Private);
+        session.Decisions.FindNotes(OriginKey(github)).ShouldBe(NotesDecision.Pending);
+    }
+
+    [Fact]
     public void Groups_filter_by_pending_conflicting_identical_and_unique_status()
     {
         VaultItem keeperExample = KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com");

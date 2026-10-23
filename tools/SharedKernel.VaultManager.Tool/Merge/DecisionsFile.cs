@@ -10,9 +10,9 @@ namespace PandaBear.VaultManager.Tool.Merge;
 
 /// <summary>
 /// Reads and writes the versioned decisions file:
-/// <c>{"version":2,"groups":[...],"links":[...],"splits":[...],"findings":[...]}</c>. The <c>findings</c> section is
-/// optional when reading; a property the format does not define, or a property given twice in one object, is rejected.
-/// Choice kinds and finding decisions are written by name, and item names as typed, with control and format characters
+/// <c>{"version":2,"groups":[...],"links":[...],"splits":[...],"findings":[...],"notes":[...]}</c>. The <c>findings</c>
+/// and <c>notes</c> sections are optional when reading; a property the format does not define, or a property given twice in one object, is rejected.
+/// Choice kinds, finding decisions, and notes decisions are written by name, and item names as typed, with control and format characters
 /// escaped. A pending entry, with the kind or decision <c>Pending</c>, marks what still needs a decision and counts as
 /// no decision.
 /// </summary>
@@ -78,7 +78,13 @@ internal static class DecisionsFile
     {
         ArgumentNullException.ThrowIfNull(decisions);
 
-        var document = new DecisionsDocument(CurrentVersion, decisions.Groups, decisions.Overrides.Links, decisions.Overrides.Splits, decisions.Findings);
+        var document = new DecisionsDocument(
+            CurrentVersion,
+            decisions.Groups,
+            decisions.Overrides.Links,
+            decisions.Overrides.Splits,
+            decisions.Findings,
+            decisions.Notes.Count > 0 ? decisions.Notes : null);
         return EscapeFormatCharacters(JsonSerializer.Serialize(document, ReadableDocument));
     }
 
@@ -123,14 +129,20 @@ internal static class DecisionsFile
         ValidateGroups(document.Groups);
         IReadOnlyList<ItemFindingDecisions> findings = document.Findings ?? [];
         ValidateFindings(findings);
-        return new MergeDecisions(document.Groups, new MatchOverrides(document.Links, document.Splits)) { Findings = findings };
+        IReadOnlyList<ItemNotesDecision> notes = document.Notes ?? [];
+        ValidateNotes(notes);
+        return new MergeDecisions(document.Groups, new MatchOverrides(document.Links, document.Splits)) { Findings = findings, Notes = notes };
     }
 
-    // The relaxed encoder writes format characters as they are, and an editor applies them instead of showing them: a
-    // right-to-left override in an item name reverses the text after it, and a zero-width character is invisible. Each is
-    // written as a \u escape instead. JSON text outside strings is ASCII, so each one is inside a string, where the escape
-    // reads back as the same character.
-    private static string EscapeFormatCharacters(string json)
+    /// <summary>
+    /// Escapes the format characters of JSON written with the relaxed encoder, which writes them as they are, and an
+    /// editor applies them instead of showing them: a right-to-left override in an item name reverses the text after it,
+    /// and a zero-width character is invisible. Each is written as a <c>\u</c> escape instead. JSON text outside strings
+    /// is ASCII, so each one is inside a string, where the escape reads back as the same character.
+    /// </summary>
+    /// <param name="json">JSON text.</param>
+    /// <returns>The same JSON with format characters escaped.</returns>
+    internal static string EscapeFormatCharacters(string json)
     {
         var escaped = new StringBuilder(json.Length);
         int index = 0;
@@ -204,6 +216,28 @@ internal static class DecisionsFile
                 {
                     throw new InvalidDataException($"The decision on finding {choice.FindingId} of {item.OriginKey} is not Pending, Accepted, or Rejected.");
                 }
+            }
+        }
+    }
+
+    private static void ValidateNotes(IReadOnlyList<ItemNotesDecision> notes)
+    {
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var item in notes)
+        {
+            if (string.IsNullOrWhiteSpace(item.OriginKey))
+            {
+                throw new InvalidDataException("A decisions file notes entry has no origin key.");
+            }
+
+            if (!Enum.IsDefined(item.Decision))
+            {
+                throw new InvalidDataException($"The notes decision of {item.OriginKey} is not Pending, Share, Private, or Hidden.");
+            }
+
+            if (!seen.Add(item.OriginKey))
+            {
+                throw new InvalidDataException($"The decisions file has two notes entries for {item.OriginKey}.");
             }
         }
     }

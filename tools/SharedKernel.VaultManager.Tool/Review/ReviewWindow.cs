@@ -83,6 +83,7 @@ internal sealed class ReviewWindow : Window
         statusBar.Add(Shortcut(ReviewKeys.Search, "Search", FocusSearch));
         statusBar.Add(Shortcut(ReviewKeys.Save, "Save", Save));
         statusBar.Add(Shortcut(ReviewKeys.Write, "Write", Write));
+        statusBar.Add(Shortcut(ReviewKeys.ShareNotes, "Share notes", ShareNotes));
         statusBar.Add(Shortcut(ReviewKeys.Quit, "Quit", Quit));
         Add(groupsFrame, header, tabs, messageLine, statusBar);
 
@@ -95,6 +96,9 @@ internal sealed class ReviewWindow : Window
             (ReviewKeys.ClearChoice, ClearChoice),
             (ReviewKeys.Reveal, RevealField),
             (ReviewKeys.Split, SplitMember),
+            (ReviewKeys.ShareMemberNotes, () => DecideNotes(NotesDecision.Share)),
+            (ReviewKeys.PrivateMemberNotes, () => DecideNotes(NotesDecision.Private)),
+            (ReviewKeys.HideMemberNotes, () => DecideNotes(NotesDecision.Hidden)),
         ];
         findingKeys =
         [
@@ -550,6 +554,42 @@ internal sealed class ReviewWindow : Window
             anchorOriginKey = remaining;
             return Header(member) + " is split out of the group.";
         });
+    }
+
+    private void DecideNotes(NotesDecision decision)
+    {
+        if (SelectedMember() is not { } member)
+        {
+            Notify("Move to the column of the item whose notes to decide on.");
+            return;
+        }
+
+        TryRun(() =>
+        {
+            session.DecideNotes(member.OriginKey, decision);
+            return Header(member) + decision switch
+            {
+                NotesDecision.Share => ": notes are shown in catalogs.",
+                NotesDecision.Private => ": notes stay out of catalogs.",
+                _ => ": notes move into a hidden field when a catalog is applied.",
+            };
+        });
+    }
+
+    private void ShareNotes()
+    {
+        if (dialogs.Unavailable is { } unavailable)
+        {
+            Notify(unavailable);
+            return;
+        }
+
+        if (!dialogs.Confirm("Share notes", "Show the notes of every item whose notes hold no finding in catalogs, where agents can read and edit them? The scanner can miss a secret."))
+        {
+            return;
+        }
+
+        TryRun(() => string.Create(CultureInfo.InvariantCulture, $"Notes of {session.ShareNotesWithoutFindings()} item(s) are shown in catalogs now."));
     }
 
     private void Decide(FindingDecision decision)

@@ -258,6 +258,36 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         };
     }
 
+    /// <summary>
+    /// Writes a vault as a Bitwarden export, password-protected unless <see cref="PipelineOutput.Plaintext"/> is set. The
+    /// password of an encrypted output is read through <see cref="VaultCommandEnvironment.ReadNewPassword"/>. Nothing is
+    /// written while the writer reports an error.
+    /// </summary>
+    /// <param name="vault">Vault to write.</param>
+    /// <param name="output">Output file.</param>
+    /// <param name="inputPaths">Files the vault was made from, which the output may not be.</param>
+    /// <param name="ct">Observed after the new-password prompt and before the file is moved into place.</param>
+    /// <returns>The writer's errors and warnings.</returns>
+    /// <exception cref="IOException">The output cannot be used, as described for <see cref="Run"/>, or cannot be written.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// The new-password prompt failed, or the password is shorter than <see cref="PasswordReader.MinimumNewPasswordLength"/>.
+    /// </exception>
+    public BitwardenWriteResult Write(VaultExport vault, PipelineOutput output, IReadOnlyList<string> inputPaths, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(vault);
+        ArgumentNullException.ThrowIfNull(output);
+        ArgumentNullException.ThrowIfNull(inputPaths);
+        CheckOutput(output, inputPaths);
+
+        BitwardenWriteResult written = BitwardenJsonWriter.Write(vault);
+        if (written.Errors.Count == 0)
+        {
+            WriteOutput(written.Json, output, ct);
+        }
+
+        return written;
+    }
+
     // The reader's message is the tool's own and names no value, so the input's name goes in front of it. A parser's
     // exception, whose message can quote the input, stays inside the reader's exception.
     private VaultReadResult Read(string path, string inputName)

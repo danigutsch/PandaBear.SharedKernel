@@ -9,6 +9,7 @@ internal sealed class FakeDialogs : IReviewDialogs
     private readonly List<bool> quitQuestions = [];
     private readonly List<IReadOnlyList<ReviewKey>> help = [];
     private readonly List<string> errors = [];
+    private readonly List<string> confirmations = [];
 
     /// <summary>Why the dialogs cannot be shown, or <see langword="null"/> when they can.</summary>
     public string? Unavailable { get; init; }
@@ -24,6 +25,12 @@ internal sealed class FakeDialogs : IReviewDialogs
 
     /// <summary>Key lists shown as help.</summary>
     public IReadOnlyList<IReadOnlyList<ReviewKey>> Help => help;
+
+    /// <summary>Answer to every yes-or-no question.</summary>
+    public bool ConfirmAnswer { get; init; }
+
+    /// <summary>Titles of the yes-or-no questions asked.</summary>
+    public IReadOnlyList<string> Confirmations => confirmations;
 
     /// <summary>Problems shown.</summary>
     public IReadOnlyList<string> Errors => errors;
@@ -49,6 +56,12 @@ internal sealed class FakeDialogs : IReviewDialogs
     {
         PasswordQuestions++;
         return Password;
+    }
+
+    public bool Confirm(string title, string message)
+    {
+        confirmations.Add(title);
+        return ConfirmAnswer;
     }
 
     public void ShowHelp(IReadOnlyList<ReviewKey> keys) => help.Add(keys);

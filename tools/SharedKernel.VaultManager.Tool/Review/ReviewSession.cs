@@ -346,6 +346,80 @@ internal sealed class ReviewSession
     }
 
     /// <summary>
+    /// Sets how a catalog handles the notes of an item: shown and editable, private, or moved into a hidden field when the
+    /// catalog is applied. The merge ignores these decisions; <c>catalog</c> and <c>apply</c> read them for the item's own
+    /// file.
+    /// </summary>
+    /// <param name="originKey">Origin key of the item.</param>
+    /// <param name="decision">The decision; <see cref="NotesDecision.Pending"/> removes it.</param>
+    /// <exception cref="ArgumentException">No item has this key, or the item has no notes.</exception>
+    public void DecideNotes(string originKey, NotesDecision decision)
+    {
+        ArgumentNullException.ThrowIfNull(originKey);
+        if (!sources.TryGetValue(originKey, out ScannedItem? item) || string.IsNullOrEmpty(item.Source.Item.Notes))
+        {
+            throw new ArgumentException($"{originKey} has no notes.", nameof(originKey));
+        }
+
+        var notes = new List<ItemNotesDecision>(Decisions.Notes);
+        int index = notes.FindIndex(entry => string.Equals(entry.OriginKey, originKey, StringComparison.Ordinal));
+        var entry = new ItemNotesDecision(originKey, decision, item.Source.Item.Name, NotesFindings(item));
+        if (decision == NotesDecision.Pending && index >= 0)
+        {
+            notes.RemoveAt(index);
+        }
+        else if (decision != NotesDecision.Pending)
+        {
+            if (index >= 0)
+            {
+                notes[index] = entry;
+            }
+            else
+            {
+                notes.Add(entry);
+            }
+        }
+
+        Change(Decisions with { Notes = notes });
+    }
+
+    /// <summary>Shares the notes of every item whose notes hold no secret finding and have no decision yet.</summary>
+    /// <returns>Number of items whose notes are shared now.</returns>
+    public int ShareNotesWithoutFindings()
+    {
+        var notes = new List<ItemNotesDecision>(Decisions.Notes);
+        int shared = 0;
+        foreach (ScannedItem item in scanned.Items)
+        {
+            string originKey = item.Source.OriginKey;
+            if (string.IsNullOrEmpty(item.Source.Item.Notes) || NotesFindings(item) > 0 || Decisions.FindNotes(originKey) != NotesDecision.Pending)
+            {
+                continue;
+            }
+
+            var entry = new ItemNotesDecision(originKey, NotesDecision.Share, item.Source.Item.Name, 0);
+            int index = notes.FindIndex(existing => string.Equals(existing.OriginKey, originKey, StringComparison.Ordinal));
+            if (index >= 0)
+            {
+                notes[index] = entry;
+            }
+            else
+            {
+                notes.Add(entry);
+            }
+
+            shared++;
+        }
+
+        if (shared > 0)
+        {
+            Change(Decisions with { Notes = notes });
+        }
+
+        return shared;
+    }
+
+    /// <summary>
     /// Links two items, so their groups merge into one. A split between the two items is removed; other splits still keep
     /// the members of the two groups apart.
     /// </summary>
@@ -588,21 +662,8 @@ internal sealed class ReviewSession
     private static Cell Websites(VaultItem member)
     {
         string[] uris = [.. (member.Login?.Uris ?? []).Select(uri => uri.Value)];
-        string[] masked = [.. uris.Select(MaskUri)];
+        string[] masked = [.. uris.Select(uri => UriMasking.Mask(uri, ReviewText.Mask))];
         return new Cell(string.Join(", ", uris), Secret: !uris.SequenceEqual(masked, StringComparer.Ordinal), string.Join(", ", masked));
-    }
-
-    private static string MaskUri(string uri)
-    {
-        int scheme = uri.IndexOf("://", StringComparison.Ordinal);
-        int authorityStart = scheme < 0 ? 0 : scheme + 3;
-        int authorityEnd = uri.IndexOfAny(['/', '?', '#'], authorityStart);
-        authorityEnd = authorityEnd < 0 ? uri.Length : authorityEnd;
-        int at = authorityEnd > authorityStart ? uri.LastIndexOf('@', authorityEnd - 1, authorityEnd - authorityStart) : -1;
-        string authority = at < 0 ? uri[authorityStart..authorityEnd] : ReviewText.Mask + uri[at..authorityEnd];
-        int rest = uri.IndexOfAny(['?', '#'], authorityEnd);
-        string path = rest < 0 ? uri[authorityEnd..] : uri[authorityEnd..rest] + uri[rest] + ReviewText.Mask;
-        return uri[..authorityStart] + authority + path;
     }
 
     private static string Day(DateTimeOffset time) => time.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
@@ -673,6 +734,9 @@ internal sealed class ReviewSession
                 group.MemberKeys.Any(suggested.Contains)));
         }
     }
+
+    private static int NotesFindings(ScannedItem item) =>
+        item.Findings.Count(finding => string.Equals(finding.Location.FieldPath, SecretLocation.Notes, StringComparison.Ordinal));
 
     private void Change(MergeDecisions decisions)
     {

@@ -11,9 +11,11 @@ namespace PandaBear.VaultManager.Tool.Merge;
 /// <param name="Links">Forced links.</param>
 /// <param name="Splits">Forced splits.</param>
 /// <param name="Findings">Decisions and pending entries on secret findings per input item; files without this section have none.</param>
+/// <param name="Notes">Decisions and pending entries on the notes of catalog items; files without this section have none.</param>
 internal sealed record DecisionsDocument(
     int Version,
     IReadOnlyList<GroupDecision> Groups,
     IReadOnlyList<OriginKeyPair> Links,
     IReadOnlyList<OriginKeyPair> Splits,
-    IReadOnlyList<ItemFindingDecisions>? Findings = null);
+    IReadOnlyList<ItemFindingDecisions>? Findings = null,
+    IReadOnlyList<ItemNotesDecision>? Notes = null);
