@@ -17,6 +17,7 @@ internal sealed class GitHubRoadmapReconcileClient
             issues(first:100,after:$after,states:[OPEN],orderBy:{field:CREATED_AT,direction:ASC}){
               nodes{
                 __typename
+                id
                 number
                 title
                 state
@@ -32,7 +33,7 @@ internal sealed class GitHubRoadmapReconcileClient
         }
         """;
 
-    private const string IssueQuery = "query($owner:String!,$name:String!,$number:Int!){repository(owner:$owner,name:$name){issueOrPullRequest(number:$number){__typename ... on Issue{number title state labels(first:100){nodes{name}pageInfo{hasNextPage endCursor}} parent{number state repository{nameWithOwner}} subIssues(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blockedBy(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blocking(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}}}}}}";
+    private const string IssueQuery = "query($owner:String!,$name:String!,$number:Int!){repository(owner:$owner,name:$name){issueOrPullRequest(number:$number){__typename ... on Issue{id number title state labels(first:100){nodes{name}pageInfo{hasNextPage endCursor}} parent{number state repository{nameWithOwner}} subIssues(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blockedBy(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blocking(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}}}}}}";
     private const string RepositoryCommitQuery = "query($owner:String!,$name:String!){repository(owner:$owner,name:$name){defaultBranchRef{target{oid}}}}";
     private static readonly TimeSpan SnapshotTimeout = TimeSpan.FromMinutes(2);
     private readonly HttpClient _httpClient;
@@ -54,7 +55,9 @@ internal sealed class GitHubRoadmapReconcileClient
     public async Task<GitHubRoadmapReconcileSnapshot> ReadSnapshot(
         string repository,
         int[] requiredIssueNumbers,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        RoadmapProject? project = null,
+        bool resolveExternalReferences = false)
     {
         ArgumentNullException.ThrowIfNull(requiredIssueNumbers);
 
@@ -67,6 +70,8 @@ internal sealed class GitHubRoadmapReconcileClient
             return await ReadSnapshotCore(
                 repository,
                 requiredIssueNumbers,
+                project,
+                resolveExternalReferences,
                 snapshotCancellation.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -82,16 +87,39 @@ internal sealed class GitHubRoadmapReconcileClient
     private async Task<GitHubRoadmapReconcileSnapshot> ReadSnapshotCore(
         string repository,
         int[] requiredIssueNumbers,
+        RoadmapProject? project,
+        bool resolveExternalReferences,
         CancellationToken cancellationToken)
     {
         var (owner, name) = SplitRepository(repository);
         var (repositoryCommit, issuesByNumber) = await ReadOpenIssues(owner, name, cancellationToken).ConfigureAwait(false);
         var supplementalIssueNumbers = DiscoverSupplementalIssueNumbers(requiredIssueNumbers, issuesByNumber.Values, repository);
-        await AddSupplementalIssues(owner, name, supplementalIssueNumbers, issuesByNumber, cancellationToken).ConfigureAwait(false);
+        Dictionary<string, GitHubIssueReferenceResolution> resolutions = new(StringComparer.Ordinal);
+        await AddSupplementalIssues(owner, name, supplementalIssueNumbers, issuesByNumber, project, resolutions, cancellationToken).ConfigureAwait(false);
+        if (project is not null)
+        {
+            foreach (var item in project.Items.Where(item => item.GitHubIssue is int))
+            {
+                if (item.HasLocalGitHubIssue(repository)
+                    && issuesByNumber.TryGetValue(item.GitHubIssue.GetValueOrDefault(), out var localIssue)
+                    && localIssue.NodeId is not null)
+                {
+                    resolutions[item.Id] = new(repository, localIssue.Number, localIssue.NodeId, item.GitHubNodeId, null);
+                }
+                else if (resolveExternalReferences && !item.HasLocalGitHubIssue(repository))
+                {
+                    resolutions[item.Id] = await new GitHubIssueReferenceResolver(_httpClient)
+                        .Resolve(item.GitHubRepository ?? repository, item.GitHubIssue.GetValueOrDefault(), item.GitHubNodeId, cancellationToken).ConfigureAwait(false);
+                }
+            }
+        }
         var finalRepositoryCommit = await ReadCurrentRepositoryCommit(owner, name, cancellationToken).ConfigureAwait(false);
         RequireStableRepositoryCommit(repositoryCommit, finalRepositoryCommit);
 
-        return new GitHubRoadmapReconcileSnapshot(finalRepositoryCommit, issuesByNumber.Values.OrderBy(issue => issue.Number).ToArray());
+        return new GitHubRoadmapReconcileSnapshot(finalRepositoryCommit, issuesByNumber.Values.OrderBy(issue => issue.Number).ToArray())
+        {
+            ReferenceResolutions = resolutions
+        };
     }
 
     private async Task<(string? RepositoryCommit, Dictionary<int, GitHubRoadmapReconcileIssue> IssuesByNumber)> ReadOpenIssues(
@@ -225,6 +253,8 @@ internal sealed class GitHubRoadmapReconcileClient
         string name,
         IEnumerable<int> supplementalIssueNumbers,
         Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber,
+        RoadmapProject? project,
+        Dictionary<string, GitHubIssueReferenceResolution> resolutions,
         CancellationToken cancellationToken)
     {
         var orderedIssueNumbers = supplementalIssueNumbers.Order().ToArray();
@@ -240,8 +270,30 @@ internal sealed class GitHubRoadmapReconcileClient
                 continue;
             }
 
-            var issue = await ReadIssueByNumber(owner, name, issueNumber, cancellationToken).ConfigureAwait(false);
-            if (issue.Number != issueNumber || !issuesByNumber.TryAdd(issue.Number, issue))
+            var expectedIssueNumber = issueNumber;
+            GitHubRoadmapReconcileIssue issue;
+            try
+            {
+                issue = await ReadIssueByNumber(owner, name, issueNumber, cancellationToken).ConfigureAwait(false);
+            }
+            catch (GitHubIssueLookupUnavailableException) when (project is not null)
+            {
+                var item = project.Items.SingleOrDefault(item => item.HasLocalGitHubIssue(project.GitHubRepository) && item.GitHubIssue == issueNumber)
+                    ?? throw new InvalidOperationException($"GitHub reconciliation cannot resolve required issue {owner}/{name}#{issueNumber}; review its explicit transition or blocker reference.");
+
+                var resolution = await new GitHubIssueReferenceResolver(_httpClient)
+                    .Resolve($"{owner}/{name}", issueNumber, item.GitHubNodeId, cancellationToken).ConfigureAwait(false);
+                resolutions[item.Id] = resolution;
+                if (!resolution.IsResolved || !string.Equals(resolution.Repository, $"{owner}/{name}", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                expectedIssueNumber = resolution.Number;
+                issue = await ReadIssueByNumber(owner, name, resolution.Number, cancellationToken).ConfigureAwait(false);
+            }
+
+            if (issue.Number != expectedIssueNumber || !issuesByNumber.TryAdd(issue.Number, issue))
             {
                 throw new InvalidOperationException("GitHub reconciliation response contains inconsistent issue metadata.");
             }
@@ -268,7 +320,13 @@ internal sealed class GitHubRoadmapReconcileClient
                 writer.WriteNumber("number", issueNumber);
             },
             cancellationToken).ConfigureAwait(false);
-        var node = GetRequiredObject(GetRepository(document.RootElement), "issueOrPullRequest");
+        var repository = GetRepository(document.RootElement);
+        if (repository.TryGetProperty("issueOrPullRequest", out var candidate) && candidate.ValueKind == JsonValueKind.Null)
+        {
+            throw new GitHubIssueLookupUnavailableException();
+        }
+
+        var node = GetRequiredObject(repository, "issueOrPullRequest");
         return await ReadIssue(node, owner, name, cancellationToken).ConfigureAwait(false);
     }
 
@@ -384,7 +442,13 @@ internal sealed class GitHubRoadmapReconcileClient
 
             if (HasErrors(document.RootElement))
             {
+                var issueUnavailable = IsUnavailableIssueLookup(document.RootElement);
                 document.Dispose();
+                if (issueUnavailable)
+                {
+                    throw new GitHubIssueLookupUnavailableException();
+                }
+
                 throw new InvalidOperationException("GitHub reconciliation request failed.");
             }
 
@@ -417,8 +481,19 @@ internal sealed class GitHubRoadmapReconcileClient
             ReadNullableRelation(root, "parent"),
             subIssues,
             blockedBy,
-            blocking);
+            blocking)
+        {
+            NodeId = GetNullableString(root, "id")
+        };
     }
+
+    private static bool IsUnavailableIssueLookup(JsonElement root) => root.TryGetProperty("errors", out var errors)
+        && errors.ValueKind == JsonValueKind.Array && errors.GetArrayLength() > 0
+        && errors.EnumerateArray().All(error => error.TryGetProperty("type", out var type)
+            && string.Equals(type.GetString(), "NOT_FOUND", StringComparison.Ordinal)
+            && error.TryGetProperty("path", out var path) && path.ValueKind == JsonValueKind.Array
+            && path.EnumerateArray().Any(part => part.ValueKind == JsonValueKind.String
+                && string.Equals(part.GetString(), "issueOrPullRequest", StringComparison.Ordinal)));
 
     private async Task<string[]> ReadAllLabels(
         JsonElement root,

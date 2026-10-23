@@ -37,7 +37,7 @@ internal static class GitHubProjectSyncTestOperations
 
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": { \"id\": \"project-id\", \"number\": 1, \"owner\": { \"login\": \"owner\" } } } }");
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(997));
         handler.EnqueueJson(HttpStatusCode.OK, "{}");
         handler.EnqueueJson(HttpStatusCode.OK, projectFields);
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"repository\": { \"issue\": { \"id\": \"issue-id\" } } } }");
@@ -83,7 +83,7 @@ internal static class GitHubProjectSyncTestOperations
 
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": { \"id\": \"project-id\", \"number\": 1, \"owner\": { \"login\": \"owner\" } } } }");
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(997));
         handler.EnqueueJson(HttpStatusCode.OK, "{}");
         handler.EnqueueJson(HttpStatusCode.OK, projectFields);
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"repository\": { \"issue\": { \"id\": \"issue-id\" } } } }");

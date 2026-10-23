@@ -13,11 +13,17 @@ internal sealed class TimeAdvancingHttpMessageHandler(FakeTimeProvider timeProvi
         cancellationToken.ThrowIfCancellationRequested();
         _requestCount++;
 
-        return Task.FromResult(CreateResponse());
+        return Task.FromResult(CreateResponse(request));
     }
 
-    private HttpResponseMessage CreateResponse()
+    private HttpResponseMessage CreateResponse(HttpRequestMessage request)
     {
+        if (request.Method == HttpMethod.Get && request.RequestUri!.AbsolutePath.Contains("/issues/", StringComparison.Ordinal))
+        {
+            var number = int.Parse(request.RequestUri.Segments[^1], System.Globalization.CultureInfo.InvariantCulture);
+            return new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(GitHubSyncTestResponseFactory.IssueMetadata(number)) };
+        }
+
         return _requestCount switch
         {
             1 or 4 => new HttpResponseMessage(HttpStatusCode.NotFound)

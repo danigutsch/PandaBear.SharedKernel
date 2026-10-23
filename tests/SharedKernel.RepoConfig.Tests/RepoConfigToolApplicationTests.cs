@@ -1329,7 +1329,7 @@ public sealed class RepoConfigToolApplicationTests
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": { \"id\": \"project-id\", \"number\": 1, \"owner\": { \"login\": \"owner\" } } } }");
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(997));
         handler.EnqueueJson(HttpStatusCode.OK, "{}");
         handler.Enqueue(new HttpResponseMessage(HttpStatusCode.OK)
         {
@@ -2246,7 +2246,7 @@ public sealed class RepoConfigToolApplicationTests
         var project = RoadmapProject.Load(workspace.RootPath);
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(997));
         handler.EnqueueJson(HttpStatusCode.OK, "{}");
         using var httpClient = new HttpClient(handler);
         var syncer = new GitHubRoadmapSyncer(project, httpClient);
@@ -2308,7 +2308,7 @@ public sealed class RepoConfigToolApplicationTests
         var project = RoadmapProject.Load(workspace.RootPath);
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [{ \"name\": \"AREA: TOOLING\" }, { \"name\": \"manual\" }] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(labels: "[{ \"name\": \"AREA: TOOLING\" }, { \"name\": \"manual\" }]"));
         handler.EnqueueJson(HttpStatusCode.OK, "{}");
         using var httpClient = new HttpClient(handler);
         var syncer = new GitHubRoadmapSyncer(project, httpClient);
@@ -2338,7 +2338,7 @@ public sealed class RepoConfigToolApplicationTests
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.Created, "{ \"number\": 1200 }");
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(1200));
         handler.EnqueueJson(HttpStatusCode.OK, "{}");
         using var httpClient = new HttpClient(handler);
         var syncer = new GitHubRoadmapSyncer(project, httpClient);
@@ -2408,7 +2408,7 @@ public sealed class RepoConfigToolApplicationTests
         workspace.WriteFile("roadmap/items/RM-001-roadmap-gitops.json", workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json").Replace("\"issue\": \"create\"", "\"issue\": 1200", StringComparison.Ordinal));
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(1200));
         handler.EnqueueJson(HttpStatusCode.OK, "{}");
         using var httpClient = new HttpClient(handler);
         var syncer = new GitHubRoadmapSyncer(project, httpClient);
@@ -2724,7 +2724,7 @@ public sealed class RepoConfigToolApplicationTests
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": { \"id\": \"project-id\", \"number\": 1, \"owner\": { \"login\": \"owner\" } } } }");
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(997));
         handler.EnqueueJson(HttpStatusCode.OK, "{}");
         handler.EnqueueJson(HttpStatusCode.OK, GitHubProjectSyncTestOperations.CompleteProjectFields("""
             [
@@ -2780,7 +2780,7 @@ public sealed class RepoConfigToolApplicationTests
         var project = RoadmapProject.Load(workspace.RootPath);
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(997));
         using var httpClient = new HttpClient(handler);
         var syncer = new GitHubRoadmapSyncer(project, httpClient);
 
@@ -2899,7 +2899,7 @@ public sealed class RepoConfigToolApplicationTests
         var project = RoadmapProject.Load(workspace.RootPath);
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(997));
         handler.Enqueue(GitHubSyncTestResponseFactory.UntrustedError(HttpStatusCode.UnprocessableEntity));
         using var httpClient = new HttpClient(handler);
         var syncer = new GitHubRoadmapSyncer(project, httpClient);
@@ -3291,7 +3291,7 @@ public sealed class RepoConfigToolApplicationTests
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": { \"id\": \"project-id\", \"number\": 1, \"owner\": { \"login\": \"owner\" } } } }");
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(997));
         handler.EnqueueJson(HttpStatusCode.OK, "{}");
         handler.EnqueueJson(HttpStatusCode.OK, """
             { "data": { "node": { "fields": { "nodes": [

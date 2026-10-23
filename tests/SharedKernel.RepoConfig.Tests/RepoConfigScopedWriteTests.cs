@@ -108,7 +108,7 @@ public sealed class RepoConfigScopedWriteTests
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.Created, "{ \"number\": 1200 }");
         handler.EnqueueJson(HttpStatusCode.NotFound, "{}");
-        handler.EnqueueJson(HttpStatusCode.OK, "{ \"labels\": [] }");
+        handler.EnqueueJson(HttpStatusCode.OK, GitHubSyncTestResponseFactory.IssueMetadata(1200));
         handler.EnqueueJson(HttpStatusCode.OK, "{}");
         using var client = new HttpClient(handler);
         var syncer = new GitHubRoadmapSyncer(RoadmapProject.Load(workspace.RootPath), client);

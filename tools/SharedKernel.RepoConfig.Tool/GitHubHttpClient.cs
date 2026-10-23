@@ -27,10 +27,24 @@ internal static class GitHubHttpClient
             throw new InvalidOperationException(missingTokenMessage);
         }
 
-        var httpClient = new HttpClient();
-        httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("sharedkernel-repo", "1.0"));
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
-        return httpClient;
+        HttpClientHandler? handler = null;
+        HttpClient? httpClient = null;
+        try
+        {
+            handler = new HttpClientHandler { AllowAutoRedirect = false, CheckCertificateRevocationList = true };
+            httpClient = new HttpClient(handler, disposeHandler: true);
+            handler = null;
+            httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("sharedkernel-repo", "1.0"));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+            var result = httpClient;
+            httpClient = null;
+            return result;
+        }
+        finally
+        {
+            handler?.Dispose();
+            httpClient?.Dispose();
+        }
     }
 }
