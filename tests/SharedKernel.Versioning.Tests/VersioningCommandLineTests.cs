@@ -332,6 +332,49 @@ public static class VersioningCommandLineTests
         });
     }
 
+    [Fact]
+    public static async Task Readme_scan_reads_inline_code_and_local_tool_command_lines()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var readme = Path.Combine(directory.Path, "README.md");
+        await File.WriteAllLinesAsync(
+            readme,
+            [
+                "Run `sharedkernel-version check-public-api-baselines` before packing.",
+                "dotnet tool run sharedkernel-version validate-package-metadata",
+                "dotnet tool run sharedkernel-version -- --help",
+                "`sharedkernel-version <command> --help` describes each option.",
+            ],
+            TestContext.Current.CancellationToken);
+
+        // Act
+        var commandLines = CallerCommandLine.ReadReadmeCommandLines(readme);
+
+        // Assert
+        commandLines.ShouldBe(["check-public-api-baselines", "validate-package-metadata", "--help"]);
+    }
+
+    [Theory]
+    [InlineData("Install sharedkernel-version before packing.")]
+    [InlineData("Run `echo sharedkernel-version check-public-api-baselines` before packing.")]
+    [InlineData("dotnet tool run sharedkernel-version --help")]
+    [InlineData("dotnet tool run sharedkernel-version classify-commit -h")]
+    [InlineData("dotnet run --project tools/SharedKernel.Versioning.Tool -c Release")]
+    public static async Task Readme_scan_rejects_tool_text_that_is_not_a_runnable_command_line(string line)
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var readme = Path.Combine(directory.Path, "README.md");
+        await File.WriteAllLinesAsync(readme, [line], TestContext.Current.CancellationToken);
+
+        // Act
+        var action = () => CallerCommandLine.ReadReadmeCommandLines(readme);
+
+        // Assert
+        action.ShouldThrow<InvalidOperationException>().Message.ShouldContain("is not a runnable command line", StringComparison.Ordinal);
+    }
+
     [Theory]
     [InlineData("has-breaking-change-marker", "--output=x")]
     [InlineData("has-breaking-change-marker", "--", "--output=x")]
