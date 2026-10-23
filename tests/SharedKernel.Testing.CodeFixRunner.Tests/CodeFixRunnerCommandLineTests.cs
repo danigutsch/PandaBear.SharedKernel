@@ -302,6 +302,36 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
     }
 
     [Fact]
+    public async Task Working_directory_global_json_that_pins_a_missing_sdk_returns_two_with_a_one_line_error()
+    {
+        // Arrange
+        var (_, sourcePath) = await CodeFixRunnerTestProject.Write(
+            projectDirectory.Path,
+            CodeFixRunnerTestProject.SourceFile,
+            TestContext.Current.CancellationToken);
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory.Path, "global.json"),
+            CodeFixRunnerTestProject.MissingSdkGlobalJsonFile,
+            TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await CodeFixRunnerProcess.Run(
+            projectDirectory.Path,
+            ["--diagnostic", "SKTEST006", "Sample.Tests.csproj"],
+            TestContext.Current.CancellationToken);
+        var source = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.Error.ShouldContain("No fixes were applied because MSBuild could not be loaded from a .NET SDK: ", StringComparison.Ordinal);
+        result.Error.ShouldContain("A compatible .NET SDK was not found.", StringComparison.Ordinal);
+        result.Error.ShouldNotContain("Microsoft.Build.Framework", StringComparison.Ordinal);
+        result.Error.TrimEnd().ShouldNotContain("\n", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(2);
+        result.Output.ShouldNotContain("Fixed", StringComparison.Ordinal);
+        source.ShouldBe(CodeFixRunnerTestProject.SourceFile);
+    }
+
+    [Fact]
     public async Task Cancelled_run_returns_one_and_leaves_project_unchanged()
     {
         // Arrange

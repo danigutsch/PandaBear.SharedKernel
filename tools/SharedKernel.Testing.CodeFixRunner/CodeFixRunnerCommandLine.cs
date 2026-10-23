@@ -13,7 +13,7 @@ internal static class CodeFixRunnerCommandLine
     /// <param name="workingDirectory">The directory that a relative project or solution path resolves against.</param>
     /// <param name="run">
     /// Fixes the target, writes diagnostics to the given error writer, and returns the number of fixed diagnostics, or
-    /// <see langword="null"/> when the target did not load.
+    /// <see langword="null"/> when MSBuild or the target did not load.
     /// </param>
     public static RootCommand Create(string workingDirectory, Func<CodeFixRunnerOptions, TextWriter, CancellationToken, Task<int?>> run)
     {

@@ -20,14 +20,16 @@ internal static class CodeFixRunEngine
 
     private static readonly SharedKernelTestingCodeFixProvider CodeFixProvider = new();
 
+    private static readonly Lock MSBuildRegistrationLock = new();
+
     public static ImmutableArray<string> FixableDiagnosticIds => CodeFixProvider.FixableDiagnosticIds;
 
     /// <summary>
     /// Fixes the diagnostics with the requested ID in the target and formats the changed documents.
     /// </summary>
     /// <returns>
-    /// The number of fixed diagnostics, or <see langword="null"/> when the target did not load. Load failures are written
-    /// to <paramref name="error"/> and no fix is applied.
+    /// The number of fixed diagnostics, or <see langword="null"/> when MSBuild or the target did not load. Load failures
+    /// are written to <paramref name="error"/> and no fix is applied.
     /// </returns>
     /// <exception cref="OperationCanceledException">
     /// <paramref name="ct"/> was canceled. Load failures reported after cancellation are not written.
@@ -52,7 +54,12 @@ internal static class CodeFixRunEngine
         ArgumentNullException.ThrowIfNull(error);
         ArgumentNullException.ThrowIfNull(openSolution);
 
-        EnsureMSBuildRegistered();
+        if (RegisterMSBuild() is { } registrationFailure)
+        {
+            ct.ThrowIfCancellationRequested();
+            await error.WriteLineAsync(registrationFailure).ConfigureAwait(false);
+            return null;
+        }
 
         using var workspace = MSBuildWorkspace.Create();
         var solution = await openSolution(workspace, options.TargetPath, ct).ConfigureAwait(false);
@@ -166,20 +173,30 @@ internal static class CodeFixRunEngine
             : null;
     }
 
-    private static void EnsureMSBuildRegistered()
+    /// <summary>Registers MSBuild from a .NET SDK found for the current directory.</summary>
+    /// <returns>A one-line error when no SDK provides MSBuild, or <see langword="null"/> when MSBuild can be used.</returns>
+    private static string? RegisterMSBuild()
     {
-        if (MSBuildLocator.IsRegistered)
+        // Runs in one process, such as parallel tests, must not interleave checking and registering.
+        lock (MSBuildRegistrationLock)
         {
-            return;
-        }
+            // MSBuild is already registered, or its assemblies are already loaded and cannot be replaced.
+            if (!MSBuildLocator.CanRegister)
+            {
+                return null;
+            }
 
-        try
-        {
-            MSBuildLocator.RegisterDefaults();
-        }
-        catch (InvalidOperationException)
-        {
-            // MSBuild can already be loaded by the test host when solution-wide tests run in parallel.
+            try
+            {
+                MSBuildLocator.RegisterDefaults();
+                return null;
+            }
+            catch (InvalidOperationException exception)
+            {
+                // The message can span lines, such as the .NET host's report of a global.json that names a missing SDK.
+                var details = string.Join(' ', exception.Message.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+                return $"No fixes were applied because MSBuild could not be loaded from a .NET SDK: {details}";
+            }
         }
     }
 
