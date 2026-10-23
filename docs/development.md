@@ -40,7 +40,7 @@ The two setup scripts are deliberately thin platform entry points: they anchor t
 restore locked dependencies, build Release, and propagate failures before repository tools exist.
 C# process tests exercise each native wrapper from an unrelated working directory, including paths
 with spaces, successful execution, restore failure, and build failure. CI runs the contract tests on
-Linux and Windows. Historical Python records under `provenance/` are not required development tools.
+Linux and Windows.
 
 Workflow contract tests guard the active C# commands and their platform test wiring. Selection output
 and candidate manifest discovery belong to the C# commands, with regression tests for failure paths.
