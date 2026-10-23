@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace PandaBear.Testing.AspNetCore;
 
 /// <summary>
-/// Creates ASP.NET Core test hosts with optional environment and service overrides.
+/// Creates ASP.NET Core test hosts with consistent bad-request responses and optional environment and service overrides.
 /// </summary>
 public static class WebApplicationTestHost
 {
@@ -50,12 +50,11 @@ public static class WebApplicationTestHost
                 builder.ConfigureAppConfiguration((_, configurationBuilder) => configurationBuilder.AddInMemoryCollection(configuration));
             }
 
-            if (configureTestServices is not null)
+            Microsoft.AspNetCore.TestHost.WebHostBuilderExtensions.ConfigureTestServices(builder, services =>
             {
-                Microsoft.AspNetCore.TestHost.WebHostBuilderExtensions.ConfigureTestServices(
-                    builder,
-                    configureTestServices);
-            }
+                services.AddTestRequestBindingDefaults();
+                configureTestServices?.Invoke(services);
+            });
         }
 
         protected override void ConfigureClient(HttpClient client)
