@@ -34,6 +34,9 @@
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
         }
       },
+      "PandaBear.SharedKernel.InputNormalization": {
+        "type": "Project"
+      },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       }

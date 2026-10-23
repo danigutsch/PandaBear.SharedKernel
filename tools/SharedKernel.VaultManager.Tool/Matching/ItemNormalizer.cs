@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
+using PandaBear.InputNormalization;
+using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Matching;
 
@@ -64,11 +66,14 @@ internal static partial class ItemNormalizer
     /// <returns>The key; empty when the value is absent.</returns>
     public static string Username(string? value) => value?.Trim().ToLowerInvariant() ?? string.Empty;
 
-    /// <summary>Title key: trimmed, lowercased with the invariant culture, and with whitespace runs collapsed to one space.</summary>
+    /// <summary>
+    /// Title key: <see cref="StringSanitizer.Sanitize"/> output (Unicode normalization form C, control characters removed,
+    /// trimmed, and whitespace runs collapsed to one space), lowercased with the invariant culture.
+    /// </summary>
     /// <param name="value">Item name.</param>
     /// <returns>The key; empty when the value is absent.</returns>
     public static string Title(string? value) =>
-        value is null ? string.Empty : WhitespaceRegex().Replace(value.Trim(), " ").ToLowerInvariant();
+        value is null ? string.Empty : StringSanitizer.Sanitize(value).ToLowerInvariant();
 
     /// <summary>Notes key: line endings converted to <c>\n</c> and trailing whitespace removed.</summary>
     /// <param name="value">Notes or another multi-line value.</param>
@@ -77,10 +82,20 @@ internal static partial class ItemNormalizer
         value is null ? string.Empty : value.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n').TrimEnd();
 
     /// <summary>
-    /// Authenticator key for comparison only: the <c>secret</c> query parameter of an <c>otpauth://</c> URI, otherwise the
-    /// raw value, uppercased without spaces, <c>-</c>, or <c>=</c>. <c>steam://</c> values are kept whole and uppercased,
-    /// so they compare case-insensitively. Full TOTP parsing belongs to secret detection.
+    /// Authenticator key for comparison only.
     /// </summary>
+    /// <remarks>
+    /// <para>
+    /// A value that <see cref="TotpUri.TryNormalize"/> accepts compares by what its codes depend on: the normalized secret
+    /// plus any algorithm, digit count, or period other than the defaults. A plain base32 secret therefore equals an
+    /// <c>otpauth://</c> URI with default settings, issuer and label differences are ignored, and different code settings
+    /// make different keys. Accepted <c>steam://</c> values compare by their normalized secret.
+    /// </para>
+    /// <para>
+    /// Other values compare leniently: the <c>secret</c> query parameter of an <c>otpauth://</c> URI, otherwise the raw
+    /// value, uppercased without spaces, <c>-</c>, or <c>=</c>. Other <c>steam://</c> values are kept whole and uppercased.
+    /// </para>
+    /// </remarks>
     /// <param name="value">Stored authenticator key.</param>
     /// <returns>The key; empty when the value is absent.</returns>
     public static string Totp(string? value)
@@ -88,6 +103,11 @@ internal static partial class ItemNormalizer
         if (string.IsNullOrWhiteSpace(value))
         {
             return string.Empty;
+        }
+
+        if (TotpUri.TryNormalize(value, null, null, out string? normalized) && normalized is not null)
+        {
+            return TotpSettingsKey(normalized);
         }
 
         string text = value.Trim();
@@ -122,6 +142,32 @@ internal static partial class ItemNormalizer
     /// <param name="value">Value.</param>
     /// <returns><see langword="true"/> when the value is absent.</returns>
     public static bool IsAbsent(string? value) => string.IsNullOrWhiteSpace(value);
+
+    // Normalized URIs put the secret first and omit default settings, so dropping the label and issuer leaves only what
+    // the generated codes depend on. Normalized steam:// values have no query.
+    private static string TotpSettingsKey(string normalized)
+    {
+        int query = normalized.IndexOf('?', StringComparison.Ordinal);
+        if (query < 0)
+        {
+            return normalized.ToUpperInvariant();
+        }
+
+        var key = new StringBuilder();
+        foreach (string parameter in normalized[(query + 1)..].Split('&'))
+        {
+            if (parameter.StartsWith("secret=", StringComparison.Ordinal))
+            {
+                key.Insert(0, parameter["secret=".Length..]);
+            }
+            else if (!parameter.StartsWith("issuer=", StringComparison.Ordinal))
+            {
+                key.Append('&').Append(parameter);
+            }
+        }
+
+        return key.ToString();
+    }
 
     private static string StripPort(string authority)
     {
@@ -164,7 +210,4 @@ internal static partial class ItemNormalizer
     // A scheme without "//", such as mailto:x. "host:8080" is a bare host with a port, not a scheme.
     [GeneratedRegex(@"^[A-Za-z][A-Za-z0-9+.\-]*:(?![0-9]+(?:[/?#\\]|$))", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 50)]
     private static partial Regex OpaqueSchemeRegex();
-
-    [GeneratedRegex(@"\s+", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 50)]
-    private static partial Regex WhitespaceRegex();
 }

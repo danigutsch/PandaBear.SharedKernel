@@ -3,7 +3,11 @@ using PandaBear.VaultManager.Tool.Matching;
 
 namespace PandaBear.VaultManager.Tool.Merge;
 
-/// <summary>Reads and writes the versioned decisions file: <c>{"version":1,"groups":[...],"links":[...],"splits":[...]}</c>.</summary>
+/// <summary>
+/// Reads and writes the versioned decisions file:
+/// <c>{"version":1,"groups":[...],"links":[...],"splits":[...],"findings":[...]}</c>. The <c>findings</c> section is
+/// optional when reading.
+/// </summary>
 internal static class DecisionsFile
 {
     /// <summary>Format version written by this tool.</summary>
@@ -16,7 +20,7 @@ internal static class DecisionsFile
     {
         ArgumentNullException.ThrowIfNull(decisions);
 
-        var document = new DecisionsDocument(CurrentVersion, decisions.Groups, decisions.Overrides.Links, decisions.Overrides.Splits);
+        var document = new DecisionsDocument(CurrentVersion, decisions.Groups, decisions.Overrides.Links, decisions.Overrides.Splits, decisions.Findings);
         return JsonSerializer.Serialize(document, DecisionsJsonContext.Default.DecisionsDocument);
     }
 
@@ -69,6 +73,32 @@ internal static class DecisionsFile
             }
         }
 
-        return new MergeDecisions(document.Groups, new MatchOverrides(document.Links, document.Splits));
+        IReadOnlyList<ItemFindingDecisions> findings = document.Findings ?? [];
+        ValidateFindings(findings);
+        return new MergeDecisions(document.Groups, new MatchOverrides(document.Links, document.Splits)) { Findings = findings };
+    }
+
+    private static void ValidateFindings(IReadOnlyList<ItemFindingDecisions> findings)
+    {
+        foreach (var item in findings)
+        {
+            if (string.IsNullOrWhiteSpace(item.OriginKey))
+            {
+                throw new InvalidDataException("A decisions file finding entry has no origin key.");
+            }
+
+            foreach (var choice in item.Choices)
+            {
+                if (string.IsNullOrWhiteSpace(choice.FindingId))
+                {
+                    throw new InvalidDataException($"A finding decision for {item.OriginKey} has no finding ID.");
+                }
+
+                if (!Enum.IsDefined(choice.Decision))
+                {
+                    throw new InvalidDataException($"The decision on finding {choice.FindingId} of {item.OriginKey} is neither accepted nor rejected.");
+                }
+            }
+        }
     }
 }

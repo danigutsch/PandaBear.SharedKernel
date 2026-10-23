@@ -80,11 +80,30 @@ public sealed class SecretPlacerTests
         var placed = SecretPlacer.Apply(item, [finding]);
 
         var card = placed.NewItems.ShouldHaveSingleItem();
+        placed.NewItemFindingIds.ShouldBe([finding.Id]);
         card.Type.ShouldBe(VaultItemType.Card);
         var data = card.Card.ShouldNotBeNull();
         data.Number.ShouldBe(number);
         data.Brand.ShouldBe("Visa");
         placed.Item.Notes.ShouldBe("Travel card");
+    }
+
+    [Fact]
+    public void Place_numbers_the_names_of_items_created_from_one_source_item()
+    {
+        string visa = TestSecrets.CardNumber("4", 16);
+        string mastercard = TestSecrets.CardNumber("51", 16);
+        string amex = TestSecrets.CardNumber("34", 15);
+        var item = SecretTestItems.Note("Visa " + visa + "\nMastercard " + mastercard + "\nAmex " + amex, "Bank cards");
+        var findings = SecretScanner.Default.Scan(item);
+
+        var placed = SecretPlacer.Apply(item, findings);
+
+        findings.ShouldHaveCount(3);
+        placed.NewItems.Select(card => card.Name).ShouldBe(["Bank cards", "Bank cards (2)", "Bank cards (3)"]);
+        placed.NewItems.Select(card => card.Card?.Number).ShouldBe([visa, mastercard, amex]);
+        placed.NewItemFindingIds.ShouldBe([.. findings.Select(finding => finding.Id)]);
+        placed.Item.Name.ShouldBe("Bank cards");
     }
 
     [Fact]

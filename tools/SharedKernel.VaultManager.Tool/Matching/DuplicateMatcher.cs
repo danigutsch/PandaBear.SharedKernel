@@ -23,13 +23,38 @@ internal static class DuplicateMatcher
     public static MatchResult Match(IReadOnlyList<VaultItem> items, MatchOverrides? overrides = null)
     {
         ArgumentNullException.ThrowIfNull(items);
+
+        return Match(items, overrides, OriginKeys.Compute(items));
+    }
+
+    /// <summary>
+    /// Groups duplicate items under origin keys the caller computed earlier, for example before secret placement changed
+    /// the items, so decisions keep naming the items as they were read.
+    /// </summary>
+    /// <param name="items">Items from every input, in input order.</param>
+    /// <param name="overrides">Forced links and splits, or <see langword="null"/> for none.</param>
+    /// <param name="originKeys">Unique origin key of each item, aligned with <paramref name="items"/>.</param>
+    /// <returns>Groups covering every item once, plus suggestions.</returns>
+    /// <exception cref="ArgumentException">The keys are not aligned with the items or are not unique.</exception>
+    public static MatchResult Match(IReadOnlyList<VaultItem> items, MatchOverrides? overrides, IReadOnlyList<string> originKeys)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+        ArgumentNullException.ThrowIfNull(originKeys);
         overrides ??= MatchOverrides.None;
 
-        var keys = OriginKeys.Compute(items);
+        if (originKeys.Count != items.Count)
+        {
+            throw new ArgumentException("Every item needs exactly one origin key.", nameof(originKeys));
+        }
+
+        var keys = originKeys;
         var indexByKey = new Dictionary<string, int>(StringComparer.Ordinal);
         for (int index = 0; index < keys.Count; index++)
         {
-            indexByKey[keys[index]] = index;
+            if (!indexByKey.TryAdd(keys[index], index))
+            {
+                throw new ArgumentException("Origin keys must be unique.", nameof(originKeys));
+            }
         }
 
         var unionFind = new ConstrainedUnionFind(items.Count, Resolve(overrides.Splits, indexByKey));

@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Formats.Asn1;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -50,6 +51,65 @@ internal static class PemFixtures
     public static string Pkcs8(AsymmetricAlgorithm key)
     {
         return Wrap("PRIVATE KEY", Convert.ToBase64String(key.ExportPkcs8PrivateKey()));
+    }
+
+    public static string Sec1(ECDsa key)
+    {
+        return Wrap("EC PRIVATE KEY", Convert.ToBase64String(key.ExportECPrivateKey()));
+    }
+
+    /// <summary>A new unencrypted key: PKCS#1 RSA for <c>RSA PRIVATE KEY</c>, otherwise SEC1 P-256.</summary>
+    public static string Unencrypted(string label)
+    {
+        if (label == "RSA PRIVATE KEY")
+        {
+            using var rsa = RSA.Create(2048);
+            return RsaPkcs1(rsa);
+        }
+
+        using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        return Sec1(ecdsa);
+    }
+
+    /// <summary>
+    /// Breaks the base64 body of a PEM block and keeps its boundary lines: the first body line either starts with a
+    /// character outside the base64 alphabet or loses three characters.
+    /// </summary>
+    public static string WithBrokenBody(string pem, bool shortenLine)
+    {
+        string[] lines = pem.Split('\n');
+        lines[1] = shortenLine ? lines[1][3..] : "*" + lines[1][1..];
+        return string.Join('\n', lines);
+    }
+
+    /// <summary>
+    /// SEC1 P-256 key whose last base64 character before the padding has its unused bits set. The body still decodes
+    /// to the same key, but <see cref="PemEncoding"/> rejects it as non-canonical base64.
+    /// </summary>
+    public static string Sec1WithNonzeroPaddingBits(ECDsa key)
+    {
+        string base64 = Convert.ToBase64String(key.ExportECPrivateKey());
+        int index = base64.TrimEnd('=').Length - 1;
+        int unusedBits = base64.EndsWith("==", StringComparison.Ordinal) ? 0x0F : 0x03;
+        char replacement = TestSecrets.Base64[TestSecrets.Base64.IndexOf(base64[index], StringComparison.Ordinal) | unusedBits];
+        return Wrap("EC PRIVATE KEY", base64[..index] + replacement + base64[(index + 1)..]);
+    }
+
+    /// <summary>SEC1 key whose named curve is <c>2.999.1</c>, under the OID arc reserved for examples, which no platform implements.</summary>
+    public static string Sec1OnUnknownCurve()
+    {
+        var writer = new AsnWriter(AsnEncodingRules.DER);
+        using (writer.PushSequence())
+        {
+            writer.WriteInteger(1);
+            writer.WriteOctetString(TestSecrets.Bytes(41, 32));
+            using (writer.PushSequence(new Asn1Tag(TagClass.ContextSpecific, 0)))
+            {
+                writer.WriteObjectIdentifier("2.999.1");
+            }
+        }
+
+        return Wrap("EC PRIVATE KEY", Convert.ToBase64String(writer.Encode()));
     }
 
     public static string EncryptedPkcs8(AsymmetricAlgorithm key)

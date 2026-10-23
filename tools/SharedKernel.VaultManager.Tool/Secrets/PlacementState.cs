@@ -1,3 +1,4 @@
+using System.Globalization;
 using PandaBear.VaultManager.Tool.Model;
 
 namespace PandaBear.VaultManager.Tool.Secrets;
@@ -8,6 +9,9 @@ namespace PandaBear.VaultManager.Tool.Secrets;
 internal sealed class PlacementState(VaultItem source, IReadOnlyDictionary<string, string>? attachmentTexts)
 {
     private readonly List<LoginUri> uris = [.. source.Login?.Uris ?? []];
+    private readonly List<(VaultItem Item, string FindingId)> newItems = [];
+    private readonly HashSet<string> newItemNames = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, int> nextNumbers = new(StringComparer.Ordinal);
 
     /// <summary>Source item, unchanged.</summary>
     public VaultItem Source { get; } = source;
@@ -27,14 +31,32 @@ internal sealed class PlacementState(VaultItem source, IReadOnlyDictionary<strin
     /// <summary>Custom fields added by placement.</summary>
     public List<CustomField> Fields { get; } = [];
 
-    /// <summary>Items created by placement.</summary>
-    public List<VaultItem> NewItems { get; } = [];
-
     /// <summary>Problems, described without values.</summary>
     public List<string> Problems { get; } = [];
 
     /// <summary>Source locations to remove because their placement succeeded.</summary>
     public List<SecretLocation> Removals { get; } = [];
+
+    /// <summary>
+    /// Adds an item created by placing a finding. An item whose name an earlier new item of the same source already uses is
+    /// renamed <c>name (n)</c> with the first free number, so items created together never match each other by title.
+    /// </summary>
+    /// <param name="item">New item.</param>
+    /// <param name="findingId">Identifier of the finding that created it.</param>
+    public void AddNewItem(VaultItem item, string findingId)
+    {
+        // One placement can create thousands of items, for example from an attachment, so the search for a free number
+        // resumes where the previous one for the same name stopped.
+        string name = item.Name;
+        int number = nextNumbers.GetValueOrDefault(item.Name, 2);
+        while (!newItemNames.Add(name))
+        {
+            name = string.Create(CultureInfo.InvariantCulture, $"{item.Name} ({number++})");
+        }
+
+        nextNumbers[item.Name] = number;
+        newItems.Add((item with { Name = name }, findingId));
+    }
 
     /// <summary>Adds a login URI unless an equal one exists.</summary>
     /// <param name="uri">URI.</param>
@@ -146,6 +168,12 @@ internal sealed class PlacementState(VaultItem source, IReadOnlyDictionary<strin
             ? null
             : (Source.Login ?? new LoginData()) with { Username = username, Password = password, Totp = totp, Uris = [.. uris] };
         VaultItem item = Source with { Notes = notes, Fields = keptFields, Login = login };
-        return new PlacementResult { Item = item, NewItems = [.. NewItems], Problems = [.. Problems] };
+        return new PlacementResult
+        {
+            Item = item,
+            NewItems = [.. newItems.Select(created => created.Item)],
+            NewItemFindingIds = [.. newItems.Select(created => created.FindingId)],
+            Problems = [.. Problems],
+        };
     }
 }

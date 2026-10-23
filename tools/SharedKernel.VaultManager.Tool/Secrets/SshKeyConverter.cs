@@ -10,7 +10,9 @@ namespace PandaBear.VaultManager.Tool.Secrets;
 /// <summary>
 /// Converts private keys into Bitwarden SSH key data with the BCL only. Bitwarden accepts OpenSSH and PKCS#8 keys; PKCS#1
 /// and SEC1 keys are rewritten as PKCS#8. Encrypted, PuTTY, DSA, and security-key (<c>sk-</c>) keys are flagged and never
-/// converted. Fingerprints use the <c>SHA256:</c> form printed by <c>ssh-keygen -lf</c> and stored by Bitwarden.
+/// converted, and so are keys that cannot be read, for example because the body is not base64 or the ECDSA curve is not
+/// <c>nistp256</c>, <c>nistp384</c>, or <c>nistp521</c>. Fingerprints use the <c>SHA256:</c> form printed by
+/// <c>ssh-keygen -lf</c> and stored by Bitwarden.
 /// </summary>
 internal static class SshKeyConverter
 {
@@ -19,6 +21,8 @@ internal static class SshKeyConverter
     private const string Ed25519Oid = "1.3.101.112";
     private const string DsaOid = "1.2.840.10040.4.1";
     private const string BudgetProblem = "key exceeds the Bitwarden field budget";
+    private const string BodyProblem = "key body is not base64";
+    private const string CurveProblem = "unsupported ECDSA curve";
 
     /// <summary>Determines format, algorithm, and encryption without converting.</summary>
     /// <param name="pem">Private key text.</param>
@@ -50,7 +54,7 @@ internal static class SshKeyConverter
         return inspection;
     }
 
-    /// <summary>Converts a private key.</summary>
+    /// <summary>Converts a private key. A key that is malformed or unsupported yields a problem instead of an exception.</summary>
     /// <param name="pem">Private key text.</param>
     /// <param name="suppliedPublicKey">Matching public key in authorized_keys form, used for Ed25519 PKCS#8 keys.</param>
     /// <returns>Converted key data, or the problem that prevented conversion.</returns>
@@ -87,6 +91,11 @@ internal static class SshKeyConverter
         {
             return new SshKeyConversion(null, "key structure is malformed");
         }
+        catch (PlatformNotSupportedException)
+        {
+            // Importing an ECDSA key throws this when the key names a curve the platform does not implement.
+            return new SshKeyConversion(null, CurveProblem);
+        }
     }
 
     /// <summary>OpenSSH SHA-256 fingerprint of a public key blob.</summary>
@@ -108,9 +117,14 @@ internal static class SshKeyConverter
             case "RSA PRIVATE KEY":
             case "EC PRIVATE KEY":
                 string algorithm = block.Label.StartsWith("RSA", StringComparison.Ordinal) ? "RSA" : "ECDSA";
-                return block.HasEncryptedHeader
-                    ? new SshKeyInspection("PKCS#1", algorithm, true, false, "encrypted keys are not converted")
-                    : new SshKeyInspection("PKCS#1", algorithm, false, true, null);
+                if (block.HasEncryptedHeader)
+                {
+                    return new SshKeyInspection("PKCS#1", algorithm, true, false, "encrypted keys are not converted");
+                }
+
+                return HasBase64Body(block)
+                    ? new SshKeyInspection("PKCS#1", algorithm, false, true, null)
+                    : new SshKeyInspection("PKCS#1", algorithm, false, false, BodyProblem);
             case "PRIVATE KEY":
                 return InspectPkcs8(block);
             case "OPENSSH PRIVATE KEY":
@@ -124,7 +138,7 @@ internal static class SshKeyConverter
     {
         if (!SecretText.TryDecodeBase64(block.Body, out byte[]? der) || der is null)
         {
-            return new SshKeyInspection("PKCS#8", null, false, false, "key body is not base64");
+            return new SshKeyInspection("PKCS#8", null, false, false, BodyProblem);
         }
 
         try
@@ -190,18 +204,36 @@ internal static class SshKeyConverter
         return new SshKeyConversion(Data(privateKey, container.KeyType, blob), null);
     }
 
+    // PKCS#1 and SEC1 keys are imported from the body that inspection found to be base64. Importing the PEM text throws
+    // ArgumentException for base64 that PemEncoding rejects as non-canonical, such as nonzero padding bits.
     private static SshKeyConversion ConvertRsa(PemBlock block)
     {
-        using var rsa = RSA.Create();
-        rsa.ImportFromPem(PemText(block));
-        return new SshKeyConversion(Data(rsa.ExportPkcs8PrivateKeyPem(), "ssh-rsa", RsaBlob(rsa)), null);
+        _ = SecretText.TryDecodeBase64(block.Body, out byte[]? der);
+        try
+        {
+            using var rsa = RSA.Create();
+            rsa.ImportRSAPrivateKey(der, out _);
+            return new SshKeyConversion(Data(rsa.ExportPkcs8PrivateKeyPem(), "ssh-rsa", RsaBlob(rsa)), null);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(der);
+        }
     }
 
     private static SshKeyConversion ConvertSec1(PemBlock block)
     {
-        using var ecdsa = ECDsa.Create();
-        ecdsa.ImportFromPem(PemText(block));
-        return EcdsaData(ecdsa, ecdsa.ExportPkcs8PrivateKeyPem());
+        _ = SecretText.TryDecodeBase64(block.Body, out byte[]? der);
+        try
+        {
+            using var ecdsa = ECDsa.Create();
+            ecdsa.ImportECPrivateKey(der, out _);
+            return EcdsaData(ecdsa, ecdsa.ExportPkcs8PrivateKeyPem());
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(der);
+        }
     }
 
     private static SshKeyConversion ConvertPkcs8(string pem, PemBlock block, string? suppliedPublicKey)
@@ -245,16 +277,20 @@ internal static class SshKeyConverter
     private static SshKeyConversion EcdsaData(ECDsa ecdsa, string privateKey)
     {
         ECParameters parameters = ecdsa.ExportParameters(false);
-        string? curve = parameters.Curve.Oid.Value switch
-        {
-            "1.2.840.10045.3.1.7" => "nistp256",
-            "1.3.132.0.34" => "nistp384",
-            "1.3.132.0.35" => "nistp521",
-            _ => null,
-        };
+
+        // SSH names the curve, so a key with explicit curve parameters, which has no curve OID, is not converted.
+        string? curve = parameters.Curve.IsNamed
+            ? parameters.Curve.Oid.Value switch
+            {
+                "1.2.840.10045.3.1.7" => "nistp256",
+                "1.3.132.0.34" => "nistp384",
+                "1.3.132.0.35" => "nistp521",
+                _ => null,
+            }
+            : null;
         if (curve is null)
         {
-            return new SshKeyConversion(null, "unsupported ECDSA curve");
+            return new SshKeyConversion(null, CurveProblem);
         }
 
         string keyType = "ecdsa-sha2-" + curve;
@@ -325,9 +361,15 @@ internal static class SshKeyConverter
         return pem.Replace("\r\n", "\n", StringComparison.Ordinal).Trim();
     }
 
-    private static string PemText(PemBlock block)
+    private static bool HasBase64Body(PemBlock block)
     {
-        return "-----BEGIN " + block.Label + "-----\n" + block.Body + "\n-----END " + block.Label + "-----";
+        if (!SecretText.TryDecodeBase64(block.Body, out byte[]? der) || der is null)
+        {
+            return false;
+        }
+
+        CryptographicOperations.ZeroMemory(der);
+        return true;
     }
 
     private static Pkcs8Info ReadPkcs8(byte[] der)

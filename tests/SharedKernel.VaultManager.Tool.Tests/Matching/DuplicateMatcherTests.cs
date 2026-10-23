@@ -105,6 +105,37 @@ public sealed class DuplicateMatcherTests
     }
 
     [Fact]
+    public void Match_with_supplied_origin_keys_uses_them_for_groups_overrides_and_suggestions()
+    {
+        var first = Login("a", "Mail", "alice", "https://mail.example.com");
+        var second = Login("b", "Mail", "alice", "https://mail.example.com");
+        var other = Login("c", "Mail", "bob", "https://mail.example.com");
+        string[] keys = ["input|one", "input|two", "input|three"];
+        var overrides = new MatchOverrides([], [new OriginKeyPair("input|one", "input|two")]);
+
+        var result = DuplicateMatcher.Match([first, second, other], overrides, keys);
+
+        result.Groups.Count.ShouldBe(3);
+        result.Groups.SelectMany(group => group.MemberKeys).ShouldBe(keys);
+        result.Suggestions.ShouldContain(suggestion =>
+            string.Equals(suggestion.FirstOriginKey, "input|one", StringComparison.Ordinal)
+            && string.Equals(suggestion.SecondOriginKey, "input|three", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Match_rejects_supplied_origin_keys_that_are_misaligned_or_repeated()
+    {
+        var first = Login("a", "Mail", "alice", "https://mail.example.com");
+        var second = Login("b", "Bank", "bob", "https://bank.example.org");
+
+        var misaligned = () => DuplicateMatcher.Match([first, second], null, ["input|one"]);
+        var repeated = () => DuplicateMatcher.Match([first, second], null, ["input|one", "input|one"]);
+
+        misaligned.ShouldThrow<ArgumentException>();
+        repeated.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
     public void Match_forced_link_and_split_overrides_apply()
     {
         var first = Login("a", "Mail", "alice", "https://mail.example.com");

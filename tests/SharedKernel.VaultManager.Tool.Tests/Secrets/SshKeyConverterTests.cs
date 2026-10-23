@@ -79,6 +79,60 @@ public sealed class SshKeyConverterTests
         conversion.Problem.ShouldNotBeNull().ShouldContain(reason, StringComparison.Ordinal);
     }
 
+    [Theory]
+    [InlineData("RSA PRIVATE KEY", false)]
+    [InlineData("RSA PRIVATE KEY", true)]
+    [InlineData("EC PRIVATE KEY", false)]
+    [InlineData("EC PRIVATE KEY", true)]
+    public void Pkcs1_and_sec1_keys_whose_body_is_not_base64_are_flagged_not_converted(string label, bool shortenLine)
+    {
+        string pem = PemFixtures.WithBrokenBody(PemFixtures.Unencrypted(label), shortenLine);
+
+        var inspection = SshKeyConverter.Inspect(pem);
+        var conversion = SshKeyConverter.Convert(pem);
+
+        inspection.CanConvert.ShouldBeFalse();
+        inspection.Problem.ShouldBe("key body is not base64");
+        conversion.Key.ShouldBeNull();
+        conversion.Problem.ShouldBe("key body is not base64");
+    }
+
+    [Fact]
+    public void Sec1_key_with_nonzero_padding_bits_converts_like_its_canonical_form()
+    {
+        using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        string pem = PemFixtures.Sec1WithNonzeroPaddingBits(ecdsa);
+
+        var conversion = SshKeyConverter.Convert(pem);
+
+        pem.ShouldNotBe(PemFixtures.Sec1(ecdsa));
+        conversion.Key.ShouldNotBeNull().PrivateKey.ShouldBe(PemFixtures.Pkcs8(ecdsa));
+    }
+
+    [Fact]
+    public void Ec_key_on_a_curve_the_platform_does_not_implement_is_flagged_not_converted()
+    {
+        var conversion = SshKeyConverter.Convert(PemFixtures.Sec1OnUnknownCurve());
+
+        conversion.Key.ShouldBeNull();
+        conversion.Problem.ShouldBe("unsupported ECDSA curve");
+    }
+
+    [Fact]
+    public void Ec_keys_with_explicit_curve_parameters_are_flagged_not_converted()
+    {
+        using var named = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        using var explicitCurve = ECDsa.Create(named.ExportExplicitParameters(true));
+
+        var sec1 = SshKeyConverter.Convert(PemFixtures.Sec1(explicitCurve));
+        var pkcs8 = SshKeyConverter.Convert(PemFixtures.Pkcs8(explicitCurve));
+
+        sec1.Key.ShouldBeNull();
+        sec1.Problem.ShouldBe("unsupported ECDSA curve");
+        pkcs8.Key.ShouldBeNull();
+        pkcs8.Problem.ShouldBe("unsupported ECDSA curve");
+    }
+
     [Fact]
     public void Encrypted_keys_are_flagged_by_inspection()
     {
