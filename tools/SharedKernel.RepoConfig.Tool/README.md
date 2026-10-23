@@ -71,7 +71,7 @@ sharedkernel-repo verify-podman-dns --verbosity quiet
 | --- | --- |
 | 0 | Success, including previews and a healthy or inapplicable Podman state. |
 | 1 | Verification failure or drift, invalid text encoding, stale or unverifiable Podman DNS state, a file, Git, or GitHub error, a command-line error, or cancellation. |
-| 130, 143 | Ctrl+C or SIGTERM when the command does not stop within two seconds. |
+| 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within two seconds. |
 
 ## Security
 

@@ -50,6 +50,7 @@ validation.
 | 0 | Success. |
 | 1 | Invalid command line, cancellation, or an unexpected error. |
 | 2 | Selection, validation, or the pull request check failed; the reason is on standard error. |
+| 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
 Ctrl+C or SIGTERM stops the running `git` or `dotnet` process tree.
 

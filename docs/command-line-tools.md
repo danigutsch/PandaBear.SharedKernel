@@ -43,7 +43,8 @@ This guidance covers every tool under `tools/`.
 - A canceled action exits 1. When cleanup outlives
   [`InvocationConfiguration.ProcessTerminationTimeout`](https://learn.microsoft.com/dotnet/standard/commandline/how-to-parse-and-invoke#process-termination-timeout),
   System.CommandLine exits 130 for SIGINT or 143 for SIGTERM. Raise the two-second default only when cleanup
-  needs longer.
+  needs longer. A signal that System.CommandLine does not handle, such as one during start-up, ends the
+  process with the same codes.
 - A factory builds the command tree from injected environment, such as the working directory, a process
   runner, or a clock. Actions write to `ParseResult.InvocationConfiguration.Output` and `Error`.
 - Tests parse and invoke the real tree through the factory, capture all output in one

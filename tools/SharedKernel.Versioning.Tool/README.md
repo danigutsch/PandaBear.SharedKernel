@@ -145,7 +145,7 @@ does the output of the `dotnet` processes and samples that `consume-candidate`, 
 | `0` | Success. |
 | `1` | Invalid command line, cancellation, or an unexpected internal error. |
 | `2` | The command failed: invalid input, a failed check, or a failed `git` or `dotnet` process. |
-| `130`, `143` | Ctrl+C or SIGTERM, and cleanup did not finish within two seconds. |
+| `130`, `143` | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
 Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or sample process tree.
 

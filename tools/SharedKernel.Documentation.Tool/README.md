@@ -42,6 +42,7 @@ maps, labels, source paths, and conformance checks belong in configuration.
 | --- | --- |
 | 0 | Documentation was refreshed or is current, or every conformance check passed. |
 | 1 | `verify` found stale documentation, generation or a conformance check failed, or the command line is invalid. |
+| 130, 143 | Ctrl+C or SIGTERM stopped the tool. |
 
 Results go to standard output. Failures, stale-file lists, and command-line errors go to standard error.
 

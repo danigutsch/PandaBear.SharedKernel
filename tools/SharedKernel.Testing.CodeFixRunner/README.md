@@ -72,7 +72,8 @@ sharedkernel-codefix SharedKernel.slnx --diagnostic SKTEST006
 - `0`: the run finished, including when diagnostics without an available fix remain.
 - `1`: invalid arguments, an unexpected error while loading or fixing the target, or cancellation.
 - `2`: the project or solution did not load. No fix was applied.
-- `130` (SIGINT) or `143` (SIGTERM): the run did not stop within two seconds of the signal.
+- `130` (SIGINT) or `143` (SIGTERM): the signal arrived during start-up, or the run did not stop within two
+  seconds of it.
 
 ## Packaging notes
 

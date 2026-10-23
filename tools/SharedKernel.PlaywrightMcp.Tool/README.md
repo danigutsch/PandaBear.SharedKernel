@@ -48,7 +48,7 @@ Configuration comes from the environment:
 | `0` | Success. |
 | `1` | Invalid command line, failed engine check, runtime or container cleanup failure, or cancellation. |
 | `2` | Invalid configuration: unsupported environment value, missing or ambiguous engine, or a remote engine override. |
-| `130`, `143` | Ctrl+C or SIGTERM, and container cleanup did not finish within 20 seconds. |
+| `130`, `143` | Ctrl+C or SIGTERM during start-up, or container cleanup did not finish within 20 seconds. |
 | Other | Exit code of the container engine or the MCP server. |
 
 ## Security
