@@ -18,6 +18,16 @@ public static class ShouldAssertionExtensions
     public static void ShouldBe<T>(this T actual, T expected) => Xunit.Assert.Equal(expected, actual);
 
     /// <summary>
+    /// Verifies equality with the expected value and states why the test expects it when the values differ.
+    /// </summary>
+    /// <typeparam name="T">The value type.</typeparam>
+    /// <param name="actual">The actual value.</param>
+    /// <param name="expected">The expected value.</param>
+    /// <param name="userMessage">Why the test expects the value; the failure message starts with it.</param>
+    public static void ShouldBe<T>(this T actual, T expected, string userMessage) =>
+        WithUserMessage(userMessage, () => Xunit.Assert.Equal(expected, actual));
+
+    /// <summary>
     /// Verifies equality with a nullable expected value.
     /// </summary>
     /// <typeparam name="T">The value type.</typeparam>
@@ -237,6 +247,16 @@ public static class ShouldAssertionExtensions
     public static void ShouldContain<T>(this IEnumerable<T> actual, Predicate<T> predicate) => Xunit.Assert.Contains(actual, predicate);
 
     /// <summary>
+    /// Verifies that a collection contains a matching item and states why the test expects one when none matches.
+    /// </summary>
+    /// <typeparam name="T">The item type.</typeparam>
+    /// <param name="actual">The actual collection.</param>
+    /// <param name="predicate">The item predicate.</param>
+    /// <param name="userMessage">Why the test expects a matching item; the failure message starts with it.</param>
+    public static void ShouldContain<T>(this IEnumerable<T> actual, Predicate<T> predicate, string userMessage) =>
+        WithUserMessage(userMessage, () => Xunit.Assert.Contains(actual, predicate));
+
+    /// <summary>
     /// Verifies that a value equals one of the expected values.
     /// </summary>
     /// <typeparam name="T">The value type.</typeparam>
@@ -323,6 +343,17 @@ public static class ShouldAssertionExtensions
     /// <param name="actual">The actual collection.</param>
     /// <param name="predicate">The item predicate.</param>
     public static void ShouldNotContain<T>(this IEnumerable<T> actual, Predicate<T> predicate) => Xunit.Assert.DoesNotContain(actual, predicate);
+
+    /// <summary>
+    /// Verifies that a collection does not contain a matching item and states why the test expects none when one
+    /// matches.
+    /// </summary>
+    /// <typeparam name="T">The item type.</typeparam>
+    /// <param name="actual">The actual collection.</param>
+    /// <param name="predicate">The item predicate.</param>
+    /// <param name="userMessage">Why the test expects no matching item; the failure message starts with it.</param>
+    public static void ShouldNotContain<T>(this IEnumerable<T> actual, Predicate<T> predicate, string userMessage) =>
+        WithUserMessage(userMessage, () => Xunit.Assert.DoesNotContain(actual, predicate));
 
     /// <summary>
     /// Verifies that a string does not contain the expected fragment.
@@ -557,4 +588,19 @@ public static class ShouldAssertionExtensions
     /// <returns>The typed inner exception.</returns>
     public static T ShouldThrowInner<T>(this Action action)
         where T : Exception => ExceptionAssertions.ThrowsInner<T>(action);
+
+    // Runs an xUnit assertion that takes no user message and puts the message before the failure that it reports.
+    private static void WithUserMessage(string userMessage, Action assertion)
+    {
+        ArgumentNullException.ThrowIfNull(userMessage);
+
+        try
+        {
+            assertion();
+        }
+        catch (Xunit.Sdk.XunitException exception)
+        {
+            throw new Xunit.Sdk.XunitException(userMessage + Environment.NewLine + exception.Message, exception);
+        }
+    }
 }

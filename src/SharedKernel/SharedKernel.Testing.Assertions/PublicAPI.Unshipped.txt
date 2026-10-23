@@ -15,6 +15,7 @@ static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldAllSatisfy<T
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe(this double actual, double expected, int precision) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe(this double actual, double expected, int precision, System.MidpointRounding rounding) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T expected) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T expected, string! userMessage) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe<T>(this T actual, T? expected) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBeEquivalentTo<T>(this System.Collections.Generic.IEnumerable<T>! actual, params T[]! expected) -> void
@@ -39,6 +40,7 @@ static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContain(this
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContain(this string? actual, string! expected, System.StringComparison comparisonType) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContainInOrder(this string? actual, params string![]! expected) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate, string! userMessage) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldEndWith(this string? actual, string! expected) -> void
@@ -60,6 +62,7 @@ static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotBeSameAs<
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain(this string? actual, string! expected) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain(this string? actual, string! expected, System.StringComparison comparisonType) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate) -> void
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Predicate<T>! predicate, string! userMessage) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotContain<T>(this System.Collections.Generic.IEnumerable<T>! actual, T expected, System.Collections.Generic.IEqualityComparer<T>! comparer) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldNotMatch(this string? actual, System.Text.RegularExpressions.Regex! expectedRegex) -> void

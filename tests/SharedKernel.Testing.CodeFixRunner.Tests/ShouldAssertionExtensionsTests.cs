@@ -83,4 +83,59 @@ public sealed class ShouldAssertionExtensionsTests
         action.ShouldThrow<Xunit.Sdk.NotNullException>();
     }
 
+    [Fact]
+    public void Assertions_with_a_user_message_pass_when_they_hold()
+    {
+        // Arrange
+        int[] values = [1, 2];
+
+        // Act, Assert
+        values.ShouldBe([1, 2], "Both values stay.");
+        values.ShouldContain(static value => value == 2, "The second value stays.");
+        values.ShouldNotContain(static value => value == 3, "No third value appears.");
+    }
+
+    [Fact]
+    public void Should_be_with_a_user_message_states_it_before_the_failure()
+    {
+        // Arrange
+        Action action = () => 1.ShouldBe(2, "Each item counts once.");
+
+        // Act
+        var exception = action.ShouldThrow<Xunit.Sdk.XunitException>();
+
+        // Assert
+        exception.Message.ShouldStartWith("Each item counts once.", StringComparison.Ordinal);
+        exception.Message.ShouldContain(exception.InnerException.ShouldBeOfType<Xunit.Sdk.EqualException>().Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Should_contain_with_a_user_message_states_it_before_the_failure()
+    {
+        // Arrange
+        int[] values = [1, 2];
+        Action action = () => values.ShouldContain(static value => value == 3, "The third value is added.");
+
+        // Act
+        var exception = action.ShouldThrow<Xunit.Sdk.XunitException>();
+
+        // Assert
+        exception.Message.ShouldStartWith("The third value is added.", StringComparison.Ordinal);
+        exception.Message.ShouldContain(exception.InnerException.ShouldBeOfType<Xunit.Sdk.ContainsException>().Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Should_not_contain_with_a_user_message_states_it_before_the_failure()
+    {
+        // Arrange
+        int[] values = [1, 2];
+        Action action = () => values.ShouldNotContain(static value => value == 2, "The second value is removed.");
+
+        // Act
+        var exception = action.ShouldThrow<Xunit.Sdk.XunitException>();
+
+        // Assert
+        exception.Message.ShouldStartWith("The second value is removed.", StringComparison.Ordinal);
+        exception.Message.ShouldContain(exception.InnerException.ShouldBeOfType<Xunit.Sdk.DoesNotContainException>().Message, StringComparison.Ordinal);
+    }
 }

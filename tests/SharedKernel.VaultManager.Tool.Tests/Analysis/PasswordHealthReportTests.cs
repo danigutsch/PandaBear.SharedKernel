@@ -138,8 +138,7 @@ public sealed class PasswordHealthReportTests
 
         var checks = PasswordHealthReport.CheckMembers([[first, second], [sameHostElsewhere]]);
 
-        // The first member shares its password only with its own group and with an item on its own host.
-        checks[0].Select(check => check.Reused).ShouldBe([false, true]);
+        checks[0].Select(check => check.Reused).ShouldBe([false, true], "The first member shares its password only with its own group and with an item on its own host.");
         checks[1].ShouldHaveSingleItem().Reused.ShouldBeTrue();
     }
 
