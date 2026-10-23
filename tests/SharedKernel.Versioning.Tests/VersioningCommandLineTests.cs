@@ -235,7 +235,7 @@ public static class VersioningCommandLineTests
     {
         // Arrange
         var sampleOutput = "Consumed sample " + Guid.NewGuid().ToString("N");
-        var resultPrefix = "Package smoke checks passed. Evidence workspace: ";
+        var resultPrefix = "Package consumption checks passed. Evidence workspace: ";
         using var temporary = new TemporaryReleasePrepDirectory();
         var manifest = temporary.WriteCandidate();
         await temporary.WriteConsumptionSamples(sampleOutput, TestContext.Current.CancellationToken);
@@ -244,13 +244,15 @@ public static class VersioningCommandLineTests
         var result = await VersioningCommandLineRunner.Invoke(
             ["consume-candidate", "--candidate", manifest, "--repo-root", temporary.Root],
             TestContext.Current.CancellationToken);
+        using var evidence = new EvidenceWorkspaces(result);
 
         // Assert
-        result.ExitCode.ShouldBe(0);
+        var succeeded = result.ExitCode == 0;
+        succeeded.ShouldBeTrue($"consume-candidate exited with {result.ExitCode}. Standard error:{Environment.NewLine}{result.Error}");
         result.Error.ShouldContain(sampleOutput, StringComparison.Ordinal);
         result.Output.ShouldNotContain(sampleOutput, StringComparison.Ordinal);
         result.Output.ShouldStartWith(resultPrefix, StringComparison.Ordinal);
-        Directory.Delete(result.Output[resultPrefix.Length..].Trim(), recursive: true);
+        Directory.Exists(result.Output[resultPrefix.Length..].Trim()).ShouldBeTrue();
     }
 
     [Fact]

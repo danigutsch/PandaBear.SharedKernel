@@ -85,6 +85,6 @@ internal static class PackageConsumptionCommand
             }
         }
 
-        await output.WriteLineAsync("Package smoke checks passed. Evidence workspace: " + scratch).ConfigureAwait(false);
+        await output.WriteLineAsync("Package consumption checks passed. Evidence workspace: " + scratch).ConfigureAwait(false);
     }
 }
