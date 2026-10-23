@@ -9,9 +9,11 @@ public sealed class EventEnvelopeTests
     [Fact]
     public void Creates_envelope_when_values_are_valid()
     {
+        // Arrange
         var source = new Uri("urn:example:admin");
         var occurredAt = TimeProvider.System.GetUtcNow();
 
+        // Act
         var envelope = new EventEnvelope(
             EnvelopeSpec,
             EnvelopeSpecVersion,
@@ -27,6 +29,7 @@ public sealed class EventEnvelopeTests
             EventPayloadEncoding.Json,
             "{\"traceparent\":\"00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-00\"}");
 
+        // Assert
         envelope.EnvelopeSpec.ShouldBe(EnvelopeSpec);
         envelope.EnvelopeSpecVersion.ShouldBe(EnvelopeSpecVersion);
         envelope.EventId.ShouldBe("018fff35-7f1b-7d01-bf70-e33f71fcaeca");
@@ -47,6 +50,7 @@ public sealed class EventEnvelopeTests
     [InlineData("   ")]
     public void Rejects_blank_envelope_spec(string? envelopeSpec)
     {
+        // Arrange
         Action create = () =>
         {
             _ = new EventEnvelope(
@@ -65,8 +69,10 @@ public sealed class EventEnvelopeTests
                 null);
         };
 
+        // Act
         var exception = create.ShouldThrow<ArgumentException>();
 
+        // Assert
         exception.ParamName.ShouldBe("envelopeSpec");
     }
 
@@ -75,6 +81,7 @@ public sealed class EventEnvelopeTests
     [InlineData("   ")]
     public void Rejects_blank_envelope_spec_version(string? envelopeSpecVersion)
     {
+        // Arrange
         Action create = () =>
         {
             _ = new EventEnvelope(
@@ -93,8 +100,10 @@ public sealed class EventEnvelopeTests
                 null);
         };
 
+        // Act
         var exception = create.ShouldThrow<ArgumentException>();
 
+        // Assert
         exception.ParamName.ShouldBe("envelopeSpecVersion");
     }
 
@@ -103,6 +112,7 @@ public sealed class EventEnvelopeTests
     [InlineData("   ")]
     public void Rejects_blank_event_id(string? eventId)
     {
+        // Arrange
         Action create = () =>
         {
             _ = new EventEnvelope(
@@ -121,14 +131,17 @@ public sealed class EventEnvelopeTests
                 null);
         };
 
+        // Act
         var exception = create.ShouldThrow<ArgumentException>();
 
+        // Assert
         exception.ParamName.ShouldBe("eventId");
     }
 
     [Fact]
     public void Rejects_null_source()
     {
+        // Arrange
         Action create = () =>
         {
             _ = new EventEnvelope(
@@ -147,8 +160,10 @@ public sealed class EventEnvelopeTests
                 null);
         };
 
+        // Act
         var exception = create.ShouldThrow<ArgumentNullException>();
 
+        // Assert
         exception.ParamName.ShouldBe("source");
     }
 
@@ -157,6 +172,7 @@ public sealed class EventEnvelopeTests
     [InlineData("   ")]
     public void Rejects_blank_event_type(string? eventType)
     {
+        // Arrange
         Action create = () =>
         {
             _ = new EventEnvelope(
@@ -175,14 +191,17 @@ public sealed class EventEnvelopeTests
                 null);
         };
 
+        // Act
         var exception = create.ShouldThrow<ArgumentException>();
 
+        // Assert
         exception.ParamName.ShouldBe("eventType");
     }
 
     [Fact]
     public void Rejects_event_type_longer_than_limit()
     {
+        // Arrange
         var eventType = new string('a', EventEnvelope.EventTypeMaxLength + 1);
 
         Action create = () =>
@@ -203,8 +222,10 @@ public sealed class EventEnvelopeTests
                 null);
         };
 
+        // Act
         var exception = create.ShouldThrow<ArgumentException>();
 
+        // Assert
         exception.ParamName.ShouldBe("eventType");
     }
 
@@ -213,6 +234,7 @@ public sealed class EventEnvelopeTests
     [InlineData(-1)]
     public void Rejects_non_positive_event_version(int eventVersion)
     {
+        // Arrange
         Action create = () =>
         {
             _ = new EventEnvelope(
@@ -231,8 +253,10 @@ public sealed class EventEnvelopeTests
                 null);
         };
 
+        // Act
         var exception = create.ShouldThrow<ArgumentOutOfRangeException>();
 
+        // Assert
         exception.ParamName.ShouldBe("eventVersion");
     }
 
@@ -241,6 +265,7 @@ public sealed class EventEnvelopeTests
     [InlineData("   ")]
     public void Rejects_blank_payload_when_provided(string? payload)
     {
+        // Arrange
         Action create = () =>
         {
             _ = new EventEnvelope(
@@ -259,8 +284,10 @@ public sealed class EventEnvelopeTests
                 null);
         };
 
+        // Act
         var exception = create.ShouldThrow<ArgumentException>();
 
+        // Assert
         exception.ParamName.ShouldBe("payload");
     }
 }

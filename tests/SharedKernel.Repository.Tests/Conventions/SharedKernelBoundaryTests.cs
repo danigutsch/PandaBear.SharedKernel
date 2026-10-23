@@ -105,7 +105,7 @@ public sealed class SharedKernelBoundaryTests
     [Fact]
     public void Observability_backends_are_opt_in_and_route_through_collector_in_library()
     {
-
+        // Act
         var sharedHostingText = File.ReadAllText(Path.Combine(
             GetRepositoryRoot(),
             "src",
@@ -119,6 +119,9 @@ public sealed class SharedKernelBoundaryTests
             "SharedKernel",
             "SharedKernel.Aspire.Hosting.Grafana",
             "GrafanaLgtmStackDefaults.cs"));
+        var actualValue = sharedHostingText.Split("ExcludeFromManifest()").Length - 1;
+
+        // Assert
         sharedHostingText.ShouldContain("GrafanaLgtmStackDefaults.ResourceNames", StringComparison.Ordinal);
         sharedDefaultsText.ShouldContain("\"opentelemetry-collector\"", StringComparison.Ordinal);
         sharedDefaultsText.ShouldContain("\"grafana\"", StringComparison.Ordinal);
@@ -128,7 +131,6 @@ public sealed class SharedKernelBoundaryTests
         sharedHostingText.ShouldContain("AddOpenTelemetryCollectorGateway(", StringComparison.Ordinal);
         sharedHostingText.ShouldContain("ConfigureAppForwarding(collector)", StringComparison.Ordinal);
         sharedHostingText.ShouldContain("ResolveCollectorEndpointName", StringComparison.Ordinal);
-        var actualValue = sharedHostingText.Split("ExcludeFromManifest()").Length - 1;
         actualValue.ShouldBe(5);
         sharedHostingText.ShouldNotContain("AddContainer(", StringComparison.Ordinal);
         sharedHostingText.ShouldContain("AddGrafana(resourceNames.Grafana", StringComparison.Ordinal);
@@ -142,12 +144,15 @@ public sealed class SharedKernelBoundaryTests
     [Trait(Testing.TestTraitNames.CategoryName, Testing.TestTraitValues.SecurityCategory)]
     public void Every_hosted_profile_routes_through_the_trusted_collector_gateway_in_library()
     {
+        // Act
         var sharedHostingText = File.ReadAllText(Path.Combine(
             GetRepositoryRoot(),
             "src",
             "SharedKernel",
             "SharedKernel.Aspire.Hosting.Grafana",
             "GrafanaLgtmStackResourceExtensions.cs"));
+
+        // Assert
         sharedHostingText.ShouldContain("WithConfig(Path.GetFullPath(privacyConfigurationFile))", StringComparison.Ordinal);
         sharedHostingText.ShouldContain("WithConfig(Path.GetFullPath(routingConfigurationFile))", StringComparison.Ordinal);
     }
@@ -155,7 +160,10 @@ public sealed class SharedKernelBoundaryTests
     [Fact]
     public void Media_object_storage_source_configuration_is_private_and_pinned_in_library()
     {
+        // Act
         var seaweedFsText = File.ReadAllText(Path.Combine(GetRepositoryRoot(), "src", "SharedKernel", "SharedKernel.Aspire.Hosting.SeaweedFs", "SeaweedFsResourceExtensions.cs"));
+
+        // Assert
         seaweedFsText.ShouldContain("WithImageSHA256", StringComparison.Ordinal);
         seaweedFsText.ShouldContain("isExternal: false", StringComparison.Ordinal);
         seaweedFsText.ShouldContain("-dir=/data", StringComparison.Ordinal);
@@ -176,13 +184,18 @@ public sealed class SharedKernelBoundaryTests
     [Fact]
     public void Admin_hosted_test_infrastructure_should_use_the_approved_fixture_and_base_class_model_in_library()
     {
+        // Arrange
         var repositoryRoot = GetRepositoryRoot();
+
+        // Act
         var publicSchemaResetText = File.ReadAllText(Path.Combine(
             repositoryRoot,
             "src",
             "SharedKernel",
             "SharedKernel.IntegrationTesting",
             "PostgreSqlPublicSchemaReset.cs"));
+
+        // Assert
         publicSchemaResetText.ShouldContain(
             "public static async Task Reset(DbConnection connection, CancellationToken ct)",
             StringComparison.Ordinal);
@@ -192,6 +205,8 @@ public sealed class SharedKernelBoundaryTests
     {
         // Arrange
         var repositoryRoot = GetRepositoryRoot();
+
+        // Act
         var sharedNpgsql = File.ReadAllText(Path.Combine(
             repositoryRoot,
             "src",
@@ -211,8 +226,12 @@ public sealed class SharedKernelBoundaryTests
     {
         // Arrange
         var repositoryRoot = GetRepositoryRoot();
+
+        // Act
         var domainEventsReadme = File.ReadAllText(
             Path.Combine(repositoryRoot, "src", "SharedKernel", "SharedKernel.Domain", "README.md"));
+
+        // Assert
         domainEventsReadme.ShouldNotContain("SharedKernel.Mediator", StringComparison.Ordinal);
     }
 
@@ -357,13 +376,17 @@ public sealed class SharedKernelBoundaryTests
     [Fact]
     public void SharedKernel_testing_should_not_own_product_or_area_specific_trait_values()
     {
+        // Arrange
         var sharedKernelTestingRoot = Path.Combine(GetRepositoryRoot(), "src", "SharedKernel", "SharedKernel.Testing");
+
+        // Act
         var offendingLines = Directory.GetFiles(sharedKernelTestingRoot, "*.cs", SearchOption.AllDirectories)
             .Where(path => !IsGeneratedTestPath(path))
             .SelectMany(FindProductSpecificSharedKernelTestingCoupling)
             .ToArray();
-
         var areDifferent = offendingLines.Length != 0;
+
+        // Assert
         areDifferent.ShouldBeFalse(
             $"Expected PandaBear.Testing to stay neutral and leave product or area-specific trait values local, but found:{Environment.NewLine}{string.Join(Environment.NewLine, offendingLines)}");
     }

@@ -94,7 +94,7 @@ public sealed class ApiVersionTests
         var version1Point1 = new ApiVersion(1, 1);
         var version2 = new ApiVersion(2);
 
-        // Assert
+        // Act, Assert
         version1.ShouldBeLessThan(version1Point1);
         version1Point1.ShouldBeLessThanOrEqualTo(version2);
         version2.ShouldBeGreaterThan(version1Point1);

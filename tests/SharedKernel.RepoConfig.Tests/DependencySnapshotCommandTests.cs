@@ -52,7 +52,8 @@ public sealed class DependencySnapshotCommandTests
     [Fact]
     public async Task Snapshot_rejects_amplified_package_urls_before_publishing_output()
     {
-        // Arrange: a small committed lock expands beyond 32 MiB through repeated dependency URLs.
+        // Arrange
+        // A small committed lock expands beyond 32 MiB through repeated dependency URLs.
         var graph = new System.Text.StringBuilder("{\"version\":2,\"dependencies\":{\"net10.0\":{");
         graph.Append("\"Long.Package\":{\"type\":\"Transitive\",\"resolved\":\"");
         graph.Append('x', 256 * 1024);

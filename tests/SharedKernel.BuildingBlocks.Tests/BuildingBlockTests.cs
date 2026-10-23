@@ -7,13 +7,17 @@ public sealed class BuildingBlockTests
     [Fact]
     public void Value_objects_are_equal_when_components_match()
     {
+        // Arrange
         var first = new TestValueObject("Lisbon", 3);
         var second = new TestValueObject("Lisbon", 3);
 
-        second.ShouldBe(first);
+        // Act
         var areEqual = first == second;
-        areEqual.ShouldBeTrue();
         var areDifferent = first != second;
+
+        // Assert
+        second.ShouldBe(first);
+        areEqual.ShouldBeTrue();
         areDifferent.ShouldBeFalse();
         second.GetHashCode().ShouldBe(first.GetHashCode());
     }
@@ -21,18 +25,26 @@ public sealed class BuildingBlockTests
     [Fact]
     public void Value_object_equality_handles_reference_and_type_comparisons()
     {
+        // Arrange
         var valueObject = new TestValueObject("Lisbon", 3);
 
-        valueObject.Equals(valueObject).ShouldBeTrue();
-        valueObject.Equals(new OtherTestValueObject("Lisbon", 3)).ShouldBeFalse();
+        // Act
+        var equalsItself = valueObject.Equals(valueObject);
+        var equalsOtherType = valueObject.Equals(new OtherTestValueObject("Lisbon", 3));
+
+        // Assert
+        equalsItself.ShouldBeTrue();
+        equalsOtherType.ShouldBeFalse();
     }
 
     [Fact]
     public void Value_objects_are_not_equal_when_components_differ()
     {
+        // Arrange
         var first = new TestValueObject("Lisbon", 3);
         var second = new TestValueObject("Porto", 3);
 
+        // Act, Assert
         second.ShouldNotBe(first);
     }
 

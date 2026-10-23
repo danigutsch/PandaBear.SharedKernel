@@ -70,7 +70,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     [Fact]
     public async Task Normalizes_multipart_schemas_using_runtime_context()
     {
-        // Arrange
+        // Act
         var normalizedDocument = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
             "uploads",
             group => group.MapPost("/commit", ([AsParameters] TestCommitImportFormDto form) => TypedResults.Ok())
@@ -120,7 +120,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     [Fact]
     public async Task Ignores_malformed_multipart_schemas_when_no_form_parameters_exist()
     {
-        // Arrange
+        // Act
         var untouchedDocument = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
             "uploads",
             group => group.MapPost("/commit", (TestJsonRequest body) => TypedResults.Ok(body))
@@ -144,7 +144,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     [Fact]
     public async Task Skips_invalid_form_parameters_during_multipart_normalization()
     {
-        // Arrange
+        // Act
         var normalizedSchema = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
             "uploads",
             group => group.MapPost("/commit", ([AsParameters] TestCommitImportFormDto form) => TypedResults.Ok())
@@ -172,7 +172,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     [Fact]
     public async Task Clears_root_required_when_multipart_normalization_uses_only_optional_form_fields()
     {
-        // Arrange
+        // Act
         var normalizedDocument = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
             "uploads",
             group => group.MapPost("/optional", ([AsParameters] TestOptionalCommitImportFormDto form) => TypedResults.Ok())
@@ -214,7 +214,7 @@ public sealed class MultipartFormRequestBodyDocumentTransformerTests
     [Fact]
     public async Task Ignores_paths_without_operations()
     {
-        // Arrange
+        // Act
         var document = await OpenApiDocumentFactory.ExecuteWithCapturedContext(
             "uploads",
             group => group.MapPost("/commit", ([AsParameters] TestCommitImportFormDto form) => TypedResults.Ok())

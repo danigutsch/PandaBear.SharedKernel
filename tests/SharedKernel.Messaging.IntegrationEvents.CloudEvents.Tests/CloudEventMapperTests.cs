@@ -6,6 +6,7 @@ public sealed class CloudEventMapperTests
     [Fact]
     public void ToCloudEvent_maps_typed_event_metadata_to_a_cloudevents_envelope()
     {
+        // Arrange
         var eventId = Guid.NewGuid();
         var occurredAt = TimeProvider.System.GetUtcNow();
         var integrationEvent = new TestIntegrationEvent(eventId, occurredAt, "tour-created");
@@ -13,8 +14,10 @@ public sealed class CloudEventMapperTests
         var dataSchema = new Uri("https://events.example/schemas/admin.tour.created.v1.json");
         var metadata = new CloudEventMetadata(source, "tour-42", "application/json", dataSchema);
 
+        // Act
         var envelope = CloudEventMapper.ToCloudEvent(integrationEvent, metadata);
 
+        // Assert
         envelope.Id.ShouldBe(eventId.ToString("D"));
         envelope.Source.ShouldBe(source);
         envelope.Type.ShouldBe("admin.tour.created");
@@ -53,6 +56,8 @@ public sealed class CloudEventMapperTests
 
         // Act
         var argumentException = ExceptionAssertions.ThrowsInner<ArgumentNullException>(() => genericMethod.Invoke(null, [null, metadata]));
+
+        // Assert
         argumentException.ParamName.ShouldBe("integrationEvent");
     }
 
@@ -66,6 +71,8 @@ public sealed class CloudEventMapperTests
 
         // Act
         var argumentException = ExceptionAssertions.ThrowsInner<ArgumentNullException>(() => genericMethod.Invoke(null, [integrationEvent, null]));
+
+        // Assert
         argumentException.ParamName.ShouldBe("metadata");
     }
 }

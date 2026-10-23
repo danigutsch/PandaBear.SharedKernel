@@ -13,6 +13,7 @@ public sealed class BrandingResponseLimitTests
     [InlineData(false)]
     public async Task SaveSettings_respects_client_buffer_limit_and_disposes_response(bool knownLength)
     {
+        // Arrange
         using var body = new BrandingResponseReadStream(Encoding.UTF8.GetBytes("{\"brandName\":\"" + new string('x', 1024) + "\"}"), knownLength);
         using var content = new StreamContent(body);
         content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -29,8 +30,11 @@ public sealed class BrandingResponseLimitTests
         };
         var sut = new ManagementBrandingApiClient(client);
 
+        // Act
         Func<Task> save = () => sut.SaveSettings(BrandingSettingsTestData.ValidRequest(), TestContext.Current.CancellationToken);
         await save.ShouldThrow<HttpRequestException>();
+
+        // Assert
         body.BytesRead.ShouldBeLessThanOrEqualTo(129L);
         body.IsDisposed.ShouldBeTrue();
     }
@@ -40,6 +44,7 @@ public sealed class BrandingResponseLimitTests
     [InlineData(false)]
     public async Task SaveSettings_accepts_json_at_exact_client_limit(bool knownLength)
     {
+        // Arrange
         const string json = "{\"brandName\":\"Exact\"}";
         using var body = new BrandingResponseReadStream(Encoding.UTF8.GetBytes(json), knownLength);
         using var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StreamContent(body) };
@@ -50,7 +55,11 @@ public sealed class BrandingResponseLimitTests
             BaseAddress = new Uri("https://branding.example"),
             MaxResponseContentBufferSize = Encoding.UTF8.GetByteCount(json)
         };
+
+        // Act
         var result = await new ManagementBrandingApiClient(client).SaveSettings(BrandingSettingsTestData.ValidRequest(), TestContext.Current.CancellationToken);
+
+        // Assert
         result.BrandName.ShouldBe("Exact");
         body.BytesRead.ShouldBe((long)Encoding.UTF8.GetByteCount(json));
         body.IsDisposed.ShouldBeTrue();
@@ -59,6 +68,7 @@ public sealed class BrandingResponseLimitTests
     [Fact]
     public async Task SaveSettings_rejects_body_above_default_ceiling()
     {
+        // Arrange
         const int limit = 1024 * 1024;
         using var body = new BrandingResponseReadStream(Encoding.UTF8.GetBytes("{\"brandName\":\"" + new string('x', limit) + "\"}"), false);
         using var response = new HttpResponseMessage(HttpStatusCode.OK)
@@ -68,8 +78,12 @@ public sealed class BrandingResponseLimitTests
         response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         using var handler = new TestHttpMessageHandler(response);
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://branding.example") };
+
+        // Act
         Func<Task> save = () => new ManagementBrandingApiClient(client).SaveSettings(BrandingSettingsTestData.ValidRequest(), TestContext.Current.CancellationToken);
         await save.ShouldThrow<HttpRequestException>();
+
+        // Assert
         body.BytesRead.ShouldBe(limit + 1L);
         body.IsDisposed.ShouldBeTrue();
     }
@@ -77,19 +91,25 @@ public sealed class BrandingResponseLimitTests
     [Fact]
     public async Task SaveSettings_preserves_declared_charset()
     {
+        // Arrange
         using var response = new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new StringContent("{\"brandName\":\"Café\"}", Encoding.Unicode, "application/json")
         };
         using var handler = new TestHttpMessageHandler(response);
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://branding.example") };
+
+        // Act
         var settings = await new ManagementBrandingApiClient(client).SaveSettings(BrandingSettingsTestData.ValidRequest(), TestContext.Current.CancellationToken);
+
+        // Assert
         settings.BrandName.ShouldBe("Café");
     }
 
     [Fact]
     public async Task SaveSettings_counts_actual_bytes_despite_small_declared_length()
     {
+        // Arrange
         using var body = new BrandingResponseReadStream(Encoding.UTF8.GetBytes("{\"brandName\":\"" + new string('x', 1024) + "\"}"), false);
         using var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StreamContent(body) };
         response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
@@ -100,8 +120,12 @@ public sealed class BrandingResponseLimitTests
             BaseAddress = new Uri("https://branding.example"),
             MaxResponseContentBufferSize = 128
         };
+
+        // Act
         Func<Task> save = () => new ManagementBrandingApiClient(client).SaveSettings(BrandingSettingsTestData.ValidRequest(), TestContext.Current.CancellationToken);
         await save.ShouldThrow<HttpRequestException>();
+
+        // Assert
         body.BytesRead.ShouldBe(129L);
         body.IsDisposed.ShouldBeTrue();
     }
@@ -111,10 +135,13 @@ public sealed class BrandingResponseLimitTests
     [InlineData("invalid-json", false)]
     public async Task SaveSettings_preserves_unusable_json_exception_contract(string json, bool nullBody)
     {
+        // Arrange
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, json);
         using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://branding.example") };
         Func<Task> save = () => new ManagementBrandingApiClient(client).SaveSettings(BrandingSettingsTestData.ValidRequest(), TestContext.Current.CancellationToken);
+
+        // Act, Assert
         if (nullBody)
         {
             await save.ShouldThrow<InvalidOperationException>();

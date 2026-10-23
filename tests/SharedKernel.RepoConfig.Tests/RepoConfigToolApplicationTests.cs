@@ -930,7 +930,11 @@ public sealed class RepoConfigToolApplicationTests
     [Fact]
     public void GitHub_repository_name_accepts_single_hyphenated_owner()
     {
-        GitHubRepositoryName.IsValid("owner-name/repository").ShouldBeTrue();
+        // Act
+        var isValid = GitHubRepositoryName.IsValid("owner-name/repository");
+
+        // Assert
+        isValid.ShouldBeTrue();
     }
 
     [Fact]
@@ -2639,70 +2643,85 @@ public sealed class RepoConfigToolApplicationTests
     [Fact]
     public async Task GitHub_project_target_rejects_mismatched_remote_number()
     {
+        // Arrange
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": { \"id\": \"project-id\", \"number\": 2, \"owner\": { \"login\": \"owner\" } } } }");
         using var httpClient = new HttpClient(handler);
         var client = new GitHubProjectClient(httpClient);
         Func<Task> action = () => client.VerifyTarget(new GitHubProjectTarget("project-id", "owner", 1), TestContext.Current.CancellationToken);
 
+        // Act
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
+        // Assert
         exception.Message.ShouldBe("Configured GitHub Project target could not be verified.");
     }
 
     [Fact]
     public async Task GitHub_project_client_rejects_missing_issue_node_id()
     {
+        // Arrange
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"repository\": { \"issue\": {} } } }");
         using var httpClient = new HttpClient(handler);
         var client = new GitHubProjectClient(httpClient);
         Func<Task> action = () => client.GetIssueNodeId("owner/repository", 1, TestContext.Current.CancellationToken);
 
+        // Act
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
+        // Assert
         exception.Message.ShouldBe("GitHub issue mapping could not be found: #1.");
     }
 
     [Fact]
     public async Task GitHub_project_client_rejects_http_failure()
     {
+        // Arrange
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.Forbidden, "{}");
         using var httpClient = new HttpClient(handler);
         var client = new GitHubProjectClient(httpClient);
         Func<Task> action = () => client.GetFields(new GitHubProjectTarget("project-id", "owner", 1), TestContext.Current.CancellationToken);
 
+        // Act
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
+        // Assert
         exception.Message.ShouldBe("GitHub Project request failed with HTTP 403.");
     }
 
     [Fact]
     public async Task GitHub_project_client_rejects_missing_field_values()
     {
+        // Arrange
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": {} } }");
         using var httpClient = new HttpClient(handler);
         var client = new GitHubProjectClient(httpClient);
         Func<Task> action = () => client.GetFieldValues("item-id", TestContext.Current.CancellationToken);
 
+        // Act
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
+        // Assert
         exception.Message.ShouldBe("GitHub Project field values could not be read.");
     }
 
     [Fact]
     public async Task GitHub_project_client_rejects_missing_project_items()
     {
+        // Arrange
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": {} } }");
         using var httpClient = new HttpClient(handler);
         var client = new GitHubProjectClient(httpClient);
         Func<Task> action = () => client.FindItemId(new GitHubProjectTarget("project-id", "owner", 1), "issue-id", TestContext.Current.CancellationToken);
 
+        // Act
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
+        // Assert
         exception.Message.ShouldBe("GitHub Project items could not be read.");
     }
 

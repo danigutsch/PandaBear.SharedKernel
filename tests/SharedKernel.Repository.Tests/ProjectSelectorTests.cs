@@ -12,12 +12,15 @@ public sealed class ProjectSelectorTests : IDisposable
     [InlineData("tests/SharedKernel.Style.Analyzers.Tests/Guard.cs")]
     public void Governed_library_or_guard_changes_validate_complete_inventory(string change)
     {
+        // Arrange
         scope.AddProject("src/Owned/Owned.csproj", """<Project><PackageId>PandaBear.SharedKernel.Owned</PackageId></Project>""");
         scope.AddProject("src/Other/Other.csproj", """<Project><PackageId>PandaBear.SharedKernel.Other</PackageId></Project>""");
         scope.AddProject("tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj", """<Project><PackageReference Include="xunit.v3.mtp-v2" /></Project>""");
 
+        // Act
         var result = ProjectSelector.Select(scope.Root, [change]);
 
+        // Assert
         result.BuildProjects.Length.ShouldBe(6);
         result.TestProjects.ShouldContain("tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj");
     }
@@ -25,15 +28,23 @@ public sealed class ProjectSelectorTests : IDisposable
     [Fact]
     public void Newly_added_solution_tests_are_selected_without_updating_provenance()
     {
+        // Arrange
         scope.AddProject("tests/New.Tests/New.Tests.csproj", """<Project><PackageReference Include="xunit.v3.mtp-v2" /></Project>""");
+
+        // Act
         var result = ProjectSelector.Select(scope.Root, ["tests/New.Tests/New.Tests.csproj"]);
+
+        // Assert
         result.TestProjects.ShouldContain("tests/New.Tests/New.Tests.csproj");
     }
 
     [Fact]
     public void Reverse_transitive_dependents_include_complete_tests()
     {
+        // Act
         var result = ProjectSelector.Select(scope.Root, ["src/Core/Deleted.cs"]);
+
+        // Assert
         result.BuildProjects.Length.ShouldBe(3);
         result.TestProjects.ShouldBe(["tests/Core.Tests/Core.Tests.csproj"]);
     }
@@ -44,7 +55,10 @@ public sealed class ProjectSelectorTests : IDisposable
     [InlineData("src/Removed/Removed.csproj")]
     public void Uncertain_and_global_changes_select_the_current_solution(string path)
     {
+        // Act
         var result = ProjectSelector.Select(scope.Root, [path]);
+
+        // Assert
         result.BuildProjects.Length.ShouldBe(3);
         result.Reasons.ShouldContain(reason => reason.StartsWith("Full validation fallback", StringComparison.Ordinal));
     }
@@ -52,7 +66,11 @@ public sealed class ProjectSelectorTests : IDisposable
     [Fact]
     public void Missing_history_selects_every_current_project()
     {
-        ProjectSelector.Select(scope.Root, null).BuildProjects.Length.ShouldBe(3);
+        // Act
+        var result = ProjectSelector.Select(scope.Root, null);
+
+        // Assert
+        result.BuildProjects.Length.ShouldBe(3);
     }
 
     [Theory]
@@ -60,8 +78,14 @@ public sealed class ProjectSelectorTests : IDisposable
     [InlineData("http://schemas.microsoft.com/developer/msbuild/2003")]
     public void Imported_project_inputs_select_every_project(string xmlNamespace)
     {
+        // Arrange
         File.WriteAllText(Path.Combine(scope.Root, "src/Core/Core.csproj"), $"""<Project xmlns="{xmlNamespace}"><Import Project="custom.build" /></Project>""");
-        ProjectSelector.Select(scope.Root, ["src/Dependent/Changed.cs"]).BuildProjects.Length.ShouldBe(3);
+
+        // Act
+        var result = ProjectSelector.Select(scope.Root, ["src/Dependent/Changed.cs"]);
+
+        // Assert
+        result.BuildProjects.Length.ShouldBe(3);
     }
 
     [Theory]
@@ -90,6 +114,7 @@ public sealed class ProjectSelectorTests : IDisposable
     [InlineData("http://schemas.microsoft.com/developer/msbuild/2003")]
     public void Namespaced_project_references_select_transitive_test_dependents(string xmlNamespace)
     {
+        // Arrange
         File.WriteAllText(
             Path.Combine(scope.Root, "src/Dependent/Dependent.csproj"),
             $"""<Project xmlns="{xmlNamespace}"><ProjectReference Include="../Core/Core.csproj" /></Project>""");
@@ -97,8 +122,10 @@ public sealed class ProjectSelectorTests : IDisposable
             Path.Combine(scope.Root, "tests/Core.Tests/Core.Tests.csproj"),
             $"""<Project xmlns="{xmlNamespace}"><PackageReference Include="xunit.v3.mtp-v2" /><ProjectReference Include="../../src/Dependent/Dependent.csproj" /></Project>""");
 
+        // Act
         var result = ProjectSelector.Select(scope.Root, ["src/Core/Changed.cs"]);
 
+        // Assert
         result.BuildProjects.Length.ShouldBe(3);
         result.TestProjects.ShouldBe(["tests/Core.Tests/Core.Tests.csproj"]);
     }
@@ -106,11 +133,17 @@ public sealed class ProjectSelectorTests : IDisposable
     [Fact]
     public void Explicit_package_edges_select_package_consumption_tests()
     {
+        // Arrange
         var directory = Path.Combine(scope.Root, "tools/SharedKernel.Repository.Tool");
         Directory.CreateDirectory(directory);
         File.WriteAllText(Path.Combine(directory, "package-consumption-edges.json"), """{"tests/Core.Tests/Core.Tests.csproj":["src/Core/Core.csproj"]}""");
         File.WriteAllText(Path.Combine(scope.Root, "tests/Core.Tests/Core.Tests.csproj"), """<Project><PackageReference Include="xunit.v3.mtp-v2" /></Project>""");
-        ProjectSelector.Select(scope.Root, ["src/Core/Changed.cs"]).TestProjects.ShouldContain("tests/Core.Tests/Core.Tests.csproj");
+
+        // Act
+        var result = ProjectSelector.Select(scope.Root, ["src/Core/Changed.cs"]);
+
+        // Assert
+        result.TestProjects.ShouldContain("tests/Core.Tests/Core.Tests.csproj");
     }
 
     [Theory]
