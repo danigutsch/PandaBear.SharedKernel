@@ -147,12 +147,15 @@ does the output of the `dotnet` processes and samples that `consume-candidate`, 
 | `2` | The command failed: invalid input, a failed check, or a failed `git` or `dotnet` process. |
 | `130`, `143` | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
-Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or sample process tree.
+Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or sample process tree. A process that fails after Ctrl+C or
+SIGTERM counts as the cancellation.
 
 ## Security
 
 - .NET tools run in full trust. Install only from trusted manifests and package sources.
 - No option accepts a secret.
+- `has-breaking-change-marker` rejects an empty range or one that starts with `-`, and passes the range to Git after
+  `--end-of-options`, so Git cannot read it as an option.
 - Packing and consumption restore third-party packages from nuget.org. Generated NuGet configurations map
   `PandaBear.SharedKernel.*` only to the local feed, so internal packages never resolve from nuget.org.
 - Candidate commands verify SHA-256 package hashes before consuming or staging packages.

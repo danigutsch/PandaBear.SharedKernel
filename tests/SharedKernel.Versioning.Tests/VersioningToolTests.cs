@@ -715,6 +715,24 @@ public static class VersioningToolTests
     }
 
     [Fact]
+    public static async Task Breaking_change_marker_check_passes_the_range_to_git_after_the_end_of_options()
+    {
+        // Arrange
+        using var repository = new TemporaryGitRepository();
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "base", "feat(api)!: remove route", TestContext.Current.CancellationToken);
+        var root = repository.Root;
+
+        // Act
+        // Parsing rejects such a range; the command still keeps Git from reading it as an option.
+        var action = () => BreakingChangeMarkerCommand.Run("--output=log.txt", root, TextWriter.Null, TestContext.Current.CancellationToken);
+
+        // Assert
+        await action.ShouldThrow<InvalidOperationException>();
+        File.Exists(Path.Combine(root, "log.txt")).ShouldBeFalse();
+    }
+
+    [Fact]
     public static async Task Wraps_missing_process_start_failures()
     {
         // Arrange
