@@ -610,11 +610,11 @@ writes the vaults.
    findings by kind and place, never a value. It shows notes only when you share them and they hold no secret
    finding: in the review of the same inputs and decisions file, `n` shares the selected item's notes, and `F8`
    shares the notes of every item without a finding.
-2. Give the agent a copy of `brief.json` to read, the format and limits in the tool README's **Agent decisions** section, and the name of
-   the file it writes, such as `agent.json`. Give it nothing else from the working folder: never `decisions.json`, an
-   export, the merged vault, or a report. Run the agent without network access, or treat the names, user names,
-   addresses, folders, and shared notes in the brief as disclosed: text in a name or a note can carry instructions that
-   lead the agent to bad decisions.
+2. Give the agent a copy of `brief.json` to read, the format and limits in the tool README's **Agent decisions**
+   section, and the name of the file it writes, such as `agent.json`. Give it nothing else from the working folder:
+   never `decisions.json`, an export, the merged vault, or a report. Run the agent without network access, or treat the
+   names, user names, addresses, folders, and shared notes in the brief as disclosed: text in a name or a note can carry
+   instructions that lead the agent to bad decisions.
 3. Merge with the agent's decisions:
 
    ```bash
@@ -645,10 +645,10 @@ that holds no secret value; you run the two commands that read and write the vau
    sharedkernel-vault catalog merged.json --output catalog.json --decisions notes.json
    ```
 
-   The catalog holds names, folders, favorites, website addresses with their user info, query, and fragment masked,
-   text custom fields without secret findings, user names without secret findings, and attachment names. It withholds every note until you
-   decide on it, and `notes.json` lists a `Pending` entry for each item with notes and the number of secret findings
-   in them.
+   The catalog holds names, folders, favorites, website addresses with their user info, query, and fragment masked, text
+   custom fields without secret findings, user names without secret findings, and attachment names. It withholds every
+   note until you decide on it, and `notes.json` lists a `Pending` entry for each item with notes and the number of
+   secret findings in them.
 2. Decide which notes the catalog may show. Open the review of the same file and press `n` (show), `p` (keep
    private), or `h` (move into a hidden field named `Notes`) on the item's column in the **Fields** tab, or `F8` to
    show every note without a finding, then save with `Ctrl+S`:
@@ -672,9 +672,9 @@ that holds no secret value; you run the two commands that read and write the vau
    ```
 
    Each line names an item by its key and name and says what changes, such as a new name, another folder, or a website
-   address that was added or removed, without notes text, field values, or masked addresses. Removals are listed
-   apart: addresses and text field values the catalog drops or changes, shared notes it empties, and folders the
-   vault would lose. Check every address that was added or whose match setting covers more sites: Bitwarden offers a login's
+   address that was added or removed, without notes text, field values, or masked addresses. Removals are listed apart:
+   addresses and text field values the catalog drops or changes, shared notes it empties, and folders the vault would
+   lose. Check every address that was added or whose match setting covers more sites: Bitwarden offers a login's
    password on the sites its addresses match.
 5. Apply the catalog. It asks for the password of `merged.json` and for a new password for `organized.json`:
 
@@ -706,8 +706,8 @@ you add above the one merge wrote, stops merge in the same way, so add your choi
 the file and run merge again; until then, no choice in the file takes effect.
 
 An origin key names one input item as `<provider>|<input file name>|<ID in that export>`, for example
-`keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA`. Items without an ID, such as CSV rows, get a key from a hash of their
-type, title, and the host of their first website address instead. A group key names a set of matched items. After a merge that
+`keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA`. Items without an ID, such as CSV rows, get a key from a hash of their type,
+title, and the host of their first website address instead. A group key names a set of matched items. After a merge that
 needs two decisions, the file holds:
 
 ```json
@@ -869,18 +869,18 @@ quit hold no secret values.
   and does not end the review.
 - `2`: merge needs decisions and writes no vault. With `--decisions <file>`, the file holds pending entries for
   you to fill in. Without it, run merge again with `--decisions <file>`.
-- `3`: an input or output problem. An input is unreadable, unsupported, account-restricted, or over a size limit, or
-  its password is wrong. A Bitwarden JSON export is malformed, for example because it holds a null item or two
-  folders with one ID; the message names the first malformed entry by its position. The decisions file is not valid, for example
-  because a property name is misspelled or a property appears twice in one object. The output exists and `--force`
-  is missing, the output is also an input or differs from one only in case, or its folder does not exist. The report
-  path names an existing file that is not a vault report, or the brief path names an existing file that is not a
-  brief. The agent decisions file is missing, not valid, outside the limits for agents, or does not fit the exports and
-  your decisions, or the brief was made from other exports. The report, the brief, or the decisions file cannot be
-  written. A value would make Bitwarden reject the import; merge still adds pending
-  entries for the decisions it needs. A password is needed and no terminal is available, or three attempts at a new
-  password fail. Merge writes no vault in these cases, except when it writes `merged.json` and then cannot write the
-  report: it prints `Wrote the merged vault to merged.json` before it writes the report, and the error says that the
-  vault is written and the report is not.
+- `3`: an input or output problem. An input is unreadable, unsupported, account-restricted, or over a size limit, or its
+  password is wrong. A Bitwarden JSON export is malformed, for example because it holds a null item or two folders with
+  one ID; the message names the first malformed entry by its position. The decisions file is not valid, for example
+  because a property name is misspelled or a property appears twice in one object. The output exists and `--force` is
+  missing, the output is also an input or differs from one only in case, or its folder does not exist. The report path
+  names an existing file that is not a vault report, or the brief path names an existing file that is not a brief. The
+  agent decisions file is missing, not valid, outside the limits for agents, or does not fit the exports and your
+  decisions, or the brief was made from other exports. `apply` refuses a catalog that removes something without
+  `--allow-removals`. The report, the brief, or the decisions file cannot be written. A value would make Bitwarden
+  reject the import; merge still adds pending entries for the decisions it needs. A password is needed and no terminal
+  is available, or three attempts at a new password fail. Merge writes no vault in these cases, except when it writes
+  `merged.json` and then cannot write the report: it prints `Wrote the merged vault to merged.json` before it writes the
+  report, and the error says that the vault is written and the report is not.
 - `130` or `143`: Ctrl+C or SIGTERM arrived while the tool was starting, or the canceled command did not end
   within two seconds.

@@ -291,8 +291,9 @@ removed. While the catalog changes something it may not, such as the text of wit
 item key, or an empty name, the command writes nothing, prints each problem by item key and name, and exits with code
 3. The output creates every folder of the catalog, including empty ones, and the parent of each.
 
-`apply` describes each change by item key and name, and names only items, fields, folders, and website addresses that
-are not masked, never a value:
+`apply --dry-run` describes each change by item key and name, and names only items, fields, folders, and website
+addresses that are not masked, never a value. A normal `apply` prints only the counts, and each removal when it refuses
+them:
 
 ```text
 Changes:
@@ -310,18 +311,22 @@ The dry run wrote nothing. Apply refuses these removals without --allow-removals
 ```
 
 An item line can say that the item was renamed, moved to another folder, got or lost an additional folder or the
-favorite mark, got or lost a website address, kept an address with another match setting, had its addresses reordered,
-had a masked address moved (by its position, without the masked text), got, lost, or changed a text field (by its
-name), or had its notes added, edited, emptied, or moved into the hidden field `Notes`. A vault line says that a folder
-was added or removed. An address line ends with `(offers the login on more sites)` when its match setting is
-`RegularExpression` or `StartsWith`. Control, bidirectional, zero-width, and other format characters show as U+FFFD or
-`\uXXXX`, so an edited name or address cannot pass for another one.
+favorite mark, got or lost a website address, kept an address with another match setting, had its addresses, text
+fields, or additional folders reordered, had a masked address moved (by its position, without the masked text), got,
+lost, or changed a text field (by its name), or had its notes added, edited, emptied, or moved into the hidden field
+`Notes`. A vault line says that a folder was added or removed. `Items changed` counts the items with a line. An address
+line ends with `(offers the login on more sites)` when its match setting is `RegularExpression` or `StartsWith`.
+Control characters and bidirectional embeddings, overrides, and isolates show as U+FFFD, line breaks and tabs as spaces,
+and other format characters, such as zero-width spaces, as `\uXXXX`, so a line cannot hide, reorder, or break text.
+In a website address, every character outside printable ASCII shows as `\uXXXX`, so a letter of another script cannot
+pass for a Latin one; names show such letters as they are. A value that the catalog keeps as shown, such as an address
+with surrounding white space, is written as the vault holds it.
 
 Removals are what the vault holds and the catalog drops: a website address that is not masked and that the catalog does
-not hold as it is, also when it was edited, compared after trimming white space; the old value of a shown text field that the
-catalog removes or changes; shared notes that the catalog empties; and a folder that the vault declares and the output
-would not have. Without `--allow-removals`, `apply` prints each removal, writes nothing, and exits with code 3 before it
-asks for a password.
+not hold as it is, also when it was edited, compared after trimming white space; the old value of a shown text field
+that the catalog removes or changes; shared notes that the catalog empties; and a folder that the vault declares and the
+output would not have. Without `--allow-removals`, `apply` reads the input, asking for its password when it is
+protected, prints each removal, writes nothing, and exits with code 3 before it asks for the password of the new export.
 
 `--dry-run` prints the changes, the removals apart from them, and the counts, and writes nothing. It reads the input,
 asking for its password when it is protected, and asks for no new password. It checks the edited vault against
@@ -448,8 +453,8 @@ that need a decision with your decisions:
 - `inputs`: the file names of the inputs. The brief holds no hash of them, because the hash of an unencrypted export
   would let a reader test guesses of the passwords it holds.
 - `members`: every item of the group, with its origin key, input file, name, folder, the host of its first website
-  address that has a host name, its user name, its modification time, and `newest`, which is true when every member has a modification time
-  and this one alone has the latest.
+  address that has a host name, its user name, its modification time, and `newest`, which is true when every member has
+  a modification time and this one alone has the latest.
 - `fields`: the fields on which the members differ, with the members that hold a value as `holders`.
   `needsDecision` says that the policy leaves the field to a decision, and `agentMayDecide` that a decisions file
   written by an agent may take one holder's value for it: the name, the folder, and the single-value fields. Each holder
@@ -459,8 +464,9 @@ that need a decision with your decisions:
   `weak`, `reused`, and `inOtherHistory` for `login.password`.
 - Values appear only for names, folders, user names, website addresses, and notes. User names and addresses appear as
   the inputs hold them: a user name in which the scanner finds a secret, or that a finding filled in, is left out, and
-  so is an address that a finding added. Addresses are masked as in the catalog. Notes appear only when the decisions file
-  shares exactly those notes and they hold no secret finding; otherwise a notes field says only that the notes differ.
+  so is an address that a finding added. Addresses are masked as in the catalog. Notes appear only when the decisions
+  file shares exactly those notes and they hold no secret finding; otherwise a notes field says only that the notes
+  differ.
 - Passwords, TOTP keys, card, identity, and SSH key values, password history, passkeys, and custom fields show no
   value. A `login.password` holder shows `weak`, `reused` (an item of another group, on other hosts, has the same
   password), and `inOtherHistory` (the password is in another member's password history). The brief holds no value,
@@ -477,9 +483,9 @@ that need a decision with your decisions:
 ## Agent decisions
 
 `merge --agent-decisions agent.json --brief brief.json` combines the decisions that an agent wrote from the brief with
-your decisions file. The agent's file has the format of the decisions file. On the same field or finding, your decisions file
-wins. The merge never copies the agent's decisions into your decisions file: its pending entries list only what neither
-file decides. This is an agent file that takes one member's password and accepts one finding:
+your decisions file. The agent's file has the format of the decisions file. On the same field or finding, your decisions
+file wins. The merge never copies the agent's decisions into your decisions file: its pending entries list only what
+neither file decides. This is an agent file that takes one member's password and accepts one finding:
 
 ```json
 {
@@ -514,12 +520,12 @@ password is asked, the merge stops with exit code 3, writes nothing, and names e
 After it reads the inputs, the merge checks the agent's decisions again against every group of the inputs as they are:
 the fields, holders, and findings an agent may decide come from the inputs, not from the brief file, so a brief edited
 after it was written, or one made from another version of an input, lets the agent decide nothing those inputs do not
-allow. Which groups the agent may decide still comes from the brief file, so let the agent read a copy of it. Decisions you made since the brief was
-written may take a group out of the brief; your decision wins there. When your decisions changed what the agent decided
-on, for example a finding you accepted changed a user name and so the groups, the merge stops with exit code 3. After it
-places the agent's finding decisions, it stops with exit code 3 when they put an item in a group with other items, which
-only links and splits may do, or empty the value that a member choice takes. In each case, write a new brief and let the
-agent decide from it.
+allow. Which groups the agent may decide still comes from the brief file, so let the agent read a copy of it. Decisions
+you made since the brief was written may take a group out of the brief; your decision wins there. When your decisions
+changed what the agent decided on, for example a finding you accepted changed a user name and so the groups, the merge
+stops with exit code 3. After it places the agent's finding decisions, it stops with exit code 3 when they put an item
+in a group with other items, which only links and splits may do, or empty the value that a member choice takes. In each
+case, write a new brief and let the agent decide from it.
 
 The summary counts the agent decisions that took effect and those your decisions file overrides, and names each
 pre-accepted finding that the agent rejects as `Rejected by agent`. The report lists every agent decision that took
@@ -562,7 +568,8 @@ that reads or writes a vault.
 An agent can rename items, move them between folders, fix website addresses, and edit shared notes and text fields in a
 catalog, and you apply it:
 
-1. Write the catalog, and decide which notes it shows, as `catalog` describes.
+1. Write the catalog, decide which notes it shows, and write it again with `--force` so that it shows them, as `catalog`
+   describes.
 2. Give the agent `catalog.json` and nothing else: never the decisions file, which shares notes, nor the vault.
 3. Preview what the edited catalog changes and check every line, also each address that was added or whose match setting
    covers more sites, because Bitwarden offers a login's password on the sites its addresses match:
@@ -623,11 +630,11 @@ that System.CommandLine repeats cannot send escape sequences either.
 - The tool makes no network calls. You import its output yourself.
 - Output is a Bitwarden password-protected export by default: PBKDF2-SHA256 with 600,000 iterations,
   AES-256-CBC, and HMAC-SHA256. A plaintext export needs `--plaintext`.
-- On Unix, the output, the report, the brief, and the decisions file are created readable only by you. Each is written to a
-  temporary file, `.<file name>.<random>.tmp`, in the same directory and then moved into place, so a file is either
-  written completely or left unchanged. A write that fails or is canceled deletes its temporary file. If the process
-  is killed during a write, or a canceled command ends while a write is still running, that file can remain and hold
-  part of the content, unencrypted with `--plaintext`. Delete it.
+- On Unix, the output, the report, the brief, and the decisions file are created readable only by you. Each is written
+  to a temporary file, `.<file name>.<random>.tmp`, in the same directory and then moved into place, so a file is either
+  written completely or left unchanged. A write that fails or is canceled deletes its temporary file. If the process is
+  killed during a write, or a canceled command ends while a write is still running, that file can remain and hold part
+  of the content, unencrypted with `--plaintext`. Delete it.
 - An existing output is replaced only with `--force`, and an input is never replaced. Paths are compared after
   resolving symbolic links and ignoring case, so a path that differs from an input only in case is refused too.
 - Passwords are read from the terminal without echo. They are never accepted as arguments or environment
