@@ -19,12 +19,15 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_without_a_decisions_file_exits_2_and_asks_for_one()
     {
+        // Arrange
         string[] inputs = CliInputs.ConflictingLogins(directory);
         string output = Path.Combine(directory, "merged.json");
         var prompts = new TestPrompts(ExportPassword);
 
+        // Act
         var run = await CommandLineRun.Invoke(prompts.Environment(), ["merge", .. inputs, "--output", output], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(2);
         run.Output.ShouldContain("Fields that need a decision: 1", StringComparison.Ordinal);
         run.Error.ShouldContain("1 field(s) and 0 finding(s) need a decision.", StringComparison.Ordinal);
@@ -37,11 +40,13 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Pending_field_entries_list_the_members_and_a_member_choice_resolves_them()
     {
+        // Arrange
         string[] inputs = CliInputs.ConflictingLogins(directory);
         string output = Path.Combine(directory, "merged.json");
         string decisionsPath = Path.Combine(directory, "decisions.json");
         string[] args = ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--plaintext"];
 
+        // Act
         var pendingRun = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken);
         bool writtenWhilePending = File.Exists(output);
         var pending = DecisionsFile.Read(decisionsPath);
@@ -52,6 +57,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         });
         var decidedRun = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken);
 
+        // Assert
         pendingRun.ExitCode.ShouldBe(2);
         pendingRun.Error.ShouldContain("Pending entries are in " + decisionsPath, StringComparison.Ordinal);
         writtenWhilePending.ShouldBeFalse();
@@ -75,12 +81,14 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Pending_finding_entries_name_proposed_findings_only_and_accepting_them_applies_them()
     {
+        // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1000);
         string input = CliInputs.CodesAndPasswordInNotes(directory, codes);
         string output = Path.Combine(directory, "merged.json");
         string decisionsPath = Path.Combine(directory, "decisions.json");
         string[] args = ["merge", input, "--output", output, "--decisions", decisionsPath, "--plaintext"];
 
+        // Act
         var pendingRun = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken);
         bool writtenWhilePending = File.Exists(output);
         var pending = DecisionsFile.Read(decisionsPath);
@@ -92,6 +100,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         });
         var decidedRun = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken);
 
+        // Assert
         pendingRun.ExitCode.ShouldBe(2);
         pendingRun.Error.ShouldContain("0 field(s) and 1 finding(s) need a decision.", StringComparison.Ordinal);
         writtenWhilePending.ShouldBeFalse();
@@ -108,6 +117,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Updating_the_decisions_file_keeps_its_decisions_and_overrides()
     {
+        // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1010);
         string input = CliInputs.CodesAndPasswordInNotes(directory, codes);
         string output = Path.Combine(directory, "merged.json");
@@ -121,8 +131,10 @@ public sealed class MergeDecisionsCommandTests : IDisposable
             Findings = [new ItemFindingDecisions(CliInputs.GitHubKey, [new FindingChoice(codesId, FindingDecision.Rejected)])],
         });
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", input, "--output", output, "--decisions", decisionsPath, "--plaintext"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(2);
         var updated = DecisionsFile.Read(decisionsPath);
         updated.Overrides.Splits.ShouldBe([split]);
@@ -132,6 +144,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_warns_about_decisions_that_match_nothing_so_a_typo_is_not_ignored()
     {
+        // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1020);
         string[] inputs = CliInputs.CodesInKeeperNotes(directory, codes);
         string output = Path.Combine(directory, "merged.json");
@@ -155,8 +168,10 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         DecisionsFile.Write(decisionsPath, decisions);
         string before = await File.ReadAllTextAsync(decisionsPath, TestContext.Current.CancellationToken);
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--plaintext"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         string[] warnings =
         [
@@ -178,6 +193,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_rejects_a_decisions_file_with_a_misspelled_section_instead_of_applying_findings_it_rejects()
     {
+        // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1030);
         string[] inputs = CliInputs.CodesInKeeperNotes(directory, codes);
         string output = Path.Combine(directory, "merged.json");
@@ -186,8 +202,10 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         string json = $$"""{"version":2,"groups":[],"links":[],"splits":[],"finding":[{"originKey":"{{CliInputs.GitHubKey}}","choices":[{"findingId":"{{codesId}}","decision":"Rejected"}]}]}""";
         string decisionsPath = PipelineInputs.Write(directory, "decisions.json", json);
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--plaintext"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(3);
         run.Output.ShouldBeEmpty();
         run.Error.ShouldContain(decisionsPath, StringComparison.Ordinal);
@@ -201,6 +219,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_rejects_a_decisions_file_with_a_repeated_section_instead_of_applying_findings_it_rejects()
     {
+        // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1040);
         string[] inputs = CliInputs.CodesInKeeperNotes(directory, codes);
         string output = Path.Combine(directory, "merged.json");
@@ -222,8 +241,10 @@ public sealed class MergeDecisionsCommandTests : IDisposable
             """;
         string decisionsPath = PipelineInputs.Write(directory, "decisions.json", json);
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--plaintext"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(3);
         run.Output.ShouldBeEmpty();
         run.Error.ShouldContain(decisionsPath, StringComparison.Ordinal);
@@ -237,6 +258,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Member_decision_naming_an_item_outside_its_group_is_warned_about_and_replaced_by_a_pending_entry()
     {
+        // Arrange
         string[] inputs = CliInputs.ConflictingLogins(directory);
         string output = Path.Combine(directory, "merged.json");
         string decisionsPath = Path.Combine(directory, "decisions.json");
@@ -244,8 +266,10 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         var conflict = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Run(new PipelineRequest(inputs)).Unresolved.ShouldHaveSingleItem();
         DecisionsFile.Write(decisionsPath, new MergeDecisions([new GroupDecision(conflict.GroupKey, [FieldChoice.Member(conflict.FieldPath, "keeper|keeper.json|rec-gone")])], MatchOverrides.None));
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(2);
         run.Error.ShouldContain("names keeper|keeper.json|rec-gone, which is not in the group, and is ignored.", StringComparison.Ordinal);
         run.Error.ShouldContain("Pending entries are in " + decisionsPath, StringComparison.Ordinal);
@@ -259,14 +283,17 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_warnings_replace_control_characters_from_the_decisions_file()
     {
+        // Arrange
         string[] inputs = CliInputs.NewerBitwardenLogin(directory);
         string output = Path.Combine(directory, "merged.json");
         string groupKey = string.Concat("0000", (char)0x1B, "[2J", (char)0x0D, (char)0x9B, "0000");
         string decisionsPath = Path.Combine(directory, "decisions.json");
         DecisionsFile.Write(decisionsPath, new MergeDecisions([new GroupDecision(groupKey, [FieldChoice.Empty(FieldPaths.Notes)])], MatchOverrides.None));
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--plaintext"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         run.Error.ShouldBe("Warning: decisions for group 0000\uFFFD[2J \uFFFD0000 match no merged group and are ignored.\n", StringComparer.Ordinal);
     }
@@ -274,12 +301,15 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_with_the_ask_policy_leaves_every_conflict_to_the_decisions_file()
     {
+        // Arrange
         string[] inputs = CliInputs.NewerBitwardenLogin(directory);
         string output = Path.Combine(directory, "merged.json");
         string decisionsPath = Path.Combine(directory, "decisions.json");
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--policy", "ask"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(2);
         DecisionsFile.Read(decisionsPath).Groups.ShouldHaveSingleItem().Choices.ShouldHaveSingleItem().FieldPath.ShouldBe(FieldPaths.LoginPassword);
         File.Exists(output).ShouldBeFalse();
@@ -288,12 +318,15 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_reports_an_invalid_decisions_file_and_leaves_it_unchanged()
     {
+        // Arrange
         string[] inputs = CliInputs.ConflictingLogins(directory);
         string output = Path.Combine(directory, "merged.json");
         string decisionsPath = PipelineInputs.Write(directory, "decisions.json", """{"version":1,"groups":[],"links":[],"splits":[]}""");
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(3);
         run.Error.ShouldContain("only version 2 is supported", StringComparison.Ordinal);
         string after = await File.ReadAllTextAsync(decisionsPath, TestContext.Current.CancellationToken);
@@ -303,12 +336,15 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_report_lists_the_decisions_needed()
     {
+        // Arrange
         string[] inputs = CliInputs.ConflictingLogins(directory);
         string output = Path.Combine(directory, "merged.json");
         string report = Path.Combine(directory, "report.md");
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--report", report], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(2);
         string markdown = await File.ReadAllTextAsync(report, TestContext.Current.CancellationToken);
         markdown.ShouldContain("The merged vault was not written because 1 field(s) need a decision.", StringComparison.Ordinal);

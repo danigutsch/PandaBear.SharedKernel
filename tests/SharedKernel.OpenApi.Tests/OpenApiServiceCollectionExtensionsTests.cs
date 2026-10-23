@@ -70,7 +70,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     [Fact]
     public async Task Includes_exact_boundary_and_nested_paths_only()
     {
-        // Arrange
+        // Act
         var document = await OpenApiDocumentFactory.CreateDocument("tours", group =>
         {
             group.MapGet("/", () => TypedResults.Ok());
@@ -85,7 +85,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     [Fact]
     public async Task Excludes_prefix_like_paths_from_named_document()
     {
-        // Arrange
+        // Act
         var document = await OpenApiDocumentFactory.CreateDocumentFromApplication("tours", app =>
         {
             app.MapGroup("/tours")
@@ -106,7 +106,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     [Fact]
     public async Task Includes_matching_API_version_paths_only()
     {
-        // Arrange
+        // Act
         var document = await OpenApiDocumentFactory.CreateApiVersionDocument(
             new ApiVersionDefinition(new ApiVersion(1)),
             app =>
@@ -130,7 +130,7 @@ public sealed class OpenApiServiceCollectionExtensionsTests
     [Fact]
     public async Task Includes_matching_API_version_paths_with_normalized_route_prefix_only()
     {
-        // Arrange
+        // Act
         var document = await OpenApiDocumentFactory.CreateApiVersionDocument(
             new ApiVersionDefinition(new ApiVersion(1, 1)),
             app =>

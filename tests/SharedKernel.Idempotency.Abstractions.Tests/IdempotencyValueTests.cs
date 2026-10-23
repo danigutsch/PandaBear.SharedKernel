@@ -42,7 +42,7 @@ public sealed class IdempotencyValueTests
     [InlineData("   ")]
     public void Key_from_rejects_blank_values(string value)
     {
-        // Arrange, Act, Assert
+        // Act, Assert
         ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<object?>)(() => IdempotencyKey.From(value)));
     }
 
@@ -52,7 +52,7 @@ public sealed class IdempotencyValueTests
     [InlineData("request_123:retry.1")]
     public void Key_from_accepts_opaque_token_values(string value)
     {
-        // Arrange, Act
+        // Act
         var key = IdempotencyKey.From(value);
 
         // Assert
@@ -95,7 +95,7 @@ public sealed class IdempotencyValueTests
     [InlineData("key#fragment")]
     public void Key_from_rejects_values_outside_token_format(string value)
     {
-        // Arrange, Act, Assert
+        // Act, Assert
         ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<object?>)(() => IdempotencyKey.From(value)));
     }
 
@@ -138,7 +138,7 @@ public sealed class IdempotencyValueTests
     [InlineData("   ")]
     public void Scope_from_rejects_blank_values(string value)
     {
-        // Arrange, Act, Assert
+        // Act, Assert
         ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<object?>)(() => IdempotencyScope.From(value)));
     }
 

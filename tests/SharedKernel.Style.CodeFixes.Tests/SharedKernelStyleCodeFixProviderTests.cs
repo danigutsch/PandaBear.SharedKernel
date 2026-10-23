@@ -1782,8 +1782,10 @@ public sealed class SharedKernelStyleCodeFixProviderTests
         // Arrange
         var fixAllProvider = new SharedKernelStyleCodeFixProvider().GetFixAllProvider();
 
-        // Assert
+        // Act
         var exception = ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<object?>)(() => fixAllProvider.GetSupportedFixAllDiagnosticIds(null!)));
+
+        // Assert
         exception.ParamName.ShouldBe("originalCodeFixProvider");
     }
 

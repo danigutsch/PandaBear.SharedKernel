@@ -13,12 +13,17 @@ public sealed class AgentDecisionsTests
     [Fact]
     public void An_agent_may_take_a_member_value_and_decide_the_findings_the_brief_lists()
     {
+        // Arrange
         var agent = new MergeDecisions([new GroupDecision(GroupKey, [FieldChoice.Member(FieldPaths.LoginPassword, Second), FieldChoice.Pending(FieldPaths.LoginTotp, [])])], MatchOverrides.None)
         {
             Findings = [new ItemFindingDecisions(First, [new FindingChoice(PreAccepted, FindingDecision.Rejected), new FindingChoice(Proposed, FindingDecision.Accepted)])],
         };
 
-        AgentDecisions.Check(agent, Document()).ShouldBeEmpty();
+        // Act
+        var problems = AgentDecisions.Check(agent, Document());
+
+        // Assert
+        problems.ShouldBeEmpty();
     }
 
     [Theory]
@@ -39,6 +44,7 @@ public sealed class AgentDecisionsTests
     [InlineData("repeated finding", "decides finding " + Proposed + " of " + First + " more than once")]
     public void An_agent_may_not_decide_what_the_limits_forbid(string change, string problem)
     {
+        // Arrange
         MergeDecisions agent = change switch
         {
             "empty choice" => AgentChoice(FieldChoice.Empty(FieldPaths.LoginPassword)),
@@ -63,12 +69,17 @@ public sealed class AgentDecisionsTests
             _ => AgentFinding(First, "notes-pin@notes:4"),
         };
 
-        AgentDecisions.Check(agent, Document()).ShouldHaveSingleItem().ShouldContain(problem, StringComparison.Ordinal);
+        // Act
+        var problems = AgentDecisions.Check(agent, Document());
+
+        // Assert
+        problems.ShouldHaveSingleItem().ShouldContain(problem, StringComparison.Ordinal);
     }
 
     [Fact]
     public void The_user_decision_wins_on_the_same_field_and_finding()
     {
+        // Arrange
         var user = new MergeDecisions([new GroupDecision(GroupKey, [FieldChoice.Member(FieldPaths.LoginPassword, First)])], new MatchOverrides([], [new OriginKeyPair(First, "keeper|keeper.json|rec-2")]))
         {
             Findings = [new ItemFindingDecisions(First, [new FindingChoice(Proposed, FindingDecision.Rejected)])],
@@ -79,8 +90,10 @@ public sealed class AgentDecisionsTests
             Findings = [new ItemFindingDecisions(First, [new FindingChoice(Proposed, FindingDecision.Accepted), new FindingChoice(PreAccepted, FindingDecision.Rejected)])],
         };
 
+        // Act
         var combined = AgentDecisions.Combine(user, agent);
 
+        // Assert
         combined.Find(GroupKey, FieldPaths.LoginPassword).ShouldBe(FieldChoice.Member(FieldPaths.LoginPassword, First));
         combined.Find(GroupKey, FieldPaths.LoginTotp).ShouldBe(FieldChoice.Member(FieldPaths.LoginTotp, First));
         combined.FindFinding(First, Proposed).ShouldBe(FindingDecision.Rejected);
@@ -92,6 +105,7 @@ public sealed class AgentDecisionsTests
     [Fact]
     public void Pre_accepted_findings_the_agent_rejects_are_listed_unless_the_user_decided_them()
     {
+        // Arrange
         var preAccepted = FindingSamples.Finding(Confidence.High);
         var proposed = FindingSamples.At("notes") with
         {
@@ -119,8 +133,10 @@ public sealed class AgentDecisionsTests
             ],
         };
 
+        // Act
         var rejected = AgentDecisions.RejectedByAgent(user, agent, findings);
 
+        // Assert
         var item = rejected.ShouldHaveSingleItem();
         item.OriginKey.ShouldBe(First);
         item.ItemName.ShouldBe("Example");
@@ -130,6 +146,7 @@ public sealed class AgentDecisionsTests
     [Fact]
     public void Finding_decisions_that_change_which_items_match_or_empty_a_chosen_value_are_conflicts()
     {
+        // Arrange
         var keeper = AgentResults.Login("rec-1", "keeper", "alice", "fixture-keeper-password");
         var bitwarden = AgentResults.Login("bw-1", "bitwarden", "alice", "fixture-bitwarden-password");
         var other = AgentResults.Login("bw-2", "bitwarden", "bob", "fixture-other-password");
@@ -138,14 +155,21 @@ public sealed class AgentDecisionsTests
         var emptied = AgentResults.Result(("g1", [keeper, bitwarden with { Login = bitwarden.Login! with { Password = null } }]), ("g2", [other]));
         var decisions = new MergeDecisions([new GroupDecision("g1", [FieldChoice.Member(FieldPaths.LoginPassword, AgentResults.Key(bitwarden))])], MatchOverrides.None);
 
-        AgentDecisions.Conflicts(userOnly, userOnly, decisions).ShouldBeEmpty();
-        AgentDecisions.Conflicts(userOnly, regrouped, decisions).ShouldNotBeEmpty();
-        AgentDecisions.Conflicts(userOnly, emptied, decisions).ShouldHaveSingleItem().ShouldContain("login.password", StringComparison.Ordinal);
+        // Act
+        var unchangedConflicts = AgentDecisions.Conflicts(userOnly, userOnly, decisions);
+        var regroupedConflicts = AgentDecisions.Conflicts(userOnly, regrouped, decisions);
+        var emptiedConflicts = AgentDecisions.Conflicts(userOnly, emptied, decisions);
+
+        // Assert
+        unchangedConflicts.ShouldBeEmpty();
+        regroupedConflicts.ShouldNotBeEmpty();
+        emptiedConflicts.ShouldHaveSingleItem().ShouldContain("login.password", StringComparison.Ordinal);
     }
 
     [Fact]
     public void Effective_agent_decisions_leave_out_what_the_user_decides()
     {
+        // Arrange
         var user = new MergeDecisions([new GroupDecision(GroupKey, [FieldChoice.Member(FieldPaths.LoginPassword, First)])], MatchOverrides.None)
         {
             Findings = [new ItemFindingDecisions(First, [new FindingChoice(Proposed, FindingDecision.Rejected)])],
@@ -155,8 +179,10 @@ public sealed class AgentDecisionsTests
             Findings = [new ItemFindingDecisions(First, [new FindingChoice(Proposed, FindingDecision.Accepted), new FindingChoice(PreAccepted, FindingDecision.Rejected)])],
         };
 
+        // Act
         var effective = AgentDecisions.Effective(user, agent);
 
+        // Assert
         effective.Groups.ShouldHaveSingleItem().Choices.ShouldBe([FieldChoice.Member(FieldPaths.LoginTotp, First)]);
         effective.Findings.ShouldHaveSingleItem().Choices.ShouldBe([new FindingChoice(PreAccepted, FindingDecision.Rejected)]);
     }

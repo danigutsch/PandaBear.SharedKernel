@@ -8,15 +8,20 @@ public sealed class CurrentTimeCodeFixTests
     [InlineData("DateTimeOffset.Now", "TimeProvider clock", "clock.GetLocalNow()")]
     public async Task Fix_uses_the_unique_in_scope_provider(string expression, string parameter, string replacement)
     {
+        // Arrange
         var workspace = CodeFixTestWorkspace.Create($$"""
             public class Reader { public object Read({{parameter}}) => {{expression}}; }
             """);
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKSTYLE014", expression);
+
+        // Act
         var actions = await workspace.GetCodeActions(new SharedKernelStyleCodeFixProvider(), diagnostic);
         await workspace.ApplyCodeAction(actions.ShouldHaveSingleItem());
         var changed = await workspace.GetDocumentText();
-        changed.ShouldContain(replacement, StringComparison.Ordinal);
         var diagnostics = await workspace.GetCompilationDiagnostics();
+
+        // Assert
+        changed.ShouldContain(replacement, StringComparison.Ordinal);
         diagnostics.Where(static d => d.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error).ShouldBeEmpty();
     }
 
@@ -27,11 +32,16 @@ public sealed class CurrentTimeCodeFixTests
     [InlineData("TimeProvider clock", "DateTime.Today")]
     public async Task Fix_declines_missing_ambiguous_or_wall_clock_conversions(string parameters, string expression)
     {
+        // Arrange
         var workspace = CodeFixTestWorkspace.Create($$"""
             public class Reader { public object Read({{parameters}}) => {{expression}}; }
             """);
         var diagnostic = await workspace.CreateDocumentDiagnostic("SKSTYLE014", expression);
+
+        // Act
         var actions = await workspace.GetCodeActions(new SharedKernelStyleCodeFixProvider(), diagnostic);
+
+        // Assert
         actions.ShouldBeEmpty();
     }
 

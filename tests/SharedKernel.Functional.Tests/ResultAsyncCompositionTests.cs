@@ -636,7 +636,7 @@ public sealed class ResultAsyncCompositionTests
     [Fact]
     public async Task Rejects_a_null_Task_result_source_for_map()
     {
-        // Arrange
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => ResultTaskExtensions.Map(NullArgumentData.Task<Result<string>>(), static value => value.Length)));
 
         // Assert
@@ -646,7 +646,7 @@ public sealed class ResultAsyncCompositionTests
     [Fact]
     public async Task Rejects_a_null_Task_result_source_for_bind()
     {
-        // Arrange
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => ResultTaskExtensions.Bind(NullArgumentData.Task<Result<string>>(), static value => Result.Ok(value.Length))));
 
         // Assert
@@ -656,7 +656,7 @@ public sealed class ResultAsyncCompositionTests
     [Fact]
     public async Task Rejects_a_null_Task_result_source_for_ensure()
     {
-        // Arrange
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => ResultTaskExtensions.Ensure(NullArgumentData.Task<Result<string>>(), static value => value.Length == 5, new ResultError("Length mismatch"))));
 
         // Assert
@@ -666,7 +666,7 @@ public sealed class ResultAsyncCompositionTests
     [Fact]
     public async Task Rejects_a_null_Task_result_source_for_match()
     {
-        // Arrange
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => ResultTaskExtensions.Match(NullArgumentData.Task<Result<string>>(), static value => value.Length, static error => error.Detail.Length)));
 
         // Assert
@@ -678,6 +678,8 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
+
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => result.Map(NullArgumentData.TaskFunc<string, int>())));
 
         // Assert
@@ -689,6 +691,8 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
+
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(async () => await result.Map(NullArgumentData.ValueTaskFunc<string, int>())));
 
         // Assert
@@ -700,6 +704,8 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
+
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => result.Bind(NullArgumentData.TaskFunc<string, Result<int>>())));
 
         // Assert
@@ -711,6 +717,8 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
+
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(async () => await result.Bind(NullArgumentData.ValueTaskFunc<string, Result<int>>())));
 
         // Assert
@@ -722,6 +730,8 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
+
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => result.Match(NullArgumentData.TaskFunc<string, int>(), static error => Task.FromResult(error.Detail.Length))));
 
         // Assert
@@ -733,6 +743,8 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok("porto");
+
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(async () => await result.Match(NullArgumentData.ValueTaskFunc<string, int>(), static error => ValueTask.FromResult(error.Detail.Length))));
 
         // Assert
@@ -744,6 +756,8 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok();
+
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(() => result.Match(NullArgumentData.TaskFactory<int>(), static error => Task.FromResult(error.Detail.Length))));
 
         // Assert
@@ -755,6 +769,8 @@ public sealed class ResultAsyncCompositionTests
     {
         // Arrange
         var result = Result.Ok();
+
+        // Act
         var exception = await ShouldAssertionExtensions.ShouldThrow<ArgumentNullException>((Func<Task>)(async () => await result.Match(NullArgumentData.ValueTaskFactory<int>(), static error => ValueTask.FromResult(error.Detail.Length))));
 
         // Assert

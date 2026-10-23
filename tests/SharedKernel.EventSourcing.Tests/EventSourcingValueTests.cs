@@ -42,7 +42,7 @@ public sealed class EventSourcingValueTests
     [InlineData("   ")]
     public void StreamId_from_rejects_blank_values(string value)
     {
-        // Arrange, Act, Assert
+        // Act, Assert
         ShouldAssertionExtensions.ShouldThrow<ArgumentException>((Func<object?>)(() => StreamId.From(value)));
     }
 
@@ -51,7 +51,7 @@ public sealed class EventSourcingValueTests
     [InlineData(-1)]
     public void StreamRevision_from_rejects_non_positive_values(long value)
     {
-        // Arrange, Act, Assert
+        // Act, Assert
         ShouldAssertionExtensions.ShouldThrow<ArgumentOutOfRangeException>((Func<object?>)(() => StreamRevision.From(value)));
     }
 
@@ -82,7 +82,7 @@ public sealed class EventSourcingValueTests
     [Fact]
     public void ExpectedStreamRevision_any_accepts_any_current_revision()
     {
-        // Arrange, Act
+        // Act
         var expectedRevision = ExpectedStreamRevision.Any;
 
         // Assert
@@ -93,7 +93,7 @@ public sealed class EventSourcingValueTests
     [Fact]
     public void ExpectedStreamRevision_nostream_requires_empty_stream()
     {
-        // Arrange, Act
+        // Act
         var expectedRevision = ExpectedStreamRevision.NoStream;
 
         // Assert
@@ -127,7 +127,7 @@ public sealed class EventSourcingValueTests
     [Fact]
     public void ProjectionCheckpoint_stores_projection_position()
     {
-        // Arrange, Act
+        // Act
         var checkpoint = new ProjectionCheckpoint("catalog-tour-projection", 42);
 
         // Assert

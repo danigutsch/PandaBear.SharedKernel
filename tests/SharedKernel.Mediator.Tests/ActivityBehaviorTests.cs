@@ -8,14 +8,17 @@ public sealed class ActivityBehaviorTests
     [Fact]
     public void Listener_rejects_a_distinct_source_with_the_same_name()
     {
+        // Arrange
         var activities = new List<Activity>();
         using var listener = ActivityBehaviorTestsHelpers.CreateCapturingListener(activities);
         using var impostor = new ActivitySource(SharedKernelMediatorActivitySource.ActivitySourceName);
         var predicate = listener.ShouldListenTo.ShouldNotBeNull();
 
+        // Act
         var acceptsImpostor = predicate(impostor);
         var acceptsExpected = predicate(SharedKernelMediatorActivitySource.Source);
 
+        // Assert
         acceptsImpostor.ShouldBeFalse();
         acceptsExpected.ShouldBeTrue();
     }
@@ -38,7 +41,7 @@ public sealed class ActivityBehaviorTests
     [Fact]
     public void Mediator_telemetry_contract_uses_stable_names()
     {
-        // Assert
+        // Act, Assert
         MediatorTelemetry.Name.ShouldBe("SharedKernel.Mediator");
         MediatorTelemetry.ActivitySend.ShouldBe("mediator.send");
         MediatorTelemetry.ActivityStream.ShouldBe("mediator.stream");

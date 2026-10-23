@@ -21,6 +21,7 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_takes_the_agent_decisions_from_the_brief_and_writes_the_vault()
     {
+        // Arrange
         string[] inputs = CliInputs.ConflictingLogins(directory);
         string output = Path.Combine(directory, "merged.json");
         string decisionsPath = Path.Combine(directory, "decisions.json");
@@ -28,11 +29,13 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         string agentPath = Path.Combine(directory, "agent.json");
         string[] briefArgs = ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--brief", briefPath, "--plaintext"];
 
+        // Act
         var briefRun = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), briefArgs, TestContext.Current.CancellationToken);
         var group = BriefFile.Read(briefPath).Groups.ShouldHaveSingleItem();
         DecisionsFile.Write(agentPath, new MergeDecisions([new GroupDecision(group.Key, [FieldChoice.Member(FieldPaths.LoginPassword, CliInputs.BitwardenKey)])], MatchOverrides.None));
         var agentRun = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), [.. briefArgs, "--agent-decisions", agentPath], TestContext.Current.CancellationToken);
 
+        // Assert
         briefRun.ExitCode.ShouldBe(2);
         agentRun.ExitCode.ShouldBe(0);
         agentRun.Error.ShouldBeEmpty();
@@ -45,6 +48,7 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
     [Fact]
     public async Task The_user_decision_wins_over_the_agent_decision_on_the_same_field()
     {
+        // Arrange
         var bitwardenLogin = PipelineInputs.BitwardenLogin("bw-1", "Example", "alice", CliInputs.BitwardenPassword, "https://example.com", revised: false);
         bitwardenLogin["notes"] = "fixture bitwarden notes";
         string[] inputs =
@@ -65,8 +69,10 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
             [new GroupDecision(groupKey, [FieldChoice.Member(FieldPaths.LoginPassword, CliInputs.BitwardenKey), FieldChoice.Member(FieldPaths.Notes, CliInputs.BitwardenKey)])],
             MatchOverrides.None));
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), [.. args, "--agent-decisions", agentPath], TestContext.Current.CancellationToken);
 
+        // Assert
         briefRun.ExitCode.ShouldBe(2);
         password.NeedsDecision.ShouldBeFalse();
         password.AgentMayDecide.ShouldBeTrue();
@@ -87,6 +93,7 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
     [InlineData("unknown finding", "is not in the brief")]
     public async Task Merge_refuses_agent_decisions_outside_the_limits_before_any_password_prompt(string change, string problem)
     {
+        // Arrange
         string keeper = PipelineInputs.Write(directory, "keeper.json", PipelineInputs.KeeperJson(PipelineInputs.KeeperLogin("rec-1", "Example", "alice", CliInputs.KeeperPassword, "https://example.com", modified: false)));
         string bitwarden = CliInputs.ProtectedBitwarden(directory, FilePassword);
         string output = Path.Combine(directory, "merged.json");
@@ -107,8 +114,10 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         });
         var prompts = new TestPrompts(ExportPassword, FilePassword);
 
+        // Act
         var run = await CommandLineRun.Invoke(prompts.Environment(), ["merge", keeper, bitwarden, "--output", output, "--decisions", decisionsPath, "--brief", briefPath, "--agent-decisions", agentPath], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(3);
         run.Error.ShouldContain("agent.json: ", StringComparison.Ordinal);
         run.Error.ShouldContain(problem, StringComparison.Ordinal);
@@ -121,6 +130,7 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_checks_the_agent_decisions_against_the_inputs_as_read_so_an_edited_brief_adds_no_field()
     {
+        // Arrange
         string[] inputs = CliInputs.ConflictingLogins(directory);
         string output = Path.Combine(directory, "merged.json");
         string briefPath = Path.Combine(directory, "brief.json");
@@ -137,8 +147,10 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         DecisionsFile.Write(agentPath, new MergeDecisions([new GroupDecision(group.Key, [FieldChoice.Member(FieldPaths.LoginUsername, CliInputs.KeeperKey)])], MatchOverrides.None));
         var prompts = new TestPrompts(ExportPassword);
 
+        // Act
         var run = await CommandLineRun.Invoke(prompts.Environment(), [.. args, "--agent-decisions", agentPath], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(3);
         run.Error.ShouldContain("field login.username of group " + group.Key + " is not one that the brief lets an agent decide", StringComparison.Ordinal);
         run.Error.ShouldContain("no longer fits these inputs and decisions", StringComparison.Ordinal);
@@ -149,6 +161,7 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_refuses_a_brief_of_other_input_files_before_any_password_prompt()
     {
+        // Arrange
         string keeper = PipelineInputs.Write(directory, "keeper.json", PipelineInputs.KeeperJson(PipelineInputs.KeeperLogin("rec-1", "Example", "alice", CliInputs.KeeperPassword, "https://example.com", modified: false)));
         string bitwarden = CliInputs.ProtectedBitwarden(directory, FilePassword);
         string output = Path.Combine(directory, "merged.json");
@@ -157,8 +170,10 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         BriefFile.Write(briefPath, BriefSamples.Document(), TestContext.Current.CancellationToken);
         var prompts = new TestPrompts(ExportPassword, FilePassword);
 
+        // Act
         var run = await CommandLineRun.Invoke(prompts.Environment(), ["merge", keeper, bitwarden, "--output", output, "--brief", briefPath, "--agent-decisions", agentPath, "--plaintext"], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(3);
         run.Error.ShouldContain(briefPath + " was made from keeper.json, bitwarden.json, not from keeper.json, protected.json.", StringComparison.Ordinal);
         prompts.FilePasswordPrompts.ShouldBeEmpty();
@@ -169,6 +184,7 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
     [Fact]
     public async Task The_user_finishes_what_the_agent_left_and_the_same_agent_file_still_applies()
     {
+        // Arrange
         var bitwardenLogin = PipelineInputs.BitwardenLogin("bw-1", "Example", "alice", CliInputs.BitwardenPassword, "https://example.com", revised: false);
         bitwardenLogin["notes"] = "fixture bitwarden notes";
         string[] inputs =
@@ -185,11 +201,13 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         string groupKey = BriefFile.Read(briefPath).Groups.ShouldHaveSingleItem().Key;
         DecisionsFile.Write(agentPath, new MergeDecisions([new GroupDecision(groupKey, [FieldChoice.Member(FieldPaths.LoginPassword, CliInputs.BitwardenKey)])], MatchOverrides.None));
 
+        // Act
         var partial = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), [.. args, "--agent-decisions", agentPath], TestContext.Current.CancellationToken);
         var pendingChoice = DecisionsFile.Read(decisionsPath).Groups.ShouldHaveSingleItem().Choices.ShouldHaveSingleItem();
         DecisionsFile.Write(decisionsPath, new MergeDecisions([new GroupDecision(groupKey, [FieldChoice.Member(FieldPaths.Notes, CliInputs.KeeperKey)])], MatchOverrides.None));
         var finished = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), [.. args, "--agent-decisions", agentPath], TestContext.Current.CancellationToken);
 
+        // Assert
         partial.ExitCode.ShouldBe(2);
         partial.Output.ShouldContain("Agent decisions applied: 1\n", StringComparison.Ordinal);
         pendingChoice.FieldPath.ShouldBe(FieldPaths.Notes);
@@ -202,6 +220,7 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_lists_the_pre_accepted_findings_that_the_agent_rejects()
     {
+        // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(1300);
         string input = CliInputs.CodesAndPasswordInNotes(directory, codes);
         string output = Path.Combine(directory, "merged.json");
@@ -218,8 +237,10 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
             Findings = [new ItemFindingDecisions(member.OriginKey, [new FindingChoice(codesId, FindingDecision.Rejected), new FindingChoice(passwordId, FindingDecision.Accepted)])],
         });
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), [.. args, "--agent-decisions", agentPath, "--report", report], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(0);
         run.Output.ShouldContain("  Rejected by agent: 1\n", StringComparison.Ordinal);
         run.Output.ShouldContain("Agent decisions applied: 2\n", StringComparison.Ordinal);
@@ -238,11 +259,14 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_needs_the_brief_the_agent_read()
     {
+        // Arrange
         string[] inputs = CliInputs.ConflictingLogins(directory);
         string agentPath = PipelineInputs.Write(directory, "agent.json", """{"version":2,"groups":[],"links":[],"splits":[]}""");
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", Path.Combine(directory, "merged.json"), "--agent-decisions", agentPath], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(1);
         run.Error.ShouldContain("--agent-decisions needs --brief", StringComparison.Ordinal);
     }
@@ -250,13 +274,16 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
     [Fact]
     public async Task Merge_refuses_an_agent_decisions_file_that_is_the_decisions_file()
     {
+        // Arrange
         string[] inputs = CliInputs.ConflictingLogins(directory);
         string decisionsPath = PipelineInputs.Write(directory, "decisions.json", """{"version":2,"groups":[],"links":[],"splits":[]}""");
         string briefPath = Path.Combine(directory, "brief.json");
         BriefFile.Write(briefPath, BriefSamples.Document(), TestContext.Current.CancellationToken);
 
+        // Act
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", Path.Combine(directory, "merged.json"), "--decisions", decisionsPath, "--brief", briefPath, "--agent-decisions", decisionsPath], TestContext.Current.CancellationToken);
 
+        // Assert
         run.ExitCode.ShouldBe(3);
         run.Error.ShouldContain("may be the same file as the agent decisions file", StringComparison.Ordinal);
     }

@@ -39,7 +39,7 @@ public class CsvRowParsingTests
         // Arrange
         var row = CsvRow.Parse("John,Doe,john.doe@example.com");
 
-        // Act & Assert
+        // Act, Assert
         ShouldAssertionExtensions.ShouldThrow<IndexOutOfRangeException>((Func<object?>)(() => row[99]));
     }
 }

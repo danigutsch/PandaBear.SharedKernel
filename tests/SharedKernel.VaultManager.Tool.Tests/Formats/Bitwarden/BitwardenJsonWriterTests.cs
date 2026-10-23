@@ -13,11 +13,14 @@ public sealed class BitwardenJsonWriterTests
     [Fact]
     public void Write_then_read_round_trips_every_item_type()
     {
+        // Arrange
         var original = Fixture.ReadBitwardenFull();
 
+        // Act
         var result = BitwardenJsonWriter.Write(original);
         var reread = BitwardenJsonReader.Read(result.Json, "written.json");
 
+        // Assert
         result.Errors.ShouldBeEmpty();
         reread.Items.Count.ShouldBe(original.Items.Count);
         foreach (var (before, after) in original.Items.Zip(reread.Items))
@@ -47,14 +50,18 @@ public sealed class BitwardenJsonWriterTests
     [Fact]
     public void Write_emits_shared_folder_IDs_and_secure_note_object()
     {
+        // Arrange
         VaultItem[] items =
         [
             new() { Type = VaultItemType.SecureNote, Name = "a", FolderPath = "Work", Origin = Origin },
             new() { Type = VaultItemType.SecureNote, Name = "b", FolderPath = "Work", Origin = Origin },
         ];
 
-        var document = JsonNode.Parse(BitwardenJsonWriter.Write(new VaultExport(items)).Json).ShouldNotBeNull();
+        // Act
+        var result = BitwardenJsonWriter.Write(new VaultExport(items));
 
+        // Assert
+        var document = JsonNode.Parse(result.Json).ShouldNotBeNull();
         var folder = document["folders"].ShouldNotBeNull().AsArray().ShouldHaveSingleItem().ShouldNotBeNull();
         folder["name"].ShouldNotBeNull().GetValue<string>().ShouldBe("Work");
         var folderId = folder["id"].ShouldNotBeNull().GetValue<string>();
@@ -70,11 +77,15 @@ public sealed class BitwardenJsonWriterTests
     [Fact]
     public void Write_emits_parent_folders_and_declared_folders_that_hold_no_item()
     {
+        // Arrange
         VaultItem[] items = [new() { Type = VaultItemType.SecureNote, Name = "a", FolderPath = "Team/Shared/Web", Origin = Origin }];
         var export = new VaultExport(items) { Folders = ["Archive/Old"] };
 
-        var document = JsonNode.Parse(BitwardenJsonWriter.Write(export).Json).ShouldNotBeNull();
+        // Act
+        var result = BitwardenJsonWriter.Write(export);
 
+        // Assert
+        var document = JsonNode.Parse(result.Json).ShouldNotBeNull();
         document["folders"].ShouldNotBeNull().AsArray()
             .Select(folder => folder.ShouldNotBeNull()["name"].ShouldNotBeNull().GetValue<string>())
             .ShouldBe(["Archive", "Archive/Old", "Team", "Team/Shared", "Team/Shared/Web"]);
@@ -83,23 +94,30 @@ public sealed class BitwardenJsonWriterTests
     [Fact]
     public void Write_then_read_keeps_folders_that_hold_no_item()
     {
+        // Arrange
         var export = new VaultExport([]) { Folders = ["Empty"] };
 
+        // Act
         var reread = BitwardenJsonReader.Read(BitwardenJsonWriter.Write(export).Json, "written.json");
 
+        // Assert
         reread.Folders.ShouldBe(["Empty"]);
     }
 
     [Fact]
     public void Write_moves_history_beyond_five_entries_into_hidden_fields()
     {
+        // Arrange
         var start = new DateTimeOffset(2020, 1, 1, 0, 0, 0, TimeSpan.Zero);
         PasswordHistoryEntry[] history = [.. Enumerable.Range(0, 7).Select(day => new PasswordHistoryEntry($"old-{day}", start.AddDays(day)))];
         var item = new VaultItem { Type = VaultItemType.Login, Name = "many", Login = new LoginData(), PasswordHistory = history, Origin = Origin };
 
+        // Act
         var result = BitwardenJsonWriter.Write(new VaultExport([item]));
-        var written = BitwardenJsonReader.Read(result.Json, "w.json").Items.ShouldHaveSingleItem();
+        var rereadItems = BitwardenJsonReader.Read(result.Json, "w.json").Items;
 
+        // Assert
+        var written = rereadItems.ShouldHaveSingleItem();
         written.PasswordHistory.Select(entry => entry.Password).ShouldBe(["old-6", "old-5", "old-4", "old-3", "old-2"]);
         written.Fields.Select(field => field.Value).ShouldBe(["old-1", "old-0"]);
         written.Fields.ShouldAllSatisfy(field => field.Type.ShouldBe(CustomFieldType.Hidden));
@@ -109,11 +127,14 @@ public sealed class BitwardenJsonWriterTests
     [Fact]
     public void Write_reports_values_over_encrypted_limits_without_truncating()
     {
+        // Arrange
         var longNotes = new string('n', 8_000);
         var item = new VaultItem { Type = VaultItemType.SecureNote, Name = "long", Notes = longNotes, Origin = Origin };
 
+        // Act
         var result = BitwardenJsonWriter.Write(new VaultExport([item]));
 
+        // Assert
         result.Errors.ShouldHaveSingleItem().ShouldContain("notes", StringComparison.Ordinal);
         BitwardenJsonReader.Read(result.Json, "w.json").Items.ShouldHaveSingleItem().Notes.ShouldBe(longNotes);
     }
@@ -121,6 +142,7 @@ public sealed class BitwardenJsonWriterTests
     [Fact]
     public void Write_errors_never_contain_values()
     {
+        // Arrange
         var secret = new string('s', 4_000);
         var item = new VaultItem
         {
@@ -131,8 +153,10 @@ public sealed class BitwardenJsonWriterTests
             Origin = Origin,
         };
 
+        // Act
         var result = BitwardenJsonWriter.Write(new VaultExport([item]));
 
+        // Assert
         result.Errors.Count.ShouldBe(2);
         result.Errors.ShouldAllSatisfy(error => error.ShouldNotContain(secret, StringComparison.Ordinal));
     }
@@ -140,6 +164,7 @@ public sealed class BitwardenJsonWriterTests
     [Fact]
     public void Write_errors_name_custom_fields_with_long_names_by_position_only()
     {
+        // Arrange
         string pastedName = new('k', 800);
         const string Question = "What was the name of the street where you lived in third grade?";
         string longValue = new('v', 4_000);
@@ -157,8 +182,10 @@ public sealed class BitwardenJsonWriterTests
             Origin = Origin,
         };
 
+        // Act
         var result = BitwardenJsonWriter.Write(new VaultExport([item]));
 
+        // Assert
         result.Errors.Count.ShouldBe(3);
         result.Errors[0].ShouldStartWith("\"Keeper import\": the name of custom field 2 is too long", StringComparison.Ordinal);
         result.Errors[1].ShouldStartWith("\"Keeper import\": the value of custom field 3 is too long", StringComparison.Ordinal);
@@ -170,6 +197,7 @@ public sealed class BitwardenJsonWriterTests
     [Fact]
     public void Write_warns_when_the_estimated_import_request_of_many_short_values_exceeds_the_vaultwarden_limit()
     {
+        // Arrange
         // Each one-character value becomes a 96-character encrypted string in the import request, so 5,000 items with
         // 41 such values each need about 26 MB, although their export JSON takes about 14 MB.
         VaultItem[] items =
@@ -183,8 +211,10 @@ public sealed class BitwardenJsonWriterTests
             }),
         ];
 
+        // Act
         var result = BitwardenJsonWriter.Write(new VaultExport(items));
 
+        // Assert
         long thirdLargerJson = Encoding.UTF8.GetByteCount(result.Json) * 4L / 3;
         thirdLargerJson.ShouldBeLessThan(BitwardenLimits.VaultwardenImportBytes);
         string warning = result.Warnings.ShouldHaveSingleItem();
@@ -197,6 +227,7 @@ public sealed class BitwardenJsonWriterTests
     [Fact]
     public void Write_warns_about_a_login_with_more_than_one_passkey_without_its_values()
     {
+        // Arrange
         VaultItem[] items =
         [
             new()
@@ -222,8 +253,10 @@ public sealed class BitwardenJsonWriterTests
             },
         ];
 
+        // Act
         var result = BitwardenJsonWriter.Write(new VaultExport(items));
 
+        // Assert
         string warning = result.Warnings.ShouldHaveSingleItem();
         warning.ShouldStartWith("\"Shop\": 2 passkeys", StringComparison.Ordinal);
         warning.ShouldNotContain("fixture-key", StringComparison.Ordinal);
@@ -234,6 +267,7 @@ public sealed class BitwardenJsonWriterTests
     [Fact]
     public void Write_does_not_warn_about_the_import_request_of_an_export_well_under_the_limit()
     {
+        // Arrange
         VaultItem[] items =
         [
             .. Enumerable.Range(0, 500).Select(_ => new VaultItem
@@ -245,14 +279,17 @@ public sealed class BitwardenJsonWriterTests
             }),
         ];
 
+        // Act
         var result = BitwardenJsonWriter.Write(new VaultExport(items));
 
+        // Assert
         result.Warnings.ShouldBeEmpty();
     }
 
     [Fact]
     public void Write_counts_the_encrypted_checksum_that_a_client_sends_with_each_login_URI()
     {
+        // Arrange
         // A client sends the encrypted SHA-256 checksum of each website address with it, 153 bytes in the request. These
         // logins stay below the limit without the checksums and exceed it with them.
         VaultItem[] items =
@@ -266,8 +303,10 @@ public sealed class BitwardenJsonWriterTests
             }),
         ];
 
+        // Act
         var result = BitwardenJsonWriter.Write(new VaultExport(items));
 
+        // Assert
         long compactJson = Encoding.UTF8.GetByteCount(JsonNode.Parse(result.Json).ShouldNotBeNull().ToJsonString());
         long withoutChecksums = compactJson + (items.Length * 51 * 95L);
         withoutChecksums.ShouldBeLessThan(BitwardenLimits.VaultwardenImportBytes);
@@ -277,6 +316,7 @@ public sealed class BitwardenJsonWriterTests
     [Fact]
     public void Write_estimates_the_import_request_from_compact_JSON_without_the_indentation_of_the_export()
     {
+        // Arrange
         // A client posts compact JSON. These identities hold no value but their name, so the indentation of the export is
         // a large part of it; counted, it would push the estimate above the limit.
         VaultItem[] items =
@@ -290,8 +330,10 @@ public sealed class BitwardenJsonWriterTests
             }),
         ];
 
+        // Act
         var result = BitwardenJsonWriter.Write(new VaultExport(items));
 
+        // Assert
         long withIndentation = Encoding.UTF8.GetByteCount(result.Json) + (items.Length * 95L);
         withIndentation.ShouldBeGreaterThan(BitwardenLimits.VaultwardenImportBytes);
         result.Warnings.ShouldBeEmpty();
@@ -304,10 +346,14 @@ public sealed class BitwardenJsonWriterTests
     [InlineData("ünïcødé value with multibyte characters")]
     public void EncryptedLength_matches_actual_encrypted_string_length(string value)
     {
+        // Arrange
         var envelope = PasswordProtectedExport.Encrypt(value, "pw", new KdfConfig(KdfType.Pbkdf2Sha256, 5_000));
-
         var data = JsonNode.Parse(envelope).ShouldNotBeNull()["data"].ShouldNotBeNull().GetValue<string>();
 
-        BitwardenLimits.EncryptedLength(value).ShouldBe(data.Length);
+        // Act
+        var length = BitwardenLimits.EncryptedLength(value);
+
+        // Assert
+        length.ShouldBe(data.Length);
     }
 }

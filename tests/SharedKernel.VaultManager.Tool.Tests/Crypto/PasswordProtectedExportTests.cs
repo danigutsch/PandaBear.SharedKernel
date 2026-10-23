@@ -15,24 +15,33 @@ public sealed class PasswordProtectedExportTests
     [Fact]
     public void Encrypt_then_decrypt_with_pbkdf2_returns_original_json()
     {
+        // Act
         var envelope = PasswordProtectedExport.Encrypt(EmptyExport, "secret", FastPbkdf2);
+        var decrypted = PasswordProtectedExport.Decrypt(envelope, "secret");
 
-        PasswordProtectedExport.Decrypt(envelope, "secret").ShouldBe(EmptyExport);
+        // Assert
+        decrypted.ShouldBe(EmptyExport);
     }
 
     [Fact]
     public void Encrypt_then_decrypt_with_argon2id_returns_original_json()
     {
+        // Act
         var envelope = PasswordProtectedExport.Encrypt(EmptyExport, "secret", SmallArgon2id);
+        var decrypted = PasswordProtectedExport.Decrypt(envelope, "secret");
 
-        PasswordProtectedExport.Decrypt(envelope, "secret").ShouldBe(EmptyExport);
+        // Assert
+        decrypted.ShouldBe(EmptyExport);
     }
 
     [Fact]
     public void Encrypt_writes_bitwarden_envelope_fields()
     {
-        var document = JsonNode.Parse(PasswordProtectedExport.Encrypt("{}", "secret", SmallArgon2id)).ShouldNotBeNull();
+        // Act
+        var envelope = PasswordProtectedExport.Encrypt("{}", "secret", SmallArgon2id);
 
+        // Assert
+        var document = JsonNode.Parse(envelope).ShouldNotBeNull();
         document["encrypted"].ShouldNotBeNull().GetValue<bool>().ShouldBeTrue();
         document["passwordProtected"].ShouldNotBeNull().GetValue<bool>().ShouldBeTrue();
         document["kdfType"].ShouldNotBeNull().GetValue<int>().ShouldBe(1);
@@ -46,35 +55,40 @@ public sealed class PasswordProtectedExportTests
     [InlineData("bitwarden/protected-argon2id.json")]
     public void Decrypt_independently_generated_export_returns_plain_JSON(string fixture)
     {
+        // Act
         var decrypted = PasswordProtectedExport.Decrypt(Fixture.Read(fixture), FixturePassword);
 
+        // Assert
         decrypted.ShouldBe(Fixture.Read("bitwarden/plain-small.json"));
     }
 
     [Fact]
     public void Decrypt_with_wrong_password_throws_invalid_data()
     {
+        // Arrange
         var envelope = Fixture.Read("bitwarden/protected-pbkdf2.json");
-
         var action = () => PasswordProtectedExport.Decrypt(envelope, "wrong password");
 
+        // Act
         var exception = action.ShouldThrow<InvalidDataException>();
 
+        // Assert
         exception.Message.ShouldContain("password is wrong", StringComparison.Ordinal);
     }
 
     [Fact]
     public void Decrypt_with_tampered_data_throws_invalid_data()
     {
+        // Arrange
         var document = JsonNode.Parse(Fixture.Read("bitwarden/protected-pbkdf2.json")).ShouldNotBeNull();
         var parts = document["data"].ShouldNotBeNull().GetValue<string>()[2..].Split('|');
         var ciphertext = Convert.FromBase64String(parts[1]);
         ciphertext[0] ^= 0x01;
         document["data"] = $"2.{parts[0]}|{Convert.ToBase64String(ciphertext)}|{parts[2]}";
         var tampered = document.ToJsonString();
-
         var action = () => PasswordProtectedExport.Decrypt(tampered, FixturePassword);
 
+        // Act, Assert
         action.ShouldThrow<InvalidDataException>();
     }
 
@@ -86,31 +100,34 @@ public sealed class PasswordProtectedExportTests
     [InlineData(0, 2_000_001, null, null)]
     public void Decrypt_rejects_out_of_range_kdf_settings_before_deriving(int kdfType, int iterations, int? memory, int? parallelism)
     {
+        // Arrange
         var document = JsonNode.Parse(Fixture.Read("bitwarden/protected-argon2id.json")).ShouldNotBeNull();
         document["kdfType"] = kdfType;
         document["kdfIterations"] = iterations;
         document["kdfMemory"] = memory;
         document["kdfParallelism"] = parallelism;
         var unsafeEnvelope = document.ToJsonString();
-
         var action = () => PasswordProtectedExport.Decrypt(unsafeEnvelope, FixturePassword);
 
+        // Act, Assert
         action.ShouldThrow<InvalidDataException>();
     }
 
     [Fact]
     public void Decrypt_rejects_files_that_are_not_password_protected()
     {
+        // Arrange
         var plain = Fixture.Read("bitwarden/plain-small.json");
-
         var action = () => PasswordProtectedExport.Decrypt(plain, "x");
 
+        // Act, Assert
         action.ShouldThrow<InvalidDataException>();
     }
 
     [Fact]
     public void Argon2id_library_matches_rfc_9106_test_vector()
     {
+        // Arrange
         // RFC 9106 section 5.3.
         using var argon2 = new Argon2id(Enumerable.Repeat((byte)0x01, 32).ToArray())
         {
@@ -122,8 +139,10 @@ public sealed class PasswordProtectedExportTests
             DegreeOfParallelism = 4,
         };
 
+        // Act
         var tag = Convert.ToHexStringLower(argon2.GetBytes(32));
 
+        // Assert
         tag.ShouldBe("0d640df58d78766c08c037a34a8b53c9d01ef0452d75b65eb52520e96b01e659");
     }
 }

@@ -23,6 +23,7 @@ public sealed class BriefBuilderTests : IDisposable
     [Fact]
     public void Brief_lists_only_the_groups_that_need_a_decision()
     {
+        // Arrange
         string[] inputs =
         [
             Write(directory, "keeper.json", KeeperJson(
@@ -33,8 +34,10 @@ public sealed class BriefBuilderTests : IDisposable
                 BitwardenLogin("bw-2", "Mail", "bob", "fixture-same-mail-password", "https://mail.example.com"))),
         ];
 
+        // Act
         (BriefDocument brief, var result) = BriefRun.Build(inputs);
 
+        // Assert
         brief.Version.ShouldBe(BriefFile.CurrentVersion);
         var group = brief.Groups.ShouldHaveSingleItem();
         group.Key.ShouldBe(result.Unresolved.ShouldHaveSingleItem().GroupKey);
@@ -59,6 +62,7 @@ public sealed class BriefBuilderTests : IDisposable
     [Fact]
     public void Brief_shows_names_folders_safe_user_names_masked_addresses_and_shared_notes_only()
     {
+        // Arrange
         JsonObject keeper = KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://alice:fixture-uri-secret@example.com/reset?token=fixture-uri-token", KeeperNotes, modified: false);
         keeper["folders"] = new JsonArray(new JsonObject { ["folder"] = "Personal" });
         JsonObject bitwarden = BitwardenLogin("bw-1", "Example Bank", "alice.example", BitwardenPassword, "https://example.com/login", revised: false);
@@ -72,8 +76,11 @@ public sealed class BriefBuilderTests : IDisposable
             Notes = [new ItemNotesDecision(KeeperKey, NotesDecision.Share, NotesSha256: ItemNotesDecision.HashOf(KeeperNotes))]
         };
 
+        // Act
         var group = BriefRun.Build(inputs, decisions).Brief.Groups.ShouldHaveSingleItem();
+        string json = BriefFile.Serialize(BriefRun.Build(inputs, decisions).Brief);
 
+        // Assert
         BriefRun.Field(group, FieldPaths.Name).Holders.Select(holder => holder.Value).ShouldBe(["Example", "Example Bank"]);
         var folder = BriefRun.Field(group, FieldPaths.Folder);
         folder.AgentMayDecide.ShouldBeTrue();
@@ -86,7 +93,6 @@ public sealed class BriefBuilderTests : IDisposable
         notes.NeedsDecision.ShouldBeTrue();
         notes.Holders.ShouldBe([new BriefHolder(KeeperKey, Newest: false, Value: KeeperNotes), new BriefHolder(BitwardenKey, Newest: false)]);
         group.Members[0].Host.ShouldBe("example.com");
-        string json = BriefFile.Serialize(BriefRun.Build(inputs, decisions).Brief);
         string[] withheld = [KeeperPassword, BitwardenPassword, BitwardenNotes, "fixture-uri-secret", "fixture-uri-token"];
         withheld.ShouldAllSatisfy(value => json.ShouldNotContain(value, StringComparison.Ordinal));
     }
@@ -94,6 +100,7 @@ public sealed class BriefBuilderTests : IDisposable
     [Fact]
     public void Brief_withholds_notes_shared_for_other_text_and_user_names_that_hold_a_finding()
     {
+        // Arrange
         string totp = PipelineSecrets.TotpUri(PipelineSecrets.TotpSecret(3100));
         JsonObject keeper = KeeperLogin("rec-1", "Example", totp, KeeperPassword, "https://example.com", KeeperNotes, modified: false);
         JsonObject bitwarden = BitwardenLogin("bw-1", "Example", "alice", BitwardenPassword, "https://example.com", revised: false);
@@ -108,8 +115,10 @@ public sealed class BriefBuilderTests : IDisposable
             ],
         };
 
+        // Act
         (BriefDocument brief, _) = BriefRun.Build(inputs, stale, new MergePolicy(MergePolicyKind.Ask));
 
+        // Assert
         var group = brief.Groups.ShouldHaveSingleItem();
         BriefRun.Field(group, FieldPaths.Notes).Holders.ShouldAllSatisfy(holder => holder.Value.ShouldBeNull());
         group.Members[0].Username.ShouldBeNull();
@@ -120,6 +129,7 @@ public sealed class BriefBuilderTests : IDisposable
     [Fact]
     public void Brief_flags_passwords_without_showing_them()
     {
+        // Arrange
         JsonObject older = KeeperLogin("rec-1", "Router", "admin", "Older-Strong-Password-1", "http://192.168.1.1");
         JsonObject newer = BitwardenLogin("bw-1", "Router", "admin", "admin", "http://192.168.1.1");
         newer["passwordHistory"] = new JsonArray(new JsonObject { ["lastUsedDate"] = "2025-01-01T00:00:00.000Z", ["password"] = "Older-Strong-Password-1" });
@@ -129,8 +139,10 @@ public sealed class BriefBuilderTests : IDisposable
             Write(directory, "bitwarden.json", BitwardenJson(newer)),
         ];
 
+        // Act
         var group = BriefRun.Build(inputs, policy: new MergePolicy(MergePolicyKind.Ask)).Brief.Groups.ShouldHaveSingleItem();
 
+        // Assert
         BriefRun.Field(group, FieldPaths.LoginPassword).Holders.ShouldBe(
         [
             new BriefHolder(KeeperKey, Newest: false, Weak: false, Reused: false, InOtherHistory: true),
@@ -145,11 +157,14 @@ public sealed class BriefBuilderTests : IDisposable
     [Fact]
     public void Brief_lists_the_findings_of_a_single_item_whose_finding_needs_a_decision()
     {
+        // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(3200);
         string input = Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, "Gh-brief-Passw0rd!"))));
 
+        // Act
         (BriefDocument brief, var result) = BriefRun.Build([input]);
 
+        // Assert
         var group = brief.Groups.ShouldHaveSingleItem();
         group.Fields.ShouldBeEmpty();
         var member = group.Members.ShouldHaveSingleItem();
@@ -171,6 +186,7 @@ public sealed class BriefBuilderTests : IDisposable
     [Fact]
     public void Brief_withholds_shared_notes_that_hold_a_finding_whether_it_applies_or_not()
     {
+        // Arrange
         string[] codes = PipelineSecrets.GitHubRecoveryCodes(3300);
         string keeperNotes = "Account notes\nPassword: Gh-brief-Notes-Passw0rd!";
         string bitwardenNotes = "Account notes\nGitHub recovery codes\n" + string.Join('\n', codes);
@@ -190,8 +206,10 @@ public sealed class BriefBuilderTests : IDisposable
             ],
         };
 
+        // Act
         (BriefDocument brief, _) = BriefRun.Build(inputs, decisions);
 
+        // Assert
         var notes = BriefRun.Field(brief.Groups.ShouldHaveSingleItem(), FieldPaths.Notes);
         notes.Holders.ShouldBe([new BriefHolder(KeeperKey, Newest: false), new BriefHolder(BitwardenKey, Newest: false)]);
         string json = BriefFile.Serialize(brief);
@@ -202,6 +220,7 @@ public sealed class BriefBuilderTests : IDisposable
     [Fact]
     public void Brief_shows_user_names_and_addresses_only_as_the_inputs_hold_them()
     {
+        // Arrange
         const string Connection = "postgres://fixture-db-user:fixture-db-secret@db.internal.example:5432/app";
         JsonObject keeper = KeeperLogin("rec-1", "Database", null, KeeperPassword, "https://example.com", Connection, modified: false);
         JsonObject bitwarden = BitwardenLogin("bw-1", "Database", "alice", BitwardenPassword, "https://example.com", revised: false);
@@ -212,8 +231,10 @@ public sealed class BriefBuilderTests : IDisposable
             Findings = [new ItemFindingDecisions(KeeperKey, [new FindingChoice(connection.Id, FindingDecision.Accepted)])],
         };
 
+        // Act
         (BriefDocument brief, var result) = BriefRun.Build(inputs, decisions);
 
+        // Assert
         result.Match.Groups.ShouldHaveSingleItem().Members[0].Login.ShouldNotBeNull().Username.ShouldBe("fixture-db-user");
         var group = brief.Groups.ShouldHaveSingleItem();
         group.Members.Select(member => (member.Username, member.Host)).ShouldBe([((string?)null, (string?)"example.com"), ("alice", "example.com")]);
@@ -230,34 +251,41 @@ public sealed class BriefBuilderTests : IDisposable
     [Fact]
     public void Brief_gives_no_host_for_an_address_whose_host_is_masked()
     {
+        // Arrange
         string[] inputs =
         [
             Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Router", "admin", KeeperPassword, "https://admin:fixture/router@router.local", modified: false))),
             Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Router", "admin", BitwardenPassword, "https://admin:fixture/router@router.local", revised: false))),
         ];
 
+        // Act
         var members = BriefRun.Build(inputs).Brief.Groups.ShouldHaveSingleItem().Members;
 
+        // Assert
         members.ShouldAllSatisfy(member => member.Host.ShouldBeNull());
     }
 
     [Fact]
     public void Brief_gives_a_host_only_for_an_address_with_a_host_name()
     {
+        // Arrange
         string[] inputs =
         [
             Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "App", "alice", KeeperPassword, "androidapp://com.example.app", modified: false))),
             Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "App", "alice", BitwardenPassword, "androidapp://com.example.app", revised: false))),
         ];
 
+        // Act
         var members = BriefRun.Build(inputs).Brief.Groups.ShouldHaveSingleItem().Members;
 
+        // Assert
         members.ShouldAllSatisfy(member => member.Host.ShouldBeNull());
     }
 
     [Fact]
     public void An_agent_may_not_accept_a_finding_whose_field_takes_its_name_from_withheld_text()
     {
+        // Arrange
         string notes = "Which street did we live on?\nfixture-street-answer";
         string[] inputs =
         [
@@ -265,8 +293,10 @@ public sealed class BriefBuilderTests : IDisposable
         ];
         var question = BriefRun.Build(inputs).Result.Findings.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.SecurityQuestion);
 
+        // Act
         var finding = BriefRun.Build(inputs).Brief.Groups.ShouldHaveSingleItem().Members.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem(candidate => candidate.Id == question.Id);
 
+        // Assert
         question.ProposedTarget.NameFromLabel.ShouldBeTrue();
         finding.AgentMayAccept.ShouldBeFalse();
     }
@@ -274,34 +304,41 @@ public sealed class BriefBuilderTests : IDisposable
     [Fact]
     public void The_name_field_marks_the_name_the_merge_keeps()
     {
+        // Arrange
         string[] inputs =
         [
             Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", modified: false))),
             Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example Bank", "alice", BitwardenPassword, "https://example.com"))),
         ];
 
+        // Act
         var group = BriefRun.Build(inputs).Brief.Groups.ShouldHaveSingleItem();
 
+        // Assert
         BriefRun.Field(group, FieldPaths.Name).Holders.Select(holder => (holder.Value, holder.Newest)).ShouldBe([((string?)"Example", false), ("Example Bank", true)]);
     }
 
     [Fact]
     public void Brief_records_the_input_files_it_was_made_from()
     {
+        // Arrange
         string[] inputs =
         [
             Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", modified: false))),
             Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", BitwardenPassword, "https://example.com", revised: false))),
         ];
 
+        // Act
         (BriefDocument brief, _) = BriefRun.Build(inputs);
 
+        // Assert
         brief.Inputs.ShouldBe(["keeper.json", "bitwarden.json"]);
     }
 
     [Fact]
     public void Brief_lists_suggested_links()
     {
+        // Arrange
         string[] inputs =
         [
             Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Example", "alice", KeeperPassword, "https://example.com", modified: false))),
@@ -310,8 +347,10 @@ public sealed class BriefBuilderTests : IDisposable
                 BitwardenLogin("bw-2", "Example", "bob", "fixture-bob-password", "https://example.com"))),
         ];
 
+        // Act
         (BriefDocument brief, var result) = BriefRun.Build(inputs);
 
+        // Assert
         result.Match.Suggestions.ShouldNotBeEmpty();
         brief.Suggestions.ShouldBe(result.Match.Suggestions);
     }

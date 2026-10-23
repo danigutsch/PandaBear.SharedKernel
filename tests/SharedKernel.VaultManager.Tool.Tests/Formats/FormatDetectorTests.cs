@@ -24,18 +24,26 @@ public sealed class FormatDetectorTests : IDisposable
     [InlineData("other-text", "Unknown")]
     public void Detect_identifies_format_by_content(string sample, string expected)
     {
+        // Arrange
         string path = FormatSamples.WriteSample(directory, sample);
 
+        // Act
         var format = FormatDetector.Detect(path);
 
+        // Assert
         format.ShouldBe(Enum.Parse<VaultFileFormat>(expected));
     }
 
     [Fact]
     public void Detect_ignores_file_extension()
     {
+        // Arrange
         string path = FormatSamples.Write(directory, "export.csv", Fixture.Read("keeper/web.json"));
 
-        FormatDetector.Detect(path).ShouldBe(VaultFileFormat.KeeperJson);
+        // Act
+        var format = FormatDetector.Detect(path);
+
+        // Assert
+        format.ShouldBe(VaultFileFormat.KeeperJson);
     }
 }
