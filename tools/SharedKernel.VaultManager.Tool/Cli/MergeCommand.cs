@@ -201,7 +201,10 @@ internal static class MergeCommand
             }
 
             PipelineResult userOnly = result;
-            request = request with { Decisions = AgentDecisions.Combine(decisions, fromBrief.Decisions) };
+            request = request with
+            {
+                Decisions = AgentDecisions.Combine(decisions, fromBrief.Decisions)
+            };
             result = pipeline.Merge(scanned, request, ct);
             if (!Report(arguments.AgentDecisions!, AgentDecisions.Conflicts(userOnly, result, request.Decisions), "changes what the brief describes", error))
             {

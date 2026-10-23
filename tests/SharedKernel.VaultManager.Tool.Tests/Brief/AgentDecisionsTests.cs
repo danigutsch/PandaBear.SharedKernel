@@ -93,14 +93,23 @@ public sealed class AgentDecisionsTests
     public void Pre_accepted_findings_the_agent_rejects_are_listed_unless_the_user_decided_them()
     {
         var preAccepted = FindingSamples.Finding(Confidence.High);
-        var proposed = FindingSamples.At("notes") with { RuleId = "fixture-proposed" };
-        var other = FindingSamples.At("fields[0].value") with { Confidence = Confidence.High };
+        var proposed = FindingSamples.At("notes") with
+        {
+            RuleId = "fixture-proposed"
+        };
+        var other = FindingSamples.At("fields[0].value") with
+        {
+            Confidence = Confidence.High
+        };
         ItemFindingsResult[] findings =
         [
             new(First, "Example", [preAccepted, proposed], []),
             new(Second, "Example (Bitwarden)", [other], [other.Id]),
         ];
-        var user = MergeDecisions.None with { Findings = [new ItemFindingDecisions(Second, [new FindingChoice(other.Id, FindingDecision.Accepted)])] };
+        var user = MergeDecisions.None with
+        {
+            Findings = [new ItemFindingDecisions(Second, [new FindingChoice(other.Id, FindingDecision.Accepted)])]
+        };
         var agent = MergeDecisions.None with
         {
             Findings =

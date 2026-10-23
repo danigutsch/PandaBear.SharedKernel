@@ -129,7 +129,10 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         (await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), args, TestContext.Current.CancellationToken)).ExitCode.ShouldBe(2);
         var brief = BriefFile.Read(briefPath);
         var group = brief.Groups.ShouldHaveSingleItem();
-        var edited = brief with { Groups = [group with { Fields = [.. group.Fields, new BriefField(FieldPaths.LoginUsername, NeedsDecision: false, AgentMayDecide: true, [new BriefHolder(CliInputs.KeeperKey, Newest: false)])] }] };
+        var edited = brief with
+        {
+            Groups = [group with { Fields = [.. group.Fields, new BriefField(FieldPaths.LoginUsername, NeedsDecision: false, AgentMayDecide: true, [new BriefHolder(CliInputs.KeeperKey, Newest: false)])] }]
+        };
         BriefFile.Write(briefPath, edited, TestContext.Current.CancellationToken);
         DecisionsFile.Write(agentPath, new MergeDecisions([new GroupDecision(group.Key, [FieldChoice.Member(FieldPaths.LoginUsername, CliInputs.KeeperKey)])], MatchOverrides.None));
         var prompts = new TestPrompts(ExportPassword);
