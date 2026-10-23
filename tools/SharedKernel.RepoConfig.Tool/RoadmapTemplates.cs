@@ -8,6 +8,11 @@ internal static class RoadmapTemplates
         This folder is the source of truth for roadmap intent and prioritization inputs.
         GitHub Issues and Projects are execution views derived from this data.
 
+        Keep roadmap item IDs stable when GitHub issues move between repositories. Optional
+        `integrations.github.repository` selects the issue repository; omission uses the configured
+        repository. `nodeId` is opaque, while `previousLocations` and `previousNodeIds` retain resolved
+        aliases. External issue mappings are read-only and retain local status, priority, and relationships.
+
         Run the repo config tool to verify the structure:
 
         ```bash
@@ -261,9 +266,9 @@ internal static class RoadmapTemplates
             "id",
             "title",
             "type",
-             "status",
-             "theme",
-             "outcome",
+            "status",
+            "theme",
+            "outcome",
             "blockedBy",
             "blocks",
             "dependencies",
@@ -398,9 +403,98 @@ internal static class RoadmapTemplates
                           "const": "create"
                         }
                       ]
+                    },
+                    "repository": {
+                      "type": "string",
+                      "pattern": "^(?![^/]*--)[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/(?!\\.{1,2}$)[A-Za-z0-9_.-]{1,100}$"
+                    },
+                    "nodeId": {
+                      "type": "string",
+                      "minLength": 1,
+                      "pattern": "\\S"
+                    },
+                    "previousLocations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "repository",
+                          "issue"
+                        ],
+                        "properties": {
+                          "repository": {
+                            "type": "string",
+                            "pattern": "^(?![^/]*--)[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?/(?!\\.{1,2}$)[A-Za-z0-9_.-]{1,100}$"
+                          },
+                          "issue": {
+                            "type": "integer",
+                            "minimum": 1
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "uniqueItems": true
+                    },
+                    "previousNodeIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "pattern": "\\S"
+                      },
+                      "uniqueItems": true
                     }
                   },
-                  "additionalProperties": false
+                  "additionalProperties": false,
+                  "allOf": [
+                    {
+                      "if": {
+                        "required": [
+                          "issue"
+                        ],
+                        "properties": {
+                          "issue": {
+                            "const": "create"
+                          }
+                        }
+                      },
+                      "then": {
+                        "not": {
+                          "anyOf": [
+                            {
+                              "required": [
+                                "nodeId"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "previousLocations"
+                              ]
+                            },
+                            {
+                              "required": [
+                                "previousNodeIds"
+                              ]
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "dependentRequired": {
+                    "repository": [
+                      "issue"
+                    ],
+                    "nodeId": [
+                      "issue"
+                    ],
+                    "previousLocations": [
+                      "issue"
+                    ],
+                    "previousNodeIds": [
+                      "issue"
+                    ]
+                  }
                 }
               }
             }

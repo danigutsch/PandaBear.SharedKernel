@@ -22,6 +22,34 @@ internal sealed record RoadmapItemSnapshot(
     int? GitHubIssue,
     bool CreateGitHubIssue)
 {
+    public string? GitHubRepository
+    {
+        get; init;
+    }
+
+    public string? GitHubNodeId
+    {
+        get; init;
+    }
+
+    public IReadOnlyList<GitHubIssueLocation> PreviousGitHubLocations { get; init; } = [];
+
+    public IReadOnlyList<string> PreviousGitHubNodeIds { get; init; } = [];
+
+    public bool GitHubReferenceReadOnly
+    {
+        get; init;
+    }
+
+    public bool GitHubReferenceUnresolved
+    {
+        get; init;
+    }
+
+    public bool HasLocalGitHubIssue(string? repository) => !GitHubReferenceUnresolved
+        && (GitHubIssue is not null || CreateGitHubIssue)
+        && (GitHubRepository is null || string.Equals(GitHubRepository, repository, StringComparison.OrdinalIgnoreCase));
+
     public decimal? Score =>
         IsTriaged
         && Reach is decimal reach

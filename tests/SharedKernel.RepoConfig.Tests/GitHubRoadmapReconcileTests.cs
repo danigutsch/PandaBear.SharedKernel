@@ -163,7 +163,7 @@ public sealed class GitHubRoadmapReconcileTests
 
 
     [Fact]
-    public async Task GitHub_reconcile_rejects_cross_repository_blocker_metadata()
+    public async Task GitHub_reconcile_preserves_qualified_cross_repository_blocker_metadata()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -224,9 +224,21 @@ public sealed class GitHubRoadmapReconcileTests
         var exitCode = await RepoConfigToolRunner.Run(["github", "reconcile", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
 
         // Assert
-        exitCode.ShouldBe(1);
-        output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldContain("does not support cross-repository blocker metadata", StringComparison.Ordinal);
+        exitCode.ShouldBe(0);
+        error.ToString().ShouldBe(string.Empty);
+        using var manifest = JsonDocument.Parse(workspace.ReadFile("roadmap/reconciliation/open-issues-test.json"));
+        var externalEdges = manifest.RootElement.GetProperty("externalBlockerEdges").EnumerateArray().ToArray();
+        externalEdges.Length.ShouldBe(1);
+        var blockerRepository = externalEdges[0].GetProperty("blocker").GetProperty("repository").GetString();
+        blockerRepository.ShouldBe("other/repository");
+        var blockerIssue = externalEdges[0].GetProperty("blocker").GetProperty("issue").GetInt32();
+        blockerIssue.ShouldBe(200);
+        var blockedRepository = externalEdges[0].GetProperty("blocked").GetProperty("repository").GetString();
+        blockedRepository.ShouldBe("owner/repository");
+        var blockedIssue = externalEdges[0].GetProperty("blocked").GetProperty("issue").GetInt32();
+        blockedIssue.ShouldBe(100);
+        var externalCount = manifest.RootElement.GetProperty("integrity").GetProperty("expectedExternalBlockerEdgeCount").GetInt32();
+        externalCount.ShouldBe(1);
     }
 
     [Fact]

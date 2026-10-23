@@ -49,7 +49,9 @@ internal sealed class GitHubRoadmapReconciler
         var client = httpClient is null
             ? throw new InvalidOperationException("GitHub reconciliation could not create an HTTP client.")
             : new GitHubRoadmapReconcileClient(httpClient);
-        var snapshot = await client.ReadSnapshot(repository, seed.Reconciliation.GetRequiredIssueNumbers(_project), cancellationToken).ConfigureAwait(false);
+        var snapshot = await client.ReadSnapshot(repository, seed.Reconciliation.GetRequiredIssueNumbers(_project), cancellationToken, _project, resolveExternalReferences: true).ConfigureAwait(false);
+        var references = GitHubRoadmapReferencePlan.Create(_project, snapshot);
+        _project = references.Project;
         var currentContent = seed.SourceContent;
         var content = CreateManifestContent(seed, repository, snapshot, seed.RetrievedOn);
         if (!string.Equals(currentContent, content, StringComparison.Ordinal))
@@ -58,7 +60,7 @@ internal sealed class GitHubRoadmapReconciler
             content = CreateManifestContent(seed, repository, snapshot, retrievedOn);
         }
 
-        return new ReconcilePlan(_project.RootPath, seed.ManifestPath, content, currentContent, inputSnapshot);
+        return new ReconcilePlan(_project.RootPath, seed.ManifestPath, content, currentContent, inputSnapshot, references.Writes, references.Diagnostics);
     }
 
     private string GetGitHubRepository()
@@ -119,11 +121,15 @@ internal sealed class GitHubRoadmapReconciler
         var openIssues = snapshot.Issues.Where(IsOpen).OrderBy(issue => issue.Number).ToArray();
         var dispositions = DeriveDispositions(openIssues, issuesByNumber, directCanonicalIssueNumbers, repository);
         var blockerEdges = DeriveBlockerEdges(snapshot.Issues, issuesByNumber, repository);
+        var externalBlockerEdges = DeriveExternalBlockerEdges(snapshot.Issues, repository);
         var repositoryCommit = snapshot.RepositoryCommit ?? seed.RepositoryCommit;
         var digestIssueNumbers = _project.GetGitHubIssueNumbers()
             .Concat(seed.Reconciliation.ClosedItemTransitions.Keys)
             .Concat(blockerEdges.Select(edge => edge.Blocker))
             .Concat(blockerEdges.Select(edge => edge.Blocked))
+            .Concat(externalBlockerEdges.SelectMany(edge => new[] { edge.Blocker, edge.Blocked })
+                .Where(endpoint => string.Equals(endpoint.Repository, repository, StringComparison.OrdinalIgnoreCase))
+                .Select(endpoint => endpoint.Number))
             .ToHashSet();
 
         using var stream = new MemoryStream();
@@ -145,12 +151,13 @@ internal sealed class GitHubRoadmapReconciler
             seed.Rules.WriteTo(writer);
             writer.WriteString("snapshotDigest", GitHubIssueSnapshotDigest.ComputeForOpenAndRequiredIssues(snapshot.Issues, digestIssueNumbers, repository));
             WriteBlockerEdges(writer, blockerEdges);
+            WriteExternalBlockerEdges(writer, externalBlockerEdges);
             WriteClosedTransitions(writer, seed.Reconciliation.ClosedItemTransitions);
             WriteDirectCanonicalPrimaries(writer, directCanonicalPrimaries);
             WriteIssueNumbers(writer, "childrenOfCanonicalPrimaries", dispositions.ChildrenOfCanonicalPrimaries);
             WriteIssueNumbers(writer, "unmappedStructuralRoots", dispositions.UnmappedStructuralRoots);
             WriteIssueNumbers(writer, "needsHuman", dispositions.NeedsHuman);
-            WriteIntegrity(writer, openIssues.Length, directCanonicalPrimaries.Length, dispositions, blockerEdges.Length);
+            WriteIntegrity(writer, openIssues.Length, directCanonicalPrimaries.Length, dispositions, blockerEdges.Length, externalBlockerEdges.Length);
             writer.WriteEndObject();
         }
 
@@ -177,7 +184,7 @@ internal sealed class GitHubRoadmapReconciler
         ArgumentNullException.ThrowIfNull(issues);
 
         var issuesByNumber = issues.ToDictionary(issue => issue.Number);
-        var itemsByIssue = project.Items.Where(item => item.GitHubIssue is int).ToDictionary(item => item.GitHubIssue.GetValueOrDefault());
+        var itemsByIssue = project.Items.Where(item => item.GitHubIssue is int && item.HasLocalGitHubIssue(project.GitHubRepository)).ToDictionary(item => item.GitHubIssue.GetValueOrDefault());
         foreach (var (issueNumber, roadmapItemId) in reconciliation.ClosedItemTransitions)
         {
             if (!issuesByNumber.TryGetValue(issueNumber, out var issue) || !IsClosed(issue)
@@ -275,12 +282,6 @@ internal sealed class GitHubRoadmapReconciler
         Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber,
         string repository)
     {
-        if (issues.SelectMany(issue => issue.BlockedBy.Concat(issue.Blocking))
-            .Any(relation => !string.Equals(relation.Repository, repository, StringComparison.OrdinalIgnoreCase)))
-        {
-            throw new InvalidOperationException("GitHub reconciliation does not support cross-repository blocker metadata.");
-        }
-
         foreach (var relation in issues.SelectMany(issue => issue.BlockedBy.Concat(issue.Blocking)))
         {
             ResolveLocalRelation(relation, repository, issuesByNumber);
@@ -301,7 +302,7 @@ internal sealed class GitHubRoadmapReconciler
         }
 
         return blocking
-            .Select(edge => CreateBlockerEdge(edge.Blocker, edge.Blocked, issuesByNumber, repository))
+            .Select(edge => CreateBlockerEdge(edge.Blocker, edge.Blocked, issuesByNumber))
             .OrderBy(edge => edge.Blocker)
             .ThenBy(edge => edge.Blocked)
             .ThenBy(edge => edge.BlockerState, StringComparer.Ordinal)
@@ -309,22 +310,68 @@ internal sealed class GitHubRoadmapReconciler
             .ToArray();
     }
 
+    internal static GitHubRoadmapExternalBlockerEdge[] DeriveExternalBlockerEdges(
+        IReadOnlyList<GitHubRoadmapReconcileIssue> issues,
+        string repository)
+    {
+        Dictionary<string, GitHubRoadmapExternalBlockerEdge> edges = new(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, string> states = new(StringComparer.OrdinalIgnoreCase);
+        foreach (var issue in issues)
+        {
+            var local = new GitHubRoadmapReconcileRelation(issue.Number, repository, issue.State);
+            foreach (var remote in issue.Blocking.Where(relation => !string.Equals(relation.Repository, repository, StringComparison.OrdinalIgnoreCase)))
+            {
+                AddExternalBlockerEdge(edges, states, new GitHubRoadmapExternalBlockerEdge(local, remote));
+            }
+
+            foreach (var remote in issue.BlockedBy.Where(relation => !string.Equals(relation.Repository, repository, StringComparison.OrdinalIgnoreCase)))
+            {
+                AddExternalBlockerEdge(edges, states, new GitHubRoadmapExternalBlockerEdge(remote, local));
+            }
+        }
+
+        return edges.Values
+            .OrderBy(edge => edge.Blocker.Repository, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(edge => edge.Blocker.Number)
+            .ThenBy(edge => edge.Blocked.Repository, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(edge => edge.Blocked.Number)
+            .ToArray();
+    }
+
+    private static void AddExternalBlockerEdge(
+        Dictionary<string, GitHubRoadmapExternalBlockerEdge> edges,
+        Dictionary<string, string> states,
+        GitHubRoadmapExternalBlockerEdge edge)
+    {
+        foreach (var endpoint in new[] { edge.Blocker, edge.Blocked })
+        {
+            if (!GitHubRepositoryName.IsValid(endpoint.Repository) || endpoint.Number < 1 || endpoint.State is not ("OPEN" or "CLOSED"))
+            {
+                throw new InvalidOperationException("GitHub reconciliation external blocker endpoint is invalid.");
+            }
+
+            var key = $"{endpoint.Repository}#{endpoint.Number}";
+            if (states.TryGetValue(key, out var previousState) && !string.Equals(previousState, endpoint.State, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("GitHub reconciliation external blocker endpoint states conflict.");
+            }
+
+            states[key] = endpoint.State;
+        }
+
+        var edgeKey = $"{edge.Blocker.Repository}#{edge.Blocker.Number}:{edge.Blocked.Repository}#{edge.Blocked.Number}";
+        edges.TryAdd(edgeKey, edge);
+    }
+
     private static GitHubRoadmapBlockerEdge CreateBlockerEdge(
         int blockerNumber,
         int blockedNumber,
-        Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber,
-        string repository)
+        Dictionary<int, GitHubRoadmapReconcileIssue> issuesByNumber)
     {
         if (!issuesByNumber.TryGetValue(blockerNumber, out var blocker)
             || !issuesByNumber.TryGetValue(blockedNumber, out var blocked))
         {
             throw new InvalidOperationException("GitHub reconciliation blocker metadata references an inaccessible issue.");
-        }
-
-        if (blocker.Blocking.Any(relation => relation.Number == blockedNumber && !string.Equals(relation.Repository, repository, StringComparison.OrdinalIgnoreCase))
-            || blocked.BlockedBy.Any(relation => relation.Number == blockerNumber && !string.Equals(relation.Repository, repository, StringComparison.OrdinalIgnoreCase)))
-        {
-            throw new InvalidOperationException("GitHub reconciliation does not support cross-repository blocker metadata.");
         }
 
         return new GitHubRoadmapBlockerEdge(blockerNumber, blocker.State, blockedNumber, blocked.State);
@@ -388,6 +435,31 @@ internal sealed class GitHubRoadmapReconciler
         return target;
     }
 
+    private static void WriteExternalBlockerEdges(Utf8JsonWriter writer, IReadOnlyList<GitHubRoadmapExternalBlockerEdge> edges)
+    {
+        writer.WritePropertyName("externalBlockerEdges");
+        writer.WriteStartArray();
+        foreach (var edge in edges)
+        {
+            writer.WriteStartObject();
+            WriteExternalEndpoint(writer, "blocker", edge.Blocker);
+            WriteExternalEndpoint(writer, "blocked", edge.Blocked);
+            writer.WriteEndObject();
+        }
+
+        writer.WriteEndArray();
+    }
+
+    private static void WriteExternalEndpoint(Utf8JsonWriter writer, string propertyName, GitHubRoadmapReconcileRelation endpoint)
+    {
+        writer.WritePropertyName(propertyName);
+        writer.WriteStartObject();
+        writer.WriteString("repository", endpoint.Repository);
+        writer.WriteNumber("issue", endpoint.Number);
+        writer.WriteString("state", endpoint.State);
+        writer.WriteEndObject();
+    }
+
     private static void WriteBlockerEdges(Utf8JsonWriter writer, IReadOnlyList<GitHubRoadmapBlockerEdge> blockerEdges)
     {
         writer.WritePropertyName("blockerEdges");
@@ -447,7 +519,7 @@ internal sealed class GitHubRoadmapReconciler
         writer.WriteEndArray();
     }
 
-    private static void WriteIntegrity(Utf8JsonWriter writer, int openIssueCount, int directCanonicalPrimaryCount, ReconcileDispositions dispositions, int blockerEdgeCount)
+    private static void WriteIntegrity(Utf8JsonWriter writer, int openIssueCount, int directCanonicalPrimaryCount, ReconcileDispositions dispositions, int blockerEdgeCount, int externalBlockerEdgeCount)
     {
         writer.WritePropertyName("integrity");
         writer.WriteStartObject();
@@ -457,6 +529,7 @@ internal sealed class GitHubRoadmapReconciler
         writer.WriteNumber("expectedUnmappedStructuralRootCount", dispositions.UnmappedStructuralRoots.Count);
         writer.WriteNumber("expectedNeedsHumanCount", dispositions.NeedsHuman.Count);
         writer.WriteNumber("expectedBlockerEdgeCount", blockerEdgeCount);
+        writer.WriteNumber("expectedExternalBlockerEdgeCount", externalBlockerEdgeCount);
         writer.WriteBoolean("dispositionsAreDisjoint", true);
         writer.WriteBoolean("dispositionsCoverSnapshot", true);
         writer.WriteEndObject();
@@ -508,28 +581,31 @@ internal sealed class GitHubRoadmapReconciler
         string manifestPath,
         string content,
         string expectedContent,
-        RoadmapWriteInputSnapshot inputSnapshot)
+        RoadmapWriteInputSnapshot inputSnapshot,
+        IReadOnlyList<AtomicFileWrite> referenceWrites,
+        IReadOnlyList<string> diagnostics)
     {
         private bool Matches => string.Equals(expectedContent, content, StringComparison.Ordinal);
 
         public void Apply() => RollbackFileWriteBatch.Apply(
             rootPath,
-            Matches ? [] : [new AtomicFileWrite(manifestPath, content, expectedContent)],
+            referenceWrites.Concat(Matches ? [] : new[] { new AtomicFileWrite(manifestPath, content, expectedContent) }).ToArray(),
             inputSnapshot.Verify);
 
-        public IReadOnlyList<string> Messages(bool preview)
+        public string[] Messages(bool preview)
         {
-            if (Matches)
+            if (Matches && referenceWrites.Count == 0)
             {
-                return [preview
+                return diagnostics.Concat(new[] { preview
                     ? "preview: reconciliation manifest already matches the GitHub snapshot."
-                    : "reconcile: reconciliation manifest already matches the GitHub snapshot."];
+                    : "reconcile: reconciliation manifest already matches the GitHub snapshot." }).ToArray();
             }
 
             var relativePath = Path.GetRelativePath(rootPath, manifestPath);
-            return [preview
-                ? $"preview: GitHub reconciliation would update {relativePath}."
-                : $"reconcile: updated {relativePath}."];
+            var identitySuffix = referenceWrites.Count == 0 ? string.Empty : $" and {referenceWrites.Count} issue identity records";
+            return diagnostics.Concat(new[] { preview
+                ? $"preview: GitHub reconciliation would update {relativePath}{identitySuffix}."
+                : $"reconcile: updated {relativePath}{identitySuffix}." }).ToArray();
         }
     }
 

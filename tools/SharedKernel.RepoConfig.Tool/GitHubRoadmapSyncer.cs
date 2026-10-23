@@ -116,7 +116,7 @@ internal sealed class GitHubRoadmapSyncer
 
     private RoadmapItemSnapshot[] GetItemsToSync() =>
         _project.Items
-            .Where(item => item.GitHubIssue is not null || item.CreateGitHubIssue)
+            .Where(item => item.HasLocalGitHubIssue(_project.GitHubRepository))
             .OrderBy(item => item.IsTriaged ? 0 : 1)
             .ThenBy(item => item.Order ?? int.MaxValue)
             .ThenByDescending(item => item.Score)
@@ -153,7 +153,11 @@ internal sealed class GitHubRoadmapSyncer
         CancellationToken cancellationToken)
     {
         var item = await CreateOrAdoptIssue(httpClient, repository, configuredItem, messages, cancellationToken).ConfigureAwait(false);
-        await SyncLabels(httpClient, repository, item, messages, cancellationToken).ConfigureAwait(false);
+        if (!await SyncLabels(httpClient, repository, item, messages, cancellationToken).ConfigureAwait(false))
+        {
+            return;
+        }
+
         await ProjectItem(projectClient, repository, item, messages, cancellationToken).ConfigureAwait(false);
 
         if (item.Labels.Count == 0 && projectClient is null)
@@ -261,23 +265,31 @@ internal sealed class GitHubRoadmapSyncer
         return exception is TimeoutException or OperationCanceledException or HttpRequestException or IOException or JsonException;
     }
 
-    private async Task SyncLabels(
+    private async Task<bool> SyncLabels(
         HttpClient httpClient,
         string repository,
         RoadmapItemSnapshot item,
         List<string> messages,
         CancellationToken cancellationToken)
     {
-        var extraLabels = await UpdateItem(httpClient, repository, item, cancellationToken).ConfigureAwait(false);
+        var check = await UpdateItem(httpClient, repository, item, cancellationToken).ConfigureAwait(false);
+        if (check.Diagnostic is not null)
+        {
+            messages.Add($"unresolved: {item.Id} ({repository}#{item.GitHubIssue}): {check.Diagnostic} No labels or Project fields were changed; run github reconcile before retrying.");
+            return false;
+        }
+
         if (item.Labels.Count > 0)
         {
             messages.Add($"updated labels for {repository}#{item.GitHubIssue} from {item.Id}");
         }
 
-        foreach (var label in extraLabels)
+        foreach (var label in check.ExtraLabels)
         {
             messages.Add($"drift: {repository}#{item.GitHubIssue} has extra GitHub label {label}");
         }
+
+        return true;
     }
 
     private async Task ProjectItem(
@@ -449,7 +461,7 @@ internal sealed class GitHubRoadmapSyncer
         return false;
     }
 
-    private async Task<IReadOnlyList<string>> UpdateItem(HttpClient httpClient, string repository, RoadmapItemSnapshot item, CancellationToken cancellationToken)
+    private async Task<GitHubIssueSyncCheck> UpdateItem(HttpClient httpClient, string repository, RoadmapItemSnapshot item, CancellationToken cancellationToken)
     {
         using var timeout = new CancellationTokenSource(GitHubRequestTimeout.Duration, _timeProvider);
         using var itemCancellation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeout.Token);
@@ -723,12 +735,19 @@ internal sealed class GitHubRoadmapSyncer
         }
     }
 
-    private static async Task<IReadOnlyList<string>> UpdateIssue(HttpClient httpClient, string repository, RoadmapItemSnapshot item, CancellationToken cancellationToken)
+    private static async Task<GitHubIssueSyncCheck> UpdateIssue(HttpClient httpClient, string repository, RoadmapItemSnapshot item, CancellationToken cancellationToken)
     {
         var issueNumber = item.GitHubIssue ?? throw new InvalidOperationException("GitHub issue mapping is required.");
         var issueUrl = $"https://api.github.com/repos/{repository}/issues/{issueNumber}";
-        await VerifyIssueMapping(httpClient, repository, issueNumber, cancellationToken).ConfigureAwait(false);
-        var extraLabels = await GetExtraLabels(httpClient, issueUrl, item.Labels, issueNumber, cancellationToken).ConfigureAwait(false);
+        if (!await VerifyIssueMapping(httpClient, repository, issueNumber, cancellationToken).ConfigureAwait(false))
+        {
+            return new([], "Issue mapping is inaccessible or its location changed.");
+        }
+        var check = await GetExtraLabels(httpClient, repository, issueUrl, item, issueNumber, cancellationToken).ConfigureAwait(false);
+        if (check.Diagnostic is not null)
+        {
+            return check;
+        }
 
         if (item.Labels.Count > 0)
         {
@@ -744,31 +763,86 @@ internal sealed class GitHubRoadmapSyncer
             }
         }
 
-        return extraLabels;
+        return check;
     }
 
-    private static async Task<IReadOnlyList<string>> GetExtraLabels(HttpClient httpClient, string issueUrl, IReadOnlyList<string> labels, int issueNumber, CancellationToken cancellationToken)
+    private static async Task<GitHubIssueSyncCheck> GetExtraLabels(HttpClient httpClient, string repository, string issueUrl, RoadmapItemSnapshot item, int issueNumber, CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, issueUrl);
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        var rateLimited = response.Headers.RetryAfter is not null
+            || (response.Headers.TryGetValues("X-RateLimit-Remaining", out var remaining) && remaining.Contains("0", StringComparer.Ordinal));
+        if (response.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.Gone
+            or HttpStatusCode.MovedPermanently or HttpStatusCode.Redirect or HttpStatusCode.TemporaryRedirect or HttpStatusCode.PermanentRedirect
+            || (response.StatusCode == HttpStatusCode.Forbidden && !rateLimited))
+        {
+            return new([], $"Issue metadata is inaccessible or its location changed (HTTP {(int)response.StatusCode}).");
+        }
+
         if (!response.IsSuccessStatusCode)
         {
             throw CreateGitHubFailure("label drift check", response.StatusCode, issueNumber);
         }
 
-        using var responseStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        using var document = await JsonDocument.ParseAsync(responseStream, cancellationToken: cancellationToken).ConfigureAwait(false);
-        if (!document.RootElement.TryGetProperty("labels", out var remoteLabels) || remoteLabels.ValueKind != JsonValueKind.Array)
+        var content = await BoundedHttpContentReader.Read(response.Content, 8 * 1024 * 1024,
+            "GitHub issue sync response exceeded the allowed size.", cancellationToken).ConfigureAwait(false);
+        using var document = JsonDocument.Parse(content);
+        var root = document.RootElement;
+        if (HasChangedIssueIdentity(root, issueUrl, issueNumber))
         {
-            return [];
+            return new([], "Issue identity or location changed.");
         }
 
-        return remoteLabels.EnumerateArray()
+        if (item.GitHubNodeId is not null)
+        {
+            if (!root.TryGetProperty("node_id", out var remoteId) || remoteId.ValueKind != JsonValueKind.String)
+            {
+                return new([], "Issue identity metadata is missing.");
+            }
+
+            if (!string.Equals(remoteId.GetString(), item.GitHubNodeId, StringComparison.Ordinal)
+                && !item.PreviousGitHubNodeIds.Contains(remoteId.GetString(), StringComparer.Ordinal))
+            {
+                var resolution = await new GitHubIssueReferenceResolver(httpClient)
+                    .Resolve(repository, issueNumber, item.GitHubNodeId, cancellationToken).ConfigureAwait(false);
+                if (!resolution.IsResolved || resolution.Number != issueNumber
+                    || !string.Equals(resolution.Repository, repository, StringComparison.OrdinalIgnoreCase))
+                {
+                    return new([], "Stored issue identity no longer resolves to its configured location.");
+                }
+            }
+        }
+
+        if (!root.TryGetProperty("labels", out var remoteLabels) || remoteLabels.ValueKind != JsonValueKind.Array)
+        {
+            return new([], null);
+        }
+
+        var extraLabels = remoteLabels.EnumerateArray()
             .Where(label => label.ValueKind == JsonValueKind.Object && label.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.String)
             .Select(label => label.GetProperty("name").GetString())
-            .Where(name => !string.IsNullOrWhiteSpace(name) && !labels.Contains(name, StringComparer.OrdinalIgnoreCase))
+            .Where(name => !string.IsNullOrWhiteSpace(name) && !item.Labels.Contains(name, StringComparer.OrdinalIgnoreCase))
             .Select(name => name ?? string.Empty)
             .ToArray();
+        return new(extraLabels, null);
+    }
+
+    private static bool HasChangedIssueIdentity(JsonElement root, string issueUrl, int issueNumber)
+    {
+        if (root.TryGetProperty("pull_request", out _))
+        {
+            return true;
+        }
+
+        if (!root.TryGetProperty("number", out var number)
+            || number.ValueKind != JsonValueKind.Number || !number.TryGetInt32(out var value) || value != issueNumber)
+        {
+            return true;
+        }
+
+        var expected = issueUrl.Replace("https://api.github.com/repos/", "https://github.com/", StringComparison.Ordinal);
+        return !root.TryGetProperty("html_url", out var url) || url.ValueKind != JsonValueKind.String
+            || !string.Equals(url.GetString(), expected, StringComparison.OrdinalIgnoreCase);
     }
 
     private static async Task<(int? IssueNumber, HttpStatusCode? FailureStatus)> CreateIssue(HttpClient httpClient, string repository, RoadmapItemSnapshot item, CancellationToken cancellationToken)
@@ -858,13 +932,22 @@ internal sealed class GitHubRoadmapSyncer
         return created;
     }
 
-    private static async Task VerifyIssueMapping(HttpClient httpClient, string repository, int issueNumber, CancellationToken cancellationToken)
+    private static async Task<bool> VerifyIssueMapping(HttpClient httpClient, string repository, int issueNumber, CancellationToken cancellationToken)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.github.com/repos/{repository}/pulls/{issueNumber}");
         using var response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
         if (response.StatusCode == HttpStatusCode.NotFound)
         {
-            return;
+            return true;
+        }
+
+        var rateLimited = response.Headers.RetryAfter is not null
+            || (response.Headers.TryGetValues("X-RateLimit-Remaining", out var remaining) && remaining.Contains("0", StringComparer.Ordinal));
+        if (response.StatusCode is HttpStatusCode.Gone or HttpStatusCode.MovedPermanently or HttpStatusCode.Redirect
+            or HttpStatusCode.TemporaryRedirect or HttpStatusCode.PermanentRedirect
+            || (response.StatusCode == HttpStatusCode.Forbidden && !rateLimited))
+        {
+            return false;
         }
 
         if (response.IsSuccessStatusCode)

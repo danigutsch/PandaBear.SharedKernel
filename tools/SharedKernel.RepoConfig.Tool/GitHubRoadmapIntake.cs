@@ -52,8 +52,15 @@ internal sealed class GitHubRoadmapIntake
         using var ownedHttpClient = _httpClient is null ? GitHubHttpClient.Create("import") : null;
         var httpClient = (_httpClient ?? ownedHttpClient) ?? throw new InvalidOperationException("GitHub import could not create an HTTP client.");
         var snapshot = await new GitHubRoadmapReconcileClient(httpClient)
-            .ReadSnapshot(repository, reconciliation.GetRequiredIssueNumbers(_project), cancellationToken)
+            .ReadSnapshot(repository, reconciliation.GetRequiredIssueNumbers(_project), cancellationToken, _project)
             .ConfigureAwait(false);
+        var references = GitHubRoadmapReferencePlan.Create(_project, snapshot);
+        if (references.Writes.Count > 0)
+        {
+            throw new InvalidOperationException("GitHub issue identities changed; run github reconcile --force before import.");
+        }
+
+        _project = references.Project;
         var snapshotDigest = GitHubIssueSnapshotDigest.ComputeForOpenAndRequiredIssues(
             snapshot.Issues,
             reconciliation.GetRequiredIssueNumbers(_project),
@@ -76,12 +83,29 @@ internal sealed class GitHubRoadmapIntake
             throw new InvalidOperationException("GitHub reconciliation blocker edges do not match the verified snapshot.");
         }
 
+        var externalEdges = GitHubRoadmapReconciler.DeriveExternalBlockerEdges(snapshot.Issues, repository);
+        if (!reconciliation.ExternalBlockerEdges.SequenceEqual(externalEdges))
+        {
+            throw new InvalidOperationException("GitHub reconciliation external blocker edges do not match the verified snapshot.");
+        }
+
         var openSnapshotIssues = snapshot.Issues
             .Where(issue => string.Equals(issue.State, "OPEN", StringComparison.Ordinal))
             .ToArray();
         var openSnapshotIssuesByNumber = ValidateOpenSnapshot(reconciliation, openSnapshotIssues);
         var closedSnapshotIssuesByNumber = ReadClosedEndpoints(reconciliation, snapshotIssues);
-        return BuildPlan(reconciliation, openSnapshotIssuesByNumber, closedSnapshotIssuesByNumber, theme, openStatus, closedStatus, inputSnapshot);
+        var plan = BuildPlan(reconciliation, openSnapshotIssuesByNumber, closedSnapshotIssuesByNumber, theme, openStatus, closedStatus, inputSnapshot);
+        var unresolvedParents = openSnapshotIssues.Where(issue => issue.Parent is { } parent
+            && !string.Equals(parent.Repository, repository, StringComparison.OrdinalIgnoreCase)
+            && !_project.Items.Any(item => item.GitHubIssue == parent.Number
+                && string.Equals(item.GitHubRepository ?? repository, parent.Repository, StringComparison.OrdinalIgnoreCase)))
+            .Select(issue => $"unresolved parent: {repository}#{issue.Number} references {issue.Parent!.Repository}#{issue.Parent.Number}; existing roadmap parent retained.");
+        var retainedParents = openSnapshotIssues.Where(issue => issue.Parent is null)
+            .Select(issue => _project.Items.SingleOrDefault(item => item.HasLocalGitHubIssue(repository) && item.GitHubIssue == issue.Number))
+            .Where(item => item is not null && GetPreservedParent(item.Id) is not null)
+            .Select(item => $"retained parent: {item!.Id} keeps accepted parent {item.Parent}; the snapshot omitted an external or unresolved relationship. Review removal explicitly.");
+        plan.Diagnostics = references.Diagnostics.Concat(unresolvedParents).Concat(retainedParents).ToArray();
+        return plan;
     }
 
     private string GetGitHubRepository()
@@ -186,7 +210,7 @@ internal sealed class GitHubRoadmapIntake
     {
         var existingItemsById = _project.Items.ToDictionary(item => item.Id, StringComparer.Ordinal);
         var existingItemsByIssue = _project.Items
-            .Where(item => item.GitHubIssue is int)
+            .Where(item => item.GitHubIssue is int && item.HasLocalGitHubIssue(_project.GitHubRepository))
             .ToDictionary(item => item.GitHubIssue.GetValueOrDefault());
         foreach (var issueNumber in openIssuesByNumber.Keys)
         {
@@ -207,7 +231,7 @@ internal sealed class GitHubRoadmapIntake
         var roadmapNumber = GetNextRoadmapNumber(usedItemIds, _project.ItemIdPrefix, reconciliation.PriorityPolicy.FirstItemNumber);
         AllocateOpenItems(reconciliation, openIssuesByNumber, existingItemsByIssue, itemIdsByIssue, usedItemIds, candidates, ref roadmapNumber);
         AllocateClosedSupportItems(reconciliation, closedIssuesByNumber, existingItemsByIssue, itemIdsByIssue, usedItemIds, candidates, closedItemTransitions, ref roadmapNumber);
-        AddExactBlockerLinks(reconciliation, itemIdsByIssue, candidates);
+        AddExactBlockerLinks(_project, reconciliation, itemIdsByIssue, candidates);
         AddParentLinks(candidates, itemIdsByIssue, reconciliation.Repository);
         var importedOrdering = CreateImportedOrdering(_project, reconciliation, openIssuesByNumber, itemIdsByIssue, candidates, existingItemsById, closedItemTransitions);
 
@@ -293,7 +317,7 @@ internal sealed class GitHubRoadmapIntake
 
             var roadmapId = FindAvailableRoadmapId(ref roadmapNumber, usedItemIds, _project.ItemIdPrefix);
             itemIdsByIssue.Add(issueNumber, roadmapId);
-            candidates.Add(CreateCandidate(issue, roadmapId, isOpen: true, reconciliation.BlockerEdges, reconciliation.PriorityPolicy));
+            candidates.Add(CreateCandidate(issue, roadmapId, isOpen: true, reconciliation.BlockerEdges, reconciliation.PriorityPolicy, reconciliation.Repository));
         }
     }
 
@@ -333,7 +357,7 @@ internal sealed class GitHubRoadmapIntake
 
             var roadmapId = FindAvailableRoadmapId(ref roadmapNumber, usedItemIds, _project.ItemIdPrefix);
             itemIdsByIssue.Add(issueNumber, roadmapId);
-            candidates.Add(CreateCandidate(issue, roadmapId, isOpen: false, reconciliation.BlockerEdges, reconciliation.PriorityPolicy));
+            candidates.Add(CreateCandidate(issue, roadmapId, isOpen: false, reconciliation.BlockerEdges, reconciliation.PriorityPolicy, reconciliation.Repository));
         }
     }
 
@@ -342,10 +366,11 @@ internal sealed class GitHubRoadmapIntake
         string roadmapId,
         bool isOpen,
         IReadOnlyCollection<GitHubRoadmapBlockerEdge> blockerEdges,
-        GitHubRoadmapPriorityPolicy priorityPolicy)
+        GitHubRoadmapPriorityPolicy priorityPolicy,
+        string repository)
     {
         var classification = Classify(issue.Labels, priorityPolicy);
-        var scoring = CreateScoring(issue.Number, isOpen, blockerEdges, priorityPolicy, classification.Effort);
+        var scoring = CreateScoring(issue.Number, isOpen, blockerEdges, priorityPolicy, classification.Effort, CountExternalOpenBlockers(issue, repository));
         return new IntakeCandidate(issue, roadmapId, isOpen, classification.Type, scoring);
     }
 
@@ -354,15 +379,20 @@ internal sealed class GitHubRoadmapIntake
         bool isOpen,
         IReadOnlyCollection<GitHubRoadmapBlockerEdge> blockerEdges,
         GitHubRoadmapPriorityPolicy priorityPolicy,
-        decimal effort)
+        decimal effort,
+        int externalOpenBlockers)
     {
         var impact = isOpen
             ? Math.Min(
                 priorityPolicy.ImpactCap,
-                1m + blockerEdges.Count(edge => edge.Blocked == issueNumber && string.Equals(edge.BlockerState, "OPEN", StringComparison.Ordinal)))
+                1m + externalOpenBlockers + blockerEdges.Count(edge => edge.Blocked == issueNumber && string.Equals(edge.BlockerState, "OPEN", StringComparison.Ordinal)))
             : 0m;
         return new IntakeScoring(priorityPolicy.Reach, impact, priorityPolicy.Confidence, effort);
     }
+
+    private static int CountExternalOpenBlockers(GitHubRoadmapReconcileIssue issue, string repository) => issue.BlockedBy.Count(relation =>
+        !string.Equals(relation.Repository, repository, StringComparison.OrdinalIgnoreCase)
+        && string.Equals(relation.State, "OPEN", StringComparison.Ordinal));
 
     private static (string Type, decimal Effort) Classify(
         IReadOnlyList<string> labels,
@@ -408,32 +438,27 @@ internal sealed class GitHubRoadmapIntake
     }
 
     private static void AddExactBlockerLinks(
+        RoadmapProject project,
         GitHubRoadmapReconciliation reconciliation,
         Dictionary<int, string> itemIdsByIssue,
         List<IntakeCandidate> candidates)
     {
-        var candidatesById = candidates.ToDictionary(candidate => candidate.Id, StringComparer.Ordinal);
-        foreach (var edge in reconciliation.BlockerEdges)
+        var (blocks, blockedBy) = CreateBlockerLinkMaps(project, reconciliation, itemIdsByIssue);
+        foreach (var candidate in candidates)
         {
-            if (!itemIdsByIssue.TryGetValue(edge.Blocker, out var blockerId)
-                || !itemIdsByIssue.TryGetValue(edge.Blocked, out var blockedId))
+            foreach (var blockedId in GetSortedLinks(blocks, candidate.Id))
             {
-                throw new InvalidOperationException("GitHub reconciliation blocker edge cannot be mapped to roadmap items.");
+                candidate.AddBlockedItem(blockedId);
             }
 
-            if (candidatesById.TryGetValue(blockerId, out var blocker))
+            foreach (var blockerId in GetSortedLinks(blockedBy, candidate.Id))
             {
-                blocker.AddBlockedItem(blockedId);
-            }
-
-            if (candidatesById.TryGetValue(blockedId, out var blocked))
-            {
-                blocked.AddBlocker(blockerId);
+                candidate.AddBlocker(blockerId);
             }
         }
     }
 
-    private static void AddParentLinks(
+    private void AddParentLinks(
         List<IntakeCandidate> candidates,
         Dictionary<int, string> itemIdsByIssue,
         string repository)
@@ -441,8 +466,7 @@ internal sealed class GitHubRoadmapIntake
         foreach (var candidate in candidates)
         {
             if (candidate.Issue.Parent is { } parent
-                && IsLocalOpenParent(parent, repository)
-                && itemIdsByIssue.TryGetValue(parent.Number, out var parentId)
+                && FindParentId(parent, repository, itemIdsByIssue) is { } parentId
                 && !string.Equals(parentId, candidate.Id, StringComparison.Ordinal))
             {
                 candidate.Parent = parentId;
@@ -464,7 +488,7 @@ internal sealed class GitHubRoadmapIntake
         IReadOnlyCollection<RoadmapItemSnapshot> closedItemTransitions)
     {
         var transitioningItemIds = new HashSet<string>(closedItemTransitions.Select(item => item.Id), StringComparer.Ordinal);
-        var (_, blockerIdsByItemId) = CreateBlockerLinkMaps(reconciliation.BlockerEdges, itemIdsByIssue);
+        var (_, blockerIdsByItemId) = CreateBlockerLinkMaps(project, reconciliation, itemIdsByIssue);
         var (remaining, scoringByItemId) = CreateOrderNodes(
             project,
             reconciliation,
@@ -520,7 +544,8 @@ internal sealed class GitHubRoadmapIntake
             }
 
             var classification = Classify(issue.Labels, reconciliation.PriorityPolicy);
-            var scoring = CreateScoring(issueNumber, isOpen: true, reconciliation.BlockerEdges, reconciliation.PriorityPolicy, classification.Effort);
+            var scoring = CreateScoring(issueNumber, isOpen: true, reconciliation.BlockerEdges, reconciliation.PriorityPolicy, classification.Effort,
+                CountExternalOpenBlockers(issue, reconciliation.Repository));
             remaining.Add(item.Id, new ImportedOrderNode(item.Id, scoring.Score, GetSortedLinks(blockerIdsByItemId, item.Id)));
             scoringByItemId.Add(item.Id, scoring);
         }
@@ -610,6 +635,7 @@ internal sealed class GitHubRoadmapIntake
             writes.Add(Path.Combine(_project.RootPath, RepoConfigPaths.Order), CreateOrderContent(orderedItemIds));
         }
 
+        ValidateProposedGraph(writes);
         return new IntakePlan(
             _project.RootPath,
             writes.OrderBy(write => write.Key, StringComparer.Ordinal)
@@ -624,6 +650,23 @@ internal sealed class GitHubRoadmapIntake
             existingItemChanges,
             orderUpdated,
             inputSnapshot);
+    }
+
+    private void ValidateProposedGraph(Dictionary<string, string> writes)
+    {
+        var proposed = _project.Items.ToDictionary(item => item.Id, StringComparer.Ordinal);
+        var itemDirectory = Path.GetFullPath(Path.Combine(_project.RootPath, RepoConfigPaths.Items));
+        foreach (var (path, content) in writes.Where(write => string.Equals(Path.GetDirectoryName(Path.GetFullPath(write.Key)), itemDirectory, StringComparison.Ordinal)))
+        {
+            var item = RoadmapProject.ReadItemContent(RepoConfigPaths.RelativeTo(_project.RootPath, path), content);
+            proposed[item.Id] = item;
+        }
+
+        var issues = RepoConfigVerifier.VerifyItemGraph(proposed.Values.ToArray());
+        if (issues.Count > 0)
+        {
+            throw new InvalidOperationException($"GitHub import proposed roadmap graph is invalid: {string.Join(" ", issues.Select(issue => $"{issue.Path}: {issue.Message}"))} No roadmap files were changed.");
+        }
     }
 
     private int CreateExistingRelationshipChanges(
@@ -650,7 +693,7 @@ internal sealed class GitHubRoadmapIntake
             existingItemsById,
             theme,
             openStatus);
-        var (blocksByItemId, blockedByItemId) = CreateBlockerLinkMaps(reconciliation.BlockerEdges, itemIdsByIssue);
+        var (blocksByItemId, blockedByItemId) = CreateBlockerLinkMaps(_project, reconciliation, itemIdsByIssue);
 
         var changes = 0;
         foreach (var item in existingItemsById.Values)
@@ -658,7 +701,12 @@ internal sealed class GitHubRoadmapIntake
             var desiredBlocks = GetSortedLinks(blocksByItemId, item.Id);
             var desiredBlockedBy = GetSortedLinks(blockedByItemId, item.Id);
             var transitionsToClosedSupport = transitioningItemIds.Contains(item.Id);
-            var replacesGitHubRelationships = item.GitHubIssue is int;
+            var replacesGitHubRelationships = item.GitHubIssue is int && item.HasLocalGitHubIssue(_project.GitHubRepository);
+            if (replacesGitHubRelationships)
+            {
+                desiredBlocks = PreserveExternalLinks(item.Blocks, desiredBlocks, existingItemsById);
+                desiredBlockedBy = PreserveExternalLinks(item.BlockedBy, desiredBlockedBy, existingItemsById);
+            }
             string? desiredParent = null;
             var updatesParent = IsIntakeGenerated(item) && parentByItemId.TryGetValue(item.Id, out desiredParent);
             var updatesOrder = importedOrdersByItemId.TryGetValue(item.Id, out var desiredOrder) && item.Order != desiredOrder;
@@ -715,7 +763,14 @@ internal sealed class GitHubRoadmapIntake
         return changes;
     }
 
-    private static Dictionary<string, string?> CreateParentByItemId(
+    private RoadmapItemSnapshot? GetPreservedParent(string itemId)
+    {
+        var existing = _project.Items.SingleOrDefault(item => string.Equals(item.Id, itemId, StringComparison.Ordinal));
+        return _project.Items.SingleOrDefault(item => string.Equals(item.Id, existing?.Parent, StringComparison.Ordinal)
+            && item.GitHubIssue is not null && (item.GitHubReferenceReadOnly || item.GitHubReferenceUnresolved));
+    }
+
+    private Dictionary<string, string?> CreateParentByItemId(
         string repository,
         IReadOnlyDictionary<int, GitHubRoadmapReconcileIssue> openIssuesByNumber,
         Dictionary<int, string> itemIdsByIssue)
@@ -725,11 +780,21 @@ internal sealed class GitHubRoadmapIntake
         {
             if (itemIdsByIssue.TryGetValue(issue.Number, out var itemId))
             {
-                parentByItemId[itemId] = issue.Parent is { } parent
-                    && IsLocalOpenParent(parent, repository)
-                    && itemIdsByIssue.TryGetValue(parent.Number, out var parentId)
-                    ? parentId
-                    : null;
+                if (issue.Parent is { } parent)
+                {
+                    var parentId = FindParentId(parent, repository, itemIdsByIssue);
+                    if (parentId is not null)
+                    {
+                        parentByItemId[itemId] = parentId;
+                    }
+                }
+                else
+                {
+                    if (GetPreservedParent(itemId) is null)
+                    {
+                        parentByItemId[itemId] = null;
+                    }
+                }
             }
         }
 
@@ -774,16 +839,35 @@ internal sealed class GitHubRoadmapIntake
         bool replacesGitHubRelationships,
         bool hasUpdate) => candidateIds.Contains(itemId) || (!replacesGitHubRelationships && !hasUpdate);
 
-    private static bool IsIntakeGenerated(RoadmapItemSnapshot item) => item.GitHubIssue is int issueNumber
-        && string.Equals(Path.GetFileName(item.Path), $"{item.Id}-github-{issueNumber}.json", StringComparison.Ordinal);
+    private static bool IsIntakeGenerated(RoadmapItemSnapshot item) => !item.GitHubReferenceReadOnly
+        && !item.GitHubReferenceUnresolved && item.GitHubIssue is int issueNumber
+        && new[] { issueNumber }.Concat(item.PreviousGitHubLocations.Select(location => location.Issue))
+            .Any(number => string.Equals(Path.GetFileName(item.Path), $"{item.Id}-github-{number}.json", StringComparison.Ordinal));
+
+    private string? FindParentId(GitHubRoadmapReconcileRelation parent, string repository, Dictionary<int, string> localItemIds)
+    {
+        if (string.Equals(parent.Repository, repository, StringComparison.OrdinalIgnoreCase)
+            && localItemIds.TryGetValue(parent.Number, out var localId))
+        {
+            return localId;
+        }
+
+        return _project.Items.SingleOrDefault(item => item.GitHubIssue == parent.Number
+            && string.Equals(item.GitHubRepository ?? repository, parent.Repository, StringComparison.OrdinalIgnoreCase))?.Id;
+    }
+
+    private static string[] PreserveExternalLinks(IReadOnlyList<string> existing, string[] desired, Dictionary<string, RoadmapItemSnapshot> items) => desired
+        .Concat(existing.Where(id => items.TryGetValue(id, out var item) && (item.GitHubReferenceReadOnly || item.GitHubReferenceUnresolved)))
+        .Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
 
     private static (Dictionary<string, List<string>> BlocksByItemId, Dictionary<string, List<string>> BlockedByItemId) CreateBlockerLinkMaps(
-        IEnumerable<GitHubRoadmapBlockerEdge> blockerEdges,
+        RoadmapProject project,
+        GitHubRoadmapReconciliation reconciliation,
         Dictionary<int, string> itemIdsByIssue)
     {
         Dictionary<string, List<string>> blocksByItemId = new(StringComparer.Ordinal);
         Dictionary<string, List<string>> blockedByItemId = new(StringComparer.Ordinal);
-        foreach (var edge in blockerEdges)
+        foreach (var edge in reconciliation.BlockerEdges)
         {
             if (!itemIdsByIssue.TryGetValue(edge.Blocker, out var blockerId)
                 || !itemIdsByIssue.TryGetValue(edge.Blocked, out var blockedId))
@@ -795,7 +879,38 @@ internal sealed class GitHubRoadmapIntake
             AddLink(blockedByItemId, blockedId, blockerId);
         }
 
+        foreach (var edge in reconciliation.ExternalBlockerEdges)
+        {
+            var blockerId = ResolveExternalEndpoint(project, edge.Blocker, itemIdsByIssue);
+            var blockedId = ResolveExternalEndpoint(project, edge.Blocked, itemIdsByIssue);
+            AddLink(blocksByItemId, blockerId, blockedId);
+            AddLink(blockedByItemId, blockedId, blockerId);
+        }
+
         return (blocksByItemId, blockedByItemId);
+    }
+
+    private static string ResolveExternalEndpoint(RoadmapProject project, GitHubRoadmapReconcileRelation endpoint, Dictionary<int, string> localItemIds)
+    {
+        if (string.Equals(endpoint.Repository, project.GitHubRepository, StringComparison.OrdinalIgnoreCase)
+            && localItemIds.TryGetValue(endpoint.Number, out var localId))
+        {
+            return localId;
+        }
+
+        var item = project.Items.SingleOrDefault(item => item.GitHubIssue == endpoint.Number
+            && string.Equals(item.GitHubRepository ?? project.GitHubRepository, endpoint.Repository, StringComparison.OrdinalIgnoreCase));
+        if (item is null || item.GitHubReferenceUnresolved)
+        {
+            throw new InvalidOperationException($"External blocker endpoint {endpoint.Repository}#{endpoint.Number} requires an accessible exact roadmap mapping before import. No roadmap files were changed.");
+        }
+
+        if (string.Equals(endpoint.State, "OPEN", StringComparison.Ordinal) && project.IsClosed(item))
+        {
+            throw new InvalidOperationException($"Open external blocker endpoint {endpoint.Repository}#{endpoint.Number} maps to closed roadmap item {item.Id}; review the reopening before import. No roadmap files were changed.");
+        }
+
+        return item.Id;
     }
 
     private static string[] GetSortedLinks(Dictionary<string, List<string>> linksByItemId, string itemId) =>
@@ -1425,19 +1540,21 @@ internal sealed class GitHubRoadmapIntake
         bool orderUpdated,
         RoadmapWriteInputSnapshot inputSnapshot)
     {
+        public IReadOnlyList<string> Diagnostics { get; set; } = [];
+
         public void Apply() => RollbackFileWriteBatch.Apply(rootPath, writes, inputSnapshot.Verify);
 
         public List<string> Messages(bool preview)
         {
             if (writes.Count == 0)
             {
-                return [preview
+                return [.. Diagnostics, preview
                     ? "preview: roadmap already matches the reconciliation manifest."
                     : "import: roadmap already matches the reconciliation manifest."];
             }
 
             var prefix = preview ? "preview: GitHub import would" : "import:";
-            List<string> messages = [];
+            List<string> messages = [.. Diagnostics];
             AddConditionalMessage(
                 messages,
                 openItemsToCreate > 0,

@@ -15,6 +15,7 @@ internal sealed class GitHubRoadmapReconciliation
         IReadOnlyList<int> childrenOfCanonicalPrimaries,
         IReadOnlyDictionary<int, string> directCanonicalPrimaries,
         IReadOnlyList<GitHubRoadmapBlockerEdge> blockerEdges,
+        IReadOnlyList<GitHubRoadmapExternalBlockerEdge> externalBlockerEdges,
         IReadOnlyDictionary<int, string> closedEndpointStates,
         IReadOnlyDictionary<int, string> closedItemTransitions,
         string? snapshotDigest,
@@ -30,6 +31,7 @@ internal sealed class GitHubRoadmapReconciliation
         ChildrenOfCanonicalPrimaries = childrenOfCanonicalPrimaries;
         DirectCanonicalPrimaries = directCanonicalPrimaries;
         BlockerEdges = blockerEdges;
+        ExternalBlockerEdges = externalBlockerEdges;
         ClosedEndpointStates = closedEndpointStates;
         ClosedItemTransitions = closedItemTransitions;
         SnapshotDigest = snapshotDigest;
@@ -40,6 +42,11 @@ internal sealed class GitHubRoadmapReconciliation
     }
 
     public IReadOnlyList<GitHubRoadmapBlockerEdge> BlockerEdges
+    {
+        get;
+    }
+
+    public IReadOnlyList<GitHubRoadmapExternalBlockerEdge> ExternalBlockerEdges
     {
         get;
     }
@@ -150,8 +157,9 @@ internal sealed class GitHubRoadmapReconciliation
         var expectedOpenIssueNumbers = ReadExpectedOpenIssues(directCanonicalPrimaries.Keys, childrenOfCanonicalPrimaries, unmappedStructuralRoots, needsHuman);
         var expectedOpenIssueSet = new HashSet<int>(expectedOpenIssueNumbers);
         var blockerEdges = ReadBlockerEdges(root, expectedOpenIssueSet, out var closedEndpointStates);
+        var externalBlockerEdges = ReadExternalBlockerEdges(root, repository, expectedOpenIssueSet, closedEndpointStates);
         var closedItemTransitions = ReadClosedItemTransitions(root, closedEndpointStates);
-        VerifyIntegrity(root, expectedOpenIssueNumbers, directCanonicalPrimaries, childrenOfCanonicalPrimaries, unmappedStructuralRoots, needsHuman, blockerEdges);
+        VerifyIntegrity(root, expectedOpenIssueNumbers, directCanonicalPrimaries, childrenOfCanonicalPrimaries, unmappedStructuralRoots, needsHuman, blockerEdges, externalBlockerEdges);
 
         return new GitHubRoadmapReconciliation(
             manifestPath,
@@ -161,6 +169,7 @@ internal sealed class GitHubRoadmapReconciliation
             childrenOfCanonicalPrimaries,
             directCanonicalPrimaries,
             blockerEdges,
+            externalBlockerEdges,
             closedEndpointStates,
             closedItemTransitions,
             GetNullableString(root, "snapshotDigest"),
@@ -317,6 +326,82 @@ internal sealed class GitHubRoadmapReconciliation
         return [.. edges];
     }
 
+    private static GitHubRoadmapExternalBlockerEdge[] ReadExternalBlockerEdges(
+        JsonElement root,
+        string repository,
+        HashSet<int> expectedOpenIssueNumbers,
+        Dictionary<int, string> closedEndpointStates)
+    {
+        if (!root.TryGetProperty("externalBlockerEdges", out var entries))
+        {
+            return [];
+        }
+
+        if (entries.ValueKind != JsonValueKind.Array)
+        {
+            throw new InvalidOperationException("GitHub reconciliation manifest external blocker edges must be an array.");
+        }
+
+        List<GitHubRoadmapExternalBlockerEdge> edges = [];
+        HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, string> states = new(StringComparer.OrdinalIgnoreCase);
+        foreach (var entry in entries.EnumerateArray())
+        {
+            var blocker = ReadExternalEndpoint(GetRequiredObject(entry, "blocker"));
+            var blocked = ReadExternalEndpoint(GetRequiredObject(entry, "blocked"));
+            var blockerIsLocal = string.Equals(blocker.Repository, repository, StringComparison.OrdinalIgnoreCase);
+            var blockedIsLocal = string.Equals(blocked.Repository, repository, StringComparison.OrdinalIgnoreCase);
+            if (blockerIsLocal == blockedIsLocal)
+            {
+                throw new InvalidOperationException("GitHub reconciliation manifest external blocker edges must have exactly one local endpoint.");
+            }
+
+            var edgeKey = $"{blocker.Repository}#{blocker.Number}:{blocked.Repository}#{blocked.Number}";
+            if (!seen.Add(edgeKey))
+            {
+                throw new InvalidOperationException("GitHub reconciliation manifest external blocker edges must be unique.");
+            }
+
+            foreach (var endpoint in new[] { blocker, blocked })
+            {
+                var key = $"{endpoint.Repository}#{endpoint.Number}";
+                if (states.TryGetValue(key, out var previousState) && !string.Equals(previousState, endpoint.State, StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException("GitHub reconciliation manifest external blocker endpoint states conflict.");
+                }
+
+                states[key] = endpoint.State;
+                if (string.Equals(endpoint.Repository, repository, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (endpoint.State == "CLOSED" && expectedOpenIssueNumbers.Contains(endpoint.Number))
+                    {
+                        throw new InvalidOperationException("GitHub reconciliation manifest external blocker endpoint states conflict with the open snapshot.");
+                    }
+
+                    VerifyEndpointState(endpoint.Number, endpoint.State, expectedOpenIssueNumbers, closedEndpointStates);
+                }
+            }
+
+            edges.Add(new GitHubRoadmapExternalBlockerEdge(blocker, blocked));
+        }
+
+        return [.. edges];
+    }
+
+    private static GitHubRoadmapReconcileRelation ReadExternalEndpoint(JsonElement endpoint)
+    {
+        var repository = GetRequiredString(endpoint, "repository");
+        if (!GitHubRepositoryName.IsValid(repository))
+        {
+            throw new InvalidOperationException("GitHub reconciliation manifest external blocker repository is invalid.");
+        }
+
+        return new GitHubRoadmapReconcileRelation(
+            GetRequiredPositiveInteger(endpoint, "issue"),
+            repository,
+            GetRequiredIssueState(endpoint, "state"));
+    }
+
     private static Dictionary<int, string> ReadClosedItemTransitions(JsonElement root, Dictionary<int, string> closedEndpointStates)
     {
         if (!root.TryGetProperty("closedItemTransitions", out var entries))
@@ -388,7 +473,8 @@ internal sealed class GitHubRoadmapReconciliation
         int[] childrenOfCanonicalPrimaries,
         int[] unmappedStructuralRoots,
         int[] needsHuman,
-        GitHubRoadmapBlockerEdge[] blockerEdges)
+        GitHubRoadmapBlockerEdge[] blockerEdges,
+        GitHubRoadmapExternalBlockerEdge[] externalBlockerEdges)
     {
         var integrity = GetRequiredObject(root, "integrity");
         if (GetRequiredPositiveOrZeroInteger(integrity, "expectedIssueCount") != expectedOpenIssueNumbers.Length
@@ -397,6 +483,9 @@ internal sealed class GitHubRoadmapReconciliation
             || GetRequiredPositiveOrZeroInteger(integrity, "expectedUnmappedStructuralRootCount") != unmappedStructuralRoots.Length
             || GetRequiredPositiveOrZeroInteger(integrity, "expectedNeedsHumanCount") != needsHuman.Length
             || GetRequiredPositiveOrZeroInteger(integrity, "expectedBlockerEdgeCount") != blockerEdges.Length
+            || ((root.TryGetProperty("externalBlockerEdges", out _)
+                    || integrity.TryGetProperty("expectedExternalBlockerEdgeCount", out _))
+                && GetRequiredPositiveOrZeroInteger(integrity, "expectedExternalBlockerEdgeCount") != externalBlockerEdges.Length)
             || !GetRequiredBoolean(integrity, "dispositionsAreDisjoint")
             || !GetRequiredBoolean(integrity, "dispositionsCoverSnapshot"))
         {

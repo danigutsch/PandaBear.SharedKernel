@@ -52,7 +52,7 @@ sharedkernel-repo verify-podman-dns --verbosity quiet
 | `set <key> <value>` | Sets `github.repository`. |
 | `get <query> [<value>]` | Lists roadmap items for `next-priority`, `next-unblocked`, `next-work`, `next-blockers`, `next-enablers`, `low-hanging-fruit`, `pareto`, `blocking-overview`, `blockers-of <item-id>`, `by-tag <tag>`, or `by-label <label>`, and counts for `tags` or `labels`. `--type` filters by roadmap type; `--limit` caps the list at 10 by default. |
 | `github sync` | Projects roadmap items to GitHub issues and Projects. |
-| `github reconcile` | Updates the reconciliation manifest from the open GitHub issues. |
+| `github reconcile` | Reconciles the GitHub snapshot and resolves transferred issue identities. |
 | `github import` | Imports the reconciled issue snapshot into roadmap items. |
 | `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request. |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
@@ -63,6 +63,47 @@ Lines that describe previewed changes start with `preview:`. The `publish-result
 repository, base SHA, branch, and changed paths. Every command except `verify-podman-dns` takes
 `--root <path>`, which defaults to the current directory. Run `sharedkernel-repo <command> --help` for
 the options of each command.
+
+## Transferred issues and external references
+
+A roadmap item's `id` stays stable when its GitHub issue moves. Existing numeric mappings still use
+`roadmap/config.json`'s configured repository. Optional item-level fields identify a different current
+location and retain historical aliases:
+
+```json
+"integrations": {
+  "github": {
+    "issue": 18,
+    "repository": "owner/shared-library",
+    "nodeId": "opaque-current-node-id",
+    "previousLocations": [{ "repository": "owner/application", "issue": 457 }],
+    "previousNodeIds": ["opaque-previous-node-id"]
+  }
+}
+```
+
+These are schema examples; populate identities from GitHub. Node IDs are opaque references and may
+change format; do not decode them. Previous locations and node IDs preserve identity across transfers
+and ID migrations. Existing aliases do not create new roadmap items. Creation intent
+(`"issue": "create"`) cannot include existing node IDs or historical aliases.
+
+`github reconcile` previews resolved locations, aliases, and snapshot changes without writing.
+`github reconcile --force` applies the reconciliation manifest and accepted identity updates atomically.
+Transfers preserve roadmap IDs, filenames, local status, priority, and relationships. External mappings
+are read-only: `github sync` skips their issue and Project mutations. Parent and blocker links continue
+to refer to roadmap IDs across repository boundaries.
+
+Cross-repository blockers use the manifest's optional `externalBlockerEdges` array. Each `blocker` and
+`blocked` endpoint records `repository`, `issue`, and `state`; exactly one endpoint belongs to the
+configured repository. Local numeric `blockerEdges` remain compatible. External edges come from
+explicit GitHub blocker metadata, are bound to the accepted snapshot digest and integrity count, and
+map to existing qualified roadmap identities without inventing external items. Intake retains both
+`blocks` and `blockedBy` links for mapped endpoints; unresolved endpoints require review before
+changing affected relationships.
+
+Missing or inaccessible references produce diagnostics; they do not establish closure or deletion.
+Unresolved metadata preserves accepted local relationships rather than erasing them. Review affected
+references before applying changes, and use explicit closure approvals for actual closed-item transitions.
 
 ## Environment
 

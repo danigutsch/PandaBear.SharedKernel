@@ -8,4 +8,10 @@ internal sealed record GitHubRoadmapReconcileIssue(
     GitHubRoadmapReconcileRelation? Parent,
     IReadOnlyList<GitHubRoadmapReconcileRelation> SubIssues,
     IReadOnlyList<GitHubRoadmapReconcileRelation> BlockedBy,
-    IReadOnlyList<GitHubRoadmapReconcileRelation> Blocking);
+    IReadOnlyList<GitHubRoadmapReconcileRelation> Blocking)
+{
+    public string? NodeId
+    {
+        get; init;
+    }
+}

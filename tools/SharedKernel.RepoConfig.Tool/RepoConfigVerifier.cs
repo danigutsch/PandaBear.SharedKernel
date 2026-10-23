@@ -171,6 +171,16 @@ internal static class RepoConfigVerifier
         }
     }
 
+    internal static IReadOnlyList<RepoConfigIssue> VerifyItemGraph(IReadOnlyCollection<RoadmapItemSnapshot> items)
+    {
+        List<RepoConfigIssue> issues = [];
+        VerifyReferences(items, issues);
+        VerifyParentCycles(items, issues);
+        VerifyBlockerConsistency(items, issues);
+        VerifyBlockedByCycles(items, issues);
+        return issues;
+    }
+
     private static void VerifyItems(string rootPath, RoadmapSettings settings, List<RepoConfigIssue> issues)
     {
         var itemsPath = Path.Combine(rootPath, RepoConfigPaths.Items);
@@ -191,7 +201,7 @@ internal static class RepoConfigVerifier
 
         var themeIds = VerifyThemes(rootPath, issues);
         VerifyUniqueIds(items, issues);
-        VerifyUniqueGitHubIssues(items, issues);
+        VerifyUniqueGitHubIssues(rootPath, items, issues);
         VerifyItemThemes(items, themeIds, issues);
         VerifyReferences(items, issues);
         VerifyParentCycles(items, issues);
@@ -271,7 +281,7 @@ internal static class RepoConfigVerifier
 
         return string.IsNullOrWhiteSpace(id)
             ? null
-            : new RoadmapItemSnapshot(
+            : GitHubRoadmapItemReference.Read(new RoadmapItemSnapshot(
                 id,
                 relativePath,
                 title,
@@ -291,7 +301,7 @@ internal static class RepoConfigVerifier
                 tags,
                 labels,
                 githubIssue,
-                createGitHubIssue);
+                createGitHubIssue), root);
     }
 
     private static bool IsUntriaged(JsonElement root, string relativePath, List<RepoConfigIssue> issues)
@@ -434,18 +444,30 @@ internal static class RepoConfigVerifier
         }
     }
 
-    private static void VerifyUniqueGitHubIssues(IReadOnlyCollection<RoadmapItemSnapshot> items, List<RepoConfigIssue> issues)
+    private static void VerifyUniqueGitHubIssues(string rootPath, IReadOnlyCollection<RoadmapItemSnapshot> items, List<RepoConfigIssue> issues)
     {
+        using var config = TryParseJsonFile(rootPath, Path.Combine(rootPath, RepoConfigPaths.Config), []);
+        var repository = config is not null && config.RootElement.ValueKind == JsonValueKind.Object
+            && config.RootElement.TryGetProperty("integrations", out var integrations) && integrations.ValueKind == JsonValueKind.Object
+            && integrations.TryGetProperty("github", out var github) && github.ValueKind == JsonValueKind.Object
+            && github.TryGetProperty("repository", out var configuredRepository) && configuredRepository.ValueKind == JsonValueKind.String
+            ? configuredRepository.GetString() : null;
+        foreach (var item in items.Where(item => item.CreateGitHubIssue && item.GitHubRepository is not null
+            && !string.Equals(item.GitHubRepository, repository, StringComparison.OrdinalIgnoreCase)))
+        {
+            issues.Add(new RepoConfigIssue(item.Path, "GitHub issue creation must target the configured repository."));
+        }
+
         var duplicates = items
             .Where(item => item.GitHubIssue is not null)
-            .GroupBy(item => item.GitHubIssue)
+            .GroupBy(item => $"{item.GitHubRepository ?? repository}#{item.GitHubIssue}", StringComparer.OrdinalIgnoreCase)
             .Where(group => group.Count() > 1);
 
         foreach (var duplicate in duplicates)
         {
             foreach (var item in duplicate)
             {
-                issues.Add(new RepoConfigIssue(item.Path, $"Duplicate GitHub issue mapping: {duplicate.Key}."));
+                issues.Add(new RepoConfigIssue(item.Path, $"Duplicate GitHub issue mapping: {item.GitHubIssue}. Repository: {item.GitHubRepository ?? repository}."));
             }
         }
     }
@@ -807,6 +829,7 @@ internal static class RepoConfigVerifier
             issues.Add(new RepoConfigIssue(relativePath, "integrations.github.subIssues is not supported; use parent links."));
         }
 
+        VerifyGitHubReference(github, relativePath, issues);
         if (!github.TryGetProperty("issue", out var issue))
         {
             return null;
@@ -825,6 +848,61 @@ internal static class RepoConfigVerifier
         }
 
         return issueNumber;
+    }
+
+    private static void VerifyGitHubReference(JsonElement github, string path, List<RepoConfigIssue> issues)
+    {
+        foreach (var name in new[] { "repository", "nodeId", "previousLocations", "previousNodeIds" })
+        {
+            if (github.TryGetProperty(name, out _) && !github.TryGetProperty("issue", out _))
+            {
+                issues.Add(new RepoConfigIssue(path, $"integrations.github.{name} requires issue."));
+            }
+        }
+
+        if (github.TryGetProperty("repository", out var repository)
+            && (repository.ValueKind != JsonValueKind.String || !GitHubRepositoryName.IsValid(repository.GetString() ?? string.Empty)))
+        {
+            issues.Add(new RepoConfigIssue(path, "integrations.github.repository must be shaped as owner/repository."));
+        }
+
+        if (github.TryGetProperty("nodeId", out var nodeId)
+            && (nodeId.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(nodeId.GetString())))
+        {
+            issues.Add(new RepoConfigIssue(path, "integrations.github.nodeId must be a non-empty opaque string."));
+        }
+
+        if (github.TryGetProperty("previousLocations", out var locations))
+        {
+            HashSet<string> seen = new(StringComparer.OrdinalIgnoreCase);
+            if (locations.ValueKind != JsonValueKind.Array || locations.EnumerateArray().Any(location =>
+                location.ValueKind != JsonValueKind.Object
+                || !location.TryGetProperty("repository", out var oldRepository)
+                || oldRepository.ValueKind != JsonValueKind.String
+                || !GitHubRepositoryName.IsValid(oldRepository.GetString() ?? string.Empty)
+                || !location.TryGetProperty("issue", out var oldIssue)
+                || oldIssue.ValueKind != JsonValueKind.Number || !oldIssue.TryGetInt32(out var number) || number < 1
+                || !seen.Add($"{oldRepository.GetString()}#{number}")))
+            {
+                issues.Add(new RepoConfigIssue(path, "integrations.github.previousLocations must contain unique repository and positive issue locations."));
+            }
+        }
+
+        if (github.TryGetProperty("previousNodeIds", out var ids))
+        {
+            HashSet<string> seen = new(StringComparer.Ordinal);
+            if (ids.ValueKind != JsonValueKind.Array || ids.EnumerateArray().Any(id => id.ValueKind != JsonValueKind.String
+                || string.IsNullOrWhiteSpace(id.GetString()) || !seen.Add(id.GetString()!)))
+            {
+                issues.Add(new RepoConfigIssue(path, "integrations.github.previousNodeIds must contain unique non-empty opaque strings."));
+            }
+        }
+
+        if (github.TryGetProperty("issue", out var issue) && issue.ValueKind == JsonValueKind.String
+            && (github.TryGetProperty("nodeId", out _) || github.TryGetProperty("previousLocations", out _) || github.TryGetProperty("previousNodeIds", out _)))
+        {
+            issues.Add(new RepoConfigIssue(path, "GitHub issue creation cannot include existing identity metadata."));
+        }
     }
 
     private static void VerifyGitHubConfig(

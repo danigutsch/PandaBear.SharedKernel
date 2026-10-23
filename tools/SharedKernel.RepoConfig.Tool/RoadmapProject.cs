@@ -20,7 +20,7 @@ internal sealed class RoadmapProject
         GitHubProjectTarget? gitHubProjectTarget)
     {
         RootPath = rootPath;
-        Items = items;
+        Items = items.Select(item => item with { GitHubReferenceReadOnly = !item.HasLocalGitHubIssue(gitHubRepository) }).ToArray();
         AllowedStatuses = allowedStatuses;
         ClosedStatuses = closedStatuses;
         ItemIdPrefix = itemIdPrefix;
@@ -154,8 +154,12 @@ internal sealed class RoadmapProject
     public IEnumerable<KeyValuePair<string, int>> LabelCounts() =>
         Items.SelectMany(item => item.Labels).GroupBy(label => label, StringComparer.Ordinal).Select(group => new KeyValuePair<string, int>(group.Key, group.Count())).OrderByDescending(item => item.Value).ThenBy(item => item.Key, StringComparer.Ordinal);
 
+    public RoadmapProject WithItems(IReadOnlyList<RoadmapItemSnapshot> items) => new(
+        RootPath, items, AllowedStatuses, ClosedStatuses, ItemIdPrefix, GitHubIntakeTheme,
+        GitHubIntakeOpenStatus, GitHubIntakeClosedStatus, GitHubRepository, GitHubEnabled, GitHubProjectTarget);
+
     public int[] GetGitHubIssueNumbers() => Items
-        .Where(item => item.GitHubIssue is int)
+        .Where(item => item.GitHubIssue is int && item.HasLocalGitHubIssue(GitHubRepository))
         .Select(item => item.GitHubIssue.GetValueOrDefault())
         .Distinct()
         .Order()
@@ -183,10 +187,12 @@ internal sealed class RoadmapProject
             ReadNullableString(intake, "closedStatus"));
     }
 
-    private static RoadmapItemSnapshot LoadItem(string rootPath, string itemPath)
+    private static RoadmapItemSnapshot LoadItem(string rootPath, string itemPath) =>
+        ReadItemContent(RepoConfigPaths.RelativeTo(rootPath, itemPath), File.ReadAllText(itemPath));
+
+    internal static RoadmapItemSnapshot ReadItemContent(string relativePath, string content)
     {
-        var relativePath = RepoConfigPaths.RelativeTo(rootPath, itemPath);
-        using var document = JsonDocument.Parse(File.ReadAllText(itemPath));
+        using var document = JsonDocument.Parse(content);
         var root = document.RootElement;
         var isUntriaged = root.TryGetProperty("triage", out var triage)
             && triage.ValueKind == JsonValueKind.String
@@ -213,7 +219,7 @@ internal sealed class RoadmapProject
             effort = ReadDecimal(scoring, "effort");
         }
 
-        return new RoadmapItemSnapshot(
+        return GitHubRoadmapItemReference.Read(new RoadmapItemSnapshot(
             root.GetProperty("id").GetString() ?? string.Empty,
             relativePath,
             root.GetProperty("title").GetString() ?? string.Empty,
@@ -233,7 +239,7 @@ internal sealed class RoadmapProject
             ReadStringArray(root, "tags"),
             ReadStringArray(root, "labels"),
             ReadGitHubIssue(root, out var createGitHubIssue),
-            createGitHubIssue);
+            createGitHubIssue), root);
     }
 
     private static string? ReadGitHubRepository(JsonElement root)
