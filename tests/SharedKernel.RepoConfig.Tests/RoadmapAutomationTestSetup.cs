@@ -81,6 +81,31 @@ internal static class RoadmapAutomationTestSetup
         return await service.CreatePlan(42, "owner/repository", cancellationToken);
     }
 
+    public static async Task<(RoadmapAutomationPlan Plan, RoadmapAutomationResultSeal Seal)> CreateSealedResult(
+        TemporaryRepoConfigWorkspace workspace,
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot,
+        byte[] status,
+        string artifactDigest,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(workspace);
+        ArgumentNullException.ThrowIfNull(snapshot);
+        ArgumentNullException.ThrowIfNull(status);
+        Configure(workspace);
+        var plan = await CreatePlan(workspace, snapshot, cancellationToken);
+        await ApplyPlan(workspace, plan, snapshot, cancellationToken);
+        await RefreshReconciliation(workspace, snapshot, cancellationToken);
+        using var handler = new TestHttpMessageHandler();
+        GitHubRoadmapSnapshotTestOperations.Enqueue(handler, snapshot);
+        using var httpClient = new HttpClient(handler);
+        var service = new RoadmapAutomationService(
+            workspace.RootPath,
+            httpClient,
+            RoadmapAutomationTestGit.Create(status));
+        var seal = await service.SealResult(plan.PlanDigest, artifactDigest, "owner/repository", cancellationToken);
+        return (plan, seal);
+    }
+
     public static async Task RefreshReconciliation(
         TemporaryRepoConfigWorkspace workspace,
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot,

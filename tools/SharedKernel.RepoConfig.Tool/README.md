@@ -8,15 +8,28 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 repository checks. Application CI slices, coverage exclusions, bootstrap, consumer compatibility,
 workflow configuration, and protected-environment approval remain consumer-owned.
 
-## Prerequisites and installation
+## Prerequisites
 
-The tool runs on .NET 10; `verify-text-encoding` also needs Git. Source is public and registry
-publication remains deferred, so install a validated candidate from an explicitly configured local or
-private feed as a local tool, then run `dotnet tool run sharedkernel-repo -- <command>`. Nothing here
-implies availability on nuget.org.
+The tool runs on .NET 10; `verify-text-encoding` also needs Git.
+
+## Installation
+
+Install a validated candidate as a local tool from the feed that holds it, such as the folder that
+`sharedkernel-version stage-candidate` copies a candidate to. Add the feed to `NuGet.Config` and map
+`PandaBear.SharedKernel.*` to it. Map every other package, for example `*`, to the existing source, because
+a package without a mapping does not restore once source mapping is enabled. With the SDK pinned in
+`global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.
+
+```text
+dotnet tool install PandaBear.SharedKernel.RepoConfig.Tool --version <validated-candidate-version>
+dotnet tool run sharedkernel-repo -- <command>
+```
+
+.NET tools run in full trust. Install only from trusted manifests and package sources.
 
 Package ID: `PandaBear.SharedKernel.RepoConfig.Tool`. C# namespace: `PandaBear.RepoConfig.Tool`.
-Assembly/project identity: `SharedKernel.RepoConfig.Tool`.
+Assembly/project identity: `SharedKernel.RepoConfig.Tool`. Source is public; registry publication remains
+deferred, and nothing here implies availability on nuget.org.
 
 ## Usage
 
@@ -28,6 +41,7 @@ sharedkernel-repo get next-work --limit 5
 sharedkernel-repo get by-label "area: tooling"
 sharedkernel-repo github reconcile
 sharedkernel-repo github reconcile --force
+sharedkernel-repo automation publish-result --force
 sharedkernel-repo verify-podman-dns --verbosity quiet
 ```
 
@@ -40,13 +54,15 @@ sharedkernel-repo verify-podman-dns --verbosity quiet
 | `github sync` | Projects roadmap items to GitHub issues and Projects. |
 | `github reconcile` | Updates the reconciliation manifest from the open GitHub issues. |
 | `github import` | Imports the reconciled issue snapshot into roadmap items. |
-| `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. |
+| `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request. |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
 
-`github` commands preview their changes unless `--force` is given. Every command except
-`verify-podman-dns` takes `--root <path>`, which defaults to the current directory. Run
-`sharedkernel-repo <command> --help` for the options of each command.
+`github` commands and `automation publish-result` preview their changes unless `--force` is given.
+Lines that describe previewed changes start with `preview:`. The `publish-result` preview names the
+repository, base SHA, branch, and changed paths. Every command except `verify-podman-dns` takes
+`--root <path>`, which defaults to the current directory. Run `sharedkernel-repo <command> --help` for
+the options of each command.
 
 ## Environment
 
@@ -57,7 +73,7 @@ sharedkernel-repo verify-podman-dns --verbosity quiet
 | `GITHUB_REPOSITORY` | `automation` steps. |
 | `GITHUB_RUN_ID` | `automation plan-github`. |
 | `ROADMAP_PLAN_DIGEST`, `ROADMAP_ARTIFACT_DIGEST`, `ROADMAP_RESULT_DIGEST` | `automation` steps after planning, as each step requires. |
-| `GITHUB_OUTPUT`, `GITHUB_STEP_SUMMARY` | `automation plan-github`, `seal-result`, and `publish-result`. |
+| `GITHUB_OUTPUT`, `GITHUB_STEP_SUMMARY` | `automation plan-github`, `seal-result`, and `publish-result --force`. |
 
 ## Limits
 
@@ -77,7 +93,11 @@ sharedkernel-repo verify-podman-dns --verbosity quiet
 
 - Tokens come only from the environment. GitHub transport failures are reported without request details.
 - Child processes (Git, Podman, and `stat`) start without `GH_TOKEN` and `GITHUB_TOKEN`.
-- Without `--force`, `github` commands only read; `--force` never skips validation.
-- `automation` steps after planning are bound to the reviewed plan digest; publication also requires a
-  sealed result.
+- Without `--force`, `github` commands and `automation publish-result` only read and change nothing in
+  GitHub or the checkout; `--force` never skips validation.
+- `automation` steps after planning are bound to the reviewed plan digest. `publish-result` requires a
+  sealed result with or without `--force`, and its preview reads GitHub only to validate. With `--force`
+  it creates Git objects, one new branch, and a draft pull request. When the branch already exists it
+  fails and leaves only unreferenced Git objects.
+- The `publish-result` preview prints no file contents.
 - Output escapes control characters from roadmap and GitHub data.

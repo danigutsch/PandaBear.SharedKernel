@@ -1,17 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <PackageId>PandaBear.SharedKernel.Idempotency</PackageId>
-        <Description>Storage-neutral idempotency primitives for shared-kernel workflows.</Description>
+        <PackageId>PandaBear.SharedKernel.Idempotency.Abstractions</PackageId>
+        <Description>Validated idempotency identities and storage-neutral lifecycle contracts.</Description>
         <RootNamespace>PandaBear.Idempotency</RootNamespace>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageTags>idempotency;shared-kernel;messaging;dotnet</PackageTags>
     </PropertyGroup>
-
-    <ItemGroup>
-    </ItemGroup>
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />

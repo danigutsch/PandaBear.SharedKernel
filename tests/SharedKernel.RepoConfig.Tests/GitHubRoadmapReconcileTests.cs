@@ -157,7 +157,7 @@ public sealed class GitHubRoadmapReconcileTests
         reconcileError.ToString().ShouldBe(string.Empty);
         importExitCode.ShouldBe(0);
         importError.ToString().ShouldBe(string.Empty);
-        importOutput.ToString().ShouldContain("dry-run: GitHub import would add 1 open roadmap items.", StringComparison.Ordinal);
+        importOutput.ToString().ShouldContain("preview: GitHub import would add 1 open roadmap items.", StringComparison.Ordinal);
     }
 
 
@@ -411,7 +411,7 @@ public sealed class GitHubRoadmapReconcileTests
     }
 
     [Fact]
-    public async Task GitHub_reconcile_defaults_to_dry_run_and_requests_only_structural_metadata()
+    public async Task GitHub_reconcile_defaults_to_preview_and_requests_only_structural_metadata()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -498,7 +498,8 @@ public sealed class GitHubRoadmapReconcileTests
 
         // Assert
         exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("dry-run: GitHub reconciliation would update", StringComparison.Ordinal);
+        output.ToString().ShouldBe(
+            $"preview: GitHub reconciliation would update {Path.Combine("roadmap", "reconciliation", "open-issues-test.json")}.{Environment.NewLine}");
         error.ToString().ShouldBe(string.Empty);
         stateAfter.ShouldBe(stateBefore);
         request.Message.Method.ShouldBe(HttpMethod.Post);
@@ -641,7 +642,8 @@ public sealed class GitHubRoadmapReconcileTests
 
         // Assert
         firstExitCode.ShouldBe(0);
-        firstOutput.ToString().ShouldContain("reconcile: updated", StringComparison.Ordinal);
+        firstOutput.ToString().ShouldBe(
+            $"reconcile: updated {Path.Combine("roadmap", "reconciliation", "open-issues-test.json")}.{Environment.NewLine}");
         firstError.ToString().ShouldBe(string.Empty);
         root.GetProperty("repositoryCommit").GetString().ShouldBe("1111111111111111111111111111111111111111");
         structuralRoots.ShouldHaveSingleItem().ShouldBe(100);

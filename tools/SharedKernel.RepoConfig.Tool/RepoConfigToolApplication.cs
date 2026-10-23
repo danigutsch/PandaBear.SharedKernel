@@ -316,13 +316,33 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
-    public static async Task<int> PublishAutomationResult(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
+    /// <summary>
+    /// Publishes the sealed result as a draft pull request when <paramref name="force"/> is set. Otherwise runs the same
+    /// validation and prints the repository, base SHA, branch, and changed paths without changing GitHub or local files.
+    /// </summary>
+    public static async Task<int> PublishAutomationResult(RoadmapAutomationService service, bool force, TextWriter output, CancellationToken ct)
     {
         var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
+        var planDigest = RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST");
+        var artifactDigest = RequireEnvironmentVariable("ROADMAP_ARTIFACT_DIGEST");
+        var resultDigest = RequireEnvironmentVariable("ROADMAP_RESULT_DIGEST");
+        if (!force)
+        {
+            var preview = await service.PreviewResult(planDigest, artifactDigest, resultDigest, repository, ct).ConfigureAwait(false);
+            await WriteMessages(
+                output,
+                [
+                    $"preview: roadmap publication would create branch {preview.BranchName} from {preview.BaseSha} in {preview.Repository} and open a draft pull request.",
+                    .. preview.Paths.Select(path => $"preview: roadmap publication would change {path}."),
+                ],
+                ct).ConfigureAwait(false);
+            return 0;
+        }
+
         var publication = await service.PublishResult(
-            RequireEnvironmentVariable("ROADMAP_PLAN_DIGEST"),
-            RequireEnvironmentVariable("ROADMAP_ARTIFACT_DIGEST"),
-            RequireEnvironmentVariable("ROADMAP_RESULT_DIGEST"),
+            planDigest,
+            artifactDigest,
+            resultDigest,
             repository,
             ct).ConfigureAwait(false);
         await AppendWorkflowOutput(

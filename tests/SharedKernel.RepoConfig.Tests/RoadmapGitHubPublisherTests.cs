@@ -285,6 +285,65 @@ public sealed class RoadmapGitHubPublisherTests
     }
 
     [Fact]
+    public async Task Preview_applies_the_publication_path_count_limit()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        var entries = Enumerable.Range(1, 513)
+            .Select(number => new RoadmapGitStatusEntry(
+                "?",
+                "??",
+                "N...",
+                "000000",
+                "000000",
+                "100644",
+                $"roadmap/items/RM-{number:D3}.json",
+                OriginalPath: null))
+            .ToArray();
+        var changes = new RoadmapGitChangeSet(
+            HasChanges: true,
+            new string('a', 64),
+            entries.Select(entry => entry.Path).ToArray(),
+            entries);
+
+        // Act
+        var action = () => RoadmapGitHubPublisher.Preview(
+            workspace.RootPath,
+            RoadmapAutomationTestPlan.Create(),
+            changes,
+            TestContext.Current.CancellationToken);
+        var exception = await action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldBe("Roadmap publication exceeds the allowed changed-path count.");
+    }
+
+    [Fact]
+    public async Task Preview_names_both_paths_of_a_confined_rename()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        workspace.WriteFile("roadmap/items/RM-101.json", "{}\n");
+        var changes = RoadmapGitChangeGuard.Capture(
+            workspace.RootPath,
+            RoadmapGitStatusTestData.Rename("roadmap/items/RM-101.json", "roadmap/items/RM-100.json"));
+        var plan = RoadmapAutomationTestPlan.Create();
+
+        // Act
+        var preview = await RoadmapGitHubPublisher.Preview(
+            workspace.RootPath,
+            plan,
+            changes,
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        preview.Repository.ShouldBe("owner/repository");
+        preview.BaseSha.ShouldBe(RoadmapAutomationTestPlan.BaseSha);
+        preview.BranchName.ShouldBe(plan.BranchName);
+        preview.Paths.ShouldBe(["roadmap/items/RM-100.json", "roadmap/items/RM-101.json"]);
+    }
+
+    [Fact]
     public async Task Publication_reports_the_aggregate_timeout_duration()
     {
         // Arrange

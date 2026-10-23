@@ -28,7 +28,7 @@ internal static class ApiCompatibilityCommand
             await SharedKernelPackCommand.Run(packOptions, writer, ct).ConfigureAwait(false);
             await ApiCompatibilityReport.AppendOutput(reportPath, writer.ToString()).ConfigureAwait(false);
         }
-        catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
+        catch (Exception ex) when ((ex is ArgumentException or InvalidOperationException) && !ct.IsCancellationRequested)
         {
             await ApiCompatibilityReport.AppendOutput(reportPath, ex.Message).ConfigureAwait(false);
             if (!ApiCompatibilityReport.ShouldTreatFailureAsReportOnly(reportOptions))

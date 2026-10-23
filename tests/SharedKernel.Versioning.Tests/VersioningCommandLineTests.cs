@@ -105,6 +105,7 @@ public static class VersioningCommandLineTests
     [InlineData("Option '--output' is required.", "stage-candidate", "--candidate", "candidate.json", "--feed", "packages")]
     [InlineData("Argument 'beta' not recognized.", "calculate-release", "--version-kind", "beta")]
     [InlineData("Argument 'production' not recognized.", "calculate-release", "--version-kind", "production")]
+    [InlineData("Option '--run-number' is required when '--version-kind' is prerelease.", "calculate-release")]
     [InlineData("Argument 'gamma' not recognized.", "check-api-compatibility", "--release-phase", "gamma")]
     [InlineData("Option '--base' expects a semantic version, but got 'not-a-version'.", "compute", "--base", "not-a-version")]
     [InlineData("Option '--version' expects a semantic version, but got '1.2'.", "create-candidate", "--version", "1.2")]
@@ -151,12 +152,12 @@ public static class VersioningCommandLineTests
     }
 
     [Theory]
-    [InlineData("--version-kind", "prerelease", "calculate-release")]
+    [InlineData("--version-kind", "prerelease", "calculate-release", "--run-number", "7")]
     [InlineData("--version-kind", "stable", "calculate-release", "--version-kind", "stable")]
     [InlineData("--run-number", "7.1", "calculate-release", "--run-number", "7.1")]
-    [InlineData("--sha", "abc123", "calculate-release", "--sha", "abc123")]
+    [InlineData("--sha", "abc123", "calculate-release", "--run-number", "7", "--sha", "abc123")]
     [InlineData("--sha", "abc123", "compute", "--base", "0.1.0", "--sha", "abc123")]
-    [InlineData("--repo-root", ".", "calculate-release")]
+    [InlineData("--repo-root", ".", "calculate-release", "--run-number", "7")]
     [InlineData("--repo-root", ".", "stage-candidate", "--candidate", "candidate.json", "--feed", "packages", "--output", "feed")]
     [InlineData("--release-phase", "alpha", "check-api-compatibility")]
     [InlineData("--output-root", "artifacts/api-compat", "check-api-compatibility")]
@@ -308,32 +309,145 @@ public static class VersioningCommandLineTests
         }
     }
 
-    [Theory]
-    [InlineData("tools/SharedKernel.Versioning.Tool/README.md", "classify-commit \"feat(versioning): emit JSON output\"")]
-    [InlineData("tools/SharedKernel.Versioning.Tool/README.md", "compute --base 0.1.0 --prerelease alpha.1 --sha abc123")]
-    [InlineData("tools/SharedKernel.Versioning.Tool/README.md", "calculate-release --version-kind stable --sha abc123")]
-    [InlineData("tools/SharedKernel.Versioning.Tool/README.md", "has-breaking-change-marker origin/main..HEAD")]
-    [InlineData("tools/SharedKernel.Versioning.Tool/README.md", "check-api-compatibility --version 0.2.0-beta.1 --release-phase beta --breaking-marker --baseline-version 0.1.0")]
-    [InlineData("tools/SharedKernel.Versioning.Tool/README.md", "pack-sharedkernel --version 0.2.0-alpha.1")]
-    [InlineData("tools/SharedKernel.Versioning.Tool/README.md", "prepare-release --version 0.2.0 --package-dir artifacts/packages/local/0.2.0")]
-    [InlineData("tools/SharedKernel.Versioning.Tool/README.md", "validate-candidate --aot")]
-    [InlineData("tools/SharedKernel.Versioning.Tool/README.md", "consume-candidate --candidate-directory artifacts/candidate --aot")]
-    [InlineData("tools/SharedKernel.Versioning.Tool/README.md", "consume-packages --feed artifacts/api-compat/packages/0.2.0-alpha.1 --version 0.2.0-alpha.1")]
-    [InlineData("tools/SharedKernel.Versioning.Tool/README.md", "stage-candidate --candidate .config/sharedkernel-candidate.json --feed ../SharedKernel/artifacts/api-compat/packages/0.2.0-alpha.1 --output .local/sharedkernel-feed --repo-root ../SharedKernel")]
-    public static void Documented_command_lines_dispatch_to_their_command(string document, string commandLine)
+    [Fact]
+    public static void Readme_command_lines_dispatch_to_their_command()
     {
         // Arrange
-        var text = File.ReadAllText(Path.Combine(RepositoryRoot.Find(), document));
-        var args = CallerCommandLine.Split(commandLine);
+        var readme = Path.Combine(RepositoryRoot.Find(), "tools", "SharedKernel.Versioning.Tool", "README.md");
+        var commandLines = CallerCommandLine.ReadReadmeCommandLines(readme);
 
+        // Act
+        var parsed = commandLines
+            .Select(static commandLine => (CommandLine: commandLine, Arguments: CallerCommandLine.Split(commandLine)))
+            .Select(static entry => (entry.CommandLine, Expected: entry.Arguments[0], Result: VersioningCommandLineRunner.Parse(entry.Arguments)))
+            .ToArray();
+
+        // Assert
+        // The piped compute and redirected prepare-release examples read standard input.
+        commandLines.ShouldContain(static line => line.StartsWith("compute ", StringComparison.Ordinal));
+        commandLines.ShouldContain(static line => line.StartsWith("prepare-release ", StringComparison.Ordinal));
+        parsed.ShouldAllSatisfy(static entry =>
+        {
+            entry.Result.Errors.ShouldBeEmpty();
+            CallerCommandLine.Selection(entry.Result).ShouldBe(entry.Expected);
+        });
+    }
+
+    [Fact]
+    public static void Readme_usage_synopsis_names_every_command_with_options_it_accepts()
+    {
+        // Arrange
+        var readme = Path.Combine(RepositoryRoot.Find(), "tools", "SharedKernel.Versioning.Tool", "README.md");
+        var rootCommand = VersioningCommandLineRunner.Create();
+
+        // Act
+        var synopses = CallerCommandLine.ReadReadmeSynopses(readme);
+        var unknown = CallerCommandLine.FindUnknownOptions(rootCommand, synopses);
+
+        // Assert
+        // A synopsis without placeholders is a runnable command line, which the README command line scan parses.
+        synopses.Select(static synopsis => synopsis.Command).ShouldBe(CommandNames.Except(["check-public-api-baselines", "validate-package-metadata"]));
+        unknown.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public static async Task Readme_synopsis_scan_reports_options_that_the_command_does_not_accept()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var readme = Path.Combine(directory.Path, "README.md");
+        await File.WriteAllLinesAsync(
+            readme,
+            [
+                "sharedkernel-version compute --base <version> [--prerelease <label>] [--missing <value>] < messages",
+                "sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--aot]",
+                "sharedkernel-version unknown-command [--sha <sha>]",
+                "`sharedkernel-version <command> --help` describes each option.",
+            ],
+            TestContext.Current.CancellationToken);
+        var rootCommand = VersioningCommandLineRunner.Create();
+
+        // Act
+        var synopses = CallerCommandLine.ReadReadmeSynopses(readme);
+        var unknown = CallerCommandLine.FindUnknownOptions(rootCommand, synopses);
+
+        // Assert
+        synopses.Select(static synopsis => synopsis.Command).ShouldBe(["compute", "consume-candidate", "unknown-command"]);
+        unknown.ShouldBe(["compute --missing", "unknown-command"]);
+    }
+
+    [Fact]
+    public static async Task Readme_scan_reads_inline_code_and_local_tool_command_lines()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var readme = Path.Combine(directory.Path, "README.md");
+        await File.WriteAllLinesAsync(
+            readme,
+            [
+                "Run `sharedkernel-version check-public-api-baselines` before packing.",
+                "dotnet tool run sharedkernel-version validate-package-metadata",
+                "dotnet tool run sharedkernel-version -- --help",
+                "`sharedkernel-version <command> --help` describes each option.",
+            ],
+            TestContext.Current.CancellationToken);
+
+        // Act
+        var commandLines = CallerCommandLine.ReadReadmeCommandLines(readme);
+
+        // Assert
+        commandLines.ShouldBe(["check-public-api-baselines", "validate-package-metadata", "--help"]);
+    }
+
+    [Theory]
+    [InlineData("Install sharedkernel-version before packing.")]
+    [InlineData("Run `echo sharedkernel-version check-public-api-baselines` before packing.")]
+    [InlineData("dotnet tool run sharedkernel-version --help")]
+    [InlineData("dotnet tool run sharedkernel-version classify-commit -h")]
+    [InlineData("dotnet run --project tools/SharedKernel.Versioning.Tool -c Release")]
+    public static async Task Readme_scan_rejects_tool_text_that_is_not_a_runnable_command_line(string line)
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var readme = Path.Combine(directory.Path, "README.md");
+        await File.WriteAllLinesAsync(readme, [line], TestContext.Current.CancellationToken);
+
+        // Act
+        var action = () => CallerCommandLine.ReadReadmeCommandLines(readme);
+
+        // Assert
+        action.ShouldThrow<InvalidOperationException>().Message.ShouldContain("is not a runnable command line", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("has-breaking-change-marker", "--output=x")]
+    [InlineData("has-breaking-change-marker", "--", "--output=x")]
+    [InlineData("has-breaking-change-marker", "-p")]
+    [InlineData("has-breaking-change-marker", "")]
+    [InlineData("has-breaking-change-marker", " ")]
+    public static void Breaking_change_marker_rejects_a_range_that_git_would_not_read_as_a_revision(params string[] args)
+    {
         // Act
         var parseResult = VersioningCommandLineRunner.Parse(args);
 
         // Assert
-        text.ShouldContain(commandLine, StringComparison.Ordinal);
-        parseResult.Errors.ShouldBeEmpty();
-        parseResult.CommandResult.Command.Name.ShouldBe(args[0]);
-        var action = parseResult.CommandResult.Command.Action.ShouldNotBeNull();
-        parseResult.Action.ShouldBeSameAs(action);
+        parseResult.Errors.ShouldHaveSingleItem().Message.ShouldBe(
+            "<git-range> requires a revision range that is not empty and does not start with '-'.");
+    }
+
+    [Fact]
+    public static async Task Failure_after_cancellation_exits_with_code_1_without_output()
+    {
+        // Arrange
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        using var input = new CancelingTextReader(cancellation, new InvalidOperationException("Command failed (130): git log"));
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(["compute", "--base", "0.1.0"], input, cancellation.Token);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Output.ShouldBe(string.Empty);
+        result.Error.ShouldBe(string.Empty);
     }
 }

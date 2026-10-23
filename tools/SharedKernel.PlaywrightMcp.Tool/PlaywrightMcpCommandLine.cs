@@ -18,7 +18,7 @@ internal static class PlaywrightMcpCommandLine
     public static RootCommand Create(
         Func<string, string?> getEnvironmentVariable,
         Func<string, string?> resolveExecutable,
-        Func<ProcessStartInfo, CancellationToken, Task<ProcessResult>> runProcess)
+        Func<ProcessStartInfo, TextWriter?, CancellationToken, Task<ProcessResult>> runProcess)
     {
         ArgumentNullException.ThrowIfNull(getEnvironmentVariable);
         ArgumentNullException.ThrowIfNull(resolveExecutable);

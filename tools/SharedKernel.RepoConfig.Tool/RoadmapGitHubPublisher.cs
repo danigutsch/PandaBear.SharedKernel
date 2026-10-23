@@ -38,6 +38,31 @@ internal sealed class RoadmapGitHubPublisher
         _timeProvider = timeProvider;
     }
 
+    /// <summary>
+    /// Runs the checks that <see cref="Publish"/> makes before contacting GitHub and describes the pull request
+    /// it would create. Nothing is sent to GitHub.
+    /// </summary>
+    public static async Task<RoadmapGitHubPublicationPreview> Preview(
+        string rootPath,
+        RoadmapAutomationPlan plan,
+        RoadmapGitChangeSet changes,
+        CancellationToken cancellationToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
+        ArgumentNullException.ThrowIfNull(plan);
+        ArgumentNullException.ThrowIfNull(changes);
+        ValidateRequest(plan, changes);
+        var files = await ReadVerifiedPublicationFiles(
+            Path.TrimEndingDirectorySeparator(Path.GetFullPath(rootPath)),
+            changes,
+            cancellationToken).ConfigureAwait(false);
+        return new RoadmapGitHubPublicationPreview(
+            plan.Repository,
+            plan.BaseSha,
+            plan.BranchName,
+            files.Select(file => file.Path).ToArray());
+    }
+
     public async Task<RoadmapGitHubPublication> Publish(
         RoadmapAutomationPlan plan,
         RoadmapGitChangeSet changes,
@@ -45,20 +70,7 @@ internal sealed class RoadmapGitHubPublisher
     {
         ArgumentNullException.ThrowIfNull(plan);
         ArgumentNullException.ThrowIfNull(changes);
-        if (!changes.HasChanges || changes.Entries.Count == 0)
-        {
-            throw new InvalidOperationException("Roadmap publication requires a nonempty sealed result.");
-        }
-
-        if (changes.Entries.Count > MaxChangedEntries)
-        {
-            throw new InvalidOperationException("Roadmap publication exceeds the allowed changed-path count.");
-        }
-
-        if (!GitHubRepositoryName.IsValid(plan.Repository))
-        {
-            throw new InvalidOperationException("Roadmap publication repository is invalid.");
-        }
+        ValidateRequest(plan, changes);
 
         using var publicationTimeout = new CancellationTokenSource(PublicationTimeout, _timeProvider);
         using var publicationCancellation = CancellationTokenSource.CreateLinkedTokenSource(
@@ -66,9 +78,7 @@ internal sealed class RoadmapGitHubPublisher
             publicationTimeout.Token);
         try
         {
-            RoadmapGitChangeGuard.Verify(_rootPath, changes);
-            var files = await ReadPublicationFiles(changes.Entries, publicationCancellation.Token).ConfigureAwait(false);
-            RoadmapGitChangeGuard.Verify(_rootPath, changes);
+            var files = await ReadVerifiedPublicationFiles(_rootPath, changes, publicationCancellation.Token).ConfigureAwait(false);
             var endpoint = CreateRepositoryEndpoint(plan.Repository);
             var initialDefaultOid = await ReadDefaultBranchOid(endpoint, publicationCancellation.Token).ConfigureAwait(false);
             RequireDefaultOid(plan.BaseSha, initialDefaultOid, "Roadmap publication default branch moved after result verification.");
@@ -132,7 +142,37 @@ internal sealed class RoadmapGitHubPublisher
         return RequireSha(RequireObject(document.RootElement, "tree"), "sha");
     }
 
-    private async Task<PublicationFileEntry[]> ReadPublicationFiles(
+    private static void ValidateRequest(RoadmapAutomationPlan plan, RoadmapGitChangeSet changes)
+    {
+        if (!changes.HasChanges || changes.Entries.Count == 0)
+        {
+            throw new InvalidOperationException("Roadmap publication requires a nonempty sealed result.");
+        }
+
+        if (changes.Entries.Count > MaxChangedEntries)
+        {
+            throw new InvalidOperationException("Roadmap publication exceeds the allowed changed-path count.");
+        }
+
+        if (!GitHubRepositoryName.IsValid(plan.Repository))
+        {
+            throw new InvalidOperationException("Roadmap publication repository is invalid.");
+        }
+    }
+
+    private static async Task<PublicationFileEntry[]> ReadVerifiedPublicationFiles(
+        string rootPath,
+        RoadmapGitChangeSet changes,
+        CancellationToken cancellationToken)
+    {
+        RoadmapGitChangeGuard.Verify(rootPath, changes);
+        var files = await ReadPublicationFiles(rootPath, changes.Entries, cancellationToken).ConfigureAwait(false);
+        RoadmapGitChangeGuard.Verify(rootPath, changes);
+        return files;
+    }
+
+    private static async Task<PublicationFileEntry[]> ReadPublicationFiles(
+        string rootPath,
         IReadOnlyList<RoadmapGitStatusEntry> changes,
         CancellationToken cancellationToken)
     {
@@ -146,7 +186,7 @@ internal sealed class RoadmapGitHubPublisher
             }
 
             var fullPath = Path.GetFullPath(Path.Combine(
-                _rootPath,
+                rootPath,
                 change.Path.Replace('/', Path.DirectorySeparatorChar)));
             if (!File.Exists(fullPath))
             {

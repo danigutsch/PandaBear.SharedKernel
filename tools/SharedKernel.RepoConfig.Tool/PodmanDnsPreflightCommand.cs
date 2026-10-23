@@ -981,10 +981,13 @@ internal static class PodmanDnsPreflightCommand
         {
             if (!process.HasExited)
             {
-                process.Kill();
+                process.Kill(entireProcessTree: true);
             }
         }
-        catch (Exception exception) when (exception is InvalidOperationException or Win32Exception or NotSupportedException)
+        catch (Exception exception) when (exception is InvalidOperationException
+            or Win32Exception
+            or NotSupportedException
+            or AggregateException)
         {
             // Best-effort cleanup must not replace the timeout or cancellation that reached this path.
         }
@@ -996,7 +999,7 @@ internal static class PodmanDnsPreflightCommand
         }
         catch (Exception exception) when (exception is OperationCanceledException or InvalidOperationException or Win32Exception or NotSupportedException)
         {
-            // The command-owned process was signalled; cleanup must not block the caller indefinitely.
+            // The command-owned process tree was signalled; cleanup must not block the caller indefinitely.
         }
     }
 

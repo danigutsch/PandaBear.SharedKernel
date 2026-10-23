@@ -7,6 +7,8 @@ internal static class VersioningCommandLine
 {
     private const int CommandFailed = 2;
 
+    private const int NoBreakingChangeMarker = 3;
+
     private const string BaselineVersionDescription =
         "Published package version to compare APIs against. Requires PandaBear.SharedKernel.* mapped only to an existing local feed in NuGet.Config.";
 
@@ -82,7 +84,7 @@ internal static class VersioningCommandLine
     {
         var versionKind = new Option<string>("--version-kind")
         {
-            Description = "Version kind. prerelease adds alpha.<run-number> when a run number is given.",
+            Description = "Version kind. prerelease prints 0.0.0-alpha.<run-number> and requires --run-number.",
             DefaultValueFactory = static _ => "prerelease",
         };
         versionKind.AcceptOnlyFromAmong("prerelease", "stable");
@@ -100,6 +102,15 @@ internal static class VersioningCommandLine
             gitHubSummary,
             repoRoot,
         };
+        command.Validators.Add(result =>
+        {
+            // Read the token, not the value: an unknown kind already has its own parse error.
+            var kind = result.GetResult(versionKind)?.Tokens is [.., var token] ? token.Value : "prerelease";
+            if (kind == "prerelease" && string.IsNullOrWhiteSpace(result.GetValue(runNumber)))
+            {
+                result.AddError($"Option '{runNumber.Name}' is required when '{versionKind.Name}' is prerelease.");
+            }
+        });
         SetAction(command, (parseResult, output, ct) => ReleaseVersionCommand.Run(
             new CalculateReleaseOptions(
                 parseResult.GetRequiredValue(repoRoot),
@@ -142,17 +153,33 @@ internal static class VersioningCommandLine
     private static Command CreateHasBreakingChangeMarker()
     {
         var range = new Argument<string>("git-range") { Description = "Git revision range, such as origin/main..HEAD." };
+
+        // An empty range names no revision, and Git reads a leading '-' as an option: --output=<path> would write a file.
+        range.Validators.Add(static result =>
+        {
+            var value = result.GetValueOrDefault<string>();
+            if (string.IsNullOrWhiteSpace(value) || value.StartsWith('-'))
+            {
+                result.AddError("<git-range> requires a revision range that is not empty and does not start with '-'.");
+            }
+        });
         var repoRoot = RepoRootOption();
         var command = new Command("has-breaking-change-marker", "Succeeds when a commit in the range has a Conventional Commit breaking-change marker.")
         {
             range,
             repoRoot,
         };
-        SetAction(command, (parseResult, output, ct) => BreakingChangeMarkerCommand.Run(
-            parseResult.GetRequiredValue(range),
-            parseResult.GetRequiredValue(repoRoot),
-            output,
-            ct));
+        SetAction(command, async (parseResult, output, ct) =>
+        {
+            var gitRange = parseResult.GetRequiredValue(range);
+            if (await BreakingChangeMarkerCommand.Run(gitRange, parseResult.GetRequiredValue(repoRoot), output, ct).ConfigureAwait(false))
+            {
+                return 0;
+            }
+
+            await parseResult.InvocationConfiguration.Error.WriteLineAsync($"No breaking-change marker found in {gitRange}.").ConfigureAwait(false);
+            return NoBreakingChangeMarker;
+        });
         return command;
     }
 
@@ -448,15 +475,27 @@ internal static class VersioningCommandLine
     private static string LocalAlphaVersion(TimeProvider timeProvider) =>
         "0.1.0-alpha.local." + timeProvider.GetUtcNow().ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
 
-    // Maps domain failures to exit code 2; parse errors and cancellation keep System.CommandLine's codes.
     private static void SetAction(Command command, Func<ParseResult, TextWriter, CancellationToken, Task> action) =>
+        SetAction(command, async (parseResult, output, ct) =>
+        {
+            await action(parseResult, output, ct).ConfigureAwait(false);
+            return 0;
+        });
+
+    // Maps domain failures to exit code 2; parse errors and cancellation keep System.CommandLine's codes.
+    private static void SetAction(Command command, Func<ParseResult, TextWriter, CancellationToken, Task<int>> action) =>
         command.SetAction(async (parseResult, ct) =>
         {
             var error = parseResult.InvocationConfiguration.Error;
             try
             {
-                await action(parseResult, parseResult.InvocationConfiguration.Output, ct).ConfigureAwait(false);
-                return 0;
+                return await action(parseResult, parseResult.InvocationConfiguration.Output, ct).ConfigureAwait(false);
+            }
+            catch (Exception exception) when (ct.IsCancellationRequested)
+            {
+                // Ctrl+C and SIGTERM sent to the process group also stop the running git, dotnet, or sample process, which
+                // can fail before the token is observed. System.CommandLine exits 1 without output for a cancellation.
+                throw new OperationCanceledException("The command was canceled.", exception, ct);
             }
             catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or IOException)
             {

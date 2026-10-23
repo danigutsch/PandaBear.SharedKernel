@@ -7,7 +7,7 @@ namespace PandaBear.PlaywrightMcp.Tool;
 internal sealed class PlaywrightMcpApplication(
     Func<string, string?> getEnvironmentVariable,
     Func<string, string?> resolveExecutable,
-    Func<ProcessStartInfo, CancellationToken, Task<ProcessResult>> runProcess)
+    Func<ProcessStartInfo, TextWriter?, CancellationToken, Task<ProcessResult>> runProcess)
 {
     public Task<int> Serve(TextWriter error, CancellationToken ct)
     {
@@ -18,7 +18,7 @@ internal sealed class PlaywrightMcpApplication(
     {
         return Run(
             error,
-            (options, token) => RunToExit(PlaywrightMcpCommand.CreatePullStartInfo(options), token),
+            (options, token) => RunToExit(PlaywrightMcpCommand.CreatePullStartInfo(options), error, token),
             ct);
     }
 
@@ -26,7 +26,7 @@ internal sealed class PlaywrightMcpApplication(
     {
         return Run(
             error,
-            (options, token) => RunToExit(PlaywrightMcpCommand.CreateImageRemoveStartInfo(options), token),
+            (options, token) => RunToExit(PlaywrightMcpCommand.CreateImageRemoveStartInfo(options), error, token),
             ct);
     }
 
@@ -71,10 +71,29 @@ internal sealed class PlaywrightMcpApplication(
         }
     }
 
-    private async Task<int> RunToExit(ProcessStartInfo startInfo, CancellationToken ct)
+    // The engine's output and errors are this tool's diagnostics, so each line goes to standard error as it arrives.
+    private async Task<int> RunToExit(ProcessStartInfo startInfo, TextWriter error, CancellationToken ct)
     {
-        var result = await runProcess(startInfo, ct).ConfigureAwait(false);
+        var result = await RunEngine(startInfo, error, ct).ConfigureAwait(false);
         return result.ExitCode;
+    }
+
+    // Ctrl+C and SIGTERM sent to the process group also stop the container engine, which can exit or fail before the
+    // runner observes the token. Either outcome then belongs to the cancellation.
+    private async Task<ProcessResult> RunEngine(ProcessStartInfo startInfo, TextWriter? forward, CancellationToken ct)
+    {
+        ProcessResult result;
+        try
+        {
+            result = await runProcess(startInfo, forward, ct).ConfigureAwait(false);
+        }
+        catch (Exception exception) when (ct.IsCancellationRequested)
+        {
+            throw new OperationCanceledException("Playwright MCP was cancelled.", exception, ct);
+        }
+
+        ct.ThrowIfCancellationRequested();
+        return result;
     }
 
     private async Task<int> RunServer(PlaywrightMcpOptions options, CancellationToken ct)
@@ -85,7 +104,7 @@ internal sealed class PlaywrightMcpApplication(
         ExceptionDispatchInfo? runtimeFailure = null;
         try
         {
-            runtimeResult = await runProcess(startInfo, ct).ConfigureAwait(false);
+            runtimeResult = await RunEngine(startInfo, null, ct).ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is InvalidOperationException
             or Win32Exception
@@ -107,8 +126,9 @@ internal sealed class PlaywrightMcpApplication(
     {
         if (options.Engine == ContainerEngine.Docker)
         {
-            var contextResult = await runProcess(
+            var contextResult = await RunEngine(
                 PlaywrightMcpCommand.CreateDockerContextShowStartInfo(options),
+                null,
                 ct).ConfigureAwait(false);
             if (contextResult.ExitCode != 0)
             {
@@ -125,8 +145,9 @@ internal sealed class PlaywrightMcpApplication(
             }
 
             options = options with { DockerContext = dockerContext };
-            var probeResult = await runProcess(
+            var probeResult = await RunEngine(
                 PlaywrightMcpCommand.CreateDockerContextProbeStartInfo(options),
+                null,
                 ct).ConfigureAwait(false);
             if (probeResult.ExitCode != 0)
             {
@@ -144,8 +165,9 @@ internal sealed class PlaywrightMcpApplication(
             return options with { DockerEndpoint = dockerEndpoint };
         }
 
-        var podmanProbeResult = await runProcess(
+        var podmanProbeResult = await RunEngine(
             PlaywrightMcpCommand.CreatePodmanRootlessProbeStartInfo(options),
+            null,
             ct).ConfigureAwait(false);
         if (podmanProbeResult.ExitCode != 0)
         {
@@ -167,7 +189,7 @@ internal sealed class PlaywrightMcpApplication(
         var cleanup = PlaywrightMcpCommand.CreateContainerCleanupStartInfo(options, containerName);
         try
         {
-            var cleanupResult = await runProcess(cleanup, cleanupTimeout.Token).ConfigureAwait(false);
+            var cleanupResult = await runProcess(cleanup, null, cleanupTimeout.Token).ConfigureAwait(false);
             var cleanupSucceeded = cleanupResult.ExitCode == 0;
             if (cleanupResult.ExitCode != 0 && options.Engine == ContainerEngine.Docker)
             {
@@ -176,6 +198,7 @@ internal sealed class PlaywrightMcpApplication(
                     containerName);
                 var existenceResult = await runProcess(
                     existenceProbe,
+                    null,
                     cleanupTimeout.Token).ConfigureAwait(false);
                 cleanupSucceeded = existenceResult.ExitCode == 0
                     && string.IsNullOrWhiteSpace(existenceResult.StandardOutput);
@@ -201,8 +224,16 @@ internal sealed class PlaywrightMcpApplication(
         }
     }
 
+    /// <summary>Runs a process and kills its process tree when <paramref name="ct"/> is canceled.</summary>
+    /// <param name="startInfo">The process to run.</param>
+    /// <param name="forward">
+    /// Receives each line of the redirected standard output and standard error as it arrives, and the result then holds
+    /// no output; <see langword="null"/> collects the output in the result.
+    /// </param>
+    /// <param name="ct">Cancels the run and kills the process tree.</param>
     internal static async Task<ProcessResult> RunProcess(
         ProcessStartInfo startInfo,
+        TextWriter? forward,
         CancellationToken ct)
     {
         using var process = new Process { StartInfo = startInfo };
@@ -212,11 +243,13 @@ internal sealed class PlaywrightMcpApplication(
             throw new InvalidOperationException($"Could not start {startInfo.FileName}.");
         }
 
+        // The two streams are read concurrently, and a TextWriter is not thread-safe, so their lines share one lock.
+        Func<string, Task>? writeLine = forward is null ? null : TextWriter.Synchronized(forward).WriteLineAsync;
         var standardOutput = startInfo.RedirectStandardOutput
-            ? process.StandardOutput.ReadToEndAsync(CancellationToken.None)
+            ? Read(process.StandardOutput, writeLine)
             : Task.FromResult(string.Empty);
         var standardError = startInfo.RedirectStandardError
-            ? process.StandardError.ReadToEndAsync(CancellationToken.None)
+            ? Read(process.StandardError, writeLine)
             : Task.FromResult(string.Empty);
 
         try
@@ -266,6 +299,21 @@ internal sealed class PlaywrightMcpApplication(
             process.ExitCode,
             await standardOutput.ConfigureAwait(false),
             await standardError.ConfigureAwait(false));
+    }
+
+    private static async Task<string> Read(StreamReader reader, Func<string, Task>? writeLine)
+    {
+        if (writeLine is null)
+        {
+            return await reader.ReadToEndAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        while (await reader.ReadLineAsync(CancellationToken.None).ConfigureAwait(false) is { } line)
+        {
+            await writeLine(line).ConfigureAwait(false);
+        }
+
+        return string.Empty;
     }
 
     internal static string? ResolveExecutable(string command)

@@ -372,6 +372,44 @@ public static class VersioningToolTests
         result.Output.ShouldContain("API compatibility report", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public static async Task Report_only_check_API_compatibility_exits_as_canceled_when_packing_fails_after_cancellation()
+    {
+        // Arrange
+        using var temporaryDirectory = new TemporaryReleasePrepDirectory();
+        await temporaryDirectory.WriteUnpackableSharedKernelProject(TestContext.Current.CancellationToken);
+
+        // An existing package version makes packing fail before it starts a process, which checks the token first.
+        var packageDirectory = Path.Combine(temporaryDirectory.OutputDirectory, "packages", "1.2.3-alpha.1");
+        Directory.CreateDirectory(packageDirectory);
+        await File.WriteAllBytesAsync(
+            Path.Combine(packageDirectory, "PandaBear.SharedKernel.Sample.1.2.3-alpha.1.nupkg"),
+            "package"u8.ToArray(),
+            TestContext.Current.CancellationToken);
+        using var cancellation = new CancellationTokenSource();
+        await cancellation.CancelAsync();
+        string[] args =
+        [
+            "check-api-compatibility",
+            "--repo-root",
+            temporaryDirectory.Root,
+            "--output-root",
+            temporaryDirectory.OutputDirectory,
+            "--version",
+            "1.2.3-alpha.1",
+            "--release-phase",
+            "alpha",
+        ];
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(args, cancellation.Token);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Output.ShouldBe(string.Empty);
+        result.Error.ShouldBe(string.Empty);
+    }
+
     [Theory]
     [InlineData(true, 0)]
     [InlineData(false, 2)]
@@ -629,8 +667,16 @@ public static class VersioningToolTests
         json.ShouldContain("\"informationalVersion\":\"0.2.0-alpha.1+sha.abc123\"", StringComparison.Ordinal);
     }
 
-    [Fact]
-    public static async Task Runs_calculate_release_command_from_git_history()
+    [Theory]
+    [InlineData("feat: add public capability", "prerelease", "0.0.0-alpha.7", "minor")]
+    [InlineData("refactor(api)!: rename package", "prerelease", "0.0.0-alpha.7", "major")]
+    [InlineData("fix: correct behavior", "prerelease", "0.0.0-alpha.7", "patch")]
+    [InlineData("feat: add public capability", "stable", "1.3.0", "minor")]
+    public static async Task Runs_calculate_release_command_from_git_history(
+        string message,
+        string versionKind,
+        string expectedVersion,
+        string expectedImpact)
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -638,7 +684,7 @@ public static class VersioningToolTests
         await repository.Initialize(TestContext.Current.CancellationToken);
         await repository.Commit("file.txt", "base", "fix: base release", TestContext.Current.CancellationToken);
         await repository.Tag("v1.2.3", TestContext.Current.CancellationToken);
-        await repository.Commit("file.txt", "next", "feat: add public capability", TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "next", message, TestContext.Current.CancellationToken);
 
         var outputPath = Path.Combine(temporaryDirectory.OutputDirectory, "github-output.txt");
         var summaryPath = Path.Combine(temporaryDirectory.OutputDirectory, "summary.md");
@@ -649,7 +695,7 @@ public static class VersioningToolTests
             "--repo-root",
             repository.Root,
             "--version-kind",
-            "prerelease",
+            versionKind,
             "--run-number",
             "7",
             "--sha",
@@ -668,12 +714,25 @@ public static class VersioningToolTests
         var json = result.Output;
         var githubOutput = await File.ReadAllTextAsync(outputPath, TestContext.Current.CancellationToken);
         var summary = await File.ReadAllTextAsync(summaryPath, TestContext.Current.CancellationToken);
-        json.ShouldContain("\"packageVersion\":\"1.3.0-alpha.7\"", StringComparison.Ordinal);
-        json.ShouldContain("\"informationalVersion\":\"1.3.0-alpha.7+sha.abc123\"", StringComparison.Ordinal);
+        json.ShouldContain($"\"packageVersion\":\"{expectedVersion}\"", StringComparison.Ordinal);
+        json.ShouldContain($"\"informationalVersion\":\"{expectedVersion}+sha.abc123\"", StringComparison.Ordinal);
         githubOutput.ShouldContain("source_tag=v1.2.3", StringComparison.Ordinal);
-        githubOutput.ShouldContain("package_version=1.3.0-alpha.7", StringComparison.Ordinal);
-        githubOutput.ShouldContain("release_impact=minor", StringComparison.Ordinal);
+        githubOutput.ShouldContain("package_version=" + expectedVersion, StringComparison.Ordinal);
+        githubOutput.ShouldContain("release_impact=" + expectedImpact, StringComparison.Ordinal);
         summary.ShouldContain("- Base version: `1.2.3`", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Rejects_prerelease_calculation_without_run_number()
+    {
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(
+            ["calculate-release", "--version-kind", "prerelease"],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Error.ShouldContain("Option '--run-number' is required when '--version-kind' is prerelease.", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -710,8 +769,46 @@ public static class VersioningToolTests
             TestContext.Current.CancellationToken);
 
         // Assert
-        result.ExitCode.ShouldBe(2);
+        result.ExitCode.ShouldBe(3);
+        result.Output.ShouldBe(string.Empty);
         result.Error.ShouldContain("No breaking-change marker found", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Breaking_change_marker_check_exits_with_code_2_when_git_fails()
+    {
+        // Arrange
+        using var repository = new TemporaryGitRepository();
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "base", "fix: base release", TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(
+            ["has-breaking-change-marker", "missing-revision..HEAD", "--repo-root", repository.Root],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(2);
+        result.Error.ShouldStartWith("Error: ", StringComparison.Ordinal);
+        result.Error.ShouldNotContain("No breaking-change marker found", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Breaking_change_marker_check_passes_the_range_to_git_after_the_end_of_options()
+    {
+        // Arrange
+        using var repository = new TemporaryGitRepository();
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        await repository.Commit("file.txt", "base", "feat(api)!: remove route", TestContext.Current.CancellationToken);
+        var root = repository.Root;
+
+        // Act
+        // Parsing rejects such a range; the command still keeps Git from reading it as an option.
+        var action = () => BreakingChangeMarkerCommand.Run("--output=log.txt", root, TextWriter.Null, TestContext.Current.CancellationToken);
+
+        // Assert
+        await action.ShouldThrow<InvalidOperationException>();
+        File.Exists(Path.Combine(root, "log.txt")).ShouldBeFalse();
     }
 
     [Fact]
@@ -740,6 +837,27 @@ public static class VersioningToolTests
 
         // Assert
         await action.ShouldThrow<OperationCanceledException>();
+    }
+
+    [Fact]
+    public static async Task Run_or_default_rethrows_a_failure_that_follows_cancellation()
+    {
+        // Arrange
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+
+        // Enumerating the arguments cancels the token after the run has checked it, so the start failure follows the
+        // cancellation, as a process that the same Ctrl+C stops fails before the run observes the token.
+        var arguments = Enumerable.Repeat("--version", 1).Select(argument =>
+        {
+            cancellation.Cancel();
+            return argument;
+        });
+
+        // Act
+        Func<Task> action = () => CommandRunner.RunOrDefault("missing-sharedkernel-versioning-tool-command", arguments, null, cancellation.Token);
+
+        // Assert
+        await action.ShouldThrow<InvalidOperationException>();
     }
 
     [Fact]

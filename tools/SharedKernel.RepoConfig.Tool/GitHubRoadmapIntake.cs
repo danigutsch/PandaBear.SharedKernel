@@ -20,14 +20,14 @@ internal sealed class GitHubRoadmapIntake
     public async Task<IReadOnlyList<string>> Preview(CancellationToken cancellationToken)
     {
         var plan = await CreatePlan(cancellationToken).ConfigureAwait(false);
-        return plan.Messages(dryRun: true);
+        return plan.Messages(preview: true);
     }
 
     public async Task<IReadOnlyList<string>> Apply(CancellationToken cancellationToken)
     {
         var plan = await CreatePlan(cancellationToken).ConfigureAwait(false);
         plan.Apply();
-        return plan.Messages(dryRun: false);
+        return plan.Messages(preview: false);
     }
 
     private async Task<IntakePlan> CreatePlan(CancellationToken cancellationToken)
@@ -1358,34 +1358,34 @@ internal sealed class GitHubRoadmapIntake
     {
         public void Apply() => RollbackFileWriteBatch.Apply(rootPath, writes, inputSnapshot.Verify);
 
-        public List<string> Messages(bool dryRun)
+        public List<string> Messages(bool preview)
         {
             if (writes.Count == 0)
             {
-                return [dryRun
-                    ? "dry-run: roadmap already matches the reconciliation manifest."
+                return [preview
+                    ? "preview: roadmap already matches the reconciliation manifest."
                     : "import: roadmap already matches the reconciliation manifest."];
             }
 
-            var prefix = dryRun ? "dry-run: GitHub import would" : "import:";
+            var prefix = preview ? "preview: GitHub import would" : "import:";
             List<string> messages = [];
             AddConditionalMessage(
                 messages,
                 openItemsToCreate > 0,
-                dryRun,
+                preview,
                 $"{prefix} add {openItemsToCreate} open roadmap items.",
                 $"{prefix} added {openItemsToCreate} open roadmap items.");
             AddConditionalMessage(
                 messages,
                 closedSupportItemsToCreate > 0,
-                dryRun,
+                preview,
                 $"{prefix} add {closedSupportItemsToCreate} closed support roadmap items.",
                 $"{prefix} added {closedSupportItemsToCreate} closed support roadmap items.");
 
             if (closedItemsToTransition > 0)
             {
                 var itemNoun = closedItemsToTransition == 1 ? "item" : "items";
-                messages.Add(dryRun
+                messages.Add(preview
                     ? $"{prefix} transition {closedItemsToTransition} imported roadmap {itemNoun} to closed support."
                     : $"{prefix} transitioned {closedItemsToTransition} imported roadmap {itemNoun} to closed support.");
             }
@@ -1393,13 +1393,13 @@ internal sealed class GitHubRoadmapIntake
             AddConditionalMessage(
                 messages,
                 existingItemChanges > 0,
-                dryRun,
+                preview,
                 $"{prefix} update {existingItemChanges} existing roadmap items with exact GitHub metadata.",
                 $"{prefix} updated {existingItemChanges} existing roadmap items with exact GitHub metadata.");
             AddConditionalMessage(
                 messages,
                 orderUpdated,
-                dryRun,
+                preview,
                 $"{prefix} update roadmap/order.json.",
                 $"{prefix} updated roadmap/order.json.");
 
@@ -1409,13 +1409,13 @@ internal sealed class GitHubRoadmapIntake
         private static void AddConditionalMessage(
             List<string> messages,
             bool condition,
-            bool dryRun,
-            string dryRunMessage,
+            bool preview,
+            string previewMessage,
             string appliedMessage)
         {
             if (condition)
             {
-                messages.Add(dryRun ? dryRunMessage : appliedMessage);
+                messages.Add(preview ? previewMessage : appliedMessage);
             }
         }
 

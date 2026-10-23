@@ -203,7 +203,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.13, )",
-          "PandaBear.SharedKernel.Idempotency": "[0.1.0-alpha.0, )",
+          "PandaBear.SharedKernel.Idempotency.Abstractions": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.InputNormalization": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.OpenApi": "[0.1.0-alpha.0, )",
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )"
@@ -212,7 +212,7 @@
       "PandaBear.SharedKernel.HttpCaching.AspNetCore": {
         "type": "Project"
       },
-      "PandaBear.SharedKernel.Idempotency": {
+      "PandaBear.SharedKernel.Idempotency.Abstractions": {
         "type": "Project"
       },
       "PandaBear.SharedKernel.InputNormalization": {

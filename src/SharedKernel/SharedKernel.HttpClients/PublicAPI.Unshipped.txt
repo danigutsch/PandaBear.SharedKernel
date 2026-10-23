@@ -88,3 +88,10 @@ PandaBear.HttpClients.UploadOperationStatus.Processing = 4 -> PandaBear.HttpClie
 PandaBear.HttpClients.UploadOperationStatus.Complete = 5 -> PandaBear.HttpClients.UploadOperationStatus
 PandaBear.HttpClients.UploadOperationStatus.Canceled = 6 -> PandaBear.HttpClients.UploadOperationStatus
 PandaBear.HttpClients.UploadOperationStatus.Failed = 7 -> PandaBear.HttpClients.UploadOperationStatus
+PandaBear.HttpClients.IdempotentSubmission<T>
+PandaBear.HttpClients.IdempotentSubmission<T>.IdempotentSubmission() -> void
+PandaBear.HttpClients.IdempotentSubmission<T>.IsBusy.get -> bool
+PandaBear.HttpClients.IdempotentSubmission<T>.HasPending.get -> bool
+PandaBear.HttpClients.IdempotentSubmission<T>.Operation.get -> string!
+PandaBear.HttpClients.IdempotentSubmission<T>.Submit(string! operation, System.Func<string!, System.Threading.CancellationToken, System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome<T>!>!>! submit, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome<T>?>!
+PandaBear.HttpClients.IdempotentSubmission<T>.Retry(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.HttpClients.HttpOutcome<T>?>!

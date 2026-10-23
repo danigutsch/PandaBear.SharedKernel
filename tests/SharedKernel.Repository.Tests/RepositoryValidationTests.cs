@@ -24,6 +24,43 @@ public sealed class RepositoryValidationTests
     }
 
     [Fact]
+    public async Task Validation_writes_the_dotnet_output_to_standard_error()
+    {
+        // Arrange
+        using var scope = new RepositoryTestScope();
+        scope.WriteSelection(["tests/Core.Tests/Core.Tests.csproj"], ["tests/Core.Tests/Core.Tests.csproj"], "fixture");
+        var processes = new ProcessLog(static (fileName, arguments, _) =>
+            Task.FromResult(fileName == "git" ? "fixture" : "dotnet " + arguments[0] + " output" + Environment.NewLine));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate"], processes.Run, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0);
+        result.Output.ShouldBe(string.Empty);
+        result.Error.ShouldBe(
+            "dotnet restore output" + Environment.NewLine + "dotnet build output" + Environment.NewLine + "dotnet test output" + Environment.NewLine);
+    }
+
+    [Fact]
+    public async Task Validation_without_selected_projects_reports_it_on_standard_output()
+    {
+        // Arrange
+        using var scope = new RepositoryTestScope();
+        scope.WriteSelection([], [], "fixture");
+        var processes = new ProcessLog();
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate"], processes.Run, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0);
+        result.Output.ShouldBe("No projects selected for all" + Environment.NewLine);
+        result.Error.ShouldBe(string.Empty);
+        processes.Calls.ShouldAllSatisfy(call => call.FileName.ShouldBe("git"));
+    }
+
+    [Fact]
     public async Task Stale_selection_cannot_execute_validation()
     {
         // Arrange
@@ -167,6 +204,38 @@ public sealed class RepositoryValidationTests
         result.ExitCode.ShouldBe(1);
         result.Error.ShouldBe(string.Empty);
         processes.Calls.ShouldAllSatisfy(call => call.Token.IsCancellationRequested.ShouldBeTrue());
+        processes.Commands.Any(command => command.StartsWith("dotnet test", StringComparison.Ordinal)).ShouldBeFalse();
+        var timing = await File.ReadAllTextAsync(Path.Combine(selection, "execution-all", "timing.tsv"), ct);
+        timing.ShouldContain("\tfailed", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task A_process_failure_after_cancellation_exits_as_the_cancellation_without_output()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var scope = new RepositoryTestScope();
+        var selection = scope.WriteSelection(["tests/Core.Tests/Core.Tests.csproj"], ["tests/Core.Tests/Core.Tests.csproj"], "fixture");
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        var processes = new ProcessLog(async (fileName, arguments, _) =>
+        {
+            if (fileName == "dotnet" && arguments[0] == "build")
+            {
+                // Ctrl+C also stops the child process, which can fail before the token is observed.
+                await cancellation.CancelAsync();
+                throw new InvalidOperationException("Command failed (130): dotnet build");
+            }
+
+            return fileName == "git" ? "fixture" : string.Empty;
+        });
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate"], processes.Run, cancellation.Token);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Output.ShouldBe(string.Empty);
+        result.Error.ShouldBe(string.Empty);
         processes.Commands.Any(command => command.StartsWith("dotnet test", StringComparison.Ordinal)).ShouldBeFalse();
         var timing = await File.ReadAllTextAsync(Path.Combine(selection, "execution-all", "timing.tsv"), ct);
         timing.ShouldContain("\tfailed", StringComparison.Ordinal);

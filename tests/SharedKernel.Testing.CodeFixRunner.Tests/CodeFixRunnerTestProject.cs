@@ -20,6 +20,15 @@ internal static class CodeFixRunnerTestProject
           <PropertyGroup>
         """;
 
+    public const string MissingSdkGlobalJsonFile = """
+        {
+          "sdk": {
+            "version": "10.0.999",
+            "rollForward": "disable"
+          }
+        }
+        """;
+
     public const string SolutionWithMissingProjectFile = """
         <Solution>
           <Project Path="Sample.Tests.csproj" />

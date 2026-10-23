@@ -7,10 +7,35 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 .NET tool that refreshes generated Markdown blocks, detects stale blocks, and checks documented facts
 against source files.
 
-## Usage
+## Prerequisites
 
-Run from the repository root: the configuration path, and every path inside the configuration, resolve
-against the current directory.
+.NET 10. Run the tool from the repository root. The `--config` path, `docsPath`, and every `sourcePath`
+and `documentPath` in the configuration resolve against the current directory; each block's `targetPath`
+resolves against `docsPath`. `docsPath` must stay inside the current directory, and `check` accepts only
+relative paths inside the current directory.
+
+## Installation
+
+Install a validated candidate as a local tool from the feed that holds it, such as the folder that
+`sharedkernel-version stage-candidate` copies a candidate to. Add the feed to `NuGet.Config` and map
+`PandaBear.SharedKernel.*` to it. Map every other package, for example `*`, to the existing source, because
+a package without a mapping does not restore once source mapping is enabled. With the SDK pinned in
+`global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.
+
+```text
+dotnet tool install PandaBear.SharedKernel.Documentation.Tool --version <validated-candidate-version>
+dotnet tool run sharedkernel-docs -- verify --config <path>
+```
+
+In this repository, run the project without installing it:
+
+```text
+dotnet run --project tools/SharedKernel.Documentation.Tool -c Release -- verify --config docs/architecture/generated-diagrams.json
+```
+
+.NET tools run in full trust. Install only from trusted manifests and package sources.
+
+## Usage
 
 ```text
 sharedkernel-docs generate --config <path>

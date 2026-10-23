@@ -1,7 +1,7 @@
 {
   "stryker-config": {
     "test-runner": "mtp",
-    "project": "SharedKernel.Idempotency.csproj",
+    "project": "SharedKernel.Idempotency.Abstractions.csproj",
     "mutate": [
       "**/*.cs"
     ],

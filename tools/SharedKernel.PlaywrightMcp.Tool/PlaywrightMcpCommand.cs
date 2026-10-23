@@ -128,6 +128,8 @@ internal static class PlaywrightMcpCommand
         var startInfo = CreateBaseStartInfo(options);
         AddLocalEnginePrefix(startInfo, options);
         AddArguments(startInfo, "pull", Image);
+        startInfo.RedirectStandardOutput = true;
+        startInfo.RedirectStandardError = true;
         return startInfo;
     }
 
@@ -137,6 +139,8 @@ internal static class PlaywrightMcpCommand
         var startInfo = CreateBaseStartInfo(options);
         AddLocalEnginePrefix(startInfo, options);
         AddArguments(startInfo, "image", "rm", Image);
+        startInfo.RedirectStandardOutput = true;
+        startInfo.RedirectStandardError = true;
         return startInfo;
     }
 

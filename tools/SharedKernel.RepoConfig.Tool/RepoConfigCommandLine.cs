@@ -67,6 +67,14 @@ internal static class RepoConfigCommandLine
                     return null;
                 }
 
+                // A response file can supply a null character, which Path.GetFullPath rejects with an exception that
+                // would escape parsing.
+                if (path.Contains('\0', StringComparison.Ordinal))
+                {
+                    result.AddError("--root path contains a null character.");
+                    return null;
+                }
+
                 return Path.GetFullPath(path, workingDirectory);
             },
         };
@@ -177,7 +185,7 @@ internal static class RepoConfigCommandLine
             CreateAutomationStep(environment, root, "apply-plan", "Apply the closure approvals in the reviewed plan.", RepoConfigToolApplication.ApplyAutomationPlan),
             CreateAutomationStep(environment, root, "seal-result", "Seal the changed roadmap paths.", RepoConfigToolApplication.SealAutomationResult),
             CreateAutomationStep(environment, root, "verify-result", "Verify the sealed result.", RepoConfigToolApplication.VerifyAutomationResult),
-            CreateAutomationStep(environment, root, "publish-result", "Publish the sealed result as a pull request.", RepoConfigToolApplication.PublishAutomationResult),
+            CreatePublishResultCommand(environment, root),
         };
 
     private static Command CreateAutomationStep(
@@ -189,11 +197,29 @@ internal static class RepoConfigCommandLine
     {
         Command command = new(name, description) { root };
         SetGuardedAction(command, (parseResult, output, _, ct) => step(
-            new RoadmapAutomationService(ResolveRoot(parseResult, root, environment), environment.HttpClient, environment.GitRepository),
+            CreateAutomationService(parseResult, root, environment),
             output,
             ct));
         return command;
     }
+
+    private static Command CreatePublishResultCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Option<bool> force = new("--force") { Description = "Publish the pull request instead of previewing it. Validation still applies." };
+        Command command = new("publish-result", "Publish the sealed result as a draft pull request. Previews unless --force is given.") { force, root };
+        SetGuardedAction(command, (parseResult, output, _, ct) => RepoConfigToolApplication.PublishAutomationResult(
+            CreateAutomationService(parseResult, root, environment),
+            parseResult.GetValue(force),
+            output,
+            ct));
+        return command;
+    }
+
+    private static RoadmapAutomationService CreateAutomationService(
+        ParseResult parseResult,
+        Option<string> root,
+        RepoConfigToolEnvironment environment) =>
+        new(ResolveRoot(parseResult, root, environment), environment.HttpClient, environment.GitRepository);
 
     private static Command CreateVerifyTextEncodingCommand(RepoConfigToolEnvironment environment, Option<string> root)
     {

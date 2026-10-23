@@ -48,9 +48,23 @@ internal static class CandidateManifest
         return evidence;
     }
 
+    /// <summary>
+    /// Replaces <paramref name="path" /> through a temporary file in the same directory, so an interrupted write never
+    /// leaves a truncated manifest.
+    /// </summary>
     public static void Write(string path, JsonObject evidence)
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(path))!);
-        File.WriteAllText(path, evidence.ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = true }) + Environment.NewLine);
+        var fullPath = Path.GetFullPath(path);
+        Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+        var temporary = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+        try
+        {
+            File.WriteAllText(temporary, evidence.ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = true }) + Environment.NewLine);
+            File.Move(temporary, fullPath, overwrite: true);
+        }
+        finally
+        {
+            File.Delete(temporary);
+        }
     }
 }

@@ -2,14 +2,15 @@
 
 [![Repository-wide build status](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danigutsch/PandaBear.SharedKernel/actions/workflows/ci.yml)
 
-Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
+Packages remain experimental `0.0.0-alpha.<run>.<attempt>` previews; stable packages, tags, and releases require separate authorization. `calculate-release --version-kind prerelease` requires `--run-number` and reports commit impact without advancing the preview core. The generic `compute` command retains normal SemVer behavior.
 
 `sharedkernel-version` calculates SharedKernel versions from Conventional Commits, checks package APIs and
 metadata, packs SharedKernel, and creates, consumes, and stages hashed package candidates.
 
 ## Prerequisites
 
-Git and the .NET SDK pinned in `global.json`. `--aot` also needs the platform
+Git 2.24 or later, which `has-breaking-change-marker` needs for `--end-of-options`, and the .NET SDK pinned in
+`global.json`. `--aot` also needs the platform
 [NativeAOT toolchain](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/development.md#nativeaot-prerequisites).
 
 ## Install
@@ -20,16 +21,32 @@ Run from this repository without installing:
 dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- --help
 ```
 
-Install from a local package:
+Install a validated candidate as a local tool. With the SDK pinned in `global.json`, `dotnet tool install` rejects
+`--add-source` under package source mapping, so add the candidate feed to `NuGet.Config`, map
+`PandaBear.SharedKernel.*` to it, and keep every other package (`*`) mapped to the existing source:
 
-```text
-dotnet pack tools/SharedKernel.Versioning.Tool/SharedKernel.Versioning.Tool.csproj -o artifacts/local-tool-feed
-dotnet tool install PandaBear.SharedKernel.Versioning.Tool --tool-path ./.tools --version <validated-candidate-version> --add-source artifacts/local-tool-feed
-./.tools/sharedkernel-version --help
+```xml
+<packageSources>
+  <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+  <add key="sharedkernel-candidates" value="<candidate-feed>" />
+</packageSources>
+<packageSourceMapping>
+  <packageSource key="nuget.org">
+    <package pattern="*" />
+  </packageSource>
+  <packageSource key="sharedkernel-candidates">
+    <package pattern="PandaBear.SharedKernel.*" />
+  </packageSource>
+</packageSourceMapping>
 ```
 
-Follow the local-feed source-mapping notes in the
-[release policy](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/release-policy.md).
+`dotnet tool install` adds the tool to the local tool manifest and creates the manifest when none exists. Put `--`
+before tool options, because `dotnet tool run` answers `--help` itself:
+
+```text
+dotnet tool install PandaBear.SharedKernel.Versioning.Tool --version <validated-candidate-version>
+dotnet tool run sharedkernel-version -- --help
+```
 
 ## Usage
 
@@ -82,8 +99,8 @@ sharedkernel-version check-api-compatibility --version 0.2.0-beta.1 --release-ph
 ```
 
 `has-breaking-change-marker` succeeds when a commit in the range has a `!` header or a `BREAKING CHANGE:` or
-`BREAKING-CHANGE:` footer. Arguments that start with `@` name response files, so write `HEAD@{u}..HEAD`
-instead of `@{u}..HEAD`.
+`BREAKING-CHANGE:` footer, and exits 3 when no commit has one. Arguments that start with `@` name response
+files, so write `HEAD@{u}..HEAD` instead of `@{u}..HEAD`.
 
 `check-api-compatibility` writes `<output-root>/<version>/api-compatibility-report.md` and packs into
 `<output-root>/packages/<version>`. With `--baseline-version`, packing runs .NET package validation against that
@@ -125,8 +142,10 @@ to an existing local feed in `NuGet.Config`.
 
 `consume-candidate` verifies the hashes, restores, builds, and runs the samples against those packages with
 isolated caches, and records `passed` or `failed` for this platform's package consumption, and its NativeAOT run
-with `--aot`, in the manifest or in `--output`. `--candidate-directory` must contain exactly one `candidate.json`,
-searched recursively. `consume-packages` runs the same checks against a feed without a manifest.
+with `--aot`, in the manifest or in `--output`. It replaces that file through a temporary file in the same
+directory, so an interrupted write never truncates it, and Ctrl+C or SIGTERM leaves the file unchanged.
+`--candidate-directory` must contain exactly one `candidate.json`, searched recursively. `consume-packages` runs
+the same checks against a feed without a manifest.
 `validate-candidate` runs `create-candidate` and then `consume-candidate` on the manifest it wrote.
 
 `stage-candidate` checks that the manifest records a clean library revision equal to `HEAD` of `--repo-root` and
@@ -145,14 +164,18 @@ does the output of the `dotnet` processes and samples that `consume-candidate`, 
 | `0` | Success. |
 | `1` | Invalid command line, cancellation, or an unexpected internal error. |
 | `2` | The command failed: invalid input, a failed check, or a failed `git` or `dotnet` process. |
+| `3` | `has-breaking-change-marker` found no breaking-change marker in the range. |
 | `130`, `143` | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
-Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or sample process tree.
+Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or sample process tree. A process that fails after the tool has
+observed Ctrl+C or SIGTERM counts as the cancellation.
 
 ## Security
 
 - .NET tools run in full trust. Install only from trusted manifests and package sources.
 - No option accepts a secret.
+- `has-breaking-change-marker` rejects an empty range or one that starts with `-`, and passes the range to Git after
+  `--end-of-options`, so Git cannot read it as an option.
 - Packing and consumption restore third-party packages from nuget.org. Generated NuGet configurations map
   `PandaBear.SharedKernel.*` only to the local feed, so internal packages never resolve from nuget.org.
 - Candidate commands verify SHA-256 package hashes before consuming or staging packages.

@@ -1230,7 +1230,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_reports_no_diagnostic_for_caller_cancellation_during_project_preflight()
+    public async Task GitHub_sync_preview_reports_no_diagnostic_for_caller_cancellation_during_project_preflight()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1259,7 +1259,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_reports_no_diagnostic_for_caller_cancellation_after_project_fields_are_read()
+    public async Task GitHub_sync_preview_reports_no_diagnostic_for_caller_cancellation_after_project_fields_are_read()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1349,7 +1349,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_reports_mapped_issues_without_network()
+    public async Task GitHub_sync_preview_reports_mapped_issues_without_network()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1369,7 +1369,7 @@ public sealed class RepoConfigToolApplicationTests
 
         // Assert
         exitCode.ShouldBe(0);
-        outputText.ShouldContain("dry-run: sync labels for owner/repository#997 from RM-001", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: sync labels for owner/repository#997 from RM-001", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1452,7 +1452,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_preflights_existing_project_membership_without_mutating()
+    public async Task GitHub_sync_preview_preflights_existing_project_membership_without_mutating()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1478,13 +1478,13 @@ public sealed class RepoConfigToolApplicationTests
 
         // Assert
         exitCode.ShouldBe(0);
-        outputText.ShouldContain("dry-run: GitHub Project 1 already contains owner/repository#997", StringComparison.Ordinal);
-        outputText.ShouldContain("dry-run: set owner/repository#997 Project field Roadmap order to 10", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: GitHub Project 1 already contains owner/repository#997", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: set owner/repository#997 Project field Roadmap order to 10", StringComparison.Ordinal);
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_defers_field_writes_until_missing_project_membership_is_added()
+    public async Task GitHub_sync_preview_defers_field_writes_until_missing_project_membership_is_added()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1509,14 +1509,14 @@ public sealed class RepoConfigToolApplicationTests
 
         // Assert
         exitCode.ShouldBe(0);
-        outputText.ShouldContain("dry-run: add owner/repository#997 to GitHub Project 1", StringComparison.Ordinal);
-        outputText.ShouldContain("dry-run: set owner/repository#997 Project field Roadmap order to 10 after adding it", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: add owner/repository#997 to GitHub Project 1", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: set owner/repository#997 Project field Roadmap order to 10 after adding it", StringComparison.Ordinal);
         handler.Requests.Count.ShouldBe(4);
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_blocks_project_proposals_for_invalid_noncurrent_status_options()
+    public async Task GitHub_sync_preview_blocks_project_proposals_for_invalid_noncurrent_status_options()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1552,13 +1552,13 @@ public sealed class RepoConfigToolApplicationTests
 
         // Assert
         exitCode.ShouldBe(0);
-        outputText.ShouldContain("dry-run: skipped projection of owner/repository#997 to GitHub Project 1 because Roadmap status cannot be projected from roadmap source", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: skipped projection of owner/repository#997 to GitHub Project 1 because Roadmap status cannot be projected from roadmap source", StringComparison.Ordinal);
         handler.Requests.Count.ShouldBe(2);
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_rejects_an_unverified_project_target_without_mutating()
+    public async Task GitHub_sync_preview_rejects_an_unverified_project_target_without_mutating()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1587,7 +1587,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_reports_project_value_conflicts_without_mutating()
+    public async Task GitHub_sync_preview_reports_project_value_conflicts_without_mutating()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1618,7 +1618,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_sanitizes_transport_failures()
+    public async Task GitHub_sync_preview_sanitizes_transport_failures()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1645,7 +1645,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_preflights_project_schema_without_issue_mappings()
+    public async Task GitHub_sync_preview_preflights_project_schema_without_issue_mappings()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1669,13 +1669,13 @@ public sealed class RepoConfigToolApplicationTests
         // Assert
         exitCode.ShouldBe(0);
         outputText.ShouldContain("No roadmap items have GitHub issue mappings or explicit creation requests.", StringComparison.Ordinal);
-        outputText.ShouldContain("dry-run: GitHub Project 1 field Roadmap order cannot be projected from roadmap source", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: GitHub Project 1 field Roadmap order cannot be projected from roadmap source", StringComparison.Ordinal);
         handler.Requests.Count.ShouldBe(2);
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_preflights_project_schema_for_issue_creation_intents()
+    public async Task GitHub_sync_preview_preflights_project_schema_for_issue_creation_intents()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1700,8 +1700,8 @@ public sealed class RepoConfigToolApplicationTests
 
         // Assert
         exitCode.ShouldBe(0);
-        outputText.ShouldContain("dry-run: create GitHub issue for owner/repository from RM-001", StringComparison.Ordinal);
-        outputText.ShouldContain("dry-run: GitHub Project 1 field Roadmap order cannot be projected from roadmap source", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: create GitHub issue for owner/repository from RM-001", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: GitHub Project 1 field Roadmap order cannot be projected from roadmap source", StringComparison.Ordinal);
         handler.Requests.Count.ShouldBe(2);
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
@@ -1729,7 +1729,7 @@ public sealed class RepoConfigToolApplicationTests
           { "id": "dropped", "name": "dropped" }
         ]
         """)]
-    public async Task GitHub_sync_dry_run_rejects_unaddressable_or_ambiguous_status_options(string statusOptions)
+    public async Task GitHub_sync_preview_rejects_unaddressable_or_ambiguous_status_options(string statusOptions)
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1752,7 +1752,7 @@ public sealed class RepoConfigToolApplicationTests
 
         // Assert
         exitCode.ShouldBe(0);
-        outputText.ShouldContain("dry-run: GitHub Project 1 field Roadmap status cannot be projected from roadmap source", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: GitHub Project 1 field Roadmap status cannot be projected from roadmap source", StringComparison.Ordinal);
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);
     }
 
@@ -1780,7 +1780,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_respects_disabled_integration()
+    public async Task GitHub_sync_preview_respects_disabled_integration()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1801,7 +1801,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_defaults_to_disabled_when_enabled_is_missing()
+    public async Task GitHub_sync_preview_defaults_to_disabled_when_enabled_is_missing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2227,8 +2227,8 @@ public sealed class RepoConfigToolApplicationTests
         var result = await syncer.Preview(TestContext.Current.CancellationToken);
 
         // Assert
-        result.Messages[0].ShouldBe("dry-run: sync labels for owner/repository#997 from RM-001");
-        result.Messages[1].ShouldBe("dry-run: sync labels for owner/repository#998 from RM-000");
+        result.Messages[0].ShouldBe("preview: sync labels for owner/repository#997 from RM-001");
+        result.Messages[1].ShouldBe("preview: sync labels for owner/repository#998 from RM-000");
     }
 
     [Fact]
@@ -2289,7 +2289,7 @@ public sealed class RepoConfigToolApplicationTests
         var result = await syncer.Preview(TestContext.Current.CancellationToken);
 
         // Assert
-        result.Messages.ShouldContain("dry-run: create GitHub issue for owner/repository from RM-001");
+        result.Messages.ShouldContain("preview: create GitHub issue for owner/repository from RM-001");
         handler.Requests.ShouldBeEmpty();
     }
 
@@ -2545,7 +2545,7 @@ public sealed class RepoConfigToolApplicationTests
         var result = await syncer.Preview(TestContext.Current.CancellationToken);
 
         // Assert
-        result.Messages.ShouldContain("dry-run: ensure owner/repository#997 is in GitHub Project 1");
+        result.Messages.ShouldContain("preview: ensure owner/repository#997 is in GitHub Project 1");
     }
 
     [Fact]
@@ -3388,7 +3388,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task GitHub_sync_dry_run_skips_numeric_project_fields_for_untriaged_items()
+    public async Task GitHub_sync_preview_skips_numeric_project_fields_for_untriaged_items()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3422,7 +3422,7 @@ public sealed class RepoConfigToolApplicationTests
 
         // Assert
         exitCode.ShouldBe(0);
-        outputText.ShouldContain("dry-run: set owner/repository#997 Project field Roadmap status to ready", StringComparison.Ordinal);
+        outputText.ShouldContain("preview: set owner/repository#997 Project field Roadmap status to ready", StringComparison.Ordinal);
         outputText.ShouldNotContain("Roadmap order", StringComparison.Ordinal);
         outputText.ShouldNotContain("RICE", StringComparison.Ordinal);
         handler.Requests.ShouldNotContain(request => request.Body?.Contains("mutation", StringComparison.Ordinal) == true);

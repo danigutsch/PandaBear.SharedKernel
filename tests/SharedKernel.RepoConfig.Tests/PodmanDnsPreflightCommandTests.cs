@@ -869,6 +869,43 @@ public sealed class PodmanDnsPreflightCommandTests
     }
 
     [Fact]
+    public async Task Cancellation_kills_the_inspection_process_tree()
+    {
+        // Arrange
+        if (!OperatingSystem.IsLinux())
+        {
+            return;
+        }
+
+        using var directory = new TemporaryDirectory();
+        ProcessStartInfo startInfo = new("/bin/sh")
+        {
+            RedirectStandardError = true,
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            WorkingDirectory = directory.Path
+        };
+        startInfo.ArgumentList.Add("-c");
+        startInfo.ArgumentList.Add("sleep 60 & echo $! > grandchild.pid; wait");
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        var running = PodmanDnsPreflightCommand.RunProcess(startInfo, cancellation.Token);
+        var grandchildId = await ChildProcessId.Read(
+            Path.Combine(directory.Path, "grandchild.pid"),
+            running,
+            TestContext.Current.CancellationToken);
+        var grandchild = LinuxProcessIdentity.Capture(grandchildId);
+
+        // Act
+        await cancellation.CancelAsync();
+        var action = () => running.WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
+        await action.ShouldThrowAssignableTo<OperationCanceledException>();
+        var exited = await grandchild.WaitForExit(TestContext.Current.CancellationToken);
+
+        // Assert
+        exited.ShouldBeTrue();
+    }
+
+    [Fact]
     public async Task Process_output_capture_retains_only_the_limit_marker()
     {
         // Arrange
