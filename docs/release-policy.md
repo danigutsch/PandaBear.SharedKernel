@@ -4,9 +4,9 @@ All packages remain preview (prerelease) until stable artifacts are separately a
 
 ## Candidates and versions
 
-Successful package-affecting changes on main produce prerelease candidates. Pull requests validate candidate artifacts before merge. Repository documentation-only changes skip packing; a README inside a package project remains an artifact input. Unknown history and uncertain inputs select full validation. Nightly validation covers the complete library and package consumers.
+Successful package-affecting changes on main produce `0.0.0-alpha.<run>.<attempt>` candidates. Pull requests validate candidate artifacts before merge. Repository documentation-only changes skip packing; a README inside a package project remains an artifact input. Unknown history and uncertain inputs select full validation. Nightly validation covers the complete library and package consumers.
 
-Use the existing C# `calculate-release` command. It selects the highest Conventional Commit impact since the latest reachable `v*` release tag: breaking markers select major, `feat` selects minor, and `fix`, `perf`, or `refactor` select patch. Multiple commits cause one coordinated release bump. Without a release tag, the existing calculator uses its `0.1.0` base and retained history; review the first stable release explicitly. Do not change the calculator merely to relabel an alpha suffix: alpha is already prerelease.
+Use the existing C# `calculate-release` command. For prerelease builds it reports the highest Conventional Commit impact since the latest reachable `v*` release tag, but fixes the package core at `0.0.0` while the library is experimental. Breaking changes remain documented and reported; they do not advance the preview core. A run identifier is required so preview calculation never emits a stable identity. Previously produced preview versions retain their identities and are not overwritten. Moving from an earlier `1.*` or `2.*` preview requires an explicit consumer pin because `0.0.0-alpha.*` sorts lower. Stable calculation and the reusable SemVer calculator retain their Conventional Commit bump behavior; a stable release requires separate authorization.
 
 CI appends workflow run number and attempt as an ordered prerelease identifier. Build metadata alone does not distinguish NuGet identities. One coordinated package version describes the release; unique candidate identifiers distinguish artifacts without incrementing the release core for every build.
 
@@ -23,3 +23,14 @@ C# namespaces use `PandaBear.*`; projects, assemblies, command names, and `Panda
 Release tooling is documented in the root README and [versioning tool guide](../tools/SharedKernel.Versioning.Tool/README.md). Release preparation itself does not authorize registry publication.
 
 References: [library versioning](https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning), [NuGet versions](https://learn.microsoft.com/en-us/nuget/concepts/package-versioning), and [package authoring](https://learn.microsoft.com/en-us/nuget/create-packages/package-authoring-best-practices).
+
+## Idempotency contracts package migration
+
+The contracts package is now `PandaBear.SharedKernel.Idempotency.Abstractions`; the existing
+`PandaBear.Idempotency` namespace remains unchanged; the project and assembly become
+`SharedKernel.Idempotency.Abstractions`.
+This is a breaking preview package-identity change. Consumers must replace direct references
+and refresh their candidate pins and lock files together; do not install both identities.
+The separate `PandaBear.SharedKernel.Idempotency.EntityFrameworkCore` provider now depends on
+the renamed contracts package. HTTP retry state belongs to HttpClients; application request
+fingerprinting and transaction/replay policy remain in the consuming application.

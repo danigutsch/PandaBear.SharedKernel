@@ -4,6 +4,11 @@ internal static class ReleaseVersionCommand
 {
     public static async Task<VersionOutput> Run(CalculateReleaseOptions options, TextWriter output)
     {
+        if (options.VersionKind == "prerelease")
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(options.RunNumber);
+        }
+
         var sourceSha = string.IsNullOrWhiteSpace(options.Sha)
             ? CommandRunner.Run("git", ["rev-parse", "HEAD"], options.RepoRoot).Trim()
             : options.Sha;
@@ -21,6 +26,15 @@ internal static class ReleaseVersionCommand
                 logOutput,
                 options.VersionKind,
                 options.RunNumber)).ConfigureAwait(false);
+
+        if (options.VersionKind == "prerelease")
+        {
+            var preview = VersionOutput.Create(
+                new SemanticVersion(0, 0, 0, "alpha." + options.RunNumber),
+                result.VersionOutput.ReleaseImpact,
+                sourceSha);
+            result = result with { VersionOutput = preview, VersionJson = VersionOutputJson.Serialize(preview) };
+        }
 
         if (!string.IsNullOrWhiteSpace(options.GitHubOutput))
         {

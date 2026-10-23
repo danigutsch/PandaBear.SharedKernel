@@ -8,5 +8,5 @@ public static class TestTraits
     /// <summary>
     /// Component value for SharedKernel idempotency tests.
     /// </summary>
-    public const string IdempotencyComponent = "SharedKernel.Idempotency";
+    public const string IdempotencyComponent = "SharedKernel.Idempotency.Abstractions";
 }
