@@ -17,7 +17,7 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
 
     public PodmanDnsPreflightTestContext()
     {
-        RootPath = Path.Combine(Path.GetTempPath(), "podman-dns-preflight-tests", Guid.NewGuid().ToString("N"));
+        RootPath = Path.Combine(Path.GetTempPath(), "verify-podman-dns-tests", Guid.NewGuid().ToString("N"));
         ProcRoot = Path.Combine(RootPath, "proc");
         RunRoot = Path.Combine(RootPath, "runroot");
         AardvarkDirectory = Path.Combine(RunRoot, "networks", "aardvark-dns");
@@ -177,15 +177,15 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
     {
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var exitCode = await PodmanDnsPreflightCommand.Run(
-            arguments ?? [],
+        var environment = new RepoConfigToolEnvironment(RootPath)
+        {
+            PodmanHost = new PodmanDnsHost(podmanExecutable, statExecutable, ProcRoot, isLinux, RunProcess)
+        };
+        var exitCode = await RepoConfigToolRunner.Run(
+            ["verify-podman-dns", .. arguments ?? []],
             output,
             error,
-            podmanExecutable,
-            statExecutable,
-            ProcRoot,
-            isLinux,
-            RunProcess,
+            environment,
             TestContext.Current.CancellationToken);
 
         return (exitCode, output.ToString(), error.ToString());

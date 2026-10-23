@@ -7,7 +7,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class TextEncodingCommandTests
 {
     [Fact]
-    public async Task Help_lists_the_text_encoding_command()
+    public async Task Help_lists_the_verify_text_encoding_command()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -17,12 +17,12 @@ public sealed class TextEncodingCommandTests
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.StandardOutput.ShouldContain("text-encoding", StringComparison.Ordinal);
+        result.StandardOutput.ShouldContain("verify-text-encoding", StringComparison.Ordinal);
         result.StandardError.ShouldBe(string.Empty);
     }
 
     [Fact]
-    public async Task Text_encoding_honors_root_and_accepts_valid_utf8_baseline()
+    public async Task Verify_text_encoding_honors_root_and_accepts_valid_utf8_baseline()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -38,7 +38,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken,
             Path.GetTempPath());
 
@@ -49,19 +49,19 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_rejects_extra_arguments()
+    public async Task Verify_text_encoding_rejects_extra_arguments()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "extra", "--root", repository.RootPath],
+            ["verify-text-encoding", "extra", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
-        result.ExitCode.ShouldBe(2);
-        result.StandardError.ShouldContain("Usage:", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(1);
+        result.StandardError.ShouldContain("Unrecognized command or argument 'extra'.", StringComparison.Ordinal);
     }
 
     [Theory]
@@ -70,7 +70,7 @@ public sealed class TextEncodingCommandTests
     [InlineData("utf16le")]
     [InlineData("utf16be")]
     [InlineData("utf8-nul")]
-    public async Task Text_encoding_rejects_nul_containing_text(string name)
+    public async Task Verify_text_encoding_rejects_nul_containing_text(string name)
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -89,7 +89,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -100,7 +100,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_rejects_invalid_utf8_without_leaking_content_or_root()
+    public async Task Verify_text_encoding_rejects_invalid_utf8_without_leaking_content_or_root()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -110,7 +110,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -122,7 +122,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_skips_only_exact_binary_set_from_index_attributes()
+    public async Task Verify_text_encoding_skips_only_exact_binary_set_from_index_attributes()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -135,7 +135,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -147,7 +147,7 @@ public sealed class TextEncodingCommandTests
     [InlineData("packages.lock.json merge=binary", "packages.lock.json")]
     [InlineData("assigned.dat binary=custom", "assigned.dat")]
     [InlineData("unset.dat -binary", "unset.dat")]
-    public async Task Text_encoding_scans_every_binary_value_except_set(string attribute, string relativePath)
+    public async Task Verify_text_encoding_scans_every_binary_value_except_set(string attribute, string relativePath)
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -159,7 +159,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -169,7 +169,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_sanitizes_special_path_diagnostics_to_one_line()
+    public async Task Verify_text_encoding_sanitizes_special_path_diagnostics_to_one_line()
     {
         if (OperatingSystem.IsWindows())
         {
@@ -185,7 +185,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
         var lines = result.StandardError.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
 
@@ -199,7 +199,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_escapes_unicode_format_and_separator_characters()
+    public async Task Verify_text_encoding_escapes_unicode_format_and_separator_characters()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -210,7 +210,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -232,7 +232,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_ignores_alternate_git_directory_routing()
+    public async Task Verify_text_encoding_ignores_alternate_git_directory_routing()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -251,7 +251,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken,
             environment: environment);
 
@@ -261,7 +261,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_ignores_alternate_index_routing()
+    public async Task Verify_text_encoding_ignores_alternate_index_routing()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -278,7 +278,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken,
             environment: environment);
 
@@ -288,7 +288,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_ignores_global_binary_attributes()
+    public async Task Verify_text_encoding_ignores_global_binary_attributes()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -303,7 +303,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken,
             environment: environment);
 
@@ -313,7 +313,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_ignores_original_info_attributes()
+    public async Task Verify_text_encoding_ignores_original_info_attributes()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -324,7 +324,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -334,7 +334,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_ignores_blob_replacement_refs()
+    public async Task Verify_text_encoding_ignores_blob_replacement_refs()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -354,7 +354,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -363,7 +363,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_supports_sha256_repositories_when_git_supports_them()
+    public async Task Verify_text_encoding_supports_sha256_repositories_when_git_supports_them()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -378,7 +378,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -387,7 +387,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_reads_split_index_with_its_shared_index()
+    public async Task Verify_text_encoding_reads_split_index_with_its_shared_index()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -407,7 +407,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -416,7 +416,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_preserves_repository_declared_object_alternates()
+    public async Task Verify_text_encoding_preserves_repository_declared_object_alternates()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -439,7 +439,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -448,7 +448,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_ignores_caller_provided_object_alternates()
+    public async Task Verify_text_encoding_ignores_caller_provided_object_alternates()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -467,7 +467,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken,
             environment: environment);
 
@@ -478,7 +478,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_uses_the_linked_worktree_index()
+    public async Task Verify_text_encoding_uses_the_linked_worktree_index()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -501,7 +501,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", linkedRoot],
+            ["verify-text-encoding", "--root", linkedRoot],
             TestContext.Current.CancellationToken,
             linkedRoot);
 
@@ -511,7 +511,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_skips_symlink_index_entries_without_reading_the_blob()
+    public async Task Verify_text_encoding_skips_symlink_index_entries_without_reading_the_blob()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -523,7 +523,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -532,7 +532,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_reads_staged_content_not_working_tree_content()
+    public async Task Verify_text_encoding_reads_staged_content_not_working_tree_content()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -543,7 +543,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -552,7 +552,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_rejects_invalid_staged_content_even_when_working_tree_is_valid()
+    public async Task Verify_text_encoding_rejects_invalid_staged_content_even_when_working_tree_is_valid()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -563,7 +563,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -573,14 +573,14 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_reports_non_git_roots_without_raw_process_details()
+    public async Task Verify_text_encoding_reports_non_git_roots_without_raw_process_details()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -591,7 +591,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_reports_corrupt_index_without_raw_git_details()
+    public async Task Verify_text_encoding_reports_corrupt_index_without_raw_git_details()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -602,7 +602,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert
@@ -613,7 +613,7 @@ public sealed class TextEncodingCommandTests
     }
 
     [Fact]
-    public async Task Text_encoding_reports_missing_blob_without_raw_git_details()
+    public async Task Verify_text_encoding_reports_missing_blob_without_raw_git_details()
     {
         // Arrange
         using var repository = new TemporaryGitRepository();
@@ -628,7 +628,7 @@ public sealed class TextEncodingCommandTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken);
 
         // Assert

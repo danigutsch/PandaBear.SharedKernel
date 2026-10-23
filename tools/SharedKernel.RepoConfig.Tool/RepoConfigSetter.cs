@@ -6,6 +6,8 @@ namespace PandaBear.RepoConfig.Tool;
 
 internal static class RepoConfigSetter
 {
+    public const string GitHubRepositoryKey = "github.repository";
+
     private static readonly JsonWriterOptions WriterOptions = new()
     {
         Indented = true
@@ -17,7 +19,7 @@ internal static class RepoConfigSetter
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
 
-        if (!string.Equals(key, "github.repository", StringComparison.Ordinal))
+        if (!string.Equals(key, GitHubRepositoryKey, StringComparison.Ordinal))
         {
             throw new ArgumentException($"Unsupported config key: {key}", nameof(key));
         }

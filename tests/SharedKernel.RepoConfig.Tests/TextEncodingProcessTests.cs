@@ -28,7 +28,7 @@ public sealed class TextEncodingProcessTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             watchdog.Token,
             environment: environment);
 
@@ -63,7 +63,7 @@ public sealed class TextEncodingProcessTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             watchdog.Token,
             environment: environment);
 
@@ -93,14 +93,16 @@ public sealed class TextEncodingProcessTests
         };
 
         // Act
-        var action = (Func<Task>)(async () => await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+        var result = await repository.RunCommand(
+            ["verify-text-encoding", "--root", repository.RootPath],
             cancellation.Token,
-            environment: environment));
-        var exception = await action.ShouldThrow<OperationCanceledException>();
+            environment: environment);
 
         // Assert
-        exception.CancellationToken.ShouldBe(cancellation.Token);
+        result.ExitCode.ShouldBe(1);
+        cancellation.IsCancellationRequested.ShouldBeTrue();
+        result.StandardOutput.ShouldBe(string.Empty);
+        result.StandardError.ShouldBe(string.Empty);
     }
 
     [Fact]
@@ -125,7 +127,7 @@ public sealed class TextEncodingProcessTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             watchdog.Token,
             environment: environment);
 
@@ -168,7 +170,7 @@ public sealed class TextEncodingProcessTests
     }
 
     [Fact]
-    public async Task Text_encoding_ignores_repository_local_git_from_relative_path_entries()
+    public async Task Verify_text_encoding_ignores_repository_local_git_from_relative_path_entries()
     {
         // Arrange
         if (OperatingSystem.IsWindows())
@@ -198,7 +200,7 @@ public sealed class TextEncodingProcessTests
 
         // Act
         var result = await repository.RunCommand(
-            ["text-encoding", "--root", repository.RootPath],
+            ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken,
             environment: environment);
 

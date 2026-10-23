@@ -16,7 +16,7 @@ public sealed class RoadmapAutomationCommandTests
         using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", null);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(
+        var exitCode = await RepoConfigToolRunner.Run(
             ["automation", "unknown", "--root", workspace.RootPath],
             output,
             error,
@@ -25,9 +25,38 @@ public sealed class RoadmapAutomationCommandTests
         var errorText = error.ToString();
 
         // Assert
-        exitCode.ShouldBe(2);
-        errorText.ShouldContain("Unknown automation command: unknown", StringComparison.Ordinal);
+        exitCode.ShouldBe(1);
+        errorText.ShouldContain("Unrecognized command or argument 'unknown'.", StringComparison.Ordinal);
         errorText.ShouldNotContain("GITHUB_REPOSITORY", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("plan-github")]
+    [InlineData("validate-plan")]
+    [InlineData("apply-plan")]
+    [InlineData("seal-result")]
+    [InlineData("verify-result")]
+    [InlineData("publish-result")]
+    public async Task Automation_steps_with_a_relative_root_require_the_repository_variable(string step)
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        using var repository = new EnvironmentVariableScope("GITHUB_REPOSITORY", null);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(
+            ["automation", step, "--root", "."],
+            output,
+            error,
+            workspace.RootPath,
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ToString().ShouldBe(string.Empty);
+        error.ToString().ShouldBe("sharedkernel-repo: Roadmap automation requires GITHUB_REPOSITORY." + Environment.NewLine);
     }
 
     [Fact]
@@ -57,7 +86,7 @@ public sealed class RoadmapAutomationCommandTests
         using var githubSummary = new EnvironmentVariableScope("GITHUB_STEP_SUMMARY", githubSummaryPath);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(
+        var exitCode = await RepoConfigToolRunner.Run(
             ["automation", "plan-github", "--root", workspace.RootPath],
             output,
             error,
@@ -141,7 +170,7 @@ public sealed class RoadmapAutomationCommandTests
         using var githubSummary = new EnvironmentVariableScope("GITHUB_STEP_SUMMARY", githubSummaryPath);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(
+        var exitCode = await RepoConfigToolRunner.Run(
             ["automation", "publish-result", "--root", workspace.RootPath],
             output,
             error,
@@ -173,7 +202,7 @@ public sealed class RoadmapAutomationCommandTests
         using var ghToken = new EnvironmentVariableScope("GH_TOKEN", "ghp_untrusted_fallback");
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(
+        var exitCode = await RepoConfigToolRunner.Run(
             ["automation", "plan-github", "--root", workspace.RootPath],
             output,
             error,

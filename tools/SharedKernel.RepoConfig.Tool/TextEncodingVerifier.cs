@@ -245,7 +245,7 @@ internal static class TextEncodingVerifier
 
     private static string CreateIsolationRoot()
     {
-        var path = Directory.CreateTempSubdirectory("sharedkernel-repo-text-encoding-").FullName;
+        var path = Directory.CreateTempSubdirectory("sharedkernel-repo-verify-text-encoding-").FullName;
         if (!OperatingSystem.IsWindows())
         {
             File.SetUnixFileMode(

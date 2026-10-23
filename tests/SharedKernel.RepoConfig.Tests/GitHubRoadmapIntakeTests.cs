@@ -8,7 +8,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class GitHubRoadmapIntakeTests
 {
     [Fact]
-    public async Task Intake_github_does_not_link_an_external_parent_with_a_matching_issue_number()
+    public async Task Github_import_does_not_link_an_external_parent_with_a_matching_issue_number()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -16,7 +16,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
         [
@@ -65,7 +65,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         using var childItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-018-github-100.json"));
 
         // Assert
@@ -75,7 +75,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_rejects_a_manifest_without_snapshot_digest_before_network()
+    public async Task Github_import_rejects_a_manifest_without_snapshot_digest_before_network()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -83,7 +83,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.Configure(
             workspace,
@@ -121,17 +121,17 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
         output.ToString().ShouldBe(string.Empty);
-        error.ToString().ShouldContain("GitHub intake requires snapshotDigest; run reconcile github --apply first.", StringComparison.Ordinal);
+        error.ToString().ShouldContain("GitHub intake requires snapshotDigest; run github reconcile --force first.", StringComparison.Ordinal);
         handler.Requests.ShouldBeEmpty();
     }
 
     [Fact]
-    public async Task Intake_github_defaults_to_dry_run_and_fetches_only_safe_metadata()
+    public async Task Github_import_defaults_to_dry_run_and_fetches_only_safe_metadata()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -139,7 +139,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
         [
@@ -184,7 +184,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var outputText = output.ToString();
         var errorText = error.ToString();
         var stateAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
@@ -210,7 +210,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_apply_allocates_links_prioritizes_and_is_idempotent()
+    public async Task Github_import_force_allocates_links_prioritizes_and_is_idempotent()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -220,7 +220,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var firstError = new StringWriter(CultureInfo.InvariantCulture);
         using var secondOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var secondError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubProjectSyncTestOperations.MapDefaultItem(workspace);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
@@ -306,7 +306,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var firstHttpClient = new HttpClient(firstHandler);
 
         // Act
-        var firstExitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], firstOutput, firstError, workspace.RootPath, firstHttpClient, TestContext.Current.CancellationToken);
+        var firstExitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], firstOutput, firstError, workspace.RootPath, firstHttpClient, TestContext.Current.CancellationToken);
         var stateAfterFirstApply = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
         using var firstImportedItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-018-github-100.json"));
         using var dependentItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-020-github-300.json"));
@@ -315,7 +315,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var secondHandler = new TestHttpMessageHandler();
         GitHubRoadmapSnapshotTestOperations.Enqueue(secondHandler, snapshot);
         using var secondHttpClient = new HttpClient(secondHandler);
-        var secondExitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], secondOutput, secondError, workspace.RootPath, secondHttpClient, TestContext.Current.CancellationToken);
+        var secondExitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], secondOutput, secondError, workspace.RootPath, secondHttpClient, TestContext.Current.CancellationToken);
         var stateAfterSecondApply = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
         var firstItemRoot = firstImportedItem.RootElement;
         var dependentRoot = dependentItem.RootElement;
@@ -347,7 +347,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_rejects_issue_set_digest_drift_without_writing()
+    public async Task Github_import_rejects_issue_set_digest_drift_without_writing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -355,7 +355,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> expectedSnapshot =
         [
@@ -403,7 +403,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var errorText = error.ToString();
         var stateAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
 
@@ -415,7 +415,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_rejects_pull_requests_without_writing()
+    public async Task Github_import_rejects_pull_requests_without_writing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -423,7 +423,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> expectedSnapshot =
         [
@@ -495,7 +495,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var errorText = error.ToString();
         var stateAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
 
@@ -507,7 +507,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_transitions_a_declared_imported_item_to_closed_support()
+    public async Task Github_import_transitions_a_declared_imported_item_to_closed_support()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -517,7 +517,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var firstError = new StringWriter(CultureInfo.InvariantCulture);
         using var secondOutput = new StringWriter(CultureInfo.InvariantCulture);
         using var secondError = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
@@ -563,7 +563,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var firstHttpClient = new HttpClient(firstHandler);
 
         // Act
-        var firstExitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], firstOutput, firstError, workspace.RootPath, firstHttpClient, TestContext.Current.CancellationToken);
+        var firstExitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], firstOutput, firstError, workspace.RootPath, firstHttpClient, TestContext.Current.CancellationToken);
         var stateAfterFirstApply = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
         using var transitionedItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-018-github-100.json"));
         using var newOpenItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-019-github-101.json"));
@@ -571,7 +571,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var secondHandler = new TestHttpMessageHandler();
         GitHubRoadmapSnapshotTestOperations.Enqueue(secondHandler, snapshot);
         using var secondHttpClient = new HttpClient(secondHandler);
-        var secondExitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], secondOutput, secondError, workspace.RootPath, secondHttpClient, TestContext.Current.CancellationToken);
+        var secondExitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], secondOutput, secondError, workspace.RootPath, secondHttpClient, TestContext.Current.CancellationToken);
         var stateAfterSecondApply = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
         var transitionedRoot = transitionedItem.RootElement;
         var newOpenRoot = newOpenItem.RootElement;
@@ -597,7 +597,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_preserves_exact_blocker_links_during_a_closed_transition()
+    public async Task Github_import_preserves_exact_blocker_links_during_a_closed_transition()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -605,7 +605,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
@@ -659,7 +659,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         using var transitionedItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-018-github-100.json"));
         using var newOpenItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-019-github-101.json"));
         using var orderDocument = JsonDocument.Parse(workspace.ReadFile("roadmap/order.json"));
@@ -676,7 +676,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_rejects_an_undeclared_imported_closed_transition_without_writing()
+    public async Task Github_import_rejects_an_undeclared_imported_closed_transition_without_writing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -684,7 +684,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
@@ -738,7 +738,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var stateAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
 
         // Assert
@@ -749,7 +749,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_rejects_a_declared_transition_without_an_existing_mapping()
+    public async Task Github_import_rejects_a_declared_transition_without_an_existing_mapping()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -757,7 +757,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
         [
@@ -803,7 +803,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var stateAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
 
         // Assert
@@ -814,7 +814,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_rejects_a_closed_transition_for_a_reviewed_item()
+    public async Task Github_import_rejects_a_closed_transition_for_a_reviewed_item()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -822,7 +822,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var reviewedItem = workspace.ReadFile("roadmap/items/RM-001-roadmap-gitops.json")
             .Replace("\"labels\": [", "\"integrations\": { \"github\": { \"issue\": 100 } },\n  \"labels\": [", StringComparison.Ordinal);
@@ -869,7 +869,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(1);
@@ -879,7 +879,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_rejects_a_declared_transition_with_a_different_roadmap_item()
+    public async Task Github_import_rejects_a_declared_transition_with_a_different_roadmap_item()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -887,7 +887,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
@@ -933,7 +933,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var stateAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
 
         // Assert
@@ -944,7 +944,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_replaces_imported_relationships_with_exact_github_metadata()
+    public async Task Github_import_replaces_imported_relationships_with_exact_github_metadata()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -952,7 +952,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.AddImportedOpenPairWithStaleRelationship(workspace);
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
@@ -1006,7 +1006,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         using var parentItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-018-github-100.json"));
         using var childItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-019-github-101.json"));
         var parentBlocks = parentItem.RootElement.GetProperty("blocks").EnumerateArray().Select(item => item.GetString() ?? string.Empty).ToArray();
@@ -1022,7 +1022,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_links_only_mapped_open_parents_from_a_digest_snapshot()
+    public async Task Github_import_links_only_mapped_open_parents_from_a_digest_snapshot()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1030,7 +1030,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         var repository = "owner/repository";
         var issue100 = new GitHubRoadmapReconcileIssue(
@@ -1149,7 +1149,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
 
         // Assert
         exitCode.ShouldBe(0);
@@ -1160,7 +1160,7 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
-    public async Task Intake_github_rejects_snapshot_metadata_drift_without_writing()
+    public async Task Github_import_rejects_snapshot_metadata_drift_without_writing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1168,7 +1168,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var initError = new StringWriter(CultureInfo.InvariantCulture);
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
-        var actualResult = await RepoConfigToolApplication.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
         actualResult.ShouldBe(0);
         GitHubRoadmapIntakeTestOperations.Configure(
             workspace,
@@ -1236,7 +1236,7 @@ public sealed class GitHubRoadmapIntakeTests
         using var httpClient = new HttpClient(handler);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(["intake", "github", "--apply", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
         var stateAfter = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
 
         // Assert

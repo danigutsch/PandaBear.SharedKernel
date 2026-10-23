@@ -8,14 +8,14 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class PodmanDnsPreflightCommandTests
 {
     [Fact]
-    public async Task Tool_help_lists_the_preflight_command()
+    public async Task Tool_help_lists_the_podman_dns_command()
     {
         // Arrange
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(
+        var exitCode = await RepoConfigToolRunner.Run(
             ["--help"],
             output,
             error,
@@ -24,28 +24,30 @@ public sealed class PodmanDnsPreflightCommandTests
 
         // Assert
         exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("podman-dns-preflight", StringComparison.Ordinal);
+        output.ToString().ShouldContain("verify-podman-dns", StringComparison.Ordinal);
         error.ToString().ShouldBe(string.Empty);
     }
 
     [Fact]
-    public async Task Command_help_uses_the_public_preflight_entry_point()
+    public async Task Command_help_describes_the_verbosity_option()
     {
         // Arrange
         using var output = new StringWriter(CultureInfo.InvariantCulture);
         using var error = new StringWriter(CultureInfo.InvariantCulture);
 
         // Act
-        var exitCode = await RepoConfigToolApplication.Run(
-            ["podman-dns-preflight", "--help"],
+        var exitCode = await RepoConfigToolRunner.Run(
+            ["verify-podman-dns", "--help"],
             output,
             error,
             Environment.CurrentDirectory,
             TestContext.Current.CancellationToken);
+        var outputText = output.ToString();
 
         // Assert
         exitCode.ShouldBe(0);
-        output.ToString().ShouldContain("Usage: sharedkernel-repo podman-dns-preflight", StringComparison.Ordinal);
+        outputText.ShouldContain("verify-podman-dns [options]", StringComparison.Ordinal);
+        outputText.ShouldContain("--verbosity <level>", StringComparison.Ordinal);
         error.ToString().ShouldBe(string.Empty);
     }
 
@@ -56,12 +58,69 @@ public sealed class PodmanDnsPreflightCommandTests
         using var context = new PodmanDnsPreflightTestContext();
 
         // Act
-        var result = await context.Run(["--check", "--help"]);
+        var result = await context.Run(["--verbosity", "quiet", "--help"]);
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.StandardOutput.ShouldContain("Usage: sharedkernel-repo podman-dns-preflight", StringComparison.Ordinal);
+        result.StandardOutput.ShouldContain("verify-podman-dns [options]", StringComparison.Ordinal);
         result.StandardError.ShouldBe(string.Empty);
+        context.Commands.ShouldBe([]);
+    }
+
+    [Theory]
+    [InlineData("q")]
+    [InlineData("quiet")]
+    public async Task Quiet_verbosity_suppresses_the_healthy_state_message(string level)
+    {
+        // Arrange
+        using var context = new PodmanDnsPreflightTestContext();
+        context.SetResponse("info --format {{.Host.Security.Rootless}}", "false\n");
+
+        // Act
+        var result = await context.Run(["--verbosity", level]);
+
+        // Assert
+        result.ExitCode.ShouldBe(0);
+        result.StandardOutput.ShouldBe(string.Empty);
+        result.StandardError.ShouldBe(string.Empty);
+    }
+
+    [Theory]
+    [InlineData("m")]
+    [InlineData("minimal")]
+    [InlineData("n")]
+    [InlineData("normal")]
+    [InlineData("d")]
+    [InlineData("detailed")]
+    [InlineData("diag")]
+    [InlineData("diagnostic")]
+    public async Task Other_verbosity_levels_report_the_healthy_state(string level)
+    {
+        // Arrange
+        using var context = new PodmanDnsPreflightTestContext();
+        context.SetResponse("info --format {{.Host.Security.Rootless}}", "false\n");
+
+        // Act
+        var result = await context.Run(["--verbosity", level]);
+
+        // Assert
+        result.ExitCode.ShouldBe(0);
+        result.StandardOutput.ShouldContain("podman dns preflight: podman is rootful", StringComparison.Ordinal);
+        result.StandardError.ShouldBe(string.Empty);
+    }
+
+    [Fact]
+    public async Task Unknown_verbosity_is_a_parse_error_without_running_podman()
+    {
+        // Arrange
+        using var context = new PodmanDnsPreflightTestContext();
+
+        // Act
+        var result = await context.Run(["--verbosity", "loud"]);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.StandardError.ShouldContain("Argument 'loud' not recognized.", StringComparison.Ordinal);
         context.Commands.ShouldBe([]);
     }
 
@@ -138,7 +197,7 @@ public sealed class PodmanDnsPreflightCommandTests
         context.SetResponse("info --format {{.Host.Security.Rootless}}", "false\n");
 
         // Act
-        var result = await context.Run(["--quiet"]);
+        var result = await context.Run(["--verbosity", "quiet"]);
 
         // Assert
         result.ExitCode.ShouldBe(0);
@@ -235,7 +294,7 @@ public sealed class PodmanDnsPreflightCommandTests
     }
 
     [Fact]
-    public async Task Check_mode_reports_orphan_config_without_mutation()
+    public async Task Orphan_config_is_reported_without_mutation()
     {
         // Arrange
         using var context = new PodmanDnsPreflightTestContext { Networks = "trip\n" };
@@ -245,7 +304,7 @@ public sealed class PodmanDnsPreflightCommandTests
         var before = context.Snapshot();
 
         // Act
-        var result = await context.Run(["--check"]);
+        var result = await context.Run();
         var after = context.Snapshot();
 
         // Assert
@@ -863,7 +922,7 @@ public sealed class PodmanDnsPreflightCommandTests
     }
 
     [Fact]
-    public async Task Unknown_argument_is_a_usage_error()
+    public async Task Unknown_option_is_a_parse_error_without_running_podman()
     {
         // Arrange
         using var context = new PodmanDnsPreflightTestContext();
@@ -872,8 +931,8 @@ public sealed class PodmanDnsPreflightCommandTests
         var result = await context.Run(["--repair"]);
 
         // Assert
-        result.ExitCode.ShouldBe(2);
-        result.StandardError.ShouldContain("Unknown argument: --repair", StringComparison.Ordinal);
+        result.ExitCode.ShouldBe(1);
+        result.StandardError.ShouldContain("Unrecognized command or argument '--repair'.", StringComparison.Ordinal);
         context.Commands.ShouldBe([]);
     }
 }
