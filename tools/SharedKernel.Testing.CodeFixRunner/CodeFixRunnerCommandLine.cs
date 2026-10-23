@@ -1,6 +1,7 @@
 extern alias testinganalyzers;
 
 using System.CommandLine;
+using System.CommandLine.Parsing;
 
 namespace PandaBear.Testing.CodeFixRunner;
 
@@ -9,26 +10,22 @@ internal static class CodeFixRunnerCommandLine
     private const int LoadFailureExitCode = 2;
 
     /// <summary>Creates the command tree.</summary>
+    /// <param name="workingDirectory">The directory that a relative project or solution path resolves against.</param>
     /// <param name="run">
     /// Fixes the target, writes diagnostics to the given error writer, and returns the number of fixed diagnostics, or
     /// <see langword="null"/> when the target did not load.
     /// </param>
-    public static RootCommand Create(Func<CodeFixRunnerOptions, TextWriter, CancellationToken, Task<int?>> run)
+    public static RootCommand Create(string workingDirectory, Func<CodeFixRunnerOptions, TextWriter, CancellationToken, Task<int?>> run)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(workingDirectory);
         ArgumentNullException.ThrowIfNull(run);
 
+        var baseDirectory = Path.GetFullPath(workingDirectory);
         var target = new Argument<FileInfo>("project-or-solution")
         {
             Description = "The .csproj, .sln, or .slnx file to fix in place.",
+            CustomParser = result => ParseTarget(result, baseDirectory),
         };
-        target.AcceptExistingOnly();
-        target.Validators.Add(static result =>
-        {
-            if (result.Tokens is [var token] && Path.GetExtension(token.Value) is not (".csproj" or ".sln" or ".slnx"))
-            {
-                result.AddError($"'{token.Value}' is not a .csproj, .sln, or .slnx file.");
-            }
-        });
 
         string[] fixableDiagnosticIds = [.. CodeFixRunEngine.FixableDiagnosticIds.Order(StringComparer.Ordinal)];
         var diagnostic = new Option<string>("--diagnostic")
@@ -70,5 +67,28 @@ internal static class CodeFixRunnerCommandLine
         });
 
         return rootCommand;
+    }
+
+    // A relative target resolves against the injected working directory, not the process directory. System.CommandLine
+    // calls this parser only when the argument has its one token.
+    private static FileInfo? ParseTarget(ArgumentResult result, string workingDirectory)
+    {
+        var path = result.Tokens[0].Value;
+        if (Path.GetExtension(path) is not (".csproj" or ".sln" or ".slnx"))
+        {
+            result.AddError($"'{path}' is not a .csproj, .sln, or .slnx file.");
+            return null;
+        }
+
+        // A response file can supply a null character, which Path.GetFullPath rejects with an exception that would escape
+        // parsing.
+        var target = path.Contains('\0', StringComparison.Ordinal) ? null : new FileInfo(Path.GetFullPath(path, workingDirectory));
+        if (target is not { Exists: true })
+        {
+            result.AddError($"File does not exist: '{path}'.");
+            return null;
+        }
+
+        return target;
     }
 }

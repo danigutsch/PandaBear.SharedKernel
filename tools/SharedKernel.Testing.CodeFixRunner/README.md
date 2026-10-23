@@ -16,6 +16,21 @@ sharedkernel-codefix --help
 sharedkernel-codefix --version
 ```
 
+## Prerequisites
+
+The tool runs on .NET 10 and loads the target through MSBuildLocator and MSBuildWorkspace. Both use the
+.NET SDK that `dotnet` selects for a directory, honoring `global.json`:
+
+- A .NET 10 SDK. MSBuildLocator loads MSBuild into the tool from the SDK selected for the current
+  directory, or from the newest installed .NET 10 SDK when the selected SDK is newer than .NET 10.
+- An SDK that can build the target. MSBuildWorkspace loads the target in a separate build host with the
+  SDK selected for the target's directory.
+- A restored target. Without restored packages, symbols such as xUnit's `[Fact]` do not resolve, and the
+  run finds fewer diagnostics without reporting an error.
+
+A `global.json` that applies to either directory must resolve to an installed SDK, or the run fails with
+exit code 1.
+
 ## Restore or install
 
 Install from a local package during development:

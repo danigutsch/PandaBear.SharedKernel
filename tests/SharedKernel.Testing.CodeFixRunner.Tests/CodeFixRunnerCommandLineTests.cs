@@ -15,7 +15,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
     public async Task Help_option_writes_usage_to_standard_output(params string[] args)
     {
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke(args, TestContext.Current.CancellationToken);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, args, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(0);
@@ -32,7 +32,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
     public async Task Version_option_writes_version_to_standard_output(params string[] args)
     {
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke(args, TestContext.Current.CancellationToken);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, args, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(0);
@@ -48,7 +48,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
     public async Task Invalid_arguments_write_errors_to_standard_error_and_return_one(params string[] args)
     {
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke(args, TestContext.Current.CancellationToken);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, args, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(1);
@@ -63,7 +63,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
         var targetPath = Path.Combine(projectDirectory.Path, "Missing.Tests.csproj");
 
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke([targetPath], TestContext.Current.CancellationToken);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, [targetPath], TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(1);
@@ -78,7 +78,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
         await File.WriteAllTextAsync(targetPath, string.Empty, TestContext.Current.CancellationToken);
 
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke([targetPath], TestContext.Current.CancellationToken);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, [targetPath], TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(1);
@@ -96,10 +96,85 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
         await File.WriteAllTextAsync(targetPath, string.Empty, TestContext.Current.CancellationToken);
 
         // Act
-        var parseResult = CodeFixRunnerCommandLine.Create(CodeFixRunEngine.Run).Parse([targetPath]);
+        var parseResult = CodeFixRunnerCommandLine.Create(projectDirectory.Path, CodeFixRunEngine.Run).Parse([targetPath]);
 
         // Assert
         parseResult.Errors.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Relative_target_resolves_against_the_working_directory()
+    {
+        // Arrange
+        Directory.CreateDirectory(Path.Combine(projectDirectory.Path, "src"));
+        var targetPath = Path.GetFullPath(Path.Combine(projectDirectory.Path, "src", "Sample.Tests.csproj"));
+        await File.WriteAllTextAsync(targetPath, string.Empty, TestContext.Current.CancellationToken);
+        var targetPaths = new List<string>();
+
+        // Act
+        var result = await CodeFixRunnerInvocation.Invoke(
+            projectDirectory.Path,
+            [Path.Combine("src", "Sample.Tests.csproj")],
+            (options, _, _) =>
+            {
+                targetPaths.Add(options.TargetPath);
+                return Task.FromResult<int?>(0);
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0);
+        result.Error.ShouldBe(string.Empty);
+        targetPaths.ShouldHaveSingleItem().ShouldBe(targetPath);
+    }
+
+    [Fact]
+    public async Task Directory_with_a_project_extension_is_rejected()
+    {
+        // Arrange
+        var targetPath = Directory.CreateDirectory(Path.Combine(projectDirectory.Path, "Sample.Tests.csproj")).FullName;
+        var targetPaths = new List<string>();
+
+        // Act
+        var result = await CodeFixRunnerInvocation.Invoke(
+            projectDirectory.Path,
+            [targetPath],
+            (options, _, _) =>
+            {
+                targetPaths.Add(options.TargetPath);
+                return Task.FromResult<int?>(0);
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Error.ShouldContain($"File does not exist: '{targetPath}'.", StringComparison.Ordinal);
+        targetPaths.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Target_with_a_null_character_is_rejected()
+    {
+        // Arrange
+        var responseFilePath = Path.Combine(projectDirectory.Path, "target.rsp");
+        await File.WriteAllTextAsync(responseFilePath, "Sample\0.Tests.csproj", TestContext.Current.CancellationToken);
+        var targetPaths = new List<string>();
+
+        // Act
+        var result = await CodeFixRunnerInvocation.Invoke(
+            projectDirectory.Path,
+            ["@" + responseFilePath],
+            (options, _, _) =>
+            {
+                targetPaths.Add(options.TargetPath);
+                return Task.FromResult<int?>(0);
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Error.ShouldContain("File does not exist: 'Sample\0.Tests.csproj'.", StringComparison.Ordinal);
+        targetPaths.ShouldBeEmpty();
     }
 
     [Theory]
@@ -115,7 +190,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
             TestContext.Current.CancellationToken);
 
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke(["--diagnostic", diagnosticId, projectPath], TestContext.Current.CancellationToken);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, ["--diagnostic", diagnosticId, projectPath], TestContext.Current.CancellationToken);
         var source = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
         // Assert
@@ -140,7 +215,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
             .ToArray();
 
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke(commandLine, TestContext.Current.CancellationToken);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, commandLine, TestContext.Current.CancellationToken);
         var source = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
         // Assert
@@ -160,7 +235,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
             TestContext.Current.CancellationToken);
 
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke([projectPath], TestContext.Current.CancellationToken);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, [projectPath], TestContext.Current.CancellationToken);
         var source = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
         // Assert
@@ -180,7 +255,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
             TestContext.Current.CancellationToken);
 
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke(["--diagnostic", "SKTEST006", projectPath], TestContext.Current.CancellationToken);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, ["--diagnostic", "SKTEST006", projectPath], TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(0);
@@ -196,7 +271,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
         await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.MalformedProjectFile, TestContext.Current.CancellationToken);
 
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke([projectPath], TestContext.Current.CancellationToken);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, [projectPath], TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(2);
@@ -216,7 +291,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
         await File.WriteAllTextAsync(solutionPath, CodeFixRunnerTestProject.SolutionWithMissingProjectFile, TestContext.Current.CancellationToken);
 
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke(["--diagnostic", "SKTEST006", solutionPath], TestContext.Current.CancellationToken);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, ["--diagnostic", "SKTEST006", solutionPath], TestContext.Current.CancellationToken);
         var source = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
         // Assert
@@ -238,7 +313,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
         await cancellation.CancelAsync();
 
         // Act
-        var result = await CodeFixRunnerInvocation.Invoke(["--diagnostic", "SKTEST006", projectPath], cancellation.Token);
+        var result = await CodeFixRunnerInvocation.Invoke(projectDirectory.Path, ["--diagnostic", "SKTEST006", projectPath], cancellation.Token);
         var source = await File.ReadAllTextAsync(sourcePath, TestContext.Current.CancellationToken);
 
         // Assert
@@ -258,6 +333,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
 
         // Act
         var result = await CodeFixRunnerInvocation.Invoke(
+            projectDirectory.Path,
             [targetPath],
             async (_, _, _) =>
             {
@@ -283,6 +359,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
 
         // Act
         var result = await CodeFixRunnerInvocation.Invoke(
+            projectDirectory.Path,
             [projectPath],
             (options, error, ct) => CodeFixRunEngine.Run(
                 options,
@@ -313,6 +390,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
 
         // Act
         var result = await CodeFixRunnerInvocation.Invoke(
+            projectDirectory.Path,
             [targetPath],
             static (_, _, _) => Task.FromException<int?>(new IOException("Connection reset by peer")),
             TestContext.Current.CancellationToken);
