@@ -289,6 +289,56 @@ public sealed class MergerTests
     }
 
     [Fact]
+    public void Merge_keeps_a_one_sided_folder_when_the_newer_member_has_none()
+    {
+        var keeper = Keeper(Login(NewPassword)) with { FolderPath = "Family/Finance/Shopping" };
+        var bitwarden = Bitwarden(Login(NewPassword));
+
+        var result = Run(keeper, bitwarden);
+
+        result.Merged.Items.ShouldHaveSingleItem().FolderPath.ShouldBe("Family/Finance/Shopping");
+        result.Unresolved.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Merge_folder_conflict_without_timestamps_is_unresolved_under_newest_policy()
+    {
+        var keeper = WithoutTimestamp(Keeper(Login(NewPassword))) with { FolderPath = "Finance" };
+        var bitwarden = WithoutTimestamp(Bitwarden(Login(NewPassword))) with { FolderPath = "Imported" };
+
+        var result = Run(keeper, bitwarden);
+
+        var conflict = result.Unresolved.ShouldHaveSingleItem();
+        conflict.FieldPath.ShouldBe(FieldPaths.Folder);
+        conflict.MemberOriginKeys.ShouldBe([KeeperKey, BitwardenKey]);
+    }
+
+    [Fact]
+    public void Merge_ask_policy_leaves_a_folder_conflict_unresolved()
+    {
+        var keeper = Keeper(Login(NewPassword)) with { FolderPath = "Finance" };
+        var bitwarden = Bitwarden(Login(NewPassword)) with { FolderPath = "Imported" };
+
+        var result = Run(new MergePolicy(MergePolicyKind.Ask), keeper, bitwarden);
+
+        result.Unresolved.ShouldHaveSingleItem().FieldPath.ShouldBe(FieldPaths.Folder);
+    }
+
+    [Fact]
+    public void Merge_folder_decision_takes_the_chosen_member_folder()
+    {
+        var keeper = WithoutTimestamp(Keeper(Login(NewPassword))) with { FolderPath = "Finance" };
+        var bitwarden = WithoutTimestamp(Bitwarden(Login(NewPassword))) with { FolderPath = "Imported" };
+        string groupKey = Run(keeper, bitwarden).Unresolved.ShouldHaveSingleItem().GroupKey;
+        var decisions = Decide(groupKey, FieldChoice.Member(FieldPaths.Folder, KeeperKey));
+
+        var result = Run(new MergePolicy(), decisions, null, keeper, bitwarden);
+
+        result.Merged.Items.ShouldHaveSingleItem().FolderPath.ShouldBe("Finance");
+        result.Unresolved.ShouldBeEmpty();
+    }
+
+    [Fact]
     public void Merge_prefer_source_policy_picks_source_and_preserves_loser()
     {
         var keeper = Keeper(Login(OldPassword));

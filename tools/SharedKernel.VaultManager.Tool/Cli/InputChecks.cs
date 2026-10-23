@@ -1,4 +1,6 @@
 using PandaBear.VaultManager.Tool.Formats;
+using PandaBear.VaultManager.Tool.Formats.Bitwarden;
+using PandaBear.VaultManager.Tool.IO;
 
 namespace PandaBear.VaultManager.Tool.Cli;
 
@@ -6,8 +8,9 @@ namespace PandaBear.VaultManager.Tool.Cli;
 internal static class InputChecks
 {
     /// <summary>
-    /// Detects the format of each input, so an input that cannot be read is named before any password is asked. Writes one
-    /// line per input that cannot be read to <paramref name="error"/>.
+    /// Detects the format of each input, and checks the envelope and key derivation settings of a password-protected one,
+    /// so an input that cannot be read is named before any password is asked. Writes one line per input that cannot be
+    /// read to <paramref name="error"/>.
     /// </summary>
     /// <param name="inputs">Input files.</param>
     /// <param name="error">Receives the problems, each starting with the input file name.</param>
@@ -26,12 +29,16 @@ internal static class InputChecks
                     // The reader rejects these formats with the explanation the user needs; no password is asked for them.
                     _ = VaultFileReader.Read(input, static _ => string.Empty);
                 }
+                else if (format == VaultFileFormat.BitwardenJsonPasswordProtected)
+                {
+                    PasswordProtectedExport.CheckEnvelope(VaultFileReader.DecodeText(VaultFileReader.ReadCapped(input)));
+                }
 
                 formats[index] = format;
             }
             catch (Exception exception) when (CommandAction.IsFileProblem(exception))
             {
-                error.WriteLine(CommandText.OneLine($"{Path.GetFileName(input)}: {exception.Message}"));
+                error.WriteLine(PrintableText.OneLine($"{Path.GetFileName(input)}: {exception.Message}"));
             }
         }
 
@@ -59,7 +66,7 @@ internal static class InputChecks
         {
             if (formats[index] == VaultFileFormat.BitwardenJsonPasswordProtected)
             {
-                error.WriteLine(CommandText.OneLine($"{Path.GetFileName(inputs[index])} is password-protected, and standard input is not a terminal to type its password in. Run the command in a terminal."));
+                error.WriteLine(PrintableText.OneLine($"{Path.GetFileName(inputs[index])} is password-protected, and standard input is not a terminal to type its password in. Run the command in a terminal."));
                 canAsk = false;
             }
         }

@@ -251,7 +251,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
     }
 
     [Fact]
-    public async Task Merge_warnings_show_control_characters_from_the_decisions_file_as_spaces()
+    public async Task Merge_warnings_replace_control_characters_from_the_decisions_file()
     {
         string[] inputs = CliInputs.NewerBitwardenLogin(directory);
         string output = Path.Combine(directory, "merged.json");
@@ -262,7 +262,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--decisions", decisionsPath, "--plaintext"], TestContext.Current.CancellationToken);
 
         run.ExitCode.ShouldBe(0);
-        run.Error.ShouldBe("Warning: decisions for group 0000 [2J  0000 match no merged group and are ignored.\n", StringComparer.Ordinal);
+        run.Error.ShouldBe("Warning: decisions for group 0000\uFFFD[2J \uFFFD0000 match no merged group and are ignored.\n", StringComparer.Ordinal);
     }
 
     [Fact]

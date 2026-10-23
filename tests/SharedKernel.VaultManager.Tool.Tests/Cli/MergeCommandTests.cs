@@ -38,6 +38,22 @@ public sealed class MergeCommandTests : IDisposable
     }
 
     [Fact]
+    public async Task Merge_never_replaces_an_existing_file_that_is_not_a_vault_report()
+    {
+        string[] inputs = CliInputs.NewerBitwardenLogin(directory);
+        string output = Path.Combine(directory, "merged.json");
+        string decisions = Write(directory, "decisions.json", "{\"version\":2,\"groups\":[]}");
+
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, "--plaintext", "--report", decisions], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(3);
+        run.Error.ShouldContain("exists and is not a vault report", StringComparison.Ordinal);
+        File.Exists(output).ShouldBeFalse();
+        string after = await File.ReadAllTextAsync(decisions, TestContext.Current.CancellationToken);
+        after.ShouldBe("{\"version\":2,\"groups\":[]}");
+    }
+
+    [Fact]
     public async Task Merge_with_plaintext_writes_unencrypted_json_without_asking_for_a_password()
     {
         string[] inputs = CliInputs.NewerBitwardenLogin(directory);
@@ -73,6 +89,38 @@ public sealed class MergeCommandTests : IDisposable
             Attachments to upload after the import: 0
 
             """.ReplaceLineEndings("\n"), StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task Merge_canceled_while_it_merges_exits_1_and_leaves_neither_the_output_nor_a_temporary_file(bool plaintext)
+    {
+        string[] inputs = CliInputs.NewerBitwardenLogin(directory);
+        string output = Path.Combine(directory, "merged.json");
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        var prompts = new TestPrompts(ExportPassword);
+        string[] args = plaintext ? ["merge", .. inputs, "--output", output, "--plaintext"] : ["merge", .. inputs, "--output", output];
+
+        var run = await CommandLineRun.Invoke(prompts.Environment() with { Time = new CancelingTimeProvider(cancellation) }, args, cancellation.Token);
+
+        run.ExitCode.ShouldBe(1);
+        run.Output.ShouldBeEmpty();
+        prompts.NewPasswordPrompts.ShouldBeEmpty();
+        string[] files = [.. Directory.GetFileSystemEntries(directory).Order(StringComparer.Ordinal)];
+        files.ShouldBe([.. inputs.Order(StringComparer.Ordinal)]);
+    }
+
+    [Fact]
+    public async Task Merge_counts_the_files_of_attachment_folders_that_match_no_single_item_among_the_attachments_to_upload()
+    {
+        string zip = Write(directory, "bitwarden.zip", TwoBanksZip());
+        string output = Path.Combine(directory, "merged.json");
+
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", zip, "--output", output, "--plaintext"], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(0);
+        run.Output.ShouldContain("\nAttachments to upload after the import: 2\n", StringComparison.Ordinal);
     }
 
     [Fact]

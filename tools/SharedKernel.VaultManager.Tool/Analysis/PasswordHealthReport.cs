@@ -3,7 +3,7 @@ using PandaBear.VaultManager.Tool.Model;
 
 namespace PandaBear.VaultManager.Tool.Analysis;
 
-/// <summary>Password weaknesses of a vault. Holds item names and issue kinds only, never passwords or hashes.</summary>
+/// <summary>Password weaknesses of a vault. Holds item names, issue kinds, and counts only, never passwords or hashes.</summary>
 /// <param name="Issues">Issues in item order.</param>
 internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
 {
@@ -11,10 +11,16 @@ internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
     public const int MinimumLength = 12;
 
     /// <summary>
+    /// Most names of other items that a <see cref="PasswordIssueKind.Reused"/> issue lists. The issue counts every other
+    /// item, so the report stays proportional to the number of items when thousands of them share one password.
+    /// </summary>
+    public const int MaxRelatedItemNames = 3;
+
+    /// <summary>
     /// Reports reuse of one password on items with different normalized hosts, passwords shorter than
     /// <see cref="MinimumLength"/>, passwords of a single character class, and easily guessed passwords: those equal to the
-    /// user name or item name, reported once per item without saying which. Reuse is found by grouping passwords in
-    /// memory; nothing is persisted.
+    /// user name or item name, reported once per item without saying which. Reuse is found by grouping the items once per
+    /// password in memory; nothing is persisted.
     /// </summary>
     /// <param name="export">Vault to analyze.</param>
     /// <returns>The report.</returns>
@@ -26,36 +32,74 @@ internal sealed record PasswordHealthReport(IReadOnlyList<PasswordIssue> Issues)
             .Where(item => !ItemNormalizer.IsAbsent(item.Login?.Password))
             .Select(item => (Item: item, Password: item.Login!.Password!, Hosts: HostKey(item)))
             .ToArray();
-        var byPassword = withPassword.ToLookup(entry => entry.Password, StringComparer.Ordinal);
+        PasswordIssue?[] reused = Reuse(withPassword);
 
         var issues = new List<PasswordIssue>();
-        foreach (var (item, password, hosts) in withPassword)
+        for (int index = 0; index < withPassword.Length; index++)
         {
-            string[] reusedOn = [.. byPassword[password].Where(other => !string.Equals(other.Hosts, hosts, StringComparison.Ordinal)).Select(other => other.Item.Name)];
-            if (reusedOn.Length > 0)
+            (VaultItem item, string password, _) = withPassword[index];
+            if (reused[index] is { } reuse)
             {
-                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.Reused, reusedOn));
+                issues.Add(reuse);
             }
 
             if (password.Length < MinimumLength)
             {
-                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.TooShort, []));
+                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.TooShort, [], 0));
             }
 
             if (CharacterClasses(password) == 1)
             {
-                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.SingleCharacterClass, []));
+                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.SingleCharacterClass, [], 0));
             }
 
             string trimmed = password.Trim();
             if (string.Equals(trimmed, item.Login!.Username?.Trim(), StringComparison.OrdinalIgnoreCase)
                 || string.Equals(trimmed, item.Name.Trim(), StringComparison.OrdinalIgnoreCase))
             {
-                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.EasilyGuessed, []));
+                issues.Add(new PasswordIssue(item.Name, PasswordIssueKind.EasilyGuessed, [], 0));
             }
         }
 
         return new PasswordHealthReport(issues);
+    }
+
+    // Groups the items once per password. An item shares its password with the items of its group on other hosts: their
+    // number is the group size minus the items on its own hosts, and their first names are found once per hosts key and
+    // shared by the items with that key. The work therefore grows with the number of items, not with its square.
+    private static PasswordIssue?[] Reuse((VaultItem Item, string Password, string Hosts)[] entries)
+    {
+        var issues = new PasswordIssue?[entries.Length];
+        foreach (IGrouping<string, int> group in Enumerable.Range(0, entries.Length).GroupBy(index => entries[index].Password, StringComparer.Ordinal))
+        {
+            int[] members = [.. group];
+            Dictionary<string, int> perHosts = members.CountBy(index => entries[index].Hosts, StringComparer.Ordinal).ToDictionary(StringComparer.Ordinal);
+            if (perHosts.Count < 2)
+            {
+                continue;
+            }
+
+            var namesByHosts = new Dictionary<string, string[]>(StringComparer.Ordinal);
+            foreach (int index in members)
+            {
+                string hosts = entries[index].Hosts;
+                if (!namesByHosts.TryGetValue(hosts, out string[]? names))
+                {
+                    names =
+                    [
+                        .. members
+                            .Where(other => !string.Equals(entries[other].Hosts, hosts, StringComparison.Ordinal))
+                            .Take(MaxRelatedItemNames)
+                            .Select(other => entries[other].Item.Name),
+                    ];
+                    namesByHosts.Add(hosts, names);
+                }
+
+                issues[index] = new PasswordIssue(entries[index].Item.Name, PasswordIssueKind.Reused, names, members.Length - perHosts[hosts]);
+            }
+        }
+
+        return issues;
     }
 
     private static string HostKey(VaultItem item) => string.Join(

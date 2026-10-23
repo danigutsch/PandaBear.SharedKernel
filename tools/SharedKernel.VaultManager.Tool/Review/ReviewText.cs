@@ -1,4 +1,4 @@
-using System.Text;
+using PandaBear.VaultManager.Tool.IO;
 
 namespace PandaBear.VaultManager.Tool.Review;
 
@@ -11,47 +11,17 @@ internal static class ReviewText
     /// <summary>Shown in place of a line break inside a value.</summary>
     public const string LineBreak = " ↵ ";
 
-    private const char Replacement = '�';
-
     /// <summary>
-    /// Returns text on one line. Line breaks become <see cref="LineBreak"/>, tabs become spaces, and other control
-    /// characters become U+FFFD, so a name or value can neither break the layout nor send control sequences to the
-    /// terminal.
+    /// Returns text on one line. Each line break that <see cref="string.ReplaceLineEndings(string)"/> recognizes, such as a
+    /// line feed, a carriage return, or the line separator U+2028, becomes <see cref="LineBreak"/>. The rest is made
+    /// printable by <see cref="PrintableText.OneLine"/>: tabs become spaces, and other control characters and bidirectional
+    /// embeddings, overrides, and isolates become U+FFFD. A name or value can then neither break the layout, nor send
+    /// control sequences to the terminal, nor reorder the text around it.
     /// </summary>
     /// <param name="text">Text, or <see langword="null"/>.</param>
     /// <returns>The text on one line; empty for <see langword="null"/>.</returns>
-    public static string OneLine(string? text)
-    {
-        if (string.IsNullOrEmpty(text))
-        {
-            return string.Empty;
-        }
-
-        var builder = new StringBuilder(text.Length);
-        for (int index = 0; index < text.Length; index++)
-        {
-            char character = text[index];
-            if (character is '\r' or '\n')
-            {
-                if (character == '\r' && index + 1 < text.Length && text[index + 1] == '\n')
-                {
-                    index++;
-                }
-
-                builder.Append(LineBreak);
-            }
-            else if (character == '\t')
-            {
-                builder.Append(' ');
-            }
-            else
-            {
-                builder.Append(char.IsControl(character) ? Replacement : character);
-            }
-        }
-
-        return builder.ToString();
-    }
+    public static string OneLine(string? text) =>
+        string.IsNullOrEmpty(text) ? string.Empty : PrintableText.OneLine(text.ReplaceLineEndings(LineBreak));
 
     /// <summary>Shows a value on one line, or <see cref="Mask"/> when it is masked. An absent value shows as empty text.</summary>
     /// <param name="value">Value, or <see langword="null"/>.</param>

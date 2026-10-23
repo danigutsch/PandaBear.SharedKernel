@@ -135,8 +135,16 @@ internal static class VaultReport
         {
             builder.Append("| ").Append(Cell(issue.ItemName))
                 .Append(" | ").Append(Describe(issue.Kind))
-                .Append(" | ").Append(Cell(string.Join(", ", issue.RelatedItemNames))).Append(" |\n");
+                .Append(" | ").Append(RelatedItems(issue)).Append(" |\n");
         }
+    }
+
+    // Names the first related items and counts the others, such as "Mail, Bank, Shop, and 2 more".
+    private static string RelatedItems(PasswordIssue issue)
+    {
+        string names = Cell(string.Join(", ", issue.RelatedItemNames));
+        int unnamed = issue.RelatedItemCount - issue.RelatedItemNames.Count;
+        return unnamed > 0 ? string.Create(CultureInfo.InvariantCulture, $"{names}, and {unnamed} more") : names;
     }
 
     private static void AppendAttachments(StringBuilder builder, IReadOnlyList<ManualAttachment> attachments, IReadOnlyList<UnassignedAttachmentFolder> folders)

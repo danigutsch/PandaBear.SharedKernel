@@ -26,7 +26,7 @@ public sealed class MergeReportTests
         string markdown = report.ToMarkdown();
 
         report.DifferentGroups.ShouldBe(2);
-        report.AutoResolvedConflicts.ShouldBe(2);
+        report.AutoResolvedConflicts.ShouldBe(3);
         report.UnresolvedConflicts.ShouldBe(1);
         markdown.ShouldContain("Example", StringComparison.Ordinal);
         markdown.ShouldContain(FieldPaths.LoginPassword, StringComparison.Ordinal);

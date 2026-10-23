@@ -17,8 +17,13 @@ For the whole migration, from exporting both vaults to importing the result, see
 
 A vault migrated in pieces can end up split across two services. Bitwarden's Keeper importer drops attachments,
 extra TOTP seeds, passkeys, and folder nesting. If both vaults then keep changing, neither one is complete. This
-tool merges them one field at a time. A value present on only one side is always kept. When both sides changed a
-value, the newer one wins, and the older value is kept in password history or in a hidden field.
+tool merges them one field at a time. A value present on only one side is always kept, the folder included. When
+both sides changed a value, the newer one wins, and the older value is kept in password history or in a hidden field.
+The item name and type come from the newest item, or from the first input when no item has a modification time; each
+other name is kept in a text field named
+`Name (from <input file name>)`. Values that are equal after normalization count as one value, and only the newest
+item's form is kept: a user name or website address that differs only in letter case or a trailing `/`, a website
+address with another match setting, and a TOTP key with another issuer or label.
 
 ## Prerequisites and installation
 
@@ -34,7 +39,10 @@ The command is `sharedkernel-vault`. Run it in a terminal: passwords are typed a
 ## Usage
 
 Supported inputs are Keeper JSON (web vault and Commander, including Commander `--zip`), Keeper CSV, and Bitwarden
-JSON, password-protected JSON, CSV, and zip. The format is detected from the content, not the file extension.
+JSON, password-protected JSON, CSV, and zip. The format is detected from the content, not the file extension. A
+Bitwarden JSON export with a null item, folder, or collection, a null entry in a list such as the custom fields, or
+two folders or collections with one ID is malformed: the command names the first malformed entry by its position
+and exits with code 3.
 
 1. Check what each export holds:
 
@@ -55,8 +63,13 @@ JSON, password-protected JSON, CSV, and zip. The format is detected from the con
    sharedkernel-vault merge keeper.zip bitwarden.json --output merged.json --decisions decisions.json --report merge.md
    ```
 
-4. Replace each pending entry in `decisions.json` with a decision, as described below, and run the same merge
-   again. Repeat until it exits with code 0.
+4. Decide each pending entry and run the same merge again. Repeat until it exits with code 0. Replace the pending
+   entries in `decisions.json` as described below, or decide in the full-screen review UI and save the decisions to
+   the same file with `Ctrl+S`:
+
+   ```sh
+   sharedkernel-vault review keeper.zip bitwarden.json --decisions decisions.json
+   ```
 
 5. Import `merged.json` into an empty Bitwarden or Vaultwarden vault with its file password, then upload the
    attachments the report lists. Delete the exports, the merged vault, and the report afterwards.
@@ -81,7 +94,7 @@ reused passwords. It writes a summary to standard output.
 
 | Option | Description |
 | --- | --- |
-| `--report <file>` | Writes the full Markdown report: findings with their origin keys and finding IDs, password health, duplicate groups, attachments to upload, and warnings. An existing report is replaced; an input never is. |
+| `--report <file>` | Writes the full Markdown report: findings with their origin keys and finding IDs, password health, duplicate groups, attachments to upload, and warnings. An existing vault report is replaced; any other existing file and an input never are. |
 
 ### `merge <inputs>... --output <file> [options]`
 
@@ -91,14 +104,14 @@ Merges the inputs into one Bitwarden export and writes a summary to standard out
 | --- | --- |
 | `-o`, `--output <file>` | Required. File to write the merged vault to. It is never an input, and its directory must exist. |
 | `--decisions <file>` | Decisions file to read. When fields or findings need a decision, it is created or updated with pending entries. Without this option, a merge that needs decisions asks for it. |
-| `--policy <newest\|ask\|prefer:<input file name>>` | How conflicting values are resolved. `newest`, the default, takes the value modified most recently; a missing or tied modification time leaves the field to a decision. `ask` leaves every conflict to a decision. `prefer:<input file name>`, such as `prefer:keeper.zip`, takes the value of that input and falls back to `newest` when that input has no value. |
+| `--policy <newest\|ask\|prefer:<input file name>>` | How conflicting values are resolved. `newest`, the default, takes the value modified most recently; a missing or tied modification time leaves the field to a decision. `ask` leaves every conflict to a decision. `prefer:<input file name>`, such as `prefer:keeper.zip`, takes the value of that input and falls back to `newest` when that input has no value. The folder follows the policy; the item name and type do not. |
 | `--plaintext` | Writes unencrypted Bitwarden JSON instead of a password-protected export. Delete the file after the import. |
-| `--report <file>` | Writes the full Markdown report, including the decisions still needed. An existing report is replaced; an input never is. |
+| `--report <file>` | Writes the full Markdown report, including the decisions still needed. An existing vault report is replaced; any other existing file and an input never are. |
 | `--force` | Allows replacing an existing output file. |
 
 By default the output is a Bitwarden password-protected export. Its password is asked twice at the terminal and
-must have at least 12 characters. Nothing is written while a field or a proposed finding needs a decision, or
-while the merged vault holds a value that Bitwarden would reject.
+must have at least 12 characters. The merged vault is not written while a field or a proposed finding needs a
+decision, or while it holds a value that Bitwarden would reject.
 
 These merges take values from the newer input or from the Keeper export:
 
@@ -126,7 +139,8 @@ sharedkernel-vault review keeper.zip bitwarden.json --decisions decisions.json -
 The review needs a terminal. When standard input or standard output is redirected, it exits with code 3 before it
 reads any input; run `merge` with `--decisions <file>` and edit the file instead. Before the UI starts, the review
 checks the files and inputs as `merge` does and asks for the password of each password-protected input at the
-terminal. A problem found then also exits with code 3.
+terminal. A problem found then also exits with code 3. Ctrl+C or SIGTERM before the UI starts ends the review at once
+with code 1.
 
 The left side lists the groups of matched items. Each line starts with `!` when a field or finding of the group needs a
 decision, `~` when its items hold different values, and `=` when they are equal. The right side shows the selected
@@ -162,8 +176,11 @@ Tab, Shift+Tab, and the arrow keys move between and inside the lists and tables.
 
 These values show as `********` until you reveal them: passwords, TOTP keys, password history, hidden custom fields,
 card numbers and security codes, SSH private keys, the values of findings, and every field that holds a finding, such
-as notes, a user name, or a custom field. Revealed values appear only on the screen; messages, the decisions file, and
-the command output never hold them.
+as notes, a user name, or a custom field. Identity social security, passport, and license numbers are masked too,
+and so are the user info, query, and fragment of a website address, such as a password or token in it. Revealed
+values appear only on the screen; messages, the decisions file, and the command output never hold them. The UI shows
+each line break inside a name or value as `↵`: a line feed, a carriage return, the separators U+2028 and U+2029, a
+form feed, and NEL U+0085. It shows other control characters as described under Output.
 
 - `Ctrl+S` writes the decisions file, readable only by you, with a pending entry for each field and finding that still
   needs a decision, so `merge` can continue from it.
@@ -171,14 +188,18 @@ the command output never hold them.
   every value. For a password-protected export, it asks twice for a password of at least 12 characters in masked
   fields. It never writes over an input, and replaces an existing output only with `--force`. Bitwarden JSON imports
   cannot carry files, so the merged vault holds no attachments.
-- After you quit, the review prints on standard output what it saved and wrote, how many fields and findings still
-  need a decision, and how many attachments to upload after the import. When it wrote the merged vault, it lists each
-  of these attachments and where to find it, as the report of `merge` does; upload them after the import. On standard
-  error, it prints the writer's warnings and each accepted finding that it could not move.
-- The review exits with code 0. Inside the UI, `Ctrl+C` does not end the review; quit with `Ctrl+Q` or `Esc`. SIGTERM
-  or SIGINT closes any open dialog, ends the review without saving, restores the terminal, and exits with code 1. A
-  signal that arrives while the review merges or writes takes effect when that work ends. When that takes longer than
-  two seconds, the process ends with code 130 or 143 and leaves the terminal in the UI's mode, which `reset` restores.
+- When the UI closes, the review prints on standard output what it saved and wrote, how many fields and findings still
+  need a decision, and how many attachments to upload after the import. The count includes the files of Bitwarden zip
+  attachment folders that match no item or several items. When it wrote the merged vault, it lists each of these files
+  and where to find it, as the report of `merge` does, with the number of items that the folder of an unassigned file
+  matches; upload them after the import. On standard error, it prints the writer's
+  warnings, each accepted finding that it could not move, and a note when decisions changed since the last save were
+  not saved.
+- After you quit with `Ctrl+Q` or `Esc`, the review exits with code 0. Inside the UI, `Ctrl+C` is a key that does not
+  end the review. SIGTERM or SIGINT closes any open dialog, ends the review without saving, restores the terminal, and
+  exits with code 1. A signal that arrives while the review merges or writes takes effect when that work ends. When
+  that takes longer than two seconds, the process ends with code 130 or 143 and leaves the terminal in the UI's mode,
+  which `reset` restores.
 
 ## Decisions file
 
@@ -246,25 +267,32 @@ property's JSON path.
 | Code | Meaning |
 | --- | --- |
 | 0 | Success. |
-| 1 | Invalid command line, with the error on standard error and help on standard output; canceled with Ctrl+C or SIGTERM; or an unexpected error. Canceled at a password prompt, the command ends at once. Canceled elsewhere, it waits up to 1.5 seconds for its work to stop, so a short file write can finish, and then ends even if a write is still running, as described under Security. An unexpected error shows the exception type and stack trace, but not its message, which can contain vault values. |
+| 1 | Invalid command line, with the error on standard error and help on standard output; canceled; or an unexpected error. Ctrl+C or SIGTERM cancels a command; inside the review UI, `Ctrl+C` is a key, and SIGTERM or SIGINT cancels, as described under `review`. Canceled at a password prompt or before the review UI starts, the command ends at once. Otherwise `inspect`, `scan`, and `merge` wait up to 1.5 seconds for their work to stop at its next check: no file write starts after the cancel, and a write already under way either completes or leaves its file unchanged, as described under Security. Work still running after 1.5 seconds ends with the process. An unexpected error shows the exception type and stack trace, but not its message, which can contain vault values. |
 | 2 | `merge` only: fields or findings need a decision. No vault is written; with `--decisions`, the decisions file holds a pending entry for each. |
-| 3 | An input or output problem: an input that is unreadable, unsupported, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; an output that exists without `--force` or is an input; a missing output directory; a report or decisions file that cannot be written; values that Bitwarden would reject; or a password needed while standard input is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
+| 3 | An input or output problem: an input that is unreadable, unsupported, malformed, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; an output that exists without `--force` or is an input; a missing output directory; a report path that names an existing file that is not a vault report; a report or decisions file that cannot be written; values that Bitwarden would reject; a password needed while standard input is not a terminal, or no acceptable new password in three attempts; or `review` started while standard input or output is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, before the tool handles it, or a canceled command that did not end within two seconds. |
 
 ## Output
 
 `inspect` writes its report to standard output, and `scan` and `merge` write a summary there. `merge` names the
-written vault there before it writes the report. Warnings, errors, and password prompts go to standard error.
-Messages name inputs, items, fields, origin keys, and finding IDs, never values. Control characters in names,
-paths, and messages are shown as spaces, so an export cannot send escape sequences to the terminal.
+written vault there before it writes the report, and `review` writes its summary there when the UI closes.
+Warnings, errors, and password prompts go to standard error. Messages name inputs, items, fields, origin keys, and
+finding IDs, never values. In the names, paths, keys, prompts, and messages that the commands print and the reports
+hold, carriage returns, line feeds, tabs, and the line and paragraph separators U+2028 and U+2029 show as spaces, and
+every other control character and every bidirectional embedding, override, and isolate shows as U+FFFD, so an export
+can neither send escape sequences to the terminal nor reorder the text around a name.
 
 ## Limits
 
 - An input file may hold at most 256 MiB.
 - Zip exports may hold at most 1000 entries and 100 MiB when expanded, with a compression ratio of at most 100:1
   and nesting of at most two levels.
-- Bitwarden JSON imports cannot carry files. Attachments stay on the upload list of the report.
-- Bitwarden and Vaultwarden reject a whole import when one item is invalid, so the merge writes nothing while a
+- Bitwarden JSON imports cannot carry files. Attachments stay on the upload list of the report, which also lists the
+  files of Bitwarden zip attachment folders that match no item or several items. The summaries of `scan`, `merge`, and
+  `review` count them all.
+- Bitwarden saves one passkey per login. A merged login keeps the passkeys of all its items, so the merge warns
+  about each login that holds more than one; split its group to keep each passkey on a login of its own.
+- Bitwarden and Vaultwarden reject a whole import when one item is invalid, so the merge writes no vault while a
   value exceeds Bitwarden's limits. The report and the errors on standard error name each one.
 
 ## Security
@@ -273,9 +301,10 @@ paths, and messages are shown as spaces, so an export cannot send escape sequenc
 - Output is a Bitwarden password-protected export by default: PBKDF2-SHA256 with 600,000 iterations,
   AES-256-CBC, and HMAC-SHA256. A plaintext export needs `--plaintext`.
 - On Unix, the output, the report, and the decisions file are created readable only by you. Each is written to a
-  temporary file, `.<file name>.<random>.tmp`, in the same directory and then moved into place. If the tool ends
-  during a write, for example after Ctrl+C, that file can remain and hold part of the content, unencrypted with
-  `--plaintext`. Delete it.
+  temporary file, `.<file name>.<random>.tmp`, in the same directory and then moved into place, so a file is either
+  written completely or left unchanged. A write that fails or is canceled deletes its temporary file. If the process
+  is killed during a write, or a canceled command ends while a write is still running, that file can remain and hold
+  part of the content, unencrypted with `--plaintext`. Delete it.
 - An existing output is replaced only with `--force`, and an input is never replaced. Paths are compared after
   resolving symbolic links and ignoring case, so a path that differs from an input only in case is refused too.
 - Passwords are read from the terminal without echo. They are never accepted as arguments or environment
@@ -283,7 +312,8 @@ paths, and messages are shown as spaces, so an export cannot send escape sequenc
   standard input is not a terminal, a command that needs a password exits with code 3 before it reads any vault,
   and names the input or output that needs the password.
 - Reports, warnings, errors, and the decisions file never contain secret values. They do contain item names,
-  folder names, file names, and origin keys.
+  folder names, file names, and origin keys. An origin key holds the record or item ID of an export, or, for an item
+  without one, such as a CSV row, a hash of its type, title, and first host.
 - .NET strings cannot be wiped from memory, so vault values remain in process memory until the runtime reclaims
   it. Work on an encrypted disk, keep exports out of synced folders, disable core dumps, and delete exports
   after a successful import.

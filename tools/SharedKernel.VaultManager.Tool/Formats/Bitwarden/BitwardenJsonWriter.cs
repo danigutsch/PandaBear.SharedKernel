@@ -26,7 +26,8 @@ internal static class BitwardenJsonWriter
     /// by position, quoting only names of at most <see cref="MaxQuotedFieldNameLength"/> characters. A warning reports an
     /// estimated import request larger than <see cref="BitwardenLimits.VaultwardenImportBytes"/>: the export as compact
     /// JSON, with every value and folder name as an encrypted string and an encrypted checksum for every login URI, as a
-    /// Bitwarden client that encrypts each field on its own sends it.
+    /// Bitwarden client that encrypts each field on its own sends it. Another warning names each login that holds more
+    /// than one passkey.
     /// </returns>
     /// <exception cref="ArgumentNullException"><paramref name="export"/> is <see langword="null"/>.</exception>
     public static BitwardenWriteResult Write(VaultExport export)
@@ -49,6 +50,7 @@ internal static class BitwardenJsonWriter
             if (prepared.Type == VaultItemType.Login && prepared.Login is { } login)
             {
                 requestGrowth += login.Uris.Count * UriChecksumBytes;
+                WarnAboutPasskeys(prepared.Name, login, warnings);
             }
         }
 
@@ -128,6 +130,17 @@ internal static class BitwardenJsonWriter
         passkey.CredentialId, passkey.KeyType, passkey.KeyAlgorithm, passkey.KeyCurve, passkey.KeyValue, passkey.RpId,
         passkey.UserHandle, passkey.UserName, passkey.Counter, passkey.RpName, passkey.UserDisplayName, passkey.Discoverable,
     ];
+
+    // Bitwarden saves one passkey per login, and whether a client keeps the others is not verified.
+    private static void WarnAboutPasskeys(string name, LoginData login, List<string> warnings)
+    {
+        if (login.Fido2Credentials.Count > 1)
+        {
+            warnings.Add(string.Create(
+                CultureInfo.InvariantCulture,
+                $"\"{name}\": {login.Fido2Credentials.Count} passkeys on one login. Bitwarden saves one passkey per login, so a client can drop or hide the others; to keep each passkey on a login of its own, split the item's group in the review or in the decisions file."));
+        }
+    }
 
     private static VaultItem MoveHistoryOverflowToFields(VaultItem item, List<string> warnings)
     {

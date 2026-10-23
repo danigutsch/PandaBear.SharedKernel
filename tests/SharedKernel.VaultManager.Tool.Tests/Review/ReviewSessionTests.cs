@@ -175,6 +175,30 @@ public sealed class ReviewSessionTests : IDisposable
     }
 
     [Fact]
+    public void Identity_numbers_and_the_credentials_and_queries_of_websites_are_masked_by_default()
+    {
+        VaultItem identity = new()
+        {
+            Type = VaultItemType.Identity,
+            Name = "Identity",
+            Identity = new IdentityData { FirstName = "Carol", Ssn = "fixture-ssn", PassportNumber = "fixture-passport", LicenseNumber = "fixture-license" },
+            Origin = new ItemOrigin("keeper", KeeperFile, "identity", null),
+        };
+        VaultItem login = KeeperLogin("site", "Example", "carol", null, "https://u:fixture-uri-password@example.com/Path?token=fixture-uri-token#fixture-fragment");
+        var session = Session(Scan(directory, identity, login));
+
+        ReviewField[] fields = [.. session.Groups(GroupFilter.All, null).SelectMany(group => session.Fields(group.Key))];
+
+        string[] secretPaths = [.. fields.Where(field => field.IsSecret).Select(field => field.FieldPath).Order(StringComparer.Ordinal)];
+        secretPaths.ShouldBe(["identity.licenseNumber", "identity.passportNumber", "identity.ssn", FieldPaths.LoginUris]);
+        string shown = string.Join("\n", fields.SelectMany(field => field.Values));
+        string[] secrets = ["fixture-ssn", "fixture-passport", "fixture-license", "fixture-uri-password", "fixture-uri-token", "fixture-fragment"];
+        secrets.ShouldAllSatisfy(secret => shown.ShouldNotContain(secret, StringComparison.Ordinal));
+        shown.ShouldContain("https://" + ReviewText.Mask + "@example.com/Path?" + ReviewText.Mask, StringComparison.Ordinal);
+        shown.ShouldContain("Carol", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Choosing_a_member_decides_the_field_and_marks_the_review_dirty()
     {
         var session = Session(ConflictingLogins(directory));

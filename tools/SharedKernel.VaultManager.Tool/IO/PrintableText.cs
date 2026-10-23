@@ -3,7 +3,8 @@ using System.Buffers;
 namespace PandaBear.VaultManager.Tool.IO;
 
 /// <summary>
-/// Makes text read from a vault, such as item, folder, and file names, safe to print in reports and on a terminal.
+/// Makes the text that the commands, the review, and the reports show safe to print in reports and on a terminal: names
+/// read from a vault, such as item, folder, and file names, and paths, keys, warnings, and messages.
 /// </summary>
 internal static class PrintableText
 {

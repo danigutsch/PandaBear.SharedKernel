@@ -48,7 +48,7 @@ internal static class MergeCommand
             string value = result.GetValueOrDefault<string>();
             if (ParsePolicy(value) is null)
             {
-                result.AddError(CommandText.OneLine($"--policy takes newest, ask, or prefer:<input file name>, not '{value}'."));
+                result.AddError(PrintableText.OneLine($"--policy takes newest, ask, or prefer:<input file name>, not '{value}'."));
             }
         });
         var plaintext = new Option<bool>("--plaintext")
@@ -116,11 +116,11 @@ internal static class MergeCommand
         int matches = names.Count(name => string.Equals(name, preferred, StringComparison.Ordinal));
         if (matches == 0)
         {
-            result.AddError(CommandText.OneLine($"--policy prefer:{preferred} names no input file. Input file names: {string.Join(", ", names)}."));
+            result.AddError(PrintableText.OneLine($"--policy prefer:{preferred} names no input file. Input file names: {string.Join(", ", names)}."));
         }
         else if (matches > 1)
         {
-            result.AddError(CommandText.OneLine($"--policy prefer:{preferred} names several input files. Give each input a different file name."));
+            result.AddError(PrintableText.OneLine($"--policy prefer:{preferred} names several input files. Give each input a different file name."));
         }
     }
 
@@ -168,7 +168,7 @@ internal static class MergeCommand
         if (arguments.Report is { } reportPath)
         {
             (string Path, string Name)[] others = arguments.Decisions is { } decisionsFile ? [mergedVault, (decisionsFile, DecisionsFileName)] : [mergedVault];
-            canWrite &= OutputFiles.CanWrite(reportPath, "report file", arguments.Inputs, others, replaceExisting: true, error);
+            canWrite &= OutputFiles.CanWriteReport(reportPath, arguments.Inputs, others, error);
         }
 
         return canWrite;
@@ -190,7 +190,7 @@ internal static class MergeCommand
     {
         foreach (string warning in result.ReadWarnings.Concat(result.WriteWarnings).Concat(UnmatchedDecisions.Find(decisions, result)))
         {
-            error.WriteLine("Warning: " + CommandText.OneLine(warning));
+            error.WriteLine("Warning: " + PrintableText.OneLine(warning));
         }
 
         PendingDecisions pending = result.OutputWritten ? PendingDecisions.None : PendingDecisions.Find(result, decisions);
@@ -205,7 +205,7 @@ internal static class MergeCommand
         if (result.OutputWritten)
         {
             // Said before the report is written, so a report that cannot be written never hides the written vault.
-            string outputPath = CommandText.OneLine(arguments.Output);
+            string outputPath = PrintableText.OneLine(arguments.Output);
             output.WriteLine(arguments.Plaintext
                 ? $"Wrote the merged vault to {outputPath} as unencrypted JSON. Delete it after the import."
                 : $"Wrote the merged vault to {outputPath} as a password-protected export.");
@@ -224,11 +224,11 @@ internal static class MergeCommand
             }
             catch (Exception exception) when (result.OutputWritten && CommandAction.IsFileProblem(exception))
             {
-                error.WriteLine(CommandText.OneLine($"The merged vault was written to {arguments.Output}, but the report was not written: {exception.Message}"));
+                error.WriteLine(PrintableText.OneLine($"The merged vault was written to {arguments.Output}, but the report was not written: {exception.Message}"));
                 return ExitCodes.InputOutputProblem;
             }
 
-            output.WriteLine("Report: " + CommandText.OneLine(reportPath));
+            output.WriteLine("Report: " + PrintableText.OneLine(reportPath));
         }
 
         return exitCode;
@@ -240,7 +240,7 @@ internal static class MergeCommand
     {
         foreach (string writeError in result.WriteErrors)
         {
-            error.WriteLine("Error: " + CommandText.OneLine(writeError));
+            error.WriteLine("Error: " + PrintableText.OneLine(writeError));
         }
 
         if (!pending.IsEmpty)
@@ -264,7 +264,7 @@ internal static class MergeCommand
         CommandText.Count(output, "  Applied", result.Findings.Sum(item => item.AcceptedFindingIds.Count));
         CommandText.Count(output, "  Need a decision", pending.FindingCount);
         CommandText.Count(output, "Password issues", result.PasswordHealth.Issues.Count);
-        CommandText.Count(output, "Attachments to upload after the import", result.ManualAttachments.Count);
+        CommandText.Count(output, "Attachments to upload after the import", result.AttachmentUploadCount);
     }
 
     private static string PendingMessage(PendingDecisions pending, string? decisionsPath)
@@ -272,7 +272,7 @@ internal static class MergeCommand
         string counts = string.Create(CultureInfo.InvariantCulture, $"{pending.Fields.Count} field(s) and {pending.FindingCount} finding(s) need a decision.");
         return decisionsPath is null
             ? counts + " Run the merge again with --decisions <file> to write a pending entry for each to that file."
-            : counts + " Pending entries are in " + CommandText.OneLine(decisionsPath) + "; replace each with a decision and run the merge again.";
+            : counts + " Pending entries are in " + PrintableText.OneLine(decisionsPath) + "; replace each with a decision and run the merge again.";
     }
 
     private static string Report(PipelineResult result, PendingDecisions pending)
@@ -314,5 +314,5 @@ internal static class MergeCommand
         return builder.ToString();
     }
 
-    private static string Cell(string text) => CommandText.OneLine(text).Replace("|", "\\|", StringComparison.Ordinal);
+    private static string Cell(string text) => PrintableText.TableCell(text);
 }

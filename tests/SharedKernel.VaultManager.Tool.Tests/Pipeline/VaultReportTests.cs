@@ -147,7 +147,15 @@ public sealed class VaultReportTests : IDisposable
         var keeperBank = KeeperLogin("rec-bank", Name, "alice", "fixture-keeper-bank-password", "https://bank.example.com", notes: "PIN: 4821");
         keeperBank["folders"] = new JsonArray(new JsonObject { ["folder"] = Folder });
         string keeper = Write(directory, "keeper.zip", CommanderZip(KeeperJson(keeperBank, KeeperFileRecord("rec-scan", Name, "file-scan", FileName))));
-        string bitwarden = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-bank", Name, "alice", "fixture-bitwarden-bank-password", "https://bank.example.com")));
+        var bitwardenBank = BitwardenLogin("bw-bank", Name, "alice", "fixture-bitwarden-bank-password", "https://bank.example.com");
+        bitwardenBank["folderId"] = "folder-imported";
+        var bitwardenExport = new JsonObject
+        {
+            ["encrypted"] = false,
+            ["folders"] = new JsonArray(new JsonObject { ["id"] = "folder-imported", ["name"] = "Imported" }),
+            ["items"] = new JsonArray(bitwardenBank),
+        };
+        string bitwarden = Write(directory, "bitwarden.json", bitwardenExport.ToJsonString());
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
         var result = pipeline.Run(new PipelineRequest([keeper, bitwarden]));
@@ -191,5 +199,26 @@ public sealed class VaultReportTests : IDisposable
         report.ShouldContainInOrder("## Password health", "| Router-Admin-Panel | easily guessed |", "| Printer | easily guessed |");
         report.ShouldNotContain("same as the", StringComparison.Ordinal);
         result.PasswordHealth.Issues.ShouldAllSatisfy(issue => issue.ToString().ShouldNotContain("Equals", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Report_names_three_other_items_that_reuse_a_password_and_counts_the_rest()
+    {
+        string input = Write(directory, "bitwarden.json", BitwardenJson(
+            BitwardenLogin("bw-mail", "Mail", "alice", KeeperOnlyPassword, "https://mail.example.com"),
+            BitwardenLogin("bw-bank", "Bank", "alice", KeeperOnlyPassword, "https://bank.example.com"),
+            BitwardenLogin("bw-shop", "Shop", "alice", KeeperOnlyPassword, "https://shop.example.com"),
+            BitwardenLogin("bw-news", "News", "alice", KeeperOnlyPassword, "https://news.example.com"),
+            BitwardenLogin("bw-chat", "Chat", "alice", KeeperOnlyPassword, "https://chat.example.com")));
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+
+        var result = pipeline.Run(new PipelineRequest([input]));
+
+        string report = VaultReport.ToMarkdown(result);
+        report.ShouldContainInOrder(
+            "## Password health",
+            "| Mail | reused on other sites | Bank, Shop, News, and 1 more |",
+            "| Chat | reused on other sites | Mail, Bank, Shop, and 1 more |");
+        report.ShouldNotContain(KeeperOnlyPassword, StringComparison.Ordinal);
     }
 }

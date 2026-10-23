@@ -1,3 +1,4 @@
+using PandaBear.VaultManager.Tool.IO;
 using PandaBear.VaultManager.Tool.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Cli;
@@ -53,7 +54,7 @@ internal sealed class PasswordPrompts
         {
             // Checked once the prompt counts as waiting, so Ctrl+C either finds the run at a prompt or ends it here.
             ct.ThrowIfCancellationRequested();
-            answer = read(CommandText.OneLine(prompt));
+            answer = read(PrintableText.OneLine(prompt));
         }
         catch (InvalidOperationException exception)
         {

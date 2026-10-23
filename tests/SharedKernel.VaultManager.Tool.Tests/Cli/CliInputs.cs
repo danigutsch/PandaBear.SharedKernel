@@ -25,6 +25,19 @@ internal static class CliInputs
         Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", BitwardenPassword, "https://example.com", revised: false))),
     ];
 
+    /// <summary>
+    /// The same login in a Keeper zip and a Bitwarden export with different passwords and no modification times, so the
+    /// password needs a decision, and a Keeper file record that lists a file missing from the zip, so reading warns about
+    /// it. Every item has the given name.
+    /// </summary>
+    public static string[] ConflictingLoginsAndMissingAttachment(string directory, string name) =>
+    [
+        Write(directory, "keeper.zip", CommanderZip(KeeperJson(
+            KeeperLogin("rec-1", name, "alice", KeeperPassword, "https://example.com", modified: false),
+            KeeperFileRecord("rec-files", name, "file-photo", "photo.png")))),
+        Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", name, "alice", BitwardenPassword, "https://example.com", revised: false))),
+    ];
+
     /// <summary>The same login in both inputs. The Bitwarden one is newer, so the merge needs no decision.</summary>
     public static string[] NewerBitwardenLogin(string directory) =>
     [

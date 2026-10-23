@@ -34,7 +34,7 @@ internal static class ScanCommand
     {
         TextWriter output = invocation.Output;
         TextWriter error = invocation.Error;
-        if (reportPath is not null && !OutputFiles.CanWrite(reportPath, "report file", inputs, [], replaceExisting: true, error))
+        if (reportPath is not null && !OutputFiles.CanWriteReport(reportPath, inputs, [], error))
         {
             return ExitCodes.InputOutputProblem;
         }
@@ -49,14 +49,14 @@ internal static class ScanCommand
         PipelineResult result = pipeline.Merge(VaultPipeline.Scan(pipeline.Load(inputs, ct), ct), new MergeRequest(), ct);
         foreach (string warning in result.ReadWarnings)
         {
-            error.WriteLine("Warning: " + CommandText.OneLine(warning));
+            error.WriteLine("Warning: " + PrintableText.OneLine(warning));
         }
 
         WriteSummary(output, result);
         if (reportPath is not null)
         {
             SecureFile.WriteAllText(reportPath, VaultReport.ToMarkdown(result), overwrite: true, ct);
-            output.WriteLine("Report: " + CommandText.OneLine(reportPath));
+            output.WriteLine("Report: " + PrintableText.OneLine(reportPath));
         }
 
         return ExitCodes.Success;
@@ -77,7 +77,7 @@ internal static class ScanCommand
             CommandText.Count(output, "  " + Describe(kind.Key), kind.Count());
         }
 
-        CommandText.Count(output, "Attachments to upload after the import", result.ManualAttachments.Count);
+        CommandText.Count(output, "Attachments to upload after the import", result.AttachmentUploadCount);
     }
 
     private static string Describe(PasswordIssueKind kind) => kind switch

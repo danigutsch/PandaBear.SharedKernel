@@ -33,6 +33,9 @@ internal sealed class ReviewSession
         FieldPaths.CardPrefix + "code",
         FieldPaths.SshKeyPrefix + "privateKey",
         FieldPaths.PasswordHistory,
+        FieldPaths.IdentityPrefix + "ssn",
+        FieldPaths.IdentityPrefix + "passportNumber",
+        FieldPaths.IdentityPrefix + "licenseNumber",
     };
 
     private readonly VaultCommandEnvironment environment;
@@ -182,7 +185,7 @@ internal sealed class ReviewSession
 
         if (merged.Type == VaultItemType.Login)
         {
-            AddList(rows, context, FieldPaths.LoginUris, "Websites", [.. members.Select(member => Plain(string.Join(", ", (member.Login?.Uris ?? []).Select(uri => uri.Value))))]);
+            AddList(rows, context, FieldPaths.LoginUris, "Websites", [.. members.Select(Websites)]);
             AddList(rows, context, FieldPaths.LoginFido2Credentials, "Passkeys", [.. members.Select(member => Plain(Passkeys(member)))]);
         }
 
@@ -578,6 +581,28 @@ internal sealed class ReviewSession
             string.Join(", ", member.PasswordHistory.Select(entry => entry.Password + " (" + Day(entry.LastUsedDate) + ")")),
             Secret: true,
             string.Join(", ", member.PasswordHistory.Select(entry => ReviewText.Mask + " (" + Day(entry.LastUsedDate) + ")")));
+    }
+
+    // Website addresses show their scheme, host, and path. User info, a query, and a fragment, which can hold credentials or
+    // tokens, are masked until the field is revealed.
+    private static Cell Websites(VaultItem member)
+    {
+        string[] uris = [.. (member.Login?.Uris ?? []).Select(uri => uri.Value)];
+        string[] masked = [.. uris.Select(MaskUri)];
+        return new Cell(string.Join(", ", uris), Secret: !uris.SequenceEqual(masked, StringComparer.Ordinal), string.Join(", ", masked));
+    }
+
+    private static string MaskUri(string uri)
+    {
+        int scheme = uri.IndexOf("://", StringComparison.Ordinal);
+        int authorityStart = scheme < 0 ? 0 : scheme + 3;
+        int authorityEnd = uri.IndexOfAny(['/', '?', '#'], authorityStart);
+        authorityEnd = authorityEnd < 0 ? uri.Length : authorityEnd;
+        int at = authorityEnd > authorityStart ? uri.LastIndexOf('@', authorityEnd - 1, authorityEnd - authorityStart) : -1;
+        string authority = at < 0 ? uri[authorityStart..authorityEnd] : ReviewText.Mask + uri[at..authorityEnd];
+        int rest = uri.IndexOfAny(['?', '#'], authorityEnd);
+        string path = rest < 0 ? uri[authorityEnd..] : uri[authorityEnd..rest] + uri[rest] + ReviewText.Mask;
+        return uri[..authorityStart] + authority + path;
     }
 
     private static string Day(DateTimeOffset time) => time.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);

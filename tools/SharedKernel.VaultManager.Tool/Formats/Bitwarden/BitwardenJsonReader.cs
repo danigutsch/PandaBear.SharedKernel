@@ -14,6 +14,7 @@ internal static class BitwardenJsonReader
     /// <summary>Reads an unencrypted Bitwarden JSON export.</summary>
     /// <param name="json">Export file contents. Decrypt password-protected files first.</param>
     /// <param name="sourceFile">File name recorded as the item origin.</param>
+    /// <param name="warnings">Receives a warning that counts the deleted items, which stay out of the result.</param>
     /// <returns>Items in the export, excluding deleted items.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="json"/> or <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidDataException">
@@ -22,7 +23,7 @@ internal static class BitwardenJsonReader
     /// history, collection IDs, and the URIs and passkeys of a login); or two folders or collections have the same ID. The
     /// message names entries by their position, never by their content.
     /// </exception>
-    public static VaultExport Read(string json, string sourceFile)
+    public static VaultExport Read(string json, string sourceFile, ICollection<string>? warnings = null)
     {
         ArgumentNullException.ThrowIfNull(json);
         ArgumentNullException.ThrowIfNull(sourceFile);
@@ -55,6 +56,14 @@ internal static class BitwardenJsonReader
         Dictionary<string, string> folders = folderList
             .Where(folder => folder.Id is not null && !string.IsNullOrWhiteSpace(folder.Name))
             .ToDictionary(folder => folder.Id!, folder => folder.Name!, StringComparer.Ordinal);
+
+        int deleted = export.Items.Count(item => item.DeletedDate is not null);
+        if (deleted > 0)
+        {
+            warnings?.Add(deleted == 1
+                ? "1 item in the trash was skipped. Restore it in Bitwarden and export again to keep it."
+                : string.Create(CultureInfo.InvariantCulture, $"{deleted} items in the trash were skipped. Restore them in Bitwarden and export again to keep them."));
+        }
 
         return new VaultExport([.. export.Items.Where(item => item.DeletedDate is null).Select(item => Map(item, folders, sourceFile))]);
     }

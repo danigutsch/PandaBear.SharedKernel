@@ -138,17 +138,60 @@ internal sealed class GroupMerger
 
     private VaultItem MergeFolder(VaultItem result)
     {
-        var winner = ChosenMember(FieldPaths.Folder) ?? primary;
-        foreach (var member in newestFirst.Where(member => member.FolderPath is not null).DistinctBy(member => member.FolderPath, StringComparer.Ordinal))
+        // The folder is a single value: a folder on one side is kept, and different folders go through the policy.
+        var values = new List<(string Key, List<VaultItem> Holders)>();
+        foreach (var member in newestFirst.Where(member => !string.IsNullOrWhiteSpace(member.FolderPath)))
         {
-            if (!string.Equals(member.FolderPath, winner.FolderPath, StringComparison.Ordinal))
+            int existing = values.FindIndex(value => string.Equals(value.Key, member.FolderPath, StringComparison.Ordinal));
+            if (existing < 0)
             {
-                string kept = winner.FolderPath is null ? "no folder" : "folder \"" + winner.FolderPath + "\"";
-                conversionNotes.Add($"Folder \"{member.FolderPath}\" from {Source(member)} was not used; the item is in {kept}.");
+                values.Add((member.FolderPath!, [member]));
+            }
+            else
+            {
+                values[existing].Holders.Add(member);
             }
         }
 
-        Record(FieldPaths.Folder, winner == primary ? ResolutionKind.Newest : ResolutionKind.Decision);
+        VaultItem winner;
+        ResolutionKind resolution;
+        if (ChosenMember(FieldPaths.Folder) is { } chosen)
+        {
+            winner = chosen;
+            resolution = ResolutionKind.Decision;
+        }
+        else if (values.Count == 0)
+        {
+            return result with { FolderPath = null };
+        }
+        else if (values.Count == 1)
+        {
+            winner = values[0].Holders[0];
+            resolution = values[0].Holders.Count == group.Members.Count ? ResolutionKind.Equal : ResolutionKind.OneSided;
+        }
+        else
+        {
+            (winner, resolution) = PickWinner(values);
+            if (resolution == ResolutionKind.Unresolved)
+            {
+                Unresolved.Add(new UnresolvedConflict(group.Key, FieldPaths.Folder, group.MemberKeys, [.. group.Members.Select(member => member.Name)]));
+            }
+            else
+            {
+                AutoResolved++;
+            }
+        }
+
+        foreach (var (key, holders) in values)
+        {
+            if (!string.Equals(key, winner.FolderPath, StringComparison.Ordinal))
+            {
+                string kept = winner.FolderPath is null ? "no folder" : "folder \"" + winner.FolderPath + "\"";
+                conversionNotes.Add($"Folder \"{key}\" from {Source(holders[0])} was not used; the item is in {kept}.");
+            }
+        }
+
+        Record(FieldPaths.Folder, resolution, always: resolution == ResolutionKind.Decision);
         return result with { FolderPath = winner.FolderPath };
     }
 

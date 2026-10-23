@@ -6,6 +6,8 @@ namespace PandaBear.VaultManager.Tool.Cli;
 internal static class OutputFiles
 {
     // Case is ignored on every platform, so paths that differ only in case are refused even where they name two files.
+    private const string ReportFile = "report file";
+
     private const string SameFileRule = "paths are compared after resolving symbolic links and ignoring case";
 
     /// <summary>
@@ -34,9 +36,52 @@ internal static class OutputFiles
             : null;
         if (problem is not null)
         {
-            error.WriteLine(CommandText.OneLine(problem));
+            error.WriteLine(PrintableText.OneLine(problem));
         }
 
         return problem is null;
+    }
+
+    /// <summary>
+    /// Checks that the Markdown report can be written, as <see cref="CanWrite"/> does, and that an existing file it would
+    /// replace is a vault report, so a mistyped path cannot replace a file such as a decisions file.
+    /// </summary>
+    /// <param name="path">Report file.</param>
+    /// <param name="inputs">Input files, which are never written.</param>
+    /// <param name="others">Other files the command writes, with what each is.</param>
+    /// <param name="error">Receives the problem.</param>
+    /// <returns><see langword="true"/> when the report can be written.</returns>
+    /// <exception cref="IOException">A path holds more than <see cref="FilePaths.MaxLinks"/> symbolic links.</exception>
+    public static bool CanWriteReport(string path, IReadOnlyList<string> inputs, IReadOnlyList<(string Path, string Name)> others, TextWriter error)
+    {
+        if (!CanWrite(path, ReportFile, inputs, others, replaceExisting: true, error))
+        {
+            return false;
+        }
+
+        string fullPath = Path.GetFullPath(path);
+        if (File.Exists(fullPath) && !IsVaultReport(fullPath))
+        {
+            error.WriteLine(PrintableText.OneLine($"The {ReportFile} '{fullPath}' exists and is not a vault report. Choose another path, or delete the file first."));
+            return false;
+        }
+
+        return true;
+    }
+
+    // A report starts with the heading VaultReport writes. A file that cannot be read counts as no report.
+    private static bool IsVaultReport(string fullPath)
+    {
+        ReadOnlySpan<byte> heading = "# Vault report\n"u8;
+        Span<byte> start = stackalloc byte[heading.Length];
+        try
+        {
+            using var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            return stream.ReadAtLeast(start, start.Length, throwOnEndOfStream: false) == start.Length && start.SequenceEqual(heading);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            return false;
+        }
     }
 }

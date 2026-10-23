@@ -24,6 +24,22 @@ public sealed class VaultFileReaderTests : IDisposable
         result.Export.Items.ShouldAllSatisfy(item => item.Origin.Provider.ShouldBe(provider));
     }
 
+    [Theory]
+    [InlineData(1, "1 item in the trash was skipped. Restore it in Bitwarden and export again to keep it.")]
+    [InlineData(2, "2 items in the trash were skipped. Restore them in Bitwarden and export again to keep them.")]
+    public void Read_warns_about_the_items_in_the_trash_that_it_skips(int deleted, string warning)
+    {
+        string trash = string.Concat(Enumerable.Range(0, deleted).Select(index =>
+            ",{\"id\":\"old-" + index + "\",\"type\":2,\"name\":\"Old\",\"notes\":\"fixture keep me\",\"deletedDate\":\"2026-01-01T00:00:00Z\"}"));
+        string path = Path.Combine(directory, "trash.json");
+        File.WriteAllText(path, "{\"encrypted\":false,\"folders\":[],\"items\":[{\"id\":\"kept\",\"type\":2,\"name\":\"Kept\",\"notes\":\"fixture\"}" + trash + "]}");
+
+        var result = VaultFileReader.Read(path, _ => throw new InvalidOperationException("No password expected."));
+
+        result.Export.Items.ShouldHaveSingleItem().Name.ShouldBe("Kept");
+        result.Warnings.ShouldBe([warning]);
+    }
+
     [Fact]
     public void Read_password_protected_export_asks_for_the_file_password_by_file_name()
     {

@@ -37,6 +37,19 @@ public sealed class OriginKeysTests
     }
 
     [Fact]
+    public void Compute_content_key_does_not_depend_on_the_user_name()
+    {
+        VaultItem secretHandle = Login(string.Empty, "Mail", "alice.secret.handle@example.com", "https://mail.example.com");
+        VaultItem guessedHandle = Login(string.Empty, "Mail", "alice@example.com", "https://mail.example.com");
+
+        string secretKey = OriginKeys.Compute([secretHandle]).ShouldHaveSingleItem();
+        string guessedKey = OriginKeys.Compute([guessedHandle]).ShouldHaveSingleItem();
+
+        secretKey.ShouldStartWith("bitwarden|vault.json|content:", StringComparison.Ordinal);
+        secretKey.ShouldBe(guessedKey);
+    }
+
+    [Fact]
     public void Match_groups_items_whose_original_IDs_end_with_number_suffixes()
     {
         VaultItem[] items = [Login("x#2", "One", "alice", "https://one.example.com"), Login("x", "Two", "bob", "https://two.example.com"), Login("x", "Three", "carol", "https://three.example.com")];

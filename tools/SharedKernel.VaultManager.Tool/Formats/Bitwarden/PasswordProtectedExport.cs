@@ -21,7 +21,7 @@ internal static class PasswordProtectedExport
         ArgumentNullException.ThrowIfNull(password);
 
         PasswordProtectedEnvelopeDto envelope = ReadEnvelope(envelopeJson);
-        var kdf = new KdfConfig((KdfType)envelope.KdfType, envelope.KdfIterations, envelope.KdfMemory, envelope.KdfParallelism);
+        KdfConfig kdf = Kdf(envelope);
         using SymmetricKeys keys = BitwardenKeyDerivation.Derive(password, envelope.Salt!, kdf);
 
         // Validation entry first: a wrong password fails here before the large payload is processed.
@@ -35,6 +35,19 @@ internal static class PasswordProtectedExport
         {
             CryptographicOperations.ZeroMemory(plaintext);
         }
+    }
+
+    /// <summary>
+    /// Checks the envelope of a password-protected export and its key derivation settings without a password, so a file
+    /// that cannot be read is named before its password is asked.
+    /// </summary>
+    /// <param name="envelopeJson">Contents of the password-protected export file.</param>
+    /// <exception cref="InvalidDataException">The file is malformed, or its settings are unsupported or outside the accepted ranges.</exception>
+    public static void CheckEnvelope(string envelopeJson)
+    {
+        ArgumentNullException.ThrowIfNull(envelopeJson);
+
+        Kdf(ReadEnvelope(envelopeJson)).Validate();
     }
 
     /// <summary>Encrypts unencrypted Bitwarden JSON into a password-protected export.</summary>
@@ -73,6 +86,9 @@ internal static class PasswordProtectedExport
             CryptographicOperations.ZeroMemory(plaintext);
         }
     }
+
+    private static KdfConfig Kdf(PasswordProtectedEnvelopeDto envelope) =>
+        new((KdfType)envelope.KdfType, envelope.KdfIterations, envelope.KdfMemory, envelope.KdfParallelism);
 
     private static PasswordProtectedEnvelopeDto ReadEnvelope(string envelopeJson)
     {

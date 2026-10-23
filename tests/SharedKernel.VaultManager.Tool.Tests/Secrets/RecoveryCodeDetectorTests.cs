@@ -28,7 +28,7 @@ public sealed class RecoveryCodeDetectorTests
         var finding = SecretScanner.Default.Scan(item).ShouldHaveSingleItem();
 
         finding.Kind.ShouldBe(SecretKind.RecoveryCodes);
-        finding.Location.FirstLine.ShouldBe(1);
+        finding.Location.FirstLine.ShouldBe(2);
         finding.Location.LastLine.ShouldBe(11);
     }
 

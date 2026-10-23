@@ -14,8 +14,9 @@ namespace PandaBear.VaultManager.Tool.Matching;
 /// </para>
 /// <para>
 /// An item without one has the content key <c>provider|sourceFile|content:&lt;hex&gt;</c>, where <c>&lt;hex&gt;</c> is
-/// the first 16 lowercase hex characters of SHA-256 over the UTF-8 bytes of the normalized type number, title, user
-/// name, and first host, joined with line feeds. Only the hash is stored, never the values.
+/// the first 16 lowercase hex characters of SHA-256 over the UTF-8 bytes of the normalized type number, title, and first
+/// host, joined with line feeds. Only the hash is stored, never the values. The user name stays out of the hash, so a
+/// decisions file cannot confirm a guessed user name.
 /// </para>
 /// <para>
 /// When several items share a key, the first one in input order keeps it, and each later one gets the next free suffix
@@ -91,7 +92,6 @@ internal static class OriginKeys
             '\n',
             ((int)item.Type).ToString(CultureInfo.InvariantCulture),
             ItemNormalizer.Title(item.Name),
-            ItemNormalizer.Username(item.Login?.Username),
             firstHost ?? string.Empty);
         return Hex16(content);
     }

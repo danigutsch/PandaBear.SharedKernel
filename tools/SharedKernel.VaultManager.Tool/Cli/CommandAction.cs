@@ -1,5 +1,6 @@
 using System.CommandLine;
 using PandaBear.BuildingBlocks;
+using PandaBear.VaultManager.Tool.IO;
 using PandaBear.VaultManager.Tool.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Cli;
@@ -31,12 +32,48 @@ internal static class CommandAction
     /// <returns><see langword="true"/> for <see cref="IOException"/>, <see cref="InvalidDataException"/>, and <see cref="UnauthorizedAccessException"/>.</returns>
     public static bool IsFileProblem(Exception exception) => exception is IOException or InvalidDataException or UnauthorizedAccessException;
 
+    /// <summary>
+    /// Runs work and maps its failures to exit codes. An input or output problem (<see cref="IsFileProblem"/>) and a
+    /// failed password prompt of <paramref name="prompts"/> print their message on one line and give
+    /// <see cref="ExitCodes.InputOutputProblem"/>. Any other exception prints its type and stack trace without its message,
+    /// which can quote a vault value, and gives <see cref="ExitCodes.UnexpectedError"/>. The cancellation of
+    /// <paramref name="ct"/> is not a failure and propagates.
+    /// </summary>
+    /// <typeparam name="T">Result of the work.</typeparam>
+    /// <param name="error">Receives the message of a failure.</param>
+    /// <param name="prompts">Password prompts of the run.</param>
+    /// <param name="work">Work.</param>
+    /// <param name="failed">Turns the exit code of a failure into a result.</param>
+    /// <param name="ct">Token of the run.</param>
+    /// <returns>The result of the work, or of <paramref name="failed"/> after a failure.</returns>
+    public static T Guard<T>(TextWriter error, PasswordPrompts prompts, Func<T> work, Func<int, T> failed, CancellationToken ct)
+    {
+        try
+        {
+            return work();
+        }
+        catch (Exception exception) when (IsFileProblem(exception) || prompts.Failed(exception))
+        {
+            error.WriteLine(PrintableText.OneLine(exception.Message));
+            return failed(ExitCodes.InputOutputProblem);
+        }
+        catch (Exception exception) when (exception.ShouldHandleAsFailure(ct))
+        {
+            // System.CommandLine's default handler prints the exception with its message, and a message can quote the
+            // text that failed, such as a vault value. Print the type and stack trace only.
+            error.WriteLine($"Unexpected error ({exception.GetType().FullName}). Its message is not shown because it can contain vault values.");
+            error.WriteLine(exception.StackTrace);
+            return failed(ExitCodes.UnexpectedError);
+        }
+    }
+
     private static async Task<int> Run(ParseResult parseResult, VaultCommandEnvironment environment, Func<ParseResult, PasswordPrompts, CancellationToken, int> work, CancellationToken ct)
     {
         // The pipeline is synchronous and a password prompt blocks on the terminal, so the work runs on the thread pool.
         // A canceled command exits 1, as System.CommandLine does for a canceled action.
         var prompts = new PasswordPrompts(environment, ct);
-        Task<int> running = Task.Run(() => Guard(parseResult, prompts, work, ct), ct);
+        TextWriter error = parseResult.InvocationConfiguration.Error;
+        Task<int> running = Task.Run(() => Guard(error, prompts, () => work(parseResult, prompts, ct), static code => code, ct), ct);
         try
         {
             return await running.WaitAsync(ct).ConfigureAwait(false);
@@ -50,28 +87,5 @@ internal static class CommandAction
             await ((Task)running).WaitAsync(StopTimeout, environment.Time, CancellationToken.None).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
             throw;
         }
-    }
-
-    private static int Guard(ParseResult parseResult, PasswordPrompts prompts, Func<ParseResult, PasswordPrompts, CancellationToken, int> work, CancellationToken ct)
-    {
-        TextWriter error = parseResult.InvocationConfiguration.Error;
-        try
-        {
-            return work(parseResult, prompts, ct);
-        }
-        catch (Exception exception) when (IsFileProblem(exception) || prompts.Failed(exception))
-        {
-            error.WriteLine(CommandText.OneLine(exception.Message));
-        }
-        catch (Exception exception) when (exception.ShouldHandleAsFailure(ct))
-        {
-            // System.CommandLine's default handler prints the exception with its message, and a message can quote the
-            // text that failed, such as a vault value. Print the type and stack trace only.
-            error.WriteLine($"Unexpected error ({exception.GetType().FullName}). Its message is not shown because it can contain vault values.");
-            error.WriteLine(exception.StackTrace);
-            return ExitCodes.UnexpectedError;
-        }
-
-        return ExitCodes.InputOutputProblem;
     }
 }

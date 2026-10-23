@@ -853,12 +853,13 @@ internal sealed class SecretScanner
                 continue;
             }
 
-            // A catalog match that is exactly the value of a labeled line takes over the line, so placing it removes the label too.
+            // A catalog match that is exactly the value of a labeled line takes over the line and its label, so placing it
+            // removes the line and names the field after the label, which is never lost.
             SecretFinding winner = kept[overlap];
-            if (winner.Location.FirstLine is null && finding.Location.FirstLine is not null
+            if (winner.Location.FirstLine is null && finding.Location.FirstLine is not null && finding.LabelLocation is not null
                 && winner.Location.Start == finding.Location.Start && winner.Location.Length == finding.Location.Length)
             {
-                kept[overlap] = winner with { Location = finding.Location };
+                kept[overlap] = winner with { Location = finding.Location, LabelLocation = finding.LabelLocation };
             }
         }
 
@@ -886,7 +887,8 @@ internal sealed class SecretScanner
         foreach (SecretFinding finding in findings)
         {
             PlacementTarget target = finding.ProposedTarget;
-            bool fromField = SecretLocation.TryParseField(finding.Location.FieldPath, out _, out _) && finding.LabelLocation is not null && finding.Kind != SecretKind.SecurityQuestion;
+            // A labeled value, from a named custom field or a labeled line, keeps its label as the name of its field.
+            bool labeled = finding.LabelLocation is not null && finding.Kind != SecretKind.SecurityQuestion;
             switch (finding.Kind)
             {
                 case SecretKind.Totp when target.Kind is PlacementTargetKind.LoginTotp:
@@ -915,7 +917,7 @@ internal sealed class SecretScanner
 
                     break;
                 case SecretKind.ApiToken or SecretKind.GenericSecret when target.Kind == PlacementTargetKind.HiddenField && finding.Confidence > Confidence.Suggestion
-                    && finding.Location.FieldPath != SecretLocation.LoginPassword && !fromField && IsDefaultTokenTarget(finding):
+                    && finding.Location.FieldPath != SecretLocation.LoginPassword && !labeled && IsDefaultTokenTarget(finding):
                     if (context.IsLogin && !passwordFilled)
                     {
                         passwordFilled = true;
@@ -923,7 +925,7 @@ internal sealed class SecretScanner
                     }
 
                     break;
-                case SecretKind.AccessKeyId when target.Kind == PlacementTargetKind.TextField && !fromField:
+                case SecretKind.AccessKeyId when target.Kind == PlacementTargetKind.TextField && !labeled:
                     if (context.IsLogin && !usernameFilled)
                     {
                         usernameFilled = true;
@@ -934,7 +936,7 @@ internal sealed class SecretScanner
                 case SecretKind.Username:
                     usernameFilled = true;
                     break;
-                case SecretKind.CardNumber when target.Kind == PlacementTargetKind.HiddenField && !fromField && context.IsSecureNote:
+                case SecretKind.CardNumber when target.Kind == PlacementTargetKind.HiddenField && !labeled && context.IsSecureNote:
                     target = PlacementTarget.NewCardItem;
                     break;
                 case SecretKind.ConnectionString or SecretKind.UrlCredentials when target.Kind == PlacementTargetKind.LoginFromConnection && !context.IsLogin:
@@ -944,7 +946,7 @@ internal sealed class SecretScanner
                     break;
             }
 
-            if (fromField && target.Kind == PlacementTargetKind.HiddenField && !target.NameFromLabel)
+            if (labeled && target.Kind == PlacementTargetKind.HiddenField && !target.NameFromLabel)
             {
                 target = PlacementTarget.HiddenNamedByLabel(target.FieldName ?? "Secret");
             }

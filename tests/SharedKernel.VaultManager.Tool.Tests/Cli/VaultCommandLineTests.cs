@@ -69,6 +69,10 @@ public sealed class VaultCommandLineTests
     [InlineData("merge", "keeper.json", "--output", " ")]
     [InlineData("merge", "keeper.json", "--output", "merged.json", "--decisions", "")]
     [InlineData("merge", "keeper.json", "--output", "merged.json", "--report", " ")]
+    [InlineData("review", "keeper.json", "--decisions", "")]
+    [InlineData("review", "keeper.json", "--decisions", "  ")]
+    [InlineData("review", "keeper.json", "--output", "")]
+    [InlineData("review", "keeper.json", "--output", "  ")]
     public async Task Invalid_command_lines_exit_1_with_the_error_on_standard_error(params string[] args)
     {
         var prompts = new TestPrompts(ExportPassword);

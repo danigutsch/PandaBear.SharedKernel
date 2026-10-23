@@ -55,10 +55,12 @@ internal static class VaultFileReader
             case VaultFileFormat.KeeperCsv:
                 return KeeperCsvReader.Read(DecodeText(content), fileName);
             case VaultFileFormat.BitwardenJson:
-                return new VaultReadResult(BitwardenJsonReader.Read(DecodeText(content), fileName), []);
+                List<string> warnings = [];
+                return new VaultReadResult(BitwardenJsonReader.Read(DecodeText(content), fileName, warnings), warnings);
             case VaultFileFormat.BitwardenJsonPasswordProtected:
                 string json = PasswordProtectedExport.Decrypt(DecodeText(content), passwordProvider(fileName));
-                return new VaultReadResult(BitwardenJsonReader.Read(json, fileName), []);
+                List<string> protectedWarnings = [];
+                return new VaultReadResult(BitwardenJsonReader.Read(json, fileName, protectedWarnings), protectedWarnings);
             case VaultFileFormat.BitwardenJsonAccountRestricted:
                 throw new InvalidDataException(
                     "This Bitwarden export is account-restricted and can only be decrypted by the Bitwarden account that created it. "

@@ -172,6 +172,43 @@ public sealed class BitwardenJsonWriterTests
     }
 
     [Fact]
+    public void Write_warns_about_a_login_with_more_than_one_passkey_without_its_values()
+    {
+        VaultItem[] items =
+        [
+            new()
+            {
+                Type = VaultItemType.Login,
+                Name = "Shop",
+                Login = new LoginData
+                {
+                    Fido2Credentials =
+                    [
+                        new Fido2Credential { CredentialId = "cred-k", KeyValue = "fixture-key-k", RpId = "shop.example" },
+                        new Fido2Credential { CredentialId = "cred-b", KeyValue = "fixture-key-b", RpId = "shop.example" },
+                    ],
+                },
+                Origin = Origin,
+            },
+            new()
+            {
+                Type = VaultItemType.Login,
+                Name = "Mail",
+                Login = new LoginData { Fido2Credentials = [new Fido2Credential { CredentialId = "cred-m", KeyValue = "fixture-key-m", RpId = "mail.example" }] },
+                Origin = Origin,
+            },
+        ];
+
+        var result = BitwardenJsonWriter.Write(new VaultExport(items));
+
+        string warning = result.Warnings.ShouldHaveSingleItem();
+        warning.ShouldStartWith("\"Shop\": 2 passkeys", StringComparison.Ordinal);
+        warning.ShouldNotContain("fixture-key", StringComparison.Ordinal);
+        warning.ShouldNotContain("cred-", StringComparison.Ordinal);
+        result.Errors.ShouldBeEmpty();
+    }
+
+    [Fact]
     public void Write_does_not_warn_about_the_import_request_of_an_export_well_under_the_limit()
     {
         VaultItem[] items =

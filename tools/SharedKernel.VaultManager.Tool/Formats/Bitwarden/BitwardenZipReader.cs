@@ -30,9 +30,8 @@ internal static class BitwardenZipReader
         using SafeArchive archive = SafeArchive.Open(path);
         ArchiveEntryInfo data = archive.Find(DataEntry)
             ?? throw new InvalidDataException("Bitwarden zip export has no data.json entry.");
-        VaultExport export = BitwardenJsonReader.Read(archive.ReadUtf8(data), sourceFile);
-
         var warnings = new List<string>();
+        VaultExport export = BitwardenJsonReader.Read(archive.ReadUtf8(data), sourceFile, warnings);
         var unassigned = new List<UnassignedAttachmentFolder>();
         var attachments = new Dictionary<VaultItem, List<AttachmentRef>>(ReferenceEqualityComparer.Instance);
         foreach (IGrouping<string, ArchiveEntryInfo> folder in GroupByFolder(archive.Entries, warnings))

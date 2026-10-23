@@ -10,7 +10,7 @@ public sealed class PasswordPromptsTests
     private const string FilePassword = "fixture file password";
 
     [Fact]
-    public async Task Prompts_show_control_characters_in_their_text_as_spaces()
+    public async Task Prompts_replace_control_characters_in_their_text()
     {
         var prompts = new TestPrompts(ExportPassword, FilePassword);
         string prompt = string.Concat("Password for a", (char)0x1B, "[2J", (char)0x9B, "b.json");
@@ -24,7 +24,7 @@ public sealed class PasswordPromptsTests
         var result = await CommandLineRun.Invoke(command, [], TestContext.Current.CancellationToken);
 
         result.ExitCode.ShouldBe(0);
-        prompts.FilePasswordPrompts.ShouldBe(["Password for a [2J b.json"]);
-        prompts.NewPasswordPrompts.ShouldBe(["Password for a [2J b.json"]);
+        prompts.FilePasswordPrompts.ShouldBe(["Password for a\uFFFD[2J\uFFFDb.json"]);
+        prompts.NewPasswordPrompts.ShouldBe(["Password for a\uFFFD[2J\uFFFDb.json"]);
     }
 }

@@ -38,7 +38,40 @@ public sealed class PrintableTextTests
     }
 
     [Theory]
+    [InlineData(0x00)]
+    [InlineData(0x07)]
+    [InlineData(0x1B)]
+    [InlineData(0x1F)]
+    [InlineData(0x7F)]
+    [InlineData(0x80)]
+    [InlineData(0x85)]
+    [InlineData(0x9B)]
+    [InlineData(0x9F)]
+    public void OneLine_replaces_each_control_character_other_than_a_line_break_or_tab(int controlCharacter)
+    {
+        string text = string.Concat("before", (char)controlCharacter, "after");
+
+        string printable = PrintableText.OneLine(text);
+
+        printable.ShouldBe(string.Concat("before", PrintableText.Replacement, "after"));
+    }
+
+    [Theory]
+    [InlineData(0x09)]
+    [InlineData(0x0A)]
+    [InlineData(0x0D)]
+    public void OneLine_shows_a_line_break_or_tab_as_a_space(int character)
+    {
+        string text = string.Concat("before", (char)character, "after");
+
+        string printable = PrintableText.OneLine(text);
+
+        printable.ShouldBe("before after");
+    }
+
+    [Theory]
     [InlineData("Bank | Visa ü €")]
+    [InlineData("Bob's Café Bank \u00A0€ 😀")]
     [InlineData("\u05D1\u05E0\u05E7 \u200FBank\u200E")]
     public void OneLine_returns_text_without_control_characters_as_it_is(string text)
     {

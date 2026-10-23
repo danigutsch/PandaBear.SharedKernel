@@ -24,18 +24,16 @@ The tool never contacts a vault service. The user imports the output.
 - Dependencies:
   - System.CommandLine for parsing; it has no transitive packages on .NET 10.
   - Konscious.Security.Cryptography.Argon2 (with Konscious Blake2) to read Argon2id-protected Bitwarden exports.
-  - Terminal.Gui for the review UI. It brings 26 transitive packages, including a native `libonigwrap`.
+  - Terminal.Gui for the review UI. It brings 23 transitive packages, including `Onigwrap` with a native
+    `libonigwrap`.
   - Existing repository modules where they fit: `SharedKernel.BuildingBlocks` for IBAN and BIC validation.
 - Packaging is framework-dependent. RID-specific and NativeAOT tool packages wait until CI can validate each
   claimed platform. See [command-line tool guidance](../command-line-tools.md).
-- On 2026-10-22, a NativeAOT spike published Terminal.Gui 2.5.0 and System.CommandLine 2.0.13 for linux-x64,
-  with warnings treated as errors, and the build reported no trim or AOT warnings. The resulting binary
-  rendered a two-pane window. The build linked with `CppCompilerAndLinker=gcc` because clang was not installed.
-  `libonigwrap.so` ships beside the executable. No other platform has been validated.
+- NativeAOT for linux-x64 builds Terminal.Gui 2.5.0 and System.CommandLine 2.0.13 without trim or AOT warnings,
+  with warnings treated as errors and gcc as the linker (`CppCompilerAndLinker=gcc`). The binary renders a
+  two-pane window, and `libonigwrap.so` ships beside it. No other platform is validated.
 
 ## Upstream facts the design depends on
-
-These were checked against upstream sources on 2026-10-22.
 
 - **Vaultwarden import behavior**
   - Import always creates new items and never updates existing ones.
@@ -82,11 +80,17 @@ Read, map, scan, apply accepted placements, match, merge, analyze, write.
    - Bitwarden zip
    - Bitwarden password-protected JSON
 
-   The reader detects the format by content rather than file extension. Readers return items and warnings.
+   The reader detects the format by content rather than file extension. Readers return items and warnings. A
+   Bitwarden JSON export with a null item, folder, or collection, a null entry in a list such as the custom fields,
+   or two folders or collections with one ID is malformed: the command exits with code 3, and the message names the
+   first malformed entry by its position, never by its content. Items in the Bitwarden trash are skipped with a
+   warning that counts them. A Keeper Commander zip entry that no record lists, or that is not under `files/`, gets
+   a warning that names it.
 2. **Map.** Every source maps to one item model shaped like a Bitwarden export item, plus provenance (provider,
    file, original ID, modification time). Every source value lands in a typed slot or a custom field. Hidden
    fields hold secrets. Each item gets its origin key as read, and decisions name the item by that key even after
-   placement changes the item. An SSH key item without a public key or fingerprint is completed from the first
+   placement changes the item. An item without an export ID, such as a CSV row, gets a key from a hash of its type,
+   title, and first host; the user name stays out of the hash, so a decisions file cannot confirm a guessed one. An SSH key item without a public key or fingerprint is completed from the first
    PEM block of its private key; other text stored with the key, such as a second key, moves to a hidden field,
    where secret detection finds it. If the key cannot be converted, for example because it is encrypted, the item
    becomes a secure note that keeps the key in a hidden field.
@@ -99,12 +103,17 @@ Read, map, scan, apply accepted placements, match, merge, analyze, write.
 4. **Match.** The matcher groups items by normalized host plus username, then by normalized title plus type, and
    suggests weaker matches without applying them.
 5. **Merge.** The merger works one field at a time (rules below).
-6. **Analyze.** The tool reports reused, short, or trivially guessable passwords.
+6. **Analyze.** The tool reports reused, short, or trivially guessable passwords. It groups the items once per
+   password, and each reuse issue names at most three other items on other hosts and counts the rest, such as
+   `Mail, Bank, Shop, and 2 more`, so the analysis and the password health table grow linearly with the vault. The
+   report holds no password, hash, or length.
 7. **Write.** By default the output is a Bitwarden password-protected export (PBKDF2-SHA256, 600,000 iterations).
    A plaintext export requires an explicit flag. The output file is created with mode 0600 and is never
-   overwritten without `--force`, and it may not be one of the inputs. Nothing is written while a field needs a
+   overwritten without `--force`, and it may not be one of the inputs. The vault is not written while a field needs a
    decision, while a proposed finding has no decision, or while the writer reports a value that Bitwarden would
-   reject.
+   reject. The writer warns when its estimate of the import request exceeds Vaultwarden's 20,000,000-byte limit: the
+   export as compact JSON, with each value and folder name as an encrypted string and an encrypted SHA-256 checksum
+   for each login URI. The tool does not split an export.
 
 ## Merge rules
 
@@ -123,7 +132,15 @@ has a TOTP. The result has the new password, the Keeper TOTP, and the old passwo
    stays unresolved until the user decides.
 5. An explicit decision overrides rules 1 to 4, including choosing "empty". Exports carry no deletion markers, so
    this is how a user drops a value that was intentionally removed on one side.
-6. The newest member's folder, name, and type are used. The other members' values are recorded.
+6. The folder is a single value under rules 2, 4, and 5: a folder on one side is kept, and different folders go
+   to the policy. The losing folder is noted in the report.
+7. The newest member's name and type are used, or the first input's when no member has a modification time, under
+   every policy. Each other name is kept in a text field named `"Name (from <source>)"`, and another type is noted
+   in the report.
+8. Values equal after normalization keep the newest member's form: user names and URIs compare without letter case,
+   URIs without their match setting, and TOTP keys without issuer and label.
+9. Passkeys are unioned like other lists. Bitwarden saves one passkey per login, so the writer warns about each login
+   with more than one; splitting the group keeps each passkey on its own login.
 
 The decisions file stores group keys, field paths, origin keys, item names, and choices, plus finding identifiers
 with the user's decision, per item origin key. It never stores values. When a merge needs decisions, it adds a
@@ -142,7 +159,8 @@ them.
 
 Detected secrets become proposals. High-confidence proposals are pre-accepted: a prefix plus a checksum, or a
 strong validator. Heuristic proposals need the user to accept them. Source text is removed from notes only
-after a proposal is accepted. A secret with no native Bitwarden slot goes into a hidden field on the same item.
+after a proposal is accepted, and only the placed value and the label that names its field: other text on its
+lines, and a header line above a block of recovery codes, stays in the notes. A secret with no native Bitwarden slot goes into a hidden field on the same item.
 
 - **Scope**
   - notes and custom fields
@@ -150,8 +168,10 @@ after a proposal is accepted. A secret with no native Bitwarden slot goes into a
   - misfiled core fields, such as a TOTP seed in a password field or a PIN in a card password
   - weak or reused passwords, reported only
 - **Engine**
-  - A keyword prefilter, then source-generated regular expressions on bounded windows with a 50 ms timeout.
-    A timeout becomes a "needs review" finding.
+  - A keyword prefilter, then source-generated regular expressions on bounded windows with a 1 s match timeout.
+    A match that times out runs once more; a second timeout turns its window into a "needs review" finding. After
+    three timed-out windows of one rule in a text, the rest of that text becomes one "needs review" finding for the
+    rule.
   - Validators: Luhn and card brand ranges, IBAN through `PandaBear.BuildingBlocks.Iban`, base32 and
     `otpauth://` for TOTP, the BIP39 checksum, JWT headers, PEM and OpenSSH structure, and token checksums.
   - Recovery-code detection looks for blocks of same-shaped tokens near keywords or in known file names.
@@ -159,6 +179,8 @@ after a proposal is accepted. A secret with no native Bitwarden slot goes into a
   - A TOTP seed goes to `login.totp`, normalized to `otpauth://`. Later seeds go to hidden fields named
     `TOTP (n)`.
   - Recovery codes go to a hidden field named `Recovery codes`.
+  - A value on a labeled line, such as `prod api token: <token>`, goes to a hidden field named after the label, also
+    when a catalog rule recognizes the value, so two labeled tokens stay apart.
   - Security questions become hidden fields named after the question.
   - SSH keys become SSH key items, converted with the BCL and fingerprinted as `SHA256:`.
   - Database URIs fill the login fields.
@@ -178,7 +200,10 @@ The tool reads attachments from Keeper Commander zips and Bitwarden zips with th
 - entries with path traversal are rejected
 
 Each file is classified by magic bytes first. Only text is scanned. Bitwarden JSON imports cannot carry files,
-so every attachment stays on a manual upload list in the report.
+so every attachment stays on a manual upload list in the report. A Bitwarden zip names each item's attachment
+folder after the item; a folder that matches no item or several items is attached to none. Its files get a second
+table in the report (folder, file, source, and the number of matching items), and the `scan`, `merge`, and `review`
+summaries count them with the other attachments to upload.
 
 ## Commands
 
@@ -208,27 +233,34 @@ parsing.
 Exit codes:
 
 - 0: success.
-- 1: invalid command line, cancellation, or an unexpected error (System.CommandLine's code for these). Canceled
-  at a password prompt, a command ends at once. Canceled elsewhere, it waits up to 1.5 seconds, less than
-  System.CommandLine's two-second process termination timeout, for its work to stop, so a short file write can
-  finish, and then ends even if a write is still running. A write cut off that way leaves its temporary file
-  behind.
+- 1: invalid command line, cancellation, or an unexpected error (System.CommandLine's code for these). Ctrl+C or
+  SIGTERM cancels the command's token, which the pipeline stages and the file writes observe. Canceled at a password
+  prompt, or before the review UI starts, a command ends at once. Canceled elsewhere, `inspect`, `scan`, and `merge`
+  wait up to 1.5 seconds, less than System.CommandLine's two-second process termination timeout, for the work to stop
+  at its next check: no file write starts after the cancel, and a write already under way either completes or deletes
+  its temporary file and leaves its file unchanged. Work still running after 1.5 seconds ends with the process, and a
+  write cut off that way can leave its temporary file behind. Inside the review UI, Ctrl+C is a key; see
+  [Review UI](#review-ui).
 - 2: decisions needed: the merge wrote, or would write, pending decisions.
-- 3: an input or output problem: an unreadable, unsupported, or account-restricted input, a wrong password, a
-  decisions file that is not valid, an output that exists without `--force` or is an input, a missing output
-  directory, a report or decisions file that cannot be written, writer errors that block writing, or a password
-  needed without a terminal. When the report cannot be written after the vault, the error says that the vault is
-  written and the report is not.
+- 3: an input or output problem: an unreadable, unsupported, malformed, or account-restricted input, a wrong password, a
+  decisions file that is not valid, an output that exists without `--force` or is an input, a missing output directory,
+  a report path that names an existing file that is not a vault report, a report or decisions file that cannot be
+  written, writer errors that block writing, a password needed without a
+  terminal, no acceptable new password in three attempts, or `review` without a terminal. When the report cannot be
+  written after the vault, the error says that the vault is written and the report is not.
 - 130 or 143: Ctrl+C or SIGTERM during start-up, before System.CommandLine handles it, or a canceled command that
   did not end within the two-second process termination timeout.
 
 Passwords are read only from a terminal prompt without echo, never from arguments or environment variables.
 Password-protected inputs and an encrypted output need a terminal: without one, a command that needs a password
 fails with exit code 3 before doing any work and names the input or output that needs it. The `inspect` report and
-the `scan` and `merge` summaries go to standard output; diagnostics, warnings, errors, and prompts go to standard
-error. Every control character (C0, DEL, and C1) in a printed name, path, prompt, or message is shown as a space,
-so a crafted export cannot send escape sequences to the terminal. Report and decisions files are created readable
-only by their owner.
+the `scan`, `merge`, and `review` summaries go to standard output; diagnostics, warnings, errors, and prompts go to
+standard error. Every printed or reported name, path, key, warning, message, prompt, and report table cell goes
+through `PrintableText`: carriage returns, line feeds, tabs, and the separators U+2028 and U+2029 become spaces, and
+every other control character (C0, DEL, and C1) and every bidirectional embedding, override, and isolate (U+202A to
+U+202E and U+2066 to U+2069) becomes U+FFFD. A crafted export can therefore neither send escape sequences to the
+terminal nor reorder the text around a name. Report table cells also escape `|`. Report and decisions files are
+created readable only by their owner.
 
 ## Review UI
 
@@ -246,7 +278,8 @@ instance model of the [command-line tool guidance](../command-line-tools.md#term
   and the current decision. Its operations take a member's value for one field or for every conflicting field, drop a
   field, accept or reject a finding, link two items, split an item out of its group, and reveal or mask a value.
 - **Masking.** Passwords, TOTP keys, password history, hidden custom fields, card numbers and security codes, SSH
-  private keys, finding values, and every field of a member that holds one of its findings, such as notes, a user
+  private keys, identity social security, passport, and license numbers, the user info, query, and fragment of
+  website addresses, finding values, and every field of a member that holds one of its findings, such as notes, a user
   name, or a custom field, are masked until revealed. Revealed values reach only the screen.
 - **Save and write.** Saving writes the decisions file through `DecisionsFile`, readable only by its owner, with
   pending entries for what is left, so `merge` continues from it. Writing goes through `VaultPipeline.Merge` with an
@@ -255,17 +288,23 @@ instance model of the [command-line tool guidance](../command-line-tools.md#term
   masked fields, with at least `PasswordReader.MinimumNewPasswordLength` characters.
 - **Summary.** `review` writes no report. After the UI, it prints the decisions it saved, the vault it wrote, the
   pending counts, and the number of attachments to upload after the import, with each attachment listed once it wrote
-  the vault. Write warnings and the placement problems of accepted findings go to standard error. They come from the
-  merge that wrote the vault, or from the latest merge when it wrote none. The findings tab shows an accepted finding
-  as applied only when placement moved it, and shows its placement problem otherwise.
+  the vault. The count and the list include the files of Bitwarden attachment folders that match no item or several
+  items, each with the number of items its folder matches. Write warnings and the placement problems of accepted
+  findings go to standard error. They come from the merge that wrote the vault, or from the latest merge when it wrote
+  none. The findings tab shows an accepted finding as applied only when placement moved it, and shows its placement
+  problem otherwise.
 - **Views.** The window only shows the session and forwards keys: groups on the left, tabs with the field diff and the
   findings on the right, and a status bar with the main keys. `F1` lists every key, and every action has one. Errors
-  show value-free messages, and quitting with unsaved decisions asks first.
-- **Cancellation.** Inside the UI, Ctrl+C is a key, not a signal. SIGTERM or SIGINT cancels the command's token; the
-  window then asks every running dialog to stop, top first, and stops itself without asking about unsaved decisions,
-  so the UI restores the terminal and the command exits with code 1. Merging and writing run on the UI thread, so a
-  signal during that work takes effect when it ends. When that takes longer than System.CommandLine's two-second
-  `ProcessTerminationTimeout`, the process ends with exit code 130 or 143 without restoring the terminal.
+  show value-free messages, and quitting with unsaved decisions asks first. Names and values show on one line through
+  `ReviewText`: each line break that `string.ReplaceLineEndings` recognizes, form feed and NEL included, becomes
+  ` ↵ `, and the rest goes through `PrintableText`.
+- **Cancellation.** Ctrl+C or SIGTERM before the UI starts, during the checks, the password prompts, or reading the
+  inputs, ends the command at once with exit code 1. Inside the UI, Ctrl+C is a key, not a signal. SIGTERM or SIGINT
+  cancels the command's token; the window then asks every running dialog to stop, top first, and stops itself without
+  asking about unsaved decisions, so the UI restores the terminal and the command exits with code 1. Merging and writing
+  run on the UI thread, so a signal during that work takes effect when it ends. When that takes longer than
+  System.CommandLine's two-second `ProcessTerminationTimeout`, the process ends with exit code 130 or 143 without
+  restoring the terminal.
 - **Tests.** `ReviewSession` has unit tests for every operation and for the save and write rules. View tests run
   headless with `Application.Create(new VirtualTimeProvider())`, the ANSI driver, and injected keys, and assert on the
   session and on the dialogs asked. They set `DisableRealDriverIO=1`, because Terminal.Gui otherwise attaches to the

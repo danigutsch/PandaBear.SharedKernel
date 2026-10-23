@@ -93,7 +93,7 @@ public sealed class InspectCommandTests : IDisposable
     }
 
     [Fact]
-    public async Task Inspect_shows_control_characters_in_folder_names_as_spaces()
+    public async Task Inspect_replaces_control_characters_in_folder_names()
     {
         string folder = string.Concat("Work", (char)0x1B, "[2J", (char)0x9B, "31m", (char)0x7F, (char)0x07, "end");
         string bitwarden = CliInputs.BitwardenWithFolder(directory, folder);
@@ -101,7 +101,7 @@ public sealed class InspectCommandTests : IDisposable
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", bitwarden], TestContext.Current.CancellationToken);
 
         run.ExitCode.ShouldBe(0);
-        run.Output.ShouldContain("\n    Work [2J 31m  end\n", StringComparison.Ordinal);
+        run.Output.ShouldContain("\n    Work\uFFFD[2J\uFFFD31m\uFFFD\uFFFDend\n", StringComparison.Ordinal);
         char[] controls = [(char)0x1B, (char)0x9B, (char)0x7F, (char)0x07];
         controls.ShouldAllSatisfy(control => run.Output.ShouldNotContain(control));
     }

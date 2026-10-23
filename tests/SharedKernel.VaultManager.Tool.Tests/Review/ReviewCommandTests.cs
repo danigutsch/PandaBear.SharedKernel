@@ -253,6 +253,33 @@ public sealed class ReviewCommandTests : IDisposable
     }
 
     [Fact]
+    public async Task Review_counts_and_lists_the_files_of_attachment_folders_that_match_no_single_item()
+    {
+        string zip = PipelineInputs.Write(directory, "bitwarden.zip", PipelineInputs.TwoBanksZip());
+        string output = Path.Combine(directory, "merged.json");
+        var terminal = new FakeTerminal
+        {
+            User = session =>
+            {
+                session.Write(null);
+                return 0;
+            },
+        };
+
+        var run = await ReviewRun.Invoke(new TestPrompts(ExportPassword).Environment(), terminal, [zip, "-o", output, "--plaintext"], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(0);
+        run.Output.ShouldEndWith(
+            """
+            Attachments to upload after the import: 2
+              statement.txt, in bitwarden.zip at attachments/Bank/statement.txt; its folder matches 2 items, so upload it to the one it belongs to
+              contract.txt, in bitwarden.zip at attachments/Bank_1/contract.txt; its folder matches 2 items, so upload it to the one it belongs to
+
+            """.ReplaceLineEndings("\n"),
+            StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Review_prints_the_write_warnings_and_placement_problems_of_the_written_vault()
     {
         string huge = TestSecrets.FromAlphabet(TestSecrets.Base64, 4000, 640);

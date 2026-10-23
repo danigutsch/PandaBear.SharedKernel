@@ -94,13 +94,12 @@ internal static class RecoveryCodeDetector
             {
                 int start = lines[first].Start + LeadingWhitespace(lines[first].Text);
                 int end = lines[last].Start + lines[last].Text.TrimEnd().Length;
-                int firstLine = first > 0 && IsHeader(lines[first - 1].Text) ? first : first + 1;
                 findings.Add(new SecretFinding
                 {
                     RuleId = RuleId,
                     Kind = SecretKind.RecoveryCodes,
                     Confidence = confidence,
-                    Location = new SecretLocation(fieldPath, start, end - start, firstLine, last + 1),
+                    Location = new SecretLocation(fieldPath, start, end - start, first + 1, last + 1),
                     ProposedTarget = PlacementTarget.Hidden("Recovery codes"),
                     Message = string.Create(CultureInfo.InvariantCulture, $"Block of {block.Count} recovery codes"),
                 });
@@ -331,12 +330,6 @@ internal static class RecoveryCodeDetector
 
         long[] values = [.. codes.Select(code => long.Parse(code, NumberStyles.None, CultureInfo.InvariantCulture))];
         return values.Zip(values.Skip(1)).All(pair => Math.Abs(pair.Second - pair.First) == 1);
-    }
-
-    private static bool IsHeader(string line)
-    {
-        string trimmed = line.Trim();
-        return trimmed.Length is > 0 and <= 80 && HasKeyword(trimmed);
     }
 
     private static int LeadingWhitespace(string line)

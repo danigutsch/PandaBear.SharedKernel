@@ -8,7 +8,7 @@ vault.
 The tool is under development. Read the status in the
 [tool README](../tools/SharedKernel.VaultManager.Tool/README.md) before you use it on real vault data. The
 [vault manager plan](plans/vault-manager.md) describes the design. Commands are for bash or zsh on Linux or
-macOS. Statements about Keeper, Bitwarden, and Vaultwarden link to their sources, checked on 2026-10-23.
+macOS. Statements about Keeper, Bitwarden, and Vaultwarden link to their sources.
 Anything marked unverified could not be confirmed in those sources.
 
 ## How the merge treats your data
@@ -22,8 +22,8 @@ Anything marked unverified could not be confirmed in those sources.
   [Deleted items and values](#deleted-items-and-values).
 - Vaultwarden adds every imported item as a new item, so the merged export goes into an empty vault.
 - Reports and the decisions file hold no secret values. They do hold item names, folder names, attachment file
-  names, and origin keys with the record and item IDs of your exports, and they can name the websites of your
-  passkeys.
+  names, and origin keys, and they can name the websites of your passkeys. An origin key holds the record or item
+  ID of your export, or, for an item without one, such as a CSV row, a hash of its type, title, and first host.
 - The tool reads passwords only from a terminal prompt that does not echo, never from arguments or environment
   variables. Wait for the prompt before you type a password: the terminal shows what you type earlier. Without a
   terminal, a command that needs a password stops with exit code 3 before it does any work and names the input or
@@ -230,14 +230,18 @@ this merge. If you exported a zip, write `bitwarden.zip` wherever this guide wri
    - which attachments an export leaves out. Download those files from their vault before you close it;
    - every warning. Two kinds need you to act:
      - `Attachment folder "<name>" matches 2 items; its files were not attached.`, or `matches no item`, for a
-       Bitwarden zip. The tool attaches a folder only when exactly one item can have produced it. The files of
-       such a folder are not on the report's upload list, so write down each folder that a warning names. After
-       the import, you upload its files by hand (step 8): open the Bitwarden items with that name to see which
-       one holds each file. You can instead give each of those items a name that no other item has and export
+       Bitwarden zip. The tool attaches a folder only when exactly one item can have produced it. The
+       **Attachments to upload** section of the report lists the files of such a folder in a second table, with
+       their folder, source, and number of matching items, and the summaries of `scan` and `merge` count them.
+       After the import, you upload these files by hand (step 8): open the Bitwarden items with that name to see
+       which one holds each file. You can instead give each of those items a name that no other item has and export
        again, but editing an item makes it the newest member of its group (step 5), and a new name can stop it
        from matching its Keeper record.
      - `"<item>": attachment "<file>" is listed but not included in the zip.`, for a Keeper zip. The report
        lists the file for you to download from Keeper.
+     - `Zip entry "files/<file>" belongs to no record; upload it by hand to the item it belongs to after the
+       import.`, for a Keeper zip. No record lists the file, so the merged vault does not name it; keep it with
+       the attachments you upload (step 8).
 
 3. To preview secrets stored in the wrong place, such as TOTP seeds or recovery codes in notes, and weak or
    reused passwords, run:
@@ -292,14 +296,18 @@ unzip -l bitwarden.zip
    `one-sided`, `union`, `newest`, `preferred source`, `decision`, or `unresolved`. It also lists the secret
    findings with the origin key of each item, password health, the attachments to upload after the import,
    errors, warnings, and the fields and findings that still need a decision.
-3. Fill in each pending entry in `decisions.json`, as [The decisions file](#the-decisions-file) describes.
+3. Fill in each pending entry in `decisions.json`, as [The decisions file](#the-decisions-file) describes, or decide
+   in the full-screen review and save to the same file, as [The review UI](#the-review-ui) describes.
 4. Run the same merge command again. Repeat steps 2 to 4 until merge exits with code 0.
 
 The default policy, `--policy newest`, lets the latest modification time win, and a missing or tied time leaves
 the field for you. `--policy ask` leaves every conflict for you. `--policy prefer:bitwarden.json` lets the values
-from that input file win conflicts, and uses `newest` for a field that the input holds no value for.
+from that input file win conflicts, and uses `newest` for a field that the input holds no value for. The folder is
+one of these fields: a folder that only one vault sets is kept, and two different folders go to the policy. The
+item name and type are not: they come from the newest member, and each other name is kept in a text field named
+`Name (from <input file name>)`.
 
-Merge writes nothing while a value is too long for a Bitwarden import, because "Bitwarden does not process the
+Merge writes no vault while a value is too long for a Bitwarden import, because "Bitwarden does not process the
 import if there is one item invalid"
 ([Vaultwarden source](https://github.com/dani-garcia/vaultwarden/blob/main/src/api/core/ciphers.rs)). It exits
 with code 3 and names each item and field. Shorten the value in its source vault, for example by moving a long
@@ -316,8 +324,10 @@ Once `merged.json` exists, a later run needs `--force` to overwrite it. Merge ne
 `--plaintext` writes an unencrypted export instead; delete that file right after the import.
 
 Merge writes each file to a hidden temporary file in the same folder, such as `.merged.json.<random>.tmp`, and
-renames it when the file is complete. If merge stops during a write, for example after Ctrl+C, the temporary file
-can remain with part of the file in it. Delete it.
+renames it when the file is complete, so each file is either complete or unchanged. After Ctrl+C, merge exits with
+code 1 and starts no further write; a write that it cancels deletes its temporary file. A temporary file remains,
+with part of the file in it, only when the process ends during a write: when it is killed, or when a write is still
+running 1.5 seconds after Ctrl+C. Delete it.
 
 ## 6. Prepare an empty Vaultwarden vault
 
@@ -397,9 +407,10 @@ Vaultwarden also limits an import request to 20,000,000 bytes, which fits "somet
 by its own estimate: its code sets `20.megabytes()`
 ([Vaultwarden source](https://github.com/dani-garcia/vaultwarden/blob/main/src/main.rs)), and the `ubyte` crate
 counts a megabyte as 1,000,000 bytes ([ubyte](https://docs.rs/ubyte/latest/ubyte/struct.ByteUnit.html)). The web
-app encrypts every value before it sends the import, so the request is larger than `merged.json`. Merge warns
-when it estimates that the request comes close to 20 MB, but the estimate is rough and can be too low, mostly for
-a vault with many short values. The tool cannot split an export. The Vaultwarden wiki describes raising the limit
+app encrypts every value before it sends the import, so the request is larger than `merged.json`. Merge estimates
+the request as `merged.json` in compact JSON, with each value and folder name as an encrypted string and an
+encrypted SHA-256 checksum for each login URI, and warns when that estimate exceeds 20,000,000 bytes. Merge cannot
+split the export. The Vaultwarden wiki describes raising the limit
 with `ROCKET_LIMITS`
 ([Vaultwarden wiki](https://github.com/dani-garcia/vaultwarden/wiki/Changing-the-API-request-size-limit)), but
 the current code sets its limits after it reads that setting, so whether `ROCKET_LIMITS` raises the import limit
@@ -416,14 +427,11 @@ exports until you have verified the vault.
 A JSON import cannot carry files, so "Upload file attachments to the new vault individually"
 ([Bitwarden](https://bitwarden.com/help/import-data/)). The **Attachments to upload** table in
 `merge-report.md` lists each item, the file name, and where to find the file: an input file and the path inside
-it, or a note that the export leaves the file out and you download it from the source vault. The table does not
-list:
-
-- the files of Bitwarden attachment folders that inspect warned about in step 4;
-- the files of a vault that you merged from an export without attachments, as
-  [When a zip breaks a limit](#when-a-zip-breaks-a-limit) describes.
-
-Upload those from their zip in the same way.
+it, or a note that the export leaves the file out and you download it from the source vault. A second table lists
+the files of the Bitwarden attachment folders that inspect warned about in step 4, with the folder, the file name,
+where to find the file, and how many items the folder matches; open the items with that name to find the one each
+file belongs to. Neither table lists the files of a vault that you merged from an export without attachments, as
+[When a zip breaks a limit](#when-a-zip-breaks-a-limit) describes; upload those from their zip in the same way.
 
 1. Extract each file under its own name. Commander stores files as `files/<file UID>`, without their names:
 
@@ -472,7 +480,8 @@ front of it needs a matching body size limit, such as `client_max_body_size 525M
 
    Both files show the same item counts per type and the same folders.
 2. Check attachments. For every item that has attachments in Keeper or Bitwarden, check that its files are in
-   Vaultwarden. The upload table in the report is not a complete list (step 8). These commands list what the
+   Vaultwarden. The report lists no file of a vault that you merged from an export without attachments (step 8),
+   and a Bitwarden zip leaves out corrupted attachments (step 3). These commands list what the
    exports hold and what Vaultwarden holds, without any secret values:
 
    ```bash
@@ -499,7 +508,9 @@ front of it needs a matching body size limit, such as `client_max_body_size 525M
    ([Bitwarden](https://bitwarden.com/help/storing-passkeys/)). Sign in once with each passkey from the browser
    extension or a mobile app. Unverified: whether a passkey exported from Keeper signs in from a Bitwarden client,
    and how clients handle a merged login that holds passkeys from both vaults, given that "Only one passkey can be
-   saved per login item". Test them before you close your Keeper account.
+   saved per login item". Merge warns about each login that holds more than one passkey, and the report lists
+   these warnings. To keep each passkey on a login of its own, split that group, as
+   [The decisions file](#the-decisions-file) describes. Test them before you close your Keeper account.
 5. Check folders. Bitwarden nests a folder only when a folder named after its parent exists, such as `Work` for
    `Work/Projects`; otherwise it shows the full name ([Bitwarden](https://bitwarden.com/help/folders/)). Create
    the parent folders you want. A Keeper record that is in several folders lands in the first one, and its
@@ -568,7 +579,8 @@ Exports carry no deletion markers, so the tool cannot tell a deletion from an en
   passkey. Delete such a value in Vaultwarden after the import.
 - A whole item that you deleted in one vault comes back from the other. The decisions file cannot drop a whole
   item. Delete it in the other vault before you export, or in Vaultwarden after the import.
-- Bitwarden exports leave out the trash, so restore anything you want to keep before you export.
+- Bitwarden exports leave out the trash, so restore anything you want to keep before you export. An export that
+  holds items in the trash anyway gets a warning that counts them, and the tool skips them.
 - Unverified: whether Commander exports records from Keeper's deleted items. Delete any that appear after the
   import.
 
@@ -590,7 +602,7 @@ the file and run merge again; until then, no choice in the file takes effect.
 
 An origin key names one input item as `<provider>|<input file name>|<ID in that export>`, for example
 `keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA`. Items without an ID, such as CSV rows, get a key from a hash of their
-type, title, user name, and first host instead. A group key names a set of matched items. After a merge that
+type, title, and first host instead. A group key names a set of matched items. After a merge that
 needs two decisions, the file holds:
 
 ```json
@@ -734,7 +746,8 @@ default `newest` policy.
 6. When nothing needs a decision, `Ctrl+W` asks twice for the password of the new export, at least 12 characters, and
    writes `merged.json` as merge does. Without `--output`, the review saves decisions only. A JSON import cannot carry
    files, so after you quit, the review lists each attachment to upload and where to find it, as the **Attachments to
-   upload** table of the merge report does. Use that list in [8. Upload attachments](#8-upload-attachments).
+   upload** tables of the merge report do, including the files of attachment folders that match no item or several
+   items. Use that list in [8. Upload attachments](#8-upload-attachments).
 7. `Ctrl+Q` or `Esc` quits; `Ctrl+C` does not. With unsaved decisions, the review asks whether to save them first. `F1`
    lists every key.
 
@@ -744,17 +757,20 @@ quit hold no secret values.
 ## Exit codes
 
 - `0`: success.
-- `1`: an invalid command line, a cancellation, or an unexpected error.
-- `2`: merge needs decisions and writes nothing. With `--decisions <file>`, the file holds pending entries for
+- `1`: an invalid command line, a cancellation, or an unexpected error. Ctrl+C or SIGTERM cancels a command, also
+  while the review checks the files or asks for passwords before its UI opens. Inside the review UI, Ctrl+C is a key
+  and does not end the review.
+- `2`: merge needs decisions and writes no vault. With `--decisions <file>`, the file holds pending entries for
   you to fill in. Without it, run merge again with `--decisions <file>`.
-- `3`: an input or output problem. An input is unreadable, unsupported, account-restricted, or over a size limit,
-  or its password is wrong. The decisions file is not valid, for example because a property name is misspelled or
-  a property appears twice in one object. The output exists and `--force` is missing, the output is also an input
-  or differs from one only in case, or its folder does not exist. The report or the decisions file cannot be
-  written. A value would make Bitwarden reject the import; merge still adds pending entries for the decisions it
-  needs. A password is needed and no terminal is available, or three attempts at a new password fail. Merge writes
-  no vault in these cases, except when it writes `merged.json` and then cannot write the report: it prints
-  `Wrote the merged vault to merged.json` before it writes the report, and the error says that the vault is
-  written and the report is not.
+- `3`: an input or output problem. An input is unreadable, unsupported, account-restricted, or over a size limit, or
+  its password is wrong. A Bitwarden JSON export is malformed, for example because it holds a null item or two
+  folders with one ID; the message names the first malformed entry by its position. The decisions file is not valid, for example
+  because a property name is misspelled or a property appears twice in one object. The output exists and `--force`
+  is missing, the output is also an input or differs from one only in case, or its folder does not exist. The report
+  path names an existing file that is not a vault report. The report or the decisions file cannot be written. A value would make Bitwarden reject the import; merge still adds pending
+  entries for the decisions it needs. A password is needed and no terminal is available, or three attempts at a new
+  password fail. Merge writes no vault in these cases, except when it writes `merged.json` and then cannot write the
+  report: it prints `Wrote the merged vault to merged.json` before it writes the report, and the error says that the
+  vault is written and the report is not.
 - `130` or `143`: Ctrl+C or SIGTERM arrived while the tool was starting, or the canceled command did not end
   within two seconds.

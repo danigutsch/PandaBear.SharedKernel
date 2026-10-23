@@ -94,7 +94,7 @@ public sealed class VaultPipelineTests : IDisposable
         field.Name.ShouldBe("Recovery codes");
         field.Type.ShouldBe(CustomFieldType.Hidden);
         field.Value.ShouldBe(string.Join('\n', codes));
-        item.Notes.ShouldBeNull();
+        item.Notes.ShouldBe("GitHub recovery codes");
         result.PlacementProblems.ShouldBeEmpty();
     }
 

@@ -38,10 +38,21 @@ public sealed class ScanCommandTests : IDisposable
     }
 
     [Fact]
+    public async Task Scan_counts_the_files_of_attachment_folders_that_match_no_single_item_among_the_attachments_to_upload()
+    {
+        string zip = Write(directory, "bitwarden.zip", TwoBanksZip());
+
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", zip], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(0);
+        run.Output.ShouldEndWith("\nAttachments to upload after the import: 2\n", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task Scan_writes_the_full_report_readable_only_by_its_owner_and_replaces_an_old_one()
     {
         string keeper = CliInputs.CodesAndPasswordInNotes(directory, PipelineSecrets.GitHubRecoveryCodes(910));
-        string report = Write(directory, "report.md", "old report");
+        string report = Write(directory, "report.md", "# Vault report\n\nold report");
         if (!OperatingSystem.IsWindows())
         {
             File.SetUnixFileMode(report, OwnerOnly | UnixFileMode.GroupRead | UnixFileMode.OtherRead);
@@ -59,6 +70,21 @@ public sealed class ScanCommandTests : IDisposable
         {
             File.GetUnixFileMode(report).ShouldBe(OwnerOnly);
         }
+    }
+
+    [Fact]
+    public async Task Scan_never_replaces_an_existing_file_that_is_not_a_vault_report()
+    {
+        string keeper = CliInputs.CodesAndPasswordInNotes(directory, PipelineSecrets.GitHubRecoveryCodes(950));
+        string decisions = Write(directory, "decisions.json", "{\"version\":2,\"groups\":[]}");
+
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", keeper, "--report", decisions], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(3);
+        run.Output.ShouldBeEmpty();
+        run.Error.ShouldBe("The report file '" + decisions + "' exists and is not a vault report. Choose another path, or delete the file first.\n", StringComparer.Ordinal);
+        string after = await File.ReadAllTextAsync(decisions, TestContext.Current.CancellationToken);
+        after.ShouldBe("{\"version\":2,\"groups\":[]}");
     }
 
     [Fact]

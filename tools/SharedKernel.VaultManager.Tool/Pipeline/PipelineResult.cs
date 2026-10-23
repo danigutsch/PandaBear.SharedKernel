@@ -52,6 +52,12 @@ internal sealed record PipelineResult
     /// </summary>
     public IReadOnlyList<UnassignedAttachmentFolder> UnassignedAttachmentFolders { get; init; } = [];
 
+    /// <summary>
+    /// Number of files the user uploads after the import: the <see cref="ManualAttachments"/> and the files of the
+    /// <see cref="UnassignedAttachmentFolders"/>.
+    /// </summary>
+    public int AttachmentUploadCount => ManualAttachments.Count + UnassignedAttachmentFolders.Sum(folder => folder.Files.Count);
+
     /// <summary>Problems that make Bitwarden or Vaultwarden reject the whole import. Any of them blocks writing.</summary>
     public required IReadOnlyList<string> WriteErrors { get; init; }
 

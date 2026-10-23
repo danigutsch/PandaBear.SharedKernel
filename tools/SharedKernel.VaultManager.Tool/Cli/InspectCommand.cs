@@ -1,5 +1,6 @@
 using System.CommandLine;
 using PandaBear.VaultManager.Tool.Formats;
+using PandaBear.VaultManager.Tool.IO;
 using PandaBear.VaultManager.Tool.Model;
 using PandaBear.VaultManager.Tool.Pipeline;
 
@@ -53,7 +54,7 @@ internal static class InspectCommand
             }
             catch (Exception exception) when (CommandAction.IsFileProblem(exception))
             {
-                error.WriteLine(CommandText.OneLine($"{name}: {exception.Message}"));
+                error.WriteLine(PrintableText.OneLine($"{name}: {exception.Message}"));
                 failed = true;
                 continue;
             }
@@ -73,7 +74,7 @@ internal static class InspectCommand
     private static void Write(TextWriter output, string name, VaultFileFormat format, VaultReadResult read)
     {
         IReadOnlyList<VaultItem> items = read.Export.Items;
-        output.WriteLine(CommandText.OneLine(name));
+        output.WriteLine(PrintableText.OneLine(name));
         output.WriteLine("  Format: " + Describe(format));
         CommandText.Count(output, "  Items", items.Count);
         foreach (IGrouping<VaultItemType, VaultItem> type in items.GroupBy(item => item.Type).OrderBy(type => type.Key))
@@ -89,7 +90,7 @@ internal static class InspectCommand
         CommandText.Count(output, "  Folders", folders.Length);
         foreach (string folder in folders)
         {
-            output.WriteLine("    " + CommandText.OneLine(folder));
+            output.WriteLine("    " + PrintableText.OneLine(folder));
         }
 
         AttachmentRef[] attachments = [.. items.SelectMany(item => item.Attachments)];
@@ -100,7 +101,7 @@ internal static class InspectCommand
         CommandText.Count(output, "  Warnings", read.Warnings.Count);
         foreach (string warning in read.Warnings)
         {
-            output.WriteLine("    " + CommandText.OneLine(warning));
+            output.WriteLine("    " + PrintableText.OneLine(warning));
         }
     }
 

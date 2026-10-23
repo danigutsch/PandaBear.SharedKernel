@@ -62,6 +62,29 @@ public sealed class CommandPasswordTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
+    [Theory]
+    [InlineData("inspect", "kdfIterations", 1000, "PBKDF2 iterations must be between")]
+    [InlineData("scan", "kdfType", 7, "Unsupported key derivation type")]
+    [InlineData("merge", "kdfIterations", 3_000_000, "PBKDF2 iterations must be between")]
+    public async Task Commands_refuse_a_protected_input_with_unsupported_key_derivation_before_asking_its_password(string command, string property, int value, string message)
+    {
+        string input = CliInputs.ProtectedBitwarden(directory, FilePassword);
+        string text = await File.ReadAllTextAsync(input, TestContext.Current.CancellationToken);
+        var envelope = System.Text.Json.Nodes.JsonNode.Parse(text).ShouldNotBeNull().AsObject();
+        envelope[property] = value;
+        await File.WriteAllTextAsync(input, envelope.ToJsonString(), TestContext.Current.CancellationToken);
+        string output = Path.Combine(directory, "merged.json");
+        var prompts = new TestPrompts(ExportPassword, FilePassword);
+        string[] args = command == "merge" ? ["merge", input, "--output", output, "--plaintext"] : [command, input];
+
+        var run = await CommandLineRun.Invoke(prompts.Environment(), args, TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(3);
+        run.Error.ShouldStartWith("protected.json: " + message, StringComparison.Ordinal);
+        prompts.FilePasswordPrompts.ShouldBeEmpty();
+        File.Exists(output).ShouldBeFalse();
+    }
+
     [Fact]
     public async Task Merge_asks_once_for_the_password_of_a_protected_input()
     {

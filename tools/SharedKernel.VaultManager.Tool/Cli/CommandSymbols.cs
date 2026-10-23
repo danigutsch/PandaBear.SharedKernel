@@ -28,7 +28,7 @@ internal static class CommandSymbols
     /// <returns>The option.</returns>
     public static Option<string> Report() => FilePath(new Option<string>("--report")
     {
-        Description = "Write the full Markdown report to this file, readable only by you. An existing report is replaced; an input never is.",
+        Description = "Write the full Markdown report to this file, readable only by you. An existing vault report is replaced; any other existing file and an input never are.",
         HelpName = "file",
     });
 

@@ -307,6 +307,26 @@ public sealed class KeeperJsonReaderTests : IDisposable
     }
 
     [Fact]
+    public void ReadZip_warns_about_files_no_record_lists_and_about_other_entries()
+    {
+        string path = Path.Combine(directory, "keeper.zip");
+        File.WriteAllBytes(path, TestZip.Create(
+            ("export.json", TestZip.Utf8(CommanderZipExport())),
+            ("files/file-1", "%PDF"u8.ToArray()),
+            ("files/fu-orphan", TestZip.Utf8("fixture orphan")),
+            ("other/stray.txt", TestZip.Utf8("fixture stray"))));
+
+        var result = KeeperJsonReader.ReadZip(path);
+
+        result.Warnings.ShouldBe(
+        [
+            "\"Record with files\": attachment \"missing.txt\" is listed but not included in the zip.",
+            "Zip entry \"files/fu-orphan\" belongs to no record; upload it by hand to the item it belongs to after the import.",
+            "Zip entry \"other/stray.txt\" is not a Keeper attachment and was ignored.",
+        ]);
+    }
+
+    [Fact]
     public void ReadZip_without_export_json_throws_invalid_data()
     {
         string path = Path.Combine(directory, "other.zip");

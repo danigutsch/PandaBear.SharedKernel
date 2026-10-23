@@ -38,7 +38,29 @@ internal static class KeeperJsonReader
         var zipFiles = archive.Entries
             .Where(entry => entry.Path.StartsWith(FilesPrefix, StringComparison.Ordinal))
             .ToDictionary(entry => entry.Path, entry => entry.Size, StringComparer.Ordinal);
-        return Read(archive.ReadUtf8(export), Path.GetFileName(path), zipFiles, []);
+        var warnings = new List<string>();
+        VaultReadResult result = Read(archive.ReadUtf8(export), Path.GetFileName(path), zipFiles, warnings);
+        WarnAboutUnusedEntries(archive.Entries, result.Export, warnings);
+        return new VaultReadResult(result.Export, warnings);
+    }
+
+    // A file that no record lists, or an entry Commander does not write, would otherwise disappear without a word.
+    private static void WarnAboutUnusedEntries(IReadOnlyList<ArchiveEntryInfo> entries, VaultExport export, List<string> warnings)
+    {
+        var attached = new HashSet<string>(
+            export.Items.SelectMany(item => item.Attachments).Select(attachment => attachment.SourcePath).OfType<string>(),
+            StringComparer.Ordinal);
+        foreach (ArchiveEntryInfo entry in entries)
+        {
+            if (entry.Path == ExportEntry || attached.Contains(entry.Path))
+            {
+                continue;
+            }
+
+            warnings.Add(entry.Path.StartsWith(FilesPrefix, StringComparison.Ordinal)
+                ? $"Zip entry \"{entry.Path}\" belongs to no record; upload it by hand to the item it belongs to after the import."
+                : $"Zip entry \"{entry.Path}\" is not a Keeper attachment and was ignored.");
+        }
     }
 
     private static VaultReadResult Read(string json, string sourceFile, Dictionary<string, long>? zipFiles, List<string> warnings)

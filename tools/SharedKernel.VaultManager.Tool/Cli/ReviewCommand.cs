@@ -1,7 +1,9 @@
 using System.CommandLine;
-using PandaBear.BuildingBlocks;
+using System.Globalization;
 using PandaBear.VaultManager.Tool.Formats;
+using PandaBear.VaultManager.Tool.IO;
 using PandaBear.VaultManager.Tool.Merge;
+using PandaBear.VaultManager.Tool.Model;
 using PandaBear.VaultManager.Tool.Pipeline;
 using PandaBear.VaultManager.Tool.Review;
 
@@ -32,16 +34,16 @@ internal static class ReviewCommand
         ArgumentNullException.ThrowIfNull(terminal);
 
         Argument<string[]> inputs = CommandSymbols.Inputs();
-        Option<string> decisions = new Option<string>("--decisions")
+        Option<string> decisions = CommandSymbols.FilePath(new Option<string>("--decisions")
         {
             Description = "Decisions file to start from and to save to, readable only by you. Without it, decisions cannot be saved.",
             HelpName = "file",
-        }.AcceptLegalFilePathsOnly();
-        Option<string> output = new Option<string>("--output", "-o")
+        });
+        Option<string> output = CommandSymbols.FilePath(new Option<string>("--output", "-o")
         {
             Description = "File to write the merged vault to. It must not be an input; an existing file is replaced only with --force. Without it, the merged vault cannot be written.",
             HelpName = "file",
-        }.AcceptLegalFilePathsOnly();
+        });
         var plaintext = new Option<bool>("--plaintext")
         {
             Description = "Write unencrypted Bitwarden JSON instead of a password-protected export. Delete the file after the import.",
@@ -90,7 +92,7 @@ internal static class ReviewCommand
         // The checks, the password prompts, and reading the inputs block on the terminal and the file system. They run on
         // the thread pool, so Ctrl+C ends the command at once, as it does for the other commands.
         (int exitCode, ReviewSession? session) = await Task.Run(
-            () => Guard(error, prompts, () => Prepare(arguments, prompts, error, ct), static code => (code, null), ct),
+            () => CommandAction.Guard(error, prompts, () => Prepare(arguments, prompts, error, ct), static code => (code, null), ct),
             ct).WaitAsync(ct).ConfigureAwait(false);
         if (session is null)
         {
@@ -99,30 +101,9 @@ internal static class ReviewCommand
 
         // The UI restores the terminal before it returns, also when the token is canceled, so the command waits for it
         // instead of ending with the terminal still in the UI's mode.
-        exitCode = await Task.Run(() => Guard(error, prompts, () => terminal.Run(session, ct), static code => code, ct), CancellationToken.None).ConfigureAwait(false);
+        exitCode = await Task.Run(() => CommandAction.Guard(error, prompts, () => terminal.Run(session, ct), static code => code, ct), CancellationToken.None).ConfigureAwait(false);
         Summarize(invocation.Output, error, session);
         return exitCode;
-    }
-
-    private static T Guard<T>(TextWriter error, PasswordPrompts prompts, Func<T> work, Func<int, T> failed, CancellationToken ct)
-    {
-        try
-        {
-            return work();
-        }
-        catch (Exception exception) when (CommandAction.IsFileProblem(exception) || prompts.Failed(exception))
-        {
-            error.WriteLine(exception.Message);
-            return failed(ExitCodes.InputOutputProblem);
-        }
-        catch (Exception exception) when (exception.ShouldHandleAsFailure(ct))
-        {
-            // A message can quote the text that failed, such as a vault value. Print the type and stack trace only, as
-            // the other commands do.
-            error.WriteLine($"Unexpected error ({exception.GetType().FullName}). Its message is not shown because it can contain vault values.");
-            error.WriteLine(exception.StackTrace);
-            return failed(ExitCodes.UnexpectedError);
-        }
     }
 
     private static (int ExitCode, ReviewSession? Session) Prepare(Arguments arguments, PasswordPrompts prompts, TextWriter error, CancellationToken ct)
@@ -146,12 +127,12 @@ internal static class ReviewCommand
         // Shown before the UI takes over the screen, so they are on the terminal again after the review ends.
         foreach (string warning in session.Result.ReadWarnings)
         {
-            error.WriteLine("Warning: " + CommandText.OneLine(warning));
+            error.WriteLine("Warning: " + PrintableText.OneLine(warning));
         }
 
         foreach (string warning in UnmatchedDecisions.Find(session.Decisions, session.Result))
         {
-            error.WriteLine("Warning: " + warning);
+            error.WriteLine("Warning: " + PrintableText.OneLine(warning));
         }
 
         return (ExitCodes.Success, session);
@@ -183,34 +164,43 @@ internal static class ReviewCommand
         PipelineResult result = session.WriteResult ?? session.Result;
         foreach (string warning in result.WriteWarnings)
         {
-            error.WriteLine("Warning: " + CommandText.OneLine(warning));
+            error.WriteLine("Warning: " + PrintableText.OneLine(warning));
         }
 
         foreach (PlacementProblem problem in result.PlacementProblems)
         {
-            error.WriteLine("Warning: \"" + CommandText.OneLine(problem.ItemName) + "\": " + CommandText.OneLine(problem.Problem));
+            error.WriteLine("Warning: \"" + PrintableText.OneLine(problem.ItemName) + "\": " + PrintableText.OneLine(problem.Problem));
         }
 
-        if (session.Saved)
+        if (session.Saved && session.Files.DecisionsPath is { } saved)
         {
-            output.WriteLine("Saved the decisions to " + session.Files.DecisionsPath + ".");
+            output.WriteLine("Saved the decisions to " + PrintableText.OneLine(saved) + ".");
         }
 
         if (session.Written && session.Files.Output is { } written)
         {
+            string writtenPath = PrintableText.OneLine(written.Path);
             output.WriteLine(written.Plaintext
-                ? "Wrote the merged vault to " + written.Path + " as unencrypted JSON. Delete it after the import."
-                : "Wrote the merged vault to " + written.Path + " as a password-protected export.");
+                ? "Wrote the merged vault to " + writtenPath + " as unencrypted JSON. Delete it after the import."
+                : "Wrote the merged vault to " + writtenPath + " as a password-protected export.");
         }
 
         CommandText.Count(output, "Fields that need a decision", session.Pending.Fields.Count);
         CommandText.Count(output, "Findings that need a decision", session.Pending.FindingCount);
-        CommandText.Count(output, "Attachments to upload after the import", result.ManualAttachments.Count);
+        CommandText.Count(output, "Attachments to upload after the import", result.AttachmentUploadCount);
         if (session.Written)
         {
             foreach (ManualAttachment attachment in result.ManualAttachments)
             {
                 output.WriteLine("  " + Describe(attachment));
+            }
+
+            foreach (UnassignedAttachmentFolder folder in result.UnassignedAttachmentFolders)
+            {
+                foreach (AttachmentRef file in folder.Files)
+                {
+                    output.WriteLine("  " + Describe(folder, file));
+                }
             }
         }
 
@@ -223,10 +213,20 @@ internal static class ReviewCommand
     // Names the file and where to find it, as the attachments table of the merge report does.
     private static string Describe(ManualAttachment attachment)
     {
-        string file = CommandText.OneLine(attachment.ItemName) + ": " + CommandText.OneLine(attachment.FileName);
+        string file = PrintableText.OneLine(attachment.ItemName) + ": " + PrintableText.OneLine(attachment.FileName);
         return attachment.ArchivePath is { } archivePath
-            ? file + ", in " + CommandText.OneLine(attachment.SourceFile) + " at " + CommandText.OneLine(archivePath)
-            : file + ", not included in " + CommandText.OneLine(attachment.SourceFile) + "; download it from the source vault";
+            ? file + ", in " + PrintableText.OneLine(attachment.SourceFile) + " at " + PrintableText.OneLine(archivePath)
+            : file + ", not included in " + PrintableText.OneLine(attachment.SourceFile) + "; download it from the source vault";
+    }
+
+    // Names a file of a Bitwarden zip whose item is unknown and where to find it, as the table of unassigned folders in the
+    // merge report does.
+    private static string Describe(UnassignedAttachmentFolder folder, AttachmentRef file)
+    {
+        string location = PrintableText.OneLine(file.FileName) + ", in " + PrintableText.OneLine(folder.SourceFile) + " at " + PrintableText.OneLine(file.SourcePath ?? file.FileName);
+        return folder.MatchingItemCount == 0
+            ? location + "; its folder matches no item, so upload it to the item it belongs to"
+            : location + string.Create(CultureInfo.InvariantCulture, $"; its folder matches {folder.MatchingItemCount} items, so upload it to the one it belongs to");
     }
 
     private sealed record Arguments(IReadOnlyList<string> Inputs, string? Decisions, string? Output, bool Plaintext, bool Force);
