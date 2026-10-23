@@ -2,21 +2,7 @@ namespace PandaBear.Versioning.Tool;
 
 internal static class ApiCompatibilityCommand
 {
-    private static bool ShouldTreatFailureAsReportOnly(ApiCompatibilityOptions options)
-    {
-        ArgumentNullException.ThrowIfNull(options);
-
-        return ApiCompatibilityReport.ShouldTreatFailureAsReportOnly(
-            new ApiCompatibilityReportOptions(
-                options.Version,
-                options.OutputRoot,
-                options.ReleasePhase,
-                options.RepoRoot,
-                options.BaselineVersion,
-                options.BreakingMarker));
-    }
-
-    public static async Task Run(ApiCompatibilityOptions options, TextWriter output)
+    public static async Task Run(ApiCompatibilityOptions options, TextWriter output, CancellationToken ct)
     {
         await PublicApiBaselineCommand.Run(options.RepoRoot, TextWriter.Null).ConfigureAwait(false);
 
@@ -33,33 +19,22 @@ internal static class ApiCompatibilityCommand
             options.Version,
             Path.Combine(options.OutputRoot, "packages"),
             VerifyRestore: string.IsNullOrWhiteSpace(options.BaselineVersion),
-            RepoRoot: options.RepoRoot);
-        var previousPackageValidation = Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation);
-        var previousBaselineVersion = Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion);
+            RepoRoot: options.RepoRoot,
+            PackageValidationBaselineVersion: options.BaselineVersion);
 
         try
         {
-            Environment.SetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation, string.IsNullOrWhiteSpace(options.BaselineVersion) ? null : "true");
-            Environment.SetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion, options.BaselineVersion);
             using var writer = new StringWriter();
-            await SharedKernelPackCommand.Run(packOptions, writer).ConfigureAwait(false);
+            await SharedKernelPackCommand.Run(packOptions, writer, ct).ConfigureAwait(false);
             await ApiCompatibilityReport.AppendOutput(reportPath, writer.ToString()).ConfigureAwait(false);
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
         {
             await ApiCompatibilityReport.AppendOutput(reportPath, ex.Message).ConfigureAwait(false);
-            if (ShouldTreatFailureAsReportOnly(options))
+            if (!ApiCompatibilityReport.ShouldTreatFailureAsReportOnly(reportOptions))
             {
-                await output.WriteLineAsync($"API compatibility report: {reportPath}").ConfigureAwait(false);
-                return;
+                throw;
             }
-
-            throw;
-        }
-        finally
-        {
-            Environment.SetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation, previousPackageValidation);
-            Environment.SetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion, previousBaselineVersion);
         }
 
         await output.WriteLineAsync($"API compatibility report: {reportPath}").ConfigureAwait(false);

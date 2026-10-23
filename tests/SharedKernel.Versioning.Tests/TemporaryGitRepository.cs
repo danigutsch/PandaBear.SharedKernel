@@ -8,25 +8,27 @@ internal sealed class TemporaryGitRepository : IDisposable
     {
         Root = Path.Combine(Path.GetTempPath(), $"versioning-git-{Guid.NewGuid():N}");
         Directory.CreateDirectory(Root);
-        CommandRunner.Run("git", ["init"], Root);
-        CommandRunner.Run("git", ["config", "commit.gpgsign", "false"], Root);
-        CommandRunner.Run("git", ["config", "user.email", "test@example.invalid"], Root);
-        CommandRunner.Run("git", ["config", "user.name", "Versioning Test"], Root);
     }
 
     public string Root { get; }
 
-    public void Commit(string fileName, string content, string message)
+    public async Task Initialize(CancellationToken ct)
     {
-        File.WriteAllText(Path.Combine(Root, fileName), content);
-        CommandRunner.Run("git", ["add", fileName], Root);
-        CommandRunner.Run("git", ["commit", "-m", message], Root);
+        await CommandRunner.Run("git", ["init"], Root, ct);
+        await CommandRunner.Run("git", ["config", "commit.gpgsign", "false"], Root, ct);
+        await CommandRunner.Run("git", ["config", "user.email", "test@example.invalid"], Root, ct);
+        await CommandRunner.Run("git", ["config", "user.name", "Versioning Test"], Root, ct);
     }
 
-    public void Tag(string tag)
+    public async Task Commit(string fileName, string content, string message, CancellationToken ct)
     {
-        CommandRunner.Run("git", ["-c", "tag.gpgSign=false", "tag", tag], Root);
+        await File.WriteAllTextAsync(Path.Combine(Root, fileName), content, ct);
+        await CommandRunner.Run("git", ["add", fileName], Root, ct);
+        await CommandRunner.Run("git", ["commit", "-m", message], Root, ct);
     }
+
+    public Task Tag(string tag, CancellationToken ct) =>
+        CommandRunner.Run("git", ["-c", "tag.gpgSign=false", "tag", tag], Root, ct);
 
     public void Dispose()
     {

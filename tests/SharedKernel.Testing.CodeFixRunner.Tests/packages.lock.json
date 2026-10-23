@@ -337,7 +337,8 @@
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "[5.6.0, )",
           "Microsoft.CodeAnalysis.Workspaces.MSBuild": "[5.6.0, )",
           "PandaBear.SharedKernel.Testing.Analyzers": "[0.1.0-alpha.0, )",
-          "PandaBear.SharedKernel.Testing.CodeFixes": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Testing.CodeFixes": "[0.1.0-alpha.0, )",
+          "System.CommandLine": "[2.0.13, )"
         }
       },
       "PandaBear.SharedKernel.Testing.Roslyn": {
@@ -425,6 +426,12 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.13",
           "Microsoft.Extensions.Primitives": "10.0.13"
         }
+      },
+      "System.CommandLine": {
+        "type": "CentralTransitive",
+        "requested": "[2.0.13, )",
+        "resolved": "2.0.13",
+        "contentHash": "TIO2lMV+sSP7WW7pD/oCRHD9ENWY+jqwXmYzgks3R46cEdDzwjQOAhsiBn+M3EegfGjgTpa2h+eIrcU+AM2k6A=="
       }
     }
   }

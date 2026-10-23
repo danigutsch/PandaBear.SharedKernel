@@ -245,7 +245,7 @@ internal static class TextEncodingVerifier
 
     private static string CreateIsolationRoot()
     {
-        var path = Directory.CreateTempSubdirectory("sharedkernel-repo-text-encoding-").FullName;
+        var path = Directory.CreateTempSubdirectory("sharedkernel-repo-verify-text-encoding-").FullName;
         if (!OperatingSystem.IsWindows())
         {
             File.SetUnixFileMode(
@@ -861,6 +861,7 @@ internal static class TextEncodingVerifier
             startInfo.Environment.Remove(variable);
         }
 
+        ChildProcessEnvironment.RemoveGitHubTokens(startInfo);
         startInfo.Environment["GIT_ATTR_NOSYSTEM"] = "1";
         startInfo.Environment["GIT_CONFIG_GLOBAL"] = invocation.GlobalConfigFile;
         startInfo.Environment["GIT_CONFIG_NOSYSTEM"] = "1";

@@ -11,9 +11,9 @@ This package is a .NET tool. The command name is `sharedkernel-codefix`.
 ## Synopsis
 
 ```text
+sharedkernel-codefix <project-or-solution> [--diagnostic <id>]
 sharedkernel-codefix --help
 sharedkernel-codefix --version
-sharedkernel-codefix [--diagnostic <id>] <project-or-solution>
 ```
 
 ## Restore or install
@@ -38,30 +38,42 @@ sharedkernel-codefix --help
 
 `.NET` tools run in full trust. Restore or install only from trusted manifests and package sources.
 
-## Commands
+## Usage
 
-Run the default testing analyzer migration against a project or solution:
+Fix the default diagnostic, `SKTEST004`, in a project or solution:
 
 ```text
 sharedkernel-codefix tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj
 ```
 
-The default diagnostic is `SKTEST004`. The runner applies the safe code fix only for static helper
-methods that can be moved to a dedicated helper file without test-instance state. It skips local
-functions, nested helper types, overloaded helpers, and instance-dependent helpers for manual review.
+The `SKTEST004` fix moves static helper methods without test-instance state to a dedicated helper
+file. It skips local functions, nested helper types, overloaded helpers, and instance-dependent
+helpers for manual review.
 
-Run a specific diagnostic migration:
+Fix another diagnostic:
 
 ```text
-sharedkernel-codefix --diagnostic SKTEST006 SharedKernel.slnx
+sharedkernel-codefix SharedKernel.slnx --diagnostic SKTEST006
 ```
+
+- `<project-or-solution>` is an existing `.csproj`, `.sln`, or `.slnx` file.
+- `--diagnostic` accepts the IDs the testing code-fix provider can fix; `--help` lists them.
+- Fixes are written to source files in place. Run the tool on a clean working tree so the changes
+  can be reviewed and reverted.
+- Every project must load before any fix is applied. MSBuild errors and warnings while loading,
+  missing projects, and project types Roslyn cannot open, such as `.esproj`, stop the run. Pass a
+  `.csproj` to fix one project of such a solution.
+- Ctrl+C or SIGTERM stops the run. Fixes already written stay on disk and may be unformatted.
+- Standard output receives `Fixed <count> <id> diagnostic(s).`. Diagnostics without an available
+  fix and errors go to standard error.
 
 ## Exit codes
 
-- `0`: command succeeded.
-- `2`: invalid command, invalid arguments, or invalid input.
-
-Errors are written to standard error. Command output is written to standard output.
+- `0`: the run finished, including when diagnostics without an available fix remain.
+- `1`: invalid arguments, an unexpected error while loading or fixing the target, or cancellation.
+- `2`: the project or solution did not load. No fix was applied.
+- `130` (SIGINT) or `143` (SIGTERM): the signal arrived during start-up, or the run did not stop within two
+  seconds of it.
 
 ## Packaging notes
 

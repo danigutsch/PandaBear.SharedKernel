@@ -47,7 +47,7 @@ public sealed class PlaywrightMcpCommandTests
             DockerEndpoint: LocalDockerEndpoint);
 
         // Act
-        var startInfo = PlaywrightMcpCommand.CreateRuntimeStartInfo(options, [], "test-container");
+        var startInfo = PlaywrightMcpCommand.CreateRuntimeStartInfo(options, "test-container");
 
         // Assert
         startInfo.UseShellExecute.ShouldBeFalse();
@@ -117,7 +117,7 @@ public sealed class PlaywrightMcpCommandTests
             DockerEndpoint: LocalDockerEndpoint);
 
         // Act
-        var startInfo = PlaywrightMcpCommand.CreateRuntimeStartInfo(options, [], "test-container");
+        var startInfo = PlaywrightMcpCommand.CreateRuntimeStartInfo(options, "test-container");
 
         // Assert
         startInfo.ArgumentList.ShouldContain("--add-host=host.docker.internal:host-gateway");
@@ -136,7 +136,7 @@ public sealed class PlaywrightMcpCommandTests
             "omit");
 
         // Act
-        var startInfo = PlaywrightMcpCommand.CreateRuntimeStartInfo(options, [], "test-container");
+        var startInfo = PlaywrightMcpCommand.CreateRuntimeStartInfo(options, "test-container");
 
         // Assert
         startInfo.ArgumentList.ShouldContain("--remote=false");
@@ -260,27 +260,6 @@ public sealed class PlaywrightMcpCommandTests
             "--format",
             "{{.Host.Security.Rootless}}"
         ]);
-    }
-
-    [Fact]
-    public void Rejects_unapproved_mcp_arguments()
-    {
-        // Arrange
-        var options = new PlaywrightMcpOptions(
-            ContainerEngine.Docker,
-            PlaywrightMcpTestEnvironment.GetExecutablePath("docker"),
-            false,
-            "omit");
-
-        // Act
-        Action create = () => PlaywrightMcpCommand.CreateRuntimeStartInfo(
-            options,
-            ["--allow-unrestricted-file-access"],
-            "test-container");
-
-        // Assert
-        var exception = create.ShouldThrow<ArgumentException>();
-        exception.Message.ShouldContain("Playwright MCP argument is not allowed", StringComparison.Ordinal);
     }
 
     [Theory]

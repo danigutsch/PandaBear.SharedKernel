@@ -7,7 +7,7 @@ internal static class SharedKernelPackCommand
 {
     private static readonly Uri NuGetSourceUrl = new(string.Concat("https://api.nuget.org", "/v3/index.json"));
 
-    public static async Task<string> Run(PackSharedKernelOptions options, TextWriter output)
+    public static async Task<string> Run(PackSharedKernelOptions options, TextWriter output, CancellationToken ct)
     {
         var packageOptions = new SharedKernelPackageOptions(
             options.Version,
@@ -29,17 +29,19 @@ internal static class SharedKernelPackCommand
         var solution = Path.Combine(packageDirectory, ".pack.slnx");
         new XDocument(new XElement("Solution", projects.Select(project =>
             new XElement("Project", new XAttribute("Path", Path.GetFullPath(project)))))).Save(solution);
-        CommandRunner.Run(
+        var baselineVersion = options.PackageValidationBaselineVersion;
+        await CommandRunner.Run(
             "dotnet",
             SharedKernelPackagePlanner.CreatePackArguments(
                 solution, packageOptions, packageDirectory,
-                Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.EnablePackageValidation),
-                Environment.GetEnvironmentVariable(ApiCompatibilityEnvironmentVariables.BaselineVersion)),
-            options.RepoRoot);
+                string.IsNullOrWhiteSpace(baselineVersion) ? null : "true",
+                baselineVersion),
+            options.RepoRoot,
+            ct).ConfigureAwait(false);
 
         if (options.VerifyRestore)
         {
-            await VerifyLocalFeed(packageDirectory, options.Version).ConfigureAwait(false);
+            await VerifyLocalFeed(packageDirectory, options.Version, ct).ConfigureAwait(false);
         }
 
         await output.WriteLineAsync("SharedKernel packages: " + packageDirectory).ConfigureAwait(false);
@@ -54,7 +56,7 @@ internal static class SharedKernelPackCommand
             && (string?)element.Attribute("name") == "DotnetTool");
     }
 
-    private static async Task VerifyLocalFeed(string packageDirectory, string version)
+    private static async Task VerifyLocalFeed(string packageDirectory, string version, CancellationToken ct)
     {
         var packages = Directory.GetFiles(packageDirectory, "PandaBear.SharedKernel.*.nupkg")
             .Where(path => !path.EndsWith(".symbols.nupkg", StringComparison.Ordinal))
@@ -78,7 +80,7 @@ internal static class SharedKernelPackCommand
         await SharedKernelLocalFeed.WriteRestoreProject(restoreDirectory, packageIds, version).ConfigureAwait(false);
         await SharedKernelLocalFeed.WriteNuGetConfig(restoreDirectory, packageDirectory, packageIds, NuGetSourceUrl).ConfigureAwait(false);
         var packageCache = Path.Combine(restoreDirectory, "packages");
-        CommandRunner.Run(
+        await CommandRunner.Run(
             "dotnet",
             [
                 "restore",
@@ -89,14 +91,16 @@ internal static class SharedKernelPackCommand
                 packageCache,
                 "--no-cache",
                 "-p:RestorePackagesWithLockFile=false",
-            ]);
+            ],
+            null,
+            ct).ConfigureAwait(false);
 
         foreach (var tool in tools)
         {
             var id = SharedKernelLocalFeed.ReadPackageIds([tool], version).Single();
-            CommandRunner.Run("dotnet", ["tool", "install", id, "--version", version,
+            await CommandRunner.Run("dotnet", ["tool", "install", id, "--version", version,
                 "--tool-path", Path.Combine(restoreDirectory, "tools", id), "--configfile",
-                Path.Combine(restoreDirectory, "NuGet.config"), "--no-cache"], restoreDirectory);
+                Path.Combine(restoreDirectory, "NuGet.config"), "--no-cache"], restoreDirectory, ct).ConfigureAwait(false);
         }
 
         var missing = packageIds.Where(packageId => !SharedKernelLocalFeed.PackageWasRestored(packageCache, packageId, version)).ToArray();

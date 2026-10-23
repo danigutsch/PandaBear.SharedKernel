@@ -216,7 +216,8 @@
       "PandaBear.SharedKernel.Versioning.Tool": {
         "type": "Project",
         "dependencies": {
-          "PandaBear.SharedKernel.Versioning": "[0.1.0-alpha.0, )"
+          "PandaBear.SharedKernel.Versioning": "[0.1.0-alpha.0, )",
+          "System.CommandLine": "[2.0.13, )"
         }
       },
       "sharedkernel.testing.packaging": {
@@ -236,6 +237,12 @@
         "requested": "[10.0.13, )",
         "resolved": "10.0.13",
         "contentHash": "G2GrGWNAPZBsii2F6AU8n+JT2tC1/I0Ml/e9ZyNCgPjf3hZqronP7o0X91aAynCmVeae8KkSIUNXXeXCNRmdVQ=="
+      },
+      "System.CommandLine": {
+        "type": "CentralTransitive",
+        "requested": "[2.0.13, )",
+        "resolved": "2.0.13",
+        "contentHash": "TIO2lMV+sSP7WW7pD/oCRHD9ENWY+jqwXmYzgks3R46cEdDzwjQOAhsiBn+M3EegfGjgTpa2h+eIrcU+AM2k6A=="
       }
     }
   }

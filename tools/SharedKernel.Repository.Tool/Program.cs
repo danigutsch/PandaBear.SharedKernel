@@ -1,3 +1,6 @@
 using PandaBear.Repository.Tool;
 
-return RepositoryToolApplication.Run(args, Console.Out, Console.Error);
+return await RepositoryCommandLine.Create(Environment.CurrentDirectory, ProcessRunner.Run)
+    .Parse(args)
+    .InvokeAsync()
+    .ConfigureAwait(false);

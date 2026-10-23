@@ -18,6 +18,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="System.CommandLine" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Documentation\SharedKernel.Documentation.csproj" />
     </ItemGroup>
 

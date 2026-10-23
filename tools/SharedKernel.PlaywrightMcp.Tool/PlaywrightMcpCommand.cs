@@ -6,12 +6,6 @@ internal static class PlaywrightMcpCommand
 {
     internal const string Image = "mcr.microsoft.com/playwright/mcp:v0.0.78@sha256:3d871c22ea2d4cca0966e2cfb1860e1cb03eb7353725a3d6cffd133296fb04eb";
 
-    private static readonly HashSet<string> AllowedMcpArguments = new(StringComparer.Ordinal)
-    {
-        "--help",
-        "--version"
-    };
-
     public static ProcessStartInfo CreateDockerContextShowStartInfo(PlaywrightMcpOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -52,13 +46,10 @@ internal static class PlaywrightMcpCommand
 
     public static ProcessStartInfo CreateRuntimeStartInfo(
         PlaywrightMcpOptions options,
-        IReadOnlyList<string> mcpArguments,
         string containerName)
     {
         ArgumentNullException.ThrowIfNull(options);
-        ArgumentNullException.ThrowIfNull(mcpArguments);
         ArgumentException.ThrowIfNullOrWhiteSpace(containerName);
-        ValidateMcpArguments(mcpArguments);
 
         var startInfo = CreateBaseStartInfo(options);
         AddLocalEnginePrefix(startInfo, options);
@@ -126,13 +117,8 @@ internal static class PlaywrightMcpCommand
             "--isolated",
             "--block-service-workers",
             "--output-dir=/tmp/playwright-output",
-            "--output-max-size=10485760");
-        foreach (var argument in mcpArguments)
-        {
-            startInfo.ArgumentList.Add(argument);
-        }
-
-        startInfo.ArgumentList.Add($"--image-responses={options.ImageResponses}");
+            "--output-max-size=10485760",
+            $"--image-responses={options.ImageResponses}");
         return startInfo;
     }
 
@@ -234,15 +220,6 @@ internal static class PlaywrightMcpCommand
         }
 
         return startInfo;
-    }
-
-    private static void ValidateMcpArguments(IReadOnlyList<string> arguments)
-    {
-        var invalidArgument = arguments.FirstOrDefault(argument => !AllowedMcpArguments.Contains(argument));
-        if (invalidArgument is not null)
-        {
-            throw new ArgumentException($"Playwright MCP argument is not allowed: {invalidArgument}", nameof(arguments));
-        }
     }
 
     private static void AddLocalEnginePrefix(ProcessStartInfo startInfo, PlaywrightMcpOptions options)
