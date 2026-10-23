@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using System.Text.RegularExpressions;
 using PandaBear.InputNormalization;
 using PandaBear.VaultManager.Tool.Secrets;
 
@@ -10,7 +9,7 @@ namespace PandaBear.VaultManager.Tool.Matching;
 /// Comparison keys for item values. Keys are used to compare and group values; they are never written to the output.
 /// </summary>
 [SuppressMessage("Globalization", "CA1308:Normalize strings to uppercase", Justification = "Hosts, user names, and titles are specified as lowercase keys; they are compared ordinally and never displayed or written.")]
-internal static partial class ItemNormalizer
+internal static class ItemNormalizer
 {
     /// <summary>
     /// Lenient host of a stored address: lowercase, without scheme, <c>www.</c>, user info, port, path, query, or
@@ -28,18 +27,18 @@ internal static partial class ItemNormalizer
         }
 
         string text = value.Trim();
-        var scheme = SchemeRegex().Match(text);
-        if (scheme.Success)
+        int schemeLength = SchemeLength(text);
+        if (schemeLength > 0 && text.AsSpan(schemeLength).StartsWith("://", StringComparison.Ordinal))
         {
-            string name = scheme.Groups["scheme"].Value;
+            ReadOnlySpan<char> name = text.AsSpan(0, schemeLength);
             if (!name.Equals("http", StringComparison.OrdinalIgnoreCase) && !name.Equals("https", StringComparison.OrdinalIgnoreCase))
             {
                 return text.ToLowerInvariant();
             }
 
-            text = text[scheme.Length..];
+            text = text[(schemeLength + "://".Length)..];
         }
-        else if (OpaqueSchemeRegex().IsMatch(text))
+        else if (HasOpaqueScheme(text, schemeLength))
         {
             return text.ToLowerInvariant();
         }
@@ -204,10 +203,41 @@ internal static partial class ItemNormalizer
         return null;
     }
 
-    [GeneratedRegex(@"^(?<scheme>[A-Za-z][A-Za-z0-9+.\-]*)://", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 50)]
-    private static partial Regex SchemeRegex();
+    // Length of the scheme name at the start of a URI, an ASCII letter followed by ASCII letters, digits, "+", ".", or
+    // "-", or 0 when the text does not start with one. The scan uses no pattern, so computing an origin key has no match
+    // timeout.
+    private static int SchemeLength(string text)
+    {
+        if (text.Length == 0 || !char.IsAsciiLetter(text[0]))
+        {
+            return 0;
+        }
 
-    // A scheme without "//", such as mailto:x. "host:8080" is a bare host with a port, not a scheme.
-    [GeneratedRegex(@"^[A-Za-z][A-Za-z0-9+.\-]*:(?![0-9]+(?:[/?#\\]|$))", RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 50)]
-    private static partial Regex OpaqueSchemeRegex();
+        int length = 1;
+        while (length < text.Length && (char.IsAsciiLetterOrDigit(text[length]) || text[length] is '+' or '.' or '-'))
+        {
+            length++;
+        }
+
+        return length;
+    }
+
+    // A scheme without "//", such as mailto:x. "host:8080" is a bare host with a port, not a scheme: the colon is followed
+    // by digits that end the text or end before "/", "?", "#", or "\".
+    private static bool HasOpaqueScheme(string text, int schemeLength)
+    {
+        if (schemeLength == 0 || schemeLength == text.Length || text[schemeLength] != ':')
+        {
+            return false;
+        }
+
+        int digitsEnd = schemeLength + 1;
+        while (digitsEnd < text.Length && char.IsAsciiDigit(text[digitsEnd]))
+        {
+            digitsEnd++;
+        }
+
+        bool port = digitsEnd > schemeLength + 1 && (digitsEnd == text.Length || text[digitsEnd] is '/' or '?' or '#' or '\\');
+        return !port;
+    }
 }

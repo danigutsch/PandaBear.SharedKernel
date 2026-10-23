@@ -64,7 +64,7 @@ internal sealed class GroupMerger
             Reprompt = group.Members.Any(member => member.Reprompt),
             CreationDate = group.Members.Min(member => member.CreationDate),
             RevisionDate = group.Members.Max(member => member.RevisionDate),
-            Attachments = [.. newestFirst.SelectMany(member => member.Attachments).DistinctBy(attachment => (attachment.FileName, attachment.Size))],
+            Attachments = [.. GroupAttachments.Choose(newestFirst).Select(file => file.Attachment)],
         };
 
         MergeType();

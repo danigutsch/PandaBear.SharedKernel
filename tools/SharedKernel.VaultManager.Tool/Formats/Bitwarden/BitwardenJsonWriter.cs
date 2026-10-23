@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
@@ -14,12 +15,20 @@ internal static class BitwardenJsonWriter
     /// </summary>
     public const int MaxQuotedFieldNameLength = 40;
 
+    // A client sends the encrypted SHA-256 checksum of each login URI with it: the 44 base64 characters of the hash as an
+    // encrypted string, in a "uriChecksum" property.
+    private static readonly long UriChecksumBytes = BitwardenLimits.EncryptedLength(new string('=', 44)) + ",\"uriChecksum\":\"\"".Length;
+
     /// <summary>Writes items as an unencrypted individual-vault Bitwarden export.</summary>
     /// <param name="export">Items to write.</param>
     /// <returns>
     /// Export JSON and problems that would affect the import. Values are never truncated, and problems name custom fields
-    /// by position, quoting only names of at most <see cref="MaxQuotedFieldNameLength"/> characters.
+    /// by position, quoting only names of at most <see cref="MaxQuotedFieldNameLength"/> characters. A warning reports an
+    /// estimated import request larger than <see cref="BitwardenLimits.VaultwardenImportBytes"/>: the export as compact
+    /// JSON, with every value and folder name as an encrypted string and an encrypted checksum for every login URI, as a
+    /// Bitwarden client that encrypts each field on its own sends it.
     /// </returns>
+    /// <exception cref="ArgumentNullException"><paramref name="export"/> is <see langword="null"/>.</exception>
     public static BitwardenWriteResult Write(VaultExport export)
     {
         ArgumentNullException.ThrowIfNull(export);
@@ -28,11 +37,19 @@ internal static class BitwardenJsonWriter
         var warnings = new List<string>();
         var folderIds = new Dictionary<string, string>(StringComparer.Ordinal);
         var items = new List<BitwardenItemDto>(export.Items.Count);
+
+        // Bytes the import request adds to the compact export JSON.
+        long requestGrowth = 0;
         foreach (VaultItem item in export.Items)
         {
             VaultItem prepared = MoveHistoryOverflowToFields(item, warnings);
             CheckLimits(prepared, errors);
             items.Add(ToDto(prepared, folderIds));
+            requestGrowth += EncryptedValues(prepared).Sum(EncryptionGrowth);
+            if (prepared.Type == VaultItemType.Login && prepared.Login is { } login)
+            {
+                requestGrowth += login.Uris.Count * UriChecksumBytes;
+            }
         }
 
         var document = new BitwardenExportDto
@@ -43,14 +60,74 @@ internal static class BitwardenJsonWriter
         };
         string json = JsonSerializer.Serialize(document, BitwardenJsonContext.Default.BitwardenExportDto);
 
-        // Encryption grows each value by about a third; warn before the server-side request limit is reached.
-        if (Encoding.UTF8.GetByteCount(json) * 4L / 3 > BitwardenLimits.VaultwardenImportBytes)
+        // The client posts compact JSON and sends each value as an encrypted string, which adds the IV, the MAC, the
+        // padding, and base64 to it: about 95 bytes for a short value. Folder names are encrypted too.
+        long requestBytes = CompactLength(document) + requestGrowth + folderIds.Keys.Sum(EncryptionGrowth);
+        if (requestBytes > BitwardenLimits.VaultwardenImportBytes)
         {
-            warnings.Add("Export is close to or above Vaultwarden's 20 MB import limit; split it into several imports.");
+            warnings.Add(string.Create(
+                CultureInfo.InvariantCulture,
+                $"The import request is estimated at {requestBytes:N0} bytes once a Bitwarden client encrypts each value, more than the {BitwardenLimits.VaultwardenImportBytes:N0} bytes Vaultwarden accepts in one request, so Vaultwarden may reject the import."));
         }
 
         return new BitwardenWriteResult(json, errors, warnings);
     }
+
+    // Bytes a value gains in the import request, where it is an encrypted string instead of its JSON text.
+    private static long EncryptionGrowth(string value) => BitwardenLimits.EncryptedLength(value) - Encoding.UTF8.GetByteCount(value);
+
+    // UTF-8 length of the document without indentation. A writer of its own decides the layout, so the indented export
+    // options of the context do not apply.
+    private static long CompactLength(BitwardenExportDto document)
+    {
+        var buffer = new ArrayBufferWriter<byte>();
+        using (var writer = new Utf8JsonWriter(buffer))
+        {
+            JsonSerializer.Serialize(writer, document, BitwardenJsonContext.Default.BitwardenExportDto);
+        }
+
+        return buffer.WrittenCount;
+    }
+
+    // The values the client encrypts, as ToDto writes them: the item type decides which typed data is written.
+    private static IEnumerable<string> EncryptedValues(VaultItem item)
+    {
+        List<string?> values = [item.Name, item.Notes];
+        values.AddRange(item.Fields.SelectMany(field => new[] { field.Name, field.Value }));
+        values.AddRange(item.PasswordHistory.Select(entry => entry.Password));
+        switch (item.Type)
+        {
+            case VaultItemType.Login when item.Login is { } login:
+                values.AddRange([login.Username, login.Password, login.Totp]);
+                values.AddRange(login.Uris.Select(uri => uri.Value));
+                values.AddRange(login.Fido2Credentials.SelectMany(PasskeyValues));
+                break;
+            case VaultItemType.Card when item.Card is { } card:
+                values.AddRange([card.CardholderName, card.Brand, card.Number, card.ExpMonth, card.ExpYear, card.Code]);
+                break;
+            case VaultItemType.Identity when item.Identity is { } identity:
+                values.AddRange(
+                [
+                    identity.Title, identity.FirstName, identity.MiddleName, identity.LastName, identity.Address1, identity.Address2,
+                    identity.Address3, identity.City, identity.State, identity.PostalCode, identity.Country, identity.Company,
+                    identity.Email, identity.Phone, identity.Ssn, identity.Username, identity.PassportNumber, identity.LicenseNumber,
+                ]);
+                break;
+            case VaultItemType.SshKey when item.SshKey is { } key:
+                values.AddRange([key.PrivateKey, key.PublicKey, key.KeyFingerprint]);
+                break;
+            default:
+                break;
+        }
+
+        return values.OfType<string>();
+    }
+
+    private static string?[] PasskeyValues(Fido2Credential passkey) =>
+    [
+        passkey.CredentialId, passkey.KeyType, passkey.KeyAlgorithm, passkey.KeyCurve, passkey.KeyValue, passkey.RpId,
+        passkey.UserHandle, passkey.UserName, passkey.Counter, passkey.RpName, passkey.UserDisplayName, passkey.Discoverable,
+    ];
 
     private static VaultItem MoveHistoryOverflowToFields(VaultItem item, List<string> warnings)
     {

@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using PandaBear.VaultManager.Tool.IO;
 
 namespace PandaBear.VaultManager.Tool.Merge;
 
@@ -30,7 +31,10 @@ internal sealed record MergeReport
     /// <summary>Conversion notes of the output items, prefixed with the item name.</summary>
     public IReadOnlyList<string> ConversionNotes { get; init; } = [];
 
-    /// <summary>Renders the report as Markdown. The output contains no values.</summary>
+    /// <summary>
+    /// Renders the report as Markdown. The output contains no values, and item names and conversion notes are printed on
+    /// one line with every control character made printable by <see cref="PrintableText"/>.
+    /// </summary>
     /// <returns>Markdown text.</returns>
     public string ToMarkdown()
     {
@@ -88,6 +92,5 @@ internal sealed record MergeReport
         _ => resolution.ToString(),
     };
 
-    private static string Escape(string text) =>
-        text.Replace("\r", " ", StringComparison.Ordinal).Replace("\n", " ", StringComparison.Ordinal).Replace("|", "\\|", StringComparison.Ordinal);
+    private static string Escape(string text) => PrintableText.TableCell(text);
 }

@@ -21,6 +21,10 @@ namespace PandaBear.VaultManager.Tool.Merge;
 /// </item>
 /// <item>An explicit decision overrides rules 1 to 4.</item>
 /// <item>Folder, name, type, and origin come from the newest member; other names become text fields and other folders conversion notes.</item>
+/// <item>
+/// Every attachment of every member is kept. Copies on several members are kept once, from the newest member, only when
+/// their names and content hashes are equal (<see cref="GroupAttachments"/>).
+/// </item>
 /// </list>
 /// </remarks>
 /// <param name="timeProvider">Clock for preserved passwords when no member has a timestamp.</param>

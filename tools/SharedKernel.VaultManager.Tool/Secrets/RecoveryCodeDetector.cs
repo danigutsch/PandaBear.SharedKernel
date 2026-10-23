@@ -49,6 +49,7 @@ internal static class RecoveryCodeDetector
     /// <param name="fileNameHint">Whether the text comes from a file whose name marks it as recovery codes.</param>
     /// <param name="host">Login host, used to pick a provider profile.</param>
     /// <returns>Findings with the recovery codes target.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="text"/> is <see langword="null"/>.</exception>
     public static List<SecretFinding> Detect(string text, string fieldPath, bool fileNameHint, string? host)
     {
         ArgumentNullException.ThrowIfNull(text);
@@ -122,7 +123,7 @@ internal static class RecoveryCodeDetector
         string[] compact = [.. codes.Select(code => code.Replace(" ", string.Empty, StringComparison.Ordinal).Replace("-", string.Empty, StringComparison.Ordinal))];
         CodeCharset charset = Charset(compact);
         bool profile = MatchesProfile(host, compact, charset);
-        if (codes.Any(code => SecretPatterns.DateOrTime().IsMatch(code)) || compact.Distinct(StringComparer.Ordinal).Count() < compact.Length
+        if (codes.Any(IsDateOrTime) || compact.Distinct(StringComparer.Ordinal).Count() < compact.Length
             || SharesLongPrefix(compact) || IsNumericSequence(compact))
         {
             return false;
@@ -147,6 +148,10 @@ internal static class RecoveryCodeDetector
         };
         return true;
     }
+
+    // A code whose date check times out, even when run again, counts as no date, so its block stays a finding to review.
+    private static bool IsDateOrTime(string code) =>
+        PatternRetry.TryRun(() => SecretPatterns.DateOrTime().IsMatch(code), out bool date) && date;
 
     private static List<string>? ParseCodes(string line)
     {

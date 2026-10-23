@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using PandaBear.VaultManager.Tool.Matching;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Pipeline;
@@ -100,6 +101,80 @@ public sealed class VaultReportTests : IDisposable
             "- bitwarden.csv: Bitwarden CSV exports omit");
         report.ShouldNotContain("other-mail-password", StringComparison.Ordinal);
         report.ShouldNotContain("\r", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData(false, "0 field(s) and 1 finding(s)")]
+    [InlineData(true, "1 field(s) and 1 finding(s)")]
+    public void Report_status_names_the_fields_and_the_findings_that_need_a_decision(bool conflict, string counts)
+    {
+        string[] codes = PipelineSecrets.GitHubRecoveryCodes(720);
+        string keeper = Write(directory, "keeper.json", KeeperJson(
+            KeeperLogin("rec-github", "GitHub", "alice", OldPassword, "https://github.com", PipelineSecrets.RecoveryNotes(codes, NotesPassword), modified: !conflict)));
+        string bitwarden = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-github", "GitHub", "alice", NewPassword, "https://github.com", revised: false)));
+        string[] inputs = conflict ? [keeper, bitwarden] : [keeper];
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+
+        var result = pipeline.Run(new PipelineRequest(inputs) { Output = new PipelineOutput(Path.Combine(directory, "merged.json")) });
+
+        string report = VaultReport.ToMarkdown(result);
+        report.ShouldStartWith("# Vault report\n\nThe merged vault was not written because " + counts + " need a decision.", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Report_lists_the_files_of_attachment_folders_that_two_items_named_bank_share_for_upload_by_hand()
+    {
+        string zip = Write(directory, "bitwarden.zip", TwoBanksZip());
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+
+        var result = pipeline.Run(new PipelineRequest([zip]));
+
+        string report = VaultReport.ToMarkdown(result);
+        report.ShouldNotContain("No item has attachments.", StringComparison.Ordinal);
+        report.ShouldContainInOrder(
+            "## Attachments to upload",
+            "| Folder | File | Source | Matching items |",
+            "| Bank | statement.txt | bitwarden.zip, `attachments/Bank/statement.txt` | 2 |",
+            "| Bank_1 | contract.txt | bitwarden.zip, `attachments/Bank_1/contract.txt` | 2 |");
+    }
+
+    [Fact]
+    public void Report_replaces_control_characters_in_item_names_folder_names_file_names_and_warnings()
+    {
+        const string Name = "Bank\u001b[2J\u009b31m";
+        const string Folder = "Finance\u001b]0;title\u0007\u007f";
+        const string FileName = "scan\u001b[5m.pdf";
+        var keeperBank = KeeperLogin("rec-bank", Name, "alice", "fixture-keeper-bank-password", "https://bank.example.com", notes: "PIN: 4821");
+        keeperBank["folders"] = new JsonArray(new JsonObject { ["folder"] = Folder });
+        string keeper = Write(directory, "keeper.zip", CommanderZip(KeeperJson(keeperBank, KeeperFileRecord("rec-scan", Name, "file-scan", FileName))));
+        string bitwarden = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-bank", Name, "alice", "fixture-bitwarden-bank-password", "https://bank.example.com")));
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+
+        var result = pipeline.Run(new PipelineRequest([keeper, bitwarden]));
+
+        string report = VaultReport.ToMarkdown(result);
+        report.ToCharArray().Where(char.IsControl).ShouldAllSatisfy(character => character.ShouldBe('\n'));
+        report.ShouldContain("| Bank\uFFFD[2J\uFFFD31m |", StringComparison.Ordinal);
+        report.ShouldContain("Folder \"Finance\uFFFD]0;title\uFFFD\uFFFD\" from keeper.zip was not used", StringComparison.Ordinal);
+        report.ShouldContain("| scan\uFFFD[5m.pdf |", StringComparison.Ordinal);
+        report.ShouldContain("attachment \"scan\uFFFD[5m.pdf\" is listed but not included in the zip.", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Report_keeps_a_changed_group_whose_item_name_holds_a_line_separator_on_its_heading_line()
+    {
+        const string Name = "Bank\u2028# Injected heading";
+        string keeper = Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-bank", Name, "alice", "fixture-keeper-bank-password", "https://bank.example.com")));
+        string bitwarden = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-bank", Name, "alice", "fixture-bitwarden-bank-password", "https://bank.example.com")));
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+
+        var result = pipeline.Run(new PipelineRequest([keeper, bitwarden]));
+
+        string report = VaultReport.ToMarkdown(result);
+        string[] headings = [.. report.Split('\n').Where(line => line.StartsWith('#'))];
+        headings.ShouldContain(heading => heading.StartsWith("#### Bank # Injected heading (`", StringComparison.Ordinal));
+        headings.ShouldNotContain(heading => heading.Contains("Injected", StringComparison.Ordinal) && !heading.StartsWith("#### Bank", StringComparison.Ordinal));
+        report.ShouldNotContain("\u2028", StringComparison.Ordinal);
     }
 
     [Fact]

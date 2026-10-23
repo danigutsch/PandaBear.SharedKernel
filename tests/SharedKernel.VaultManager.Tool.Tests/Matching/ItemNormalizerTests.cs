@@ -12,6 +12,14 @@ public sealed class ItemNormalizerTests
     [InlineData("http://user@192.168.1.10:8080/admin", "192.168.1.10")]
     [InlineData("https://[2001:db8::1]:443/", "[2001:db8::1]")]
     [InlineData("androidapp://com.Example.App", "androidapp://com.example.app")]
+    [InlineData("HTTPS://Example.com/x", "example.com")]
+    [InlineData("ftp://Files.Example.com/pub", "ftp://files.example.com/pub")]
+    [InlineData("mailto:Alice@Example.com", "mailto:alice@example.com")]
+    [InlineData("web+app:open", "web+app:open")]
+    [InlineData("host:80x", "host:80x")]
+    [InlineData("example.com:8443", "example.com")]
+    [InlineData("example.com:8443?next=1", "example.com")]
+    [InlineData("1password://open", "1password")]
     public void Host_normalizes_web_addresses_and_keeps_other_schemes_whole(string value, string expected)
     {
         ItemNormalizer.Host(value).ShouldBe(expected);

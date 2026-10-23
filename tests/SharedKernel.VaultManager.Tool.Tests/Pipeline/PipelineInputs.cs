@@ -30,6 +30,20 @@ internal static class PipelineInputs
     public static byte[] CommanderZip(string exportJson, params (string Path, string Text)[] files) =>
         TestZip.Create([("export.json", TestZip.Utf8(exportJson)), .. files.Select(file => (file.Path, TestZip.Utf8(file.Text)))]);
 
+    public static byte[] BitwardenZip(string dataJson, params (string Path, string Text)[] files) =>
+        TestZip.Create([("data.json", TestZip.Utf8(dataJson)), .. files.Select(file => (file.Path, TestZip.Utf8(file.Text)))]);
+
+    /// <summary>
+    /// Bitwarden zip with two logins named <c>Bank</c>, whose attachment folders are <c>Bank</c> and <c>Bank_1</c>, as
+    /// Bitwarden names them. Each folder could belong to either login.
+    /// </summary>
+    public static byte[] TwoBanksZip() => BitwardenZip(
+        BitwardenJson(
+            BitwardenLogin("bw-bank-one", "Bank", "alice", "fixture-bank-one-password", "https://one.example.com"),
+            BitwardenLogin("bw-bank-two", "Bank", "bob", "fixture-bank-two-password", "https://two.example.com")),
+        ("attachments/Bank/statement.txt", "fixture statement\n"),
+        ("attachments/Bank_1/contract.txt", "fixture contract\n"));
+
     public static JsonObject KeeperLogin(
         string uid,
         string title,

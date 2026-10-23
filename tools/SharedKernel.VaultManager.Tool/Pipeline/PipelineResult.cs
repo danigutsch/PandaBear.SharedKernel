@@ -1,5 +1,6 @@
 using System.Text;
 using PandaBear.VaultManager.Tool.Analysis;
+using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.Matching;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Model;
@@ -21,6 +22,12 @@ internal sealed record PipelineResult
     /// <summary>Fields that need a user decision.</summary>
     public required IReadOnlyList<UnresolvedConflict> Unresolved { get; init; }
 
+    /// <summary>
+    /// Findings that are not pre-accepted and have no accept or reject decision, per input item, as pending entries for
+    /// <see cref="MergeDecisions.WithPending"/>. Pre-accepted findings apply without a decision and are not listed.
+    /// </summary>
+    public IReadOnlyList<ItemFindingDecisions> PendingFindings { get; init; } = [];
+
     /// <summary>Value-free merge summary.</summary>
     public required MergeReport MergeReport { get; init; }
 
@@ -38,6 +45,12 @@ internal sealed record PipelineResult
     /// merged items with the same name and content is listed once, from the newest item.
     /// </summary>
     public required IReadOnlyList<ManualAttachment> ManualAttachments { get; init; }
+
+    /// <summary>
+    /// Attachment folders of Bitwarden zip inputs whose files belong to no item, because the folder matches no item or
+    /// several items with the same name. The user uploads their files by hand.
+    /// </summary>
+    public IReadOnlyList<UnassignedAttachmentFolder> UnassignedAttachmentFolders { get; init; } = [];
 
     /// <summary>Problems that make Bitwarden or Vaultwarden reject the whole import. Any of them blocks writing.</summary>
     public required IReadOnlyList<string> WriteErrors { get; init; }
@@ -57,6 +70,9 @@ internal sealed record PipelineResult
     /// <summary>Whether a field still needs a decision. The merged vault is then not written.</summary>
     public bool HasUnresolvedConflicts => Unresolved.Count > 0;
 
+    /// <summary>Number of findings in <see cref="PendingFindings"/>. While it is not 0, the merged vault is not written.</summary>
+    public int PendingFindingCount => PendingFindings.Sum(item => item.Choices.Count);
+
     /// <summary>Whether the writer reported an error. The merged vault is then not written.</summary>
     public bool HasWriteErrors => WriteErrors.Count > 0;
 
@@ -66,8 +82,10 @@ internal sealed record PipelineResult
         builder.Append("Items = ").Append(Merged.Items.Count)
             .Append(", Unresolved = ").Append(Unresolved.Count)
             .Append(", Findings = ").Append(Findings.Sum(item => item.Findings.Count))
+            .Append(", PendingFindings = ").Append(PendingFindingCount)
             .Append(", PlacementProblems = ").Append(PlacementProblems.Count)
             .Append(", ManualAttachments = ").Append(ManualAttachments.Count)
+            .Append(", UnassignedAttachmentFolders = ").Append(UnassignedAttachmentFolders.Count)
             .Append(", WriteErrors = ").Append(WriteErrors.Count)
             .Append(", OutputWritten = ").Append(OutputWritten);
         return true;

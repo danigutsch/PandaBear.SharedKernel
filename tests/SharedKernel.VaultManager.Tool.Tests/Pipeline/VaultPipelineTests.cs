@@ -1,4 +1,6 @@
 using System.Security.Cryptography;
+using System.Text.Json;
+using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.Formats.Bitwarden;
 using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Model;
@@ -167,8 +169,10 @@ public sealed class VaultPipelineTests : IDisposable
         string keeper = Write(directory, "keeper.json", KeeperJson(KeeperSshKey("rec-ssh", "Deploy key", privateKey, string.Empty)));
         string output = Path.Combine(directory, "merged.json");
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var proposed = pipeline.Run(new PipelineRequest([keeper])).PendingFindings.ShouldHaveSingleItem();
+        var rejected = PipelineDecisions.Findings(proposed.OriginKey, [.. proposed.Choices.Select(choice => choice with { Decision = FindingDecision.Rejected })]);
 
-        var result = pipeline.Run(new PipelineRequest([keeper]) { Output = new PipelineOutput(output, Plaintext: true) });
+        var result = pipeline.Run(new PipelineRequest([keeper]) { Decisions = rejected, Output = new PipelineOutput(output, Plaintext: true) });
 
         result.OutputWritten.ShouldBeTrue();
         var item = BitwardenJsonReader.Read(File.ReadAllText(output), "merged.json").Items.ShouldHaveSingleItem();
@@ -190,6 +194,8 @@ public sealed class VaultPipelineTests : IDisposable
         var result = pipeline.Run(new PipelineRequest([keeper]) { Output = new PipelineOutput(output, Plaintext: true) });
 
         result.OutputWritten.ShouldBeTrue();
+        result.Findings.ShouldBeEmpty();
+        result.PlacementProblems.ShouldBeEmpty();
         var item = BitwardenJsonReader.Read(File.ReadAllText(output), "merged.json").Items.ShouldHaveSingleItem();
         item.Type.ShouldBe(VaultItemType.SecureNote);
         item.Fields.ShouldBe([new CustomField(SshKeyNormalizer.PrivateKeyField, privateKey, CustomFieldType.Hidden)]);
@@ -388,14 +394,14 @@ public sealed class VaultPipelineTests : IDisposable
             KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, NotesPassword))));
         var prompts = new TestPrompts(ExportPassword);
         var pipeline = new VaultPipeline(prompts.Environment());
-        var scanned = VaultPipeline.Scan(pipeline.Load([keeper]));
-        var proposed = pipeline.Merge(scanned, new MergeRequest());
+        var scanned = VaultPipeline.Scan(pipeline.Load([keeper], TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
+        var proposed = pipeline.Merge(scanned, new MergeRequest(), TestContext.Current.CancellationToken);
         var findings = proposed.Findings.ShouldHaveSingleItem();
         var passwordFinding = findings.Findings.ShouldHaveSingleItem(finding => finding.Kind == SecretKind.Password);
         var decisions = PipelineDecisions.Findings(findings.OriginKey, new FindingChoice(passwordFinding.Id, FindingDecision.Accepted));
         File.Delete(keeper);
 
-        var decided = pipeline.Merge(scanned, new MergeRequest { Decisions = decisions });
+        var decided = pipeline.Merge(scanned, new MergeRequest { Decisions = decisions }, TestContext.Current.CancellationToken);
 
         proposed.Merged.Items.ShouldHaveSingleItem().Login.ShouldNotBeNull().Password.ShouldBeNull();
         decided.Merged.Items.ShouldHaveSingleItem().Login.ShouldNotBeNull().Password.ShouldBe(NotesPassword);
@@ -410,10 +416,10 @@ public sealed class VaultPipelineTests : IDisposable
         string input = Write(directory, "bitwarden.json", json);
         var prompts = new TestPrompts(ExportPassword);
         var pipeline = new VaultPipeline(prompts.Environment());
-        var scanned = VaultPipeline.Scan(pipeline.Load([input]));
+        var scanned = VaultPipeline.Scan(pipeline.Load([input], TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
 
-        var overInput = () => pipeline.Merge(scanned, new MergeRequest { Output = new PipelineOutput(input, Plaintext: true, Force: true) });
-        var missingDirectory = () => pipeline.Merge(scanned, new MergeRequest { Output = new PipelineOutput(Path.Combine(directory, "missing", "merged.json")) });
+        var overInput = () => pipeline.Merge(scanned, new MergeRequest { Output = new PipelineOutput(input, Plaintext: true, Force: true) }, TestContext.Current.CancellationToken);
+        var missingDirectory = () => pipeline.Merge(scanned, new MergeRequest { Output = new PipelineOutput(Path.Combine(directory, "missing", "merged.json")) }, TestContext.Current.CancellationToken);
 
         overInput.ShouldThrow<IOException>().Message.ShouldContain("also an input", StringComparison.Ordinal);
         missingDirectory.ShouldThrow<IOException>().Message.ShouldContain("does not exist", StringComparison.Ordinal);
@@ -428,13 +434,63 @@ public sealed class VaultPipelineTests : IDisposable
         string zip = Write(directory, "keeper.zip", CommanderZip(
             KeeperJson(KeeperFileRecord("rec-files", "GitHub backup", "file-codes", "github-recovery-codes.txt")),
             ("files/file-codes", string.Join('\n', codes))));
-        var loaded = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Load([zip]);
+        var loaded = new VaultPipeline(new TestPrompts(ExportPassword).Environment()).Load([zip], TestContext.Current.CancellationToken);
         File.Delete(zip);
 
-        var scanned = VaultPipeline.Scan(loaded);
+        var scanned = VaultPipeline.Scan(loaded, TestContext.Current.CancellationToken);
 
         scanned.Items.ShouldHaveSingleItem().Findings.ShouldBeEmpty();
         scanned.Warnings.ShouldHaveSingleItem().ShouldStartWith("keeper.zip: attachments were not scanned", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Load_and_run_keep_the_files_of_attachment_folders_that_two_items_named_bank_share()
+    {
+        string zip = Write(directory, "bitwarden.zip", TwoBanksZip());
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+
+        var loaded = pipeline.Load([zip], TestContext.Current.CancellationToken);
+        var result = pipeline.Run(new PipelineRequest([zip]));
+
+        IReadOnlyList<UnassignedAttachmentFolder>[] lists = [loaded.UnassignedAttachmentFolders, result.UnassignedAttachmentFolders];
+        lists.ShouldAllSatisfy(folders =>
+        {
+            folders.Select(folder => (folder.SourceFile, folder.FolderName, folder.MatchingItemCount)).ShouldBe([("bitwarden.zip", "Bank", 2), ("bitwarden.zip", "Bank_1", 2)]);
+            folders.SelectMany(folder => folder.Files).Select(file => (file.FileName, file.SourcePath)).ShouldBe(
+            [
+                ("statement.txt", "attachments/Bank/statement.txt"),
+                ("contract.txt", "attachments/Bank_1/contract.txt"),
+            ]);
+        });
+        result.ManualAttachments.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Load_names_an_input_whose_content_is_malformed_and_keeps_the_reader_error_inside()
+    {
+        const string Value = "fixture-unquoted-secret";
+        string keeper = Write(directory, "keeper.json", "[{\"title\": \"Example\", \"password\": " + Value + "}]");
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+
+        var action = () => pipeline.Load([keeper], TestContext.Current.CancellationToken);
+
+        var exception = action.ShouldThrow<InvalidDataException>();
+        exception.Message.ShouldBe("keeper.json: Keeper export is not valid JSON.");
+        var readerError = exception.InnerException.ShouldBeOfType<InvalidDataException>();
+        readerError.Message.ShouldBe("Keeper export is not valid JSON.");
+        readerError.InnerException.ShouldBeAssignableTo<JsonException>();
+    }
+
+    [Fact]
+    public void Load_names_a_bitwarden_input_that_holds_a_null_item()
+    {
+        string input = Write(directory, "bitwarden.json", """{"encrypted":false,"folders":[],"items":[null]}""");
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+
+        var action = () => pipeline.Load([input], TestContext.Current.CancellationToken);
+
+        var exception = action.ShouldThrow<InvalidDataException>();
+        exception.Message.ShouldBe("bitwarden.json: Item 1 of the Bitwarden export is null.");
     }
 
     [Fact]
@@ -442,7 +498,7 @@ public sealed class VaultPipelineTests : IDisposable
     {
         var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
 
-        var action = () => pipeline.Load([]);
+        var action = () => pipeline.Load([], TestContext.Current.CancellationToken);
 
         action.ShouldThrow<ArgumentException>();
     }

@@ -24,9 +24,14 @@ internal static class SshKeyConverter
     private const string BodyProblem = "key body is not base64";
     private const string CurveProblem = "unsupported ECDSA curve";
 
-    /// <summary>Determines format, algorithm, and encryption without converting.</summary>
+    /// <summary>
+    /// Determines format, algorithm, and encryption without converting, and whether <see cref="Convert"/> can build an SSH
+    /// key from the key. An ECDSA key can be converted only when its SEC1 or PKCS#8 structure names <c>nistp256</c>,
+    /// <c>nistp384</c>, or <c>nistp521</c>; a key with explicit curve parameters names no curve.
+    /// </summary>
     /// <param name="pem">Private key text.</param>
     /// <returns>The inspection.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="pem"/> is <see langword="null"/>.</exception>
     public static SshKeyInspection Inspect(string pem)
     {
         ArgumentNullException.ThrowIfNull(pem);
@@ -122,6 +127,11 @@ internal static class SshKeyConverter
                     return new SshKeyInspection("PKCS#1", algorithm, true, false, "encrypted keys are not converted");
                 }
 
+                if (algorithm == "ECDSA")
+                {
+                    return InspectSec1(block);
+                }
+
                 return HasBase64Body(block)
                     ? new SshKeyInspection("PKCS#1", algorithm, false, true, null)
                     : new SshKeyInspection("PKCS#1", algorithm, false, false, BodyProblem);
@@ -143,11 +153,13 @@ internal static class SshKeyConverter
 
         try
         {
-            string oid = ReadPkcs8(der).AlgorithmOid;
-            return oid switch
+            Pkcs8Info info = ReadPkcs8(der);
+            return info.AlgorithmOid switch
             {
                 RsaOid => new SshKeyInspection("PKCS#8", "RSA", false, true, null),
-                EcOid => new SshKeyInspection("PKCS#8", "ECDSA", false, true, null),
+                EcOid => SshCurveName(info.CurveOid) is null
+                    ? new SshKeyInspection("PKCS#8", "ECDSA", false, false, CurveProblem)
+                    : new SshKeyInspection("PKCS#8", "ECDSA", false, true, null),
                 Ed25519Oid => new SshKeyInspection("PKCS#8", "Ed25519", false, true, null),
                 DsaOid => new SshKeyInspection("PKCS#8", "DSA", false, false, "DSA keys are not supported by Bitwarden"),
                 _ => new SshKeyInspection("PKCS#8", null, false, false, "unsupported key algorithm"),
@@ -162,6 +174,62 @@ internal static class SshKeyConverter
             CryptographicOperations.ZeroMemory(der);
         }
     }
+
+    // A SEC1 key names its curve in its optional [0] parameters. Explicit curve parameters, or none, name no curve.
+    private static SshKeyInspection InspectSec1(PemBlock block)
+    {
+        if (!SecretText.TryDecodeBase64(block.Body, out byte[]? der) || der is null)
+        {
+            return new SshKeyInspection("PKCS#1", "ECDSA", false, false, BodyProblem);
+        }
+
+        try
+        {
+            var reader = new AsnReader(der, AsnEncodingRules.BER);
+            AsnReader key = reader.ReadSequence();
+            _ = key.ReadInteger();
+            SkipPrivateKeyOctets(key);
+            string? curveOid = null;
+            if (key.HasData && key.PeekTag().HasSameClassAndValue(new Asn1Tag(TagClass.ContextSpecific, 0)))
+            {
+                curveOid = ReadCurveOid(key.ReadSequence(new Asn1Tag(TagClass.ContextSpecific, 0)));
+            }
+
+            return SshCurveName(curveOid) is null
+                ? new SshKeyInspection("PKCS#1", "ECDSA", false, false, CurveProblem)
+                : new SshKeyInspection("PKCS#1", "ECDSA", false, true, null);
+        }
+        catch (AsnContentException)
+        {
+            return new SshKeyInspection("PKCS#1", "ECDSA", false, false, "key structure is malformed");
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(der);
+        }
+    }
+
+    // Reads past the OCTET STRING that holds private key material without keeping a copy of it.
+    private static void SkipPrivateKeyOctets(AsnReader reader)
+    {
+        if (!reader.TryReadPrimitiveOctetString(out _))
+        {
+            CryptographicOperations.ZeroMemory(reader.ReadOctetString());
+        }
+    }
+
+    // ECParameters is a named curve OID, NULL, or explicit SpecifiedECDomain parameters; only the first names a curve.
+    private static string? ReadCurveOid(AsnReader parameters) =>
+        parameters.HasData && parameters.PeekTag().HasSameClassAndValue(Asn1Tag.ObjectIdentifier) ? parameters.ReadObjectIdentifier() : null;
+
+    // SSH key types name these curves only; a key on another curve, or with explicit curve parameters, has no SSH form.
+    private static string? SshCurveName(string? curveOid) => curveOid switch
+    {
+        "1.2.840.10045.3.1.7" => "nistp256",
+        "1.3.132.0.34" => "nistp384",
+        "1.3.132.0.35" => "nistp521",
+        _ => null,
+    };
 
     private static SshKeyInspection InspectOpenSsh(PemBlock block)
     {
@@ -278,17 +346,9 @@ internal static class SshKeyConverter
     {
         ECParameters parameters = ecdsa.ExportParameters(false);
 
-        // SSH names the curve, so a key with explicit curve parameters, which has no curve OID, is not converted. The OID
-        // is read null-safely because platforms differ in what they report for such keys.
-        string? curve = parameters.Curve.IsNamed
-            ? parameters.Curve.Oid?.Value switch
-            {
-                "1.2.840.10045.3.1.7" => "nistp256",
-                "1.3.132.0.34" => "nistp384",
-                "1.3.132.0.35" => "nistp521",
-                _ => null,
-            }
-            : null;
+        // Inspection already turned away keys whose structure names no supported curve; the curve the platform reports is
+        // checked as well. The OID is read null-safely because platforms differ in what they report for unnamed curves.
+        string? curve = parameters.Curve.IsNamed ? SshCurveName(parameters.Curve.Oid?.Value) : null;
         if (curve is null)
         {
             return new SshKeyConversion(null, CurveProblem);
@@ -380,7 +440,8 @@ internal static class SshKeyConverter
         _ = sequence.ReadInteger();
         AsnReader algorithm = sequence.ReadSequence();
         string oid = algorithm.ReadObjectIdentifier();
-        _ = sequence.ReadOctetString();
+        string? curveOid = oid == EcOid ? ReadCurveOid(algorithm) : null;
+        SkipPrivateKeyOctets(sequence);
         byte[]? publicKey = null;
         while (sequence.HasData)
         {
@@ -395,7 +456,7 @@ internal static class SshKeyConverter
             }
         }
 
-        return new Pkcs8Info(oid, publicKey);
+        return new Pkcs8Info(oid, curveOid, publicKey);
     }
 
     private static bool TryReadOpenSsh(PemBlock block, out OpenSshContainer? container)
@@ -434,7 +495,7 @@ internal static class SshKeyConverter
         return true;
     }
 
-    private sealed record Pkcs8Info(string AlgorithmOid, byte[]? PublicKey);
+    private sealed record Pkcs8Info(string AlgorithmOid, string? CurveOid, byte[]? PublicKey);
 
     private sealed record OpenSshContainer(string Cipher, string KeyType, byte[] PublicBlob, bool ChecksMatch);
 }

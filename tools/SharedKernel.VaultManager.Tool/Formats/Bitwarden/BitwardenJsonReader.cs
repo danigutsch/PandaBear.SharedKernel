@@ -15,7 +15,13 @@ internal static class BitwardenJsonReader
     /// <param name="json">Export file contents. Decrypt password-protected files first.</param>
     /// <param name="sourceFile">File name recorded as the item origin.</param>
     /// <returns>Items in the export, excluding deleted items.</returns>
-    /// <exception cref="InvalidDataException">The file is not an unencrypted Bitwarden JSON export.</exception>
+    /// <exception cref="ArgumentNullException"><paramref name="json"/> or <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
+    /// <exception cref="InvalidDataException">
+    /// The file is not an unencrypted Bitwarden JSON export, or it is malformed: an item, folder, or collection is
+    /// <c>null</c>; an item that is not deleted holds a <c>null</c> entry in a list the reader uses (custom fields, password
+    /// history, collection IDs, and the URIs and passkeys of a login); or two folders or collections have the same ID. The
+    /// message names entries by their position, never by their content.
+    /// </exception>
     public static VaultExport Read(string json, string sourceFile)
     {
         ArgumentNullException.ThrowIfNull(json);
@@ -43,12 +49,56 @@ internal static class BitwardenJsonReader
                 + "Export again as .json or as password-protected .json (Encrypted).");
         }
 
-        Dictionary<string, string> folders = (export.Folders ?? export.Collections ?? [])
+        string folderKind = export.Folders is null && export.Collections is not null ? "Collection" : "Folder";
+        IReadOnlyList<BitwardenFolderDto> folderList = export.Folders ?? export.Collections ?? [];
+        CheckEntries(export.Items, folderList, folderKind);
+        Dictionary<string, string> folders = folderList
             .Where(folder => folder.Id is not null && !string.IsNullOrWhiteSpace(folder.Name))
             .ToDictionary(folder => folder.Id!, folder => folder.Name!, StringComparer.Ordinal);
 
         return new VaultExport([.. export.Items.Where(item => item.DeletedDate is null).Select(item => Map(item, folders, sourceFile))]);
     }
+
+    // A null entry holds nothing to read, and two folders with one ID make the folder of an item ambiguous. Neither occurs
+    // in an export Bitwarden wrote, so the file is reported as malformed, naming entries by their position only.
+    private static void CheckEntries(IReadOnlyList<BitwardenItemDto> items, IReadOnlyList<BitwardenFolderDto> folders, string folderKind)
+    {
+        for (int index = 0; index < items.Count; index++)
+        {
+            BitwardenItemDto item = items[index]
+                ?? throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"Item {index + 1} of the Bitwarden export is null."));
+            if (item.DeletedDate is not null)
+            {
+                continue;
+            }
+
+            bool login = item.Type == (int)VaultItemType.Login && item.Login is not null;
+            string? list = HasNull(item.Fields) ? "custom fields"
+                : HasNull(item.PasswordHistory) ? "password history"
+                : HasNull(item.CollectionIds) ? "collection IDs"
+                : login && HasNull(item.Login!.Uris) ? "URIs"
+                : login && HasNull(item.Login!.Fido2Credentials) ? "passkeys"
+                : null;
+            if (list is not null)
+            {
+                throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"Item {index + 1} of the Bitwarden export has a null entry in its {list}."));
+            }
+        }
+
+        var positions = new Dictionary<string, int>(StringComparer.Ordinal);
+        for (int index = 0; index < folders.Count; index++)
+        {
+            BitwardenFolderDto folder = folders[index]
+                ?? throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"{folderKind} {index + 1} of the Bitwarden export is null."));
+            if (folder.Id is not null && !positions.TryAdd(folder.Id, index + 1))
+            {
+                throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"{folderKind}s {positions[folder.Id]} and {index + 1} of the Bitwarden export have the same ID."));
+            }
+        }
+    }
+
+    private static bool HasNull<T>(IReadOnlyList<T?>? entries)
+        where T : class => entries is not null && entries.Contains(null);
 
     private static VaultItem Map(BitwardenItemDto item, Dictionary<string, string> folders, string sourceFile)
     {

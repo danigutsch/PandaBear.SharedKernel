@@ -134,6 +134,47 @@ public sealed class SshKeyConverterTests
     }
 
     [Fact]
+    public void Inspection_flags_ec_keys_with_explicit_curve_parameters_as_conversion_does()
+    {
+        using var named = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        using var explicitCurve = ECDsa.Create(named.ExportExplicitParameters(true));
+
+        var sec1 = SshKeyConverter.Inspect(PemFixtures.Sec1(explicitCurve));
+        var pkcs8 = SshKeyConverter.Inspect(PemFixtures.Pkcs8(explicitCurve));
+
+        sec1.CanConvert.ShouldBeFalse();
+        sec1.Problem.ShouldBe("unsupported ECDSA curve");
+        pkcs8.CanConvert.ShouldBeFalse();
+        pkcs8.Problem.ShouldBe("unsupported ECDSA curve");
+    }
+
+    [Fact]
+    public void Inspection_flags_an_ec_key_on_a_named_curve_ssh_does_not_support()
+    {
+        var inspection = SshKeyConverter.Inspect(PemFixtures.Sec1OnUnknownCurve());
+
+        inspection.CanConvert.ShouldBeFalse();
+        inspection.Problem.ShouldBe("unsupported ECDSA curve");
+    }
+
+    [Fact]
+    public void Inspection_accepts_ec_keys_on_the_curves_ssh_names()
+    {
+        using var p256 = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        using var p384 = ECDsa.Create(ECCurve.NamedCurves.nistP384);
+        using var p521 = ECDsa.Create(ECCurve.NamedCurves.nistP521);
+        string[] keys = [PemFixtures.Sec1(p256), PemFixtures.Pkcs8(p256), PemFixtures.Sec1(p384), PemFixtures.Pkcs8(p384), PemFixtures.Sec1(p521), PemFixtures.Pkcs8(p521)];
+
+        var inspections = keys.Select(SshKeyConverter.Inspect).ToArray();
+
+        inspections.ShouldAllSatisfy(inspection =>
+        {
+            inspection.CanConvert.ShouldBeTrue();
+            inspection.Algorithm.ShouldBe("ECDSA");
+        });
+    }
+
+    [Fact]
     public void Encrypted_keys_are_flagged_by_inspection()
     {
         using var rsa = RSA.Create(2048);

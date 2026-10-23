@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using PandaBear.VaultManager.Tool.Model;
 using PandaBear.VaultManager.Tool.Secrets;
 
@@ -258,6 +259,54 @@ public sealed class SecretScannerTests
     }
 
     [Fact]
+    public void Scan_ec_key_with_explicit_curve_parameters_in_notes_proposes_a_hidden_field_that_placement_fills_without_a_problem()
+    {
+        using var named = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        using var explicitCurve = ECDsa.Create(named.ExportExplicitParameters(includePrivateParameters: true));
+        string pem = PemFixtures.Sec1(explicitCurve);
+        var item = SecretTestItems.Note("deploy key\n" + pem, "build server");
+
+        var finding = Scanner.Scan(item).ShouldHaveSingleItem();
+        var placed = SecretPlacer.Apply(item, [finding]);
+
+        finding.Kind.ShouldBe(SecretKind.PrivateKey);
+        finding.NeedsReview.ShouldBeTrue();
+        finding.IsPreAccepted.ShouldBeFalse();
+        finding.ProposedTarget.ShouldBe(PlacementTarget.Hidden("Private key"));
+        finding.Message.ShouldContain("unsupported ECDSA curve", StringComparison.Ordinal);
+        placed.Problems.ShouldBeEmpty();
+        placed.NewItems.ShouldBeEmpty();
+        placed.Item.Fields.ShouldBe([new CustomField("Private key", pem, CustomFieldType.Hidden)]);
+        placed.Item.Notes.ShouldBe("deploy key");
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Scan_reports_nothing_for_a_key_that_fills_a_hidden_field_and_cannot_become_an_ssh_key_item(bool explicitCurveParameters)
+    {
+        using var named = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+        using var explicitCurve = ECDsa.Create(named.ExportExplicitParameters(includePrivateParameters: true));
+        string pem = explicitCurveParameters ? PemFixtures.Sec1(explicitCurve) : PemFixtures.EncryptedPkcs8(named);
+        var item = SecretTestItems.Note("deploy key") with { Fields = [new CustomField("Deploy key", pem, CustomFieldType.Hidden)] };
+
+        var findings = Scanner.Scan(item);
+
+        findings.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Scan_still_proposes_an_ssh_key_item_for_a_convertible_key_that_fills_a_hidden_field()
+    {
+        var item = SecretTestItems.Note("deploy key") with { Fields = [new CustomField("Deploy key", PemFixtures.Ed25519OpenSsh(), CustomFieldType.Hidden)] };
+
+        var finding = Scanner.Scan(item).ShouldHaveSingleItem();
+
+        finding.Kind.ShouldBe(SecretKind.PrivateKey);
+        finding.ProposedTarget.ShouldBe(PlacementTarget.NewSshKeyItem);
+    }
+
+    [Fact]
     public void Scan_github_token_with_valid_checksum_is_high_confidence()
     {
         string valid = TestSecrets.GitHubToken("ghp", 11);
@@ -336,6 +385,82 @@ public sealed class SecretScannerTests
         finding.Kind.ShouldBe(SecretKind.NeedsReview);
         finding.NeedsReview.ShouldBeTrue();
         finding.ProposedTarget.Kind.ShouldBe(PlacementTargetKind.NotMoved);
+    }
+
+    [Fact]
+    public void Scan_regex_timeout_in_one_window_still_flags_the_later_windows_of_the_rule()
+    {
+        var rule = new SecretRule
+        {
+            Id = "slow-rule",
+            DisplayName = "Slow rule",
+            Kind = SecretKind.ApiToken,
+            Keywords = ["aaaa"],
+            Pattern = SlowPatterns.Catastrophic(),
+            Source = "test",
+        };
+        var scanner = new SecretScanner([rule]);
+        string run = new('a', 4000);
+        const int SecondRun = 24_000;
+        string notes = run + new string('x', SecondRun - run.Length) + run;
+
+        var findings = scanner.Scan(SecretTestItems.Note(notes));
+
+        SecretFinding[] timeouts = [.. findings.Where(found => found.RuleId == "slow-rule")];
+        timeouts.ShouldAllSatisfy(found => found.Kind.ShouldBe(SecretKind.NeedsReview));
+        timeouts.ShouldContain(found => found.Location.Start == 0);
+        timeouts.ShouldContain(found => found.Location.Start < SecondRun && found.Location.Start + found.Location.Length >= notes.Length);
+    }
+
+    [Fact]
+    public void Scan_runs_a_window_whose_match_timed_out_once_again_and_reports_its_finding()
+    {
+        int checks = 0;
+        var rule = new SecretRule
+        {
+            Id = "paused-rule",
+            DisplayName = "Paused rule",
+            Kind = SecretKind.ApiToken,
+            Keywords = ["tok_"],
+            Pattern = TestPatterns.Token(),
+
+            // The first check times out, as a match does when a pause of the process outlasts the match timeout.
+            Validator = _ => ++checks == 1 ? throw new RegexMatchTimeoutException() : true,
+            Source = "test",
+        };
+        var scanner = new SecretScanner([rule]);
+
+        var findings = scanner.Scan(SecretTestItems.Note("deploy token tok_" + new string('k', 16)));
+
+        var finding = findings.ShouldHaveSingleItem(found => found.RuleId == "paused-rule");
+        finding.Kind.ShouldBe(SecretKind.ApiToken);
+        finding.NeedsReview.ShouldBeFalse();
+        checks.ShouldBe(2);
+    }
+
+    [Fact]
+    public void Scan_flags_the_remaining_windows_of_a_rule_as_one_finding_once_three_of_its_windows_time_out()
+    {
+        // Runs of "a" 10,000 characters apart give the rule five separate windows: each run's window starts 1024 characters
+        // before it, and the last one ends with the text.
+        const int Spacing = 10_000;
+        string run = new('a', 4000);
+        string notes = string.Join(new string('x', Spacing - run.Length), Enumerable.Repeat(run, 5));
+        var scanner = new SecretScanner([SlowPatterns.Rule()]);
+
+        var findings = scanner.Scan(SecretTestItems.Note(notes));
+
+        findings.ShouldAllSatisfy(found =>
+        {
+            found.RuleId.ShouldBe("slow-rule");
+            found.Kind.ShouldBe(SecretKind.NeedsReview);
+        });
+        int[] starts = [.. findings.Select(found => found.Location.Start)];
+        starts.ShouldBe([0, Spacing - 1024, (2 * Spacing) - 1024, (3 * Spacing) - 1024]);
+        var rest = findings[^1];
+        int restEnd = rest.Location.Start + rest.Location.Length;
+        restEnd.ShouldBe(notes.Length);
+        rest.Message.ShouldBe("Slow rule pattern timed out 3 times; review the rest of this text manually");
     }
 
     [Fact]
