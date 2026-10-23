@@ -371,7 +371,7 @@ that need a decision with your decisions:
   "summary": { "items": 412, "mergedGroups": 120, "conflictsResolvedByPolicy": 85, "fieldsNeedingDecision": 3, "findings": 14, "findingsApplied": 9, "findingsNeedingDecision": 2, "passwordIssues": 7, "attachmentsToUpload": 4 },
   "groups": [
     {
-      "key": "5d0c2e8f41a7b693",
+      "key": "0000000000000000",
       "type": "Login",
       "members": [
         {
