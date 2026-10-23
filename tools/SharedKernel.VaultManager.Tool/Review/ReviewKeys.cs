@@ -32,6 +32,9 @@ internal static class ReviewKeys
     /// <summary>Writes the merged vault.</summary>
     public static ReviewKey Write { get; } = new(Key.W.WithCtrl, ReviewArea.Everywhere, "Write the merged vault once nothing needs a decision");
 
+    /// <summary>Shares the notes of every item whose notes hold no finding.</summary>
+    public static ReviewKey ShareNotes { get; } = new(Key.F8, ReviewArea.Everywhere, "Show the notes of every item whose notes hold no finding in catalogs; asks first");
+
     /// <summary>Quits.</summary>
     public static ReviewKey Quit { get; } = new(Key.Q.WithCtrl, ReviewArea.Everywhere, "Quit; asks first when decisions are not saved");
 
@@ -65,6 +68,15 @@ internal static class ReviewKeys
     /// <summary>Splits the selected member out of the group.</summary>
     public static ReviewKey Split { get; } = new(Key.S, ReviewArea.Fields, "Split the selected member out of the group");
 
+    /// <summary>Shows the selected member's notes in catalogs.</summary>
+    public static ReviewKey ShareMemberNotes { get; } = new(Key.N, ReviewArea.Fields, "Show the selected item's notes in catalogs");
+
+    /// <summary>Keeps the selected member's notes out of catalogs.</summary>
+    public static ReviewKey PrivateMemberNotes { get; } = new(Key.P, ReviewArea.Fields, "Keep the selected item's notes out of catalogs");
+
+    /// <summary>Moves the selected member's notes into a hidden field when a catalog is applied.</summary>
+    public static ReviewKey HideMemberNotes { get; } = new(Key.H, ReviewArea.Fields, "Move the selected item's notes into a hidden field when a catalog is applied");
+
     /// <summary>Accepts the selected finding.</summary>
     public static ReviewKey Accept { get; } = new(Key.A, ReviewArea.Findings, "Accept the finding");
 
@@ -83,9 +95,9 @@ internal static class ReviewKeys
         get;
     } =
     [
-        Help, Groups, Fields, Findings, NextFilter, Search, Save, Write, Quit, Escape,
+        Help, Groups, Fields, Findings, NextFilter, Search, Save, Write, ShareNotes, Quit, Escape,
         OpenGroup, Mark, Link,
-        ChooseMember, ChooseForConflicts, ChooseEmpty, ClearChoice, Reveal, Split,
+        ChooseMember, ChooseForConflicts, ChooseEmpty, ClearChoice, Reveal, Split, ShareMemberNotes, PrivateMemberNotes, HideMemberNotes,
         Accept, Reject, ClearFinding, RevealFinding,
     ];
 }

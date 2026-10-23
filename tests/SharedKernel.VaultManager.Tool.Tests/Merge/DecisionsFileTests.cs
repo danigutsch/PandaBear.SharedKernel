@@ -43,6 +43,47 @@ public sealed class DecisionsFileTests : IDisposable
     }
 
     [Fact]
+    public void Notes_decisions_round_trip_and_files_without_them_still_read()
+    {
+        var decisions = MergeDecisions.None with
+        {
+            Notes = [new ItemNotesDecision("a|b|c", NotesDecision.Share, "GitHub", 2, ItemNotesDecision.HashOf("shared notes")), new ItemNotesDecision("a|b|d", NotesDecision.Hidden)]
+        };
+
+        string json = DecisionsFile.Serialize(decisions);
+
+        DecisionsFile.Deserialize(json).Notes.ShouldBe(decisions.Notes);
+        json.ShouldContain("\"decision\": \"Share\"", StringComparison.Ordinal);
+        DecisionsFile.Serialize(MergeDecisions.None).ShouldNotContain("notes", StringComparison.Ordinal);
+        DecisionsFile.Deserialize("""{"version":2,"groups":[],"links":[],"splits":[]}""").Notes.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Notes_decisions_reject_two_entries_for_one_item()
+    {
+        const string json = """{"version":2,"groups":[],"links":[],"splits":[],"notes":[{"originKey":"a|b|c","decision":"Share"},{"originKey":"a|b|c","decision":"Private"}]}""";
+
+        var action = () => DecisionsFile.Deserialize(json);
+
+        action.ShouldThrow<InvalidDataException>().Message.ShouldContain("two notes entries", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Notes_updates_replace_entries_and_drop_stale_pending_ones()
+    {
+        var decisions = MergeDecisions.None with
+        {
+            Notes = [new ItemNotesDecision("a|b|c", NotesDecision.Private), new ItemNotesDecision("a|b|old", NotesDecision.Pending), new ItemNotesDecision("a|b|e", NotesDecision.Share)],
+        };
+
+        var updated = decisions.WithNotes([new ItemNotesDecision("a|b|e", NotesDecision.Pending, "Changed"), new ItemNotesDecision("a|b|d", NotesDecision.Pending, "Two", 1)]);
+
+        updated.Notes.ShouldBe([new ItemNotesDecision("a|b|c", NotesDecision.Private), new ItemNotesDecision("a|b|e", NotesDecision.Pending, "Changed"), new ItemNotesDecision("a|b|d", NotesDecision.Pending, "Two", 1)]);
+        updated.FindNotes("a|b|c").ShouldBe(NotesDecision.Private);
+        updated.FindNotes("a|b|f").ShouldBe(NotesDecision.Pending);
+    }
+
+    [Fact]
     public void Decisions_with_finding_decisions_round_trip_without_values()
     {
         const string NotesPassword = "fixture-notes-password";

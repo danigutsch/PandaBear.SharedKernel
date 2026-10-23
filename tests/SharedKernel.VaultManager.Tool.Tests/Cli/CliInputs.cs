@@ -18,6 +18,17 @@ internal static class CliInputs
 
     private static readonly KdfConfig FastPbkdf2 = new(KdfType.Pbkdf2Sha256, 5_000);
 
+    /// <summary>A Bitwarden JSON export with one login in the folder <c>Work</c> that has notes.</summary>
+    public static string LoginWithNotesInFolder(string directory, string password, string notes)
+    {
+        var login = BitwardenLogin("bw-github", "GitHub", "alice", password, "https://github.com/login");
+        login["notes"] = notes;
+        login["folderId"] = "f1";
+        var document = JsonNode.Parse(BitwardenJson(login)).ShouldNotBeNull();
+        document["folders"] = new JsonArray(new JsonObject { ["id"] = "f1", ["name"] = "Work" });
+        return Write(directory, "vault.json", document.ToJsonString());
+    }
+
     /// <summary>The same login in both inputs with different passwords and no modification times, so the password needs a decision.</summary>
     public static string[] ConflictingLogins(string directory) =>
     [

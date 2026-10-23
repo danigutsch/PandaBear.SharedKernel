@@ -17,6 +17,65 @@ internal sealed record MergeDecisions(IReadOnlyList<GroupDecision> Groups, Match
     /// <summary>Decisions on secret findings, per input item.</summary>
     public IReadOnlyList<ItemFindingDecisions> Findings { get; init; } = [];
 
+    /// <summary>Decisions on the notes of catalog items, at most one per input item.</summary>
+    public IReadOnlyList<ItemNotesDecision> Notes { get; init; } = [];
+
+    /// <summary>Finds the entry on the notes of an input item.</summary>
+    /// <param name="originKey">Origin key of the item.</param>
+    /// <returns>The entry, or <see langword="null"/> when there is none.</returns>
+    public ItemNotesDecision? FindNotesEntry(string originKey) =>
+        Notes.FirstOrDefault(item => string.Equals(item.OriginKey, originKey, StringComparison.Ordinal));
+
+    /// <summary>Finds the decision on the notes of an input item.</summary>
+    /// <param name="originKey">Origin key of the item.</param>
+    /// <returns>The decision; <see cref="NotesDecision.Pending"/> when there is none.</returns>
+    public NotesDecision FindNotes(string originKey) => FindNotesEntry(originKey)?.Decision ?? NotesDecision.Pending;
+
+    /// <summary>
+    /// Whether the notes of an input item are shared: the decision is <see cref="NotesDecision.Share"/> and was made for
+    /// exactly these notes (<see cref="ItemNotesDecision.NotesSha256"/>).
+    /// </summary>
+    /// <param name="originKey">Origin key of the item.</param>
+    /// <param name="notes">The item's current notes.</param>
+    /// <returns><see langword="true"/> when the notes may be shown and edited.</returns>
+    public bool SharesNotes(string originKey, string notes)
+    {
+        ArgumentNullException.ThrowIfNull(notes);
+
+        return FindNotesEntry(originKey) is { Decision: NotesDecision.Share, NotesSha256: { } hash }
+            && string.Equals(hash, ItemNotesDecision.HashOf(notes), StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Returns these decisions with notes entries updated: every pending entry is dropped, each given entry replaces the
+    /// entry of its item in place or is added, and other entries stay as they are.
+    /// </summary>
+    /// <param name="updates">New entries, such as pending entries for notes that need a decision.</param>
+    /// <returns>The updated decisions.</returns>
+    public MergeDecisions WithNotes(IEnumerable<ItemNotesDecision> updates)
+    {
+        ArgumentNullException.ThrowIfNull(updates);
+
+        Dictionary<string, ItemNotesDecision> byKey = updates.ToDictionary(item => item.OriginKey, StringComparer.Ordinal);
+        var notes = new List<ItemNotesDecision>();
+        foreach (ItemNotesDecision entry in Notes)
+        {
+            if (byKey.Remove(entry.OriginKey, out ItemNotesDecision? update))
+            {
+                notes.Add(update);
+            }
+            else if (entry.Decision != NotesDecision.Pending)
+            {
+                notes.Add(entry);
+            }
+        }
+
+        return this with
+        {
+            Notes = [.. notes, .. updates.Where(item => byKey.ContainsKey(item.OriginKey))]
+        };
+    }
+
     /// <summary>Finds the decision for a field of a group. The first matching decision counts; pending entries are skipped.</summary>
     /// <param name="groupKey">Group key.</param>
     /// <param name="fieldPath">Field path.</param>

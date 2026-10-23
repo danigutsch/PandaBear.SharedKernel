@@ -19,12 +19,14 @@ internal static class VaultCommandLine
     {
         ArgumentNullException.ThrowIfNull(environment);
 
-        return new RootCommand("Inspect, scan, merge, and review password vault exports offline.")
+        return new RootCommand("Inspect, scan, merge, review, and organize password vault exports offline.")
         {
             InspectCommand.Create(environment),
             ScanCommand.Create(environment),
             MergeCommand.Create(environment),
             ReviewCommand.Create(environment),
+            CatalogCommand.Create(environment),
+            ApplyCommand.Create(environment),
         };
     }
 

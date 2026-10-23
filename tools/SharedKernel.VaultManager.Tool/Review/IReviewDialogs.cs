@@ -24,6 +24,12 @@ internal interface IReviewDialogs
     /// <returns>The password, or <see langword="null"/> when the user cancels.</returns>
     string? AskExportPassword();
 
+    /// <summary>Asks a yes-or-no question.</summary>
+    /// <param name="title">Title of the question.</param>
+    /// <param name="message">Value-free question.</param>
+    /// <returns><see langword="true"/> when the user agrees; <see langword="false"/> when the user declines or dismisses it.</returns>
+    bool Confirm(string title, string message);
+
     /// <summary>Shows every key of the review.</summary>
     /// <param name="keys">Keys, in the order to show them.</param>
     void ShowHelp(IReadOnlyList<ReviewKey> keys);

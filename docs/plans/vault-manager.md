@@ -226,8 +226,7 @@ summaries count them with the other attachments to upload.
 ## Commands
 
 - `sharedkernel-vault inspect <inputs...>` shows, per input, the detected format, item counts by type, folders and
-  how many hold no item,
-  items with and without modification times, attachments in the export or missing from it, and read warnings. It
+  how many hold no item, items with and without modification times, attachments in the export or missing from it, and read warnings. It
   writes this report to standard output and shows no values.
 - `sharedkernel-vault scan <inputs...> [--report <file>]` reports secret findings and password health without
   values. It writes a summary to standard output; `--report` writes the full Markdown report.
@@ -242,6 +241,10 @@ summaries count them with the other attachments to upload.
   other entry. The merge warns about decisions whose group, field, origin key, or finding identifier matches
   nothing. Each input is parsed and scanned once, and each password asked once; format detection reads each input
   before that. With `--report`, the merge names the written vault on standard output before it writes the report.
+- `sharedkernel-vault catalog <input> --output <file> [--decisions <file>] [--force]` writes the catalog of one
+  vault file and adds pending notes entries to the decisions file (see Catalog).
+- `sharedkernel-vault apply <input> --catalog <file> --output <file> [--decisions <file>] [--plaintext] [--force]`
+  applies an edited catalog to the file it was made from and writes a Bitwarden export.
 - `sharedkernel-vault review <inputs...> [--decisions <file>] [--output <file>] [--plaintext] [--force]` opens the
   full-screen review UI: groups, a side-by-side field diff, findings, and decisions. See [Review UI](#review-ui).
 
@@ -282,6 +285,32 @@ terminal nor reorder the text around a name. `VaultCommandLine.Invoke` writes Sy
 corrections, and help through `PrintableTextWriter`, which keeps line breaks and replaces the same characters, because
 System.CommandLine repeats arguments verbatim. Report table cells also escape `|`. Report and decisions files are
 created readable only by their owner.
+
+## Catalog
+
+A catalog lets a person or an agent organize a vault without seeing its secrets. `catalog` writes it from one vault
+file, the agent edits only the catalog, and `apply` writes the vault with the edits.
+
+- The catalog holds, per item, its origin key, name, folder, additional folders, favorite, website addresses, notes,
+  and text custom fields, plus read-only information: type, user name, which secrets are present, protected field
+  names, and attachment names and sizes. It is plain JSON, owner-only on Unix, and read strictly: an unknown, missing,
+  or repeated property fails.
+- Redaction: a website address with user info, a query, or a fragment is masked and can only be moved. A text custom
+  field or user name in which the scanner finds a secret is withheld; hidden, boolean, and linked fields show only
+  their names. Passwords, TOTPs, passkeys, password history, and card, identity, and SSH key values are never shown.
+- Notes are withheld until the user decides on them in the decisions file's `notes` list, by editing it or in
+  `review` of the same file: `Share` shows them, `Private` keeps them out, and `Hidden` also moves them into a hidden
+  field named `Notes` on `apply`. `catalog` rebuilds the pending entries, one for each item whose notes have no
+  decision, with the number of findings in them. The scanner can miss a secret, so no notes are shown without a decision. A
+  `Share` decision is bound to the SHA-256 of the notes it shares, recorded by `review` or, for a decision typed into
+  the file, by the first `catalog` run; notes that changed since go back to pending. The hash is of notes the catalog
+  already shows, so it reveals nothing new.
+- `apply` accepts a catalog only for the file it was made from, by file name and SHA-256. It reads the item set from
+  the vault and refuses a catalog that adds, removes, or renames a key, empties a name, sets the text of notes that
+  the decisions file does not share, or changes or removes a masked address. Field order is kept: shown fields fill
+  the places of the shown fields as read, and protected fields keep theirs.
+- The trust boundary is the vault password: only the user can run `catalog` and `apply` on a password-protected
+  vault. An agent that can write the decisions file can share notes, so the commands print how many notes they show.
 
 ## Review UI
 
