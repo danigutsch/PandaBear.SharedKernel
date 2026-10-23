@@ -17,6 +17,7 @@ internal static class CandidateFilter
     /// <summary>Whether a value must never be reported as a secret.</summary>
     /// <param name="value">Candidate value.</param>
     /// <returns><see langword="true"/> when the value is a known false positive.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
     public static bool IsRejected(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -40,6 +41,7 @@ internal static class CandidateFilter
     /// <summary>Whether a value is a template variable, masked value, or common dummy word.</summary>
     /// <param name="value">Trimmed value.</param>
     /// <returns><see langword="true"/> when the value is a placeholder.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
     public static bool IsPlaceholder(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
@@ -97,16 +99,7 @@ internal static class CandidateFilter
             && IPAddress.TryParse(value.Split('/')[0], out _);
     }
 
-    private static bool Matches(Regex pattern, string value)
-    {
-        try
-        {
-            return pattern.IsMatch(value);
-        }
-        catch (RegexMatchTimeoutException)
-        {
-            // An anchored, bounded filter timing out means the value is unusual; keep it for review.
-            return false;
-        }
-    }
+    // An anchored, bounded filter that times out, even when run again, means the value is unusual; keep it for review.
+    private static bool Matches(Regex pattern, string value) =>
+        PatternRetry.TryRun(() => pattern.IsMatch(value), out bool matched) && matched;
 }

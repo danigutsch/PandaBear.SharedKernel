@@ -1,3 +1,5 @@
+using PandaBear.VaultManager.Tool.Formats;
+
 namespace PandaBear.VaultManager.Tool.Pipeline;
 
 /// <summary>Scanned items and every warning raised while reading and scanning them.</summary>
@@ -6,4 +8,8 @@ namespace PandaBear.VaultManager.Tool.Pipeline;
 /// <param name="Warnings">
 /// Read warnings, then attachment scanning warnings. Warnings name items, fields, and files, never values.
 /// </param>
-internal sealed record ScannedVault(IReadOnlyList<string> InputPaths, IReadOnlyList<ScannedItem> Items, IReadOnlyList<string> Warnings);
+internal sealed record ScannedVault(IReadOnlyList<string> InputPaths, IReadOnlyList<ScannedItem> Items, IReadOnlyList<string> Warnings)
+{
+    /// <summary>Attachment folders of Bitwarden zip inputs whose files belong to no item, as loaded.</summary>
+    public IReadOnlyList<UnassignedAttachmentFolder> UnassignedAttachmentFolders { get; init; } = [];
+}

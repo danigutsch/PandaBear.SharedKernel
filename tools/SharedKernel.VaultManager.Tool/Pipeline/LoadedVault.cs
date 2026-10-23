@@ -1,3 +1,5 @@
+using PandaBear.VaultManager.Tool.Formats;
+
 namespace PandaBear.VaultManager.Tool.Pipeline;
 
 /// <summary>Items read from every input file and the warnings raised while reading them.</summary>
@@ -7,4 +9,11 @@ namespace PandaBear.VaultManager.Tool.Pipeline;
 /// Lossy conversions or skipped data, each prefixed with the input file name. Warnings name items and fields, never
 /// values.
 /// </param>
-internal sealed record LoadedVault(IReadOnlyList<string> InputPaths, IReadOnlyList<SourceItem> Items, IReadOnlyList<string> Warnings);
+internal sealed record LoadedVault(IReadOnlyList<string> InputPaths, IReadOnlyList<SourceItem> Items, IReadOnlyList<string> Warnings)
+{
+    /// <summary>
+    /// Attachment folders of Bitwarden zip inputs whose files belong to no item, in input order. The user uploads their
+    /// files by hand.
+    /// </summary>
+    public IReadOnlyList<UnassignedAttachmentFolder> UnassignedAttachmentFolders { get; init; } = [];
+}

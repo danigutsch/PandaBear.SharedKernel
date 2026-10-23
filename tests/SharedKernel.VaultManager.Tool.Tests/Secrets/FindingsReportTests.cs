@@ -34,6 +34,21 @@ public sealed class FindingsReportTests
     }
 
     [Fact]
+    public void Findings_report_replaces_control_characters_in_item_names_in_both_formats()
+    {
+        var item = SecretTestItems.Login(name: "visible\u001b[31m item\u009b", notes: "Password: Tr0ub4dor&3x");
+        var findings = SecretScanner.Default.Scan(item);
+
+        string markdown = FindingsReport.Render([new ItemFindings(item.Name, findings)], ReportFormat.Markdown);
+        string text = FindingsReport.Render([new ItemFindings(item.Name, findings)], ReportFormat.Text);
+
+        markdown.ToCharArray().Where(char.IsControl).ShouldAllSatisfy(character => character.ShouldBe('\n'));
+        text.ToCharArray().Where(char.IsControl).ShouldAllSatisfy(character => character.ShouldBeOneOf('\n', '\t'));
+        markdown.ShouldContain("| visible\uFFFD[31m item\uFFFD |", StringComparison.Ordinal);
+        text.ShouldStartWith("visible\uFFFD[31m item\uFFFD\t", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Finding_to_string_never_contains_secret_values()
     {
         string token = TestSecrets.GitHubToken("ghp", 71);

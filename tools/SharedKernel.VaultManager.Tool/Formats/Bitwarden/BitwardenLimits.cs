@@ -20,8 +20,11 @@ internal static class BitwardenLimits
     /// <summary>Password history entries kept by Bitwarden clients on import.</summary>
     public const int PasswordHistoryEntries = 5;
 
-    /// <summary>Import request size limit of Vaultwarden, in bytes.</summary>
-    public const long VaultwardenImportBytes = 20L * 1024 * 1024;
+    /// <summary>
+    /// Import request size limit of Vaultwarden, in bytes: Rocket's <c>20.megabytes()</c>, where a megabyte is 1,000,000
+    /// bytes. The request holds every value encrypted, so it is larger than the export file.
+    /// </summary>
+    public const long VaultwardenImportBytes = 20_000_000;
 
     /// <summary>Length of a value once encrypted as a Bitwarden type 2 encrypted string.</summary>
     /// <param name="value">Plaintext value.</param>

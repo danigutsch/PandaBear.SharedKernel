@@ -1,6 +1,7 @@
 using System.Globalization;
 using PandaBear.VaultManager.Tool.Formats;
 using PandaBear.VaultManager.Tool.Formats.Bitwarden;
+using PandaBear.VaultManager.Tool.Merge;
 using PandaBear.VaultManager.Tool.Pipeline;
 using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
@@ -191,10 +192,10 @@ public sealed class PipelineOutputTests : IDisposable
         string input = Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Example", "alice", Password, "https://example.com")));
         var prompts = new TestPrompts(ExportPassword);
         var pipeline = new VaultPipeline(prompts.Environment());
-        var scanned = VaultPipeline.Scan(pipeline.Load([input]));
+        var scanned = VaultPipeline.Scan(pipeline.Load([input], TestContext.Current.CancellationToken), TestContext.Current.CancellationToken);
 
         var run = () => pipeline.Run(new PipelineRequest([input]) { Output = new PipelineOutput(string.Empty) });
-        var merge = () => pipeline.Merge(scanned, new MergeRequest { Output = new PipelineOutput(string.Empty) });
+        var merge = () => pipeline.Merge(scanned, new MergeRequest { Output = new PipelineOutput(string.Empty) }, TestContext.Current.CancellationToken);
 
         run.ShouldThrow<ArgumentException>();
         merge.ShouldThrow<ArgumentException>();
@@ -291,6 +292,50 @@ public sealed class PipelineOutputTests : IDisposable
         result.OutputWritten.ShouldBeFalse();
         File.Exists(output).ShouldBeFalse();
         prompts.NewPasswordPrompts.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Run_does_not_write_while_a_proposed_finding_has_no_decision()
+    {
+        string[] codes = PipelineSecrets.GitHubRecoveryCodes(910);
+        string keeper = Write(directory, "keeper.json", KeeperJson(
+            KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, "Gh-notes-Passw0rd!"))));
+        string output = Path.Combine(directory, "merged.json");
+        var prompts = new TestPrompts(ExportPassword);
+        var pipeline = new VaultPipeline(prompts.Environment());
+
+        var result = pipeline.Run(new PipelineRequest([keeper]) { Output = new PipelineOutput(output) });
+
+        result.HasUnresolvedConflicts.ShouldBeFalse();
+        result.OutputWritten.ShouldBeFalse();
+        File.Exists(output).ShouldBeFalse();
+        prompts.NewPasswordPrompts.ShouldBeEmpty();
+        var proposed = result.Findings.ShouldHaveSingleItem().Findings.ShouldHaveSingleItem(finding => !finding.IsPreAccepted);
+        var pending = result.PendingFindings.ShouldHaveSingleItem();
+        pending.OriginKey.ShouldBe("keeper|keeper.json|rec-github");
+        pending.ItemName.ShouldBe("GitHub");
+        pending.Choices.ShouldBe([new FindingChoice(proposed.Id, FindingDecision.Pending)]);
+        result.PendingFindingCount.ShouldBe(1);
+    }
+
+    [Fact]
+    public void Run_writes_once_every_proposed_finding_is_decided_and_applies_pre_accepted_findings_without_a_decision()
+    {
+        string[] codes = PipelineSecrets.GitHubRecoveryCodes(920);
+        string keeper = Write(directory, "keeper.json", KeeperJson(
+            KeeperLogin("rec-github", "GitHub", "alice", url: "https://github.com", notes: PipelineSecrets.RecoveryNotes(codes, "Gh-notes-Passw0rd!"))));
+        string output = Path.Combine(directory, "merged.json");
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+        var findings = pipeline.Run(new PipelineRequest([keeper])).Findings.ShouldHaveSingleItem();
+        var proposed = findings.Findings.ShouldHaveSingleItem(finding => !finding.IsPreAccepted);
+        var decisions = PipelineDecisions.Findings(findings.OriginKey, new FindingChoice(proposed.Id, FindingDecision.Rejected));
+
+        var result = pipeline.Run(new PipelineRequest([keeper]) { Decisions = decisions, Output = new PipelineOutput(output, Plaintext: true) });
+
+        result.PendingFindings.ShouldBeEmpty();
+        result.OutputWritten.ShouldBeTrue();
+        var item = BitwardenJsonReader.Read(File.ReadAllText(output), "merged.json").Items.ShouldHaveSingleItem();
+        item.Fields.ShouldHaveSingleItem().Name.ShouldBe("Recovery codes");
     }
 
     [Fact]

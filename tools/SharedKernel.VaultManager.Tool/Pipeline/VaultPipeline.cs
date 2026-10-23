@@ -22,6 +22,7 @@ namespace PandaBear.VaultManager.Tool.Pipeline;
 /// <see cref="InvalidOperationException"/>. Their messages name files and items, never vault values; an inner exception
 /// from a parser can quote input text, so report <see cref="Exception.Message"/> rather than the exception chain.
 /// <see cref="ArgumentException"/> means the caller passed no input or an empty output path.
+/// <see cref="OperationCanceledException"/> means the caller canceled its token; a canceled stage writes nothing.
 /// </remarks>
 /// <param name="environment">Password prompts and clock.</param>
 internal sealed class VaultPipeline(VaultCommandEnvironment environment)
@@ -40,16 +41,24 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
     /// input asks for its password through <see cref="VaultCommandEnvironment.ReadPassword"/>.
     /// </summary>
     /// <param name="inputPaths">Vault export files, in order.</param>
-    /// <returns>The input paths, the items in input order with their input paths, and the read warnings.</returns>
+    /// <param name="ct">Observed before each input file is read.</param>
+    /// <returns>
+    /// The input paths, the items in input order with their input paths, the read warnings, and the attachment folders of
+    /// Bitwarden zip inputs whose files belong to no item.
+    /// </returns>
     /// <exception cref="ArgumentException">No input file was given.</exception>
     /// <exception cref="IOException">
     /// An input file does not exist, is a directory, or cannot be read, also when access to it is denied.
     /// </exception>
-    /// <exception cref="InvalidDataException">An input is too large, unsupported, malformed, account-restricted, or its password is wrong.</exception>
+    /// <exception cref="InvalidDataException">
+    /// An input is too large, unsupported, malformed, account-restricted, or its password is wrong. The message starts with
+    /// the input's file name, followed by the reader's message; the reader's exception is the inner exception.
+    /// </exception>
     /// <exception cref="InvalidOperationException">
     /// The password prompt of a password-protected input failed, for example because standard input is not a terminal.
     /// </exception>
-    public LoadedVault Load(IReadOnlyList<string> inputPaths)
+    /// <exception cref="OperationCanceledException"><paramref name="ct"/> is canceled.</exception>
+    public LoadedVault Load(IReadOnlyList<string> inputPaths, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(inputPaths);
         if (inputPaths.Count == 0)
@@ -60,17 +69,20 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         string[] paths = [.. inputPaths];
         var read = new List<(VaultItem Item, string InputPath)>();
         var warnings = new List<string>();
+        var unassignedFolders = new List<UnassignedAttachmentFolder>();
         foreach (string path in paths)
         {
-            VaultReadResult result = VaultFileReader.Read(path, fileName => environment.ReadPassword("Password for " + fileName));
-            read.AddRange(result.Export.Items.Select(item => (item, path)));
+            ct.ThrowIfCancellationRequested();
             string inputName = Path.GetFileName(path);
+            VaultReadResult result = Read(path, inputName);
+            read.AddRange(result.Export.Items.Select(item => (item, path)));
             warnings.AddRange(result.Warnings.Select(warning => inputName + ": " + warning));
+            unassignedFolders.AddRange(result.UnassignedAttachmentFolders);
         }
 
         IReadOnlyList<string> keys = OriginKeys.Compute([.. read.Select(entry => entry.Item)]);
         SourceItem[] items = [.. read.Select((entry, index) => new SourceItem(SshKeyNormalizer.Normalize(entry.Item), keys[index], entry.InputPath))];
-        return new LoadedVault(paths, items, warnings);
+        return new LoadedVault(paths, items, warnings) { UnassignedAttachmentFolders = unassignedFolders };
     }
 
     /// <summary>
@@ -80,8 +92,11 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
     /// <see cref="MaxAttachmentFindings"/> findings.
     /// </summary>
     /// <param name="vault">Loaded items.</param>
+    /// <param name="ct">Observed before each item and each attachment is scanned.</param>
     /// <returns>The input paths, the items with their findings and attachment texts, and every warning so far.</returns>
-    public static ScannedVault Scan(LoadedVault vault)
+    /// <exception cref="ArgumentNullException"><paramref name="vault"/> is <see langword="null"/>.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="ct"/> is canceled.</exception>
+    public static ScannedVault Scan(LoadedVault vault, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(vault);
 
@@ -90,11 +105,13 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         using var archives = new InputArchives();
         foreach (SourceItem source in vault.Items)
         {
+            ct.ThrowIfCancellationRequested();
             var findings = new List<SecretFinding>(SecretScanner.Default.Scan(source.Item));
             var texts = new Dictionary<string, string>(StringComparer.Ordinal);
             var attachments = new List<AttachmentRef>(source.Item.Attachments.Count);
             foreach (AttachmentRef attachment in source.Item.Attachments)
             {
+                ct.ThrowIfCancellationRequested();
                 if (attachment.SourcePath is not { } entryPath || ReadAttachment(source, attachment, entryPath, archives, warnings) is not { } content)
                 {
                     attachments.Add(attachment);
@@ -119,14 +136,16 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
             items.Add(new ScannedItem(scannedSource, findings, texts));
         }
 
-        return new ScannedVault(vault.InputPaths, items, warnings);
+        return new ScannedVault(vault.InputPaths, items, warnings) { UnassignedAttachmentFolders = vault.UnassignedAttachmentFolders };
     }
 
     /// <summary>
-    /// Runs every stage: checks the output, reads and scans the inputs, and continues with <see cref="Merge"/>.
+    /// Runs every stage: checks the output, reads and scans the inputs, and continues with <see cref="Merge"/>. It observes
+    /// no cancellation token; <see cref="Load"/>, <see cref="Scan"/>, and <see cref="Merge"/> each take one.
     /// </summary>
     /// <param name="request">Inputs, decisions, policy, and output.</param>
     /// <returns>The merged vault, reports, problems, and warnings.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">No input file was given, or the output path is empty.</exception>
     /// <exception cref="IOException">
     /// The output cannot be used: it names an input, also through a symbolic link or in different case; its directory does
@@ -134,7 +153,10 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
     /// Also thrown when an input is missing, is a directory, or cannot be read, or the output cannot be written, including
     /// when access is denied.
     /// </exception>
-    /// <exception cref="InvalidDataException">An input is too large, unsupported, malformed, account-restricted, or its password is wrong.</exception>
+    /// <exception cref="InvalidDataException">
+    /// An input is too large, unsupported, malformed, account-restricted, or its password is wrong. The message starts with
+    /// the input's file name.
+    /// </exception>
     /// <exception cref="InvalidOperationException">
     /// A password prompt failed, for example because standard input is not a terminal, or the password for an encrypted
     /// output is shorter than <see cref="PasswordReader.MinimumNewPasswordLength"/>. Nothing is written then.
@@ -152,13 +174,19 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
 
     /// <summary>
     /// Places the accepted findings of a scanned vault, then matches, merges, and analyzes it. The merged vault is written
-    /// only when an output is requested, no field needs a decision, and the writer reports no error; the password of an
+    /// only when an output is requested, no field needs a decision, every finding that is not pre-accepted is accepted or
+    /// rejected (<see cref="PipelineResult.PendingFindings"/> is empty), and the writer reports no error; the password of an
     /// encrypted output is then read through <see cref="VaultCommandEnvironment.ReadNewPassword"/>. Inputs are not read
     /// again and their passwords are not asked for, so the review UI can merge again after each change of decisions.
     /// </summary>
     /// <param name="scanned">Vault from <see cref="Scan"/>; it is not changed.</param>
     /// <param name="request">Decisions, policy, and output.</param>
+    /// <param name="ct">
+    /// Observed before each stage, after the new-password prompt, before the output is written, and before the written file
+    /// is moved into place.
+    /// </param>
     /// <returns>The merged vault, reports, problems, and warnings.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="scanned"/> or <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">The output path is empty.</exception>
     /// <exception cref="IOException">
     /// The output cannot be used, as described for <see cref="Run"/>, checked against the inputs of
@@ -168,7 +196,10 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
     /// The new-password prompt failed, or the password for an encrypted output is shorter than
     /// <see cref="PasswordReader.MinimumNewPasswordLength"/>. Nothing is written then.
     /// </exception>
-    public PipelineResult Merge(ScannedVault scanned, MergeRequest request)
+    /// <exception cref="OperationCanceledException">
+    /// <paramref name="ct"/> is canceled. Neither the output nor a temporary file is written then.
+    /// </exception>
+    public PipelineResult Merge(ScannedVault scanned, MergeRequest request, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(scanned);
         ArgumentNullException.ThrowIfNull(request);
@@ -177,15 +208,22 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
             CheckOutput(requested, scanned.InputPaths);
         }
 
+        ct.ThrowIfCancellationRequested();
         PlacedVault placed = Place(scanned, request.Decisions);
+        ItemFindingDecisions[] pendingFindings = PendingFindings(placed.Findings, request.Decisions);
+        ct.ThrowIfCancellationRequested();
         MatchResult match = DuplicateMatcher.Match(placed.Items, request.Decisions.Overrides, placed.OriginKeys);
+        ct.ThrowIfCancellationRequested();
         MergeResult merge = new Merger(environment.Time).Merge(match.Groups, request.Policy, request.Decisions);
+        ct.ThrowIfCancellationRequested();
         PasswordHealthReport health = PasswordHealthReport.Analyze(merge.Merged);
         BitwardenWriteResult written = BitwardenJsonWriter.Write(merge.Merged);
+        bool decided = merge.Unresolved.Count == 0 && pendingFindings.Length == 0;
         bool outputWritten = false;
-        if (request.Output is { } output && merge.Unresolved.Count == 0 && written.Errors.Count == 0)
+        if (request.Output is { } output && decided && written.Errors.Count == 0)
         {
-            WriteOutput(written.Json, output);
+            ct.ThrowIfCancellationRequested();
+            WriteOutput(written.Json, output, ct);
             outputWritten = true;
         }
 
@@ -194,17 +232,33 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
             Merged = merge.Merged,
             Match = match,
             Unresolved = merge.Unresolved,
+            PendingFindings = pendingFindings,
             MergeReport = merge.Report,
             Findings = placed.Findings,
             PlacementProblems = placed.Problems,
             PasswordHealth = health,
             ManualAttachments = ManualAttachments(match, merge.Merged),
+            UnassignedAttachmentFolders = scanned.UnassignedAttachmentFolders,
             WriteErrors = written.Errors,
             WriteWarnings = written.Warnings,
             ReadWarnings = scanned.Warnings,
             Output = request.Output,
             OutputWritten = outputWritten,
         };
+    }
+
+    // The reader's message is the tool's own and names no value, so the input's name goes in front of it. A parser's
+    // exception, whose message can quote the input, stays inside the reader's exception.
+    private VaultReadResult Read(string path, string inputName)
+    {
+        try
+        {
+            return VaultFileReader.Read(path, fileName => environment.ReadPassword("Password for " + fileName));
+        }
+        catch (InvalidDataException exception)
+        {
+            throw new InvalidDataException(inputName + ": " + exception.Message, exception);
+        }
     }
 
     // Reads an attachment from its input archive: the SHA-256 of its bytes, and its text when it is a text kind. Returns
@@ -305,6 +359,22 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         return new PlacedVault(items, keys, findings, problems);
     }
 
+    // A finding that is not pre-accepted is applied only when accepted, so it waits for an accept or reject decision. A
+    // pre-accepted finding is applied unless rejected and needs none.
+    private static ItemFindingDecisions[] PendingFindings(IReadOnlyList<ItemFindingsResult> findings, MergeDecisions decisions) =>
+    [
+        .. findings
+            .Select(item => new ItemFindingDecisions(
+                item.OriginKey,
+                [
+                    .. item.Findings
+                        .Where(finding => !finding.IsPreAccepted && decisions.FindFinding(item.OriginKey, finding.Id) is null)
+                        .Select(finding => new FindingChoice(finding.Id, FindingDecision.Pending)),
+                ],
+                item.ItemName))
+            .Where(item => item.Choices.Count > 0),
+    ];
+
     // An item created by placement is named after its source item and the finding that created it, so it has the same
     // origin key on every run and matches and merges like an item read from a file. A suffix keeps the key unique when an
     // input item already has it.
@@ -323,53 +393,20 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         return (adopted, key);
     }
 
+    // The files listed for a merged item are the ones it keeps, each pointing to the member whose copy it keeps.
     private static List<ManualAttachment> ManualAttachments(MatchResult match, VaultExport merged)
     {
         var attachments = new List<ManualAttachment>();
         for (int index = 0; index < match.Groups.Count; index++)
         {
             string itemName = merged.Items[index].Name;
-            foreach ((VaultItem member, AttachmentRef attachment) in DistinctFiles(match.Groups[index].Members))
+            foreach ((VaultItem member, AttachmentRef attachment) in GroupAttachments.Choose(match.Groups[index].Members))
             {
                 attachments.Add(new ManualAttachment(itemName, attachment.FileName, member.Origin.SourceFile, attachment.SourcePath));
             }
         }
 
         return attachments;
-    }
-
-    // Each attachment of a member is a file of its own, even when two share a name. An attachment of another member is a
-    // copy of a listed file only when both were read from their archives and have the same name and content hash; the
-    // n-th such attachment of a member is a copy of the n-th listed file. A file whose content is unknown is listed for
-    // every member that has it. Members are visited newest first, as GroupMerger orders them, so a file found on several
-    // members points to the newest member's copy, the one the merged item keeps.
-    private static List<(VaultItem Member, AttachmentRef Attachment)> DistinctFiles(IReadOnlyList<VaultItem> members)
-    {
-        var files = new List<(VaultItem Member, AttachmentRef Attachment)>();
-        var listed = new Dictionary<(string FileName, string ContentHash), int>();
-        foreach (VaultItem member in members.OrderByDescending(member => member.LastModified.HasValue).ThenByDescending(member => member.LastModified))
-        {
-            var occurrences = new Dictionary<(string FileName, string ContentHash), int>();
-            foreach (AttachmentRef attachment in member.Attachments)
-            {
-                if (attachment.ContentHash is not { } contentHash)
-                {
-                    files.Add((member, attachment));
-                    continue;
-                }
-
-                var file = (attachment.FileName, contentHash);
-                int occurrence = occurrences.GetValueOrDefault(file) + 1;
-                occurrences[file] = occurrence;
-                if (occurrence > listed.GetValueOrDefault(file))
-                {
-                    listed[file] = occurrence;
-                    files.Add((member, attachment));
-                }
-            }
-        }
-
-        return files;
     }
 
     // Checked before any input is read and again before merging, so a bad output fails before the password prompts.
@@ -400,15 +437,19 @@ internal sealed class VaultPipeline(VaultCommandEnvironment environment)
         }
     }
 
-    private void WriteOutput(string json, PipelineOutput output)
+    // The token is checked again right before the write, so a merge canceled during the password prompt or the key
+    // derivation writes nothing, and SecureFile checks it once more before it moves the written file into place.
+    private void WriteOutput(string json, PipelineOutput output, CancellationToken ct)
     {
-        string contents = output.Plaintext ? json : Encrypt(json);
-        SecureFile.WriteAllText(output.Path, contents, output.Force);
+        string contents = output.Plaintext ? json : Encrypt(json, ct);
+        ct.ThrowIfCancellationRequested();
+        SecureFile.WriteAllText(output.Path, contents, output.Force, ct);
     }
 
-    private string Encrypt(string json)
+    private string Encrypt(string json, CancellationToken ct)
     {
         string password = environment.ReadNewPassword(NewExportPasswordPrompt);
+        ct.ThrowIfCancellationRequested();
         if (password.Length < PasswordReader.MinimumNewPasswordLength)
         {
             throw new InvalidOperationException(string.Create(

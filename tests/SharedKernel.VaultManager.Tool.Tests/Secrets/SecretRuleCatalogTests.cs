@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
@@ -37,8 +38,29 @@ public sealed class SecretRuleCatalogTests
         {
             rule.Source.ShouldNotBeEmpty();
             rule.Keywords.ShouldNotBeEmpty();
-            rule.Pattern.MatchTimeout.ShouldBe(TimeSpan.FromMilliseconds(50));
+            rule.Pattern.MatchTimeout.ShouldBe(TimeSpan.FromSeconds(1));
         });
+    }
+
+    [Fact]
+    public void Patterns_used_outside_the_catalog_time_out_only_after_one_second()
+    {
+        Regex[] patterns =
+        [
+            SecretPatterns.AwsSecretCandidate(),
+            SecretPatterns.MaFileSharedSecret(),
+            SecretPatterns.MaFileRevocationCode(),
+            SecretPatterns.NotesLine(),
+            SecretPatterns.Uuid(),
+            SecretPatterns.DateOrTime(),
+            SecretPatterns.SemVer(),
+            SecretPatterns.Email(),
+            SecretPatterns.PlainUrl(),
+            SecretPatterns.FilePath(),
+            SecretPatterns.TemplatePlaceholder(),
+        ];
+
+        patterns.ShouldAllSatisfy(pattern => pattern.MatchTimeout.ShouldBe(TimeSpan.FromSeconds(1)));
     }
 
     [Fact]

@@ -91,4 +91,49 @@ public sealed class BitwardenJsonReaderTests
 
         action.ShouldThrow<InvalidDataException>();
     }
+
+    [Theory]
+    [InlineData("""{"encrypted":false,"folders":[],"items":[{"id":"i","type":2,"name":"n"},null]}""", "Item 2 of the Bitwarden export is null.")]
+    [InlineData("""{"encrypted":false,"folders":[{"id":"f","name":"Work"},null],"items":[]}""", "Folder 2 of the Bitwarden export is null.")]
+    [InlineData("""{"encrypted":false,"collections":[null],"items":[]}""", "Collection 1 of the Bitwarden export is null.")]
+    [InlineData("""{"encrypted":false,"folders":[],"items":[{"id":"i","type":2,"name":"n","fields":[null]}]}""", "Item 1 of the Bitwarden export has a null entry in its custom fields.")]
+    [InlineData("""{"encrypted":false,"folders":[],"items":[{"id":"i","type":1,"name":"n","passwordHistory":[null]}]}""", "Item 1 of the Bitwarden export has a null entry in its password history.")]
+    [InlineData("""{"encrypted":false,"collections":[],"items":[{"id":"i","type":2,"name":"n","collectionIds":[null]}]}""", "Item 1 of the Bitwarden export has a null entry in its collection IDs.")]
+    [InlineData("""{"encrypted":false,"folders":[],"items":[{"id":"i","type":1,"name":"n","login":{"uris":[null]}}]}""", "Item 1 of the Bitwarden export has a null entry in its URIs.")]
+    [InlineData("""{"encrypted":false,"folders":[],"items":[{"id":"i","type":1,"name":"n","login":{"fido2Credentials":[null]}}]}""", "Item 1 of the Bitwarden export has a null entry in its passkeys.")]
+    public void Read_export_with_a_null_entry_throws_invalid_data_that_names_the_entry_by_position(string json, string message)
+    {
+        var action = () => BitwardenJsonReader.Read(json, "null-entry.json");
+
+        var exception = action.ShouldThrow<InvalidDataException>();
+        exception.Message.ShouldBe(message);
+    }
+
+    [Theory]
+    [InlineData("folders", "Folders 1 and 3 of the Bitwarden export have the same ID.")]
+    [InlineData("collections", "Collections 1 and 3 of the Bitwarden export have the same ID.")]
+    public void Read_export_whose_folders_repeat_an_ID_throws_invalid_data_that_names_them_by_position(string list, string message)
+    {
+        string json = "{\"encrypted\":false,\"" + list + "\":[{\"id\":\"f1\",\"name\":\"Work\"},{\"id\":\"f2\",\"name\":\"Home\"},{\"id\":\"f1\",\"name\":\"Bank\"}],"
+            + "\"items\":[{\"id\":\"i\",\"type\":2,\"name\":\"n\",\"folderId\":\"f1\"}]}";
+
+        var action = () => BitwardenJsonReader.Read(json, "duplicate-folders.json");
+
+        var exception = action.ShouldThrow<InvalidDataException>();
+        exception.Message.ShouldBe(message);
+    }
+
+    [Fact]
+    public void Read_ignores_null_entries_of_deleted_items_it_does_not_read()
+    {
+        const string json = """
+            {"encrypted":false,"folders":[],"items":[
+              {"id":"deleted","type":1,"name":"Old","deletedDate":"2026-01-01T00:00:00Z","fields":[null],"login":{"uris":[null]}},
+              {"id":"kept","type":2,"name":"Kept"}]}
+            """;
+
+        var item = BitwardenJsonReader.Read(json, "deleted.json").Items.ShouldHaveSingleItem();
+
+        item.Name.ShouldBe("Kept");
+    }
 }

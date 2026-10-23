@@ -1,15 +1,20 @@
 using System.Globalization;
 using System.Text;
+using PandaBear.VaultManager.Tool.IO;
 
 namespace PandaBear.VaultManager.Tool.Secrets;
 
-/// <summary>Renders findings without values: item, kind, confidence, location, length, and target.</summary>
+/// <summary>
+/// Renders findings without values: item, kind, confidence, location, length, and target. Every cell is printed on one line
+/// with every control character made printable by <see cref="PrintableText"/>.
+/// </summary>
 internal static class FindingsReport
 {
     /// <summary>Renders a report.</summary>
     /// <param name="items">Findings per item.</param>
     /// <param name="format">Output format.</param>
     /// <returns>Report text.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="items"/> is <see langword="null"/>.</exception>
     public static string Render(IEnumerable<ItemFindings> items, ReportFormat format)
     {
         ArgumentNullException.ThrowIfNull(items);
@@ -41,7 +46,7 @@ internal static class FindingsReport
                 }
                 else
                 {
-                    builder.AppendJoin("\t", cells.Select(cell => cell.Replace('\n', ' ').Replace('\t', ' '))).Append('\n');
+                    builder.AppendJoin("\t", cells.Select(PrintableText.OneLine)).Append('\n');
                 }
             }
         }
@@ -49,8 +54,5 @@ internal static class FindingsReport
         return builder.ToString();
     }
 
-    private static string Escape(string cell)
-    {
-        return cell.Replace("|", "\\|", StringComparison.Ordinal).Replace('\n', ' ').Replace('\r', ' ');
-    }
+    private static string Escape(string cell) => PrintableText.TableCell(cell);
 }

@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json.Nodes;
 using PandaBear.VaultManager.Tool.Crypto;
 using PandaBear.VaultManager.Tool.Formats.Bitwarden;
@@ -141,6 +142,99 @@ public sealed class BitwardenJsonWriterTests
         result.Errors[2].ShouldStartWith("\"Keeper import\": the value of custom field 4 \"API key\" is too long", StringComparison.Ordinal);
         result.Errors.ShouldAllSatisfy(error => error.ShouldNotContain("kkkk", StringComparison.Ordinal));
         result.Errors.ShouldAllSatisfy(error => error.ShouldNotContain("third grade", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Write_warns_when_the_estimated_import_request_of_many_short_values_exceeds_the_vaultwarden_limit()
+    {
+        // Each one-character value becomes a 96-character encrypted string in the import request, so 5,000 items with
+        // 41 such values each need about 26 MB, although their export JSON takes about 14 MB.
+        VaultItem[] items =
+        [
+            .. Enumerable.Range(0, 5_000).Select(_ => new VaultItem
+            {
+                Type = VaultItemType.SecureNote,
+                Name = "n",
+                Fields = [.. Enumerable.Range(0, 20).Select(position => new CustomField("f", "v", CustomFieldType.Text))],
+                Origin = Origin,
+            }),
+        ];
+
+        var result = BitwardenJsonWriter.Write(new VaultExport(items));
+
+        long thirdLargerJson = Encoding.UTF8.GetByteCount(result.Json) * 4L / 3;
+        thirdLargerJson.ShouldBeLessThan(BitwardenLimits.VaultwardenImportBytes);
+        string warning = result.Warnings.ShouldHaveSingleItem();
+        warning.ShouldContain("estimated", StringComparison.Ordinal);
+        warning.ShouldContain("20,000,000 bytes", StringComparison.Ordinal);
+        warning.ShouldNotContain("split", StringComparison.Ordinal);
+        BitwardenLimits.VaultwardenImportBytes.ShouldBe(20_000_000);
+    }
+
+    [Fact]
+    public void Write_does_not_warn_about_the_import_request_of_an_export_well_under_the_limit()
+    {
+        VaultItem[] items =
+        [
+            .. Enumerable.Range(0, 500).Select(_ => new VaultItem
+            {
+                Type = VaultItemType.SecureNote,
+                Name = "n",
+                Fields = [.. Enumerable.Range(0, 20).Select(position => new CustomField("f", "v", CustomFieldType.Text))],
+                Origin = Origin,
+            }),
+        ];
+
+        var result = BitwardenJsonWriter.Write(new VaultExport(items));
+
+        result.Warnings.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Write_counts_the_encrypted_checksum_that_a_client_sends_with_each_login_URI()
+    {
+        // A client sends the encrypted SHA-256 checksum of each website address with it, 153 bytes in the request. These
+        // logins stay below the limit without the checksums and exceed it with them.
+        VaultItem[] items =
+        [
+            .. Enumerable.Range(0, 1_800).Select(_ => new VaultItem
+            {
+                Type = VaultItemType.Login,
+                Name = "n",
+                Login = new LoginData { Uris = [.. Enumerable.Range(0, 50).Select(position => new LoginUri("u"))] },
+                Origin = Origin,
+            }),
+        ];
+
+        var result = BitwardenJsonWriter.Write(new VaultExport(items));
+
+        long compactJson = Encoding.UTF8.GetByteCount(JsonNode.Parse(result.Json).ShouldNotBeNull().ToJsonString());
+        long withoutChecksums = compactJson + (items.Length * 51 * 95L);
+        withoutChecksums.ShouldBeLessThan(BitwardenLimits.VaultwardenImportBytes);
+        result.Warnings.ShouldHaveSingleItem().ShouldContain("estimated", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Write_estimates_the_import_request_from_compact_JSON_without_the_indentation_of_the_export()
+    {
+        // A client posts compact JSON. These identities hold no value but their name, so the indentation of the export is
+        // a large part of it; counted, it would push the estimate above the limit.
+        VaultItem[] items =
+        [
+            .. Enumerable.Range(0, 24_000).Select(_ => new VaultItem
+            {
+                Type = VaultItemType.Identity,
+                Name = "n",
+                Identity = new IdentityData(),
+                Origin = Origin,
+            }),
+        ];
+
+        var result = BitwardenJsonWriter.Write(new VaultExport(items));
+
+        long withIndentation = Encoding.UTF8.GetByteCount(result.Json) + (items.Length * 95L);
+        withIndentation.ShouldBeGreaterThan(BitwardenLimits.VaultwardenImportBytes);
+        result.Warnings.ShouldBeEmpty();
     }
 
     [Theory]

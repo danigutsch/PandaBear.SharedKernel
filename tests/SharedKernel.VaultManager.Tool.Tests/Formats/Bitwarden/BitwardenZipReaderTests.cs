@@ -41,6 +41,26 @@ public sealed class BitwardenZipReaderTests : IDisposable
     }
 
     [Fact]
+    public void Read_lists_the_files_of_folders_that_match_no_item_or_several_items()
+    {
+        var result = BitwardenZipReader.Read(BitwardenZipFixture.Write(directory));
+
+        var folders = result.UnassignedAttachmentFolders;
+        folders.Select(folder => (folder.SourceFile, folder.FolderName, folder.MatchingItemCount)).ShouldBe(
+        [
+            ("export.zip", "Dup", 2),
+            ("export.zip", "Dup_1", 2),
+            ("export.zip", "Orphan", 0),
+        ]);
+        folders.SelectMany(folder => folder.Files).ShouldBe(
+        [
+            new AttachmentRef("one.txt", 1, "attachments/Dup/one.txt"),
+            new AttachmentRef("two.txt", 1, "attachments/Dup_1/two.txt"),
+            new AttachmentRef("lost.txt", 1, "attachments/Orphan/lost.txt"),
+        ]);
+    }
+
+    [Fact]
     public void Read_zip_without_data_json_throws_invalid_data()
     {
         string path = Path.Combine(directory, "empty.zip");

@@ -414,6 +414,45 @@ public sealed class MergerTests
     }
 
     [Fact]
+    public void Merge_keeps_two_files_with_one_name_and_size_whose_content_differs()
+    {
+        var keeper = Keeper(Login(OldPassword)) with { Attachments = [new AttachmentRef("scan.pdf", 100, "files/keeper-scan") { ContentHash = "aa01" }] };
+        var bitwarden = Bitwarden(Login(OldPassword)) with { Attachments = [new AttachmentRef("scan.pdf", 100, "attachments/Example/scan.pdf") { ContentHash = "bb02" }] };
+
+        var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
+
+        item.Attachments.Select(attachment => attachment.SourcePath).ShouldBe(["attachments/Example/scan.pdf", "files/keeper-scan"]);
+    }
+
+    [Fact]
+    public void Merge_keeps_every_file_whose_content_is_unknown()
+    {
+        var keeper = Keeper(Login(OldPassword)) with { Attachments = [new AttachmentRef("scan.pdf", 100, null)] };
+        var bitwarden = Bitwarden(Login(OldPassword)) with
+        {
+            Attachments = [new AttachmentRef("scan.pdf", 100, null), new AttachmentRef("scan.pdf", 100, null)],
+        };
+
+        var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
+
+        item.Attachments.Count.ShouldBe(3);
+    }
+
+    [Fact]
+    public void Merge_keeps_one_copy_of_a_file_found_on_two_members_from_the_newest_member()
+    {
+        var keeper = Keeper(Login(OldPassword)) with
+        {
+            Attachments = [new AttachmentRef("scan.pdf", 100, "files/keeper-scan") { ContentHash = "aa01" }, new AttachmentRef("notes.txt", 7, "files/keeper-notes") { ContentHash = "cc03" }],
+        };
+        var bitwarden = Bitwarden(Login(OldPassword)) with { Attachments = [new AttachmentRef("scan.pdf", 100, "attachments/Example/scan.pdf") { ContentHash = "aa01" }] };
+
+        var item = Run(keeper, bitwarden).Merged.Items.ShouldHaveSingleItem();
+
+        item.Attachments.Select(attachment => attachment.SourcePath).ShouldBe(["attachments/Example/scan.pdf", "files/keeper-notes"]);
+    }
+
+    [Fact]
     public void Merge_never_drops_a_non_empty_value()
     {
         var random = new Random(20261022);

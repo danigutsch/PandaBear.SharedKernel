@@ -4,12 +4,17 @@ namespace PandaBear.VaultManager.Tool.Secrets;
 
 /// <summary>
 /// Source-generated patterns for secret detection. Every pattern uses explicit ASCII classes, bounded quantifiers,
-/// <see cref="RegexOptions.CultureInvariant"/>, and a 50 ms timeout.
+/// <see cref="RegexOptions.CultureInvariant"/>, and a timeout of <see cref="TimeoutMilliseconds"/>.
 /// </summary>
 internal static partial class SecretPatterns
 {
-    /// <summary>Match timeout of every pattern, in milliseconds.</summary>
-    public const int TimeoutMilliseconds = 50;
+    /// <summary>
+    /// Match timeout of every pattern, in milliseconds. It stops catastrophic backtracking, which the bounded quantifiers
+    /// of the patterns are meant to rule out. A match on real input normally takes far less, but a pause of the whole
+    /// process, such as a garbage collection on a machine that is short of processor time, can exceed any timeout, so
+    /// the scanner runs a timed-out match once more (<see cref="PatternRetry"/>) before it flags the text for review.
+    /// </summary>
+    public const int TimeoutMilliseconds = 1000;
 
     /// <summary>Pattern <c>GitHubToken</c>.</summary>
     /// <returns>The compiled pattern.</returns>

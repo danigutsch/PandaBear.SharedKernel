@@ -13,8 +13,16 @@ namespace PandaBear.VaultManager.Tool.Secrets;
 /// phrases, and misfiled core fields. Findings hold locations, never values.
 /// </summary>
 /// <remarks>
+/// <para>
 /// Scanning time grows about linearly with the text: whole-text facts are computed once per field, line lookups use
 /// precomputed line starts, and overlapping findings are resolved through an <see cref="OverlapIndex"/>.
+/// </para>
+/// <para>
+/// A pattern match that exceeds its timeout runs once more (<see cref="PatternRetry"/>). When it times out again, the
+/// window or line it ran on becomes a <see cref="SecretKind.NeedsReview"/> finding, which takes the place of every
+/// finding that overlaps it. Once three windows of one catalog rule time out in a text, the rule's remaining windows are
+/// not matched and become one such finding.
+/// </para>
 /// </remarks>
 internal sealed class SecretScanner
 {
@@ -29,6 +37,10 @@ internal sealed class SecretScanner
     // Overlapping windows of one rule are merged up to this length, so text with a keyword on every line is scanned about
     // once instead of once per keyword. Every keyword hit still gets its whole window inside one scanned window.
     private const int MaxMergedWindow = 16 * 1024;
+
+    // Once this many windows of one rule time out in a text, even when run again, the rule's remaining windows are not
+    // matched and become one finding to review, so a text that the pattern cannot handle costs a bounded time.
+    private const int MaxTimedOutWindows = 3;
 
     private static readonly string[] BankWords =
         ["bank", "card", "karte", "visa", "mastercard", "amex", "credit", "debit", "kredit", "sparkasse", "volksbank", "giro", "atm"];
@@ -53,6 +65,7 @@ internal sealed class SecretScanner
     /// <summary>Scans notes, custom fields, and core login fields of an item.</summary>
     /// <param name="item">Item.</param>
     /// <returns>Findings with proposed targets.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="item"/> is <see langword="null"/>.</exception>
     public IReadOnlyList<SecretFinding> Scan(VaultItem item)
     {
         ArgumentNullException.ThrowIfNull(item);
@@ -83,6 +96,7 @@ internal sealed class SecretScanner
     /// <param name="fileName">File name, whose shape can raise confidence.</param>
     /// <param name="item">Item the attachment belongs to, used for placement context.</param>
     /// <returns>Findings with proposed targets.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="text"/> or <paramref name="fieldPath"/> is <see langword="null"/>.</exception>
     public IReadOnlyList<SecretFinding> ScanText(string text, string fieldPath, string? fileName, VaultItem? item = null)
     {
         ArgumentNullException.ThrowIfNull(text);
@@ -137,8 +151,13 @@ internal sealed class SecretScanner
         var label = new SecretLocation(SecretLocation.FieldName(index), 0, field.Name?.Length ?? 0);
         foreach (SecretFinding finding in ScanField(value, path, context, fileNameHint: false))
         {
+            // A secret that fills a hidden field is reported only when it has a better place: the TOTP slot, an SSH key
+            // item, login fields, or outside the vault. A private key that cannot become an SSH key item would only move
+            // to a hidden field again.
             bool whole = value.Trim().Length == finding.Location.Length;
-            if (field.Type == CustomFieldType.Hidden && whole && finding.Kind is not (SecretKind.Totp or SecretKind.PrivateKey or SecretKind.BitwardenRecoveryCode or SecretKind.ConnectionString))
+            bool hasBetterPlace = finding.Kind is SecretKind.Totp or SecretKind.BitwardenRecoveryCode or SecretKind.ConnectionString
+                || (finding.Kind == SecretKind.PrivateKey && finding.ProposedTarget.Kind != PlacementTargetKind.HiddenField);
+            if (field.Type == CustomFieldType.Hidden && whole && !hasBetterPlace)
             {
                 continue;
             }
@@ -252,32 +271,45 @@ internal sealed class SecretScanner
                 continue;
             }
 
+            int timedOut = 0;
             foreach (var (start, end) in ruleWindows)
             {
-                try
+                if (timedOut == MaxTimedOutWindows)
                 {
-                    for (Match match = rule.Pattern.Match(text, start, end - start); match.Success; match = match.NextMatch())
-                    {
-                        if (ToFinding(rule, text, path, match, start, end) is { } finding && seen.Add((rule.Id, finding.Location.Start, finding.Location.Length)))
-                        {
-                            findings.Add(finding);
-                        }
-                    }
-                }
-                catch (RegexMatchTimeoutException)
-                {
-                    findings.Add(new SecretFinding
-                    {
-                        RuleId = rule.Id,
-                        Kind = SecretKind.NeedsReview,
-                        Confidence = Confidence.Suggestion,
-                        Location = new SecretLocation(path, start, end - start),
-                        ProposedTarget = PlacementTarget.NotMoved("pattern timed out"),
-                        NeedsReview = true,
-                        Message = $"{rule.DisplayName} pattern timed out; review this text manually",
-                    });
+                    int rest = ruleWindows[^1].End - start;
+                    findings.Add(TimeoutFinding(rule.Id, path, start, rest, string.Create(CultureInfo.InvariantCulture, $"{rule.DisplayName} pattern timed out {MaxTimedOutWindows} times; review the rest of this text manually")));
                     break;
                 }
+
+                if (!PatternRetry.TryRun(() => MatchWindow(rule, text, path, start, end), out var matched))
+                {
+                    // The window becomes a finding to review; the rule's later windows are still matched.
+                    timedOut++;
+                    findings.Add(TimeoutFinding(rule.Id, path, start, end - start, $"{rule.DisplayName} pattern timed out; review this text manually"));
+                    continue;
+                }
+
+                foreach (SecretFinding finding in matched)
+                {
+                    if (seen.Add((rule.Id, finding.Location.Start, finding.Location.Length)))
+                    {
+                        findings.Add(finding);
+                    }
+                }
+            }
+        }
+
+        return findings;
+    }
+
+    private static List<SecretFinding> MatchWindow(SecretRule rule, string text, string path, int start, int end)
+    {
+        var findings = new List<SecretFinding>();
+        for (Match match = rule.Pattern.Match(text, start, end - start); match.Success; match = match.NextMatch())
+        {
+            if (ToFinding(rule, text, path, match, start, end) is { } finding)
+            {
+                findings.Add(finding);
             }
         }
 
@@ -391,21 +423,29 @@ internal sealed class SecretScanner
                     continue;
                 }
 
-                try
+                if (PatternRetry.TryRun(() => AwsSecretCandidates(rule, lineText, lineStart, path), out var candidates))
                 {
-                    for (Match match = SecretPatterns.AwsSecretCandidate().Match(lineText); match.Success; match = match.NextMatch())
-                    {
-                        if (SecretText.ShannonEntropy(match.Value) >= rule.MinimumEntropy && SecretText.CharacterClasses(match.Value) >= 3)
-                        {
-                            var location = new SecretLocation(path, lineStart + match.Index, match.Length);
-                            findings.Add(Finding(rule.Id, rule.Kind, Confidence.Medium, location, DefaultTarget(rule.Kind, rule.DisplayName), rule.DisplayName + " near an access key ID", match.Value));
-                        }
-                    }
+                    findings.AddRange(candidates);
                 }
-                catch (RegexMatchTimeoutException)
+                else
                 {
                     findings.Add(TimeoutFinding(rule.Id, path, lineStart, lineText.Length));
                 }
+            }
+        }
+
+        return findings;
+    }
+
+    private static List<SecretFinding> AwsSecretCandidates(SecretRule rule, string lineText, int lineStart, string path)
+    {
+        var findings = new List<SecretFinding>();
+        for (Match match = SecretPatterns.AwsSecretCandidate().Match(lineText); match.Success; match = match.NextMatch())
+        {
+            if (SecretText.ShannonEntropy(match.Value) >= rule.MinimumEntropy && SecretText.CharacterClasses(match.Value) >= 3)
+            {
+                var location = new SecretLocation(path, lineStart + match.Index, match.Length);
+                findings.Add(Finding(rule.Id, rule.Kind, Confidence.Medium, location, DefaultTarget(rule.Kind, rule.DisplayName), rule.DisplayName + " near an access key ID", match.Value));
             }
         }
 
@@ -428,19 +468,15 @@ internal sealed class SecretScanner
                 continue;
             }
 
-            try
-            {
-                Match match = SecretPatterns.NotesLine().Match(line);
-                if (match.Success)
-                {
-                    Group value = match.Groups["value"];
-                    Group key = match.Groups["key"];
-                    parsed[index] = (key.Value, lines[index].Start + key.Index, KeyClassifier.Classify(key.Value), lines[index].Start + value.Index, value.Value);
-                }
-            }
-            catch (RegexMatchTimeoutException)
+            if (!PatternRetry.TryRun(() => SecretPatterns.NotesLine().Match(line), out var match))
             {
                 findings.Add(TimeoutFinding("notes-line", path, lines[index].Start, line.Length));
+            }
+            else if (match.Success)
+            {
+                Group value = match.Groups["value"];
+                Group key = match.Groups["key"];
+                parsed[index] = (key.Value, lines[index].Start + key.Index, KeyClassifier.Classify(key.Value), lines[index].Start + value.Index, value.Value);
             }
         }
 
@@ -777,23 +813,20 @@ internal sealed class SecretScanner
     private static List<SecretFinding> ScanMaFile(string text, string path)
     {
         var findings = new List<SecretFinding>();
-        try
-        {
-            Match shared = SecretPatterns.MaFileSharedSecret().Match(text);
-            if (shared.Success && shared.Groups["secret"] is { } secret)
-            {
-                findings.Add(Finding(MaFileSharedSecretRule, SecretKind.Totp, Confidence.High, new SecretLocation(path, secret.Index, secret.Length), PlacementTarget.LoginTotp, "Steam Guard shared secret", secret.Value));
-            }
-
-            Match revocation = SecretPatterns.MaFileRevocationCode().Match(text);
-            if (revocation.Success && revocation.Groups["secret"] is { } code)
-            {
-                findings.Add(Finding("steam-mafile-revocation-code", SecretKind.RecoveryCodes, Confidence.High, new SecretLocation(path, code.Index, code.Length), PlacementTarget.Hidden("Steam revocation code"), "Steam Guard revocation code", code.Value));
-            }
-        }
-        catch (RegexMatchTimeoutException)
+        if (!PatternRetry.TryRun(() => (Shared: SecretPatterns.MaFileSharedSecret().Match(text), Revocation: SecretPatterns.MaFileRevocationCode().Match(text)), out var matches))
         {
             findings.Add(TimeoutFinding("steam-mafile", path, 0, text.Length));
+            return findings;
+        }
+
+        if (matches.Shared.Success && matches.Shared.Groups["secret"] is { } secret)
+        {
+            findings.Add(Finding(MaFileSharedSecretRule, SecretKind.Totp, Confidence.High, new SecretLocation(path, secret.Index, secret.Length), PlacementTarget.LoginTotp, "Steam Guard shared secret", secret.Value));
+        }
+
+        if (matches.Revocation.Success && matches.Revocation.Groups["secret"] is { } code)
+        {
+            findings.Add(Finding("steam-mafile-revocation-code", SecretKind.RecoveryCodes, Confidence.High, new SecretLocation(path, code.Index, code.Length), PlacementTarget.Hidden("Steam revocation code"), "Steam Guard revocation code", code.Value));
         }
 
         return findings;
@@ -977,7 +1010,8 @@ internal sealed class SecretScanner
         return BitwardenLimits.Fits(value, BitwardenLimits.ValueEncryptedLength);
     }
 
-    private static SecretFinding TimeoutFinding(string ruleId, string path, int start, int length)
+    // A pattern that timed out twice in a row flags the text it ran on for review; the text is never dropped.
+    private static SecretFinding TimeoutFinding(string ruleId, string path, int start, int length, string message = "Pattern timed out; review this text manually")
     {
         return new SecretFinding
         {
@@ -987,7 +1021,7 @@ internal sealed class SecretScanner
             Location = new SecretLocation(path, start, Math.Max(1, length)),
             ProposedTarget = PlacementTarget.NotMoved("pattern timed out"),
             NeedsReview = true,
-            Message = "Pattern timed out; review this text manually",
+            Message = message,
         };
     }
 
