@@ -49,6 +49,7 @@ public sealed class BitwardenCsvReaderTests
         var item = BitwardenCsvReader.Read(Fixture.Read("bitwarden-csv/organization.csv"), "organization.csv").Export.Items.ShouldHaveSingleItem();
 
         item.FolderPath.ShouldBe("Shared");
+        item.Fields.ShouldBe([new CustomField("Additional folders", "Other", CustomFieldType.Text)]);
         item.ConversionNotes.ShouldContain(note => note.Contains("collections", StringComparison.Ordinal));
         item.Login.ShouldNotBeNull().Username.ShouldBe("bob");
     }

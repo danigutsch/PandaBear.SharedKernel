@@ -22,6 +22,18 @@ public sealed class VaultPipelineTests : IDisposable
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]
+    public void Run_keeps_the_folders_of_every_input_in_the_merged_vault()
+    {
+        string keeper = Write(directory, "keeper.json", """{"shared_folders":[{"uid":"s1","path":"Team\\Empty"}],"records":[]}""");
+        string bitwarden = Write(directory, "bitwarden.json", """{"encrypted":false,"folders":[{"id":"f","name":"Archive"}],"items":[]}""");
+        var pipeline = new VaultPipeline(new TestPrompts(ExportPassword).Environment());
+
+        var result = pipeline.Run(new PipelineRequest([keeper, bitwarden]));
+
+        result.Merged.Folders.ShouldBe(["Team/Empty", "Archive"]);
+    }
+
+    [Fact]
     public void Run_keeps_the_newer_bitwarden_password_the_keeper_totp_and_the_old_password_in_history()
     {
         string totp = PipelineSecrets.TotpUri(PipelineSecrets.TotpSecret(300));

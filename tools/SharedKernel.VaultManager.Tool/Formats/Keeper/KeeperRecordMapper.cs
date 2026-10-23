@@ -368,9 +368,14 @@ internal static class KeeperRecordMapper
         string[] others = [.. record.Folders.Select(KeeperFolderPath.Join).OfType<string>().Skip(1).Distinct(StringComparer.Ordinal)];
         if (others.Length > 0)
         {
-            fields.Add(new CustomField("Additional folders", string.Join('\n', others), CustomFieldType.Text));
+            fields.Add(new CustomField(AdditionalFolders.FieldName, string.Join('\n', others), CustomFieldType.Text));
             notes.Add(string.Create(CultureInfo.InvariantCulture,
-                $"Record is also in {others.Length} other folder(s); they are listed in the field \"Additional folders\"."));
+                $"Record is also in {others.Length} other folder(s); they are listed in the field \"{AdditionalFolders.FieldName}\"."));
+        }
+
+        foreach (string name in record.Folders.SelectMany(KeeperFolderPath.NamesWithSlash).Distinct(StringComparer.Ordinal))
+        {
+            notes.Add($"Folder name \"{name}\" became \"{name.Replace('/', '-')}\" because Bitwarden reads \"/\" as a folder level.");
         }
 
         if (record.Folders.Any(folder => folder.CanEdit || folder.CanShare))

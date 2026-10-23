@@ -13,6 +13,28 @@ public sealed class KeeperJsonReaderTests : IDisposable
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]
+    public void Read_keeps_shared_folders_and_record_folders_as_declared_folders()
+    {
+        const string json = """
+            {"shared_folders":[{"uid":"s1","path":"Team\\Empty"}],
+             "records":[{"uid":"r","title":"t","folders":[{"shared_folder":"Team","folder":"Web"},{"folder":"Personal"}]}]}
+            """;
+
+        KeeperJsonReader.Read(json, "keeper.json").Export.Folders.ShouldBe(["Team/Empty", "Team/Web", "Personal"]);
+    }
+
+    [Fact]
+    public void Read_replaces_a_slash_in_a_folder_name_and_notes_the_original_name()
+    {
+        const string json = """{"records":[{"uid":"r","title":"t","folders":[{"folder":"Bills\\A/B"}]}]}""";
+
+        var item = KeeperJsonReader.Read(json, "keeper.json").Export.Items.ShouldHaveSingleItem();
+
+        item.FolderPath.ShouldBe("Bills/A-B");
+        item.ConversionNotes.ShouldContain(note => note.Contains("\"A/B\"", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void Read_commander_login_maps_login_totps_uris_fields_folders_and_timestamp()
     {
         var item = ReadCommander().Items.ShouldHaveSingleItem(item => item.Name == "Example login");

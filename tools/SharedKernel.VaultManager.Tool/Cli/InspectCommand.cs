@@ -86,12 +86,15 @@ internal static class InspectCommand
         CommandText.Count(output, "  Items with a modification time", dated);
         CommandText.Count(output, "  Items without a modification time", items.Count - dated);
 
-        string[] folders = [.. items.Select(item => item.FolderPath).OfType<string>().Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)];
+        HashSet<string> used = [.. items.Select(item => item.FolderPath).OfType<string>()];
+        string[] folders = [.. read.Export.Folders.Concat(used).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)];
         CommandText.Count(output, "  Folders", folders.Length);
         foreach (string folder in folders)
         {
             output.WriteLine("    " + PrintableText.OneLine(folder));
         }
+
+        CommandText.Count(output, "  Folders without items", folders.Count(folder => !used.Contains(folder)));
 
         AttachmentRef[] attachments = [.. items.SelectMany(item => item.Attachments)];
         int included = attachments.Count(attachment => attachment.SourcePath is not null);

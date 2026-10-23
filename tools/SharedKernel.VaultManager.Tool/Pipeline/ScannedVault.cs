@@ -12,4 +12,7 @@ internal sealed record ScannedVault(IReadOnlyList<string> InputPaths, IReadOnlyL
 {
     /// <summary>Attachment folders of Bitwarden zip inputs whose files belong to no item, as loaded.</summary>
     public IReadOnlyList<UnassignedAttachmentFolder> UnassignedAttachmentFolders { get; init; } = [];
+
+    /// <summary>Distinct folders that the inputs declare, as loaded.</summary>
+    public IReadOnlyList<string> Folders { get; init; } = [];
 }

@@ -75,13 +75,15 @@ internal static class BitwardenCsvReader
 
         var notes = new List<string>();
         string? folder = Cell("folder");
+        string[] otherFolders = [];
         if (Cell("collections") is { } collections)
         {
-            string[] names = collections.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            string[] names = [.. collections.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Distinct(StringComparer.Ordinal)];
             folder = names.FirstOrDefault();
+            otherFolders = names.Length > 1 ? names[1..] : [];
             if (names.Length > 1)
             {
-                notes.Add("Item belonged to several collections; the first one became its folder.");
+                notes.Add(BitwardenJsonReader.CollectionsNote(names.Length));
             }
         }
 
@@ -109,7 +111,7 @@ internal static class BitwardenCsvReader
             Favorite = Cell("favorite") == "1",
             Reprompt = Cell("reprompt") is { } reprompt && reprompt != "0",
             Notes = Cell("notes")?.ReplaceLineEndings("\n"),
-            Fields = ParseFields(Cell("fields")),
+            Fields = AdditionalFolders.Add(ParseFields(Cell("fields")), otherFolders, folder),
             Login = itemType == VaultItemType.Login
                 ? new LoginData
                 {

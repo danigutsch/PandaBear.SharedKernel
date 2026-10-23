@@ -15,7 +15,11 @@ internal static class BitwardenJsonReader
     /// <param name="json">Export file contents. Decrypt password-protected files first.</param>
     /// <param name="sourceFile">File name recorded as the item origin.</param>
     /// <param name="warnings">Receives a warning that counts the deleted items, which stay out of the result.</param>
-    /// <returns>Items in the export, excluding deleted items.</returns>
+    /// <returns>
+    /// Items in the export, excluding deleted items, and every named folder and collection as a declared folder. An item
+    /// takes its folder, or else its first collection, as its folder; its other collections are listed in the
+    /// <see cref="AdditionalFolders"/> field.
+    /// </returns>
     /// <exception cref="ArgumentNullException"><paramref name="json"/> or <paramref name="sourceFile"/> is <see langword="null"/>.</exception>
     /// <exception cref="InvalidDataException">
     /// The file is not an unencrypted Bitwarden JSON export, or it is malformed: an item, folder, or collection is
@@ -50,12 +54,11 @@ internal static class BitwardenJsonReader
                 + "Export again as .json or as password-protected .json (Encrypted).");
         }
 
-        string folderKind = export.Folders is null && export.Collections is not null ? "Collection" : "Folder";
-        IReadOnlyList<BitwardenFolderDto> folderList = export.Folders ?? export.Collections ?? [];
-        CheckEntries(export.Items, folderList, folderKind);
-        Dictionary<string, string> folders = folderList
-            .Where(folder => folder.Id is not null && !string.IsNullOrWhiteSpace(folder.Name))
-            .ToDictionary(folder => folder.Id!, folder => folder.Name!, StringComparer.Ordinal);
+        CheckItems(export.Items);
+        CheckFolders(export.Folders ?? [], "Folder");
+        CheckFolders(export.Collections ?? [], "Collection");
+        Dictionary<string, string> folders = Named(export.Folders ?? []);
+        Dictionary<string, string> collections = Named(export.Collections ?? []);
 
         int deleted = export.Items.Count(item => item.DeletedDate is not null);
         if (deleted > 0)
@@ -65,12 +68,20 @@ internal static class BitwardenJsonReader
                 : string.Create(CultureInfo.InvariantCulture, $"{deleted} items in the trash were skipped. Restore them in Bitwarden and export again to keep them."));
         }
 
-        return new VaultExport([.. export.Items.Where(item => item.DeletedDate is null).Select(item => Map(item, folders, sourceFile))]);
+        return new VaultExport([.. export.Items.Where(item => item.DeletedDate is null).Select(item => Map(item, folders, collections, sourceFile))])
+        {
+            Folders = [.. folders.Values.Concat(collections.Values).Distinct(StringComparer.Ordinal)],
+        };
     }
+
+    // Folders and collections in file order; entries without an ID or a name hold no folder.
+    private static Dictionary<string, string> Named(IReadOnlyList<BitwardenFolderDto> folders) => folders
+        .Where(folder => folder.Id is not null && !string.IsNullOrWhiteSpace(folder.Name))
+        .ToDictionary(folder => folder.Id!, folder => folder.Name!, StringComparer.Ordinal);
 
     // A null entry holds nothing to read, and two folders with one ID make the folder of an item ambiguous. Neither occurs
     // in an export Bitwarden wrote, so the file is reported as malformed, naming entries by their position only.
-    private static void CheckEntries(IReadOnlyList<BitwardenItemDto> items, IReadOnlyList<BitwardenFolderDto> folders, string folderKind)
+    private static void CheckItems(IReadOnlyList<BitwardenItemDto> items)
     {
         for (int index = 0; index < items.Count; index++)
         {
@@ -93,7 +104,10 @@ internal static class BitwardenJsonReader
                 throw new InvalidDataException(string.Create(CultureInfo.InvariantCulture, $"Item {index + 1} of the Bitwarden export has a null entry in its {list}."));
             }
         }
+    }
 
+    private static void CheckFolders(IReadOnlyList<BitwardenFolderDto> folders, string folderKind)
+    {
         var positions = new Dictionary<string, int>(StringComparer.Ordinal);
         for (int index = 0; index < folders.Count; index++)
         {
@@ -109,12 +123,12 @@ internal static class BitwardenJsonReader
     private static bool HasNull<T>(IReadOnlyList<T?>? entries)
         where T : class => entries is not null && entries.Contains(null);
 
-    private static VaultItem Map(BitwardenItemDto item, Dictionary<string, string> folders, string sourceFile)
+    private static VaultItem Map(BitwardenItemDto item, Dictionary<string, string> folders, Dictionary<string, string> collections, string sourceFile)
     {
         var notes = new List<string>();
-        string? folderPath = ResolveFolder(item, folders, notes);
+        (string? folderPath, IReadOnlyList<string> otherFolders) = ResolveFolder(item, folders, collections, notes);
         bool known = Enum.IsDefined((VaultItemType)item.Type);
-        var fields = new List<CustomField>(item.Fields ?? []);
+        var fields = new List<CustomField>(AdditionalFolders.Add(item.Fields ?? [], otherFolders, folderPath));
         if (!known)
         {
             fields.AddRange(FlattenUnknownPayload(item.Extra));
@@ -145,21 +159,40 @@ internal static class BitwardenJsonReader
         };
     }
 
-    private static string? ResolveFolder(BitwardenItemDto item, Dictionary<string, string> folders, List<string> notes)
+    // The folder, or else the first collection, becomes the folder; the other collections are returned as other folders.
+    private static (string? Folder, IReadOnlyList<string> Others) ResolveFolder(
+        BitwardenItemDto item, Dictionary<string, string> folders, Dictionary<string, string> collections, List<string> notes)
     {
-        if (item.FolderId is not null)
+        string? folder = null;
+        if (item.FolderId is not null && !folders.TryGetValue(item.FolderId, out folder))
         {
-            return folders.GetValueOrDefault(item.FolderId);
+            notes.Add("Item names a folder that the export does not list; it has no folder.");
         }
 
-        IReadOnlyList<string> collections = item.CollectionIds ?? [];
-        if (collections.Count > 1)
+        List<string> others = [.. (item.CollectionIds ?? []).Select(collections.GetValueOrDefault).OfType<string>().Distinct(StringComparer.Ordinal)];
+        if (folder is null && others.Count > 0)
         {
-            notes.Add("Item belonged to several collections; the first one became its folder.");
+            folder = others[0];
+            others.RemoveAt(0);
+            if (others.Count > 0)
+            {
+                notes.Add(CollectionsNote(others.Count + 1));
+            }
+        }
+        else if (others.Count > 0)
+        {
+            notes.Add(string.Create(CultureInfo.InvariantCulture,
+                $"Item is also in {others.Count} collection(s); they are listed in the field \"{AdditionalFolders.FieldName}\"."));
         }
 
-        return collections.Count > 0 ? folders.GetValueOrDefault(collections[0]) : null;
+        return (folder, others);
     }
+
+    /// <summary>Conversion note for an item in several collections, the first of which became its folder.</summary>
+    /// <param name="count">Number of collections.</param>
+    /// <returns>The note.</returns>
+    internal static string CollectionsNote(int count) => string.Create(CultureInfo.InvariantCulture,
+        $"Item is in {count} collections; the first became its folder and the others are listed in the field \"{AdditionalFolders.FieldName}\".");
 
     private static LoginData MapLogin(BitwardenLoginDto? login)
     {

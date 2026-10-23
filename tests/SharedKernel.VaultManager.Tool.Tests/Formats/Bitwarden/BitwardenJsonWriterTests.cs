@@ -68,6 +68,29 @@ public sealed class BitwardenJsonWriterTests
     }
 
     [Fact]
+    public void Write_emits_parent_folders_and_declared_folders_that_hold_no_item()
+    {
+        VaultItem[] items = [new() { Type = VaultItemType.SecureNote, Name = "a", FolderPath = "Team/Shared/Web", Origin = Origin }];
+        var export = new VaultExport(items) { Folders = ["Archive/Old"] };
+
+        var document = JsonNode.Parse(BitwardenJsonWriter.Write(export).Json).ShouldNotBeNull();
+
+        document["folders"].ShouldNotBeNull().AsArray()
+            .Select(folder => folder.ShouldNotBeNull()["name"].ShouldNotBeNull().GetValue<string>())
+            .ShouldBe(["Archive", "Archive/Old", "Team", "Team/Shared", "Team/Shared/Web"]);
+    }
+
+    [Fact]
+    public void Write_then_read_keeps_folders_that_hold_no_item()
+    {
+        var export = new VaultExport([]) { Folders = ["Empty"] };
+
+        var reread = BitwardenJsonReader.Read(BitwardenJsonWriter.Write(export).Json, "written.json");
+
+        reread.Folders.ShouldBe(["Empty"]);
+    }
+
+    [Fact]
     public void Write_moves_history_beyond_five_entries_into_hidden_fields()
     {
         var start = new DateTimeOffset(2020, 1, 1, 0, 0, 0, TimeSpan.Zero);

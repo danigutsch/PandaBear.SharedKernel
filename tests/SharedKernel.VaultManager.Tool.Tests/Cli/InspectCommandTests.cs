@@ -30,6 +30,7 @@ public sealed class InspectCommandTests : IDisposable
               Items without a modification time: 0
               Folders: 1
                 Personal
+              Folders without items: 0
               Attachments in the export: 1
               Attachments missing from the export: 1
               Warnings: 1
@@ -44,11 +45,23 @@ public sealed class InspectCommandTests : IDisposable
               Items without a modification time: 1
               Folders: 1
                 Work
+              Folders without items: 0
               Attachments in the export: 0
               Attachments missing from the export: 0
               Warnings: 0
 
             """.ReplaceLineEndings("\n"), StringComparer.Ordinal);
+    }
+
+    [Fact]
+    public async Task Inspect_lists_declared_folders_that_hold_no_item()
+    {
+        string input = PipelineInputs.Write(directory, "bitwarden.json", """{"encrypted":false,"folders":[{"id":"f","name":"Archive/Old"}],"items":[]}""");
+
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", input], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(0);
+        run.Output.ShouldContain("  Folders: 1\n    Archive/Old\n  Folders without items: 1\n", StringComparison.Ordinal);
     }
 
     [Fact]

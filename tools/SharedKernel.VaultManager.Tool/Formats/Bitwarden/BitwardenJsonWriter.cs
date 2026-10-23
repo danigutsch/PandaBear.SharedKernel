@@ -19,7 +19,10 @@ internal static class BitwardenJsonWriter
     // encrypted string, in a "uriChecksum" property.
     private static readonly long UriChecksumBytes = BitwardenLimits.EncryptedLength(new string('=', 44)) + ",\"uriChecksum\":\"\"".Length;
 
-    /// <summary>Writes items as an unencrypted individual-vault Bitwarden export.</summary>
+    /// <summary>
+    /// Writes items as an unencrypted individual-vault Bitwarden export. Its folders are the declared folders, the folders
+    /// of the items, and the parent of each, so that Bitwarden nests them (<see cref="FolderTree.WithParents"/>).
+    /// </summary>
     /// <param name="export">Items to write.</param>
     /// <returns>
     /// Export JSON and problems that would affect the import. Values are never truncated, and problems name custom fields
@@ -36,7 +39,8 @@ internal static class BitwardenJsonWriter
 
         var errors = new List<string>();
         var warnings = new List<string>();
-        var folderIds = new Dictionary<string, string>(StringComparer.Ordinal);
+        IReadOnlyList<string> folderPaths = FolderTree.WithParents(export.Folders.Concat(export.Items.Select(item => item.FolderPath)));
+        Dictionary<string, string> folderIds = folderPaths.ToDictionary(path => path, _ => Guid.NewGuid().ToString(), StringComparer.Ordinal);
         var items = new List<BitwardenItemDto>(export.Items.Count);
 
         // Bytes the import request adds to the compact export JSON.
@@ -57,7 +61,7 @@ internal static class BitwardenJsonWriter
         var document = new BitwardenExportDto
         {
             Encrypted = false,
-            Folders = [.. folderIds.Select(folder => new BitwardenFolderDto(folder.Value, folder.Key))],
+            Folders = [.. folderPaths.Select(path => new BitwardenFolderDto(folderIds[path], path))],
             Items = items,
         };
         string json = JsonSerializer.Serialize(document, BitwardenJsonContext.Default.BitwardenExportDto);
@@ -193,12 +197,7 @@ internal static class BitwardenJsonWriter
 
     private static BitwardenItemDto ToDto(VaultItem item, Dictionary<string, string> folderIds)
     {
-        string? folderId = null;
-        if (!string.IsNullOrWhiteSpace(item.FolderPath) && !folderIds.TryGetValue(item.FolderPath, out folderId))
-        {
-            folderId = Guid.NewGuid().ToString();
-            folderIds.Add(item.FolderPath, folderId);
-        }
+        string? folderId = string.IsNullOrWhiteSpace(item.FolderPath) ? null : folderIds[item.FolderPath];
 
         return new BitwardenItemDto
         {

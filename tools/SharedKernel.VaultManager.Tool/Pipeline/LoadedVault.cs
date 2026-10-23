@@ -16,4 +16,7 @@ internal sealed record LoadedVault(IReadOnlyList<string> InputPaths, IReadOnlyLi
     /// files by hand.
     /// </summary>
     public IReadOnlyList<UnassignedAttachmentFolder> UnassignedAttachmentFolders { get; init; } = [];
+
+    /// <summary>Distinct folders that the inputs declare, in input order (<see cref="Model.VaultExport.Folders"/>).</summary>
+    public IReadOnlyList<string> Folders { get; init; } = [];
 }

@@ -220,7 +220,7 @@ this merge. If you exported a zip, write `bitwarden.zip` wherever this guide wri
    ```
 
    For a password-protected export, the tool asks for its password. For each input it prints the detected
-   format, item counts by type, folders, how many items have a modification time, attachments that the export
+   format, item counts by type, folders and how many hold no item, how many items have a modification time, attachments that the export
    includes or leaves out, and read warnings. It prints no values. Check:
 
    - that each detected format matches what you exported;
@@ -513,10 +513,13 @@ front of it needs a matching body size limit, such as `client_max_body_size 525M
    these warnings. To keep each passkey on a login of its own, split that group, as
    [The decisions file](#the-decisions-file) describes. Test them before you close your Keeper account.
 5. Check folders. Bitwarden nests a folder only when a folder named after its parent exists, such as `Work` for
-   `Work/Projects`; otherwise it shows the full name ([Bitwarden](https://bitwarden.com/help/folders/)). Create
-   the parent folders you want. A Keeper record that is in several folders lands in the first one, and its
-   `Additional folders` field lists the others. Keeper shared-folder permissions are not carried over; the merge
-   report's conversion notes name the affected items.
+   `Work/Projects`; otherwise it shows the full name ([Bitwarden](https://bitwarden.com/help/folders/)). The merged
+   vault creates every folder of your exports, including empty ones, and the parent of each. An item holds one
+   folder: a Keeper record that is in several folders lands in the first one, a Bitwarden item in several
+   collections lands in the first collection, and an item whose merged copies sat in different folders lands in
+   the folder the policy chose. Its `Additional folders` field lists the others; move the item if you prefer one of
+   them. A `/` inside a Keeper folder name becomes `-`. Keeper shared-folder permissions are not carried over; the
+   merge report's conversion notes name the affected items.
 6. Check password history. Open a login and select **Password history**. Bitwarden "stores the last five saved
    passwords for each login item"
    ([Bitwarden](https://bitwarden.com/help/password-and-generator-history/)), so merge moves older entries into
