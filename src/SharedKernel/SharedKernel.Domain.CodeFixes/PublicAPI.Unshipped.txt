@@ -1,0 +1,9 @@
+#nullable enable
+PandaBear.Domain.CodeFixes.SharedKernelDomainCodeFixProvider
+PandaBear.Domain.CodeFixes.SharedKernelDomainCodeFixProvider.SharedKernelDomainCodeFixProvider() -> void
+override PandaBear.Domain.CodeFixes.SharedKernelDomainCodeFixProvider.FixableDiagnosticIds.get -> System.Collections.Immutable.ImmutableArray<string!>
+override PandaBear.Domain.CodeFixes.SharedKernelDomainCodeFixProvider.GetFixAllProvider() -> Microsoft.CodeAnalysis.CodeFixes.FixAllProvider?
+override PandaBear.Domain.CodeFixes.SharedKernelDomainCodeFixProvider.RegisterCodeFixesAsync(Microsoft.CodeAnalysis.CodeFixes.CodeFixContext context) -> System.Threading.Tasks.Task!
+const PandaBear.Domain.Analyzers.DomainDiagnosticIds.MutableCollectionExposure = "SKDOM002" -> string!
+const PandaBear.Domain.Analyzers.DomainDiagnosticIds.NonPrivateSetter = "SKDOM001" -> string!
+PandaBear.Domain.Analyzers.DomainDiagnosticIds

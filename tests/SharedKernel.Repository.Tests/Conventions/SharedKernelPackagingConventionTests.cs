@@ -41,6 +41,12 @@ public static class SharedKernelPackagingConventionTests
             (
                 Path.Combine(repositoryRoot, "src", "SharedKernel", "SharedKernel.Style.CodeFixes", "SharedKernel.Style.CodeFixes.csproj"),
                 ["SharedKernel.Style.Analyzers.dll", "SharedKernel.Style.CodeFixes.dll"]),
+            (
+                Path.Combine(repositoryRoot, "src", "SharedKernel", "SharedKernel.Domain.Analyzers", "SharedKernel.Domain.Analyzers.csproj"),
+                ["SharedKernel.Domain.Analyzers.dll"]),
+            (
+                Path.Combine(repositoryRoot, "src", "SharedKernel", "SharedKernel.Domain.CodeFixes", "SharedKernel.Domain.CodeFixes.csproj"),
+                ["SharedKernel.Domain.CodeFixes.dll"]),
         ];
 
         // Act
