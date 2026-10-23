@@ -25,8 +25,11 @@ Anything marked unverified could not be confirmed in those sources.
   names, and origin keys with the record and item IDs of your exports, and they can name the websites of your
   passkeys.
 - The tool reads passwords only from a terminal prompt that does not echo, never from arguments or environment
-  variables. Without a terminal, a command that needs a password stops with exit code 3 before it does any work
-  and names the input or output that needs the password.
+  variables. Wait for the prompt before you type a password: the terminal shows what you type earlier. Without a
+  terminal, a command that needs a password stops with exit code 3 before it does any work and names the input or
+  output that needs the password.
+- Every argument is a file name or an option. An argument that starts with `@`, such as `@bitwarden.json`, names a
+  file called `@bitwarden.json`; the tool reads no response files, so it never splits an export into arguments.
 - The tool reads a zip export only within the size limits in [step 4](#4-inspect-the-exports).
 
 ## 1. Prepare a working folder
@@ -282,7 +285,8 @@ unzip -l bitwarden.zip
      shorter, it asks again, and after the third failed attempt it stops with exit code 3 without writing. Use a
      password that protects this file only; you type it again for the import.
    - Exit code 3: an input or output problem, or a value too long for a Bitwarden import, as described below and
-     in [Exit codes](#exit-codes).
+     in [Exit codes](#exit-codes). If the output also shows `Wrote the merged vault to merged.json`, the vault is
+     complete and only the report could not be written; the error names the reason.
 
 2. Read `merge-report.md`. It lists the groups whose members differ and how each field resolved: `equal`,
    `one-sided`, `union`, `newest`, `preferred source`, `decision`, or `unresolved`. It also lists the secret
@@ -310,6 +314,10 @@ decision, as [The decisions file](#the-decisions-file) describes.
 
 Once `merged.json` exists, a later run needs `--force` to overwrite it. Merge never overwrites an input file.
 `--plaintext` writes an unencrypted export instead; delete that file right after the import.
+
+Merge writes each file to a hidden temporary file in the same folder, such as `.merged.json.<random>.tmp`, and
+renames it when the file is complete. If merge stops during a write, for example after Ctrl+C, the temporary file
+can remain with part of the file in it. Delete it.
 
 ## 6. Prepare an empty Vaultwarden vault
 
@@ -567,10 +575,18 @@ Exports carry no deletion markers, so the tool cannot tell a deletion from an en
 ## The decisions file
 
 The decisions file holds group keys, field paths, origin keys, item names, finding IDs, and your choices, never
-secret values. When decisions are needed, merge creates or updates the file: it adds a pending entry for each
-field and each proposed finding that needs your choice, and keeps every other entry as it is. A pending entry
-counts as no decision. While a field or a proposed finding has no decision, merge exits with code 2 and writes no
-vault. The **Decisions needed** section of the merge report lists the same entries.
+secret values. Item names appear as typed in your vaults, except that control and format characters appear as
+JSON escapes, such as `\u202E` for a right-to-left override, so that they cannot reorder or hide text in your
+editor. When decisions are needed, merge creates or updates the file: it adds a pending entry for each field and
+each proposed finding that needs your choice, and keeps every other entry as it is. A pending entry counts as no
+decision. While a field or a proposed finding has no decision, merge exits with code 2 and writes no vault. The
+**Decisions needed** section of the merge report lists the same entries.
+
+Merge reads only the property names that this section shows, each at most once in its object. A property with any
+other name, such as `finding` instead of `findings`, stops merge with exit code 3, and the error names the file and
+the JSON path of that property, such as `$.finding`. A property given twice, such as a second `findings` list that
+you add above the one merge wrote, stops merge in the same way, so add your choices to the existing list. Correct
+the file and run merge again; until then, no choice in the file takes effect.
 
 An origin key names one input item as `<provider>|<input file name>|<ID in that export>`, for example
 `keeper|keeper.zip|q8Ck2Rb0Tz4mW1xV6yN3aA`. Items without an ID, such as CSV rows, get a key from a hash of their
@@ -667,8 +683,8 @@ seed that you deleted in one vault:
 - A finding choice has `"decision": "Accepted"`, which moves the secret to its proposed field, or `"Rejected"`,
   which leaves it where it is. Pre-accepted findings, which have high confidence and need no review, apply
   unless you reject them, so they get no pending entry: to reject one, add a `Rejected` choice with its finding
-  ID under its item's origin key, both from the secret findings table of the report. Other findings apply only
-  when you accept them.
+  ID under its item's origin key, both from the secret findings table of the report, to the `findings` list.
+  Other findings apply only when you accept them.
 - To decide a field that has no pending entry, such as a value to drop or a value to keep after an edit
   (step 5), add a choice to the group's `choices`, or add a group `{ "groupKey": "<group key>", "choices": [] }`
   with the choice in its list. Pending entries list the origin keys of a group's members. To list them for every
@@ -681,7 +697,10 @@ seed that you deleted in one vault:
     --output unused.json --decisions all-conflicts.json --policy ask
   ```
 
-- Merge warns about each decision whose group, field, origin key, or finding ID matches nothing.
+- Merge warns about each decision whose group, field, origin key, or finding ID matches nothing. A `Member` choice
+  whose `originKey` is not one of the group's members counts as no decision: the policy decides the field, and
+  when the field needs your decision, merge puts its pending entry, with the members as `options`, in the choice's
+  place.
 - `links` and `splits` correct the matching. Each entry is `{ "first": "<origin key>", "second": "<origin key>" }`.
   A link puts two items into one group, and a split keeps them apart and wins over a link. A link or a split
   changes the key of the group, so check the decisions for that group again after the next run.
@@ -699,7 +718,13 @@ file. It is not available in this version; edit the decisions file instead.
 - `2`: merge needs decisions and writes nothing. With `--decisions <file>`, the file holds pending entries for
   you to fill in. Without it, run merge again with `--decisions <file>`.
 - `3`: an input or output problem. An input is unreadable, unsupported, account-restricted, or over a size limit,
-  or its password is wrong. The output exists and `--force` is missing, the output is also an input, or its
-  folder does not exist. A value would make Bitwarden reject the import; merge still adds pending entries for
-  the decisions it needs. A password is needed and no terminal is available, or three attempts at a new password
-  fail.
+  or its password is wrong. The decisions file is not valid, for example because a property name is misspelled or
+  a property appears twice in one object. The output exists and `--force` is missing, the output is also an input
+  or differs from one only in case, or its folder does not exist. The report or the decisions file cannot be
+  written. A value would make Bitwarden reject the import; merge still adds pending entries for the decisions it
+  needs. A password is needed and no terminal is available, or three attempts at a new password fail. Merge writes
+  no vault in these cases, except when it writes `merged.json` and then cannot write the report: it prints
+  `Wrote the merged vault to merged.json` before it writes the report, and the error says that the vault is
+  written and the report is not.
+- `130` or `143`: Ctrl+C or SIGTERM arrived while the tool was starting, or the canceled command did not end
+  within two seconds.

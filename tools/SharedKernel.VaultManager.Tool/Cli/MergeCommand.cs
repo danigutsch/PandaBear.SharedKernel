@@ -26,17 +26,17 @@ internal static class MergeCommand
     public static Command Create(VaultCommandEnvironment environment)
     {
         Argument<string[]> inputs = CommandSymbols.Inputs();
-        Option<string> output = new Option<string>("--output", "-o")
+        Option<string> output = CommandSymbols.FilePath(new Option<string>("--output", "-o")
         {
             Description = "File to write the merged vault to. It must not be an input; an existing file is replaced only with --force.",
             HelpName = "file",
             Required = true,
-        }.AcceptLegalFilePathsOnly();
-        Option<string> decisions = new Option<string>("--decisions")
+        });
+        Option<string> decisions = CommandSymbols.FilePath(new Option<string>("--decisions")
         {
             Description = "Decisions file to read. When fields or findings need a decision, it is created or updated with pending entries to edit.",
             HelpName = "file",
-        }.AcceptLegalFilePathsOnly();
+        });
         var policy = new Option<string>("--policy")
         {
             Description = "How conflicting values are resolved: newest takes the most recently modified value, ask leaves every conflict to the decisions file, and prefer:<input file name> takes the value of that input.",
@@ -48,7 +48,7 @@ internal static class MergeCommand
             string value = result.GetValueOrDefault<string>();
             if (ParsePolicy(value) is null)
             {
-                result.AddError($"--policy takes newest, ask, or prefer:<input file name>, not '{value}'.");
+                result.AddError(CommandText.OneLine($"--policy takes newest, ask, or prefer:<input file name>, not '{value}'."));
             }
         });
         var plaintext = new Option<bool>("--plaintext")
@@ -116,11 +116,11 @@ internal static class MergeCommand
         int matches = names.Count(name => string.Equals(name, preferred, StringComparison.Ordinal));
         if (matches == 0)
         {
-            result.AddError($"--policy prefer:{preferred} names no input file. Input file names: {string.Join(", ", names)}.");
+            result.AddError(CommandText.OneLine($"--policy prefer:{preferred} names no input file. Input file names: {string.Join(", ", names)}."));
         }
         else if (matches > 1)
         {
-            result.AddError($"--policy prefer:{preferred} names several input files. Give each input a different file name.");
+            result.AddError(CommandText.OneLine($"--policy prefer:{preferred} names several input files. Give each input a different file name."));
         }
     }
 
@@ -141,16 +141,20 @@ internal static class MergeCommand
 
         MergeDecisions decisions = arguments.Decisions is { } decisionsPath ? DecisionsFile.Read(decisionsPath) : MergeDecisions.None;
         var pipeline = new VaultPipeline(prompts.Environment);
-        var request = new PipelineRequest(arguments.Inputs) { Policy = arguments.Policy, Decisions = decisions };
+        LoadedVault loaded = pipeline.Load(arguments.Inputs);
+        ct.ThrowIfCancellationRequested();
+        ScannedVault scanned = VaultPipeline.Scan(loaded);
+        ct.ThrowIfCancellationRequested();
+        var request = new MergeRequest { Policy = arguments.Policy, Decisions = decisions };
 
         // The pipeline writes the vault whenever no field needs a decision, but a proposed finding without a decision also
-        // blocks writing. The first run writes nothing; a second run writes the vault once nothing is pending.
-        PipelineResult result = pipeline.Run(request);
+        // blocks writing. The first merge writes nothing; a second merge writes the vault once nothing is pending. Both
+        // merge the same scanned vault, so each input is read and each password asked once.
+        PipelineResult result = pipeline.Merge(scanned, request);
         if (PendingDecisions.Find(result, decisions).IsEmpty && !result.HasWriteErrors)
         {
             ct.ThrowIfCancellationRequested();
-            prompts.Replay();
-            result = pipeline.Run(request with { Output = RequestedOutput(arguments) });
+            result = pipeline.Merge(scanned, request with { Output = RequestedOutput(arguments) });
         }
 
         return Finish(arguments, decisions, result, output, error, ct);
@@ -188,14 +192,9 @@ internal static class MergeCommand
 
     private static int Finish(MergeArguments arguments, MergeDecisions decisions, PipelineResult result, TextWriter output, TextWriter error, CancellationToken ct)
     {
-        foreach (string warning in result.ReadWarnings.Concat(result.WriteWarnings))
+        foreach (string warning in result.ReadWarnings.Concat(result.WriteWarnings).Concat(UnmatchedDecisions.Find(decisions, result)))
         {
             error.WriteLine("Warning: " + CommandText.OneLine(warning));
-        }
-
-        foreach (string warning in UnmatchedDecisions.Find(decisions, result))
-        {
-            error.WriteLine("Warning: " + warning);
         }
 
         PendingDecisions pending = result.OutputWritten ? PendingDecisions.None : PendingDecisions.Find(result, decisions);
@@ -206,21 +205,44 @@ internal static class MergeCommand
         }
 
         WriteSummary(output, result, pending);
+        int exitCode;
+        if (result.OutputWritten)
+        {
+            // Said before the report is written, so a report that cannot be written never hides the written vault.
+            string outputPath = CommandText.OneLine(arguments.Output);
+            output.WriteLine(arguments.Plaintext
+                ? $"Wrote the merged vault to {outputPath} as unencrypted JSON. Delete it after the import."
+                : $"Wrote the merged vault to {outputPath} as a password-protected export.");
+            exitCode = ExitCodes.Success;
+        }
+        else
+        {
+            exitCode = NotWritten(arguments, result, pending, error);
+        }
+
         if (arguments.Report is { } reportPath)
         {
             ct.ThrowIfCancellationRequested();
-            SecureFile.WriteAllText(reportPath, Report(result with { Output = RequestedOutput(arguments) }, pending), overwrite: true);
-            output.WriteLine("Report: " + reportPath);
+            try
+            {
+                SecureFile.WriteAllText(reportPath, Report(result with { Output = RequestedOutput(arguments) }, pending), overwrite: true);
+            }
+            catch (Exception exception) when (result.OutputWritten && CommandAction.IsFileProblem(exception))
+            {
+                error.WriteLine(CommandText.OneLine($"The merged vault was written to {arguments.Output}, but the report was not written: {exception.Message}"));
+                return ExitCodes.InputOutputProblem;
+            }
+
+            output.WriteLine("Report: " + CommandText.OneLine(reportPath));
         }
 
-        if (result.OutputWritten)
-        {
-            output.WriteLine(arguments.Plaintext
-                ? $"Wrote the merged vault to {arguments.Output} as unencrypted JSON. Delete it after the import."
-                : $"Wrote the merged vault to {arguments.Output} as a password-protected export.");
-            return ExitCodes.Success;
-        }
+        return exitCode;
+    }
 
+    // Says why the merged vault is not written and returns the exit code. Writer errors decide it: no decision fixes
+    // them, and fixing an input can change what needs a decision.
+    private static int NotWritten(MergeArguments arguments, PipelineResult result, PendingDecisions pending, TextWriter error)
+    {
         foreach (string writeError in result.WriteErrors)
         {
             error.WriteLine("Error: " + CommandText.OneLine(writeError));
@@ -232,8 +254,6 @@ internal static class MergeCommand
         }
 
         error.WriteLine(result.HasWriteErrors ? "The merged vault was not written because Bitwarden would reject the import." : "The merged vault was not written.");
-
-        // Writer errors decide the exit code: no decision fixes them, and fixing an input can change what needs a decision.
         return result.HasWriteErrors ? ExitCodes.InputOutputProblem : ExitCodes.DecisionsNeeded;
     }
 
@@ -257,7 +277,7 @@ internal static class MergeCommand
         string counts = string.Create(CultureInfo.InvariantCulture, $"{pending.Fields.Count} field(s) and {pending.FindingCount} finding(s) need a decision.");
         return decisionsPath is null
             ? counts + " Run the merge again with --decisions <file> to write a pending entry for each to that file."
-            : counts + " Pending entries are in " + decisionsPath + "; replace each with a decision and run the merge again.";
+            : counts + " Pending entries are in " + CommandText.OneLine(decisionsPath) + "; replace each with a decision and run the merge again.";
     }
 
     private static string Report(PipelineResult result, PendingDecisions pending)

@@ -78,6 +78,34 @@ public sealed class InspectCommandTests : IDisposable
         run.Error.ShouldStartWith("missing.json: ", StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task Inspect_takes_an_argument_starting_with_at_as_a_file_name_and_shows_no_vault_values()
+    {
+        string export = CliInputs.BitwardenWithFolder(directory);
+
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", "@" + export], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(3);
+        run.Output.ShouldBeEmpty();
+        run.Error.ShouldContain("@" + export, StringComparison.Ordinal);
+        string[] values = [CliInputs.BitwardenPassword, "fixture wifi note"];
+        values.ShouldAllSatisfy(value => run.Error.ShouldNotContain(value, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task Inspect_shows_control_characters_in_folder_names_as_spaces()
+    {
+        string folder = string.Concat("Work", (char)0x1B, "[2J", (char)0x9B, "31m", (char)0x7F, (char)0x07, "end");
+        string bitwarden = CliInputs.BitwardenWithFolder(directory, folder);
+
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["inspect", bitwarden], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(0);
+        run.Output.ShouldContain("\n    Work [2J 31m  end\n", StringComparison.Ordinal);
+        char[] controls = [(char)0x1B, (char)0x9B, (char)0x7F, (char)0x07];
+        controls.ShouldAllSatisfy(control => run.Output.ShouldNotContain(control));
+    }
+
     [Theory]
     [InlineData("export.txt", "not an export\n", "not recognized")]
     [InlineData("restricted.json", """{"encrypted":true,"encKeyValidation_DO_NOT_EDIT":"2.x","data":"2.x"}""", "account-restricted")]

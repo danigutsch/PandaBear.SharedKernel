@@ -121,7 +121,7 @@ public sealed class MergeCommandTests : IDisposable
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", inputs[1], "--plaintext", "--force"], TestContext.Current.CancellationToken);
 
         run.ExitCode.ShouldBe(3);
-        run.Error.ShouldContain("is also an input", StringComparison.Ordinal);
+        run.Error.ShouldContain("may be the same file as an input", StringComparison.Ordinal);
         string after = await File.ReadAllTextAsync(inputs[1], TestContext.Current.CancellationToken);
         after.ShouldBe(before);
     }
@@ -139,12 +139,57 @@ public sealed class MergeCommandTests : IDisposable
         var overOutput = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, option, output], TestContext.Current.CancellationToken);
 
         overInput.ExitCode.ShouldBe(3);
-        overInput.Error.ShouldContain("is also an input", StringComparison.Ordinal);
+        overInput.Error.ShouldContain("may be the same file as an input", StringComparison.Ordinal);
         overOutput.ExitCode.ShouldBe(3);
-        overOutput.Error.ShouldContain("is also the output", StringComparison.Ordinal);
+        overOutput.Error.ShouldContain("may be the same file as the output", StringComparison.Ordinal);
         string after = await File.ReadAllTextAsync(inputs[0], TestContext.Current.CancellationToken);
         after.ShouldBe(before);
         File.Exists(output).ShouldBeFalse();
+    }
+
+    [Theory(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanCreateSymbolicLinks), Skip = "This system does not let the test create symbolic links.")]
+    [InlineData("--report")]
+    [InlineData("--decisions")]
+    public async Task Merge_never_writes_a_report_or_decisions_over_an_input_or_the_output_reached_through_a_linked_directory(string option)
+    {
+        string exports = Directory.CreateDirectory(Path.Combine(directory, "exports")).FullName;
+        string[] inputs = CliInputs.ConflictingLogins(exports);
+        string alias = Path.Combine(directory, "alias");
+        Directory.CreateSymbolicLink(alias, exports);
+        string output = Path.Combine(exports, "merged.json");
+        string before = await File.ReadAllTextAsync(inputs[0], TestContext.Current.CancellationToken);
+
+        var overInput = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, option, Path.Combine(alias, "keeper.json")], TestContext.Current.CancellationToken);
+        var overOutput = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["merge", .. inputs, "--output", output, option, Path.Combine(alias, "merged.json")], TestContext.Current.CancellationToken);
+
+        overInput.ExitCode.ShouldBe(3);
+        overInput.Error.ShouldContain("may be the same file as an input", StringComparison.Ordinal);
+        overOutput.ExitCode.ShouldBe(3);
+        overOutput.Error.ShouldContain("may be the same file as the output", StringComparison.Ordinal);
+        string after = await File.ReadAllTextAsync(inputs[0], TestContext.Current.CancellationToken);
+        after.ShouldBe(before);
+        File.Exists(output).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Merge_that_cannot_write_the_report_after_the_vault_says_the_vault_was_written_and_exits_3()
+    {
+        string[] inputs = CliInputs.NewerBitwardenLogin(directory);
+        string output = Path.Combine(directory, "merged.json");
+        string reports = Directory.CreateDirectory(Path.Combine(directory, "reports")).FullName;
+        string report = Path.Combine(reports, "report.md");
+
+        // The report directory disappears while the vault is written, after the checks that run before any work.
+        var prompts = new TestPrompts(ExportPassword) { OnNewPassword = () => Directory.Delete(reports) };
+
+        var run = await CommandLineRun.Invoke(prompts.Environment(), ["merge", .. inputs, "--output", output, "--report", report], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(3);
+        run.Output.ShouldContain("Wrote the merged vault to " + output + " as a password-protected export.\n", StringComparison.Ordinal);
+        run.Output.ShouldNotContain("Report: ", StringComparison.Ordinal);
+        run.Error.ShouldContain("The merged vault was written to " + output + ", but the report was not written: ", StringComparison.Ordinal);
+        string json = PasswordProtectedExport.Decrypt(await File.ReadAllTextAsync(output, TestContext.Current.CancellationToken), ExportPassword);
+        BitwardenJsonReader.Read(json, "merged.json").Items.ShouldHaveSingleItem();
     }
 
     [Fact]

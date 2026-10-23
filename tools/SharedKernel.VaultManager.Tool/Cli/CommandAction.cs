@@ -8,6 +8,12 @@ namespace PandaBear.VaultManager.Tool.Cli;
 internal static class CommandAction
 {
     /// <summary>
+    /// Longest wait for canceled work to stop. It is shorter than System.CommandLine's two-second
+    /// <see cref="InvocationConfiguration.ProcessTerminationTimeout"/>, so a canceled command still exits 1.
+    /// </summary>
+    public static readonly TimeSpan StopTimeout = TimeSpan.FromSeconds(1.5);
+
+    /// <summary>
     /// Sets the action of a command. The work gets the parse result, the password prompts of the run, and the
     /// cancellation token, and writes to the invocation's output and error writers.
     /// </summary>
@@ -27,10 +33,23 @@ internal static class CommandAction
 
     private static async Task<int> Run(ParseResult parseResult, VaultCommandEnvironment environment, Func<ParseResult, PasswordPrompts, CancellationToken, int> work, CancellationToken ct)
     {
-        // The pipeline is synchronous and a password prompt blocks on the terminal. The work runs on the thread pool so
-        // that Ctrl+C ends the command at once: the canceled wait exits 1, as System.CommandLine does for a canceled
-        // action. The prompts check the token, so canceled work stops at its next prompt and writes nothing after it.
-        return await Task.Run(() => Guard(parseResult, new PasswordPrompts(environment, ct), work, ct), ct).WaitAsync(ct).ConfigureAwait(false);
+        // The pipeline is synchronous and a password prompt blocks on the terminal, so the work runs on the thread pool.
+        // A canceled command exits 1, as System.CommandLine does for a canceled action.
+        var prompts = new PasswordPrompts(environment, ct);
+        Task<int> running = Task.Run(() => Guard(parseResult, prompts, work, ct), ct);
+        try
+        {
+            return await running.WaitAsync(ct).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested && !prompts.IsAsking)
+        {
+            // Ctrl+C at a prompt ends the command at once: nothing is being written, and the run writes nothing after the
+            // prompt. Elsewhere it can arrive while a file is written, so the command waits for the work to stop at its
+            // next cancellation check instead of ending the process in the middle of a write, which would leave a hidden
+            // temporary file behind. Work that does not stop in time ends with the process.
+            await ((Task)running).WaitAsync(StopTimeout, environment.Time, CancellationToken.None).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+            throw;
+        }
     }
 
     private static int Guard(ParseResult parseResult, PasswordPrompts prompts, Func<ParseResult, PasswordPrompts, CancellationToken, int> work, CancellationToken ct)
@@ -42,7 +61,7 @@ internal static class CommandAction
         }
         catch (Exception exception) when (IsFileProblem(exception) || prompts.Failed(exception))
         {
-            error.WriteLine(exception.Message);
+            error.WriteLine(CommandText.OneLine(exception.Message));
         }
         catch (Exception exception) when (exception.ShouldHandleAsFailure(ct))
         {

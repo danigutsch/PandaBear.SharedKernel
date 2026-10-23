@@ -70,7 +70,38 @@ public sealed class ScanCommandTests : IDisposable
         var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", keeper, "--report", keeper], TestContext.Current.CancellationToken);
 
         run.ExitCode.ShouldBe(3);
-        run.Error.ShouldContain("is also an input", StringComparison.Ordinal);
+        run.Error.ShouldContain("may be the same file as an input", StringComparison.Ordinal);
+        string after = await File.ReadAllTextAsync(keeper, TestContext.Current.CancellationToken);
+        after.ShouldBe(before);
+    }
+
+    [Fact]
+    public async Task Scan_refuses_a_report_path_that_differs_from_an_input_only_in_case_and_says_why()
+    {
+        string bitwarden = CliInputs.BitwardenWithFolder(directory);
+        string report = Path.Combine(directory, "BITWARDEN.json");
+
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", bitwarden, "--report", report], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(3);
+        run.Output.ShouldBeEmpty();
+        run.Error.ShouldBe("The report file '" + report + "' may be the same file as an input file: paths are compared after resolving symbolic links and ignoring case. Choose another path.\n", StringComparer.Ordinal);
+    }
+
+    [Fact(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanCreateSymbolicLinks), Skip = "This system does not let the test create symbolic links.")]
+    public async Task Scan_never_writes_the_report_over_an_input_reached_through_a_linked_directory()
+    {
+        string real = Directory.CreateDirectory(Path.Combine(directory, "real")).FullName;
+        string keeper = CliInputs.CodesAndPasswordInNotes(real, PipelineSecrets.GitHubRecoveryCodes(940));
+        string alias = Path.Combine(directory, "alias");
+        Directory.CreateSymbolicLink(alias, real);
+        string before = await File.ReadAllTextAsync(keeper, TestContext.Current.CancellationToken);
+
+        var run = await CommandLineRun.Invoke(new TestPrompts(ExportPassword).Environment(), ["scan", keeper, "--report", Path.Combine(alias, "keeper.json")], TestContext.Current.CancellationToken);
+
+        run.ExitCode.ShouldBe(3);
+        run.Output.ShouldBeEmpty();
+        run.Error.ShouldContain("may be the same file as an input", StringComparison.Ordinal);
         string after = await File.ReadAllTextAsync(keeper, TestContext.Current.CancellationToken);
         after.ShouldBe(before);
     }

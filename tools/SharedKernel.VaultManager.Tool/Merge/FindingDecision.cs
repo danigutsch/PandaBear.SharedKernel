@@ -2,7 +2,7 @@ namespace PandaBear.VaultManager.Tool.Merge;
 
 /// <summary>
 /// Whether a secret finding is moved to its proposed target. The zero value is <see cref="Pending"/>, so an unset
-/// decision never applies a finding.
+/// decision applies only pre-accepted findings and never a proposed one.
 /// </summary>
 internal enum FindingDecision
 {

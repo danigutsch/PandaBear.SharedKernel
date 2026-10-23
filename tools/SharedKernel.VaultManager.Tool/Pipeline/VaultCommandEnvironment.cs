@@ -7,7 +7,7 @@ namespace PandaBear.VaultManager.Tool.Pipeline;
 /// <param name="ReadPassword">Prompts for an existing password, such as the password of an input file, and returns it.</param>
 /// <param name="ReadNewPassword">Prompts for a new password with confirmation, such as the password of an output file, and returns it.</param>
 /// <param name="IsInteractive">Whether standard input is a terminal, so prompts and the review UI can run.</param>
-/// <param name="Time">Clock.</param>
+/// <param name="Time">Clock of the merge, and of the wait for canceled work to stop.</param>
 internal sealed record VaultCommandEnvironment(
     Func<string, string> ReadPassword,
     Func<string, string> ReadNewPassword,

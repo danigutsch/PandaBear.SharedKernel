@@ -63,7 +63,9 @@ JSON, password-protected JSON, CSV, and zip. The format is detected from the con
 
 ## Commands
 
-Every command takes one or more input files and accepts `--help`. The root command also accepts `--version`.
+Every command takes one or more input files and accepts `--help`. The root command also accepts `--version`. An
+argument that starts with `@` is a file name like any other: the tool reads no response files, so an export is never
+split into arguments. An empty or blank file name is an invalid command line.
 
 ### `inspect <inputs>...`
 
@@ -110,7 +112,9 @@ sharedkernel-vault merge keeper.zip bitwarden.json -o merged.json --decisions de
 The decisions file is JSON. A merge with `--decisions` reads it. When something needs a decision, the merge
 rewrites the file: it rebuilds the pending entries, one for each field and finding without a decision, and keeps
 all other entries as they are. Pending entries count as no decision. A merge that needs no decision leaves the
-file unchanged. This is a file after a merge that needs two decisions:
+file unchanged. Item names are written as typed, apostrophes and accents included. Control and format characters,
+such as a right-to-left override, are escaped, so a name cannot reorder or hide text in an editor. This is a file
+after a merge that needs two decisions:
 
 ```json
 {
@@ -151,28 +155,35 @@ file unchanged. This is a file after a merge that needs two decisions:
 - **Finding decisions.** A finding is a secret proposed for a better place, named by its finding ID. Pre-accepted
   findings, which have a checksum or a strong validator, are applied unless a decision rejects them. Other findings
   are applied only when accepted. Replace `"decision": "Pending"` with `"Accepted"` or `"Rejected"`. To reject a
-  pre-accepted finding, add an entry with its finding ID from the report.
+  pre-accepted finding, add an entry with its finding ID from the report to the `findings` list.
 - **Links and splits.** `links` and `splits` take pairs of origin keys, such as
   `{ "first": "keeper|keeper.json|rec-1", "second": "bitwarden|bitwarden.json|bw-1" }`, that must or must never
   end up in one group. A split wins over a link.
 
 The merge warns on standard error about each decision whose group, field, origin key, or finding ID matches
-nothing, so a typo does not leave the policy or a pre-accepted finding in effect unnoticed.
+nothing, so a typo does not leave the policy or a pre-accepted finding in effect unnoticed. A `Member` choice that
+names an item outside its group is no decision: the policy decides the field, and when the field needs a decision,
+its pending entry takes the choice's place. The merge reads only the properties shown above, each at most once in
+its object. Any other property, such as a misspelled `findings`, and a repeated one, such as a second `findings`
+list, stop the merge with exit code 3 before any password is asked, and the error names the file and the
+property's JSON path.
 
 ## Exit codes
 
 | Code | Meaning |
 | --- | --- |
 | 0 | Success. |
-| 1 | Invalid command line, with the error on standard error and help on standard output; canceled with Ctrl+C or SIGTERM; or an unexpected error. An unexpected error shows the exception type and stack trace, but not its message, which can contain vault values. |
+| 1 | Invalid command line, with the error on standard error and help on standard output; canceled with Ctrl+C or SIGTERM; or an unexpected error. Canceled at a password prompt, the command ends at once. Canceled elsewhere, it waits up to 1.5 seconds for its work to stop, so a short file write can finish, and then ends even if a write is still running, as described under Security. An unexpected error shows the exception type and stack trace, but not its message, which can contain vault values. |
 | 2 | `merge` only: fields or findings need a decision. No vault is written; with `--decisions`, the decisions file holds a pending entry for each. |
-| 3 | An input or output problem: an input that is unreadable, unsupported, or account-restricted, or whose password is wrong; an output that exists without `--force` or is an input; a missing output directory; values that Bitwarden would reject; or a password needed while standard input is not a terminal. No vault is written. When `merge` also needs decisions, it still adds their pending entries. |
+| 3 | An input or output problem: an input that is unreadable, unsupported, or account-restricted, or whose password is wrong; a decisions file that is not valid, such as one with an unknown or repeated property; an output that exists without `--force` or is an input; a missing output directory; a report or decisions file that cannot be written; values that Bitwarden would reject; or a password needed while standard input is not a terminal. No vault is written, except when `merge` writes the vault and then cannot write the report: standard output then names the written vault, and the error says that the vault is written and the report is not. When `merge` also needs decisions, it still adds their pending entries. |
+| 130, 143 | Ctrl+C or SIGTERM during start-up, before the tool handles it, or a canceled command that did not end within two seconds. |
 
 ## Output
 
-`inspect` writes its report to standard output, and `scan` and `merge` write a summary there. Warnings, errors,
-and password prompts go to standard error. Messages name inputs, items, fields, origin keys, and finding IDs, never
-values.
+`inspect` writes its report to standard output, and `scan` and `merge` write a summary there. `merge` names the
+written vault there before it writes the report. Warnings, errors, and password prompts go to standard error.
+Messages name inputs, items, fields, origin keys, and finding IDs, never values. Control characters in names,
+paths, and messages are shown as spaces, so an export cannot send escape sequences to the terminal.
 
 ## Limits
 
@@ -189,11 +200,15 @@ values.
 - Output is a Bitwarden password-protected export by default: PBKDF2-SHA256 with 600,000 iterations,
   AES-256-CBC, and HMAC-SHA256. A plaintext export needs `--plaintext`.
 - On Unix, the output, the report, and the decisions file are created readable only by you. Each is written to a
-  temporary file and moved into place. An existing output is replaced only with `--force`, and an input is never
-  replaced.
+  temporary file, `.<file name>.<random>.tmp`, in the same directory and then moved into place. If the tool ends
+  during a write, for example after Ctrl+C, that file can remain and hold part of the content, unencrypted with
+  `--plaintext`. Delete it.
+- An existing output is replaced only with `--force`, and an input is never replaced. Paths are compared after
+  resolving symbolic links and ignoring case, so a path that differs from an input only in case is refused too.
 - Passwords are read from the terminal without echo. They are never accepted as arguments or environment
-  variables. When standard input is not a terminal, a command that needs a password exits with code 3 before it
-  reads any vault, and names the input or output that needs the password.
+  variables. Wait for the prompt before you type a password: the terminal shows what is typed earlier. When
+  standard input is not a terminal, a command that needs a password exits with code 3 before it reads any vault,
+  and names the input or output that needs the password.
 - Reports, warnings, errors, and the decisions file never contain secret values. They do contain item names,
   folder names, file names, and origin keys.
 - .NET strings cannot be wiped from memory, so vault values remain in process memory until the runtime reclaims
