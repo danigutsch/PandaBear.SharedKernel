@@ -5,6 +5,8 @@
 		<UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
 		<TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
 		<TestingPlatformCaptureOutput>false</TestingPlatformCaptureOutput>
+		<!-- System.CommandLine localizes help and parse errors by UI culture; tests assert the English text. -->
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj' and '$(IsRoslynComponent)' != 'true' and '$(EnableSharedKernelTestingAnalyzers)' != 'false'">
