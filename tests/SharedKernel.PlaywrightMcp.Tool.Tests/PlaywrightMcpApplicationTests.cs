@@ -366,6 +366,39 @@ public sealed class PlaywrightMcpApplicationTests
     }
 
     [Theory]
+    [InlineData("prepare")]
+    [InlineData("clean")]
+    public async Task Prepare_and_clean_write_the_engine_output_to_standard_error(string command)
+    {
+        // Arrange
+        var environment = new PlaywrightMcpTestEnvironment();
+        environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
+        var invocation = 0;
+
+        // Act
+        var exitCode = await environment.Invoke(
+            [command],
+            (_, _) =>
+            {
+                invocation++;
+                return Task.FromResult(invocation switch
+                {
+                    1 => new ProcessResult(0, "default", string.Empty),
+                    2 => new ProcessResult(0, "unix:///var/run/docker.sock", string.Empty),
+                    _ => new ProcessResult(0, "engine output" + Environment.NewLine, "engine warning" + Environment.NewLine)
+                });
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        invocation.ShouldBe(3);
+        environment.Output.ToString().ShouldBeEmpty();
+        environment.Error.ToString().ShouldBe(
+            "engine output" + Environment.NewLine + "engine warning" + Environment.NewLine);
+    }
+
+    [Theory]
     [InlineData("docker", "Docker current-context inspection failed: preflight denied")]
     [InlineData("podman", "Podman rootless inspection failed: preflight denied")]
     public async Task Engine_preflight_failures_stop_before_runtime_start(

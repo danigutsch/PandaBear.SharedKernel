@@ -18,7 +18,7 @@ internal sealed class PlaywrightMcpApplication(
     {
         return Run(
             error,
-            (options, token) => RunToExit(PlaywrightMcpCommand.CreatePullStartInfo(options), token),
+            (options, token) => RunToExit(PlaywrightMcpCommand.CreatePullStartInfo(options), error, token),
             ct);
     }
 
@@ -26,7 +26,7 @@ internal sealed class PlaywrightMcpApplication(
     {
         return Run(
             error,
-            (options, token) => RunToExit(PlaywrightMcpCommand.CreateImageRemoveStartInfo(options), token),
+            (options, token) => RunToExit(PlaywrightMcpCommand.CreateImageRemoveStartInfo(options), error, token),
             ct);
     }
 
@@ -71,9 +71,12 @@ internal sealed class PlaywrightMcpApplication(
         }
     }
 
-    private async Task<int> RunToExit(ProcessStartInfo startInfo, CancellationToken ct)
+    // The engine's output and errors are this tool's diagnostics, so both go to standard error.
+    private async Task<int> RunToExit(ProcessStartInfo startInfo, TextWriter error, CancellationToken ct)
     {
         var result = await runProcess(startInfo, ct).ConfigureAwait(false);
+        await error.WriteAsync(result.StandardOutput).ConfigureAwait(false);
+        await error.WriteAsync(result.StandardError).ConfigureAwait(false);
         return result.ExitCode;
     }
 

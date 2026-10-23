@@ -178,6 +178,28 @@ public sealed class PlaywrightMcpCommandTests
     }
 
     [Fact]
+    public void Image_pull_and_removal_capture_the_engine_output_and_errors()
+    {
+        // Arrange
+        var options = new PlaywrightMcpOptions(
+            ContainerEngine.Docker,
+            PlaywrightMcpTestEnvironment.GetExecutablePath("docker"),
+            false,
+            "omit",
+            DockerEndpoint: LocalDockerEndpoint);
+
+        // Act
+        var pull = PlaywrightMcpCommand.CreatePullStartInfo(options);
+        var remove = PlaywrightMcpCommand.CreateImageRemoveStartInfo(options);
+
+        // Assert
+        pull.RedirectStandardOutput.ShouldBeTrue();
+        pull.RedirectStandardError.ShouldBeTrue();
+        remove.RedirectStandardOutput.ShouldBeTrue();
+        remove.RedirectStandardError.ShouldBeTrue();
+    }
+
+    [Fact]
     public void Clean_removes_only_the_exact_pinned_image()
     {
         // Arrange

@@ -98,6 +98,34 @@ public sealed class PlaywrightMcpCommandLineTests
     }
 
     [Fact]
+    public void Readme_command_lines_select_their_command_or_the_help_and_version_actions()
+    {
+        // Arrange
+        var environment = new PlaywrightMcpTestEnvironment();
+        var rootCommand = PlaywrightMcpCommandLine.Create(
+            environment.GetEnvironmentVariable,
+            environment.ResolveExecutable,
+            static (_, _) => Task.FromResult(new ProcessResult(0, string.Empty, string.Empty)));
+        var commandLines = DocumentedCommandLines.Find(DocumentedCommandLines.ReadToolReadme());
+
+        // Act
+        var parsed = commandLines
+            .Select(static commandLine => (CommandLine: commandLine, Arguments: DocumentedCommandLines.Arguments(commandLine)))
+            .Select(entry => (entry.CommandLine, Expected: entry.Arguments[0], Result: rootCommand.Parse(entry.Arguments)))
+            .ToArray();
+        var selections = parsed.Select(static entry => DocumentedCommandLines.Selection(entry.Result)).ToArray();
+
+        // Assert
+        commandLines.ShouldNotBeEmpty();
+        parsed.ShouldAllSatisfy(static entry =>
+        {
+            entry.Result.Errors.ShouldBeEmpty();
+            DocumentedCommandLines.Selection(entry.Result).ShouldBe(entry.Expected);
+        });
+        rootCommand.Subcommands.ShouldAllSatisfy(command => selections.ShouldContain(command.Name));
+    }
+
+    [Fact]
     public async Task Missing_command_fails_parsing_before_any_process_starts()
     {
         // Arrange

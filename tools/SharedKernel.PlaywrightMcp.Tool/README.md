@@ -31,7 +31,9 @@ sharedkernel-playwright-mcp --version
 
 Run `prepare` first; `serve` starts the image with `--pull=never`. Configure the MCP client to start
 `sharedkernel-playwright-mcp serve`. `serve` writes only the MCP protocol to standard output and diagnostics to
-standard error. `clean` removes the image from the local engine cache; check other local uses before running it.
+standard error. `prepare` and `clean` write nothing to standard output; the container engine's output and errors go
+to standard error when the engine exits. `clean` removes the image from the local engine cache; check other local
+uses before running it.
 
 Configuration comes from the environment:
 
@@ -40,6 +42,16 @@ Configuration comes from the environment:
 | `PLAYWRIGHT_MCP_ENGINE` | `docker` or `podman`; required when both are installed. |
 | `PLAYWRIGHT_MCP_NETWORK_ACCESS` | `1` enables container networking; default `0`. |
 | `PLAYWRIGHT_MCP_IMAGE_RESPONSES` | `allow` sends images to the MCP client; default `omit`. |
+
+## Limits
+
+`serve` runs the container with fixed limits:
+
+- a read-only root file system;
+- 2 GiB of memory and 1 GiB of shared memory;
+- at most 256 processes;
+- a 512 MiB `/tmp` tmpfs and a 128 MiB `/home/node` tmpfs;
+- a 10 MiB cap on Playwright output.
 
 ## Exit codes
 
@@ -56,6 +68,7 @@ Configuration comes from the environment:
 - Remote engine overrides are rejected: `DOCKER_HOST` and `DOCKER_CONTEXT` for Docker, `CONTAINER_HOST` and
   `CONTAINER_CONNECTION` for Podman. The current Docker context must use a local socket or pipe, and Podman must run
   rootless.
+- The container drops all Linux capabilities and runs with `no-new-privileges`.
 - Command-line arguments never reach the container. Networking and image responses stay off unless enabled.
 - Ctrl+C or SIGTERM stops the server and force-removes its container before the tool exits.
 
