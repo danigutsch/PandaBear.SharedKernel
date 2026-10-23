@@ -76,4 +76,4 @@ equality, hashes, collection membership, and empty identities. It mutates three 
 through their `Id` setter, including private init setters. This test-only helper retains reflected
 property access because the existing domain models deliberately hide identity mutation. Generic
 metadata annotations preserve the property boundary; this package does not promise NativeAOT support.
-Use `id.ShouldBeUuidV7()` for generated identifier version checks.
+Use `id.ShouldBeUuidV7()` for generated identifier version and standard UUID variant checks.

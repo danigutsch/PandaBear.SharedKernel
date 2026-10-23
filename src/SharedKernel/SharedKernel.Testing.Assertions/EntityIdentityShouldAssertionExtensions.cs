@@ -6,12 +6,14 @@ namespace PandaBear.Testing.Assertions;
 /// <summary>Verifies generated GUID identity equality, including empty identities.</summary>
 public static class EntityIdentityShouldAssertionExtensions
 {
-    /// <summary>Verifies a UUID version 7 identifier.</summary>
+    /// <summary>Verifies a UUID version 7 identifier with the standard UUID variant.</summary>
     /// <param name="id">The identifier.</param>
     public static void ShouldBeUuidV7(this Guid id)
     {
         var guidText = id.ToString("D");
         guidText[14].ShouldBe('7');
+        var hasStandardVariant = guidText[19] is '8' or '9' or 'a' or 'b';
+        hasStandardVariant.ShouldBeTrue("Expected the standard UUID variant.");
     }
 
     private static void SetId<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties)] T>(T entity, Guid id)
