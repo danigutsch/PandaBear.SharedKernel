@@ -61,6 +61,30 @@ public sealed class ShownValuesTests
         ShownValues.IsMasked(address).ShouldBeTrue();
     }
 
+    [Theory]
+    [InlineData("slack-webhook-url", "https://***")]
+    [InlineData("connection-string", "***")]
+    public void Addresses_that_hold_a_secret_finding_are_masked_after_their_scheme(string ruleId, string masked)
+    {
+        string address = RuleSamples.All.ShouldHaveSingleItem(sample => sample.RuleId == ruleId).Positive;
+
+        ShownValues.MaskUri(address).ShouldBe(masked);
+    }
+
+    [Fact]
+    public void A_user_name_that_holds_a_secret_finding_is_withheld()
+    {
+        var item = new VaultItem
+        {
+            Type = VaultItemType.Login,
+            Name = "Deploy",
+            Login = new LoginData { Username = TestSecrets.GitHubToken("ghp", 5) },
+            Origin = new ItemOrigin("bitwarden", "vault.json", "item-1", null),
+        };
+
+        ShownValues.Username(item, []).ShouldBeNull();
+    }
+
     [Fact]
     public void Addresses_without_user_info_a_query_or_a_fragment_are_shown_as_they_are()
     {
