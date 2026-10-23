@@ -246,8 +246,9 @@ summaries count them with the other attachments to upload.
   written stops the merge before anything else is written.
 - `sharedkernel-vault catalog <input> --output <file> [--decisions <file>] [--force]` writes the catalog of one
   vault file and adds pending notes entries to the decisions file (see Catalog).
-- `sharedkernel-vault apply <input> --catalog <file> --output <file> [--decisions <file>] [--plaintext] [--force]`
-  applies an edited catalog to the file it was made from and writes a Bitwarden export.
+- `sharedkernel-vault apply <input> --catalog <file> [--output <file>] [--decisions <file>] [--plaintext] [--force] [--dry-run] [--allow-removals]`
+  applies an edited catalog to the file it was made from and writes a Bitwarden export, or with `--dry-run` lists every
+  change and writes nothing.
 - `sharedkernel-vault review <inputs...> [--decisions <file>] [--output <file>] [--plaintext] [--force]` opens the
   full-screen review UI: groups, a side-by-side field diff, findings, and decisions. See [Review UI](#review-ui).
 
@@ -320,6 +321,22 @@ file, the agent edits only the catalog, and `apply` writes the vault with the ed
   the places of the shown fields as read, and protected fields keep theirs.
 - The trust boundary is the vault password: only the user can run `catalog` and `apply` on a password-protected
   vault. An agent that can write the decisions file can share notes, so the commands print how many notes they show.
+- Changes: `CatalogApplier` describes each change while it applies the catalog, one value-free line per change by item
+  key and name: renames, folder moves, additional folders, the favorite mark, website addresses added, removed, with
+  another match setting, or reordered, masked addresses moved by position, text fields added, removed, or changed by
+  name, notes added, edited, emptied, or moved into the hidden `Notes` field, and vault folders added or removed.
+  Lines go through `PrintableText` and the format-character escaping of the decisions file, so an edit cannot spoof a
+  name on the terminal. A match setting of `RegularExpression` or `StartsWith` is marked, because it offers the login on
+  more sites.
+- Removals: what the vault holds and the catalog drops, compared after the applier's own normalization (trimmed
+  addresses, a missing field name as empty): an unmasked address that the catalog does not hold as it is, the old value
+  of a shown text field it removes or changes, shared notes it empties, and a declared folder the output would not
+  have. Edits count as removals of the old value, because a replaced login address is the edit that harms most: it
+  offers the password on another site. Without `--allow-removals`, `apply` prints each removal and writes nothing
+  before the export password prompt. Additions are not removals; the dry run lists them for the user to check.
+- `--dry-run` runs the same steps in memory: it applies the catalog, checks the edited vault with the Bitwarden writer
+  without encryption, checks `--output` when it is given, asks no new password, writes nothing, lists the changes and,
+  apart, the removals, and exits with code 0 unless the catalog or the writer reports a problem.
 
 ## Brief
 

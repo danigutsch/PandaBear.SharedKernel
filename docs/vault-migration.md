@@ -665,7 +665,18 @@ that holds no secret value; you run the two commands that read and write the vau
    `additionalFolders`, `favorite`, the `text` of shared notes, the `uris` that are not masked, the `fields`, and the
    top-level `folders` list. It must keep each `key` and each masked address, and leave withheld notes without
    text. Keep `notes.json` out of its reach: an agent that can write it can share notes.
-4. Apply the catalog. It asks for the password of `merged.json` and for a new password for `organized.json`:
+4. Preview what the edited catalog changes. It asks for the password of `merged.json` and writes nothing:
+
+   ```bash
+   sharedkernel-vault apply merged.json --catalog catalog.json --decisions notes.json --dry-run
+   ```
+
+   Each line names an item by its key and name and says what changes, such as a new name, another folder, or a website
+   address that was added or removed, without notes text, field values, or masked addresses. Removals are listed
+   apart: addresses and text field values the catalog drops or changes, shared notes it empties, and folders the
+   vault would lose. Check every address that was added or whose match setting covers more sites: Bitwarden offers a login's
+   password on the sites its addresses match.
+5. Apply the catalog. It asks for the password of `merged.json` and for a new password for `organized.json`:
 
    ```bash
    sharedkernel-vault apply merged.json --catalog catalog.json --output organized.json --decisions notes.json
@@ -673,7 +684,9 @@ that holds no secret value; you run the two commands that read and write the vau
 
    `apply` refuses a catalog made from another file or from `merged.json` before a later merge, and writes nothing
    while the catalog changes something it may not; each problem names the item. Fix the catalog and run it again.
-5. Import `organized.json` instead of `merged.json` in step 7, and delete `catalog.json`, `notes.json`, and
+   It also writes nothing while the catalog removes something; when you agree with every removal of the preview, add
+   `--allow-removals`.
+6. Import `organized.json` instead of `merged.json` in step 7, and delete `catalog.json`, `notes.json`, and
    `organized.json` in step 10.
 
 ## The decisions file
