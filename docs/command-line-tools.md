@@ -4,17 +4,19 @@ This guidance covers every tool under `tools/`.
 
 ## Packaging
 
-- Set `PackAsTool`, a unique `ToolCommandName` without an extension, `PackageId`, and `PackageReadmeFile`, as
-  described in [Create a .NET tool](https://learn.microsoft.com/dotnet/core/tools/global-tools-how-to-create).
-  Command names start with `sharedkernel-`.
+- Packaged tools set `PackAsTool`, a unique `ToolCommandName` without an extension, `PackageId`, and
+  `PackageReadmeFile`, as described in [Create a .NET tool](https://learn.microsoft.com/dotnet/core/tools/global-tools-how-to-create)
+  and the [pack target](https://learn.microsoft.com/nuget/reference/msbuild-targets#pack-target). Command names
+  start with `sharedkernel-`.
 - Ship framework-dependent tool packages. Add
   [RID-specific, self-contained, or NativeAOT tool packages](https://learn.microsoft.com/dotnet/core/tools/rid-specific-tools)
   only when CI builds and consumes each claimed platform. NativeAOT packages build on the operating system they
   target. Include `any` for a framework-dependent fallback.
-- Keep tools AOT- and trimming-compatible: `IsAotCompatible`, source-generated JSON, `[GeneratedRegex]`.
+- Keep tools AOT- and trimming-compatible: `IsAotCompatible`, source-generated JSON, `[GeneratedRegex]`. A tool
+  whose dependencies rule this out says why in its project file.
 - Write the README per the [NuGet package README guidance](https://learn.microsoft.com/nuget/nuget-org/package-readme-on-nuget-org):
-  what the tool does, prerequisites, installation, usage, limits, exit codes, and security notes. Images use
-  allow-listed absolute URLs.
+  what the tool does, prerequisites, installation, and usage. Add limits, exit codes, and security notes. Images
+  use allow-listed absolute URLs.
 
 ## Commands and parsing
 
@@ -23,20 +25,33 @@ This guidance covers every tool under `tools/`.
 - Follow the [design guidance](https://learn.microsoft.com/dotnet/standard/commandline/design-guidance):
   - Names are lowercase kebab-case.
   - Leaf commands are verbs. A command with subcommands only groups them.
-  - Options are nouns and take values, not actions.
+  - Options are nouns that give the command parameters, never a different action. `--help` and `--version` are
+    the exceptions.
   - Short aliases are rare. `-o/--output`, `-v/--verbosity`, and `-i/--interactive` keep their conventional
     meanings.
-  - Required options set `Required = true`.
+- Required options set [`Required = true`](https://learn.microsoft.com/dotnet/standard/commandline/syntax#required-options).
 - Use System.CommandLine defaults for help, version, response files, POSIX bundling, and parse errors. A tool
-  that changes a default explains why in a comment next to the change.
+  that changes a default explains why in a comment next to the change. Help names the root command after the
+  assembly, such as `SharedKernel.Versioning.Tool`. An argument that starts with `@` names a
+  [response file](https://learn.microsoft.com/dotnet/standard/commandline/syntax#response-files).
 - Each action returns an `int` exit code. A command tree is either synchronous or asynchronous, never mixed.
-- Parse errors use System.CommandLine's exit code and go to standard error. The README documents domain exit
-  codes.
-- System.CommandLine handles Ctrl+C and SIGTERM. Actions pass their `CancellationToken` into child processes
-  and cleanup work. Set `InvocationConfiguration.ProcessTerminationTimeout` only when cleanup needs longer than
-  the default two seconds.
-- A factory builds the command tree from injected writers and environment. Tests parse and invoke the real
-  command tree through it, with output captured in `InvocationConfiguration`.
+- Parse errors exit with code 1, write the errors to standard error, and write help to standard output. The
+  README documents every other exit code.
+- Ctrl+C and SIGTERM cancel the `CancellationToken` of an asynchronous action. Actions pass it to child
+  processes, kill the child process tree when it is canceled, and wait for the tree to exit. Cleanup that must
+  still run uses its own bounded token.
+- A canceled action exits 1. When cleanup outlives
+  [`InvocationConfiguration.ProcessTerminationTimeout`](https://learn.microsoft.com/dotnet/standard/commandline/how-to-parse-and-invoke#process-termination-timeout),
+  System.CommandLine exits 130 for SIGINT or 143 for SIGTERM. Raise the two-second default only when cleanup
+  needs longer.
+- A factory builds the command tree from injected environment, such as the working directory, a process
+  runner, or a clock. Actions write to `ParseResult.InvocationConfiguration.Output` and `Error`.
+- Tests parse and invoke the real tree through the factory, capture all output in one
+  `InvocationConfiguration`, and set its `ProcessTerminationTimeout` to `null` so System.CommandLine registers
+  no signal handlers in the test host. Caller tests parse every command line in workflows, scripts, and tool READMEs with the real
+  tree. They do not read `docs/` prose, because documentation-only changes skip tests. Test projects keep
+  System.CommandLine's text English with
+  [`SatelliteResourceLanguages`](https://learn.microsoft.com/dotnet/core/project-sdk/msbuild-props#satelliteresourcelanguages).
 - A command-line change updates every caller in the same change: CI workflows, scripts, documentation, tests,
   other tools, and consuming repositories. Consuming repositories adopt it with the tool package version that
   contains it.
@@ -52,16 +67,18 @@ non-interactive commands and to how they start a UI.
 - Exit with 0 on success and a documented non-zero code for each important failure mode.
 - Prompt only when standard input is a terminal. Without a terminal, fail with a message that names the flag or
   input to use instead. A full-screen UI refuses to start without a terminal.
-- Overwriting files or other destructive work requires `--force` when not interactive. Offer a dry run where it
-  helps.
-- Disable color when `NO_COLOR` is set, when output is not a terminal, or when `TERM=dumb`.
-- Print something within about 100 ms on long operations, without animations when output is not a terminal.
+- Work that changes remote state or deletes data that cannot be restored requires `--force` when not
+  interactive. A command may preview by default and act only with `--force`, which never skips validation.
+- Disable color when `NO_COLOR` is set and not empty, when output is not a terminal, or when `TERM=dumb`.
+  System.CommandLine colors its parse errors red when output is not redirected; tools keep that default.
 
 ## Secrets
 
 - Read secrets from a terminal prompt without echo (`Console.ReadKey(intercept: true)`), from a file, or from
   standard input. Never from arguments or environment variables, which leak through process listings, shell
-  history, and child processes.
+  history, and child processes. A GitHub token is the exception: tools that call GitHub read it from `GH_TOKEN`
+  or `GITHUB_TOKEN`, as [`gh`](https://cli.github.com/manual/gh_help_environment) does, and keep both out of
+  child process environments.
 - Do not use `SecureString` ([DE0001](https://github.com/dotnet/platform-compat/blob/master/docs/DE0001.md)).
   Keep secret bytes in arrays you own and clear them with
   [`CryptographicOperations.ZeroMemory`](https://learn.microsoft.com/dotnet/api/system.security.cryptography.cryptographicoperations.zeromemory).
