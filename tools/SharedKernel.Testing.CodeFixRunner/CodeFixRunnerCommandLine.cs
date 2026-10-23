@@ -8,8 +8,15 @@ internal static class CodeFixRunnerCommandLine
 {
     private const int LoadFailureExitCode = 2;
 
-    public static RootCommand Create()
+    /// <summary>Creates the command tree.</summary>
+    /// <param name="run">
+    /// Fixes the target, writes diagnostics to the given error writer, and returns the number of fixed diagnostics, or
+    /// <see langword="null"/> when the target did not load.
+    /// </param>
+    public static RootCommand Create(Func<CodeFixRunnerOptions, TextWriter, CancellationToken, Task<int?>> run)
     {
+        ArgumentNullException.ThrowIfNull(run);
+
         var target = new Argument<FileInfo>("project-or-solution")
         {
             Description = "The .csproj, .sln, or .slnx file to fix in place.",
@@ -40,7 +47,18 @@ internal static class CodeFixRunnerCommandLine
         rootCommand.SetAction(async (parseResult, ct) =>
         {
             var options = new CodeFixRunnerOptions(parseResult.GetRequiredValue(target).FullName, parseResult.GetRequiredValue(diagnostic));
-            var fixedCount = await CodeFixRunEngine.Run(options, parseResult.InvocationConfiguration.Error, ct).ConfigureAwait(false);
+            int? fixedCount;
+            try
+            {
+                fixedCount = await run(options, parseResult.InvocationConfiguration.Error, ct).ConfigureAwait(false);
+            }
+            catch (Exception exception) when (ct.IsCancellationRequested)
+            {
+                // Ctrl+C and SIGTERM sent to the process group also stop the MSBuild build host, so a canceled run can fail with
+                // a lost connection instead of a cancellation. System.CommandLine exits 1 without output for a cancellation.
+                throw new OperationCanceledException("The code fix run was canceled.", exception, ct);
+            }
+
             if (fixedCount is null)
             {
                 return LoadFailureExitCode;

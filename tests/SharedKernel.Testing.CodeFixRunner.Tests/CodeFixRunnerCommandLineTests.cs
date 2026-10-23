@@ -96,7 +96,7 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
         await File.WriteAllTextAsync(targetPath, string.Empty, TestContext.Current.CancellationToken);
 
         // Act
-        var parseResult = CodeFixRunnerCommandLine.Create().Parse([targetPath]);
+        var parseResult = CodeFixRunnerCommandLine.Create(CodeFixRunEngine.Run).Parse([targetPath]);
 
         // Assert
         parseResult.Errors.ShouldBeEmpty();
@@ -245,6 +245,82 @@ public sealed class CodeFixRunnerCommandLineTests : IDisposable
         source.ShouldBe(CodeFixRunnerTestProject.SourceFile);
         result.ExitCode.ShouldBe(1);
         result.Output.ShouldBe(string.Empty);
+        result.Error.ShouldBe(string.Empty);
+    }
+
+    [Fact]
+    public async Task Failure_after_cancellation_returns_one_without_output()
+    {
+        // Arrange
+        var targetPath = Path.Combine(projectDirectory.Path, "Sample.Tests.csproj");
+        await File.WriteAllTextAsync(targetPath, string.Empty, TestContext.Current.CancellationToken);
+        using var cancellation = new CancellationTokenSource();
+
+        // Act
+        var result = await CodeFixRunnerInvocation.Invoke(
+            [targetPath],
+            async (_, _, _) =>
+            {
+                // A signal also stops the MSBuild build host, so loading fails with a connection error instead of a cancellation.
+                await cancellation.CancelAsync();
+                throw new IOException("Connection reset by peer");
+            },
+            cancellation.Token);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Output.ShouldBe(string.Empty);
+        result.Error.ShouldBe(string.Empty);
+    }
+
+    [Fact]
+    public async Task Load_failure_reported_after_cancellation_returns_one_without_output()
+    {
+        // Arrange
+        var projectPath = Path.Combine(projectDirectory.Path, "Malformed.Tests.csproj");
+        await File.WriteAllTextAsync(projectPath, CodeFixRunnerTestProject.MalformedProjectFile, TestContext.Current.CancellationToken);
+        using var cancellation = new CancellationTokenSource();
+
+        // Act
+        var result = await CodeFixRunnerInvocation.Invoke(
+            [projectPath],
+            (options, error, ct) => CodeFixRunEngine.Run(
+                options,
+                error,
+                async (workspace, targetPath, _) =>
+                {
+                    // A signal as loading ends also stops the MSBuild build host, which the workspace reports as a load
+                    // failure instead of throwing. The malformed project leaves such a failure before the token is canceled.
+                    var project = await workspace.OpenProjectAsync(targetPath, cancellationToken: TestContext.Current.CancellationToken);
+                    await cancellation.CancelAsync();
+                    return project.Solution;
+                },
+                ct),
+            cancellation.Token);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Output.ShouldBe(string.Empty);
+        result.Error.ShouldBe(string.Empty);
+    }
+
+    [Fact]
+    public async Task Failure_without_cancellation_returns_one_and_reports_the_exception_on_standard_error()
+    {
+        // Arrange
+        var targetPath = Path.Combine(projectDirectory.Path, "Sample.Tests.csproj");
+        await File.WriteAllTextAsync(targetPath, string.Empty, TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await CodeFixRunnerInvocation.Invoke(
+            [targetPath],
+            static (_, _, _) => Task.FromException<int?>(new IOException("Connection reset by peer")),
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Output.ShouldBe(string.Empty);
+        result.Error.ShouldContain("System.IO.IOException: Connection reset by peer", StringComparison.Ordinal);
     }
 
     public void Dispose()
