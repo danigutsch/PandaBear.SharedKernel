@@ -1181,7 +1181,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Sync_returns_clean_error_for_noncaller_cancellation()
+    public async Task GitHub_sync_returns_clean_error_for_noncaller_cancellation()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1205,7 +1205,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Sync_reports_no_diagnostic_for_caller_cancellation()
+    public async Task GitHub_sync_reports_no_diagnostic_for_caller_cancellation()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1230,7 +1230,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_reports_no_diagnostic_for_caller_cancellation_during_project_preflight()
+    public async Task GitHub_sync_dry_run_reports_no_diagnostic_for_caller_cancellation_during_project_preflight()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1259,7 +1259,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_reports_no_diagnostic_for_caller_cancellation_after_project_fields_are_read()
+    public async Task GitHub_sync_dry_run_reports_no_diagnostic_for_caller_cancellation_after_project_fields_are_read()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1304,7 +1304,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_propagates_caller_cancellation_after_project_fields_are_read()
+    public async Task GitHub_roadmap_syncer_apply_propagates_caller_cancellation_after_project_fields_are_read()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1349,7 +1349,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_reports_mapped_issues_without_network()
+    public async Task GitHub_sync_dry_run_reports_mapped_issues_without_network()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1373,7 +1373,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_requires_a_token_for_authenticated_sync()
+    public async Task GitHub_roadmap_syncer_apply_requires_a_token_for_authenticated_sync()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1396,7 +1396,63 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_preflights_existing_project_membership_without_mutating()
+    public async Task GitHub_import_requires_a_token_for_authenticated_import()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
+        GitHubRoadmapIntakeTestOperations.Configure(
+            workspace,
+            """
+            {
+              "repository": "owner/repository",
+              "snapshotDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+              "mechanicalPriorityOverride": {
+                "firstItemNumber": 18,
+                "reach": 1,
+                "impact": "1 plus direct open blockers, capped at impactCap.",
+                "impactCap": 5,
+                "confidence": 0.1,
+                "effort": { "type: epic": 8, "type: feature": 5, "type: enabler": 3, "type: docs": 2, "type: chore": 2, "default": 3 },
+                "order": "Existing reviewed orders remain first; imported work uses topological order, score descending, then canonical ID."
+              },
+              "blockerEdges": [],
+              "closedItemTransitions": [],
+              "directCanonicalPrimaries": [],
+              "childrenOfCanonicalPrimaries": [],
+              "unmappedStructuralRoots": [],
+              "needsHuman": [],
+              "integrity": {
+                "expectedIssueCount": 0,
+                "expectedDirectCanonicalPrimaryCount": 0,
+                "expectedChildrenOfCanonicalPrimaryCount": 0,
+                "expectedUnmappedStructuralRootCount": 0,
+                "expectedNeedsHumanCount": 0,
+                "expectedBlockerEdgeCount": 0,
+                "dispositionsAreDisjoint": true,
+                "dispositionsCoverSnapshot": true
+              }
+            }
+            """);
+        using var ghTokenScope = new EnvironmentVariableScope("GH_TOKEN", null);
+        using var gitHubTokenScope = new EnvironmentVariableScope("GITHUB_TOKEN", null);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ToString().ShouldBe(string.Empty);
+        error.ToString().ShouldBe("sharedkernel-repo: Set GH_TOKEN or GITHUB_TOKEN before running authenticated GitHub import." + Environment.NewLine);
+    }
+
+    [Fact]
+    public async Task GitHub_sync_dry_run_preflights_existing_project_membership_without_mutating()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1428,7 +1484,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_defers_field_writes_until_missing_project_membership_is_added()
+    public async Task GitHub_sync_dry_run_defers_field_writes_until_missing_project_membership_is_added()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1460,7 +1516,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_blocks_project_proposals_for_invalid_noncurrent_status_options()
+    public async Task GitHub_sync_dry_run_blocks_project_proposals_for_invalid_noncurrent_status_options()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1502,7 +1558,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_rejects_an_unverified_project_target_without_mutating()
+    public async Task GitHub_sync_dry_run_rejects_an_unverified_project_target_without_mutating()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1531,7 +1587,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_reports_project_value_conflicts_without_mutating()
+    public async Task GitHub_sync_dry_run_reports_project_value_conflicts_without_mutating()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1562,7 +1618,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_sanitizes_transport_failures()
+    public async Task GitHub_sync_dry_run_sanitizes_transport_failures()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1589,7 +1645,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_preflights_project_schema_without_issue_mappings()
+    public async Task GitHub_sync_dry_run_preflights_project_schema_without_issue_mappings()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1619,7 +1675,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_preflights_project_schema_for_issue_creation_intents()
+    public async Task GitHub_sync_dry_run_preflights_project_schema_for_issue_creation_intents()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1673,7 +1729,7 @@ public sealed class RepoConfigToolApplicationTests
           { "id": "dropped", "name": "dropped" }
         ]
         """)]
-    public async Task Github_sync_dry_run_rejects_unaddressable_or_ambiguous_status_options(string statusOptions)
+    public async Task GitHub_sync_dry_run_rejects_unaddressable_or_ambiguous_status_options(string statusOptions)
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1724,7 +1780,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_respects_disabled_integration()
+    public async Task GitHub_sync_dry_run_respects_disabled_integration()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -1745,7 +1801,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_defaults_to_disabled_when_enabled_is_missing()
+    public async Task GitHub_sync_dry_run_defaults_to_disabled_when_enabled_is_missing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2147,7 +2203,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_orders_mapped_items_by_priority()
+    public async Task GitHub_roadmap_syncer_preview_orders_mapped_items_by_priority()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2176,7 +2232,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_syncs_labels_after_confirming_the_mapping_is_not_a_pull_request()
+    public async Task GitHub_roadmap_syncer_apply_syncs_labels_after_confirming_the_mapping_is_not_a_pull_request()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2213,7 +2269,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_preview_describes_explicit_issue_creation_without_http()
+    public async Task GitHub_roadmap_syncer_preview_describes_explicit_issue_creation_without_http()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2238,7 +2294,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_reports_extra_github_labels_without_removing_them()
+    public async Task GitHub_roadmap_syncer_apply_reports_extra_github_labels_without_removing_them()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2267,7 +2323,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_creates_and_persists_an_explicit_issue_mapping()
+    public async Task GitHub_roadmap_syncer_apply_creates_and_persists_an_explicit_issue_mapping()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2302,7 +2358,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_throws_timeout_when_issue_creation_limit_is_reached()
+    public async Task GitHub_roadmap_syncer_apply_throws_timeout_when_issue_creation_limit_is_reached()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2337,7 +2393,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_adopts_a_mapping_persisted_after_project_load()
+    public async Task GitHub_roadmap_syncer_apply_adopts_a_mapping_persisted_after_project_load()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2367,7 +2423,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_does_not_overwrite_a_mapping_changed_during_issue_creation()
+    public async Task GitHub_roadmap_syncer_apply_does_not_overwrite_a_mapping_changed_during_issue_creation()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2403,7 +2459,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_keeps_create_intent_when_issue_creation_fails()
+    public async Task GitHub_roadmap_syncer_apply_keeps_create_intent_when_issue_creation_fails()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2430,7 +2486,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_retains_the_creation_lock_after_an_ambiguous_server_failure()
+    public async Task GitHub_roadmap_syncer_apply_retains_the_creation_lock_after_an_ambiguous_server_failure()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2464,7 +2520,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_preview_describes_conditional_project_membership()
+    public async Task GitHub_roadmap_syncer_preview_describes_conditional_project_membership()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2651,7 +2707,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_adds_mapped_issue_to_configured_project_once()
+    public async Task GitHub_roadmap_syncer_apply_adds_mapped_issue_to_configured_project_once()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2707,7 +2763,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_skips_mapped_items_without_labels()
+    public async Task GitHub_roadmap_syncer_apply_skips_mapped_items_without_labels()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2738,7 +2794,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_resets_the_timeout_for_each_item()
+    public async Task GitHub_roadmap_syncer_apply_resets_the_timeout_for_each_item()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2766,7 +2822,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_throws_timeout_when_the_per_item_limit_is_reached()
+    public async Task GitHub_roadmap_syncer_apply_throws_timeout_when_the_per_item_limit_is_reached()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2797,7 +2853,7 @@ public sealed class RepoConfigToolApplicationTests
     [InlineData(HttpStatusCode.UnprocessableEntity, "GitHub pull request check failed for #997: HTTP 422 (request validation failed).")]
     [InlineData(HttpStatusCode.TooManyRequests, "GitHub pull request check failed for #997: HTTP 429 (rate limited).")]
     [InlineData(HttpStatusCode.BadGateway, "GitHub pull request check failed for #997: HTTP 502.")]
-    public async Task Github_sync_force_uses_safe_status_hints_for_pull_request_check_failures(HttpStatusCode statusCode, string expectedMessage)
+    public async Task GitHub_roadmap_syncer_apply_uses_safe_status_hints_for_pull_request_check_failures(HttpStatusCode statusCode, string expectedMessage)
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2829,7 +2885,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_does_not_expose_remote_details_for_label_failure()
+    public async Task GitHub_roadmap_syncer_apply_does_not_expose_remote_details_for_label_failure()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2862,7 +2918,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_rejects_pull_request_mappings()
+    public async Task GitHub_roadmap_syncer_apply_rejects_pull_request_mappings()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2891,7 +2947,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_reports_empty_mapping_and_create_request_filter()
+    public async Task GitHub_roadmap_syncer_apply_reports_empty_mapping_and_create_request_filter()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2914,7 +2970,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_blocks_project_projection_when_roadmap_status_field_is_missing()
+    public async Task GitHub_roadmap_syncer_apply_blocks_project_projection_when_roadmap_status_field_is_missing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2943,7 +2999,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_reports_number_conflicts_without_overwriting_the_project_value()
+    public async Task GitHub_roadmap_syncer_apply_reports_number_conflicts_without_overwriting_the_project_value()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2971,7 +3027,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_tolerates_project_number_float_round_trips()
+    public async Task GitHub_roadmap_syncer_apply_tolerates_project_number_float_round_trips()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -2999,7 +3055,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_reports_status_conflicts_without_overwriting_the_project_value()
+    public async Task GitHub_roadmap_syncer_apply_reports_status_conflicts_without_overwriting_the_project_value()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3027,7 +3083,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_reports_text_conflicts_without_overwriting_the_project_value()
+    public async Task GitHub_roadmap_syncer_apply_reports_text_conflicts_without_overwriting_the_project_value()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3055,7 +3111,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_reports_missing_status_options_without_mutating_the_project()
+    public async Task GitHub_roadmap_syncer_apply_reports_missing_status_options_without_mutating_the_project()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3102,7 +3158,7 @@ public sealed class RepoConfigToolApplicationTests
           { "id": "status", "name": "Roadmap status", "dataType": "TEXT" }
         ] } } } }
         """)]
-    public async Task Github_sync_force_blocks_invalid_required_status_schema_before_project_mutations(string projectFields)
+    public async Task GitHub_roadmap_syncer_apply_blocks_invalid_required_status_schema_before_project_mutations(string projectFields)
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3143,7 +3199,7 @@ public sealed class RepoConfigToolApplicationTests
           { "id": "ready", "name": "legacy" }
         ]
         """)]
-    public async Task Github_sync_force_reports_ambiguous_status_options_without_mutating_the_project(string statusOptions)
+    public async Task GitHub_roadmap_syncer_apply_reports_ambiguous_status_options_without_mutating_the_project(string statusOptions)
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3177,7 +3233,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_prevalidates_noncurrent_status_options_before_project_mutations()
+    public async Task GitHub_roadmap_syncer_apply_prevalidates_noncurrent_status_options_before_project_mutations()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3221,7 +3277,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_continues_compatible_field_mutations_when_nonstatus_fields_are_missing()
+    public async Task GitHub_roadmap_syncer_apply_continues_compatible_field_mutations_when_nonstatus_fields_are_missing()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3272,7 +3328,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_skips_numeric_project_fields_for_untriaged_items()
+    public async Task GitHub_roadmap_syncer_apply_skips_numeric_project_fields_for_untriaged_items()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3332,7 +3388,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_dry_run_skips_numeric_project_fields_for_untriaged_items()
+    public async Task GitHub_sync_dry_run_skips_numeric_project_fields_for_untriaged_items()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3373,7 +3429,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_reports_incompatible_project_field_types_without_mutating_them()
+    public async Task GitHub_roadmap_syncer_apply_reports_incompatible_project_field_types_without_mutating_them()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3401,7 +3457,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_rejects_held_issue_creation_locks_without_http_requests()
+    public async Task GitHub_roadmap_syncer_apply_rejects_held_issue_creation_locks_without_http_requests()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -3429,7 +3485,7 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
-    public async Task Github_sync_force_aborts_without_http_when_create_intent_changes()
+    public async Task GitHub_roadmap_syncer_apply_aborts_without_http_when_create_intent_changes()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

@@ -7,7 +7,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class GitHubRoadmapIntakeOrderingTests
 {
     [Fact]
-    public async Task Github_import_rejects_order_exhaustion()
+    public async Task GitHub_import_rejects_order_exhaustion()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -72,7 +72,7 @@ public sealed class GitHubRoadmapIntakeOrderingTests
     }
 
     [Fact]
-    public async Task Github_import_places_a_new_blocker_before_an_existing_imported_item()
+    public async Task GitHub_import_places_a_new_blocker_before_an_existing_imported_item()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

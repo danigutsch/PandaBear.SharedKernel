@@ -4,7 +4,7 @@ namespace PandaBear.RepoConfig.Tests;
 
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection("Repo config tool environment")]
-public sealed class TextEncodingCommandTests
+public sealed class VerifyTextEncodingCommandTests
 {
     [Fact]
     public async Task Help_lists_the_verify_text_encoding_command()

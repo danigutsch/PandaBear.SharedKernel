@@ -6,7 +6,7 @@ namespace PandaBear.RepoConfig.Tests;
 public sealed class GitHubRoadmapIntakeIntegrityTests
 {
     [Fact]
-    public async Task Github_import_verifies_a_mapped_closed_issue_that_is_not_a_blocker_endpoint()
+    public async Task GitHub_import_verifies_a_mapped_closed_issue_that_is_not_a_blocker_endpoint()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -78,7 +78,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
     }
 
     [Fact]
-    public async Task Github_import_rejects_a_generated_filename_owned_by_another_item()
+    public async Task GitHub_import_rejects_a_generated_filename_owned_by_another_item()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -146,7 +146,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
     }
 
     [Fact]
-    public async Task Github_import_force_rejects_a_manifest_changed_during_the_request()
+    public async Task GitHub_import_force_rejects_a_manifest_changed_during_the_request()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -212,7 +212,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
     }
 
     [Fact]
-    public async Task Github_import_force_rejects_an_item_added_during_the_request()
+    public async Task GitHub_import_force_rejects_an_item_added_during_the_request()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -280,7 +280,7 @@ public sealed class GitHubRoadmapIntakeIntegrityTests
     }
 
     [Fact]
-    public async Task Github_import_rejects_manifest_blocker_edges_not_present_in_the_verified_snapshot()
+    public async Task GitHub_import_rejects_manifest_blocker_edges_not_present_in_the_verified_snapshot()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();

@@ -42,6 +42,8 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
 
     public List<string> Commands { get; } = [];
 
+    public List<ProcessStartInfo> ProcessStartInfos { get; } = [];
+
     public void AddDaemon(
         int processId,
         string? configDirectory = null,
@@ -214,6 +216,7 @@ internal sealed class PodmanDnsPreflightTestContext : IDisposable
     private async Task<PodmanCommandResult> RunProcess(ProcessStartInfo startInfo, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        ProcessStartInfos.Add(startInfo);
         var arguments = startInfo.ArgumentList.ToArray();
         if (string.Equals(startInfo.FileName, _systemProcessExecutable, StringComparison.Ordinal))
         {

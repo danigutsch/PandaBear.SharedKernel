@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace PandaBear.RepoConfig.Tests;
 
@@ -31,7 +32,7 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
     }
 
     [Fact]
-    public async Task Github_import_rejects_an_impact_cap_below_one()
+    public async Task GitHub_roadmap_reconciliation_load_rejects_an_impact_cap_below_one()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
@@ -82,7 +83,123 @@ public sealed class GitHubRoadmapIntakeConfigurationTests
     }
 
     [Fact]
-    public async Task Github_import_uses_configured_identity_scoring_theme_and_status_defaults()
+    public async Task GitHub_import_respects_disabled_integration()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
+        using var handler = new TestHttpMessageHandler();
+        using var httpClient = new HttpClient(handler);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ToString().ShouldBe(string.Empty);
+        error.ToString().ShouldBe("sharedkernel-repo: GitHub import is disabled in roadmap/config.json." + Environment.NewLine);
+        handler.Requests.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task GitHub_import_requires_the_intake_configuration()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
+        GitHubRoadmapSnapshotTestOperations.Configure(
+            workspace,
+            """
+            {
+              "repository": "owner/repository",
+              "mechanicalPriorityOverride": {
+                "firstItemNumber": 18,
+                "reach": 1,
+                "impact": "1 plus direct open blockers, capped at impactCap.",
+                "impactCap": 4,
+                "confidence": 0.1,
+                "effort": { "type: epic": 8, "type: feature": 5, "type: enabler": 3, "type: docs": 2, "type: chore": 2, "default": 3 },
+                "order": "Existing reviewed orders remain first; imported work uses topological order, score descending, then canonical ID."
+              },
+              "blockerEdges": [],
+              "closedItemTransitions": [],
+              "directCanonicalPrimaries": [],
+              "childrenOfCanonicalPrimaries": [],
+              "unmappedStructuralRoots": [],
+              "needsHuman": [],
+              "integrity": {
+                "expectedIssueCount": 0,
+                "expectedDirectCanonicalPrimaryCount": 0,
+                "expectedChildrenOfCanonicalPrimaryCount": 0,
+                "expectedUnmappedStructuralRootCount": 0,
+                "expectedNeedsHumanCount": 0,
+                "expectedBlockerEdgeCount": 0,
+                "dispositionsAreDisjoint": true,
+                "dispositionsCoverSnapshot": true
+              }
+            }
+            """,
+            []);
+        var config = JsonNode.Parse(workspace.ReadFile("roadmap/config.json"))!.AsObject();
+        config["integrations"]!["github"]!.AsObject().Remove("intake").ShouldBeTrue();
+        workspace.WriteFile("roadmap/config.json", config.ToJsonString());
+        using var handler = new TestHttpMessageHandler();
+        using var httpClient = new HttpClient(handler);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ToString().ShouldBe(string.Empty);
+        error.ToString().ShouldBe("sharedkernel-repo: roadmap/config.json must define integrations.github.intake before GitHub import." + Environment.NewLine);
+        handler.Requests.ShouldBeEmpty();
+    }
+
+    [Theory]
+    [InlineData(0, "One GitHub reconciliation manifest is required under roadmap/reconciliation.")]
+    [InlineData(2, "Exactly one GitHub reconciliation manifest is required under roadmap/reconciliation.")]
+    public async Task GitHub_import_requires_exactly_one_reconciliation_manifest(int manifestCount, string expectedError)
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
+        RoadmapConfigTestOperations.EnableGitHubSync(workspace);
+        for (var index = 0; index < manifestCount; index++)
+        {
+            workspace.WriteFile($"roadmap/reconciliation/open-issues-{index.ToString(CultureInfo.InvariantCulture)}.json", "{}");
+        }
+
+        using var handler = new TestHttpMessageHandler();
+        using var httpClient = new HttpClient(handler);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--root", workspace.RootPath], output, error, workspace.RootPath, httpClient, TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ToString().ShouldBe(string.Empty);
+        error.ToString().ShouldBe($"sharedkernel-repo: {expectedError}{Environment.NewLine}");
+        handler.Requests.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task GitHub_import_uses_configured_identity_scoring_theme_and_status_defaults()
     {
         // Arrange
         using var workspace = new TemporaryRepoConfigWorkspace();
