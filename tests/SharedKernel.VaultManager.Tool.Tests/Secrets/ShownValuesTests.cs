@@ -48,6 +48,13 @@ public sealed class ShownValuesTests
     [InlineData("https://alice:fixture-uri-secret@example.com/reset?token=fixture-uri-token", "https://***@example.com/reset?***")]
     [InlineData("https://example.com/login#fixture-fragment", "https://example.com/login#***")]
     [InlineData("ftp://user:fixture-ftp-secret@files.example.com/in", "ftp://***@files.example.com/in")]
+    [InlineData("admin:fixture-bare-secret@192.168.1.1", "***@192.168.1.1")]
+    [InlineData("https://admin:fixture/slash@router.local", "https://***")]
+    [InlineData("https://admin:fixture#hash@router.local", "https://***")]
+    [InlineData("https://admin:fixture?query@router.local", "https://***")]
+    [InlineData("https://evil.example\\@bank.example", "https://***")]
+    [InlineData("https://example.com\\reset?token=fixture-token", "https://example.com\\reset?***")]
+    [InlineData("example.com/reset?token=fixture-token&next=https://other.example", "example.com/reset?***")]
     public void Addresses_with_user_info_a_query_or_a_fragment_are_masked(string address, string masked)
     {
         ShownValues.MaskUri(address).ShouldBe(masked);

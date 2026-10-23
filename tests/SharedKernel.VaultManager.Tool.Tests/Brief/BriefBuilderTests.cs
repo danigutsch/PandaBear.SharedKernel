@@ -226,6 +226,20 @@ public sealed class BriefBuilderTests : IDisposable
     }
 
     [Fact]
+    public void Brief_gives_no_host_for_an_address_whose_host_is_masked()
+    {
+        string[] inputs =
+        [
+            Write(directory, "keeper.json", KeeperJson(KeeperLogin("rec-1", "Router", "admin", KeeperPassword, "https://admin:fixture/router@router.local", modified: false))),
+            Write(directory, "bitwarden.json", BitwardenJson(BitwardenLogin("bw-1", "Router", "admin", BitwardenPassword, "https://admin:fixture/router@router.local", revised: false))),
+        ];
+
+        var members = BriefRun.Build(inputs).Brief.Groups.ShouldHaveSingleItem().Members;
+
+        members.ShouldAllSatisfy(member => member.Host.ShouldBeNull());
+    }
+
+    [Fact]
     public void Brief_records_the_input_files_it_was_made_from()
     {
         string[] inputs =
