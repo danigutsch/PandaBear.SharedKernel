@@ -6,6 +6,7 @@
 - [Payment identifiers and payment epic handoff](plans/payment-identifiers.md)
 - [Command-line tool guidance](command-line-tools.md)
 - [Vault manager tool design](plans/vault-manager.md)
+- [Vault migration: Keeper and Bitwarden into Vaultwarden](vault-migration.md)
 - [Architecture and generated diagrams](architecture/README.md)
 - [Release policy](release-policy.md)
 - [Package development and validation](package-development.md)
