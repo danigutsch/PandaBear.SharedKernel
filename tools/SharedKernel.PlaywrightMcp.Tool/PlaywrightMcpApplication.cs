@@ -237,6 +237,7 @@ internal sealed class PlaywrightMcpApplication(
             catch (Exception exception) when (exception is InvalidOperationException
                 or Win32Exception
                 or NotSupportedException
+                or AggregateException
                 or OperationCanceledException)
             {
                 // Preserve cancellation so the caller can force-remove the named container.
