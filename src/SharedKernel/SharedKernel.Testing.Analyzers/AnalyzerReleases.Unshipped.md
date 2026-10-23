@@ -18,3 +18,4 @@ SKTEST014 | Testing | Warning | Prevent conditional access from skipping ShouldB
 SKTEST015 | Testing | Warning | Use ShouldHaveTitle for supported Playwright title assertions
 SKTEST010 | Testing | Warning | Test activity listeners should filter by source identity
 SKTEST016 | Testing | Warning | Construct the system under test in Arrange
+SKTEST017 | Testing | Disabled | Public assertions should have a userMessage overload; enable warning severity in assertion libraries

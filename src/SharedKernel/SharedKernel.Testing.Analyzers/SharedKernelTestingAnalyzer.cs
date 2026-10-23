@@ -151,7 +151,7 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
 
     /// <inheritdoc />
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
-        [ActivityListenerSourceIdentityRule, SutConstructionRule, TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule, SingleAssertionRule, ParenthesizedAssertionRule, ConditionalAssertionRule, PlaywrightAssertionRule];
+        [ActivityListenerSourceIdentityRule, SutConstructionRule, TestMethodWarningSuppressionRule, XunitTestMethodNamingRule, XunitTestMethodRequiredTraitRule, XunitTestClassHelperMethodRule, XunitSerialCollectionJustificationRule, XunitAssertionWrapperRule, XunitArrangeActAssertMarkersRule, XunitTryStatementRule, XunitTraitConstantUsageRule, AssertionDelegateInliningRule, SingleAssertionRule, ParenthesizedAssertionRule, ConditionalAssertionRule, PlaywrightAssertionRule, AssertionUserMessageOverloadRule];
 
     /// <inheritdoc />
     public override void Initialize(AnalysisContext context)
@@ -167,6 +167,7 @@ public sealed partial class SharedKernelTestingAnalyzer : DiagnosticAnalyzer
         context.RegisterSyntaxNodeAction(
             AnalyzePragmaDirective,
             SyntaxKind.PragmaWarningDirectiveTrivia);
+        context.RegisterSymbolAction(AnalyzeAssertionUserMessageOverload, SymbolKind.Method);
         context.RegisterCompilationStartAction(static compilationContext =>
         {
             var optionsByTree = new ConcurrentDictionary<SyntaxTree, TestingAnalyzerConfigOptions>();
