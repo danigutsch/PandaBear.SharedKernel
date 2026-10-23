@@ -6,17 +6,24 @@ namespace PandaBear.Repository.Tool;
 
 internal static class RepositoryValidation
 {
-    public static void Run(string root, string selection, string group, Func<string, string[], string, string> run, TextWriter output)
+    public static async Task Run(
+        string root,
+        string selection,
+        string group,
+        Func<string, string[], string, CancellationToken, Task<string>> run,
+        TextWriter output,
+        CancellationToken ct)
     {
-        var revision = run("git", ["rev-parse", "HEAD"], root).Trim();
-        if (File.ReadAllText(Path.Combine(selection, "revision.txt")).Trim() != revision)
+        var revision = (await run("git", ["rev-parse", "HEAD"], root, ct).ConfigureAwait(false)).Trim();
+        var selectedRevision = await File.ReadAllTextAsync(Path.Combine(selection, "revision.txt"), ct).ConfigureAwait(false);
+        if (selectedRevision.Trim() != revision)
         {
             throw new ArgumentException("Selection revision does not match the checkout revision.");
         }
         var known = XDocument.Load(Path.Combine(root, "SharedKernel.slnx")).Descendants("Project")
             .Select(project => (string)project.Attribute("Path")!).ToHashSet(StringComparer.Ordinal);
-        var build = File.ReadAllLines(Path.Combine(selection, "build-projects.txt"));
-        var tests = File.ReadAllLines(Path.Combine(selection, "test-projects.txt"));
+        var build = await File.ReadAllLinesAsync(Path.Combine(selection, "build-projects.txt"), ct).ConfigureAwait(false);
+        var tests = await File.ReadAllLinesAsync(Path.Combine(selection, "test-projects.txt"), ct).ConfigureAwait(false);
         foreach (var project in build.Concat(tests))
         {
             if (!known.Contains(project) || Path.IsPathRooted(project) || project.Replace('\\', '/').Split('/').Contains("..", StringComparer.Ordinal))
@@ -33,7 +40,11 @@ internal static class RepositoryValidation
         if (group != "all" && group != "ordinary" && !known.Contains(group)) { throw new ArgumentException("Unknown test group."); }
         var selectedTests = group == "all" ? tests : group == "ordinary" ? tests.Except(hosted, StringComparer.Ordinal).ToArray() : tests.Where(project => project == group).ToArray();
         var selectedBuild = group == "all" ? build : group == "ordinary" ? build.Except(hosted, StringComparer.Ordinal).ToArray() : selectedTests;
-        if (selectedBuild.Length == 0) { output.WriteLine("No projects selected for " + group); return; }
+        if (selectedBuild.Length == 0)
+        {
+            await output.WriteLineAsync("No projects selected for " + group).ConfigureAwait(false);
+            return;
+        }
         var directory = Path.Combine(selection, "execution-" + (group is "all" or "ordinary" ? group : Path.GetFileNameWithoutExtension(group)));
         Directory.CreateDirectory(directory);
         var graph = WriteSolution(root, directory, "build", selectedBuild);
@@ -41,25 +52,29 @@ internal static class RepositoryValidation
         var status = "failed";
         try
         {
-            output.Write(run("dotnet", ["restore", graph, "--locked-mode"], root));
-            output.Write(run("dotnet", ["build", graph, "-c", "Release", "--no-restore"], root));
+            await Dotnet("restore", graph, "--locked-mode").ConfigureAwait(false);
+            await Dotnet("build", graph, "-c", "Release", "--no-restore").ConfigureAwait(false);
             var ordinaryTests = selectedTests.Except(hosted, StringComparer.Ordinal).ToArray();
             if (ordinaryTests.Length > 0)
             {
                 var testGraph = WriteSolution(root, directory, "tests", ordinaryTests);
-                output.Write(run("dotnet", ["test", "--solution", testGraph, "-c", "Release", "--no-build", "--no-restore"], root));
+                await Dotnet("test", "--solution", testGraph, "-c", "Release", "--no-build", "--no-restore").ConfigureAwait(false);
             }
             foreach (var project in selectedTests.Intersect(hosted, StringComparer.Ordinal))
             {
-                output.Write(run("dotnet", ["test", "--project", project, "-c", "Release", "--no-build", "--no-restore"], root));
+                await Dotnet("test", "--project", project, "-c", "Release", "--no-build", "--no-restore").ConfigureAwait(false);
             }
             status = "passed";
         }
         finally
         {
-            File.WriteAllText(Path.Combine(directory, "timing.tsv"), "revision\tgroup\tduration_seconds\tstatus\n" + revision + "\t" + group + "\t"
-                + timer.Elapsed.TotalSeconds.ToString("F3", CultureInfo.InvariantCulture) + "\t" + status + "\n");
+            // Record the outcome even when the run is cancelled.
+            await File.WriteAllTextAsync(Path.Combine(directory, "timing.tsv"), "revision\tgroup\tduration_seconds\tstatus\n" + revision + "\t" + group + "\t"
+                + timer.Elapsed.TotalSeconds.ToString("F3", CultureInfo.InvariantCulture) + "\t" + status + "\n", CancellationToken.None).ConfigureAwait(false);
         }
+
+        async Task Dotnet(params string[] arguments) =>
+            await output.WriteAsync(await run("dotnet", arguments, root, ct).ConfigureAwait(false)).ConfigureAwait(false);
     }
 
     internal static bool IsHosted(string root, string project) =>

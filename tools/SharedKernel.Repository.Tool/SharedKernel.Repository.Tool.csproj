@@ -2,10 +2,10 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <IsPackable>false</IsPackable>
-    <IsAotCompatible>false</IsAotCompatible>
+    <IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../SharedKernel.Versioning.Tool/CommandRunner.cs" Link="CommandRunner.cs" />
     <InternalsVisibleTo Include="SharedKernel.Repository.Tests" />
+    <PackageReference Include="System.CommandLine" />
   </ItemGroup>
 </Project>
