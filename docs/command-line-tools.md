@@ -17,6 +17,10 @@ This guidance covers every tool under `tools/`.
 - Write the README per the [NuGet package README guidance](https://learn.microsoft.com/nuget/nuget-org/package-readme-on-nuget-org):
   what the tool does, prerequisites, installation, and usage. Add limits, exit codes, and security notes. Images
   use allow-listed absolute URLs.
+- Installation maps the candidate feed in `NuGet.Config`: with the SDK pinned in `global.json`, `dotnet tool
+  install` rejects `--add-source` when package source mapping is enabled. Local-tool examples put `--` before the
+  tool's arguments, as in `dotnet tool run sharedkernel-docs -- --help`, because `dotnet tool run` answers
+  `--help` itself.
 
 ## Commands and parsing
 
