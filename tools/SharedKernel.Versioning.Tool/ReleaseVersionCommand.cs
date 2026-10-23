@@ -33,7 +33,11 @@ internal static class ReleaseVersionCommand
                 new SemanticVersion(0, 0, 0, "alpha." + options.RunNumber),
                 result.VersionOutput.ReleaseImpact,
                 sourceSha);
-            result = result with { VersionOutput = preview, VersionJson = VersionOutputJson.Serialize(preview) };
+            result = result with
+            {
+                VersionOutput = preview,
+                VersionJson = VersionOutputJson.Serialize(preview)
+            };
         }
 
         if (!string.IsNullOrWhiteSpace(options.GitHubOutput))
