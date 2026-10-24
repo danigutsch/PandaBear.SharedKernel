@@ -1,7 +1,7 @@
 namespace PandaBear.RepoConfig.Tests;
 
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
-[Collection("Repo config tool environment")]
+[Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class ChildProcessEnvironmentTests
 {
     [Fact]

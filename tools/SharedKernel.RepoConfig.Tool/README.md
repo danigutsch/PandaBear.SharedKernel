@@ -43,6 +43,8 @@ sharedkernel-repo get next-work --limit 5
 sharedkernel-repo get by-label "area: tooling"
 sharedkernel-repo github reconcile
 sharedkernel-repo github reconcile --force
+sharedkernel-repo github link-subissue --repository owner/repository --parent 10 --child 20
+sharedkernel-repo github link-subissue --repository owner/repository --parent 10 --child 20 --force
 sharedkernel-repo automation publish-result --force
 sharedkernel-repo verify-podman-dns --verbosity quiet
 sharedkernel-repo verify-json
@@ -59,6 +61,7 @@ sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_
 | `github sync` | Projects roadmap items to GitHub issues and Projects. |
 | `github reconcile` | Reconciles the GitHub snapshot and resolves transferred issue identities. |
 | `github import` | Imports the reconciled issue snapshot into roadmap items. |
+| `github link-subissue` | Previews or creates a native GitHub parent/subissue link between existing issues in the same repository. |
 | `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request. |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
@@ -70,7 +73,7 @@ sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_
 `github` commands, `automation publish-result`, and `dependency submit` preview their changes unless
 `--force` is given. Lines that describe previewed changes start with `preview:`. The `publish-result`
 preview names the repository, base SHA, branch, and changed paths; the `dependency submit` preview names
-the snapshot, its size, and the endpoint. Every command except `verify-podman-dns` takes `--root <path>`,
+the snapshot, its size, and the endpoint. Every command except `verify-podman-dns` and `github link-subissue` takes `--root <path>`,
 which defaults to the current directory; relative `--snapshot` and `--github-output` paths resolve against
 it. Run `sharedkernel-repo <command> --help` for the options of each command.
 
@@ -254,3 +257,30 @@ The snapshot must be a JSON object, and `--repository` must name `owner/name`. W
 posts the file unchanged to `https://api.github.com/repos/<owner>/<name>/dependency-graph/snapshots` with the
 token from `GH_TOKEN`, then `GITHUB_TOKEN`; a workflow token needs `contents: write`. A response other than
 2xx, or a result of `INVALID`, fails the command.
+
+## Native GitHub subissue links
+
+`github link-subissue --repository owner/repository --parent 10 --child 20` validates the repository
+name and positive issue numbers and previews the intended relationship without network access or
+credentials. It requires no roadmap or consumer configuration.
+
+Add `--force` to resolve both existing issues, check the child's current parent, create the native
+link using the child's numeric REST identity, and verify its parent afterward. An already matching
+relationship succeeds without a write. A different parent is rejected; `--force` never reparents.
+The command supports issues in one repository on github.com; pull requests are rejected.
+
+Forced linking reads `GH_TOKEN`, then `GITHUB_TOKEN`, and requires access to both issues with Issues
+write permission for mutation. It does not invoke `gh` or extract credentials from another process.
+Supply the token through the existing environment authentication flow; never pass it as an argument.
+Requests go only to api.github.com, do not follow redirects, and bound issue responses to 1 MiB and
+the complete operation to 30 seconds. Cancellation is propagated. Errors report status codes without
+echoing remote response bodies or transport details.
+
+A successful POST followed by failed verification, or cancellation/transport failure during a write,
+may have changed the remote relationship; inspect the child before retrying. Writes are not automatically
+retried. A 422 response is accepted only
+when a readback proves that a concurrent request created the exact requested link. Exit code 0
+means previewed, already linked, or linked and verified; validation, API, verification, and timeout
+failures exit 1. No package publication or consumer package adoption is performed by this command.
+
+The API contract follows [GitHub's subissue REST documentation](https://docs.github.com/en/rest/issues/sub-issues).
