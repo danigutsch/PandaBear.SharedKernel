@@ -121,32 +121,16 @@ public sealed class ChildProcessEnvironmentTests
         }
 
         using var repository = await LicenseExceptionTestRepository.Create(new LicenseScenario());
-        var markerPath = Path.Combine(repository.RootPath, "fake-git-ran");
-        var fakeGitPath = Path.Combine(repository.RootPath, "git");
-        await File.WriteAllTextAsync(
-            fakeGitPath,
-            "#!/bin/sh\n: > \"$REPO_CONFIG_FAKE_GIT_MARKER\"\nexit 99\n",
-            TestContext.Current.CancellationToken);
-        File.SetUnixFileMode(
-            fakeGitPath,
-            UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
-        var relativeRoot = Path.GetRelativePath(Environment.CurrentDirectory, repository.RootPath);
-        Dictionary<string, string?> environment = new(StringComparer.Ordinal)
-        {
-            // A bare "git" would resolve through the relative entry to the fake, and shells read the empty entry as the
-            // current directory.
-            ["PATH"] = $"{relativeRoot}{Path.PathSeparator}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}",
-            ["REPO_CONFIG_FAKE_GIT_MARKER"] = markerPath
-        };
+        var fakeGit = await RepositoryLocalGit.Create(repository.RootPath, TestContext.Current.CancellationToken);
 
         // Act
         var result = await repository.RunCommand(
             [.. command, "--root", repository.RootPath],
             TestContext.Current.CancellationToken,
-            environment: environment);
+            environment: fakeGit.EnvironmentVariables);
 
         // Assert
         result.ExitCode.ShouldBe(0, "The real Git lists valid JSON and a lock file that resolves the approved versions.");
-        File.Exists(markerPath).ShouldBeFalse("Git resolves only from absolute PATH entries, so the repository-local fake never runs.");
+        fakeGit.Ran.ShouldBeFalse("Git resolves only from absolute PATH entries, so the repository-local fake never runs.");
     }
 }
