@@ -18,7 +18,7 @@ internal static class VersioningCommandLine
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(timeProvider);
 
-        return new RootCommand("Calculates SharedKernel versions and validates, packs, and stages SharedKernel packages.")
+        return new RootCommand("Calculates SharedKernel versions and validates, packs, and consumes SharedKernel packages.")
         {
             CreateClassifyCommit(),
             CreateCompute(input),
@@ -33,7 +33,6 @@ internal static class VersioningCommandLine
             CreateValidateCandidate(timeProvider),
             CreateConsumeCandidate(),
             CreateConsumePackages(),
-            CreateStageCandidate(),
         };
     }
 
@@ -418,29 +417,6 @@ internal static class VersioningCommandLine
             parseResult.GetValue(aot),
             output,
             parseResult.InvocationConfiguration.Error,
-            ct));
-        return command;
-    }
-
-    private static Command CreateStageCandidate()
-    {
-        var candidate = new Option<string>("--candidate") { Description = "Pinned candidate manifest.", HelpName = "path", Required = true };
-        var feed = new Option<string>("--feed") { Description = "Directory containing the candidate packages.", HelpName = "path", Required = true };
-        var destination = new Option<string>("--output") { Description = "Local feed directory that receives the verified packages.", HelpName = "path", Required = true };
-        var repoRoot = RepoRootOption();
-        var command = new Command("stage-candidate", "Verifies a candidate against the checkout revision and copies its packages to a local feed.")
-        {
-            candidate,
-            feed,
-            destination,
-            repoRoot,
-        };
-        SetAction(command, (parseResult, output, ct) => CandidateStagingCommand.Run(
-            Path.GetFullPath(parseResult.GetRequiredValue(repoRoot)),
-            Path.GetFullPath(parseResult.GetRequiredValue(candidate)),
-            Path.GetFullPath(parseResult.GetRequiredValue(feed)),
-            Path.GetFullPath(parseResult.GetRequiredValue(destination)),
-            output,
             ct));
         return command;
     }

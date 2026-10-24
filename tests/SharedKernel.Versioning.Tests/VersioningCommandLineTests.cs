@@ -20,7 +20,6 @@ public static class VersioningCommandLineTests
         "validate-candidate",
         "consume-candidate",
         "consume-packages",
-        "stage-candidate",
     ];
 
     [Fact]
@@ -53,7 +52,6 @@ public static class VersioningCommandLineTests
     [InlineData("validate-candidate", "--version <version>", "--baseline-version <version>", "--aot", "--repo-root <path>")]
     [InlineData("consume-candidate", "--candidate <path>", "--candidate-directory <path>", "--output <path>", "--aot", "--repo-root <path>")]
     [InlineData("consume-packages", "--feed <path> (REQUIRED)", "--version <version> (REQUIRED)", "--aot", "--repo-root <path>")]
-    [InlineData("stage-candidate", "--candidate <path> (REQUIRED)", "--feed <path> (REQUIRED)", "--output <path> (REQUIRED)", "--repo-root <path>")]
     public static async Task Command_help_lists_arguments_and_options_on_standard_output(string command, params string[] expected)
     {
         // Act
@@ -93,7 +91,6 @@ public static class VersioningCommandLineTests
     [Theory]
     [InlineData("Unrecognized command or argument 'unknown'.", "unknown")]
     [InlineData("Unrecognized command or argument '--unknown'.", "check-public-api-baselines", "--unknown", "value")]
-    [InlineData("Unrecognized command or argument '--aot'.", "stage-candidate", "--candidate", "candidate.json", "--feed", "packages", "--output", "feed", "--aot")]
     [InlineData("Required argument missing for option: '--version'.", "check-api-compatibility", "--version")]
     [InlineData("Required argument missing for command: 'classify-commit'.", "classify-commit")]
     [InlineData("Required argument missing for command: 'has-breaking-change-marker'.", "has-breaking-change-marker")]
@@ -101,8 +98,6 @@ public static class VersioningCommandLineTests
     [InlineData("Option '--version' is required.", "prepare-release", "--package-dir", "packages")]
     [InlineData("Option '--package-dir' is required.", "prepare-release", "--version", "1.2.3")]
     [InlineData("Option '--feed' is required.", "consume-packages", "--version", "1.2.3")]
-    [InlineData("Option '--candidate' is required.", "stage-candidate", "--feed", "packages", "--output", "feed")]
-    [InlineData("Option '--output' is required.", "stage-candidate", "--candidate", "candidate.json", "--feed", "packages")]
     [InlineData("Argument 'beta' not recognized.", "calculate-release", "--version-kind", "beta")]
     [InlineData("Argument 'production' not recognized.", "calculate-release", "--version-kind", "production")]
     [InlineData("Option '--run-number' is required when '--version-kind' is prerelease.", "calculate-release")]
@@ -138,7 +133,6 @@ public static class VersioningCommandLineTests
     [InlineData("consume-candidate", "consume-candidate", "--candidate", "candidate.json", "--output", "evidence.json", "--aot", "--repo-root", "/repo")]
     [InlineData("consume-candidate", "consume-candidate", "--candidate-directory", "artifacts/candidate", "--aot")]
     [InlineData("consume-packages", "consume-packages", "--feed", "packages", "--version", "1.2.3", "--aot", "--repo-root", "/repo")]
-    [InlineData("stage-candidate", "stage-candidate", "--repo-root", "/library", "--candidate", "candidate.json", "--feed", "packages", "--output", ".local/sharedkernel-feed")]
     public static void Command_lines_dispatch_to_their_command(string command, params string[] args)
     {
         // Act
@@ -158,7 +152,6 @@ public static class VersioningCommandLineTests
     [InlineData("--sha", "abc123", "calculate-release", "--run-number", "7", "--sha", "abc123")]
     [InlineData("--sha", "abc123", "compute", "--base", "0.1.0", "--sha", "abc123")]
     [InlineData("--repo-root", ".", "calculate-release", "--run-number", "7")]
-    [InlineData("--repo-root", ".", "stage-candidate", "--candidate", "candidate.json", "--feed", "packages", "--output", "feed")]
     [InlineData("--release-phase", "alpha", "check-api-compatibility")]
     [InlineData("--output-root", "artifacts/api-compat", "check-api-compatibility")]
     [InlineData("--output-root", "artifacts/packages/local", "pack-sharedkernel")]
@@ -254,37 +247,6 @@ public static class VersioningCommandLineTests
         result.Output.ShouldNotContain(sampleOutput, StringComparison.Ordinal);
         result.Output.ShouldStartWith(resultPrefix, StringComparison.Ordinal);
         Directory.Exists(result.Output[resultPrefix.Length..].Trim()).ShouldBeTrue();
-    }
-
-    [Fact]
-    public static async Task Canceled_commands_exit_with_code_1_without_staging_packages()
-    {
-        // Arrange
-        using var temporary = new TemporaryReleasePrepDirectory();
-        var manifest = temporary.WriteCandidate();
-        using var cancellation = new CancellationTokenSource();
-        await cancellation.CancelAsync();
-        string[] args =
-        [
-            "stage-candidate",
-            "--repo-root",
-            temporary.Root,
-            "--candidate",
-            manifest,
-            "--feed",
-            temporary.PackageDirectory,
-            "--output",
-            temporary.OutputDirectory,
-        ];
-
-        // Act
-        var result = await VersioningCommandLineRunner.Invoke(args, cancellation.Token);
-
-        // Assert
-        result.ExitCode.ShouldBe(1);
-        result.Output.ShouldBe(string.Empty);
-        result.Error.ShouldBe(string.Empty);
-        Directory.Exists(temporary.OutputDirectory).ShouldBeFalse();
     }
 
     [Fact]

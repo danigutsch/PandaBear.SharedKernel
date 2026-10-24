@@ -5,7 +5,9 @@
 Packages remain `<target>-alpha.<run>.<attempt>` previews; stable packages, tags, and releases require separate authorization. `calculate-release --version-kind prerelease` requires `--run-number`. Without a reachable `v*` tag the target is `0.1.0`. When the latest reachable `v*` tag is a prerelease, its version core is the fixed target and only the prerelease identifier advances; after a stable tag, the Conventional Commit impact selects the next target on each run until a prerelease tag fixes it. `--version-kind stable` releases the same target core. Commit impact is always reported. The generic `compute` command applies normal SemVer bumps.
 
 `sharedkernel-version` calculates SharedKernel versions from Conventional Commits, checks package APIs and
-metadata, packs SharedKernel, and creates, consumes, and stages hashed package candidates.
+metadata, packs SharedKernel, and creates and consumes hashed package candidates. A consumer stages a pinned candidate
+in its local feed with `sharedkernel-ci stage-candidate` from the
+[CI tool](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.CI.Tool/README.md).
 
 ## Prerequisites
 
@@ -64,7 +66,6 @@ sharedkernel-version create-candidate [--version <version>] [--baseline-version 
 sharedkernel-version validate-candidate [--version <version>] [--baseline-version <version>] [--aot]
 sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot]
 sharedkernel-version consume-packages --feed <path> --version <version> [--aot]
-sharedkernel-version stage-candidate --candidate <path> --feed <path> --output <path>
 ```
 
 Every command except `classify-commit` and `compute` accepts `--repo-root <path>`, which defaults to the current
@@ -130,7 +131,6 @@ Without `--version`, the version is `0.1.0-alpha.local.<UTC timestamp>`.
 sharedkernel-version validate-candidate --aot
 sharedkernel-version consume-candidate --candidate-directory artifacts/candidate --aot
 sharedkernel-version consume-packages --feed artifacts/api-compat/packages/0.2.0-alpha.1 --version 0.2.0-alpha.1
-sharedkernel-version stage-candidate --candidate .config/sharedkernel-candidate.json --feed ../SharedKernel/artifacts/api-compat/packages/0.2.0-alpha.1 --output .local/sharedkernel-feed --repo-root ../SharedKernel
 ```
 
 `create-candidate` requires a clean committed checkout. It runs `check-api-compatibility` in the `beta` phase and
@@ -147,11 +147,6 @@ directory, so an interrupted write never truncates it, and Ctrl+C or SIGTERM lea
 `--candidate-directory` must contain exactly one `candidate.json`, searched recursively. `consume-packages` runs
 the same checks against a feed without a manifest.
 `validate-candidate` runs `create-candidate` and then `consume-candidate` on the manifest it wrote.
-
-`stage-candidate` checks that the manifest records a clean library revision equal to `HEAD` of `--repo-root` and
-that the package hashes match, then copies the packages and manifest to `--output`. It never overwrites a
-different package, repeats safely with identical packages, removes incomplete copies when canceled, and contacts
-no package registry.
 
 ## Output and exit codes
 
@@ -178,7 +173,7 @@ observed Ctrl+C or SIGTERM counts as the cancellation.
   `--end-of-options`, so Git cannot read it as an option.
 - Packing and consumption restore third-party packages from nuget.org. Generated NuGet configurations map
   `PandaBear.SharedKernel.*` only to the local feed, so internal packages never resolve from nuget.org.
-- Candidate commands verify SHA-256 package hashes before consuming or staging packages.
+- Candidate commands verify SHA-256 package hashes before consuming packages.
 
 ## Packaging and AOT
 
