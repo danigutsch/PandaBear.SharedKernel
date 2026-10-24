@@ -72,4 +72,40 @@ public sealed class ChildProcessEnvironmentTests
         gitEnvironment.ShouldNotContain("GH_TOKEN");
         gitEnvironment.ShouldNotContain("GITHUB_TOKEN");
     }
+
+    [Fact]
+    public async Task Verify_json_starts_git_from_path_without_github_tokens()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new TemporaryGitRepository();
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        repository.WriteText("valid.json", "{}");
+        await repository.Stage("valid.json", TestContext.Current.CancellationToken);
+        var environmentLogPath = Path.Combine(repository.RootPath, "git-environment.log");
+        Dictionary<string, string?> environment = new(StringComparer.Ordinal)
+        {
+            ["PATH"] = repository.CreateGitShim(),
+            ["TEXT_ENCODING_GIT_SHIM_ENVIRONMENT_LOG"] = environmentLogPath,
+            ["GH_TOKEN"] = "credential-marker",
+            ["GITHUB_TOKEN"] = "credential-marker"
+        };
+
+        // Act
+        var result = await repository.RunCommand(
+            ["verify-json", "--root", repository.RootPath],
+            TestContext.Current.CancellationToken,
+            environment: environment);
+        var gitEnvironment = await File.ReadAllLinesAsync(environmentLogPath, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0);
+        gitEnvironment.ShouldContain(static line => line == "git-shim", "Git is resolved through PATH, where the shim comes first.");
+        gitEnvironment.ShouldNotContain("GH_TOKEN");
+        gitEnvironment.ShouldNotContain("GITHUB_TOKEN");
+    }
 }

@@ -9,7 +9,7 @@ namespace PandaBear.RepoConfig.Tool;
 internal static class DependencySnapshotCommand
 {
     private const int MaximumInputBytes = 64 * 1024 * 1024;
-    private const int MaximumOutputBytes = 32 * 1024 * 1024;
+    internal const int MaximumOutputBytes = 32 * 1024 * 1024;
     private const int MaximumEdgeVisits = 1_000_000;
 
     public static async Task<int> Run(DependencySnapshotOptions options, TextWriter output, TextWriter error, CancellationToken cancellationToken)

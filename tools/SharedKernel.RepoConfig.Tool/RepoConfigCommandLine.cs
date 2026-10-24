@@ -39,7 +39,7 @@ internal static class RepoConfigCommandLine
         ArgumentNullException.ThrowIfNull(environment);
 
         var root = CreateRootOption(environment.WorkingDirectory);
-        return new RootCommand("Maintains repository roadmap configuration, GitHub projection, and repository checks.")
+        var command = new RootCommand("Maintains repository roadmap configuration, GitHub projection, and repository checks.")
         {
             CreateInitCommand(environment, root),
             CreateVerifyCommand(environment, root),
@@ -49,10 +49,15 @@ internal static class RepoConfigCommandLine
             CreateGitHubCommand(environment, root),
             CreateAutomationCommand(environment, root),
             CreateVerifyTextEncodingCommand(environment, root),
+            CreateVerifyJsonCommand(environment, root),
             CreateVerifyPodmanDnsCommand(environment),
             CreateSecurityCommand(environment, root),
             CreateDependencyCommand(environment, root),
         };
+
+        // Consumer caller tests run "[diagram] <command line>" to parse a command line without running it.
+        command.Directives.Add(new DiagramDirective());
+        return command;
     }
 
     private static Option<string> CreateRootOption(string workingDirectory) =>
@@ -251,6 +256,14 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
+    private static Command CreateVerifyJsonCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Command command = new("verify-json", "Verify that the working-tree content of every JSON file in the Git index is UTF-8 JSON. Comments and trailing commas are allowed.") { root };
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+            RepoConfigToolApplication.VerifyJson(ResolveRoot(parseResult, root, environment), output, error, ct));
+        return command;
+    }
+
     private static Command CreateVerifyPodmanDnsCommand(RepoConfigToolEnvironment environment)
     {
         Option<string> verbosity = new("--verbosity")
@@ -312,8 +325,77 @@ internal static class RepoConfigCommandLine
             output,
             error,
             cancellationToken));
-        return new Command("dependency", "Generate repository dependency metadata.") { snapshot };
+        return new Command("dependency", "Generate, submit, and verify repository dependency metadata.")
+        {
+            snapshot,
+            CreateDependencySubmitCommand(environment, root),
+            CreateVerifyLicenseExceptionsCommand(environment, root),
+        };
     }
+
+    private static Command CreateDependencySubmitCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        var snapshot = CreatePathOption("--snapshot", "Dependency snapshot JSON file. Relative to the root.");
+        snapshot.Required = true;
+        Option<string> repository = new("--repository")
+        {
+            Required = true,
+            Description = "GitHub repository that receives the snapshot.",
+            HelpName = "owner/name",
+        };
+        Option<bool> force = new("--force")
+        {
+            Description = "Submit the snapshot instead of previewing it. Validation still applies."
+        };
+        Command command = new("submit", "Submit a dependency snapshot to the GitHub dependency graph. Previews unless --force is given.")
+        {
+            snapshot, repository, force, root
+        };
+        SetGuardedAction(command, (parseResult, output, _, ct) => DependencySubmitCommand.Run(
+            new DependencySubmitOptions(
+                ResolveRoot(parseResult, root, environment),
+                parseResult.GetRequiredValue(snapshot),
+                parseResult.GetRequiredValue(repository),
+                parseResult.GetValue(force)),
+            environment.HttpClient,
+            output,
+            ct));
+        return command;
+    }
+
+    private static Command CreateVerifyLicenseExceptionsCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        var githubOutput = CreatePathOption("--github-output", "GitHub Actions output file that receives packages, the approved package URLs. Relative to the root.");
+        Command command = new("verify-license-exceptions", "Verify that the configured license exceptions match their approval and the locked package versions.")
+        {
+            githubOutput, root
+        };
+        SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyLicenseExceptions(
+            ResolveRoot(parseResult, root, environment),
+            parseResult.GetValue(githubOutput),
+            output,
+            error,
+            ct));
+        return command;
+    }
+
+    private static Option<string> CreatePathOption(string name, string description) =>
+        new(name)
+        {
+            Description = description,
+            HelpName = "path",
+            CustomParser = result =>
+            {
+                var path = result.Tokens.Count == 1 ? result.Tokens[0].Value : null;
+                if (string.IsNullOrWhiteSpace(path) || path.Contains('\0', StringComparison.Ordinal))
+                {
+                    result.AddError($"{name} requires a file path.");
+                    return null;
+                }
+
+                return path;
+            },
+        };
 
     private static Command CreateSecurityCommand(RepoConfigToolEnvironment environment, Option<string> root)
     {
