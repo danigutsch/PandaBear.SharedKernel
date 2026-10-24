@@ -101,15 +101,18 @@ public sealed class ProcessRunnerTests
         var (fileName, arguments) = TestShell.Command(
             $"echo $$ > '{bashPath}'; exec sleep 60",
             $"Set-Content -LiteralPath '{powerShellPath}' -Value $PID; Start-Sleep -Seconds 60");
-        var running = ProcessRunner.Run(fileName, arguments, Path.GetTempPath(), TimeSpan.FromSeconds(3), static _ => { }, TestContext.Current.CancellationToken);
+        var timeProvider = new ManualTimeProvider();
+        var running = ProcessRunner.Run(fileName, arguments, Path.GetTempPath(), TimeSpan.FromMinutes(10), timeProvider, static _ => { }, TestContext.Current.CancellationToken);
         var processId = await ChildProcessId.Read(processIdPath, running, TestContext.Current.CancellationToken);
 
         // Act
+        // The timeout fires only after the child has reported its process ID, however long its shell took to start.
+        timeProvider.Fire();
         var action = () => running.WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<TimeoutException>();
 
         // Assert
-        exception.Message.ShouldContain("did not exit within 3 seconds", StringComparison.Ordinal);
+        exception.Message.ShouldContain("did not exit within 600 seconds", StringComparison.Ordinal);
         var lookup = () => Process.GetProcessById(processId);
         lookup.ShouldThrow<ArgumentException>();
     }

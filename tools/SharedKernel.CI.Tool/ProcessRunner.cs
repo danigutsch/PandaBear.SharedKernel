@@ -17,7 +17,7 @@ internal static class ProcessRunner
     /// <exception cref="InvalidOperationException">The process could not start or exited with a non-zero code.</exception>
     /// <exception cref="OperationCanceledException"><paramref name="ct"/> was cancelled; the process tree is terminated first.</exception>
     public static Task<string> Run(string fileName, string[] arguments, string workingDirectory, CancellationToken ct) =>
-        Run(fileName, arguments, workingDirectory, Timeout.InfiniteTimeSpan, static _ => { }, ct);
+        Run(fileName, arguments, workingDirectory, Timeout.InfiniteTimeSpan, TimeProvider.System, static _ => { }, ct);
 
     /// <summary>
     /// Runs Git without the inherited <c>GIT_*</c> variables, which can point it at another repository, and stops it
@@ -27,7 +27,7 @@ internal static class ProcessRunner
     /// <exception cref="TimeoutException">Git did not exit within a minute; its process tree is terminated first.</exception>
     /// <exception cref="OperationCanceledException"><paramref name="ct"/> was cancelled; the process tree is terminated first.</exception>
     public static Task<string> RunGit(string[] arguments, string workingDirectory, CancellationToken ct) =>
-        Run("git", arguments, workingDirectory, GitTimeout, RemoveGitVariables, ct);
+        Run("git", arguments, workingDirectory, GitTimeout, TimeProvider.System, RemoveGitVariables, ct);
 
     /// <summary>Removes every <c>GIT_*</c> variable, in any case, from the child environment.</summary>
     internal static void RemoveGitVariables(ProcessStartInfo startInfo)
@@ -38,10 +38,13 @@ internal static class ProcessRunner
         }
     }
 
-    /// <summary>Runs a process with a configured start and a timeout, and returns its standard output.</summary>
+    /// <summary>
+    /// Runs a process with a configured start and a timeout that <paramref name="timeProvider"/> times, and returns its
+    /// standard output.
+    /// </summary>
     /// <exception cref="TimeoutException">The process did not exit within <paramref name="timeout"/>; its process tree is terminated first.</exception>
     internal static async Task<string> Run(
-        string fileName, string[] arguments, string workingDirectory, TimeSpan timeout, Action<ProcessStartInfo> configure, CancellationToken ct)
+        string fileName, string[] arguments, string workingDirectory, TimeSpan timeout, TimeProvider timeProvider, Action<ProcessStartInfo> configure, CancellationToken ct)
     {
         var startInfo = new ProcessStartInfo(ExecutableResolver.ResolveCommand(fileName))
         {
@@ -59,7 +62,7 @@ internal static class ProcessRunner
         using var process = Start(startInfo);
         var standardOutput = process.StandardOutput.ReadToEndAsync(CancellationToken.None);
         var standardError = process.StandardError.ReadToEndAsync(CancellationToken.None);
-        using var timeoutSource = new CancellationTokenSource(timeout);
+        using var timeoutSource = new CancellationTokenSource(timeout, timeProvider);
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutSource.Token);
         try
         {
