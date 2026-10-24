@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Nodes;
+using PandaBear.Testing;
 
 namespace PandaBear.Repository.Tests;
 
@@ -15,9 +16,12 @@ internal sealed class CandidateStagingScope : IDisposable
     public const string Repository = "danigutsch/PandaBear.SharedKernel";
     public const string GlobalJson = """{ "sdk": { "version": "10.0.402", "rollForward": "disable" } }""";
 
+    // Git creates its object files read-only, which Windows refuses to delete until the attribute is cleared.
+    private readonly TemporaryDirectory directory = new();
+
     public CandidateStagingScope()
     {
-        Base = Directory.CreateTempSubdirectory("sharedkernel-stage-").FullName;
+        Base = directory.Path;
         Root = Path.Combine(Base, "consumer");
         LibraryRoot = Path.Combine(Base, "library");
         Feed = Path.Combine(Base, "feed");
@@ -122,7 +126,7 @@ internal sealed class CandidateStagingScope : IDisposable
             ? Directory.GetDirectories(Path.GetDirectoryName(Output)!, ".sharedkernel-feed.stage-*")
             : [];
 
-    public void Dispose() => Directory.Delete(Base, recursive: true);
+    public void Dispose() => directory.Dispose();
 
     private void AddPackage(string name)
     {
