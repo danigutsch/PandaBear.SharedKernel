@@ -98,7 +98,7 @@ internal static class CandidateStaging
         new($"https://github.com/{repository}/releases/download/v{Uri.EscapeDataString(version)}/{Uri.EscapeDataString(asset)}");
 
     // The release's candidate.json is fetched even when every package is cached, so the packages of a deleted or
-    // replaced release are refused. Evidence properties may differ from the pin; identity properties may not.
+    // re-created release are refused. Evidence properties may differ from the pin; identity properties may not.
     private static async Task VerifyRelease(ReleaseAssetClient assets, string repository, CandidatePin pin, CancellationToken ct)
     {
         var uri = AssetUri(repository, pin.PackageVersion, ManifestName);
@@ -145,7 +145,7 @@ internal static class CandidateStaging
         }
     }
 
-    // File.Move without overwrite fails when the target exists, so a package in the output is never replaced. A
+    // File.Move without overwrite fails when the target exists, so a package in the output is never overwritten. A
     // concurrent stager of the same pin may have moved the identical package first, which is fine.
     private static async Task MoveIntoOutput(string staged, string target, string hash)
     {
