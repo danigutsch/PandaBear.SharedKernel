@@ -196,9 +196,9 @@ slice; several slices run together, and without `--slice` every required slice r
 another revision, an unknown slice, and a plan that names a test project outside the checkout or through a symbolic
 link. When the slices have no selected test project, standard output says so and nothing is built.
 
-The run writes one solution filter, `tests.slnf`, of the selected test projects to its execution directory,
-`execution-<slice>` (several slices join their names with `+`, as in `execution-fast+system`; without `--slice`,
-`execution`) in the plan directory, and then:
+The run writes one solution filter, `tests.slnf`, of the selected test projects and the projects of the slices'
+`openApi` targets to its execution directory, `execution-<slice>` (several slices join their names with `+`, as in
+`execution-fast+system`; without `--slice`, `execution`) in the plan directory, and then:
 
 1. `dotnet restore tests.slnf --locked-mode`;
 2. `dotnet build tests.slnf -c <configuration> --no-restore`;
