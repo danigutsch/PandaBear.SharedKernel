@@ -3,16 +3,23 @@ using System.Text.RegularExpressions;
 
 namespace PandaBear.Repository.Tests;
 
-/// <summary>Finds repository tool command lines in workflows and the tool README.</summary>
+/// <summary>Finds CI tool command lines, from source or the installed sharedkernel-ci, in workflows and the tool README.</summary>
 internal static partial class RepositoryToolCallers
 {
     private const string ArrayExpansion = "${args[@]}";
+
+    // Sample values for shell variables that options validate.
+    private static readonly Dictionary<string, string> Samples = new(StringComparer.Ordinal)
+    {
+        ["$GITHUB_REPOSITORY"] = "danigutsch/PandaBear.SharedKernel",
+        ["$env:GITHUB_REPOSITORY"] = "danigutsch/PandaBear.SharedKernel",
+    };
 
     public static IEnumerable<RepositoryToolCaller> Find(string root)
     {
         // Documentation-only changes skip these tests, so only files whose changes run them are read.
         var files = Directory.EnumerateFiles(Path.Combine(root, ".github", "workflows"), "*.yml")
-            .Append(Path.Combine(root, "tools", "SharedKernel.Repository.Tool", "README.md"));
+            .Append(Path.Combine(root, "tools", "SharedKernel.CI.Tool", "README.md"));
         foreach (var file in files)
         {
             var relativePath = Path.GetRelativePath(root, file).Replace('\\', '/');
@@ -37,9 +44,10 @@ internal static partial class RepositoryToolCallers
         }
     }
 
-    private static string[] Split(string commandLine) => [.. CommandLineParser.SplitCommandLine(commandLine)];
+    private static string[] Split(string commandLine) =>
+        [.. CommandLineParser.SplitCommandLine(commandLine).Select(static argument => Samples.GetValueOrDefault(argument, argument))];
 
-    [GeneratedRegex(@"tools/SharedKernel\.Repository\.Tool[^\n`]*? -- (?<arguments>[^\n`]*)", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"(?:tools/SharedKernel\.CI\.Tool|sharedkernel-ci)[^\n`]*? -- (?<arguments>[^\n`]*)", RegexOptions.CultureInvariant)]
     private static partial Regex Invocation();
 
     [GeneratedRegex(@"args\+=\((?<values>[^)\n]*)\)", RegexOptions.CultureInvariant)]

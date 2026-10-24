@@ -27,19 +27,19 @@ reports are evidence for those projects, not whole-repository coverage trends. T
 Build gates retain SDK analyzers (`AnalysisMode=All`), SharedKernel analyzers, warnings as errors, public API checks, dependency vulnerability auditing,
 and package-consumption checks. No remote SonarCloud upload or proprietary coverage collector is required.
 
-`SharedKernel.Repository.Tool` is repository-only and is not packaged. Selection reads the live solution, includes
-reverse transitive dependents and whole test projects, and falls back to full validation when history or dependencies are uncertain. Full runs happen
-nightly; selection reasons are retained in CI.
+`SharedKernel.CI.Tool` packs as the `sharedkernel-ci` tool and also builds from a sparse checkout of its own directory
+and `tools/Shared`. Selection reads the live solution, includes reverse transitive dependents and whole test projects, and falls back to full
+validation when history or dependencies are uncertain. Full runs happen nightly; selection reasons are retained in CI.
 
 ```sh
-dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- select --base <base-revision>
-dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- validate
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select --base <base-revision>
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- validate
 ```
 
 Commit changes before creating candidate evidence. Candidates receive unique ordered prerelease versions and are never overwritten.
-`SharedKernel.Versioning.Tool` validates APIs, packs once, records the library revision and SHA-256 package hashes, then checks isolated package
-restore, locked restore, build, run, generators, and optional NativeAOT. Candidate manifests mark unavailable consumer, baseline, and platform
-evidence as pending.
+`SharedKernel.Versioning.Tool` validates APIs, packs once, records the library revision and SHA-256 package hashes, then installs every packed tool
+and runs each command that its package declares with `--help`, and checks isolated package restore, locked restore, build, run, generators, and optional NativeAOT.
+Candidate manifests mark unavailable consumer, baseline, and platform evidence as pending.
 
 ```sh
 dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- validate-candidate --aot

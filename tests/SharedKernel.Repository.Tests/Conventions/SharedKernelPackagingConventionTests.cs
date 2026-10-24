@@ -41,6 +41,12 @@ public static class SharedKernelPackagingConventionTests
             (
                 Path.Combine(repositoryRoot, "src", "SharedKernel", "SharedKernel.Style.CodeFixes", "SharedKernel.Style.CodeFixes.csproj"),
                 ["SharedKernel.Style.Analyzers.dll", "SharedKernel.Style.CodeFixes.dll"]),
+            (
+                Path.Combine(repositoryRoot, "src", "SharedKernel", "SharedKernel.Domain.Analyzers", "SharedKernel.Domain.Analyzers.csproj"),
+                ["SharedKernel.Domain.Analyzers.dll"]),
+            (
+                Path.Combine(repositoryRoot, "src", "SharedKernel", "SharedKernel.Domain.CodeFixes", "SharedKernel.Domain.CodeFixes.csproj"),
+                ["SharedKernel.Domain.CodeFixes.dll"]),
         ];
 
         // Act
@@ -50,6 +56,33 @@ public static class SharedKernelPackagingConventionTests
 
         // Assert
         violations.ShouldBe([]);
+    }
+
+    [Fact]
+    public static void Ci_tool_is_packaged_as_the_sharedkernel_ci_dotnet_tool()
+    {
+        // Arrange
+        var projectPath = Path.Combine(
+            SharedKernelPackagingConventionTestFiles.GetRepositoryRoot(),
+            "tools",
+            "SharedKernel.CI.Tool",
+            "SharedKernel.CI.Tool.csproj");
+
+        // Act
+        var violations = SharedKernelPackagingConventionTestFiles.GetPackageMetadataViolations(projectPath).ToArray();
+        var isPackable = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "IsPackable");
+        var packAsTool = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "PackAsTool");
+        var commandName = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "ToolCommandName");
+        var description = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "Description");
+        var aotCompatible = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "IsAotCompatible");
+
+        // Assert
+        violations.ShouldBe([]);
+        isPackable.ShouldBe("true");
+        packAsTool.ShouldBe("true");
+        commandName.ShouldBe("sharedkernel-ci", "Tool command names start with sharedkernel- and name the tool.");
+        description.ShouldNotBe(string.Empty);
+        aotCompatible.ShouldBe("true");
     }
 
     [Fact]

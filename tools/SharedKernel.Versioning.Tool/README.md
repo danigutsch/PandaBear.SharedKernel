@@ -5,13 +5,17 @@
 Packages remain `<target>-alpha.<run>.<attempt>` previews; stable packages, tags, and releases require separate authorization. `calculate-release --version-kind prerelease` requires `--run-number`. Without a reachable `v*` tag the target is `0.1.0`. When the latest reachable `v*` tag is a prerelease, its version core is the fixed target and only the prerelease identifier advances; after a stable tag, the Conventional Commit impact selects the next target on each run until a prerelease tag fixes it. `--version-kind stable` releases the same target core. Commit impact is always reported. The generic `compute` command applies normal SemVer bumps.
 
 `sharedkernel-version` calculates SharedKernel versions from Conventional Commits, checks package APIs and
-metadata, packs SharedKernel, and creates, consumes, and stages hashed package candidates.
+metadata, packs SharedKernel, and creates and consumes hashed package candidates. A consumer stages a pinned candidate
+in its local feed with `sharedkernel-ci stage-candidate` from the
+[CI tool](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.CI.Tool/README.md).
 
 ## Prerequisites
 
 Git 2.24 or later, which `has-breaking-change-marker` needs for `--end-of-options`, and the .NET SDK pinned in
 `global.json`. `--aot` also needs the platform
 [NativeAOT toolchain](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/development.md#nativeaot-prerequisites).
+`consume-candidate`, `consume-packages`, and `validate-candidate` run installed tool commands, whose shims find
+.NET through `DOTNET_ROOT` or the default or registered install location.
 
 ## Install
 
@@ -64,11 +68,11 @@ sharedkernel-version create-candidate [--version <version>] [--baseline-version 
 sharedkernel-version validate-candidate [--version <version>] [--baseline-version <version>] [--aot]
 sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot]
 sharedkernel-version consume-packages --feed <path> --version <version> [--aot]
-sharedkernel-version stage-candidate --candidate <path> --feed <path> --output <path>
 ```
 
 Every command except `classify-commit` and `compute` accepts `--repo-root <path>`, which defaults to the current
-directory. `sharedkernel-version <command> --help` describes each option.
+directory. `sharedkernel-version <command> --help` describes each option. A command line that starts with
+`[diagram]` prints how it parses without running the command, and exits 1 when it does not parse.
 
 ### Versions
 
@@ -130,7 +134,6 @@ Without `--version`, the version is `0.1.0-alpha.local.<UTC timestamp>`.
 sharedkernel-version validate-candidate --aot
 sharedkernel-version consume-candidate --candidate-directory artifacts/candidate --aot
 sharedkernel-version consume-packages --feed artifacts/api-compat/packages/0.2.0-alpha.1 --version 0.2.0-alpha.1
-sharedkernel-version stage-candidate --candidate .config/sharedkernel-candidate.json --feed ../SharedKernel/artifacts/api-compat/packages/0.2.0-alpha.1 --output .local/sharedkernel-feed --repo-root ../SharedKernel
 ```
 
 `create-candidate` requires a clean committed checkout. It runs `check-api-compatibility` in the `beta` phase and
@@ -140,35 +143,35 @@ revision and SHA-256 package hashes. Consumer, platform, and stable-promotion ev
 of `ComputedSemVer` in `Directory.Build.props`. `--baseline-version` requires `PandaBear.SharedKernel.*` mapped only
 to an existing local feed in `NuGet.Config`.
 
-`consume-candidate` verifies the hashes, restores, builds, and runs the samples against those packages with
-isolated caches, and records `passed` or `failed` for this platform's package consumption, and its NativeAOT run
-with `--aot`, in the manifest or in `--output`. It replaces that file through a temporary file in the same
-directory, so an interrupted write never truncates it, and Ctrl+C or SIGTERM leaves the file unchanged.
+`consume-candidate` verifies the hashes and requires the manifest to list the exact file name of every package in its
+directory, and every package to have the candidate version. It installs each tool package into a scratch tool path,
+from a generated NuGet configuration whose only source is that directory, and runs each command that the package's
+`tools/<tfm>/any/DotnetToolSettings.xml` declares with `--help` from an empty scratch directory. It deletes the
+scratch directory afterwards. The check fails when a package does not install or a command exits with a non-zero
+code, and the error names the package and any failing command. It then restores, builds, and runs the samples against
+the packages with isolated caches, and records `passed` or `failed` for this platform's package consumption, and its
+NativeAOT run with `--aot`, in the manifest or in `--output`. It replaces that file through a temporary file in the
+same directory, so an interrupted write never truncates it, and Ctrl+C or SIGTERM leaves the file unchanged.
 `--candidate-directory` must contain exactly one `candidate.json`, searched recursively. `consume-packages` runs
 the same checks against a feed without a manifest.
 `validate-candidate` runs `create-candidate` and then `consume-candidate` on the manifest it wrote.
 
-`stage-candidate` checks that the manifest records a clean library revision equal to `HEAD` of `--repo-root` and
-that the package hashes match, then copies the packages and manifest to `--output`. It never overwrites a
-different package, repeats safely with identical packages, removes incomplete copies when canceled, and contacts
-no package registry.
-
 ## Output and exit codes
 
 Results such as versions, JSON, and report or package paths go to standard output. Errors go to standard error, as
-does the output of the `dotnet` processes and samples that `consume-candidate`, `consume-packages`, and
-`validate-candidate` run.
+does the output of the `dotnet` processes, tool commands, and samples that `consume-candidate`, `consume-packages`,
+and `validate-candidate` run.
 
 | Code | Meaning |
 | --- | --- |
 | `0` | Success. |
 | `1` | Invalid command line, cancellation, or an unexpected internal error. |
-| `2` | The command failed: invalid input, a failed check, or a failed `git` or `dotnet` process. |
+| `2` | The command failed: invalid input, a failed check, or a failed `git`, `dotnet`, or tool process. |
 | `3` | `has-breaking-change-marker` found no breaking-change marker in the range. |
 | `130`, `143` | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
-Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or sample process tree. A process that fails after the tool has
-observed Ctrl+C or SIGTERM counts as the cancellation.
+Ctrl+C or SIGTERM stops the running `git`, `dotnet`, tool, or sample process tree. A process that fails after the tool
+has observed Ctrl+C or SIGTERM counts as the cancellation.
 
 ## Security
 
@@ -178,7 +181,9 @@ observed Ctrl+C or SIGTERM counts as the cancellation.
   `--end-of-options`, so Git cannot read it as an option.
 - Packing and consumption restore third-party packages from nuget.org. Generated NuGet configurations map
   `PandaBear.SharedKernel.*` only to the local feed, so internal packages never resolve from nuget.org.
-- Candidate commands verify SHA-256 package hashes before consuming or staging packages.
+- Consumption installs tool packages only from the candidate directory, and reads their tool settings without
+  document type definitions, so no entity expands and no external resource is read.
+- Candidate commands verify SHA-256 package hashes before consuming packages.
 
 ## Packaging and AOT
 
