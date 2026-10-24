@@ -26,7 +26,7 @@ internal static partial class RepositoryCommandLine
         string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run, CandidateStagingServices staging)
     {
         var root = new RootCommand(
-            "Selects, builds, and tests affected SharedKernel projects, stages package candidates, and verifies commit messages.");
+            "Selects, builds, and tests affected test projects, stages package candidates, and verifies commit messages.");
 
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
@@ -41,26 +41,17 @@ internal static partial class RepositoryCommandLine
     {
         var baseOption = new Option<string>("--base")
         {
-            Description = "Revision to compare with HEAD. Without it, every project is selected.",
-            HelpName = "revision",
+            Description = "Git object ID of the revision to compare with HEAD. Without one, an invalid one, or one that is not an ancestor of HEAD, every test project is selected.",
+            HelpName = "object-id",
         };
-
-        // Git reads an empty base as HEAD, which selects nothing, and a leading '-' as an option.
-        baseOption.Validators.Add(static result =>
-        {
-            var revision = result.GetValueOrDefault<string>();
-            if (string.IsNullOrWhiteSpace(revision) || revision.StartsWith('-'))
-            {
-                result.AddError("--base requires a revision that is not empty and does not start with '-'.");
-            }
-        });
         var githubOutputOption = PathOption(
             "--github-output",
-            "GitHub Actions output file that receives candidate_required, hosted_required, and hosted_matrix. Relative to the root.",
+            "GitHub Actions output file that receives build_required, documentation_only, matrix, and <slice>_required. Relative to the root.",
             "path");
         var rootOption = CreateRootOption();
         var selectionOption = CreateSelectionOption();
-        var command = new Command("select", "Select the projects affected since a base revision and write the validation plan.")
+        var command = new Command(
+            "select", "Select the test projects affected since a base revision, as .config/sharedkernel-ci.json configures, and write the validation plan.")
         {
             baseOption,
             githubOutputOption,
@@ -88,17 +79,24 @@ internal static partial class RepositoryCommandLine
 
     private static Command CreateValidate(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run)
     {
-        var testGroupOption = new Option<string>("--test-group")
+        var sliceOption = new Option<string>("--slice")
         {
-            Description = "Projects to validate: all, ordinary (everything except hosted Aspire test projects), or one hosted test project path.",
-            HelpName = "group",
-            DefaultValueFactory = static _ => "all",
+            Description = "Slice whose solution filter is restored, built, and tested.",
+            HelpName = "name",
+            Required = true,
         };
+        sliceOption.Validators.Add(static result =>
+        {
+            if (!CiConfigurationFile.IsSliceName(result.GetValueOrDefault<string>() ?? string.Empty))
+            {
+                result.AddError("--slice requires a slice name: lowercase letters and digits in words separated by '-'.");
+            }
+        });
         var rootOption = CreateRootOption();
         var selectionOption = CreateSelectionOption();
-        var command = new Command("validate", "Restore, build, and test the projects in the validation plan.")
+        var command = new Command("validate", "Restore, build, and test the selected test projects of one slice of the validation plan.")
         {
-            testGroupOption,
+            sliceOption,
             rootOption,
             selectionOption,
         };
@@ -110,7 +108,7 @@ internal static partial class RepositoryCommandLine
                 return RepositoryValidation.Run(
                     root,
                     Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root),
-                    parseResult.GetRequiredValue(testGroupOption),
+                    parseResult.GetRequiredValue(sliceOption),
                     run,
                     output,
                     error,

@@ -19,10 +19,10 @@ public sealed class WorkflowContractTests
         // Assert
         workflow.ShouldContain("github.event_name == 'push' && github.event.before", StringComparison.Ordinal);
         quality.ShouldContain("needs: selection", StringComparison.Ordinal);
-        quality.ShouldContain("if: needs.selection.outputs.candidate_required == 'true'\n        run: bash setup-dev.sh", StringComparison.Ordinal);
-        quality.ShouldContain("if: needs.selection.outputs.candidate_required == 'true'\n        run: |\n          dotnet test", StringComparison.Ordinal);
-        quality.ShouldContain("if: needs.selection.outputs.candidate_required == 'true'\n        run: dotnet format", StringComparison.Ordinal);
-        quality.ShouldContain("if: needs.selection.outputs.candidate_required == 'false'\n        uses: ./.github/actions/setup-dotnet-tool", StringComparison.Ordinal);
+        quality.ShouldContain("if: needs.selection.outputs.build_required == 'true'\n        run: bash setup-dev.sh", StringComparison.Ordinal);
+        quality.ShouldContain("if: needs.selection.outputs.build_required == 'true'\n        run: |\n          dotnet test", StringComparison.Ordinal);
+        quality.ShouldContain("if: needs.selection.outputs.build_required == 'true'\n        run: dotnet format", StringComparison.Ordinal);
+        quality.ShouldContain("if: needs.selection.outputs.build_required == 'false'\n        uses: ./.github/actions/setup-dotnet-tool", StringComparison.Ordinal);
         quality.ShouldContain("project: tools/SharedKernel.Documentation.Tool", StringComparison.Ordinal);
         quality.ShouldContain("-- verify --config docs/architecture/generated-diagrams.json\n", StringComparison.Ordinal);
     }
@@ -49,7 +49,7 @@ public sealed class WorkflowContractTests
 
         // Assert
         var checkout = checkouts.ShouldHaveSingleItem();
-        job.ShouldContain("    needs: selection\n    if: needs.selection.outputs.candidate_required == 'true'\n", StringComparison.Ordinal);
+        job.ShouldContain("    needs: selection\n    if: needs.selection.outputs.build_required == 'true'\n", StringComparison.Ordinal);
         job.ShouldContain("        os: [ubuntu-latest, windows-latest]\n        tool: [SharedKernel.CI.Tool, SharedKernel.RepoConfig.Tool]\n", StringComparison.Ordinal);
         job.ShouldContain(
             "      " + checkout + "\n        with:\n          path: source-build\n          persist-credentials: false\n"
@@ -70,6 +70,26 @@ public sealed class WorkflowContractTests
     }
 
     [Fact]
+    public void Selection_feeds_one_validate_job_per_slice_with_selected_test_projects()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+
+        // Act
+        var selection = WorkflowJobs.Read(workflow, "selection");
+        var validate = WorkflowJobs.Read(workflow, "validate");
+
+        // Assert
+        selection.ShouldContain("      build_required: ${{ steps.selection.outputs.build_required }}\n      matrix: ${{ steps.selection.outputs.matrix }}\n", StringComparison.Ordinal);
+        validate.ShouldContain("    if: needs.selection.outputs.build_required == 'true' && needs.selection.outputs.matrix != '[]'\n", StringComparison.Ordinal);
+        validate.ShouldContain("        slice: ${{ fromJSON(needs.selection.outputs.matrix) }}\n", StringComparison.Ordinal);
+        validate.ShouldContain("          SLICE: ${{ matrix.slice }}\n", StringComparison.Ordinal);
+        validate.ShouldContain("-- validate --slice \"$SLICE\"\n", StringComparison.Ordinal);
+        validate.ShouldContain("          name: validation-${{ matrix.slice }}-evidence\n          path: TestResults/selection/execution-${{ matrix.slice }}/**\n", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Validation_summary_requires_the_source_build_whenever_a_candidate_is_required()
     {
         // Arrange
@@ -85,10 +105,16 @@ public sealed class WorkflowContractTests
 
         // Assert
         needs.ShouldContain("source-build");
+        needs.ShouldContain("validate");
         summary.ShouldContain("          SOURCE_BUILD_RESULT: ${{ needs.source-build.result }}\n", StringComparison.Ordinal);
         summary.ShouldContain(
-            "if [[ \"$CANDIDATE_REQUIRED\" == true ]]; then\n"
-                + "            for result in \"$LIBRARY_RESULT\" \"$SOURCE_BUILD_RESULT\" \"$CANDIDATE_RESULT\" \"$LINUX_RESULT\" \"$WINDOWS_RESULT\"; do\n",
+            "if [[ \"$BUILD_REQUIRED\" == true ]]; then\n"
+                + "            if [[ \"$MATRIX\" == '[]' ]]; then\n"
+                + "              test \"$VALIDATE_RESULT\" = skipped || exit 1\n"
+                + "            else\n"
+                + "              test \"$VALIDATE_RESULT\" = success || exit 1\n"
+                + "            fi\n"
+                + "            for result in \"$SOURCE_BUILD_RESULT\" \"$CANDIDATE_RESULT\" \"$LINUX_RESULT\" \"$WINDOWS_RESULT\"; do\n",
             StringComparison.Ordinal);
     }
 

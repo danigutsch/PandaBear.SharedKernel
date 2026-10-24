@@ -26,7 +26,7 @@ public sealed class RepositoryToolCallerTests
     }
 
     [Fact]
-    public void Ci_selection_passes_the_base_revision_only_when_one_exists()
+    public void Ci_selection_passes_the_base_revision_on_one_command_line()
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
@@ -38,7 +38,7 @@ public sealed class RepositoryToolCallerTests
             .ToArray();
 
         // Assert
-        selections.ShouldBe(["select --github-output $GITHUB_OUTPUT", "select --github-output $GITHUB_OUTPUT --base $BASE_SHA"]);
+        selections.ShouldBe(["select --base $BASE_SHA --github-output $GITHUB_OUTPUT"], "An empty base selects every test project with a reason.");
     }
 
     [Fact]
@@ -57,8 +57,8 @@ public sealed class RepositoryToolCallerTests
         readmeCallers.ShouldBe(
             [
                 "verify-commit-message --file <commit-message-file>",
-                "select --base <revision>",
-                "validate",
+                "select --base <object-id>",
+                "validate --slice library",
                 "stage-candidate --pin <candidate.json> --library-root . --output <feed> --repository danigutsch/PandaBear.SharedKernel",
                 "verify-commit-message --event <event.json>",
                 "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"

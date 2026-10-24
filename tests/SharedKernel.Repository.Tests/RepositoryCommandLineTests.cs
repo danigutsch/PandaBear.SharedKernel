@@ -23,8 +23,8 @@ public sealed class RepositoryCommandLineTests
     }
 
     [Theory]
-    [InlineData("select", "--base <revision>", "--github-output <path>", "--root <path>", "--selection <directory>", "[default: TestResults/selection]")]
-    [InlineData("validate", "--test-group <group>", "[default: all]", "--root <path>", "--selection <directory>")]
+    [InlineData("select", "--base <object-id>", "--github-output <path>", "--root <path>", "--selection <directory>", "[default: TestResults/selection]")]
+    [InlineData("validate", "--slice <name> (REQUIRED)", "--root <path>", "--selection <directory>")]
     [InlineData(
         "stage-candidate",
         "--pin <file> (REQUIRED)",
@@ -73,7 +73,8 @@ public sealed class RepositoryCommandLineTests
 
     [Theory]
     [InlineData("[diagram] select --base main", 0)]
-    [InlineData("[diagram] validate --test-group ordinary", 0)]
+    [InlineData("[diagram] validate --slice library", 0)]
+    [InlineData("[diagram] validate --slice ../library", 1)]
     [InlineData("[diagram] verify-commit-message --event event.json", 0)]
     [InlineData("[diagram] verify-commit-message --file COMMIT_EDITMSG", 0)]
     [InlineData("[diagram] verify-commit-message --event event.json --file COMMIT_EDITMSG", 1)]
@@ -104,6 +105,9 @@ public sealed class RepositoryCommandLineTests
     [InlineData("publish")]
     [InlineData("validate --version 1.0.0")]
     [InlineData("validate --base main")]
+    [InlineData("validate")]
+    [InlineData("validate --slice build")]
+    [InlineData("validate --slice Library")]
     [InlineData("select --test-group ordinary")]
     [InlineData("select --base")]
     [InlineData("verify-commit-message")]
@@ -158,18 +162,20 @@ public sealed class RepositoryCommandLineTests
     [InlineData("select", "--root")]
     [InlineData("select", "--selection")]
     [InlineData("select", "--github-output")]
-    [InlineData("validate", "--root")]
-    [InlineData("validate", "--selection")]
+    [InlineData("validate --slice library", "--root")]
+    [InlineData("validate --slice library", "--selection")]
     [InlineData("verify-commit-message", "--event")]
     [InlineData("verify-commit-message", "--file")]
     public async Task Path_options_reject_empty_values_before_running_processes(string command, string option)
     {
         // Arrange
+        ArgumentNullException.ThrowIfNull(command);
         using var scope = new RepositoryTestScope();
         var processes = new ProcessLog();
 
         // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, [command, option, ""], processes.Run, TestContext.Current.CancellationToken);
+        var result = await RepositoryToolInvocation.Run(
+            scope.Root, [.. command.Split(' '), option, ""], processes.Run, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(1);
@@ -177,27 +183,6 @@ public sealed class RepositoryCommandLineTests
         processes.Calls.ShouldBeEmpty();
         Directory.Exists(Path.Combine(scope.Root, "TestResults")).ShouldBeFalse();
         File.Exists(Path.Combine(scope.Root, "revision.txt")).ShouldBeFalse();
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData("-p")]
-    [InlineData("--output=changes.txt")]
-    public async Task Select_rejects_a_base_that_git_would_not_read_as_a_revision(string revision)
-    {
-        // Arrange
-        using var scope = new RepositoryTestScope();
-        var processes = new ProcessLog();
-
-        // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["select", "--base", revision], processes.Run, TestContext.Current.CancellationToken);
-
-        // Assert
-        result.ExitCode.ShouldBe(1);
-        result.Error.ShouldContain("--base", StringComparison.Ordinal);
-        processes.Calls.ShouldBeEmpty();
-        Directory.Exists(Path.Combine(scope.Root, "TestResults")).ShouldBeFalse();
     }
 
     [Theory]

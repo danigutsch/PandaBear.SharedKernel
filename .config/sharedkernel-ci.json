@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "solution": "SharedKernel.slnx",
+  "selection": {
+    "fullValidation": [
+      ".config/*",
+      ".github/*",
+      "*.props",
+      "*.targets",
+      "*.slnx",
+      "*.globalconfig",
+      ".editorconfig",
+      ".gitattributes",
+      "global.json",
+      "NuGet.Config",
+      "src/*",
+      "tools/*",
+      "tests/SharedKernel.MalwareScanning.ClamAv.Testing/*",
+      "tests/SharedKernel.Style.Analyzers.Tests/*",
+      "tests/SharedKernel.Testing.Contracts/*",
+      "tests/testconfig.json",
+      "tests/xunit.runner.json"
+    ],
+    "documentation": [
+      "docs/*",
+      "provenance/*",
+      "README.md",
+      "LICENSE.txt",
+      "AGENTS.md"
+    ],
+    "alwaysSelected": [],
+    "requireCoveringTests": false
+  },
+  "slices": [
+    {
+      "name": "library",
+      "projects": []
+    },
+    {
+      "name": "entity-framework-core",
+      "projects": ["tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj"]
+    },
+    {
+      "name": "event-sourcing-npgsql",
+      "projects": ["tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj"]
+    },
+    {
+      "name": "npgsql",
+      "projects": ["tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj"]
+    }
+  ],
+  "defaultSlice": "library"
+}

@@ -4,13 +4,15 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-`sharedkernel-ci` selects the SharedKernel solution projects affected by a change, restores and builds them as one
-graph, runs complete MTP test projects, stages pinned package candidates in a local feed, and verifies Conventional
-Commit messages in pull request events and git commit message files.
+`sharedkernel-ci` selects the test projects affected by a change, as the repository's `.config/sharedkernel-ci.json`
+configures, writes a solution filter for each CI test slice, restores, builds, and tests a slice's filter, stages pinned
+package candidates in a local feed, and verifies Conventional Commit messages in pull request events and git commit
+message files.
 
 ## Prerequisites
 
-Git and the .NET SDK pinned in `global.json`. `select` and `validate` read `SharedKernel.slnx` in a Git checkout;
+Git and the .NET SDK pinned in `global.json`. `select` reads `.config/sharedkernel-ci.json` and the solution it names in a
+Git checkout, and `validate` reads the plan that `select` wrote;
 `stage-candidate` reads a clean SharedKernel checkout and, with `--repository`, needs HTTPS access to `github.com` and
 `release-assets.githubusercontent.com`; `verify-commit-message` reads only its event or message file.
 
@@ -34,8 +36,8 @@ run before a candidate exists. Its only package dependency is System.CommandLine
 without installing it:
 
 ```sh
-dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select --base <revision>
-dotnet run --project tools/SharedKernel.CI.Tool -c Release -- validate
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select --base <object-id>
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- validate --slice <name>
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- stage-candidate --pin <candidate.json> --library-root . --output <feed> --repository danigutsch/PandaBear.SharedKernel
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-commit-message --event <event.json>
 ```
@@ -51,29 +53,115 @@ the other relative paths of `select`, `validate`, and `stage-candidate` resolve 
 `--file` paths resolve from the current directory. A command line that starts with `[diagram]` prints how it parses
 instead of running; an invalid command line exits 1.
 
+### Configuration
+
+`select` reads `<root>/.config/sharedkernel-ci.json`: strict JSON of at most 1 MiB with camelCase property names that
+match exactly. Comments, trailing commas, and unknown, repeated, or missing properties are errors, and every error names
+the file and the JSON path of the problem.
+
+```json
+{
+  "version": 1,
+  "solution": "App.slnx",
+  "selection": {
+    "fullValidation": [".github/*", "*.props", "*.targets", "src/Shared/*"],
+    "documentation": ["docs/*", "README.md"],
+    "alwaysSelected": ["tests/Architecture.Tests/Architecture.Tests.csproj"],
+    "requireCoveringTests": true
+  },
+  "slices": [
+    { "name": "fast", "projects": [] },
+    { "name": "system", "projects": ["tests/System.Tests/System.Tests.csproj"], "openApi": ["admin"], "playwright": true }
+  ],
+  "defaultSlice": "fast"
+}
+```
+
+| Property | Meaning |
+| --- | --- |
+| `version` | `1`. |
+| `solution` | The `.slnx` whose projects are selected, relative to the root. |
+| `selection.fullValidation` | Path patterns whose change selects every test project. |
+| `selection.documentation` | Path patterns whose change selects nothing while every tracked build file is inert. |
+| `selection.alwaysSelected` | Test projects that run whenever a change selects any project. |
+| `selection.requireCoveringTests` | Whether a changed project that no selected test project depends on selects every test project. |
+| `slices[].name` | Lowercase letters and digits in words separated by `-`, other than `build`. It names the matrix entry, the filter, and the `<name>_required` output. |
+| `slices[].projects` | The slice's test projects. Each is a test project of the solution, listed in one slice. Only the default slice may list none. |
+| `slices[].openApi` | Optional OpenAPI target names that the slice generates before its tests run. |
+| `slices[].playwright` | Optional; whether the slice installs Playwright browsers before its tests run. Default `false`. |
+| `defaultSlice` | Optional; the slice that runs the selected test projects that no slice lists. Without it, every test project of the solution must be in a slice. |
+
+Paths are relative to the root, use `/`, and have no empty, `.`, or `..` segment; they resolve under the root without
+following symbolic links. Patterns match the whole repository-relative path with
+`FileSystemName.MatchesSimpleExpression(pattern, path, ignoreCase: false)`: `*` matches any characters, including `/`,
+and `?` matches one. A test project references `xunit.v3.mtp-v2` or sets `IsTestProject` to `true` in its project file.
+
 ### select
 
-Writes the validation plan to `--selection` (default `TestResults/selection`): `revision.txt`, `build-projects.txt`,
-`test-projects.txt`, `selection-reasons.txt`, `selection.json`, and `candidate-required.txt`. Selection reads the live
-solution and adds reverse transitive dependents, whole test projects, and the package-consumption dependencies in
-`tools/SharedKernel.CI.Tool/package-consumption-edges.json` under the root, when that file exists. Without `--base`,
-or when history or a dependency is uncertain, every project is selected. Selection reasons go to standard output.
+Compares `--base` with `HEAD` and writes the validation plan to `--selection` (default `TestResults/selection`). The
+changed paths are `git diff --name-only --no-renames -z <base>...HEAD`, after `git merge-base --is-ancestor <base> HEAD`
+confirms that the base is an ancestor of `HEAD`; each Git command stops after 30 seconds. Without `--base`, or with an
+empty one, one that is not a 40- or 64-character hexadecimal object ID, one that is not an ancestor of `HEAD`, or a
+failed or stopped comparison, every test project is selected with the reason. Git never receives a `--base` that is not
+an object ID.
 
-Arguments that start with `@` name response files, so write `--base HEAD@{u}` instead of `--base @{u}`.
+Each changed path is classified in order:
 
-`--github-output <path>` appends `candidate_required`, `hosted_required`, and `hosted_matrix` (the selected Aspire
-test projects) to a GitHub Actions output file.
+1. A path that matches a `fullValidation` pattern selects every test project.
+2. A path that matches a `documentation` pattern selects nothing while every tracked build file is inert. A build file
+   is a `*.csproj`, `*.props`, or `*.targets` file that `git ls-files` lists. An inert file has no `Exec`, `UsingTask`,
+   or `ReadLinesFromFile` element and no `System.IO.File` property function, and imports only `Sdk.props` and
+   `Sdk.targets` of `Microsoft.NET.Sdk`, or, in a `Directory.Build.props` or `Directory.Build.targets`, the file of the
+   same name above it through `$([MSBuild]::GetPathOfFileAbove('<name>', '$(MSBuildThisFileDirectory)..'))` (or `../`).
+   Otherwise the path is classified as any other path.
+3. Any other path is owned by the projects that compile it through an explicit `Compile` path and by the solution
+   project whose directory most closely contains it. A path without an owner selects every test project.
+
+Selection reads `ProjectReference` and `Compile` items from project files without evaluating MSBuild. A project file that
+cannot be read, imports anything other than `Sdk.props` or `Sdk.targets` of `Microsoft.NET.Sdk`, or has a reference or
+compile item with a property, an item, a metadata reference, a wildcard, or a list, or that resolves outside the
+solution, makes the references uncertain, and a change that needs them selects every test project.
+
+The selected test projects are the test projects among the owning projects and the projects that reference them
+directly or transitively, plus `alwaysSelected`. With `requireCoveringTests`, a changed project that no selected test
+project depends on or is selects every test project. A slice runs only its selected test projects; the default slice
+also runs the selected test projects that no slice lists. A change of no path selects nothing.
+
+The plan directory receives:
+
+- `selection.json`: the revision, the base, `fullValidation`, `buildRequired`, `documentationOnly`, the reasons, the
+  selected non-test projects (every solution project for full validation), and every slice with whether it is required
+  and its selected test projects, each with the changed paths that selected it (`alwaysSelected` for a configured one;
+  none for full validation).
+- `<slice>.slnf` for each slice with a selected test project: a solution filter that lists exactly those test projects.
+  For full validation, it lists every test project of the slice.
+- `build.slnf` when a non-test project is selected: a solution filter of the selected non-test projects; for full
+  validation, of every solution project.
+
+A filter names the solution relative to the filter and lists projects relative to the solution, in ordinal order, with
+`/` separators. `dotnet restore`, `dotnet build`, and `dotnet test --solution` accept a filter in place of the solution
+and load only the listed projects and the projects they reference. Filters that an earlier plan left in the directory
+are deleted. Selection reasons go to standard output.
+
+`--github-output <path>` appends these lines to a GitHub Actions output file:
+
+| Output | Value |
+| --- | --- |
+| `build_required` | `true` when any project is selected. |
+| `documentation_only` | `true` when the change selects nothing because it touches only documentation, or nothing. |
+| `matrix` | A JSON array of the slices with a selected test project, in configuration order, such as `["fast"]`. |
+| `<slice>_required` | `true` when the slice has a selected test project; one line per configured slice. |
 
 ### validate
 
-Restores and builds the planned projects as one temporary solution graph, then runs complete test projects with
-native MTP module scheduling and no module-parallelism cap. `--test-group` selects `all` (default), `ordinary`
-(everything except hosted Aspire test projects), or one hosted test project path. Validation rejects a plan recorded
-for another revision or naming projects outside the live solution, and keeps timings under `execution-*` in the plan
-directory. When a `dotnet` restore, build, or test step succeeds, its standard output goes to standard error after the
-step ends, and its standard error is not shown. A failed step's standard output and standard error appear in its
-failure message on standard error. Standard output stays empty unless the plan selects no projects for the group.
-Package candidates are created with `SharedKernel.Versioning.Tool`; see
+Restores, builds, and tests the solution filter of one slice: `dotnet restore <slice>.slnf --locked-mode`, `dotnet build
+<slice>.slnf -c Release --no-restore`, and `dotnet test --solution <slice>.slnf -c Release --no-build --no-restore`, with
+native MTP module scheduling and no module-parallelism cap. `--slice` names the slice. Validation rejects a plan
+recorded for another revision, an unknown slice, and a required slice without its filter, and keeps timings under
+`execution-<slice>` in the plan directory. When a `dotnet` restore, build, or test step succeeds, its standard output
+goes to standard error after the step ends, and its standard error is not shown. A failed step's standard output and
+standard error appear in its failure message on standard error. Standard output stays empty unless the slice has no
+selected test project. Package candidates are created with `SharedKernel.Versioning.Tool`; see
 [package development](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/package-development.md).
 
 ### stage-candidate
@@ -148,7 +236,7 @@ exec dotnet tool run sharedkernel-ci -- verify-commit-message --file "$1"
 | --- | --- |
 | 0 | Success. |
 | 1 | Invalid command line, cancellation, or an unexpected error. |
-| 2 | Selection, validation, staging, or the commit message check failed; the reason is on standard error. |
+| 2 | The configuration is invalid, or validation, staging, or the commit message check failed; the reason is on standard error. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
 Ctrl+C or SIGTERM stops the running `git` or `dotnet` process tree. A process that fails after the tool has observed
@@ -158,8 +246,8 @@ line by line, so text from files, processes, and the network cannot drive the te
 ## Security
 
 The tool starts only `git` and `dotnet`, found in the absolute directories of `PATH` and never in the working
-directory, and passes arguments as a list. `--base` rejects empty values and values starting with `-`, so Git cannot
-read them as options. `verify-commit-message` starts no process. No credentials are needed. `stage-candidate` runs
+directory, and passes arguments as a list. `select` passes `--base` to Git only when it is a hexadecimal object ID, so Git
+cannot read it as an option, and escapes control characters in the changed paths that its reasons repeat. `verify-commit-message` starts no process. No credentials are needed. `stage-candidate` runs
 Git without the inherited `GIT_*` variables, which could point it at another repository, and stops Git after a minute.
 
 `stage-candidate --repository` sends unauthenticated HTTPS `GET` requests to

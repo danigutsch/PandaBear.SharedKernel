@@ -2,24 +2,30 @@ namespace PandaBear.Repository.Tests;
 
 public sealed class RepositoryValidationTests
 {
+    private const string CoreTests = "tests/Core.Tests/Core.Tests.csproj";
+
     [Fact]
-    public async Task Selected_projects_restore_and_build_as_one_graph()
+    public async Task A_slice_restores_builds_and_tests_its_solution_filter_without_capping_test_parallelism()
     {
         // Arrange
         using var scope = new RepositoryTestScope();
-        scope.WriteSelection(
-            ["src/Core/Core.csproj", "src/Dependent/Dependent.csproj", "tests/Core.Tests/Core.Tests.csproj"], ["tests/Core.Tests/Core.Tests.csproj"], "fixture");
+        var selection = scope.WriteSelection("fixture", ("library", [CoreTests]));
+        var filter = Path.Combine(selection, "library.slnf");
         var processes = new ProcessLog();
 
         // Act
         var result = await RepositoryToolInvocation.Run(
-            Path.GetDirectoryName(scope.Root)!, ["validate", "--root", scope.Root], processes.Run, TestContext.Current.CancellationToken);
+            Path.GetDirectoryName(scope.Root)!, ["validate", "--slice", "library", "--root", scope.Root], processes.Run, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        processes.Commands.Count(command => command.StartsWith("dotnet restore ", StringComparison.Ordinal)).ShouldBe(1);
-        processes.Commands.Count(command => command.StartsWith("dotnet build ", StringComparison.Ordinal)).ShouldBe(1);
-        processes.Commands.Count(command => command.StartsWith("dotnet test --solution ", StringComparison.Ordinal)).ShouldBe(1);
+        processes.Commands.ShouldBe(
+        [
+            "git rev-parse HEAD",
+            "dotnet restore " + filter + " --locked-mode",
+            "dotnet build " + filter + " -c Release --no-restore",
+            "dotnet test --solution " + filter + " -c Release --no-build --no-restore",
+        ]);
         processes.Calls.ShouldAllSatisfy(call => call.WorkingDirectory.ShouldBe(scope.Root));
     }
 
@@ -28,12 +34,12 @@ public sealed class RepositoryValidationTests
     {
         // Arrange
         using var scope = new RepositoryTestScope();
-        scope.WriteSelection(["tests/Core.Tests/Core.Tests.csproj"], ["tests/Core.Tests/Core.Tests.csproj"], "fixture");
+        scope.WriteSelection("fixture", ("library", [CoreTests]));
         var processes = new ProcessLog(static (fileName, arguments, _) =>
             Task.FromResult(fileName == "git" ? "fixture" : "dotnet " + arguments[0] + " output" + Environment.NewLine));
 
         // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate"], processes.Run, TestContext.Current.CancellationToken);
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate", "--slice", "library"], processes.Run, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(0);
@@ -43,19 +49,19 @@ public sealed class RepositoryValidationTests
     }
 
     [Fact]
-    public async Task Validation_without_selected_projects_reports_it_on_standard_output()
+    public async Task A_slice_without_selected_tests_reports_it_on_standard_output()
     {
         // Arrange
         using var scope = new RepositoryTestScope();
-        scope.WriteSelection([], [], "fixture");
+        scope.WriteSelection("fixture", ("library", []));
         var processes = new ProcessLog();
 
         // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate"], processes.Run, TestContext.Current.CancellationToken);
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate", "--slice", "library"], processes.Run, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        result.Output.ShouldBe("No projects selected for all" + Environment.NewLine);
+        result.Output.ShouldBe("No test projects selected for library" + Environment.NewLine);
         result.Error.ShouldBe(string.Empty);
         processes.Calls.ShouldAllSatisfy(call => call.FileName.ShouldBe("git"));
     }
@@ -65,11 +71,11 @@ public sealed class RepositoryValidationTests
     {
         // Arrange
         using var scope = new RepositoryTestScope();
-        scope.WriteSelection([], [], "previous");
+        scope.WriteSelection("previous", ("library", [CoreTests]));
         var processes = new ProcessLog(static (fileName, _, _) => Task.FromResult(fileName == "git" ? "current" : string.Empty));
 
         // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate"], processes.Run, TestContext.Current.CancellationToken);
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate", "--slice", "library"], processes.Run, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(2);
@@ -78,85 +84,44 @@ public sealed class RepositoryValidationTests
     }
 
     [Fact]
-    public async Task A_failed_graph_build_does_not_run_tests_or_claim_success()
+    public async Task A_failed_build_does_not_run_tests_or_claim_success()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         using var scope = new RepositoryTestScope();
-        var selection = scope.WriteSelection(["tests/Core.Tests/Core.Tests.csproj"], ["tests/Core.Tests/Core.Tests.csproj"], "fixture");
+        var selection = scope.WriteSelection("fixture", ("library", [CoreTests]));
         var processes = new ProcessLog(static (fileName, arguments, _) => fileName == "git"
             ? Task.FromResult("fixture")
             : arguments[0] == "build" ? throw new InvalidOperationException("Build failed.") : Task.FromResult(string.Empty));
 
         // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate"], processes.Run, ct);
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate", "--slice", "library"], processes.Run, ct);
 
         // Assert
         result.ExitCode.ShouldBe(2);
         result.Error.ShouldContain("Build failed.", StringComparison.Ordinal);
         processes.Commands.Any(command => command.StartsWith("dotnet test", StringComparison.Ordinal)).ShouldBeFalse();
-        var timing = await File.ReadAllTextAsync(Path.Combine(selection, "execution-all", "timing.tsv"), ct);
+        var timing = await File.ReadAllTextAsync(Path.Combine(selection, "execution-library", "timing.tsv"), ct);
         timing.ShouldContain("\tfailed", StringComparison.Ordinal);
     }
 
-    [Fact]
-    public async Task Ordinary_group_excludes_hosted_tests_without_capping_test_parallelism()
-    {
-        // Arrange
-        var ct = TestContext.Current.CancellationToken;
-        using var scope = new RepositoryTestScope();
-        scope.AddProject("tests/Hosted/Hosted.csproj", """<Project Sdk="Aspire.AppHost.Sdk" />""");
-        var selection = scope.WriteSelection(
-            ["tests/Core.Tests/Core.Tests.csproj", "tests/Hosted/Hosted.csproj"], ["tests/Core.Tests/Core.Tests.csproj", "tests/Hosted/Hosted.csproj"], "fixture");
-        var processes = new ProcessLog();
-
-        // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate", "--test-group", "ordinary"], processes.Run, ct);
-
-        // Assert
-        result.ExitCode.ShouldBe(0);
-        var graph = await File.ReadAllTextAsync(Path.Combine(selection, "execution-ordinary", "build.slnx"), ct);
-        graph.ShouldNotContain("Hosted", StringComparison.Ordinal);
-        processes.Commands.Any(command => command.Contains("--max-parallel-test-modules", StringComparison.Ordinal)).ShouldBeFalse();
-    }
-
-    [Fact]
-    public async Task Hosted_test_group_builds_and_tests_only_that_project()
-    {
-        // Arrange
-        var ct = TestContext.Current.CancellationToken;
-        using var scope = new RepositoryTestScope();
-        scope.AddProject("tests/Hosted/Hosted.csproj", """<Project Sdk="Aspire.AppHost.Sdk" />""");
-        var selection = scope.WriteSelection(
-            ["tests/Core.Tests/Core.Tests.csproj", "tests/Hosted/Hosted.csproj"], ["tests/Core.Tests/Core.Tests.csproj", "tests/Hosted/Hosted.csproj"], "fixture");
-        var processes = new ProcessLog();
-
-        // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate", "--test-group", "tests/Hosted/Hosted.csproj"], processes.Run, ct);
-
-        // Assert
-        result.ExitCode.ShouldBe(0);
-        var graph = await File.ReadAllTextAsync(Path.Combine(selection, "execution-Hosted", "build.slnx"), ct);
-        graph.ShouldNotContain("Core.Tests", StringComparison.Ordinal);
-        processes.Commands.ShouldContain("dotnet test --project tests/Hosted/Hosted.csproj -c Release --no-build --no-restore");
-        processes.Commands.Any(command => command.StartsWith("dotnet test --solution", StringComparison.Ordinal)).ShouldBeFalse();
-    }
-
-    [Fact]
-    public async Task Unknown_test_group_fails_with_the_domain_exit_code_before_building()
+    [Theory]
+    [InlineData("other", "Unknown slice.")]
+    [InlineData("hosted", "The selection has no solution filter for the slice.")]
+    public async Task An_unknown_slice_or_a_missing_filter_fails_with_the_domain_exit_code_before_building(string slice, string error)
     {
         // Arrange
         using var scope = new RepositoryTestScope();
-        scope.WriteSelection(["tests/Core.Tests/Core.Tests.csproj"], ["tests/Core.Tests/Core.Tests.csproj"], "fixture");
+        var selection = scope.WriteSelection("fixture", ("library", [CoreTests]), ("hosted", ["tests/Hosted/Hosted.csproj"]));
+        File.Delete(Path.Combine(selection, "hosted.slnf"));
         var processes = new ProcessLog();
 
         // Act
-        var result = await RepositoryToolInvocation.Run(
-            scope.Root, ["validate", "--test-group", "tests/Missing/Missing.csproj"], processes.Run, TestContext.Current.CancellationToken);
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate", "--slice", slice], processes.Run, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(2);
-        result.Error.ShouldContain("Unknown test group.", StringComparison.Ordinal);
+        result.Error.ShouldContain(error, StringComparison.Ordinal);
         processes.Calls.ShouldAllSatisfy(call => call.FileName.ShouldBe("git"));
     }
 
@@ -166,16 +131,16 @@ public sealed class RepositoryValidationTests
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         using var scope = new RepositoryTestScope();
-        var selection = scope.WriteSelection(["tests/Core.Tests/Core.Tests.csproj"], ["tests/Core.Tests/Core.Tests.csproj"], "fixture", "plans/current");
+        var selection = scope.WriteSelectionIn("plans/current", "fixture", ("library", [CoreTests]));
         var processes = new ProcessLog();
 
         // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate", "--selection", "plans/current"], processes.Run, ct);
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate", "--slice", "library", "--selection", "plans/current"], processes.Run, ct);
 
         // Assert
         result.ExitCode.ShouldBe(0);
-        var timing = await File.ReadAllTextAsync(Path.Combine(selection, "execution-all", "timing.tsv"), ct);
-        timing.ShouldContain("\tpassed", StringComparison.Ordinal);
+        var timing = await File.ReadAllTextAsync(Path.Combine(selection, "execution-library", "timing.tsv"), ct);
+        timing.ShouldBe("revision\tslice\tduration_seconds\tstatus\nfixture\tlibrary\t" + timing.Split('\t')[^2] + "\tpassed\n");
     }
 
     [Fact]
@@ -184,7 +149,7 @@ public sealed class RepositoryValidationTests
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         using var scope = new RepositoryTestScope();
-        var selection = scope.WriteSelection(["tests/Core.Tests/Core.Tests.csproj"], ["tests/Core.Tests/Core.Tests.csproj"], "fixture");
+        var selection = scope.WriteSelection("fixture", ("library", [CoreTests]));
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(ct);
         var processes = new ProcessLog(async (fileName, arguments, processToken) =>
         {
@@ -198,14 +163,14 @@ public sealed class RepositoryValidationTests
         });
 
         // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate"], processes.Run, cancellation.Token);
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate", "--slice", "library"], processes.Run, cancellation.Token);
 
         // Assert
         result.ExitCode.ShouldBe(1);
         result.Error.ShouldBe(string.Empty);
         processes.Calls.ShouldAllSatisfy(call => call.Token.IsCancellationRequested.ShouldBeTrue());
         processes.Commands.Any(command => command.StartsWith("dotnet test", StringComparison.Ordinal)).ShouldBeFalse();
-        var timing = await File.ReadAllTextAsync(Path.Combine(selection, "execution-all", "timing.tsv"), ct);
+        var timing = await File.ReadAllTextAsync(Path.Combine(selection, "execution-library", "timing.tsv"), ct);
         timing.ShouldContain("\tfailed", StringComparison.Ordinal);
     }
 
@@ -215,7 +180,7 @@ public sealed class RepositoryValidationTests
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         using var scope = new RepositoryTestScope();
-        var selection = scope.WriteSelection(["tests/Core.Tests/Core.Tests.csproj"], ["tests/Core.Tests/Core.Tests.csproj"], "fixture");
+        var selection = scope.WriteSelection("fixture", ("library", [CoreTests]));
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(ct);
         var processes = new ProcessLog(async (fileName, arguments, _) =>
         {
@@ -230,14 +195,14 @@ public sealed class RepositoryValidationTests
         });
 
         // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate"], processes.Run, cancellation.Token);
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["validate", "--slice", "library"], processes.Run, cancellation.Token);
 
         // Assert
         result.ExitCode.ShouldBe(1);
         result.Output.ShouldBe(string.Empty);
         result.Error.ShouldBe(string.Empty);
         processes.Commands.Any(command => command.StartsWith("dotnet test", StringComparison.Ordinal)).ShouldBeFalse();
-        var timing = await File.ReadAllTextAsync(Path.Combine(selection, "execution-all", "timing.tsv"), ct);
+        var timing = await File.ReadAllTextAsync(Path.Combine(selection, "execution-library", "timing.tsv"), ct);
         timing.ShouldContain("\tfailed", StringComparison.Ordinal);
     }
 }
