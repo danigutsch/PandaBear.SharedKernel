@@ -38,7 +38,7 @@ dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- validate
 
 Commit changes before creating candidate evidence. Candidates receive unique ordered prerelease versions and are never overwritten.
 `SharedKernel.Versioning.Tool` validates APIs, packs once, records the library revision and SHA-256 package hashes, then installs every packed tool
-and runs each of its commands with `--help`, and checks isolated package restore, locked restore, build, run, generators, and optional NativeAOT.
+and runs each command that its package declares with `--help`, and checks isolated package restore, locked restore, build, run, generators, and optional NativeAOT.
 Candidate manifests mark unavailable consumer, baseline, and platform evidence as pending.
 
 ```sh
