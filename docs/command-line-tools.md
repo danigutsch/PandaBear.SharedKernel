@@ -9,7 +9,7 @@ This guidance covers every tool under `tools/`.
   and the [pack target](https://learn.microsoft.com/nuget/reference/msbuild-targets#pack-target). Command names
   start with `sharedkernel-`.
 - Candidates pack the tools named in `SharedKernelPackagePlanner.PackagedTools`. A convention test requires every
-  `PackAsTool` project there except `SharedKernel.VaultManager.Tool`, which candidates do not ship.
+  `PackAsTool` project in that list, except `SharedKernel.VaultManager.Tool`, which candidates do not ship.
 - `SharedKernel.CI.Tool` and `SharedKernel.RepoConfig.Tool` also run from source before a candidate exists. They
   reference only System.CommandLine, no other project, and link shared sources only from `tools/Shared`. A
   convention test keeps them that way, and CI builds each from a cone sparse checkout of its directory and

@@ -165,7 +165,7 @@ public sealed class DocumentationCommandLineTests
         // Assert
         run.ExitCode.ShouldBe(expectedExitCode, "Consumer caller tests read the parse result from the exit code.");
         run.Output.ShouldContain("[ generate", StringComparison.Ordinal);
-        workspace.ReadArchitectureDoc("overview.md").ShouldBe(staleDocument, "The directive replaces the command, so generate writes nothing.");
+        workspace.ReadArchitectureDoc("overview.md").ShouldBe(staleDocument, "The directive runs instead of the command, so generate writes nothing.");
     }
 
     [Fact]

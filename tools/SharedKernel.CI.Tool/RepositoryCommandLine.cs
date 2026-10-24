@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace PandaBear.CI.Tool;
 
-/// <summary>Builds the repository tool command tree.</summary>
+/// <summary>Builds the <c>sharedkernel-ci</c> command tree.</summary>
 internal static class RepositoryCommandLine
 {
     /// <summary>Exit code for a failed selection, validation, or pull request title check.</summary>
