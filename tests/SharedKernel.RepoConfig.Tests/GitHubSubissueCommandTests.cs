@@ -5,7 +5,7 @@ using static PandaBear.RepoConfig.Tests.GitHubSubissueTestOperations;
 namespace PandaBear.RepoConfig.Tests;
 
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
-[Collection("Repo config tool environment")]
+[Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class GitHubSubissueCommandTests
 {
     private const string ApiRoot = "https://api.github.com/repos/owner/repository/issues/";
@@ -13,12 +13,15 @@ public sealed class GitHubSubissueCommandTests
     [Fact]
     public async Task Link_previews_without_network_or_credentials()
     {
+        // Arrange
         using var ghToken = new EnvironmentVariableScope("GH_TOKEN", null);
         using var githubToken = new EnvironmentVariableScope("GITHUB_TOKEN", null);
         using var handler = new TestHttpMessageHandler();
 
+        // Act
         var (exitCode, output, error) = await Run(handler, force: false);
 
+        // Assert
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
         output.ShouldContain("preview:", StringComparison.Ordinal);
@@ -30,12 +33,15 @@ public sealed class GitHubSubissueCommandTests
     [Fact]
     public async Task Link_resolves_native_id_and_verifies_the_parent_after_posting()
     {
+        // Arrange
         using var handler = Unparented();
         handler.EnqueueJson(HttpStatusCode.Created, Issue(20, 222));
         handler.EnqueueJson(HttpStatusCode.OK, Issue(10, 111));
 
+        // Act
         var (exitCode, output, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
         output.ShouldContain("Linked", StringComparison.Ordinal);
@@ -52,11 +58,14 @@ public sealed class GitHubSubissueCommandTests
     [Fact]
     public async Task Link_is_idempotent_when_parent_already_matches()
     {
+        // Arrange
         using var handler = Issues();
         handler.EnqueueJson(HttpStatusCode.OK, Issue(10, 111));
 
+        // Act
         var (exitCode, output, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
         output.ShouldContain("Already linked", StringComparison.Ordinal);
@@ -67,11 +76,14 @@ public sealed class GitHubSubissueCommandTests
     [Fact]
     public async Task Link_refuses_to_replace_an_existing_parent()
     {
+        // Arrange
         using var handler = Issues();
         handler.EnqueueJson(HttpStatusCode.OK, Issue(30, 333));
 
+        // Act
         var (exitCode, _, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(1);
         error.ShouldContain("different parent", StringComparison.Ordinal);
         handler.Requests.All(request => request.Method == HttpMethod.Get).ShouldBeTrue();
@@ -80,12 +92,15 @@ public sealed class GitHubSubissueCommandTests
     [Fact]
     public async Task Link_does_not_claim_success_when_verification_fails()
     {
+        // Arrange
         using var handler = Unparented();
         handler.EnqueueJson(HttpStatusCode.Created, Issue(20, 222));
         handler.EnqueueJson(HttpStatusCode.OK, Issue(30, 333));
 
+        // Act
         var (exitCode, output, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
         error.ShouldContain("verify", StringComparison.Ordinal);
@@ -96,12 +111,15 @@ public sealed class GitHubSubissueCommandTests
     [InlineData(HttpStatusCode.OK, "ghp_untrusted invalid JSON")]
     public async Task Link_warns_of_a_possible_write_when_verification_response_fails(HttpStatusCode status, string body)
     {
+        // Arrange
         using var handler = Unparented();
         handler.EnqueueJson(HttpStatusCode.Created, Issue(20, 6000000222));
         handler.EnqueueJson(status, body);
 
+        // Act
         var (exitCode, output, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
         error.ShouldContain("remote write may have succeeded", StringComparison.Ordinal);
@@ -111,6 +129,7 @@ public sealed class GitHubSubissueCommandTests
     [Fact]
     public async Task Link_warns_of_a_possible_write_when_verification_transport_fails()
     {
+        // Arrange
         var calls = 0;
         using var handler = new BeforeResponseHttpMessageHandler(
             () => calls switch
@@ -129,8 +148,10 @@ public sealed class GitHubSubissueCommandTests
                 }
             });
 
+        // Act
         var (exitCode, output, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
         error.ShouldContain("remote write may have succeeded", StringComparison.Ordinal);
@@ -144,6 +165,7 @@ public sealed class GitHubSubissueCommandTests
     [InlineData(true)]
     public async Task Link_sanitizes_response_stream_failures_and_preserves_write_uncertainty(bool afterWrite)
     {
+        // Arrange
         using var handler = afterWrite ? Unparented() : new TestHttpMessageHandler();
         if (afterWrite)
         {
@@ -155,8 +177,10 @@ public sealed class GitHubSubissueCommandTests
             Content = new StreamContent(new ResponseReadFailureStream()),
         });
 
+        // Act
         var (exitCode, output, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
         error.ShouldNotContain("ghp_untrusted", StringComparison.Ordinal);
@@ -167,12 +191,15 @@ public sealed class GitHubSubissueCommandTests
     [Fact]
     public async Task Link_accepts_an_already_linked_race_without_repeating_the_write()
     {
+        // Arrange
         using var handler = Unparented();
         handler.EnqueueJson(HttpStatusCode.UnprocessableEntity, "{\"message\":\"ghp_untrusted\"}");
         handler.EnqueueJson(HttpStatusCode.OK, Issue(10, 111));
 
+        // Act
         var (exitCode, _, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(0);
         error.ShouldBe(string.Empty);
         handler.Requests.Count(request => request.Method == HttpMethod.Post).ShouldBe(1);
@@ -186,9 +213,13 @@ public sealed class GitHubSubissueCommandTests
     [InlineData("owner/../repository", "10", "20")]
     public async Task Link_rejects_invalid_identifiers_before_any_request(string repository, string parent, string child)
     {
+        // Arrange
         using var handler = new TestHttpMessageHandler();
+
+        // Act
         var (exitCode, _, error) = await Run(handler, repository: repository, parent: parent, child: child);
 
+        // Assert
         exitCode.ShouldBe(1);
         error.Length.ShouldBeGreaterThan(0);
         handler.Requests.ShouldBeEmpty();
@@ -201,11 +232,14 @@ public sealed class GitHubSubissueCommandTests
     [InlineData(HttpStatusCode.TooManyRequests)]
     public async Task Link_reports_HTTP_errors_without_echoing_remote_content(HttpStatusCode status)
     {
+        // Arrange
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(status, "{\"message\":\"ghp_untrusted\"}");
 
+        // Act
         var (exitCode, output, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
         error.ShouldContain($"HTTP {(int)status}", StringComparison.Ordinal);
@@ -222,11 +256,14 @@ public sealed class GitHubSubissueCommandTests
     [InlineData("{\"id\":111,\"number\":10,\"url\":\"https://api.github.com/repos/owner/repository/issues/10\",\"pull_request\":{}}")]
     public async Task Link_rejects_malformed_or_unexpected_issue_responses(string json)
     {
+        // Arrange
         using var handler = new TestHttpMessageHandler();
         handler.EnqueueJson(HttpStatusCode.OK, json);
 
+        // Act
         var (exitCode, _, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(1);
         error.ShouldNotContain("ghp_untrusted", StringComparison.Ordinal);
         handler.Requests.Count.ShouldBe(1);
@@ -235,14 +272,17 @@ public sealed class GitHubSubissueCommandTests
     [Fact]
     public async Task Link_bounds_response_bytes()
     {
+        // Arrange
         using var handler = new TestHttpMessageHandler();
         handler.Enqueue(new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new ByteArrayContent(new byte[(1024 * 1024) + 1]),
         });
 
+        // Act
         var (exitCode, _, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(1);
         error.ShouldContain("exceeded", StringComparison.Ordinal);
     }
@@ -250,9 +290,13 @@ public sealed class GitHubSubissueCommandTests
     [Fact]
     public async Task Link_sanitizes_transport_failures()
     {
+        // Arrange
         using var handler = TestHttpMessageHandler.FromException(new HttpRequestException("ghp_transport"));
+
+        // Act
         var (exitCode, _, error) = await Run(handler);
 
+        // Assert
         exitCode.ShouldBe(1);
         error.ShouldNotContain("ghp_transport", StringComparison.Ordinal);
         error.ShouldContain("request failed", StringComparison.Ordinal);
@@ -261,11 +305,15 @@ public sealed class GitHubSubissueCommandTests
     [Fact]
     public async Task Link_propagates_cancellation_without_a_write()
     {
+        // Arrange
         using var handler = TestHttpMessageHandler.FromException(new OperationCanceledException(TestContext.Current.CancellationToken));
         using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         await cancellation.CancelAsync();
+
+        // Act
         var (exitCode, output, _) = await Run(handler, cancellationToken: cancellation.Token);
 
+        // Assert
         exitCode.ShouldBe(1);
         output.ShouldBe(string.Empty);
         handler.Requests.ShouldBeEmpty();
