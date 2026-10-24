@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Unicode;
+using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -58,7 +59,7 @@ internal static class DependencySubmitCommand
             await output.WriteLineAsync(
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"preview: dependency submission would send {RepoConfigToolApplication.EscapeControlCharacters(options.SnapshotPath)} ({snapshot.Length} bytes) to {endpoint.AbsoluteUri}.").AsMemory(),
+                    $"preview: dependency submission would send {ControlCharacters.Escape(options.SnapshotPath)} ({snapshot.Length} bytes) to {endpoint.AbsoluteUri}.").AsMemory(),
                 cancellationToken).ConfigureAwait(false);
             return 0;
         }

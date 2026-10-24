@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tool;
 
@@ -9,11 +10,12 @@ internal static class CommandRunner
     private static readonly TimeSpan TerminationTimeout = TimeSpan.FromSeconds(2);
 
     /// <summary>Runs a process and kills its process tree when <paramref name="ct" /> is canceled.</summary>
+    /// <remarks>A bare command name resolves only from the absolute directories of <c>PATH</c>.</remarks>
     public static async Task<string> Run(string fileName, IEnumerable<string> arguments, string? workingDirectory, CancellationToken ct)
     {
         ct.ThrowIfCancellationRequested();
         var argumentList = arguments.ToArray();
-        using var process = StartProcess(CreateStartInfo(fileName, argumentList, workingDirectory), fileName);
+        using var process = StartProcess(CreateStartInfo(ExecutableResolver.ResolveCommand(fileName), argumentList, workingDirectory), fileName);
         var outputTask = process.StandardOutput.ReadToEndAsync(ct);
         var errorTask = process.StandardError.ReadToEndAsync(ct);
         try

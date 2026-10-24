@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using PandaBear.Tooling;
 
 namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
@@ -178,10 +179,36 @@ public sealed class PlaywrightMcpApplicationTests
     public void Relative_path_entries_cannot_resolve_a_container_runtime()
     {
         // Act
-        var executable = PlaywrightMcpApplication.ResolveExecutable("docker", ".", OperatingSystem.IsWindows());
+        var executable = ExecutableResolver.Resolve("docker", ".", OperatingSystem.IsWindows());
 
         // Assert
         executable.ShouldBeNull();
+    }
+
+    [Fact]
+    public void Files_without_an_execute_bit_cannot_resolve_a_container_runtime()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var notExecutable = new TemporaryDirectory();
+        using var executable = new TemporaryDirectory();
+        var skippedPath = Path.Combine(notExecutable.Path, "docker");
+        File.WriteAllText(skippedPath, string.Empty);
+        File.SetUnixFileMode(skippedPath, UnixFileMode.UserRead | UnixFileMode.UserWrite);
+        var expectedPath = Path.Combine(executable.Path, "docker");
+        File.WriteAllText(expectedPath, string.Empty);
+        File.SetUnixFileMode(expectedPath, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+        var path = $"{notExecutable.Path}{Path.PathSeparator}{executable.Path}";
+
+        // Act
+        var resolvedPath = ExecutableResolver.Resolve("docker", path, isWindows: false);
+
+        // Assert
+        resolvedPath.ShouldBe(expectedPath, "A file without an execute bit cannot start, so the next PATH entry supplies the runtime.");
     }
 
     [Fact]
@@ -577,7 +604,7 @@ public sealed class PlaywrightMcpApplicationTests
         var expectedFileName = OperatingSystem.IsWindows() ? $"{command}.exe" : command;
 
         // Act
-        var executable = PlaywrightMcpApplication.ResolveExecutable(
+        var executable = ExecutableResolver.Resolve(
             command,
             path,
             OperatingSystem.IsWindows());

@@ -7,13 +7,21 @@ namespace PandaBear.Repository.Tests;
 /// <summary>Parses and invokes the real CI tool command tree with captured output.</summary>
 internal static class RepositoryToolInvocation
 {
+    public static Task<RepositoryToolResult> Run(
+        string workingDirectory,
+        IReadOnlyList<string> args,
+        Func<string, string[], string, CancellationToken, Task<string>> run,
+        CancellationToken ct) =>
+        Run(workingDirectory, args, run, CandidateStagingTestServices.Offline(new CandidateGit()), ct);
+
     public static async Task<RepositoryToolResult> Run(
         string workingDirectory,
         IReadOnlyList<string> args,
         Func<string, string[], string, CancellationToken, Task<string>> run,
+        CandidateStagingServices staging,
         CancellationToken ct)
     {
-        var command = RepositoryCommandLine.Create(workingDirectory, run);
+        var command = RepositoryCommandLine.Create(workingDirectory, run, staging);
 
         // Help wraps at the width of the terminal running the tests; unwrapped help keeps assertions independent of it.
         var help = (HelpAction)command.Options.OfType<HelpOption>().First().Action!;

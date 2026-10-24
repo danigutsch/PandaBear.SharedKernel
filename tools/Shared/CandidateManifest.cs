@@ -1,8 +1,12 @@
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Versioning.Tool;
+namespace PandaBear.Tooling;
 
+/// <summary>
+/// Finds, reads, and writes <c>candidate.json</c>, which records a candidate's library revision, package version, and
+/// the SHA-256 hash of each package.
+/// </summary>
 internal static class CandidateManifest
 {
     public static string Find(string directory)
@@ -18,7 +22,7 @@ internal static class CandidateManifest
             : throw new ArgumentException($"Candidate directory must contain exactly one candidate.json, searched recursively: {directory}.");
     }
 
-    public static JsonObject ReadAndVerify(string path, string? feed = null)
+    public static JsonObject ReadAndVerify(string path)
     {
         var evidence = JsonNode.Parse(File.ReadAllText(path))?.AsObject()
             ?? throw new ArgumentException("Candidate manifest is empty.");
@@ -36,7 +40,7 @@ internal static class CandidateManifest
                 throw new ArgumentException($"Invalid candidate package filename: {name}.");
             }
 
-            using var stream = File.OpenRead(Path.Combine(feed ?? Path.GetDirectoryName(path)!, name));
+            using var stream = File.OpenRead(Path.Combine(Path.GetDirectoryName(path)!, name));
             var actual = Convert.ToHexStringLower(SHA256.HashData(stream));
             if (!string.Equals(actual, value?.GetValue<string>(), StringComparison.Ordinal))
             {
@@ -44,8 +48,17 @@ internal static class CandidateManifest
             }
         }
 
-        _ = SemanticVersion.Parse(evidence["packageVersion"]!.GetValue<string>());
         return evidence;
+    }
+
+    /// <summary>Returns the SHA-256 hash of a package file as the lowercase hexadecimal text that <c>packageSha256</c> records.</summary>
+    public static async Task<string> HashPackage(string path, CancellationToken ct)
+    {
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 81_920, useAsync: true);
+        await using (stream.ConfigureAwait(false))
+        {
+            return Convert.ToHexStringLower(await SHA256.HashDataAsync(stream, ct).ConfigureAwait(false));
+        }
     }
 
     /// <summary>

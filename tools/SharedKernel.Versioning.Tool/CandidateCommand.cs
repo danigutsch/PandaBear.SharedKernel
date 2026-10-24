@@ -1,7 +1,7 @@
 using System.Globalization;
-using System.Security.Cryptography;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
+using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tool;
 
@@ -48,8 +48,7 @@ internal static class CandidateCommand
         var hashes = new JsonObject();
         foreach (var path in Directory.GetFiles(feed, "*.nupkg").Order(StringComparer.Ordinal))
         {
-            using var stream = File.OpenRead(path);
-            hashes[Path.GetFileName(path)] = Convert.ToHexStringLower((await SHA256.HashDataAsync(stream, ct).ConfigureAwait(false)));
+            hashes[Path.GetFileName(path)] = await CandidateManifest.HashPackage(path, ct).ConfigureAwait(false);
         }
 
         var evidence = new JsonObject
@@ -74,13 +73,15 @@ internal static class CandidateCommand
         string root, string manifest, string destination, bool aot, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var evidence = CandidateManifest.ReadAndVerify(manifest);
+        var version = evidence["packageVersion"]!.GetValue<string>();
+        _ = SemanticVersion.Parse(version);
         var feed = Path.GetDirectoryName(manifest)!;
         RequireListedPackagesOnly(feed, evidence["packageSha256"]!.AsObject());
         var platform = OperatingSystem.IsWindows() ? "windowsPackageConsumption" : "linuxPackageConsumption";
         try
         {
             await PackageConsumptionCommand.Run(
-                root, feed, evidence["packageVersion"]!.GetValue<string>(), aot, output, error, ct).ConfigureAwait(false);
+                root, feed, version, aot, output, error, ct).ConfigureAwait(false);
         }
         catch (Exception) when (!ct.IsCancellationRequested)
         {
