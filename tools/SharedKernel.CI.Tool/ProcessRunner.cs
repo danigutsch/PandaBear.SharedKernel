@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using PandaBear.Tooling;
 
 namespace PandaBear.CI.Tool;
@@ -9,11 +10,38 @@ internal static class ProcessRunner
 {
     private static readonly TimeSpan TerminationTimeout = TimeSpan.FromSeconds(2);
 
+    private static readonly TimeSpan GitTimeout = TimeSpan.FromMinutes(1);
+
     /// <summary>Runs a process and returns its standard output.</summary>
     /// <remarks>A bare command name resolves only from the absolute directories of <c>PATH</c>.</remarks>
     /// <exception cref="InvalidOperationException">The process could not start or exited with a non-zero code.</exception>
     /// <exception cref="OperationCanceledException"><paramref name="ct"/> was cancelled; the process tree is terminated first.</exception>
-    public static async Task<string> Run(string fileName, string[] arguments, string workingDirectory, CancellationToken ct)
+    public static Task<string> Run(string fileName, string[] arguments, string workingDirectory, CancellationToken ct) =>
+        Run(fileName, arguments, workingDirectory, Timeout.InfiniteTimeSpan, static _ => { }, ct);
+
+    /// <summary>
+    /// Runs Git without the inherited <c>GIT_*</c> variables, which can point it at another repository, and stops it
+    /// when it has not exited within a minute.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Git could not start or exited with a non-zero code.</exception>
+    /// <exception cref="TimeoutException">Git did not exit within a minute; its process tree is terminated first.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="ct"/> was cancelled; the process tree is terminated first.</exception>
+    public static Task<string> RunGit(string[] arguments, string workingDirectory, CancellationToken ct) =>
+        Run("git", arguments, workingDirectory, GitTimeout, RemoveGitVariables, ct);
+
+    /// <summary>Removes every <c>GIT_*</c> variable, in any case, from the child environment.</summary>
+    internal static void RemoveGitVariables(ProcessStartInfo startInfo)
+    {
+        foreach (var name in startInfo.Environment.Keys.Where(static name => name.StartsWith("GIT_", StringComparison.OrdinalIgnoreCase)).ToArray())
+        {
+            startInfo.Environment.Remove(name);
+        }
+    }
+
+    /// <summary>Runs a process with a configured start and a timeout, and returns its standard output.</summary>
+    /// <exception cref="TimeoutException">The process did not exit within <paramref name="timeout"/>; its process tree is terminated first.</exception>
+    internal static async Task<string> Run(
+        string fileName, string[] arguments, string workingDirectory, TimeSpan timeout, Action<ProcessStartInfo> configure, CancellationToken ct)
     {
         var startInfo = new ProcessStartInfo(ExecutableResolver.ResolveCommand(fileName))
         {
@@ -27,16 +55,26 @@ internal static class ProcessRunner
             startInfo.ArgumentList.Add(argument);
         }
 
+        configure(startInfo);
         using var process = Start(startInfo);
         var standardOutput = process.StandardOutput.ReadToEndAsync(CancellationToken.None);
         var standardError = process.StandardError.ReadToEndAsync(CancellationToken.None);
+        using var timeoutSource = new CancellationTokenSource(timeout);
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(ct, timeoutSource.Token);
         try
         {
-            await process.WaitForExitAsync(ct).ConfigureAwait(false);
+            await process.WaitForExitAsync(linked.Token).ConfigureAwait(false);
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException exception)
         {
             await Terminate(process).ConfigureAwait(false);
+            if (timeoutSource.IsCancellationRequested && !ct.IsCancellationRequested)
+            {
+                throw new TimeoutException(
+                    string.Create(CultureInfo.InvariantCulture, $"{fileName} {string.Join(' ', arguments)} did not exit within {timeout.TotalSeconds} seconds."),
+                    exception);
+            }
+
             throw;
         }
 

@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Security.Cryptography;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
 using PandaBear.Tooling;
@@ -49,8 +48,7 @@ internal static class CandidateCommand
         var hashes = new JsonObject();
         foreach (var path in Directory.GetFiles(feed, "*.nupkg").Order(StringComparer.Ordinal))
         {
-            using var stream = File.OpenRead(path);
-            hashes[Path.GetFileName(path)] = Convert.ToHexStringLower((await SHA256.HashDataAsync(stream, ct).ConfigureAwait(false)));
+            hashes[Path.GetFileName(path)] = await CandidateManifest.HashPackage(path, ct).ConfigureAwait(false);
         }
 
         var evidence = new JsonObject

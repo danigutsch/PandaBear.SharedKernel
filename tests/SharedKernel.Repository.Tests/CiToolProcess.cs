@@ -5,14 +5,21 @@ namespace PandaBear.Repository.Tests;
 
 /// <summary>
 /// Runs the built CI tool with <c>dotnet exec</c> in its own process, which has its own working directory and
-/// <c>PATH</c>.
+/// environment.
 /// </summary>
 internal static class CiToolProcess
 {
     private static readonly TimeSpan ExitTimeout = TimeSpan.FromSeconds(60);
 
-    /// <summary>Runs the tool with <paramref name="path"/> as its <c>PATH</c> and waits at most 60 seconds for it to exit.</summary>
-    public static async Task<RepositoryToolResult> Run(string workingDirectory, IReadOnlyList<string> args, string path, CancellationToken ct)
+    /// <summary>
+    /// Runs the tool with <paramref name="environment"/> added to the inherited environment and waits at most 60 seconds
+    /// for it to exit.
+    /// </summary>
+    public static async Task<RepositoryToolResult> Run(
+        string workingDirectory,
+        IReadOnlyList<string> args,
+        IReadOnlyDictionary<string, string?> environment,
+        CancellationToken ct)
     {
         var startInfo = new ProcessStartInfo("dotnet")
         {
@@ -28,7 +35,11 @@ internal static class CiToolProcess
             startInfo.ArgumentList.Add(arg);
         }
 
-        startInfo.Environment["PATH"] = path;
+        foreach (var (name, value) in environment)
+        {
+            startInfo.Environment[name] = value;
+        }
+
         using var process = Process.Start(startInfo) ?? throw new InvalidOperationException("The CI tool did not start.");
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeout.CancelAfter(ExitTimeout);

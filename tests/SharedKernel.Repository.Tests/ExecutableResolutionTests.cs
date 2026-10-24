@@ -17,10 +17,13 @@ public sealed class ExecutableResolutionTests
         using var repository = new RepositoryTestScope();
         var marker = Path.Combine(repository.Root, "fake-git-ran");
         FakeExecutable.WriteMarker(Path.Combine(repository.Root, fakeGit), marker);
-        var path = "relative-bin" + Path.PathSeparator + Environment.GetEnvironmentVariable("PATH");
+        var environment = new Dictionary<string, string?>
+        {
+            ["PATH"] = "relative-bin" + Path.PathSeparator + Environment.GetEnvironmentVariable("PATH"),
+        };
 
         // Act
-        var result = await CiToolProcess.Run(repository.Root, ["select"], path, TestContext.Current.CancellationToken);
+        var result = await CiToolProcess.Run(repository.Root, ["select"], environment, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(0, "Selection without a readable revision still selects every project.");

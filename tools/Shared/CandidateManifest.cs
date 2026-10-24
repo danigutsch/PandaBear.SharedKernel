@@ -51,6 +51,16 @@ internal static class CandidateManifest
         return evidence;
     }
 
+    /// <summary>Returns the SHA-256 hash of a package file as the lowercase hexadecimal text that <c>packageSha256</c> records.</summary>
+    public static async Task<string> HashPackage(string path, CancellationToken ct)
+    {
+        var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 81_920, useAsync: true);
+        await using (stream.ConfigureAwait(false))
+        {
+            return Convert.ToHexStringLower(await SHA256.HashDataAsync(stream, ct).ConfigureAwait(false));
+        }
+    }
+
     /// <summary>
     /// Replaces <paramref name="path" /> through a temporary file in the same directory, so an interrupted write never
     /// leaves a truncated manifest.

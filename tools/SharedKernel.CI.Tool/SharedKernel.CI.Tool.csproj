@@ -6,9 +6,9 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>sharedkernel-ci</ToolCommandName>
         <PackageId>PandaBear.SharedKernel.CI.Tool</PackageId>
-        <Description>CI automation that selects, builds, and tests affected SharedKernel projects and verifies pull request titles.</Description>
+        <Description>CI automation that selects, builds, and tests affected SharedKernel projects, stages package candidates, and verifies pull request titles.</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageTags>ci;continuous-integration;test-selection;pull-request;dotnet-tool</PackageTags>
+        <PackageTags>ci;continuous-integration;test-selection;package-candidate;pull-request;dotnet-tool</PackageTags>
         <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
@@ -21,6 +21,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="../Shared/CandidateManifest.cs" Link="Shared/CandidateManifest.cs" />
+        <Compile Include="../Shared/ControlCharacters.cs" Link="Shared/ControlCharacters.cs" />
         <Compile Include="../Shared/ExecutableResolver.cs" Link="Shared/ExecutableResolver.cs" />
     </ItemGroup>
 
