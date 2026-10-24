@@ -143,9 +143,9 @@ revision and SHA-256 package hashes. Consumer, platform, and stable-promotion ev
 of `ComputedSemVer` in `Directory.Build.props`. `--baseline-version` requires `PandaBear.SharedKernel.*` mapped only
 to an existing local feed in `NuGet.Config`.
 
-`consume-candidate` verifies the hashes and requires every package in the manifest's directory to have the
-candidate version. It installs each tool package into a scratch tool path, from a generated NuGet configuration
-whose only source is that directory, and runs each command that the package's
+`consume-candidate` verifies the hashes and requires the manifest to list the exact file name of every package in its
+directory, and every package to have the candidate version. It installs each tool package into a scratch tool path,
+from a generated NuGet configuration whose only source is that directory, and runs each command that the package's
 `tools/<tfm>/any/DotnetToolSettings.xml` declares with `--help` from an empty scratch directory. It deletes the
 scratch directory afterwards. The check fails when a package does not install or a command exits with a non-zero
 code, and the error names the package and any failing command. It then restores, builds, and runs the samples against

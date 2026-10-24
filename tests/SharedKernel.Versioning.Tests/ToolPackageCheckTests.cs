@@ -84,6 +84,63 @@ public static class ToolPackageCheckTests
     }
 
     [Fact]
+    public static async Task Consume_candidate_rejects_packages_that_the_manifest_does_not_list_before_installing_tools()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        var manifest = temporary.WriteCandidate();
+        await temporary.WriteConsumptionSamples("Consumed sample", TestContext.Current.CancellationToken);
+        var tool = NuGetPackageBuilder.WriteToolPackage(
+            temporary.PackageDirectory,
+            "PandaBear.SharedKernel.Unlisted.Tool",
+            "1.0.0",
+            (DotnetToolSettings.EntryPath, DotnetToolSettings.Declaring("sharedkernel-unlisted")));
+        var library = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "PandaBear.SharedKernel.Unlisted", "1.0.0");
+        var original = await File.ReadAllTextAsync(manifest, TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(
+            ["consume-candidate", "--candidate", manifest, "--repo-root", temporary.Root],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(2, "No hash in the manifest covers the unlisted packages.");
+        result.Error.ShouldBe(
+            $"Error: Candidate directory {temporary.PackageDirectory} holds packages that the manifest does not list: "
+            + $"{Path.GetFileName(library)}, {Path.GetFileName(tool)}.{Environment.NewLine}",
+            "The check names every unlisted package and fails before any dotnet or tool process writes output.");
+        var retained = await File.ReadAllTextAsync(manifest, TestContext.Current.CancellationToken);
+        retained.ShouldBe(original, "A failure before consumption leaves the recorded evidence unchanged.");
+    }
+
+    [Fact(
+        SkipType = typeof(FileSystemProbes),
+        SkipUnless = nameof(FileSystemProbes.IsCaseSensitive),
+        Skip = "This file system opens one file for package file names that differ only in case.")]
+    public static async Task Consume_candidate_rejects_a_package_whose_file_name_differs_from_a_listed_one_only_in_case()
+    {
+        // Arrange
+        using var temporary = new TemporaryReleasePrepDirectory();
+        var manifest = temporary.WriteCandidate();
+        var variant = NuGetPackageBuilder.WritePackage(temporary.PackageDirectory, "pandabear.sharedkernel.probe", "1.0.0");
+        var original = await File.ReadAllTextAsync(manifest, TestContext.Current.CancellationToken);
+
+        // Act
+        var result = await VersioningCommandLineRunner.Invoke(
+            ["consume-candidate", "--candidate", manifest, "--repo-root", temporary.Root],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(2, "NuGet can restore the unlisted variant instead of the listed PandaBear.SharedKernel.Probe package.");
+        result.Error.ShouldBe(
+            $"Error: Candidate directory {temporary.PackageDirectory} holds packages that the manifest does not list: "
+            + $"{Path.GetFileName(variant)}.{Environment.NewLine}",
+            "File names match manifest entries by ordinal comparison, so case counts.");
+        var retained = await File.ReadAllTextAsync(manifest, TestContext.Current.CancellationToken);
+        retained.ShouldBe(original, "A failure before consumption leaves the recorded evidence unchanged.");
+    }
+
+    [Fact]
     public static async Task Tool_check_installs_tools_from_the_candidate_directory_alone_and_runs_each_command_from_an_empty_directory()
     {
         // Arrange
