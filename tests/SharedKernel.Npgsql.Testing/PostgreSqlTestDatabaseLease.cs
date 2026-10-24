@@ -3,7 +3,8 @@ using Npgsql;
 
 namespace PandaBear.Npgsql.Testing;
 
-internal sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
+/// <summary>Owns an isolated PostgreSQL test database and its default data source.</summary>
+public sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
 {
     private static readonly TimeSpan CleanupTimeout = TimeSpan.FromSeconds(30);
 
@@ -25,17 +26,20 @@ internal sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
         DataSource = dataSource;
     }
 
-    internal string DatabaseName
+    /// <summary>Gets the fixture-issued database name. </summary>
+    public string DatabaseName
     {
         get;
     }
 
-    internal string ConnectionString
+    /// <summary>Gets the isolated database connection string. </summary>
+    public string ConnectionString
     {
         get;
     }
 
-    internal NpgsqlDataSource DataSource
+    /// <summary>Gets the lease-owned data source. </summary>
+    public NpgsqlDataSource DataSource
     {
         get;
     }
@@ -101,6 +105,34 @@ internal sealed class PostgreSqlTestDatabaseLease : IAsyncDisposable
         }
     }
 
+    /// <summary>Creates a named data source owned by the caller.</summary>
+    /// <param name="name">The diagnostic data-source name.</param>
+    /// <returns>The caller-owned data source.</returns>
+    public NpgsqlDataSource CreateDataSource(string name)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        return new NpgsqlDataSourceBuilder(ConnectionString) { Name = name }.Build();
+    }
+
+    /// <summary>Creates a caller-owned data source with a dedicated database role.</summary>
+    /// <param name="name">The diagnostic data-source name.</param>
+    /// <param name="username">The database role.</param>
+    /// <param name="password">The role password.</param>
+    /// <returns>The caller-owned data source.</returns>
+    public NpgsqlDataSource CreateDataSource(string name, string username, string password)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentException.ThrowIfNullOrWhiteSpace(username);
+        ArgumentNullException.ThrowIfNull(password);
+        var connectionString = new NpgsqlConnectionStringBuilder(ConnectionString)
+        {
+            Username = username,
+            Password = password,
+        }.ConnectionString;
+        return new NpgsqlDataSourceBuilder(connectionString) { Name = name }.Build();
+    }
+
+    /// <inheritdoc />
     public async ValueTask DisposeAsync()
     {
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
