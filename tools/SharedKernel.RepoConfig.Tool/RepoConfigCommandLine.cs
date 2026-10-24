@@ -198,7 +198,41 @@ internal static class RepoConfigCommandLine
             output,
             ct));
 
-        return new Command("github", "Preview or write the GitHub projection, reconciliation, and import.") { sync, reconcile, import };
+        return new Command("github", "Preview or write GitHub projection, reconciliation, import, and issue links.")
+        {
+            sync, reconcile, import, CreateLinkSubissueCommand(environment)
+        };
+    }
+
+    private static Command CreateLinkSubissueCommand(RepoConfigToolEnvironment environment)
+    {
+        Option<string> repository = new("--repository")
+        {
+            Required = true,
+            Description = "GitHub repository containing both issues, as owner/name."
+        };
+        Option<int> parent = new("--parent")
+        {
+            Required = true,
+            Description = "Positive parent issue number."
+        };
+        Option<int> child = new("--child")
+        {
+            Required = true,
+            Description = "Positive child issue number."
+        };
+        Option<bool> force = new("--force")
+        {
+            Description = "Create and verify the link instead of previewing it. Never replaces a parent."
+        };
+        Command command = new("link-subissue", "Link an existing issue to a parent in the same repository. Previews unless --force is given.")
+        {
+            repository, parent, child, force
+        };
+        SetGuardedAction(command, (parseResult, output, _, ct) => GitHubSubissueCommand.Run(
+            parseResult.GetRequiredValue(repository), parseResult.GetRequiredValue(parent), parseResult.GetRequiredValue(child),
+            parseResult.GetValue(force), environment.HttpClient, output, ct));
+        return command;
     }
 
     private static Command CreateAutomationCommand(RepoConfigToolEnvironment environment, Option<string> root) =>
