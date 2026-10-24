@@ -95,6 +95,7 @@ public sealed class WorkflowContractTests
     [Theory]
     [InlineData("tools/SharedKernel.CI.Tool", "select")]
     [InlineData("tools/SharedKernel.CI.Tool", "validate")]
+    [InlineData("tools/SharedKernel.CI.Tool", "stage-candidate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "calculate-release")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "create-candidate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "consume-candidate")]
@@ -120,22 +121,33 @@ public sealed class WorkflowContractTests
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
 
         // Act
-        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
-        var consumption = workflow.Split("  published-candidate-consumption:", StringSplitOptions.None)[1]
-            .Split("\n  validation-summary:", StringSplitOptions.None)[0];
+        var consumption = WorkflowJobs.Read(workflow, "published-candidate-consumption");
+        var steps = consumption.Split("\n      - ", StringSplitOptions.None);
+        var discovery = steps.ShouldHaveSingleItem(static step => step.Contains("gh release view", StringComparison.Ordinal));
 
         // Assert
         workflow.ShouldContain("&& inputs.candidate_version == ''", StringComparison.Ordinal);
         consumption.ShouldContain("os: [ubuntu-latest, windows-latest]", StringComparison.Ordinal);
-        consumption.ShouldContain("CANDIDATE_VERSION: ${{ inputs.candidate_version }}", StringComparison.Ordinal);
-        consumption.ShouldContain("--repo $env:GITHUB_REPOSITORY", StringComparison.Ordinal);
-        consumption.ShouldContain("$candidate.packageVersion -cne $env:CANDIDATE_VERSION", StringComparison.Ordinal);
-        consumption.ShouldContain("Compare-Object $expectedFiles $actualFiles", StringComparison.Ordinal);
+        discovery.ShouldContain("CANDIDATE_VERSION: ${{ inputs.candidate_version }}", StringComparison.Ordinal);
+        discovery.ShouldContain(
+            "if ($env:CANDIDATE_VERSION -cnotmatch '^[0-9]+\\.[0-9]+\\.[0-9]+-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*$')", StringComparison.Ordinal);
+        discovery.ShouldContain("--repo $env:GITHUB_REPOSITORY --json isPrerelease,assets\n", StringComparison.Ordinal);
+        discovery.ShouldContain("if ($release.isPrerelease -ne $true)", StringComparison.Ordinal);
+        discovery.ShouldContain("--dir $directory --pattern candidate.json\n", StringComparison.Ordinal);
+        discovery.Split("--pattern").Length.ShouldBe(2, "Only candidate.json is downloaded; stage-candidate downloads and verifies the packages.");
+        discovery.ShouldContain("$candidate.packageVersion -cne $env:CANDIDATE_VERSION", StringComparison.Ordinal);
+        discovery.ShouldContain("Compare-Object $expectedAssets $actualAssets -CaseSensitive", StringComparison.Ordinal);
+        consumption.Split("GH_TOKEN").Length.ShouldBe(2, "Only the gh step receives a token; staging downloads the public release without one.");
         consumption.ShouldContain("ref: ${{ steps.candidate.outputs.library_revision }}", StringComparison.Ordinal);
-        consumption.ShouldContain("$revision -cne $env:CANDIDATE_REVISION -or $dirty", StringComparison.Ordinal);
-        consumption.ShouldContain("-- consume-candidate --candidate $manifest --output $evidence --aot", StringComparison.Ordinal);
+        consumption.ShouldContain("project: tools/SharedKernel.CI.Tool\n", StringComparison.Ordinal);
+        consumption.ShouldContain("project: tools/SharedKernel.Versioning.Tool\n", StringComparison.Ordinal);
+        consumption.ShouldContain(
+            "-- stage-candidate --pin $manifest --library-root . --output $feed --repository $env:GITHUB_REPOSITORY\n", StringComparison.Ordinal);
+        consumption.ShouldContain("-- consume-candidate --candidate $staged --output $evidence --aot\n", StringComparison.Ordinal);
+        consumption.ShouldNotContain("Verify exact clean source revision", StringComparison.Ordinal);
         consumption.ShouldNotContain("-- create-candidate", StringComparison.Ordinal);
         consumption.ShouldContain("if: always()", StringComparison.Ordinal);
         consumption.ShouldContain("published-candidate/consumption.json", StringComparison.Ordinal);

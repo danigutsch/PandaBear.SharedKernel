@@ -72,6 +72,7 @@ public sealed class RepositoryToolCallerTests
     [Theory]
     [InlineData(".github/workflows/ci.yml", "select")]
     [InlineData(".github/workflows/ci.yml", "validate")]
+    [InlineData(".github/workflows/ci.yml", "stage-candidate")]
     [InlineData(".github/workflows/pr-metadata.yml", "verify-pr-title")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "select")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "validate")]
