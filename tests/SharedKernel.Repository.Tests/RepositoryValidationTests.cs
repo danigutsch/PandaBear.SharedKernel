@@ -338,6 +338,34 @@ public sealed class RepositoryValidationTests
     }
 
     [Fact]
+    public async Task OpenApi_target_projects_join_the_filter_so_generation_finds_them_restored_and_built()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var scope = new RepositoryTestScope();
+        scope.AddProject("src/Api/Api.csproj", """<Project />""");
+        scope.WriteFile(".config/sharedkernel-ci.json", RepositoryTestScope.DefaultConfiguration
+            .Replace(
+                "\"version\": 1,",
+                "\"version\": 1,\n  \"openApi\": [{ \"name\": \"api\", \"project\": \"src/Api/Api.csproj\", \"generateProperty\": \"GenerateApi\", \"refreshProperty\": \"RefreshApi\" }],",
+                StringComparison.Ordinal)
+            .Replace(
+                """{ "name": "library", "projects": [] }""",
+                """{ "name": "library", "projects": ["tests/Core.Tests/Core.Tests.csproj"], "openApi": ["api"] }""",
+                StringComparison.Ordinal));
+        var selection = scope.WriteSelection("fixture", ("library", [CoreTests]));
+        var processes = new ProcessLog(static (fileName, _, _) => Task.FromResult(fileName == "git" ? "fixture" : string.Empty));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, ["run", "--slice", "library"], processes.Run, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        var projects = await SelectionTestFiles.Projects(Path.Combine(selection, "execution-library"), "tests", ct);
+        projects.ShouldBe(["src/Api/Api.csproj", CoreTests], "Generation builds the target with --no-restore, so the filter must restore and build it.");
+    }
+
+    [Fact]
     public async Task Playwright_installs_only_when_requested()
     {
         // Arrange

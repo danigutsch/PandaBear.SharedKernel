@@ -82,14 +82,20 @@ internal static class SliceRun
                 return;
             }
 
+            var targets = configuration.OpenApi ?? [];
+            var openApi = configured.SelectMany(static slice => slice.OpenApi ?? []).Distinct(StringComparer.Ordinal)
+                .Select(name => targets.First(candidate => candidate.Name == name))
+                .ToArray();
+
+            // Generation builds each target with --no-restore, so the filter restores and builds the targets too.
             var filter = Path.Combine(execution, FilterFileName);
-            await SolutionFilter.Write(root, configuration.Solution, filter, projects, ct).ConfigureAwait(false);
+            string[] filtered = [.. projects.Concat(openApi.Select(static target => target.Project)).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)];
+            await SolutionFilter.Write(root, configuration.Solution, filter, filtered, ct).ConfigureAwait(false);
             await Phase("restore", () => run("dotnet", ["restore", filter, "--locked-mode"], root, ct)).ConfigureAwait(false);
             await Phase("build", () => run("dotnet", ["build", filter, "-c", options.Configuration, "--no-restore"], root, ct)).ConfigureAwait(false);
-            var targets = configuration.OpenApi ?? [];
-            foreach (var name in configured.SelectMany(static slice => slice.OpenApi ?? []).Distinct(StringComparer.Ordinal))
+            foreach (var target in openApi)
             {
-                var target = targets.First(candidate => candidate.Name == name);
+                var name = target.Name;
                 await Phase("openapi-" + name, () => runConfigured(
                     OpenApiGeneration.DotnetHostPath(), OpenApiGeneration.Arguments(target, false, options.Configuration), root, OpenApiGeneration.ApplyEnvironment, ct))
                     .ConfigureAwait(false);
