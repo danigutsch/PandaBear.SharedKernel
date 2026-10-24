@@ -31,7 +31,8 @@ public sealed class RoadmapGitRepositoryTests
 
         // Assert
         head.ShouldBe(RoadmapAutomationTestPlan.BaseSha);
-        startInfo.FileName.ShouldBe("git");
+        Path.IsPathFullyQualified(startInfo.FileName).ShouldBeTrue("A bare name would let .NET run a git from the application or current directory before PATH.");
+        Path.GetFileNameWithoutExtension(startInfo.FileName).ShouldBe("git");
         startInfo.ArgumentList.ToArray().ShouldBe(["rev-parse", "--verify", "HEAD"]);
         startInfo.UseShellExecute.ShouldBeFalse();
         startInfo.RedirectStandardOutput.ShouldBeTrue();
@@ -39,6 +40,33 @@ public sealed class RoadmapGitRepositoryTests
         startInfo.Environment["GIT_TERMINAL_PROMPT"].ShouldBe("0");
         startInfo.Environment.ContainsKey("GH_TOKEN").ShouldBeFalse();
         startInfo.Environment.ContainsKey("GITHUB_TOKEN").ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Git_queries_start_nothing_when_no_absolute_path_entry_holds_git()
+    {
+        // Arrange
+        // The current directory and an empty entry are the only PATH entries.
+        using var pathScope = new EnvironmentVariableScope("PATH", "." + Path.PathSeparator);
+        var started = false;
+        var repository = new RoadmapGitRepository((_, _) =>
+        {
+            started = true;
+            return Task.FromResult(new RoadmapGitCommandResult(
+                0,
+                Encoding.UTF8.GetBytes(RoadmapAutomationTestPlan.BaseSha + "\n"),
+                string.Empty,
+                OutputLimitExceeded: false,
+                ErrorLimitExceeded: false));
+        });
+
+        // Act
+        Func<Task> action = async () => _ = await repository.ReadHead("/tmp/repository", TestContext.Current.CancellationToken);
+        var exception = await action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldBe("Could not resolve git to an absolute executable path.");
+        started.ShouldBeFalse("Without an absolute PATH entry for git, no bare name falls back to the current directory.");
     }
 
     [Fact]

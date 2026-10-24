@@ -182,31 +182,17 @@ public sealed class TextEncodingProcessTests
         await repository.Initialize(TestContext.Current.CancellationToken);
         repository.WriteBytes("invalid.txt", [0xFF]);
         await repository.Stage("invalid.txt", TestContext.Current.CancellationToken);
-        var markerPath = Path.Combine(repository.RootPath, "fake-git-ran");
-        var fakeGitPath = Path.Combine(repository.RootPath, "git");
-        await File.WriteAllTextAsync(
-            fakeGitPath,
-            "#!/bin/sh\n: > \"$TEXT_ENCODING_FAKE_GIT_MARKER\"\nexit 99\n",
-            TestContext.Current.CancellationToken);
-        File.SetUnixFileMode(
-            fakeGitPath,
-            UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
-        var relativeRoot = Path.GetRelativePath(Environment.CurrentDirectory, repository.RootPath);
-        Dictionary<string, string?> environment = new(StringComparer.Ordinal)
-        {
-            ["PATH"] = $"{relativeRoot}{Path.PathSeparator}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}",
-            ["TEXT_ENCODING_FAKE_GIT_MARKER"] = markerPath
-        };
+        var fakeGit = await RepositoryLocalGit.Create(repository.RootPath, TestContext.Current.CancellationToken);
 
         // Act
         var result = await repository.RunCommand(
             ["verify-text-encoding", "--root", repository.RootPath],
             TestContext.Current.CancellationToken,
-            environment: environment);
+            environment: fakeGit.EnvironmentVariables);
 
         // Assert
         result.ExitCode.ShouldBe(1);
         result.StandardError.ShouldContain("invalid.txt: Is not valid UTF-8.", StringComparison.Ordinal);
-        File.Exists(markerPath).ShouldBeFalse();
+        fakeGit.Ran.ShouldBeFalse("Git resolves only from absolute PATH entries, so the repository-local fake never runs.");
     }
 }

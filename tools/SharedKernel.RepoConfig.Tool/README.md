@@ -11,7 +11,7 @@ workflow configuration, and protected-environment approval remain consumer-owned
 ## Prerequisites
 
 The tool runs on .NET 10. `verify-text-encoding`, `verify-json`, `dependency snapshot`,
-`dependency verify-license-exceptions`, and the `automation` steps also need Git.
+`dependency verify-license-exceptions`, and the `automation` steps also need Git on an absolute `PATH` entry.
 
 ## Installation
 
@@ -195,6 +195,8 @@ references before applying changes, and use explicit closure approvals for actua
 
 - Tokens come only from the environment. GitHub transport failures are reported without request details.
 - Child processes (Git, Podman, and `stat`) start without `GH_TOKEN` and `GITHUB_TOKEN`.
+- Git starts from the first absolute `PATH` entry that holds it, never from the current directory or a
+  relative or empty `PATH` entry.
 - Without `--force`, `github` commands and `automation publish-result` only read and change nothing in
   GitHub or the checkout; `--force` never skips validation.
 - `dependency submit` sends no request and reads no token without `--force`. With it, the command sends

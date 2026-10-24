@@ -39,8 +39,8 @@ internal sealed class DependencySnapshotTestRepository : IDisposable
         Head = head.StandardOutput.Trim();
     }
 
-    public Task<TemporaryGitRepository.CommandResult> Run(string? destination = null, string? sha = null) =>
-        repository.RunCommand(["dependency", "snapshot", "--root", RootPath, "--sha", sha ?? Head, "--ref", "refs/heads/test", "--job", "123", "--correlator", "test-locks", "--output", destination ?? "TestResults/snapshot.json"], TestContext.Current.CancellationToken);
+    public Task<TemporaryGitRepository.CommandResult> Run(string? destination = null, string? sha = null, IReadOnlyDictionary<string, string?>? environment = null) =>
+        repository.RunCommand(["dependency", "snapshot", "--root", RootPath, "--sha", sha ?? Head, "--ref", "refs/heads/test", "--job", "123", "--correlator", "test-locks", "--output", destination ?? "TestResults/snapshot.json"], TestContext.Current.CancellationToken, environment: environment);
 
     public JsonDocument ReadSnapshot() =>
         JsonDocument.Parse(File.ReadAllText(Path.Combine(RootPath, "TestResults/snapshot.json")));
