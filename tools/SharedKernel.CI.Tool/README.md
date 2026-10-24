@@ -44,7 +44,8 @@ availability on nuget.org.
 ## Usage
 
 `--help` lists the options of each command. `--root` sets the repository root (default: the current directory);
-relative `--selection` and `--github-output` paths resolve from it.
+relative `--selection` and `--github-output` paths resolve from it. A command line that starts with `[diagram]` prints
+how it parses instead of running; an invalid command line exits 1.
 
 ### select
 

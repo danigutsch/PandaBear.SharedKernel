@@ -49,7 +49,8 @@ sharedkernel-docs check --config <path>
 | `verify` | Writes nothing. Lists stale files on standard error when any block differs from its generated content. |
 | `check` | Writes nothing. Validates marked documentation facts against the sources a conformance configuration names. |
 
-`--config` is required. Add `--help` to any command to describe its options.
+`--config` is required. Add `--help` to any command to describe its options. A command line that starts with
+`[diagram]` prints how it parses instead of running; an invalid command line exits 1.
 
 ## Limits and safety
 

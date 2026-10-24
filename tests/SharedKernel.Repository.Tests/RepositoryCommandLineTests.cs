@@ -63,6 +63,29 @@ public sealed class RepositoryCommandLineTests
     }
 
     [Theory]
+    [InlineData("[diagram] select --base main", 0)]
+    [InlineData("[diagram] validate --test-group ordinary", 0)]
+    [InlineData("[diagram] verify-pr-title --event event.json", 0)]
+    [InlineData("[diagram] select --bsae main", 1)]
+    public async Task Diagram_directive_reports_whether_a_command_line_parses_without_running_it(string commandLine, int expectedExitCode)
+    {
+        // Arrange
+        ArgumentNullException.ThrowIfNull(commandLine);
+        var arguments = commandLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        using var scope = new RepositoryTestScope();
+        var processes = new ProcessLog();
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(scope.Root, arguments, processes.Run, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(expectedExitCode, "Consumer caller tests read the parse result from the exit code.");
+        result.Output.ShouldContain("[ " + arguments[1], StringComparison.Ordinal);
+        processes.Calls.ShouldBeEmpty();
+        Directory.Exists(Path.Combine(scope.Root, "TestResults")).ShouldBeFalse();
+    }
+
+    [Theory]
     [InlineData("")]
     [InlineData("publish")]
     [InlineData("validate --version 1.0.0")]

@@ -148,6 +148,26 @@ public sealed class DocumentationCommandLineTests
         run.Error.ShouldContain(parseError.Message, StringComparison.Ordinal);
     }
 
+    [Theory]
+    [InlineData("--config", 0)]
+    [InlineData("--confg", 1)]
+    public void Diagram_directive_reports_whether_generate_parses_without_writing_files(string option, int expectedExitCode)
+    {
+        // Arrange
+        using var workspace = new TemporaryDocumentationWorkspace();
+        var staleDocument = DocumentationTestContent.GeneratedBlockDocument("old[Old]");
+        workspace.WriteArchitectureDoc("overview.md", staleDocument);
+        workspace.WriteConfig(DocumentationTestContent.GeneratorConfig("newNode[New node]"));
+
+        // Act
+        var run = DocumentationCommandLineRun.Invoke(workspace.RootPath, ["[diagram]", "generate", option, GeneratorConfigPath]);
+
+        // Assert
+        run.ExitCode.ShouldBe(expectedExitCode, "Consumer caller tests read the parse result from the exit code.");
+        run.Output.ShouldContain("[ generate", StringComparison.Ordinal);
+        workspace.ReadArchitectureDoc("overview.md").ShouldBe(staleDocument, "The directive replaces the command, so generate writes nothing.");
+    }
+
     [Fact]
     public void Generate_rejects_unrecognized_options_without_writing_files()
     {

@@ -16,6 +16,9 @@ internal static class RepositoryCommandLine
     public static RootCommand Create(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run)
     {
         var root = new RootCommand("Selects, builds, and tests affected SharedKernel projects and verifies pull request titles.");
+
+        // Consumer caller tests parse command lines with [diagram] without running them.
+        root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(CreateSelect(workingDirectory, run));
         root.Subcommands.Add(CreateValidate(workingDirectory, run));
         root.Subcommands.Add(CreateVerifyPrTitle(workingDirectory));
