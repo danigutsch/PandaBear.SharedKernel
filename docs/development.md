@@ -35,7 +35,7 @@ Prefer NativeAOT and trimming compatibility where practical. Use explicit typed 
 
 ## Required automation coverage
 
-Reusable repository automation lives in the C# repository, versioning, and documentation tools.
+Reusable repository automation lives in the C# CI, versioning, and documentation tools.
 The two setup scripts are deliberately thin platform entry points: they anchor the working directory,
 restore locked dependencies, build Release, and propagate failures before repository tools exist.
 C# process tests exercise each native wrapper from an unrelated working directory, including paths
