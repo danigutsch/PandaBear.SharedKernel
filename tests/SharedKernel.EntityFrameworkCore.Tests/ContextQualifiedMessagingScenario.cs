@@ -32,6 +32,16 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         return Create(firstPublisher: null, addTransportProducers: true);
     }
 
+    public static ContextQualifiedMessagingScenario CreateWithDefaultsFor<TContext>()
+        where TContext : DbContext
+    {
+        return Create(firstPublisher: null, addTransportProducers: true, configureDefaults: services =>
+        {
+            services.UseDefaultIntegrationEventOutbox<TContext>();
+            services.UseDefaultIdempotencyStore<TContext>();
+        });
+    }
+
     public static ContextQualifiedMessagingScenario CreateWithFirstPublisher(IEventEnvelopePublisher firstPublisher)
     {
         ArgumentNullException.ThrowIfNull(firstPublisher);
@@ -46,7 +56,8 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
 
     private static ContextQualifiedMessagingScenario Create(
         IEventEnvelopePublisher? firstPublisher,
-        bool addTransportProducers)
+        bool addTransportProducers,
+        Action<IServiceCollection>? configureDefaults = null)
     {
         var services = new ServiceCollection();
         var firstDatabaseName = $"first-{Guid.CreateVersion7():N}";
@@ -98,6 +109,7 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         }
         firstRegistration.WithOutboxRelay(options => options.BatchSize = 1);
         secondRegistration.WithOutboxRelay(options => options.BatchSize = 2);
+        configureDefaults?.Invoke(services);
         services.AddDbContext<FirstMessagingDbContext>(options =>
             options.UseInMemoryDatabase(firstDatabaseName));
         services.AddDbContext<SecondMessagingDbContext>(options =>
@@ -110,6 +122,34 @@ internal sealed class ContextQualifiedMessagingScenario : IAsyncDisposable
         });
 
         return new ContextQualifiedMessagingScenario(provider, applicationPublisher);
+    }
+
+    /// <summary>Resolves the unkeyed outbox and store and reports which registered context each one belongs to.</summary>
+    public (Type? Outbox, Type? IdempotencyStore) ResolveDefaultContexts()
+    {
+        using var scope = provider.CreateScope();
+        var services = scope.ServiceProvider;
+        var outbox = services.GetRequiredService<IIntegrationEventOutbox>();
+        var store = services.GetRequiredService<IIdempotencyStore>();
+        Type[] contexts = [typeof(FirstMessagingDbContext), typeof(SecondMessagingDbContext)];
+
+        return (
+            contexts.SingleOrDefault(context => ReferenceEquals(outbox, services.GetRequiredKeyedService<IIntegrationEventOutbox>(context))),
+            contexts.SingleOrDefault(context => ReferenceEquals(store, services.GetRequiredKeyedService<IIdempotencyStore>(context))));
+    }
+
+    /// <summary>Resolves only the unkeyed outbox.</summary>
+    public void ResolveDefaultOutbox()
+    {
+        using var scope = provider.CreateScope();
+        _ = scope.ServiceProvider.GetRequiredService<IIntegrationEventOutbox>();
+    }
+
+    /// <summary>Resolves only the unkeyed idempotency store.</summary>
+    public void ResolveDefaultIdempotencyStore()
+    {
+        using var scope = provider.CreateScope();
+        _ = scope.ServiceProvider.GetRequiredService<IIdempotencyStore>();
     }
 
     public static async ValueTask<(int ApplicationPublished, int TransportCount)> PublishWithApplicationRegisteredAfterProducer(

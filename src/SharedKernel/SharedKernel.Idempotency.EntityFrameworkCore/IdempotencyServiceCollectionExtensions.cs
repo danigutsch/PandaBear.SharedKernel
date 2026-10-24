@@ -17,7 +17,7 @@ public static class IdempotencyServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type that owns the idempotency table.</typeparam>
     /// <returns>The configured service collection.</returns>
-    /// <remarks>The store is keyed by <c>typeof(TContext)</c>; the first registration also remains available unkeyed for compatibility.</remarks>
+    /// <remarks>The store is keyed by <c>typeof(TContext)</c>. It is also the unkeyed store when it is the only context registered or the one chosen with <see cref="UseDefaultIdempotencyStore{TContext}" />.</remarks>
     public static IServiceCollection AddIdempotencyStore<TContext>(this IServiceCollection services)
         where TContext : DbContext
     {
@@ -31,7 +31,7 @@ public static class IdempotencyServiceCollectionExtensions
     /// <param name="configureStorage">The delegate that configures the context's idempotency table.</param>
     /// <typeparam name="TContext">The DbContext type that owns the idempotency table.</typeparam>
     /// <returns>The configured service collection.</returns>
-    /// <remarks>The store is keyed by <c>typeof(TContext)</c>; the first registration also remains available unkeyed for compatibility.</remarks>
+    /// <remarks>The store is keyed by <c>typeof(TContext)</c>. It is also the unkeyed store when it is the only context registered or the one chosen with <see cref="UseDefaultIdempotencyStore{TContext}" />.</remarks>
     public static IServiceCollection AddIdempotencyStore<TContext>(
         this IServiceCollection services,
         Action<IdempotencyStorageOptions> configureStorage)
@@ -40,6 +40,22 @@ public static class IdempotencyServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(configureStorage);
 
         return AddIdempotencyStoreCore<TContext>(services, configureStorage);
+    }
+
+    /// <summary>
+    /// Chooses the context whose idempotency store is resolved without a context key when several contexts register
+    /// one. Without a choice, resolving the unkeyed store fails rather than binding whichever registered first.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <typeparam name="TContext">The DbContext type whose store becomes the unkeyed default.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection UseDefaultIdempotencyStore<TContext>(this IServiceCollection services)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        ContextKeyedDefault<IIdempotencyStore>.Choose(services, typeof(TContext));
+        return services;
     }
 
     private static IServiceCollection AddIdempotencyStoreCore<TContext>(
@@ -63,8 +79,7 @@ public static class IdempotencyServiceCollectionExtensions
         services.TryAddKeyedScoped<IIdempotencyStore>(
             typeof(TContext),
             (serviceProvider, _) => serviceProvider.GetRequiredService<EfIdempotencyStore<TContext>>());
-        services.TryAddScoped(serviceProvider =>
-            serviceProvider.GetRequiredKeyedService<IIdempotencyStore>(typeof(TContext)));
+        ContextKeyedDefault<IIdempotencyStore>.Register(services, typeof(TContext), nameof(UseDefaultIdempotencyStore));
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IdempotencyDbContextConfiguration<TContext>>());
 
         return services;

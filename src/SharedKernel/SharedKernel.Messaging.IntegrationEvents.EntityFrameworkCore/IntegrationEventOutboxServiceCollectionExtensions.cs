@@ -33,7 +33,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
     /// <returns>The configured service collection.</returns>
-    /// <remarks>The outbox is keyed by <c>typeof(TContext)</c>; the first registration also remains available unkeyed for compatibility.</remarks>
+    /// <remarks>The outbox is keyed by <c>typeof(TContext)</c>. It is also the unkeyed outbox when it is the only context registered or the one chosen with <see cref="UseDefaultIntegrationEventOutbox{TContext}" />.</remarks>
     public static IServiceCollection AddIntegrationEventOutbox<TContext>(this IServiceCollection services)
         where TContext : DbContext
     {
@@ -47,7 +47,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="configureStorage">The delegate that configures the context's integration-event tables.</param>
     /// <typeparam name="TContext">The DbContext type that owns the outbox table.</typeparam>
     /// <returns>The configured service collection.</returns>
-    /// <remarks>The outbox is keyed by <c>typeof(TContext)</c>; the first registration also remains available unkeyed for compatibility.</remarks>
+    /// <remarks>The outbox is keyed by <c>typeof(TContext)</c>. It is also the unkeyed outbox when it is the only context registered or the one chosen with <see cref="UseDefaultIntegrationEventOutbox{TContext}" />.</remarks>
     public static IServiceCollection AddIntegrationEventOutbox<TContext>(
         this IServiceCollection services,
         Action<IntegrationEventStorageOptions> configureStorage)
@@ -56,6 +56,22 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(configureStorage);
 
         return AddIntegrationEventOutboxCore<TContext>(services, configureStorage);
+    }
+
+    /// <summary>
+    /// Chooses the context whose outbox is resolved without a context key when several contexts register one. Without a
+    /// choice, resolving the unkeyed outbox fails rather than binding whichever registered first.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <typeparam name="TContext">The DbContext type whose outbox becomes the unkeyed default.</typeparam>
+    /// <returns>The configured service collection.</returns>
+    public static IServiceCollection UseDefaultIntegrationEventOutbox<TContext>(this IServiceCollection services)
+        where TContext : DbContext
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        ContextKeyedDefault<IIntegrationEventOutbox>.Choose(services, typeof(TContext));
+        return services;
     }
 
     private static IServiceCollection AddIntegrationEventOutboxCore<TContext>(
@@ -75,8 +91,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
         services.TryAddKeyedScoped<IIntegrationEventOutbox>(
             typeof(TContext),
             (serviceProvider, _) => serviceProvider.GetRequiredService<EfIntegrationEventOutbox<TContext>>());
-        services.TryAddScoped(serviceProvider =>
-            serviceProvider.GetRequiredKeyedService<IIntegrationEventOutbox>(typeof(TContext)));
+        ContextKeyedDefault<IIntegrationEventOutbox>.Register(services, typeof(TContext), nameof(UseDefaultIntegrationEventOutbox));
         services.TryAddScoped<IDomainEventIntegrationEventOutbox, EfDomainEventIntegrationEventOutbox>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDbContextConfiguration<TContext>, IntegrationEventOutboxDbContextConfiguration<TContext>>());
 
@@ -142,7 +157,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="services">The service collection to configure.</param>
     /// <typeparam name="TContext">The DbContext type that owns the inbox idempotency table.</typeparam>
     /// <returns>The configured service collection.</returns>
-    /// <remarks>The store is keyed by <c>typeof(TContext)</c>; the first registration also remains available unkeyed for compatibility.</remarks>
+    /// <remarks>The store is keyed by <c>typeof(TContext)</c>. It is also the unkeyed store when it is the only context registered or the one chosen with <see cref="IdempotencyServiceCollectionExtensions.UseDefaultIdempotencyStore{TContext}" />.</remarks>
     public static IServiceCollection AddIntegrationEventInbox<TContext>(this IServiceCollection services)
         where TContext : DbContext => services.AddIdempotencyStore<TContext>();
 
@@ -153,7 +168,7 @@ public static class IntegrationEventOutboxServiceCollectionExtensions
     /// <param name="configureStorage">The delegate that configures the context's idempotency table.</param>
     /// <typeparam name="TContext">The DbContext type that owns the inbox idempotency table.</typeparam>
     /// <returns>The configured service collection.</returns>
-    /// <remarks>The store is keyed by <c>typeof(TContext)</c>; the first registration also remains available unkeyed for compatibility.</remarks>
+    /// <remarks>The store is keyed by <c>typeof(TContext)</c>. It is also the unkeyed store when it is the only context registered or the one chosen with <see cref="IdempotencyServiceCollectionExtensions.UseDefaultIdempotencyStore{TContext}" />.</remarks>
     public static IServiceCollection AddIntegrationEventInbox<TContext>(
         this IServiceCollection services,
         Action<IdempotencyStorageOptions> configureStorage)

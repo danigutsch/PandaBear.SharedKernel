@@ -69,8 +69,12 @@ its queue or destination.
 
 Register each co-hosted module using its own context. Outboxes, inbox stores, transport producers,
 storage options, and relay options remain context-qualified. Resolve outbox and inbox interfaces with
-`GetRequiredKeyedService<T>(typeof(TContext))`; the first unkeyed registration remains available for
-legacy single-context consumers. Register an `IIntegrationEventSerializer` globally or keyed by context.
+`GetRequiredKeyedService<T>(typeof(TContext))`. The unkeyed `IIntegrationEventOutbox` and `IIdempotencyStore`
+resolve to the only registered context, or to the context chosen with
+`UseDefaultIntegrationEventOutbox<TContext>()` / `UseDefaultIdempotencyStore<TContext>()` (fluent:
+`AsDefaultOutbox()` / `AsDefaultInbox()`). When several contexts register one and none is chosen, resolving
+the unkeyed service throws instead of silently binding whichever registered first. Register an
+`IIntegrationEventSerializer` globally or keyed by context.
 
 Transport producers register only context-keyed `IEventEnvelopePublisher` instances. Relays prefer their
 context-keyed publisher and otherwise require an unkeyed application publisher. Transport consumers

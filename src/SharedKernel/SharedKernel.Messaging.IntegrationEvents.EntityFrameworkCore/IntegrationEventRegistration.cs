@@ -57,6 +57,29 @@ public sealed class IntegrationEventRegistration<TContext>
     }
 
     /// <summary>
+    /// Makes this context's outbox the one resolved without a context key when several contexts share a host.
+    /// </summary>
+    /// <returns>This registration builder.</returns>
+    public IntegrationEventRegistration<TContext> AsDefaultOutbox()
+    {
+        services.UseDefaultIntegrationEventOutbox<TContext>();
+
+        return this;
+    }
+
+    /// <summary>
+    /// Makes this context's inbox idempotency store the one resolved without a context key when several contexts share
+    /// a host.
+    /// </summary>
+    /// <returns>This registration builder.</returns>
+    public IntegrationEventRegistration<TContext> AsDefaultInbox()
+    {
+        services.UseDefaultIdempotencyStore<TContext>();
+
+        return this;
+    }
+
+    /// <summary>
     /// Registers and hosts the context's outbox relay.
     /// </summary>
     /// <param name="configureOptions">Optional relay configuration.</param>
