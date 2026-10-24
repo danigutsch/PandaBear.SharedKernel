@@ -6,7 +6,9 @@ namespace PandaBear.Style.Analyzers.Tests;
 
 public sealed class GovernedLiteralRepositoryTests
 {
-    [Fact]
+    // It reads the compiler inputs that a Release build of the whole solution records, so test runs that build only
+    // the selected projects skip it; repository quality runs it with --explicit only after building the solution.
+    [Fact(Explicit = true)]
     public void Library_catalog_has_exact_canonical_owners_and_no_unapproved_aliases()
     {
         // Arrange

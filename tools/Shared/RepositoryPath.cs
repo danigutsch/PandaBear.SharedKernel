@@ -1,4 +1,4 @@
-namespace PandaBear.RepoConfig.Tool;
+namespace PandaBear.Tooling;
 
 /// <summary>
 /// Validates and resolves the repository-relative paths that configuration files name.

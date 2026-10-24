@@ -20,6 +20,14 @@ internal static class TestGit
         return (await Run(directory, ["rev-parse", "HEAD"], ct)).Trim();
     }
 
+    /// <summary>Commits every file in the repository at <paramref name="directory"/> and returns the commit.</summary>
+    public static async Task<string> Commit(string directory, CancellationToken ct)
+    {
+        await Run(directory, ["add", "--all"], ct);
+        await Run(directory, ["-c", "user.name=Stage Tests", "-c", "user.email=stage-tests@example.invalid", "commit", "--quiet", "--message", "test: change"], ct);
+        return (await Run(directory, ["rev-parse", "HEAD"], ct)).Trim();
+    }
+
     public static async Task<string> Run(string directory, string[] arguments, CancellationToken ct)
     {
         var result = await CiTestSelectionTestProcess.Run("git", directory, arguments, ct, Environment);

@@ -100,6 +100,11 @@ non-interactive commands and to how they start a UI.
   `JsonSerializerContext` that sets `UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow` and
   `AllowDuplicateProperties = false`. Errors name the file and the JSON path of the problem.
 - A command fails when the file lacks the section it needs.
+- `sharedkernel-ci select`, `run`, `openapi`, and `coverage` read `.config/sharedkernel-ci.json`: the solution, the
+  full-validation and documentation path patterns, the always-selected test projects, whether changed projects need
+  covering tests, the test slices with their OpenAPI targets and Playwright browsers, the OpenAPI targets, and the
+  changed-code coverage threshold, source patterns, and symbol directories. The
+  [CI tool README](../tools/SharedKernel.CI.Tool/README.md#configuration) describes the format and the selection rules.
 - Paths in the file are relative to the root and use `/`. They are never rooted, have no empty, `.`, or `..`
   segments, and resolve under the root without following symbolic links.
 - Path patterns match with `FileSystemName.MatchesSimpleExpression(pattern, path, ignoreCase: false)`. Regular

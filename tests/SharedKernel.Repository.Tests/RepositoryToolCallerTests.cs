@@ -26,7 +26,7 @@ public sealed class RepositoryToolCallerTests
     }
 
     [Fact]
-    public void Ci_selection_passes_the_base_revision_only_when_one_exists()
+    public void Ci_selection_passes_the_base_revision_on_one_command_line()
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
@@ -38,7 +38,7 @@ public sealed class RepositoryToolCallerTests
             .ToArray();
 
         // Assert
-        selections.ShouldBe(["select --github-output $GITHUB_OUTPUT", "select --github-output $GITHUB_OUTPUT --base $BASE_SHA"]);
+        selections.ShouldBe(["select --base $BASE_SHA --github-output $GITHUB_OUTPUT"], "An empty base selects every test project with a reason.");
     }
 
     [Fact]
@@ -57,10 +57,15 @@ public sealed class RepositoryToolCallerTests
         readmeCallers.ShouldBe(
             [
                 "verify-commit-message --file <commit-message-file>",
-                "select --base <revision>",
-                "validate",
+                "select --base <object-id>",
+                "run --slice library",
+                "openapi refresh --target library",
+                "install-playwright --project <test-project> --browser chromium --with-dependencies",
                 "stage-candidate --pin <candidate.json> --library-root . --output <feed> --repository danigutsch/PandaBear.SharedKernel",
                 "verify-commit-message --event <event.json>",
+                "run --slice library --coverage --install-playwright --playwright-dependencies --github-summary $GITHUB_STEP_SUMMARY",
+                "coverage record-symbols",
+                "coverage verify --report artifacts --base $BASE_SHA --symbols TestResults/symbol-evidence.json",
                 "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"
                     + " --repository danigutsch/PandaBear.SharedKernel",
                 "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"
@@ -72,11 +77,13 @@ public sealed class RepositoryToolCallerTests
 
     [Theory]
     [InlineData(".github/workflows/ci.yml", "select")]
-    [InlineData(".github/workflows/ci.yml", "validate")]
+    [InlineData(".github/workflows/ci.yml", "run")]
     [InlineData(".github/workflows/ci.yml", "stage-candidate")]
     [InlineData(".github/workflows/pr-metadata.yml", "verify-commit-message")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "select")]
-    [InlineData("tools/SharedKernel.CI.Tool/README.md", "validate")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "run")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "refresh")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "install-playwright")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "stage-candidate")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "verify-commit-message")]
     public void Callers_invoke_the_repository_tool_command(string file, string commandName)

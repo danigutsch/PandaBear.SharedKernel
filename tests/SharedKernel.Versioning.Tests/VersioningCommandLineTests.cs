@@ -20,6 +20,7 @@ public static class VersioningCommandLineTests
         "validate-candidate",
         "consume-candidate",
         "consume-packages",
+        "verify-consumer",
     ];
 
     [Fact]
@@ -52,6 +53,7 @@ public static class VersioningCommandLineTests
     [InlineData("validate-candidate", "--version <version>", "--baseline-version <version>", "--aot", "--repo-root <path>")]
     [InlineData("consume-candidate", "--candidate <path>", "--candidate-directory <path>", "--output <path>", "--aot", "--repo-root <path>")]
     [InlineData("consume-packages", "--feed <path> (REQUIRED)", "--version <version> (REQUIRED)", "--aot", "--repo-root <path>")]
+    [InlineData("verify-consumer", "<command>...", "--candidate <file> (REQUIRED)", "--solution <file>", "--output <file>", "--repo-root <path>")]
     public static async Task Command_help_lists_arguments_and_options_on_standard_output(string command, params string[] expected)
     {
         // Act
@@ -108,6 +110,8 @@ public static class VersioningCommandLineTests
     [InlineData("Option '--version' expects a semantic version, but got 'v1'.", "consume-packages", "--feed", "packages", "--version", "v1")]
     [InlineData("Option '--candidate' or '--candidate-directory' is required.", "consume-candidate")]
     [InlineData("Options '--candidate' and '--candidate-directory' cannot be combined.", "consume-candidate", "--candidate", "candidate.json", "--candidate-directory", "candidates")]
+    [InlineData("Option '--candidate' is required.", "verify-consumer", "--", "dotnet", "test")]
+    [InlineData("Required argument missing for command: 'verify-consumer'.", "verify-consumer", "--candidate", "candidate.json")]
     public static async Task Invalid_command_lines_are_parse_errors_on_standard_error(string expectedError, params string[] args)
     {
         // Act
@@ -133,6 +137,7 @@ public static class VersioningCommandLineTests
     [InlineData("consume-candidate", "consume-candidate", "--candidate", "candidate.json", "--output", "evidence.json", "--aot", "--repo-root", "/repo")]
     [InlineData("consume-candidate", "consume-candidate", "--candidate-directory", "artifacts/candidate", "--aot")]
     [InlineData("consume-packages", "consume-packages", "--feed", "packages", "--version", "1.2.3", "--aot", "--repo-root", "/repo")]
+    [InlineData("verify-consumer", "verify-consumer", "--candidate", "candidate.json", "--solution", "App.slnx", "--output", "evidence.json", "--repo-root", "/repo", "--", "dotnet", "test", "--solution", "App.slnx")]
     public static void Command_lines_dispatch_to_their_command(string command, params string[] args)
     {
         // Act
@@ -233,6 +238,29 @@ public static class VersioningCommandLineTests
         misspelled.ExitCode.ShouldBe(1, "A command line that does not parse exits 1, as a parse error does without [diagram].");
         misspelled.Error.ShouldNotContain("Candidate directory does not exist", StringComparison.Ordinal);
         misspelled.Output.ShouldContain("--candidate-directry", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task Diagram_directive_parses_a_consumer_command_after_the_separator_without_running_it()
+    {
+        // Arrange
+        var missing = Path.Combine(Path.GetTempPath(), "sharedkernel-missing-candidate-" + Guid.NewGuid().ToString("N"), "candidate.json");
+
+        // Act
+        var valid = await VersioningCommandLineRunner.Invoke(
+            ["[diagram]", "verify-consumer", "--candidate", missing, "--", "dotnet", "test", "--solution", "App.slnx", "--output", "child.json"],
+            TestContext.Current.CancellationToken);
+        var misspelled = await VersioningCommandLineRunner.Invoke(
+            ["[diagram]", "verify-consumer", "--candidat", missing, "--", "dotnet", "test"],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        valid.ExitCode.ShouldBe(0, "Options after -- belong to the consumer command, and [diagram] only prints how the line parses.");
+        valid.Error.ShouldBe(string.Empty);
+        valid.Output.ShouldContain("[ verify-consumer ", StringComparison.Ordinal);
+        valid.Output.ShouldContain("<dotnet> <test> <--solution> <App.slnx> <--output> <child.json>", StringComparison.Ordinal);
+        misspelled.ExitCode.ShouldBe(1);
+        misspelled.Output.ShouldContain("--candidat", StringComparison.Ordinal);
     }
 
     [Fact]

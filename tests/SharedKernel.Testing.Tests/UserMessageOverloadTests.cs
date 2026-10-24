@@ -174,6 +174,43 @@ public sealed class UserMessageOverloadTests
     }
 
     [Fact]
+    public void Exception_message_overloads_return_the_thrown_exception()
+    {
+        // Arrange
+        var expected = new InvalidOperationException();
+        Action action = () => throw expected;
+        Func<object?> accessor = () => throw expected;
+
+        // Act
+        var fromAction = action.ShouldThrow<InvalidOperationException>(Reason);
+        var fromAccessor = accessor.ShouldThrow<InvalidOperationException>(Reason);
+
+        // Assert
+        fromAction.ShouldBeSameAs(expected);
+        fromAccessor.ShouldBeSameAs(expected);
+    }
+
+    [Fact]
+    public void Exception_message_overloads_state_the_reason_before_a_wrong_exception_type()
+    {
+        // Arrange
+        Action action = () => throw new ArgumentException("Rejected.");
+        Func<object?> accessor = () => throw new ArgumentException("Rejected.");
+        Action actionAssertion = () => action.ShouldThrow<InvalidOperationException>(Reason);
+        Action accessorAssertion = () => accessor.ShouldThrow<InvalidOperationException>(Reason);
+
+        // Act
+        var actionException = actionAssertion.ShouldThrow<Xunit.Sdk.XunitException>();
+        var accessorException = accessorAssertion.ShouldThrow<Xunit.Sdk.XunitException>();
+
+        // Assert
+        var actionFailure = actionException.InnerException.ShouldBeOfType<Xunit.Sdk.ThrowsException>();
+        var accessorFailure = accessorException.InnerException.ShouldBeOfType<Xunit.Sdk.ThrowsException>();
+        actionException.Message.ShouldBe(Reason + Environment.NewLine + actionFailure.Message);
+        accessorException.Message.ShouldBe(Reason + Environment.NewLine + accessorFailure.Message);
+    }
+
+    [Fact]
     public async Task Async_message_overload_states_the_reason_before_the_awaited_failure()
     {
         // Arrange

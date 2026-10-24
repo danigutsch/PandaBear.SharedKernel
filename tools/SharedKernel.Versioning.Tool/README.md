@@ -5,7 +5,8 @@
 Packages remain `<target>-alpha.<run>.<attempt>` previews; stable packages, tags, and releases require separate authorization. `calculate-release --version-kind prerelease` requires `--run-number`. Without a reachable `v*` tag the target is `0.1.0`. When the latest reachable `v*` tag is a prerelease, its version core is the fixed target and only the prerelease identifier advances; after a stable tag, the Conventional Commit impact selects the next target on each run until a prerelease tag fixes it. `--version-kind stable` releases the same target core. Commit impact is always reported. The generic `compute` command applies normal SemVer bumps.
 
 `sharedkernel-version` calculates SharedKernel versions from Conventional Commits, checks package APIs and
-metadata, packs SharedKernel, and creates and consumes hashed package candidates. A consumer stages a pinned candidate
+metadata, packs SharedKernel, creates and consumes hashed package candidates, and verifies a consumer repository
+against a candidate. A consumer stages a pinned candidate
 in its local feed with `sharedkernel-ci stage-candidate` from the
 [CI tool](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/tools/SharedKernel.CI.Tool/README.md).
 
@@ -15,7 +16,8 @@ Git 2.24 or later, which `has-breaking-change-marker` needs for `--end-of-option
 `global.json`. `--aot` also needs the platform
 [NativeAOT toolchain](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/development.md#nativeaot-prerequisites).
 `consume-candidate`, `consume-packages`, and `validate-candidate` run installed tool commands, whose shims find
-.NET through `DOTNET_ROOT` or the default or registered install location.
+.NET through `DOTNET_ROOT` or the default or registered install location. `verify-consumer` runs Git and the command it is given, found
+in the absolute directories of `PATH` unless it is a full path.
 
 ## Install
 
@@ -68,6 +70,7 @@ sharedkernel-version create-candidate [--version <version>] [--baseline-version 
 sharedkernel-version validate-candidate [--version <version>] [--baseline-version <version>] [--aot]
 sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot]
 sharedkernel-version consume-packages --feed <path> --version <version> [--aot]
+sharedkernel-version verify-consumer --candidate <file> [--solution <file>] [--output <file>] -- <command>...
 ```
 
 Every command except `classify-commit` and `compute` accepts `--repo-root <path>`, which defaults to the current
@@ -156,11 +159,40 @@ same directory, so an interrupted write never truncates it, and Ctrl+C or SIGTER
 the same checks against a feed without a manifest.
 `validate-candidate` runs `create-candidate` and then `consume-candidate` on the manifest it wrote.
 
+```text
+sharedkernel-version verify-consumer --candidate artifacts/candidate/candidate.json -- dotnet test --solution App.slnx -c Release
+```
+
+`verify-consumer` runs in a consumer repository. Relative paths resolve from the current directory. It verifies the
+candidate's package hashes, then:
+
+1. records the consumer's `HEAD` and whether `git status --porcelain` is empty; with uncommitted consumer changes or
+   a candidate whose `libraryDirty` is not `false`, the result is `pending` and nothing runs;
+2. clones the repository with `git clone --no-checkout --shared` into a scratch directory under the system
+   temporary directory and checks out the recorded revision detached;
+3. in the clone, requires every `PandaBear.SharedKernel.*` `PackageVersion` in `Directory.Packages.props`, every
+   such entry in the `packages.lock.json` of each project of `--solution` (default: the only `.slnx` in the
+   repository root), and every such tool in `.config/dotnet-tools.json` to have the candidate version, comparing IDs
+   and versions case-insensitively; a project or lock entry that references SharedKernel source fails the check, and
+   so does a consumer that references no such package;
+4. requires the clone's `NuGet.Config` to clear `packageSources` and `fallbackPackageFolders` and to map
+   `PandaBear.SharedKernel.*` to exactly one source, a repository-relative folder that holds no package, and copies
+   the candidate's packages there;
+5. runs the command after `--`, with the clone as its working directory and `NUGET_PACKAGES` and
+   `NUGET_HTTP_CACHE_PATH` in the scratch directory; the command's output streams to standard error.
+
+`--output` (default `TestResults/consumer-compatibility.json` in `--repo-root`) receives the candidate manifest with
+`consumerRevision`, `consumerDirty`, `consumerCompatibility` (`passed`, `failed`, or `pending`), and, unless it
+passed, a `reason` of at most 4,096 characters. It is written through a temporary file, and it can never be the
+candidate manifest. The command exits 0 only when the result is `passed`. Ctrl+C or SIGTERM stops the command's
+process tree and writes no evidence, so a canceled run never records a result. The scratch directory is deleted in
+every case.
+
 ## Output and exit codes
 
 Results such as versions, JSON, and report or package paths go to standard output. Errors go to standard error, as
 does the output of the `dotnet` processes, tool commands, and samples that `consume-candidate`, `consume-packages`,
-and `validate-candidate` run.
+and `validate-candidate` run, and of the command that `verify-consumer` runs.
 
 | Code | Meaning |
 | --- | --- |
@@ -184,6 +216,8 @@ has observed Ctrl+C or SIGTERM counts as the cancellation.
 - Consumption installs tool packages only from the candidate directory, and reads their tool settings without
   document type definitions, so no entity expands and no external resource is read.
 - Candidate commands verify SHA-256 package hashes before consuming packages.
+- `verify-consumer` runs its command on a clone of the committed revision, never in the working tree, with NuGet caches
+  of its own, and verifies the staged package copies against their hashes.
 
 ## Packaging and AOT
 

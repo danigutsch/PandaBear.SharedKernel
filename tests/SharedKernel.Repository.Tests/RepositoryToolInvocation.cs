@@ -21,7 +21,8 @@ internal static class RepositoryToolInvocation
         CandidateStagingServices staging,
         CancellationToken ct)
     {
-        var command = RepositoryCommandLine.Create(workingDirectory, run, staging);
+        // OpenAPI generation reaches the same recorder; its environment is tested on its own.
+        var command = RepositoryCommandLine.Create(workingDirectory, run, (fileName, arguments, directory, _, token) => run(fileName, arguments, directory, token), staging);
 
         // Help wraps at the width of the terminal running the tests; unwrapped help keeps assertions independent of it.
         var help = (HelpAction)command.Options.OfType<HelpOption>().First().Action!;

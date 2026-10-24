@@ -23,9 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     outputs:
-      candidate_required: ${{ steps.selection.outputs.candidate_required }}
-      hosted_required: ${{ steps.selection.outputs.hosted_required }}
-      hosted_matrix: ${{ steps.selection.outputs.hosted_matrix }}
+      build_required: ${{ steps.selection.outputs.build_required }}
+      matrix: ${{ steps.selection.outputs.matrix }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
@@ -34,14 +33,11 @@ jobs:
       - uses: ./.github/actions/setup-dotnet-tool
         with:
           project: tools/SharedKernel.CI.Tool
-      - name: Select affected projects
+      - name: Select affected test projects
         id: selection
         env:
           BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event_name == 'push' && github.event.before || '' }}
-        run: |
-          args=()
-          if [[ -n "$BASE_SHA" ]]; then args+=(--base "$BASE_SHA"); fi
-          dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- select --github-output "$GITHUB_OUTPUT" "${args[@]}"
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- select --base "$BASE_SHA" --github-output "$GITHUB_OUTPUT"
       - name: Upload selection reasons
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
@@ -49,11 +45,15 @@ jobs:
           path: TestResults/selection/*
           if-no-files-found: error
 
-  library:
+  validate:
     needs: selection
-    if: needs.selection.outputs.candidate_required == 'true'
+    if: needs.selection.outputs.build_required == 'true' && needs.selection.outputs.matrix != '[]'
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        slice: ${{ fromJSON(needs.selection.outputs.matrix) }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
@@ -66,54 +66,22 @@ jobs:
         with:
           name: selection-and-reasons
           path: TestResults/selection
-      - name: Validate selected ordinary projects and tests
+      - name: Run the selected test projects of the slice
         env:
           DOTNET_CLI_CONTEXT_VERBOSE: 'true'
-        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- validate --test-group ordinary
+          SLICE: ${{ matrix.slice }}
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- run --slice "$SLICE" --github-summary "$GITHUB_STEP_SUMMARY"
       - name: Retain validation evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
-          name: ordinary-validation-evidence
-          path: TestResults/selection/execution-ordinary/**
-          if-no-files-found: error
-
-  hosted-tests:
-    needs: selection
-    if: needs.selection.outputs.hosted_required == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.selection.outputs.hosted_matrix) }}
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-      - uses: ./.github/actions/setup-dotnet-tool
-        with:
-          project: tools/SharedKernel.CI.Tool
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
-        with:
-          name: selection-and-reasons
-          path: TestResults/selection
-      - name: Validate isolated hosted test project
-        env:
-          TEST_PROJECT: ${{ matrix.project }}
-        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- validate --test-group "$TEST_PROJECT"
-      - name: Retain hosted validation evidence
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: hosted-${{ matrix.name }}-evidence
-          path: TestResults/selection/execution-*/**
+          name: validation-${{ matrix.slice }}-evidence
+          path: TestResults/selection/execution-${{ matrix.slice }}/**
           if-no-files-found: ignore
 
   source-build:
     needs: selection
-    if: needs.selection.outputs.candidate_required == 'true'
+    if: needs.selection.outputs.build_required == 'true'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     strategy:
@@ -147,7 +115,7 @@ jobs:
 
   candidate:
     needs: selection
-    if: needs.selection.outputs.candidate_required == 'true'
+    if: needs.selection.outputs.build_required == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
@@ -256,18 +224,21 @@ jobs:
         with:
           global-json-file: global.json
       - name: Bootstrap from clean checkout
-        if: needs.selection.outputs.candidate_required == 'true'
+        if: needs.selection.outputs.build_required == 'true'
         run: bash setup-dev.sh
       - name: Validate setup and workflow contracts
-        if: needs.selection.outputs.candidate_required == 'true'
+        if: needs.selection.outputs.build_required == 'true'
         run: |
           dotnet test --project tests/SharedKernel.RepoConfig.Tests/SharedKernel.RepoConfig.Tests.csproj -c Release --no-build --no-restore
           dotnet test --project tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj -c Release --no-build --no-restore
+      - name: Check governed literals against every library of the solution build
+        if: needs.selection.outputs.build_required == 'true'
+        run: dotnet test --project tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj -c Release --no-build --no-restore --explicit only
       - name: Verify formatting
-        if: needs.selection.outputs.candidate_required == 'true'
+        if: needs.selection.outputs.build_required == 'true'
         run: dotnet format SharedKernel.slnx --verify-no-changes --no-restore
       - name: Build only documentation tooling for documentation changes
-        if: needs.selection.outputs.candidate_required == 'false'
+        if: needs.selection.outputs.build_required == 'false'
         uses: ./.github/actions/setup-dotnet-tool
         with:
           project: tools/SharedKernel.Documentation.Tool
@@ -349,7 +320,7 @@ jobs:
 
   validation-summary:
     name: ${{ github.event.action == 'labeled' && github.event.label.name != 'ci:rerun' && 'Ignored label event' || 'SharedKernel Validation' }}
-    needs: [selection, library, hosted-tests, source-build, candidate, linux-package-consumption, windows-package-consumption, repository-quality, published-candidate-consumption]
+    needs: [selection, validate, source-build, candidate, linux-package-consumption, windows-package-consumption, repository-quality, published-candidate-consumption]
     if: ${{ always() && (github.event.action != 'labeled' || github.event.label.name == 'ci:rerun') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -360,11 +331,10 @@ jobs:
           PUBLISHED_CANDIDATE_RESULT: ${{ needs.published-candidate-consumption.result }}
           SELECTION_RESULT: ${{ needs.selection.result }}
           QUALITY_RESULT: ${{ needs.repository-quality.result }}
-          CANDIDATE_REQUIRED: ${{ needs.selection.outputs.candidate_required }}
-          LIBRARY_RESULT: ${{ needs.library.result }}
+          BUILD_REQUIRED: ${{ needs.selection.outputs.build_required }}
+          MATRIX: ${{ needs.selection.outputs.matrix }}
+          VALIDATE_RESULT: ${{ needs.validate.result }}
           SOURCE_BUILD_RESULT: ${{ needs.source-build.result }}
-          HOSTED_RESULT: ${{ needs.hosted-tests.result }}
-          HOSTED_REQUIRED: ${{ needs.selection.outputs.hosted_required }}
           CANDIDATE_RESULT: ${{ needs.candidate.result }}
           LINUX_RESULT: ${{ needs.linux-package-consumption.result }}
           WINDOWS_RESULT: ${{ needs.windows-package-consumption.result }}
@@ -375,16 +345,16 @@ jobs:
           fi
           test "$SELECTION_RESULT" = success
           test "$QUALITY_RESULT" = success
-          if [[ "$CANDIDATE_REQUIRED" == true ]]; then
-            for result in "$LIBRARY_RESULT" "$SOURCE_BUILD_RESULT" "$CANDIDATE_RESULT" "$LINUX_RESULT" "$WINDOWS_RESULT"; do
+          if [[ "$BUILD_REQUIRED" == true ]]; then
+            if [[ "$MATRIX" == '[]' ]]; then
+              test "$VALIDATE_RESULT" = skipped || exit 1
+            else
+              test "$VALIDATE_RESULT" = success || exit 1
+            fi
+            for result in "$SOURCE_BUILD_RESULT" "$CANDIDATE_RESULT" "$LINUX_RESULT" "$WINDOWS_RESULT"; do
               test "$result" = success || exit 1
             done
-            case "$HOSTED_REQUIRED" in
-              true) test "$HOSTED_RESULT" = success ;;
-              false) test "$HOSTED_RESULT" = skipped ;;
-              *) echo "Missing hosted selection evidence." >&2; exit 1 ;;
-            esac
-          elif [[ "$CANDIDATE_REQUIRED" != false ]]; then
-            echo "Missing candidate selection evidence." >&2
+          elif [[ "$BUILD_REQUIRED" != false ]]; then
+            echo "Missing selection evidence." >&2
             exit 1
           fi
