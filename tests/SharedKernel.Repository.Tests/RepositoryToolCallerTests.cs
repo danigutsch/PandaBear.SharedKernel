@@ -1,6 +1,6 @@
 using System.CommandLine;
+using PandaBear.CI.Tool;
 using PandaBear.Repository.Tests.Conventions;
-using PandaBear.Repository.Tool;
 
 namespace PandaBear.Repository.Tests;
 
@@ -45,9 +45,9 @@ public sealed class RepositoryToolCallerTests
     [InlineData(".github/workflows/ci.yml", "select")]
     [InlineData(".github/workflows/ci.yml", "validate")]
     [InlineData(".github/workflows/pr-metadata.yml", "verify-pr-title")]
-    [InlineData("tools/SharedKernel.Repository.Tool/README.md", "select")]
-    [InlineData("tools/SharedKernel.Repository.Tool/README.md", "validate")]
-    [InlineData("tools/SharedKernel.Repository.Tool/README.md", "verify-pr-title")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "select")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "validate")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "verify-pr-title")]
     public void Callers_invoke_the_repository_tool_command(string file, string commandName)
     {
         // Arrange

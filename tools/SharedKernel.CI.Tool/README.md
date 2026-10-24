@@ -1,15 +1,15 @@
 # Repository validation tool
 
-`SharedKernel.Repository.Tool` is a repository-only executable and is not packaged. It selects the solution projects
+`SharedKernel.CI.Tool` is a repository-only executable and is not packaged. It selects the solution projects
 affected by a change, restores and builds them as one graph, runs complete MTP test projects, and verifies pull request
 titles. Run it from a Git checkout with the SDK pinned in `global.json`.
 
 ## Usage
 
 ```sh
-dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- select --base <revision>
-dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- validate
-dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- verify-pr-title --event <event.json>
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select --base <revision>
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- validate
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-pr-title --event <event.json>
 ```
 
 `--help` lists the options of each command. `--root` sets the repository root (default: the current directory);

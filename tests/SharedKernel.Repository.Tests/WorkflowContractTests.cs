@@ -27,8 +27,8 @@ public sealed class WorkflowContractTests
     }
 
     [Theory]
-    [InlineData("tools/SharedKernel.Repository.Tool", "select")]
-    [InlineData("tools/SharedKernel.Repository.Tool", "validate")]
+    [InlineData("tools/SharedKernel.CI.Tool", "select")]
+    [InlineData("tools/SharedKernel.CI.Tool", "validate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "calculate-release")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "create-candidate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "consume-candidate")]

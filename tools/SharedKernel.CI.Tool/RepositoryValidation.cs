@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Xml.Linq;
 
-namespace PandaBear.Repository.Tool;
+namespace PandaBear.CI.Tool;
 
 internal static class RepositoryValidation
 {

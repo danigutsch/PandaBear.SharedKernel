@@ -2,7 +2,7 @@ using System.CommandLine;
 using System.Text.Json;
 using System.Xml;
 
-namespace PandaBear.Repository.Tool;
+namespace PandaBear.CI.Tool;
 
 /// <summary>Builds the repository tool command tree.</summary>
 internal static class RepositoryCommandLine

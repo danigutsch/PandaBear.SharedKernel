@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace PandaBear.Repository.Tool;
+namespace PandaBear.CI.Tool;
 
 /// <summary>Runs child processes and stops them when the command is cancelled.</summary>
 internal static class ProcessRunner

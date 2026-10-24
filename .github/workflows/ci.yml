@@ -33,7 +33,7 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup-dotnet-tool
         with:
-          project: tools/SharedKernel.Repository.Tool
+          project: tools/SharedKernel.CI.Tool
       - name: Select affected projects
         id: selection
         env:
@@ -41,7 +41,7 @@ jobs:
         run: |
           args=()
           if [[ -n "$BASE_SHA" ]]; then args+=(--base "$BASE_SHA"); fi
-          dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- select --github-output "$GITHUB_OUTPUT" "${args[@]}"
+          dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- select --github-output "$GITHUB_OUTPUT" "${args[@]}"
       - name: Upload selection reasons
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
@@ -61,7 +61,7 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup-dotnet-tool
         with:
-          project: tools/SharedKernel.Repository.Tool
+          project: tools/SharedKernel.CI.Tool
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: selection-and-reasons
@@ -69,7 +69,7 @@ jobs:
       - name: Validate selected ordinary projects and tests
         env:
           DOTNET_CLI_CONTEXT_VERBOSE: 'true'
-        run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- validate --test-group ordinary
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- validate --test-group ordinary
       - name: Retain validation evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -94,7 +94,7 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/setup-dotnet-tool
         with:
-          project: tools/SharedKernel.Repository.Tool
+          project: tools/SharedKernel.CI.Tool
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: selection-and-reasons
@@ -102,7 +102,7 @@ jobs:
       - name: Validate isolated hosted test project
         env:
           TEST_PROJECT: ${{ matrix.project }}
-        run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release --no-build --no-restore -- validate --test-group "$TEST_PROJECT"
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- validate --test-group "$TEST_PROJECT"
       - name: Retain hosted validation evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a

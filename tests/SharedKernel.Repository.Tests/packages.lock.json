@@ -134,7 +134,7 @@
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
-      "sharedkernel.repository.tool": {
+      "sharedkernel.ci.tool": {
         "type": "Project",
         "dependencies": {
           "System.CommandLine": "[2.0.13, )"
