@@ -97,6 +97,50 @@ public sealed class LicenseExceptionCommandTests
     }
 
     [Fact]
+    public async Task Verify_license_exceptions_reads_tracked_lock_files_at_the_root_and_in_nested_directories()
+    {
+        // Arrange
+        using var repository = await LicenseExceptionTestRepository.Create(new LicenseScenario());
+        repository.WriteText("packages.lock.json", """{"version":2,"dependencies":{"net10.0":{"StreamJsonRpc":{"type":"Direct","resolved":"2.25.30"}}}}""");
+        repository.WriteText("src/App/packages.lock.json", """{"version":2,"dependencies":{"net10.0":{"Magick.NET-Q8-AnyCPU":{"type":"Transitive","resolved":"15.0.1"}}}}""");
+        await repository.Stage("packages.lock.json", TestContext.Current.CancellationToken);
+        await repository.Stage("src/App/packages.lock.json", TestContext.Current.CancellationToken);
+        var outputPath = Path.Combine(repository.RootPath, "github-output");
+
+        // Act
+        var result = await repository.RunCommand(
+            ["dependency", "verify-license-exceptions", "--github-output", outputPath, "--root", repository.RootPath],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1, "src/packages.lock.json resolves the approved versions, so only the root and nested lock files can fail.");
+        result.StandardError.ShouldContain("- packages.lock.json: StreamJsonRpc resolves to 2.25.30 for net10.0, not the approved 2.25.29.", StringComparison.Ordinal);
+        result.StandardError.ShouldContain("- src/App/packages.lock.json: Magick.NET-Q8-AnyCPU resolves to 15.0.1 for net10.0, not the approved 15.0.0.", StringComparison.Ordinal);
+        File.Exists(outputPath).ShouldBeFalse("A failed verification grants no license exception.");
+    }
+
+    [Fact]
+    public async Task Verify_license_exceptions_rejects_an_approval_file_that_repeats_a_property()
+    {
+        // Arrange
+        using var repository = await LicenseExceptionTestRepository.Create(new LicenseScenario());
+        repository.WriteText(
+            ".config/sharedkernel-candidate.json",
+            $$"""{"packageVersion":"1.0.0","packageVersion":"{{LicenseExceptionTestRepository.ApprovedVersion}}","libraryRevision":"{{LicenseExceptionTestRepository.ApprovedRevision}}","libraryDirty":false}""");
+        var outputPath = Path.Combine(repository.RootPath, "github-output");
+
+        // Act
+        var result = await repository.RunCommand(
+            ["dependency", "verify-license-exceptions", "--github-output", outputPath, "--root", repository.RootPath],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1, "The last packageVersion is the approved one, but the repeated property leaves the approved value ambiguous.");
+        result.StandardError.ShouldContain("- .config/sharedkernel-candidate.json: Invalid JSON: Duplicate property 'packageVersion' encountered during deserialization.", StringComparison.Ordinal);
+        File.Exists(outputPath).ShouldBeFalse("A failed verification grants no license exception.");
+    }
+
+    [Fact]
     public async Task Verify_license_exceptions_requires_a_tracked_lock_file()
     {
         // Arrange
