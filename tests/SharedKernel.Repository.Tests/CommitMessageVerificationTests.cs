@@ -109,7 +109,7 @@ public sealed class CommitMessageVerificationTests
     [InlineData("Update contract\n", HeaderError)]
     [InlineData("feat:    \n", HeaderError)]
     [InlineData("  feat: support the contract\n", HeaderError)]
-    [InlineData("﻿feat: support the contract\n", HeaderError)]
+    [InlineData("\uFEFFfeat: support the contract\n", HeaderError)]
     [InlineData("feat: support the contract\n\nBREAKING CHANGE missing colon\n", FooterError)]
     [InlineData("feat: support the contract\n\nBREAKING-CHANGE:  \n", FooterError)]
     public async Task Message_file_without_a_valid_header_or_breaking_footer_fails_with_fixed_text(string message, string expectedError)
