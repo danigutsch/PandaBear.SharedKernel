@@ -20,6 +20,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="../Shared/ExecutableResolver.cs" Link="Shared/ExecutableResolver.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 

@@ -1,26 +1,38 @@
 using System.CommandLine;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Xml;
+using PandaBear.Tooling;
 
 namespace PandaBear.CI.Tool;
 
 /// <summary>Builds the <c>sharedkernel-ci</c> command tree.</summary>
-internal static class RepositoryCommandLine
+internal static partial class RepositoryCommandLine
 {
-    /// <summary>Exit code for a failed selection, validation, or commit message check.</summary>
+    /// <summary>Exit code for a failed selection, validation, staging, or commit message check.</summary>
     private const int FailureExitCode = 2;
+
+    /// <summary>Creates the command tree with the Git, network, and clock access that the tool uses.</summary>
+    /// <param name="workingDirectory">Directory that relative <c>--root</c>, <c>--event</c>, and <c>--file</c> paths resolve from.</param>
+    /// <param name="run">Runs a child process and returns its standard output.</param>
+    public static RootCommand Create(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run) =>
+        Create(workingDirectory, run, CandidateStagingServices.Default);
 
     /// <summary>Creates the command tree.</summary>
     /// <param name="workingDirectory">Directory that relative <c>--root</c>, <c>--event</c>, and <c>--file</c> paths resolve from.</param>
     /// <param name="run">Runs a child process and returns its standard output.</param>
-    public static RootCommand Create(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run)
+    /// <param name="staging">Supplies what <c>stage-candidate</c> uses to reach Git, the network, and the clock.</param>
+    public static RootCommand Create(
+        string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run, CandidateStagingServices staging)
     {
-        var root = new RootCommand("Selects, builds, and tests affected SharedKernel projects and verifies commit messages.");
+        var root = new RootCommand(
+            "Selects, builds, and tests affected SharedKernel projects, stages package candidates, and verifies commit messages.");
 
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(CreateSelect(workingDirectory, run));
         root.Subcommands.Add(CreateValidate(workingDirectory, run));
+        root.Subcommands.Add(CreateStageCandidate(workingDirectory, staging));
         root.Subcommands.Add(CreateVerifyCommitMessage(workingDirectory));
         return root;
     }
@@ -108,6 +120,77 @@ internal static class RepositoryCommandLine
         return command;
     }
 
+    private static Command CreateStageCandidate(string workingDirectory, CandidateStagingServices services)
+    {
+        var pinOption = PathOption(
+            "--pin", "Candidate manifest that pins the library revision, the package version, and the package hashes. Relative to the root.", "file");
+        pinOption.Required = true;
+        var libraryRootOption = PathOption(
+            "--library-root", "Clean SharedKernel checkout, at its top level, of the pinned revision. Relative to the root.", "path");
+        libraryRootOption.Required = true;
+        var outputOption = PathOption("--output", "Local feed that receives the packages and candidate.json. Relative to the root.", "directory");
+        outputOption.Required = true;
+        var repositoryOption = new Option<string>("--repository")
+        {
+            Description = "GitHub repository whose v<version> release supplies the packages.",
+            HelpName = "owner/name",
+        };
+
+        // The value becomes part of an https://github.com/ address, so it may not add path segments or a host.
+        repositoryOption.Validators.Add(static result =>
+        {
+            var repository = result.GetValueOrDefault<string>() ?? string.Empty;
+            if (!Repository().IsMatch(repository) || repository.Split('/')[1] is "." or "..")
+            {
+                result.AddError(
+                    "--repository requires owner/name: letters, digits, and '-' in the owner, also '.' and '_' in the name, which cannot be '.' or '..'.");
+            }
+        });
+        var feedOption = PathOption("--feed", "Directory that holds the packages. Relative to the root.", "directory");
+        var rootOption = CreateRootOption();
+        var command = new Command(
+            "stage-candidate",
+            "Verify a pinned candidate against a clean library checkout, then stage its packages from a release or a directory in a local feed.")
+        {
+            pinOption,
+            libraryRootOption,
+            outputOption,
+            repositoryOption,
+            feedOption,
+            rootOption,
+        };
+        command.Validators.Add(result =>
+        {
+            var hasRepository = result.GetResult(repositoryOption) is not null;
+            if (hasRepository == (result.GetResult(feedOption) is not null))
+            {
+                result.AddError(hasRepository
+                    ? $"Options '{repositoryOption.Name}' and '{feedOption.Name}' cannot be combined."
+                    : $"Option '{repositoryOption.Name}' or '{feedOption.Name}' is required.");
+            }
+        });
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            (output, _) =>
+            {
+                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                var feed = parseResult.GetValue(feedOption);
+                return CandidateStaging.Run(
+                    new CandidateStagingRequest(
+                        root,
+                        Path.GetFullPath(parseResult.GetRequiredValue(pinOption), root),
+                        Path.GetFullPath(parseResult.GetRequiredValue(libraryRootOption), root),
+                        Path.GetFullPath(parseResult.GetRequiredValue(outputOption), root),
+                        parseResult.GetValue(repositoryOption),
+                        feed is null ? null : Path.GetFullPath(feed, root)),
+                    services,
+                    output,
+                    ct);
+            },
+            ct));
+        return command;
+    }
+
     private static Command CreateVerifyCommitMessage(string workingDirectory)
     {
         var eventOption = PathOption(
@@ -182,10 +265,29 @@ internal static class RepositoryCommandLine
             // before the token is observed. System.CommandLine exits 1 without output for a cancellation.
             throw new OperationCanceledException("The command was canceled.", exception, ct);
         }
-        catch (Exception exception) when (exception is ArgumentException or IOException or InvalidOperationException or XmlException or JsonException or KeyNotFoundException)
+        catch (Exception exception) when (exception is ArgumentException
+            or IOException
+            or InvalidOperationException
+            or XmlException
+            or JsonException
+            or KeyNotFoundException
+            or InvalidDataException
+            or UnauthorizedAccessException
+            or TimeoutException
+            or HttpRequestException)
         {
-            await error.WriteLineAsync(exception.Message).ConfigureAwait(false);
+            // Messages carry text from files, processes, and the network. Each line is escaped on its own, so process
+            // output keeps its lines; messages escape the pin, global.json, and release values they embed, so such a
+            // value cannot start a line.
+            foreach (var line in exception.Message.TrimEnd('\r', '\n').Split('\n'))
+            {
+                await error.WriteLineAsync(ControlCharacters.Escape(line.TrimEnd('\r'))).ConfigureAwait(false);
+            }
+
             return FailureExitCode;
         }
     }
+
+    [GeneratedRegex(@"\A[A-Za-z0-9-]+/[A-Za-z0-9._-]+\z", RegexOptions.CultureInvariant)]
+    private static partial Regex Repository();
 }

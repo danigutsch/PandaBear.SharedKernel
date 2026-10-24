@@ -59,7 +59,12 @@ public sealed class RepositoryToolCallerTests
                 "verify-commit-message --file <commit-message-file>",
                 "select --base <revision>",
                 "validate",
+                "stage-candidate --pin <candidate.json> --library-root . --output <feed> --repository danigutsch/PandaBear.SharedKernel",
                 "verify-commit-message --event <event.json>",
+                "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"
+                    + " --repository danigutsch/PandaBear.SharedKernel",
+                "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"
+                    + " --feed <packages>",
                 "verify-commit-message --file $1",
             ],
             "Installation and the commit-msg hook run the installed sharedkernel-ci, and this repository runs the project.");
@@ -68,9 +73,11 @@ public sealed class RepositoryToolCallerTests
     [Theory]
     [InlineData(".github/workflows/ci.yml", "select")]
     [InlineData(".github/workflows/ci.yml", "validate")]
+    [InlineData(".github/workflows/ci.yml", "stage-candidate")]
     [InlineData(".github/workflows/pr-metadata.yml", "verify-commit-message")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "select")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "validate")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "stage-candidate")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "verify-commit-message")]
     public void Callers_invoke_the_repository_tool_command(string file, string commandName)
     {

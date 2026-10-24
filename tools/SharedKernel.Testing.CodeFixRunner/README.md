@@ -39,7 +39,7 @@ A `global.json` that applies to either directory must resolve to an installed SD
 ## Installation
 
 Install a validated candidate as a local tool from the feed that holds it, such as the folder that
-`sharedkernel-version stage-candidate` copies a candidate to. Add the feed to `NuGet.Config` and map
+`sharedkernel-ci stage-candidate` stages a candidate in. Add the feed to `NuGet.Config` and map
 `PandaBear.SharedKernel.*` to it. Map every other package, for example `*`, to the existing source, because
 a package without a mapping does not restore once source mapping is enabled. With the SDK pinned in
 `global.json`, `dotnet tool install` rejects `--add-source` when package source mapping is enabled.

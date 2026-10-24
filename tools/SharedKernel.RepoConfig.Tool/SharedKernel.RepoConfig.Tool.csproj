@@ -1,12 +1,7 @@
-<Project>
-    <PropertyGroup>
-        <IsPackable>true</IsPackable>
-        <EnableSharedKernelAnalyzers>false</EnableSharedKernelAnalyzers>
-    </PropertyGroup>
-    <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <IsPackable>true</IsPackable>
         <RootNamespace>PandaBear.RepoConfig.Tool</RootNamespace>
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>sharedkernel-repo</ToolCommandName>
@@ -22,12 +17,15 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="../Shared/ControlCharacters.cs" Link="Shared/ControlCharacters.cs" />
+        <Compile Include="../Shared/ExecutableResolver.cs" Link="Shared/ExecutableResolver.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
         <InternalsVisibleTo Include="SharedKernel.RepoConfig.Tests" />
     </ItemGroup>
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
-
-    <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
 </Project>

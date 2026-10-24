@@ -6,4 +6,14 @@
         <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" />
     </ItemGroup>
 
+    <!-- Libraries that declare assertions opt in to the testing analyzers; SKTEST017 is enabled per project in .editorconfig. -->
+    <ItemGroup Condition="'$(MSBuildProjectExtension)' == '.csproj' and '$(IsRoslynComponent)' != 'true' and '$(EnableSharedKernelTestingAnalyzers)' == 'true'">
+        <ProjectReference Include="$(MSBuildThisFileDirectory)SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj"
+            OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" IsAspireProjectResource="false"
+            Condition="Exists('$(MSBuildThisFileDirectory)SharedKernel/SharedKernel.Testing.Analyzers/SharedKernel.Testing.Analyzers.csproj')" />
+        <ProjectReference Include="$(MSBuildThisFileDirectory)SharedKernel/SharedKernel.Testing.CodeFixes/SharedKernel.Testing.CodeFixes.csproj"
+            OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" IsAspireProjectResource="false"
+            Condition="Exists('$(MSBuildThisFileDirectory)SharedKernel/SharedKernel.Testing.CodeFixes/SharedKernel.Testing.CodeFixes.csproj')" />
+    </ItemGroup>
+
 </Project>

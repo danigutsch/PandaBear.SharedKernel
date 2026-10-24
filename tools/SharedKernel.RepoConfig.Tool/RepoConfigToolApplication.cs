@@ -1,7 +1,7 @@
-using System.Buffers;
 using System.Globalization;
 using System.Text;
 using System.Text.Json;
+using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -65,7 +65,7 @@ internal static class RepoConfigToolApplication
         output.WriteLine("Initialized repository roadmap structure:");
         foreach (var path in createdPaths)
         {
-            output.WriteLine($"- {EscapeControlCharacters(path)}");
+            output.WriteLine($"- {ControlCharacters.Escape(path)}");
         }
 
         return 0;
@@ -100,7 +100,7 @@ internal static class RepoConfigToolApplication
     public static int Set(string rootPath, string key, string value, TextWriter output)
     {
         RepoConfigSetter.Set(rootPath, key, value);
-        output.WriteLine($"Updated {EscapeControlCharacters(key)}.");
+        output.WriteLine($"Updated {ControlCharacters.Escape(key)}.");
         return 0;
     }
 
@@ -222,6 +222,45 @@ internal static class RepoConfigToolApplication
 
         WriteIssues(error, "Repository text encoding verification failed:", issues);
         return 1;
+    }
+
+    public static async Task<int> VerifyJson(string rootPath, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var issues = await JsonVerifier.Verify(rootPath, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
+        {
+            await output.WriteLineAsync("Repository JSON is valid.".AsMemory(), ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        WriteIssues(error, "Repository JSON verification failed:", issues);
+        return 1;
+    }
+
+    /// <summary>
+    /// Verifies the license exceptions in the consumer configuration. On success, appends
+    /// <c>packages=pkg:nuget/&lt;id&gt;@&lt;version&gt;,...</c> to <paramref name="githubOutput"/> when it is given.
+    /// </summary>
+    public static async Task<int> VerifyLicenseExceptions(string rootPath, string? githubOutput, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
+        var licenseExceptions = configuration.LicenseExceptions
+            ?? throw new InvalidOperationException($"{ConsumerConfigurationFile.RelativePath} has no licenseExceptions section.");
+        var issues = await LicenseExceptionVerifier.Verify(rootPath, licenseExceptions, ct).ConfigureAwait(false);
+        if (issues.Count > 0)
+        {
+            WriteIssues(error, "License exception verification failed:", issues);
+            return 1;
+        }
+
+        var packages = string.Join(',', licenseExceptions.Packages.Select(static package => $"pkg:nuget/{package.Key}@{package.Value}"));
+        if (githubOutput is not null)
+        {
+            await File.AppendAllTextAsync(Path.GetFullPath(githubOutput, rootPath), "packages=" + packages + Environment.NewLine, ct).ConfigureAwait(false);
+        }
+
+        await output.WriteLineAsync($"License exceptions are current: {packages}".AsMemory(), ct).ConfigureAwait(false);
+        return 0;
     }
 
     public static async Task<int> PlanAutomation(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
@@ -362,50 +401,14 @@ internal static class RepoConfigToolApplication
         return 0;
     }
 
-    internal static string EscapeControlCharacters(string value)
-    {
-        StringBuilder? escaped = null;
-        var index = 0;
-        while (index < value.Length)
-        {
-            var status = Rune.DecodeFromUtf16(value.AsSpan(index), out var rune, out var consumed);
-            if (status != OperationStatus.Done)
-            {
-                escaped ??= new StringBuilder(value.Length + 6).Append(value, 0, index);
-                escaped.Append("\\u").Append(((int)value[index]).ToString("X4", CultureInfo.InvariantCulture));
-                index++;
-                continue;
-            }
-
-            var category = Rune.GetUnicodeCategory(rune);
-            if (category is not UnicodeCategory.Control
-                    and not UnicodeCategory.Format
-                    and not UnicodeCategory.LineSeparator
-                    and not UnicodeCategory.ParagraphSeparator)
-            {
-                escaped?.Append(value, index, consumed);
-                index += consumed;
-                continue;
-            }
-
-            escaped ??= new StringBuilder(value.Length + 6).Append(value, 0, index);
-            escaped
-                .Append(rune.IsBmp ? "\\u" : "\\U")
-                .Append(rune.Value.ToString(rune.IsBmp ? "X4" : "X8", CultureInfo.InvariantCulture));
-            index += consumed;
-        }
-
-        return escaped?.ToString() ?? value;
-    }
-
     private static Task WriteError(TextWriter error, string message, CancellationToken ct) =>
-        error.WriteLineAsync($"sharedkernel-repo: {EscapeControlCharacters(message)}".AsMemory(), ct);
+        error.WriteLineAsync($"sharedkernel-repo: {ControlCharacters.Escape(message)}".AsMemory(), ct);
 
     private static async Task WriteMessages(TextWriter output, IEnumerable<string> messages, CancellationToken ct)
     {
         foreach (var message in messages)
         {
-            await output.WriteLineAsync(EscapeControlCharacters(message).AsMemory(), ct).ConfigureAwait(false);
+            await output.WriteLineAsync(ControlCharacters.Escape(message).AsMemory(), ct).ConfigureAwait(false);
         }
     }
 
@@ -414,7 +417,7 @@ internal static class RepoConfigToolApplication
         error.WriteLine(heading);
         foreach (var issue in issues)
         {
-            error.WriteLine($"- {EscapeControlCharacters(issue.Path)}: {EscapeControlCharacters(issue.Message)}");
+            error.WriteLine($"- {ControlCharacters.Escape(issue.Path)}: {ControlCharacters.Escape(issue.Message)}");
         }
     }
 
@@ -423,10 +426,10 @@ internal static class RepoConfigToolApplication
         var count = 0;
         foreach (var item in items)
         {
-            var id = EscapeControlCharacters(item.Id);
-            var type = EscapeControlCharacters(item.Type);
-            var status = EscapeControlCharacters(item.Status);
-            var title = EscapeControlCharacters(item.Title);
+            var id = ControlCharacters.Escape(item.Id);
+            var type = ControlCharacters.Escape(item.Type);
+            var status = ControlCharacters.Escape(item.Status);
+            var title = ControlCharacters.Escape(item.Title);
             output.WriteLine(item.IsTriaged
                 ? $"{id} | {type} | {status} | order {item.Order?.ToString(CultureInfo.InvariantCulture)} | score {item.Score?.ToString("0.##", CultureInfo.InvariantCulture)} | {title}"
                 : $"{id} | {type} | {status} | untriaged | {title}");
@@ -444,7 +447,7 @@ internal static class RepoConfigToolApplication
         var count = 0;
         foreach (var item in counts)
         {
-            output.WriteLine($"{EscapeControlCharacters(item.Key)} | {item.Value.ToString(CultureInfo.InvariantCulture)}");
+            output.WriteLine($"{ControlCharacters.Escape(item.Key)} | {item.Value.ToString(CultureInfo.InvariantCulture)}");
             count++;
         }
 
@@ -467,7 +470,7 @@ internal static class RepoConfigToolApplication
 
         foreach (var item in blockedItems)
         {
-            output.WriteLine($"{EscapeControlCharacters(item.Item.Id)} blocked by {string.Join(", ", item.Blockers.Select(EscapeControlCharacters))}");
+            output.WriteLine($"{ControlCharacters.Escape(item.Item.Id)} blocked by {string.Join(", ", item.Blockers.Select(ControlCharacters.Escape))}");
             count++;
         }
 

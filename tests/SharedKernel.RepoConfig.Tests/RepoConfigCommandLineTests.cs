@@ -28,6 +28,9 @@ public sealed class RepoConfigCommandLineTests
         outputText.ShouldContain("  automation ", StringComparison.Ordinal);
         outputText.ShouldContain("  verify-text-encoding ", StringComparison.Ordinal);
         outputText.ShouldContain("  verify-podman-dns ", StringComparison.Ordinal);
+        outputText.ShouldContain("  verify-json ", StringComparison.Ordinal);
+        outputText.ShouldContain("  security ", StringComparison.Ordinal);
+        outputText.ShouldContain("  dependency ", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -65,6 +68,8 @@ public sealed class RepoConfigCommandLineTests
     [Theory]
     [InlineData("github")]
     [InlineData("automation")]
+    [InlineData("security")]
+    [InlineData("dependency")]
     public async Task Command_groups_require_a_subcommand(string group)
     {
         // Arrange
@@ -160,6 +165,12 @@ public sealed class RepoConfigCommandLineTests
     [InlineData("automation plan-github --root .", "plan-github")]
     [InlineData("automation publish-result --root .", "publish-result")]
     [InlineData("automation publish-result --force --root .", "publish-result")]
+    [InlineData("verify-json", "verify-json")]
+    [InlineData("verify-json --root .", "verify-json")]
+    [InlineData("dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository", "submit")]
+    [InlineData("dependency submit --snapshot snapshot.json --repository owner/repository --force --root .", "submit")]
+    [InlineData("dependency verify-license-exceptions", "verify-license-exceptions")]
+    [InlineData("dependency verify-license-exceptions --github-output \"$GITHUB_OUTPUT\" --root .", "verify-license-exceptions")]
     public void Command_lines_parse_to_their_command(string commandLine, string expectedCommand)
     {
         // Arrange
@@ -377,5 +388,40 @@ public sealed class RepoConfigCommandLineTests
         // Assert
         commandLines.ShouldNotBeEmpty();
         parseErrors.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Diagram_directive_parses_a_valid_command_line_without_running_it()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["[diagram]", "init", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        output.ToString().ShouldContain("[ init [ --root <", StringComparison.Ordinal);
+        error.ToString().ShouldBe(string.Empty);
+        workspace.FileExists("roadmap/config.json").ShouldBeFalse("The directive prints the parse diagram instead of running init.");
+    }
+
+    [Fact]
+    public async Task Diagram_directive_fails_a_misspelled_option_without_running_the_command()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["[diagram]", "init", "--rot", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        output.ToString().ShouldContain("--rot", StringComparison.Ordinal);
+        workspace.FileExists("roadmap/config.json").ShouldBeFalse("A diagram never runs the command, even when parsing fails.");
     }
 }

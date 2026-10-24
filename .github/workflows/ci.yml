@@ -283,7 +283,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
     steps:
-      - name: Download immutable published prerelease
+      - name: Read the published prerelease manifest
         id: candidate
         shell: pwsh
         env:
@@ -294,21 +294,22 @@ jobs:
           if ($env:CANDIDATE_VERSION -cnotmatch '^[0-9]+\.[0-9]+\.[0-9]+-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*$') {
             throw 'A prerelease package version is required.'
           }
-          $releaseJson = gh release view "v$env:CANDIDATE_VERSION" --repo $env:GITHUB_REPOSITORY --json isPrerelease
+          $releaseJson = gh release view "v$env:CANDIDATE_VERSION" --repo $env:GITHUB_REPOSITORY --json isPrerelease,assets
           if ($LASTEXITCODE -ne 0) { throw 'Could not read the published prerelease.' }
-          if (($releaseJson | ConvertFrom-Json).isPrerelease -ne $true) { throw 'The release must remain prerelease.' }
-          $feed = Join-Path $env:RUNNER_TEMP 'published-candidate'
-          New-Item -ItemType Directory -Path $feed | Out-Null
-          gh release download "v$env:CANDIDATE_VERSION" --repo $env:GITHUB_REPOSITORY --dir $feed --pattern candidate.json --pattern '*.nupkg'
-          if ($LASTEXITCODE -ne 0) { throw 'Could not download the immutable candidate.' }
-          $candidate = Get-Content -Raw (Join-Path $feed 'candidate.json') | ConvertFrom-Json
+          $release = $releaseJson | ConvertFrom-Json
+          if ($release.isPrerelease -ne $true) { throw 'The release must remain prerelease.' }
+          $directory = Join-Path $env:RUNNER_TEMP 'published-candidate'
+          New-Item -ItemType Directory -Path $directory | Out-Null
+          gh release download "v$env:CANDIDATE_VERSION" --repo $env:GITHUB_REPOSITORY --dir $directory --pattern candidate.json
+          if ($LASTEXITCODE -ne 0) { throw 'Could not download the candidate manifest.' }
+          $candidate = Get-Content -Raw (Join-Path $directory 'candidate.json') | ConvertFrom-Json
           if ($candidate.packageVersion -cne $env:CANDIDATE_VERSION -or $candidate.libraryDirty -ne $false) {
             throw 'The candidate must identify the requested version and a clean library revision.'
           }
-          $expectedFiles = @($candidate.packageSha256.PSObject.Properties.Name | Sort-Object)
-          $actualFiles = @(Get-ChildItem -Path $feed -Filter '*.nupkg' -File | ForEach-Object Name | Sort-Object)
-          if ($expectedFiles.Count -eq 0 -or (Compare-Object $expectedFiles $actualFiles)) {
-            throw 'Downloaded packages must exactly match the immutable manifest.'
+          $expectedAssets = @($candidate.packageSha256.PSObject.Properties.Name | Sort-Object)
+          $actualAssets = @($release.assets.name | Where-Object { $_ -like '*.nupkg' } | Sort-Object)
+          if ($expectedAssets.Count -eq 0 -or (Compare-Object $expectedAssets $actualAssets -CaseSensitive)) {
+            throw 'The release packages must exactly match the manifest.'
           }
           if ($candidate.libraryRevision -cnotmatch '^[0-9a-f]{40}$') { throw 'Invalid candidate source revision.' }
           "library_revision=$($candidate.libraryRevision)" >> $env:GITHUB_OUTPUT
@@ -316,27 +317,25 @@ jobs:
         with:
           ref: ${{ steps.candidate.outputs.library_revision }}
           persist-credentials: false
-      - name: Verify exact clean source revision
-        shell: pwsh
-        env:
-          CANDIDATE_REVISION: ${{ steps.candidate.outputs.library_revision }}
-        run: |
-          $revision = git rev-parse HEAD
-          if ($LASTEXITCODE -ne 0) { throw 'Could not read the source revision.' }
-          $dirty = git status --porcelain
-          if ($LASTEXITCODE -ne 0) { throw 'Could not inspect source cleanliness.' }
-          if ($revision -cne $env:CANDIDATE_REVISION -or $dirty) {
-            throw 'Candidate consumption requires its exact clean source revision.'
-          }
+      - uses: ./.github/actions/setup-dotnet-tool
+        with:
+          project: tools/SharedKernel.CI.Tool
       - uses: ./.github/actions/setup-dotnet-tool
         with:
           project: tools/SharedKernel.Versioning.Tool
-      - name: Verify package hashes and consume the same candidate including NativeAOT
+      - name: Stage the prerelease packages after checking the clean source revision
         shell: pwsh
         run: |
           $manifest = Join-Path $env:RUNNER_TEMP 'published-candidate/candidate.json'
+          $feed = Join-Path $env:RUNNER_TEMP 'published-candidate/feed'
+          dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- stage-candidate --pin $manifest --library-root . --output $feed --repository $env:GITHUB_REPOSITORY
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify package hashes and consume the same candidate including NativeAOT
+        shell: pwsh
+        run: |
+          $staged = Join-Path $env:RUNNER_TEMP 'published-candidate/feed/candidate.json'
           $evidence = Join-Path $env:RUNNER_TEMP 'published-candidate/consumption.json'
-          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- consume-candidate --candidate $manifest --output $evidence --aot
+          dotnet run --project tools/SharedKernel.Versioning.Tool -c Release --no-build --no-restore -- consume-candidate --candidate $staged --output $evidence --aot
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Retain platform evidence without rewriting release assets
         if: always()
