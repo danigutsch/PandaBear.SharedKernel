@@ -36,17 +36,56 @@ internal sealed class TemporaryReleasePrepDirectory : IDisposable
         get;
     }
 
-    public string WriteCandidate()
+    /// <summary>Writes the version 1.0.0 probe package and a manifest with its hash and the hashes of <paramref name="packages" />.</summary>
+    public string WriteCandidate(params string[] packages)
     {
-        var package = NuGetPackageBuilder.WritePackage(PackageDirectory, "PandaBear.SharedKernel.Probe", "1.0.0");
-        var hash = Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(package)));
+        var hashes = new System.Text.Json.Nodes.JsonObject();
+        foreach (var package in packages.Prepend(NuGetPackageBuilder.WritePackage(PackageDirectory, "PandaBear.SharedKernel.Probe", "1.0.0")))
+        {
+            hashes[Path.GetFileName(package)] = Convert.ToHexStringLower(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(package)));
+        }
+
         var path = Path.Combine(PackageDirectory, "candidate.json");
         CandidateManifest.Write(path, new System.Text.Json.Nodes.JsonObject
         {
             ["packageVersion"] = "1.0.0",
-            ["packageSha256"] = new System.Text.Json.Nodes.JsonObject { [Path.GetFileName(package)] = hash }
+            ["packageSha256"] = hashes
         });
         return path;
+    }
+
+    /// <summary>
+    /// Packs a version 1.0.0 framework-dependent tool into <see cref="PackageDirectory" /> whose command prints
+    /// <paramref name="output" /> followed by its arguments.
+    /// </summary>
+    public async Task<string> PackTool(string packageId, string command, string output, CancellationToken ct)
+    {
+        var projectDirectory = Path.Combine(Root, "tool-projects", packageId);
+        Directory.CreateDirectory(projectDirectory);
+        File.Copy(Path.Combine(RepositoryRoot.Find(), "global.json"), Path.Combine(projectDirectory, "global.json"));
+        foreach (var name in new[] { "Directory.Build.props", "Directory.Build.targets", "Directory.Packages.props" })
+        {
+            await File.WriteAllTextAsync(Path.Combine(projectDirectory, name), "<Project />", ct);
+        }
+
+        await File.WriteAllTextAsync(
+            Path.Combine(projectDirectory, "ProbeTool.csproj"),
+            $"""
+            <Project Sdk="Microsoft.NET.Sdk">
+              <PropertyGroup>
+                <OutputType>Exe</OutputType>
+                <TargetFramework>net10.0</TargetFramework>
+                <PackAsTool>true</PackAsTool>
+                <ToolCommandName>{command}</ToolCommandName>
+                <PackageId>{packageId}</PackageId>
+                <Version>1.0.0</Version>
+              </PropertyGroup>
+            </Project>
+            """,
+            ct);
+        await File.WriteAllTextAsync(Path.Combine(projectDirectory, "Program.cs"), $"System.Console.WriteLine(\"{output} \" + string.Join(' ', args));", ct);
+        await Tool.CommandRunner.Run("dotnet", ["pack", projectDirectory, "-c", "Release", "-o", PackageDirectory], projectDirectory, ct);
+        return Path.Combine(PackageDirectory, packageId + ".1.0.0.nupkg");
     }
 
     public async Task WriteConsumptionSamples(string sampleOutput, CancellationToken ct)

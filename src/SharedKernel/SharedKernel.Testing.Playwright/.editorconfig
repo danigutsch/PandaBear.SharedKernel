@@ -1,0 +1,5 @@
+root = false
+
+[*.cs]
+# Assertion libraries give every public Should* assertion a userMessage overload.
+dotnet_diagnostic.SKTEST017.severity = warning

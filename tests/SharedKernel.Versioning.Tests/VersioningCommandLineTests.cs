@@ -213,6 +213,29 @@ public static class VersioningCommandLineTests
     }
 
     [Fact]
+    public static async Task Diagram_directive_parses_command_lines_without_running_them()
+    {
+        // Arrange
+        var missing = Path.Combine(Path.GetTempPath(), "sharedkernel-missing-candidate-" + Guid.NewGuid().ToString("N"));
+
+        // Act
+        var valid = await VersioningCommandLineRunner.Invoke(
+            ["[diagram]", "consume-candidate", "--candidate-directory", missing, "--aot"],
+            TestContext.Current.CancellationToken);
+        var misspelled = await VersioningCommandLineRunner.Invoke(
+            ["[diagram]", "consume-candidate", "--candidate-directry", missing, "--aot"],
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        valid.ExitCode.ShouldBe(0, "The command line parses, and [diagram] only prints how.");
+        valid.Error.ShouldBe(string.Empty, "Running consume-candidate would report that the candidate directory does not exist.");
+        valid.Output.ShouldContain("[ consume-candidate ", StringComparison.Ordinal);
+        misspelled.ExitCode.ShouldBe(1, "A command line that does not parse exits 1, as a parse error does without [diagram].");
+        misspelled.Error.ShouldNotContain("Candidate directory does not exist", StringComparison.Ordinal);
+        misspelled.Output.ShouldContain("--candidate-directry", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public static async Task Command_failures_exit_with_code_2_and_report_on_standard_error()
     {
         // Act

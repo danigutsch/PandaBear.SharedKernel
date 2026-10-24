@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using System.Xml.Linq;
 
 namespace PandaBear.Versioning.Tool;
@@ -48,14 +47,6 @@ internal static class SharedKernelPackCommand
         return packageDirectory;
     }
 
-    private static bool IsToolPackage(string package)
-    {
-        using var archive = ZipFile.OpenRead(package);
-        using var stream = archive.Entries.Single(entry => entry.FullName.EndsWith(".nuspec", StringComparison.Ordinal)).Open();
-        return XDocument.Load(stream).Descendants().Any(element => element.Name.LocalName == "packageType"
-            && (string?)element.Attribute("name") == "DotnetTool");
-    }
-
     private static async Task VerifyLocalFeed(string packageDirectory, string version, CancellationToken ct)
     {
         var packages = Directory.GetFiles(packageDirectory, "PandaBear.SharedKernel.*.nupkg")
@@ -68,7 +59,7 @@ internal static class SharedKernelPackCommand
         }
 
         _ = SharedKernelLocalFeed.ReadPackageIds(packages, version);
-        var tools = packages.Where(IsToolPackage).ToArray();
+        var tools = packages.Where(ToolPackageCheck.IsToolPackage).ToArray();
         var packageIds = SharedKernelLocalFeed.ReadPackageIds(packages.Except(tools).ToArray(), version);
         var restoreDirectory = Path.Combine(packageDirectory, ".restore-check");
         if (Directory.Exists(restoreDirectory))

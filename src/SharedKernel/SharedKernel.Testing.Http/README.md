@@ -43,3 +43,17 @@ expectedCode: "not_found", cancellationToken: cancellationToken)`. Helpers retur
 `JsonElement` values, avoid reflection-based serialization, and leave response ownership with
 the caller. Title, type, instance, privacy headers, and application-specific extensions remain
 available for explicit assertions.
+
+Each assertion also has an overload that takes `userMessage`, the reason the test expects it to
+hold. The `ShouldBeProblem` and `ShouldBeValidationProblem` message overloads take `expectedDetail`
+and `expectedCode` explicitly (pass `null` to leave one unchecked), then `userMessage`, then the
+optional token:
+
+```csharp
+await response.ShouldBeProblem(HttpStatusCode.NotFound, null, "not_found",
+    userMessage: "Deleted orders stay deleted.", cancellationToken: cancellationToken);
+```
+
+A message overload reports a failure as an `XunitException` whose message starts with
+`userMessage` and whose inner exception is the original failure. Argument errors and cancellation
+pass through unchanged.

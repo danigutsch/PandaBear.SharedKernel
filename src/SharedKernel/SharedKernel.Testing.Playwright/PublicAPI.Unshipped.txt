@@ -1,3 +1,4 @@
 #nullable enable
 PandaBear.Testing.Playwright.PlaywrightShouldAssertionExtensions
 static PandaBear.Testing.Playwright.PlaywrightShouldAssertionExtensions.ShouldHaveTitle(this Microsoft.Playwright.IPage! page, string! expectedTitle) -> System.Threading.Tasks.Task!
+static PandaBear.Testing.Playwright.PlaywrightShouldAssertionExtensions.ShouldHaveTitle(this Microsoft.Playwright.IPage! page, string! expectedTitle, string! userMessage) -> System.Threading.Tasks.Task!

@@ -14,6 +14,8 @@ in its local feed with `sharedkernel-ci stage-candidate` from the
 Git 2.24 or later, which `has-breaking-change-marker` needs for `--end-of-options`, and the .NET SDK pinned in
 `global.json`. `--aot` also needs the platform
 [NativeAOT toolchain](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/development.md#nativeaot-prerequisites).
+`consume-candidate`, `consume-packages`, and `validate-candidate` run installed tool commands, whose shims find
+.NET through `DOTNET_ROOT` or the default or registered install location.
 
 ## Install
 
@@ -69,7 +71,8 @@ sharedkernel-version consume-packages --feed <path> --version <version> [--aot]
 ```
 
 Every command except `classify-commit` and `compute` accepts `--repo-root <path>`, which defaults to the current
-directory. `sharedkernel-version <command> --help` describes each option.
+directory. `sharedkernel-version <command> --help` describes each option. A command line that starts with
+`[diagram]` prints how it parses without running the command, and exits 1 when it does not parse.
 
 ### Versions
 
@@ -140,10 +143,15 @@ revision and SHA-256 package hashes. Consumer, platform, and stable-promotion ev
 of `ComputedSemVer` in `Directory.Build.props`. `--baseline-version` requires `PandaBear.SharedKernel.*` mapped only
 to an existing local feed in `NuGet.Config`.
 
-`consume-candidate` verifies the hashes, restores, builds, and runs the samples against those packages with
-isolated caches, and records `passed` or `failed` for this platform's package consumption, and its NativeAOT run
-with `--aot`, in the manifest or in `--output`. It replaces that file through a temporary file in the same
-directory, so an interrupted write never truncates it, and Ctrl+C or SIGTERM leaves the file unchanged.
+`consume-candidate` verifies the hashes and requires the manifest to list the exact file name of every package in its
+directory, and every package to have the candidate version. It installs each tool package into a scratch tool path,
+from a generated NuGet configuration whose only source is that directory, and runs each command that the package's
+`tools/<tfm>/any/DotnetToolSettings.xml` declares with `--help` from an empty scratch directory. It deletes the
+scratch directory afterwards. The check fails when a package does not install or a command exits with a non-zero
+code, and the error names the package and any failing command. It then restores, builds, and runs the samples against
+the packages with isolated caches, and records `passed` or `failed` for this platform's package consumption, and its
+NativeAOT run with `--aot`, in the manifest or in `--output`. It replaces that file through a temporary file in the
+same directory, so an interrupted write never truncates it, and Ctrl+C or SIGTERM leaves the file unchanged.
 `--candidate-directory` must contain exactly one `candidate.json`, searched recursively. `consume-packages` runs
 the same checks against a feed without a manifest.
 `validate-candidate` runs `create-candidate` and then `consume-candidate` on the manifest it wrote.
@@ -151,19 +159,19 @@ the same checks against a feed without a manifest.
 ## Output and exit codes
 
 Results such as versions, JSON, and report or package paths go to standard output. Errors go to standard error, as
-does the output of the `dotnet` processes and samples that `consume-candidate`, `consume-packages`, and
-`validate-candidate` run.
+does the output of the `dotnet` processes, tool commands, and samples that `consume-candidate`, `consume-packages`,
+and `validate-candidate` run.
 
 | Code | Meaning |
 | --- | --- |
 | `0` | Success. |
 | `1` | Invalid command line, cancellation, or an unexpected internal error. |
-| `2` | The command failed: invalid input, a failed check, or a failed `git` or `dotnet` process. |
+| `2` | The command failed: invalid input, a failed check, or a failed `git`, `dotnet`, or tool process. |
 | `3` | `has-breaking-change-marker` found no breaking-change marker in the range. |
 | `130`, `143` | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
-Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or sample process tree. A process that fails after the tool has
-observed Ctrl+C or SIGTERM counts as the cancellation.
+Ctrl+C or SIGTERM stops the running `git`, `dotnet`, tool, or sample process tree. A process that fails after the tool
+has observed Ctrl+C or SIGTERM counts as the cancellation.
 
 ## Security
 
@@ -173,6 +181,8 @@ observed Ctrl+C or SIGTERM counts as the cancellation.
   `--end-of-options`, so Git cannot read it as an option.
 - Packing and consumption restore third-party packages from nuget.org. Generated NuGet configurations map
   `PandaBear.SharedKernel.*` only to the local feed, so internal packages never resolve from nuget.org.
+- Consumption installs tool packages only from the candidate directory, and reads their tool settings without
+  document type definitions, so no entity expands and no external resource is read.
 - Candidate commands verify SHA-256 package hashes before consuming packages.
 
 ## Packaging and AOT

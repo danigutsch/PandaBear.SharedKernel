@@ -224,6 +224,45 @@ internal static class RepoConfigToolApplication
         return 1;
     }
 
+    public static async Task<int> VerifyJson(string rootPath, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var issues = await JsonVerifier.Verify(rootPath, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
+        {
+            await output.WriteLineAsync("Repository JSON is valid.".AsMemory(), ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        WriteIssues(error, "Repository JSON verification failed:", issues);
+        return 1;
+    }
+
+    /// <summary>
+    /// Verifies the license exceptions in the consumer configuration. On success, appends
+    /// <c>packages=pkg:nuget/&lt;id&gt;@&lt;version&gt;,...</c> to <paramref name="githubOutput"/> when it is given.
+    /// </summary>
+    public static async Task<int> VerifyLicenseExceptions(string rootPath, string? githubOutput, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
+        var licenseExceptions = configuration.LicenseExceptions
+            ?? throw new InvalidOperationException($"{ConsumerConfigurationFile.RelativePath} has no licenseExceptions section.");
+        var issues = await LicenseExceptionVerifier.Verify(rootPath, licenseExceptions, ct).ConfigureAwait(false);
+        if (issues.Count > 0)
+        {
+            WriteIssues(error, "License exception verification failed:", issues);
+            return 1;
+        }
+
+        var packages = string.Join(',', licenseExceptions.Packages.Select(static package => $"pkg:nuget/{package.Key}@{package.Value}"));
+        if (githubOutput is not null)
+        {
+            await File.AppendAllTextAsync(Path.GetFullPath(githubOutput, rootPath), "packages=" + packages + Environment.NewLine, ct).ConfigureAwait(false);
+        }
+
+        await output.WriteLineAsync($"License exceptions are current: {packages}".AsMemory(), ct).ConfigureAwait(false);
+        return 0;
+    }
+
     public static async Task<int> PlanAutomation(RoadmapAutomationService service, TextWriter output, CancellationToken ct)
     {
         var repository = RequireEnvironmentVariable("GITHUB_REPOSITORY");
