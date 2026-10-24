@@ -5,14 +5,14 @@
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
 `sharedkernel-ci` selects the SharedKernel solution projects affected by a change, restores and builds them as one
-graph, runs complete MTP test projects, stages pinned package candidates in a local feed, and verifies pull request
-titles.
+graph, runs complete MTP test projects, stages pinned package candidates in a local feed, and verifies Conventional
+Commit messages in pull request events and git commit message files.
 
 ## Prerequisites
 
 Git and the .NET SDK pinned in `global.json`. `select` and `validate` read `SharedKernel.slnx` in a Git checkout;
 `stage-candidate` reads a clean SharedKernel checkout and, with `--repository`, needs HTTPS access to `github.com` and
-`release-assets.githubusercontent.com`; `verify-pr-title` reads only its event file.
+`release-assets.githubusercontent.com`; `verify-commit-message` reads only its event or message file.
 
 ## Installation
 
@@ -24,7 +24,7 @@ a package without a mapping does not restore once source mapping is enabled. Wit
 
 ```text
 dotnet tool install PandaBear.SharedKernel.CI.Tool --version <validated-candidate-version>
-dotnet tool run sharedkernel-ci -- verify-pr-title --event <event.json>
+dotnet tool run sharedkernel-ci -- verify-commit-message --file <commit-message-file>
 ```
 
 .NET tools run in full trust. Install only from trusted manifests and package sources.
@@ -37,7 +37,7 @@ without installing it:
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select --base <revision>
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- validate
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- stage-candidate --pin <candidate.json> --library-root . --output <feed> --repository danigutsch/PandaBear.SharedKernel
-dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-pr-title --event <event.json>
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-commit-message --event <event.json>
 ```
 
 Package ID: `PandaBear.SharedKernel.CI.Tool`. C# namespace: `PandaBear.CI.Tool`. Assembly/project identity:
@@ -47,8 +47,9 @@ availability on nuget.org.
 ## Usage
 
 `--help` lists the options of each command. `--root` sets the repository root (default: the current directory);
-the other relative paths of `select`, `validate`, and `stage-candidate` resolve from it. A command line that starts
-with `[diagram]` prints how it parses instead of running; an invalid command line exits 1.
+the other relative paths of `select`, `validate`, and `stage-candidate` resolve from it, and relative `--event` and
+`--file` paths resolve from the current directory. A command line that starts with `[diagram]` prints how it parses
+instead of running; an invalid command line exits 1.
 
 ### select
 
@@ -115,11 +116,31 @@ command ends; one older than a day, which an interrupted run left behind, is del
 concurrent run's newer one stays. A staging directory that cannot be deleted stays for a later run and does not fail
 the command. Standard output reports how many packages were added and how many were already present.
 
-### verify-pr-title
+### verify-commit-message
 
-Checks that the `pull_request` title in a GitHub event file is a Conventional Commit header of at most 100 characters
-and that every `BREAKING CHANGE` footer has a description. The PR metadata workflow runs it separately from source
-validation.
+Checks that a message header is a Conventional Commit header of at most 100 characters with no surrounding whitespace,
+and that every `BREAKING CHANGE` or `BREAKING-CHANGE` footer has a description. Pass exactly one source:
+
+- `--event <path>` reads a GitHub `pull_request` event file: the title is the header and the body holds the footers.
+  The PR metadata workflow runs it separately from source validation.
+- `--file <path>` reads a commit message file as UTF-8, as git passes it to a `commit-msg` hook. Trailing whitespace
+  is ignored, the `# ------------------------ >8 ------------------------` line that `git commit -v` writes ends the
+  message, and lines that start with `#` after optional whitespace are comments. The first remaining non-blank line
+  is the header. The check skips the `fixup! `, `amend! `, and `squash! ` prefixes that `git commit --fixup` and
+  `--squash` write for `git rebase --autosquash`, so the subject after them must pass. A header that starts with
+  `Merge `, `Revert `, or `Reapply `, as git writes for merge commits, reverts, and reverts of reverts, passes.
+
+Errors are fixed text and never repeat the title or message.
+
+To check each local commit, save this hook as the file that `git rev-parse --git-path hooks/commit-msg` prints and
+make it executable. That path follows `core.hooksPath`. When only the global Git configuration sets it, every
+repository shares the path, so first set `core.hooksPath` in this repository to a directory of its own. Git runs hooks
+from the top of the working tree, where `dotnet tool run` finds the tool manifest.
+
+```sh
+#!/bin/sh
+exec dotnet tool run sharedkernel-ci -- verify-commit-message --file "$1"
+```
 
 ## Exit codes
 
@@ -127,7 +148,7 @@ validation.
 | --- | --- |
 | 0 | Success. |
 | 1 | Invalid command line, cancellation, or an unexpected error. |
-| 2 | Selection, validation, staging, or the pull request check failed; the reason is on standard error. |
+| 2 | Selection, validation, staging, or the commit message check failed; the reason is on standard error. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
 Ctrl+C or SIGTERM stops the running `git` or `dotnet` process tree. A process that fails after the tool has observed
@@ -138,8 +159,8 @@ line by line, so text from files, processes, and the network cannot drive the te
 
 The tool starts only `git` and `dotnet`, found in the absolute directories of `PATH` and never in the working
 directory, and passes arguments as a list. `--base` rejects empty values and values starting with `-`, so Git cannot
-read them as options. No credentials are needed. `stage-candidate` runs Git without the inherited `GIT_*` variables,
-which could point it at another repository, and stops Git after a minute.
+read them as options. `verify-commit-message` starts no process. No credentials are needed. `stage-candidate` runs
+Git without the inherited `GIT_*` variables, which could point it at another repository, and stops Git after a minute.
 
 `stage-candidate --repository` sends unauthenticated HTTPS `GET` requests to
 `https://github.com/<owner>/<name>/releases/download/v<version>/<asset>`, which GitHub redirects to its release-asset

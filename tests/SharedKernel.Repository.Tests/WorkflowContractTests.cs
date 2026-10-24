@@ -117,6 +117,24 @@ public sealed class WorkflowContractTests
     }
 
     [Fact]
+    public void Pull_request_metadata_reaches_the_ci_tool_only_through_the_event_file()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "pr-metadata.yml"));
+
+        // Act
+        var job = WorkflowJobs.Read(workflow, "metadata");
+
+        // Assert
+        job.ShouldContain(
+            "        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-commit-message --event \"$GITHUB_EVENT_PATH\"\n",
+            StringComparison.Ordinal);
+        workflow.ShouldNotContain("github.event.pull_request.title", StringComparison.Ordinal);
+        workflow.ShouldNotContain("github.event.pull_request.body", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Published_candidate_dispatch_consumes_exact_artifacts_on_both_platforms_without_repacking()
     {
         // Arrange

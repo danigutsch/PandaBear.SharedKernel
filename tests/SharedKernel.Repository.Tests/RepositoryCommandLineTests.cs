@@ -3,7 +3,7 @@ namespace PandaBear.Repository.Tests;
 public sealed class RepositoryCommandLineTests
 {
     [Fact]
-    public async Task Help_lists_the_select_validate_stage_candidate_and_verify_pr_title_commands()
+    public async Task Help_lists_the_select_validate_stage_candidate_and_verify_commit_message_commands()
     {
         // Arrange
         using var scope = new RepositoryTestScope();
@@ -17,7 +17,7 @@ public sealed class RepositoryCommandLineTests
         result.Output.ShouldContain("  select ", StringComparison.Ordinal);
         result.Output.ShouldContain("  validate ", StringComparison.Ordinal);
         result.Output.ShouldContain("  stage-candidate ", StringComparison.Ordinal);
-        result.Output.ShouldContain("  verify-pr-title ", StringComparison.Ordinal);
+        result.Output.ShouldContain("  verify-commit-message ", StringComparison.Ordinal);
         result.Error.ShouldBe(string.Empty);
         processes.Calls.ShouldBeEmpty();
     }
@@ -33,7 +33,7 @@ public sealed class RepositoryCommandLineTests
         "--repository <owner/name>",
         "--feed <directory>",
         "--root <path>")]
-    [InlineData("verify-pr-title", "--event <path> (REQUIRED)")]
+    [InlineData("verify-commit-message", "--event <path>", "--file <path>")]
     public async Task Command_help_lists_the_command_options(string command, params string[] expectedText)
     {
         // Arrange
@@ -74,7 +74,9 @@ public sealed class RepositoryCommandLineTests
     [Theory]
     [InlineData("[diagram] select --base main", 0)]
     [InlineData("[diagram] validate --test-group ordinary", 0)]
-    [InlineData("[diagram] verify-pr-title --event event.json", 0)]
+    [InlineData("[diagram] verify-commit-message --event event.json", 0)]
+    [InlineData("[diagram] verify-commit-message --file COMMIT_EDITMSG", 0)]
+    [InlineData("[diagram] verify-commit-message --event event.json --file COMMIT_EDITMSG", 1)]
     [InlineData("[diagram] stage-candidate --pin pin.json --library-root sk --output feed --feed packages", 0)]
     [InlineData("[diagram] stage-candidate --pin pin.json --library-root sk --output feed --repository danigutsch/PandaBear.SharedKernel", 0)]
     [InlineData("[diagram] select --bsae main", 1)]
@@ -104,9 +106,12 @@ public sealed class RepositoryCommandLineTests
     [InlineData("validate --base main")]
     [InlineData("select --test-group ordinary")]
     [InlineData("select --base")]
-    [InlineData("verify-pr-title")]
-    [InlineData("verify-pr-title --event")]
-    [InlineData("verify-pr-title --event event.json extra")]
+    [InlineData("verify-commit-message")]
+    [InlineData("verify-commit-message --event")]
+    [InlineData("verify-commit-message --file")]
+    [InlineData("verify-commit-message --event event.json --file COMMIT_EDITMSG")]
+    [InlineData("verify-commit-message --event event.json extra")]
+    [InlineData("verify-commit-message --file COMMIT_EDITMSG extra")]
     [InlineData("stage-candidate --library-root sk --output feed --feed packages")]
     [InlineData("stage-candidate --pin pin.json --output feed --feed packages")]
     [InlineData("stage-candidate --pin pin.json --library-root sk --feed packages")]
@@ -130,12 +135,33 @@ public sealed class RepositoryCommandLineTests
     }
 
     [Theory]
+    [InlineData("verify-commit-message", "Option '--event' or '--file' is required.")]
+    [InlineData("verify-commit-message --event event.json --file COMMIT_EDITMSG", "Options '--event' and '--file' cannot be combined.")]
+    public async Task Verify_commit_message_requires_exactly_one_of_the_event_and_file_options(string commandLine, string expectedError)
+    {
+        // Arrange
+        ArgumentNullException.ThrowIfNull(commandLine);
+        using var scope = new RepositoryTestScope();
+        var processes = new ProcessLog();
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(
+            scope.Root, commandLine.Split(' ', StringSplitOptions.RemoveEmptyEntries), processes.Run, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1, "A missing or doubled message source is a parse error, so no file is read.");
+        result.Error.ShouldContain(expectedError, StringComparison.Ordinal);
+        processes.Calls.ShouldBeEmpty();
+    }
+
+    [Theory]
     [InlineData("select", "--root")]
     [InlineData("select", "--selection")]
     [InlineData("select", "--github-output")]
     [InlineData("validate", "--root")]
     [InlineData("validate", "--selection")]
-    [InlineData("verify-pr-title", "--event")]
+    [InlineData("verify-commit-message", "--event")]
+    [InlineData("verify-commit-message", "--file")]
     public async Task Path_options_reject_empty_values_before_running_processes(string command, string option)
     {
         // Arrange
