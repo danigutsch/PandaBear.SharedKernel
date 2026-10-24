@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -493,7 +494,7 @@ internal static class PodmanDnsPreflightCommand
         await error.WriteLineAsync("verify-podman-dns: stale aardvark-dns state detected".AsMemory(), cancellationToken).ConfigureAwait(false);
         foreach (var reason in reasons)
         {
-            await error.WriteLineAsync($"  - {RepoConfigToolApplication.EscapeControlCharacters(reason)}".AsMemory(), cancellationToken).ConfigureAwait(false);
+            await error.WriteLineAsync($"  - {ControlCharacters.Escape(reason)}".AsMemory(), cancellationToken).ConfigureAwait(false);
         }
 
         await error.WriteLineAsync("No changes were made. Stop all rootless Podman containers and other Podman operations,".AsMemory(), cancellationToken).ConfigureAwait(false);
@@ -1035,11 +1036,11 @@ internal static class PodmanDnsPreflightCommand
 
     private static async Task<int> WriteFailure(TextWriter error, string message, CancellationToken cancellationToken)
     {
-        var escapedMessage = RepoConfigToolApplication.EscapeControlCharacters(message);
+        var escapedMessage = ControlCharacters.Escape(message);
         await error.WriteLineAsync($"verify-podman-dns: unable to verify safely: {escapedMessage}".AsMemory(), cancellationToken).ConfigureAwait(false);
         return 1;
     }
 
     private static string Display(string value) =>
-        value.Length == 0 ? "empty" : RepoConfigToolApplication.EscapeControlCharacters(value);
+        value.Length == 0 ? "empty" : ControlCharacters.Escape(value);
 }

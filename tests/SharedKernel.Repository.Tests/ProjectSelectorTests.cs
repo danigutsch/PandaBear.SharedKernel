@@ -1,4 +1,4 @@
-using PandaBear.Repository.Tool;
+using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests;
 
@@ -134,7 +134,7 @@ public sealed class ProjectSelectorTests : IDisposable
     public void Explicit_package_edges_select_package_consumption_tests()
     {
         // Arrange
-        var directory = Path.Combine(scope.Root, "tools/SharedKernel.Repository.Tool");
+        var directory = Path.Combine(scope.Root, "tools/SharedKernel.CI.Tool");
         Directory.CreateDirectory(directory);
         File.WriteAllText(Path.Combine(directory, "package-consumption-edges.json"), """{"tests/Core.Tests/Core.Tests.csproj":["src/Core/Core.csproj"]}""");
         File.WriteAllText(Path.Combine(scope.Root, "tests/Core.Tests/Core.Tests.csproj"), """<Project><PackageReference Include="xunit.v3.mtp-v2" /></Project>""");

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.ExceptionServices;
+using PandaBear.Tooling;
 
 namespace PandaBear.PlaywrightMcp.Tool;
 
@@ -322,44 +323,6 @@ internal sealed class PlaywrightMcpApplication(
         return string.Empty;
     }
 
-    internal static string? ResolveExecutable(string command)
-    {
-        return ResolveExecutable(
-            command,
-            Environment.GetEnvironmentVariable("PATH"),
-            OperatingSystem.IsWindows());
-    }
-
-    internal static string? ResolveExecutable(string command, string? path, bool isWindows)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(command);
-        if (string.IsNullOrWhiteSpace(path))
-        {
-            return null;
-        }
-
-        var fileNames = isWindows
-            ? new[] { $"{command}.exe", command }
-            : new[] { command };
-
-        foreach (var directory in path.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
-        {
-            var absoluteDirectory = directory.Trim('"');
-            if (!Path.IsPathFullyQualified(absoluteDirectory))
-            {
-                continue;
-            }
-
-            foreach (var fileName in fileNames)
-            {
-                var candidate = Path.Combine(absoluteDirectory, fileName);
-                if (File.Exists(candidate))
-                {
-                    return candidate;
-                }
-            }
-        }
-
-        return null;
-    }
+    internal static string? ResolveExecutable(string command) =>
+        ExecutableResolver.Resolve(command, Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows());
 }

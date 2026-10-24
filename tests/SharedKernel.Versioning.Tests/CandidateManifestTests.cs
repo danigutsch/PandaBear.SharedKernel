@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
-using PandaBear.Versioning.Tool;
+using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tests;
 

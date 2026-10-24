@@ -21,6 +21,9 @@ internal static class DocumentationCommandLine
         ArgumentException.ThrowIfNullOrWhiteSpace(rootPath);
 
         var root = new RootCommand("Generates Markdown blocks and checks documentation facts from repository configuration.");
+
+        // Consumer caller tests parse command lines with [diagram] without running them.
+        root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(CreateGenerateCommand(rootPath));
         root.Subcommands.Add(CreateVerifyCommand(rootPath));
         root.Subcommands.Add(CreateCheckCommand(rootPath));

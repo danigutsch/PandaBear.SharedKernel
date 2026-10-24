@@ -4,7 +4,10 @@ namespace PandaBear.Versioning.Tool;
 
 internal static class PackageConsumptionCommand
 {
-    /// <summary>Restores, builds, and runs the samples against the packages in <paramref name="feed" />, writing child process output to <paramref name="error" />.</summary>
+    /// <summary>
+    /// Installs the tool packages in <paramref name="feed" /> and runs their commands with <c>--help</c>, then restores, builds,
+    /// and runs the samples against the packages, writing child process output to <paramref name="error" />.
+    /// </summary>
     public static async Task Run(string root, string feed, string version, bool aot, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var packages = Directory.GetFiles(feed, "*.nupkg");
@@ -13,6 +16,7 @@ internal static class PackageConsumptionCommand
             throw new ArgumentException("Candidate feed contains no packages.");
         }
         var packageIds = SharedKernelLocalFeed.ReadPackageIds(packages, version);
+        await ToolPackageCheck.Run(root, feed, version, packages, CommandRunner.Run, error, ct).ConfigureAwait(false);
         var external = XDocument.Load(Path.Combine(root, "Directory.Packages.props"))
             .Descendants("PackageVersion").ToDictionary(x => (string)x.Attribute("Include")!, x => (string)x.Attribute("Version")!, StringComparer.Ordinal);
         var scratch = Path.Combine(Path.GetTempPath(), "sharedkernel-package-check-" + Guid.NewGuid().ToString("N"));

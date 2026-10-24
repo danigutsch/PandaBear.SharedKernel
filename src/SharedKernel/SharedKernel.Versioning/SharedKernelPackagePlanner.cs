@@ -8,7 +8,14 @@ public static class SharedKernelPackagePlanner
     private static readonly string[] ConsumerSupportProjects =
         ["SharedKernel.Testing.Contracts", "SharedKernel.MalwareScanning.ClamAv.Testing"];
     private static readonly string[] PackagedTools =
-        ["SharedKernel.Versioning.Tool", "SharedKernel.Testing.CodeFixRunner", "SharedKernel.PlaywrightMcp.Tool", "SharedKernel.Documentation.Tool", "SharedKernel.RepoConfig.Tool"];
+    [
+        "SharedKernel.Versioning.Tool",
+        "SharedKernel.Testing.CodeFixRunner",
+        "SharedKernel.PlaywrightMcp.Tool",
+        "SharedKernel.Documentation.Tool",
+        "SharedKernel.RepoConfig.Tool",
+        "SharedKernel.CI.Tool",
+    ];
     /// <summary>
     /// Resolves the package directory for a package version.
     /// </summary>

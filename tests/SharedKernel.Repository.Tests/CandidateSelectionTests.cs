@@ -1,4 +1,4 @@
-using PandaBear.Repository.Tool;
+using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests;
 

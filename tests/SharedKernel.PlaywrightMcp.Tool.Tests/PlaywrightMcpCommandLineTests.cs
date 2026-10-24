@@ -125,6 +125,35 @@ public sealed class PlaywrightMcpCommandLineTests
         rootCommand.Subcommands.ShouldAllSatisfy(command => selections.ShouldContain(command.Name));
     }
 
+    [Theory]
+    [InlineData("serve", 0)]
+    [InlineData("serve --hlep", 1)]
+    public async Task Diagram_directive_reports_whether_a_command_line_parses_without_starting_a_process(
+        string commandLine,
+        int expectedExitCode)
+    {
+        // Arrange
+        ArgumentNullException.ThrowIfNull(commandLine);
+        var environment = new PlaywrightMcpTestEnvironment();
+        environment.SetExecutable("docker", PlaywrightMcpTestEnvironment.GetExecutablePath("docker"));
+        var invocation = 0;
+
+        // Act
+        var exitCode = await environment.Invoke(
+            ["[diagram]", .. commandLine.Split(' ')],
+            (_, _) =>
+            {
+                invocation++;
+                return Task.FromResult(new ProcessResult(0, string.Empty, string.Empty));
+            },
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(expectedExitCode, "Consumer caller tests read the parse result from the exit code.");
+        invocation.ShouldBe(0);
+        environment.Output.ToString().ShouldContain("[ serve", StringComparison.Ordinal);
+    }
+
     [Fact]
     public async Task Missing_command_fails_parsing_before_any_process_starts()
     {

@@ -67,6 +67,7 @@ flowchart TB
     selection[selection]
     library[library]
     hosted_tests[hosted-tests]
+    source_build[source-build]
     candidate[candidate]
     linux_package_consumption[linux-package-consumption]
     windows_package_consumption[windows-package-consumption]
@@ -76,6 +77,7 @@ flowchart TB
     trigger --> selection
     selection --> library
     selection --> hosted_tests
+    selection --> source_build
     selection --> candidate
     candidate --> linux_package_consumption
     candidate --> windows_package_consumption

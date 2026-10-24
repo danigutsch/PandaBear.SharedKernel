@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using PandaBear.Repository.Tool;
+using PandaBear.CI.Tool;
 using PandaBear.Testing;
 
 namespace PandaBear.Repository.Tests;
@@ -88,5 +88,50 @@ public sealed class ProcessRunnerTests
 
         // Assert
         exception.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task Timed_out_process_is_terminated_and_reported_as_a_timeout()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var processIdPath = Path.Combine(directory.Path, "child.pid");
+        var bashPath = processIdPath.Replace("'", "'\\''", StringComparison.Ordinal);
+        var powerShellPath = processIdPath.Replace("'", "''", StringComparison.Ordinal);
+        var (fileName, arguments) = TestShell.Command(
+            $"echo $$ > '{bashPath}'; exec sleep 60",
+            $"Set-Content -LiteralPath '{powerShellPath}' -Value $PID; Start-Sleep -Seconds 60");
+        var timeProvider = new ManualTimeProvider();
+        var running = ProcessRunner.Run(fileName, arguments, Path.GetTempPath(), TimeSpan.FromMinutes(10), timeProvider, static _ => { }, TestContext.Current.CancellationToken);
+        var processId = await ChildProcessId.Read(processIdPath, running, TestContext.Current.CancellationToken);
+
+        // Act
+        // The timeout fires only after the child has reported its process ID, however long its shell took to start.
+        timeProvider.Fire();
+        var action = () => running.WaitAsync(TimeSpan.FromSeconds(30), TestContext.Current.CancellationToken);
+        var exception = await action.ShouldThrow<TimeoutException>();
+
+        // Assert
+        exception.Message.ShouldContain("did not exit within 600 seconds", StringComparison.Ordinal);
+        var lookup = () => Process.GetProcessById(processId);
+        lookup.ShouldThrow<ArgumentException>();
+    }
+
+    [Fact]
+    public void Git_runs_without_inherited_git_variables()
+    {
+        // Arrange
+        var startInfo = new ProcessStartInfo("git");
+        startInfo.Environment["GIT_DIR"] = "/elsewhere/.git";
+        startInfo.Environment["GIT_WORK_TREE"] = "/elsewhere";
+        startInfo.Environment["git_index_file"] = "/elsewhere/index";
+        startInfo.Environment["SHAREDKERNEL_UNRELATED"] = "kept";
+
+        // Act
+        ProcessRunner.RemoveGitVariables(startInfo);
+
+        // Assert
+        startInfo.Environment.Keys.ShouldNotContain(static name => name.StartsWith("GIT_", StringComparison.OrdinalIgnoreCase), "Git reads repository locations from these variables.");
+        startInfo.Environment["SHAREDKERNEL_UNRELATED"].ShouldBe("kept");
     }
 }
