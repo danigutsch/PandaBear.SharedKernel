@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using PandaBear.Tooling;
 
 namespace PandaBear.CI.Tool;
 
@@ -9,11 +10,12 @@ internal static class ProcessRunner
     private static readonly TimeSpan TerminationTimeout = TimeSpan.FromSeconds(2);
 
     /// <summary>Runs a process and returns its standard output.</summary>
+    /// <remarks>A bare command name resolves only from the absolute directories of <c>PATH</c>.</remarks>
     /// <exception cref="InvalidOperationException">The process could not start or exited with a non-zero code.</exception>
     /// <exception cref="OperationCanceledException"><paramref name="ct"/> was cancelled; the process tree is terminated first.</exception>
     public static async Task<string> Run(string fileName, string[] arguments, string workingDirectory, CancellationToken ct)
     {
-        var startInfo = new ProcessStartInfo(fileName)
+        var startInfo = new ProcessStartInfo(ExecutableResolver.ResolveCommand(fileName))
         {
             RedirectStandardError = true,
             RedirectStandardOutput = true,

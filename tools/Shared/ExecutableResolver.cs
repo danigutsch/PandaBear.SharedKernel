@@ -7,6 +7,19 @@ namespace PandaBear.Tooling;
 /// </summary>
 internal static class ExecutableResolver
 {
+    /// <summary>
+    /// Returns <paramref name="fileName"/> when it is a fully qualified path, otherwise the executable that
+    /// <see cref="Resolve"/> finds in the absolute directories of the process <c>PATH</c>.
+    /// </summary>
+    /// <param name="fileName">A command name or a fully qualified executable path.</param>
+    /// <returns>The absolute executable path to start.</returns>
+    /// <exception cref="InvalidOperationException">No absolute <c>PATH</c> directory contains the command.</exception>
+    internal static string ResolveCommand(string fileName) =>
+        Path.IsPathFullyQualified(fileName)
+            ? fileName
+            : Resolve(fileName, Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows())
+                ?? throw new InvalidOperationException($"Failed to start {fileName}: no absolute PATH directory contains it.");
+
     /// <summary>Returns the first executable named <paramref name="command"/> in an absolute directory of <paramref name="path"/>.</summary>
     /// <param name="command">The command name, without an extension.</param>
     /// <param name="path">The directory list, separated by <see cref="Path.PathSeparator"/>.</param>
