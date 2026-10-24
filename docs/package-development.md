@@ -27,9 +27,9 @@ reports are evidence for those projects, not whole-repository coverage trends. T
 Build gates retain SDK analyzers (`AnalysisMode=All`), SharedKernel analyzers, warnings as errors, public API checks, dependency vulnerability auditing,
 and package-consumption checks. No remote SonarCloud upload or proprietary coverage collector is required.
 
-`SharedKernel.CI.Tool` is repository-only and is not packaged. Selection reads the live solution, includes
-reverse transitive dependents and whole test projects, and falls back to full validation when history or dependencies are uncertain. Full runs happen
-nightly; selection reasons are retained in CI.
+`SharedKernel.CI.Tool` packs as the `sharedkernel-ci` tool and also builds from a sparse checkout of its own directory
+and `tools/Shared`. Selection reads the live solution, includes reverse transitive dependents and whole test projects, and falls back to full
+validation when history or dependencies are uncertain. Full runs happen nightly; selection reasons are retained in CI.
 
 ```sh
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select --base <base-revision>

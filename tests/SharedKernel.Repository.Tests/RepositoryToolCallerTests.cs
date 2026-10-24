@@ -41,6 +41,29 @@ public sealed class RepositoryToolCallerTests
         selections.ShouldBe(["select --github-output $GITHUB_OUTPUT", "select --github-output $GITHUB_OUTPUT --base $BASE_SHA"]);
     }
 
+    [Fact]
+    public void Tool_readme_runs_the_installed_tool_and_the_project()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+
+        // Act
+        var readmeCallers = RepositoryToolCallers.Find(root)
+            .Where(static caller => caller.File == "tools/SharedKernel.CI.Tool/README.md")
+            .Select(static caller => string.Join(' ', caller.Arguments))
+            .ToArray();
+
+        // Assert
+        readmeCallers.ShouldBe(
+            [
+                "verify-pr-title --event <event.json>",
+                "select --base <revision>",
+                "validate",
+                "verify-pr-title --event <event.json>",
+            ],
+            "Installation runs the installed sharedkernel-ci, and this repository runs the project.");
+    }
+
     [Theory]
     [InlineData(".github/workflows/ci.yml", "select")]
     [InlineData(".github/workflows/ci.yml", "validate")]

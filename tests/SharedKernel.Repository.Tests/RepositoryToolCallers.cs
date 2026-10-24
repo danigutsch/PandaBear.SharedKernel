@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace PandaBear.Repository.Tests;
 
-/// <summary>Finds repository tool command lines in workflows and the tool README.</summary>
+/// <summary>Finds CI tool command lines, from source or the installed sharedkernel-ci, in workflows and the tool README.</summary>
 internal static partial class RepositoryToolCallers
 {
     private const string ArrayExpansion = "${args[@]}";
@@ -39,7 +39,7 @@ internal static partial class RepositoryToolCallers
 
     private static string[] Split(string commandLine) => [.. CommandLineParser.SplitCommandLine(commandLine)];
 
-    [GeneratedRegex(@"tools/SharedKernel\.CI\.Tool[^\n`]*? -- (?<arguments>[^\n`]*)", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"(?:tools/SharedKernel\.CI\.Tool|sharedkernel-ci)[^\n`]*? -- (?<arguments>[^\n`]*)", RegexOptions.CultureInvariant)]
     private static partial Regex Invocation();
 
     [GeneratedRegex(@"args\+=\((?<values>[^)\n]*)\)", RegexOptions.CultureInvariant)]
