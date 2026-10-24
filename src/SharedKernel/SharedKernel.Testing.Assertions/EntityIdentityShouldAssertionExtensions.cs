@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Diagnostics.CodeAnalysis;
+using static PandaBear.Testing.Assertions.UserMessageAssertions;
 
 namespace PandaBear.Testing.Assertions;
 
@@ -15,6 +16,13 @@ public static class EntityIdentityShouldAssertionExtensions
         var hasStandardVariant = guidText[19] is '8' or '9' or 'a' or 'b';
         hasStandardVariant.ShouldBeTrue("Expected the standard UUID variant.");
     }
+
+    /// <summary>Verifies a UUID version 7 identifier with the standard UUID variant.</summary>
+    /// <param name="id">The identifier.</param>
+    /// <param name="userMessage">Why the test expects the assertion to hold; the failure message starts with it.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userMessage"/> is null.</exception>
+    public static void ShouldBeUuidV7(this Guid id, string userMessage) =>
+        WithUserMessage(userMessage, () => id.ShouldBeUuidV7());
 
     private static void SetId<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties)] T>(T entity, Guid id)
     {
@@ -32,6 +40,7 @@ public static class EntityIdentityShouldAssertionExtensions
     /// <param name="first">The first test-owned entity.</param>
     /// <param name="second">The test-owned entity assigned the same identity, then an empty identity.</param>
     /// <param name="different">The test-owned entity assigned a different identity.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="first"/>, <paramref name="second"/>, or <paramref name="different"/> is null.</exception>
     public static void ShouldHaveGeneratedIdentitySemantics<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties)] T>(this T first, T second, T different)
         where T : class
     {
@@ -60,4 +69,16 @@ public static class EntityIdentityShouldAssertionExtensions
         set.ShouldNotContain(second);
         (EqualityComparer<T>.Default.Equals(first, null)).ShouldBeFalse();
     }
+
+    /// <summary>Verifies equality and hash behavior for matching, different, and empty GUID identities.</summary>
+    /// <remarks>Mutates the supplied test-owned instances through their Id setter, including private init setters.</remarks>
+    /// <typeparam name="T">The entity type with a GUID Id property.</typeparam>
+    /// <param name="first">The first test-owned entity.</param>
+    /// <param name="second">The test-owned entity assigned the same identity, then an empty identity.</param>
+    /// <param name="different">The test-owned entity assigned a different identity.</param>
+    /// <param name="userMessage">Why the test expects the assertion to hold; the failure message starts with it.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="first"/>, <paramref name="second"/>, or <paramref name="different"/> is null. Also thrown when <paramref name="userMessage"/> is null.</exception>
+    public static void ShouldHaveGeneratedIdentitySemantics<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.NonPublicProperties)] T>(this T first, T second, T different, string userMessage)
+        where T : class =>
+        WithUserMessage(userMessage, () => first.ShouldHaveGeneratedIdentitySemantics(second, different));
 }

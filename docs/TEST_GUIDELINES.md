@@ -6,10 +6,13 @@ act in a named local and check it under `// Assert`; an exception assertion that
 `// Act`. Use a single `// Act, Assert` line only when one call both acts and asserts and nothing else is checked.
 `SKTEST007` reports a complete marker set out of order.
 
-State why an assertion holds in its message instead of a comment. `ShouldBe(expected, userMessage)`,
-`ShouldContain(predicate, userMessage)`, `ShouldNotContain(predicate, userMessage)`, `ShouldBeTrue(userMessage)`, and
-`ShouldBeFalse(userMessage)` put the message before the failure that they report. Keep comments for setup and for how an
-act works.
+State why an assertion holds in its message instead of a comment. Every `Should*` assertion in
+`PandaBear.Testing.Assertions`, `PandaBear.Testing.Http`, and `PandaBear.Testing.Playwright` takes the reason as
+`userMessage` after its other arguments and before a trailing `CancellationToken`, and the failure message starts with
+it. Pass the values of a `params` assertion as an array to add a message. Name the argument (`userMessage: "..."`) when
+the argument before it is also a string. `ShouldBeTrue` and `ShouldBeFalse` take it as an optional argument.
+`ShouldThrow<T>()` without a parameter name takes no message, because its string overload checks `paramName`. Keep
+comments for setup and for how an act works.
 
 Use the capability-specific `Should*` APIs so failures describe the assertion that failed.
 Keep domain setup local and preserve cancellation, isolation, and cleanup assertions when migrating.
@@ -32,7 +35,8 @@ Keep domain setup local and preserve cancellation, isolation, and cleanup assert
   Intentional null expectations require guarding the parent explicitly instead, for example
   `value.ShouldNotBeNull().Title.ShouldBeNull()`; no projected-value fix is offered for those cases.
 - Use `await page.ShouldHaveTitle(expectedTitle)` from `PandaBear.Testing.Playwright` for default
-  string title assertions. `SKTEST015` reports the equivalent direct Playwright call. Regex titles,
+  string title assertions. `SKTEST015` reports the equivalent direct Playwright call; a message given to
+  `Expect(page, message)` moves to `ShouldHaveTitle(expectedTitle, userMessage)`. Regex titles,
   explicit options, and assertions without a matching repository wrapper remain outside this rule.
   The specialized Playwright implementation may call the native assertion API directly.
 
