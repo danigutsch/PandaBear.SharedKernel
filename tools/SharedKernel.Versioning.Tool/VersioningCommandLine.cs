@@ -33,6 +33,10 @@ internal static class VersioningCommandLine
             CreateConsumeCandidate(),
             CreateConsumePackages(),
             CreateStageCandidate(),
+
+            // [diagram] is not a default directive. Consuming repositories' caller tests parse their command lines with it,
+            // which prints the parse without running the command and exits 1 when the command line does not parse.
+            new DiagramDirective(),
         };
     }
 

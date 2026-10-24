@@ -70,7 +70,8 @@ sharedkernel-version stage-candidate --candidate <path> --feed <path> --output <
 ```
 
 Every command except `classify-commit` and `compute` accepts `--repo-root <path>`, which defaults to the current
-directory. `sharedkernel-version <command> --help` describes each option.
+directory. `sharedkernel-version <command> --help` describes each option. A command line that starts with
+`[diagram]` prints how it parses without running the command, and exits 1 when it does not parse.
 
 ### Versions
 
