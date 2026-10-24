@@ -74,11 +74,13 @@ internal static class CandidateCommand
         string root, string manifest, string destination, bool aot, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var evidence = CandidateManifest.ReadAndVerify(manifest);
+        var feed = Path.GetDirectoryName(manifest)!;
+        RequireListedPackagesOnly(feed, evidence["packageSha256"]!.AsObject());
         var platform = OperatingSystem.IsWindows() ? "windowsPackageConsumption" : "linuxPackageConsumption";
         try
         {
             await PackageConsumptionCommand.Run(
-                root, Path.GetDirectoryName(manifest)!, evidence["packageVersion"]!.GetValue<string>(), aot, output, error, ct).ConfigureAwait(false);
+                root, feed, evidence["packageVersion"]!.GetValue<string>(), aot, output, error, ct).ConfigureAwait(false);
         }
         catch (Exception) when (!ct.IsCancellationRequested)
         {
@@ -95,5 +97,25 @@ internal static class CandidateCommand
         }
 
         CandidateManifest.Write(destination, evidence);
+    }
+
+    /// <summary>
+    /// Requires the file name of every package in <paramref name="feed" /> to be a key of <paramref name="hashes" />,
+    /// compared ordinally. Consumption installs every tool package in the directory and restores from it, and NuGet can
+    /// restore an unlisted package instead of a listed one whose file name differs only in case.
+    /// </summary>
+    /// <exception cref="ArgumentException">The directory holds a package that the manifest does not list.</exception>
+    private static void RequireListedPackagesOnly(string feed, JsonObject hashes)
+    {
+        var listed = hashes.Select(static hash => hash.Key).ToHashSet(StringComparer.Ordinal);
+        var unlisted = Directory.GetFiles(feed, "*.nupkg")
+            .Select(static package => Path.GetFileName(package))
+            .Where(name => !listed.Contains(name))
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+        if (unlisted.Length != 0)
+        {
+            throw new ArgumentException($"Candidate directory {feed} holds packages that the manifest does not list: {string.Join(", ", unlisted)}.");
+        }
     }
 }
