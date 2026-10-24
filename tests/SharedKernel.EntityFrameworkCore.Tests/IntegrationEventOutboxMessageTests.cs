@@ -141,6 +141,26 @@ public sealed class IntegrationEventOutboxMessageTests
         result.FailureMessage.ShouldContain("batch size", StringComparison.OrdinalIgnoreCase);
     }
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Consumer_options_reject_a_non_positive_attempt_limit(int maxConsumeAttempts)
+    {
+        // Arrange
+        var validator = new IntegrationEventOutboxRelayOptionsValidator();
+        var options = new IntegrationEventOutboxRelayOptions
+        {
+            MaxConsumeAttempts = maxConsumeAttempts
+        };
+
+        // Act
+        var result = validator.Validate(null, options);
+
+        // Assert
+        result.Failed.ShouldBeTrue();
+        result.FailureMessage.ShouldContain("attempt", StringComparison.OrdinalIgnoreCase);
+    }
+
     [Fact]
     public void Relay_options_reject_non_positive_poll_interval()
     {

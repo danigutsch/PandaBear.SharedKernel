@@ -156,6 +156,58 @@ public sealed class PostgreSqlIntegrationEventTransportTests(PostgreSqlFixture f
     }
 
     [Fact]
+    public async Task Consumer_poisons_a_message_after_its_attempt_limit_and_stops_claiming_it()
+    {
+        // Arrange
+        const string eventId = "consumer-poison";
+        var ct = TestContext.Current.CancellationToken;
+        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 10, 24, 12, 0, 0, TimeSpan.Zero));
+        await Scenario.SeedMessage(eventId, ct);
+        var publisher = new RecordingEventEnvelopePublisher { Failure = new InvalidOperationException("handler failed") };
+
+        // Act
+        var first = await Scenario.ConsumeWith(publisher, ct, timeProvider, maxConsumeAttempts: 2);
+        timeProvider.Advance(TimeSpan.FromMinutes(10));
+        var second = await Scenario.ConsumeWith(publisher, ct, timeProvider, maxConsumeAttempts: 2);
+        timeProvider.Advance(TimeSpan.FromHours(1));
+        var third = await Scenario.ConsumeWith(publisher, ct, timeProvider, maxConsumeAttempts: 2);
+
+        // Assert
+        (first, second, third).ShouldBe((1, 1, 0));
+        var message = await Scenario.GetMessage(eventId, ct);
+        message.ConsumeAttempts.ShouldBe(2);
+        message.PoisonedAt.ShouldNotBeNull();
+        message.ProcessedAt.ShouldBeNull();
+        message.NextConsumeAttemptAt.ShouldBeNull();
+        message.ClaimedBy.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task A_poisoned_message_does_not_block_later_messages_and_can_be_replayed()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var timeProvider = new AdjustableTimeProvider(new DateTimeOffset(2026, 10, 24, 12, 0, 0, TimeSpan.Zero));
+        await Scenario.SeedMessage("poisoned-first", ct);
+        var failing = new RecordingEventEnvelopePublisher { Failure = new InvalidOperationException("handler failed") };
+        await Scenario.ConsumeWith(failing, ct, timeProvider, maxConsumeAttempts: 1);
+        await Scenario.SeedMessage("healthy-later", ct);
+        var healthy = new RecordingEventEnvelopePublisher();
+
+        // Act
+        var later = await Scenario.ConsumeWith(healthy, ct, timeProvider, maxConsumeAttempts: 1);
+        await Scenario.ReplayPoisoned("poisoned-first", timeProvider.GetUtcNow(), ct);
+        var replayed = await Scenario.ConsumeWith(healthy, ct, timeProvider, maxConsumeAttempts: 1);
+
+        // Assert
+        (later, replayed).ShouldBe((1, 1));
+        healthy.Published.Select(envelope => envelope.EventId).ShouldBe(["healthy-later", "poisoned-first"]);
+        var message = await Scenario.GetMessage("poisoned-first", ct);
+        message.PoisonedAt.ShouldBeNull();
+        message.ProcessedAt.ShouldNotBeNull();
+    }
+
+    [Fact]
     public async Task Consumer_uses_one_scope_and_processes_a_claimed_batch_sequentially()
     {
         // Arrange

@@ -52,6 +52,7 @@ internal sealed class IntegrationEventTransportMessageConfiguration : IEntityTyp
         builder.Property(message => message.ConsumerName).HasMaxLength(IntegrationEventTransportMessage.ConsumerNameMaxLength).IsRequired();
         builder.HasIndex(message => new { message.ConsumerName, message.EventId }).IsUnique();
         builder.HasIndex(message => new { message.ConsumerName, message.ProcessedAt, message.NextConsumeAttemptAt, message.ReceivedAt });
+        builder.HasIndex(message => new { message.ConsumerName, message.PoisonedAt });
         builder.Property(message => message.EnvelopeSpec).HasMaxLength(100).IsRequired();
         builder.Property(message => message.EnvelopeSpecVersion).HasMaxLength(20).IsRequired();
         builder.Property(message => message.EventId).HasMaxLength(200).IsRequired();

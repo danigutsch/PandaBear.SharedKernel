@@ -10,6 +10,8 @@ Entity Framework Core outbox and inbox persistence provider for typed integratio
 
 Compose the outbox/inbox registration extensions with the owning EF Core context and configure `IntegrationEventStorageOptions` and relay options. The package includes durable outbox storage, claiming, relay, and PostgreSQL transport components. Producers and consumers register separately. Applications retain schemas, migrations, transport composition, handler business rules, and retention policy.
 
+Transport consumers retry a failing message without limit unless `IntegrationEventOutboxRelayOptions.MaxConsumeAttempts` is set. When a message reaches that limit it is poisoned: it stops being claimed, so later messages for the same consumer keep flowing. Use `IntegrationEventTransportPoison.CountPoisoned` to alert on poisoned messages and `IntegrationEventTransportPoison.ReleasePoisoned` to return one to delivery with a fresh attempt budget after the cause is fixed. Release from an audited operator workflow; the package does not record who released a message. Adding the poison column and index requires a migration in the context that owns the transport table.
+
 ## Install and example
 
 The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. The placeholders do not identify a published package version. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.

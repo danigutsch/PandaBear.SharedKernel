@@ -45,3 +45,8 @@ static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEven
 static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxServiceCollectionExtensions.UseDefaultIntegrationEventOutbox<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventRegistration<TContext>.AsDefaultInbox() -> PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventRegistration<TContext!>!
 PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventRegistration<TContext>.AsDefaultOutbox() -> PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventRegistration<TContext!>!
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxRelayOptions.MaxConsumeAttempts.get -> int?
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventOutboxRelayOptions.MaxConsumeAttempts.set -> void
+PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportPoison
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportPoison.CountPoisoned<TContext>(TContext! dbContext, string! consumerName, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<int>!
+static PandaBear.Messaging.IntegrationEvents.EntityFrameworkCore.IntegrationEventTransportPoison.ReleasePoisoned<TContext>(TContext! dbContext, string! consumerName, string! eventId, System.DateTimeOffset releasedAt, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<bool>!

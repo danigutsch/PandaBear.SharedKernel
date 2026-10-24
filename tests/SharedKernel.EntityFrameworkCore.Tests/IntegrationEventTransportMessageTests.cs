@@ -70,6 +70,49 @@ public sealed class IntegrationEventTransportMessageTests
     }
 
     [Fact]
+    public void MarkPoisoned_records_the_final_attempt_and_leaves_no_retry_scheduled()
+    {
+        // Arrange
+        var message = new IntegrationEventTransportMessage(
+            Guid.CreateVersion7(),
+            "consumer",
+            TransportEnvelopeFactory.Create("poison-unit"),
+            new DateTimeOffset(2026, 10, 24, 12, 0, 0, TimeSpan.Zero));
+        var attemptedAt = new DateTimeOffset(2026, 10, 24, 12, 5, 0, TimeSpan.Zero);
+
+        // Act
+        message.MarkPoisoned(attemptedAt, "handler failed");
+
+        // Assert
+        message.ConsumeAttempts.ShouldBe(1);
+        message.PoisonedAt.ShouldBe(attemptedAt);
+        message.LastConsumeAttemptAt.ShouldBe(attemptedAt);
+        message.NextConsumeAttemptAt.ShouldBeNull();
+        message.LastConsumeError.ShouldBe("handler failed");
+    }
+
+    [Fact]
+    public void ReleaseFromPoison_makes_the_message_claimable_again_with_fresh_attempts()
+    {
+        // Arrange
+        var message = new IntegrationEventTransportMessage(
+            Guid.CreateVersion7(),
+            "consumer",
+            TransportEnvelopeFactory.Create("poison-release"),
+            new DateTimeOffset(2026, 10, 24, 12, 0, 0, TimeSpan.Zero));
+        message.MarkPoisoned(new DateTimeOffset(2026, 10, 24, 12, 5, 0, TimeSpan.Zero), "handler failed");
+        var releasedAt = new DateTimeOffset(2026, 10, 24, 13, 0, 0, TimeSpan.Zero);
+
+        // Act
+        message.ReleaseFromPoison(releasedAt);
+
+        // Assert
+        message.PoisonedAt.ShouldBeNull();
+        message.ConsumeAttempts.ShouldBe(0);
+        message.NextConsumeAttemptAt.ShouldBe(releasedAt);
+    }
+
+    [Fact]
     public void MarkProcessed_clears_retry_and_claim_state()
     {
         // Arrange

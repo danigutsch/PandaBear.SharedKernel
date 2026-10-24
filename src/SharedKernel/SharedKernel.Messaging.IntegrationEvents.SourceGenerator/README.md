@@ -10,6 +10,8 @@ Source generator for typed domain-event to integration-event messaging mappings.
 
 Reference this package as a compiler analyzer with the domain and integration-event contracts. Declare `IntegrationEventMappingAttribute` mappings and explicit consumer metadata/handlers. The generator emits typed domain-to-integration mappings and closed dispatch paths; it reports missing or duplicate consumer registrations at compilation. Applications own payload contracts, business handlers, JSON metadata, and host scopes.
 
+An assembly may both produce and consume: the generated serializer covers every registered contract, while the generated envelope publisher takes JSON metadata only for consumed contracts. The handler for each consumed contract must be declared in the same assembly as its `AddIntegrationEventConsumer` registration (`SKMSG001`); a thin handler that delegates to application code in another assembly satisfies this.
+
 ## Install and example
 
 The following placeholders are intentional: replace `<validated-candidate-version>` with a candidate that has actually been built and validated, and `<private-candidate-feed>` with its private local feed. The placeholders do not identify a published package version. The code requires the package's target runtime; integration examples assume application-owned host/provider configuration.

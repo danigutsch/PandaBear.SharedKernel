@@ -18,6 +18,11 @@ internal sealed class IntegrationEventOutboxRelayOptionsValidator : IValidateOpt
             return ValidateOptionsResult.Fail("Integration event outbox relay poll interval must be greater than zero.");
         }
 
+        if (options.MaxConsumeAttempts is <= 0)
+        {
+            return ValidateOptionsResult.Fail("Integration event transport consumer max attempts must be greater than zero when set.");
+        }
+
         return options.ClaimLeaseDuration > TimeSpan.Zero
             ? ValidateOptionsResult.Success
             : ValidateOptionsResult.Fail("Integration event outbox relay claim lease duration must be greater than zero.");

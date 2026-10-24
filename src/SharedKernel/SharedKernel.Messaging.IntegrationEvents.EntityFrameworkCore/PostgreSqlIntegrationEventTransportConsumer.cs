@@ -24,7 +24,8 @@ internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
         var publisher = scope.ServiceProvider.GetRequiredService<IEventEnvelopePublisher>();
         var now = timeProvider.GetUtcNow();
         var claimedBy = Guid.CreateVersion7().ToString("N");
-        var claimedUntil = now.Add(options.Get(IntegrationEventOptionsNames.Consumer<TContext>()).ClaimLeaseDuration);
+        var consumerOptions = options.Get(IntegrationEventOptionsNames.Consumer<TContext>());
+        var claimedUntil = now.Add(consumerOptions.ClaimLeaseDuration);
         var messages = await PostgreSqlIntegrationEventTransportClaimSql.ClaimPending(
             dbContext,
             consumerName,
@@ -50,10 +51,17 @@ internal sealed class PostgreSqlIntegrationEventTransportConsumer<TContext>(
             catch (Exception exception) when (ShouldRecordConsumeFailure(exception, ct))
             {
                 var attemptedAt = timeProvider.GetUtcNow();
-                message.MarkConsumeFailed(
-                    attemptedAt,
-                    attemptedAt.Add(GetRetryDelay(message.ConsumeAttempts)),
-                    FormatConsumeError(exception));
+                if (message.ConsumeAttempts + 1 >= consumerOptions.MaxConsumeAttempts)
+                {
+                    message.MarkPoisoned(attemptedAt, FormatConsumeError(exception));
+                }
+                else
+                {
+                    message.MarkConsumeFailed(
+                        attemptedAt,
+                        attemptedAt.Add(GetRetryDelay(message.ConsumeAttempts)),
+                        FormatConsumeError(exception));
+                }
             }
 
             await dbContext.SaveChangesAsync(ct).ConfigureAwait(false);
