@@ -1,6 +1,7 @@
 # Command-line tool guidance
 
-This guidance covers every tool under `tools/`.
+This guidance covers every tool under `tools/`. Tool code holds no consuming application's policy, data, or defaults;
+the consuming repository supplies them, as [Consumer configuration](#consumer-configuration) describes.
 
 ## Packaging
 
@@ -49,6 +50,9 @@ This guidance covers every tool under `tools/`.
   System.CommandLine exits 130 for SIGINT or 143 for SIGTERM. Raise the two-second default only when cleanup
   needs longer. A signal that System.CommandLine does not handle, such as one during start-up, ends the
   process with the same codes.
+- Child processes start only from fully qualified paths. A bare command name such as `git` resolves only in the
+  absolute directories of `PATH`, as `ExecutableResolver` does, never in the application directory, the working
+  directory, or a relative `PATH` entry, so a checkout cannot supply the executable.
 - A factory builds the command tree from injected environment, such as the working directory, a process
   runner, or a clock. Actions write to `ParseResult.InvocationConfiguration.Output` and `Error`.
 - Tests parse and invoke the real tree through the factory, capture all output in one
@@ -77,12 +81,62 @@ non-interactive commands and to how they start a UI.
 - Disable color when `NO_COLOR` is set and not empty, when output is not a terminal, or when `TERM=dumb`.
   System.CommandLine colors its parse errors red when output is not redirected; tools keep that default.
 
+## Consumer configuration
+
+- A tool that applies consumer policy reads `<root>/.config/<tool-command>.json`, such as
+  `.config/sharedkernel-repo.json`, where `--root` defaults to the current directory. No option names another
+  configuration file. The exceptions are `sharedkernel-docs`, which reads the file that `--config` names;
+  `sharedkernel-repo`, whose `security` commands read `.config/security-baseline.json` and whose roadmap commands
+  read `roadmap/config.json`; and `sharedkernel-playwright-mcp`, which reads `PLAYWRIGHT_MCP_*` environment
+  variables.
+- The file is strict JSON of at most 1 MiB with `"version": 1`. Property names are camelCase and match exactly;
+  comments, trailing commas, and unknown or repeated properties are errors. Read it with a source-generated
+  `JsonSerializerContext` that sets `UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow` and
+  `AllowDuplicateProperties = false`. Errors name the file and the JSON path of the problem.
+- A command fails when the file lacks the section it needs.
+- Paths in the file are relative to the root and use `/`. They are never rooted, have no empty, `.`, or `..`
+  segments, and resolve under the root without following symbolic links.
+- Path patterns match with `FileSystemName.MatchesSimpleExpression(pattern, path, ignoreCase: false)`. Regular
+  expressions from configuration compile with `RegexOptions.NonBacktracking` and a match timeout.
+
+## GitHub Actions
+
+- Commands write GitHub Actions outputs and step summaries only to the files that `--github-output <path>` and
+  `--github-summary <path>` name. Except for the `sharedkernel-repo automation` steps, they do not read
+  `GITHUB_OUTPUT` or `GITHUB_STEP_SUMMARY`.
+- Workflows hand values to `run:` scripts through `env:`, never through `${{ }}` expressions inside the script.
+  Pull request text reaches a command only through `--event "$GITHUB_EVENT_PATH"`.
+- Workflows set a GitHub token only on the steps that call the GitHub API, as described under
+  [Secrets](#secrets). Every `actions/checkout` sets `persist-credentials: false`.
+
+## Running before a candidate is staged
+
+A consumer job that runs before its pinned candidate is staged, such as the job that stages it, builds
+`sharedkernel-ci` or `sharedkernel-repo` from SharedKernel source at the pin's `libraryRevision`:
+
+1. Check out that revision of `danigutsch/PandaBear.SharedKernel` into a directory of its own, with a cone sparse
+   checkout of `tools/<project>` and `tools/Shared`.
+2. Build inside that checkout with `dotnet build tools/<project> -c Release`, so SharedKernel's `global.json`,
+   `NuGet.Config`, and the tool's lock file apply.
+3. Run `dotnet run --project <checkout>/tools/<project> -c Release --no-build -- <command>`.
+
+The consumer and SharedKernel pin the same SDK version and roll-forward policy in `global.json`;
+`sharedkernel-ci stage-candidate` refuses to stage a candidate when they differ. Jobs that run after staging install
+the candidate's tools from that local feed and run them with `dotnet tool run`.
+
+## Shared sources
+
+Helpers that two or more tools call live in `tools/Shared`, one internal type per file in the `PandaBear.Tooling`
+namespace. A tool compiles each file it uses as a link, such as
+`<Compile Include="../Shared/ExecutableResolver.cs" Link="Shared/ExecutableResolver.cs" />`. Process runners and
+GitHub HTTP clients stay in each tool.
+
 ## Secrets
 
 - Read secrets from a terminal prompt without echo (`Console.ReadKey(intercept: true)`), from a file, or from
   standard input. Never from arguments or environment variables, which leak through process listings, shell
-  history, and child processes. A GitHub token is the exception: tools that call GitHub read it from `GH_TOKEN`
-  or `GITHUB_TOKEN`, as [`gh`](https://cli.github.com/manual/gh_help_environment) does, and keep both out of
+  history, and child processes. A GitHub token is the exception: commands that call the GitHub API read it from
+  `GH_TOKEN` or `GITHUB_TOKEN`, as [`gh`](https://cli.github.com/manual/gh_help_environment) does, and keep both out of
   child process environments.
 - Do not use `SecureString` ([DE0001](https://github.com/dotnet/platform-compat/blob/master/docs/DE0001.md)).
   Keep secret bytes in arrays you own and clear them with
@@ -112,3 +166,15 @@ non-interactive commands and to how they start a UI.
   `FakeClipboard`. Terminal.Gui 2.5.0 otherwise attaches to the controlling terminal through `/dev/tty`, even when
   standard input and output are redirected, and uses the system clipboard.
 - Every action is reachable from the keyboard. Secret values are masked until the user reveals them.
+
+## Adding a tool
+
+1. Create `tools/SharedKernel.<Name>.Tool` in the `PandaBear.<Name>.Tool` namespace, with the packaging properties
+   above, the `sharedkernel-<name>` command name, and the `PandaBear.SharedKernel.<Name>.Tool` package ID. Add it and
+   `tests/SharedKernel.<Name>.Tool.Tests` to `SharedKernel.slnx`.
+2. Add the project to `SharedKernelPackagePlanner.PackagedTools`, so candidates pack it and candidate consumption
+   installs it and runs `sharedkernel-<name> --help` on Linux and Windows.
+3. Add System.CommandLine's `DiagramDirective` to the root command, so consumer caller tests can parse command lines
+   with `[diagram]` without running them.
+4. Write the packed README, and add the test project to the `windows-package-consumption` job's test step when
+   consumers run the tool on Windows.

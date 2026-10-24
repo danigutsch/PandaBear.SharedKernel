@@ -25,7 +25,7 @@ Choose the packages your project needs. Each package has its own README with req
 
 ## Try it
 
-Download the unchanged `.nupkg` files and `candidate.json` from the `candidate-packages` artifact of a successful CI run on `main` into a local feed directory. NuGet registry publication and stable promotion remain deferred. Verify the clean source checkout matches the manifest revision and every package SHA-256 matches the trusted candidate manifest before consumption. Replace the placeholders below with that candidate's version and directory:
+Download the unchanged `.nupkg` files and `candidate.json` from a candidate's GitHub prerelease, `v<packageVersion>`, or from the `candidate-packages` artifact of a successful CI run on `main`, into a local feed directory. NuGet registry publication and stable promotion remain deferred. Verify the clean source checkout matches the manifest revision and every package SHA-256 matches the trusted candidate manifest before consumption. Replace the placeholders below with that candidate's version and directory:
 
 ```text
 dotnet add package PandaBear.SharedKernel.Results --version <preview-version> --source <candidate-feed>
