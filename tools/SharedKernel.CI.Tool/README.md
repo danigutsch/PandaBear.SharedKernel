@@ -126,8 +126,9 @@ and that every `BREAKING CHANGE` or `BREAKING-CHANGE` footer has a description. 
 - `--file <path>` reads a commit message file as UTF-8, as git passes it to a `commit-msg` hook. Trailing whitespace
   is ignored, the `# ------------------------ >8 ------------------------` line that `git commit -v` writes ends the
   message, and lines that start with `#` after optional whitespace are comments. The first remaining non-blank line
-  is the header. A message whose header starts with `Merge `, `Revert `, or `Reapply `, as git writes for merge
-  commits, reverts, and reverts of reverts, passes.
+  is the header. The check skips the `fixup! `, `amend! `, and `squash! ` prefixes that `git commit --fixup` and
+  `--squash` write for `git rebase --autosquash`, so the subject after them must pass. A header that starts with
+  `Merge `, `Revert `, or `Reapply `, as git writes for merge commits, reverts, and reverts of reverts, passes.
 
 Errors are fixed text and never repeat the title or message.
 

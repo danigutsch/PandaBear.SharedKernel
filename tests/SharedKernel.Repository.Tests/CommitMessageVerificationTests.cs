@@ -16,6 +16,7 @@ public sealed class CommitMessageVerificationTests
     [InlineData("feat:    ", "", 2)]
     [InlineData("feat: first\nfix: injected", "", 2)]
     [InlineData("Merge branch 'feature' into main", "", 2)]
+    [InlineData("fixup! feat: support the contract", "", 2)]
     [InlineData("feat: support the contract", "BREAKING CHANGE missing colon", 2)]
     [InlineData("feat: change the contract", "BREAKING CHANGE:", 2)]
     public async Task Event_rejects_invalid_squash_headers_and_breaking_footers(string title, string body, int expected)
@@ -84,7 +85,12 @@ public sealed class CommitMessageVerificationTests
     [InlineData("Merge branch 'feature' into main\n\n# Conflicts:\n#\tsrc/Contract.cs\n")]
     [InlineData("Revert \"feat: support the contract\"\n\nThis reverts commit 0123456789abcdef0123456789abcdef01234567.\n")]
     [InlineData("Reapply \"feat: support the contract\"\n\nThis reverts commit 0123456789abcdef0123456789abcdef01234567.\n")]
-    public async Task Message_file_accepts_conventional_headers_and_git_merge_and_revert_messages(string message)
+    [InlineData("fixup! feat: support the contract\n")]
+    [InlineData("squash! feat: support the contract\n\nAlso cover the contract.\n")]
+    [InlineData("amend! feat: support the contract\n\nfeat: support the new contract\n")]
+    [InlineData("fixup! amend! feat: support the contract\n")]
+    [InlineData("fixup! Merge branch 'feature' into main\n")]
+    public async Task Message_file_accepts_conventional_headers_and_the_messages_git_writes(string message)
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
@@ -110,6 +116,9 @@ public sealed class CommitMessageVerificationTests
     [InlineData("feat:    \n", HeaderError)]
     [InlineData("  feat: support the contract\n", HeaderError)]
     [InlineData("\uFEFFfeat: support the contract\n", HeaderError)]
+    [InlineData("fixup! Update contract\n", HeaderError)]
+    [InlineData("fixup!feat: support the contract\n", HeaderError)]
+    [InlineData("squash! feat: support the contract\n\nBREAKING CHANGE missing colon\n", FooterError)]
     [InlineData("feat: support the contract\n\nBREAKING CHANGE missing colon\n", FooterError)]
     [InlineData("feat: support the contract\n\nBREAKING-CHANGE:  \n", FooterError)]
     public async Task Message_file_without_a_valid_header_or_breaking_footer_fails_with_fixed_text(string message, string expectedError)
@@ -134,6 +143,8 @@ public sealed class CommitMessageVerificationTests
     [InlineData("feat: ", 100, 0)]
     [InlineData("feat: ", 101, 2)]
     [InlineData("Merge ", 101, 0)]
+    [InlineData("fixup! feat: ", 107, 0)]
+    [InlineData("fixup! feat: ", 108, 2)]
     public async Task Message_file_header_is_limited_to_100_characters_unless_git_wrote_it(string prefix, int length, int expected)
     {
         // Arrange
