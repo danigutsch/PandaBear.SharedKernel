@@ -407,7 +407,9 @@ internal static class VersioningCommandLine
         version.Required = true;
         var aot = AotOption();
         var repoRoot = RepoRootOption();
-        var command = new Command("consume-packages", "Restores, builds, and runs the samples against the packages in a feed.")
+        var command = new Command(
+            "consume-packages",
+            "Installs the tool packages in a feed and runs their commands with --help, then restores, builds, and runs the samples against the packages.")
         {
             feed,
             version,
