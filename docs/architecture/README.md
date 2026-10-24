@@ -65,8 +65,7 @@ flowchart TB
 flowchart TB
     trigger[Pull request, main push, nightly, or manual run]
     selection[selection]
-    library[library]
-    hosted_tests[hosted-tests]
+    validate[validate]
     source_build[source-build]
     candidate[candidate]
     linux_package_consumption[linux-package-consumption]
@@ -75,8 +74,7 @@ flowchart TB
     published_candidate_consumption[published-candidate-consumption]
     validation_summary[validation-summary]
     trigger --> selection
-    selection --> library
-    selection --> hosted_tests
+    selection --> validate
     selection --> source_build
     selection --> candidate
     candidate --> linux_package_consumption

@@ -13,7 +13,8 @@ dotnet build SharedKernel.slnx -c Release --no-restore
 dotnet test --solution SharedKernel.slnx -c Release --no-build --no-restore
 ```
 
-Coverage uses the MIT-licensed `coverlet.MTP` extension. To collect Cobertura for a project, run:
+Coverage uses the MIT-licensed `coverlet.MTP` extension, which every test project references, so `sharedkernel-ci run
+--coverage` gets a Cobertura report from each selected test project. To collect Cobertura for a project, run:
 
 ```sh
 dotnet test --project tests/SharedKernel.HttpClients.Tests/SharedKernel.HttpClients.Tests.csproj -c Release --no-build --no-restore --coverlet --results-directory TestResults/coverage
@@ -28,12 +29,14 @@ Build gates retain SDK analyzers (`AnalysisMode=All`), SharedKernel analyzers, w
 and package-consumption checks. No remote SonarCloud upload or proprietary coverage collector is required.
 
 `SharedKernel.CI.Tool` packs as the `sharedkernel-ci` tool and also builds from a sparse checkout of its own directory
-and `tools/Shared`. Selection reads the live solution, includes reverse transitive dependents and whole test projects, and falls back to full
-validation when history or dependencies are uncertain. Full runs happen nightly; selection reasons are retained in CI.
+and `tools/Shared`. Selection follows `.config/sharedkernel-ci.json`: it selects the test projects that depend on the
+changed projects, writes one solution filter per test slice, and selects every test project when history, a path, or a
+reference is uncertain. A library or tool change selects only the test projects that depend on it, and still runs the
+candidate job, which packs and consumes every package. Full runs happen nightly; selection reasons are retained in CI.
 
 ```sh
-dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select --base <base-revision>
-dotnet run --project tools/SharedKernel.CI.Tool -c Release -- validate
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select --base <base-object-id>
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice library
 ```
 
 Commit changes before creating candidate evidence. Candidates receive unique ordered prerelease versions and are never overwritten.
@@ -47,6 +50,9 @@ dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- consume-ca
 ```
 
 Candidate packages and their manifest can be copied together to another machine; consumption regenerates configuration for the current feed location.
+A consumer repository records its compatibility with a candidate by running its own build and tests on a clean clone of its committed revision
+with `sharedkernel-version verify-consumer --candidate <candidate.json> -- <command>...`; the
+[Versioning tool README](../tools/SharedKernel.Versioning.Tool/README.md#candidates) describes the checks and the evidence.
 Linux and Windows consume the same hashed artifacts before stable promotion. Repository and Source Link metadata target the public repository; candidate validation records source and symbol evidence separately.
 
 

@@ -13,6 +13,8 @@ internal static partial class RepositoryToolCallers
     {
         ["$GITHUB_REPOSITORY"] = "danigutsch/PandaBear.SharedKernel",
         ["$env:GITHUB_REPOSITORY"] = "danigutsch/PandaBear.SharedKernel",
+        ["$SLICE"] = "library",
+        ["<name>"] = "library",
     };
 
     public static IEnumerable<RepositoryToolCaller> Find(string root)

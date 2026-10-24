@@ -24,6 +24,7 @@
         <Compile Include="../Shared/CandidateManifest.cs" Link="Shared/CandidateManifest.cs" />
         <Compile Include="../Shared/ControlCharacters.cs" Link="Shared/ControlCharacters.cs" />
         <Compile Include="../Shared/ExecutableResolver.cs" Link="Shared/ExecutableResolver.cs" />
+        <Compile Include="../Shared/RepositoryPath.cs" Link="Shared/RepositoryPath.cs" />
     </ItemGroup>
 
     <ItemGroup>

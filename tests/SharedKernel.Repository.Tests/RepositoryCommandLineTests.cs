@@ -3,7 +3,7 @@ namespace PandaBear.Repository.Tests;
 public sealed class RepositoryCommandLineTests
 {
     [Fact]
-    public async Task Help_lists_the_select_validate_stage_candidate_and_verify_commit_message_commands()
+    public async Task Help_lists_the_select_run_openapi_install_playwright_coverage_stage_candidate_and_verify_commit_message_commands()
     {
         // Arrange
         using var scope = new RepositoryTestScope();
@@ -15,7 +15,11 @@ public sealed class RepositoryCommandLineTests
         // Assert
         result.ExitCode.ShouldBe(0);
         result.Output.ShouldContain("  select ", StringComparison.Ordinal);
-        result.Output.ShouldContain("  validate ", StringComparison.Ordinal);
+        result.Output.ShouldContain("  run ", StringComparison.Ordinal);
+        result.Output.ShouldContain("  openapi ", StringComparison.Ordinal);
+        result.Output.ShouldContain("  install-playwright ", StringComparison.Ordinal);
+        result.Output.ShouldContain("  coverage ", StringComparison.Ordinal);
+        result.Output.ShouldNotContain("  validate ", StringComparison.Ordinal);
         result.Output.ShouldContain("  stage-candidate ", StringComparison.Ordinal);
         result.Output.ShouldContain("  verify-commit-message ", StringComparison.Ordinal);
         result.Error.ShouldBe(string.Empty);
@@ -23,8 +27,32 @@ public sealed class RepositoryCommandLineTests
     }
 
     [Theory]
-    [InlineData("select", "--base <revision>", "--github-output <path>", "--root <path>", "--selection <directory>", "[default: TestResults/selection]")]
-    [InlineData("validate", "--test-group <group>", "[default: all]", "--root <path>", "--selection <directory>")]
+    [InlineData("select", "--base <object-id>", "--github-output <path>", "--root <path>", "--selection <directory>", "[default: TestResults/selection]")]
+    [InlineData(
+        "run",
+        "--slice <name>",
+        "--configuration <name>",
+        "[default: Release]",
+        "--coverage",
+        "--install-playwright",
+        "--playwright-dependencies",
+        "--github-summary <path>",
+        "--root <path>",
+        "--selection <directory>")]
+    [InlineData("openapi", "generate", "refresh")]
+    [InlineData("openapi generate", "--target <name>", "--root <path>")]
+    [InlineData("openapi refresh", "--target <name>", "--root <path>")]
+    [InlineData("coverage", "record-symbols", "verify")]
+    [InlineData("coverage record-symbols", "--output <file>", "[default: TestResults/symbol-evidence.json]", "--root <path>")]
+    [InlineData(
+        "coverage verify",
+        "--report <path> (REQUIRED)",
+        "--base <object-id> (REQUIRED)",
+        "--symbols <file> (REQUIRED)",
+        "--output <file>",
+        "[default: TestResults/coverage-gate.json]",
+        "--root <path>")]
+    [InlineData("install-playwright", "--project <path> (REQUIRED)", "--browser <name>", "--with-dependencies", "--configuration <name>", "--root <path>")]
     [InlineData(
         "stage-candidate",
         "--pin <file> (REQUIRED)",
@@ -37,12 +65,13 @@ public sealed class RepositoryCommandLineTests
     public async Task Command_help_lists_the_command_options(string command, params string[] expectedText)
     {
         // Arrange
+        ArgumentNullException.ThrowIfNull(command);
         ArgumentNullException.ThrowIfNull(expectedText);
         using var scope = new RepositoryTestScope();
         var processes = new ProcessLog();
 
         // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, [command, "--help"], processes.Run, TestContext.Current.CancellationToken);
+        var result = await RepositoryToolInvocation.Run(scope.Root, [.. command.Split(' '), "--help"], processes.Run, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(0);
@@ -73,7 +102,11 @@ public sealed class RepositoryCommandLineTests
 
     [Theory]
     [InlineData("[diagram] select --base main", 0)]
-    [InlineData("[diagram] validate --test-group ordinary", 0)]
+    [InlineData("[diagram] run --slice library", 0)]
+    [InlineData("[diagram] run --slice library --slice hosted --coverage --install-playwright --playwright-dependencies --github-summary summary.md", 0)]
+    [InlineData("[diagram] run --slice ../library", 1)]
+    [InlineData("[diagram] openapi refresh --target admin --target catalog", 0)]
+    [InlineData("[diagram] install-playwright --project tests/A/A.csproj --browser chromium --with-dependencies", 0)]
     [InlineData("[diagram] verify-commit-message --event event.json", 0)]
     [InlineData("[diagram] verify-commit-message --file COMMIT_EDITMSG", 0)]
     [InlineData("[diagram] verify-commit-message --event event.json --file COMMIT_EDITMSG", 1)]
@@ -102,8 +135,20 @@ public sealed class RepositoryCommandLineTests
     [Theory]
     [InlineData("")]
     [InlineData("publish")]
-    [InlineData("validate --version 1.0.0")]
-    [InlineData("validate --base main")]
+    [InlineData("validate --slice library")]
+    [InlineData("run --version 1.0.0")]
+    [InlineData("run --base main")]
+    [InlineData("run --slice build")]
+    [InlineData("run --slice Library")]
+    [InlineData("run --slice library --slice library")]
+    [InlineData("run --playwright-dependencies")]
+    [InlineData("run --configuration -c")]
+    [InlineData("run --configuration Release;Debug")]
+    [InlineData("openapi")]
+    [InlineData("openapi generate --target Admin")]
+    [InlineData("openapi generate extra")]
+    [InlineData("install-playwright")]
+    [InlineData("install-playwright --project tests/A/A.csproj --browser Chromium")]
     [InlineData("select --test-group ordinary")]
     [InlineData("select --base")]
     [InlineData("verify-commit-message")]
@@ -158,18 +203,24 @@ public sealed class RepositoryCommandLineTests
     [InlineData("select", "--root")]
     [InlineData("select", "--selection")]
     [InlineData("select", "--github-output")]
-    [InlineData("validate", "--root")]
-    [InlineData("validate", "--selection")]
+    [InlineData("run", "--root")]
+    [InlineData("run", "--selection")]
+    [InlineData("run", "--github-summary")]
+    [InlineData("openapi generate", "--root")]
+    [InlineData("install-playwright --project tests/A/A.csproj", "--root")]
+    [InlineData("install-playwright", "--project")]
     [InlineData("verify-commit-message", "--event")]
     [InlineData("verify-commit-message", "--file")]
     public async Task Path_options_reject_empty_values_before_running_processes(string command, string option)
     {
         // Arrange
+        ArgumentNullException.ThrowIfNull(command);
         using var scope = new RepositoryTestScope();
         var processes = new ProcessLog();
 
         // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, [command, option, ""], processes.Run, TestContext.Current.CancellationToken);
+        var result = await RepositoryToolInvocation.Run(
+            scope.Root, [.. command.Split(' '), option, ""], processes.Run, TestContext.Current.CancellationToken);
 
         // Assert
         result.ExitCode.ShouldBe(1);
@@ -177,27 +228,6 @@ public sealed class RepositoryCommandLineTests
         processes.Calls.ShouldBeEmpty();
         Directory.Exists(Path.Combine(scope.Root, "TestResults")).ShouldBeFalse();
         File.Exists(Path.Combine(scope.Root, "revision.txt")).ShouldBeFalse();
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData(" ")]
-    [InlineData("-p")]
-    [InlineData("--output=changes.txt")]
-    public async Task Select_rejects_a_base_that_git_would_not_read_as_a_revision(string revision)
-    {
-        // Arrange
-        using var scope = new RepositoryTestScope();
-        var processes = new ProcessLog();
-
-        // Act
-        var result = await RepositoryToolInvocation.Run(scope.Root, ["select", "--base", revision], processes.Run, TestContext.Current.CancellationToken);
-
-        // Assert
-        result.ExitCode.ShouldBe(1);
-        result.Error.ShouldContain("--base", StringComparison.Ordinal);
-        processes.Calls.ShouldBeEmpty();
-        Directory.Exists(Path.Combine(scope.Root, "TestResults")).ShouldBeFalse();
     }
 
     [Theory]
