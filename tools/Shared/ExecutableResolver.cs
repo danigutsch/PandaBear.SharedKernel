@@ -1,7 +1,17 @@
-namespace PandaBear.RepoConfig.Tool;
+namespace PandaBear.Tooling;
 
+/// <summary>
+/// Resolves a command to an executable file in an absolute <c>PATH</c> directory. A bare file name passed to
+/// <see cref="System.Diagnostics.Process"/> is also looked up in the application and current directories, and relative
+/// <c>PATH</c> entries resolve from the current directory, so a repository could otherwise supply the executable.
+/// </summary>
 internal static class ExecutableResolver
 {
+    /// <summary>Returns the first executable named <paramref name="command"/> in an absolute directory of <paramref name="path"/>.</summary>
+    /// <param name="command">The command name, without an extension.</param>
+    /// <param name="path">The directory list, separated by <see cref="Path.PathSeparator"/>.</param>
+    /// <param name="isWindows">Whether to try <c>&lt;command&gt;.exe</c> first and skip the Unix execute-permission check.</param>
+    /// <returns>The absolute executable path, or <see langword="null"/> when no absolute directory contains it.</returns>
     internal static string? Resolve(string command, string? path, bool isWindows)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(command);

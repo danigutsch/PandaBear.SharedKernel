@@ -222,16 +222,6 @@ public sealed class VerifyTextEncodingCommandTests
     }
 
     [Fact]
-    public void Diagnostic_sanitizer_escapes_malformed_surrogate_code_units()
-    {
-        // Act
-        var escaped = RepoConfigToolApplication.EscapeControlCharacters("before\uD800middle\uDC00after");
-
-        // Assert
-        escaped.ShouldBe("before\\uD800middle\\uDC00after");
-    }
-
-    [Fact]
     public async Task Verify_text_encoding_ignores_alternate_git_directory_routing()
     {
         // Arrange

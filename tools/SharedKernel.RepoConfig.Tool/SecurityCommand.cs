@@ -1,4 +1,5 @@
 using System.Text.Json;
+using PandaBear.Tooling;
 
 namespace PandaBear.RepoConfig.Tool;
 
@@ -12,7 +13,7 @@ internal static class SecurityCommand
             var issues = VerifyBaseline(root, cancellationToken);
             foreach (var issue in issues)
             {
-                await error.WriteLineAsync($"security: {RepoConfigToolApplication.EscapeControlCharacters(issue.Path)}: {issue.Message}").ConfigureAwait(false);
+                await error.WriteLineAsync($"security: {ControlCharacters.Escape(issue.Path)}: {issue.Message}").ConfigureAwait(false);
             }
 
             if (issues.Count == 0)
