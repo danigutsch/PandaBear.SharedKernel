@@ -11,7 +11,7 @@ State why an assertion holds in its message instead of a comment. Every `Should*
 `userMessage` after its other arguments and before a trailing `CancellationToken`, and the failure message starts with
 it. Pass the values of a `params` assertion as an array to add a message. Name the argument (`userMessage: "..."`) when
 the argument before it is also a string. `ShouldBeTrue` and `ShouldBeFalse` take it as an optional argument.
-`ShouldThrow<T>()` without a parameter name takes no message, because its string overload checks `paramName`. Keep
+Check an argument exception's parameter name on the exception that `ShouldThrow<T>` returns. Keep
 comments for setup and for how an act works.
 
 Use the capability-specific `Should*` APIs so failures describe the assertion that failed.

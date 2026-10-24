@@ -1059,32 +1059,20 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The expected exception type.</typeparam>
     /// <param name="action">The action.</param>
     /// <returns>The thrown exception.</returns>
-    [SuppressMessage("Testing", "SKTEST017:Public assertions should have a userMessage overload", Justification = "ShouldThrow<T>(Action, string? paramName) already uses the (Action, string) signature, so a userMessage overload would not compile (CS0111); argument exceptions take a message through ShouldThrow<T>(paramName, userMessage).")]
     public static T ShouldThrow<T>(this Action action)
         where T : Exception => Xunit.Assert.Throws<T>(action);
 
     /// <summary>
-    /// Verifies that an action throws the expected argument exception parameter.
+    /// Verifies that an action throws the expected exception.
     /// </summary>
     /// <typeparam name="T">The expected exception type.</typeparam>
     /// <param name="action">The action.</param>
-    /// <param name="paramName">The expected parameter name.</param>
-    /// <returns>The thrown exception.</returns>
-    public static T ShouldThrow<T>(this Action action, string? paramName)
-        where T : ArgumentException => Xunit.Assert.Throws<T>(paramName, action);
-
-    /// <summary>
-    /// Verifies that an action throws the expected argument exception parameter.
-    /// </summary>
-    /// <typeparam name="T">The expected exception type.</typeparam>
-    /// <param name="action">The action.</param>
-    /// <param name="paramName">The expected parameter name.</param>
     /// <param name="userMessage">Why the test expects the assertion to hold; the failure message starts with it.</param>
     /// <returns>The thrown exception.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="userMessage"/> is null.</exception>
-    public static T ShouldThrow<T>(this Action action, string? paramName, string userMessage)
-        where T : ArgumentException =>
-        WithUserMessage(userMessage, () => action.ShouldThrow<T>(paramName));
+    public static T ShouldThrow<T>(this Action action, string userMessage)
+        where T : Exception =>
+        WithUserMessage(userMessage, () => action.ShouldThrow<T>());
 
     /// <summary>
     /// Verifies that a value-returning action throws the expected exception.
@@ -1092,32 +1080,20 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The expected exception type.</typeparam>
     /// <param name="action">The action.</param>
     /// <returns>The thrown exception.</returns>
-    [SuppressMessage("Testing", "SKTEST017:Public assertions should have a userMessage overload", Justification = "ShouldThrow<T>(Func<object?>, string? paramName) already uses the (Func<object?>, string) signature, so a userMessage overload would not compile (CS0111); argument exceptions take a message through ShouldThrow<T>(paramName, userMessage).")]
     public static T ShouldThrow<T>(this Func<object?> action)
         where T : Exception => Xunit.Assert.Throws<T>(action);
 
     /// <summary>
-    /// Verifies that a value-returning action throws the expected argument exception parameter.
+    /// Verifies that a value-returning action throws the expected exception.
     /// </summary>
     /// <typeparam name="T">The expected exception type.</typeparam>
     /// <param name="action">The action.</param>
-    /// <param name="paramName">The expected parameter name.</param>
-    /// <returns>The thrown exception.</returns>
-    public static T ShouldThrow<T>(this Func<object?> action, string? paramName)
-        where T : ArgumentException => Xunit.Assert.Throws<T>(paramName, action);
-
-    /// <summary>
-    /// Verifies that a value-returning action throws the expected argument exception parameter.
-    /// </summary>
-    /// <typeparam name="T">The expected exception type.</typeparam>
-    /// <param name="action">The action.</param>
-    /// <param name="paramName">The expected parameter name.</param>
     /// <param name="userMessage">Why the test expects the assertion to hold; the failure message starts with it.</param>
     /// <returns>The thrown exception.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="userMessage"/> is null.</exception>
-    public static T ShouldThrow<T>(this Func<object?> action, string? paramName, string userMessage)
-        where T : ArgumentException =>
-        WithUserMessage(userMessage, () => action.ShouldThrow<T>(paramName));
+    public static T ShouldThrow<T>(this Func<object?> action, string userMessage)
+        where T : Exception =>
+        WithUserMessage(userMessage, () => action.ShouldThrow<T>());
 
     /// <summary>
     /// Verifies that an async action throws the expected exception.
@@ -1125,32 +1101,20 @@ public static class ShouldAssertionExtensions
     /// <typeparam name="T">The expected exception type.</typeparam>
     /// <param name="action">The async action.</param>
     /// <returns>The thrown exception.</returns>
-    [SuppressMessage("Testing", "SKTEST017:Public assertions should have a userMessage overload", Justification = "ShouldThrow<T>(Func<Task>, string? paramName) already uses the (Func<Task>, string) signature, so a userMessage overload would not compile (CS0111); argument exceptions take a message through ShouldThrow<T>(paramName, userMessage).")]
     public static Task<T> ShouldThrow<T>(this Func<Task> action)
         where T : Exception => Xunit.Assert.ThrowsAsync<T>(action);
 
     /// <summary>
-    /// Verifies that an async action throws the expected argument exception parameter.
+    /// Verifies that an async action throws the expected exception.
     /// </summary>
     /// <typeparam name="T">The expected exception type.</typeparam>
     /// <param name="action">The async action.</param>
-    /// <param name="paramName">The expected parameter name.</param>
-    /// <returns>The thrown exception.</returns>
-    public static Task<T> ShouldThrow<T>(this Func<Task> action, string? paramName)
-        where T : ArgumentException => Xunit.Assert.ThrowsAsync<T>(paramName, action);
-
-    /// <summary>
-    /// Verifies that an async action throws the expected argument exception parameter.
-    /// </summary>
-    /// <typeparam name="T">The expected exception type.</typeparam>
-    /// <param name="action">The async action.</param>
-    /// <param name="paramName">The expected parameter name.</param>
     /// <param name="userMessage">Why the test expects the assertion to hold; the failure message starts with it.</param>
     /// <returns>The thrown exception.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="userMessage"/> is null.</exception>
-    public static Task<T> ShouldThrow<T>(this Func<Task> action, string? paramName, string userMessage)
-        where T : ArgumentException =>
-        WithUserMessage(userMessage, () => action.ShouldThrow<T>(paramName));
+    public static Task<T> ShouldThrow<T>(this Func<Task> action, string userMessage)
+        where T : Exception =>
+        WithUserMessage(userMessage, () => action.ShouldThrow<T>());
 
     /// <summary>
     /// Verifies that an async action throws an exception assignable to the expected type.

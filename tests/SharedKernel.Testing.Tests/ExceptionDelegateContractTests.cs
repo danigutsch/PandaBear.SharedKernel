@@ -11,41 +11,39 @@ public sealed class ExceptionDelegateContractTests
         var expected = new ArgumentNullException(parameterName);
         Action action = () => throw expected;
         Action wrongType = () => action.ShouldThrow<ArgumentException>();
-        Action wrongParameter = () => action.ShouldThrow<ArgumentNullException>("other");
 
         // Act
-        var actual = action.ShouldThrow<ArgumentNullException>(parameterName);
+        var actual = action.ShouldThrow<ArgumentNullException>();
 
         // Assert
         actual.ShouldBeSameAs(expected);
+        actual.ParamName.ShouldBe(parameterName);
         wrongType.ShouldThrow<Xunit.Sdk.ThrowsException>();
-        wrongParameter.ShouldThrow<Xunit.Sdk.ThrowsException>();
     }
 
     [Theory]
     [InlineData("value")]
     [InlineData(null)]
-    public void Property_delegate_preserves_identity_and_parameter_validation(string? parameterName)
+    public void Property_delegate_preserves_identity_and_exact_exception_type(string? parameterName)
     {
         // Arrange
         var expected = new ArgumentNullException(parameterName);
         Func<object?> action = () => throw expected;
         Action wrongType = () => action.ShouldThrow<ArgumentException>();
-        Action wrongParameter = () => action.ShouldThrow<ArgumentNullException>("other");
 
         // Act
-        var actual = action.ShouldThrow<ArgumentNullException>(parameterName);
+        var actual = action.ShouldThrow<ArgumentNullException>();
 
         // Assert
         actual.ShouldBeSameAs(expected);
+        actual.ParamName.ShouldBe(parameterName);
         wrongType.ShouldThrow<Xunit.Sdk.ThrowsException>();
-        wrongParameter.ShouldThrow<Xunit.Sdk.ThrowsException>();
     }
 
     [Theory]
     [InlineData("value")]
     [InlineData(null)]
-    public async Task Asynchronous_delegate_preserves_identity_exact_type_and_parameter_validation(string? parameterName)
+    public async Task Asynchronous_delegate_preserves_identity_and_exact_exception_type(string? parameterName)
     {
         // Arrange
         var expected = new ArgumentNullException(parameterName);
@@ -55,15 +53,14 @@ public sealed class ExceptionDelegateContractTests
             throw expected;
         };
         Func<Task> wrongType = () => action.ShouldThrow<ArgumentException>();
-        Func<Task> wrongParameter = () => action.ShouldThrow<ArgumentNullException>("other");
 
         // Act
-        var actual = await action.ShouldThrow<ArgumentNullException>(parameterName);
+        var actual = await action.ShouldThrow<ArgumentNullException>();
 
         // Assert
         actual.ShouldBeSameAs(expected);
+        actual.ParamName.ShouldBe(parameterName);
         await wrongType.ShouldThrow<Xunit.Sdk.ThrowsException>();
-        await wrongParameter.ShouldThrow<Xunit.Sdk.ThrowsException>();
         var actualResult = await action.ShouldThrowAssignableTo<ArgumentException>();
         actualResult.ShouldBeSameAs(expected);
     }

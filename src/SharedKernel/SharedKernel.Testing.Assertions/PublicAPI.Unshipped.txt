@@ -123,14 +123,11 @@ static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldStartWith(th
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldStartWith(this string? actual, string! expected, System.StringComparison comparisonType) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldStartWith(this string? actual, string! expected, System.StringComparison comparisonType, string! userMessage) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Action! action) -> T!
-static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Action! action, string? paramName) -> T!
-static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Action! action, string? paramName, string! userMessage) -> T!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Action! action, string! userMessage) -> T!
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<object?>! action) -> T!
-static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<object?>! action, string? paramName) -> T!
-static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<object?>! action, string? paramName, string! userMessage) -> T!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<object?>! action, string! userMessage) -> T!
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<T!>!
-static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<System.Threading.Tasks.Task!>! action, string? paramName) -> System.Threading.Tasks.Task<T!>!
-static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<System.Threading.Tasks.Task!>! action, string? paramName, string! userMessage) -> System.Threading.Tasks.Task<T!>!
+static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrow<T>(this System.Func<System.Threading.Tasks.Task!>! action, string! userMessage) -> System.Threading.Tasks.Task<T!>!
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrowAssignableTo<T>(this System.Func<System.Threading.Tasks.Task!>! action) -> System.Threading.Tasks.Task<T!>!
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrowAssignableTo<T>(this System.Func<System.Threading.Tasks.Task!>! action, string! userMessage) -> System.Threading.Tasks.Task<T!>!
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldThrowInner<T>(this System.Action! action) -> T!

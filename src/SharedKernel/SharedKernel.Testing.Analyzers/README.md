@@ -203,7 +203,7 @@ The diagnostic message names the reason when the code fix cannot add the overloa
 
 | Condition | Reason |
 | --- | --- |
-| Another overload already has the overload's parameter types and is not a public extension method with `userMessage` at the message position | The overload would not compile (CS0111). For example, `ShouldThrow<T>` on `Action`, `Func<object?>`, and `Func<Task>` cannot take a message because their `paramName` overloads already use the `(delegate, string)` signature. |
+| Another overload already has the overload's parameter types and is not a public extension method with `userMessage` at the message position | The overload would not compile (CS0111). |
 | A partial method | The code fix does not copy partial declarations. |
 | A parameter named `userMessage` that does not cover the assertion, such as the `this` parameter | The overload's message parameter would have the same name. |
 | A `ref`, `in`, or `out` parameter, a ref struct, pointer, or function-pointer parameter, a parameter of a type parameter that allows ref structs, or `__arglist` | A lambda cannot capture or forward it. |
