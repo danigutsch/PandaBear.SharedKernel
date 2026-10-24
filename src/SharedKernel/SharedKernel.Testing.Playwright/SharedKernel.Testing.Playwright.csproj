@@ -7,6 +7,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageTags>testing;playwright;browser;assertions;shared-kernel;dotnet</PackageTags>
         <IsAotCompatible>false</IsAotCompatible>
+        <EnableSharedKernelTestingAnalyzers>true</EnableSharedKernelTestingAnalyzers>
     </PropertyGroup>
 
     <ItemGroup>

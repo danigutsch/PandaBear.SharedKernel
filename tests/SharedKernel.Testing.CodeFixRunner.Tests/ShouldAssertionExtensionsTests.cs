@@ -99,6 +99,26 @@ public sealed class ShouldAssertionExtensionsTests
     }
 
     [Fact]
+    public void Should_contain_in_order_rejects_a_null_fragment_before_matching()
+    {
+        // Arrange
+        string? missingActual = null;
+        Action afterMissingFragment = () => "abc".ShouldContainInOrder("x", null!);
+        Action withoutActual = () => missingActual.ShouldContainInOrder([null!]);
+        Action withUserMessage = () => "abc".ShouldContainInOrder(["x", null!], "Fragments are never null.");
+
+        // Act
+        var afterMissingFragmentException = afterMissingFragment.ShouldThrow<ArgumentNullException>();
+        var withoutActualException = withoutActual.ShouldThrow<ArgumentNullException>();
+        var withUserMessageException = withUserMessage.ShouldThrow<ArgumentNullException>();
+
+        // Assert
+        afterMissingFragmentException.ParamName.ShouldBe("expected");
+        withoutActualException.ParamName.ShouldBe("expected");
+        withUserMessageException.ParamName.ShouldBe("expected");
+    }
+
+    [Fact]
     public void Assertions_with_a_user_message_pass_when_they_hold()
     {
         // Arrange
