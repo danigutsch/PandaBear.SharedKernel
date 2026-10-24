@@ -8,6 +8,12 @@ This guidance covers every tool under `tools/`.
   `PackageReadmeFile`, as described in [Create a .NET tool](https://learn.microsoft.com/dotnet/core/tools/global-tools-how-to-create)
   and the [pack target](https://learn.microsoft.com/nuget/reference/msbuild-targets#pack-target). Command names
   start with `sharedkernel-`.
+- Candidates pack the tools named in `SharedKernelPackagePlanner.PackagedTools`. A convention test requires every
+  `PackAsTool` project in that list, except `SharedKernel.VaultManager.Tool`, which candidates do not ship.
+- `SharedKernel.CI.Tool` and `SharedKernel.RepoConfig.Tool` also run from source before a candidate exists. They
+  reference only System.CommandLine, no other project, and link shared sources only from `tools/Shared`. A
+  convention test keeps them that way, and CI builds each from a cone sparse checkout of its directory and
+  `tools/Shared` on Linux and Windows, then runs it from outside the checkout.
 - Ship framework-dependent tool packages. Add
   [RID-specific, self-contained, or NativeAOT tool packages](https://learn.microsoft.com/dotnet/core/tools/rid-specific-tools)
   only when CI builds and consumes each claimed platform. NativeAOT packages build on the operating system they

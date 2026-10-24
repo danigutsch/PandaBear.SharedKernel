@@ -35,7 +35,7 @@ Prefer NativeAOT and trimming compatibility where practical. Use explicit typed 
 
 ## Required automation coverage
 
-Reusable repository automation lives in the C# repository, versioning, and documentation tools.
+Reusable repository automation lives in the C# CI, versioning, and documentation tools.
 The two setup scripts are deliberately thin platform entry points: they anchor the working directory,
 restore locked dependencies, build Release, and propagate failures before repository tools exist.
 C# process tests exercise each native wrapper from an unrelated working directory, including paths
@@ -59,8 +59,9 @@ restart source validation; remove and reapply for another attempt using a human 
 account. Unrelated labels use separate concurrency groups and cannot cancel validation.
 
 The source workflow selects projects once, then overlaps ordinary graph validation, isolated hosted
-test jobs, and candidate creation. Hosted jobs are generated from selected Aspire projects. Linux
-and Windows consume the same candidate bytes in parallel. Repository quality runs on every validation.
+test jobs, sparse-checkout source builds of the CI and RepoConfig tools on Linux and Windows, and
+candidate creation. Hosted jobs are generated from selected Aspire projects. Linux and Windows
+consume the same candidate bytes in parallel. Repository quality runs on every validation.
 Standalone repository documentation skips candidates, tests, and full-solution bootstrap/formatting.
 Repository quality builds only the documentation tool and checks generated-document drift. Package
 READMEs, scripts, and uncertain inputs are not documentation-only and select validation. Main pushes

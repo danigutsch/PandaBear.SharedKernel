@@ -35,6 +35,9 @@ internal static class PlaywrightMcpCommandLine
         clean.SetAction((parseResult, ct) => application.Clean(parseResult.InvocationConfiguration.Error, ct));
 
         var root = new RootCommand(Description);
+
+        // Consumer caller tests parse command lines with [diagram] without running them.
+        root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(serve);
         root.Subcommands.Add(prepare);
         root.Subcommands.Add(clean);

@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
 
-namespace PandaBear.Repository.Tool;
+namespace PandaBear.CI.Tool;
 
 internal static class ProjectSelector
 {
@@ -63,7 +63,7 @@ internal static class ProjectSelector
                 graph[project] = dependencies;
             }
 
-            var edgePath = Path.Combine(root, "tools/SharedKernel.Repository.Tool/package-consumption-edges.json");
+            var edgePath = Path.Combine(root, "tools/SharedKernel.CI.Tool/package-consumption-edges.json");
             if (File.Exists(edgePath))
             {
                 foreach (var (consumer, values) in JsonNode.Parse(File.ReadAllText(edgePath))!.AsObject())

@@ -1,6 +1,6 @@
 using System.CommandLine;
+using PandaBear.CI.Tool;
 using PandaBear.Repository.Tests.Conventions;
-using PandaBear.Repository.Tool;
 
 namespace PandaBear.Repository.Tests;
 
@@ -41,13 +41,36 @@ public sealed class RepositoryToolCallerTests
         selections.ShouldBe(["select --github-output $GITHUB_OUTPUT", "select --github-output $GITHUB_OUTPUT --base $BASE_SHA"]);
     }
 
+    [Fact]
+    public void Tool_readme_runs_the_installed_tool_and_the_project()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+
+        // Act
+        var readmeCallers = RepositoryToolCallers.Find(root)
+            .Where(static caller => caller.File == "tools/SharedKernel.CI.Tool/README.md")
+            .Select(static caller => string.Join(' ', caller.Arguments))
+            .ToArray();
+
+        // Assert
+        readmeCallers.ShouldBe(
+            [
+                "verify-pr-title --event <event.json>",
+                "select --base <revision>",
+                "validate",
+                "verify-pr-title --event <event.json>",
+            ],
+            "Installation runs the installed sharedkernel-ci, and this repository runs the project.");
+    }
+
     [Theory]
     [InlineData(".github/workflows/ci.yml", "select")]
     [InlineData(".github/workflows/ci.yml", "validate")]
     [InlineData(".github/workflows/pr-metadata.yml", "verify-pr-title")]
-    [InlineData("tools/SharedKernel.Repository.Tool/README.md", "select")]
-    [InlineData("tools/SharedKernel.Repository.Tool/README.md", "validate")]
-    [InlineData("tools/SharedKernel.Repository.Tool/README.md", "verify-pr-title")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "select")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "validate")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "verify-pr-title")]
     public void Callers_invoke_the_repository_tool_command(string file, string commandName)
     {
         // Arrange

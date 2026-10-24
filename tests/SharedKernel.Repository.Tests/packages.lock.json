@@ -121,6 +121,12 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
+      "PandaBear.SharedKernel.CI.Tool": {
+        "type": "Project",
+        "dependencies": {
+          "System.CommandLine": "[2.0.13, )"
+        }
+      },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
@@ -132,12 +138,6 @@
         "dependencies": {
           "PandaBear.SharedKernel.Results": "[0.1.0-alpha.0, )",
           "xunit.v3.assert": "[4.0.0, )"
-        }
-      },
-      "sharedkernel.repository.tool": {
-        "type": "Project",
-        "dependencies": {
-          "System.CommandLine": "[2.0.13, )"
         }
       },
       "System.CommandLine": {

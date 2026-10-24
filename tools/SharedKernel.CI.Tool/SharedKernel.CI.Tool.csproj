@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <OutputType>Exe</OutputType>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>sharedkernel-ci</ToolCommandName>
+        <PackageId>PandaBear.SharedKernel.CI.Tool</PackageId>
+        <Description>CI automation that selects, builds, and tests affected SharedKernel projects and verifies pull request titles.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>ci;continuous-integration;test-selection;pull-request;dotnet-tool</PackageTags>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.Repository.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.CommandLine" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

@@ -53,6 +53,33 @@ public static class SharedKernelPackagingConventionTests
     }
 
     [Fact]
+    public static void Ci_tool_is_packaged_as_the_sharedkernel_ci_dotnet_tool()
+    {
+        // Arrange
+        var projectPath = Path.Combine(
+            SharedKernelPackagingConventionTestFiles.GetRepositoryRoot(),
+            "tools",
+            "SharedKernel.CI.Tool",
+            "SharedKernel.CI.Tool.csproj");
+
+        // Act
+        var violations = SharedKernelPackagingConventionTestFiles.GetPackageMetadataViolations(projectPath).ToArray();
+        var isPackable = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "IsPackable");
+        var packAsTool = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "PackAsTool");
+        var commandName = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "ToolCommandName");
+        var description = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "Description");
+        var aotCompatible = SharedKernelPackagingConventionTestFiles.GetProperty(projectPath, "IsAotCompatible");
+
+        // Assert
+        violations.ShouldBe([]);
+        isPackable.ShouldBe("true");
+        packAsTool.ShouldBe("true");
+        commandName.ShouldBe("sharedkernel-ci", "Tool command names start with sharedkernel- and name the tool.");
+        description.ShouldNotBe(string.Empty);
+        aotCompatible.ShouldBe("true");
+    }
+
+    [Fact]
     public static void Samples_benchmarks_and_repository_only_helpers_are_non_packable()
     {
         // Arrange

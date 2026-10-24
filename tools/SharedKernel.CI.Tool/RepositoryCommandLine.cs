@@ -2,9 +2,9 @@ using System.CommandLine;
 using System.Text.Json;
 using System.Xml;
 
-namespace PandaBear.Repository.Tool;
+namespace PandaBear.CI.Tool;
 
-/// <summary>Builds the repository tool command tree.</summary>
+/// <summary>Builds the <c>sharedkernel-ci</c> command tree.</summary>
 internal static class RepositoryCommandLine
 {
     /// <summary>Exit code for a failed selection, validation, or pull request title check.</summary>
@@ -16,6 +16,9 @@ internal static class RepositoryCommandLine
     public static RootCommand Create(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run)
     {
         var root = new RootCommand("Selects, builds, and tests affected SharedKernel projects and verifies pull request titles.");
+
+        // Consumer caller tests parse command lines with [diagram] without running them.
+        root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(CreateSelect(workingDirectory, run));
         root.Subcommands.Add(CreateValidate(workingDirectory, run));
         root.Subcommands.Add(CreateVerifyPrTitle(workingDirectory));

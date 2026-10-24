@@ -21,4 +21,4 @@ jobs:
         with:
           global-json-file: global.json
       - name: Validate squash header
-        run: dotnet run --project tools/SharedKernel.Repository.Tool -c Release -- verify-pr-title --event "$GITHUB_EVENT_PATH"
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-pr-title --event "$GITHUB_EVENT_PATH"

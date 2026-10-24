@@ -1,10 +1,10 @@
 using System.CommandLine;
 using System.CommandLine.Help;
-using PandaBear.Repository.Tool;
+using PandaBear.CI.Tool;
 
 namespace PandaBear.Repository.Tests;
 
-/// <summary>Parses and invokes the real repository tool command tree with captured output.</summary>
+/// <summary>Parses and invokes the real CI tool command tree with captured output.</summary>
 internal static class RepositoryToolInvocation
 {
     public static async Task<RepositoryToolResult> Run(

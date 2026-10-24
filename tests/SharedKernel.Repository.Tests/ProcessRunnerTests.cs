@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using PandaBear.Repository.Tool;
+using PandaBear.CI.Tool;
 using PandaBear.Testing;
 
 namespace PandaBear.Repository.Tests;

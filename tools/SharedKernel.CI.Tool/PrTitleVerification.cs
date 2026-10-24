@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace PandaBear.Repository.Tool;
+namespace PandaBear.CI.Tool;
 
 /// <summary>Verifies the pull request title and breaking-change footers in a GitHub event file.</summary>
 internal static partial class PrTitleVerification

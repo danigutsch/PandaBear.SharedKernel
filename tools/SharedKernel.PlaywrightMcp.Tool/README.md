@@ -37,7 +37,8 @@ Run `prepare` first; `serve` starts the image with `--pull=never`. Configure the
 `sharedkernel-playwright-mcp serve`. `serve` writes only the MCP protocol to standard output and diagnostics to
 standard error. `prepare` and `clean` write nothing to standard output; each line of the container engine's output
 and errors goes to standard error as the engine writes it. `clean` removes the image from the local engine cache;
-check other local uses before running it.
+check other local uses before running it. A command line that starts with `[diagram]` prints how it parses instead of
+running; an invalid command line exits 1.
 
 Configuration comes from the environment:
 
