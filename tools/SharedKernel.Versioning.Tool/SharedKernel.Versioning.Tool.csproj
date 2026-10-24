@@ -23,6 +23,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Compile Include="../Shared/CandidateManifest.cs" Link="Shared/CandidateManifest.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
         <InternalsVisibleTo Include="SharedKernel.Versioning.Tests" />
     </ItemGroup>
 

@@ -1,8 +1,12 @@
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
 
-namespace PandaBear.Versioning.Tool;
+namespace PandaBear.Tooling;
 
+/// <summary>
+/// Finds, reads, and writes <c>candidate.json</c>, which records a candidate's library revision, package version, and
+/// the SHA-256 hash of each package.
+/// </summary>
 internal static class CandidateManifest
 {
     public static string Find(string directory)
@@ -44,7 +48,6 @@ internal static class CandidateManifest
             }
         }
 
-        _ = SemanticVersion.Parse(evidence["packageVersion"]!.GetValue<string>());
         return evidence;
     }
 

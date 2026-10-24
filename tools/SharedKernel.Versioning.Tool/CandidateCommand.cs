@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
 using System.Xml.Linq;
+using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tool;
 
@@ -74,11 +75,13 @@ internal static class CandidateCommand
         string root, string manifest, string destination, bool aot, TextWriter output, TextWriter error, CancellationToken ct)
     {
         var evidence = CandidateManifest.ReadAndVerify(manifest);
+        var version = evidence["packageVersion"]!.GetValue<string>();
+        _ = SemanticVersion.Parse(version);
         var platform = OperatingSystem.IsWindows() ? "windowsPackageConsumption" : "linuxPackageConsumption";
         try
         {
             await PackageConsumptionCommand.Run(
-                root, Path.GetDirectoryName(manifest)!, evidence["packageVersion"]!.GetValue<string>(), aot, output, error, ct).ConfigureAwait(false);
+                root, Path.GetDirectoryName(manifest)!, version, aot, output, error, ct).ConfigureAwait(false);
         }
         catch (Exception) when (!ct.IsCancellationRequested)
         {

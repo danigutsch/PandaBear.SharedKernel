@@ -1,3 +1,4 @@
+using PandaBear.Tooling;
 using PandaBear.Versioning.Tool;
 
 namespace PandaBear.Versioning.Tests;

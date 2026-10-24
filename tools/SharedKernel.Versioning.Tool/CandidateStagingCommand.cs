@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using PandaBear.Tooling;
 
 namespace PandaBear.Versioning.Tool;
 
@@ -7,6 +8,7 @@ internal static class CandidateStagingCommand
     public static async Task Run(string root, string candidate, string feed, string destination, TextWriter output, CancellationToken ct)
     {
         var evidence = CandidateManifest.ReadAndVerify(candidate, feed);
+        _ = SemanticVersion.Parse(evidence["packageVersion"]!.GetValue<string>());
         var revision = (await CommandRunner.Run("git", ["rev-parse", "HEAD"], root, ct).ConfigureAwait(false)).Trim();
         if (evidence["libraryRevision"]?.GetValue<string>() != revision || evidence["libraryDirty"]?.GetValue<bool>() != false)
         {
@@ -21,6 +23,7 @@ internal static class CandidateStagingCommand
     {
         ct.ThrowIfCancellationRequested();
         var evidence = CandidateManifest.ReadAndVerify(candidate, feed);
+        _ = SemanticVersion.Parse(evidence["packageVersion"]!.GetValue<string>());
         var hashes = evidence["packageSha256"]!.AsObject();
         // Check every existing destination before writing any artifacts.
         foreach (var (name, value) in hashes)
