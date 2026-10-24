@@ -56,21 +56,22 @@ public sealed class RepositoryToolCallerTests
         // Assert
         readmeCallers.ShouldBe(
             [
-                "verify-pr-title --event <event.json>",
+                "verify-commit-message --file <commit-message-file>",
                 "select --base <revision>",
                 "validate",
-                "verify-pr-title --event <event.json>",
+                "verify-commit-message --event <event.json>",
+                "verify-commit-message --file $1",
             ],
-            "Installation runs the installed sharedkernel-ci, and this repository runs the project.");
+            "Installation and the commit-msg hook run the installed sharedkernel-ci, and this repository runs the project.");
     }
 
     [Theory]
     [InlineData(".github/workflows/ci.yml", "select")]
     [InlineData(".github/workflows/ci.yml", "validate")]
-    [InlineData(".github/workflows/pr-metadata.yml", "verify-pr-title")]
+    [InlineData(".github/workflows/pr-metadata.yml", "verify-commit-message")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "select")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "validate")]
-    [InlineData("tools/SharedKernel.CI.Tool/README.md", "verify-pr-title")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "verify-commit-message")]
     public void Callers_invoke_the_repository_tool_command(string file, string commandName)
     {
         // Arrange

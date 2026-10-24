@@ -7,21 +7,21 @@ namespace PandaBear.CI.Tool;
 /// <summary>Builds the <c>sharedkernel-ci</c> command tree.</summary>
 internal static class RepositoryCommandLine
 {
-    /// <summary>Exit code for a failed selection, validation, or pull request title check.</summary>
+    /// <summary>Exit code for a failed selection, validation, or commit message check.</summary>
     private const int FailureExitCode = 2;
 
     /// <summary>Creates the command tree.</summary>
-    /// <param name="workingDirectory">Directory that relative <c>--root</c> and <c>--event</c> paths resolve from.</param>
+    /// <param name="workingDirectory">Directory that relative <c>--root</c>, <c>--event</c>, and <c>--file</c> paths resolve from.</param>
     /// <param name="run">Runs a child process and returns its standard output.</param>
     public static RootCommand Create(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run)
     {
-        var root = new RootCommand("Selects, builds, and tests affected SharedKernel projects and verifies pull request titles.");
+        var root = new RootCommand("Selects, builds, and tests affected SharedKernel projects and verifies commit messages.");
 
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(CreateSelect(workingDirectory, run));
         root.Subcommands.Add(CreateValidate(workingDirectory, run));
-        root.Subcommands.Add(CreateVerifyPrTitle(workingDirectory));
+        root.Subcommands.Add(CreateVerifyCommitMessage(workingDirectory));
         return root;
     }
 
@@ -108,19 +108,38 @@ internal static class RepositoryCommandLine
         return command;
     }
 
-    private static Command CreateVerifyPrTitle(string workingDirectory)
+    private static Command CreateVerifyCommitMessage(string workingDirectory)
     {
-        var eventOption = PathOption("--event", "GitHub pull_request event JSON file.", "path");
-        eventOption.Required = true;
+        var eventOption = PathOption(
+            "--event",
+            "GitHub pull_request event JSON file whose title is the header and whose body holds the footers. Specify this or --file.",
+            "path");
+        var fileOption = PathOption(
+            "--file",
+            "Git commit message file, such as the one a commit-msg hook receives. Specify this or --event.",
+            "path");
         var command = new Command(
-            "verify-pr-title",
-            "Verify that the pull request title is a Conventional Commit header and that breaking-change footers have a description.")
+            "verify-commit-message",
+            "Verify that a pull request title or commit message header is a Conventional Commit header and that breaking-change footers have a description.")
         {
             eventOption,
+            fileOption,
         };
+        command.Validators.Add(result =>
+        {
+            var hasEvent = result.GetResult(eventOption) is not null;
+            if (hasEvent == (result.GetResult(fileOption) is not null))
+            {
+                result.AddError(hasEvent
+                    ? $"Options '{eventOption.Name}' and '{fileOption.Name}' cannot be combined."
+                    : $"Option '{eventOption.Name}' or '{fileOption.Name}' is required.");
+            }
+        });
         command.SetAction((parseResult, ct) => Execute(
             parseResult,
-            (_, _) => PrTitleVerification.Verify(Path.GetFullPath(parseResult.GetRequiredValue(eventOption), workingDirectory), ct),
+            (_, _) => parseResult.GetValue(eventOption) is { } eventPath
+                ? CommitMessageVerification.VerifyEvent(Path.GetFullPath(eventPath, workingDirectory), ct)
+                : CommitMessageVerification.VerifyFile(Path.GetFullPath(parseResult.GetRequiredValue(fileOption), workingDirectory), ct),
             ct));
         return command;
     }

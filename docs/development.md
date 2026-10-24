@@ -54,6 +54,11 @@ PR validation is advisory because main has no branch protection. Use squash merg
 Conventional Commit PR title of at most 100 characters, preserve breaking-change notes in the PR
 body, and start a fresh branch after merging. Registry publication is deferred.
 
+The PR metadata workflow checks the title and breaking-change footers with the CI tool's
+`verify-commit-message --event`. Its `--file` option checks a local commit message against the
+same header and footer rules, as the
+[CI tool README](../tools/SharedKernel.CI.Tool/README.md#verify-commit-message) describes.
+
 Ordinary PR title/body edits run only the independent metadata workflow. Add `ci:rerun` to explicitly
 restart source validation; remove and reapply for another attempt using a human or authorized app
 account. Unrelated labels use separate concurrency groups and cannot cancel validation.
