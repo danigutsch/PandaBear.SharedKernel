@@ -30,12 +30,12 @@ and package-consumption checks. No remote SonarCloud upload or proprietary cover
 `SharedKernel.CI.Tool` packs as the `sharedkernel-ci` tool and also builds from a sparse checkout of its own directory
 and `tools/Shared`. Selection follows `.config/sharedkernel-ci.json`: it selects the test projects that depend on the
 changed projects, writes one solution filter per test slice, and selects every test project when history, a path, or a
-reference is uncertain. Every `src` and `tools` change, and every packable project's references, select full validation.
-Full runs happen nightly; selection reasons are retained in CI.
+reference is uncertain. A library or tool change selects only the test projects that depend on it, and still runs the
+candidate job, which packs and consumes every package. Full runs happen nightly; selection reasons are retained in CI.
 
 ```sh
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select --base <base-object-id>
-dotnet run --project tools/SharedKernel.CI.Tool -c Release -- validate --slice library
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice library
 ```
 
 Commit changes before creating candidate evidence. Candidates receive unique ordered prerelease versions and are never overwritten.

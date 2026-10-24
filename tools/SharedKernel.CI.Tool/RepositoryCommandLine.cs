@@ -1,4 +1,5 @@
 using System.CommandLine;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -9,29 +10,35 @@ namespace PandaBear.CI.Tool;
 /// <summary>Builds the <c>sharedkernel-ci</c> command tree.</summary>
 internal static partial class RepositoryCommandLine
 {
-    /// <summary>Exit code for a failed selection, validation, staging, or commit message check.</summary>
+    /// <summary>Exit code for a failed selection, run, generation, installation, staging, or commit message check.</summary>
     private const int FailureExitCode = 2;
 
     /// <summary>Creates the command tree with the Git, network, and clock access that the tool uses.</summary>
     /// <param name="workingDirectory">Directory that relative <c>--root</c>, <c>--event</c>, and <c>--file</c> paths resolve from.</param>
     /// <param name="run">Runs a child process and returns its standard output.</param>
     public static RootCommand Create(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run) =>
-        Create(workingDirectory, run, CandidateStagingServices.Default);
+        Create(workingDirectory, run, ProcessRunner.RunConfigured, CandidateStagingServices.Default);
 
     /// <summary>Creates the command tree.</summary>
     /// <param name="workingDirectory">Directory that relative <c>--root</c>, <c>--event</c>, and <c>--file</c> paths resolve from.</param>
     /// <param name="run">Runs a child process and returns its standard output.</param>
+    /// <param name="runConfigured">Runs a child process after its start information is adjusted, such as OpenAPI generation with its own environment.</param>
     /// <param name="staging">Supplies what <c>stage-candidate</c> uses to reach Git, the network, and the clock.</param>
     public static RootCommand Create(
-        string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run, CandidateStagingServices staging)
+        string workingDirectory,
+        Func<string, string[], string, CancellationToken, Task<string>> run,
+        Func<string, string[], string, Action<ProcessStartInfo>, CancellationToken, Task<string>> runConfigured,
+        CandidateStagingServices staging)
     {
         var root = new RootCommand(
-            "Selects, builds, and tests affected test projects, stages package candidates, and verifies commit messages.");
+            "Selects and runs affected test projects, generates OpenAPI documents, installs Playwright browsers, stages package candidates, and verifies commit messages.");
 
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(CreateSelect(workingDirectory, run));
-        root.Subcommands.Add(CreateValidate(workingDirectory, run));
+        root.Subcommands.Add(CreateRun(workingDirectory, run, runConfigured));
+        root.Subcommands.Add(CreateOpenApi(workingDirectory, runConfigured));
+        root.Subcommands.Add(CreateInstallPlaywright(workingDirectory, run));
         root.Subcommands.Add(CreateStageCandidate(workingDirectory, staging));
         root.Subcommands.Add(CreateVerifyCommitMessage(workingDirectory));
         return root;
@@ -77,42 +84,170 @@ internal static partial class RepositoryCommandLine
         return command;
     }
 
-    private static Command CreateValidate(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run)
+    private static Command CreateRun(
+        string workingDirectory,
+        Func<string, string[], string, CancellationToken, Task<string>> run,
+        Func<string, string[], string, Action<ProcessStartInfo>, CancellationToken, Task<string>> runConfigured)
     {
-        var sliceOption = new Option<string>("--slice")
+        var sliceOption = new Option<string[]>("--slice")
         {
-            Description = "Slice whose solution filter is restored, built, and tested.",
+            Description = "Slice whose selected test projects run; repeat it to run several slices in one test run. Without it, every required slice runs.",
             HelpName = "name",
-            Required = true,
         };
         sliceOption.Validators.Add(static result =>
         {
-            if (!CiConfigurationFile.IsSliceName(result.GetValueOrDefault<string>() ?? string.Empty))
+            if (result.GetValueOrDefault<string[]>() is { } slices && slices.Any(static slice => !CiConfigurationFile.IsSliceName(slice)))
             {
                 result.AddError("--slice requires a slice name: lowercase letters and digits in words separated by '-'.");
             }
         });
+        var configurationOption = CreateConfigurationOption("Release");
+        var coverageOption = new Option<bool>("--coverage")
+        {
+            Description = "Collect Cobertura coverage per test project and fail when a selected test project produced no report.",
+        };
+        var playwrightOption = new Option<bool>("--install-playwright")
+        {
+            Description = "Install the Playwright browsers that the selected slices configure before the tests run.",
+        };
+        var dependenciesOption = new Option<bool>("--playwright-dependencies")
+        {
+            Description = "Also install the operating system dependencies of the Playwright browsers. Requires --install-playwright.",
+        };
+        var summaryOption = PathOption("--github-summary", "GitHub Actions step summary file that receives the phases. Relative to the root.", "path");
         var rootOption = CreateRootOption();
         var selectionOption = CreateSelectionOption();
-        var command = new Command("validate", "Restore, build, and test the selected test projects of one slice of the validation plan.")
+        var command = new Command(
+            "run",
+            "Restore, build, and test the selected test projects of the validation plan through one solution filter, after the slices' OpenAPI targets and Playwright browsers.")
         {
             sliceOption,
+            configurationOption,
+            coverageOption,
+            playwrightOption,
+            dependenciesOption,
+            summaryOption,
             rootOption,
             selectionOption,
         };
+        command.Validators.Add(result =>
+        {
+            if (result.GetValue(dependenciesOption) && !result.GetValue(playwrightOption))
+            {
+                result.AddError("--playwright-dependencies requires --install-playwright.");
+            }
+
+            if (result.GetValue(sliceOption) is { } slices && slices.Distinct(StringComparer.Ordinal).Count() != slices.Length)
+            {
+                result.AddError("--slice repeats a slice.");
+            }
+        });
         command.SetAction((parseResult, ct) => Execute(
             parseResult,
             (output, error) =>
             {
                 var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
-                return RepositoryValidation.Run(
+                return SliceRun.Run(
                     root,
                     Path.GetFullPath(parseResult.GetRequiredValue(selectionOption), root),
-                    parseResult.GetRequiredValue(sliceOption),
+                    new SliceRunOptions(
+                        parseResult.GetValue(sliceOption) ?? [],
+                        parseResult.GetRequiredValue(configurationOption),
+                        parseResult.GetValue(coverageOption),
+                        parseResult.GetValue(playwrightOption),
+                        parseResult.GetValue(dependenciesOption),
+                        parseResult.GetValue(summaryOption)),
                     run,
+                    runConfigured,
                     output,
                     error,
                     ct);
+            },
+            ct));
+        return command;
+    }
+
+    private static Command CreateOpenApi(
+        string workingDirectory, Func<string, string[], string, Action<ProcessStartInfo>, CancellationToken, Task<string>> runConfigured)
+    {
+        var command = new Command("openapi", "Generate OpenAPI documents, or refresh their committed copies, with the targets in .config/sharedkernel-ci.json.");
+        command.Subcommands.Add(CreateOpenApiAction("generate", "Build the OpenAPI targets with their generate property.", refresh: false));
+        command.Subcommands.Add(CreateOpenApiAction("refresh", "Build the OpenAPI targets with their refresh property, which also updates the committed copies.", refresh: true));
+        return command;
+
+        Command CreateOpenApiAction(string name, string description, bool refresh)
+        {
+            var targetOption = new Option<string[]>("--target")
+            {
+                Description = "OpenAPI target to build; repeat it for several. Without it, every configured target is built.",
+                HelpName = "name",
+            };
+            targetOption.Validators.Add(static result =>
+            {
+                if (result.GetValueOrDefault<string[]>() is { } targets && targets.Any(static target => !CiConfigurationFile.IsName(target)))
+                {
+                    result.AddError("--target requires a target name: lowercase letters and digits in words separated by '-'.");
+                }
+            });
+            var rootOption = CreateRootOption();
+            var action = new Command(name, description) { targetOption, rootOption };
+            action.SetAction((parseResult, ct) => Execute(
+                parseResult,
+                async (_, error) =>
+                {
+                    var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                    var configuration = await CiConfigurationFile.Read(root, ct).ConfigureAwait(false);
+                    await OpenApiGeneration.Run(root, configuration, parseResult.GetValue(targetOption) ?? [], refresh, null, runConfigured, error, ct).ConfigureAwait(false);
+                },
+                ct));
+            return action;
+        }
+    }
+
+    private static Command CreateInstallPlaywright(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run)
+    {
+        var projectOption = PathOption("--project", "Built project whose output holds playwright.ps1. Relative to the root.", "path");
+        projectOption.Required = true;
+        var browserOption = new Option<string[]>("--browser")
+        {
+            Description = "Browser to install, such as chromium; repeat it for several. Without it, Playwright installs its default browsers.",
+            HelpName = "name",
+        };
+        browserOption.Validators.Add(static result =>
+        {
+            if (result.GetValueOrDefault<string[]>() is { } browsers && browsers.Any(static browser => !CiConfigurationFile.IsBrowser(browser)))
+            {
+                result.AddError("--browser requires a browser name: lowercase letters, digits, and '-', starting with a letter.");
+            }
+        });
+        var dependenciesOption = new Option<bool>("--with-dependencies")
+        {
+            Description = "Also install the operating system dependencies of the browsers.",
+        };
+        var configurationOption = CreateConfigurationOption(null);
+        var rootOption = CreateRootOption();
+        var command = new Command(
+            "install-playwright", "Install Playwright browsers with the playwright.ps1 in the build output of a project, found through its evaluated OutputPath.")
+        {
+            projectOption,
+            browserOption,
+            dependenciesOption,
+            configurationOption,
+            rootOption,
+        };
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            async (_, error) =>
+            {
+                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                await error.WriteAsync(await PlaywrightInstallation.Run(
+                    root,
+                    parseResult.GetRequiredValue(projectOption),
+                    parseResult.GetValue(browserOption) ?? [],
+                    parseResult.GetValue(dependenciesOption),
+                    parseResult.GetValue(configurationOption),
+                    run,
+                    ct).ConfigureAwait(false)).ConfigureAwait(false);
             },
             ct));
         return command;
@@ -225,6 +360,29 @@ internal static partial class RepositoryCommandLine
         return command;
     }
 
+    private static Option<string> CreateConfigurationOption(string? defaultValue)
+    {
+        var option = new Option<string>("--configuration")
+        {
+            Description = defaultValue is null ? "Build configuration. Defaults to the project's own." : "Build configuration.",
+            HelpName = "name",
+        };
+        if (defaultValue is not null)
+        {
+            option.DefaultValueFactory = _ => defaultValue;
+        }
+
+        // The value reaches dotnet as -c <name> or -p:Configuration=<name>, so it cannot carry an option or another property.
+        option.Validators.Add(static result =>
+        {
+            if (!ConfigurationName().IsMatch(result.GetValueOrDefault<string>() ?? string.Empty))
+            {
+                result.AddError("--configuration requires a configuration name: letters, digits, '_', '.', and '-', starting with a letter.");
+            }
+        });
+        return option;
+    }
+
     private static Option<string> CreateRootOption() => PathOption("--root", "Repository root. Defaults to the current directory.", "path");
 
     private static Option<string> CreateSelectionOption()
@@ -288,4 +446,7 @@ internal static partial class RepositoryCommandLine
 
     [GeneratedRegex(@"\A[A-Za-z0-9-]+/[A-Za-z0-9._-]+\z", RegexOptions.CultureInvariant)]
     private static partial Regex Repository();
+
+    [GeneratedRegex(@"\A[A-Za-z][A-Za-z0-9_.-]*\z", RegexOptions.CultureInvariant)]
+    private static partial Regex ConfigurationName();
 }

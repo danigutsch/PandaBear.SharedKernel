@@ -81,13 +81,14 @@ internal sealed class RepositoryTestScope : IDisposable
         return ProjectSelector.Select(configuration, graph, changes, "fixture", nonInertBuildFile);
     }
 
-    /// <summary>Writes a validation plan whose slices run the given test projects, with their filters, and returns its directory.</summary>
+    /// <summary>Writes a validation plan whose slices run the given test projects and returns its directory.</summary>
     public string WriteSelection(string revision, params (string Slice, string[] Tests)[] slices) => WriteSelectionIn("TestResults/selection", revision, slices);
 
     /// <summary>Writes a validation plan in <paramref name="directory"/> under the root and returns its full path.</summary>
     public string WriteSelectionIn(string directory, string revision, params (string Slice, string[] Tests)[] slices)
     {
-        var selection = Path.Combine(Root, directory);
+        // The tool resolves the directory to a full path, which uses the platform separator.
+        var selection = Path.GetFullPath(Path.Combine(Root, directory));
         Directory.CreateDirectory(selection);
         var plan = new SelectionPlan(
             revision,
@@ -101,11 +102,6 @@ internal sealed class RepositoryTestScope : IDisposable
         File.WriteAllBytes(
             Path.Combine(selection, "selection.json"),
             System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(plan, SelectionPlanJsonContext.Default.SelectionPlan));
-        foreach (var (slice, tests) in slices.Where(static slice => slice.Tests.Length > 0))
-        {
-            File.WriteAllText(Path.Combine(selection, slice + ".slnf"), "{}");
-        }
-
         return selection;
     }
 

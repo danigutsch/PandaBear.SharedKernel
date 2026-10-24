@@ -64,8 +64,13 @@ restart source validation; remove and reapply for another attempt using a human 
 account. Unrelated labels use separate concurrency groups and cannot cancel validation.
 
 The source workflow selects test projects once with `sharedkernel-ci select`, as `.config/sharedkernel-ci.json`
-configures, then overlaps one `validate` job per test slice with selected test projects, sparse-checkout source builds of
-the CI and RepoConfig tools on Linux and Windows, and candidate creation. Each Aspire AppHost test project has a slice of
+configures, then overlaps one `validate` job per test slice with selected test projects, which runs `sharedkernel-ci run
+--slice <name>`, sparse-checkout source builds of the CI and RepoConfig tools on Linux and Windows, and candidate
+creation. A change to a project selects the test projects that depend on it; a change to a repository-wide build input
+(`.config`, `.github`, `*.props`, `*.targets`, `*.slnx`, analyzer configuration, `global.json`, `NuGet.Config`, the
+style analyzer tests, or the shared test configuration) selects every test project. Any project change runs the
+candidate job, which packs and consumes every package, and repository quality, which builds the whole solution and runs
+the governed literal check (`--explicit only`) against every library. Each Aspire AppHost test project has a slice of
 its own; the `library` slice runs every other selected test project. Linux and Windows consume the same candidate bytes
 in parallel. Repository quality runs on every validation. Standalone repository documentation skips candidates, tests,
 and full-solution bootstrap/formatting while every tracked build file is inert; repository quality then builds only the

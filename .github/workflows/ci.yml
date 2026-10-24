@@ -66,11 +66,11 @@ jobs:
         with:
           name: selection-and-reasons
           path: TestResults/selection
-      - name: Validate the selected test projects of the slice
+      - name: Run the selected test projects of the slice
         env:
           DOTNET_CLI_CONTEXT_VERBOSE: 'true'
           SLICE: ${{ matrix.slice }}
-        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- validate --slice "$SLICE"
+        run: dotnet run --project tools/SharedKernel.CI.Tool -c Release --no-build --no-restore -- run --slice "$SLICE" --github-summary "$GITHUB_STEP_SUMMARY"
       - name: Retain validation evidence
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
@@ -231,6 +231,9 @@ jobs:
         run: |
           dotnet test --project tests/SharedKernel.RepoConfig.Tests/SharedKernel.RepoConfig.Tests.csproj -c Release --no-build --no-restore
           dotnet test --project tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj -c Release --no-build --no-restore
+      - name: Check governed literals against every library of the solution build
+        if: needs.selection.outputs.build_required == 'true'
+        run: dotnet test --project tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj -c Release --no-build --no-restore --explicit only
       - name: Verify formatting
         if: needs.selection.outputs.build_required == 'true'
         run: dotnet format SharedKernel.slnx --verify-no-changes --no-restore

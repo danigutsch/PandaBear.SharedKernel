@@ -85,6 +85,37 @@ internal static partial class CiConfigurationFile
         ValidatePatterns(selection.Documentation, "$.selection.documentation");
         ValidateProjects(selection.AlwaysSelected, "$.selection.alwaysSelected", new Dictionary<string, string>(StringComparer.Ordinal));
 
+        var targets = new HashSet<string>(StringComparer.Ordinal);
+        var openApi = configuration.OpenApi ?? [];
+        for (var index = 0; index < openApi.Length; index++)
+        {
+            var target = openApi[index];
+            var path = "$.openApi[" + index.ToString(CultureInfo.InvariantCulture) + "]";
+            if (target is null)
+            {
+                throw Invalid(path + " must be an object.");
+            }
+
+            if (!IsName(target.Name))
+            {
+                throw Invalid(path + ".name must be lowercase letters and digits in words separated by '-'.");
+            }
+
+            if (!targets.Add(target.Name))
+            {
+                throw Invalid(path + ".name repeats the OpenAPI target " + target.Name + ".");
+            }
+
+            if (!RepositoryPath.IsRelative(target.Project))
+            {
+                throw Invalid(path + ".project must be a repository-relative project path with '/' separators and without empty, '.', or '..' segments.");
+            }
+
+            // The property reaches dotnet build as -p:<name>=true, so it cannot carry another property or a switch.
+            ValidateProperty(target.GenerateProperty, path + ".generateProperty");
+            ValidateProperty(target.RefreshProperty, path + ".refreshProperty");
+        }
+
         if (configuration.Slices.Length == 0)
         {
             throw Invalid("$.slices must name at least one slice.");
@@ -117,12 +148,40 @@ internal static partial class CiConfigurationFile
             }
 
             ValidateProjects(slice.Projects, path + ".projects", owners, slice.Name);
-            if (slice.OpenApi is { } openApi)
+            var sliceTargets = slice.OpenApi ?? [];
+            for (var target = 0; target < sliceTargets.Length; target++)
             {
-                ValidatePatterns(openApi, path + ".openApi");
-                if (openApi.Distinct(StringComparer.Ordinal).Count() != openApi.Length)
+                if (!targets.Contains(sliceTargets[target] ?? string.Empty))
                 {
-                    throw Invalid(path + ".openApi repeats a target.");
+                    throw Invalid(path + ".openApi[" + target.ToString(CultureInfo.InvariantCulture) + "] names " + sliceTargets[target] + ", which $.openApi does not define.");
+                }
+            }
+
+            if (sliceTargets.Distinct(StringComparer.Ordinal).Count() != sliceTargets.Length)
+            {
+                throw Invalid(path + ".openApi repeats a target.");
+            }
+
+            if (slice.Playwright is { } playwright)
+            {
+                if (!slice.Projects.Contains(playwright.Project, StringComparer.Ordinal))
+                {
+                    throw Invalid(path + ".playwright.project must name a test project that the slice lists.");
+                }
+
+                if (playwright.Browsers.Length == 0)
+                {
+                    throw Invalid(path + ".playwright.browsers must name at least one browser.");
+                }
+
+                for (var browser = 0; browser < playwright.Browsers.Length; browser++)
+                {
+                    // Browsers follow the install command, so a value that starts with '-' would be an option.
+                    if (!Browser().IsMatch(playwright.Browsers[browser] ?? string.Empty))
+                    {
+                        throw Invalid(path + ".playwright.browsers[" + browser.ToString(CultureInfo.InvariantCulture)
+                            + "] must be lowercase letters, digits, and '-', starting with a letter.");
+                    }
                 }
             }
         }
@@ -165,11 +224,31 @@ internal static partial class CiConfigurationFile
     }
 
     /// <summary>Reports whether <paramref name="name"/> is a valid slice name.</summary>
-    public static bool IsSliceName(string name) => SliceName().IsMatch(name) && name != BuildFilterName;
+    public static bool IsSliceName(string name) => IsName(name) && name != BuildFilterName;
+
+    /// <summary>Reports whether <paramref name="name"/> is lowercase letters and digits in words separated by <c>-</c>.</summary>
+    public static bool IsName(string name) => SliceName().IsMatch(name);
+
+    /// <summary>Reports whether <paramref name="browser"/> is a Playwright browser name: lowercase letters, digits, and <c>-</c>, starting with a letter.</summary>
+    public static bool IsBrowser(string browser) => Browser().IsMatch(browser);
+
+    private static void ValidateProperty(string value, string path)
+    {
+        if (!Property().IsMatch(value))
+        {
+            throw Invalid(path + " must be an MSBuild property name.");
+        }
+    }
 
     /// <summary>Creates the error for a value at a JSON path of the file.</summary>
     public static InvalidOperationException Invalid(string message) => new($"{RelativePath}: {message}");
 
     [GeneratedRegex(@"\A[a-z0-9]+(?:-[a-z0-9]+)*\z", RegexOptions.CultureInvariant)]
     private static partial Regex SliceName();
+
+    [GeneratedRegex(@"\A[a-z][a-z0-9-]*\z", RegexOptions.CultureInvariant)]
+    private static partial Regex Browser();
+
+    [GeneratedRegex(@"\A[A-Za-z_][A-Za-z0-9_]*\z", RegexOptions.CultureInvariant)]
+    private static partial Regex Property();
 }

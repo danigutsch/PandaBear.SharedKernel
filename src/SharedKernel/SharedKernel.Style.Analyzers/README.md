@@ -232,14 +232,14 @@ Local `const string` declarations with governed values are also rejected; compat
 apply only to named fields. Generated-code attributes on enclosing types or methods exempt nested
 declarations as well.
 Every registered canonical field must exist exactly once with its registered value.
-The repository selector conservatively requests full validation for packaged-library or guard-test
-changes so clean CI always builds the complete inventory and runs the guard. Unresolved
+The guard is an explicit test, so test runs that build only selected projects skip it. Whenever a
+project changes, repository quality builds the whole solution and runs it with `--explicit only`. Unresolved
 string constants fail closed. Test projects and generated declarations are excluded. Unregistered values
 remain unrestricted. Run the guard with:
 
 ```sh
 dotnet build SharedKernel.slnx -c Release --no-restore
-dotnet test --project tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj -c Release --no-build --no-restore -- --filter-class '*GovernedLiteralRepositoryTests'
+dotnet test --project tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj -c Release --no-build --no-restore --explicit only
 ```
 
 A reviewed compatibility exception adds a fourth nonempty justification column to a row naming

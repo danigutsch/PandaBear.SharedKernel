@@ -5,23 +5,32 @@ namespace PandaBear.Repository.Tests;
 /// <summary>Guards the strict format of <c>.config/sharedkernel-ci.json</c>.</summary>
 public sealed class CiConfigurationFileTests : IDisposable
 {
+    private const string AdminTarget =
+        """{ "name": "admin", "project": "src/Admin/Admin.csproj", "generateProperty": "GenerateAdminOpenApi", "refreshProperty": "RefreshAdminOpenApi" }""";
+
     private readonly RepositoryTestScope scope = new();
 
     [Fact]
-    public async Task The_configuration_is_read_with_its_optional_slice_settings()
+    public async Task The_configuration_is_read_with_its_optional_OpenApi_and_slice_settings()
     {
         // Arrange
-        scope.WriteFile(".config/sharedkernel-ci.json", RepositoryTestScope.DefaultConfiguration.Replace(
-            """{ "name": "library", "projects": [] }""", """{ "name": "library", "projects": [], "openApi": ["admin"], "playwright": true }""", StringComparison.Ordinal));
+        scope.WriteFile(".config/sharedkernel-ci.json", RepositoryTestScope.DefaultConfiguration
+            .Replace("\"version\": 1,", "\"version\": 1,\n  \"openApi\": [" + AdminTarget + "],", StringComparison.Ordinal)
+            .Replace(
+                """{ "name": "library", "projects": [] }""",
+                """{ "name": "library", "projects": ["tests/Core.Tests/Core.Tests.csproj"], "openApi": ["admin"], "playwright": { "project": "tests/Core.Tests/Core.Tests.csproj", "browsers": ["chromium"] } }""",
+                StringComparison.Ordinal));
 
         // Act
         var configuration = await CiConfigurationFile.Read(scope.Root, TestContext.Current.CancellationToken);
 
         // Assert
         configuration.Solution.ShouldBe("SharedKernel.slnx");
+        configuration.OpenApi.ShouldBe([new OpenApiTargetConfiguration("admin", "src/Admin/Admin.csproj", "GenerateAdminOpenApi", "RefreshAdminOpenApi")]);
         var slice = configuration.Slices.ShouldHaveSingleItem();
         slice.OpenApi.ShouldBe(["admin"]);
-        slice.Playwright.ShouldBeTrue();
+        slice.Playwright.ShouldNotBeNull().Project.ShouldBe("tests/Core.Tests/Core.Tests.csproj");
+        slice.Playwright.Browsers.ShouldBe(["chromium"]);
         configuration.DefaultSlice.ShouldBe("library");
     }
 
@@ -39,6 +48,15 @@ public sealed class CiConfigurationFileTests : IDisposable
     [InlineData("\"defaultSlice\": \"library\"", "\"defaultSlice\": \"other\"", ": $.slices[0].projects must name at least one test project unless the slice is the default slice.")]
     [InlineData("\"slices\": [{ \"name\": \"library\", \"projects\": [] }]", "\"slices\": []", ": $.slices must name at least one slice.")]
     [InlineData("\"slices\": [{ \"name\": \"library\", \"projects\": [] }]", "\"slices\": [{ \"name\": \"library\", \"projects\": [] }, { \"name\": \"library\", \"projects\": [\"tests/A/A.csproj\"] }]", ": $.slices[1].name repeats the slice library.")]
+    [InlineData("\"name\": \"library\", \"projects\": []", "\"name\": \"library\", \"projects\": [], \"openApi\": [\"admin\"]", ": $.slices[0].openApi[0] names admin, which $.openApi does not define.")]
+    [InlineData("\"name\": \"library\", \"projects\": []", "\"name\": \"library\", \"projects\": [], \"playwright\": { \"project\": \"tests/A/A.csproj\", \"browsers\": [\"chromium\"] }", ": $.slices[0].playwright.project must name a test project that the slice lists.")]
+    [InlineData("\"name\": \"library\", \"projects\": []", "\"name\": \"library\", \"projects\": [\"tests/A/A.csproj\"], \"playwright\": { \"project\": \"tests/A/A.csproj\", \"browsers\": [\"--with-deps\"] }", ": $.slices[0].playwright.browsers[0] must be lowercase letters, digits, and '-', starting with a letter.")]
+    [InlineData("\"name\": \"library\", \"projects\": []", "\"name\": \"library\", \"projects\": [\"tests/A/A.csproj\"], \"playwright\": { \"project\": \"tests/A/A.csproj\", \"browsers\": [] }", ": $.slices[0].playwright.browsers must name at least one browser.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [{ \"name\": \"Admin\", \"project\": \"src/A/A.csproj\", \"generateProperty\": \"G\", \"refreshProperty\": \"R\" }],", ": $.openApi[0].name must be lowercase letters and digits in words separated by '-'.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [{ \"name\": \"admin\", \"project\": \"../A.csproj\", \"generateProperty\": \"G\", \"refreshProperty\": \"R\" }],", ": $.openApi[0].project must be a repository-relative project path")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [{ \"name\": \"admin\", \"project\": \"src/A/A.csproj\", \"generateProperty\": \"G;X=1\", \"refreshProperty\": \"R\" }],", ": $.openApi[0].generateProperty must be an MSBuild property name.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [{ \"name\": \"admin\", \"project\": \"src/A/A.csproj\", \"generateProperty\": \"G\", \"refreshProperty\": \"-p:R\" }],", ": $.openApi[0].refreshProperty must be an MSBuild property name.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [" + AdminTarget + ", " + AdminTarget + "],", ": $.openApi[1].name repeats the OpenAPI target admin.")]
     public async Task Invalid_configuration_names_the_file_and_the_json_path(string original, string replacement, string expected)
     {
         // Arrange

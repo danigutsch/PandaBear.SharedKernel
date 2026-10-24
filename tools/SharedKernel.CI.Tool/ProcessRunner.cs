@@ -19,6 +19,12 @@ internal static class ProcessRunner
     public static Task<string> Run(string fileName, string[] arguments, string workingDirectory, CancellationToken ct) =>
         Run(fileName, arguments, workingDirectory, Timeout.InfiniteTimeSpan, TimeProvider.System, static _ => { }, ct);
 
+    /// <summary>Runs a process whose start information <paramref name="configure"/> adjusts, and returns its standard output.</summary>
+    /// <exception cref="InvalidOperationException">The process could not start or exited with a non-zero code.</exception>
+    /// <exception cref="OperationCanceledException"><paramref name="ct"/> was cancelled; the process tree is terminated first.</exception>
+    public static Task<string> RunConfigured(string fileName, string[] arguments, string workingDirectory, Action<ProcessStartInfo> configure, CancellationToken ct) =>
+        Run(fileName, arguments, workingDirectory, Timeout.InfiniteTimeSpan, TimeProvider.System, configure, ct);
+
     /// <summary>
     /// Runs Git without the inherited <c>GIT_*</c> variables, which can point it at another repository, and stops it
     /// when it has not exited within a minute.

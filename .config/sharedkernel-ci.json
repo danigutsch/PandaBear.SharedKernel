@@ -13,11 +13,7 @@
       ".gitattributes",
       "global.json",
       "NuGet.Config",
-      "src/*",
-      "tools/*",
-      "tests/SharedKernel.MalwareScanning.ClamAv.Testing/*",
       "tests/SharedKernel.Style.Analyzers.Tests/*",
-      "tests/SharedKernel.Testing.Contracts/*",
       "tests/testconfig.json",
       "tests/xunit.runner.json"
     ],

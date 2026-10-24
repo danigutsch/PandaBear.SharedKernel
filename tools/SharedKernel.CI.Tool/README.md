@@ -5,14 +5,15 @@
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
 `sharedkernel-ci` selects the test projects affected by a change, as the repository's `.config/sharedkernel-ci.json`
-configures, writes a solution filter for each CI test slice, restores, builds, and tests a slice's filter, stages pinned
-package candidates in a local feed, and verifies Conventional Commit messages in pull request events and git commit
-message files.
+configures, writes a solution filter for each CI test slice, runs the selected test projects of one or more slices
+through one solution filter, generates OpenAPI documents, installs Playwright browsers, stages pinned package candidates
+in a local feed, and verifies Conventional Commit messages in pull request events and git commit message files.
 
 ## Prerequisites
 
 Git and the .NET SDK pinned in `global.json`. `select` reads `.config/sharedkernel-ci.json` and the solution it names in a
-Git checkout, and `validate` reads the plan that `select` wrote;
+Git checkout, and `run` reads the configuration and the plan that `select` wrote; `openapi` reads the configuration;
+`install-playwright`, and `run --install-playwright`, need PowerShell (`pwsh`);
 `stage-candidate` reads a clean SharedKernel checkout and, with `--repository`, needs HTTPS access to `github.com` and
 `release-assets.githubusercontent.com`; `verify-commit-message` reads only its event or message file.
 
@@ -37,7 +38,9 @@ without installing it:
 
 ```sh
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select --base <object-id>
-dotnet run --project tools/SharedKernel.CI.Tool -c Release -- validate --slice <name>
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice <name>
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- openapi refresh --target <name>
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- install-playwright --project <test-project> --browser chromium --with-dependencies
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- stage-candidate --pin <candidate.json> --library-root . --output <feed> --repository danigutsch/PandaBear.SharedKernel
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-commit-message --event <event.json>
 ```
@@ -49,13 +52,13 @@ availability on nuget.org.
 ## Usage
 
 `--help` lists the options of each command. `--root` sets the repository root (default: the current directory);
-the other relative paths of `select`, `validate`, and `stage-candidate` resolve from it, and relative `--event` and
+the other relative paths of `select`, `run`, `install-playwright`, and `stage-candidate` resolve from it, and relative `--event` and
 `--file` paths resolve from the current directory. A command line that starts with `[diagram]` prints how it parses
 instead of running; an invalid command line exits 1.
 
 ### Configuration
 
-`select` reads `<root>/.config/sharedkernel-ci.json`: strict JSON of at most 1 MiB with camelCase property names that
+`select`, `run`, and `openapi` read `<root>/.config/sharedkernel-ci.json`: strict JSON of at most 1 MiB with camelCase property names that
 match exactly. Comments, trailing commas, and unknown, repeated, or missing properties are errors, and every error names
 the file and the JSON path of the problem.
 
@@ -71,9 +74,22 @@ the file and the JSON path of the problem.
   },
   "slices": [
     { "name": "fast", "projects": [] },
-    { "name": "system", "projects": ["tests/System.Tests/System.Tests.csproj"], "openApi": ["admin"], "playwright": true }
+    {
+      "name": "system",
+      "projects": ["tests/System.Tests/System.Tests.csproj"],
+      "openApi": ["admin"],
+      "playwright": { "project": "tests/System.Tests/System.Tests.csproj", "browsers": ["chromium"] }
+    }
   ],
-  "defaultSlice": "fast"
+  "defaultSlice": "fast",
+  "openApi": [
+    {
+      "name": "admin",
+      "project": "src/Admin.Api/Admin.Api.csproj",
+      "generateProperty": "GenerateAdminOpenApiArtifacts",
+      "refreshProperty": "RefreshAdminOpenApiArtifacts"
+    }
+  ]
 }
 ```
 
@@ -87,9 +103,14 @@ the file and the JSON path of the problem.
 | `selection.requireCoveringTests` | Whether a changed project that no selected test project depends on selects every test project. |
 | `slices[].name` | Lowercase letters and digits in words separated by `-`, other than `build`. It names the matrix entry, the filter, and the `<name>_required` output. |
 | `slices[].projects` | The slice's test projects. Each is a test project of the solution, listed in one slice. Only the default slice may list none. |
-| `slices[].openApi` | Optional OpenAPI target names that the slice generates before its tests run. |
-| `slices[].playwright` | Optional; whether the slice installs Playwright browsers before its tests run. Default `false`. |
+| `slices[].openApi` | Optional names of `openApi` targets that the slice generates after its build and before its tests run. |
+| `slices[].playwright.project` | Optional; a test project that the slice lists, whose build output holds `playwright.ps1`. `run --install-playwright` installs the browsers when this project is selected. |
+| `slices[].playwright.browsers` | The browsers to install, such as `chromium`: lowercase letters, digits, and `-`, starting with a letter. At least one. |
 | `defaultSlice` | Optional; the slice that runs the selected test projects that no slice lists. Without it, every test project of the solution must be in a slice. |
+| `openApi[].name` | Optional section. A target name: lowercase letters and digits in words separated by `-`, unique. |
+| `openApi[].project` | The project that `dotnet build` builds for the target. |
+| `openApi[].generateProperty` | The MSBuild property set to `true` to generate the documents: letters, digits, and `_`, not starting with a digit. |
+| `openApi[].refreshProperty` | The MSBuild property set to `true` to generate the documents and refresh their committed copies. |
 
 Paths are relative to the root, use `/`, and have no empty, `.`, or `..` segment; they resolve under the root without
 following symbolic links. Patterns match the whole repository-relative path with
@@ -152,17 +173,72 @@ are deleted. Selection reasons go to standard output.
 | `matrix` | A JSON array of the slices with a selected test project, in configuration order, such as `["fast"]`. |
 | `<slice>_required` | `true` when the slice has a selected test project; one line per configured slice. |
 
-### validate
+### run
 
-Restores, builds, and tests the solution filter of one slice: `dotnet restore <slice>.slnf --locked-mode`, `dotnet build
-<slice>.slnf -c Release --no-restore`, and `dotnet test --solution <slice>.slnf -c Release --no-build --no-restore`, with
-native MTP module scheduling and no module-parallelism cap. `--slice` names the slice. Validation rejects a plan
-recorded for another revision, an unknown slice, and a required slice without its filter, and keeps timings under
-`execution-<slice>` in the plan directory. When a `dotnet` restore, build, or test step succeeds, its standard output
-goes to standard error after the step ends, and its standard error is not shown. A failed step's standard output and
-standard error appear in its failure message on standard error. Standard output stays empty unless the slice has no
-selected test project. Package candidates are created with `SharedKernel.Versioning.Tool`; see
-[package development](https://github.com/danigutsch/PandaBear.SharedKernel/blob/main/docs/package-development.md).
+```text
+dotnet tool run sharedkernel-ci -- run --slice <name> --coverage --install-playwright --playwright-dependencies --github-summary "$GITHUB_STEP_SUMMARY"
+```
+
+Runs the selected test projects of the plan in `--selection` (default `TestResults/selection`). Each `--slice` names a
+slice; several slices run together, and without `--slice` every required slice runs. The run rejects a plan recorded for
+another revision, an unknown slice, and a plan that names a test project outside the checkout or through a symbolic
+link. When the slices have no selected test project, standard output says so and nothing is built.
+
+The run writes one solution filter, `tests.slnf`, of the selected test projects to its execution directory,
+`execution-<slice>` (several slices join their names with `+`, as in `execution-fast+system`; without `--slice`,
+`execution`) in the plan directory, and then:
+
+1. `dotnet restore tests.slnf --locked-mode`;
+2. `dotnet build tests.slnf -c <configuration> --no-restore`;
+3. for each `openApi` target of the slices, in order, the target's build with its generate property, as `openapi
+   generate` runs it, with `-c <configuration>`;
+4. with `--install-playwright`, `install-playwright` for each slice whose `playwright.project` is selected, with its
+   browsers, `--configuration <configuration>`, and, with `--playwright-dependencies`, `--with-dependencies`;
+5. one `dotnet test --solution tests.slnf -c <configuration> --no-build --no-restore --results-directory results`, with
+   native MTP module scheduling and no module-parallelism cap.
+
+`--configuration` defaults to `Release`. `--coverage` adds `--results-directory-layout per-module -- --coverlet
+--coverlet-output-format cobertura`, so each test project writes its Cobertura report under
+`results/<project>/<target-framework>_<runtime>`, and the run fails when a selected test project produced no
+`*.cobertura*.xml` report. The test projects need the `coverlet.MTP` extension. Results that an earlier run left are
+deleted before the tests run.
+
+Each phase writes its standard output to `<phase>.log`, or its failure message when it fails, and to standard error.
+Whether the run succeeds, fails, or is canceled, configuration and plan loading included, the execution directory
+receives `phase-timings.tsv` (phase, start, duration in seconds, and status, then a `total` line), `manifest.json` (the
+revision, the status, the slices, the configuration, the options, the test projects, and the phases with their logs),
+and `diagnostics.txt` (the same facts, the escaped failure message, and every file in the directory). `--github-summary
+<path>` appends a table of the phases to a GitHub Actions step summary. A failed phase's standard output and standard
+error appear in its failure message on standard error.
+
+### openapi
+
+```text
+sharedkernel-ci openapi generate [--target <name>]... [--root <path>]
+sharedkernel-ci openapi refresh [--target <name>]... [--root <path>]
+```
+
+Builds the `openApi` targets of the configuration, each named `--target` in order, or every target in configuration
+order: `dotnet build --no-restore <project> -p:<generateProperty>=true`, or `<refreshProperty>` for `refresh`. Each
+build runs through the dotnet host that runs the tool, from the root, with an environment that keeps only `HOME` and
+`TMPDIR` (on Windows `TEMP`, `TMP`, `USERPROFILE`, `APPDATA`, `LOCALAPPDATA`, `SystemRoot`, and `ComSpec`),
+`NUGET_PACKAGES` when it is the repository's `.nuget/packages`, and a `PATH` of the dotnet host directory and the system
+directories. It sets `ASPNETCORE_ENVIRONMENT` and `DOTNET_ENVIRONMENT` to `OpenApiGeneration`, the host environment
+that `PandaBear.OpenApi.OpenApiGenerationMode` recognizes, turns off telemetry and the first-run experience, and
+disables OpenTelemetry export. Credentials, connection strings, proxies, and startup hooks of the parent environment do
+not reach the build. Restore the projects first. A configuration without `openApi` targets fails the command.
+
+### install-playwright
+
+```text
+sharedkernel-ci install-playwright --project <path> [--browser <name>]... [--with-dependencies] [--configuration <name>] [--root <path>]
+```
+
+Evaluates the project's `OutputPath` with `dotnet msbuild <project> -getProperty:OutputPath`, with
+`-p:Configuration=<name>` when `--configuration` is given, normalizes its `\` and `/` separators, resolves it from the
+project directory, and runs `pwsh <output>/playwright.ps1 install`, with `--with-deps` for `--with-dependencies`, and
+the browsers. Without `--browser`, Playwright installs its default browsers. Build the project first; the command fails
+when the output has no `playwright.ps1`.
 
 ### stage-candidate
 
@@ -236,17 +312,19 @@ exec dotnet tool run sharedkernel-ci -- verify-commit-message --file "$1"
 | --- | --- |
 | 0 | Success. |
 | 1 | Invalid command line, cancellation, or an unexpected error. |
-| 2 | The configuration is invalid, or validation, staging, or the commit message check failed; the reason is on standard error. |
+| 2 | The configuration is invalid, or a run, generation, installation, staging, or the commit message check failed; the reason is on standard error. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
-Ctrl+C or SIGTERM stops the running `git` or `dotnet` process tree. A process that fails after the tool has observed
+Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or `pwsh` process tree. A process that fails after the tool has observed
 Ctrl+C or SIGTERM counts as the cancellation. Error messages on standard error escape control and format characters
 line by line, so text from files, processes, and the network cannot drive the terminal.
 
 ## Security
 
-The tool starts only `git` and `dotnet`, found in the absolute directories of `PATH` and never in the working
-directory, and passes arguments as a list. `select` passes `--base` to Git only when it is a hexadecimal object ID, so Git
+The tool starts only `git`, `dotnet`, and `pwsh`, found in the absolute directories of `PATH` and never in the working
+directory, or, for OpenAPI generation, the dotnet host that runs the tool, and passes arguments as a list. Slice,
+target, browser, configuration, and MSBuild property values are restricted to names, so none can become an option or
+another property. `select` passes `--base` to Git only when it is a hexadecimal object ID, so Git
 cannot read it as an option, and escapes control characters in the changed paths that its reasons repeat. `verify-commit-message` starts no process. No credentials are needed. `stage-candidate` runs
 Git without the inherited `GIT_*` variables, which could point it at another repository, and stops Git after a minute.
 

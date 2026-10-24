@@ -385,4 +385,48 @@ public static class SelectionCommandTests
         result.ExitCode.ShouldBe(0, result.Error);
         outputs.ShouldStartWith("build_required=false\ndocumentation_only=true\nmatrix=[]\n", StringComparison.Ordinal);
     }
+
+    [Theory]
+    [InlineData("src/SharedKernel/SharedKernel.Results/Result.cs", "src/SharedKernel/SharedKernel.Results/SharedKernel.Results.csproj")]
+    [InlineData("src/SharedKernel/SharedKernel.Tabular/CsvDocument.cs", "src/SharedKernel/SharedKernel.Tabular/SharedKernel.Tabular.csproj")]
+    public static async Task A_library_change_in_this_repository_selects_only_the_test_projects_that_depend_on_the_library(string path, string library)
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var graph = SolutionGraph.Load(root, (await CiConfigurationFile.Read(root, ct)).Solution);
+        using var scratch = new RepositoryTestScope();
+        var selection = Path.Combine(scratch.Root, "plan");
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(root, ["select", "--base", BaseRevision, "--selection", selection], SelectionTestFiles.CheckoutGit(path), ct);
+        var plan = await SelectionTestFiles.ReadPlan(selection, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        plan.FullValidation.ShouldBeFalse(string.Join('\n', plan.Reasons));
+        plan.BuildRequired.ShouldBeTrue("A library change runs the candidate job, which packs and consumes every package.");
+        var selected = plan.Slices.SelectMany(static slice => slice.Tests).Select(static test => test.Project).Order(StringComparer.Ordinal).ToArray();
+        selected.ShouldNotBeEmpty();
+        selected.ShouldBe([.. graph.Tests.Where(test => graph.Closure(test).Contains(library)).Order(StringComparer.Ordinal)]);
+    }
+
+    [Fact]
+    public static async Task A_leaf_library_change_in_this_repository_runs_only_its_own_tests()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        using var scratch = new RepositoryTestScope();
+        var selection = Path.Combine(scratch.Root, "plan");
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(
+            root, ["select", "--base", BaseRevision, "--selection", selection], SelectionTestFiles.CheckoutGit("src/SharedKernel/SharedKernel.Tabular/CsvDocument.cs"), ct);
+        var plan = await SelectionTestFiles.ReadPlan(selection, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        plan.Slices.SelectMany(static slice => slice.Tests).Select(static test => test.Project).ShouldBe(["tests/SharedKernel.Tabular.Tests/SharedKernel.Tabular.Tests.csproj"]);
+    }
 }

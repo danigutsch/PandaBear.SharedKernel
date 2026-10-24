@@ -9,7 +9,7 @@ public sealed class CiConfigurationConventionTests
     private const string StyleAnalyzerTests = "tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj";
 
     [Fact]
-    public async Task Full_validation_covers_every_packable_project_its_references_and_the_style_analyzer_tests()
+    public async Task Every_packable_project_change_requires_a_build_and_so_the_candidate_job()
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
@@ -23,18 +23,28 @@ public sealed class CiConfigurationConventionTests
             return elements.Any(static element => element.Name.LocalName == "PackageId" && element.Value.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal))
                 && !elements.Any(static element => element.Name.LocalName == "IsPackable" && element.Value.Trim() == "false");
         }).ToArray();
-        var uncovered = packable.SelectMany(graph.Closure)
-            .Append(StyleAnalyzerTests)
-            .Distinct(StringComparer.Ordinal)
-            .Where(project => ProjectSelector.Match(configuration.Selection.FullValidation, project) is null
-                || ProjectSelector.Match(configuration.Selection.FullValidation, project[..(project.LastIndexOf('/') + 1)] + "Source.cs") is null)
-            .Order(StringComparer.Ordinal)
+        var unbuilt = packable
+            .Where(project => !ProjectSelector.Select(configuration, graph, [project[..(project.LastIndexOf('/') + 1)] + "Source.cs"], null, null).BuildRequired)
             .ToArray();
 
         // Assert
         packable.ShouldNotBeEmpty();
-        uncovered.ShouldBeEmpty(
-            "Consumers and package consumption tests use every packable project, and the style analyzer tests guard the governed literals of every library.");
+        unbuilt.ShouldBeEmpty("build_required starts the candidate job, which packs and consumes every package whenever a packable project changes.");
+    }
+
+    [Fact]
+    public async Task Full_validation_covers_the_style_analyzer_tests()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+
+        // Act
+        var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
+
+        // Assert
+        ProjectSelector.Match(configuration.Selection.FullValidation, StyleAnalyzerTests).ShouldNotBeNull();
+        ProjectSelector.Match(configuration.Selection.FullValidation, StyleAnalyzerTests[..(StyleAnalyzerTests.LastIndexOf('/') + 1)] + "Source.cs")
+            .ShouldNotBeNull("The style analyzer tests guard the governed literals of every library, so their change runs every test project.");
     }
 
     [Fact]

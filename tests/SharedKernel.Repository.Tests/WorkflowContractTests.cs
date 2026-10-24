@@ -85,8 +85,28 @@ public sealed class WorkflowContractTests
         validate.ShouldContain("    if: needs.selection.outputs.build_required == 'true' && needs.selection.outputs.matrix != '[]'\n", StringComparison.Ordinal);
         validate.ShouldContain("        slice: ${{ fromJSON(needs.selection.outputs.matrix) }}\n", StringComparison.Ordinal);
         validate.ShouldContain("          SLICE: ${{ matrix.slice }}\n", StringComparison.Ordinal);
-        validate.ShouldContain("-- validate --slice \"$SLICE\"\n", StringComparison.Ordinal);
+        validate.ShouldContain("-- run --slice \"$SLICE\" --github-summary \"$GITHUB_STEP_SUMMARY\"\n", StringComparison.Ordinal);
         validate.ShouldContain("          name: validation-${{ matrix.slice }}-evidence\n          path: TestResults/selection/execution-${{ matrix.slice }}/**\n", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Every_build_checks_governed_literals_after_the_full_solution_build_of_repository_quality()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+
+        // Act
+        var quality = WorkflowJobs.Read(workflow, "repository-quality");
+
+        // Assert
+        quality.ShouldContain(
+            "      - name: Check governed literals against every library of the solution build\n"
+                + "        if: needs.selection.outputs.build_required == 'true'\n"
+                + "        run: dotnet test --project tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj -c Release --no-build --no-restore --explicit only\n",
+            StringComparison.Ordinal,
+            "Selected test runs build only what they test, so the explicit governed literal check runs after setup-dev.sh builds the solution.");
+        quality.IndexOf("run: bash setup-dev.sh", StringComparison.Ordinal).ShouldBeLessThan(quality.IndexOf("--explicit only", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -120,7 +140,7 @@ public sealed class WorkflowContractTests
 
     [Theory]
     [InlineData("tools/SharedKernel.CI.Tool", "select")]
-    [InlineData("tools/SharedKernel.CI.Tool", "validate")]
+    [InlineData("tools/SharedKernel.CI.Tool", "run")]
     [InlineData("tools/SharedKernel.CI.Tool", "stage-candidate")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "calculate-release")]
     [InlineData("tools/SharedKernel.Versioning.Tool", "create-candidate")]
