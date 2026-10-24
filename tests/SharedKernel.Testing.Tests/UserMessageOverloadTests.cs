@@ -185,17 +185,17 @@ public sealed class UserMessageOverloadTests
             ArgumentNullException.ThrowIfNull(orderId);
         };
         Func<Task> assignableAssertion = () => completes.ShouldThrowAssignableTo<InvalidOperationException>(Reason);
-        Func<Task> parameterAssertion = () => rejectsOrder.ShouldThrow<ArgumentNullException>("customerId", userMessage: Reason);
+        Func<Task> typeAssertion = () => rejectsOrder.ShouldThrow<InvalidOperationException>(Reason);
 
         // Act
         var assignableException = await assignableAssertion.ShouldThrow<Xunit.Sdk.XunitException>();
-        var parameterException = await parameterAssertion.ShouldThrow<Xunit.Sdk.XunitException>();
+        var typeException = await typeAssertion.ShouldThrow<Xunit.Sdk.XunitException>();
 
         // Assert
         var assignableFailure = assignableException.InnerException.ShouldBeOfType<Xunit.Sdk.ThrowsAnyException>();
-        var parameterFailure = parameterException.InnerException.ShouldBeOfType<Xunit.Sdk.ThrowsException>();
+        var typeFailure = typeException.InnerException.ShouldBeOfType<Xunit.Sdk.ThrowsException>();
         assignableException.Message.ShouldBe(Reason + Environment.NewLine + assignableFailure.Message);
-        parameterException.Message.ShouldBe(Reason + Environment.NewLine + parameterFailure.Message);
+        typeException.Message.ShouldBe(Reason + Environment.NewLine + typeFailure.Message);
     }
 
     [Fact]

@@ -124,7 +124,7 @@ public sealed class AssertionDelegateInliningTests
     }
 
     [Fact]
-    public async Task Static_named_argument_preserves_parameter_name_and_lambda_comments()
+    public async Task Static_named_argument_preserves_the_message_and_lambda_comments()
     {
         // Arrange
         const string source = """
@@ -135,13 +135,13 @@ public sealed class AssertionDelegateInliningTests
                 public void Checks_exception()
                 {
                     Action action = () => { /* keep */ GC.Collect(); };
-                    ShouldAssertionExtensions.ShouldThrow<ArgumentException>(paramName: "value", action: action);
+                    ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>(userMessage: "value", action: action);
                 }
             }
             """;
         AnalyzerTestHarness.CreateCompilation(source).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
         var workspace = CodeFixTestWorkspace.Create(source);
-        var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "ShouldAssertionExtensions.ShouldThrow<ArgumentException>(paramName: \"value\", action: action)");
+        var diagnostic = await workspace.CreateDocumentDiagnostic(DiagnosticId, "ShouldAssertionExtensions.ShouldThrow<InvalidOperationException>(userMessage: \"value\", action: action)");
         var provider = new testingcodefixes::PandaBear.Testing.CodeFixes.SharedKernelTestingCodeFixProvider();
 
         // Act
@@ -153,7 +153,7 @@ public sealed class AssertionDelegateInliningTests
         var updated = await workspace.GetDocumentText();
 
         // Assert
-        updated.ShouldContain("paramName: \"value\"", StringComparison.Ordinal);
+        updated.ShouldContain("userMessage: \"value\"", StringComparison.Ordinal);
         updated.ShouldContain("/* keep */", StringComparison.Ordinal);
         AnalyzerTestHarness.CreateCompilation(updated).GetDiagnostics(TestContext.Current.CancellationToken).Where(static d => d.Severity == DiagnosticSeverity.Error).ShouldBeEmpty();
     }

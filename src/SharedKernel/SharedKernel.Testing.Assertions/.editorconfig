@@ -5,5 +5,4 @@ root = false
 dotnet_diagnostic.SKTEST006.severity = none
 
 # Assertion libraries give every public Should* assertion a userMessage overload.
-# README.md records the scoped suppressions under "SKTEST017 suppressions".
 dotnet_diagnostic.SKTEST017.severity = warning

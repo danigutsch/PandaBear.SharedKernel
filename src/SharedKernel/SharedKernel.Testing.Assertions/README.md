@@ -10,7 +10,7 @@ Reusable xUnit assertion extensions for SharedKernel test suites.
 
 Import `PandaBear.Testing.Assertions` for `ShouldBe` and collection assertions. Use `ExceptionAssertions.ThrowsInner<TException>` when validating wrapped failures. Keep assertions tied to observable behavior and use the comparer/precision overloads when equality semantics require them.
 
-Pass the reason that an assertion holds as `userMessage`. Every `Should*` assertion takes it after its other arguments, except the `ShouldThrow<T>` forms without `paramName` described under [exception delegate contracts](#exception-delegate-contracts). `ShouldBeTrue` and `ShouldBeFalse` take it as an optional argument and report xUnit's own `TrueException` or `FalseException`, whose message is `userMessage` alone when one is given, without xUnit's expected and actual lines. The other assertions report a failure as an `XunitException` whose message starts with `userMessage` and whose inner exception is the original failure, including failures that are not xUnit assertions, such as the `XmlException` of `ShouldBeWellFormedHtmlDocument`. `ArgumentException`, `OperationCanceledException`, and dynamic skips pass through unchanged, and a null `userMessage` throws `ArgumentNullException` before the assertion runs. To assert the specific xUnit exception type that an assertion throws, such as `EqualException`, use the overload that takes no message.
+Pass the reason that an assertion holds as `userMessage`. Every `Should*` assertion takes it after its other arguments. `ShouldBeTrue` and `ShouldBeFalse` take it as an optional argument and report xUnit's own `TrueException` or `FalseException`, whose message is `userMessage` alone when one is given, without xUnit's expected and actual lines. The other assertions report a failure as an `XunitException` whose message starts with `userMessage` and whose inner exception is the original failure, including failures that are not xUnit assertions, such as the `XmlException` of `ShouldBeWellFormedHtmlDocument`. `ArgumentException`, `OperationCanceledException`, and dynamic skips pass through unchanged, and a null `userMessage` throws `ArgumentNullException` before the assertion runs. To assert the specific xUnit exception type that an assertion throws, such as `EqualException`, use the overload that takes no message.
 
 Pass the values of a `params` assertion as an array to add a message, and name the argument (`userMessage: "..."`) when the argument before it is also a string. When `T` is `object`, `IEnumerable`, or `ICloneable`, the types that both a string and an array of `T` convert to, a `ShouldBeOneOf` or `ShouldBeEquivalentTo` call with an array and a string binds to the message overload, so the string is the message rather than an expected value. A `null` or `default` first value followed by one string is also taken as the array and the message when a string converts to `T` and `T` is not `string`, such as `object`, and is ambiguous (CS0121) when the values are strings, as in `ShouldContainInOrder` and `ShouldHaveValidationError`. Pass such values as an array, such as `value.ShouldBeOneOf([null, "Ready"])`, or cast the null, such as `(object?)null`.
 
@@ -30,47 +30,28 @@ Use the existing typed `ShouldThrow<T>` overloads:
 | `Func<object?>` | Property or value accessor | Throws exactly `T` and returns that exception. |
 | `Func<Task>` | Asynchronous operation | Await the returned task; throws exactly `T` and returns that exception. |
 
-Each form also supports `ShouldThrow<T>(paramName)` and `ShouldThrow<T>(paramName, userMessage)`
-for `T : ArgumentException` and checks the parameter name, including `null`. The forms without
-`paramName` take no message, because their `(delegate, string)` signature belongs to the
-`paramName` overload: for an `ArgumentException` type, a string passed there is checked as the
-parameter name. `ShouldThrowAssignableTo<T>` is the explicitly assignable asynchronous variant.
-Do not substitute it for exact exception checks. An async lambda must use `Func<Task>` rather than
-`Action`, which would erase the awaited failure as `async void`.
+Each form also takes `ShouldThrow<T>(userMessage)`. Check an argument exception's parameter name on
+the returned exception with `exception.ParamName.ShouldBe(...)`. `ShouldThrowAssignableTo<T>` is the
+explicitly assignable asynchronous variant. Do not substitute it for exact exception checks. An async
+lambda must use `Func<Task>` rather than `Action`, which would erase the awaited failure as
+`async void`.
 
 ```csharp
 Action synchronous = () => service.Execute();
 var exception = synchronous.ShouldThrow<InvalidOperationException>();
 
 Func<object?> accessor = () => service.Value;
-accessor.ShouldThrow<ArgumentNullException>("value");
+accessor.ShouldThrow<ArgumentNullException>("A missing value is rejected.").ParamName.ShouldBe("value");
 
 Func<Task> asynchronous = () => service.ExecuteLater();
 await asynchronous.ShouldThrow<InvalidOperationException>();
 ```
 
-### SKTEST017 suppressions
-
-The three `ShouldThrow<T>` forms without `paramName` suppress SKTEST017 with a justification. This
-record follows the [warning policy](../../../docs/ci/warning-policy.md), except that it names review
-triggers instead of an expiry or review date.
-
-| Field | Record |
-| --- | --- |
-| Producer and rule | `SKTEST017` from `SharedKernel.Testing.Analyzers`. |
-| Scope | One method-level `[SuppressMessage]` on each of `ShouldThrow<T>(this Action)`, `ShouldThrow<T>(this Func<object?>)`, and `ShouldThrow<T>(this Func<Task>)` in `ShouldAssertionExtensions.cs` of this project. |
-| Baseline | 3, a fixed set. Another suppression needs its own record. |
-| Rationale and evidence | `ShouldThrow<T>(delegate, string? paramName)` already has the `(delegate, string)` signature that a `userMessage` overload needs, and constraints are not part of a signature, so the overload would not compile (CS0111). SKTEST017 names the colliding overload as the reason it offers no code fix. |
-| Owner | SharedKernel maintainers. |
-| Remediation | Rename the `paramName` overloads in a breaking change, remove the suppressions, and add the three overloads with the code fix. |
-| Review | At the first stable API review, and whenever the `ShouldThrow` overloads or SKTEST017 change. |
-| Findings outside the exception | Each suppression covers only its own method. SKTEST017 is a warning in this project, so warnings-as-errors fails the build for any other public assertion without a `userMessage` overload. The repository convention tests in `AssertionLibraryAnalyzerTests` keep the rule enabled in the three assertion libraries: they check each project's opt-in property and `.editorconfig` severity, and the testing analyzer references that `src/Directory.Build.props` adds for the opt-in. |
-
 ### Epic #6 evaluation
 
-The three typed forms, their `paramName` overloads with and without `userMessage`, and the explicit
-asynchronous assignable variant cover delegate exception assertions. Direct contract tests cover
-returned exception identity, derived exception rejection, and parameter-name validation. There is
+The three typed forms, their `userMessage` overloads, and the explicit asynchronous assignable
+variant cover delegate exception assertions. Direct contract tests cover returned exception
+identity, derived exception rejection, and the returned parameter name. There is
 no `Delegate`, `object`, or `Func<ValueTask>` assertion wrapper; unsupported forms must not be
 silently coerced.
 
