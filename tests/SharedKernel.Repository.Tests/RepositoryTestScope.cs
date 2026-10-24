@@ -105,5 +105,19 @@ internal sealed class RepositoryTestScope : IDisposable
         return selection;
     }
 
-    public void Dispose() => Directory.Delete(Root, recursive: true);
+    public void Dispose()
+    {
+        // Git writes object files read-only, and Windows refuses to delete read-only files.
+        var options = new EnumerationOptions { RecurseSubdirectories = true, AttributesToSkip = FileAttributes.ReparsePoint };
+        foreach (var path in Directory.EnumerateFiles(Root, "*", options))
+        {
+            var attributes = File.GetAttributes(path);
+            if ((attributes & FileAttributes.ReadOnly) != 0)
+            {
+                File.SetAttributes(path, attributes & ~FileAttributes.ReadOnly);
+            }
+        }
+
+        Directory.Delete(Root, recursive: true);
+    }
 }
