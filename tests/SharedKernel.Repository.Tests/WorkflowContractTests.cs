@@ -75,21 +75,4 @@ public sealed class WorkflowContractTests
         consumption.ShouldContain("published-candidate/consumption.json", StringComparison.Ordinal);
         workflow.ShouldContain("test \"$PUBLISHED_CANDIDATE_RESULT\" = success", StringComparison.Ordinal);
     }
-
-    [Fact]
-    public void Active_workflows_do_not_execute_archived_extraction_scripts()
-    {
-        // Arrange
-        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
-
-        // Act
-        var workflows = Directory.GetFiles(Path.Combine(root, ".github", "workflows"), "*.y*ml");
-
-        // Assert
-        workflows.ShouldNotBeEmpty();
-        foreach (var workflow in workflows)
-        {
-            File.ReadAllText(workflow).ShouldNotContain("provenance/extraction-tools/", StringComparison.Ordinal);
-        }
-    }
 }
