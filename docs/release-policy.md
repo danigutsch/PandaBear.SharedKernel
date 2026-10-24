@@ -2,6 +2,8 @@
 
 All packages remain preview (prerelease) until stable artifacts are separately authorized. Source is public. Preview candidates are the hashed `candidate-packages` CI artifacts; verify their revision and SHA-256 identities before consumption. Candidates do not authorize NuGet registry publication, GitHub releases, stable packages, stable tags, or stable releases.
 
+Consuming repositories take a candidate from its GitHub prerelease, `v<packageVersion>`, which holds the candidate's packages and manifest, `candidate.json`, unchanged. Each such publication is separately authorized. A consumer pins that manifest and stages the packages with `sharedkernel-ci stage-candidate --repository`.
+
 ## Candidates and versions
 
 Successful package-affecting changes on main produce `<target>-alpha.<run>.<attempt>` candidates. Pull requests validate candidate artifacts before merge. Repository documentation-only changes skip packing; a README inside a package project remains an artifact input. Unknown history and uncertain inputs select full validation. Nightly validation covers the complete library and package consumers.
@@ -12,9 +14,9 @@ CI appends workflow run number and attempt as an ordered prerelease identifier. 
 
 ## Immutable validation
 
-Build once per version and retain exact packages, symbol archives, candidate manifest, revision, and SHA-256 hashes. Never overwrite an existing package version. Validate ordinary packages through isolated restore/locked restore/build/run checks and tools through installation. The Windows job consumes the same artifacts produced on Linux; keep platform and NativeAOT evidence separate and mark unavailable evidence pending.
+Build once per version and retain exact packages, symbol archives, candidate manifest, revision, and SHA-256 hashes. Never overwrite an existing package version. Validate ordinary packages through isolated restore/locked restore/build/run checks and tools through installation. The Windows job consumes the same artifacts produced on Linux; keep platform and NativeAOT evidence separate and mark unavailable evidence pending. A manual dispatch with `candidate_version` stages that version from its GitHub prerelease and consumes it unchanged on Linux and Windows.
 
-CI always calculates prerelease candidates, including manual dispatch; there is no stable-preparation input. Do not create stable packages, tags, or releases now. Generic CLI stable-version capabilities remain available for future separately authorized work. A future stable identity needs its own artifacts and validation; never relabel a prerelease archive.
+CI calculates only prerelease candidates, including on manual dispatch; there is no stable-preparation input. Do not create stable packages, tags, or releases now. Generic CLI stable-version capabilities remain available for future separately authorized work. A future stable identity needs its own artifacts and validation; never relabel a prerelease archive.
 
 ## API and source compatibility
 

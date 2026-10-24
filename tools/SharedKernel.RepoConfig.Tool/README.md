@@ -4,9 +4,10 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-`sharedkernel-repo` maintains repository roadmap configuration, its optional GitHub projection, and
-repository checks. Application CI slices, coverage exclusions, bootstrap, consumer compatibility,
-workflow configuration, and protected-environment approval remain consumer-owned.
+`sharedkernel-repo` maintains repository roadmap configuration, its optional GitHub projection, dependency
+snapshots, and repository checks. The tool holds generic engines; the consuming repository owns its policy and
+data, such as the license exceptions in `.config/sharedkernel-repo.json`, its workflows, and protected-environment
+approvals.
 
 ## Prerequisites
 

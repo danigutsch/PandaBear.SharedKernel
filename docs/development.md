@@ -65,8 +65,8 @@ consume the same candidate bytes in parallel. Repository quality runs on every v
 Standalone repository documentation skips candidates, tests, and full-solution bootstrap/formatting.
 Repository quality builds only the documentation tool and checks generated-document drift. Package
 READMEs, scripts, and uncertain inputs are not documentation-only and select validation. Main pushes
-compare their before/after revisions; nightly and manual runs select full validation. Invalid
-comparison history falls back to full validation.
+compare their before/after revisions; nightly runs and manual runs without `candidate_version` select
+full validation. Invalid comparison history falls back to full validation.
 
 The repository allows only squash merging, uses the PR title and body as the default squash commit
 message, deletes merged branches automatically, and defines the `ci:rerun` label.
