@@ -43,8 +43,10 @@ internal static partial class CommitMessageVerification
             throw new ArgumentException("Commit message has no header.");
         }
 
-        // Git writes these headers for merge and revert commits.
-        if (lines[0].StartsWith("Merge ", StringComparison.Ordinal) || lines[0].StartsWith("Revert ", StringComparison.Ordinal))
+        // Git writes these headers for merge commits and reverts; reverting a revert writes Reapply.
+        if (lines[0].StartsWith("Merge ", StringComparison.Ordinal)
+            || lines[0].StartsWith("Revert ", StringComparison.Ordinal)
+            || lines[0].StartsWith("Reapply ", StringComparison.Ordinal))
         {
             return;
         }

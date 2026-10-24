@@ -83,6 +83,7 @@ public sealed class CommitMessageVerificationTests
     [InlineData("feat: support the contract\n\n" + Scissors + "\n# Do not modify or remove the line above.\nBREAKING CHANGE missing colon\n")]
     [InlineData("Merge branch 'feature' into main\n\n# Conflicts:\n#\tsrc/Contract.cs\n")]
     [InlineData("Revert \"feat: support the contract\"\n\nThis reverts commit 0123456789abcdef0123456789abcdef01234567.\n")]
+    [InlineData("Reapply \"feat: support the contract\"\n\nThis reverts commit 0123456789abcdef0123456789abcdef01234567.\n")]
     public async Task Message_file_accepts_conventional_headers_and_git_merge_and_revert_messages(string message)
     {
         // Arrange
