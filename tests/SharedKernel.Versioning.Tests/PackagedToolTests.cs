@@ -32,4 +32,24 @@ public static class PackagedToolTests
         toolProjects.ShouldNotBeEmpty();
         unpackedTools.ShouldBe([], "SharedKernelPackagePlanner.PackagedTools must name every tool package, because FindProjects skips a name that has no project.");
     }
+    [Fact]
+    public static void Candidates_include_every_packable_consumer_test_support_project()
+    {
+        // Arrange
+        var root = RepositoryRoot.Find();
+        var supportProjects = Directory.GetFiles(Path.Combine(root, "tests"), "*.csproj", SearchOption.AllDirectories)
+            .Where(static project => XDocument.Load(project).Descendants("PackageId")
+                .Any(static element => element.Value.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal)))
+            .Where(static project => !XDocument.Load(project).Descendants("IsPackable")
+                .Any(static element => element.Value.Trim() == "false"))
+            .ToArray();
+
+        // Act
+        var packed = SharedKernelPackagePlanner.FindProjects(root).ToHashSet(StringComparer.Ordinal);
+        var missing = supportProjects.Where(project => !packed.Contains(project)).ToArray();
+
+        // Assert
+        supportProjects.ShouldNotBeEmpty();
+        missing.ShouldBeEmpty();
+    }
 }

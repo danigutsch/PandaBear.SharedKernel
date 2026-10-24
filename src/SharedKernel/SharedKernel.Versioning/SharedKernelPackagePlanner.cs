@@ -6,7 +6,7 @@ namespace PandaBear.Versioning;
 public static class SharedKernelPackagePlanner
 {
     private static readonly string[] ConsumerSupportProjects =
-        ["SharedKernel.Testing.Contracts", "SharedKernel.MalwareScanning.ClamAv.Testing"];
+        ["SharedKernel.Testing.Contracts", "SharedKernel.MalwareScanning.ClamAv.Testing", "SharedKernel.Npgsql.Testing"];
     private static readonly string[] PackagedTools =
     [
         "SharedKernel.Versioning.Tool",
