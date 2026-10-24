@@ -59,7 +59,8 @@ restart source validation; remove and reapply for another attempt using a human 
 account. Unrelated labels use separate concurrency groups and cannot cancel validation.
 
 The source workflow selects projects once, then overlaps ordinary graph validation, isolated hosted
-test jobs, and candidate creation. Hosted jobs are generated from selected Aspire projects. Linux
+test jobs, sparse-checkout source builds of the CI and RepoConfig tools on Linux and Windows, and
+candidate creation. Hosted jobs are generated from selected Aspire projects. Linux
 and Windows consume the same candidate bytes in parallel. Repository quality runs on every validation.
 Standalone repository documentation skips candidates, tests, and full-solution bootstrap/formatting.
 Repository quality builds only the documentation tool and checks generated-document drift. Package

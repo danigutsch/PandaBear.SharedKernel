@@ -111,6 +111,40 @@ jobs:
           path: TestResults/selection/execution-*/**
           if-no-files-found: ignore
 
+  source-build:
+    needs: selection
+    if: needs.selection.outputs.candidate_required == 'true'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        tool: [SharedKernel.CI.Tool, SharedKernel.RepoConfig.Tool]
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          path: source-build
+          persist-credentials: false
+          sparse-checkout: |
+            tools/${{ matrix.tool }}
+            tools/Shared
+          sparse-checkout-cone-mode: true
+      - uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7
+        with:
+          global-json-file: source-build/global.json
+      - name: Build the tool from its sparse checkout
+        working-directory: source-build
+        shell: bash
+        env:
+          TOOL: ${{ matrix.tool }}
+        run: dotnet build "tools/$TOOL" -c Release
+      - name: Run the tool from outside its checkout
+        shell: bash
+        env:
+          TOOL: ${{ matrix.tool }}
+        run: dotnet run --project "source-build/tools/$TOOL" -c Release --no-build -- --help
+
   candidate:
     needs: selection
     if: needs.selection.outputs.candidate_required == 'true'
@@ -316,7 +350,7 @@ jobs:
 
   validation-summary:
     name: ${{ github.event.action == 'labeled' && github.event.label.name != 'ci:rerun' && 'Ignored label event' || 'SharedKernel Validation' }}
-    needs: [selection, library, hosted-tests, candidate, linux-package-consumption, windows-package-consumption, repository-quality, published-candidate-consumption]
+    needs: [selection, library, hosted-tests, source-build, candidate, linux-package-consumption, windows-package-consumption, repository-quality, published-candidate-consumption]
     if: ${{ always() && (github.event.action != 'labeled' || github.event.label.name == 'ci:rerun') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -329,6 +363,7 @@ jobs:
           QUALITY_RESULT: ${{ needs.repository-quality.result }}
           CANDIDATE_REQUIRED: ${{ needs.selection.outputs.candidate_required }}
           LIBRARY_RESULT: ${{ needs.library.result }}
+          SOURCE_BUILD_RESULT: ${{ needs.source-build.result }}
           HOSTED_RESULT: ${{ needs.hosted-tests.result }}
           HOSTED_REQUIRED: ${{ needs.selection.outputs.hosted_required }}
           CANDIDATE_RESULT: ${{ needs.candidate.result }}
@@ -342,7 +377,7 @@ jobs:
           test "$SELECTION_RESULT" = success
           test "$QUALITY_RESULT" = success
           if [[ "$CANDIDATE_REQUIRED" == true ]]; then
-            for result in "$LIBRARY_RESULT" "$CANDIDATE_RESULT" "$LINUX_RESULT" "$WINDOWS_RESULT"; do
+            for result in "$LIBRARY_RESULT" "$SOURCE_BUILD_RESULT" "$CANDIDATE_RESULT" "$LINUX_RESULT" "$WINDOWS_RESULT"; do
               test "$result" = success || exit 1
             done
             case "$HOSTED_REQUIRED" in

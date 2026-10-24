@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using PandaBear.Repository.Tests.Conventions;
 
 namespace PandaBear.Repository.Tests;
@@ -24,6 +25,71 @@ public sealed class WorkflowContractTests
         quality.ShouldContain("if: needs.selection.outputs.candidate_required == 'false'\n        uses: ./.github/actions/setup-dotnet-tool", StringComparison.Ordinal);
         quality.ShouldContain("project: tools/SharedKernel.Documentation.Tool", StringComparison.Ordinal);
         quality.ShouldContain("-- verify --config docs/architecture/generated-diagrams.json\n", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Source_build_builds_each_source_runnable_tool_from_a_sparse_checkout_and_runs_it_from_outside()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+        var buildProperties = XDocument.Load(Path.Combine(root, "Directory.Build.props"));
+
+        // Act
+        var job = WorkflowJobs.Read(workflow, "source-build");
+        var checkouts = workflow.Split('\n')
+            .Select(static line => line.Trim())
+            .Where(static line => line.StartsWith("- uses: actions/checkout@", StringComparison.Ordinal))
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+        var lockedRestoreConditions = buildProperties.Descendants("PropertyGroup")
+            .Where(static group => group.Elements("RestoreLockedMode").Any(static mode => mode.Value == "true"))
+            .Select(static group => (string?)group.Attribute("Condition") ?? string.Empty)
+            .ToArray();
+
+        // Assert
+        var checkout = checkouts.ShouldHaveSingleItem();
+        job.ShouldContain("    needs: selection\n    if: needs.selection.outputs.candidate_required == 'true'\n", StringComparison.Ordinal);
+        job.ShouldContain("        os: [ubuntu-latest, windows-latest]\n        tool: [SharedKernel.CI.Tool, SharedKernel.RepoConfig.Tool]\n", StringComparison.Ordinal);
+        job.ShouldContain(
+            "      " + checkout + "\n        with:\n          path: source-build\n          persist-credentials: false\n"
+                + "          sparse-checkout: |\n            tools/${{ matrix.tool }}\n            tools/Shared\n          sparse-checkout-cone-mode: true\n",
+            StringComparison.Ordinal);
+        job.ShouldContain("          global-json-file: source-build/global.json\n", StringComparison.Ordinal);
+        job.ShouldContain(
+            "        working-directory: source-build\n        shell: bash\n        env:\n          TOOL: ${{ matrix.tool }}\n"
+                + "        run: dotnet build \"tools/$TOOL\" -c Release\n",
+            StringComparison.Ordinal);
+        job.ShouldContain(
+            "      - name: Run the tool from outside its checkout\n        shell: bash\n        env:\n          TOOL: ${{ matrix.tool }}\n"
+                + "        run: dotnet run --project \"source-build/tools/$TOOL\" -c Release --no-build -- --help\n",
+            StringComparison.Ordinal);
+        lockedRestoreConditions.ShouldContain(
+            static condition => condition.Contains("'$(GITHUB_ACTIONS)' == 'true'", StringComparison.Ordinal),
+            "The build step restores in locked mode because GitHub Actions sets GITHUB_ACTIONS.");
+    }
+
+    [Fact]
+    public void Validation_summary_requires_the_source_build_whenever_a_candidate_is_required()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "ci.yml"));
+
+        // Act
+        var summary = WorkflowJobs.Read(workflow, "validation-summary");
+        var needs = summary.Split('\n')
+            .Select(static line => line.Trim())
+            .ShouldHaveSingleItem(static line => line.StartsWith("needs: [", StringComparison.Ordinal))["needs: [".Length..^1]
+            .Split(", ");
+
+        // Assert
+        needs.ShouldContain("source-build");
+        summary.ShouldContain("          SOURCE_BUILD_RESULT: ${{ needs.source-build.result }}\n", StringComparison.Ordinal);
+        summary.ShouldContain(
+            "if [[ \"$CANDIDATE_REQUIRED\" == true ]]; then\n"
+                + "            for result in \"$LIBRARY_RESULT\" \"$SOURCE_BUILD_RESULT\" \"$CANDIDATE_RESULT\" \"$LINUX_RESULT\" \"$WINDOWS_RESULT\"; do\n",
+            StringComparison.Ordinal);
     }
 
     [Theory]
