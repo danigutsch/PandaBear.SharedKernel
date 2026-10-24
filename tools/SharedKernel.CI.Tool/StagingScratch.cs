@@ -26,7 +26,10 @@ internal sealed class StagingScratch : IDisposable
     }
 
     /// <summary>Deletes the staging directories of <paramref name="output"/> that are older than <see cref="StaleAge"/>.</summary>
-    /// <remarks>A symbolic link with a staging name is left alone; the sweep never follows one.</remarks>
+    /// <remarks>
+    /// A symbolic link with a staging name is left alone; the sweep never follows one. A directory that cannot be read or
+    /// deleted stays for the sweep of a later run.
+    /// </remarks>
     public static void SweepStale(string output, TimeProvider timeProvider)
     {
         var parent = Parent(output);
@@ -39,12 +42,20 @@ internal sealed class StagingScratch : IDisposable
         var now = timeProvider.GetUtcNow().UtcDateTime;
         foreach (var directory in new DirectoryInfo(parent).EnumerateDirectories(prefix + "*"))
         {
-            if (directory.Name.Length == prefix.Length + 32
-                && !directory.Name.AsSpan(prefix.Length).ContainsAnyExcept(LowercaseHexadecimal)
-                && directory.LinkTarget is null
-                && now - directory.LastWriteTimeUtc > StaleAge)
+            try
             {
-                directory.Delete(recursive: true);
+                if (directory.Name.Length == prefix.Length + 32
+                    && !directory.Name.AsSpan(prefix.Length).ContainsAnyExcept(LowercaseHexadecimal)
+                    && directory.LinkTarget is null
+                    && now - directory.LastWriteTimeUtc > StaleAge)
+                {
+                    directory.Delete(recursive: true);
+                }
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+            {
+                // A run that starts at the same time may delete the same leftover first. Neither that nor a leftover that
+                // cannot be deleted stops this run, which moves packages only from its own staging directory.
             }
         }
     }

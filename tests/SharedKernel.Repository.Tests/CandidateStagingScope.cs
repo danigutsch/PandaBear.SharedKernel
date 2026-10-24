@@ -18,6 +18,7 @@ internal sealed class CandidateStagingScope : IDisposable
 
     // Git creates its object files read-only, which Windows refuses to delete until the attribute is cleared.
     private readonly TemporaryDirectory directory = new();
+    private readonly List<string> lockedDirectories = [];
 
     public CandidateStagingScope()
     {
@@ -126,7 +127,42 @@ internal sealed class CandidateStagingScope : IDisposable
             ? Directory.GetDirectories(Path.GetDirectoryName(Output)!, ".sharedkernel-feed.stage-*")
             : [];
 
-    public void Dispose() => directory.Dispose();
+    /// <summary>
+    /// Creates a staging directory, two days old, that this process cannot delete: it holds a read-only file on Windows
+    /// and, elsewhere, a file in a directory without write permission. Disposal unlocks it.
+    /// </summary>
+    public string AddUndeletableStaleScratch()
+    {
+        var scratch = Directory.CreateDirectory(Path.Combine(Path.GetDirectoryName(Output)!, ".sharedkernel-feed.stage-" + Guid.NewGuid().ToString("N"))).FullName;
+        var locked = Directory.CreateDirectory(Path.Combine(scratch, "locked")).FullName;
+        var file = Path.Combine(locked, "partial.nupkg");
+        File.WriteAllText(file, "partial");
+        if (OperatingSystem.IsWindows())
+        {
+            File.SetAttributes(file, FileAttributes.ReadOnly);
+        }
+        else
+        {
+            File.SetUnixFileMode(locked, UnixFileMode.UserRead | UnixFileMode.UserExecute);
+            lockedDirectories.Add(locked);
+        }
+
+        Directory.SetLastWriteTimeUtc(scratch, TimeProvider.System.GetUtcNow().UtcDateTime.AddDays(-2));
+        return scratch;
+    }
+
+    public void Dispose()
+    {
+        foreach (var locked in lockedDirectories)
+        {
+            if (!OperatingSystem.IsWindows())
+            {
+                File.SetUnixFileMode(locked, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+            }
+        }
+
+        directory.Dispose();
+    }
 
     private void AddPackage(string name)
     {

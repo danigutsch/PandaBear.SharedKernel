@@ -156,6 +156,24 @@ public sealed class CandidateStagingFeedTests
     }
 
     [Fact]
+    public async Task Staging_continues_when_a_stale_scratch_directory_cannot_be_deleted()
+    {
+        // Arrange
+        using var scope = new CandidateStagingScope();
+        var stale = scope.AddUndeletableStaleScratch();
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(
+            scope.Base, scope.Arguments(), new ProcessLog().Run, CandidateStagingTestServices.Offline(new CandidateGit()), TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        Directory.GetFiles(scope.Output).Select(Path.GetFileName).Order(StringComparer.Ordinal).ToArray()
+            .ShouldBe([.. scope.PackageNames.Append("candidate.json").Order(StringComparer.Ordinal)], "A leftover that cannot be deleted does not stop staging.");
+        scope.ScratchDirectories().ShouldNotContain(directory => directory != stale, "The run still deletes its own staging directory.");
+    }
+
+    [Fact]
     public async Task Canceled_staging_exits_with_code_1_without_staging_packages()
     {
         // Arrange

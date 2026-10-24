@@ -112,8 +112,8 @@ are verified against the pinned SHA-256 hashes there and only then move into `--
 with the same pin may move the same package first. The pin's exact bytes are written last, through a temporary file,
 as `<output>/candidate.json`. Packages of other versions in `--output` stay. The staging directory is deleted when the
 command ends; one older than a day, which an interrupted run left behind, is deleted when the next run starts, while a
-concurrent run's newer one stays. Standard output reports how many packages were added and how many were already
-present.
+concurrent run's newer one stays. A staging directory that cannot be deleted stays for a later run and does not fail
+the command. Standard output reports how many packages were added and how many were already present.
 
 ### verify-pr-title
 
