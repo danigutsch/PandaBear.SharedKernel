@@ -10,7 +10,8 @@ workflow configuration, and protected-environment approval remain consumer-owned
 
 ## Prerequisites
 
-The tool runs on .NET 10; `verify-text-encoding` also needs Git.
+The tool runs on .NET 10. `verify-text-encoding`, `verify-json`, `dependency snapshot`,
+`dependency verify-license-exceptions`, and the `automation` steps also need Git.
 
 ## Installation
 
@@ -43,6 +44,9 @@ sharedkernel-repo github reconcile
 sharedkernel-repo github reconcile --force
 sharedkernel-repo automation publish-result --force
 sharedkernel-repo verify-podman-dns --verbosity quiet
+sharedkernel-repo verify-json
+sharedkernel-repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository
+sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_OUTPUT"
 ```
 
 | Command | Purpose |
@@ -57,12 +61,63 @@ sharedkernel-repo verify-podman-dns --verbosity quiet
 | `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request. |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
+| `verify-json` | Fails when the working-tree content of a `*.json` file in the Git index is missing, not UTF-8, or not JSON. Comments, trailing commas, and a UTF-8 byte order mark are allowed. Each failure names the path, line, and byte. |
+| `dependency snapshot` | Generates a dependency snapshot from committed lock files; see [Offline dependency snapshots](#offline-dependency-snapshots). |
+| `dependency submit` | Submits a dependency snapshot to the GitHub dependency graph. |
+| `dependency verify-license-exceptions` | Verifies the configured license exceptions; see [License exceptions](#license-exceptions). |
 
-`github` commands and `automation publish-result` preview their changes unless `--force` is given.
-Lines that describe previewed changes start with `preview:`. The `publish-result` preview names the
-repository, base SHA, branch, and changed paths. Every command except `verify-podman-dns` takes
-`--root <path>`, which defaults to the current directory. Run `sharedkernel-repo <command> --help` for
-the options of each command.
+`github` commands, `automation publish-result`, and `dependency submit` preview their changes unless
+`--force` is given. Lines that describe previewed changes start with `preview:`. The `publish-result`
+preview names the repository, base SHA, branch, and changed paths; the `dependency submit` preview names
+the snapshot, its size, and the endpoint. Every command except `verify-podman-dns` takes `--root <path>`,
+which defaults to the current directory; relative `--snapshot` and `--github-output` paths resolve against
+it. Run `sharedkernel-repo <command> --help` for the options of each command.
+
+`[diagram]` before a command line prints how the tool parses it without running it, and exits 1 when the
+command line does not parse, as in `sharedkernel-repo [diagram] verify-json --root .`.
+
+## Configuration
+
+Commands that apply consumer policy read `.config/sharedkernel-repo.json` under `--root`. The file is
+strict JSON of at most 1 MiB with `"version": 1`: property names are camelCase and match exactly, and
+comments, trailing commas, and unknown or repeated properties are errors. Paths in it are relative to the
+root, use `/`, and have no empty, `.`, or `..` segments; symbolic links are not followed. Errors name the
+file and the JSON path of the problem. A command fails when the file lacks its section.
+
+```json
+{
+  "version": 1,
+  "licenseExceptions": {
+    "approval": {
+      "file": ".config/sharedkernel-candidate.json",
+      "values": {
+        "packageVersion": "1.0.0-alpha.1",
+        "libraryRevision": "0123456789abcdef0123456789abcdef01234567",
+        "libraryDirty": false
+      }
+    },
+    "packages": {
+      "Example.Package": "2.0.0"
+    }
+  }
+}
+```
+
+### License exceptions
+
+`dependency verify-license-exceptions` checks the `licenseExceptions` section, which records package
+license exceptions that a review approved:
+
+- Each property in `approval.values` must hold the same string or boolean at the top level of the JSON file
+  that `approval.file` names. A change to any approved value, such as a new pinned version, needs a new
+  review.
+- Each package in `packages` must resolve to its approved version in every target of every
+  `packages.lock.json` in the Git index, and at least one of them must resolve it. Package IDs ignore case;
+  versions match exactly.
+
+Every finding is listed. When none is found, `--github-output <path>` appends
+`packages=pkg:nuget/<id>@<version>,...` in the configured order, the format of the
+`allow-dependencies-licenses` input of GitHub's dependency review action; a failure appends nothing.
 
 ## Transferred issues and external references
 
@@ -109,7 +164,7 @@ references before applying changes, and use explicit closure approvals for actua
 
 | Variable | Read by |
 | --- | --- |
-| `GH_TOKEN`, then `GITHUB_TOKEN` | `github` commands. |
+| `GH_TOKEN`, then `GITHUB_TOKEN` | `github` commands and `dependency submit --force`. |
 | `GITHUB_TOKEN` | `automation` steps that call GitHub. |
 | `GITHUB_REPOSITORY` | `automation` steps. |
 | `GITHUB_RUN_ID` | `automation plan-github`. |
@@ -121,13 +176,19 @@ references before applying changes, and use explicit closure approvals for actua
 - `verify-podman-dns` inspects only local rootless Podman on Linux and fails closed for remote services.
 - `verify-text-encoding` checks staged regular files, skips files whose `binary` attribute is set, and
   fails on blobs larger than 64 MiB.
+- `verify-json` reads the working-tree content of the regular files in the Git index, skips symbolic links
+  and submodules, and fails on files larger than 64 MiB. In a sparse checkout, files outside it are
+  reported as missing.
+- `dependency verify-license-exceptions` reads the working-tree content of the regular `packages.lock.json`
+  files in the Git index, and fails on an approval file larger than 1 MiB or a lock file larger than 64 MiB.
+- `dependency submit` accepts a snapshot of at most 32 MiB, the size that `dependency snapshot` writes.
 
 ## Exit codes
 
 | Code | Meaning |
 | --- | --- |
 | 0 | Success, including previews and a healthy or inapplicable Podman state. |
-| 1 | Verification failure or drift, invalid text encoding, stale or unverifiable Podman DNS state, a file, Git, or GitHub error, a command-line error, or cancellation. |
+| 1 | Verification failure or drift, invalid text encoding or JSON, a license exception finding, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a command-line error, or cancellation. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within two seconds. |
 
 ## Security
@@ -136,6 +197,8 @@ references before applying changes, and use explicit closure approvals for actua
 - Child processes (Git, Podman, and `stat`) start without `GH_TOKEN` and `GITHUB_TOKEN`.
 - Without `--force`, `github` commands and `automation publish-result` only read and change nothing in
   GitHub or the checkout; `--force` never skips validation.
+- `dependency submit` sends no request and reads no token without `--force`. With it, the command sends
+  the snapshot file unchanged and reports only the HTTP status of a rejected request.
 - `automation` steps after planning are bound to the reviewed plan digest. `publish-result` requires a
   sealed result with or without `--force`, and its preview reads GitHub only to validate. With `--force`
   it creates Git objects, one new branch, and a draft pull request. When the branch already exists it
@@ -174,7 +237,17 @@ because lockfiles do not encode development-only asset usage.
 
 Missing committed locks, unresolved edges, ambiguous names, unsupported node kinds or lock versions,
 dirty/mislabeled commits, and unsafe output paths fail before publication. Existing output is not overwritten.
-Submit the JSON through GitHub's dependency-submission API using the reviewed workflow's existing
-contents-write permission. The command itself performs no network calls. One source-built tool can inspect
-both historical base and current head checkouts, so retired releases are unnecessary for dependency review.
-Actual application builds still require the current candidate's artifacts.
+The command itself performs no network calls. One source-built tool can inspect both historical base and
+current head checkouts, so retired releases are unnecessary for dependency review. Actual application builds
+still require the current candidate's artifacts.
+
+`dependency submit` sends the snapshot to GitHub's dependency submission API:
+
+```sh
+sharedkernel-repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository --force
+```
+
+The snapshot must be a JSON object, and `--repository` must name `owner/name`. With `--force`, the command
+posts the file unchanged to `https://api.github.com/repos/<owner>/<name>/dependency-graph/snapshots` with the
+token from `GH_TOKEN`, then `GITHUB_TOKEN`; a workflow token needs `contents: write`. A response other than
+2xx, or a result of `INVALID`, fails the command.
