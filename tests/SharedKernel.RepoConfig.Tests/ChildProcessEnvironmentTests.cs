@@ -133,4 +133,64 @@ public sealed class ChildProcessEnvironmentTests
         result.ExitCode.ShouldBe(0, "The real Git lists valid JSON and a lock file that resolves the approved versions.");
         fakeGit.Ran.ShouldBeFalse("Git resolves only from absolute PATH entries, so the repository-local fake never runs.");
     }
+
+    [Fact]
+    public async Task Dependency_snapshot_ignores_repository_local_git_from_relative_path_entries()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = await DependencySnapshotTestRepository.Create(
+            "{\"version\":2,\"dependencies\":{\"net10.0\":{\"A\":{\"type\":\"Direct\",\"resolved\":\"1.0.0\",\"contentHash\":\"HASH\"}}}}");
+        var fakeGit = await RepositoryLocalGit.Create(repository.RootPath, TestContext.Current.CancellationToken);
+
+        // The snapshot requires a clean checkout, so the reviewed commit carries the fake.
+        await repository.Commit();
+
+        // Act
+        var result = await repository.Run(environment: fakeGit.EnvironmentVariables);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, "The real Git reads the clean HEAD and the committed solution, project, and lock file.");
+        fakeGit.Ran.ShouldBeFalse("Git resolves only from absolute PATH entries, so the committed fake never runs.");
+    }
+
+    [Fact]
+    public async Task Automation_plan_ignores_repository_local_git_from_relative_path_entries()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new TemporaryGitRepository();
+        await repository.Initialize(TestContext.Current.CancellationToken);
+        var commit = await repository.RunGit(
+            ["-c", "user.name=Repo Config Tests", "-c", "user.email=repo-config-tests@example.invalid", "-c", "commit.gpgsign=false", "commit", "--allow-empty", "--quiet", "-m", "base"],
+            TestContext.Current.CancellationToken);
+        commit.ExitCode.ShouldBe(0, "Planning reads HEAD, so the repository needs a commit.");
+        var fakeGit = await RepositoryLocalGit.Create(repository.RootPath, TestContext.Current.CancellationToken);
+        Dictionary<string, string?> environment = new(fakeGit.EnvironmentVariables, StringComparer.Ordinal)
+        {
+            ["GITHUB_REPOSITORY"] = "owner/repository",
+            ["GITHUB_RUN_ID"] = "42"
+        };
+
+        // Act
+        var result = await repository.RunCommand(
+            ["automation", "plan-github", "--root", repository.RootPath],
+            TestContext.Current.CancellationToken,
+            environment: environment);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.StandardError.ShouldBe(
+            "sharedkernel-repo: Roadmap automation detected a change outside roadmap/**." + Environment.NewLine,
+            "The real Git reads HEAD and lists the untracked fake, and planning accepts changes only under roadmap/**.");
+        fakeGit.Ran.ShouldBeFalse("Git resolves only from absolute PATH entries, so the repository-local fake never runs.");
+    }
 }
