@@ -594,7 +594,7 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
 
         if (consumerTypes.Length > 0)
         {
-            EmitEnvelopePublisher(builder, contractTypes, consumerHandlers);
+            EmitEnvelopePublisher(builder, consumerHandlers);
         }
 
         if (mappings.Length > 0)
@@ -638,24 +638,24 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
 
     private static void EmitEnvelopePublisher(
         StringBuilder builder,
-        string[] contractTypes,
         IntegrationEventHandlerModel[] consumerHandlers)
     {
+        var consumerTypes = consumerHandlers.Select(static handler => handler.IntegrationEventType).ToArray();
         builder.AppendLine("internal sealed class GeneratedIntegrationEventEnvelopePublisher(");
         builder.AppendLine("    global::Microsoft.Extensions.DependencyInjection.IServiceScopeFactory scopeFactory,");
-        for (var index = 0; index < contractTypes.Length; index++)
+        for (var index = 0; index < consumerTypes.Length; index++)
         {
-            builder.Append("    global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<").Append(contractTypes[index]).Append("> jsonTypeInfo").Append(index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture));
-            builder.AppendLine(index == contractTypes.Length - 1 ? ") : global::PandaBear.Messaging.IEventEnvelopePublisher" : ",");
+            builder.Append("    global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<").Append(consumerTypes[index]).Append("> jsonTypeInfo").Append(index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture));
+            builder.AppendLine(index == consumerTypes.Length - 1 ? ") : global::PandaBear.Messaging.IEventEnvelopePublisher" : ",");
         }
         builder.AppendLine("{");
         builder.AppendLine("    public async global::System.Threading.Tasks.ValueTask Publish(global::PandaBear.Messaging.EventEnvelope envelope, global::System.Threading.CancellationToken ct)");
         builder.AppendLine("    {");
         builder.AppendLine("        global::System.ArgumentNullException.ThrowIfNull(envelope);");
         builder.AppendLine("        ct.ThrowIfCancellationRequested();");
-        foreach (var consumerType in consumerHandlers.Select(static handler => handler.IntegrationEventType))
+        for (var contractIndex = 0; contractIndex < consumerTypes.Length; contractIndex++)
         {
-            var contractIndex = Array.IndexOf(contractTypes, consumerType);
+            var consumerType = consumerTypes[contractIndex];
             builder.Append("        if (global::System.String.Equals(envelope.EventType, ").Append(consumerType).AppendLine(".EventType, global::System.StringComparison.Ordinal))");
             builder.AppendLine("        {");
             builder.AppendLine("            if (envelope.Payload is null) throw new global::System.InvalidOperationException($\"Integration event '{envelope.EventType}' payload is required.\");");

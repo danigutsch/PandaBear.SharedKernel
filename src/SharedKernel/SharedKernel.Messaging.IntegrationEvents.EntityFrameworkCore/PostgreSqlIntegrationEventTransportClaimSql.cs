@@ -45,6 +45,7 @@ internal static class PostgreSqlIntegrationEventTransportClaimSql
         var consumerNameColumn = FormatIdentifier(GetColumnName(entityType, nameof(IntegrationEventTransportMessage.ConsumerName), storeObject));
         var processedAtColumn = FormatIdentifier(GetColumnName(entityType, nameof(IntegrationEventTransportMessage.ProcessedAt), storeObject));
         var nextAttemptColumn = FormatIdentifier(GetColumnName(entityType, nameof(IntegrationEventTransportMessage.NextConsumeAttemptAt), storeObject));
+        var poisonedAtColumn = FormatIdentifier(GetColumnName(entityType, nameof(IntegrationEventTransportMessage.PoisonedAt), storeObject));
         var claimedByColumn = FormatIdentifier(GetColumnName(entityType, nameof(IntegrationEventTransportMessage.ClaimedBy), storeObject));
         var claimedUntilColumn = FormatIdentifier(GetColumnName(entityType, nameof(IntegrationEventTransportMessage.ClaimedUntil), storeObject));
         var receivedAtColumn = FormatIdentifier(GetColumnName(entityType, nameof(IntegrationEventTransportMessage.ReceivedAt), storeObject));
@@ -58,6 +59,7 @@ internal static class PostgreSqlIntegrationEventTransportClaimSql
                     FROM {{tableName}} AS candidate
                     WHERE candidate.{{consumerNameColumn}} = {0}
                         AND candidate.{{processedAtColumn}} IS NULL
+                        AND candidate.{{poisonedAtColumn}} IS NULL
                         AND (candidate.{{nextAttemptColumn}} IS NULL OR candidate.{{nextAttemptColumn}} <= {3})
                         AND (candidate.{{claimedUntilColumn}} IS NULL OR candidate.{{claimedUntilColumn}} <= {3})
                     ORDER BY candidate.{{receivedAtColumn}}

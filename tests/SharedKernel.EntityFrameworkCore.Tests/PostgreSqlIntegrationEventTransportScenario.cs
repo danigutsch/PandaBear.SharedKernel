@@ -65,9 +65,10 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         IEventEnvelopePublisher publisher,
         CancellationToken ct,
         TimeProvider? timeProvider = null,
-        ServiceLifetime publisherLifetime = ServiceLifetime.Singleton)
+        ServiceLifetime publisherLifetime = ServiceLifetime.Singleton,
+        int? maxConsumeAttempts = null)
     {
-        await using var provider = CreateConsumerProvider(publisher, publisherLifetime, timeProvider);
+        await using var provider = CreateConsumerProvider(publisher, publisherLifetime, timeProvider, maxConsumeAttempts);
         var consumer = provider.GetRequiredService<PostgreSqlIntegrationEventTransportConsumer<TransportDbContext>>();
 
         return await consumer.ConsumePending(1, ct);
@@ -143,10 +144,18 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
             [new IntegrationEventTransportDbContextConfiguration<TransportDbContext>()]);
     }
 
+    public async ValueTask ReplayPoisoned(string eventId, DateTimeOffset now, CancellationToken ct)
+    {
+        await using var dbContext = CreateDbContext();
+        (await IntegrationEventTransportPoison.CountPoisoned(dbContext, ConsumerName, ct)).ShouldBe(1);
+        (await IntegrationEventTransportPoison.ReleasePoisoned(dbContext, ConsumerName, eventId, now, ct)).ShouldBeTrue();
+    }
+
     private ServiceProvider CreateConsumerProvider(
         IEventEnvelopePublisher publisher,
         ServiceLifetime publisherLifetime = ServiceLifetime.Singleton,
-        TimeProvider? timeProvider = null)
+        TimeProvider? timeProvider = null,
+        int? maxConsumeAttempts = null)
     {
         var services = new ServiceCollection();
         services.AddDbContext<TransportDbContext>(options => options.UseNpgsql(dataSource));
@@ -159,6 +168,9 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
         };
         services.AddSingleton(timeProvider ?? TimeProvider.System);
         services.AddPostgreSqlIntegrationEventTransportConsumer<TransportDbContext>(ConsumerName);
+        services.Configure<IntegrationEventOutboxRelayOptions>(
+            IntegrationEventOptionsNames.Consumer<TransportDbContext>(),
+            options => options.MaxConsumeAttempts = maxConsumeAttempts);
 
         return services.BuildServiceProvider();
     }

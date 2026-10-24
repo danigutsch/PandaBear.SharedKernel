@@ -86,6 +86,14 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
         get; private set;
     }
 
+    /// <summary>
+    /// Gets when the message exhausted its consume attempts. Ordinary claims never select a poisoned message.
+    /// </summary>
+    public DateTimeOffset? PoisonedAt
+    {
+        get; private set;
+    }
+
     public string? ClaimedBy
     {
         get; private set;
@@ -104,6 +112,32 @@ internal sealed class IntegrationEventTransportMessage : EventEnvelope, IIntegra
         LastConsumeError = null;
         ClaimedBy = null;
         ClaimedUntil = null;
+    }
+
+    /// <summary>Records a final failed attempt and moves the message to the poison state.</summary>
+    /// <param name="attemptedAt">When the final attempt failed.</param>
+    /// <param name="error">The bounded failure description.</param>
+    public void MarkPoisoned(DateTimeOffset attemptedAt, string error)
+    {
+        MarkConsumeFailed(attemptedAt, attemptedAt, error);
+        NextConsumeAttemptAt = null;
+        PoisonedAt = attemptedAt;
+    }
+
+    /// <summary>
+    /// Returns a poisoned message to ordinary delivery with a fresh attempt budget, for an audited operator replay.
+    /// </summary>
+    /// <param name="releasedAt">When the message becomes claimable again.</param>
+    public void ReleaseFromPoison(DateTimeOffset releasedAt)
+    {
+        if (PoisonedAt is null)
+        {
+            throw new InvalidOperationException("Only a poisoned transport message can be released.");
+        }
+
+        PoisonedAt = null;
+        ConsumeAttempts = 0;
+        NextConsumeAttemptAt = releasedAt;
     }
 
     public void MarkConsumeFailed(DateTimeOffset attemptedAt, DateTimeOffset nextAttemptAt, string error)

@@ -19,4 +19,13 @@ public sealed class IntegrationEventOutboxRelayOptions
     /// Gets or sets how long a relay claim remains active before another relay may retry the message.
     /// </summary>
     public TimeSpan ClaimLeaseDuration { get; set; } = TimeSpan.FromMinutes(5);
+
+    /// <summary>
+    /// Gets or sets how many times a transport consumer attempts a message before it is poisoned; <see langword="null" />
+    /// retries without limit. Outbox relays ignore this setting.
+    /// </summary>
+    public int? MaxConsumeAttempts
+    {
+        get; set;
+    }
 }

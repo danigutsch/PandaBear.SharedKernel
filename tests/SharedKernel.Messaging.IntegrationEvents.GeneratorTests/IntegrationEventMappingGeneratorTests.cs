@@ -887,6 +887,59 @@ public sealed class IntegrationEventMappingGeneratorTests
     }
 
     [Fact]
+    public void Envelope_publisher_takes_only_consumed_contract_type_info_when_the_assembly_also_produces()
+    {
+        // Arrange
+        const string source = """
+            using Microsoft.Extensions.DependencyInjection;
+
+            namespace Demo;
+
+            public sealed record TourCreatedIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "tour.created";
+                public static int EventVersion => 1;
+            }
+
+            public sealed record BrandingChangedIntegrationEvent(Guid EventId, DateTimeOffset OccurredAt) : IIntegrationEvent
+            {
+                public static string EventType => "branding.changed";
+                public static int EventVersion => 1;
+            }
+
+            public sealed class BrandingChangedIntegrationEventHandler : IIntegrationEventHandler<BrandingChangedIntegrationEvent>
+            {
+                public ValueTask Handle(BrandingChangedIntegrationEvent integrationEvent, CancellationToken ct) =>
+                    ValueTask.CompletedTask;
+            }
+
+            public static class Registration
+            {
+                public static IServiceCollection AddMessaging(IServiceCollection services)
+                {
+                    services.AddIntegrationEventContract<TourCreatedIntegrationEvent>(TourCreatedIntegrationEvent.EventType, null!);
+                    services.AddIntegrationEventConsumer<BrandingChangedIntegrationEvent>(BrandingChangedIntegrationEvent.EventType, null!);
+                    return services;
+                }
+            }
+            """;
+        var compilation = GeneratorTestHarness.CreateCompilation(source);
+
+        // Act
+        var result = GeneratorTestHarness.RunGenerator(compilation);
+        var generatedSource = GeneratorTestHarness.GetGeneratedSource(result.RunResult);
+        var publisherSource = generatedSource[generatedSource.IndexOf("class GeneratedIntegrationEventEnvelopePublisher", StringComparison.Ordinal)..];
+        var unreadParameterWarnings = result.OutputCompilation.GetDiagnostics(TestContext.Current.CancellationToken)
+            .Where(static diagnostic => string.Equals(diagnostic.Id, "CS9113", StringComparison.Ordinal))
+            .ToArray();
+
+        // Assert
+        unreadParameterWarnings.ShouldBeEmpty();
+        publisherSource.ShouldContain("JsonTypeInfo<global::Demo.BrandingChangedIntegrationEvent>", StringComparison.Ordinal);
+        publisherSource.ShouldNotContain("JsonTypeInfo<global::Demo.TourCreatedIntegrationEvent>", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Serializer_matches_registered_base_and_derived_contracts_by_exact_runtime_type()
     {
         // Arrange
