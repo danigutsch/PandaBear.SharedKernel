@@ -50,6 +50,9 @@ dotnet run --project tools/SharedKernel.Versioning.Tool -c Release -- consume-ca
 ```
 
 Candidate packages and their manifest can be copied together to another machine; consumption regenerates configuration for the current feed location.
+A consumer repository records its compatibility with a candidate by running its own build and tests on a clean clone of its committed revision
+with `sharedkernel-version verify-consumer --candidate <candidate.json> -- <command>...`; the
+[Versioning tool README](../tools/SharedKernel.Versioning.Tool/README.md#candidates) describes the checks and the evidence.
 Linux and Windows consume the same hashed artifacts before stable promotion. Repository and Source Link metadata target the public repository; candidate validation records source and symbol evidence separately.
 
 

@@ -18,7 +18,7 @@ internal static class VersioningCommandLine
         ArgumentNullException.ThrowIfNull(input);
         ArgumentNullException.ThrowIfNull(timeProvider);
 
-        return new RootCommand("Calculates SharedKernel versions and validates, packs, and consumes SharedKernel packages.")
+        return new RootCommand("Calculates SharedKernel versions, validates, packs, and consumes SharedKernel packages, and verifies consumers against candidates.")
         {
             CreateClassifyCommit(),
             CreateCompute(input),
@@ -33,6 +33,7 @@ internal static class VersioningCommandLine
             CreateValidateCandidate(timeProvider),
             CreateConsumeCandidate(),
             CreateConsumePackages(),
+            CreateVerifyConsumer(),
 
             // [diagram] is not a default directive. Consuming repositories' caller tests parse their command lines with it,
             // which prints the parse without running the command and exits 1 when the command line does not parse.
@@ -424,6 +425,57 @@ internal static class VersioningCommandLine
             output,
             parseResult.InvocationConfiguration.Error,
             ct));
+        return command;
+    }
+
+    private static Command CreateVerifyConsumer()
+    {
+        var candidate = new Option<string>("--candidate")
+        {
+            Description = "Candidate manifest, candidate.json, beside the packages it lists.",
+            HelpName = "file",
+            Required = true,
+        };
+        var solution = new Option<string>("--solution")
+        {
+            Description = "Solution whose projects' lock files are checked. Default: the only .slnx in the repository root.",
+            HelpName = "file",
+        };
+        var evidence = new Option<string>("--output")
+        {
+            Description = "Evidence file to write, never the candidate manifest. Default: " + ConsumerVerificationCommand.DefaultOutput + " in the repository root.",
+            HelpName = "file",
+        };
+        var repoRoot = RepoRootOption();
+        var childCommand = new Argument<string[]>("command")
+        {
+            Description = "Command, after --, that restores, builds, and tests the consumer in the clone, such as dotnet test.",
+            Arity = ArgumentArity.OneOrMore,
+        };
+        var command = new Command(
+            "verify-consumer",
+            "Runs a command on a clean clone of the consumer's committed revision with a candidate's packages and records the consumer compatibility evidence.")
+        {
+            candidate,
+            solution,
+            evidence,
+            repoRoot,
+            childCommand,
+        };
+        SetAction(command, (parseResult, output, ct) =>
+        {
+            var root = Path.GetFullPath(parseResult.GetRequiredValue(repoRoot));
+            return ConsumerVerificationCommand.Run(
+                new ConsumerVerificationOptions(
+                    root,
+                    Path.GetFullPath(parseResult.GetRequiredValue(candidate)),
+                    parseResult.GetValue(solution) is { } path ? Path.GetFullPath(path) : null,
+                    Path.GetFullPath(parseResult.GetValue(evidence) ?? Path.Combine(root, ConsumerVerificationCommand.DefaultOutput)),
+                    parseResult.GetRequiredValue(childCommand)),
+                output,
+                parseResult.InvocationConfiguration.Error,
+                ct);
+        });
         return command;
     }
 
