@@ -10,8 +10,8 @@ workflow configuration, and protected-environment approval remain consumer-owned
 
 ## Prerequisites
 
-The tool runs on .NET 10; `verify-text-encoding`, `verify-json`, and `dependency verify-license-exceptions`
-also need Git.
+The tool runs on .NET 10. `verify-text-encoding`, `verify-json`, `dependency snapshot`,
+`dependency verify-license-exceptions`, and the `automation` steps also need Git.
 
 ## Installation
 
@@ -179,6 +179,8 @@ references before applying changes, and use explicit closure approvals for actua
 - `verify-json` reads the working-tree content of the regular files in the Git index, skips symbolic links
   and submodules, and fails on files larger than 64 MiB. In a sparse checkout, files outside it are
   reported as missing.
+- `dependency verify-license-exceptions` reads the working-tree content of the regular `packages.lock.json`
+  files in the Git index, and fails on an approval file larger than 1 MiB or a lock file larger than 64 MiB.
 - `dependency submit` accepts a snapshot of at most 32 MiB, the size that `dependency snapshot` writes.
 
 ## Exit codes
