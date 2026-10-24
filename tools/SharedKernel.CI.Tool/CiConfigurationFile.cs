@@ -190,6 +190,40 @@ internal static partial class CiConfigurationFile
         {
             throw Invalid("$.defaultSlice must name a slice in $.slices.");
         }
+
+        if (configuration.Coverage is { } coverage)
+        {
+            ValidateCoverage(coverage);
+        }
+    }
+
+    private static void ValidateCoverage(CoverageConfiguration coverage)
+    {
+        if (coverage.ThresholdPercent is < 0 or > 100)
+        {
+            throw Invalid("$.coverage.thresholdPercent must be from 0 to 100.");
+        }
+
+        if (coverage.Include.Length == 0)
+        {
+            throw Invalid("$.coverage.include must name at least one pattern.");
+        }
+
+        ValidatePatterns(coverage.Include, "$.coverage.include");
+        ValidatePatterns(coverage.Exclude, "$.coverage.exclude");
+        if (coverage.SymbolDirectories.Length == 0)
+        {
+            throw Invalid("$.coverage.symbolDirectories must name at least one directory.");
+        }
+
+        for (var index = 0; index < coverage.SymbolDirectories.Length; index++)
+        {
+            if (!RepositoryPath.IsRelative(coverage.SymbolDirectories[index]))
+            {
+                throw Invalid("$.coverage.symbolDirectories[" + index.ToString(CultureInfo.InvariantCulture)
+                    + "] must be a repository-relative directory with '/' separators and without empty, '.', or '..' segments.");
+            }
+        }
     }
 
     private static void ValidatePatterns(string[] values, string path)

@@ -148,7 +148,8 @@ internal static class ProjectSelectionPlan
         }
     }
 
-    private static bool IsObjectId(string value) =>
+    /// <summary>Reports whether <paramref name="value"/> is a full hexadecimal SHA-1 or SHA-256 Git object ID.</summary>
+    public static bool IsObjectId(string value) =>
         value.Length is 40 or 64 && value.All(char.IsAsciiHexDigit);
 
     private static string Bool(bool value) => value ? "true" : "false";

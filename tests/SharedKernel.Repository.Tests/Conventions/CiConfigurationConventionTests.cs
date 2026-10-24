@@ -67,4 +67,23 @@ public sealed class CiConfigurationConventionTests
         hosted.ShouldNotBeEmpty();
         shared.ShouldBeEmpty("Each hosted test project starts its own containers, so it runs in a job of its own.");
     }
+
+    [Fact]
+    public async Task Every_test_project_collects_coverage_for_run_coverage()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
+        var graph = SolutionGraph.Load(root, configuration.Solution);
+
+        // Act
+        var uncollected = graph.Tests
+            .Where(project => !XDocument.Load(Path.Combine(root, project)).Descendants()
+                .Any(static element => element.Name.LocalName == "PackageReference" && (string?)element.Attribute("Include") == "coverlet.MTP"))
+            .ToArray();
+
+        // Assert
+        graph.Tests.ShouldNotBeEmpty();
+        uncollected.ShouldBeEmpty("run --coverage fails when a selected test project writes no Cobertura report.");
+    }
 }

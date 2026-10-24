@@ -64,6 +64,8 @@ public sealed class RepositoryToolCallerTests
                 "stage-candidate --pin <candidate.json> --library-root . --output <feed> --repository danigutsch/PandaBear.SharedKernel",
                 "verify-commit-message --event <event.json>",
                 "run --slice library --coverage --install-playwright --playwright-dependencies --github-summary $GITHUB_STEP_SUMMARY",
+                "coverage record-symbols",
+                "coverage verify --report artifacts --base $BASE_SHA --symbols TestResults/symbol-evidence.json",
                 "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"
                     + " --repository danigutsch/PandaBear.SharedKernel",
                 "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"

@@ -135,7 +135,7 @@ internal static class SliceRun
                     var missing = projects.Where(project =>
                     {
                         var directory = Path.Combine(results, Path.GetFileNameWithoutExtension(project));
-                        return !Directory.Exists(directory) || !Directory.EnumerateFiles(directory, "*.cobertura*.xml", SearchOption.AllDirectories).Any();
+                        return !Directory.Exists(directory) || !Directory.EnumerateFiles(directory, CoberturaReport.FilePattern, SearchOption.AllDirectories).Any();
                     }).ToArray();
                     return missing.Length == 0
                         ? Task.FromResult(string.Empty)

@@ -57,6 +57,12 @@ public sealed class CiConfigurationFileTests : IDisposable
     [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [{ \"name\": \"admin\", \"project\": \"src/A/A.csproj\", \"generateProperty\": \"G;X=1\", \"refreshProperty\": \"R\" }],", ": $.openApi[0].generateProperty must be an MSBuild property name.")]
     [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [{ \"name\": \"admin\", \"project\": \"src/A/A.csproj\", \"generateProperty\": \"G\", \"refreshProperty\": \"-p:R\" }],", ": $.openApi[0].refreshProperty must be an MSBuild property name.")]
     [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [" + AdminTarget + ", " + AdminTarget + "],", ": $.openApi[1].name repeats the OpenAPI target admin.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 101, \"include\": [\"src/*\"], \"exclude\": [], \"symbolDirectories\": [\"src\"] },", ": $.coverage.thresholdPercent must be from 0 to 100.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 80, \"include\": [], \"exclude\": [], \"symbolDirectories\": [\"src\"] },", ": $.coverage.include must name at least one pattern.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 80, \"include\": [\"src/*\"], \"exclude\": [\"src\\\\*\"], \"symbolDirectories\": [\"src\"] },", ": $.coverage.exclude[0] must be a non-empty value with '/' separators.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 80, \"include\": [\"src/*\"], \"exclude\": [], \"symbolDirectories\": [] },", ": $.coverage.symbolDirectories must name at least one directory.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 80, \"include\": [\"src/*\"], \"exclude\": [], \"symbolDirectories\": [\"../src\"] },", ": $.coverage.symbolDirectories[0] must be a repository-relative directory")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 80, \"include\": [\"src/*\"], \"symbolDirectories\": [\"src\"] },", " is not valid at $.coverage")]
     public async Task Invalid_configuration_names_the_file_and_the_json_path(string original, string replacement, string expected)
     {
         // Arrange

@@ -10,7 +10,7 @@ namespace PandaBear.CI.Tool;
 /// <summary>Builds the <c>sharedkernel-ci</c> command tree.</summary>
 internal static partial class RepositoryCommandLine
 {
-    /// <summary>Exit code for a failed selection, run, generation, installation, staging, or commit message check.</summary>
+    /// <summary>Exit code for a failed selection, run, generation, installation, coverage check, staging, or commit message check.</summary>
     private const int FailureExitCode = 2;
 
     /// <summary>Creates the command tree with the Git, network, and clock access that the tool uses.</summary>
@@ -31,7 +31,7 @@ internal static partial class RepositoryCommandLine
         CandidateStagingServices staging)
     {
         var root = new RootCommand(
-            "Selects and runs affected test projects, generates OpenAPI documents, installs Playwright browsers, stages package candidates, and verifies commit messages.");
+            "Selects and runs affected test projects, generates OpenAPI documents, installs Playwright browsers, verifies changed-code coverage, stages package candidates, and verifies commit messages.");
 
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
@@ -39,6 +39,7 @@ internal static partial class RepositoryCommandLine
         root.Subcommands.Add(CreateRun(workingDirectory, run, runConfigured));
         root.Subcommands.Add(CreateOpenApi(workingDirectory, runConfigured));
         root.Subcommands.Add(CreateInstallPlaywright(workingDirectory, run));
+        root.Subcommands.Add(CreateCoverage(workingDirectory, run));
         root.Subcommands.Add(CreateStageCandidate(workingDirectory, staging));
         root.Subcommands.Add(CreateVerifyCommitMessage(workingDirectory));
         return root;
@@ -250,6 +251,88 @@ internal static partial class RepositoryCommandLine
                     ct).ConfigureAwait(false)).ConfigureAwait(false);
             },
             ct));
+        return command;
+    }
+
+    private static Command CreateCoverage(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run)
+    {
+        var command = new Command(
+            "coverage", "Record the Release symbols of a build, and verify the changed-code coverage of Cobertura reports with the coverage policy of .config/sharedkernel-ci.json.");
+
+        var recordOutput = PathOption("--output", "Symbol evidence file to write. Relative to the root.", "file");
+        recordOutput.DefaultValueFactory = static _ => SymbolEvidence.DefaultPath;
+        var recordRoot = CreateRootOption();
+        var record = new Command(
+            "record-symbols", "Record HEAD and the SHA-256 hash of every Release portable PDB under the configured symbol directories.")
+        {
+            recordOutput,
+            recordRoot,
+        };
+        record.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            async (output, _) =>
+            {
+                var root = Path.GetFullPath(parseResult.GetValue(recordRoot) ?? ".", workingDirectory);
+                var configuration = await CiConfigurationFile.Read(root, ct).ConfigureAwait(false);
+                var coverage = configuration.Coverage ?? throw CiConfigurationFile.Invalid("$.coverage is required by the coverage commands.");
+                await SymbolEvidence.Record(root, coverage, parseResult.GetRequiredValue(recordOutput), run, output, ct).ConfigureAwait(false);
+            },
+            ct));
+
+        var reportOption = new Option<string[]>("--report")
+        {
+            Description = "Cobertura report, or a directory searched recursively for " + CoberturaReport.FilePattern + " reports; repeat it for several. Relative to the root.",
+            HelpName = "path",
+            Required = true,
+        };
+        reportOption.Validators.Add(static result =>
+        {
+            if (result.GetValueOrDefault<string[]>() is { } reports && reports.Any(string.IsNullOrWhiteSpace))
+            {
+                result.AddError("--report requires a path.");
+            }
+        });
+        var baseOption = new Option<string>("--base")
+        {
+            Description = "Git object ID of the revision to compare with HEAD; the lines added in <base>...HEAD count.",
+            HelpName = "object-id",
+            Required = true,
+        };
+
+        var symbolsOption = PathOption("--symbols", "Symbol evidence that coverage record-symbols wrote for HEAD. Relative to the root.", "file");
+        symbolsOption.Required = true;
+        var verifyOutput = PathOption("--output", "Gate evidence file to write. Relative to the root.", "file");
+        verifyOutput.DefaultValueFactory = static _ => CoverageGate.DefaultOutput;
+        var verifyRoot = CreateRootOption();
+        var verify = new Command(
+            "verify",
+            "Verify the symbol evidence, then require the configured share of the executable lines and conditions added since --base to be covered.")
+        {
+            reportOption,
+            baseOption,
+            symbolsOption,
+            verifyOutput,
+            verifyRoot,
+        };
+        verify.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            (output, _) =>
+            {
+                var root = Path.GetFullPath(parseResult.GetValue(verifyRoot) ?? ".", workingDirectory);
+                return CoverageGate.Verify(
+                    root,
+                    parseResult.GetRequiredValue(reportOption),
+                    parseResult.GetRequiredValue(baseOption),
+                    parseResult.GetRequiredValue(symbolsOption),
+                    parseResult.GetRequiredValue(verifyOutput),
+                    run,
+                    output,
+                    ct);
+            },
+            ct));
+
+        command.Subcommands.Add(record);
+        command.Subcommands.Add(verify);
         return command;
     }
 

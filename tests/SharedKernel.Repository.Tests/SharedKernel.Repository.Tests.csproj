@@ -4,6 +4,7 @@
     <Compile Include="../SharedKernel.RepoConfig.Tests/CiTestSelectionTestProcess.cs" Link="CiTestSelectionTestProcess.cs" />
     <Using Include="Xunit" />
     <Using Include="PandaBear.Testing.Assertions" />
+    <PackageReference Include="coverlet.MTP" PrivateAssets="all" />
     <PackageReference Include="xunit.v3.mtp-v2" />
     <ProjectReference Include="../../tools/SharedKernel.CI.Tool/SharedKernel.CI.Tool.csproj" />
     <ProjectReference Include="../../src/SharedKernel/SharedKernel.Testing.Assertions/SharedKernel.Testing.Assertions.csproj" />

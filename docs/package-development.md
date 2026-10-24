@@ -13,7 +13,8 @@ dotnet build SharedKernel.slnx -c Release --no-restore
 dotnet test --solution SharedKernel.slnx -c Release --no-build --no-restore
 ```
 
-Coverage uses the MIT-licensed `coverlet.MTP` extension. To collect Cobertura for a project, run:
+Coverage uses the MIT-licensed `coverlet.MTP` extension, which every test project references, so `sharedkernel-ci run
+--coverage` gets a Cobertura report from each selected test project. To collect Cobertura for a project, run:
 
 ```sh
 dotnet test --project tests/SharedKernel.HttpClients.Tests/SharedKernel.HttpClients.Tests.csproj -c Release --no-build --no-restore --coverlet --results-directory TestResults/coverage

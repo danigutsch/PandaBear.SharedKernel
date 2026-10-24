@@ -6,13 +6,15 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 `sharedkernel-ci` selects the test projects affected by a change, as the repository's `.config/sharedkernel-ci.json`
 configures, writes a solution filter for each CI test slice, runs the selected test projects of one or more slices
-through one solution filter, generates OpenAPI documents, installs Playwright browsers, stages pinned package candidates
-in a local feed, and verifies Conventional Commit messages in pull request events and git commit message files.
+through one solution filter, generates OpenAPI documents, installs Playwright browsers, verifies the coverage of changed
+code, stages pinned package candidates in a local feed, and verifies Conventional Commit messages in pull request events
+and git commit message files.
 
 ## Prerequisites
 
 Git and the .NET SDK pinned in `global.json`. `select` reads `.config/sharedkernel-ci.json` and the solution it names in a
 Git checkout, and `run` reads the configuration and the plan that `select` wrote; `openapi` reads the configuration;
+`coverage` reads the configuration in a Git checkout with the history of `--base`;
 `install-playwright`, and `run --install-playwright`, need PowerShell (`pwsh`);
 `stage-candidate` reads a clean SharedKernel checkout and, with `--repository`, needs HTTPS access to `github.com` and
 `release-assets.githubusercontent.com`; `verify-commit-message` reads only its event or message file.
@@ -52,13 +54,13 @@ availability on nuget.org.
 ## Usage
 
 `--help` lists the options of each command. `--root` sets the repository root (default: the current directory);
-the other relative paths of `select`, `run`, `install-playwright`, and `stage-candidate` resolve from it, and relative `--event` and
+the other relative paths of `select`, `run`, `install-playwright`, `coverage`, and `stage-candidate` resolve from it, and relative `--event` and
 `--file` paths resolve from the current directory. A command line that starts with `[diagram]` prints how it parses
 instead of running; an invalid command line exits 1.
 
 ### Configuration
 
-`select`, `run`, and `openapi` read `<root>/.config/sharedkernel-ci.json`: strict JSON of at most 1 MiB with camelCase property names that
+`select`, `run`, `openapi`, and `coverage` read `<root>/.config/sharedkernel-ci.json`: strict JSON of at most 1 MiB with camelCase property names that
 match exactly. Comments, trailing commas, and unknown, repeated, or missing properties are errors, and every error names
 the file and the JSON path of the problem.
 
@@ -89,7 +91,13 @@ the file and the JSON path of the problem.
       "generateProperty": "GenerateAdminOpenApiArtifacts",
       "refreshProperty": "RefreshAdminOpenApiArtifacts"
     }
-  ]
+  ],
+  "coverage": {
+    "thresholdPercent": 80,
+    "include": ["src/*.cs", "src/*.razor"],
+    "exclude": ["*/Migrations/*", "*/obj/*", "*.g.cs", "*.generated.cs"],
+    "symbolDirectories": ["src"]
+  }
 }
 ```
 
@@ -111,6 +119,10 @@ the file and the JSON path of the problem.
 | `openApi[].project` | The project that `dotnet build` builds for the target. |
 | `openApi[].generateProperty` | The MSBuild property set to `true` to generate the documents: letters, digits, and `_`, not starting with a digit. |
 | `openApi[].refreshProperty` | The MSBuild property set to `true` to generate the documents and refresh their committed copies. |
+| `coverage.thresholdPercent` | Optional section, required by `coverage`. The least share, from 0 to 100, of the changed executable lines and conditions that the tests cover. |
+| `coverage.include` | Path patterns of the source files whose added lines count. At least one. |
+| `coverage.exclude` | Path patterns of included files whose added lines do not count, such as generated code. |
+| `coverage.symbolDirectories` | Directories whose `bin/Release` directories hold the portable PDBs that `coverage record-symbols` records. At least one. |
 
 Paths are relative to the root, use `/`, and have no empty, `.`, or `..` segment; they resolve under the root without
 following symbolic links. Patterns match the whole repository-relative path with
@@ -240,6 +252,40 @@ project directory, and runs `pwsh <output>/playwright.ps1 install`, with `--with
 the browsers. Without `--browser`, Playwright installs its default browsers. Build the project first; the command fails
 when the output has no `playwright.ps1`.
 
+### coverage
+
+```text
+dotnet tool run sharedkernel-ci -- coverage record-symbols
+dotnet tool run sharedkernel-ci -- coverage verify --report artifacts --base "$BASE_SHA" --symbols TestResults/symbol-evidence.json
+```
+
+`coverage record-symbols` runs after a Release build. It writes `HEAD` and the SHA-256 hash of every `*.pdb` in a
+`bin/Release` directory under the `coverage.symbolDirectories` to `--output` (default
+`TestResults/symbol-evidence.json`), and fails when there is none.
+
+`coverage verify` checks, in order:
+
+1. the symbol evidence of `--symbols`: it records `HEAD`, and each file it names is a `bin/Release` `.pdb` under a
+   symbol directory, reached without a symbolic link, whose content has the recorded hash;
+2. the lines added since `--base`, a full hexadecimal Git object ID, from `git -c core.quotePath=false diff
+   --no-ext-diff --no-textconv --no-color --src-prefix=a/ --dst-prefix=b/ --unified=0 --inter-hunk-context=0 --text
+   --find-renames <base>...HEAD --`, so repository Git configuration and attributes cannot hide, convert, or move
+   changed lines; a path that Git quotes fails the check;
+3. the Cobertura reports of each `--report`: a report file, or a directory searched recursively for
+   `*.cobertura*.xml`, such as the `results` directory of `run --coverage`. A report with a document type declaration
+   is refused. A line is covered when any report hits it.
+
+Only added lines of files that match `coverage.include` and no `coverage.exclude` count: each line that a report lists
+counts once, plus its conditions. A changed file that no report lists passes only when a recorded portable PDB names it
+with the SHA-256 hash of its content and maps no executable code to it, as for a file of interfaces; otherwise the
+check fails. The check passes when nothing counts or the covered share reaches `coverage.thresholdPercent`, and
+standard output gives the counts.
+
+Whether the check passes, fails, or is canceled, `--output` (default `TestResults/coverage-gate.json`) receives
+`passed`, `thresholdPercent`, `covered`, `total`, `revision`, `parents` (both parents of a pull request merge
+checkout), `base`, `configurationSha256` (the hash of `.config/sharedkernel-ci.json`), the `reports` read, and the
+`error` of a failed check. For a pull request merge checkout, pass the merge commit's first parent as `--base`.
+
 ### stage-candidate
 
 ```text
@@ -312,7 +358,7 @@ exec dotnet tool run sharedkernel-ci -- verify-commit-message --file "$1"
 | --- | --- |
 | 0 | Success. |
 | 1 | Invalid command line, cancellation, or an unexpected error. |
-| 2 | The configuration is invalid, or a run, generation, installation, staging, or the commit message check failed; the reason is on standard error. |
+| 2 | The configuration is invalid, or a run, generation, installation, coverage check, staging, or the commit message check failed; the reason is on standard error. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
 Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or `pwsh` process tree. A process that fails after the tool has observed
@@ -324,7 +370,7 @@ line by line, so text from files, processes, and the network cannot drive the te
 The tool starts only `git`, `dotnet`, and `pwsh`, found in the absolute directories of `PATH` and never in the working
 directory, or, for OpenAPI generation, the dotnet host that runs the tool, and passes arguments as a list. Slice,
 target, browser, configuration, and MSBuild property values are restricted to names, so none can become an option or
-another property. `select` passes `--base` to Git only when it is a hexadecimal object ID, so Git
+another property. `select` and `coverage verify` pass `--base` to Git only when it is a hexadecimal object ID, so Git
 cannot read it as an option, and escapes control characters in the changed paths that its reasons repeat. `verify-commit-message` starts no process. No credentials are needed. `stage-candidate` runs
 Git without the inherited `GIT_*` variables, which could point it at another repository, and stops Git after a minute.
 

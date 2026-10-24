@@ -3,7 +3,7 @@ namespace PandaBear.Repository.Tests;
 public sealed class RepositoryCommandLineTests
 {
     [Fact]
-    public async Task Help_lists_the_select_run_openapi_install_playwright_stage_candidate_and_verify_commit_message_commands()
+    public async Task Help_lists_the_select_run_openapi_install_playwright_coverage_stage_candidate_and_verify_commit_message_commands()
     {
         // Arrange
         using var scope = new RepositoryTestScope();
@@ -18,6 +18,7 @@ public sealed class RepositoryCommandLineTests
         result.Output.ShouldContain("  run ", StringComparison.Ordinal);
         result.Output.ShouldContain("  openapi ", StringComparison.Ordinal);
         result.Output.ShouldContain("  install-playwright ", StringComparison.Ordinal);
+        result.Output.ShouldContain("  coverage ", StringComparison.Ordinal);
         result.Output.ShouldNotContain("  validate ", StringComparison.Ordinal);
         result.Output.ShouldContain("  stage-candidate ", StringComparison.Ordinal);
         result.Output.ShouldContain("  verify-commit-message ", StringComparison.Ordinal);
@@ -41,6 +42,16 @@ public sealed class RepositoryCommandLineTests
     [InlineData("openapi", "generate", "refresh")]
     [InlineData("openapi generate", "--target <name>", "--root <path>")]
     [InlineData("openapi refresh", "--target <name>", "--root <path>")]
+    [InlineData("coverage", "record-symbols", "verify")]
+    [InlineData("coverage record-symbols", "--output <file>", "[default: TestResults/symbol-evidence.json]", "--root <path>")]
+    [InlineData(
+        "coverage verify",
+        "--report <path> (REQUIRED)",
+        "--base <object-id> (REQUIRED)",
+        "--symbols <file> (REQUIRED)",
+        "--output <file>",
+        "[default: TestResults/coverage-gate.json]",
+        "--root <path>")]
     [InlineData("install-playwright", "--project <path> (REQUIRED)", "--browser <name>", "--with-dependencies", "--configuration <name>", "--root <path>")]
     [InlineData(
         "stage-candidate",
