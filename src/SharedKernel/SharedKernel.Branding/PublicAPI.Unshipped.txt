@@ -38,13 +38,6 @@ PandaBear.Branding.BrandingSettingsDto.TextColor.get -> string!
 PandaBear.Branding.BrandingSettingsDto.TextColor.set -> void
 PandaBear.Branding.IBrandingApiClient
 PandaBear.Branding.IBrandingSettingsStore
-PandaBear.Branding.IManagementBrandingApiClient
-PandaBear.Branding.IManagementBrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettingsDto!>!
-PandaBear.Branding.IManagementBrandingApiClient.SaveSettings(PandaBear.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettingsDto!>!
-PandaBear.Branding.ManagementBrandingApiClient
-PandaBear.Branding.ManagementBrandingApiClient.GetSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettingsDto!>!
-PandaBear.Branding.ManagementBrandingApiClient.ManagementBrandingApiClient(System.Net.Http.HttpClient! httpClient) -> void
-PandaBear.Branding.ManagementBrandingApiClient.SaveSettings(PandaBear.Branding.BrandingSettingsDto! request, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettingsDto!>!
 static PandaBear.Branding.BrandingSettings.Create(PandaBear.Branding.BrandingSettingsDto! request, System.Collections.Generic.IReadOnlyCollection<string!>! allowedFontFamilies) -> PandaBear.Results.Result<PandaBear.Branding.BrandingSettings!>
 PandaBear.Branding.BrandingApiClient.GetPublicSettings(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.Branding.BrandingSettingsDto!>!
 PandaBear.Branding.BrandingSettingsDto.BrandingSettingsDto() -> void

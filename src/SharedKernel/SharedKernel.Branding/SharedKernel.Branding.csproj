@@ -9,7 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\SharedKernel.HttpClients\SharedKernel.HttpClients.csproj" />
         <ProjectReference Include="..\SharedKernel.InputNormalization\SharedKernel.InputNormalization.csproj" />
         <ProjectReference Include="..\SharedKernel.Results\SharedKernel.Results.csproj" />
     </ItemGroup>
