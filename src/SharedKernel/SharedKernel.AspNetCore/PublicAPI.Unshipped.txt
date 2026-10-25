@@ -9,6 +9,14 @@ const PandaBear.AspNetCore.SitemapXmlSerializer.MaximumUrlCount = 50000 -> int
 PandaBear.AspNetCore.ApiAuthenticationDefaults
 PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions
 PandaBear.AspNetCore.AntiforgerySignOutEndpointRouteBuilderExtensions
+PandaBear.AspNetCore.ApiBearerScheme
+PandaBear.AspNetCore.ApiBearerScheme.ApiBearerScheme(string! Name, string! Audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! PermissionsByRole) -> void
+PandaBear.AspNetCore.ApiBearerScheme.Audience.get -> string!
+PandaBear.AspNetCore.ApiBearerScheme.Audience.init -> void
+PandaBear.AspNetCore.ApiBearerScheme.Name.get -> string!
+PandaBear.AspNetCore.ApiBearerScheme.Name.init -> void
+PandaBear.AspNetCore.ApiBearerScheme.PermissionsByRole.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>!
+PandaBear.AspNetCore.ApiBearerScheme.PermissionsByRole.init -> void
 PandaBear.AspNetCore.ApiSecurityApplicationBuilderExtensions
 PandaBear.AspNetCore.AspNetCoreCorsExtensions
 PandaBear.AspNetCore.AuthorizationPolicyBuilderExtensions
@@ -22,7 +30,9 @@ static PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiA
 static PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiBearerAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
 static PandaBear.AspNetCore.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, string! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
 static PandaBear.AspNetCore.AntiforgerySignOutEndpointRouteBuilderExtensions.MapAntiforgeryProtectedSignOut(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, string! pattern, string! localAuthenticationScheme, string! remoteAuthenticationScheme, System.Uri! redirectUri) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder!
+static PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiBearerAuthentication(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, System.Collections.Generic.IReadOnlyList<PandaBear.AspNetCore.ApiBearerScheme!>! schemes) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
 static PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiSecurity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, string! audience, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyCollection<string!>!>! permissionsByRole) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
+static PandaBear.AspNetCore.ApiAuthenticationServiceCollectionExtensions.AddApiSecurity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, Microsoft.Extensions.Hosting.IHostEnvironment! environment, System.Collections.Generic.IReadOnlyList<PandaBear.AspNetCore.ApiBearerScheme!>! schemes) -> Microsoft.AspNetCore.Authorization.AuthorizationBuilder!
 static PandaBear.AspNetCore.ApiSecurityApplicationBuilderExtensions.UseApiSecurity(this Microsoft.AspNetCore.Builder.WebApplication! application) -> Microsoft.AspNetCore.Builder.WebApplication!
 static PandaBear.AspNetCore.AspNetCoreCorsExtensions.AddConfiguredOriginsPolicy(this Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions! options, string! policyName, Microsoft.Extensions.Configuration.IConfiguration! allowedOriginsSection) -> Microsoft.AspNetCore.Cors.Infrastructure.CorsOptions!
 PandaBear.AspNetCore.AspNetCoreForwardedHeadersExtensions
