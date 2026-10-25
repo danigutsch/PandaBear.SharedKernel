@@ -56,6 +56,10 @@ public sealed class CiConfigurationConventionTests
         var graph = SolutionGraph.Load(root, configuration.Solution);
 
         // Act
+        // ponytail: membership only. A hosted project that does not borrow the slice's server still passes, and so does a second
+        // kind of hosted project (Redis, ClamAV) in the postgres slice, whose containers would then start beside the shared
+        // server. All three hosted projects use PostgreSQL today; require a reference to SharedKernel.Npgsql.Testing in a
+        // served slice, the code that reads the variable, when a project of another kind arrives.
         var hosted = graph.Tests
             .Where(project => XDocument.Load(Path.Combine(root, project)).Root?.Attribute("Sdk")?.Value.StartsWith("Aspire.AppHost.Sdk", StringComparison.Ordinal) == true)
             .Order(StringComparer.Ordinal)
@@ -121,7 +125,7 @@ public sealed class CiConfigurationConventionTests
                 "SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE",
                 "SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING",
                 StopTimeoutSeconds: 180),
-            "The names are the contract between the CI tool, the owner host, and the test assemblies, and the stop timeout outlasts the two minutes that the container runtime may take to remove the server, because killing the host earlier would leak its container.");
+            "The names are the contract between the CI tool, the owner host, and the test assemblies, and the stop timeout outlasts the two minutes that the container runtime may take to remove the server, because the host removes its container while it exits and a kill earlier would interrupt that.");
     }
 
     [Fact]
@@ -147,7 +151,7 @@ public sealed class CiConfigurationConventionTests
         // Assert
         served.ShouldNotBeEmpty();
         unselected.Values.ShouldAllSatisfy(
-            static projects => projects.ShouldBeEmpty("The service's project references no test project, so selection.testPaths must tie its directory to the tests that it serves."));
+            static projects => projects.ShouldBeEmpty("Most tests that a service serves do not reference its project, so selection.testPaths must tie its directory to the tests that it serves."));
     }
 
     [Fact]

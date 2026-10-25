@@ -254,7 +254,7 @@ internal static partial class CiConfigurationFile
 
         if (IsTokenVariable(name))
         {
-            throw Invalid(path + " names " + name + ", which the tool never passes to a child process.");
+            throw Invalid(path + " names " + name + ", a GitHub token variable that the tool removes from the service's environment; use another name.");
         }
     }
 
@@ -391,7 +391,7 @@ internal static partial class CiConfigurationFile
     /// <summary>Reports whether <paramref name="browser"/> is a Playwright browser name: lowercase letters, digits, and <c>-</c>, starting with a letter.</summary>
     public static bool IsBrowser(string browser) => Browser().IsMatch(browser);
 
-    /// <summary>Reports whether <paramref name="name"/> is, in any case, a variable that holds a GitHub token and that no child process receives.</summary>
+    /// <summary>Reports whether <paramref name="name"/> is, in any case, a variable that holds a GitHub token and that the tool removes from the service's environment.</summary>
     public static bool IsTokenVariable(string name) => TokenVariables.Contains(name, StringComparer.OrdinalIgnoreCase);
 
     private static void ValidateProperty(string value, string path)

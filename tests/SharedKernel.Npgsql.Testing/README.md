@@ -71,7 +71,7 @@ server that resource provides, without starting anything until a test creates it
 
 Several test processes cannot share one container through `WithContainerName` and
 `ContainerLifetime.Persistent` with the defaults of this package. This was checked with Aspire 13.6.1 and DCP
-0.26.5.
+0.26.5, in AppHost projects without user secrets.
 
 - Aspire reuses a persistent container only when its lifecycle key matches, and the key includes the host port
   and the environment, including the generated password. Every test process draws its own random proxyless port
@@ -79,9 +79,10 @@ Several test processes cannot share one container through `WithContainerName` an
   which fails with connection errors 57P01, 57P03 and 28P01.
 - DCP never removes a persistent container, so something outside the test processes would have to remove it
   after the run.
-- It works only when an external run owner fixes the name, the port and the password for the whole run. The
+- It worked only when an external run owner fixed the name, the port and the password for the whole run. The
   owner host does that without relying on key equality: one process owns the server and the others borrow its
-  connection string.
+  connection string. Aspire can also keep a generated password and public port of a persistent resource in
+  user secrets; that way was not tried.
 
 The package uses the existing Npgsql, Aspire PostgreSQL, Aspire testing and xUnit core dependencies.
 Application authentication, browser setup, resource images, reset policy and business assertions remain

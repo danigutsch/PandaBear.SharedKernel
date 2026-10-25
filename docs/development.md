@@ -45,7 +45,7 @@ dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice postgr
 `select` without `--base` selects every test project and writes the plan to `TestResults/selection`. `run` restores and
 builds the slice, runs the host, runs the three projects with the connection string, and stops the host. The evidence
 is in `TestResults/selection/execution-postgres`. A change under `tests/SharedKernel.Npgsql.Testing.Host` selects the
-three projects through `selection.testPaths`, because no test project references the host.
+three projects through `selection.testPaths`, because only `SharedKernel.Npgsql.Tests` references the host.
 
 ## JavaScript tooling
 
