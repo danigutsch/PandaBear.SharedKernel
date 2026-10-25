@@ -93,6 +93,11 @@ internal static class ConsumerConfigurationFile
             Validate(links);
         }
 
+        if (configuration.Gherkin?.FindError() is { } gherkinError)
+        {
+            throw Invalid(gherkinError);
+        }
+
         return configuration;
     }
 
