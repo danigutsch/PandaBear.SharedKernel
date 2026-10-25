@@ -116,6 +116,100 @@ public static class ApiAuthenticationServiceCollectionExtensions
     }
 
     /// <summary>
+    /// Adds several named exact-audience bearer schemes for a host that co-hosts modules, or authorization only while
+    /// OpenAPI documents are generated. The first scheme is the default; route policies select the others by name.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="configuration">The configuration that supplies the authority and issuer.</param>
+    /// <param name="environment">The host environment.</param>
+    /// <param name="schemes">The schemes; names and audiences must be unique.</param>
+    /// <returns>The authorization builder for route policies.</returns>
+    public static AuthorizationBuilder AddApiSecurity(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IHostEnvironment environment,
+        IReadOnlyList<ApiBearerScheme> schemes)
+    {
+        return AddApiSecurity(services, configuration, environment, schemes, registerBearerAuthentication: null);
+    }
+
+    internal static AuthorizationBuilder AddApiSecurity(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IHostEnvironment environment,
+        IReadOnlyList<ApiBearerScheme> schemes,
+        bool? registerBearerAuthentication)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(environment);
+        ValidateSchemes(schemes);
+
+        var shouldRegisterBearerAuthentication = registerBearerAuthentication
+            ?? !OpenApiGenerationMode.IsEnabled(environment);
+
+        return shouldRegisterBearerAuthentication
+            ? services.AddApiBearerAuthentication(configuration, environment, schemes)
+            : services.AddApiAuthorization(EmptyPermissions);
+    }
+
+    /// <summary>
+    /// Adds several named exact-audience bearer schemes. Each scheme maps roles with its own permission table when it
+    /// validates a token; no host-wide claims transformation is registered.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    /// <param name="configuration">The configuration that supplies the authority and issuer.</param>
+    /// <param name="environment">The host environment.</param>
+    /// <param name="schemes">The schemes; names and audiences must be unique.</param>
+    /// <returns>The authorization builder for route policies.</returns>
+    public static AuthorizationBuilder AddApiBearerAuthentication(
+        this IServiceCollection services,
+        IConfiguration configuration,
+        IHostEnvironment environment,
+        IReadOnlyList<ApiBearerScheme> schemes)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+        ArgumentNullException.ThrowIfNull(environment);
+        ValidateSchemes(schemes);
+
+        var authority = configuration[ApiAuthenticationDefaults.AuthorityConfigurationKey];
+        var issuer = configuration[ApiAuthenticationDefaults.IssuerConfigurationKey];
+        var allowHttpDevelopmentAuthority = environment.IsDevelopment()
+            && string.Equals(
+                configuration[ApiAuthenticationDefaults.AllowHttpDevelopmentAuthorityConfigurationKey],
+                bool.TrueString,
+                StringComparison.OrdinalIgnoreCase);
+
+        ValidateConfiguration(authority, issuer, allowHttpDevelopmentAuthority);
+
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
+
+        var authentication = services.AddAuthentication(schemes[0].Name);
+        foreach (var scheme in schemes)
+        {
+            authentication.AddScheme<JwtBearerOptions, JwtBearerHandler>(scheme.Name, options =>
+            {
+                ConfigureBearerOptions(options, scheme.Audience, authority, issuer, allowHttpDevelopmentAuthority);
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        if (context.Principal is { } principal)
+                        {
+                            ApplyPermissions(principal, scheme.PermissionsByRole);
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+        }
+
+        return services.AddApiAuthorization(EmptyPermissions);
+    }
+
+    /// <summary>
     /// Adds authorization policies and an authenticated fallback policy without registering an authentication handler.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
@@ -164,6 +258,66 @@ public static class ApiAuthenticationServiceCollectionExtensions
             ClockSkew = TimeSpan.FromMinutes(2),
             ValidAlgorithms = [SecurityAlgorithms.RsaSha256]
         };
+    }
+
+    private static readonly IReadOnlyDictionary<string, IReadOnlyCollection<string>> EmptyPermissions =
+        new Dictionary<string, IReadOnlyCollection<string>>(StringComparer.Ordinal);
+
+    private static void ValidateSchemes(IReadOnlyList<ApiBearerScheme> schemes)
+    {
+        ArgumentNullException.ThrowIfNull(schemes);
+        if (schemes.Count == 0)
+        {
+            throw new ArgumentException("At least one bearer scheme is required.", nameof(schemes));
+        }
+
+        foreach (var scheme in schemes)
+        {
+            ArgumentNullException.ThrowIfNull(scheme);
+            ArgumentException.ThrowIfNullOrWhiteSpace(scheme.Name);
+            ArgumentException.ThrowIfNullOrWhiteSpace(scheme.Audience);
+            ArgumentNullException.ThrowIfNull(scheme.PermissionsByRole);
+        }
+
+        if (schemes.Select(static scheme => scheme.Name).Distinct(StringComparer.Ordinal).Count() != schemes.Count)
+        {
+            throw new ArgumentException("Bearer scheme names must be unique.", nameof(schemes));
+        }
+
+        if (schemes.Select(static scheme => scheme.Audience).Distinct(StringComparer.Ordinal).Count() != schemes.Count)
+        {
+            // One audience per scheme keeps a token for one module from authenticating another module's routes.
+            throw new ArgumentException("Bearer scheme audiences must be unique.", nameof(schemes));
+        }
+    }
+
+    private static void ApplyPermissions(
+        ClaimsPrincipal principal,
+        IReadOnlyDictionary<string, IReadOnlyCollection<string>> permissionsByRole)
+    {
+        foreach (var claimsIdentity in principal.Identities.OfType<ClaimsIdentity>())
+        {
+            foreach (var permission in claimsIdentity.FindAll(ApiAuthenticationDefaults.PermissionClaimType).ToArray())
+            {
+                claimsIdentity.RemoveClaim(permission);
+            }
+        }
+
+        var permissions = principal.FindAll(ApiAuthenticationDefaults.RolesClaimType)
+            .Where(role => permissionsByRole.ContainsKey(role.Value))
+            .SelectMany(role => permissionsByRole[role.Value])
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+        var identity = principal.Identities.OfType<ClaimsIdentity>().FirstOrDefault();
+        if (identity is null)
+        {
+            return;
+        }
+
+        foreach (var permission in permissions)
+        {
+            identity.AddClaim(new Claim(ApiAuthenticationDefaults.PermissionClaimType, permission));
+        }
     }
 
     private static void ValidateConfiguration(
@@ -219,42 +373,8 @@ public static class ApiAuthenticationServiceCollectionExtensions
         {
             ArgumentNullException.ThrowIfNull(principal);
 
-            RemoveProviderPermissions(principal);
-
-            var permissions = principal.FindAll(ApiAuthenticationDefaults.RolesClaimType)
-                .Where(role => permissionsByRole.TryGetValue(role.Value, out _))
-                .SelectMany(role => permissionsByRole[role.Value])
-                .Distinct(StringComparer.Ordinal)
-                .ToArray();
-
-            if (permissions.Length == 0)
-            {
-                return Task.FromResult(principal);
-            }
-
-            var identity = principal.Identities.OfType<ClaimsIdentity>().FirstOrDefault();
-            if (identity is null)
-            {
-                return Task.FromResult(principal);
-            }
-
-            foreach (var permission in permissions)
-            {
-                identity.AddClaim(new Claim(ApiAuthenticationDefaults.PermissionClaimType, permission));
-            }
-
+            ApplyPermissions(principal, permissionsByRole);
             return Task.FromResult(principal);
-        }
-
-        private static void RemoveProviderPermissions(ClaimsPrincipal principal)
-        {
-            foreach (var identity in principal.Identities.OfType<ClaimsIdentity>())
-            {
-                foreach (var permission in identity.FindAll(ApiAuthenticationDefaults.PermissionClaimType).ToArray())
-                {
-                    identity.RemoveClaim(permission);
-                }
-            }
         }
     }
 }
