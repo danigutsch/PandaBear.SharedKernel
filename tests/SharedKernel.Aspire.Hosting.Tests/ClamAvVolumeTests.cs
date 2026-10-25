@@ -1,0 +1,77 @@
+using Aspire.Hosting;
+using Aspire.Hosting.ApplicationModel;
+
+namespace PandaBear.Aspire.Hosting.Tests;
+
+public sealed class ClamAvVolumeTests
+{
+    private const string ResourceNameSuffixConfigurationKey = "DcpPublisher:ResourceNameSuffix";
+
+    [Fact]
+    public void Definitions_use_a_named_volume_when_no_resource_name_suffix_is_set()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+
+        // Act
+        var clamAv = builder.AddClamAv("clamav");
+
+        // Assert
+        var volume = clamAv.Resource.Annotations.OfType<ContainerMountAnnotation>().ShouldHaveSingleItem();
+        volume.Source.ShouldBe("clamav-definitions", "an AppHost run keeps the definitions for the next run");
+        volume.Target.ShouldBe("/var/lib/clamav");
+        volume.Type.ShouldBe(ContainerMountType.Volume);
+        volume.IsReadOnly.ShouldBeFalse("FreshClam writes the definitions");
+    }
+
+    [Fact]
+    public void The_named_volume_follows_the_resource_name()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+
+        // Act
+        var clamAv = builder.AddClamAv("scanner");
+
+        // Assert
+        var volume = clamAv.Resource.Annotations.OfType<ContainerMountAnnotation>().ShouldHaveSingleItem();
+        volume.Source.ShouldBe("scanner-definitions");
+    }
+
+    [Theory]
+    [InlineData("test")]
+    [InlineData("hosted-5a1f4f87055d40469e33670147b3acdd")]
+    public void Definitions_use_an_anonymous_volume_when_a_resource_name_suffix_is_set(string suffix)
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        builder.Configuration[ResourceNameSuffixConfigurationKey] = suffix;
+
+        // Act
+        var clamAv = builder.AddClamAv("clamav");
+
+        // Assert
+        var volume = clamAv.Resource.Annotations.OfType<ContainerMountAnnotation>().ShouldHaveSingleItem();
+        volume.Source.ShouldBeNull("a named volume of an isolated instance would outlive its container and never be reused");
+        volume.Target.ShouldBe("/var/lib/clamav");
+        volume.Type.ShouldBe(ContainerMountType.Volume);
+        volume.IsReadOnly.ShouldBeFalse("FreshClam writes the definitions");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void A_blank_resource_name_suffix_does_not_isolate_the_instance(string suffix)
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        builder.Configuration[ResourceNameSuffixConfigurationKey] = suffix;
+
+        // Act
+        var clamAv = builder.AddClamAv("clamav");
+
+        // Assert
+        var volume = clamAv.Resource.Annotations.OfType<ContainerMountAnnotation>().ShouldHaveSingleItem();
+        volume.Source.ShouldBe("clamav-definitions");
+    }
+}

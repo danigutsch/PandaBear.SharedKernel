@@ -71,6 +71,7 @@
   <Project Path="tests/SharedKernel.AspNetCore.Tests/SharedKernel.AspNetCore.Tests.csproj" />
   <Project Path="tests/SharedKernel.Aspire.Analyzers.Tests/SharedKernel.Aspire.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Aspire.CodeFixes.Tests/SharedKernel.Aspire.CodeFixes.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Aspire.Hosting.Tests/SharedKernel.Aspire.Hosting.Tests.csproj" />
   <Project Path="tests/SharedKernel.AuditTrail.GeneratorTests/SharedKernel.AuditTrail.GeneratorTests.csproj" />
   <Project Path="tests/SharedKernel.Branding.Tests/SharedKernel.Branding.Tests.csproj" />
   <Project Path="tests/SharedKernel.BuildingBlocks.Tests/SharedKernel.BuildingBlocks.Tests.csproj" />
