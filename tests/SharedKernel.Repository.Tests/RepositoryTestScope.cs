@@ -57,7 +57,8 @@ internal sealed class RepositoryTestScope : IDisposable
         string slices,
         string? defaultSlice = "library",
         string alwaysSelected = "[]",
-        bool requireCoveringTests = false) =>
+        bool requireCoveringTests = false,
+        string? testPaths = null) =>
         WriteFile(".config/sharedkernel-ci.json", $$"""
             {
               "version": 1,
@@ -66,11 +67,24 @@ internal sealed class RepositoryTestScope : IDisposable
                 "fullValidation": ["*.props", ".github/*"],
                 "documentation": ["docs/*", "README.md"],
                 "alwaysSelected": {{alwaysSelected}},
-                "requireCoveringTests": {{(requireCoveringTests ? "true" : "false")}}
+                "requireCoveringTests": {{(requireCoveringTests ? "true" : "false")}}{{(testPaths is null ? string.Empty : ",\n    \"testPaths\": " + testPaths)}}
               },
               "slices": {{slices}}{{(defaultSlice is null ? string.Empty : ",\n  \"defaultSlice\": \"" + defaultSlice + "\"")}}
             }
             """);
+
+    /// <summary>The test project that <see cref="ConfigureTestPaths"/> maps <c>config/*</c> and <c>assets/*.json</c> to.</summary>
+    public const string ConfigTests = "tests/Config.Tests/Config.Tests.csproj";
+
+    /// <summary>Adds <see cref="ConfigTests"/> and a configuration whose <c>testPaths</c> map <c>config/*</c> and <c>assets/*.json</c> to it.</summary>
+    public void ConfigureTestPaths(string alwaysSelected = "[]")
+    {
+        AddTestProject(ConfigTests);
+        Configure(
+            """[{ "name": "library", "projects": [] }]""",
+            alwaysSelected: alwaysSelected,
+            testPaths: """[{ "paths": ["config/*", "assets/*.json"], "tests": ["tests/Config.Tests/Config.Tests.csproj"] }]""");
+    }
 
     /// <summary>Writes each of <paramref name="configFiles"/> and a configuration that runs them with Stryker 4.15.0.</summary>
     public void ConfigureMutation(params string[] configFiles)

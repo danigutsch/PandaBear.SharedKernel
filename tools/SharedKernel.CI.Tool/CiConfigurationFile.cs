@@ -84,6 +84,7 @@ internal static partial class CiConfigurationFile
         ValidatePatterns(selection.FullValidation, "$.selection.fullValidation");
         ValidatePatterns(selection.Documentation, "$.selection.documentation");
         ValidateProjects(selection.AlwaysSelected, "$.selection.alwaysSelected", new Dictionary<string, string>(StringComparer.Ordinal));
+        ValidateTestPaths(selection.TestPaths ?? []);
 
         var targets = new HashSet<string>(StringComparer.Ordinal);
         var openApi = configuration.OpenApi ?? [];
@@ -258,6 +259,32 @@ internal static partial class CiConfigurationFile
                 throw Invalid("$.coverage.symbolDirectories[" + index.ToString(CultureInfo.InvariantCulture)
                     + "] must be a repository-relative directory with '/' separators and without empty, '.', or '..' segments.");
             }
+        }
+    }
+
+    private static void ValidateTestPaths(TestPathRule[] rules)
+    {
+        for (var index = 0; index < rules.Length; index++)
+        {
+            var rule = rules[index];
+            var path = "$.selection.testPaths[" + index.ToString(CultureInfo.InvariantCulture) + "]";
+            if (rule is null)
+            {
+                throw Invalid(path + " must be an object.");
+            }
+
+            if (rule.Paths.Length == 0)
+            {
+                throw Invalid(path + ".paths must name at least one pattern.");
+            }
+
+            ValidatePatterns(rule.Paths, path + ".paths");
+            if (rule.Tests.Length == 0)
+            {
+                throw Invalid(path + ".tests must name at least one test project.");
+            }
+
+            ValidateProjects(rule.Tests, path + ".tests", new Dictionary<string, string>(StringComparer.Ordinal));
         }
     }
 

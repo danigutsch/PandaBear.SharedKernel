@@ -315,6 +315,95 @@ public sealed class ProjectSelectorTests : IDisposable
         SelectionTestFiles.Tests(selection, "hosted").ShouldBe(["tests/Hosted.Tests/Hosted.Tests.csproj"]);
     }
 
+    private const string ConfigTests = RepositoryTestScope.ConfigTests;
+
+    [Theory]
+    [InlineData("config/settings.json")]
+    [InlineData("assets/a.json")]
+    public async Task Test_paths_select_only_their_test_projects_for_a_path_that_no_project_owns(string path)
+    {
+        // Arrange
+        scope.ConfigureTestPaths();
+
+        // Act
+        var selection = await scope.Select([path]);
+
+        // Assert
+        selection.FullValidation.ShouldBeFalse();
+        selection.DocumentationOnly.ShouldBeFalse();
+        selection.BuildRequired.ShouldBeTrue();
+        var test = selection.Slices[0].Tests.ShouldHaveSingleItem();
+        test.Project.ShouldBe(ConfigTests);
+        test.SelectedBy.ShouldBe([path]);
+        selection.Reasons.ShouldBe([path + ": selects " + ConfigTests + " through $.selection.testPaths."]);
+    }
+
+    [Fact]
+    public async Task Test_paths_add_their_test_projects_to_the_owners_and_always_selected_tests()
+    {
+        // Arrange
+        scope.AddTestProject("tests/Architecture.Tests/Architecture.Tests.csproj");
+        scope.ConfigureTestPaths("""["tests/Architecture.Tests/Architecture.Tests.csproj"]""");
+
+        // Act
+        var selection = await scope.Select(["config/settings.json", "src/Core/Changed.cs"]);
+
+        // Assert
+        SelectionTestFiles.Tests(selection, "library").ShouldBe([
+            "tests/Architecture.Tests/Architecture.Tests.csproj",
+            "tests/Config.Tests/Config.Tests.csproj",
+            CoreTests]);
+        selection.Slices[0].Tests.Where(static test => test.Project == ConfigTests).ShouldHaveSingleItem().SelectedBy.ShouldBe(["config/settings.json"]);
+    }
+
+    [Fact]
+    public async Task Full_validation_and_documentation_patterns_win_over_test_paths()
+    {
+        // Arrange
+        scope.AddTestProject(ConfigTests);
+        scope.Configure(
+            """[{ "name": "library", "projects": [] }]""",
+            testPaths: """[{ "paths": ["docs/*", ".github/*"], "tests": ["tests/Config.Tests/Config.Tests.csproj"] }]""");
+
+        // Act
+        var documentation = await scope.Select(["docs/guide.md"]);
+        var full = await scope.Select([".github/workflows/ci.yml"]);
+
+        // Assert
+        documentation.DocumentationOnly.ShouldBeTrue();
+        documentation.Slices[0].Tests.ShouldBeEmpty();
+        full.FullValidation.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task A_path_that_no_test_path_matches_and_no_project_owns_still_selects_every_test_project()
+    {
+        // Arrange
+        scope.ConfigureTestPaths();
+
+        // Act
+        var selection = await scope.Select(["other/settings.json"]);
+
+        // Assert
+        selection.FullValidation.ShouldBeTrue();
+        selection.Reasons.ShouldHaveSingleItem().ShouldContain("no solution project owns it", StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("""[{ "paths": ["config/*"], "tests": ["tests/Missing/Missing.csproj"] }]""", "$.selection.testPaths[0].tests[0] names tests/Missing/Missing.csproj, which is not a project of SharedKernel.slnx.")]
+    [InlineData("""[{ "paths": ["config/*"], "tests": ["src/Core/Core.csproj"] }]""", "$.selection.testPaths[0].tests[0] names src/Core/Core.csproj, which is not a test project.")]
+    public async Task Test_path_entries_must_name_solution_test_projects(string testPaths, string error)
+    {
+        // Arrange
+        scope.Configure("""[{ "name": "library", "projects": [] }]""", testPaths: testPaths);
+
+        // Act
+        Func<Task> select = () => scope.Select(["config/settings.json"]);
+
+        // Assert
+        (await select.ShouldThrow<InvalidOperationException>()).Message.ShouldBe(".config/sharedkernel-ci.json: " + error);
+    }
+
     [Theory]
     [InlineData("""[{ "name": "library", "projects": ["tests/Missing/Missing.csproj"] }]""", "$.slices[0].projects[0] names tests/Missing/Missing.csproj, which is not a project of SharedKernel.slnx.")]
     [InlineData("""[{ "name": "library", "projects": ["src/Core/Core.csproj"] }]""", "$.slices[0].projects[0] names src/Core/Core.csproj, which is not a test project.")]
