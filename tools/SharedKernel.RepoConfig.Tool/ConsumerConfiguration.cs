@@ -5,4 +5,8 @@ namespace PandaBear.RepoConfig.Tool;
 /// </summary>
 /// <param name="Version">Format version; only <c>1</c> is supported.</param>
 /// <param name="LicenseExceptions">The license exceptions that <c>dependency verify-license-exceptions</c> verifies, if any.</param>
-internal sealed record ConsumerConfiguration(int Version, LicenseExceptionConfiguration? LicenseExceptions = null);
+/// <param name="Labels">The repository labels that <c>github sync-labels</c> creates and updates, if any.</param>
+internal sealed record ConsumerConfiguration(
+    int Version,
+    LicenseExceptionConfiguration? LicenseExceptions = null,
+    IReadOnlyList<GitHubLabelConfiguration>? Labels = null);

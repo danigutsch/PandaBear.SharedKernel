@@ -198,10 +198,35 @@ internal static class RepoConfigCommandLine
             output,
             ct));
 
-        return new Command("github", "Preview or write GitHub projection, reconciliation, import, and issue links.")
+        return new Command("github", "Preview or write GitHub projection, reconciliation, import, issue links, and labels.")
         {
-            sync, reconcile, import, CreateLinkSubissueCommand(environment)
+            sync, reconcile, import, CreateLinkSubissueCommand(environment), CreateSyncLabelsCommand(environment, root)
         };
+    }
+
+    private static Command CreateSyncLabelsCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Option<string> repository = new("--repository")
+        {
+            Required = true,
+            Description = "GitHub repository whose labels are synchronized, as owner/name."
+        };
+        Option<bool> force = new("--force")
+        {
+            Description = "Create and update the labels instead of previewing them. Never deletes a label."
+        };
+        Command command = new("sync-labels", "Create missing and update changed GitHub labels from the consumer configuration. Previews unless --force is given.")
+        {
+            repository, force, root
+        };
+        SetGuardedAction(command, (parseResult, output, _, ct) => GitHubLabelSyncCommand.Run(
+            ResolveRoot(parseResult, root, environment),
+            parseResult.GetRequiredValue(repository),
+            parseResult.GetValue(force),
+            environment.HttpClient,
+            output,
+            ct));
+        return command;
     }
 
     private static Command CreateLinkSubissueCommand(RepoConfigToolEnvironment environment)

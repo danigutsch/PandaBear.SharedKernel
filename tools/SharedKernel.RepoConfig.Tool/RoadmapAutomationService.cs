@@ -198,7 +198,7 @@ internal sealed class RoadmapAutomationService
         var httpClient = _httpClient ?? ownedHttpClient
             ?? throw new InvalidOperationException("Roadmap automation could not create a GitHub client.");
         return await new RoadmapGitHubPublisher(_rootPath, httpClient)
-            .Publish(validation.Plan, validation.Changes, cancellationToken)
+            .Publish(validation.Plan, validation.Changes, validation.PullRequestBody!, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -223,7 +223,9 @@ internal sealed class RoadmapAutomationService
             throw new InvalidOperationException("Roadmap publication requires a nonempty sealed result.");
         }
 
-        return validation;
+        return validation.PullRequestBody is null
+            ? throw new InvalidOperationException("roadmap/config.json must define automation.pullRequestBody before roadmap publication.")
+            : validation;
     }
 
     private async Task<PlanValidation> CreateValidation(
@@ -299,7 +301,7 @@ internal sealed class RoadmapAutomationService
 
         var status = await _gitRepository.ReadStatus(_rootPath, cancellationToken).ConfigureAwait(false);
         var changes = RoadmapGitChangeGuard.Capture(_rootPath, status);
-        return new PostApplyValidation(plan, changes);
+        return new PostApplyValidation(plan, changes, project.AutomationPullRequestBody);
     }
 
     private async Task<string> RequireCleanHead(CancellationToken cancellationToken)
@@ -406,5 +408,6 @@ internal sealed class RoadmapAutomationService
 
     private sealed record PostApplyValidation(
         RoadmapAutomationPlan Plan,
-        RoadmapGitChangeSet Changes);
+        RoadmapGitChangeSet Changes,
+        string? PullRequestBody);
 }

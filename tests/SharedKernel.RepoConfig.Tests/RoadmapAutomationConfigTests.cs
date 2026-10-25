@@ -1,0 +1,88 @@
+using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+
+namespace PandaBear.RepoConfig.Tests;
+
+[Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
+public sealed class RoadmapAutomationConfigTests
+{
+    [Fact]
+    public async Task Init_declares_the_automation_pull_request_body_in_the_config_and_its_schema()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var output = new StringWriter(CultureInfo.InvariantCulture);
+        using var error = new StringWriter(CultureInfo.InvariantCulture);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], output, error, workspace.RootPath, TestContext.Current.CancellationToken);
+        using var config = JsonDocument.Parse(workspace.ReadFile("roadmap/config.json"));
+        using var schema = JsonDocument.Parse(workspace.ReadFile("roadmap/schema/roadmap-config.schema.json"));
+        var properties = schema.RootElement.GetProperty("properties");
+        var automation = properties.GetProperty("automation");
+
+        // Assert
+        exitCode.ShouldBe(0);
+        string.IsNullOrWhiteSpace(config.RootElement.GetProperty("automation").GetProperty("pullRequestBody").GetString()).ShouldBeFalse();
+        automation.GetProperty("required").EnumerateArray().Select(value => value.GetString()).ShouldBe(["pullRequestBody"]);
+        automation.GetProperty("additionalProperties").GetBoolean().ShouldBeFalse();
+        automation.GetProperty("properties").GetProperty("pullRequestBody").GetProperty("maxLength").GetInt32().ShouldBe(65536);
+        schema.RootElement.GetProperty("required").EnumerateArray().Select(value => value.GetString()).ShouldNotContain("automation");
+        config.RootElement.EnumerateObject()
+            .Where(property => property.Name != "$schema")
+            .ShouldAllSatisfy(property => properties.TryGetProperty(property.Name, out _).ShouldBeTrue(property.Name));
+    }
+
+    [Fact]
+    public async Task Verify_accepts_a_config_without_automation_settings()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        _ = RepoConfigInitializer.Initialize(workspace.RootPath);
+        RoadmapConfigTestOperations.SetProperty(workspace, "automation", null);
+
+        // Act
+        var (exitCode, _, error) = await RoadmapConfigTestOperations.Verify(workspace);
+
+        // Assert
+        exitCode.ShouldBe(0, error);
+    }
+
+    [Theory]
+    [InlineData("[]", "automation must be a JSON object when present.")]
+    [InlineData("{}", "automation.pullRequestBody must be a nonblank string of at most 65536 characters.")]
+    [InlineData("""{"pullRequestBody":" "}""", "automation.pullRequestBody must be a nonblank string of at most 65536 characters.")]
+    [InlineData("""{"pullRequestBody":1}""", "automation.pullRequestBody must be a nonblank string of at most 65536 characters.")]
+    [InlineData("""{"pullRequestBody":"Refs #1","title":"x"}""", "automation.title is not supported.")]
+    public async Task Verify_rejects_invalid_automation_settings(string automation, string expectedMessage)
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        _ = RepoConfigInitializer.Initialize(workspace.RootPath);
+        RoadmapConfigTestOperations.SetProperty(workspace, "automation", JsonNode.Parse(automation));
+
+        // Act
+        var (exitCode, _, error) = await RoadmapConfigTestOperations.Verify(workspace);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ShouldContain("- roadmap/config.json: " + expectedMessage, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Verify_rejects_a_pull_request_body_longer_than_github_allows()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        _ = RepoConfigInitializer.Initialize(workspace.RootPath);
+        RoadmapConfigTestOperations.SetProperty(workspace, "automation", new JsonObject { ["pullRequestBody"] = new string('b', 65537) });
+
+        // Act
+        var (exitCode, _, error) = await RoadmapConfigTestOperations.Verify(workspace);
+
+        // Assert
+        exitCode.ShouldBe(1);
+        error.ShouldContain("- roadmap/config.json: automation.pullRequestBody must be a nonblank string of at most 65536 characters.", StringComparison.Ordinal);
+    }
+}
