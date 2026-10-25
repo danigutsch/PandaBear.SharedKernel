@@ -129,29 +129,56 @@ public sealed class CiConfigurationConventionTests
     }
 
     [Fact]
-    public async Task A_change_to_a_slice_service_selects_every_test_project_of_its_slice()
+    public async Task A_change_to_a_slice_service_or_to_the_tool_code_that_runs_it_selects_every_test_project_of_its_slice()
     {
         // Arrange
         var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
         var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
         var graph = SolutionGraph.Load(root, configuration.Solution);
         var served = configuration.Slices.Where(static slice => slice.Service is not null).ToArray();
+        string[] protocol = ["tools/SharedKernel.CI.Tool/ServiceConfiguration.cs", "tools/SharedKernel.CI.Tool/ServiceHost.cs"];
 
         // Act
-        var unselected = served.ToDictionary(
-            static slice => slice.Name,
-            slice =>
+        var unselected = served
+            .SelectMany(slice =>
             {
-                var directory = slice.Service!.Project[..(slice.Service.Project.LastIndexOf('/') + 1)];
-                var plan = ProjectSelector.Select(configuration, graph, [directory + "Source.cs"], null, null);
-                var selected = plan.Slices.SelectMany(static selection => selection.Tests).Select(static test => test.Project).ToArray();
-                return plan.FullValidation ? [.. slice.Projects] : slice.Projects.Except(selected, StringComparer.Ordinal).ToArray();
-            });
+                string[] changes = [slice.Service!.Project[..(slice.Service.Project.LastIndexOf('/') + 1)] + "Source.cs", .. protocol];
+                return changes.Select(changed =>
+                {
+                    var plan = ProjectSelector.Select(configuration, graph, [changed], null, null);
+                    var selected = plan.Slices.SelectMany(static selection => selection.Tests).Select(static test => test.Project).ToArray();
+                    return (Changed: changed, Projects: plan.FullValidation ? [.. slice.Projects] : slice.Projects.Except(selected, StringComparer.Ordinal).ToArray());
+                });
+            })
+            .ToArray();
 
         // Assert
         served.ShouldNotBeEmpty();
-        unselected.Values.ShouldAllSatisfy(
-            static projects => projects.ShouldBeEmpty("Most tests that a service serves do not reference its project, so selection.testPaths must tie its directory to the tests that it serves."));
+        protocol.ShouldAllSatisfy(file => File.Exists(Path.Combine(root, file)).ShouldBeTrue(file + " runs a service, so the rule that names it must not outlive it."));
+        unselected.ShouldAllSatisfy(
+            static change => change.Projects.ShouldBeEmpty(
+                change.Changed + " must select every test project of the slice: most of them do not reference the service or the tool, and only the real tool, host, and tests together prove the start, hand-over, and stop of the service."));
+    }
+
+    [Fact]
+    public async Task A_change_to_the_service_protocol_of_the_tool_still_selects_the_tests_of_the_tool()
+    {
+        // Arrange
+        var root = SharedKernelPackagingConventionTestFiles.GetRepositoryRoot();
+        var configuration = await CiConfigurationFile.Read(root, TestContext.Current.CancellationToken);
+        var graph = SolutionGraph.Load(root, configuration.Solution);
+        const string toolTests = "tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj";
+        string[] protocol = ["tools/SharedKernel.CI.Tool/ServiceConfiguration.cs", "tools/SharedKernel.CI.Tool/ServiceHost.cs"];
+
+        // Act
+        var unselected = protocol
+            .Where(file => !ProjectSelector.Select(configuration, graph, [file], null, null).Slices
+                .SelectMany(static selection => selection.Tests)
+                .Any(test => test.Project == toolTests))
+            .ToArray();
+
+        // Assert
+        unselected.ShouldBeEmpty("A selection.testPaths rule selects the projects it names and no others, so the rule for the protocol must name the tests of the tool as well.");
     }
 
     [Fact]

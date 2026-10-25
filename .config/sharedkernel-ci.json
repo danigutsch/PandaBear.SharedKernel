@@ -34,6 +34,15 @@
           "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
           "tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj"
         ]
+      },
+      {
+        "paths": ["tools/SharedKernel.CI.Tool/ServiceConfiguration.cs", "tools/SharedKernel.CI.Tool/ServiceHost.cs"],
+        "tests": [
+          "tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj",
+          "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
+          "tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj",
+          "tests/SharedKernel.Repository.Tests/SharedKernel.Repository.Tests.csproj"
+        ]
       }
     ]
   },
