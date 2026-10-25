@@ -127,9 +127,16 @@ internal static class SliceRun
             }
 
             string[] test = ["test", "--solution", filter, "-c", options.Configuration, "--no-build", "--no-restore", "--results-directory", results];
+            string[] platform = options.Coverage ? ["--coverlet", "--coverlet-output-format", "cobertura"] : [];
+            platform = [.. platform, .. options.ExcludeTraits.SelectMany(static trait => new[] { "--filter-not-trait", trait })];
             if (options.Coverage)
             {
-                test = [.. test, "--results-directory-layout", "per-module", "--", "--coverlet", "--coverlet-output-format", "cobertura"];
+                test = [.. test, "--results-directory-layout", "per-module"];
+            }
+
+            if (platform.Length > 0)
+            {
+                test = [.. test, "--", .. platform];
             }
 
             await Phase("test", () => run("dotnet", test, root, ct)).ConfigureAwait(false);

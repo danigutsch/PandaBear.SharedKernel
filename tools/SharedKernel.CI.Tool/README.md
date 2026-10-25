@@ -231,6 +231,11 @@ The run writes one solution filter, `tests.slnf`, of the selected test projects 
 `*.cobertura*.xml` report. The test projects need the `coverlet.MTP` extension. Results that an earlier run left are
 deleted before the tests run.
 
+Each `--exclude-trait <name=value>` leaves out the tests with that xUnit trait: the run passes `--filter-not-trait
+<name=value>` to the test run, after `--` and after the coverage arguments. Repeat the option for several traits. The
+name and value are non-empty and contain no whitespace, and the name does not start with `-`. A consuming repository
+uses this to run, in an environment that lacks an external dependency, every test except the ones that need it.
+
 Each phase writes its standard output to `<phase>.log`, or its failure message when it fails, and to standard error.
 Whether the run succeeds, fails, or is canceled, configuration and plan loading included, the execution directory
 receives `phase-timings.tsv` (phase, start, duration in seconds, and status, then a `total` line), `manifest.json` (the
