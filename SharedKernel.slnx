@@ -88,6 +88,7 @@
   <Project Path="tests/SharedKernel.Idempotency.Abstractions.Tests/SharedKernel.Idempotency.Abstractions.Tests.csproj" />
   <Project Path="tests/SharedKernel.ImageProcessing.Tests/SharedKernel.ImageProcessing.Tests.csproj" />
   <Project Path="tests/SharedKernel.InputNormalization.Tests/SharedKernel.InputNormalization.Tests.csproj" />
+  <Project Path="tests/SharedKernel.K6.Tool.Tests/SharedKernel.K6.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.MalwareScanning.ClamAv.Testing/SharedKernel.MalwareScanning.ClamAv.Testing.csproj" />
   <Project Path="tests/SharedKernel.MalwareScanning.ClamAv.Tests/SharedKernel.MalwareScanning.ClamAv.Tests.csproj" />
   <Project Path="tests/SharedKernel.Mediator.Analyzers.Tests/SharedKernel.Mediator.Analyzers.Tests.csproj" />
@@ -119,6 +120,7 @@
   <Project Path="tests/SharedKernel.Testing.Tests/SharedKernel.Testing.Tests.csproj" />
   <Project Path="tests/SharedKernel.VaultManager.Tool.Tests/SharedKernel.VaultManager.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.Versioning.Tests/SharedKernel.Versioning.Tests.csproj" />
+  <Project Path="tools/SharedKernel.K6.Tool/SharedKernel.K6.Tool.csproj" />
   <Project Path="tools/SharedKernel.PlaywrightMcp.Tool/SharedKernel.PlaywrightMcp.Tool.csproj" />
   <Project Path="tools/SharedKernel.Testing.CodeFixRunner/SharedKernel.Testing.CodeFixRunner.csproj" />
   <Project Path="tools/SharedKernel.VaultManager.Tool/SharedKernel.VaultManager.Tool.csproj" />
