@@ -48,7 +48,7 @@ public sealed class PostgreSqlFixtureTests(PostgreSqlFixture fixture)
     // this test because the fixture's pool is shared with tests that run in parallel, so only a private pool on the
     // fixture's server lets the test compare the registered names exactly.
     [Fact]
-    public async Task Cancelled_database_creation_removes_the_registered_name()
+    public async Task A_cancelled_database_creation_registers_no_name_and_leaves_the_pool_usable()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
