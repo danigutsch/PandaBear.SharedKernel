@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 using PandaBear.Tooling;
 
@@ -45,10 +46,13 @@ internal static partial class VerifyDevcontainerCommand
         {
             await WriteStep(output, "Building and starting the devcontainer").ConfigureAwait(false);
             var upLog = Path.Combine(options.LogDirectory, "devcontainer-up.log");
-            var upExitCode = await RunCli(cli, root, upArguments, output, upLog, ct).ConfigureAwait(false);
+            StringBuilder upResult = new();
+            var upExitCode = await RunCli(cli, root, upArguments, output, upLog, upResult, ct).ConfigureAwait(false);
             var upOutput = await File.ReadAllTextAsync(upLog, ct).ConfigureAwait(false);
-            var containerIds = ContainerIdPattern().Matches(upOutput);
-            containerId = containerIds.Count > 0 ? containerIds[^1].Groups["id"].Value : null;
+
+            // The two streams interleave in the log in arrival order, so the result on standard output wins over trace
+            // lines on standard error.
+            containerId = LastContainerId(upResult.ToString()) ?? LastContainerId(upOutput);
             if (containerId is not null)
             {
                 await WriteMetadata(options, cli, containerId, ct).ConfigureAwait(false);
@@ -76,6 +80,7 @@ internal static partial class VerifyDevcontainerCommand
                     ["exec", "--workspace-folder", root, "bash", "-lc", options.Commands[index - 1]],
                     output,
                     execLog,
+                    null,
                     ct).ConfigureAwait(false);
                 if (exitCode != 0)
                 {
@@ -137,7 +142,7 @@ internal static partial class VerifyDevcontainerCommand
         }
 
         using StringWriter standardOutput = new(CultureInfo.InvariantCulture);
-        var exitCode = await DevcontainerProcess.Run(startInfo, standardOutput, TextWriter.Null, null, ct).ConfigureAwait(false);
+        var exitCode = await DevcontainerProcess.Run(startInfo, standardOutput, TextWriter.Null, null, null, ct).ConfigureAwait(false);
         var commonDirectory = standardOutput.ToString().Trim();
         return exitCode == 0 && commonDirectory.Length > 0 ? Path.GetFullPath(commonDirectory, root) : null;
     }
@@ -148,6 +153,7 @@ internal static partial class VerifyDevcontainerCommand
         IEnumerable<string> arguments,
         TextWriter output,
         string logPath,
+        StringBuilder? capturedOutput,
         CancellationToken ct)
     {
         ProcessStartInfo startInfo = new(cli.Executable)
@@ -164,7 +170,7 @@ internal static partial class VerifyDevcontainerCommand
             startInfo.ArgumentList.Add(argument);
         }
 
-        return DevcontainerProcess.Run(startInfo, output, output, logPath, ct);
+        return DevcontainerProcess.Run(startInfo, output, output, logPath, capturedOutput, ct);
     }
 
     private static Task WriteMetadata(VerifyDevcontainerOptions options, DevcontainerCli cli, string containerId, CancellationToken ct) =>
@@ -199,7 +205,7 @@ internal static partial class VerifyDevcontainerCommand
         using CancellationTokenSource deadline = new(TimeSpan.FromMinutes(1));
         try
         {
-            if (await DevcontainerProcess.Run(startInfo, TextWriter.Null, TextWriter.Null, null, deadline.Token).ConfigureAwait(false) == 0)
+            if (await DevcontainerProcess.Run(startInfo, TextWriter.Null, TextWriter.Null, null, null, deadline.Token).ConfigureAwait(false) == 0)
             {
                 return;
             }
@@ -214,6 +220,12 @@ internal static partial class VerifyDevcontainerCommand
 
     private static Task WriteStep(TextWriter output, string message) =>
         output.WriteLineAsync($"{Environment.NewLine}==> {message}");
+
+    private static string? LastContainerId(string text)
+    {
+        var matches = ContainerIdPattern().Matches(text);
+        return matches.Count > 0 ? matches[^1].Groups["id"].Value : null;
+    }
 
     [GeneratedRegex("\"containerId\":\"(?<id>[^\"]+)", RegexOptions.ExplicitCapture | RegexOptions.CultureInvariant, matchTimeoutMilliseconds: 10_000)]
     private static partial Regex ContainerIdPattern();

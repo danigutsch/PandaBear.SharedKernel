@@ -18,8 +18,15 @@ internal static class DevcontainerProcess
     /// <param name="output">Receives standard output.</param>
     /// <param name="error">Receives standard error.</param>
     /// <param name="logPath">A file that receives both streams, or <see langword="null"/>.</param>
+    /// <param name="capturedOutput">Also receives the standard output lines, or <see langword="null"/>.</param>
     /// <param name="ct">Cancels the process.</param>
-    public static async Task<int> Run(ProcessStartInfo startInfo, TextWriter output, TextWriter error, string? logPath, CancellationToken ct)
+    public static async Task<int> Run(
+        ProcessStartInfo startInfo,
+        TextWriter output,
+        TextWriter error,
+        string? logPath,
+        StringBuilder? capturedOutput,
+        CancellationToken ct)
     {
         startInfo.UseShellExecute = false;
         startInfo.RedirectStandardInput = true;
@@ -30,7 +37,7 @@ internal static class DevcontainerProcess
 
         using var process = Start(startInfo);
         process.StandardInput.Close();
-        var copy = Copy(process.StandardOutput, process.StandardError, output, error, logPath);
+        var copy = Copy(process.StandardOutput, process.StandardError, output, error, logPath, capturedOutput);
         try
         {
             await process.WaitForExitAsync(ct).ConfigureAwait(false);
@@ -66,17 +73,23 @@ internal static class DevcontainerProcess
         }
     }
 
-    private static async Task Copy(StreamReader standardOutput, StreamReader standardError, TextWriter output, TextWriter error, string? logPath)
+    private static async Task Copy(
+        StreamReader standardOutput,
+        StreamReader standardError,
+        TextWriter output,
+        TextWriter error,
+        string? logPath,
+        StringBuilder? capturedOutput)
     {
         var log = logPath is null ? TextWriter.Null : new StreamWriter(logPath, append: false, new UTF8Encoding(false)) { AutoFlush = true };
         await using (log.ConfigureAwait(false))
         {
             using var gate = new SemaphoreSlim(1, 1);
-            await Task.WhenAll(CopyLines(standardOutput, output, log, gate), CopyLines(standardError, error, log, gate)).ConfigureAwait(false);
+            await Task.WhenAll(CopyLines(standardOutput, output, log, gate, capturedOutput), CopyLines(standardError, error, log, gate, null)).ConfigureAwait(false);
         }
     }
 
-    private static async Task CopyLines(StreamReader reader, TextWriter writer, TextWriter log, SemaphoreSlim gate)
+    private static async Task CopyLines(StreamReader reader, TextWriter writer, TextWriter log, SemaphoreSlim gate, StringBuilder? capture)
     {
         while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line)
         {
@@ -85,6 +98,7 @@ internal static class DevcontainerProcess
             {
                 await writer.WriteLineAsync(line).ConfigureAwait(false);
                 await log.WriteLineAsync(line).ConfigureAwait(false);
+                capture?.AppendLine(line);
             }
             finally
             {

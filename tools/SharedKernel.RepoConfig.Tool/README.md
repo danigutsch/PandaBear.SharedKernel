@@ -386,7 +386,8 @@ references before applying changes, and use explicit closure approvals for actua
    directory, `TestResults/devcontainer-smoke` unless `--log-directory <directory>` names another. The command
    fails when the CLI exits with a non-zero code or its output contains `"outcome":"error"`, even with exit
    code 0.
-4. The last `"containerId":"<id>"` in the output names the container. With an ID, `metadata.txt` in the log
+4. The last `"containerId":"<id>"` on standard output names the container, or, without one there, the last in the
+   log. With an ID, `metadata.txt` in the log
    directory records `workspace_folder`, `log_dir`, `devcontainer_cli`, and `container_id`; without one, the
    command fails.
 5. Each `--exec <command>` runs in order as `devcontainer exec --workspace-folder <root> bash -lc <command>`, with
