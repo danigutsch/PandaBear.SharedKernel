@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <PackageId>PandaBear.SharedKernel.Aspire.Hosting.K6</PackageId>
+        <Description>Aspire hosting extensions that run a k6 scenario as an explicit-start container with client-credentials authentication.</Description>
+        <RootNamespace>PandaBear.Aspire.Hosting.K6</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <PackageTags>aspire;k6;load-testing;shared-kernel;dotnet</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting" />
+        <PackageReference Include="CommunityToolkit.Aspire.Hosting.k6" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Scripts\*.js" LogicalName="k6lib/%(Filename)%(Extension)" />
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

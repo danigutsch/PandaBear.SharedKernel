@@ -15,6 +15,7 @@
     <PackageVersion Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="13.6.1" />
     <PackageVersion Include="Aspire.StackExchange.Redis.OutputCaching" Version="13.6.1" />
     <PackageVersion Include="AWSSDK.S3" Version="4.0.104.4" />
+    <PackageVersion Include="CommunityToolkit.Aspire.Hosting.k6" Version="13.6.0" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.OpenTelemetryCollector" Version="13.6.0" />
     <!-- Code analysis packages -->
     <PackageVersion Include="Duende.AccessTokenManagement.OpenIdConnect" Version="4.3.0" />

@@ -1,0 +1,4 @@
+#nullable enable
+Aspire.Hosting.K6ScenarioResourceExtensions
+static Aspire.Hosting.K6ScenarioResourceExtensions.AddK6Scenario(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name, string! scriptDirectory, string! script, string! resultsDirectory) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.K6Resource!>!
+static Aspire.Hosting.K6ScenarioResourceExtensions.WithK6ClientCredentials(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.K6Resource!>! k6, Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.IResourceWithEndpoints!>! identityProvider, string! tokenPath, string! clientId, Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.ParameterResource!>! clientSecret) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.K6Resource!>!
