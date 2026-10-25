@@ -63,6 +63,12 @@ public sealed class CiConfigurationFileTests : IDisposable
     [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 80, \"include\": [\"src/*\"], \"exclude\": [], \"symbolDirectories\": [] },", ": $.coverage.symbolDirectories must name at least one directory.")]
     [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 80, \"include\": [\"src/*\"], \"exclude\": [], \"symbolDirectories\": [\"../src\"] },", ": $.coverage.symbolDirectories[0] must be a repository-relative directory")]
     [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 80, \"include\": [\"src/*\"], \"symbolDirectories\": [\"src\"] },", " is not valid at $.coverage")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"mutation\": { \"strykerVersion\": \"4.15\", \"configFiles\": [\"tests/A/stryker.json\"] },", ": $.mutation.strykerVersion must be an exact NuGet version, such as 4.15.0.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"mutation\": { \"strykerVersion\": \"[4.15.0,)\", \"configFiles\": [\"tests/A/stryker.json\"] },", ": $.mutation.strykerVersion must be an exact NuGet version, such as 4.15.0.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"mutation\": { \"strykerVersion\": \"4.15.0\", \"configFiles\": [] },", ": $.mutation.configFiles must name at least one Stryker config file.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"mutation\": { \"strykerVersion\": \"4.15.0\", \"configFiles\": [\"../stryker.json\"] },", ": $.mutation.configFiles[0] must be a repository-relative file path")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"mutation\": { \"strykerVersion\": \"4.15.0\", \"configFiles\": [\"tests/A/stryker.json\", \"tests/A/stryker.json\"] },", ": $.mutation.configFiles[1] repeats tests/A/stryker.json.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"mutation\": { \"strykerVersion\": \"4.15.0\" },", " is not valid at $.mutation")]
     public async Task Invalid_configuration_names_the_file_and_the_json_path(string original, string replacement, string expected)
     {
         // Arrange

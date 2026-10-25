@@ -72,6 +72,22 @@ internal sealed class RepositoryTestScope : IDisposable
             }
             """);
 
+    /// <summary>Writes each of <paramref name="configFiles"/> and a configuration that runs them with Stryker 4.15.0.</summary>
+    public void ConfigureMutation(params string[] configFiles)
+    {
+        foreach (var configFile in configFiles)
+        {
+            WriteFile(configFile, "{}");
+        }
+
+        WriteFile(".config/sharedkernel-ci.json", DefaultConfiguration.Replace(
+            "\"version\": 1,",
+            "\"version\": 1,\n  \"mutation\": { \"strykerVersion\": \"4.15.0\", \"configFiles\": ["
+                + string.Join(", ", configFiles.Select(static file => "\"" + file + "\""))
+                + "] },",
+            StringComparison.Ordinal));
+    }
+
     /// <summary>Reads the configuration and the solution, and selects for <paramref name="changes"/>.</summary>
     public async Task<SelectionPlan> Select(string[]? changes, string? nonInertBuildFile = null)
     {

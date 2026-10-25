@@ -7,8 +7,8 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 `sharedkernel-ci` selects the test projects affected by a change, as the repository's `.config/sharedkernel-ci.json`
 configures, writes a solution filter for each CI test slice, runs the selected test projects of one or more slices
 through one solution filter, generates OpenAPI documents, installs Playwright browsers, verifies the coverage of changed
-code, stages pinned package candidates in a local feed, and verifies Conventional Commit messages in pull request events
-and git commit message files.
+code, stages pinned package candidates in a local feed, verifies Conventional Commit messages in pull request events
+and git commit message files, and runs Stryker.NET mutation tests.
 
 ## Prerequisites
 
@@ -17,7 +17,9 @@ Git checkout, and `run` reads the configuration and the plan that `select` wrote
 `coverage` reads the configuration in a Git checkout with the history of `--base`;
 `install-playwright`, and `run --install-playwright`, need PowerShell (`pwsh`);
 `stage-candidate` reads a clean SharedKernel checkout and, with `--repository`, needs HTTPS access to `github.com` and
-`release-assets.githubusercontent.com`; `verify-commit-message` reads only its event or message file.
+`release-assets.githubusercontent.com`; `verify-commit-message` reads only its event or message file;
+`run-mutation-tests` reads the configuration and, until the configured `dotnet-stryker` is installed, needs a NuGet
+source, as the root's `NuGet.Config` names it, that serves the `dotnet-stryker` package.
 
 ## Installation
 
@@ -45,6 +47,7 @@ dotnet run --project tools/SharedKernel.CI.Tool -c Release -- openapi refresh --
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- install-playwright --project <test-project> --browser chromium --with-dependencies
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- stage-candidate --pin <candidate.json> --library-root . --output <feed> --repository danigutsch/PandaBear.SharedKernel
 dotnet run --project tools/SharedKernel.CI.Tool -c Release -- verify-commit-message --event <event.json>
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run-mutation-tests
 ```
 
 Package ID: `PandaBear.SharedKernel.CI.Tool`. C# namespace: `PandaBear.CI.Tool`. Assembly/project identity:
@@ -60,7 +63,7 @@ instead of running; an invalid command line exits 1.
 
 ### Configuration
 
-`select`, `run`, `openapi`, and `coverage` read `<root>/.config/sharedkernel-ci.json`: strict JSON of at most 1 MiB with camelCase property names that
+`select`, `run`, `openapi`, `coverage`, and `run-mutation-tests` read `<root>/.config/sharedkernel-ci.json`: strict JSON of at most 1 MiB with camelCase property names that
 match exactly. Comments, trailing commas, and unknown, repeated, or missing properties are errors, and every error names
 the file and the JSON path of the problem.
 
@@ -97,6 +100,10 @@ the file and the JSON path of the problem.
     "include": ["src/*.cs", "src/*.razor"],
     "exclude": ["*/Migrations/*", "*/obj/*", "*.g.cs", "*.generated.cs"],
     "symbolDirectories": ["src"]
+  },
+  "mutation": {
+    "strykerVersion": "4.15.0",
+    "configFiles": ["tests/Domain.Tests/stryker-config.json", "tests/Application.Tests/stryker-config.json"]
   }
 }
 ```
@@ -123,6 +130,8 @@ the file and the JSON path of the problem.
 | `coverage.include` | Path patterns of the source files whose added lines count. At least one. |
 | `coverage.exclude` | Path patterns of included files whose added lines do not count, such as generated code. |
 | `coverage.symbolDirectories` | Directories whose `bin/Release` directories hold the portable PDBs that `coverage record-symbols` records. At least one. |
+| `mutation.strykerVersion` | Optional section, required by `run-mutation-tests`. The exact `dotnet-stryker` package version, such as `4.15.0`: three numbers and an optional prerelease label. |
+| `mutation.configFiles` | The Stryker config files that `run-mutation-tests` runs, in order. At least one, none repeated. |
 
 Paths are relative to the root, use `/`, and have no empty, `.`, or `..` segment; they resolve under the root without
 following symbolic links. Patterns match the whole repository-relative path with
@@ -352,23 +361,39 @@ from the top of the working tree, where `dotnet tool run` finds the tool manifes
 exec dotnet tool run sharedkernel-ci -- verify-commit-message --file "$1"
 ```
 
+### run-mutation-tests
+
+```text
+dotnet tool run sharedkernel-ci -- run-mutation-tests
+```
+
+Runs Stryker.NET with each `mutation.configFiles` entry, in order, and stops at the first run that fails. Every config
+file must exist before anything runs. Unless `<root>/TestResults/tools/dotnet-stryker/<strykerVersion>` already holds
+`dotnet-stryker`, the command first runs `dotnet tool install dotnet-stryker --version <strykerVersion> --tool-path
+<that directory>` from the root. The tool stays out of the tool manifest, so other tool restores never download it, and
+later runs reuse the installed version. Each config then runs as `<tool path>/dotnet-stryker --config-file <file name>`
+from the config file's directory, where Stryker writes its `StrykerOutput` reports. Standard output receives a `==>
+<config file>` line before each run and the run's output when it ends; a failed run's output is in its failure message
+on standard error.
+
 ## Exit codes
 
 | Code | Meaning |
 | --- | --- |
 | 0 | Success. |
 | 1 | Invalid command line, cancellation, or an unexpected error. |
-| 2 | The configuration is invalid, or a run, generation, installation, coverage check, staging, or the commit message check failed; the reason is on standard error. |
+| 2 | The configuration is invalid, or a run, generation, installation, coverage check, staging, the commit message check, or a mutation run failed; the reason is on standard error. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
-Ctrl+C or SIGTERM stops the running `git`, `dotnet`, or `pwsh` process tree. A process that fails after the tool has observed
+Ctrl+C or SIGTERM stops the running `git`, `dotnet`, `pwsh`, or `dotnet-stryker` process tree. A process that fails after the tool has observed
 Ctrl+C or SIGTERM counts as the cancellation. Error messages on standard error escape control and format characters
 line by line, so text from files, processes, and the network cannot drive the terminal.
 
 ## Security
 
 The tool starts only `git`, `dotnet`, and `pwsh`, found in the absolute directories of `PATH` and never in the working
-directory, or, for OpenAPI generation, the dotnet host that runs the tool, and passes arguments as a list. Slice,
+directory, or, for OpenAPI generation, the dotnet host that runs the tool, or the `dotnet-stryker` that
+`run-mutation-tests` installs under `TestResults/tools`, and passes arguments as a list. Slice,
 target, browser, configuration, and MSBuild property values are restricted to names, so none can become an option or
 another property. `select` and `coverage verify` pass `--base` to Git only when it is a hexadecimal object ID, so Git
 cannot read it as an option, and escapes control characters in the changed paths that its reasons repeat. `verify-commit-message` starts no process. No credentials are needed. `stage-candidate` runs

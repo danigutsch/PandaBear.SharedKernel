@@ -10,7 +10,7 @@ namespace PandaBear.CI.Tool;
 /// <summary>Builds the <c>sharedkernel-ci</c> command tree.</summary>
 internal static partial class RepositoryCommandLine
 {
-    /// <summary>Exit code for a failed selection, run, generation, installation, coverage check, staging, or commit message check.</summary>
+    /// <summary>Exit code for a failed selection, run, generation, installation, coverage check, staging, commit message check, or mutation run.</summary>
     private const int FailureExitCode = 2;
 
     /// <summary>Creates the command tree with the Git, network, and clock access that the tool uses.</summary>
@@ -31,7 +31,7 @@ internal static partial class RepositoryCommandLine
         CandidateStagingServices staging)
     {
         var root = new RootCommand(
-            "Selects and runs affected test projects, generates OpenAPI documents, installs Playwright browsers, verifies changed-code coverage, stages package candidates, and verifies commit messages.");
+            "Selects and runs affected test projects, generates OpenAPI documents, installs Playwright browsers, verifies changed-code coverage, stages package candidates, verifies commit messages, and runs mutation tests.");
 
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
@@ -42,7 +42,30 @@ internal static partial class RepositoryCommandLine
         root.Subcommands.Add(CreateCoverage(workingDirectory, run));
         root.Subcommands.Add(CreateStageCandidate(workingDirectory, staging));
         root.Subcommands.Add(CreateVerifyCommitMessage(workingDirectory));
+        root.Subcommands.Add(CreateRunMutationTests(workingDirectory, run));
         return root;
+    }
+
+    private static Command CreateRunMutationTests(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run)
+    {
+        var rootOption = CreateRootOption();
+        var command = new Command(
+            "run-mutation-tests",
+            "Run each Stryker.NET config of .config/sharedkernel-ci.json in order, with the configured dotnet-stryker installed on demand, and stop at the first failure.")
+        {
+            rootOption,
+        };
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            async (output, _) =>
+            {
+                var root = Path.GetFullPath(parseResult.GetValue(rootOption) ?? ".", workingDirectory);
+                var configuration = await CiConfigurationFile.Read(root, ct).ConfigureAwait(false);
+                var mutation = configuration.Mutation ?? throw CiConfigurationFile.Invalid("$.mutation is required by run-mutation-tests.");
+                await MutationTestRun.Run(root, mutation, run, output, ct).ConfigureAwait(false);
+            },
+            ct));
+        return command;
     }
 
     private static Command CreateSelect(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run)
