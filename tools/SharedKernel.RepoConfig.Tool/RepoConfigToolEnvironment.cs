@@ -29,4 +29,12 @@ internal sealed record RepoConfigToolEnvironment(string WorkingDirectory)
     {
         get; init;
     }
+
+    /// <summary>
+    /// Gets the host that <c>verify-devcontainer</c> uses, or <see langword="null"/> for the current machine.
+    /// </summary>
+    public DevcontainerHost? DevcontainerHost
+    {
+        get; init;
+    }
 }
