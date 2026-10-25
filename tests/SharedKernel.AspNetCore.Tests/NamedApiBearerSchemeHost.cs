@@ -56,6 +56,9 @@ internal sealed class NamedApiBearerSchemeHost : IAsyncDisposable
     public Task<AuthenticationScheme?> DefaultScheme() =>
         _provider.GetRequiredService<IAuthenticationSchemeProvider>().GetDefaultAuthenticateSchemeAsync();
 
+    public Task<AuthenticationScheme?> DefaultChallengeScheme() =>
+        _provider.GetRequiredService<IAuthenticationSchemeProvider>().GetDefaultChallengeSchemeAsync();
+
     public IClaimsTransformation ClaimsTransformation => _provider.GetRequiredService<IClaimsTransformation>();
 
     public ValueTask DisposeAsync() => _provider.DisposeAsync();

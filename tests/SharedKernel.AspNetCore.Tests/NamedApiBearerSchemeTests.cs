@@ -15,7 +15,7 @@ namespace PandaBear.AspNetCore.Tests;
 public sealed class NamedApiBearerSchemeTests
 {
     [Fact]
-    public async Task Registers_each_scheme_with_its_own_exact_audience_and_the_first_as_default()
+    public async Task Registers_each_scheme_with_its_own_exact_audience_and_no_default_authentication()
     {
         // Arrange
         await using var host = NamedApiBearerSchemeHost.Create();
@@ -24,6 +24,7 @@ public sealed class NamedApiBearerSchemeTests
         var catalog = host.Options(NamedApiBearerSchemeHost.CatalogScheme);
         var branding = host.Options(NamedApiBearerSchemeHost.BrandingScheme);
         var defaultScheme = await host.DefaultScheme();
+        var challengeScheme = await host.DefaultChallengeScheme();
         var transformed = await host.ClaimsTransformation.TransformAsync(
             new ClaimsPrincipal(new ClaimsIdentity([new Claim(ApiAuthenticationDefaults.RolesClaimType, "Admin")], "test")));
 
@@ -31,7 +32,8 @@ public sealed class NamedApiBearerSchemeTests
         catalog.TokenValidationParameters.ValidAudience.ShouldBe("catalog-api");
         branding.TokenValidationParameters.ValidAudience.ShouldBe("branding-api");
         branding.TokenValidationParameters.ValidAlgorithms.ShouldBe([SecurityAlgorithms.RsaSha256]);
-        defaultScheme.ShouldNotBeNull().Name.ShouldBe(NamedApiBearerSchemeHost.CatalogScheme);
+        defaultScheme.ShouldBeNull();
+        challengeScheme.ShouldNotBeNull().Name.ShouldBe(NamedApiBearerSchemeHost.CatalogScheme);
         transformed.FindAll(ApiAuthenticationDefaults.PermissionClaimType).ShouldBeEmpty();
     }
 

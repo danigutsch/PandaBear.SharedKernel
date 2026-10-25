@@ -117,7 +117,8 @@ public static class ApiAuthenticationServiceCollectionExtensions
 
     /// <summary>
     /// Adds several named exact-audience bearer schemes for a host that co-hosts modules, or authorization only while
-    /// OpenAPI documents are generated. The first scheme is the default; route policies select the others by name.
+    /// OpenAPI documents are generated. No scheme authenticates by default: every protected route's policy must name
+    /// its scheme with <c>AddAuthenticationSchemes</c>, and the fallback policy rejects routes that do not.
     /// </summary>
     /// <param name="services">The service collection.</param>
     /// <param name="configuration">The configuration that supplies the authority and issuer.</param>
@@ -185,7 +186,13 @@ public static class ApiAuthenticationServiceCollectionExtensions
 
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
 
-        var authentication = services.AddAuthentication(schemes[0].Name);
+        // No default authenticate scheme: a route is authenticated only by the scheme its policy names, so a route
+        // that forgets a module policy fails closed under the fallback instead of accepting another module's token.
+        var authentication = services.AddAuthentication(options =>
+        {
+            options.DefaultChallengeScheme = schemes[0].Name;
+            options.DefaultForbidScheme = schemes[0].Name;
+        });
         foreach (var scheme in schemes)
         {
             authentication.AddScheme<JwtBearerOptions, JwtBearerHandler>(scheme.Name, options =>

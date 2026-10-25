@@ -12,9 +12,10 @@ content security policies. Each consuming application owns those decisions.
 
 A host that co-hosts modules with different API audiences passes `ApiBearerScheme` values to
 `AddApiSecurity`. Each scheme accepts only tokens for its single audience and maps roles with its own
-permission table when it validates a token; names and audiences must be unique, and the first scheme is
-the default. Route policies select a non-default scheme with `AddAuthenticationSchemes(name)`, so one
-module's token never satisfies another module's policy.
+permission table when it validates a token; names and audiences must be unique. No scheme authenticates by
+default: every protected route's policy must name its scheme with `AddAuthenticationSchemes(name)`, and the
+fallback policy rejects a route that does not, so one module's token never satisfies another module's route.
+The first scheme only issues challenges and forbids.
 
 Use `MapRobotsTxt` to expose an application-owned crawler policy at `/robots.txt` with
 `text/plain; charset=utf-8`.
