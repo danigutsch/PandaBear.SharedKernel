@@ -16,4 +16,15 @@ internal static class FakeEnvironment
             ? value
             : throw new InvalidOperationException($"The test environment defines no variable '{name}'.");
     }
+
+    /// <summary>
+    /// Creates an environment in which only the owner host's ready-file variable is set, to <paramref name="value"/>.
+    /// Reading any other variable fails, so a test notices code that reads more than the contract names.
+    /// </summary>
+    public static Func<string, string?> WithReadyFile(string? value)
+    {
+        return name => string.Equals(name, PostgreSqlTestServer.ReadyFileVariable, StringComparison.Ordinal)
+            ? value
+            : throw new InvalidOperationException($"The test environment defines no variable '{name}'.");
+    }
 }
