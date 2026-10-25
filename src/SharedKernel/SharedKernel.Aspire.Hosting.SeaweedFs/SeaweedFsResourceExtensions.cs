@@ -9,11 +9,18 @@ public static class SeaweedFsResourceExtensions
 {
     private const string ImageTag = "4.39";
     private const string ImageDigest = "c7d6c721b30ae711db766bbbfd40192776e263d4e51e22f57baef7bef93c12c6";
+    private const string DataPath = "/data";
     private const string ResourceNameSuffixConfigurationKey = "DcpPublisher:ResourceNameSuffix";
 
     /// <summary>
-    /// Adds an authenticated SeaweedFS mini cluster with a persistent data volume.
+    /// Adds an authenticated SeaweedFS mini cluster whose data persists between AppHost runs.
     /// </summary>
+    /// <remarks>
+    /// The data lives in the named volume <c>{name}-data</c>, so a restarted AppHost reuses it.
+    /// When the <c>DcpPublisher:ResourceNameSuffix</c> configuration value is set, the resource is an isolated instance,
+    /// such as a parallel test run. It then gets an anonymous volume that the container runtime removes together with
+    /// the container, because a named volume of one isolated instance is never reused and would stay behind.
+    /// </remarks>
     /// <param name="builder">The distributed application builder.</param>
     /// <param name="name">The resource name.</param>
     /// <param name="bucketDefault">The default bucket name.</param>
@@ -38,13 +45,10 @@ public static class SeaweedFsResourceExtensions
             secret: true,
             persist: true);
         var bucket = builder.AddParameter($"{name}-bucket", bucketDefault);
-        var resourceNameSuffix = builder.Configuration[ResourceNameSuffixConfigurationKey]?.Trim();
-        var dataVolumeName = string.IsNullOrWhiteSpace(resourceNameSuffix)
-            ? $"{name}-data"
-            : $"{name}-{resourceNameSuffix}-data";
+        var isolatedInstance = !string.IsNullOrWhiteSpace(builder.Configuration[ResourceNameSuffixConfigurationKey]);
         var resource = new SeaweedFsResource(name, accessKey.Resource, secretKey.Resource, bucket.Resource);
 
-        return builder.AddResource(resource)
+        var resourceBuilder = builder.AddResource(resource)
             .WithImage("chrislusf/seaweedfs", ImageTag)
             .WithImageRegistry("docker.io")
             .WithImageSHA256(ImageDigest)
@@ -54,7 +58,10 @@ public static class SeaweedFsResourceExtensions
             .WithEnvironment("S3_BUCKET", bucket)
             .WithEndpoint(targetPort: 8333, name: SeaweedFsResource.S3EndpointName, scheme: "http", isExternal: false)
             .WithEndpoint(targetPort: 9333, name: "master", scheme: "http", isExternal: false)
-            .WithHttpHealthCheck("/cluster/healthz", endpointName: "master")
-            .WithVolume(dataVolumeName, "/data");
+            .WithHttpHealthCheck("/cluster/healthz", endpointName: "master");
+
+        return isolatedInstance
+            ? resourceBuilder.WithVolume(DataPath)
+            : resourceBuilder.WithVolume($"{name}-data", DataPath);
     }
 }

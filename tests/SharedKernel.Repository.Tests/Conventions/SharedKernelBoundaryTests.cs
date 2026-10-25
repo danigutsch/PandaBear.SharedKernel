@@ -355,25 +355,6 @@ public sealed class SharedKernelBoundaryTests
     }
 
     [Fact]
-    public void Seaweedfs_uses_named_storage()
-    {
-        // Arrange
-        var seaweedFsText = File.ReadAllText(Path.Combine(
-            GetRepositoryRoot(),
-            "src",
-            "SharedKernel",
-            "SharedKernel.Aspire.Hosting.SeaweedFs",
-            "SeaweedFsResourceExtensions.cs"));
-
-        // Act
-        var usesNamedStorage = seaweedFsText.Contains("DcpPublisher:ResourceNameSuffix", StringComparison.Ordinal)
-            && seaweedFsText.Contains("WithVolume(dataVolumeName, \"/data\")", StringComparison.Ordinal);
-
-        // Assert
-        usesNamedStorage.ShouldBeTrue();
-    }
-
-    [Fact]
     public void SharedKernel_testing_should_not_own_product_or_area_specific_trait_values()
     {
         // Arrange

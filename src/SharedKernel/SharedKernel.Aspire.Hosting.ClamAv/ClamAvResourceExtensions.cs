@@ -10,11 +10,18 @@ public static class ClamAvResourceExtensions
 {
     private const string ImageTag = "1.5";
     private const string ImageDigest = "6f4a9e7d616ffc8d1070200fe35ac860735fdd522161a1043f94856e6ee13c28";
+    private const string DefinitionsPath = "/var/lib/clamav";
     private const string ResourceNameSuffixConfigurationKey = "DcpPublisher:ResourceNameSuffix";
 
     /// <summary>
-    /// Adds a private ClamAV daemon with persistent virus definitions.
+    /// Adds a private ClamAV daemon whose virus definitions persist between AppHost runs.
     /// </summary>
+    /// <remarks>
+    /// The definitions live in the named volume <c>{name}-definitions</c>, so a restarted AppHost reuses them.
+    /// When the <c>DcpPublisher:ResourceNameSuffix</c> configuration value is set, the resource is an isolated instance,
+    /// such as a parallel test run. It then gets an anonymous volume that the container runtime removes together with
+    /// the container, because a named volume of one isolated instance is never reused and would stay behind.
+    /// </remarks>
     /// <param name="builder">The distributed application builder.</param>
     /// <param name="name">The resource name.</param>
     /// <returns>The configured ClamAV container resource.</returns>
@@ -23,17 +30,16 @@ public static class ClamAvResourceExtensions
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
-        var resourceNameSuffix = builder.Configuration[ResourceNameSuffixConfigurationKey]?.Trim();
-        var definitionsVolumeName = string.IsNullOrWhiteSpace(resourceNameSuffix)
-            ? $"{name}-definitions"
-            : $"{name}-{resourceNameSuffix}-definitions";
+        var isolatedInstance = !string.IsNullOrWhiteSpace(builder.Configuration[ResourceNameSuffixConfigurationKey]);
         var resource = new ClamAvResource(name);
         var resourceBuilder = builder.AddResource(resource)
             .WithImage("clamav/clamav", ImageTag)
             .WithImageRegistry("docker.io")
             .WithImageSHA256(ImageDigest)
-            .WithEndpoint(targetPort: 3310, name: ClamAvResource.TcpEndpointName, scheme: "tcp", isExternal: false)
-            .WithVolume(definitionsVolumeName, "/var/lib/clamav");
+            .WithEndpoint(targetPort: 3310, name: ClamAvResource.TcpEndpointName, scheme: "tcp", isExternal: false);
+        resourceBuilder = isolatedInstance
+            ? resourceBuilder.WithVolume(DefinitionsPath)
+            : resourceBuilder.WithVolume($"{name}-definitions", DefinitionsPath);
         var healthCheckName = $"{name}-tcp-ping";
         builder.Services.AddHealthChecks().AddCheck(healthCheckName, new ClamAvPingHealthCheck(resourceBuilder.GetEndpoint(ClamAvResource.TcpEndpointName)));
 
