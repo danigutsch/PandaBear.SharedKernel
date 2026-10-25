@@ -47,7 +47,9 @@ public sealed class SliceServiceTests
         ]);
         (await ServiceRunScope.Phases(run.Execution, ct)).ShouldBe(
             ["load passed", "restore passed", "build passed", "service-database passed", "test passed", "service-stop-database passed", "total passed"]);
-        during.ShouldBe((true, true, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute), "The service runs and its private ready file exists while the tests run.");
+        during.ShouldBe(
+            (true, false, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute),
+            "The service runs and its private directory exists while the tests run, but the ready file is gone: the tool has read the value, and nothing else needs the file.");
         run.Host.IsRunning(Database).ShouldBeFalse();
     }
 

@@ -200,7 +200,8 @@ internal static class SliceRun
                 failure = failure is null ? teardownFailure : failure + Environment.NewLine + teardownFailure;
             }
 
-            // Evidence is written even when the run fails or is cancelled, so the job can upload it.
+            // Evidence is written even when the run fails or is cancelled, so the job can upload it. Program.cs gives a cancelled
+            // run 90 seconds for the stop above and this.
             var name = slices.Length == 0 ? "selection" : string.Join('+', slices);
             await RunEvidence.Write(
                 execution, name, revision, slices, projects, options, status, failure, started, time.GetUtcNow(), phases, root).ConfigureAwait(false);

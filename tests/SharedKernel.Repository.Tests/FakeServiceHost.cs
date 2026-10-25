@@ -33,6 +33,9 @@ internal sealed class FakeServiceHost
             $"printf '%s' \"$$\" > {Quote(Path.Combine(directory, name + ".pid"))}\n/usr/bin/env > {Quote(Path.Combine(directory, name + ".env"))}\n{body}");
     }
 
+    /// <summary>Returns the path of the script that stands in for <paramref name="project"/>.</summary>
+    public string ScriptPath(string project) => Path.Combine(directory, names[project]);
+
     /// <summary>Starts the script of the service project that the start information names, in place of <c>dotnet run</c>.</summary>
     public Process Start(ProcessStartInfo startInfo)
     {

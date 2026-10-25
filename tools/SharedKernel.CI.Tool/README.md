@@ -143,7 +143,7 @@ the file and the JSON path of the problem.
 | `slices[].service.readyFileVariable` | The environment variable, in the service's environment, that names the file where the service writes its value: letters, digits, and `_`, not starting with a digit, and not `GH_TOKEN` or `GITHUB_TOKEN`. |
 | `slices[].service.valueVariable` | The environment variable that carries the written value into the slice's test run, and only there. It follows the rules of `readyFileVariable`, differs from it, and differs from the `valueVariable` of every other slice. |
 | `slices[].service.readyTimeoutSeconds` | Optional, from 1 to 3600, default 300: how long the service has to write its value, enough for an image pull on a cold runner. |
-| `slices[].service.stopTimeoutSeconds` | Optional, from 1 to 3600, default 60: how long the service has to exit after its standard input closes before its process tree is killed. A service that removes containers needs more than the two minutes that the container runtime may take, because the kill also stops the helpers that remove them. |
+| `slices[].service.stopTimeoutSeconds` | Optional, from 1 to 3600, default 60: how long the service has to exit after its standard input closes before its process tree is killed. A service that removes containers needs more than the two minutes that the container runtime may take, because it removes them while it exits and a kill interrupts that; a helper that the service detached, such as Aspire's DCP process, can still remove what a killed service left, but that is a safety net and not the plan. |
 | `defaultSlice` | Optional; the slice that runs the selected test projects that no slice lists. Without it, every test project of the solution must be in a slice. |
 | `openApi[].name` | Optional section. A target name: lowercase letters and digits in words separated by `-`, unique. |
 | `openApi[].project` | The project that `dotnet build` builds for the target. |
@@ -278,16 +278,19 @@ value, and the variable that hands the value to the tests. The protocol is:
 3. When the server accepts connections, the service writes its value to the ready file as one UTF-8 line without a byte
    order mark: it writes `<file>.tmp` and moves it over the file, so the file never exists before the value is whole.
    The run polls for the file. The first line, trimmed, is the value, and an empty file or line is not a value yet; the
-   file is at most 4 KiB and the line free of control characters. If the service exits first, the run fails with the
-   exit code and the log paths. If `readyTimeoutSeconds` pass first, the run fails too.
+   file is at most 4 KiB and the line free of control characters. As soon as the run has read the value it deletes the
+   file, so a run that is cut short leaves an empty directory and no credential. If the service exits first, the run
+   fails with the exit code and the log paths. If `readyTimeoutSeconds` pass first, the run fails too.
 4. The test phase runs with the value in `valueVariable`, in the environment of that child process only. The value is
    never an argument, and no earlier phase and no other process receives it. The run replaces the value in the test
    output and in the failure message of the test phase with `[redacted]`; it cannot know forms that the tests derive from
    the value, so tests must not print connection strings.
 5. After the test phase, and after a failure or a cancellation of any phase, the run closes the service's input. The
    service reads end-of-file as the request to release what it started and exit with code 0. The run waits up to
-   `stopTimeoutSeconds` and only then kills the service's process tree, because killing the tree first would also kill
-   the helpers that remove what the service started. It then finishes the logs and deletes the temporary directory.
+   `stopTimeoutSeconds` and only then kills the service's process tree, because the service releases what it started
+   while it exits and a kill interrupts that. A helper that the service detached, such as Aspire's DCP process, outlives
+   the kill and removes what a killed service left within seconds, but that is a safety net and not the plan. The run
+   then finishes the logs and deletes the temporary directory.
 
 A service that was killed, exited with a non-zero code, or left its directory fails a run that would otherwise pass. It
 never replaces an earlier failure: the first failure is the one that the run reports, and `diagnostics.txt` lists both.
@@ -446,12 +449,15 @@ on standard error.
 | 0 | Success. |
 | 1 | Invalid command line, cancellation, or an unexpected error. |
 | 2 | The configuration is invalid, or a run, generation, installation, coverage check, staging, the commit message check, or a mutation run failed; the reason is on standard error. |
-| 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
+| 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within 90 seconds. |
 
-Ctrl+C or SIGTERM stops the running `git`, `dotnet`, `pwsh`, or `dotnet-stryker` process tree, and a service through its
-standard input first; when cleanup exceeds two seconds the tool exits, and the closed input still tells the service to stop. A process that fails after the tool has observed
-Ctrl+C or SIGTERM counts as the cancellation. Error messages on standard error escape control and format characters
-line by line, so text from files, processes, and the network cannot drive the terminal.
+Ctrl+C or SIGTERM stops the running `git`, `dotnet`, `pwsh`, or `dotnet-stryker` process tree, then stops the services of
+a `run` through their standard input, finishes the run's evidence, and exits with 1. A service that removes its container
+needs about ten seconds for that. When this cleanup exceeds 90 seconds the tool exits with 130 or 143 instead, without
+the rest of the evidence, and the closed input still tells a service to stop. A second Ctrl+C or SIGTERM does not shorten
+the wait. A process that fails after the tool has observed Ctrl+C or SIGTERM counts as the cancellation. Error messages
+on standard error escape control and format characters line by line, so text from files, processes, and the network
+cannot drive the terminal.
 
 ## Security
 
@@ -465,8 +471,9 @@ cannot read it as an option, and escapes control characters in the changed paths
 Git without the inherited `GIT_*` variables, which could point it at another repository, and stops Git after a minute.
 
 A service's value can be a credential, such as a connection string with a password. The service writes it to a ready file in
-a temporary directory that only the current user can enter and that lies outside the execution directory, and the tool
-deletes the directory when the service stops. The value reaches the test phase through the environment of the child
+a temporary directory that only the current user can enter and that lies outside the execution directory. The tool
+deletes the file as soon as it has read the value and the directory when the service stops, also when a signal cancels
+the run. The value reaches the test phase through the environment of the child
 process and never through the arguments that failure messages print. Neither the value nor the ready file appears in the
 evidence, the phase logs, or the messages, and the service's own output goes to log files that a service must keep free
 of it.

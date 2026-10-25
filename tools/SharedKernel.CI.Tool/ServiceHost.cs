@@ -7,9 +7,10 @@ namespace PandaBear.CI.Tool;
 
 /// <summary>
 /// A slice's service while its tests run. The tool starts it with <c>dotnet run</c> and redirected standard input, output, and
-/// error, waits for the ready file in which it writes its value, and stops it by closing its standard input, which it reads as
-/// end-of-file. Its output goes straight to log files in the execution directory. The ready file lives in a private
-/// temporary directory, because the execution directory is uploaded as a CI artifact.
+/// error, waits for the ready file in which it writes its value, deletes that file as soon as it has read the value, and stops
+/// it by closing its standard input, which it reads as end-of-file. Its output goes straight to log files in the execution
+/// directory. The ready file lives in a private temporary directory, because the execution directory is uploaded as a CI
+/// artifact.
 /// </summary>
 internal sealed class ServiceHost
 {
@@ -175,6 +176,7 @@ internal sealed class ServiceHost
         {
             if (await ReadValue(ct).ConfigureAwait(false) is { } value)
             {
+                DeleteReadyFile();
                 return value;
             }
 
@@ -268,6 +270,20 @@ internal sealed class ServiceHost
         }
 
         return ParseValue(Encoding.UTF8.GetString(content), Slice);
+    }
+
+    // The value is in memory from here on, and the file is the only place on disk that holds it, so a run that is cut short,
+    // even killed, leaves an empty directory and not a credential.
+    private void DeleteReadyFile()
+    {
+        try
+        {
+            File.Delete(_readyFile);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            // Stop deletes the whole directory and reports it when it stays, so a file that resists here is not forgotten.
+        }
     }
 
     private void CloseInput()
