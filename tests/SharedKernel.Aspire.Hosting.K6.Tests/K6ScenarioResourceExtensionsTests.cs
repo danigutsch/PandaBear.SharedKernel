@@ -92,6 +92,9 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         var environment = await K6ResourceInspector.UnresolvedEnvironment(k6.Resource);
         environment["SK_K6_CLIENT_ID"].ShouldBe("k6-smoke");
         environment["SK_K6_CLIENT_SECRET"].ShouldBe(secret.Resource);
+        var host = (EndpointReferenceExpression)environment["SK_K6_TOKEN_HOST"];
+        host.Property.ShouldBe(EndpointProperty.HostAndPort);
+        host.Endpoint.Resource.Name.ShouldBe("identity");
         ((ReferenceExpression)environment["SK_K6_TOKEN_URL"]).ValueExpression.ShouldEndWith("/realms/app/protocol/openid-connect/token", StringComparison.Ordinal);
         k6.Resource.Annotations.OfType<WaitAnnotation>().Select(wait => wait.Resource.Name).ShouldContain("identity");
     }

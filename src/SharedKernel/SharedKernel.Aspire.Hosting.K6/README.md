@@ -23,8 +23,10 @@ var k6 = builder.AddK6Scenario("admin-smoke", scriptDirectory, "scenarios/admin-
   `/results`. On Linux and macOS the results directory is made writable for the container user.
 - The script must stay under `scriptDirectory`. No `--vus` or `--duration` flag is passed, so the script's own `options`
   decide the load.
-- `WithK6ClientCredentials` waits for the identity provider and passes `SK_K6_TOKEN_URL`, `SK_K6_CLIENT_ID`, and
-  `SK_K6_CLIENT_SECRET`. The secret is an Aspire secret parameter. The container receives the values as environment
+- `WithK6ClientCredentials` waits for the identity provider and passes `SK_K6_TOKEN_URL`, `SK_K6_CLIENT_ID`,
+  `SK_K6_CLIENT_SECRET`, and `SK_K6_TOKEN_HOST`. The token request reaches the identity provider through the container
+  network and carries the host-side `localhost` address as its `Host` header, so the token's issuer matches the issuer
+  that services validate. The secret is an Aspire secret parameter. The container receives the values as environment
   variables; they never appear in a file or in k6 output.
 
 ## k6 helper library

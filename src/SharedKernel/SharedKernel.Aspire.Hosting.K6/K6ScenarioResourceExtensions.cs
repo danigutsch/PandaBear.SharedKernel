@@ -71,8 +71,10 @@ public static class K6ScenarioResourceExtensions
     /// Passes the client-credentials settings that <c>/k6lib/auth.js</c> reads and waits for the identity provider.
     /// </summary>
     /// <remarks>
-    /// The environment names are <c>SK_K6_TOKEN_URL</c>, <c>SK_K6_CLIENT_ID</c>, and <c>SK_K6_CLIENT_SECRET</c>.
-    /// The secret is an Aspire secret parameter.
+    /// The environment names are <c>SK_K6_TOKEN_URL</c>, <c>SK_K6_CLIENT_ID</c>, <c>SK_K6_CLIENT_SECRET</c>, and
+    /// <c>SK_K6_TOKEN_HOST</c>. The secret is an Aspire secret parameter. The token request goes to the identity
+    /// provider through the container network, and carries the <c>Host</c> of its host-side endpoint so the issuer of the
+    /// token matches the issuer that services reach through <c>localhost</c>.
     /// </remarks>
     /// <param name="k6">The k6 container resource.</param>
     /// <param name="identityProvider">The identity provider; its <c>http</c> endpoint hosts the token endpoint.</param>
@@ -94,8 +96,10 @@ public static class K6ScenarioResourceExtensions
         ArgumentNullException.ThrowIfNull(clientSecret);
 
         var endpoint = identityProvider.GetEndpoint("http");
+        var hostEndpoint = identityProvider.GetEndpoint("http", KnownNetworkIdentifiers.LocalhostNetwork);
         return k6
             .WithEnvironment("SK_K6_TOKEN_URL", ReferenceExpression.Create($"{endpoint}{tokenPath}"))
+            .WithEnvironment("SK_K6_TOKEN_HOST", hostEndpoint.Property(EndpointProperty.HostAndPort))
             .WithEnvironment("SK_K6_CLIENT_ID", clientId)
             .WithEnvironment("SK_K6_CLIENT_SECRET", clientSecret)
             .WaitFor(identityProvider);
