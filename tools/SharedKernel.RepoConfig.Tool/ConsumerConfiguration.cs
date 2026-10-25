@@ -5,4 +5,5 @@ namespace PandaBear.RepoConfig.Tool;
 /// </summary>
 /// <param name="Version">Format version; only <c>1</c> is supported.</param>
 /// <param name="LicenseExceptions">The license exceptions that <c>dependency verify-license-exceptions</c> verifies, if any.</param>
-internal sealed record ConsumerConfiguration(int Version, LicenseExceptionConfiguration? LicenseExceptions = null);
+/// <param name="Links">The documentation files that <c>verify-links</c> scans, if any.</param>
+internal sealed record ConsumerConfiguration(int Version, LicenseExceptionConfiguration? LicenseExceptions = null, LinkConfiguration? Links = null);

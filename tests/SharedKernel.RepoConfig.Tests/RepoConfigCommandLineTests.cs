@@ -29,6 +29,8 @@ public sealed class RepoConfigCommandLineTests
         outputText.ShouldContain("  verify-text-encoding ", StringComparison.Ordinal);
         outputText.ShouldContain("  verify-podman-dns ", StringComparison.Ordinal);
         outputText.ShouldContain("  verify-json ", StringComparison.Ordinal);
+        outputText.ShouldContain("  verify-line-endings ", StringComparison.Ordinal);
+        outputText.ShouldContain("  verify-links ", StringComparison.Ordinal);
         outputText.ShouldContain("  security ", StringComparison.Ordinal);
         outputText.ShouldContain("  dependency ", StringComparison.Ordinal);
     }
@@ -167,6 +169,9 @@ public sealed class RepoConfigCommandLineTests
     [InlineData("automation publish-result --force --root .", "publish-result")]
     [InlineData("verify-json", "verify-json")]
     [InlineData("verify-json --root .", "verify-json")]
+    [InlineData("verify-line-endings --root .", "verify-line-endings")]
+    [InlineData("verify-links", "verify-links")]
+    [InlineData("verify-links roadmap/README.md docs --root .", "verify-links")]
     [InlineData("dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository", "submit")]
     [InlineData("dependency submit --snapshot snapshot.json --repository owner/repository --force --root .", "submit")]
     [InlineData("dependency verify-license-exceptions", "verify-license-exceptions")]
