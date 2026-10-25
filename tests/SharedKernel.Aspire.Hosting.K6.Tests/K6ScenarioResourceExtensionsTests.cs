@@ -192,4 +192,19 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         // Assert
         source.ShouldNotContain("console.", StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void Summary_script_drops_setup_data_because_it_holds_the_access_token()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var library = k6.Resource.Annotations.OfType<ContainerMountAnnotation>().Where(mount => mount.Target == "/k6lib").ShouldHaveSingleItem().Source!;
+
+        // Act
+        var source = File.ReadAllText(Path.Combine(library, "summary.js"));
+
+        // Assert
+        source.ShouldContain("delete summary.setup_data", StringComparison.Ordinal);
+    }
 }

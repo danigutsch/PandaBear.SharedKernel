@@ -37,7 +37,7 @@ var k6 = builder.AddK6Scenario("admin-smoke", scriptDirectory, "scenarios/admin-
 |---|---|---|
 | `/k6lib/auth.js` | `getAccessToken()` | Call from `setup()`. Requests a client-credentials token and throws on a non-200 response. It never logs the token or the secret. |
 | `/k6lib/auth.js` | `bearerHeaders(token, extraHeaders)` | Builds the `Authorization` header. |
-| `/k6lib/summary.js` | `createSummaryHandler(name)` | Export it as `handleSummary` to write `/results/<name>-summary.json`. |
+| `/k6lib/summary.js` | `createSummaryHandler(name)` | Export it as `handleSummary` to write `/results/<name>-summary.json`. It drops `setup_data`, which holds the access token. |
 
 ```javascript
 import http from 'k6/http';
