@@ -14,7 +14,6 @@ internal sealed class RoadmapGitHubPublisher
     private const int MaxPublicationBytes = 32 * 1024 * 1024;
     private const int MaxResponseBytes = 1024 * 1024;
     private static readonly TimeSpan PublicationTimeout = TimeSpan.FromMinutes(10);
-    private const string PullRequestBody = "Refs #1160";
 
     private readonly HttpClient _httpClient;
     private readonly string _rootPath;
@@ -66,10 +65,12 @@ internal sealed class RoadmapGitHubPublisher
     public async Task<RoadmapGitHubPublication> Publish(
         RoadmapAutomationPlan plan,
         RoadmapGitChangeSet changes,
+        string pullRequestBody,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(plan);
         ArgumentNullException.ThrowIfNull(changes);
+        ArgumentException.ThrowIfNullOrWhiteSpace(pullRequestBody);
         ValidateRequest(plan, changes);
 
         using var publicationTimeout = new CancellationTokenSource(PublicationTimeout, _timeProvider);
@@ -96,6 +97,7 @@ internal sealed class RoadmapGitHubPublisher
                 endpoint,
                 plan,
                 commitSha,
+                pullRequestBody,
                 publicationCancellation.Token).ConfigureAwait(false);
             return new RoadmapGitHubPublication(pullRequestUrl, commitSha);
         }
@@ -366,6 +368,7 @@ internal sealed class RoadmapGitHubPublisher
         Uri endpoint,
         RoadmapAutomationPlan plan,
         string commitSha,
+        string pullRequestBody,
         CancellationToken cancellationToken)
     {
         using var document = await Send(
@@ -376,7 +379,7 @@ internal sealed class RoadmapGitHubPublisher
                 writer.WriteString("title", CommitMessage);
                 writer.WriteString("head", plan.BranchName);
                 writer.WriteString("base", BaseBranch);
-                writer.WriteString("body", PullRequestBody);
+                writer.WriteString("body", pullRequestBody);
                 writer.WriteBoolean("maintainer_can_modify", false);
                 writer.WriteBoolean("draft", true);
             },

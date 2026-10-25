@@ -86,12 +86,14 @@ internal static class RoadmapAutomationTestSetup
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot,
         byte[] status,
         string artifactDigest,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        Action<TemporaryRepoConfigWorkspace>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(snapshot);
         ArgumentNullException.ThrowIfNull(status);
         Configure(workspace);
+        configure?.Invoke(workspace);
         var plan = await CreatePlan(workspace, snapshot, cancellationToken);
         await ApplyPlan(workspace, plan, snapshot, cancellationToken);
         await RefreshReconciliation(workspace, snapshot, cancellationToken);

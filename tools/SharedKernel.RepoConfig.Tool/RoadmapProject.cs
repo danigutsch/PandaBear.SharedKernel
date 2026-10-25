@@ -17,7 +17,8 @@ internal sealed class RoadmapProject
         string? gitHubIntakeClosedStatus,
         string? gitHubRepository,
         bool gitHubEnabled,
-        GitHubProjectTarget? gitHubProjectTarget)
+        GitHubProjectTarget? gitHubProjectTarget,
+        string? automationPullRequestBody)
     {
         RootPath = rootPath;
         Items = items.Select(item => item with { GitHubReferenceReadOnly = !item.HasLocalGitHubIssue(gitHubRepository) }).ToArray();
@@ -30,6 +31,7 @@ internal sealed class RoadmapProject
         GitHubRepository = gitHubRepository;
         GitHubEnabled = gitHubEnabled;
         GitHubProjectTarget = gitHubProjectTarget;
+        AutomationPullRequestBody = automationPullRequestBody;
         _itemsById = Items.ToDictionary(item => item.Id, StringComparer.Ordinal);
     }
 
@@ -88,6 +90,14 @@ internal sealed class RoadmapProject
         get;
     }
 
+    /// <summary>
+    /// The body of the draft pull request that <c>automation publish-result</c> opens, if configured.
+    /// </summary>
+    public string? AutomationPullRequestBody
+    {
+        get;
+    }
+
     public static RoadmapProject Load(string rootPath)
     {
         var issues = RepoConfigVerifier.Verify(rootPath);
@@ -117,7 +127,8 @@ internal sealed class RoadmapProject
             gitHubIntakeClosedStatus,
             gitHubRepository,
             gitHubEnabled,
-            gitHubProjectTarget);
+            gitHubProjectTarget,
+            ReadAutomationPullRequestBody(config.RootElement));
     }
 
     public IReadOnlyList<RoadmapItemSnapshot> OpenItems(string? type = null) =>
@@ -156,7 +167,8 @@ internal sealed class RoadmapProject
 
     public RoadmapProject WithItems(IReadOnlyList<RoadmapItemSnapshot> items) => new(
         RootPath, items, AllowedStatuses, ClosedStatuses, ItemIdPrefix, GitHubIntakeTheme,
-        GitHubIntakeOpenStatus, GitHubIntakeClosedStatus, GitHubRepository, GitHubEnabled, GitHubProjectTarget);
+        GitHubIntakeOpenStatus, GitHubIntakeClosedStatus, GitHubRepository, GitHubEnabled, GitHubProjectTarget,
+        AutomationPullRequestBody);
 
     public int[] GetGitHubIssueNumbers() => Items
         .Where(item => item.GitHubIssue is int && item.HasLocalGitHubIssue(GitHubRepository))
@@ -289,6 +301,11 @@ internal sealed class RoadmapProject
 
         return new GitHubProjectTarget(id.GetString() ?? string.Empty, owner.GetString() ?? string.Empty, value);
     }
+
+    private static string? ReadAutomationPullRequestBody(JsonElement root) =>
+        root.TryGetProperty("automation", out var automation) && automation.ValueKind == JsonValueKind.Object
+            ? ReadNullableString(automation, "pullRequestBody")
+            : null;
 
     private static int? ReadGitHubIssue(JsonElement root, out bool createRequested)
     {

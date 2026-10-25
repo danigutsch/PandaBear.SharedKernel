@@ -46,6 +46,8 @@ sharedkernel-repo github reconcile
 sharedkernel-repo github reconcile --force
 sharedkernel-repo github link-subissue --repository owner/repository --parent 10 --child 20
 sharedkernel-repo github link-subissue --repository owner/repository --parent 10 --child 20 --force
+sharedkernel-repo github sync-labels --repository owner/repository
+sharedkernel-repo github sync-labels --repository owner/repository --force
 sharedkernel-repo automation publish-result --force
 sharedkernel-repo verify-podman-dns --verbosity quiet
 sharedkernel-repo verify-json
@@ -68,7 +70,8 @@ sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_
 | `github reconcile` | Reconciles the GitHub snapshot and resolves transferred issue identities. |
 | `github import` | Imports the reconciled issue snapshot into roadmap items. |
 | `github link-subissue` | Previews or creates a native GitHub parent/subissue link between existing issues in the same repository. |
-| `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request. |
+| `github sync-labels` | Creates the configured labels that are missing and updates those that differ; see [Repository labels](#repository-labels). |
+| `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request; see [Roadmap publication](#roadmap-publication). |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
 | `verify-json` | Fails when the working-tree content of a `*.json` file in the Git index is missing, not UTF-8, or not JSON. Comments, trailing commas, and a UTF-8 byte order mark are allowed. Each failure names the path, line, and byte. |
@@ -100,6 +103,9 @@ file and the JSON path of the problem. A command fails when the file lacks its s
 ```json
 {
   "version": 1,
+  "labels": [
+    { "name": "type: feature", "color": "a2eeef", "description": "New capability" }
+  ],
   "licenseExceptions": {
     "approval": {
       "file": ".config/sharedkernel-candidate.json",
@@ -218,6 +224,44 @@ first `#` in any other line is ignored, also inside a name. A keyword counts onl
 before a colon, or alone, which leaves its name empty. `Example:`, `Scenario Template:`, and `Scenarios:` are not
 keywords, so a file whose scenarios all use `Example:` has no scenario. A UTF-8 byte order mark stays part of the
 first line, which is then neither a keyword, a tag, nor a comment.
+
+### Repository labels
+
+`github sync-labels --repository owner/name` reads the `labels` section, a nonempty array of labels:
+
+- `name` has 1 to 50 characters, without control characters or surrounding white space. Names must differ
+  ignoring case, because GitHub matches label names ignoring case.
+- `color` is six hexadecimal digits without `#`.
+- `description` has at most 100 characters without control characters, and may be empty.
+
+The command reads every page of the repository's labels from `https://api.github.com/repos/<owner>/<name>/labels`
+and compares them with the configured labels. A missing label is created; a label whose name casing, color, or
+description differs is updated. Colors compare ignoring case, and a label without a description matches an
+empty `description`. Labels that are not configured are never deleted. Without `--force`, the command prints a
+`preview:` line for each label it would create or update and a summary, and writes nothing. With `--force`, it
+writes each change and prints the same summary.
+
+Both modes read `GH_TOKEN`, then `GITHUB_TOKEN`; reads need Issues read and `--force` needs Issues write
+permission. Requests go only to api.github.com, do not follow redirects, read responses of at most 1 MiB, and
+time out after 30 seconds each. Errors report status codes without echoing response bodies. A failed write
+names its label; changes written before it remain, and rerunning the command applies the rest.
+
+## Roadmap publication
+
+`automation publish-result` publishes the sealed roadmap maintenance result. The draft pull request's body is
+`automation.pullRequestBody` from `roadmap/config.json`, a nonblank string of at most 65536 characters, and the
+command fails without it. `init` writes the property and its schema; set the body that the repository's pull
+request policy requires, such as an issue reference:
+
+```json
+"automation": {
+  "pullRequestBody": "Refs #123"
+}
+```
+
+With `--force`, the command requires `GITHUB_OUTPUT` and `GITHUB_STEP_SUMMARY` before it writes to GitHub. It
+succeeds only when GitHub returns the draft pull request's URL, which it appends to `GITHUB_OUTPUT` as
+`pull_request_url` and to the step summary.
 
 ## Transferred issues and external references
 

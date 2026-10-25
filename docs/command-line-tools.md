@@ -105,6 +105,9 @@ non-interactive commands and to how they start a UI.
   covering tests, the test slices with their OpenAPI targets and Playwright browsers, the OpenAPI targets, and the
   changed-code coverage threshold, source patterns, and symbol directories. The
   [CI tool README](../tools/SharedKernel.CI.Tool/README.md#configuration) describes the format and the selection rules.
+- `sharedkernel-repo dependency verify-license-exceptions` and `github sync-labels` read
+  `.config/sharedkernel-repo.json`: the license exceptions and the repository labels. The
+  [repo tool README](../tools/SharedKernel.RepoConfig.Tool/README.md#configuration) describes the format.
 - Paths in the file are relative to the root and use `/`. They are never rooted, have no empty, `.`, or `..`
   segments, and resolve under the root without following symbolic links.
 - Path patterns match with `FileSystemName.MatchesSimpleExpression(pattern, path, ignoreCase: false)`. Regular

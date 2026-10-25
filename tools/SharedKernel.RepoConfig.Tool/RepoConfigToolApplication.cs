@@ -431,6 +431,9 @@ internal static class RepoConfigToolApplication
             return 0;
         }
 
+        // Without these files a published pull request would go unreported, so they are required before any write.
+        _ = RequireEnvironmentVariable("GITHUB_OUTPUT");
+        _ = RequireEnvironmentVariable("GITHUB_STEP_SUMMARY");
         var publication = await service.PublishResult(
             planDigest,
             artifactDigest,
