@@ -50,6 +50,7 @@ internal static class RepoConfigCommandLine
             CreateAutomationCommand(environment, root),
             CreateVerifyTextEncodingCommand(environment, root),
             CreateVerifyJsonCommand(environment, root),
+            CreateVerifyGherkinCommand(environment, root),
             CreateVerifyPodmanDnsCommand(environment),
             CreateSecurityCommand(environment, root),
             CreateDependencyCommand(environment, root),
@@ -287,6 +288,23 @@ internal static class RepoConfigCommandLine
         Command command = new("verify-text-encoding", "Verify that text files in the Git index are valid UTF-8 without NUL bytes.") { root };
         SetGuardedAction(command, (parseResult, output, error, ct) =>
             RepoConfigToolApplication.VerifyTextEncoding(ResolveRoot(parseResult, root, environment), output, error, ct));
+        return command;
+    }
+
+    private static Command CreateVerifyGherkinCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Argument<string[]> paths = new("path")
+        {
+            Arity = ArgumentArity.ZeroOrMore,
+            Description = "Tracked feature files or directories to check instead of the configured include patterns. Relative to the root.",
+        };
+        Command command = new("verify-gherkin", "Verify tracked Gherkin feature files against the gherkin rules in .config/sharedkernel-repo.json.") { paths, root };
+        SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyGherkin(
+            ResolveRoot(parseResult, root, environment),
+            parseResult.GetValue(paths) ?? [],
+            output,
+            error,
+            ct));
         return command;
     }
 

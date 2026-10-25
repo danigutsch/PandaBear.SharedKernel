@@ -238,6 +238,26 @@ internal static class RepoConfigToolApplication
     }
 
     /// <summary>
+    /// Verifies the feature files that the <c>gherkin</c> section of the consumer configuration selects, or the tracked
+    /// feature files that <paramref name="paths"/> name, against its rules.
+    /// </summary>
+    public static async Task<int> VerifyGherkin(string rootPath, IReadOnlyList<string> paths, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
+        var gherkin = configuration.Gherkin
+            ?? throw new InvalidOperationException($"{ConsumerConfigurationFile.RelativePath} has no gherkin section.");
+        var issues = await GherkinVerifier.Verify(rootPath, gherkin, paths, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
+        {
+            await output.WriteLineAsync("Repository Gherkin files are valid.".AsMemory(), ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        WriteIssues(error, "Repository Gherkin verification failed:", issues);
+        return 1;
+    }
+
+    /// <summary>
     /// Verifies the license exceptions in the consumer configuration. On success, appends
     /// <c>packages=pkg:nuget/&lt;id&gt;@&lt;version&gt;,...</c> to <paramref name="githubOutput"/> when it is given.
     /// </summary>

@@ -88,6 +88,11 @@ internal static class ConsumerConfigurationFile
             Validate(licenseExceptions);
         }
 
+        if (configuration.Gherkin?.FindError() is { } gherkinError)
+        {
+            throw Invalid(gherkinError);
+        }
+
         return configuration;
     }
 

@@ -11,7 +11,7 @@ approvals.
 
 ## Prerequisites
 
-The tool runs on .NET 10. `verify-text-encoding`, `verify-json`, `dependency snapshot`,
+The tool runs on .NET 10. `verify-text-encoding`, `verify-json`, `verify-gherkin`, `dependency snapshot`,
 `dependency verify-license-exceptions`, and the `automation` steps also need Git on an absolute `PATH` entry.
 
 ## Installation
@@ -48,6 +48,8 @@ sharedkernel-repo github link-subissue --repository owner/repository --parent 10
 sharedkernel-repo automation publish-result --force
 sharedkernel-repo verify-podman-dns --verbosity quiet
 sharedkernel-repo verify-json
+sharedkernel-repo verify-gherkin
+sharedkernel-repo verify-gherkin tests/Features/booking.feature tests/Features/Tours
 sharedkernel-repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository
 sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_OUTPUT"
 ```
@@ -66,6 +68,7 @@ sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
 | `verify-json` | Fails when the working-tree content of a `*.json` file in the Git index is missing, not UTF-8, or not JSON. Comments, trailing commas, and a UTF-8 byte order mark are allowed. Each failure names the path, line, and byte. |
+| `verify-gherkin [<path>...]` | Checks tracked Gherkin feature files against the configured rules; see [Gherkin feature files](#gherkin-feature-files). |
 | `dependency snapshot` | Generates a dependency snapshot from committed lock files; see [Offline dependency snapshots](#offline-dependency-snapshots). |
 | `dependency submit` | Submits a dependency snapshot to the GitHub dependency graph. |
 | `dependency verify-license-exceptions` | Verifies the configured license exceptions; see [License exceptions](#license-exceptions). |
@@ -122,6 +125,53 @@ license exceptions that a review approved:
 Every finding is listed. When none is found, `--github-output <path>` appends
 `packages=pkg:nuget/<id>@<version>,...` in the configured order, the format of the
 `allow-dependencies-licenses` input of GitHub's dependency review action; a failure appends nothing.
+
+### Gherkin feature files
+
+`verify-gherkin` checks the working-tree content of the `*.feature` files in the Git index against the
+`gherkin` section, whose properties are all required:
+
+```json
+{
+  "version": 1,
+  "gherkin": {
+    "include": ["tests/*"],
+    "exclude": ["tests/Generated/*"],
+    "allowedTagPatterns": ["@smoke", "@wip", "@ADR:\\d+", "@BC:.+"],
+    "forbiddenTags": ["@skip"],
+    "featureNameMaxLength": 250,
+    "scenarioNameMaxLength": 150
+  }
+}
+```
+
+- Without arguments, the command checks the tracked feature files that an `include` pattern matches. Paths on
+  the command line, relative to the root and separated by `/`, replace `include`: each names a tracked feature
+  file or a directory that holds one, or the command fails. `exclude` patterns leave files out in both cases.
+  Patterns match the whole path case-sensitively, and `*` also matches `/`.
+- Each tag must match an `allowedTagPatterns` entry as a whole: the pattern `p` compiles as `\A(?:p)\z` with
+  `RegexOptions.NonBacktracking` and a one-second match timeout. A tag in `forbiddenTags` is also reported.
+- Name lengths count Unicode code points.
+
+Each finding names the path and line:
+
+- An empty file, or a file that does not end with a newline.
+- Trailing whitespace on any line, and a tab on a line that is neither blank nor a comment.
+- A tag that is not allowed or is forbidden. Tags are the whitespace-separated words that start with `@` on a line
+  that starts with `@`.
+- A `Feature:` without a name or with a longer name, a file without a named `Feature:`, and a Feature name that an
+  earlier checked file has. Files are checked in ordinal path order.
+- A `Scenario:` or `Scenario Outline:` without a name, with a longer name, or with the name of an earlier scenario
+  in the file.
+- A `Scenario Outline:` without an `Examples:` before the next scenario or the end of the file, reported at that
+  line.
+- A file without a scenario.
+
+Lines end at LF, CRLF, or CR. A line whose first non-blank character is `#` is a comment, and the text from the
+first `#` in any other line is ignored, also inside a name. A keyword counts only at the start of a line and directly
+before a colon, or alone, which leaves its name empty. `Example:`, `Scenario Template:`, and `Scenarios:` are not
+keywords, so a file whose scenarios all use `Example:` has no scenario. A UTF-8 byte order mark stays part of the
+first line, which is then neither a keyword, a tag, nor a comment.
 
 ## Transferred issues and external references
 
@@ -180,6 +230,9 @@ references before applying changes, and use explicit closure approvals for actua
 - `verify-podman-dns` inspects only local rootless Podman on Linux and fails closed for remote services.
 - `verify-text-encoding` checks staged regular files, skips files whose `binary` attribute is set, and
   fails on blobs larger than 64 MiB.
+- `verify-gherkin` reads the working-tree content of the regular files in the Git index, skips symbolic links,
+  and fails on files larger than 64 MiB. Untracked feature files are not checked, and a tracked file missing from
+  the working tree is reported.
 - `verify-json` reads the working-tree content of the regular files in the Git index, skips symbolic links
   and submodules, and fails on files larger than 64 MiB. In a sparse checkout, files outside it are
   reported as missing.
@@ -192,7 +245,7 @@ references before applying changes, and use explicit closure approvals for actua
 | Code | Meaning |
 | --- | --- |
 | 0 | Success, including previews and a healthy or inapplicable Podman state. |
-| 1 | Verification failure or drift, invalid text encoding or JSON, a license exception finding, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a command-line error, or cancellation. |
+| 1 | Verification failure or drift, invalid text encoding or JSON, a Gherkin finding, a license exception finding, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a command-line error, or cancellation. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within two seconds. |
 
 ## Security
