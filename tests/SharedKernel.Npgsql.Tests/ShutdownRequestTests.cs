@@ -50,6 +50,72 @@ public sealed class ShutdownRequestTests
     }
 
     [Fact]
+    public async Task A_failed_read_of_standard_input_requests_the_stop_instead_of_ending_the_process()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var input = new ScriptedInput();
+        using var request = new ShutdownRequest(input, []);
+        await input.Waiting.WaitAsync(Patience, ct);
+
+        // Act
+        // A terminal that hangs up fails the blocked read; an exception on the reader thread would end the process before the server stopped.
+        input.Fail(new IOException("Input/output error"));
+        await request.Wait().WaitAsync(Patience, ct);
+
+        // Assert
+        request.Token.IsCancellationRequested.ShouldBeTrue("a hangup of the terminal that feeds standard input stops the host, as SIGHUP does");
+        request.Reason.ShouldBe("standard input could not be read");
+    }
+
+    [Fact]
+    public void A_repeated_signal_lets_the_runtime_end_the_process_because_the_graceful_stop_is_stuck_or_too_slow()
+    {
+        // Arrange
+        using var input = new ScriptedInput();
+        using var request = new ShutdownRequest(input, []);
+        var first = new PosixSignalContext(PosixSignal.SIGINT);
+        var second = new PosixSignalContext(PosixSignal.SIGINT);
+
+        // Act
+        request.OnSignal(first);
+        request.OnSignal(second);
+
+        // Assert
+        first.Cancel.ShouldBeTrue("the first signal starts a graceful stop, which the default action would cut short");
+        second.Cancel.ShouldBeFalse("a second signal means that the stop does not finish; the process then ends and DCP removes the container");
+    }
+
+    [Theory]
+    [InlineData(false, "standard input reached end-of-file")]
+    [InlineData(true, "standard input could not be read")]
+    public async Task The_first_signal_still_gets_a_graceful_stop_when_the_input_already_ended_or_failed(bool inputFails, string reason)
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var input = new ScriptedInput();
+        using var request = new ShutdownRequest(input, []);
+        if (inputFails)
+        {
+            input.Fail(new IOException("Input/output error"));
+        }
+        else
+        {
+            input.End();
+        }
+
+        await request.Wait().WaitAsync(Patience, ct);
+        var signal = new PosixSignalContext(PosixSignal.SIGHUP);
+
+        // Act
+        request.OnSignal(signal);
+
+        // Assert
+        signal.Cancel.ShouldBeTrue("a hangup fails standard input and sends SIGHUP, and the owner closing standard input is no impatient second request");
+        request.Reason.ShouldBe(reason);
+    }
+
+    [Fact]
     public async Task The_first_request_names_the_reason_and_a_later_one_changes_nothing()
     {
         // Arrange

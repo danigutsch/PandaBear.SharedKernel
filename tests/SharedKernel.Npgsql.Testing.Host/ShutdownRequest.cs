@@ -5,7 +5,10 @@ namespace PandaBear.Npgsql.Testing.Host;
 
 /// <summary>
 /// Tells the host when its owner wants it to stop: standard input reached end-of-file, which is what the owner causes by
-/// closing the pipe or by dying, or the process received one of <see cref="TerminationSignals"/>.
+/// closing the pipe or by dying, or failed because the terminal behind it hung up, or the process received one of
+/// <see cref="TerminationSignals"/>. The first signal starts a graceful stop that the runtime does not cut short. A second
+/// signal ends the process at once, because that stop is stuck or too slow; DCP removes the container of a host that it
+/// monitored.
 /// </summary>
 [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "A source without a timer holds no unmanaged resource, and the input watcher may still request a stop after disposal.")]
 internal sealed class ShutdownRequest : IDisposable
@@ -16,6 +19,7 @@ internal sealed class ShutdownRequest : IDisposable
     private readonly CancellationTokenSource _requested = new();
     private readonly List<PosixSignalRegistration> _registrations;
     private string? _reason;
+    private int _signals;
 
     /// <summary>Starts watching <paramref name="standardInput"/> and <paramref name="signals"/>.</summary>
     /// <param name="standardInput">Read to its end; whatever it delivers before that is ignored.</param>
@@ -48,11 +52,15 @@ internal sealed class ShutdownRequest : IDisposable
         }
     }
 
-    /// <summary>Requests a stop for <paramref name="context"/> and keeps the runtime from ending the process by itself.</summary>
+    /// <summary>
+    /// Requests a stop for <paramref name="context"/>. The first signal keeps the runtime from ending the process by
+    /// itself, so the host can stop the server first; a later signal leaves the default action, which ends the process.
+    /// </summary>
     /// <param name="context">The signal that arrived.</param>
     internal void OnSignal(PosixSignalContext context)
     {
-        context.Cancel = true;
+        // Only signals count: a hangup also fails standard input, and the owner closing it is no impatient second request.
+        context.Cancel = Interlocked.Increment(ref _signals) == 1;
         Request(context.Signal.ToString());
     }
 
@@ -62,12 +70,21 @@ internal sealed class ShutdownRequest : IDisposable
     private void WaitForEndOfFile(Stream standardInput)
     {
         var buffer = new byte[256];
-        while (standardInput.Read(buffer) > 0)
+        try
         {
-            // Input is not a command; only its end is.
-        }
+            while (standardInput.Read(buffer) > 0)
+            {
+                // Input is not a command; only its end is.
+            }
 
-        Request("standard input reached end-of-file");
+            Request("standard input reached end-of-file");
+        }
+        catch (Exception failure) when (failure is IOException or ObjectDisposedException)
+        {
+            // A terminal that hangs up fails the read (EIO) instead of ending it. An exception on this thread would end the
+            // process before the server stopped, so the failure is a stop request like the hangup signal that follows it.
+            Request("standard input could not be read");
+        }
     }
 
     private void Request(string reason)

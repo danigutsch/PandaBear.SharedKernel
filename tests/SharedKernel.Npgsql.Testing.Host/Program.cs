@@ -9,11 +9,16 @@ namespace PandaBear.Npgsql.Testing.Host;
 /// Owns the one PostgreSQL server that the database test assemblies of a CI slice borrow. The CI tool starts it with
 /// standard input redirected and <see cref="PostgreSqlTestServer.ReadyFileVariable"/> set, waits for the ready file,
 /// runs the tests with the connection string it holds, and then closes standard input. The host stops the server and
-/// exits 0 when standard input ends or SIGTERM, SIGINT or SIGHUP arrives; a failure to start it exits 1 and leaves no
-/// ready file. It never prints the connection string, which carries the password.
+/// exits 0 when standard input ends or fails or SIGTERM, SIGINT or SIGHUP arrives; a second signal ends the process at
+/// once, and a failure to start the server exits 1 and leaves no ready file. It never prints the connection string, which
+/// carries the password.
 /// </summary>
 internal static class Program
 {
+    // ponytail: Aspire's container runtime check does not observe the stop token, so a stop that arrives while it retries
+    // (about a minute without a runtime) is honored only afterwards, and the host then exits 1, not 0; a second signal
+    // ends the process at once. Aspire's own startup timeout cancels the start with no stop requested, so it reaches the
+    // generic catch below as a cancellation; name the timeout there if that message ever hides a cause.
     [SuppressMessage(
         "Design",
         "CA1031:Do not catch general exception types",
