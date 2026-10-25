@@ -4,25 +4,37 @@ using PandaBear.IntegrationTesting;
 
 namespace PandaBear.Npgsql.Tests;
 
-public sealed class AspireTestApplicationTests
+public sealed class AspireTestApplicationTests(PostgreSqlTestServerFixture fixture)
 {
+    // Aspire allocates proxyless ports outside the OS ephemeral range, and mixing a DCP-reserved proxy target port with a
+    // container port that the runtime assigns lets Podman claim the same port. AspireTestApplication.Start prevents that by
+    // turning the proxy off for every container, and this test pins the result in two halves that together cost no container:
+    // - The model half starts an application whose PostgreSQL resource is marked WithExplicitStart. DCP allocates the
+    //   endpoint when the application starts, whether or not the resource ever does, so the endpoint annotation already shows
+    //   that the proxy is off and that the port is a direct one in DCP's range. A plain AddPostgres without WithExplicitStart
+    //   would start a container here, which is what this half avoids.
+    // - The real half opens a connection to the PostgreSQL server of the assembly fixture. That server is started through
+    //   AspireTestApplication.Start, either by the fixture itself or by the owner host that the fixture borrows it from, so the
+    //   port that the connection really reaches is the allocated one and lies in the same range. This half is what proves that
+    //   a started container listens on the direct port, which the unstarted model cannot show.
     [Fact]
     public async Task Container_endpoints_use_direct_dynamic_ports_without_runtime_port_allocation()
     {
         // Arrange
+        var ct = TestContext.Current.CancellationToken;
         var builder = AspireTestApplication.CreateBuilder();
-        var postgres = builder.AddPostgres("port-isolation-postgres");
+        var postgres = builder.AddPostgres("port-isolation-postgres").WithExplicitStart();
 
         // Act
-        await using var app = await AspireTestApplication.Start(
-            builder, [postgres.Resource.Name], null, TestContext.Current.CancellationToken);
+        await using var app = await AspireTestApplication.Start(builder, [], null, ct);
         var endpoint = postgres.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem();
-        var connectionString = await app.GetConnectionString(postgres.Resource.Name, TestContext.Current.CancellationToken);
+        var connectionString = await fixture.GetServerConnectionString(ct);
         await using var connection = new NpgsqlConnection(connectionString);
-        await connection.OpenAsync(TestContext.Current.CancellationToken);
+        await connection.OpenAsync(ct);
 
         // Assert
         endpoint.IsProxied.ShouldBeFalse();
+        endpoint.AllocatedEndpoint.ShouldNotBeNull().Port.ShouldBeInRange(10000, 32767);
         connection.Port.ShouldBeInRange(10000, 32767);
         connection.State.ShouldBe(System.Data.ConnectionState.Open);
     }
