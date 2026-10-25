@@ -114,22 +114,23 @@ public sealed class PostgreSqlTestServerFixtureLazyStartTests
     }
 
     [Fact]
-    public async Task A_present_but_unreachable_server_fails_the_request_reports_the_cleanup_and_builds_no_other_server()
+    public async Task A_present_but_unreachable_server_fails_every_request_with_the_connection_error_registers_nothing_and_builds_no_other_server()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         var fixture = new RefusingServerFixture(FakeEnvironment.WithServer($"Host=127.0.0.1;Port={LoopbackPorts.Unused()};Username=postgres;Timeout=5"));
-        Func<Task> request = () => fixture.CreateDatabase(ct);
+        Func<Task> firstRequest = () => fixture.CreateDatabase(ct);
+        Func<Task> laterRequest = () => fixture.CreateDatabase(ct);
 
         // Act
-        var requestFailure = await request.ShouldThrow<AggregateException>();
-        var disposal = fixture.DisposeAsync().AsTask();
-        Func<Task> awaitDisposal = () => disposal;
-        var disposalFailure = await awaitDisposal.ShouldThrow<AggregateException>();
+        var firstFailure = await firstRequest.ShouldThrow<NpgsqlException>();
+        var laterFailure = await laterRequest.ShouldThrow<NpgsqlException>();
+        var ownedNames = fixture.OwnedDatabaseNames;
+        await fixture.DisposeAsync();
 
         // Assert
-        ExceptionLeaves.Of(requestFailure).ShouldAllSatisfy(leaf => leaf.ShouldBeAssignableTo<NpgsqlException>(), "the request fails with the connection error");
-        disposalFailure.Message.ShouldStartWith("PostgreSQL test server cleanup failed.", "teardown reports the database it could not verify as dropped instead of hiding it");
+        laterFailure.ShouldBeSameAs(firstFailure, "the server is found unreachable once, and every request sees that failure");
+        ownedNames.ShouldBeEmpty("a database name is registered only after the server accepted a connection, so teardown has nothing to verify as dropped");
         fixture.BuilderCalls.ShouldBe(0, "a set variable never falls back to a server of the fixture's own");
     }
 }

@@ -124,16 +124,57 @@ public sealed class PostgreSqlTestServerSourceTests
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         var start = new ControlledStart<StartedPostgreSqlTestServer>();
-        var source = new PostgreSqlTestServerSource(start.Start, FakeEnvironment.WithServer("Host=owner;Port=41234;Password=owner-secret"));
+        List<string> reached = [];
+        var source = new PostgreSqlTestServerSource(
+            start.Start,
+            FakeEnvironment.WithServer("Host=owner;Port=41234;Password=owner-secret"),
+            (server, _) =>
+            {
+                reached.Add(server);
+                return Task.CompletedTask;
+            });
 
         // Act
         // A source that starts a server instead of borrowing one would wait for a start that never completes: fail instead of hang.
         var connectionString = await source.GetConnectionString(ct).WaitAsync(TimeSpan.FromSeconds(30), ct);
+        var laterConnectionString = await source.GetConnectionString(ct).WaitAsync(TimeSpan.FromSeconds(30), ct);
         await source.DisposeAsync();
 
         // Assert
         connectionString.ShouldBe("Host=owner;Port=41234;Password=owner-secret");
+        laterConnectionString.ShouldBe(connectionString);
+        reached.ShouldBe(["Host=owner;Port=41234;Password=owner-secret"], "the first demand connects to the borrowed server once and no later demand does");
         start.Calls.ShouldBe(0, "a borrowed server belongs to its owner, so the source never starts one");
+    }
+
+    [Fact]
+    public async Task A_borrowed_server_that_rejects_the_first_connection_fails_every_demand_with_that_failure_and_starts_no_server()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var failure = new InvalidOperationException("the owner refused the connection");
+        var attempts = 0;
+        var start = new ControlledStart<StartedPostgreSqlTestServer>();
+        await using var source = new PostgreSqlTestServerSource(
+            start.Start,
+            FakeEnvironment.WithServer("Host=owner;Port=41234;Password=owner-secret"),
+            (_, _) =>
+            {
+                attempts++;
+                return Task.FromException(failure);
+            });
+        Func<Task> firstDemand = () => source.GetConnectionString(ct).WaitAsync(TimeSpan.FromSeconds(30), ct);
+        Func<Task> laterDemand = () => source.GetConnectionString(ct).WaitAsync(TimeSpan.FromSeconds(30), ct);
+
+        // Act
+        var firstFailure = await firstDemand.ShouldThrow<InvalidOperationException>();
+        var laterFailure = await laterDemand.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        firstFailure.ShouldBeSameAs(failure);
+        laterFailure.ShouldBeSameAs(failure, "a later demand must see the cached failure instead of connecting again");
+        attempts.ShouldBe(1);
+        start.Calls.ShouldBe(0, "a set variable never falls back to a server of the source's own");
     }
 
     [Fact]

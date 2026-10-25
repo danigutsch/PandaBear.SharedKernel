@@ -43,6 +43,20 @@ internal static class PostgreSqlTestServer
             : throw new InvalidOperationException($"The environment variable {ConnectionStringVariable} does not contain a PostgreSQL connection string with a host.");
     }
 
+    /// <summary>Opens and closes one connection to a server that another process owns, so that a server that does not answer is found out once.</summary>
+    /// <param name="borrowed">The connection string that <see cref="Borrowed"/> returned.</param>
+    /// <param name="ct">Cancels the attempt; the connection timeout in <paramref name="borrowed"/>, 15 seconds by default, bounds it.</param>
+    /// <exception cref="NpgsqlException">
+    /// Thrown when the server refuses the connection, does not answer within the connection timeout, or rejects the
+    /// credentials. Neither the message nor the inner exceptions repeat the password.
+    /// </exception>
+    internal static async Task Reach(string borrowed, CancellationToken ct)
+    {
+        var administrative = new NpgsqlConnectionStringBuilder(borrowed) { Database = "postgres" }.ConnectionString;
+        await using var dataSource = NpgsqlDataSource.Create(administrative);
+        await using var connection = await dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
+    }
+
     /// <summary>Composes the server on <paramref name="builder"/>, starts it and waits until it is healthy.</summary>
     /// <param name="builder">
     /// A testing builder that was created from an assembly that uses the Aspire AppHost SDK, on the synchronous call

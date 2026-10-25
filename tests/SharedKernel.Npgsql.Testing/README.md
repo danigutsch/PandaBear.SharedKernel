@@ -45,8 +45,10 @@ The first test that needs a database resolves the server, either by borrowing it
   the connection string of a server that another process owns. The fixture only creates and drops its own
   isolated databases on it and never stops it. A value that is not a PostgreSQL connection string with a host
   fails the test that needs a database, with a message that names the variable and never repeats its value. A
-  server that cannot be reached fails it too. A set variable never falls back to a container of its own,
-  because that would hide a broken owner and start a second server.
+  server that does not accept a connection fails it too: the first test that needs a database connects once and
+  the failure is cached, so a server that accepts connections and never answers costs the assembly one connection
+  timeout, 15 seconds unless the connection string says otherwise, not one per test. A set variable never falls
+  back to a container of its own, because that would hide a broken owner and start a second server.
 - Own: when the variable is not set or is blank, the fixture starts a PostgreSQL container of its own through
   its `CreateBuilder` override on that first demand and stops it when the assembly is done. The start is shared
   by concurrent tests and a failed start is cached, so it fails every test that needs a database instead of

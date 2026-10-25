@@ -17,8 +17,9 @@ databases on a PostgreSQL server, and where that server comes from depends on th
 
 - When it holds a connection string, the assembly borrows that server. It never starts, stops, or replaces it, and a
   value that is present but malformed fails on first use with a message that names the variable, never one that repeats
-  the value. It does not fall back to a server of its own, because that would hide a broken owner and start a second
-  container.
+  the value. A server that does not accept a connection fails on first use too, once for the assembly: the failure is
+  cached, so a server that accepts connections and never answers costs one connection timeout, not one per test. It
+  does not fall back to a server of its own, because that would hide a broken owner and start a second container.
 - When it is absent or blank, as in a plain `dotnet test --solution SharedKernel.slnx -c Release --no-build
   --no-restore`, each assembly starts a server of its own through Aspire on its first database use and stops it when its
   tests end. A test that needs no database starts no container, so a complete local run starts one server per assembly

@@ -18,6 +18,9 @@ namespace PandaBear.Npgsql.Testing;
 /// </para>
 /// <para>
 /// A failed start is cached, so it fails every test that needs a database instead of repeating a long startup timeout.
+/// A borrowed server is connected to once, by the first call that needs a database, and a failure to connect is cached
+/// the same way: a server that accepts connections and never answers costs the assembly one connection timeout, 15
+/// seconds unless the connection string says otherwise, instead of one per test.
 /// </para>
 /// </remarks>
 public abstract class PostgreSqlTestServerFixture : IAsyncLifetime
