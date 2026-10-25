@@ -1,76 +1,70 @@
-using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using Aspire.Hosting;
 using Aspire.Hosting.Testing;
 using Npgsql;
-using PandaBear.IntegrationTesting;
 using Xunit;
 
 namespace PandaBear.Npgsql.Testing;
 
-/// <summary>Owns an assembly-scoped PostgreSQL server with isolated per-test database leases.</summary>
+/// <summary>Leases isolated per-test databases on a PostgreSQL server that an assembly-scoped fixture resolves on demand.</summary>
+/// <remarks>
+/// <para>
+/// Creating and initializing the fixture starts nothing, so a test assembly whose selected tests need no database pays
+/// for no container. The first call that needs a database resolves the server: the one that another process owns when the
+/// <c>SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING</c> environment variable carries its connection string, otherwise a
+/// container that <see cref="CreateBuilder"/> composes and the fixture starts and later stops. A set variable always
+/// borrows: a malformed value fails the requesting test with a message that names the variable, and an unreachable server
+/// fails it too, but neither falls back to a second container. The fixture drops its own databases on disposal and never
+/// stops a server it did not start.
+/// </para>
+/// <para>
+/// A failed start is cached, so it fails every test that needs a database instead of repeating a long startup timeout.
+/// A borrowed server is connected to once, by the first call that needs a database, and a failure to connect is cached
+/// the same way: a server that accepts connections and never answers costs the assembly one connection timeout, 15
+/// seconds unless the connection string says otherwise, instead of one per test.
+/// </para>
+/// </remarks>
 public abstract class PostgreSqlTestServerFixture : IAsyncLifetime
 {
-    private const string DatabaseResourceName = "fixture";
-    private const string PostgreSqlResourceName = "postgres";
+    private readonly PostgreSqlTestServerSource _server;
+    private readonly PostgreSqlTestDatabasePool _databases;
 
-    private readonly ConcurrentDictionary<string, byte> _ownedDatabases = new(StringComparer.Ordinal);
-    private AspireTestApplication? _app;
-    private string? _administrativeConnectionString;
+    /// <summary>Creates a fixture that finds a server another process owns in the process environment.</summary>
+    protected PostgreSqlTestServerFixture()
+        : this(Environment.GetEnvironmentVariable)
+    {
+    }
+
+    internal PostgreSqlTestServerFixture(Func<string, string?> readEnvironment)
+    {
+        // CreateBuilder runs on the first demand, never while the fixture is constructed.
+        _server = new PostgreSqlTestServerSource(CreateBuilder, readEnvironment);
+        _databases = new PostgreSqlTestDatabasePool(_server.GetConnectionString);
+    }
 
     /// <summary>Creates the testing builder from the consuming Aspire AppHost assembly.</summary>
     /// <returns>A builder with the consuming assembly's Aspire metadata.</returns>
+    /// <remarks>
+    /// Override it in the executable test assembly with <see cref="System.Runtime.CompilerServices.MethodImplOptions.NoInlining"/>.
+    /// It runs only when this fixture starts a server of its own, on the thread of the first test that needs a database.
+    /// </remarks>
     protected abstract IDistributedApplicationTestingBuilder CreateBuilder();
 
     /// <inheritdoc />
-    public async ValueTask InitializeAsync()
-    {
-        var appBuilder = CreateBuilder();
-        var databaseServer = appBuilder.AddPostgres(PostgreSqlResourceName);
-        _ = databaseServer.AddDatabase(DatabaseResourceName);
+    public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-        var app = await AspireTestApplication.Start(
-            appBuilder,
-            [PostgreSqlResourceName],
-            resourceStartupTimeout: null,
-            TestContext.Current.CancellationToken);
-        try
-        {
-            var connectionString = await app.GetConnectionString(
-                DatabaseResourceName,
-                TestContext.Current.CancellationToken);
-            _administrativeConnectionString = new NpgsqlConnectionStringBuilder(connectionString)
-            {
-                Database = "postgres"
-            }.ConnectionString;
-            _app = app;
-        }
-        catch (Exception initializationFailure)
-        {
-            await PostgreSqlTestCleanup.Run(initializationFailure, app.DisposeAsync);
-            throw;
-        }
-    }
+    internal Task<PostgreSqlTestDatabaseLease> CreateDatabase(CancellationToken ct) => _databases.Create(ct);
 
-    internal async Task<PostgreSqlTestDatabaseLease> CreateDatabase(CancellationToken ct)
-    {
-        var connectionString = GetAdministrativeConnectionString();
-        var databaseName = $"test_{Guid.NewGuid():N}";
-        if (!_ownedDatabases.TryAdd(databaseName, 0))
-        {
-            throw new InvalidOperationException("A duplicate PostgreSQL test database lease was issued.");
-        }
+    internal IReadOnlyCollection<string> OwnedDatabaseNames => _databases.OwnedDatabaseNames;
 
-        return await PostgreSqlTestDatabaseLease.Create(
-            connectionString,
-            databaseName,
-            OnDatabaseDropped,
-            ct);
-    }
+    internal Task<string> GetServerConnectionString(CancellationToken ct) => _server.GetConnectionString(ct);
 
     internal async Task<bool> DatabaseExists(string databaseName, CancellationToken ct)
     {
-        await using var dataSource = NpgsqlDataSource.Create(GetAdministrativeConnectionString());
+        var administrativeConnectionString = new NpgsqlConnectionStringBuilder(await _server.GetConnectionString(ct))
+        {
+            Database = "postgres"
+        }.ConnectionString;
+        await using var dataSource = NpgsqlDataSource.Create(administrativeConnectionString);
         await using var command = dataSource.CreateCommand(
             "SELECT EXISTS (SELECT 1 FROM pg_database WHERE datname = @databaseName);");
         command.Parameters.AddWithValue("databaseName", databaseName);
@@ -81,57 +75,33 @@ public abstract class PostgreSqlTestServerFixture : IAsyncLifetime
     [SuppressMessage(
         "Design",
         "CA1031:Do not catch general exception types",
-        Justification = "Assembly teardown must attempt every owned database and Aspire cleanup before reporting aggregate failures.")]
+        Justification = "Assembly teardown must attempt database cleanup and server cleanup before reporting aggregate failures.")]
     public async ValueTask DisposeAsync()
     {
         GC.SuppressFinalize(this);
         List<Exception> failures = [];
-        var connectionString = _administrativeConnectionString;
-        _administrativeConnectionString = null;
 
-        if (connectionString is not null)
+        try
         {
-            foreach (var databaseName in _ownedDatabases.Keys)
-            {
-                try
-                {
-                    await PostgreSqlTestDatabaseLease.DropDatabase(connectionString, databaseName);
-                    _ = _ownedDatabases.TryRemove(databaseName, out _);
-                }
-                catch (Exception exception)
-                {
-                    failures.Add(exception);
-                }
-            }
+            await _databases.DisposeAsync();
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
         }
 
-        var app = Interlocked.Exchange(ref _app, null);
-        if (app is not null)
+        try
         {
-            try
-            {
-                await app.DisposeAsync();
-            }
-            catch (Exception exception)
-            {
-                failures.Add(exception);
-            }
+            await _server.DisposeAsync();
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
         }
 
         if (failures.Count > 0)
         {
             throw new AggregateException("PostgreSQL test server cleanup failed.", failures);
         }
-    }
-
-    private string GetAdministrativeConnectionString()
-    {
-        return _administrativeConnectionString
-            ?? throw new InvalidOperationException("PostgreSQL test server fixture is not initialized.");
-    }
-
-    private void OnDatabaseDropped(string databaseName)
-    {
-        _ = _ownedDatabases.TryRemove(databaseName, out _);
     }
 }

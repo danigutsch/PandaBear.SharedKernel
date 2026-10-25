@@ -1,5 +1,5 @@
-using System.ComponentModel;
 using System.Diagnostics;
+using PandaBear.Tooling;
 
 namespace PandaBear.Repository.Tests;
 
@@ -9,8 +9,6 @@ namespace PandaBear.Repository.Tests;
 /// </summary>
 internal static class CiToolProcess
 {
-    private static readonly TimeSpan ExitTimeout = TimeSpan.FromSeconds(60);
-
     /// <summary>
     /// Runs the tool with <paramref name="environment"/> added to the inherited environment and waits at most 60 seconds
     /// for it to exit.
@@ -21,7 +19,18 @@ internal static class CiToolProcess
         IReadOnlyDictionary<string, string?> environment,
         CancellationToken ct)
     {
-        var startInfo = new ProcessStartInfo("dotnet")
+        using var tool = Start(workingDirectory, args, environment);
+        return await tool.Exited(ct);
+    }
+
+    /// <summary>Starts the tool with <paramref name="environment"/> added to the inherited environment and returns without waiting for it.</summary>
+    public static RunningCiTool Start(
+        string workingDirectory,
+        IReadOnlyList<string> args,
+        IReadOnlyDictionary<string, string?> environment)
+    {
+        // The test process resolves dotnet, so a dotnet on the PATH that the tool gets cannot stand in for the host.
+        var startInfo = new ProcessStartInfo(ExecutableResolver.ResolveCommand("dotnet"))
         {
             WorkingDirectory = workingDirectory,
             RedirectStandardOutput = true,
@@ -40,41 +49,6 @@ internal static class CiToolProcess
             startInfo.Environment[name] = value;
         }
 
-        using var process = Process.Start(startInfo) ?? throw new InvalidOperationException("The CI tool did not start.");
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        timeout.CancelAfter(ExitTimeout);
-        var output = process.StandardOutput.ReadToEndAsync(timeout.Token);
-        var error = process.StandardError.ReadToEndAsync(timeout.Token);
-        try
-        {
-            await process.WaitForExitAsync(timeout.Token);
-            return new RepositoryToolResult(process.ExitCode, await output, await error);
-        }
-        catch (OperationCanceledException)
-        {
-            await Stop(process);
-            throw;
-        }
-    }
-
-    // Best effort: the cancellation that led here is what the caller sees.
-    private static async Task Stop(Process process)
-    {
-        try
-        {
-            if (!process.HasExited)
-            {
-                process.Kill(entireProcessTree: true);
-                using var terminationTimeout = new CancellationTokenSource(TimeSpan.FromSeconds(2));
-                await process.WaitForExitAsync(terminationTimeout.Token);
-            }
-        }
-        catch (Exception exception) when (exception is InvalidOperationException
-            or Win32Exception
-            or NotSupportedException
-            or AggregateException
-            or OperationCanceledException)
-        {
-        }
+        return new RunningCiTool(Process.Start(startInfo) ?? throw new InvalidOperationException("The CI tool did not start."));
     }
 }

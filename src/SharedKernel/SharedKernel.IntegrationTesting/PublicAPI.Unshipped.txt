@@ -17,3 +17,7 @@ static PandaBear.IntegrationTesting.AspireTestApplication.Start(Aspire.Hosting.T
 static PandaBear.IntegrationTesting.AspireTestApplication.Start<TAppHost>(System.Collections.Generic.IEnumerable<string!>! healthyResourceNames, System.TimeSpan? resourceStartupTimeout, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<PandaBear.IntegrationTesting.AspireTestApplication!>!
 static PandaBear.IntegrationTesting.PostgreSqlPublicSchemaReset.Reset(System.Data.Common.DbConnection! connection, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
 static PandaBear.IntegrationTesting.PostgreSqlPublicSchemaReset.Reset(System.Data.Common.DbConnection! connection, System.Collections.Generic.IReadOnlyCollection<string!>! excludedTableNames, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+PandaBear.IntegrationTesting.OnDemandResource<T>
+PandaBear.IntegrationTesting.OnDemandResource<T>.DisposeAsync() -> System.Threading.Tasks.ValueTask
+PandaBear.IntegrationTesting.OnDemandResource<T>.Get(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<T>!
+PandaBear.IntegrationTesting.OnDemandResource<T>.OnDemandResource(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<T>!>! start) -> void

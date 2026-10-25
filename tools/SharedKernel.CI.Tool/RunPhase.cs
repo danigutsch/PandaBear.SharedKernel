@@ -1,7 +1,7 @@
 namespace PandaBear.CI.Tool;
 
 /// <summary>A finished phase of <c>run</c>.</summary>
-/// <param name="Name">The phase, such as <c>build</c> or <c>openapi-admin</c>.</param>
+/// <param name="Name">The phase, such as <c>build</c>, <c>openapi-admin</c>, or <c>service-postgres</c>.</param>
 /// <param name="Status"><c>passed</c> or <c>failed</c>.</param>
 /// <param name="StartedAt">When the phase started.</param>
 /// <param name="Duration">How long the phase ran.</param>

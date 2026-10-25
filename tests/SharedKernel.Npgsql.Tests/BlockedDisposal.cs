@@ -1,0 +1,22 @@
+namespace PandaBear.Npgsql.Tests;
+
+/// <summary>An async-disposable value whose disposal waits until a test lets it finish, and then fails.</summary>
+/// <param name="failure">What the disposal throws once it is allowed to finish.</param>
+internal sealed class BlockedDisposal(Exception failure) : IAsyncDisposable
+{
+    private readonly TaskCompletionSource _entered = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource _mayFinish = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    // A broken implementation must fail the test instead of hanging it.
+    public Task Entered => _entered.Task.WaitAsync(TimeSpan.FromSeconds(30));
+
+    public void Finish() => _mayFinish.SetResult();
+
+    // A second disposal of the value fails here, because the signal below can be set only once.
+    public async ValueTask DisposeAsync()
+    {
+        _entered.SetResult();
+        await _mayFinish.Task.ConfigureAwait(false);
+        throw failure;
+    }
+}

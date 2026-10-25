@@ -18,6 +18,8 @@ internal static partial class CiConfigurationFile
 
     private const int MaxBytes = 1024 * 1024;
 
+    private static readonly string[] TokenVariables = ["GH_TOKEN", "GITHUB_TOKEN"];
+
     /// <summary>Reads the configuration under <paramref name="root"/> without following symbolic links.</summary>
     /// <exception cref="InvalidOperationException">
     /// The file is missing, unreadable, larger than 1 MiB, or not a valid configuration of version 1.
@@ -187,6 +189,16 @@ internal static partial class CiConfigurationFile
             }
         }
 
+        // A service is checked after every slice, because a later slice can list the project as a test project.
+        var handedVariables = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        for (var index = 0; index < configuration.Slices.Length; index++)
+        {
+            if (configuration.Slices[index].Service is { } service)
+            {
+                ValidateService(service, "$.slices[" + index.ToString(CultureInfo.InvariantCulture) + "].service", configuration.Slices[index].Name, owners, handedVariables);
+            }
+        }
+
         if (configuration.DefaultSlice is { } defaultSlice && !names.Contains(defaultSlice))
         {
             throw Invalid("$.defaultSlice must name a slice in $.slices.");
@@ -200,6 +212,57 @@ internal static partial class CiConfigurationFile
         if (configuration.Mutation is { } mutation)
         {
             ValidateMutation(mutation);
+        }
+    }
+
+    private static void ValidateService(
+        ServiceConfiguration service, string path, string slice, Dictionary<string, string> testProjects, Dictionary<string, string> handedVariables)
+    {
+        if (!RepositoryPath.IsRelative(service.Project))
+        {
+            throw Invalid(path + ".project must be a repository-relative project path with '/' separators and without empty, '.', or '..' segments.");
+        }
+
+        if (testProjects.TryGetValue(service.Project, out var owner))
+        {
+            throw Invalid(path + ".project names " + service.Project + ", which slice " + owner + " lists as a test project; a service is not a test project.");
+        }
+
+        ValidateVariable(service.ReadyFileVariable, path + ".readyFileVariable");
+        ValidateVariable(service.ValueVariable, path + ".valueVariable");
+        if (string.Equals(service.ValueVariable, service.ReadyFileVariable, StringComparison.OrdinalIgnoreCase))
+        {
+            throw Invalid(path + ".valueVariable repeats readyFileVariable " + service.ReadyFileVariable + ".");
+        }
+
+        // The test run of a run that merges slices has one environment, so two services cannot hand over the same variable.
+        if (!handedVariables.TryAdd(service.ValueVariable, slice))
+        {
+            throw Invalid(path + ".valueVariable repeats " + service.ValueVariable + ", which the service of slice " + handedVariables[service.ValueVariable] + " already hands to its tests.");
+        }
+
+        ValidateTimeout(service.ReadyTimeoutSeconds, path + ".readyTimeoutSeconds");
+        ValidateTimeout(service.StopTimeoutSeconds, path + ".stopTimeoutSeconds");
+    }
+
+    private static void ValidateVariable(string name, string path)
+    {
+        if (!Identifier().IsMatch(name))
+        {
+            throw Invalid(path + " must be an environment variable name: letters, digits, and '_', not starting with a digit.");
+        }
+
+        if (IsTokenVariable(name))
+        {
+            throw Invalid(path + " names " + name + ", a GitHub token variable that the tool removes from the service's environment; use another name.");
+        }
+    }
+
+    private static void ValidateTimeout(int seconds, string path)
+    {
+        if (seconds is < 1 or > ServiceConfiguration.MaxTimeoutSeconds)
+        {
+            throw Invalid(path + " must be from 1 to " + ServiceConfiguration.MaxTimeoutSeconds.ToString(CultureInfo.InvariantCulture) + ".");
         }
     }
 
@@ -328,9 +391,12 @@ internal static partial class CiConfigurationFile
     /// <summary>Reports whether <paramref name="browser"/> is a Playwright browser name: lowercase letters, digits, and <c>-</c>, starting with a letter.</summary>
     public static bool IsBrowser(string browser) => Browser().IsMatch(browser);
 
+    /// <summary>Reports whether <paramref name="name"/> is, in any case, a variable that holds a GitHub token and that the tool removes from the service's environment.</summary>
+    public static bool IsTokenVariable(string name) => TokenVariables.Contains(name, StringComparer.OrdinalIgnoreCase);
+
     private static void ValidateProperty(string value, string path)
     {
-        if (!Property().IsMatch(value))
+        if (!Identifier().IsMatch(value))
         {
             throw Invalid(path + " must be an MSBuild property name.");
         }
@@ -345,8 +411,9 @@ internal static partial class CiConfigurationFile
     [GeneratedRegex(@"\A[a-z][a-z0-9-]*\z", RegexOptions.CultureInvariant)]
     private static partial Regex Browser();
 
+    // An MSBuild property name and an environment variable name share this shape.
     [GeneratedRegex(@"\A[A-Za-z_][A-Za-z0-9_]*\z", RegexOptions.CultureInvariant)]
-    private static partial Regex Property();
+    private static partial Regex Identifier();
 
     [GeneratedRegex(@"\A[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?\z", RegexOptions.CultureInvariant)]
     private static partial Regex ExactVersion();

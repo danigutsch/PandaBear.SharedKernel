@@ -14,8 +14,8 @@ internal static class ProjectSelector
 
     /// <summary>Checks the configured project lists against the solution.</summary>
     /// <exception cref="InvalidOperationException">
-    /// A slice or <c>alwaysSelected</c> entry is not a test project of the solution, or, without a default slice, a solution
-    /// test project belongs to no slice.
+    /// A slice or <c>alwaysSelected</c> entry is not a test project of the solution, a slice's service is not a project of the
+    /// solution or is a test project, or, without a default slice, a solution test project belongs to no slice.
     /// </exception>
     public static void Validate(CiConfiguration configuration, SolutionGraph graph)
     {
@@ -40,6 +40,11 @@ internal static class ProjectSelector
             for (var index = 0; index < projects.Length; index++)
             {
                 ValidateTestProject(projects[index], "$.slices[" + Index(slice) + "].projects[" + Index(index) + "]", known, graph);
+            }
+
+            if (configuration.Slices[slice].Service is { } service)
+            {
+                ValidateServiceProject(service.Project, "$.slices[" + Index(slice) + "].service.project", known, graph);
             }
         }
 
@@ -198,6 +203,19 @@ internal static class ProjectSelector
         if (!graph.Tests.Contains(project) && !graph.Unread.Contains(project))
         {
             throw CiConfigurationFile.Invalid(path + " names " + project + ", which is not a test project.");
+        }
+    }
+
+    private static void ValidateServiceProject(string project, string path, HashSet<string> known, SolutionGraph graph)
+    {
+        if (!known.Contains(project))
+        {
+            throw CiConfigurationFile.Invalid(path + " names " + project + ", which is not a project of " + graph.Solution + ".");
+        }
+
+        if (graph.Tests.Contains(project))
+        {
+            throw CiConfigurationFile.Invalid(path + " names " + project + ", which is a test project; a service is not.");
         }
     }
 

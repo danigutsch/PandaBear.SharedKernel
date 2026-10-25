@@ -19,6 +19,8 @@
         <ProjectReference Include="../../src/SharedKernel/SharedKernel.IntegrationTesting/SharedKernel.IntegrationTesting.csproj" />
         <InternalsVisibleTo Include="SharedKernel.Npgsql.Tests" />
         <InternalsVisibleTo Include="SharedKernel.EventSourcing.Npgsql.Tests" />
+        <InternalsVisibleTo Include="SharedKernel.EntityFrameworkCore.Tests" />
+        <InternalsVisibleTo Include="SharedKernel.Npgsql.Testing.Host" />
     </ItemGroup>
 
 </Project>

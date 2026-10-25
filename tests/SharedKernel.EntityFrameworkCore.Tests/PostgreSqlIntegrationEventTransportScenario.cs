@@ -15,12 +15,12 @@ internal sealed class PostgreSqlIntegrationEventTransportScenario : IAsyncDispos
 {
     private const string ConsumerName = "catalog";
 
-    private readonly PostgreSqlTestDatabase database;
+    private readonly PostgreSqlTestDatabaseLease database;
     private readonly NpgsqlDataSource dataSource;
     private TransportDbContext? duplicateContext;
 
     private PostgreSqlIntegrationEventTransportScenario(
-        PostgreSqlTestDatabase database,
+        PostgreSqlTestDatabaseLease database,
         NpgsqlDataSource dataSource)
     {
         this.database = database;

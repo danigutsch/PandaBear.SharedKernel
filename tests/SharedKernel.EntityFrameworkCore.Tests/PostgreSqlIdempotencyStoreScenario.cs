@@ -8,13 +8,13 @@ namespace PandaBear.EntityFrameworkCore.Tests;
 
 internal sealed class PostgreSqlIdempotencyStoreScenario : IAsyncDisposable
 {
-    private readonly PostgreSqlTestDatabase database;
+    private readonly PostgreSqlTestDatabaseLease database;
     private readonly NpgsqlDataSource dataSource;
     private readonly ConcurrentSaveBarrierInterceptor saveBarrier;
     private readonly ServiceProvider serviceProvider;
 
     private PostgreSqlIdempotencyStoreScenario(
-        PostgreSqlTestDatabase database,
+        PostgreSqlTestDatabaseLease database,
         NpgsqlDataSource dataSource,
         ConcurrentSaveBarrierInterceptor saveBarrier,
         ServiceProvider serviceProvider)
