@@ -25,6 +25,15 @@ internal static class ProjectSelector
             ValidateTestProject(configuration.Selection.AlwaysSelected[index], "$.selection.alwaysSelected[" + Index(index) + "]", known, graph);
         }
 
+        var rules = configuration.Selection.TestPaths ?? [];
+        for (var rule = 0; rule < rules.Length; rule++)
+        {
+            for (var index = 0; index < rules[rule].Tests.Length; index++)
+            {
+                ValidateTestProject(rules[rule].Tests[index], "$.selection.testPaths[" + Index(rule) + "].tests[" + Index(index) + "]", known, graph);
+            }
+        }
+
         for (var slice = 0; slice < configuration.Slices.Length; slice++)
         {
             var projects = configuration.Slices[slice].Projects;
@@ -67,6 +76,7 @@ internal static class ProjectSelector
 
         var reasons = new List<string>();
         var owners = new Dictionary<string, string[]>(StringComparer.Ordinal);
+        var mapped = new Dictionary<string, string[]>(StringComparer.Ordinal);
         foreach (var path in changes.Distinct(StringComparer.Ordinal))
         {
             if (Match(configuration.Selection.FullValidation, path) is { } pattern)
@@ -78,6 +88,13 @@ internal static class ProjectSelector
             if (documentation is not null && nonInertBuildFile is null)
             {
                 reasons.Add(path + ": matches the documentation pattern " + documentation + ".");
+                continue;
+            }
+
+            if ((configuration.Selection.TestPaths ?? []).FirstOrDefault(rule => Match(rule.Paths, path) is not null) is { } testPath)
+            {
+                mapped[path] = testPath.Tests;
+                reasons.Add(path + ": selects " + string.Join(", ", testPath.Tests) + " through $.selection.testPaths.");
                 continue;
             }
 
@@ -98,7 +115,7 @@ internal static class ProjectSelector
             reasons.Add(path + ": owned by " + string.Join(", ", owning) + ".");
         }
 
-        if (owners.Count == 0)
+        if (owners.Count == 0 && mapped.Count == 0)
         {
             return Plan(configuration, false, true, [.. reasons], [], []);
         }
@@ -107,10 +124,14 @@ internal static class ProjectSelector
         var affected = graph.WithDependents(changed);
         var always = configuration.Selection.AlwaysSelected.ToHashSet(StringComparer.Ordinal);
         var tests = new Dictionary<string, string[]>(StringComparer.Ordinal);
-        foreach (var test in affected.Where(graph.Tests.Contains).Concat(always).Distinct(StringComparer.Ordinal))
+        foreach (var test in affected.Where(graph.Tests.Contains).Concat(always).Concat(mapped.Values.SelectMany(static projects => projects)).Distinct(StringComparer.Ordinal))
         {
             var closure = graph.Closure(test);
-            string[] selectedBy = [.. owners.Where(owner => owner.Value.Any(closure.Contains)).Select(static owner => owner.Key)];
+            string[] selectedBy =
+            [
+                .. owners.Where(owner => owner.Value.Any(closure.Contains)).Select(static owner => owner.Key),
+                .. mapped.Where(path => path.Value.Contains(test, StringComparer.Ordinal)).Select(static path => path.Key),
+            ];
             tests[test] = always.Contains(test) ? [.. selectedBy, AlwaysSelected] : selectedBy;
         }
 

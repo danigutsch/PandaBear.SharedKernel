@@ -75,7 +75,10 @@ the file and the JSON path of the problem.
     "fullValidation": [".github/*", "*.props", "*.targets", "src/Shared/*"],
     "documentation": ["docs/*", "README.md"],
     "alwaysSelected": ["tests/Architecture.Tests/Architecture.Tests.csproj"],
-    "requireCoveringTests": true
+    "requireCoveringTests": true,
+    "testPaths": [
+      { "paths": ["config/*"], "tests": ["tests/Config.Tests/Config.Tests.csproj"] }
+    ]
   },
   "slices": [
     { "name": "fast", "projects": [] },
@@ -115,6 +118,8 @@ the file and the JSON path of the problem.
 | `selection.fullValidation` | Path patterns whose change selects every test project. |
 | `selection.documentation` | Path patterns whose change selects nothing while every tracked build file is inert. |
 | `selection.alwaysSelected` | Test projects that run whenever a change selects any project. |
+| `selection.testPaths[].paths` | Optional section. Path patterns, at least one, of files that no solution project owns and that only some test projects read. |
+| `selection.testPaths[].tests` | The solution test projects, at least one, that a change of a matching path selects, plus `alwaysSelected`. |
 | `selection.requireCoveringTests` | Whether a changed project that no selected test project depends on selects every test project. |
 | `slices[].name` | Lowercase letters and digits in words separated by `-`, other than `build`. It names the matrix entry, the filter, and the `<name>_required` output. |
 | `slices[].projects` | The slice's test projects. Each is a test project of the solution, listed in one slice. Only the default slice may list none. |
@@ -156,7 +161,9 @@ Each changed path is classified in order:
    `Sdk.targets` of `Microsoft.NET.Sdk`, or, in a `Directory.Build.props` or `Directory.Build.targets`, the file of the
    same name above it through `$([MSBuild]::GetPathOfFileAbove('<name>', '$(MSBuildThisFileDirectory)..'))` (or `../`).
    Otherwise the path is classified as any other path.
-3. Any other path is owned by the projects that compile it through an explicit `Compile` path and by the solution
+3. A path that matches a `testPaths` pattern selects the test projects of the first matching rule, even when a solution
+   project directory contains it, and no other project.
+4. Any other path is owned by the projects that compile it through an explicit `Compile` path and by the solution
    project whose directory most closely contains it. A path without an owner selects every test project.
 
 Selection reads `ProjectReference` and `Compile` items from project files without evaluating MSBuild. A project file that
