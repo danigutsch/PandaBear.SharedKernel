@@ -37,6 +37,7 @@ public sealed class RepositoryCommandLineTests
         "--coverage",
         "--install-playwright",
         "--playwright-dependencies",
+        "--exclude-trait <name=value>",
         "--github-summary <path>",
         "--root <path>",
         "--selection <directory>")]

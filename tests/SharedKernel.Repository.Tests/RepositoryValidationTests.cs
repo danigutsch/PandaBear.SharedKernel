@@ -298,6 +298,83 @@ public sealed class RepositoryValidationTests
     }
 
     [Fact]
+    public async Task Excluded_traits_reach_the_test_run_as_filter_not_trait_arguments()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var scope = new RepositoryTestScope();
+        var selection = scope.WriteSelection("fixture", ("library", [CoreTests]));
+        var results = Path.Combine(selection, "execution-library", "results");
+        var processes = new ProcessLog(static (fileName, _, _) => Task.FromResult(fileName == "git" ? "fixture" : string.Empty));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(
+            scope.Root,
+            ["run", "--slice", "library", "--exclude-trait", "Requires=external-engine", "--exclude-trait", "Scope=slow"],
+            processes.Run,
+            ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        processes.Commands.ShouldContain(
+            "dotnet test --solution " + Path.Combine(selection, "execution-library", "tests.slnf") + " -c Release --no-build --no-restore --results-directory " + results
+                + " -- --filter-not-trait Requires=external-engine --filter-not-trait Scope=slow");
+    }
+
+    [Fact]
+    public async Task Excluded_traits_follow_the_coverage_arguments_after_one_separator()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var scope = new RepositoryTestScope();
+        var selection = scope.WriteSelection("fixture", ("library", [CoreTests]));
+        var results = Path.Combine(selection, "execution-library", "results");
+        var processes = new ProcessLog(async (fileName, arguments, token) =>
+        {
+            if (arguments is ["test", ..])
+            {
+                Directory.CreateDirectory(Path.Combine(results, "Core.Tests", "net10.0_x64"));
+                await File.WriteAllTextAsync(Path.Combine(results, "Core.Tests", "net10.0_x64", "coverage.cobertura.1.xml"), "<coverage />", token);
+            }
+
+            return fileName == "git" ? "fixture" : string.Empty;
+        });
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(
+            scope.Root, ["run", "--slice", "library", "--coverage", "--exclude-trait", "Requires=external-engine"], processes.Run, ct);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        processes.Commands.ShouldContain(
+            "dotnet test --solution " + Path.Combine(selection, "execution-library", "tests.slnf") + " -c Release --no-build --no-restore --results-directory " + results
+                + " --results-directory-layout per-module -- --coverlet --coverlet-output-format cobertura --filter-not-trait Requires=external-engine");
+    }
+
+    [Theory]
+    [InlineData("Requires")]
+    [InlineData("=external-engine")]
+    [InlineData("Requires=")]
+    [InlineData("--Requires=x")]
+    [InlineData("Requires=a b")]
+    public async Task Excluded_trait_must_be_a_name_and_value_pair_before_running_processes(string trait)
+    {
+        // Arrange
+        using var scope = new RepositoryTestScope();
+        scope.WriteSelection("fixture", ("library", [CoreTests]));
+        var processes = new ProcessLog(static (fileName, _, _) => Task.FromResult(fileName == "git" ? "fixture" : string.Empty));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(
+            scope.Root, ["run", "--slice", "library", "--exclude-trait", trait], processes.Run, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(1);
+        result.Error.ShouldContain("--exclude-trait requires name=value", StringComparison.Ordinal);
+        processes.Commands.ShouldNotContain(static command => command.StartsWith("dotnet test", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public async Task OpenApi_targets_of_the_slice_generate_after_the_build_and_playwright_installs_before_the_tests()
     {
         // Arrange

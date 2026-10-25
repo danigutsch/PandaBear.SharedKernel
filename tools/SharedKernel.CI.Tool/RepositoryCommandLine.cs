@@ -141,6 +141,19 @@ internal static partial class RepositoryCommandLine
         {
             Description = "Also install the operating system dependencies of the Playwright browsers. Requires --install-playwright.",
         };
+        var excludeTraitOption = new Option<string[]>("--exclude-trait")
+        {
+            Description = "Leave out the tests with this xUnit trait, as name=value. Repeat for several traits.",
+            HelpName = "name=value",
+            AllowMultipleArgumentsPerToken = false,
+        };
+        excludeTraitOption.Validators.Add(static result =>
+        {
+            if (result.GetValueOrDefault<string[]>() is { } traits && traits.Any(static trait => !IsTraitFilter(trait)))
+            {
+                result.AddError("--exclude-trait requires name=value: a non-empty name and value without whitespace, and a name that does not start with '-'.");
+            }
+        });
         var summaryOption = PathOption("--github-summary", "GitHub Actions step summary file that receives the phases. Relative to the root.", "path");
         var rootOption = CreateRootOption();
         var selectionOption = CreateSelectionOption();
@@ -153,6 +166,7 @@ internal static partial class RepositoryCommandLine
             coverageOption,
             playwrightOption,
             dependenciesOption,
+            excludeTraitOption,
             summaryOption,
             rootOption,
             selectionOption,
@@ -183,6 +197,7 @@ internal static partial class RepositoryCommandLine
                         parseResult.GetValue(coverageOption),
                         parseResult.GetValue(playwrightOption),
                         parseResult.GetValue(dependenciesOption),
+                        parseResult.GetValue(excludeTraitOption) ?? [],
                         parseResult.GetValue(summaryOption)),
                     run,
                     runConfigured,
@@ -193,6 +208,15 @@ internal static partial class RepositoryCommandLine
             },
             ct));
         return command;
+    }
+
+    private static bool IsTraitFilter(string trait)
+    {
+        var separator = trait.IndexOf('=', StringComparison.Ordinal);
+        return separator > 0
+            && separator < trait.Length - 1
+            && trait[0] != '-'
+            && !trait.Any(char.IsWhiteSpace);
     }
 
     private static Command CreateOpenApi(
