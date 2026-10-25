@@ -10,6 +10,12 @@ public sealed class PostgreSqlTestServerUnresponsiveBorrowTests
 
     private static readonly TimeSpan Patience = TimeSpan.FromSeconds(60);
 
+    // A connection attempt that times out is one handshake, and Npgsql sometimes opens one more connection while the attempt
+    // ends: under load it began 996 ms after the first, with an SSL request of its own. A cache that does not work makes an
+    // attempt for every demand, so the bound sits below the number of demands in each test and separates the two without
+    // counting connections that Npgsql opens by itself.
+    private const int HandshakesOfOneAttempt = 2;
+
     [Fact]
     public async Task A_borrowed_server_that_never_answers_fails_the_first_demand_once_and_every_later_demand_from_the_cache()
     {
@@ -24,13 +30,13 @@ public sealed class PostgreSqlTestServerUnresponsiveBorrowTests
         // Act
         var firstFailure = await firstDemand.ShouldThrowAssignableTo<Exception>();
         var laterFailures = new List<Exception>();
-        for (var demand = 0; demand < 5; demand++)
+        for (var demand = 0; demand < 6; demand++)
         {
             laterFailures.Add(await laterDemand.ShouldThrowAssignableTo<Exception>());
         }
 
         // Assert
-        server.Handshakes.ShouldBe(1, "the first demand makes one attempt to connect, and the failure is cached for every later demand");
+        server.Handshakes.ShouldBeInRange(1, HandshakesOfOneAttempt, "the first demand makes one attempt to connect, and the failure is cached for every later demand");
         laterFailures.ShouldAllSatisfy(failure => failure.ShouldBeSameAs(firstFailure, "a later demand must see the cached failure instead of waiting for the connection timeout again"));
         firstFailure.ToString().ShouldNotContain(Password, "the failure of a borrowed server must not repeat the owner's password");
         start.Calls.ShouldBe(0, "a set variable never falls back to a server of the assembly's own");
@@ -55,7 +61,7 @@ public sealed class PostgreSqlTestServerUnresponsiveBorrowTests
         }
 
         // Assert
-        server.Handshakes.ShouldBe(1, "concurrent first demands share one attempt to connect");
+        server.Handshakes.ShouldBeInRange(1, HandshakesOfOneAttempt, "concurrent first demands share one attempt to connect");
         failures.Distinct().Count().ShouldBe(1, "every demand sees the same failure");
     }
 
@@ -69,13 +75,13 @@ public sealed class PostgreSqlTestServerUnresponsiveBorrowTests
         Func<Task> request = () => fixture.CreateDatabase(ct).WaitAsync(Patience, ct);
 
         // Act
-        for (var attempt = 0; attempt < 4; attempt++)
+        for (var attempt = 0; attempt < 6; attempt++)
         {
             _ = await request.ShouldThrowAssignableTo<Exception>();
         }
 
         // Assert
-        server.Handshakes.ShouldBe(1, "without the cache every request waits for the timeout twice, once to create the database and once to clean up after the failure");
+        server.Handshakes.ShouldBeInRange(1, HandshakesOfOneAttempt, "without the cache every request waits for the timeout twice, once to create the database and once to clean up after the failure");
         fixture.OwnedDatabaseNames.ShouldBeEmpty("no request reached the server far enough to register a database");
         fixture.BuilderCalls.ShouldBe(0, "a set variable never falls back to a server of the fixture's own");
     }
