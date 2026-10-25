@@ -121,7 +121,9 @@ internal static class ProcessRunner
         }
     }
 
-    private static Process Start(ProcessStartInfo startInfo)
+    /// <summary>Starts a process, reporting a start failure as an invalid operation.</summary>
+    /// <exception cref="InvalidOperationException">The process could not start.</exception>
+    internal static Process Start(ProcessStartInfo startInfo)
     {
         try
         {

@@ -24,11 +24,13 @@ internal static partial class RepositoryCommandLine
     /// <param name="run">Runs a child process and returns its standard output.</param>
     /// <param name="runConfigured">Runs a child process after its start information is adjusted, such as OpenAPI generation with its own environment.</param>
     /// <param name="staging">Supplies what <c>stage-candidate</c> uses to reach Git, the network, and the clock.</param>
+    /// <param name="startService">Starts the process of a slice's service from its start information; none starts it with <see cref="Process.Start(ProcessStartInfo)"/>.</param>
     public static RootCommand Create(
         string workingDirectory,
         Func<string, string[], string, CancellationToken, Task<string>> run,
         Func<string, string[], string, Action<ProcessStartInfo>, CancellationToken, Task<string>> runConfigured,
-        CandidateStagingServices staging)
+        CandidateStagingServices staging,
+        Func<ProcessStartInfo, Process>? startService = null)
     {
         var root = new RootCommand(
             "Selects and runs affected test projects, generates OpenAPI documents, installs Playwright browsers, verifies changed-code coverage, stages package candidates, verifies commit messages, and runs mutation tests.");
@@ -36,7 +38,7 @@ internal static partial class RepositoryCommandLine
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(CreateSelect(workingDirectory, run));
-        root.Subcommands.Add(CreateRun(workingDirectory, run, runConfigured));
+        root.Subcommands.Add(CreateRun(workingDirectory, run, runConfigured, startService));
         root.Subcommands.Add(CreateOpenApi(workingDirectory, runConfigured));
         root.Subcommands.Add(CreateInstallPlaywright(workingDirectory, run));
         root.Subcommands.Add(CreateCoverage(workingDirectory, run));
@@ -111,7 +113,8 @@ internal static partial class RepositoryCommandLine
     private static Command CreateRun(
         string workingDirectory,
         Func<string, string[], string, CancellationToken, Task<string>> run,
-        Func<string, string[], string, Action<ProcessStartInfo>, CancellationToken, Task<string>> runConfigured)
+        Func<string, string[], string, Action<ProcessStartInfo>, CancellationToken, Task<string>> runConfigured,
+        Func<ProcessStartInfo, Process>? startService)
     {
         var sliceOption = new Option<string[]>("--slice")
         {
@@ -143,7 +146,7 @@ internal static partial class RepositoryCommandLine
         var selectionOption = CreateSelectionOption();
         var command = new Command(
             "run",
-            "Restore, build, and test the selected test projects of the validation plan through one solution filter, after the slices' OpenAPI targets and Playwright browsers.")
+            "Restore, build, and test the selected test projects of the validation plan through one solution filter, after the slices' OpenAPI targets and Playwright browsers, with the slices' services running during the tests.")
         {
             sliceOption,
             configurationOption,
@@ -185,7 +188,8 @@ internal static partial class RepositoryCommandLine
                     runConfigured,
                     output,
                     error,
-                    ct);
+                    ct,
+                    startService: startService);
             },
             ct));
         return command;

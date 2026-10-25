@@ -16,6 +16,8 @@ internal static class SliceRun
 
     private const int MaxPlanBytes = 16 * 1024 * 1024;
 
+    private const string Redaction = "[redacted]";
+
     public static async Task Run(
         string root,
         string selection,
@@ -25,18 +27,23 @@ internal static class SliceRun
         TextWriter output,
         TextWriter error,
         CancellationToken ct,
-        TimeProvider? timeProvider = null)
+        TimeProvider? timeProvider = null,
+        Func<ProcessStartInfo, Process>? startService = null)
     {
         var time = timeProvider ?? TimeProvider.System;
+        var start = startService ?? ProcessRunner.Start;
         var execution = Path.Combine(selection, options.Slices.Length == 0 ? "execution" : "execution-" + string.Join('+', options.Slices));
         Directory.CreateDirectory(execution);
         var phases = new List<RunPhase>();
+        var hosts = new List<ServiceHost>();
+        var handed = new List<(string Variable, string Value)>();
         var started = time.GetUtcNow();
         var revision = "unavailable";
         var slices = options.Slices;
         string[] projects = [];
         var status = "failed";
         string? failure = null;
+        string? teardownFailure = null;
         try
         {
             CiConfiguration configuration = null!;
@@ -87,9 +94,25 @@ internal static class SliceRun
                 .Select(name => targets.First(candidate => candidate.Name == name))
                 .ToArray();
 
-            // Generation builds each target with --no-restore, so the filter restores and builds the targets too.
+            (string Slice, ServiceConfiguration Service)[] services =
+            [
+                .. configured.Where(static slice => slice.Service is not null).Select(static slice => (slice.Name, slice.Service!)),
+            ];
+            foreach (var (_, service) in services)
+            {
+                RepositoryPath.Resolve(root, service.Project);
+            }
+
+            // Generation builds each target with --no-restore, and a service starts with --no-build --no-restore, so the filter restores and builds them too.
             var filter = Path.Combine(execution, FilterFileName);
-            string[] filtered = [.. projects.Concat(openApi.Select(static target => target.Project)).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)];
+            string[] filtered =
+            [
+                .. projects
+                    .Concat(openApi.Select(static target => target.Project))
+                    .Concat(services.Select(static service => service.Service.Project))
+                    .Distinct(StringComparer.Ordinal)
+                    .Order(StringComparer.Ordinal),
+            ];
             await SolutionFilter.Write(root, configuration.Solution, filter, filtered, ct).ConfigureAwait(false);
             await Phase("restore", () => run("dotnet", ["restore", filter, "--locked-mode"], root, ct)).ConfigureAwait(false);
             await Phase("build", () => run("dotnet", ["build", filter, "-c", options.Configuration, "--no-restore"], root, ct)).ConfigureAwait(false);
@@ -119,6 +142,17 @@ internal static class SliceRun
                 }).ConfigureAwait(false);
             }
 
+            foreach (var (slice, service) in services)
+            {
+                await Phase(ServiceHost.PhaseName(slice), async () =>
+                {
+                    var host = ServiceHost.Start(slice, service, options.Configuration, root, execution, start);
+                    hosts.Add(host);
+                    handed.Add((service.ValueVariable, await host.WaitUntilReady(ct).ConfigureAwait(false)));
+                    return host.ReadyMessage();
+                }).ConfigureAwait(false);
+            }
+
             var results = Path.Combine(execution, "results");
             if (Directory.Exists(results))
             {
@@ -132,7 +166,7 @@ internal static class SliceRun
                 test = [.. test, "--results-directory-layout", "per-module", "--", "--coverlet", "--coverlet-output-format", "cobertura"];
             }
 
-            await Phase("test", () => run("dotnet", test, root, ct)).ConfigureAwait(false);
+            await Phase("test", () => handed.Count == 0 ? run("dotnet", test, root, ct) : RunTests(test)).ConfigureAwait(false);
             if (options.Coverage)
             {
                 await Phase("coverage", () =>
@@ -158,11 +192,69 @@ internal static class SliceRun
         }
         finally
         {
+            // The services stop first, so their phases and logs are part of the evidence, and a failure to stop never replaces the failure that came first.
+            teardownFailure = await StopServices().ConfigureAwait(false);
+            if (teardownFailure is not null)
+            {
+                status = "failed";
+                failure = failure is null ? teardownFailure : failure + Environment.NewLine + teardownFailure;
+            }
+
             // Evidence is written even when the run fails or is cancelled, so the job can upload it.
             var name = slices.Length == 0 ? "selection" : string.Join('+', slices);
             await RunEvidence.Write(
                 execution, name, revision, slices, projects, options, status, failure, started, time.GetUtcNow(), phases, root).ConfigureAwait(false);
         }
+
+        // Only a run that would otherwise have passed gets here, and a service that failed or was killed must not let it pass.
+        if (teardownFailure is not null)
+        {
+            throw new InvalidOperationException(teardownFailure);
+        }
+
+        async Task<string?> StopServices()
+        {
+            string? failed = null;
+            foreach (var host in Enumerable.Reverse(hosts))
+            {
+                try
+                {
+                    await Phase(ServiceHost.StopPhaseName(host.Slice), host.Stop).ConfigureAwait(false);
+                }
+                catch (Exception exception) when (exception is InvalidOperationException or IOException or UnauthorizedAccessException or ObjectDisposedException)
+                {
+                    failed = failed is null ? exception.Message : failed + Environment.NewLine + exception.Message;
+                }
+            }
+
+            return failed;
+        }
+
+        // The services' values reach only the test run, and its output and failure message, which can repeat them, never do.
+        async Task<string> RunTests(string[] arguments)
+        {
+            try
+            {
+                return Redact(await runConfigured(
+                    "dotnet",
+                    arguments,
+                    root,
+                    startInfo =>
+                    {
+                        foreach (var (variable, value) in handed)
+                        {
+                            startInfo.Environment[variable] = value;
+                        }
+                    },
+                    ct).ConfigureAwait(false));
+            }
+            catch (InvalidOperationException exception)
+            {
+                throw new InvalidOperationException(Redact(exception.Message));
+            }
+        }
+
+        string Redact(string text) => handed.Aggregate(text, static (current, service) => current.Replace(service.Value, Redaction, StringComparison.Ordinal));
 
         async Task Phase(string name, Func<Task<string>> action)
         {

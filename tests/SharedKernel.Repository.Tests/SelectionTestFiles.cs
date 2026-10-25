@@ -35,6 +35,29 @@ internal static class SelectionTestFiles
         return [.. document.RootElement.GetProperty("solution").GetProperty("projects").EnumerateArray().Select(static project => project.GetString()!)];
     }
 
+    /// <summary>
+    /// Selects with <paramref name="slices"/> as the configured slices into a directory named <paramref name="name"/> under the root and returns
+    /// what <c>select</c> printed, its plan, the filter of the <c>hosted</c> slice and the build filter, and its GitHub output.
+    /// </summary>
+    public static async Task<string[]> SelectedFiles(
+        RepositoryTestScope repository, ProcessLog processes, string slices, string name, string baseRevision, CancellationToken ct)
+    {
+        repository.Configure(slices);
+        var selection = Path.Combine(repository.Root, name);
+        var githubOutput = Path.Combine(repository.Root, name + ".txt");
+        var result = await RepositoryToolInvocation.Run(
+            repository.Root, ["select", "--base", baseRevision, "--selection", selection, "--github-output", githubOutput], processes.Run, ct);
+        result.ExitCode.ShouldBe(0, result.Error);
+        return
+        [
+            result.Output,
+            await File.ReadAllTextAsync(Path.Combine(selection, "selection.json"), ct),
+            await File.ReadAllTextAsync(Path.Combine(selection, "hosted.slnf"), ct),
+            await File.ReadAllTextAsync(Path.Combine(selection, "build.slnf"), ct),
+            await File.ReadAllTextAsync(githubOutput, ct),
+        ];
+    }
+
     /// <summary>Returns the selected test projects of a slice.</summary>
     public static string[] Tests(SelectionPlan selection, string slice) =>
         [.. selection.Slices.Single(candidate => candidate.Name == slice).Tests.Select(static test => test.Project)];

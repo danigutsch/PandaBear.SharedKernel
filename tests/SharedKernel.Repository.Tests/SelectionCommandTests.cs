@@ -8,6 +8,8 @@ public static class SelectionCommandTests
 {
     private const string BaseRevision = "0123456789abcdef0123456789abcdef01234567";
 
+    private const string LibrarySlice = """{ "name": "library", "projects": [] }""";
+
     [Fact]
     public static async Task An_empty_diff_writes_the_pinned_outputs_and_no_filter()
     {
@@ -98,6 +100,26 @@ public static class SelectionCommandTests
         var plan = await SelectionTestFiles.ReadPlan(selection, ct);
         plan.Slices[0].Tests.ShouldHaveSingleItem().SelectedBy.ShouldBe(["src/Core/Changed.cs"]);
         result.Output.ShouldContain("src/Core/Changed.cs: owned by src/Core/Core.csproj.", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public static async Task A_slice_service_changes_neither_the_plan_nor_the_filters_nor_the_outputs()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var repository = new RepositoryTestScope();
+        repository.AddTestProject("tests/Hosted.Tests/Hosted.Tests.csproj", "src/Core/Core.csproj");
+        repository.AddProject("tests/Host/Host.csproj", """<Project />""");
+        var processes = new ProcessLog(SelectionTestFiles.Git(diff: "src/Core/Changed.cs\0"));
+        const string hosted = """{ "name": "hosted", "projects": ["tests/Hosted.Tests/Hosted.Tests.csproj"]""";
+        const string service = """, "service": { "project": "tests/Host/Host.csproj", "readyFileVariable": "APP_READY_FILE", "valueVariable": "APP_VALUE" }""";
+
+        // Act
+        var without = await SelectionTestFiles.SelectedFiles(repository, processes, "[" + LibrarySlice + ", " + hosted + " }]", "without", BaseRevision, ct);
+        var with = await SelectionTestFiles.SelectedFiles(repository, processes, "[" + LibrarySlice + ", " + hosted + service + " }]", "with", BaseRevision, ct);
+
+        // Assert
+        with.ShouldBe(without, "A service is started by run; selection neither lists its project nor changes what a slice selects.");
     }
 
     [Fact]
