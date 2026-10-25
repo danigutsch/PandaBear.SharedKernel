@@ -41,25 +41,35 @@ public sealed class PostgreSqlFixtureTests(PostgreSqlFixture fixture)
         secondCount.ShouldBe(0);
     }
 
+    // A token that is already cancelled stops the pool at its gate, before it registers a name, so this test cannot show
+    // the release of a name that was registered first. SharedKernel.Npgsql.Tests covers that path on the same lease and
+    // pool code: PostgreSqlTestDatabaseLeaseCreationTests registers a name itself and then cancels, and
+    // PostgreSqlTestDatabasePoolCancellationTests cancels after the pool has resolved the server. The pool is private to
+    // this test because the fixture's pool is shared with tests that run in parallel, so only a private pool on the
+    // fixture's server lets the test compare the registered names exactly.
     [Fact]
     public async Task Cancelled_database_creation_removes_the_registered_name()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        await using var existingDatabase = await fixture.CreateIsolatedDatabase(ct);
-        var databaseName = $"{PostgreSqlTestDatabase.DatabaseNamePrefix}{Guid.NewGuid():N}";
+        await using var pool = new PostgreSqlTestDatabasePool(await fixture.GetServerConnectionString(ct));
+        await using var existingDatabase = await pool.Create(ct);
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
 
         // Act
-        Func<Task> createDatabase = async () =>
-            await fixture.CreateIsolatedDatabase(databaseName, cancellation.Token);
+        Func<Task> createDatabase = async () => await pool.Create(cancellation.Token);
         var exception = await createDatabase.ShouldThrowAssignableTo<OperationCanceledException>();
-        var ownsDatabase = fixture.OwnsDatabase(databaseName);
+        var ownedNames = pool.OwnedDatabaseNames;
+        var existingDatabaseExists = await fixture.DatabaseExists(existingDatabase.DatabaseName, ct);
+        await using var nextDatabase = await pool.Create(ct);
+        var nextDatabaseExists = await fixture.DatabaseExists(nextDatabase.DatabaseName, ct);
 
         // Assert
         exception.ShouldNotBeNull();
-        ownsDatabase.ShouldBeFalse();
+        ownedNames.ShouldHaveSingleItem().ShouldBe(existingDatabase.DatabaseName);
+        existingDatabaseExists.ShouldBeTrue();
+        nextDatabaseExists.ShouldBeTrue();
     }
 
     [Fact]
@@ -84,7 +94,7 @@ public sealed class PostgreSqlFixtureTests(PostgreSqlFixture fixture)
     public async Task Cleanup_rejects_a_database_name_not_issued_by_the_fixture()
     {
         // Arrange
-        Func<Task> dropDatabase = () => PostgreSqlTestDatabase.DropDatabase(
+        Func<Task> dropDatabase = () => PostgreSqlTestDatabaseLease.DropDatabase(
             "Host=localhost;Database=postgres;Username=test;Password=test",
             "postgres");
 

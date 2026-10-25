@@ -13,7 +13,7 @@ namespace PandaBear.EntityFrameworkCore.Tests;
     Justification = "DisposeAsync passes the data source to the independent aggregate cleanup helper.")]
 public sealed class EfCoreCommandTransactionScopeTests(PostgreSqlFixture fixture) : IAsyncLifetime
 {
-    private PostgreSqlTestDatabase? database;
+    private PostgreSqlTestDatabaseLease? database;
     private NpgsqlDataSource? dataSource;
 
     private NpgsqlDataSource DataSource =>

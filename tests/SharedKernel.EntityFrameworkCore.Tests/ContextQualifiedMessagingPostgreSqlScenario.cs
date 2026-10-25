@@ -13,12 +13,12 @@ internal sealed class ContextQualifiedMessagingPostgreSqlScenario : IAsyncDispos
     private const string FirstConsumerName = "first-consumer";
     private const string SecondConsumerName = "second-consumer";
 
-    private readonly PostgreSqlTestDatabase database;
+    private readonly PostgreSqlTestDatabaseLease database;
     private readonly NpgsqlDataSource dataSource;
     private readonly ServiceProvider provider;
 
     private ContextQualifiedMessagingPostgreSqlScenario(
-        PostgreSqlTestDatabase database,
+        PostgreSqlTestDatabaseLease database,
         NpgsqlDataSource dataSource,
         ServiceProvider provider,
         string firstCreateScript,
