@@ -72,19 +72,24 @@ public sealed class OnDemandResourceTests
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         var start = new ControlledStart<string>();
-        await using var resource = new OnDemandResource<string>(start.Start);
+
+        // Disposed explicitly below: disposal waits for the start, which only completes after the wait that follows.
+        var resource = new OnDemandResource<string>(start.Start);
         using var impatientCaller = CancellationTokenSource.CreateLinkedTokenSource(ct);
         var abandoned = resource.Get(impatientCaller.Token);
         var patient = resource.Get(ct);
 
         // Act
         await impatientCaller.CancelAsync();
-        Func<Task> awaitAbandoned = () => abandoned;
+
+        // The start completes only after this wait, so a caller that is not abandoned must fail the test, not hang it.
+        Func<Task> awaitAbandoned = () => abandoned.WaitAsync(TimeSpan.FromSeconds(30));
         _ = await awaitAbandoned.ShouldThrowAssignableTo<OperationCanceledException>();
         var startTokenCancelled = start.Token.IsCancellationRequested;
         start.Complete("value");
         var patientValue = await patient;
         var laterValue = await resource.Get(ct);
+        await resource.DisposeAsync();
 
         // Assert
         start.Token.ShouldNotBe(impatientCaller.Token, "the start must run with a token owned by the resource");
@@ -173,47 +178,6 @@ public sealed class OnDemandResourceTests
     }
 
     [Fact]
-    public async Task Is_started_is_true_only_after_the_start_succeeded_and_until_disposal()
-    {
-        // Arrange
-        var ct = TestContext.Current.CancellationToken;
-        var start = new ControlledStart<string>();
-        var resource = new OnDemandResource<string>(start.Start);
-        var beforeStart = resource.IsStarted;
-
-        // Act
-        var pending = resource.Get(ct);
-        var whilePending = resource.IsStarted;
-        start.Complete("value");
-        _ = await pending;
-        var afterStart = resource.IsStarted;
-        await resource.DisposeAsync();
-        var afterDisposal = resource.IsStarted;
-
-        // Assert
-        beforeStart.ShouldBeFalse();
-        whilePending.ShouldBeFalse("a pending start has not produced a usable value");
-        afterStart.ShouldBeTrue();
-        afterDisposal.ShouldBeFalse("a disposed resource no longer holds a started value");
-    }
-
-    [Fact]
-    public async Task Is_started_stays_false_after_a_failed_start()
-    {
-        // Arrange
-        var ct = TestContext.Current.CancellationToken;
-        await using var resource = new OnDemandResource<string>(_ => Task.FromException<string>(new InvalidOperationException("startup failed")));
-        Func<Task> get = () => resource.Get(ct);
-
-        // Act
-        _ = await get.ShouldThrow<InvalidOperationException>();
-        var isStarted = resource.IsStarted;
-
-        // Assert
-        isStarted.ShouldBeFalse();
-    }
-
-    [Fact]
     public async Task Disposing_an_unstarted_resource_never_starts_it()
     {
         // Arrange
@@ -235,7 +199,6 @@ public sealed class OnDemandResourceTests
         // Assert
         start.Calls.ShouldBe(0, "disposal and a later Get must not start the resource");
         stops.ShouldBe(0, "there is nothing to stop");
-        resource.IsStarted.ShouldBeFalse();
     }
 
     [Fact]
@@ -262,7 +225,6 @@ public sealed class OnDemandResourceTests
 
         // Assert
         stops.ShouldBe(0, "a cancelled start produced no value to stop");
-        resource.IsStarted.ShouldBeFalse();
     }
 
     [Fact]
@@ -514,29 +476,208 @@ public sealed class OnDemandResourceTests
     }
 
     [Fact]
-    public async Task Racing_get_and_disposal_never_leaves_a_started_value_undisposed()
+    public async Task Racing_gets_and_disposal_start_each_resource_at_most_once_and_never_leave_a_started_value_undisposed()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        var markers = new ConcurrentBag<AsyncDisposableMarker>();
-        var resources = Enumerable.Range(0, 64).Select(_ => new OnDemandResource<AsyncDisposableMarker>(token =>
+        var starts = new ConcurrentBag<(int Resource, AsyncDisposableMarker Marker)>();
+        var resources = Enumerable.Range(0, 64).Select(index => new OnDemandResource<AsyncDisposableMarker>(token =>
         {
             var marker = new AsyncDisposableMarker();
-            markers.Add(marker);
+            starts.Add((index, marker));
             return Task.FromResult(marker);
         })).ToArray();
 
         // Act
         var races = resources.Select(resource => Task.WhenAll(
             Task.Run(() => resource.Get(ct), ct),
+            Task.Run(() => resource.Get(ct), ct),
             Task.Run(() => resource.DisposeAsync().AsTask(), ct))).ToArray();
         _ = await Task.WhenAny(Task.WhenAll(races));
         var failures = races.Where(race => race.IsFaulted).SelectMany(race => race.Exception!.InnerExceptions).ToArray();
 
         // Assert
-        markers.Count.ShouldBeLessThanOrEqualTo(resources.Length, "no resource may start twice");
-        markers.ShouldAllSatisfy(marker => marker.DisposeCount.ShouldBe(1, "a started value must be disposed exactly once"));
+        starts.GroupBy(start => start.Resource).ShouldAllSatisfy(
+            resourceStarts => resourceStarts.Count().ShouldBe(1, "concurrent callers must share one start"));
+        starts.ShouldAllSatisfy(start => start.Marker.DisposeCount.ShouldBe(1, "a started value must be disposed exactly once"));
         failures.ShouldAllSatisfy(failure => failure.ShouldBeOfType<ObjectDisposedException>(), "only a Get that lost the race may fail");
+    }
+
+    [Fact]
+    public async Task A_throwing_cancellation_callback_does_not_let_disposal_abandon_the_pending_start()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var callbackFailure = new InvalidOperationException("cancellation callback failed");
+        var produced = new AsyncDisposableMarker();
+        var start = new ControlledStart<AsyncDisposableMarker>(callbackFailure);
+        var resource = new OnDemandResource<AsyncDisposableMarker>(start.Start);
+        var pending = resource.Get(ct);
+        var disposal = resource.DisposeAsync().AsTask();
+        await start.TokenCancelled;
+
+        // Act
+        var finishedBeforeStart = disposal.IsCompleted;
+        start.Complete(produced);
+        Func<Task> awaitDisposal = () => disposal;
+        var surfaced = await awaitDisposal.ShouldThrowAssignableTo<Exception>();
+        _ = await pending;
+
+        // Assert
+        finishedBeforeStart.ShouldBeFalse("disposal must keep waiting for the pending start although a cancellation callback threw");
+        produced.DisposeCount.ShouldBe(1, "a value produced after the callback failure must still be released");
+        ExceptionLeaves.Of(surfaced).ShouldContain(callbackFailure, "the failure of the callback must not be masked");
+    }
+
+    [Fact]
+    public async Task A_throwing_cancellation_callback_is_reported_together_with_a_failing_stop()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var callbackFailure = new InvalidOperationException("cancellation callback failed");
+        var stopFailure = new InvalidOperationException("stop failed");
+        var start = new ControlledStart<string>(callbackFailure);
+        var resource = new OnDemandResource<string>(start.Start, _ => ValueTask.FromException(stopFailure));
+        var pending = resource.Get(ct);
+        var disposal = resource.DisposeAsync().AsTask();
+        await start.TokenCancelled;
+
+        // Act
+        start.Complete("value");
+        Func<Task> awaitDisposal = () => disposal;
+        var surfaced = await awaitDisposal.ShouldThrowAssignableTo<Exception>();
+        _ = await pending;
+
+        // Assert
+        var failures = ExceptionLeaves.Of(surfaced);
+        failures.ShouldContain(callbackFailure, "the failed cancellation callback must be reported");
+        failures.ShouldContain(stopFailure, "the failing stop must be reported with it, not skipped");
+    }
+
+    [Fact]
+    public async Task A_start_failure_that_no_caller_received_surfaces_from_disposal()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var failure = new InvalidOperationException("startup and cleanup failed");
+        var failStart = new TaskCompletionSource();
+
+        // The start observes its token, so a failure above makes the disposal at the end cancel it instead of hanging.
+        await using var resource = new OnDemandResource<string>(async token =>
+        {
+            await failStart.Task.WaitAsync(token).ConfigureAwait(false);
+            throw failure;
+        });
+        using var impatientCaller = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        var abandoned = resource.Get(impatientCaller.Token);
+        await impatientCaller.CancelAsync();
+        Func<Task> awaitAbandoned = () => abandoned.WaitAsync(TimeSpan.FromSeconds(30));
+        _ = await awaitAbandoned.ShouldThrowAssignableTo<OperationCanceledException>();
+
+        // A thread-pool thread has no synchronization context, so the continuations of the start run inline and the
+        // start has failed, with nobody waiting, by the time this returns.
+        await Task.Run(() => failStart.SetResult(), ct);
+
+        // Act
+        Func<Task> dispose = () => resource.DisposeAsync().AsTask();
+        var surfaced = await dispose.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        surfaced.ShouldBeSameAs(failure, "a failure that every caller abandoned must not be lost");
+    }
+
+    [Fact]
+    public async Task Get_from_the_synchronous_part_of_the_start_throws_instead_of_recursing()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        OnDemandResource<string>? resource = null;
+        resource = new OnDemandResource<string>(token => resource!.Get(token));
+
+        // A nested call that is not rejected waits for the start it belongs to, so it must fail this test, not hang it.
+        Func<Task> get = () => resource.Get(ct).WaitAsync(TimeSpan.FromSeconds(30));
+
+        // Act
+        var failure = await get.ShouldThrow<InvalidOperationException>();
+        await resource.DisposeAsync();
+
+        // Assert
+        failure.Message.ShouldContain("Get", "the failure must name the forbidden call");
+    }
+
+    [Fact]
+    public async Task A_start_cancelled_by_something_other_than_disposal_fails_with_a_descriptive_exception()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var startupTimeout = new CancellationTokenSource();
+        await startupTimeout.CancelAsync();
+        var calls = 0;
+        await using var resource = new OnDemandResource<string>(_ =>
+        {
+            calls++;
+            return Task.FromCanceled<string>(startupTimeout.Token);
+        });
+        Func<Task> first = () => resource.Get(ct);
+        Func<Task> later = () => resource.Get(ct);
+
+        // Act
+        var firstFailure = await first.ShouldThrow<InvalidOperationException>();
+        var laterFailure = await later.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        _ = firstFailure.InnerException.ShouldBeAssignableTo<OperationCanceledException>("the cancellation must stay attached as the cause");
+        laterFailure.ShouldBeSameAs(firstFailure, "the failure is cached like any other");
+        calls.ShouldBe(1, "a cancelled start must not repeat");
+    }
+
+    [Fact]
+    public async Task A_concurrent_second_disposal_waits_for_the_first_without_repeating_its_failure()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var failure = new InvalidOperationException("stop failed");
+        var stopEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var stopMayFinish = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var resource = new OnDemandResource<string>(
+            _ => Task.FromResult("value"),
+            async _ =>
+            {
+                stopEntered.SetResult();
+                await stopMayFinish.Task.ConfigureAwait(false);
+                throw failure;
+            });
+        _ = await resource.Get(ct);
+        var first = resource.DisposeAsync().AsTask();
+        await stopEntered.Task.WaitAsync(TimeSpan.FromSeconds(30), ct);
+
+        // Act
+        var second = resource.DisposeAsync().AsTask();
+        var secondFinishedWhileStopRuns = second.IsCompleted;
+        stopMayFinish.SetResult();
+        Func<Task> awaitFirst = () => first;
+        var surfaced = await awaitFirst.ShouldThrow<InvalidOperationException>();
+        await second.WaitAsync(TimeSpan.FromSeconds(30), ct);
+
+        // Assert
+        secondFinishedWhileStopRuns.ShouldBeFalse("a disposal that overlaps the first must not complete before the value is stopped");
+        surfaced.ShouldBeSameAs(failure, "the first disposal owns the failure");
+    }
+
+    [Fact]
+    public async Task Disposing_a_value_that_is_both_async_and_sync_disposable_uses_the_async_disposal_only()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var resource = new OnDemandResource<DualDisposableMarker>(_ => Task.FromResult(new DualDisposableMarker()));
+        var marker = await resource.Get(ct);
+
+        // Act
+        await resource.DisposeAsync();
+
+        // Assert
+        marker.AsyncDisposeCount.ShouldBe(1, "IAsyncDisposable is preferred when a value implements both interfaces");
+        marker.DisposeCount.ShouldBe(0, "a value is disposed through one path only");
     }
 
     [Fact]
@@ -545,7 +686,10 @@ public sealed class OnDemandResourceTests
         // Arrange
         Func<object> construct = () => new OnDemandResource<string>(null!);
 
-        // Act, Assert
-        _ = construct.ShouldThrow<ArgumentNullException>();
+        // Act
+        var failure = construct.ShouldThrow<ArgumentNullException>();
+
+        // Assert
+        failure.ParamName.ShouldBe("start", "the argument name is part of the constructor contract");
     }
 }

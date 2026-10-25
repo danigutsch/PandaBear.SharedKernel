@@ -18,7 +18,10 @@ When another component starts the server on demand, pass a resolver instead of a
 pool calls it on the first `Create`, inside its gate and with that caller's token, and keeps the first
 successful result. A failed or cancelled resolution registers no database, so the next `Create` resolves
 again. A pool that never created a database never calls the resolver: disposing it neither resolves nor
-contacts a server. `OnDemandResource<T>` from `PandaBear.SharedKernel.IntegrationTesting` is a natural source.
+contacts a server. A resolver that returns `null` or a blank string is a defect, not a retry signal: `Create`
+fails with `InvalidOperationException` and registers nothing, so a resolver whose server is not ready yet must wait
+or throw. Other resolver failures reach the caller of `Create` unchanged. `OnDemandResource<T>` from
+`PandaBear.SharedKernel.IntegrationTesting` is a natural source.
 
 ```csharp
 await using var server = new OnDemandResource<AspireTestApplication>(startServer);

@@ -20,5 +20,4 @@ static PandaBear.IntegrationTesting.PostgreSqlPublicSchemaReset.Reset(System.Dat
 PandaBear.IntegrationTesting.OnDemandResource<T>
 PandaBear.IntegrationTesting.OnDemandResource<T>.DisposeAsync() -> System.Threading.Tasks.ValueTask
 PandaBear.IntegrationTesting.OnDemandResource<T>.Get(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task<T>!
-PandaBear.IntegrationTesting.OnDemandResource<T>.IsStarted.get -> bool
 PandaBear.IntegrationTesting.OnDemandResource<T>.OnDemandResource(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.Task<T>!>! start, System.Func<T, System.Threading.Tasks.ValueTask>? stop = null) -> void

@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Npgsql;
 
 namespace PandaBear.Npgsql.Testing;
@@ -16,6 +17,10 @@ public sealed class PostgreSqlTestDatabasePool : IAsyncDisposable
 
     /// <summary>Creates a pool without starting or taking ownership of the server.</summary>
     /// <param name="serverConnectionString">A connection string with permission to create databases.</param>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="serverConnectionString"/> is <see langword="null"/>, blank, or not a connection string.
+    /// </exception>
+    [OverloadResolutionPriority(1)] // A null literal keeps binding here, as it did before the resolver overload existed.
     public PostgreSqlTestDatabasePool(string serverConnectionString)
         : this(CreateFixedResolver(serverConnectionString))
     {
@@ -29,8 +34,14 @@ public sealed class PostgreSqlTestDatabasePool : IAsyncDisposable
     /// Returns a connection string with permission to create databases. It runs inside the pool's gate with the
     /// token of the caller that needs it. The first successful result is kept; a failed or cancelled
     /// resolution registers nothing and the next <see cref="Create"/> resolves again. A pool that never
-    /// created a database never calls it.
+    /// created a database never calls it. A <see langword="null"/> or blank result is a defect of the resolver:
+    /// <see cref="Create"/> fails with <see cref="InvalidOperationException"/> rather than waiting for a server,
+    /// so a resolver that is not ready yet must wait or throw. Other failures of the resolver reach the caller
+    /// of <see cref="Create"/> unchanged.
     /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="resolveServerConnectionString"/> is <see langword="null"/>.
+    /// </exception>
     public PostgreSqlTestDatabasePool(Func<CancellationToken, Task<string>> resolveServerConnectionString)
     {
         ArgumentNullException.ThrowIfNull(resolveServerConnectionString);
@@ -43,6 +54,15 @@ public sealed class PostgreSqlTestDatabasePool : IAsyncDisposable
     /// <summary>Creates a new isolated database with an internally generated name.</summary>
     /// <param name="ct">Cancels acquisition without cancelling subsequent cleanup.</param>
     /// <returns>A lease owned by the caller and tracked until successful cleanup.</returns>
+    /// <exception cref="OperationCanceledException">
+    /// Thrown when <paramref name="ct"/> is cancelled while the caller waits for the pool, while the server connection
+    /// string is resolved, or while the database is created.
+    /// </exception>
+    /// <exception cref="ObjectDisposedException">Thrown when the pool is disposed; the server is not resolved.</exception>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the resolver returns <see langword="null"/> or a blank connection string; no database is registered
+    /// and the next call resolves again.
+    /// </exception>
     public async Task<PostgreSqlTestDatabaseLease> Create(CancellationToken ct)
     {
         await _gate.WaitAsync(ct).ConfigureAwait(false);

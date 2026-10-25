@@ -188,8 +188,24 @@ public sealed class PostgreSqlTestDatabasePoolLazyServerTests(PostgreSqlTestServ
         // Arrange
         Func<object> construct = () => new PostgreSqlTestDatabasePool((Func<CancellationToken, Task<string>>)null!);
 
-        // Act, Assert
-        _ = construct.ShouldThrow<ArgumentNullException>();
+        // Act
+        var failure = construct.ShouldThrow<ArgumentNullException>();
+
+        // Assert
+        failure.ParamName.ShouldBe("resolveServerConnectionString", "the argument name is part of the constructor contract");
+    }
+
+    [Fact]
+    public void A_null_literal_still_binds_to_the_connection_string_constructor()
+    {
+        // Arrange
+        Func<object> construct = () => new PostgreSqlTestDatabasePool(null!);
+
+        // Act
+        var failure = construct.ShouldThrow<ArgumentNullException>();
+
+        // Assert
+        failure.ParamName.ShouldBe("serverConnectionString", "a call that compiled before the resolver overload existed must keep its meaning");
     }
 
     [Fact]

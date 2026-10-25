@@ -80,21 +80,27 @@ public sealed class ServerFixture : IAsyncLifetime
 ```
 
 - The first `Get` invokes the start delegate on the calling thread, without `Task.Run`, and never again. The
-  delegate receives a token owned by the resource, so it must not depend on the first caller's test token.
-  Other callers wait for the synchronous part of the start and then share the same task.
+  delegate receives a token owned by the resource, so it must not depend on the first caller's test token. Other
+  callers wait for the synchronous part of the start and then share the same task. The delegate must not call `Get`
+  or `DisposeAsync` on its own resource: a `Get` from its synchronous part throws `InvalidOperationException`, and a
+  later call would wait for the start itself and never complete.
 - A cancelled `ct` throws before anything starts, and cancelling it while waiting abandons only that caller's wait;
   it never cancels or poisons the shared start.
 - A failed start is cached: every caller observes the same failure and the delegate is not invoked again, so a
-  multi-minute startup timeout is not repeated for every test. A synchronous throw becomes a faulted task.
-- `DisposeAsync` is idempotent and safe in any state. It does nothing for a resource that never started, cancels
-  and awaits a pending start, and otherwise disposes the value once, through the optional stop delegate or, when
-  there is none, through `IAsyncDisposable` or `IDisposable`. Failures of a start surface from `Get`, and a start
-  that already failed is not reported again. A pending start that fails with anything but the cancellation that
-  disposal requested, such as a failure carrying cleanup errors, also surfaces from `DisposeAsync`, as do failures of
-  the stop delegate or of the value's own disposal. `Get` after disposal throws `ObjectDisposedException` without
+  multi-minute startup timeout is not repeated for every test. A synchronous throw becomes a faulted task. A start
+  that is cancelled by anything but disposal, such as its own startup timeout, fails with an
+  `InvalidOperationException` that carries the cancellation as its inner exception.
+- `DisposeAsync` never starts the resource and is safe in any state. It does nothing for a resource that never
+  started, cancels and awaits a pending start, and otherwise disposes the value once, through the optional stop
+  delegate or, when there is none, through `IAsyncDisposable` (preferred) or `IDisposable`. Failures of a start
+  surface from `Get`; a start that failed before disposal is reported by `DisposeAsync` only when no caller of `Get`
+  received the failure. Any cancellation that a pending start shows after disposal requested one is swallowed, even
+  when another source raised it. A pending start that fails with anything else, such as a failure carrying cleanup
+  errors, also surfaces from `DisposeAsync`, as do failures of cancellation callbacks, of the stop delegate and of the
+  value's own disposal; several failures are combined in an `AggregateException`. Overlapping and later calls wait
+  for the first disposal and never repeat its failure. `Get` after disposal throws `ObjectDisposedException` without
   starting anything.
-- Dispose only after every borrower has finished. `IsStarted` reports whether a value was started successfully and
-  is not disposed, so teardown can skip work that would otherwise start the resource.
+- Dispose only after every borrower has finished.
 
 ## Concurrent container ports and cleanup
 
