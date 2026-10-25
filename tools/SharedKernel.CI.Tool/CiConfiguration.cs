@@ -8,6 +8,7 @@ namespace PandaBear.CI.Tool;
 /// <param name="DefaultSlice">The slice that runs the solution test projects that no slice lists.</param>
 /// <param name="OpenApi">The OpenAPI targets that <c>openapi</c> and the slices generate.</param>
 /// <param name="Coverage">The changed-code coverage policy of the <c>coverage</c> commands.</param>
+/// <param name="Mutation">The Stryker.NET runs of <c>run-mutation-tests</c>.</param>
 internal sealed record CiConfiguration(
     int Version,
     string Solution,
@@ -15,4 +16,5 @@ internal sealed record CiConfiguration(
     SliceConfiguration[] Slices,
     string? DefaultSlice = null,
     OpenApiTargetConfiguration[]? OpenApi = null,
-    CoverageConfiguration? Coverage = null);
+    CoverageConfiguration? Coverage = null,
+    MutationConfiguration? Mutation = null);

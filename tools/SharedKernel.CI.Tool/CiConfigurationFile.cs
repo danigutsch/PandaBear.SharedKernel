@@ -195,6 +195,41 @@ internal static partial class CiConfigurationFile
         {
             ValidateCoverage(coverage);
         }
+
+        if (configuration.Mutation is { } mutation)
+        {
+            ValidateMutation(mutation);
+        }
+    }
+
+    private static void ValidateMutation(MutationConfiguration mutation)
+    {
+        // The version reaches dotnet tool install as --version <value> and names the scratch tool directory.
+        if (!ExactVersion().IsMatch(mutation.StrykerVersion))
+        {
+            throw Invalid("$.mutation.strykerVersion must be an exact NuGet version, such as 4.15.0.");
+        }
+
+        if (mutation.ConfigFiles.Length == 0)
+        {
+            throw Invalid("$.mutation.configFiles must name at least one Stryker config file.");
+        }
+
+        var configFiles = new HashSet<string>(StringComparer.Ordinal);
+        for (var index = 0; index < mutation.ConfigFiles.Length; index++)
+        {
+            var path = "$.mutation.configFiles[" + index.ToString(CultureInfo.InvariantCulture) + "]";
+            var configFile = mutation.ConfigFiles[index];
+            if (configFile is null || !RepositoryPath.IsRelative(configFile))
+            {
+                throw Invalid(path + " must be a repository-relative file path with '/' separators and without empty, '.', or '..' segments.");
+            }
+
+            if (!configFiles.Add(configFile))
+            {
+                throw Invalid(path + " repeats " + configFile + ".");
+            }
+        }
     }
 
     private static void ValidateCoverage(CoverageConfiguration coverage)
@@ -285,4 +320,7 @@ internal static partial class CiConfigurationFile
 
     [GeneratedRegex(@"\A[A-Za-z_][A-Za-z0-9_]*\z", RegexOptions.CultureInvariant)]
     private static partial Regex Property();
+
+    [GeneratedRegex(@"\A[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?\z", RegexOptions.CultureInvariant)]
+    private static partial Regex ExactVersion();
 }
