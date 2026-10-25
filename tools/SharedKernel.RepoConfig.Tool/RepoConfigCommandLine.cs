@@ -50,6 +50,8 @@ internal static class RepoConfigCommandLine
             CreateAutomationCommand(environment, root),
             CreateVerifyTextEncodingCommand(environment, root),
             CreateVerifyJsonCommand(environment, root),
+            CreateVerifyLineEndingsCommand(environment, root),
+            CreateVerifyLinksCommand(environment, root),
             CreateVerifyPodmanDnsCommand(environment),
             CreateSecurityCommand(environment, root),
             CreateDependencyCommand(environment, root),
@@ -295,6 +297,31 @@ internal static class RepoConfigCommandLine
         Command command = new("verify-json", "Verify that the working-tree content of every JSON file in the Git index is UTF-8 JSON. Comments and trailing commas are allowed.") { root };
         SetGuardedAction(command, (parseResult, output, error, ct) =>
             RepoConfigToolApplication.VerifyJson(ResolveRoot(parseResult, root, environment), output, error, ct));
+        return command;
+    }
+
+    private static Command CreateVerifyLineEndingsCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Command command = new("verify-line-endings", "Verify that files in the Git index and the working tree use the line endings that their eol attribute requires.") { root };
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+            RepoConfigToolApplication.VerifyLineEndings(ResolveRoot(parseResult, root, environment), output, error, ct));
+        return command;
+    }
+
+    private static Command CreateVerifyLinksCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Argument<string[]> paths = new("path")
+        {
+            Description = "Markdown or text files, or directories of Markdown files, to scan instead of the configured include patterns. Relative to the root.",
+            Arity = ArgumentArity.ZeroOrMore,
+        };
+        Command command = new("verify-links", "Verify local links, Markdown anchors, and issue references in documentation files.") { paths, root };
+        SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyLinks(
+            ResolveRoot(parseResult, root, environment),
+            parseResult.GetValue(paths) ?? [],
+            output,
+            error,
+            ct));
         return command;
     }
 

@@ -88,7 +88,34 @@ internal static class ConsumerConfigurationFile
             Validate(licenseExceptions);
         }
 
+        if (configuration.Links is { } links)
+        {
+            Validate(links);
+        }
+
         return configuration;
+    }
+
+    private static void Validate(LinkConfiguration links)
+    {
+        if (links.Include.Length == 0)
+        {
+            throw Invalid("$.links.include must name at least one pattern.");
+        }
+
+        ValidatePatterns(links.Include, "$.links.include");
+        ValidatePatterns(links.Exclude, "$.links.exclude");
+    }
+
+    private static void ValidatePatterns(string[] patterns, string path)
+    {
+        for (var index = 0; index < patterns.Length; index++)
+        {
+            if (!RepositoryPath.IsRelative(patterns[index]))
+            {
+                throw Invalid(string.Create(CultureInfo.InvariantCulture, $"{path}[{index}] must be a repository-relative path pattern with '/' separators and without empty, '.', or '..' segments."));
+            }
+        }
     }
 
     private static void Validate(LicenseExceptionConfiguration licenseExceptions)

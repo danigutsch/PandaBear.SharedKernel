@@ -6,12 +6,12 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 `sharedkernel-repo` maintains repository roadmap configuration, its optional GitHub projection, dependency
 snapshots, and repository checks. The tool holds generic engines; the consuming repository owns its policy and
-data, such as the license exceptions in `.config/sharedkernel-repo.json`, its workflows, and protected-environment
-approvals.
+data, such as the license exceptions and documentation link scope in `.config/sharedkernel-repo.json`, its workflows,
+and protected-environment approvals.
 
 ## Prerequisites
 
-The tool runs on .NET 10. `verify-text-encoding`, `verify-json`, `dependency snapshot`,
+The tool runs on .NET 10. `verify-text-encoding`, `verify-line-endings`, `verify-json`, `dependency snapshot`,
 `dependency verify-license-exceptions`, and the `automation` steps also need Git on an absolute `PATH` entry.
 
 ## Installation
@@ -48,6 +48,9 @@ sharedkernel-repo github link-subissue --repository owner/repository --parent 10
 sharedkernel-repo automation publish-result --force
 sharedkernel-repo verify-podman-dns --verbosity quiet
 sharedkernel-repo verify-json
+sharedkernel-repo verify-line-endings
+sharedkernel-repo verify-links
+sharedkernel-repo verify-links roadmap/README.md
 sharedkernel-repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository
 sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_OUTPUT"
 ```
@@ -66,6 +69,8 @@ sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
 | `verify-json` | Fails when the working-tree content of a `*.json` file in the Git index is missing, not UTF-8, or not JSON. Comments, trailing commas, and a UTF-8 byte order mark are allowed. Each failure names the path, line, and byte. |
+| `verify-line-endings` | Fails when a file in the Git index has CRLF or mixed line endings, staged or in the working tree, while its attributes set `eol=lf`, or LF or mixed line endings in the working tree while they set `eol=crlf`. |
+| `verify-links [<path>...]` | Fails on a broken local link or Markdown anchor, a link that leaves the repository, or an issue or pull request reference in documentation files; see [Documentation links](#documentation-links). |
 | `dependency snapshot` | Generates a dependency snapshot from committed lock files; see [Offline dependency snapshots](#offline-dependency-snapshots). |
 | `dependency submit` | Submits a dependency snapshot to the GitHub dependency graph. |
 | `dependency verify-license-exceptions` | Verifies the configured license exceptions; see [License exceptions](#license-exceptions). |
@@ -74,7 +79,7 @@ sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_
 `--force` is given. Lines that describe previewed changes start with `preview:`. The `publish-result`
 preview names the repository, base SHA, branch, and changed paths; the `dependency submit` preview names
 the snapshot, its size, and the endpoint. Every command except `verify-podman-dns` and `github link-subissue` takes `--root <path>`,
-which defaults to the current directory; relative `--snapshot` and `--github-output` paths resolve against
+which defaults to the current directory; relative `--snapshot`, `--github-output`, and `verify-links` paths resolve against
 it. Run `sharedkernel-repo <command> --help` for the options of each command.
 
 `[diagram]` before a command line prints how the tool parses it without running it, and exits 1 when the
@@ -103,6 +108,10 @@ file and the JSON path of the problem. A command fails when the file lacks its s
     "packages": {
       "Example.Package": "2.0.0"
     }
+  },
+  "links": {
+    "include": ["README.md", "docs/*.md"],
+    "exclude": ["*/bin/*", "docs/GENERATED*.md"]
   }
 }
 ```
@@ -122,6 +131,42 @@ license exceptions that a review approved:
 Every finding is listed. When none is found, `--github-output <path>` appends
 `packages=pkg:nuget/<id>@<version>,...` in the configured order, the format of the
 `allow-dependencies-licenses` input of GitHub's dependency review action; a failure appends nothing.
+
+### Documentation links
+
+`verify-links` checks the documentation files that the `links` section selects:
+
+- `include` holds at least one path pattern. Without arguments, the command scans each file whose path matches one.
+- `exclude` holds path patterns of files that are never scanned, matched after symbolic links resolve; it may be
+  empty.
+- Patterns match the whole root-relative path with
+  `FileSystemName.MatchesSimpleExpression(pattern, path, ignoreCase: false)`: `*` matches any characters, including
+  `/`, and `?` matches one character.
+
+Paths given as arguments replace `include` but not `exclude`. Each names a `.md` or `.txt` file, or a directory whose
+`*.md` files are scanned recursively, relative to the root; other paths are skipped. Files resolve through symbolic
+links, and a file that resolves outside the root is skipped. The walk does not descend into symbolic links to
+directories.
+
+Outside fenced code (lines that start with three backticks or tildes), every line, including inline code and HTML
+comments, is checked:
+
+- Inline links `[text](target)` end at the first `)`; reference definitions `[name]: target` and autolinks
+  `<target>` that hold `://` or start with `#` are checked too. URLs and `mailto:`, `tel:`, and `urn:` targets are
+  not followed.
+- A local target is percent-decoded, resolves against the file's directory through symbolic links, and must exist
+  inside the root. A target that starts with `/` resolves from the file system root, so it leaves the repository.
+- A fragment in a link to a Markdown file must name a heading anchor of that file, ignoring case. Every line that
+  starts with `#` is a heading. Its anchor drops HTML tags and `` ` ``, `*`, `_`, `~`, `[`, `]`, `(`, and `)`, is
+  lowercased, keeps only ASCII letters, digits, spaces, `.`, `_`, and `-`, and turns each space into `-`; a repeated
+  anchor gets the suffix `-1`, `-2`, and so on.
+- GitHub issue and pull request URLs, repository-relative `issues/<n>` and `pull/<n>` paths, and bare references
+  such as `#123`, `GH-123`, `PR-123`, `issue-123`, and `owner/name#123` are findings. Color values such as
+  `fill:#e7f5ff`, URL fragments, and `Unicode Standard Annex #15` or `UAX #15` are not.
+
+Lines, whitespace, lowercasing, and percent-decoding follow Python's string rules, so a UTF-8 byte order mark stays
+part of the first line. Each finding names the root-relative path and line of the resolved file; a file that cannot be
+read or is not UTF-8 is a finding. On success the command prints how many files it scanned.
 
 ## Transferred issues and external references
 
@@ -183,6 +228,10 @@ references before applying changes, and use explicit closure approvals for actua
 - `verify-json` reads the working-tree content of the regular files in the Git index, skips symbolic links
   and submodules, and fails on files larger than 64 MiB. In a sparse checkout, files outside it are
   reported as missing.
+- `verify-line-endings` reads the line endings that `git ls-files --eol` reports. Git stores `eol=crlf` text
+  with LF in the index, so only the working tree is checked for it. Files missing from the working tree are
+  checked only in the index.
+- `verify-links` reads the working tree, not the Git index, and fails on files larger than 64 MiB.
 - `dependency verify-license-exceptions` reads the working-tree content of the regular `packages.lock.json`
   files in the Git index, and fails on an approval file larger than 1 MiB or a lock file larger than 64 MiB.
 - `dependency submit` accepts a snapshot of at most 32 MiB, the size that `dependency snapshot` writes.
@@ -192,7 +241,7 @@ references before applying changes, and use explicit closure approvals for actua
 | Code | Meaning |
 | --- | --- |
 | 0 | Success, including previews and a healthy or inapplicable Podman state. |
-| 1 | Verification failure or drift, invalid text encoding or JSON, a license exception finding, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a command-line error, or cancellation. |
+| 1 | Verification failure or drift, invalid text encoding or JSON, a line-ending or link finding, a license exception finding, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a command-line error, or cancellation. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within two seconds. |
 
 ## Security
