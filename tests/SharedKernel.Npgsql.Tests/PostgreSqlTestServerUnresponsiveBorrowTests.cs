@@ -30,7 +30,7 @@ public sealed class PostgreSqlTestServerUnresponsiveBorrowTests
         }
 
         // Assert
-        server.Accepted.ShouldBe(1, "the first demand probes the server once, and the failure is cached for every later demand");
+        server.Handshakes.ShouldBe(1, "the first demand makes one attempt to connect, and the failure is cached for every later demand");
         laterFailures.ShouldAllSatisfy(failure => failure.ShouldBeSameAs(firstFailure, "a later demand must see the cached failure instead of waiting for the connection timeout again"));
         firstFailure.ToString().ShouldNotContain(Password, "the failure of a borrowed server must not repeat the owner's password");
         start.Calls.ShouldBe(0, "a set variable never falls back to a server of the assembly's own");
@@ -55,7 +55,7 @@ public sealed class PostgreSqlTestServerUnresponsiveBorrowTests
         }
 
         // Assert
-        server.Accepted.ShouldBe(1, "concurrent first demands share one probe");
+        server.Handshakes.ShouldBe(1, "concurrent first demands share one attempt to connect");
         failures.Distinct().Count().ShouldBe(1, "every demand sees the same failure");
     }
 
@@ -75,7 +75,7 @@ public sealed class PostgreSqlTestServerUnresponsiveBorrowTests
         }
 
         // Assert
-        server.Accepted.ShouldBe(1, "without the cache every request waits for the timeout twice, once to create the database and once to clean up after the failure");
+        server.Handshakes.ShouldBe(1, "without the cache every request waits for the timeout twice, once to create the database and once to clean up after the failure");
         fixture.OwnedDatabaseNames.ShouldBeEmpty("no request reached the server far enough to register a database");
         fixture.BuilderCalls.ShouldBe(0, "a set variable never falls back to a server of the fixture's own");
     }
