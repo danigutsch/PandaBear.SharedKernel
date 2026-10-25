@@ -7,7 +7,7 @@ Keep external Actions pinned to immutable full commit SHAs and container resourc
 | Pin location | Review owner and evidence |
 | --- | --- |
 | `.github/workflows/ci.yml` external `uses:` | Library CI maintainers verify upstream SHA, release changes, permissions, nested Actions, downloaded tools, runner compatibility, and artifact behavior. |
-| `src/SharedKernel/SharedKernel.Aspire.Hosting.ClamAv`, `.SeaweedFs`, and `.Grafana` resource extensions | Hosting package maintainers verify registry tag/digest, supported architectures, configuration compatibility, resource health, persistence, and telemetry/privacy behavior. |
+| `src/SharedKernel/SharedKernel.Aspire.Hosting.ClamAv`, `.SeaweedFs`, `.Grafana`, and `.K6` resource extensions | Hosting package maintainers verify registry tag/digest, supported architectures, configuration compatibility, resource health, persistence, and telemetry/privacy behavior. |
 | `tools/SharedKernel.PlaywrightMcp.Tool/PlaywrightMcpCommand.cs` | Tool maintainers review the pinned image, local engine isolation, explicit image preparation, network restrictions, and browser/MCP compatibility. |
 
 This checkout has no tracked Dependabot configuration or Dev Container configuration. Do not imply that bots update these C# image constants or that an application updater covers library-owned declarations. SDK and NuGet changes follow the existing central version/locked-restore workflow and [release policy](../release-policy.md).
