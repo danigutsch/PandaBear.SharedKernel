@@ -182,13 +182,8 @@ public sealed class OnDemandResourceTests
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        var start = new ControlledStart<string>();
-        var stops = 0;
-        var resource = new OnDemandResource<string>(start.Start, _ =>
-        {
-            stops++;
-            return ValueTask.CompletedTask;
-        });
+        var start = new ControlledStart<AsyncDisposableMarker>();
+        var resource = new OnDemandResource<AsyncDisposableMarker>(start.Start);
 
         // Act
         // A disposal that starts the resource and waits for it must fail this test instead of hanging it.
@@ -198,7 +193,6 @@ public sealed class OnDemandResourceTests
 
         // Assert
         start.Calls.ShouldBe(0, "disposal and a later Get must not start the resource");
-        stops.ShouldBe(0, "there is nothing to stop");
     }
 
     [Fact]
@@ -207,12 +201,7 @@ public sealed class OnDemandResourceTests
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         var start = new ControlledStart<AsyncDisposableMarker>();
-        var stops = 0;
-        var resource = new OnDemandResource<AsyncDisposableMarker>(start.Start, _ =>
-        {
-            stops++;
-            return ValueTask.CompletedTask;
-        });
+        var resource = new OnDemandResource<AsyncDisposableMarker>(start.Start);
         var pending = resource.Get(ct);
 
         // Act
@@ -224,7 +213,7 @@ public sealed class OnDemandResourceTests
         _ = await awaitPending.ShouldThrowAssignableTo<OperationCanceledException>();
 
         // Assert
-        stops.ShouldBe(0, "a cancelled start produced no value to stop");
+        disposal.Status.ShouldBe(TaskStatus.RanToCompletion, "the cancellation that disposal requested is not a failure of disposal");
     }
 
     [Fact]
@@ -275,30 +264,7 @@ public sealed class OnDemandResourceTests
     }
 
     [Fact]
-    public async Task Disposing_a_started_resource_stops_the_value_once()
-    {
-        // Arrange
-        var ct = TestContext.Current.CancellationToken;
-        var stopped = new List<string>();
-        var resource = new OnDemandResource<string>(
-            _ => Task.FromResult("value"),
-            value =>
-            {
-                stopped.Add(value);
-                return ValueTask.CompletedTask;
-            });
-        _ = await resource.Get(ct);
-
-        // Act
-        await resource.DisposeAsync();
-        await resource.DisposeAsync();
-
-        // Assert
-        stopped.ShouldBe(["value"], "the stop delegate runs once with the started value");
-    }
-
-    [Fact]
-    public async Task Disposing_a_started_resource_disposes_an_async_disposable_value_by_default()
+    public async Task Disposing_a_started_resource_disposes_an_async_disposable_value()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
@@ -314,7 +280,7 @@ public sealed class OnDemandResourceTests
     }
 
     [Fact]
-    public async Task Disposing_a_started_resource_disposes_a_disposable_value_by_default()
+    public async Task Disposing_a_started_resource_disposes_a_disposable_value()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
@@ -330,75 +296,21 @@ public sealed class OnDemandResourceTests
     }
 
     [Fact]
-    public async Task A_stop_delegate_replaces_the_default_disposal_of_the_value()
-    {
-        // Arrange
-        var ct = TestContext.Current.CancellationToken;
-        var stops = 0;
-        var resource = new OnDemandResource<AsyncDisposableMarker>(
-            _ => Task.FromResult(new AsyncDisposableMarker()),
-            _ =>
-            {
-                stops++;
-                return ValueTask.CompletedTask;
-            });
-        var marker = await resource.Get(ct);
-
-        // Act
-        await resource.DisposeAsync();
-
-        // Assert
-        stops.ShouldBe(1);
-        marker.DisposeCount.ShouldBe(0, "the stop delegate owns teardown when it is supplied");
-    }
-
-    [Fact]
     public async Task Disposing_after_a_failed_start_has_nothing_to_release()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        var stops = 0;
-        var resource = new OnDemandResource<string>(
-            _ => Task.FromException<string>(new InvalidOperationException("startup failed")),
-            _ =>
-            {
-                stops++;
-                return ValueTask.CompletedTask;
-            });
+        var resource = new OnDemandResource<AsyncDisposableMarker>(
+            _ => Task.FromException<AsyncDisposableMarker>(new InvalidOperationException("startup failed")));
         Func<Task> get = () => resource.Get(ct);
         _ = await get.ShouldThrow<InvalidOperationException>();
 
         // Act
-        await resource.DisposeAsync();
+        var disposal = resource.DisposeAsync().AsTask();
+        await disposal.WaitAsync(TimeSpan.FromSeconds(30), ct);
 
         // Assert
-        stops.ShouldBe(0, "a failed start produced no value, and its failure belongs to the callers of Get");
-    }
-
-    [Fact]
-    public async Task A_failing_stop_delegate_surfaces_from_disposal_and_runs_once()
-    {
-        // Arrange
-        var ct = TestContext.Current.CancellationToken;
-        var failure = new InvalidOperationException("stop failed");
-        var stops = 0;
-        var resource = new OnDemandResource<string>(
-            _ => Task.FromResult("value"),
-            _ =>
-            {
-                stops++;
-                return ValueTask.FromException(failure);
-            });
-        _ = await resource.Get(ct);
-        Func<Task> dispose = () => resource.DisposeAsync().AsTask();
-
-        // Act
-        var surfaced = await dispose.ShouldThrow<InvalidOperationException>();
-        await resource.DisposeAsync();
-
-        // Assert
-        surfaced.ShouldBeSameAs(failure);
-        stops.ShouldBe(1, "a second disposal must not stop the value again");
+        disposal.Status.ShouldBe(TaskStatus.RanToCompletion, "a failed start produced no value, and its failure belongs to the callers of Get");
     }
 
     [Fact]
@@ -413,10 +325,11 @@ public sealed class OnDemandResourceTests
 
         // Act
         var surfaced = await dispose.ShouldThrow<InvalidOperationException>();
+        await resource.DisposeAsync();
 
         // Assert
         surfaced.ShouldBeSameAs(failure);
-        marker.DisposeCount.ShouldBe(1);
+        marker.DisposeCount.ShouldBe(1, "a second disposal must neither repeat the failure nor dispose the value again");
     }
 
     [Fact]
@@ -457,7 +370,7 @@ public sealed class OnDemandResourceTests
     }
 
     [Fact]
-    public async Task Value_types_and_values_without_teardown_need_no_stop_delegate()
+    public async Task Values_without_teardown_are_left_alone_on_disposal()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
@@ -530,20 +443,20 @@ public sealed class OnDemandResourceTests
     }
 
     [Fact]
-    public async Task A_throwing_cancellation_callback_is_reported_together_with_a_failing_stop()
+    public async Task A_throwing_cancellation_callback_is_reported_together_with_a_failing_disposal_of_the_value()
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
         var callbackFailure = new InvalidOperationException("cancellation callback failed");
-        var stopFailure = new InvalidOperationException("stop failed");
-        var start = new ControlledStart<string>(callbackFailure);
-        var resource = new OnDemandResource<string>(start.Start, _ => ValueTask.FromException(stopFailure));
+        var disposeFailure = new InvalidOperationException("dispose failed");
+        var start = new ControlledStart<AsyncDisposableMarker>(callbackFailure);
+        var resource = new OnDemandResource<AsyncDisposableMarker>(start.Start);
         var pending = resource.Get(ct);
         var disposal = resource.DisposeAsync().AsTask();
         await start.TokenCancelled;
 
         // Act
-        start.Complete("value");
+        start.Complete(new AsyncDisposableMarker(disposeFailure));
         Func<Task> awaitDisposal = () => disposal;
         var surfaced = await awaitDisposal.ShouldThrowAssignableTo<Exception>();
         _ = await pending;
@@ -551,7 +464,7 @@ public sealed class OnDemandResourceTests
         // Assert
         var failures = ExceptionLeaves.Of(surfaced);
         failures.ShouldContain(callbackFailure, "the failed cancellation callback must be reported");
-        failures.ShouldContain(stopFailure, "the failing stop must be reported with it, not skipped");
+        failures.ShouldContain(disposeFailure, "the failing disposal of the value must be reported with it, not skipped");
     }
 
     [Fact]
@@ -636,31 +549,22 @@ public sealed class OnDemandResourceTests
     {
         // Arrange
         var ct = TestContext.Current.CancellationToken;
-        var failure = new InvalidOperationException("stop failed");
-        var stopEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var stopMayFinish = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var resource = new OnDemandResource<string>(
-            _ => Task.FromResult("value"),
-            async _ =>
-            {
-                stopEntered.SetResult();
-                await stopMayFinish.Task.ConfigureAwait(false);
-                throw failure;
-            });
-        _ = await resource.Get(ct);
+        var failure = new InvalidOperationException("dispose failed");
+        var resource = new OnDemandResource<BlockedDisposal>(_ => Task.FromResult(new BlockedDisposal(failure)));
+        var value = await resource.Get(ct);
         var first = resource.DisposeAsync().AsTask();
-        await stopEntered.Task.WaitAsync(TimeSpan.FromSeconds(30), ct);
+        await value.Entered;
 
         // Act
         var second = resource.DisposeAsync().AsTask();
-        var secondFinishedWhileStopRuns = second.IsCompleted;
-        stopMayFinish.SetResult();
+        var secondFinishedWhileDisposalRuns = second.IsCompleted;
+        value.Finish();
         Func<Task> awaitFirst = () => first;
         var surfaced = await awaitFirst.ShouldThrow<InvalidOperationException>();
         await second.WaitAsync(TimeSpan.FromSeconds(30), ct);
 
         // Assert
-        secondFinishedWhileStopRuns.ShouldBeFalse("a disposal that overlaps the first must not complete before the value is stopped");
+        secondFinishedWhileDisposalRuns.ShouldBeFalse("a disposal that overlaps the first must not complete before the value is disposed");
         surfaced.ShouldBeSameAs(failure, "the first disposal owns the failure");
     }
 

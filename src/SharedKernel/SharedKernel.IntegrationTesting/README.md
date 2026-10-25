@@ -91,15 +91,14 @@ public sealed class ServerFixture : IAsyncLifetime
   that is cancelled by anything but disposal, such as its own startup timeout, fails with an
   `InvalidOperationException` that carries the cancellation as its inner exception.
 - `DisposeAsync` never starts the resource and is safe in any state. It does nothing for a resource that never
-  started, cancels and awaits a pending start, and otherwise disposes the value once, through the optional stop
-  delegate or, when there is none, through `IAsyncDisposable` (preferred) or `IDisposable`. Failures of a start
-  surface from `Get`; a start that failed before disposal is reported by `DisposeAsync` only when no caller of `Get`
-  received the failure. Any cancellation that a pending start shows after disposal requested one is swallowed, even
-  when another source raised it. A pending start that fails with anything else, such as a failure carrying cleanup
-  errors, also surfaces from `DisposeAsync`, as do failures of cancellation callbacks, of the stop delegate and of the
-  value's own disposal; several failures are combined in an `AggregateException`. Overlapping and later calls wait
-  for the first disposal and never repeat its failure. `Get` after disposal throws `ObjectDisposedException` without
-  starting anything.
+  started, cancels and awaits a pending start, and otherwise disposes the value once, through `IAsyncDisposable`
+  (preferred) or `IDisposable`. Failures of a start surface from `Get`; a start that failed before disposal is
+  reported by `DisposeAsync` only when no caller of `Get` received the failure. Any cancellation that a pending
+  start shows after disposal requested one is swallowed, even when another source raised it. A pending start that
+  fails with anything else, such as a failure carrying cleanup errors, also surfaces from `DisposeAsync`, as do
+  failures of cancellation callbacks and of the value's own disposal; several failures are combined in an
+  `AggregateException`. Overlapping and later calls wait for the first disposal and never repeat its failure. `Get`
+  after disposal throws `ObjectDisposedException` without starting anything.
 - Dispose only after every borrower has finished.
 
 ## Concurrent container ports and cleanup

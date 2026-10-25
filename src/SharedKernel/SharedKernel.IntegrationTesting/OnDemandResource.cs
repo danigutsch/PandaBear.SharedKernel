@@ -29,19 +29,18 @@ namespace PandaBear.IntegrationTesting;
 /// <para>
 /// Dispose after every borrower has finished. Disposal never starts the resource. It cancels and awaits a pending
 /// start, and every cancellation it observes from that start counts as the one it requested. It disposes the
-/// started value once, preferring <see cref="IAsyncDisposable"/> over <see cref="IDisposable"/> when no stop
-/// delegate is supplied. A start that failed before disposal belongs to the callers of <see cref="Get"/>; when none
-/// of them received that failure, <see cref="DisposeAsync"/> reports it. A pending start that fails with anything
-/// but a cancellation, such as a failure that carries cleanup errors, also surfaces from
-/// <see cref="DisposeAsync"/>, as do failures of cancellation callbacks, of the stop delegate and of the value's own
-/// disposal; several failures surface together in an <see cref="AggregateException"/>. Overlapping and later calls
-/// wait for the first disposal and never repeat its failure.
+/// started value once, through <see cref="IAsyncDisposable"/> when the value implements it and through
+/// <see cref="IDisposable"/> otherwise. A start that failed before disposal belongs to the callers of
+/// <see cref="Get"/>; when none of them received that failure, <see cref="DisposeAsync"/> reports it. A pending start
+/// that fails with anything but a cancellation, such as a failure that carries cleanup errors, also surfaces from
+/// <see cref="DisposeAsync"/>, as do failures of cancellation callbacks and of the value's own disposal; several
+/// failures surface together in an <see cref="AggregateException"/>. Overlapping and later calls wait for the first
+/// disposal and never repeat its failure.
 /// </para>
 /// </remarks>
 public sealed class OnDemandResource<T> : IAsyncDisposable
 {
     private readonly Func<CancellationToken, Task<T>> _start;
-    private readonly Func<T, ValueTask>? _stop;
     private readonly CancellationTokenSource _startCancellation = new();
     private readonly Lock _gate = new();
     private Task<T>? _started;
@@ -52,17 +51,11 @@ public sealed class OnDemandResource<T> : IAsyncDisposable
     /// Creates a resource that starts on its first <see cref="Get"/>.
     /// </summary>
     /// <param name="start">Starts the resource. It receives a token that disposal cancels while the start is pending.</param>
-    /// <param name="stop">
-    /// Stops the started value. When it is <see langword="null"/>, a value that implements
-    /// <see cref="IAsyncDisposable"/> or <see cref="IDisposable"/> is disposed instead, through
-    /// <see cref="IAsyncDisposable"/> when it implements both.
-    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="start"/> is <see langword="null"/>.</exception>
-    public OnDemandResource(Func<CancellationToken, Task<T>> start, Func<T, ValueTask>? stop = null)
+    public OnDemandResource(Func<CancellationToken, Task<T>> start)
     {
         ArgumentNullException.ThrowIfNull(start);
         _start = start;
-        _stop = stop;
     }
 
     /// <summary>
@@ -109,14 +102,14 @@ public sealed class OnDemandResource<T> : IAsyncDisposable
     /// <summary>
     /// Releases the resource: a never-started resource is left alone, a pending start is cancelled and awaited
     /// (any cancellation it then observes is swallowed, and any value it still produces is released), and a started
-    /// value is stopped or disposed once. Overlapping and later calls wait for that first disposal.
+    /// value is disposed once. Overlapping and later calls wait for that first disposal.
     /// </summary>
     /// <returns>
     /// A task that completes when the value is released. For the first call it faults with a failure of a
-    /// cancellation callback, of the stop delegate, of the value's own disposal, of a pending start that did not fail
-    /// by cancellation, or of a start that failed before disposal and was received by no caller of
-    /// <see cref="Get"/>; several failures are combined in an <see cref="AggregateException"/>. Overlapping and later
-    /// calls complete without repeating a failure.
+    /// cancellation callback, of the value's own disposal, of a pending start that did not fail by cancellation, or
+    /// of a start that failed before disposal and was received by no caller of <see cref="Get"/>; several failures
+    /// are combined in an <see cref="AggregateException"/>. Overlapping and later calls complete without repeating a
+    /// failure.
     /// </returns>
     public ValueTask DisposeAsync()
     {
@@ -231,7 +224,7 @@ public sealed class OnDemandResource<T> : IAsyncDisposable
         {
             try
             {
-                await Stop(value).ConfigureAwait(false);
+                await DisposeValue(value).ConfigureAwait(false);
             }
             catch (Exception failure)
             {
@@ -250,13 +243,9 @@ public sealed class OnDemandResource<T> : IAsyncDisposable
         }
     }
 
-    private async ValueTask Stop(T value)
+    private static async ValueTask DisposeValue(T value)
     {
-        if (_stop is not null)
-        {
-            await _stop(value).ConfigureAwait(false);
-        }
-        else if (value is IAsyncDisposable asyncDisposable)
+        if (value is IAsyncDisposable asyncDisposable)
         {
             await asyncDisposable.DisposeAsync().ConfigureAwait(false);
         }
