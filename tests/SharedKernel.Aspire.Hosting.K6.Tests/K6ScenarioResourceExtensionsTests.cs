@@ -60,6 +60,72 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
     }
 
     [Fact]
+    public void AddK6Scenario_materializes_the_library_under_the_per_user_data_folder()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+
+        // Act
+        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+
+        // Assert
+        var library = k6.Resource.Annotations.OfType<ContainerMountAnnotation>().Where(mount => mount.Target == "/k6lib").ShouldHaveSingleItem();
+        library.Source.ShouldStartWith(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AddK6Scenario_replaces_a_linked_library_file_without_writing_through_the_link()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        var builder = DistributedApplication.CreateBuilder([]);
+        var first = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+        var library = first.Resource.Annotations.OfType<ContainerMountAnnotation>().Where(mount => mount.Target == "/k6lib").ShouldHaveSingleItem().Source!;
+        var decoy = Path.Combine(_root, "decoy.txt");
+        File.WriteAllText(decoy, "decoy");
+        var authPath = Path.Combine(library, "auth.js");
+        File.Delete(authPath);
+        File.CreateSymbolicLink(authPath, decoy);
+
+        // Act
+        DistributedApplication.CreateBuilder([]).AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+
+        // Assert
+        File.ReadAllText(decoy).ShouldBe("decoy");
+        new FileInfo(authPath).LinkTarget.ShouldBeNull();
+        File.ReadAllText(authPath).ShouldContain("getAccessToken", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AddK6Scenario_makes_only_a_results_directory_it_created_shared_with_the_sticky_bit()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        var created = Path.Combine(_root, "created");
+        var existing = Directory.CreateDirectory(Path.Combine(_root, "existing")).FullName;
+        File.SetUnixFileMode(existing, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+
+        // Act
+        DistributedApplication.CreateBuilder([]).AddK6Scenario("created", _root, "scenarios/smoke.js", created);
+        DistributedApplication.CreateBuilder([]).AddK6Scenario("existing", _root, "scenarios/smoke.js", existing);
+
+        // Assert
+        var shared = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute
+            | UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute
+            | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute | UnixFileMode.StickyBit;
+        File.GetUnixFileMode(created).ShouldBe(shared);
+        File.GetUnixFileMode(existing).ShouldBe(UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
+    }
+
+    [Fact]
     public async Task AddK6Scenario_runs_the_script_from_the_scripts_mount()
     {
         // Arrange

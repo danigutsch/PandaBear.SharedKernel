@@ -20,7 +20,9 @@ var k6 = builder.AddK6Scenario("admin-smoke", scriptDirectory, "scenarios/admin-
 
 - The container starts only when requested from the Aspire dashboard or CLI.
 - `scriptDirectory` mounts read-only at `/scripts`, the helper library at `/k6lib`, and `resultsDirectory` writable at
-  `/results`. On Linux and macOS the results directory is made writable for the container user.
+  `/results`. The helper library is written to the per-user data folder. On Linux and macOS a results directory that
+  the call creates is made writable for the container user with the sticky bit set; an existing results directory keeps
+  its mode and must already allow the container user to write.
 - The script must stay under `scriptDirectory`. No `--vus` or `--duration` flag is passed, so the script's own `options`
   decide the load.
 - `WithK6ClientCredentials` waits for the identity provider and passes `SK_K6_TOKEN_URL`, `SK_K6_CLIENT_ID`,

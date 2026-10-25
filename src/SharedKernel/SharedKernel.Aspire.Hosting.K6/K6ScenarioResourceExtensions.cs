@@ -19,7 +19,8 @@ public static class K6ScenarioResourceExtensions
     /// <remarks>
     /// The image is pinned by tag and digest. The script directory and the helper library (<c>/k6lib/auth.js</c>
     /// and <c>/k6lib/summary.js</c>) mount read-only; the results directory mounts writable at <c>/results</c>.
-    /// On Linux and macOS the results directory is made writable for the container user.
+    /// On Linux and macOS a results directory that this call creates is made writable for the container user with the
+    /// sticky bit set; an existing results directory keeps its mode and must already allow the container user to write.
     /// </remarks>
     /// <param name="builder">The distributed application builder.</param>
     /// <param name="name">The resource name.</param>
@@ -48,13 +49,16 @@ public static class K6ScenarioResourceExtensions
         }
 
         var results = Path.GetFullPath(resultsDirectory);
+        var created = !Directory.Exists(results);
         Directory.CreateDirectory(results);
-        if (!OperatingSystem.IsWindows())
+        if (created && !OperatingSystem.IsWindows())
         {
-            // The k6 image runs as an unprivileged user that is not the host user.
+            // The k6 image runs as an unprivileged user that is not the host user. The sticky bit keeps that user
+            // from deleting or replacing files it does not own.
             File.SetUnixFileMode(results, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute
                 | UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute
-                | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute);
+                | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute
+                | UnixFileMode.StickyBit);
         }
 
         return builder.AddK6(name)

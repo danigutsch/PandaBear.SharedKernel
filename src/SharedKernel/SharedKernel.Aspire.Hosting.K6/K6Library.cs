@@ -4,7 +4,8 @@ using System.Security.Cryptography;
 namespace Aspire.Hosting;
 
 /// <summary>
-/// Writes the embedded k6 helper library to a content-addressed directory that a container can mount.
+/// Writes the embedded k6 helper library to a content-addressed directory under the per-user data folder that a
+/// container can mount.
 /// </summary>
 internal static class K6Library
 {
@@ -20,15 +21,29 @@ internal static class K6Library
             .ToArray();
 
         var hash = Convert.ToHexString(SHA256.HashData(files.SelectMany(static file => file.Content).ToArray()))[..16];
-        var directory = Path.Combine(Path.GetTempPath(), "sharedkernel-k6-" + hash);
+        var userData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        if (string.IsNullOrEmpty(userData))
+        {
+            throw new InvalidOperationException("The per-user data folder is not available to hold the k6 library.");
+        }
+
+        var directory = Path.Combine(userData, "sharedkernel-k6", hash);
         Directory.CreateDirectory(directory);
+        if (new DirectoryInfo(directory).LinkTarget is not null)
+        {
+            throw new InvalidOperationException($"The k6 library directory '{directory}' must not be a link.");
+        }
 
         foreach (var (name, content) in files)
         {
             var path = Path.Combine(directory, name);
-            if (!File.Exists(path) || !File.ReadAllBytes(path).AsSpan().SequenceEqual(content))
+            var info = new FileInfo(path);
+            if (info.LinkTarget is not null || !info.Exists || !File.ReadAllBytes(path).AsSpan().SequenceEqual(content))
             {
-                File.WriteAllBytes(path, content);
+                // Replace the path itself, so an existing link is removed instead of written through.
+                var temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
+                File.WriteAllBytes(temporary, content);
+                File.Move(temporary, path, overwrite: true);
             }
         }
 
