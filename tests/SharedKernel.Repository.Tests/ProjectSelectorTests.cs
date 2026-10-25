@@ -429,6 +429,31 @@ public sealed class ProjectSelectorTests : IDisposable
         }
     }
 
+    [Theory]
+    [InlineData("tests/Missing/Host.csproj", "$.slices[0].service.project names tests/Missing/Host.csproj, which is not a project of SharedKernel.slnx.")]
+    [InlineData("tests/Core.Tests/Core.Tests.csproj", "$.slices[0].service.project names tests/Core.Tests/Core.Tests.csproj, which is a test project; a service is not.")]
+    [InlineData("src/Core/Core.csproj", null)]
+    public async Task A_service_must_be_a_solution_project_that_is_not_a_test_project(string project, string? error)
+    {
+        // Arrange
+        scope.Configure($$"""
+            [{ "name": "library", "projects": [], "service": { "project": "{{project}}", "readyFileVariable": "APP_READY_FILE", "valueVariable": "APP_VALUE" } }]
+            """);
+
+        // Act
+        Func<Task> select = () => scope.Select(["src/Core/Changed.cs"]);
+
+        // Assert
+        if (error is null)
+        {
+            (await scope.Select(["src/Core/Changed.cs"])).Slices[0].Tests.ShouldHaveSingleItem();
+        }
+        else
+        {
+            (await select.ShouldThrow<InvalidOperationException>()).Message.ShouldBe(".config/sharedkernel-ci.json: " + error);
+        }
+    }
+
     [Fact]
     public async Task Without_a_default_slice_every_solution_test_project_must_be_in_a_slice()
     {
