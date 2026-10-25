@@ -56,6 +56,7 @@ internal static class RepoConfigCommandLine
             CreateVerifyPodmanDnsCommand(environment),
             CreateSecurityCommand(environment, root),
             CreateDependencyCommand(environment, root),
+            CreateVerifyDevcontainerCommand(environment, root),
         };
 
         // Consumer caller tests run "[diagram] <command line>" to parse a command line without running it.
@@ -527,6 +528,65 @@ internal static class RepoConfigCommandLine
         SetGuardedAction(scan, (parseResult, output, error, ct) => SecurityCommand.Run(
             ResolveRoot(parseResult, root, environment), parseResult.GetRequiredValue(destination), output, error, ct));
         return new Command("security", "Verify security document contracts and scan current source.") { baseline, scan };
+    }
+
+    private static Command CreateVerifyDevcontainerCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Option<string[]> commands = new("--exec")
+        {
+            Description = "Command to run with bash -lc inside the started container. Repeat to run several in order.",
+            HelpName = "command",
+        };
+        commands.Validators.Add(result =>
+        {
+            if (result.Tokens.Any(static token => string.IsNullOrWhiteSpace(token.Value) || token.Value.Contains('\0', StringComparison.Ordinal)))
+            {
+                result.AddError("--exec requires a command.");
+            }
+        });
+        Option<string> logDirectory = new("--log-directory")
+        {
+            Description = $"Directory that receives the logs and metadata.txt. Relative to the root. Defaults to {VerifyDevcontainerCommand.DefaultLogDirectory}.",
+            HelpName = "directory",
+            CustomParser = result =>
+            {
+                var path = result.Tokens.Count == 1 ? result.Tokens[0].Value : null;
+                if (string.IsNullOrWhiteSpace(path) || path.Contains('\0', StringComparison.Ordinal))
+                {
+                    result.AddError("--log-directory requires a directory path.");
+                    return null;
+                }
+
+                return path;
+            },
+        };
+        Option<bool> keepContainer = new("--keep-container")
+        {
+            Description = "Keep the started container instead of removing it."
+        };
+        var cli = CreatePathOption(
+            "--devcontainer-cli",
+            $"Dev Container CLI to run. Relative to the root. Without it, the pinned CLI is bootstrapped under {VerifyDevcontainerCommand.ToolsDirectory} on Linux x64.");
+        Command command = new("verify-devcontainer", "Start the repository dev container, run commands inside it, and remove it.")
+        {
+            commands, logDirectory, keepContainer, cli, root
+        };
+        SetGuardedAction(command, (parseResult, output, _, ct) =>
+        {
+            var rootPath = ResolveRoot(parseResult, root, environment);
+            var cliPath = parseResult.GetValue(cli);
+            return VerifyDevcontainerCommand.Run(
+                new VerifyDevcontainerOptions(
+                    rootPath,
+                    parseResult.GetValue(commands) ?? [],
+                    Path.GetFullPath(parseResult.GetValue(logDirectory) ?? VerifyDevcontainerCommand.DefaultLogDirectory, rootPath),
+                    parseResult.GetValue(keepContainer),
+                    cliPath is null ? null : Path.GetFullPath(cliPath, rootPath)),
+                environment.DevcontainerHost ?? DevcontainerHost.Current(),
+                output,
+                ct);
+        });
+        return command;
     }
 
     private static void SetGuardedAction(Command command, Func<ParseResult, TextWriter, TextWriter, CancellationToken, Task<int>> action) =>

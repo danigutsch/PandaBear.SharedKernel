@@ -14,6 +14,8 @@ and protected-environment approvals.
 The tool runs on .NET 10. `verify-text-encoding`, `verify-line-endings`, `verify-json`, `verify-gherkin`,
 `dependency snapshot`, `dependency verify-license-exceptions`, and the `automation` steps also need Git on an absolute
 `PATH` entry.
+`verify-devcontainer` needs Docker on an absolute `PATH` entry, a container image with `bash`, and, without
+`--devcontainer-cli`, a Linux x64 host with HTTPS access to `nodejs.org` and `registry.npmjs.org`.
 
 ## Installation
 
@@ -58,6 +60,7 @@ sharedkernel-repo verify-gherkin
 sharedkernel-repo verify-gherkin tests/Features/booking.feature tests/Features/Tours
 sharedkernel-repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository
 sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_OUTPUT"
+sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 ```
 
 | Command | Purpose |
@@ -81,13 +84,15 @@ sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_
 | `dependency snapshot` | Generates a dependency snapshot from committed lock files; see [Offline dependency snapshots](#offline-dependency-snapshots). |
 | `dependency submit` | Submits a dependency snapshot to the GitHub dependency graph. |
 | `dependency verify-license-exceptions` | Verifies the configured license exceptions; see [License exceptions](#license-exceptions). |
+| `verify-devcontainer` | Starts the dev container of the root, runs each `--exec` command in it, and removes it; see [Dev container validation](#dev-container-validation). |
 
 `github` commands, `automation publish-result`, and `dependency submit` preview their changes unless
 `--force` is given. Lines that describe previewed changes start with `preview:`. The `publish-result`
 preview names the repository, base SHA, branch, and changed paths; the `dependency submit` preview names
 the snapshot, its size, and the endpoint. Every command except `verify-podman-dns` and `github link-subissue` takes `--root <path>`,
-which defaults to the current directory; relative `--snapshot`, `--github-output`, and `verify-links` paths resolve against
-it. Run `sharedkernel-repo <command> --help` for the options of each command.
+which defaults to the current directory; relative `--snapshot`, `--github-output`, `--log-directory`,
+`--devcontainer-cli`, and `verify-links` paths resolve against it. Run `sharedkernel-repo <command> --help` for the
+options of each command.
 
 `[diagram]` before a command line prints how the tool parses it without running it, and exits 1 when the
 command line does not parse, as in `sharedkernel-repo [diagram] verify-json --root .`.
@@ -333,21 +338,28 @@ references before applying changes, and use explicit closure approvals for actua
 - `dependency verify-license-exceptions` reads the working-tree content of the regular `packages.lock.json`
   files in the Git index, and fails on an approval file larger than 1 MiB or a lock file larger than 64 MiB.
 - `dependency submit` accepts a snapshot of at most 32 MiB, the size that `dependency snapshot` writes.
+- `verify-devcontainer` bootstraps its CLI only on Linux x64 and accepts downloads of at most 256 MiB. A
+  container that `devcontainer up` creates before it reports its ID, or that outlives the two-second
+  termination timeout after Ctrl+C or SIGTERM, is not removed.
 
 ## Exit codes
 
 | Code | Meaning |
 | --- | --- |
 | 0 | Success, including previews and a healthy or inapplicable Podman state. |
-| 1 | Verification failure or drift, invalid text encoding or JSON, a line-ending, link, or Gherkin finding, a license exception finding, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a command-line error, or cancellation. |
+| 1 | Verification failure or drift, invalid text encoding or JSON, a line-ending, link, or Gherkin finding, a license exception finding, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a failed dev container start, command, or CLI bootstrap, a command-line error, or cancellation. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within two seconds. |
 
 ## Security
 
 - Tokens come only from the environment. GitHub transport failures are reported without request details.
-- Child processes (Git, Podman, and `stat`) start without `GH_TOKEN` and `GITHUB_TOKEN`.
-- Git starts from the first absolute `PATH` entry that holds it, never from the current directory or a
-  relative or empty `PATH` entry.
+- Child processes (Git, Podman, `stat`, Docker, and the Dev Container CLI) start without `GH_TOKEN` and
+  `GITHUB_TOKEN`.
+- Git and Docker start from the first absolute `PATH` entry that holds them, never from the current directory
+  or a relative or empty `PATH` entry.
+- `verify-devcontainer` checks each downloaded archive against the hash pinned in the tool before reading it,
+  and extracts only regular files to fixed paths: `bin/node` and the entries under `package/`. Links and
+  entries with empty, `.`, or `..` segments fail the bootstrap.
 - Without `--force`, `github` commands and `automation publish-result` only read and change nothing in
   GitHub or the checkout; `--force` never skips validation.
 - `dependency submit` sends no request and reads no token without `--force`. With it, the command sends
@@ -358,6 +370,34 @@ references before applying changes, and use explicit closure approvals for actua
   fails and leaves only unreferenced Git objects.
 - The `publish-result` preview prints no file contents.
 - Output escapes control characters from roadmap and GitHub data.
+
+## Dev container validation
+
+`verify-devcontainer` validates `.devcontainer/devcontainer.json` under the root with the Dev Container CLI:
+
+1. Without `--devcontainer-cli <path>`, it uses `@devcontainers/cli` 0.84.1 on Node.js 24.22.1, cached under
+   `TestResults/devcontainer-tools/devcontainers-cli-0.84.1-node-24.22.1`. A missing cache is downloaded from
+   `nodejs.org` and `registry.npmjs.org`; the Node.js archive must match the SHA-256 in the release's signed
+   `SHASUMS256.txt.asc`, and the CLI tarball the registry's `dist.integrity`, both pinned in the tool.
+2. It runs `devcontainer up --workspace-folder <root> --log-level trace`. When `.git` under the root is a file,
+   as in a linked worktree, it adds a bind mount of the Git common directory at the same path, so Git works in
+   the container.
+3. The CLI output appears on standard output as it arrives and is written to `devcontainer-up.log` in the log
+   directory, `TestResults/devcontainer-smoke` unless `--log-directory <directory>` names another. The command
+   fails when the CLI exits with a non-zero code or its output contains `"outcome":"error"`, even with exit
+   code 0.
+4. The last `"containerId":"<id>"` in the output names the container. With an ID, `metadata.txt` in the log
+   directory records `workspace_folder`, `log_dir`, `devcontainer_cli`, and `container_id`; without one, the
+   command fails.
+5. Each `--exec <command>` runs in order as `devcontainer exec --workspace-folder <root> bash -lc <command>`, with
+   its output on standard output and in `devcontainer-exec-<n>.log`. The first non-zero exit code fails the
+   command.
+6. Afterwards, also after a failure or cancellation, `docker rm -f <id>` removes the container unless
+   `--keep-container` is given. A failed removal is reported and does not change the exit code.
+
+```bash
+sharedkernel-repo verify-devcontainer --devcontainer-cli /usr/local/bin/devcontainer --keep-container --root .
+```
 
 ## Security commands
 
