@@ -66,6 +66,9 @@ internal static class RoadmapTemplates
                 "closedStatus": "done"
               }
             }
+          },
+          "automation": {
+            "pullRequestBody": "Refresh the roadmap from the reviewed GitHub reconciliation."
           }
         }
         """;
@@ -243,6 +246,21 @@ internal static class RoadmapTemplates
                   "additionalProperties": false
                 }
               }
+            },
+            "automation": {
+              "type": "object",
+              "required": [
+                "pullRequestBody"
+              ],
+              "properties": {
+                "pullRequestBody": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 65536,
+                  "pattern": "\\S"
+                }
+              },
+              "additionalProperties": false
             }
           }
         }

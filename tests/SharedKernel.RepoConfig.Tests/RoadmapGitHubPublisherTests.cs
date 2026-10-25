@@ -7,6 +7,8 @@ namespace PandaBear.RepoConfig.Tests;
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RoadmapGitHubPublisherTests
 {
+    private const string PullRequestBody = "Refs #42";
+
     [Fact]
     public async Task Publication_creates_a_signed_exact_base_commit_and_a_new_draft_pull_request()
     {
@@ -24,7 +26,7 @@ public sealed class RoadmapGitHubPublisherTests
         var publisher = new RoadmapGitHubPublisher(workspace.RootPath, httpClient);
 
         // Act
-        var publication = await publisher.Publish(plan, changes, TestContext.Current.CancellationToken);
+        var publication = await publisher.Publish(plan, changes, PullRequestBody, TestContext.Current.CancellationToken);
         var treeRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/git/trees", StringComparison.Ordinal));
         var commitRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/git/commits", StringComparison.Ordinal));
         var refRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/git/refs", StringComparison.Ordinal));
@@ -55,7 +57,7 @@ public sealed class RoadmapGitHubPublisherTests
         pullBody.RootElement.GetProperty("head").GetString().ShouldBe(plan.BranchName);
         pullBody.RootElement.GetProperty("base").GetString().ShouldBe("main");
         pullBody.RootElement.GetProperty("draft").GetBoolean().ShouldBeTrue();
-        pullRequestBody.ShouldBe("Refs #1160");
+        pullRequestBody.ShouldBe(PullRequestBody);
         handler.Requests.Any(request => request.Message.Method == HttpMethod.Patch).ShouldBeFalse();
     }
 
@@ -76,6 +78,7 @@ public sealed class RoadmapGitHubPublisherTests
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
             changes,
+            PullRequestBody,
             TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
@@ -107,6 +110,7 @@ public sealed class RoadmapGitHubPublisherTests
         _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
             changes,
+            PullRequestBody,
             TestContext.Current.CancellationToken);
         var treeRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/git/trees", StringComparison.Ordinal));
         using var treeBody = JsonDocument.Parse(treeRequest.Body.ShouldNotBeNull());
@@ -136,6 +140,7 @@ public sealed class RoadmapGitHubPublisherTests
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
             changes,
+            PullRequestBody,
             TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
@@ -162,6 +167,7 @@ public sealed class RoadmapGitHubPublisherTests
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
             changes,
+            PullRequestBody,
             TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
@@ -185,6 +191,7 @@ public sealed class RoadmapGitHubPublisherTests
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
             changes,
+            PullRequestBody,
             TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
@@ -210,6 +217,7 @@ public sealed class RoadmapGitHubPublisherTests
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
             changes,
+            PullRequestBody,
             TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
@@ -239,6 +247,7 @@ public sealed class RoadmapGitHubPublisherTests
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
             changes,
+            PullRequestBody,
             TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
@@ -276,6 +285,7 @@ public sealed class RoadmapGitHubPublisherTests
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
             changes,
+            PullRequestBody,
             TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
@@ -358,6 +368,7 @@ public sealed class RoadmapGitHubPublisherTests
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
             changes,
+            PullRequestBody,
             TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<TimeoutException>();
 
@@ -384,6 +395,7 @@ public sealed class RoadmapGitHubPublisherTests
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
             changes,
+            PullRequestBody,
             TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<InvalidOperationException>();
 
@@ -412,6 +424,7 @@ public sealed class RoadmapGitHubPublisherTests
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
             changes,
+            PullRequestBody,
             TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<InvalidOperationException>();
 

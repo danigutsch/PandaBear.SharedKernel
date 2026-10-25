@@ -95,6 +95,7 @@ internal static class RepoConfigVerifier
         VerifyProjectConfig(root, distinctStatuses, distinctClosedStatuses, relativePath, issues);
         VerifyIntegrationsConfig(root, distinctStatuses, distinctClosedStatuses, relativePath, issues);
         VerifyConfigScoring(root, relativePath, issues);
+        VerifyAutomationConfig(root, relativePath, issues);
 
         return new RoadmapSettings(
             itemIdPrefixIsValid ? configuredItemIdPrefix! : RoadmapSettings.Default.ItemIdPrefix,
@@ -168,6 +169,32 @@ internal static class RepoConfigVerifier
         if (!string.Equals(GetString(scoring, "formula"), "reach * impact * confidence / effort", StringComparison.Ordinal))
         {
             issues.Add(new RepoConfigIssue(relativePath, "scoring.formula must be reach * impact * confidence / effort."));
+        }
+    }
+
+    // GitHub limits a pull request body to 65536 characters.
+    private static void VerifyAutomationConfig(JsonElement root, string relativePath, List<RepoConfigIssue> issues)
+    {
+        if (!root.TryGetProperty("automation", out var automation))
+        {
+            return;
+        }
+
+        if (automation.ValueKind != JsonValueKind.Object)
+        {
+            issues.Add(new RepoConfigIssue(relativePath, "automation must be a JSON object when present."));
+            return;
+        }
+
+        foreach (var property in automation.EnumerateObject().Where(property => property.Name != "pullRequestBody"))
+        {
+            issues.Add(new RepoConfigIssue(relativePath, $"automation.{property.Name} is not supported."));
+        }
+
+        var body = GetString(automation, "pullRequestBody");
+        if (string.IsNullOrWhiteSpace(body) || body.Length > 65536)
+        {
+            issues.Add(new RepoConfigIssue(relativePath, "automation.pullRequestBody must be a nonblank string of at most 65536 characters."));
         }
     }
 

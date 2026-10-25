@@ -88,7 +88,44 @@ internal static class ConsumerConfigurationFile
             Validate(licenseExceptions);
         }
 
+        if (configuration.Links is { } links)
+        {
+            Validate(links);
+        }
+
+        if (configuration.Gherkin?.FindError() is { } gherkinError)
+        {
+            throw Invalid(gherkinError);
+        }
+
+        if (configuration.Labels is { } labels)
+        {
+            Validate(labels);
+        }
+
         return configuration;
+    }
+
+    private static void Validate(LinkConfiguration links)
+    {
+        if (links.Include.Length == 0)
+        {
+            throw Invalid("$.links.include must name at least one pattern.");
+        }
+
+        ValidatePatterns(links.Include, "$.links.include");
+        ValidatePatterns(links.Exclude, "$.links.exclude");
+    }
+
+    private static void ValidatePatterns(string[] patterns, string path)
+    {
+        for (var index = 0; index < patterns.Length; index++)
+        {
+            if (!RepositoryPath.IsRelative(patterns[index]))
+            {
+                throw Invalid(string.Create(CultureInfo.InvariantCulture, $"{path}[{index}] must be a repository-relative path pattern with '/' separators and without empty, '.', or '..' segments."));
+            }
+        }
     }
 
     private static void Validate(LicenseExceptionConfiguration licenseExceptions)
@@ -141,6 +178,41 @@ internal static class ConsumerConfigurationFile
             if (!IsVersion(version))
             {
                 throw Invalid(path + " must be a NuGet version.");
+            }
+        }
+    }
+
+    // GitHub limits label names to 50 and descriptions to 100 characters, and matches names ignoring case.
+    private static void Validate(IReadOnlyList<GitHubLabelConfiguration> labels)
+    {
+        if (labels.Count == 0)
+        {
+            throw Invalid("$.labels must name at least one label.");
+        }
+
+        HashSet<string> names = new(StringComparer.OrdinalIgnoreCase);
+        for (var index = 0; index < labels.Count; index++)
+        {
+            var (name, color, description) = labels[index];
+            var path = string.Create(CultureInfo.InvariantCulture, $"$.labels[{index}]");
+            if (name.Length is 0 or > 50 || name.Any(char.IsControl) || name.Trim().Length != name.Length)
+            {
+                throw Invalid(path + ".name must be 1 to 50 characters without control characters or surrounding white space.");
+            }
+
+            if (!names.Add(name))
+            {
+                throw Invalid(path + ".name repeats a label name that differs only in case.");
+            }
+
+            if (color.Length != 6 || !color.All(char.IsAsciiHexDigit))
+            {
+                throw Invalid(path + ".color must be six hexadecimal digits without '#'.");
+            }
+
+            if (description.Length > 100 || description.Any(char.IsControl))
+            {
+                throw Invalid(path + ".description must be at most 100 characters without control characters.");
             }
         }
     }

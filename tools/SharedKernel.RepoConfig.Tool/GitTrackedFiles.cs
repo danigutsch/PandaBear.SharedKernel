@@ -6,7 +6,7 @@ using PandaBear.Tooling;
 namespace PandaBear.RepoConfig.Tool;
 
 /// <summary>
-/// Lists the regular files that the Git index of a repository tracks.
+/// Lists the files that the Git index of a repository tracks.
 /// </summary>
 internal static class GitTrackedFiles
 {
@@ -25,20 +25,9 @@ internal static class GitTrackedFiles
     /// <exception cref="TimeoutException">Git does not finish within 30 seconds.</exception>
     public static async Task<IReadOnlyList<string>> Read(string rootPath, IReadOnlyList<string> pathspecs, CancellationToken cancellationToken)
     {
-        var output = await Run(CreateStartInfo(rootPath, pathspecs), cancellationToken).ConfigureAwait(false);
-        string records;
-        try
-        {
-            records = StrictUtf8.GetString(output);
-        }
-        catch (DecoderFallbackException)
-        {
-            throw Failure();
-        }
-
         List<string> paths = [];
         HashSet<string> seen = new(StringComparer.Ordinal);
-        foreach (var record in records.Split('\0', StringSplitOptions.RemoveEmptyEntries))
+        foreach (var record in await ReadRecords(rootPath, ["ls-files", "-z", "--stage", "--", .. pathspecs], cancellationToken).ConfigureAwait(false))
         {
             // Each record is "<mode> <object> <stage>\t<path>"; an unmerged path has a record for each stage.
             var separator = record.IndexOf('\t', StringComparison.Ordinal);
@@ -63,7 +52,30 @@ internal static class GitTrackedFiles
         return paths;
     }
 
-    private static ProcessStartInfo CreateStartInfo(string rootPath, IReadOnlyList<string> pathspecs)
+    /// <summary>
+    /// Returns the <c>git ls-files --eol</c> record of each entry in the Git index of <paramref name="rootPath"/>, in
+    /// index order: <c>i/&lt;index&gt; w/&lt;working tree&gt; attr/&lt;attributes&gt;</c>, padded with spaces, then a tab
+    /// and the path relative to the root.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Git cannot be found or started, or it cannot list the index.</exception>
+    /// <exception cref="TimeoutException">Git does not finish within 30 seconds.</exception>
+    public static Task<string[]> ReadLineEndings(string rootPath, CancellationToken cancellationToken) =>
+        ReadRecords(rootPath, ["ls-files", "-z", "--eol"], cancellationToken);
+
+    private static async Task<string[]> ReadRecords(string rootPath, IReadOnlyList<string> arguments, CancellationToken cancellationToken)
+    {
+        var output = await Run(CreateStartInfo(rootPath, arguments), cancellationToken).ConfigureAwait(false);
+        try
+        {
+            return StrictUtf8.GetString(output).Split('\0', StringSplitOptions.RemoveEmptyEntries);
+        }
+        catch (DecoderFallbackException)
+        {
+            throw Failure();
+        }
+    }
+
+    private static ProcessStartInfo CreateStartInfo(string rootPath, IReadOnlyList<string> arguments)
     {
         var git = ExecutableResolver.Resolve("git", Environment.GetEnvironmentVariable("PATH"), OperatingSystem.IsWindows())
             ?? throw new InvalidOperationException("Could not resolve git to an absolute executable path.");
@@ -84,7 +96,7 @@ internal static class GitTrackedFiles
 
         ChildProcessEnvironment.RemoveGitHubTokens(startInfo);
         startInfo.Environment["GIT_TERMINAL_PROMPT"] = "0";
-        foreach (var argument in (string[])["ls-files", "-z", "--stage", "--", .. pathspecs])
+        foreach (var argument in arguments)
         {
             startInfo.ArgumentList.Add(argument);
         }

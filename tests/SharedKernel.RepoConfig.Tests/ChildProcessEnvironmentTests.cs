@@ -111,6 +111,7 @@ public sealed class ChildProcessEnvironmentTests
 
     [Theory]
     [InlineData("verify-json")]
+    [InlineData("verify-line-endings")]
     [InlineData("dependency", "verify-license-exceptions")]
     public async Task Git_index_commands_ignore_repository_local_git_from_relative_path_entries(params string[] command)
     {

@@ -9,9 +9,16 @@ internal static class FakeExecutable
     [UnsupportedOSPlatform("windows")]
     public static void WriteMarker(string path, string marker)
     {
-        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         var quotedMarker = "'" + marker.Replace("'", "'\\''", StringComparison.Ordinal) + "'";
-        File.WriteAllText(path, "#!/bin/sh\n: > " + quotedMarker + "\nexit 1\n");
+        WriteScript(path, ": > " + quotedMarker + "\nexit 1\n");
+    }
+
+    /// <summary>Writes an executable POSIX shell script at <paramref name="path"/> with <paramref name="body"/>.</summary>
+    [UnsupportedOSPlatform("windows")]
+    public static void WriteScript(string path, string body)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllText(path, "#!/bin/sh\n" + body);
         File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
     }
 }

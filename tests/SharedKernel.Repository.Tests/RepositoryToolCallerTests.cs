@@ -63,6 +63,7 @@ public sealed class RepositoryToolCallerTests
                 "install-playwright --project <test-project> --browser chromium --with-dependencies",
                 "stage-candidate --pin <candidate.json> --library-root . --output <feed> --repository danigutsch/PandaBear.SharedKernel",
                 "verify-commit-message --event <event.json>",
+                "run-mutation-tests",
                 "run --slice library --coverage --install-playwright --playwright-dependencies --github-summary $GITHUB_STEP_SUMMARY",
                 "coverage record-symbols",
                 "coverage verify --report artifacts --base $BASE_SHA --symbols TestResults/symbol-evidence.json",
@@ -71,6 +72,7 @@ public sealed class RepositoryToolCallerTests
                 "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"
                     + " --feed <packages>",
                 "verify-commit-message --file $1",
+                "run-mutation-tests",
             ],
             "Installation and the commit-msg hook run the installed sharedkernel-ci, and this repository runs the project.");
     }
@@ -86,6 +88,7 @@ public sealed class RepositoryToolCallerTests
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "install-playwright")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "stage-candidate")]
     [InlineData("tools/SharedKernel.CI.Tool/README.md", "verify-commit-message")]
+    [InlineData("tools/SharedKernel.CI.Tool/README.md", "run-mutation-tests")]
     public void Callers_invoke_the_repository_tool_command(string file, string commandName)
     {
         // Arrange

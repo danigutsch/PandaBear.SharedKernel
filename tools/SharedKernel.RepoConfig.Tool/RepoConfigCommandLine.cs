@@ -50,9 +50,13 @@ internal static class RepoConfigCommandLine
             CreateAutomationCommand(environment, root),
             CreateVerifyTextEncodingCommand(environment, root),
             CreateVerifyJsonCommand(environment, root),
+            CreateVerifyLineEndingsCommand(environment, root),
+            CreateVerifyLinksCommand(environment, root),
+            CreateVerifyGherkinCommand(environment, root),
             CreateVerifyPodmanDnsCommand(environment),
             CreateSecurityCommand(environment, root),
             CreateDependencyCommand(environment, root),
+            CreateVerifyDevcontainerCommand(environment, root),
         };
 
         // Consumer caller tests run "[diagram] <command line>" to parse a command line without running it.
@@ -198,10 +202,35 @@ internal static class RepoConfigCommandLine
             output,
             ct));
 
-        return new Command("github", "Preview or write GitHub projection, reconciliation, import, and issue links.")
+        return new Command("github", "Preview or write GitHub projection, reconciliation, import, issue links, and labels.")
         {
-            sync, reconcile, import, CreateLinkSubissueCommand(environment)
+            sync, reconcile, import, CreateLinkSubissueCommand(environment), CreateSyncLabelsCommand(environment, root)
         };
+    }
+
+    private static Command CreateSyncLabelsCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Option<string> repository = new("--repository")
+        {
+            Required = true,
+            Description = "GitHub repository whose labels are synchronized, as owner/name."
+        };
+        Option<bool> force = new("--force")
+        {
+            Description = "Create and update the labels instead of previewing them. Never deletes a label."
+        };
+        Command command = new("sync-labels", "Create missing and update changed GitHub labels from the consumer configuration. Previews unless --force is given.")
+        {
+            repository, force, root
+        };
+        SetGuardedAction(command, (parseResult, output, _, ct) => GitHubLabelSyncCommand.Run(
+            ResolveRoot(parseResult, root, environment),
+            parseResult.GetRequiredValue(repository),
+            parseResult.GetValue(force),
+            environment.HttpClient,
+            output,
+            ct));
+        return command;
     }
 
     private static Command CreateLinkSubissueCommand(RepoConfigToolEnvironment environment)
@@ -290,11 +319,53 @@ internal static class RepoConfigCommandLine
         return command;
     }
 
+    private static Command CreateVerifyGherkinCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Argument<string[]> paths = new("path")
+        {
+            Arity = ArgumentArity.ZeroOrMore,
+            Description = "Tracked feature files or directories to check instead of the configured include patterns. Relative to the root.",
+        };
+        Command command = new("verify-gherkin", "Verify tracked Gherkin feature files against the gherkin rules in .config/sharedkernel-repo.json.") { paths, root };
+        SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyGherkin(
+            ResolveRoot(parseResult, root, environment),
+            parseResult.GetValue(paths) ?? [],
+            output,
+            error,
+            ct));
+        return command;
+    }
+
     private static Command CreateVerifyJsonCommand(RepoConfigToolEnvironment environment, Option<string> root)
     {
         Command command = new("verify-json", "Verify that the working-tree content of every JSON file in the Git index is UTF-8 JSON. Comments and trailing commas are allowed.") { root };
         SetGuardedAction(command, (parseResult, output, error, ct) =>
             RepoConfigToolApplication.VerifyJson(ResolveRoot(parseResult, root, environment), output, error, ct));
+        return command;
+    }
+
+    private static Command CreateVerifyLineEndingsCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Command command = new("verify-line-endings", "Verify that files in the Git index and the working tree use the line endings that their eol attribute requires.") { root };
+        SetGuardedAction(command, (parseResult, output, error, ct) =>
+            RepoConfigToolApplication.VerifyLineEndings(ResolveRoot(parseResult, root, environment), output, error, ct));
+        return command;
+    }
+
+    private static Command CreateVerifyLinksCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Argument<string[]> paths = new("path")
+        {
+            Description = "Markdown or text files, or directories of Markdown files, to scan instead of the configured include patterns. Relative to the root.",
+            Arity = ArgumentArity.ZeroOrMore,
+        };
+        Command command = new("verify-links", "Verify local links, Markdown anchors, and issue references in documentation files.") { paths, root };
+        SetGuardedAction(command, (parseResult, output, error, ct) => RepoConfigToolApplication.VerifyLinks(
+            ResolveRoot(parseResult, root, environment),
+            parseResult.GetValue(paths) ?? [],
+            output,
+            error,
+            ct));
         return command;
     }
 
@@ -457,6 +528,65 @@ internal static class RepoConfigCommandLine
         SetGuardedAction(scan, (parseResult, output, error, ct) => SecurityCommand.Run(
             ResolveRoot(parseResult, root, environment), parseResult.GetRequiredValue(destination), output, error, ct));
         return new Command("security", "Verify security document contracts and scan current source.") { baseline, scan };
+    }
+
+    private static Command CreateVerifyDevcontainerCommand(RepoConfigToolEnvironment environment, Option<string> root)
+    {
+        Option<string[]> commands = new("--exec")
+        {
+            Description = "Command to run with bash -lc inside the started container. Repeat to run several in order.",
+            HelpName = "command",
+        };
+        commands.Validators.Add(result =>
+        {
+            if (result.Tokens.Any(static token => string.IsNullOrWhiteSpace(token.Value) || token.Value.Contains('\0', StringComparison.Ordinal)))
+            {
+                result.AddError("--exec requires a command.");
+            }
+        });
+        Option<string> logDirectory = new("--log-directory")
+        {
+            Description = $"Directory that receives the logs and metadata.txt. Relative to the root. Defaults to {VerifyDevcontainerCommand.DefaultLogDirectory}.",
+            HelpName = "directory",
+            CustomParser = result =>
+            {
+                var path = result.Tokens.Count == 1 ? result.Tokens[0].Value : null;
+                if (string.IsNullOrWhiteSpace(path) || path.Contains('\0', StringComparison.Ordinal))
+                {
+                    result.AddError("--log-directory requires a directory path.");
+                    return null;
+                }
+
+                return path;
+            },
+        };
+        Option<bool> keepContainer = new("--keep-container")
+        {
+            Description = "Keep the started container instead of removing it."
+        };
+        var cli = CreatePathOption(
+            "--devcontainer-cli",
+            $"Dev Container CLI to run. Relative to the root. Without it, the pinned CLI is bootstrapped under {VerifyDevcontainerCommand.ToolsDirectory} on Linux x64.");
+        Command command = new("verify-devcontainer", "Start the repository dev container, run commands inside it, and remove it.")
+        {
+            commands, logDirectory, keepContainer, cli, root
+        };
+        SetGuardedAction(command, (parseResult, output, _, ct) =>
+        {
+            var rootPath = ResolveRoot(parseResult, root, environment);
+            var cliPath = parseResult.GetValue(cli);
+            return VerifyDevcontainerCommand.Run(
+                new VerifyDevcontainerOptions(
+                    rootPath,
+                    parseResult.GetValue(commands) ?? [],
+                    Path.GetFullPath(parseResult.GetValue(logDirectory) ?? VerifyDevcontainerCommand.DefaultLogDirectory, rootPath),
+                    parseResult.GetValue(keepContainer),
+                    cliPath is null ? null : Path.GetFullPath(cliPath, rootPath)),
+                environment.DevcontainerHost ?? DevcontainerHost.Current(),
+                output,
+                ct);
+        });
+        return command;
     }
 
     private static void SetGuardedAction(Command command, Func<ParseResult, TextWriter, TextWriter, CancellationToken, Task<int>> action) =>

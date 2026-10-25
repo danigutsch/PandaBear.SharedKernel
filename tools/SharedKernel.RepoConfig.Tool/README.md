@@ -6,13 +6,16 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 `sharedkernel-repo` maintains repository roadmap configuration, its optional GitHub projection, dependency
 snapshots, and repository checks. The tool holds generic engines; the consuming repository owns its policy and
-data, such as the license exceptions in `.config/sharedkernel-repo.json`, its workflows, and protected-environment
-approvals.
+data, such as the license exceptions and documentation link scope in `.config/sharedkernel-repo.json`, its workflows,
+and protected-environment approvals.
 
 ## Prerequisites
 
-The tool runs on .NET 10. `verify-text-encoding`, `verify-json`, `dependency snapshot`,
-`dependency verify-license-exceptions`, and the `automation` steps also need Git on an absolute `PATH` entry.
+The tool runs on .NET 10. `verify-text-encoding`, `verify-line-endings`, `verify-json`, `verify-gherkin`,
+`dependency snapshot`, `dependency verify-license-exceptions`, and the `automation` steps also need Git on an absolute
+`PATH` entry.
+`verify-devcontainer` needs Docker on an absolute `PATH` entry, a container image with `bash`, and, without
+`--devcontainer-cli`, a Linux x64 host with HTTPS access to `nodejs.org` and `registry.npmjs.org`.
 
 ## Installation
 
@@ -45,11 +48,19 @@ sharedkernel-repo github reconcile
 sharedkernel-repo github reconcile --force
 sharedkernel-repo github link-subissue --repository owner/repository --parent 10 --child 20
 sharedkernel-repo github link-subissue --repository owner/repository --parent 10 --child 20 --force
+sharedkernel-repo github sync-labels --repository owner/repository
+sharedkernel-repo github sync-labels --repository owner/repository --force
 sharedkernel-repo automation publish-result --force
 sharedkernel-repo verify-podman-dns --verbosity quiet
 sharedkernel-repo verify-json
+sharedkernel-repo verify-line-endings
+sharedkernel-repo verify-links
+sharedkernel-repo verify-links roadmap/README.md
+sharedkernel-repo verify-gherkin
+sharedkernel-repo verify-gherkin tests/Features/booking.feature tests/Features/Tours
 sharedkernel-repo dependency submit --snapshot TestResults/dependency-snapshot.json --repository owner/repository
 sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_OUTPUT"
+sharedkernel-repo verify-devcontainer --exec "dotnet --version" --exec "git --version"
 ```
 
 | Command | Purpose |
@@ -62,20 +73,26 @@ sharedkernel-repo dependency verify-license-exceptions --github-output "$GITHUB_
 | `github reconcile` | Reconciles the GitHub snapshot and resolves transferred issue identities. |
 | `github import` | Imports the reconciled issue snapshot into roadmap items. |
 | `github link-subissue` | Previews or creates a native GitHub parent/subissue link between existing issues in the same repository. |
-| `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request. |
+| `github sync-labels` | Creates the configured labels that are missing and updates those that differ; see [Repository labels](#repository-labels). |
+| `automation <step>` | Runs the integrity-bound GitHub Actions steps `plan-github`, `validate-plan`, `apply-plan`, `seal-result`, `verify-result`, and `publish-result`. `publish-result --force` opens the sealed result as a draft pull request; see [Roadmap publication](#roadmap-publication). |
 | `verify-text-encoding` | Fails when a text blob in the Git index is not valid UTF-8 or contains NUL. |
 | `verify-podman-dns` | Checks local rootless Podman aardvark-dns state without changing it. |
 | `verify-json` | Fails when the working-tree content of a `*.json` file in the Git index is missing, not UTF-8, or not JSON. Comments, trailing commas, and a UTF-8 byte order mark are allowed. Each failure names the path, line, and byte. |
+| `verify-line-endings` | Fails when a file in the Git index has CRLF or mixed line endings, staged or in the working tree, while its attributes set `eol=lf`, or LF or mixed line endings in the working tree while they set `eol=crlf`. |
+| `verify-links [<path>...]` | Fails on a broken local link or Markdown anchor, a link that leaves the repository, or an issue or pull request reference in documentation files; see [Documentation links](#documentation-links). |
+| `verify-gherkin [<path>...]` | Checks tracked Gherkin feature files against the configured rules; see [Gherkin feature files](#gherkin-feature-files). |
 | `dependency snapshot` | Generates a dependency snapshot from committed lock files; see [Offline dependency snapshots](#offline-dependency-snapshots). |
 | `dependency submit` | Submits a dependency snapshot to the GitHub dependency graph. |
 | `dependency verify-license-exceptions` | Verifies the configured license exceptions; see [License exceptions](#license-exceptions). |
+| `verify-devcontainer` | Starts the dev container of the root, runs each `--exec` command in it, and removes it; see [Dev container validation](#dev-container-validation). |
 
 `github` commands, `automation publish-result`, and `dependency submit` preview their changes unless
 `--force` is given. Lines that describe previewed changes start with `preview:`. The `publish-result`
 preview names the repository, base SHA, branch, and changed paths; the `dependency submit` preview names
 the snapshot, its size, and the endpoint. Every command except `verify-podman-dns` and `github link-subissue` takes `--root <path>`,
-which defaults to the current directory; relative `--snapshot` and `--github-output` paths resolve against
-it. Run `sharedkernel-repo <command> --help` for the options of each command.
+which defaults to the current directory; relative `--snapshot`, `--github-output`, `--log-directory`,
+`--devcontainer-cli`, and `verify-links` paths resolve against it. Run `sharedkernel-repo <command> --help` for the
+options of each command.
 
 `[diagram]` before a command line prints how the tool parses it without running it, and exits 1 when the
 command line does not parse, as in `sharedkernel-repo [diagram] verify-json --root .`.
@@ -91,6 +108,9 @@ file and the JSON path of the problem. A command fails when the file lacks its s
 ```json
 {
   "version": 1,
+  "labels": [
+    { "name": "type: feature", "color": "a2eeef", "description": "New capability" }
+  ],
   "licenseExceptions": {
     "approval": {
       "file": ".config/sharedkernel-candidate.json",
@@ -103,6 +123,10 @@ file and the JSON path of the problem. A command fails when the file lacks its s
     "packages": {
       "Example.Package": "2.0.0"
     }
+  },
+  "links": {
+    "include": ["README.md", "docs/*.md"],
+    "exclude": ["*/bin/*", "docs/GENERATED*.md"]
   }
 }
 ```
@@ -122,6 +146,127 @@ license exceptions that a review approved:
 Every finding is listed. When none is found, `--github-output <path>` appends
 `packages=pkg:nuget/<id>@<version>,...` in the configured order, the format of the
 `allow-dependencies-licenses` input of GitHub's dependency review action; a failure appends nothing.
+
+### Documentation links
+
+`verify-links` checks the documentation files that the `links` section selects:
+
+- `include` holds at least one path pattern. Without arguments, the command scans each file whose path matches one.
+- `exclude` holds path patterns of files that are never scanned, matched after symbolic links resolve; it may be
+  empty.
+- Patterns match the whole root-relative path with
+  `FileSystemName.MatchesSimpleExpression(pattern, path, ignoreCase: false)`: `*` matches any characters, including
+  `/`, and `?` matches one character.
+
+Paths given as arguments replace `include` but not `exclude`. Each names a `.md` or `.txt` file, or a directory whose
+`*.md` files are scanned recursively, relative to the root; other paths are skipped. Files resolve through symbolic
+links, and a file that resolves outside the root is skipped. The walk does not descend into symbolic links to
+directories.
+
+Outside fenced code (lines that start with three backticks or tildes), every line, including inline code and HTML
+comments, is checked:
+
+- Inline links `[text](target)` end at the first `)`; reference definitions `[name]: target` and autolinks
+  `<target>` that hold `://` or start with `#` are checked too. URLs and `mailto:`, `tel:`, and `urn:` targets are
+  not followed.
+- A local target is percent-decoded, resolves against the file's directory through symbolic links, and must exist
+  inside the root. A target that starts with `/` resolves from the file system root, so it leaves the repository.
+- A fragment in a link to a Markdown file must name a heading anchor of that file, ignoring case. Every line that
+  starts with `#` is a heading. Its anchor drops HTML tags and `` ` ``, `*`, `_`, `~`, `[`, `]`, `(`, and `)`, is
+  lowercased, keeps only ASCII letters, digits, spaces, `.`, `_`, and `-`, and turns each space into `-`; a repeated
+  anchor gets the suffix `-1`, `-2`, and so on.
+- GitHub issue and pull request URLs, repository-relative `issues/<n>` and `pull/<n>` paths, and bare references
+  such as `#123`, `GH-123`, `PR-123`, `issue-123`, and `owner/name#123` are findings. Color values such as
+  `fill:#e7f5ff`, URL fragments, and `Unicode Standard Annex #15` or `UAX #15` are not.
+
+Lines, whitespace, lowercasing, and percent-decoding follow Python's string rules, so a UTF-8 byte order mark stays
+part of the first line. Each finding names the root-relative path and line of the resolved file; a file that cannot be
+read or is not UTF-8 is a finding. On success the command prints how many files it scanned.
+
+### Gherkin feature files
+
+`verify-gherkin` checks the working-tree content of the `*.feature` files in the Git index against the
+`gherkin` section, whose properties are all required:
+
+```json
+{
+  "version": 1,
+  "gherkin": {
+    "include": ["tests/*"],
+    "exclude": ["tests/Generated/*"],
+    "allowedTagPatterns": ["@smoke", "@wip", "@ADR:\\d+", "@BC:.+"],
+    "forbiddenTags": ["@skip"],
+    "featureNameMaxLength": 250,
+    "scenarioNameMaxLength": 150
+  }
+}
+```
+
+- Without arguments, the command checks the tracked feature files that an `include` pattern matches. Paths on
+  the command line, relative to the root and separated by `/`, replace `include`: each names a tracked feature
+  file or a directory that holds one, or the command fails. `exclude` patterns leave files out in both cases.
+  Patterns match the whole path case-sensitively, and `*` also matches `/`.
+- Each tag must match an `allowedTagPatterns` entry as a whole: the pattern `p` compiles as `\A(?:p)\z` with
+  `RegexOptions.NonBacktracking` and a one-second match timeout. A tag in `forbiddenTags` is also reported.
+- Name lengths count Unicode code points.
+
+Each finding names the path and line:
+
+- An empty file, or a file that does not end with a newline.
+- Trailing whitespace on any line, and a tab on a line that is neither blank nor a comment.
+- A tag that is not allowed or is forbidden. Tags are the whitespace-separated words that start with `@` on a line
+  that starts with `@`.
+- A `Feature:` without a name or with a longer name, a file without a named `Feature:`, and a Feature name that an
+  earlier checked file has. Files are checked in ordinal path order.
+- A `Scenario:` or `Scenario Outline:` without a name, with a longer name, or with the name of an earlier scenario
+  in the file.
+- A `Scenario Outline:` without an `Examples:` before the next scenario or the end of the file, reported at that
+  line.
+- A file without a scenario.
+
+Lines end at LF, CRLF, or CR. A line whose first non-blank character is `#` is a comment, and the text from the
+first `#` in any other line is ignored, also inside a name. A keyword counts only at the start of a line and directly
+before a colon, or alone, which leaves its name empty. `Example:`, `Scenario Template:`, and `Scenarios:` are not
+keywords, so a file whose scenarios all use `Example:` has no scenario. A UTF-8 byte order mark stays part of the
+first line, which is then neither a keyword, a tag, nor a comment.
+
+### Repository labels
+
+`github sync-labels --repository owner/name` reads the `labels` section, a nonempty array of labels:
+
+- `name` has 1 to 50 characters, without control characters or surrounding white space. Names must differ
+  ignoring case, because GitHub matches label names ignoring case.
+- `color` is six hexadecimal digits without `#`.
+- `description` has at most 100 characters without control characters, and may be empty.
+
+The command reads every page of the repository's labels from `https://api.github.com/repos/<owner>/<name>/labels`
+and compares them with the configured labels. A missing label is created; a label whose name casing, color, or
+description differs is updated. Colors compare ignoring case, and a label without a description matches an
+empty `description`. Labels that are not configured are never deleted. Without `--force`, the command prints a
+`preview:` line for each label it would create or update and a summary, and writes nothing. With `--force`, it
+writes each change and prints the same summary.
+
+Both modes read `GH_TOKEN`, then `GITHUB_TOKEN`; reads need Issues read and `--force` needs Issues write
+permission. Requests go only to api.github.com, do not follow redirects, read responses of at most 1 MiB, and
+time out after 30 seconds each. Errors report status codes without echoing response bodies. A failed write
+names its label; changes written before it remain, and rerunning the command applies the rest.
+
+## Roadmap publication
+
+`automation publish-result` publishes the sealed roadmap maintenance result. The draft pull request's body is
+`automation.pullRequestBody` from `roadmap/config.json`, a nonblank string of at most 65536 characters, and the
+command fails without it. `init` writes the property and its schema; set the body that the repository's pull
+request policy requires, such as an issue reference:
+
+```json
+"automation": {
+  "pullRequestBody": "Refs #123"
+}
+```
+
+With `--force`, the command requires `GITHUB_OUTPUT` and `GITHUB_STEP_SUMMARY` before it writes to GitHub. It
+succeeds only when GitHub returns the draft pull request's URL, which it appends to `GITHUB_OUTPUT` as
+`pull_request_url` and to the step summary.
 
 ## Transferred issues and external references
 
@@ -180,27 +325,41 @@ references before applying changes, and use explicit closure approvals for actua
 - `verify-podman-dns` inspects only local rootless Podman on Linux and fails closed for remote services.
 - `verify-text-encoding` checks staged regular files, skips files whose `binary` attribute is set, and
   fails on blobs larger than 64 MiB.
+- `verify-gherkin` reads the working-tree content of the regular files in the Git index, skips symbolic links,
+  and fails on files larger than 64 MiB. Untracked feature files are not checked, and a tracked file missing from
+  the working tree is reported.
 - `verify-json` reads the working-tree content of the regular files in the Git index, skips symbolic links
   and submodules, and fails on files larger than 64 MiB. In a sparse checkout, files outside it are
   reported as missing.
+- `verify-line-endings` reads the line endings that `git ls-files --eol` reports. Git stores `eol=crlf` text
+  with LF in the index, so only the working tree is checked for it. Files missing from the working tree are
+  checked only in the index.
+- `verify-links` reads the working tree, not the Git index, and fails on files larger than 64 MiB.
 - `dependency verify-license-exceptions` reads the working-tree content of the regular `packages.lock.json`
   files in the Git index, and fails on an approval file larger than 1 MiB or a lock file larger than 64 MiB.
 - `dependency submit` accepts a snapshot of at most 32 MiB, the size that `dependency snapshot` writes.
+- `verify-devcontainer` bootstraps its CLI only on Linux x64 and accepts downloads of at most 256 MiB. A
+  container that `devcontainer up` creates before it reports its ID, or that outlives the two-second
+  termination timeout after Ctrl+C or SIGTERM, is not removed.
 
 ## Exit codes
 
 | Code | Meaning |
 | --- | --- |
 | 0 | Success, including previews and a healthy or inapplicable Podman state. |
-| 1 | Verification failure or drift, invalid text encoding or JSON, a license exception finding, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a command-line error, or cancellation. |
+| 1 | Verification failure or drift, invalid text encoding or JSON, a line-ending, link, or Gherkin finding, a license exception finding, stale or unverifiable Podman DNS state, invalid configuration, a file, Git, or GitHub error, a rejected dependency submission, a failed dev container start, command, or CLI bootstrap, a command-line error, or cancellation. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or the command did not stop within two seconds. |
 
 ## Security
 
 - Tokens come only from the environment. GitHub transport failures are reported without request details.
-- Child processes (Git, Podman, and `stat`) start without `GH_TOKEN` and `GITHUB_TOKEN`.
-- Git starts from the first absolute `PATH` entry that holds it, never from the current directory or a
-  relative or empty `PATH` entry.
+- Child processes (Git, Podman, `stat`, Docker, and the Dev Container CLI) start without `GH_TOKEN` and
+  `GITHUB_TOKEN`.
+- Git and Docker start from the first absolute `PATH` entry that holds them, never from the current directory
+  or a relative or empty `PATH` entry.
+- `verify-devcontainer` checks each downloaded archive against the hash pinned in the tool before reading it,
+  and extracts only regular files to fixed paths: `bin/node` and the entries under `package/`. Links and
+  entries with empty, `.`, or `..` segments fail the bootstrap.
 - Without `--force`, `github` commands and `automation publish-result` only read and change nothing in
   GitHub or the checkout; `--force` never skips validation.
 - `dependency submit` sends no request and reads no token without `--force`. With it, the command sends
@@ -211,6 +370,35 @@ references before applying changes, and use explicit closure approvals for actua
   fails and leaves only unreferenced Git objects.
 - The `publish-result` preview prints no file contents.
 - Output escapes control characters from roadmap and GitHub data.
+
+## Dev container validation
+
+`verify-devcontainer` validates `.devcontainer/devcontainer.json` under the root with the Dev Container CLI:
+
+1. Without `--devcontainer-cli <path>`, it uses `@devcontainers/cli` 0.84.1 on Node.js 24.22.1, cached under
+   `TestResults/devcontainer-tools/devcontainers-cli-0.84.1-node-24.22.1`. A missing cache is downloaded from
+   `nodejs.org` and `registry.npmjs.org`; the Node.js archive must match the SHA-256 in the release's signed
+   `SHASUMS256.txt.asc`, and the CLI tarball the registry's `dist.integrity`, both pinned in the tool.
+2. It runs `devcontainer up --workspace-folder <root> --log-level trace`. When `.git` under the root is a file,
+   as in a linked worktree, it adds a bind mount of the Git common directory at the same path, so Git works in
+   the container.
+3. The CLI output appears on standard output as it arrives and is written to `devcontainer-up.log` in the log
+   directory, `TestResults/devcontainer-smoke` unless `--log-directory <directory>` names another. The command
+   fails when the CLI exits with a non-zero code or its output contains `"outcome":"error"`, even with exit
+   code 0.
+4. The last `"containerId":"<id>"` on standard output names the container, or, without one there, the last in the
+   log. With an ID, `metadata.txt` in the log
+   directory records `workspace_folder`, `log_dir`, `devcontainer_cli`, and `container_id`; without one, the
+   command fails.
+5. Each `--exec <command>` runs in order as `devcontainer exec --workspace-folder <root> bash -lc <command>`, with
+   its output on standard output and in `devcontainer-exec-<n>.log`. The first non-zero exit code fails the
+   command.
+6. Afterwards, also after a failure or cancellation, `docker rm -f <id>` removes the container unless
+   `--keep-container` is given. A failed removal is reported and does not change the exit code.
+
+```bash
+sharedkernel-repo verify-devcontainer --devcontainer-cli /usr/local/bin/devcontainer --keep-container --root .
+```
 
 ## Security commands
 

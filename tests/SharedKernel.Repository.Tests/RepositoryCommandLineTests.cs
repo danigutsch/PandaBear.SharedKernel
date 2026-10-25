@@ -3,7 +3,7 @@ namespace PandaBear.Repository.Tests;
 public sealed class RepositoryCommandLineTests
 {
     [Fact]
-    public async Task Help_lists_the_select_run_openapi_install_playwright_coverage_stage_candidate_and_verify_commit_message_commands()
+    public async Task Help_lists_the_select_run_openapi_install_playwright_coverage_stage_candidate_verify_commit_message_and_run_mutation_tests_commands()
     {
         // Arrange
         using var scope = new RepositoryTestScope();
@@ -19,6 +19,7 @@ public sealed class RepositoryCommandLineTests
         result.Output.ShouldContain("  openapi ", StringComparison.Ordinal);
         result.Output.ShouldContain("  install-playwright ", StringComparison.Ordinal);
         result.Output.ShouldContain("  coverage ", StringComparison.Ordinal);
+        result.Output.ShouldContain("  run-mutation-tests ", StringComparison.Ordinal);
         result.Output.ShouldNotContain("  validate ", StringComparison.Ordinal);
         result.Output.ShouldContain("  stage-candidate ", StringComparison.Ordinal);
         result.Output.ShouldContain("  verify-commit-message ", StringComparison.Ordinal);
@@ -62,6 +63,7 @@ public sealed class RepositoryCommandLineTests
         "--feed <directory>",
         "--root <path>")]
     [InlineData("verify-commit-message", "--event <path>", "--file <path>")]
+    [InlineData("run-mutation-tests", "--root <path>")]
     public async Task Command_help_lists_the_command_options(string command, params string[] expectedText)
     {
         // Arrange

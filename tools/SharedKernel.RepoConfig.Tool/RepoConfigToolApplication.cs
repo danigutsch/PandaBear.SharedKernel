@@ -237,6 +237,59 @@ internal static class RepoConfigToolApplication
         return 1;
     }
 
+    public static async Task<int> VerifyLineEndings(string rootPath, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var issues = await LineEndingVerifier.Verify(rootPath, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
+        {
+            await output.WriteLineAsync("Repository line endings match their attributes.".AsMemory(), ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        WriteIssues(error, "Repository line-ending verification failed:", issues);
+        return 1;
+    }
+
+    /// <summary>
+    /// Verifies the links in the documentation files that the <c>links</c> section of the consumer configuration
+    /// selects, or in <paramref name="paths"/> when any are given.
+    /// </summary>
+    public static async Task<int> VerifyLinks(string rootPath, IReadOnlyList<string> paths, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
+        var links = configuration.Links
+            ?? throw new InvalidOperationException($"{ConsumerConfigurationFile.RelativePath} has no links section.");
+        var (fileCount, issues) = await LinkVerifier.Verify(rootPath, links, paths, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
+        {
+            await output.WriteLineAsync(string.Create(CultureInfo.InvariantCulture, $"Link validation passed for {fileCount} documentation files.").AsMemory(), ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        WriteIssues(error, "Link validation failed:", issues);
+        return 1;
+    }
+
+    /// <summary>
+    /// Verifies the feature files that the <c>gherkin</c> section of the consumer configuration selects, or the tracked
+    /// feature files that <paramref name="paths"/> name, against its rules.
+    /// </summary>
+    public static async Task<int> VerifyGherkin(string rootPath, IReadOnlyList<string> paths, TextWriter output, TextWriter error, CancellationToken ct)
+    {
+        var configuration = await ConsumerConfigurationFile.Read(rootPath, ct).ConfigureAwait(false);
+        var gherkin = configuration.Gherkin
+            ?? throw new InvalidOperationException($"{ConsumerConfigurationFile.RelativePath} has no gherkin section.");
+        var issues = await GherkinVerifier.Verify(rootPath, gherkin, paths, ct).ConfigureAwait(false);
+        if (issues.Count == 0)
+        {
+            await output.WriteLineAsync("Repository Gherkin files are valid.".AsMemory(), ct).ConfigureAwait(false);
+            return 0;
+        }
+
+        WriteIssues(error, "Repository Gherkin verification failed:", issues);
+        return 1;
+    }
+
     /// <summary>
     /// Verifies the license exceptions in the consumer configuration. On success, appends
     /// <c>packages=pkg:nuget/&lt;id&gt;@&lt;version&gt;,...</c> to <paramref name="githubOutput"/> when it is given.
@@ -378,6 +431,9 @@ internal static class RepoConfigToolApplication
             return 0;
         }
 
+        // Without these files a published pull request would go unreported, so they are required before any write.
+        _ = RequireEnvironmentVariable("GITHUB_OUTPUT");
+        _ = RequireEnvironmentVariable("GITHUB_STEP_SUMMARY");
         var publication = await service.PublishResult(
             planDigest,
             artifactDigest,
