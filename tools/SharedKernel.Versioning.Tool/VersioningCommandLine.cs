@@ -33,6 +33,7 @@ internal static class VersioningCommandLine
             CreateValidateCandidate(timeProvider),
             CreateConsumeCandidate(),
             CreateConsumePackages(),
+            CreateMergeEvidence(),
             CreateVerifyConsumer(),
 
             // [diagram] is not a default directive. Consuming repositories' caller tests parse their command lines with it,
@@ -396,6 +397,36 @@ internal static class VersioningCommandLine
                 parseResult.GetValue(aot),
                 output,
                 parseResult.InvocationConfiguration.Error,
+                ct);
+        });
+        return command;
+    }
+
+    private static Command CreateMergeEvidence()
+    {
+        var candidate = new Option<string>("--candidate") { Description = "Candidate manifest to extend.", HelpName = "path", Required = true };
+        var evidence = new Option<string[]>("--evidence")
+        {
+            Description = "Evidence files written by consume-candidate --output, one or more.",
+            HelpName = "path",
+            Required = true,
+            AllowMultipleArgumentsPerToken = true,
+        };
+        var destination = new Option<string>("--output") { Description = "Manifest to write. Default: the candidate manifest.", HelpName = "path" };
+        var command = new Command("merge-evidence", "Merges passed per-platform consumption and NativeAOT results from evidence files into a candidate manifest.")
+        {
+            candidate,
+            evidence,
+            destination,
+        };
+        SetAction(command, (parseResult, output, ct) =>
+        {
+            var path = Path.GetFullPath(parseResult.GetRequiredValue(candidate));
+            return CandidateEvidenceCommand.Run(
+                path,
+                [.. parseResult.GetRequiredValue(evidence).Select(Path.GetFullPath)],
+                parseResult.GetValue(destination) is { } target ? Path.GetFullPath(target) : path,
+                output,
                 ct);
         });
         return command;

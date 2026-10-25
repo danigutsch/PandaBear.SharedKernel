@@ -20,6 +20,7 @@ public static class VersioningCommandLineTests
         "validate-candidate",
         "consume-candidate",
         "consume-packages",
+        "merge-evidence",
         "verify-consumer",
     ];
 

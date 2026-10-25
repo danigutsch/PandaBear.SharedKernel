@@ -70,6 +70,7 @@ sharedkernel-version create-candidate [--version <version>] [--baseline-version 
 sharedkernel-version validate-candidate [--version <version>] [--baseline-version <version>] [--aot]
 sharedkernel-version consume-candidate (--candidate <path> | --candidate-directory <path>) [--output <path>] [--aot]
 sharedkernel-version consume-packages --feed <path> --version <version> [--aot]
+sharedkernel-version merge-evidence --candidate <path> --evidence <path>... [--output <path>]
 sharedkernel-version verify-consumer --candidate <file> [--solution <file>] [--output <file>] -- <command>...
 ```
 
@@ -158,6 +159,12 @@ same directory, so an interrupted write never truncates it, and Ctrl+C or SIGTER
 `--candidate-directory` must contain exactly one `candidate.json`, searched recursively. `consume-packages` runs
 the same checks against a feed without a manifest.
 `validate-candidate` runs `create-candidate` and then `consume-candidate` on the manifest it wrote.
+
+`merge-evidence` copies the `passed` platform results (`linuxPackageConsumption`, `windowsPackageConsumption`,
+`linuxNativeAot`, `windowsNativeAot`) from one or more evidence files into a candidate manifest, normally a
+consumer's committed pin. Each evidence file must carry the candidate's `libraryRevision`, `libraryDirty`,
+`packageVersion` and `packageSha256` exactly. A `failed` result or a mismatch exits 2 and writes nothing. Other
+fields stay as they are, and it never lowers a recorded result.
 
 ```text
 sharedkernel-version verify-consumer --candidate artifacts/candidate/candidate.json -- dotnet test --solution App.slnx -c Release
