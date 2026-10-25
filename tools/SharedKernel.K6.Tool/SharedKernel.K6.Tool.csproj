@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>sharedkernel-k6</ToolCommandName>
+        <PackageId>PandaBear.SharedKernel.K6.Tool</PackageId>
+        <Description>Runs configured k6 scenarios locally or in a digest-pinned container, with loopback targets, a minimal k6 environment, confined results, and a managed host process.</Description>
+        <RootNamespace>PandaBear.K6.Tool</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>k6;performance;load-testing;benchmark;dotnet-tool</PackageTags>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="SharedKernel.K6.Tool.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.CommandLine" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Include="../Shared/ControlCharacters.cs" Link="Shared/ControlCharacters.cs" />
+        <Compile Include="../Shared/ExecutableResolver.cs" Link="Shared/ExecutableResolver.cs" />
+        <Compile Include="../Shared/RepositoryPath.cs" Link="Shared/RepositoryPath.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+</Project>

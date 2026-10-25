@@ -105,6 +105,10 @@ non-interactive commands and to how they start a UI.
   covering tests, the test slices with their OpenAPI targets and Playwright browsers, the OpenAPI targets, and the
   changed-code coverage threshold, source patterns, and symbol directories. The
   [CI tool README](../tools/SharedKernel.CI.Tool/README.md#configuration) describes the format and the selection rules.
+- `sharedkernel-k6 run` reads `.config/sharedkernel-k6.json`: the script and results directories, the container engine
+  and digest-pinned image, and the scenarios with their script, base URL variable, forwarded environment variables,
+  and optional host process. The [k6 tool README](../tools/SharedKernel.K6.Tool/README.md#configuration) describes
+  the format.
 - Paths in the file are relative to the root and use `/`. They are never rooted, have no empty, `.`, or `..`
   segments, and resolve under the root without following symbolic links.
 - Path patterns match with `FileSystemName.MatchesSimpleExpression(pattern, path, ignoreCase: false)`. Regular
