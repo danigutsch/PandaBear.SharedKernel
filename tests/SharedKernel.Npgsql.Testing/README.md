@@ -14,6 +14,19 @@ var connectionString = database.ConnectionString;
 // Run the consumer's migrations and scenario using this isolated connection string.
 ```
 
+When another component starts the server on demand, pass a resolver instead of a connection string. The
+pool calls it on the first `Create`, inside its gate and with that caller's token, and keeps the first
+successful result. A failed or cancelled resolution registers no database, so the next `Create` resolves
+again. A pool that never created a database never calls the resolver: disposing it neither resolves nor
+contacts a server. `OnDemandResource<T>` from `PandaBear.SharedKernel.IntegrationTesting` is a natural source.
+
+```csharp
+await using var server = new OnDemandResource<AspireTestApplication>(startServer);
+await using var pool = new PostgreSqlTestDatabasePool(async ct =>
+    await (await server.Get(ct)).GetConnectionString("postgres", ct));
+await using var database = await pool.Create(cancellationToken);
+```
+
 The connection must permit database creation. Names are generated internally. Cleanup uses a bounded,
 cancellation-independent connection and forced database removal; failures retain ownership for the pool's
 final cleanup. The lease owns `DataSource`; additional sources returned by `CreateDataSource` belong to

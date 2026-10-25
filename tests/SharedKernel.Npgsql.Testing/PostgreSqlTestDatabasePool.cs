@@ -8,17 +8,33 @@ namespace PandaBear.Npgsql.Testing;
 [SuppressMessage("Usage", "CA2213:Disposable fields should be disposed", Justification = "The semaphore never allocates a wait handle and must remain available for concurrent or retrying disposal calls.")]
 public sealed class PostgreSqlTestDatabasePool : IAsyncDisposable
 {
-    private readonly string _connectionString;
+    private readonly Func<CancellationToken, Task<string>> _resolveServerConnectionString;
     private readonly ConcurrentDictionary<string, PostgreSqlTestDatabaseLease?> _databases = new(StringComparer.Ordinal);
     private readonly SemaphoreSlim _gate = new(1, 1);
+    private string? _connectionString;
     private bool _disposed;
 
     /// <summary>Creates a pool without starting or taking ownership of the server.</summary>
     /// <param name="serverConnectionString">A connection string with permission to create databases.</param>
     public PostgreSqlTestDatabasePool(string serverConnectionString)
+        : this(CreateFixedResolver(serverConnectionString))
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(serverConnectionString);
-        _connectionString = new NpgsqlConnectionStringBuilder(serverConnectionString) { Database = "postgres" }.ConnectionString;
+    }
+
+    /// <summary>
+    /// Creates a pool that resolves the server connection string when the first database is created,
+    /// without starting or taking ownership of the server.
+    /// </summary>
+    /// <param name="resolveServerConnectionString">
+    /// Returns a connection string with permission to create databases. It runs inside the pool's gate with the
+    /// token of the caller that needs it. The first successful result is kept; a failed or cancelled
+    /// resolution registers nothing and the next <see cref="Create"/> resolves again. A pool that never
+    /// created a database never calls it.
+    /// </param>
+    public PostgreSqlTestDatabasePool(Func<CancellationToken, Task<string>> resolveServerConnectionString)
+    {
+        ArgumentNullException.ThrowIfNull(resolveServerConnectionString);
+        _resolveServerConnectionString = resolveServerConnectionString;
     }
 
     /// <summary>Gets a snapshot of databases awaiting successful cleanup.</summary>
@@ -33,13 +49,14 @@ public sealed class PostgreSqlTestDatabasePool : IAsyncDisposable
         try
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
+            var connectionString = await ResolveConnectionString(ct).ConfigureAwait(false);
             var databaseName = $"test_{Guid.NewGuid():N}";
             if (!_databases.TryAdd(databaseName, null))
             {
                 throw new InvalidOperationException("A duplicate PostgreSQL test database was registered.");
             }
 
-            var lease = await PostgreSqlTestDatabaseLease.Create(_connectionString, databaseName, OnDropped, ct).ConfigureAwait(false);
+            var lease = await PostgreSqlTestDatabaseLease.Create(connectionString, databaseName, OnDropped, ct).ConfigureAwait(false);
             _databases[databaseName] = lease;
             return lease;
         }
@@ -57,6 +74,13 @@ public sealed class PostgreSqlTestDatabasePool : IAsyncDisposable
         try
         {
             _disposed = true;
+
+            // A database name is registered only after the server connection string was resolved.
+            if (_connectionString is not { } connectionString)
+            {
+                return;
+            }
+
             List<Exception> failures = [];
             foreach (var (name, lease) in _databases.ToArray())
             {
@@ -70,7 +94,7 @@ public sealed class PostgreSqlTestDatabasePool : IAsyncDisposable
                     // A failed lease disposal remains registered, even when it was already attempted.
                     if (_databases.ContainsKey(name))
                     {
-                        await PostgreSqlTestDatabaseLease.DropDatabase(_connectionString, name).ConfigureAwait(false);
+                        await PostgreSqlTestDatabaseLease.DropDatabase(connectionString, name).ConfigureAwait(false);
                         OnDropped(name);
                     }
                 }
@@ -89,6 +113,36 @@ public sealed class PostgreSqlTestDatabasePool : IAsyncDisposable
         {
             _ = _gate.Release();
         }
+    }
+
+    // A fixed connection string is rejected at construction, exactly as before the lazy constructor existed.
+    private static Func<CancellationToken, Task<string>> CreateFixedResolver(string serverConnectionString)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(serverConnectionString);
+        var connectionString = Normalize(serverConnectionString);
+        return _ => Task.FromResult(connectionString);
+    }
+
+    private static string Normalize(string serverConnectionString)
+    {
+        return new NpgsqlConnectionStringBuilder(serverConnectionString) { Database = "postgres" }.ConnectionString;
+    }
+
+    private async Task<string> ResolveConnectionString(CancellationToken ct)
+    {
+        if (_connectionString is { } resolved)
+        {
+            return resolved;
+        }
+
+        var serverConnectionString = await _resolveServerConnectionString(ct).ConfigureAwait(false);
+        if (string.IsNullOrWhiteSpace(serverConnectionString))
+        {
+            throw new InvalidOperationException("The PostgreSQL server connection string resolver returned no connection string.");
+        }
+
+        _connectionString = Normalize(serverConnectionString);
+        return _connectionString;
     }
 
     private void OnDropped(string name)

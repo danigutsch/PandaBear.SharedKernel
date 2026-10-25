@@ -16,6 +16,7 @@ SharedKernel seed and should stay reusable outside this repository.
 - Resource health waits with explicit timeouts and cancellation.
 - A two-minute host shutdown budget aligned with DCP resource cleanup, with cleanup failures preserved.
 - PostgreSQL public-schema resets for known-baseline tests.
+- Start-on-first-demand sharing of an expensive test resource with `OnDemandResource<T>`.
 
 ## Boundaries
 
@@ -26,7 +27,9 @@ SharedKernel seed and should stay reusable outside this repository.
 - Keep helper APIs small, host-agnostic, documented, and free of app business rules.
 - Keep provider-specific behavior in provider-named helpers, such as PostgreSQL reset helpers.
 - Do not add Testcontainers, Respawn, generic fixture frameworks, or broader lifecycle abstractions for
-  speculative future needs.
+  speculative future needs. `OnDemandResource<T>` is the one lifecycle primitive: it starts a single value on
+  first demand and disposes it once. It decides nothing about what a value means, which tests need it, or what
+  teardown beyond disposal the value requires.
 - Prefer explicit operations over hidden global setup so tests can show which external state they reset.
 - Test AppHost isolation keeps DCP resource names suffixed while Aspire randomizes resource ports and disables
   the dashboard. Aspire service-discovery names remain unchanged.
@@ -42,6 +45,56 @@ SharedKernel seed and should stay reusable outside this repository.
 - Reset PostgreSQL with `PostgreSqlPublicSchemaReset.Reset(connection, ct)` before serial tests that need
   a known database baseline.
 - Pass explicit excluded table names when immutable test evidence must survive the reset.
+
+## On-demand resources
+
+xUnit creates an assembly fixture whenever any selected test runs, including a test that never uses what the
+fixture owns. Let the fixture hold an `OnDemandResource<T>` instead of starting the resource in
+`InitializeAsync`, so only tests that ask for the resource pay for it.
+
+```csharp
+public sealed class ServerFixture : IAsyncLifetime
+{
+    private readonly OnDemandResource<AspireTestApplication> _server = new(StartServer);
+
+    public ValueTask InitializeAsync() => ValueTask.CompletedTask;
+
+    public async Task<string> GetConnectionString(CancellationToken ct)
+    {
+        var server = await _server.Get(ct);
+        return await server.GetConnectionString("postgres", ct);
+    }
+
+    public ValueTask DisposeAsync() => _server.DisposeAsync();
+
+    // Aspire finds its DCP metadata by walking the synchronous call stack, so the builder is created here, in the
+    // executable test assembly, and the first caller runs this method synchronously.
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static Task<AspireTestApplication> StartServer(CancellationToken ct)
+    {
+        var builder = AspireTestApplication.CreateBuilder();
+        _ = builder.AddPostgres("postgres");
+        return AspireTestApplication.Start(builder, ["postgres"], resourceStartupTimeout: null, ct);
+    }
+}
+```
+
+- The first `Get` invokes the start delegate on the calling thread, without `Task.Run`, and never again. The
+  delegate receives a token owned by the resource, so it must not depend on the first caller's test token.
+  Other callers wait for the synchronous part of the start and then share the same task.
+- A cancelled `ct` throws before anything starts, and cancelling it while waiting abandons only that caller's wait;
+  it never cancels or poisons the shared start.
+- A failed start is cached: every caller observes the same failure and the delegate is not invoked again, so a
+  multi-minute startup timeout is not repeated for every test. A synchronous throw becomes a faulted task.
+- `DisposeAsync` is idempotent and safe in any state. It does nothing for a resource that never started, cancels
+  and awaits a pending start, and otherwise disposes the value once, through the optional stop delegate or, when
+  there is none, through `IAsyncDisposable` or `IDisposable`. Failures of a start surface from `Get`, and a start
+  that already failed is not reported again. A pending start that fails with anything but the cancellation that
+  disposal requested, such as a failure carrying cleanup errors, also surfaces from `DisposeAsync`, as do failures of
+  the stop delegate or of the value's own disposal. `Get` after disposal throws `ObjectDisposedException` without
+  starting anything.
+- Dispose only after every borrower has finished. `IsStarted` reports whether a value was started successfully and
+  is not disposed, so teardown can skip work that would otherwise start the resource.
 
 ## Concurrent container ports and cleanup
 
