@@ -8,6 +8,44 @@ Run `dotnet format SharedKernel.slnx --verify-no-changes --no-restore`, then `do
 
 Use file-scoped namespaces, nullable references, four spaces, one top-level type per new file, and XML documentation on public APIs. Do not append `Async` to methods. Preserve warnings-as-errors, vulnerability auditing, public API validation, authorization, validation, privacy, and meaningful regressions. Prove actionable behavior gaps with failing tests before production changes. Prefer existing .NET tools and platform APIs; review any new dependency, including transitives.
 
+## PostgreSQL test servers
+
+The three PostgreSQL test assemblies, `SharedKernel.Npgsql.Tests`, `SharedKernel.EventSourcing.Npgsql.Tests`, and
+`SharedKernel.EntityFrameworkCore.Tests`, stay separate assemblies. Each creates and drops only its own isolated
+databases on a PostgreSQL server, and where that server comes from depends on the environment variable
+`SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING`:
+
+- When it holds a connection string, the assembly borrows that server. It never starts, stops, or replaces it, and a
+  value that is present but malformed fails on first use with a message that names the variable, never one that repeats
+  the value. It does not fall back to a server of its own, because that would hide a broken owner and start a second
+  container.
+- When it is absent or blank, as in a plain `dotnet test --solution SharedKernel.slnx -c Release --no-build
+  --no-restore`, each assembly starts a server of its own through Aspire on its first database use and stops it when its
+  tests end. A test that needs no database starts no container, so a complete local run starts one server per assembly
+  that needs one, up to three.
+
+CI shares one server instead. `.config/sharedkernel-ci.json` lists the three projects in the `postgres` slice and gives
+it a `service`: the project `tests/SharedKernel.Npgsql.Testing.Host`. `sharedkernel-ci run --slice postgres` starts that
+host after the build, waits for it to write its connection string to the file that
+`SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE` names, hands the string to the test run alone through
+`SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING`, and stops the host after the tests by closing its standard input, which
+makes the host remove its container. The host's output is in `service-postgres.stdout.log` and
+`service-postgres.stderr.log` beside the other logs of the slice's evidence, and the connection string is in no log. The
+[CI tool README](../tools/SharedKernel.CI.Tool/README.md#services) describes the protocol. Parallel test modules stay
+enabled, so the three assemblies run at the same time against the one server.
+
+To run the slice as CI does, with a working container runtime:
+
+```sh
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- select
+dotnet run --project tools/SharedKernel.CI.Tool -c Release -- run --slice postgres
+```
+
+`select` without `--base` selects every test project and writes the plan to `TestResults/selection`. `run` restores and
+builds the slice, runs the host, runs the three projects with the connection string, and stops the host. The evidence
+is in `TestResults/selection/execution-postgres`. A change under `tests/SharedKernel.Npgsql.Testing.Host` selects the
+three projects through `selection.testPaths`, because no test project references the host.
+
 ## JavaScript tooling
 
 This repository contains no tracked JavaScript/TypeScript sources and declares no ESLint or Node toolchain. Setup and CI use the pinned .NET SDK and explicit platform prerequisites. An inherited editor or Git-hook command requiring ESLint is not a library requirement; identify the effective hook/configuration and its exact error before changing lint scope. Do not add empty lint configuration or blanket ignores to hide an external invocation.
@@ -70,8 +108,9 @@ creation. A change to a project selects the test projects that depend on it; a c
 (`.config`, `.github`, `*.props`, `*.targets`, `*.slnx`, analyzer configuration, `global.json`, `NuGet.Config`, the
 style analyzer tests, or the shared test configuration) selects every test project. Any project change runs the
 candidate job, which packs and consumes every package, and repository quality, which builds the whole solution and runs
-the governed literal check (`--explicit only`) against every library. Each Aspire AppHost test project has a slice of
-its own; the `library` slice runs every other selected test project. Linux and Windows consume the same candidate bytes
+the governed literal check (`--explicit only`) against every library. The three PostgreSQL test projects share the
+`postgres` slice, which runs one PostgreSQL server for all of them (see [PostgreSQL test servers](#postgresql-test-servers));
+the `library` slice runs every other selected test project. Linux and Windows consume the same candidate bytes
 in parallel. Repository quality runs on every validation. Standalone repository documentation skips candidates, tests,
 and full-solution bootstrap/formatting while every tracked build file is inert; repository quality then builds only the
 documentation tool and checks generated-document drift. Package READMEs, scripts, and uncertain inputs are not

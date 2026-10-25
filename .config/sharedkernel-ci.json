@@ -25,7 +25,17 @@
       "AGENTS.md"
     ],
     "alwaysSelected": [],
-    "requireCoveringTests": false
+    "requireCoveringTests": false,
+    "testPaths": [
+      {
+        "paths": ["tests/SharedKernel.Npgsql.Testing.Host/*"],
+        "tests": [
+          "tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj",
+          "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
+          "tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj"
+        ]
+      }
+    ]
   },
   "slices": [
     {
@@ -33,16 +43,18 @@
       "projects": []
     },
     {
-      "name": "entity-framework-core",
-      "projects": ["tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj"]
-    },
-    {
-      "name": "event-sourcing-npgsql",
-      "projects": ["tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj"]
-    },
-    {
-      "name": "npgsql",
-      "projects": ["tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj"]
+      "name": "postgres",
+      "projects": [
+        "tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj",
+        "tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj",
+        "tests/SharedKernel.Npgsql.Tests/SharedKernel.Npgsql.Tests.csproj"
+      ],
+      "service": {
+        "project": "tests/SharedKernel.Npgsql.Testing.Host/SharedKernel.Npgsql.Testing.Host.csproj",
+        "readyFileVariable": "SHAREDKERNEL_TESTING_POSTGRESQL_READY_FILE",
+        "valueVariable": "SHAREDKERNEL_TESTING_POSTGRESQL_CONNECTION_STRING",
+        "stopTimeoutSeconds": 180
+      }
     }
   ],
   "defaultSlice": "library"

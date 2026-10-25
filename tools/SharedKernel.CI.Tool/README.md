@@ -6,9 +6,9 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 `sharedkernel-ci` selects the test projects affected by a change, as the repository's `.config/sharedkernel-ci.json`
 configures, writes a solution filter for each CI test slice, runs the selected test projects of one or more slices
-through one solution filter, generates OpenAPI documents, installs Playwright browsers, verifies the coverage of changed
-code, stages pinned package candidates in a local feed, verifies Conventional Commit messages in pull request events
-and git commit message files, and runs Stryker.NET mutation tests.
+through one solution filter with the slices' services running around the tests, generates OpenAPI documents, installs
+Playwright browsers, verifies the coverage of changed code, stages pinned package candidates in a local feed, verifies
+Conventional Commit messages in pull request events and git commit message files, and runs Stryker.NET mutation tests.
 
 ## Prerequisites
 
@@ -16,6 +16,8 @@ Git and the .NET SDK pinned in `global.json`. `select` reads `.config/sharedkern
 Git checkout, and `run` reads the configuration and the plan that `select` wrote; `openapi` reads the configuration;
 `coverage` reads the configuration in a Git checkout with the history of `--base`;
 `install-playwright`, and `run --install-playwright`, need PowerShell (`pwsh`);
+`run` for a slice with a `service` starts the service's project with `dotnet run`, so it needs whatever that project
+needs, such as a container runtime;
 `stage-candidate` reads a clean SharedKernel checkout and, with `--repository`, needs HTTPS access to `github.com` and
 `release-assets.githubusercontent.com`; `verify-commit-message` reads only its event or message file;
 `run-mutation-tests` reads the configuration and, until the configured `dotnet-stryker` is installed, needs a NuGet
@@ -87,6 +89,17 @@ the file and the JSON path of the problem.
       "projects": ["tests/System.Tests/System.Tests.csproj"],
       "openApi": ["admin"],
       "playwright": { "project": "tests/System.Tests/System.Tests.csproj", "browsers": ["chromium"] }
+    },
+    {
+      "name": "database",
+      "projects": ["tests/Database.Tests/Database.Tests.csproj", "tests/Outbox.Tests/Outbox.Tests.csproj"],
+      "service": {
+        "project": "tests/Database.Host/Database.Host.csproj",
+        "readyFileVariable": "APP_DATABASE_READY_FILE",
+        "valueVariable": "APP_DATABASE_CONNECTION_STRING",
+        "readyTimeoutSeconds": 300,
+        "stopTimeoutSeconds": 60
+      }
     }
   ],
   "defaultSlice": "fast",
@@ -126,6 +139,11 @@ the file and the JSON path of the problem.
 | `slices[].openApi` | Optional names of `openApi` targets that the slice generates after its build and before its tests run. |
 | `slices[].playwright.project` | Optional; a test project that the slice lists, whose build output holds `playwright.ps1`. `run --install-playwright` installs the browsers when this project is selected. |
 | `slices[].playwright.browsers` | The browsers to install, such as `chromium`: lowercase letters, digits, and `-`, starting with a letter. At least one. |
+| `slices[].service.project` | Optional section. A project of the solution that is not a test project and that no slice lists. `run` starts it with `dotnet run` before the slice's tests and stops it after them; see [Services](#services). |
+| `slices[].service.readyFileVariable` | The environment variable, in the service's environment, that names the file where the service writes its value: letters, digits, and `_`, not starting with a digit, and not `GH_TOKEN` or `GITHUB_TOKEN`. |
+| `slices[].service.valueVariable` | The environment variable that carries the written value into the slice's test run, and only there. It follows the rules of `readyFileVariable`, differs from it, and differs from the `valueVariable` of every other slice. |
+| `slices[].service.readyTimeoutSeconds` | Optional, from 1 to 3600, default 300: how long the service has to write its value, enough for an image pull on a cold runner. |
+| `slices[].service.stopTimeoutSeconds` | Optional, from 1 to 3600, default 60: how long the service has to exit after its standard input closes before its process tree is killed. A service that removes containers needs more than the two minutes that the container runtime may take, because the kill also stops the helpers that remove them. |
 | `defaultSlice` | Optional; the slice that runs the selected test projects that no slice lists. Without it, every test project of the solution must be in a slice. |
 | `openApi[].name` | Optional section. A target name: lowercase letters and digits in words separated by `-`, unique. |
 | `openApi[].project` | The project that `dotnet build` builds for the target. |
@@ -213,7 +231,7 @@ another revision, an unknown slice, and a plan that names a test project outside
 link. When the slices have no selected test project, standard output says so and nothing is built.
 
 The run writes one solution filter, `tests.slnf`, of the selected test projects and the projects of the slices'
-`openApi` targets to its execution directory, `execution-<slice>` (several slices join their names with `+`, as in
+`openApi` targets and services to its execution directory, `execution-<slice>` (several slices join their names with `+`, as in
 `execution-fast+system`; without `--slice`, `execution`) in the plan directory, and then:
 
 1. `dotnet restore tests.slnf --locked-mode`;
@@ -222,8 +240,9 @@ The run writes one solution filter, `tests.slnf`, of the selected test projects 
    generate` runs it, with `-c <configuration>`;
 4. with `--install-playwright`, `install-playwright` for each slice whose `playwright.project` is selected, with its
    browsers, `--configuration <configuration>`, and, with `--playwright-dependencies`, `--with-dependencies`;
-5. one `dotnet test --solution tests.slnf -c <configuration> --no-build --no-restore --results-directory results`, with
-   native MTP module scheduling and no module-parallelism cap.
+5. for each slice with a `service`, in configuration order, the service, as [Services](#services) describes;
+6. one `dotnet test --solution tests.slnf -c <configuration> --no-build --no-restore --results-directory results`, with
+   native MTP module scheduling and no module-parallelism cap, and after it the stop of the services in reverse order.
 
 `--configuration` defaults to `Release`. `--coverage` adds `--results-directory-layout per-module -- --coverlet
 --coverlet-output-format cobertura`, so each test project writes its Cobertura report under
@@ -238,6 +257,43 @@ revision, the status, the slices, the configuration, the options, the test proje
 and `diagnostics.txt` (the same facts, the escaped failure message, and every file in the directory). `--github-summary
 <path>` appends a table of the phases to a GitHub Actions step summary. A failed phase's standard output and standard
 error appear in its failure message on standard error.
+
+#### Services
+
+A slice's `service` is a process that all of the slice's test projects share, such as one database server, and that
+only `run` can start once for them. The configuration names its project, the variable that tells it where to write its
+value, and the variable that hands the value to the tests. The protocol is:
+
+1. The service project is in `tests.slnf`, so restore and build cover it. After the build, the OpenAPI generation, and
+   the Playwright install, `run` starts it from the root with `dotnet run --project <project> -c <configuration>
+   --no-build --no-restore --no-launch-profile`. `dotnet run` passes its redirected standard input to the application,
+   so closing the input reaches the service as end-of-file, and the application's exit code is the exit code of
+   `dotnet run`.
+2. The service's environment is the tool's, without `GH_TOKEN` and `GITHUB_TOKEN`, without `valueVariable`, and with
+   `readyFileVariable` set to the absolute path of a file in a fresh temporary directory. Only the current user can
+   enter that directory (mode 0700 on Unix), and it lies outside the execution directory, which CI uploads as an
+   artifact. Standard input is a pipe that the tool holds open. Standard output and standard error stream to
+   `service-<slice>.stdout.log` and `service-<slice>.stderr.log` in the execution directory, where the `service-<slice>`
+   phase log names them.
+3. When the server accepts connections, the service writes its value to the ready file as one UTF-8 line without a byte
+   order mark: it writes `<file>.tmp` and moves it over the file, so the file never exists before the value is whole.
+   The run polls for the file. The first line, trimmed, is the value, and an empty file or line is not a value yet; the
+   file is at most 4 KiB and the line free of control characters. If the service exits first, the run fails with the
+   exit code and the log paths. If `readyTimeoutSeconds` pass first, the run fails too.
+4. The test phase runs with the value in `valueVariable`, in the environment of that child process only. The value is
+   never an argument, and no earlier phase and no other process receives it. The run replaces the value in the test
+   output and in the failure message of the test phase with `[redacted]`; it cannot know forms that the tests derive from
+   the value, so tests must not print connection strings.
+5. After the test phase, and after a failure or a cancellation of any phase, the run closes the service's input. The
+   service reads end-of-file as the request to release what it started and exit with code 0. The run waits up to
+   `stopTimeoutSeconds` and only then kills the service's process tree, because killing the tree first would also kill
+   the helpers that remove what the service started. It then finishes the logs and deletes the temporary directory.
+
+A service that was killed, exited with a non-zero code, or left its directory fails a run that would otherwise pass. It
+never replaces an earlier failure: the first failure is the one that the run reports, and `diagnostics.txt` lists both.
+If the tool dies, the service still sees end-of-file, because the pipe closes with the tool. Each service adds a
+`service-<slice>` phase, which starts it and waits for its value, and a `service-stop-<slice>` phase to the evidence.
+A slice without a `service` runs as before.
 
 ### openapi
 
@@ -392,7 +448,8 @@ on standard error.
 | 2 | The configuration is invalid, or a run, generation, installation, coverage check, staging, the commit message check, or a mutation run failed; the reason is on standard error. |
 | 130, 143 | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within two seconds. |
 
-Ctrl+C or SIGTERM stops the running `git`, `dotnet`, `pwsh`, or `dotnet-stryker` process tree. A process that fails after the tool has observed
+Ctrl+C or SIGTERM stops the running `git`, `dotnet`, `pwsh`, or `dotnet-stryker` process tree, and a service through its
+standard input first; when cleanup exceeds two seconds the tool exits, and the closed input still tells the service to stop. A process that fails after the tool has observed
 Ctrl+C or SIGTERM counts as the cancellation. Error messages on standard error escape control and format characters
 line by line, so text from files, processes, and the network cannot drive the terminal.
 
@@ -400,11 +457,19 @@ line by line, so text from files, processes, and the network cannot drive the te
 
 The tool starts only `git`, `dotnet`, and `pwsh`, found in the absolute directories of `PATH` and never in the working
 directory, or, for OpenAPI generation, the dotnet host that runs the tool, or the `dotnet-stryker` that
-`run-mutation-tests` installs under `TestResults/tools`, and passes arguments as a list. Slice,
+`run-mutation-tests` installs under `TestResults/tools`, and passes arguments as a list. A slice's service is a `dotnet run`
+of the solution project that the configuration names, started without a GitHub token in its environment. Slice,
 target, browser, configuration, and MSBuild property values are restricted to names, so none can become an option or
 another property. `select` and `coverage verify` pass `--base` to Git only when it is a hexadecimal object ID, so Git
 cannot read it as an option, and escapes control characters in the changed paths that its reasons repeat. `verify-commit-message` starts no process. No credentials are needed. `stage-candidate` runs
 Git without the inherited `GIT_*` variables, which could point it at another repository, and stops Git after a minute.
+
+A service's value can be a credential, such as a connection string with a password. The service writes it to a ready file in
+a temporary directory that only the current user can enter and that lies outside the execution directory, and the tool
+deletes the directory when the service stops. The value reaches the test phase through the environment of the child
+process and never through the arguments that failure messages print. Neither the value nor the ready file appears in the
+evidence, the phase logs, or the messages, and the service's own output goes to log files that a service must keep free
+of it.
 
 `stage-candidate --repository` sends unauthenticated HTTPS `GET` requests to
 `https://github.com/<owner>/<name>/releases/download/v<version>/<asset>`, which GitHub redirects to its release-asset
