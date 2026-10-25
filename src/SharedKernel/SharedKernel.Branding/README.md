@@ -8,9 +8,7 @@ Reusable branding settings contracts, validation, and HTTP client primitives.
 
 ## Usage
 
-Use `BrandingSettings` and contract constants for reusable branding validation, `IBrandingSettingsStore` for persistence abstraction, and the public/management branding clients with an explicitly configured `HttpClient`. DTOs and routes describe the reusable contract; the host owns authorization, endpoint base addresses, persistence, cache policy, and application defaults.
-
-Management `SaveSettings` success bodies are limited to 1 MiB or the configured `HttpClient.MaxResponseContentBufferSize`, whichever is smaller, including unknown-length responses. Oversized bodies raise `HttpRequestException`; caller cancellation and the client timeout cover response-body reads. Responses are disposed on success and failure, and declared JSON charsets remain supported.
+Use `BrandingSettings` and contract constants for reusable branding validation, `IBrandingSettingsStore` for persistence abstraction, and the public branding client with an explicitly configured `HttpClient`. DTOs and routes describe the reusable contract; the host owns authorization, endpoint base addresses, persistence, cache policy, and application defaults.
 
 ## Install and example
 
