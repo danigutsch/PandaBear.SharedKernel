@@ -60,6 +60,11 @@ read-only at `/k6` and the run directory at `/results`, and starts the configure
 loopback target becomes `host.docker.internal`; Docker maps it with `--add-host host.docker.internal:host-gateway`,
 and Podman provides it.
 
+On Linux and macOS the tool makes the run directory that it creates for a container run writable for the
+container user (mode `1777`, with the sticky bit), because the k6 image runs as an unprivileged user that is not the
+host user. It changes no other directory, and a local run keeps the default mode. k6 exits 0 when it cannot write its
+summary, so a container run that exits 0 without `k6-summary.json` in the run directory fails with exit code `2`.
+
 A command line that starts with `[diagram]` prints how it parses instead of running; an invalid command line exits 1.
 
 ## Configuration
@@ -143,7 +148,7 @@ Variable names are letters, digits, and `_`; `GH_TOKEN`, `GITHUB_TOKEN`, and `K6
 | --- | --- |
 | `0` | k6 succeeded. |
 | `1` | Invalid command line or cancellation. |
-| `2` | Invalid configuration, a rejected argument or target, a missing executable or script, or a host that exited, timed out, or reported an invalid URL. |
+| `2` | Invalid configuration, a rejected argument or target, a missing executable or script, a host that exited, timed out, or reported an invalid URL, or a container run that exited 0 without writing `k6-summary.json`. |
 | `130`, `143` | Ctrl+C or SIGTERM during start-up, or cleanup did not finish within 20 seconds. |
 | Other | Exit code of k6 or the container engine, once it started. |
 

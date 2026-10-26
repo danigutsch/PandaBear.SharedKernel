@@ -59,6 +59,18 @@ internal sealed class K6TestRepository : IDisposable
         return fake;
     }
 
+    /// <summary>A fake container engine body that writes the summary file into the mounted results directory.</summary>
+    public const string WritesContainerSummary = """
+        for argument in "$@"; do
+          case "$argument" in
+            type=bind,source=*,target=/results)
+              results="${argument#type=bind,source=}"
+              : > "${results%,target=/results}/k6-summary.json"
+              ;;
+          esac
+        done
+        """;
+
     public string[] RunDirectories() =>
         Directory.Exists(ResultsDirectory) ? Directory.GetDirectories(ResultsDirectory) : [];
 

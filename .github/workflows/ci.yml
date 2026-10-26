@@ -207,6 +207,10 @@ jobs:
           dotnet restore tests/SharedKernel.K6.Tool.Tests --locked-mode
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           dotnet test --project tests/SharedKernel.K6.Tool.Tests/SharedKernel.K6.Tool.Tests.csproj -c Release --no-restore
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet restore tests/SharedKernel.Aspire.Hosting.K6.Tests --locked-mode
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet test --project tests/SharedKernel.Aspire.Hosting.K6.Tests/SharedKernel.Aspire.Hosting.K6.Tests.csproj -c Release --no-restore
           exit $LASTEXITCODE
       - name: Retain Windows compatibility evidence
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a

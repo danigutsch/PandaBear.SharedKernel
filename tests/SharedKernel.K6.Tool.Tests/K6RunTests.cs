@@ -121,6 +121,77 @@ public sealed class K6RunTests
     }
 
     [Fact]
+    public async Task Container_runs_create_a_results_directory_that_the_container_user_can_write()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new K6TestRepository();
+        repository.AddFake("podman", body: K6TestRepository.WritesContainerSummary);
+        repository.SetEnvironment("APP_BASE_URL", "http://localhost:5000");
+
+        // Act
+        var exitCode = await repository.Invoke(["run", "--scenario", "smoke", "--container"], TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        var run = repository.RunDirectories().ShouldHaveSingleItem();
+        File.GetUnixFileMode(run).ShouldBe(
+            UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute
+            | UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute
+            | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute
+            | UnixFileMode.StickyBit);
+        File.GetUnixFileMode(repository.ResultsDirectory).HasFlag(UnixFileMode.OtherWrite).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Local_runs_leave_the_mode_of_the_results_directory_alone()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new K6TestRepository();
+        repository.AddFake("k6");
+        repository.SetEnvironment("APP_BASE_URL", "http://localhost:5000");
+
+        // Act
+        var exitCode = await repository.Invoke(["run", "--scenario", "smoke"], TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(0);
+        var mode = File.GetUnixFileMode(repository.RunDirectories().ShouldHaveSingleItem());
+        mode.HasFlag(UnixFileMode.OtherWrite).ShouldBeFalse();
+        mode.HasFlag(UnixFileMode.StickyBit).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task A_container_run_that_exits_0_without_a_summary_fails()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using var repository = new K6TestRepository();
+        repository.AddFake("podman");
+        repository.SetEnvironment("APP_BASE_URL", "http://localhost:5000");
+
+        // Act
+        var exitCode = await repository.Invoke(["run", "--scenario", "smoke", "--container"], TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldBe(2);
+        repository.Error.ToString().ShouldContain("exited 0 but wrote no k6-summary.json", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task The_image_option_replaces_the_configured_image()
     {
         // Arrange
@@ -130,7 +201,7 @@ public sealed class K6RunTests
         }
 
         using var repository = new K6TestRepository();
-        var podman = repository.AddFake("podman");
+        var podman = repository.AddFake("podman", body: K6TestRepository.WritesContainerSummary);
         repository.SetEnvironment("APP_BASE_URL", "http://localhost:5000");
         const string image = "mirror.example/k6@sha256:fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210";
 
