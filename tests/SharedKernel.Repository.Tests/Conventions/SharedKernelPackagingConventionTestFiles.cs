@@ -1,8 +1,9 @@
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace PandaBear.Repository.Tests.Conventions;
 
-internal static class SharedKernelPackagingConventionTestFiles
+internal static partial class SharedKernelPackagingConventionTestFiles
 {
     public static string GetRepositoryRoot()
     {
@@ -19,6 +20,15 @@ internal static class SharedKernelPackagingConventionTestFiles
 
         throw new InvalidOperationException("Could not locate repository root.");
     }
+
+    public static IEnumerable<string> GetHintNameLiteralViolations(string path, string text) =>
+        HintNameLiteral().Matches(text)
+            .Select(static match => match.Groups["name"].Value)
+            .Where(static name => !name.EndsWith(".g.cs", StringComparison.Ordinal))
+            .Select(name => $"{path}: hint name \"{name}\" must end in .g.cs.");
+
+    [GeneratedRegex(@"(?:HintName\w*\s*=|AddSource\(\s*)\s*""(?<name>[^""]*)""")]
+    private static partial Regex HintNameLiteral();
 
     public static IEnumerable<string> GetPackageMetadataViolations(string projectPath)
     {
