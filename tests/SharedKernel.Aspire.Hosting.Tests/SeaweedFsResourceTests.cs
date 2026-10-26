@@ -159,4 +159,17 @@ public sealed class SeaweedFsResourceTests
         // Assert
         action.ShouldThrow<ArgumentException>().ParamName.ShouldBe("bucketDefault");
     }
+
+    [Fact]
+    public void AddSeaweedFs_rejects_a_null_default_bucket()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+
+        // Act
+        var action = () => builder.AddSeaweedFs("seaweed", null!);
+
+        // Assert
+        action.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("bucketDefault");
+    }
 }
