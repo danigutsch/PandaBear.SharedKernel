@@ -53,6 +53,7 @@ internal static partial class RepositoryCommandLine
         root.Subcommands.Add(CreateVerifyCommitMessage(workingDirectory));
         root.Subcommands.Add(CreateVerifyRestoreWarnings(workingDirectory));
         root.Subcommands.Add(CreateWarningSummary(workingDirectory));
+        root.Subcommands.Add(CreateWarningReport(workingDirectory));
         root.Subcommands.Add(CreateRunMutationTests(workingDirectory, run));
         return root;
     }
@@ -517,6 +518,7 @@ internal static partial class RepositoryCommandLine
         logOption.Required = true;
         var summaryOption = PathOption("--summary", "GitHub Actions step summary file that receives the classification. Appended to.", "path");
         var reportOption = PathOption("--report", "File that receives the warning report for warning-summary. Replaced if it exists.", "path");
+        var exceptionsOption = PathOption("--exceptions", "Warning exception ledger JSON. Findings it covers count as accepted, an expired exception is reported as blocking.", "path");
         var command = new Command(
             "verify-restore-warnings",
             "Fail when a dotnet restore log reports a high or critical NuGet vulnerability advisory; lower severities and other NuGet warnings stay advisory in the summary.")
@@ -524,6 +526,7 @@ internal static partial class RepositoryCommandLine
             logOption,
             summaryOption,
             reportOption,
+            exceptionsOption,
         };
         command.SetAction((parseResult, ct) => Execute(
             parseResult,
@@ -531,6 +534,52 @@ internal static partial class RepositoryCommandLine
                 Path.GetFullPath(parseResult.GetRequiredValue(logOption), workingDirectory),
                 parseResult.GetValue(summaryOption) is { } summary ? Path.GetFullPath(summary, workingDirectory) : null,
                 parseResult.GetValue(reportOption) is { } report ? Path.GetFullPath(report, workingDirectory) : null,
+                parseResult.GetValue(exceptionsOption) is { } exceptions ? Path.GetFullPath(exceptions, workingDirectory) : null,
+                ct),
+            ct));
+        return command;
+    }
+
+    private static Command CreateWarningReport(string workingDirectory)
+    {
+        var toolOption = new Option<string>("--tool") { Description = "Name of the producing tool, such as 'Markdown lint'.", HelpName = "name", Required = true };
+        var outcomeOption = new Option<string>("--outcome")
+        {
+            Description = "Outcome of the step: success or failure. Pass steps.<id>.outcome; a skipped or cancelled step fails instead of reading as a pass.",
+            HelpName = "outcome",
+            Required = true,
+        };
+        var advisoryOption = new Option<int>("--advisory")
+        {
+            Description = "Number of advisory findings the step reported.",
+            HelpName = "count",
+            DefaultValueFactory = _ => 0,
+        };
+        advisoryOption.Validators.Add(static result =>
+        {
+            if (result.GetValueOrDefault<int>() < 0)
+            {
+                result.AddError("Option '--advisory' cannot be negative.");
+            }
+        });
+        var reportOption = PathOption("--report", "File that receives the warning report for warning-summary. Replaced if it exists.", "path");
+        reportOption.Required = true;
+        var command = new Command(
+            "warning-report",
+            "Write the warning report of a step without a log to classify, such as a linter or a test run, for warning-summary.")
+        {
+            toolOption,
+            outcomeOption,
+            advisoryOption,
+            reportOption,
+        };
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            (_, _) => WarningProducer.Write(
+                parseResult.GetRequiredValue(toolOption),
+                parseResult.GetRequiredValue(outcomeOption),
+                parseResult.GetValue(advisoryOption),
+                Path.GetFullPath(parseResult.GetRequiredValue(reportOption), workingDirectory),
                 ct),
             ct));
         return command;

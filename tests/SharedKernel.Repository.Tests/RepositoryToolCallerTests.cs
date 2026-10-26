@@ -73,6 +73,7 @@ public sealed class RepositoryToolCallerTests
                     + " --feed <packages>",
                 "verify-restore-warnings --log restore.log --report restore-warnings.json",
                 "warning-summary --report restore-warnings.json --report lint-warnings.json --summary $GITHUB_STEP_SUMMARY",
+                "warning-report --tool Markdown lint --outcome $MARKDOWN_OUTCOME --report markdown-warnings.json",
                 "verify-commit-message --file $1",
                 "run-mutation-tests",
             ],
