@@ -4,22 +4,22 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Reusable .NET Aspire hosting extensions for a private local ClamAV daemon.
+Aspire hosting integration for a private ClamAV container.
 
-The package adds a pinned `clamav/clamav` container resource, an internal TCP
-endpoint for `clamd`, virus definitions that persist between AppHost runs, and
-a PING/PONG health check.
+## Usage example
 
-The definitions live in the named volume `{name}-definitions`, so a restarted
-AppHost reuses them. When the `DcpPublisher:ResourceNameSuffix` configuration
-value is set, the resource is an isolated instance, such as a parallel test
-run. It then gets an anonymous volume that the container runtime removes
-together with the container, because the named volume of an isolated instance
-is never reused and would stay behind after every run.
+```csharp
+var clamAv = builder.AddClamAv("clamav")
+                    .WithDataVolume();
 
-FreshClam is enabled by default. Use `.WithFreshClam(false)` only when virus
-definitions are supplied by the image, a mounted volume, or another update
-process.
+builder.AddProject<Projects.Api>("api")
+       .WithClamAvReference(clamAv)
+       .WaitFor(clamAv);
+```
+
+The container exposes `clamd` on a private TCP endpoint and is healthy once it answers `PING`. Without `WithDataVolume` or
+`WithDataBindMount` the virus definitions live and die with the container. Use `WithFreshClam(false)` when the definitions come
+from the image or another update process.
 
 ## Package identity and availability
 

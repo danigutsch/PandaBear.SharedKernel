@@ -3,11 +3,10 @@ using Aspire.Hosting.ApplicationModel;
 namespace Aspire.Hosting;
 
 /// <summary>
-/// Adds local Grafana LGTM observability resources to an Aspire AppHost model.
+/// Provides extension methods for adding the Grafana LGTM observability stack to the application model.
 /// </summary>
 public static class GrafanaLgtmStackResourceExtensions
 {
-    private const string OtlpGrpcEndpointName = "otlp-grpc";
     private const string OtlpExporterEndpointVariableName = "OTEL_EXPORTER_OTLP_ENDPOINT";
     private const string OtlpExporterProtocolVariableName = "OTEL_EXPORTER_OTLP_PROTOCOL";
     private const string OtlpHttpProtobufProtocol = "http/protobuf";
@@ -15,44 +14,19 @@ public static class GrafanaLgtmStackResourceExtensions
     private const string CollectorGrpcEndpointName = "grpc";
     private const string CollectorHttpEndpointName = "http";
 
-    /// <summary>Tag for <c>docker.io/otel/opentelemetry-collector-contrib:0.130.1</c>.</summary>
-    private const string OpenTelemetryCollectorImageTag = "0.130.1";
-
-    /// <summary>Digest for <c>docker.io/otel/opentelemetry-collector-contrib:0.130.1</c>.</summary>
-    private const string OpenTelemetryCollectorImageDigest = "9c247564e65ca19f97d891cca19a1a8d291ce631b890885b44e3503c5fdb3895";
-
-    /// <summary>Tag for <c>docker.io/grafana/grafana:12.0.2</c>.</summary>
-    private const string GrafanaImageTag = "12.0.2";
-
-    /// <summary>Digest for <c>docker.io/grafana/grafana:12.0.2</c>.</summary>
-    private const string GrafanaImageDigest = "b5b59bfc7561634c2d7b136c4543d702ebcc94a3da477f21ff26f89ffd4214fa";
-
-    /// <summary>Tag for <c>docker.io/grafana/loki:3.5.1</c>.</summary>
-    private const string LokiImageTag = "3.5.1";
-
-    /// <summary>Digest for <c>docker.io/grafana/loki:3.5.1</c>.</summary>
-    private const string LokiImageDigest = "a74594532eec4cc313401beedc4dd2708c43674c032084b1aeb87c14a5be1745";
-
-    /// <summary>Tag for <c>docker.io/grafana/tempo:2.8.1</c>.</summary>
-    private const string TempoImageTag = "2.8.1";
-
-    /// <summary>Digest for <c>docker.io/grafana/tempo:2.8.1</c>.</summary>
-    private const string TempoImageDigest = "bc9245fe3da4e63dc4c6862d9c2dad9bcd8be13d0ba4f7705fa6acda4c904d0e";
-
-    /// <summary>Tag for <c>docker.io/prom/prometheus:v3.5.0</c>.</summary>
-    private const string PrometheusImageTag = "v3.5.0";
-
-    /// <summary>Digest for <c>docker.io/prom/prometheus:v3.5.0</c>.</summary>
-    private const string PrometheusImageDigest = "63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996";
-
     /// <summary>
-    /// Adds a pinned OpenTelemetry Collector gateway and routes compatible AppHost resources through it.
+    /// Adds an OpenTelemetry Collector gateway to the application model and routes the telemetry of compatible resources through it.
     /// </summary>
-    /// <param name="builder">The distributed application builder.</param>
-    /// <param name="name">The collector resource name.</param>
-    /// <param name="privacyConfigurationFile">The shared receiver and privacy-processor configuration file.</param>
-    /// <param name="routingConfigurationFile">The exporter and pipeline-routing configuration file.</param>
-    /// <returns>The configured OpenTelemetry Collector resource.</returns>
+    /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
+    /// <param name="name">The name of the resource.</param>
+    /// <param name="privacyConfigurationFile">The path of the configuration file with the shared receivers and privacy processors.</param>
+    /// <param name="routingConfigurationFile">The path of the configuration file with the exporters and pipeline routing.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <remarks>
+    /// Resources that export OTLP telemetry wait until the collector is healthy and send to its gRPC endpoint, or to its HTTP
+    /// endpoint when their <c>OTEL_EXPORTER_OTLP_PROTOCOL</c> is <c>http/protobuf</c> or <c>http/json</c>.
+    /// This version of the package defaults to the <inheritdoc cref="GrafanaLgtmContainerImageTags.OpenTelemetryCollectorTag"/> tag of the collector container image.
+    /// </remarks>
     public static IResourceBuilder<OpenTelemetryCollectorResource> AddOpenTelemetryCollectorGateway(
         this IDistributedApplicationBuilder builder,
         [ResourceName] string name,
@@ -65,8 +39,8 @@ public static class GrafanaLgtmStackResourceExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(routingConfigurationFile);
 
         var collector = builder.AddOpenTelemetryCollector(name)
-            .WithImageTag(OpenTelemetryCollectorImageTag)
-            .WithImageSHA256(OpenTelemetryCollectorImageDigest)
+            .WithImageTag(GrafanaLgtmContainerImageTags.OpenTelemetryCollectorTag)
+            .WithImageSHA256(GrafanaLgtmContainerImageTags.OpenTelemetryCollectorDigest)
             .WithConfig(Path.GetFullPath(privacyConfigurationFile))
             .WithConfig(Path.GetFullPath(routingConfigurationFile));
         ConfigureAppForwarding(collector);
@@ -126,12 +100,21 @@ public static class GrafanaLgtmStackResourceExtensions
     }
 
     /// <summary>
-    /// Adds a Grafana resource to the Aspire model.
+    /// Adds a Grafana container to the application model.
     /// </summary>
-    /// <param name="builder">The distributed application builder.</param>
-    /// <param name="name">The resource name.</param>
-    /// <param name="configurationRoot">The root folder containing Grafana provisioning and dashboard folders.</param>
-    /// <returns>The configured Grafana resource.</returns>
+    /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
+    /// <param name="name">The name of the resource.</param>
+    /// <param name="configurationRoot">The path of the folder that contains the <c>provisioning</c> and <c>dashboards</c> folders.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <remarks>
+    /// <para>
+    /// This resource includes built-in health checks. When this resource is referenced as a dependency
+    /// using the <see cref="ResourceBuilderExtensions.WaitFor{T}(IResourceBuilder{T}, IResourceBuilder{IResource})"/>
+    /// extension method then the dependent resource will wait until Grafana is able to service requests.
+    /// </para>
+    /// Anonymous access with the Admin role is enabled and the resource is excluded from the manifest, because it is meant for local development.
+    /// This version of the package defaults to the <inheritdoc cref="GrafanaLgtmContainerImageTags.GrafanaTag"/> tag of the <inheritdoc cref="GrafanaLgtmContainerImageTags.GrafanaImage"/> container image.
+    /// </remarks>
     public static IResourceBuilder<GrafanaResource> AddGrafana(
         this IDistributedApplicationBuilder builder,
         [ResourceName] string name,
@@ -144,25 +127,48 @@ public static class GrafanaLgtmStackResourceExtensions
         var grafanaRoot = Path.GetFullPath(configurationRoot);
 
         return builder.AddResource(new GrafanaResource(name))
-            .WithImage("grafana/grafana")
-            .WithImageTag(GrafanaImageTag)
-            .WithImageSHA256(GrafanaImageDigest)
+            .WithImage(GrafanaLgtmContainerImageTags.GrafanaImage, GrafanaLgtmContainerImageTags.GrafanaTag)
+            .WithImageRegistry(GrafanaLgtmContainerImageTags.Registry)
+            .WithImageSHA256(GrafanaLgtmContainerImageTags.GrafanaDigest)
             .WithBindMount(Path.Combine(grafanaRoot, "provisioning"), "/etc/grafana/provisioning", isReadOnly: true)
             .WithBindMount(Path.Combine(grafanaRoot, "dashboards"), "/var/lib/grafana/dashboards", isReadOnly: true)
             .WithEnvironment("GF_AUTH_ANONYMOUS_ENABLED", "true")
             .WithEnvironment("GF_AUTH_ANONYMOUS_ORG_ROLE", "Admin")
             .WithEnvironment("GF_AUTH_DISABLE_LOGIN_FORM", "true")
-            .WithHttpEndpoint(targetPort: 3000)
+            .WithHttpEndpoint(targetPort: 3000, name: GrafanaResource.HttpEndpointName)
+            .WithHttpHealthCheck("/api/health", endpointName: GrafanaResource.HttpEndpointName)
             .ExcludeFromManifest();
     }
 
     /// <summary>
-    /// Adds a Loki resource to the Aspire model.
+    /// Configures the host port that the Grafana resource is exposed on instead of using randomly assigned port.
     /// </summary>
-    /// <param name="builder">The distributed application builder.</param>
-    /// <param name="name">The resource name.</param>
-    /// <param name="configurationFile">The Loki configuration file.</param>
-    /// <returns>The configured Loki resource.</returns>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="port">The port to bind on the host. If <see langword="null"/> is used random port will be assigned.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<GrafanaResource> WithHostPort(this IResourceBuilder<GrafanaResource> builder, int? port)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        return builder.WithEndpoint(GrafanaResource.HttpEndpointName, endpoint => endpoint.Port = port);
+    }
+
+    /// <summary>
+    /// Adds a Loki container to the application model.
+    /// </summary>
+    /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
+    /// <param name="name">The name of the resource.</param>
+    /// <param name="configurationFile">The path of the Loki configuration file.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <remarks>
+    /// <para>
+    /// This resource includes built-in health checks. When this resource is referenced as a dependency
+    /// using the <see cref="ResourceBuilderExtensions.WaitFor{T}(IResourceBuilder{T}, IResourceBuilder{IResource})"/>
+    /// extension method then the dependent resource will wait until Loki is able to service requests.
+    /// </para>
+    /// The resource is excluded from the manifest, because it is meant for local development.
+    /// This version of the package defaults to the <inheritdoc cref="GrafanaLgtmContainerImageTags.LokiTag"/> tag of the <inheritdoc cref="GrafanaLgtmContainerImageTags.LokiImage"/> container image.
+    /// </remarks>
     public static IResourceBuilder<LokiResource> AddLoki(
         this IDistributedApplicationBuilder builder,
         [ResourceName] string name,
@@ -173,22 +179,40 @@ public static class GrafanaLgtmStackResourceExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(configurationFile);
 
         return builder.AddResource(new LokiResource(name))
-            .WithImage("grafana/loki")
-            .WithImageTag(LokiImageTag)
-            .WithImageSHA256(LokiImageDigest)
+            .WithImage(GrafanaLgtmContainerImageTags.LokiImage, GrafanaLgtmContainerImageTags.LokiTag)
+            .WithImageRegistry(GrafanaLgtmContainerImageTags.Registry)
+            .WithImageSHA256(GrafanaLgtmContainerImageTags.LokiDigest)
             .WithBindMount(Path.GetFullPath(configurationFile), "/etc/loki/loki.yaml", isReadOnly: true)
             .WithArgs("-config.file=/etc/loki/loki.yaml")
-            .WithHttpEndpoint(targetPort: 3100)
+            .WithHttpEndpoint(targetPort: 3100, name: LokiResource.HttpEndpointName)
+            .WithHttpHealthCheck("/ready", endpointName: LokiResource.HttpEndpointName)
             .ExcludeFromManifest();
     }
 
     /// <summary>
-    /// Adds a Tempo resource to the Aspire model.
+    /// Configures the host port that the Loki resource is exposed on instead of using randomly assigned port.
     /// </summary>
-    /// <param name="builder">The distributed application builder.</param>
-    /// <param name="name">The resource name.</param>
-    /// <param name="configurationFile">The Tempo configuration file.</param>
-    /// <returns>The configured Tempo resource.</returns>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="port">The port to bind on the host. If <see langword="null"/> is used random port will be assigned.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<LokiResource> WithHostPort(this IResourceBuilder<LokiResource> builder, int? port)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        return builder.WithEndpoint(LokiResource.HttpEndpointName, endpoint => endpoint.Port = port);
+    }
+
+    /// <summary>
+    /// Adds a Tempo container to the application model.
+    /// </summary>
+    /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
+    /// <param name="name">The name of the resource.</param>
+    /// <param name="configurationFile">The path of the Tempo configuration file.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <remarks>
+    /// The resource is excluded from the manifest, because it is meant for local development.
+    /// This version of the package defaults to the <inheritdoc cref="GrafanaLgtmContainerImageTags.TempoTag"/> tag of the <inheritdoc cref="GrafanaLgtmContainerImageTags.TempoImage"/> container image.
+    /// </remarks>
     public static IResourceBuilder<TempoResource> AddTempo(
         this IDistributedApplicationBuilder builder,
         [ResourceName] string name,
@@ -199,22 +223,44 @@ public static class GrafanaLgtmStackResourceExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(configurationFile);
 
         return builder.AddResource(new TempoResource(name))
-            .WithImage("grafana/tempo")
-            .WithImageTag(TempoImageTag)
-            .WithImageSHA256(TempoImageDigest)
+            .WithImage(GrafanaLgtmContainerImageTags.TempoImage, GrafanaLgtmContainerImageTags.TempoTag)
+            .WithImageRegistry(GrafanaLgtmContainerImageTags.Registry)
+            .WithImageSHA256(GrafanaLgtmContainerImageTags.TempoDigest)
             .WithBindMount(Path.GetFullPath(configurationFile), "/etc/tempo/tempo.yaml", isReadOnly: true)
             .WithArgs("-config.file=/etc/tempo/tempo.yaml")
-            .WithEndpoint(targetPort: 4317, name: OtlpGrpcEndpointName)
+            .WithEndpoint(targetPort: 4317, name: TempoResource.OtlpGrpcEndpointName)
             .ExcludeFromManifest();
     }
 
     /// <summary>
-    /// Adds a Prometheus resource to the Aspire model.
+    /// Configures the host port that the Tempo resource is exposed on instead of using randomly assigned port.
     /// </summary>
-    /// <param name="builder">The distributed application builder.</param>
-    /// <param name="name">The resource name.</param>
-    /// <param name="configurationFile">The Prometheus configuration file.</param>
-    /// <returns>The configured Prometheus resource.</returns>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="port">The port to bind on the host. If <see langword="null"/> is used random port will be assigned.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<TempoResource> WithHostPort(this IResourceBuilder<TempoResource> builder, int? port)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        return builder.WithEndpoint(TempoResource.OtlpGrpcEndpointName, endpoint => endpoint.Port = port);
+    }
+
+    /// <summary>
+    /// Adds a Prometheus container to the application model.
+    /// </summary>
+    /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
+    /// <param name="name">The name of the resource.</param>
+    /// <param name="configurationFile">The path of the Prometheus configuration file.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <remarks>
+    /// <para>
+    /// This resource includes built-in health checks. When this resource is referenced as a dependency
+    /// using the <see cref="ResourceBuilderExtensions.WaitFor{T}(IResourceBuilder{T}, IResourceBuilder{IResource})"/>
+    /// extension method then the dependent resource will wait until Prometheus is able to service requests.
+    /// </para>
+    /// The resource is excluded from the manifest, because it is meant for local development.
+    /// This version of the package defaults to the <inheritdoc cref="GrafanaLgtmContainerImageTags.PrometheusTag"/> tag of the <inheritdoc cref="GrafanaLgtmContainerImageTags.PrometheusImage"/> container image.
+    /// </remarks>
     public static IResourceBuilder<PrometheusResource> AddPrometheus(
         this IDistributedApplicationBuilder builder,
         [ResourceName] string name,
@@ -225,21 +271,38 @@ public static class GrafanaLgtmStackResourceExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(configurationFile);
 
         return builder.AddResource(new PrometheusResource(name))
-            .WithImage("prom/prometheus")
-            .WithImageTag(PrometheusImageTag)
-            .WithImageSHA256(PrometheusImageDigest)
+            .WithImage(GrafanaLgtmContainerImageTags.PrometheusImage, GrafanaLgtmContainerImageTags.PrometheusTag)
+            .WithImageRegistry(GrafanaLgtmContainerImageTags.Registry)
+            .WithImageSHA256(GrafanaLgtmContainerImageTags.PrometheusDigest)
             .WithBindMount(Path.GetFullPath(configurationFile), "/etc/prometheus/prometheus.yml", isReadOnly: true)
             .WithArgs("--config.file=/etc/prometheus/prometheus.yml")
-            .WithHttpEndpoint(targetPort: 9090)
+            .WithHttpEndpoint(targetPort: 9090, name: PrometheusResource.HttpEndpointName)
+            .WithHttpHealthCheck("/-/ready", endpointName: PrometheusResource.HttpEndpointName)
             .ExcludeFromManifest();
     }
 
     /// <summary>
-    /// Adds Grafana, Loki, Tempo, Prometheus, and an OpenTelemetry Collector to the Aspire model.
+    /// Configures the host port that the Prometheus resource is exposed on instead of using randomly assigned port.
     /// </summary>
-    /// <param name="builder">The distributed application builder.</param>
-    /// <param name="configurationRoot">The root folder containing <c>grafana</c>, <c>loki</c>, <c>otel-collector</c>, <c>prometheus</c>, and <c>tempo</c> configuration folders.</param>
-    /// <returns>The configured Grafana resource.</returns>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="port">The port to bind on the host. If <see langword="null"/> is used random port will be assigned.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<PrometheusResource> WithHostPort(this IResourceBuilder<PrometheusResource> builder, int? port)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        return builder.WithEndpoint(PrometheusResource.HttpEndpointName, endpoint => endpoint.Port = port);
+    }
+
+    /// <summary>
+    /// Adds Grafana, Loki, Tempo, Prometheus, and an OpenTelemetry Collector gateway to the application model.
+    /// </summary>
+    /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
+    /// <param name="configurationRoot">The path of the folder that contains the <c>grafana</c>, <c>loki</c>, <c>otel-collector</c>, <c>prometheus</c>, and <c>tempo</c> configuration folders.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{T}"/> for the Grafana resource.</returns>
+    /// <remarks>
+    /// The resources are named with <see cref="GrafanaLgtmStackDefaults.ResourceNames"/>.
+    /// </remarks>
     public static IResourceBuilder<GrafanaResource> AddGrafanaLgtmStack(
         this IDistributedApplicationBuilder builder,
         string configurationRoot)
@@ -251,12 +314,15 @@ public static class GrafanaLgtmStackResourceExtensions
     }
 
     /// <summary>
-    /// Adds Grafana, Loki, Tempo, Prometheus, and an OpenTelemetry Collector to the Aspire model.
+    /// Adds Grafana, Loki, Tempo, Prometheus, and an OpenTelemetry Collector gateway to the application model.
     /// </summary>
-    /// <param name="builder">The distributed application builder.</param>
-    /// <param name="resourceNames">The resource names to use in the Aspire model.</param>
-    /// <param name="configurationRoot">The root folder containing <c>grafana</c>, <c>loki</c>, <c>otel-collector</c>, <c>prometheus</c>, and <c>tempo</c> configuration folders.</param>
-    /// <returns>The configured Grafana resource.</returns>
+    /// <param name="builder">The <see cref="IDistributedApplicationBuilder"/>.</param>
+    /// <param name="resourceNames">The names of the resources.</param>
+    /// <param name="configurationRoot">The path of the folder that contains the <c>grafana</c>, <c>loki</c>, <c>otel-collector</c>, <c>prometheus</c>, and <c>tempo</c> configuration folders.</param>
+    /// <returns>A reference to the <see cref="IResourceBuilder{T}"/> for the Grafana resource.</returns>
+    /// <remarks>
+    /// The collector waits for Tempo and Loki, Prometheus waits for the collector, and Grafana waits for Loki, Tempo, and Prometheus.
+    /// </remarks>
     public static IResourceBuilder<GrafanaResource> AddGrafanaLgtmStack(
         this IDistributedApplicationBuilder builder,
         GrafanaLgtmStackResourceNames resourceNames,

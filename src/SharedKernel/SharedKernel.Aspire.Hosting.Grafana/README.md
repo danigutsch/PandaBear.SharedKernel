@@ -4,11 +4,17 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Reusable .NET Aspire hosting extensions for local Grafana LGTM observability stacks.
+Aspire hosting integration for a local Grafana LGTM observability stack.
 
-The package adds typed resources and extension methods for Grafana, Loki, Tempo,
-Prometheus, and the OpenTelemetry Collector. The collector gateway composes a shared privacy
-configuration with an environment-specific routing configuration before forwarding AppHost telemetry.
+## Usage example
+
+```csharp
+builder.AddGrafanaLgtmStack("observability");
+```
+
+The stack adds Grafana, Loki, Tempo, Prometheus, and an OpenTelemetry Collector gateway that applies a shared privacy
+configuration before it forwards the telemetry of the AppHost. Each resource is also available on its own, for example
+`AddGrafana`, `AddLoki`, and `AddOpenTelemetryCollectorGateway`.
 
 ## Package identity and availability
 
