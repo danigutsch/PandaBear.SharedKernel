@@ -14,3 +14,9 @@ static PandaBear.EntityFrameworkCore.CurrentSaveChangesDbContext.Enter(Microsoft
 static PandaBear.EntityFrameworkCore.DbContextConfigurationServiceCollectionExtensions.AddDbContextConfiguration<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, PandaBear.EntityFrameworkCore.IDbContextConfiguration<TContext!>! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static PandaBear.EntityFrameworkCore.DbContextConfigurationServiceCollectionExtensions.ApplyDbContextOptionConfigurations<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! options, bool enableDevelopmentDiagnostics) -> void
 static PandaBear.EntityFrameworkCore.EfCoreCommandTransactionScope.Execute<TResponse>(Microsoft.EntityFrameworkCore.DbContext! dbContext, System.Func<System.Threading.Tasks.ValueTask<TResponse>>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>
+PandaBear.EntityFrameworkCore.ReadDbContextConfiguration<TContext>
+PandaBear.EntityFrameworkCore.ReadDbContextConfiguration<TContext>.ConfigureOptions(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! optionsBuilder) -> void
+PandaBear.EntityFrameworkCore.ReadDbContextConfiguration<TContext>.ReadDbContextConfiguration() -> void
+PandaBear.EntityFrameworkCore.WriteDbContextConfiguration<TContext>
+PandaBear.EntityFrameworkCore.WriteDbContextConfiguration<TContext>.ConfigureOptions(Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! optionsBuilder) -> void
+PandaBear.EntityFrameworkCore.WriteDbContextConfiguration<TContext>.WriteDbContextConfiguration() -> void
