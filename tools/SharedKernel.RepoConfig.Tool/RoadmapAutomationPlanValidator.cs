@@ -10,7 +10,7 @@ internal static class RoadmapAutomationPlanValidator
         string currentDefaultBranchOid,
         string currentSnapshotDigest,
         string currentInputDigest,
-        IReadOnlyDictionary<int, string> currentBaselineTransitions,
+        IReadOnlyList<RoadmapClosedItemTransition> currentBaselineTransitions,
         IReadOnlyList<RoadmapClosedItemTransition> currentRequiredTransitions)
     {
         ArgumentNullException.ThrowIfNull(plan);
@@ -27,15 +27,7 @@ internal static class RoadmapAutomationPlanValidator
             throw new InvalidOperationException("Roadmap automation plan repository does not match the workflow repository.");
         }
 
-        if (!string.Equals(plan.BaseSha, currentHead, StringComparison.Ordinal))
-        {
-            throw new InvalidOperationException("Roadmap automation plan base SHA is stale.");
-        }
-
-        if (!string.Equals(plan.DefaultBranchOid, currentDefaultBranchOid, StringComparison.Ordinal))
-        {
-            throw new InvalidOperationException("Roadmap automation plan default-branch OID is stale.");
-        }
+        RequireCurrentDefaultBranchHead(currentHead, currentDefaultBranchOid);
 
         if (!string.Equals(plan.SnapshotDigest, currentSnapshotDigest, StringComparison.Ordinal))
         {
@@ -60,7 +52,6 @@ internal static class RoadmapAutomationPlanValidator
         }
 
         var approved = currentBaselineTransitions
-            .Select(transition => new RoadmapClosedItemTransition(transition.Key, transition.Value))
             .Concat(required)
             .OrderBy(transition => transition.Issue)
             .ToArray();
@@ -84,7 +75,7 @@ internal static class RoadmapAutomationPlanValidator
         string currentHead,
         string currentDefaultBranchOid,
         string currentSnapshotDigest,
-        IReadOnlyDictionary<int, string> currentApprovedTransitions,
+        IReadOnlyList<RoadmapClosedItemTransition> currentApprovedTransitions,
         IReadOnlyList<RoadmapClosedItemTransition> currentRequiredTransitions)
     {
         ArgumentNullException.ThrowIfNull(plan);
@@ -101,15 +92,7 @@ internal static class RoadmapAutomationPlanValidator
             throw new InvalidOperationException("Roadmap automation plan repository does not match the workflow repository.");
         }
 
-        if (!string.Equals(plan.BaseSha, currentHead, StringComparison.Ordinal))
-        {
-            throw new InvalidOperationException("Roadmap automation plan base SHA is stale.");
-        }
-
-        if (!string.Equals(plan.DefaultBranchOid, currentDefaultBranchOid, StringComparison.Ordinal))
-        {
-            throw new InvalidOperationException("Roadmap automation plan default-branch OID is stale.");
-        }
+        RequireCurrentDefaultBranchHead(currentHead, currentDefaultBranchOid);
 
         if (!string.Equals(plan.SnapshotDigest, currentSnapshotDigest, StringComparison.Ordinal))
         {
@@ -125,6 +108,18 @@ internal static class RoadmapAutomationPlanValidator
         if (!string.Equals(plan.ApprovedClosedTransitionsDigest, approvedDigest, StringComparison.Ordinal))
         {
             throw new InvalidOperationException("Roadmap automation closure approvals changed after the protected apply.");
+        }
+    }
+
+    /// <summary>
+    /// The plan is bound to its repository inputs, not to commit SHAs. A newer default-branch head is
+    /// accepted as long as the checkout is that head; the input digest rejects any roadmap change.
+    /// </summary>
+    private static void RequireCurrentDefaultBranchHead(string currentHead, string currentDefaultBranchOid)
+    {
+        if (!string.Equals(currentHead, currentDefaultBranchOid, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException("Roadmap automation checkout is not the current default-branch head.");
         }
     }
 }

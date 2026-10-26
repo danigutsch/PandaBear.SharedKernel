@@ -274,6 +274,21 @@ internal sealed class GitHubRoadmapIntake
         }
     }
 
+    private string ResolveTransitionStatus(
+        RoadmapItemSnapshot item,
+        GitHubRoadmapReconciliation reconciliation,
+        string closedStatus)
+    {
+        if (!reconciliation.ClosedItemCloseReasons.TryGetValue(item.GitHubIssue.GetValueOrDefault(), out var closeReason)
+            || !string.Equals(closeReason, RoadmapCloseReason.NotPlanned, StringComparison.Ordinal))
+        {
+            return closedStatus;
+        }
+
+        return _project.GitHubIntakeNotPlannedStatus
+            ?? throw new InvalidOperationException("roadmap/config.json must define integrations.github.intake.notPlannedStatus before a NOT_PLANNED issue can transition.");
+    }
+
     private static void ValidateClosedItemTransitions(
         GitHubRoadmapReconciliation reconciliation,
         Dictionary<int, RoadmapItemSnapshot> existingItemsByIssue)
@@ -746,7 +761,7 @@ internal sealed class GitHubRoadmapIntake
                 desiredScoring,
                 updatesMetadata,
                 desiredMetadata,
-                closedStatus,
+                transitionsToClosedSupport ? ResolveTransitionStatus(item, reconciliation, closedStatus) : closedStatus,
                 out var itemChanged);
             if (updatedContent is null)
             {

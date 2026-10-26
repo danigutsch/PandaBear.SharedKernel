@@ -61,6 +61,21 @@ internal sealed class GitHubRoadmapReconciliation
         get;
     }
 
+    /// <summary>Close outcomes declared by the manifest; an issue without an entry was completed.</summary>
+    public IReadOnlyDictionary<int, string> ClosedItemCloseReasons
+    {
+        get; private init;
+    } = new Dictionary<int, string>();
+
+    public IReadOnlyList<RoadmapClosedItemTransition> GetClosedTransitions() =>
+        ClosedItemTransitions
+            .OrderBy(transition => transition.Key)
+            .Select(transition => new RoadmapClosedItemTransition(
+                transition.Key,
+                transition.Value,
+                ClosedItemCloseReasons.GetValueOrDefault(transition.Key, RoadmapCloseReason.Completed)))
+            .ToArray();
+
     public IReadOnlyList<int> ChildrenOfCanonicalPrimaries
     {
         get;
@@ -158,7 +173,7 @@ internal sealed class GitHubRoadmapReconciliation
         var expectedOpenIssueSet = new HashSet<int>(expectedOpenIssueNumbers);
         var blockerEdges = ReadBlockerEdges(root, expectedOpenIssueSet, out var closedEndpointStates);
         var externalBlockerEdges = ReadExternalBlockerEdges(root, repository, expectedOpenIssueSet, closedEndpointStates);
-        var closedItemTransitions = ReadClosedItemTransitions(root, closedEndpointStates);
+        var closedItemTransitions = ReadClosedItemTransitions(root, closedEndpointStates, out var closedItemCloseReasons);
         VerifyIntegrity(root, expectedOpenIssueNumbers, directCanonicalPrimaries, childrenOfCanonicalPrimaries, unmappedStructuralRoots, needsHuman, blockerEdges, externalBlockerEdges);
 
         return new GitHubRoadmapReconciliation(
@@ -176,7 +191,10 @@ internal sealed class GitHubRoadmapReconciliation
             GetNullableString(root, "repositoryCommit"),
             GetNullableString(root, "ruleVersion"),
             priorityPolicy,
-            content);
+            content)
+        {
+            ClosedItemCloseReasons = closedItemCloseReasons
+        };
     }
 
     private static string FindManifestPath(string rootPath)
@@ -402,8 +420,12 @@ internal sealed class GitHubRoadmapReconciliation
             GetRequiredIssueState(endpoint, "state"));
     }
 
-    private static Dictionary<int, string> ReadClosedItemTransitions(JsonElement root, Dictionary<int, string> closedEndpointStates)
+    private static Dictionary<int, string> ReadClosedItemTransitions(
+        JsonElement root,
+        Dictionary<int, string> closedEndpointStates,
+        out Dictionary<int, string> closeReasons)
     {
+        closeReasons = [];
         if (!root.TryGetProperty("closedItemTransitions", out var entries))
         {
             return [];
@@ -425,6 +447,12 @@ internal sealed class GitHubRoadmapReconciliation
 
             var issue = GetRequiredPositiveInteger(entry, "issue");
             var roadmapItem = GetRequiredString(entry, "roadmapItem");
+            var closeReason = GetNullableString(entry, "closeReason");
+            if (closeReason is not null && !string.Equals(closeReason, RoadmapCloseReason.NotPlanned, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException("GitHub reconciliation manifest closed item transition closeReason must be NOT_PLANNED when present.");
+            }
+
             if (closedEndpointStates.TryGetValue(issue, out var existingState)
                 && !string.Equals(existingState, "CLOSED", StringComparison.Ordinal))
             {
@@ -437,6 +465,10 @@ internal sealed class GitHubRoadmapReconciliation
             }
 
             closedEndpointStates[issue] = "CLOSED";
+            if (closeReason is not null)
+            {
+                closeReasons.Add(issue, closeReason);
+            }
         }
 
         return transitions;

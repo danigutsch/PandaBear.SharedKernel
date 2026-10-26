@@ -17,7 +17,7 @@ public sealed class RoadmapAutomationPlanTests
             RoadmapAutomationTestPlan.SnapshotDigest,
             RoadmapAutomationTestPlan.InputDigest,
             "roadmap/reconciliation/open-issues-test.json",
-            new Dictionary<int, string> { [90] = "RM-090" },
+            new RoadmapClosedItemTransition[] { new(90, "RM-090") },
             [
                 new RoadmapClosedItemTransition(101, "RM-101"),
                 new RoadmapClosedItemTransition(100, "RM-100")
@@ -103,7 +103,7 @@ public sealed class RoadmapAutomationPlanTests
     }
 
     [Fact]
-    public void Before_write_validation_rejects_a_stale_base_sha()
+    public void Before_write_validation_rejects_a_checkout_ahead_of_the_default_branch()
     {
         // Arrange
         var plan = RoadmapAutomationTestPlan.Create();
@@ -117,16 +117,61 @@ public sealed class RoadmapAutomationPlanTests
             RoadmapAutomationTestPlan.BaseSha,
             RoadmapAutomationTestPlan.SnapshotDigest,
             RoadmapAutomationTestPlan.InputDigest,
-            new Dictionary<int, string> { [90] = "RM-090" },
+            new RoadmapClosedItemTransition[] { new(90, "RM-090") },
             [new RoadmapClosedItemTransition(100, "RM-100")]);
         var exception = action.ShouldThrow<InvalidOperationException>();
 
         // Assert
-        exception.Message.ShouldBe("Roadmap automation plan base SHA is stale.");
+        exception.Message.ShouldBe("Roadmap automation checkout is not the current default-branch head.");
     }
 
     [Fact]
-    public void Before_write_validation_rejects_a_moved_default_branch()
+    public void Before_write_validation_accepts_a_newer_head_when_the_repository_inputs_are_unchanged()
+    {
+        // Arrange
+        var plan = RoadmapAutomationTestPlan.Create();
+
+        // Act
+        RoadmapAutomationPlanValidator.ValidateBeforeWrite(
+            plan,
+            plan.PlanDigest,
+            "owner/repository",
+            RoadmapAutomationTestPlan.DifferentSha,
+            RoadmapAutomationTestPlan.DifferentSha,
+            RoadmapAutomationTestPlan.SnapshotDigest,
+            RoadmapAutomationTestPlan.InputDigest,
+            new RoadmapClosedItemTransition[] { new(90, "RM-090") },
+            [new RoadmapClosedItemTransition(100, "RM-100")]);
+
+        // Assert
+        plan.BaseSha.ShouldBe(RoadmapAutomationTestPlan.BaseSha);
+    }
+
+    [Fact]
+    public void Before_write_validation_rejects_a_newer_head_when_the_repository_inputs_changed()
+    {
+        // Arrange
+        var plan = RoadmapAutomationTestPlan.Create();
+
+        // Act
+        Action action = () => RoadmapAutomationPlanValidator.ValidateBeforeWrite(
+            plan,
+            plan.PlanDigest,
+            "owner/repository",
+            RoadmapAutomationTestPlan.DifferentSha,
+            RoadmapAutomationTestPlan.DifferentSha,
+            RoadmapAutomationTestPlan.SnapshotDigest,
+            new string('c', 64),
+            new RoadmapClosedItemTransition[] { new(90, "RM-090") },
+            [new RoadmapClosedItemTransition(100, "RM-100")]);
+        var exception = action.ShouldThrow<InvalidOperationException>();
+
+        // Assert
+        exception.Message.ShouldBe("Roadmap automation repository input snapshot is stale.");
+    }
+
+    [Fact]
+    public void Before_write_validation_rejects_a_checkout_behind_the_default_branch()
     {
         // Arrange
         var plan = RoadmapAutomationTestPlan.Create();
@@ -140,12 +185,12 @@ public sealed class RoadmapAutomationPlanTests
             RoadmapAutomationTestPlan.DifferentSha,
             RoadmapAutomationTestPlan.SnapshotDigest,
             RoadmapAutomationTestPlan.InputDigest,
-            new Dictionary<int, string> { [90] = "RM-090" },
+            new RoadmapClosedItemTransition[] { new(90, "RM-090") },
             [new RoadmapClosedItemTransition(100, "RM-100")]);
         var exception = action.ShouldThrow<InvalidOperationException>();
 
         // Assert
-        exception.Message.ShouldBe("Roadmap automation plan default-branch OID is stale.");
+        exception.Message.ShouldBe("Roadmap automation checkout is not the current default-branch head.");
     }
 
     [Fact]
@@ -163,7 +208,7 @@ public sealed class RoadmapAutomationPlanTests
             RoadmapAutomationTestPlan.BaseSha,
             new string('c', 64),
             RoadmapAutomationTestPlan.InputDigest,
-            new Dictionary<int, string> { [90] = "RM-090" },
+            new RoadmapClosedItemTransition[] { new(90, "RM-090") },
             [new RoadmapClosedItemTransition(100, "RM-100")]);
         var exception = action.ShouldThrow<InvalidOperationException>();
 
@@ -186,7 +231,7 @@ public sealed class RoadmapAutomationPlanTests
             RoadmapAutomationTestPlan.BaseSha,
             RoadmapAutomationTestPlan.SnapshotDigest,
             new string('c', 64),
-            new Dictionary<int, string> { [90] = "RM-090" },
+            new RoadmapClosedItemTransition[] { new(90, "RM-090") },
             [new RoadmapClosedItemTransition(100, "RM-100")]);
         var exception = action.ShouldThrow<InvalidOperationException>();
 
@@ -209,7 +254,7 @@ public sealed class RoadmapAutomationPlanTests
             RoadmapAutomationTestPlan.BaseSha,
             RoadmapAutomationTestPlan.SnapshotDigest,
             RoadmapAutomationTestPlan.InputDigest,
-            new Dictionary<int, string> { [90] = "RM-090" },
+            new RoadmapClosedItemTransition[] { new(90, "RM-090") },
             [new RoadmapClosedItemTransition(101, "RM-101")]);
         var exception = action.ShouldThrow<InvalidOperationException>();
 
@@ -232,7 +277,7 @@ public sealed class RoadmapAutomationPlanTests
             RoadmapAutomationTestPlan.BaseSha,
             RoadmapAutomationTestPlan.SnapshotDigest,
             RoadmapAutomationTestPlan.InputDigest,
-            new Dictionary<int, string> { [90] = "RM-090" },
+            new RoadmapClosedItemTransition[] { new(90, "RM-090") },
             []);
 
         // Assert
@@ -252,7 +297,7 @@ public sealed class RoadmapAutomationPlanTests
             RoadmapAutomationTestPlan.SnapshotDigest,
             RoadmapAutomationTestPlan.InputDigest,
             "roadmap/reconciliation/open-issues-test.json",
-            new Dictionary<int, string>(),
+            Array.Empty<RoadmapClosedItemTransition>(),
             [new RoadmapClosedItemTransition(100, "RM-100\n::warning::unsafe")],
             snapshotChanged: false);
         var exception = action.ShouldThrow<InvalidOperationException>();
@@ -298,11 +343,11 @@ public sealed class RoadmapAutomationPlanTests
     {
         // Arrange
         var plan = RoadmapAutomationTestPlan.Create();
-        var currentTransitions = new Dictionary<int, string>
+        var currentTransitions = new RoadmapClosedItemTransition[]
         {
-            [90] = "RM-090",
-            [100] = "RM-100",
-            [101] = "RM-101"
+            new(90, "RM-090"),
+            new(100, "RM-100"),
+            new(101, "RM-101")
         };
 
         // Act
@@ -326,10 +371,10 @@ public sealed class RoadmapAutomationPlanTests
     {
         // Arrange
         var plan = RoadmapAutomationTestPlan.Create();
-        var approvedTransitions = new Dictionary<int, string>
+        var approvedTransitions = new RoadmapClosedItemTransition[]
         {
-            [90] = "RM-090",
-            [100] = "RM-100"
+            new(90, "RM-090"),
+            new(100, "RM-100")
         };
         Action changedPlanDigest = () => RoadmapAutomationPlanValidator.ValidateBeforePush(
             plan,
@@ -376,8 +421,8 @@ public sealed class RoadmapAutomationPlanTests
 
         // Assert
         planException.Message.ShouldBe("Roadmap automation plan digest changed after approval.");
-        baseException.Message.ShouldBe("Roadmap automation plan base SHA is stale.");
-        defaultBranchException.Message.ShouldBe("Roadmap automation plan default-branch OID is stale.");
+        baseException.Message.ShouldBe("Roadmap automation checkout is not the current default-branch head.");
+        defaultBranchException.Message.ShouldBe("Roadmap automation checkout is not the current default-branch head.");
         snapshotException.Message.ShouldBe("Roadmap automation GitHub snapshot is stale.");
     }
 }

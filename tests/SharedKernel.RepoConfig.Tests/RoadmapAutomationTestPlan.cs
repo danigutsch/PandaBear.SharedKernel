@@ -19,7 +19,7 @@ internal static class RoadmapAutomationTestPlan
             SnapshotDigest,
             InputDigest,
             "roadmap/reconciliation/open-issues-test.json",
-            new Dictionary<int, string> { [90] = "RM-090" },
+            new RoadmapClosedItemTransition[] { new(90, "RM-090") },
             requiredTransitions ?? [new RoadmapClosedItemTransition(100, "RM-100")],
             snapshotChanged);
     }

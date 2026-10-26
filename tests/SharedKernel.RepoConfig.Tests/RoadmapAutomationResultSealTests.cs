@@ -14,6 +14,7 @@ public sealed class RoadmapAutomationResultSealTests
         var resultDigest = new string('d', 64);
         var seal = RoadmapAutomationResultSeal.Create(
             plan,
+            plan.BaseSha,
             artifactDigest,
             resultDigest,
             pathCount: 3,
@@ -48,6 +49,7 @@ public sealed class RoadmapAutomationResultSealTests
         var resultDigest = new string('d', 64);
         var seal = RoadmapAutomationResultSeal.Create(
             plan,
+            plan.BaseSha,
             artifactDigest,
             resultDigest,
             pathCount: 1,
@@ -77,6 +79,7 @@ public sealed class RoadmapAutomationResultSealTests
         File.WriteAllText(path, "existing-artifact");
         var seal = RoadmapAutomationResultSeal.Create(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             new string('c', 64),
             new string('d', 64),
             pathCount: 1,

@@ -14,4 +14,9 @@ internal sealed record GitHubRoadmapReconcileIssue(
     {
         get; init;
     }
+
+    public string? StateReason
+    {
+        get; init;
+    }
 }

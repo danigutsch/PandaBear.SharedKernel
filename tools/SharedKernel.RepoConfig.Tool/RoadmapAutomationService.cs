@@ -74,7 +74,7 @@ internal sealed class RoadmapAutomationService
             snapshotDigest,
             inputSnapshot.Digest,
             manifestPath,
-            reconciliation.ClosedItemTransitions,
+            reconciliation.GetClosedTransitions(),
             requiredTransitions,
             snapshotChanged);
         plan.Write(GetPlanPath(_rootPath));
@@ -131,6 +131,7 @@ internal sealed class RoadmapAutomationService
             cancellationToken).ConfigureAwait(false);
         var seal = RoadmapAutomationResultSeal.Create(
             validation.Plan,
+            validation.BaseSha,
             expectedArtifactDigest,
             validation.Changes.Digest,
             validation.Changes.Paths.Count,
@@ -175,7 +176,7 @@ internal sealed class RoadmapAutomationService
             expectedRepository,
             cancellationToken).ConfigureAwait(false);
         return await RoadmapGitHubPublisher
-            .Preview(_rootPath, validation.Plan, validation.Changes, cancellationToken)
+            .Preview(_rootPath, validation.Plan, validation.BaseSha, validation.Changes, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -198,7 +199,7 @@ internal sealed class RoadmapAutomationService
         var httpClient = _httpClient ?? ownedHttpClient
             ?? throw new InvalidOperationException("Roadmap automation could not create a GitHub client.");
         return await new RoadmapGitHubPublisher(_rootPath, httpClient)
-            .Publish(validation.Plan, validation.Changes, validation.PullRequestBody!, cancellationToken)
+            .Publish(validation.Plan, validation.BaseSha, validation.Changes, validation.PullRequestBody!, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -259,7 +260,7 @@ internal sealed class RoadmapAutomationService
             defaultBranchOid,
             snapshotDigest,
             inputSnapshot.Digest,
-            reconciliation.ClosedItemTransitions,
+            reconciliation.GetClosedTransitions(),
             requiredTransitions);
         return new PlanValidation(plan, reconciliation, inputSnapshot);
     }
@@ -291,9 +292,9 @@ internal sealed class RoadmapAutomationService
             currentHead,
             defaultBranchOid,
             snapshotDigest,
-            reconciliation.ClosedItemTransitions,
+            reconciliation.GetClosedTransitions(),
             requiredTransitions);
-        if (!string.Equals(reconciliation.RepositoryCommit, plan.DefaultBranchOid, StringComparison.Ordinal)
+        if (!string.Equals(reconciliation.RepositoryCommit, defaultBranchOid, StringComparison.Ordinal)
             || !string.Equals(reconciliation.SnapshotDigest, plan.SnapshotDigest, StringComparison.Ordinal))
         {
             throw new InvalidOperationException("Roadmap automation reconciliation manifest does not match the approved snapshot.");
@@ -301,7 +302,7 @@ internal sealed class RoadmapAutomationService
 
         var status = await _gitRepository.ReadStatus(_rootPath, cancellationToken).ConfigureAwait(false);
         var changes = RoadmapGitChangeGuard.Capture(_rootPath, status);
-        return new PostApplyValidation(plan, changes, project.AutomationPullRequestBody);
+        return new PostApplyValidation(plan, currentHead, changes, project.AutomationPullRequestBody);
     }
 
     private async Task<string> RequireCleanHead(CancellationToken cancellationToken)
@@ -355,7 +356,7 @@ internal sealed class RoadmapAutomationService
             expectedPlanDigest,
             expectedArtifactDigest,
             expectedResultDigest);
-        if (!string.Equals(seal.BaseSha, validation.Plan.BaseSha, StringComparison.Ordinal)
+        if (!string.Equals(seal.BaseSha, validation.BaseSha, StringComparison.Ordinal)
             || !string.Equals(seal.SnapshotDigest, validation.Plan.SnapshotDigest, StringComparison.Ordinal)
             || seal.HasChanges != validation.Changes.HasChanges
             || seal.PathCount != validation.Changes.Paths.Count
@@ -408,6 +409,7 @@ internal sealed class RoadmapAutomationService
 
     private sealed record PostApplyValidation(
         RoadmapAutomationPlan Plan,
+        string BaseSha,
         RoadmapGitChangeSet Changes,
         string? PullRequestBody);
 }

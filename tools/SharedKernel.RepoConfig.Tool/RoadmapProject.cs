@@ -15,6 +15,7 @@ internal sealed class RoadmapProject
         string? gitHubIntakeTheme,
         string? gitHubIntakeOpenStatus,
         string? gitHubIntakeClosedStatus,
+        string? gitHubIntakeNotPlannedStatus,
         string? gitHubRepository,
         bool gitHubEnabled,
         GitHubProjectTarget? gitHubProjectTarget,
@@ -28,6 +29,7 @@ internal sealed class RoadmapProject
         GitHubIntakeTheme = gitHubIntakeTheme;
         GitHubIntakeOpenStatus = gitHubIntakeOpenStatus;
         GitHubIntakeClosedStatus = gitHubIntakeClosedStatus;
+        GitHubIntakeNotPlannedStatus = gitHubIntakeNotPlannedStatus;
         GitHubRepository = gitHubRepository;
         GitHubEnabled = gitHubEnabled;
         GitHubProjectTarget = gitHubProjectTarget;
@@ -85,6 +87,11 @@ internal sealed class RoadmapProject
         get;
     }
 
+    public string? GitHubIntakeNotPlannedStatus
+    {
+        get;
+    }
+
     public GitHubProjectTarget? GitHubProjectTarget
     {
         get;
@@ -115,7 +122,7 @@ internal sealed class RoadmapProject
         var gitHubEnabled = ReadGitHubEnabled(config.RootElement);
         var gitHubProjectTarget = ReadGitHubProjectTarget(config.RootElement);
         var items = LoadItems(rootPath);
-        var (gitHubIntakeTheme, gitHubIntakeOpenStatus, gitHubIntakeClosedStatus) = ReadGitHubIntakeSettings(config.RootElement);
+        var (gitHubIntakeTheme, gitHubIntakeOpenStatus, gitHubIntakeClosedStatus, gitHubIntakeNotPlannedStatus) = ReadGitHubIntakeSettings(config.RootElement);
         return new RoadmapProject(
             rootPath,
             items,
@@ -125,6 +132,7 @@ internal sealed class RoadmapProject
             gitHubIntakeTheme,
             gitHubIntakeOpenStatus,
             gitHubIntakeClosedStatus,
+            gitHubIntakeNotPlannedStatus,
             gitHubRepository,
             gitHubEnabled,
             gitHubProjectTarget,
@@ -167,7 +175,7 @@ internal sealed class RoadmapProject
 
     public RoadmapProject WithItems(IReadOnlyList<RoadmapItemSnapshot> items) => new(
         RootPath, items, AllowedStatuses, ClosedStatuses, ItemIdPrefix, GitHubIntakeTheme,
-        GitHubIntakeOpenStatus, GitHubIntakeClosedStatus, GitHubRepository, GitHubEnabled, GitHubProjectTarget,
+        GitHubIntakeOpenStatus, GitHubIntakeClosedStatus, GitHubIntakeNotPlannedStatus, GitHubRepository, GitHubEnabled, GitHubProjectTarget,
         AutomationPullRequestBody);
 
     public int[] GetGitHubIssueNumbers() => Items
@@ -183,20 +191,21 @@ internal sealed class RoadmapProject
             .Select(path => LoadItem(rootPath, path))
             .ToArray();
 
-    private static (string? Theme, string? OpenStatus, string? ClosedStatus) ReadGitHubIntakeSettings(JsonElement root)
+    private static (string? Theme, string? OpenStatus, string? ClosedStatus, string? NotPlannedStatus) ReadGitHubIntakeSettings(JsonElement root)
     {
         if (!root.TryGetProperty("integrations", out var integrations)
             || !integrations.TryGetProperty("github", out var github)
             || !github.TryGetProperty("intake", out var intake)
             || intake.ValueKind != JsonValueKind.Object)
         {
-            return (null, null, null);
+            return (null, null, null, null);
         }
 
         return (
             ReadNullableString(intake, "theme"),
             ReadNullableString(intake, "openStatus"),
-            ReadNullableString(intake, "closedStatus"));
+            ReadNullableString(intake, "closedStatus"),
+            ReadNullableString(intake, "notPlannedStatus"));
     }
 
     private static RoadmapItemSnapshot LoadItem(string rootPath, string itemPath) =>

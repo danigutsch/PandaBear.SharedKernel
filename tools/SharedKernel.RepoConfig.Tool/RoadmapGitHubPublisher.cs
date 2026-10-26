@@ -44,6 +44,7 @@ internal sealed class RoadmapGitHubPublisher
     public static async Task<RoadmapGitHubPublicationPreview> Preview(
         string rootPath,
         RoadmapAutomationPlan plan,
+        string baseSha,
         RoadmapGitChangeSet changes,
         CancellationToken cancellationToken)
     {
@@ -57,13 +58,14 @@ internal sealed class RoadmapGitHubPublisher
             cancellationToken).ConfigureAwait(false);
         return new RoadmapGitHubPublicationPreview(
             plan.Repository,
-            plan.BaseSha,
+            baseSha,
             plan.BranchName,
             files.Select(file => file.Path).ToArray());
     }
 
     public async Task<RoadmapGitHubPublication> Publish(
         RoadmapAutomationPlan plan,
+        string baseSha,
         RoadmapGitChangeSet changes,
         string pullRequestBody,
         CancellationToken cancellationToken)
@@ -82,20 +84,21 @@ internal sealed class RoadmapGitHubPublisher
             var files = await ReadVerifiedPublicationFiles(_rootPath, changes, publicationCancellation.Token).ConfigureAwait(false);
             var endpoint = CreateRepositoryEndpoint(plan.Repository);
             var initialDefaultOid = await ReadDefaultBranchOid(endpoint, publicationCancellation.Token).ConfigureAwait(false);
-            RequireDefaultOid(plan.BaseSha, initialDefaultOid, "Roadmap publication default branch moved after result verification.");
-            var baseTreeSha = await ReadBaseTreeSha(endpoint, plan.BaseSha, publicationCancellation.Token).ConfigureAwait(false);
+            RequireDefaultOid(baseSha, initialDefaultOid, "Roadmap publication default branch moved after result verification.");
+            var baseTreeSha = await ReadBaseTreeSha(endpoint, baseSha, publicationCancellation.Token).ConfigureAwait(false);
             var treeEntries = await CreateTreeEntries(endpoint, files, publicationCancellation.Token).ConfigureAwait(false);
             var treeSha = await CreateTree(endpoint, baseTreeSha, treeEntries, publicationCancellation.Token).ConfigureAwait(false);
-            var commitSha = await CreateVerifiedCommit(endpoint, plan.BaseSha, treeSha, publicationCancellation.Token).ConfigureAwait(false);
+            var commitSha = await CreateVerifiedCommit(endpoint, baseSha, treeSha, publicationCancellation.Token).ConfigureAwait(false);
             RoadmapGitChangeGuard.Verify(_rootPath, changes);
             var prePublicationDefaultOid = await ReadDefaultBranchOid(endpoint, publicationCancellation.Token).ConfigureAwait(false);
-            RequireDefaultOid(plan.BaseSha, prePublicationDefaultOid, "Roadmap publication default branch moved after result verification.");
+            RequireDefaultOid(baseSha, prePublicationDefaultOid, "Roadmap publication default branch moved after result verification.");
             await CreateReference(endpoint, plan.BranchName, commitSha, publicationCancellation.Token).ConfigureAwait(false);
             var postPublicationDefaultOid = await ReadDefaultBranchOid(endpoint, publicationCancellation.Token).ConfigureAwait(false);
-            RequireDefaultOid(plan.BaseSha, postPublicationDefaultOid, "Roadmap publication default branch moved during branch creation.");
+            RequireDefaultOid(baseSha, postPublicationDefaultOid, "Roadmap publication default branch moved during branch creation.");
             var pullRequestUrl = await CreatePullRequest(
                 endpoint,
                 plan,
+                baseSha,
                 commitSha,
                 pullRequestBody,
                 publicationCancellation.Token).ConfigureAwait(false);
@@ -367,6 +370,7 @@ internal sealed class RoadmapGitHubPublisher
     private async Task<string> CreatePullRequest(
         Uri endpoint,
         RoadmapAutomationPlan plan,
+        string expectedBaseSha,
         string commitSha,
         string pullRequestBody,
         CancellationToken cancellationToken)
@@ -390,7 +394,7 @@ internal sealed class RoadmapGitHubPublisher
         var baseSha = RequireSha(RequireObject(document.RootElement, "base"), "sha");
         if (!RequireBoolean(document.RootElement, "draft")
             || !string.Equals(headSha, commitSha, StringComparison.Ordinal)
-            || !string.Equals(baseSha, plan.BaseSha, StringComparison.Ordinal))
+            || !string.Equals(baseSha, expectedBaseSha, StringComparison.Ordinal))
         {
             throw new InvalidOperationException("Roadmap publication pull request does not match the approved base and head.");
         }

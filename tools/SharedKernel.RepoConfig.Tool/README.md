@@ -309,6 +309,19 @@ Missing or inaccessible references produce diagnostics; they do not establish cl
 Unresolved metadata preserves accepted local relationships rather than erasing them. Review affected
 references before applying changes, and use explicit closure approvals for actual closed-item transitions.
 
+Each `closedItemTransitions` entry may carry `"closeReason": "NOT_PLANNED"`, the GitHub close outcome. Planning reads
+`stateReason` from GitHub and records the outcome in the plan, so the reviewer sees which closures were not completed;
+`apply-plan` writes `closeReason` only when it is `NOT_PLANNED`, and an entry without it means completed. On import, a
+`NOT_PLANNED` transition sets the item to `integrations.github.intake.notPlannedStatus`, which must be a configured closed
+status (for example `dropped`); import fails when that setting is missing. Other transitions use `closedStatus`.
+
+An approved plan is bound to its repository inputs, not to commit SHAs. `validate-plan` and `apply-plan` accept a newer
+default-branch head when the checkout is that head and the digest of `roadmap/config.json`, `roadmap/order.json`, items,
+themes, and reconciliation manifests is unchanged; otherwise they fail with the stale-input error. `seal-result` records
+the head it was sealed on, and `publish-result` opens the pull request against that head. The workflow must therefore
+check out the current default branch for the apply job. The GitHub snapshot read repeats up to three times when only the
+default-branch commit moved while it was read.
+
 ## Environment
 
 | Variable | Read by |

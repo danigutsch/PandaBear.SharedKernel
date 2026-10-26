@@ -152,7 +152,7 @@ internal sealed class GitHubRoadmapReconciler
             writer.WriteString("snapshotDigest", GitHubIssueSnapshotDigest.ComputeForOpenAndRequiredIssues(snapshot.Issues, digestIssueNumbers, repository));
             WriteBlockerEdges(writer, blockerEdges);
             WriteExternalBlockerEdges(writer, externalBlockerEdges);
-            WriteClosedTransitions(writer, seed.Reconciliation.ClosedItemTransitions);
+            WriteClosedTransitions(writer, seed.Reconciliation.GetClosedTransitions());
             WriteDirectCanonicalPrimaries(writer, directCanonicalPrimaries);
             WriteIssueNumbers(writer, "childrenOfCanonicalPrimaries", dispositions.ChildrenOfCanonicalPrimaries);
             WriteIssueNumbers(writer, "unmappedStructuralRoots", dispositions.UnmappedStructuralRoots);
@@ -202,7 +202,10 @@ internal sealed class GitHubRoadmapReconciler
                 && !project.IsClosed(item)
                 && !reconciliation.ClosedItemTransitions.ContainsKey(issueNumber))
             .OrderBy(item => item.GitHubIssue)
-            .Select(item => new RoadmapClosedItemTransition(item.GitHubIssue.GetValueOrDefault(), item.Id))
+            .Select(item => new RoadmapClosedItemTransition(
+                item.GitHubIssue.GetValueOrDefault(),
+                item.Id,
+                RoadmapCloseReason.FromStateReason(issuesByNumber[item.GitHubIssue.GetValueOrDefault()].StateReason)))
             .ToArray();
     }
 
@@ -477,15 +480,20 @@ internal sealed class GitHubRoadmapReconciler
         writer.WriteEndArray();
     }
 
-    private static void WriteClosedTransitions(Utf8JsonWriter writer, IReadOnlyDictionary<int, string> closedItemTransitions)
+    private static void WriteClosedTransitions(Utf8JsonWriter writer, IReadOnlyList<RoadmapClosedItemTransition> closedItemTransitions)
     {
         writer.WritePropertyName("closedItemTransitions");
         writer.WriteStartArray();
-        foreach (var (issueNumber, roadmapItemId) in closedItemTransitions.OrderBy(transition => transition.Key))
+        foreach (var transition in closedItemTransitions.OrderBy(transition => transition.Issue))
         {
             writer.WriteStartObject();
-            writer.WriteNumber("issue", issueNumber);
-            writer.WriteString("roadmapItem", roadmapItemId);
+            writer.WriteNumber("issue", transition.Issue);
+            writer.WriteString("roadmapItem", transition.RoadmapItem);
+            if (!string.Equals(transition.CloseReason, RoadmapCloseReason.Completed, StringComparison.Ordinal))
+            {
+                writer.WriteString("closeReason", transition.CloseReason);
+            }
+
             writer.WriteEndObject();
         }
 
