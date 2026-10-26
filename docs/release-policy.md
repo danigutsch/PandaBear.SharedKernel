@@ -18,6 +18,16 @@ Build once per version and retain exact packages, symbol archives, candidate man
 
 CI calculates only prerelease candidates, including on manual dispatch; there is no stable-preparation input. Do not create stable packages, tags, or releases now. Generic CLI stable-version capabilities remain available for future separately authorized work. A future stable identity needs its own artifacts and validation; never relabel a prerelease archive.
 
+## Channels, promotion, and support
+
+The only release channel is the preview candidate: a prerelease version that signals an unstable API under [SemVer](https://semver.org/) and that NuGet resolves only when a consumer opts in. Stable packages form a second channel that does not exist yet.
+
+A candidate becomes stable only when all of these hold: the same hashed artifacts are consumed on Linux and Windows, including NativeAOT; the API compatibility and breaking-change gates pass; one consumer compatibility run is recorded with `sharedkernel-version verify-consumer`; and the repository owner separately authorizes the release.
+
+Preview candidates promise no compatibility with one another. Deliberate breaks are marked as breaking in Conventional Commit history, and earlier candidates and their evidence are kept for rollback. The first stable release defines the public API and is versioned `1.0.0`: record a prerelease tag whose version core is `1.0.0` before it, so the calculated target follows.
+
+The repository owner owns support for every released version. [Security support](../SECURITY.md) follows the same channels.
+
 ## API and source compatibility
 
 C# namespaces use `PandaBear.*`; projects, assemblies, command names, and `PandaBear.SharedKernel.*` package IDs retain their documented identities. The [namespace decision](adr/20261020-pandabear-namespaces.md) records the breaking source change. Preserve API compatibility and breaking-change gates and mark deliberate breaks in Conventional Commit history. Keep previous candidates and evidence for rollback.
