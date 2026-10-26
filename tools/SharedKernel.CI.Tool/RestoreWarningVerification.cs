@@ -19,8 +19,9 @@ internal static partial class RestoreWarningVerification
 
     /// <summary>Verifies the log, appends a summary and writes a warning report when requested, and fails when a blocking advisory is present.</summary>
     /// <exception cref="InvalidOperationException">The log contains a high or critical vulnerability advisory.</exception>
-    public static async Task Verify(string logPath, string? summaryPath, string? reportPath, CancellationToken ct)
+    public static async Task Verify(string logPath, string? summaryPath, string? reportPath, string? exceptionsPath, CancellationToken ct)
     {
+        var ledger = exceptionsPath is null ? WarningExceptionLedger.Empty : await WarningExceptionLedger.Read(exceptionsPath, ct).ConfigureAwait(false);
         var log = Encoding.UTF8.GetString(await BoundedFile.Read(logPath, MaxLogBytes, "The restore log", ct).ConfigureAwait(false));
         var findings = new SortedSet<string>(StringComparer.Ordinal);
         var blocking = new SortedSet<string>(StringComparer.Ordinal);
@@ -39,34 +40,34 @@ internal static partial class RestoreWarningVerification
             }
         }
 
+        var report = ledger.Classify("NuGet restore", blocking, findings.Except(blocking).ToList(), DateOnly.FromDateTime(TimeProvider.System.GetUtcNow().UtcDateTime));
         if (summaryPath is not null)
         {
-            await File.AppendAllTextAsync(summaryPath, Render(findings.Count - blocking.Count, blocking), ct).ConfigureAwait(false);
+            await File.AppendAllTextAsync(summaryPath, Render(report), ct).ConfigureAwait(false);
         }
 
         if (reportPath is not null)
         {
-            var report = new WarningReport("NuGet restore", blocking.Count, findings.Count - blocking.Count, 0, [.. blocking]);
             await File.WriteAllBytesAsync(reportPath, JsonSerializer.SerializeToUtf8Bytes(report, WarningReportJsonContext.Default.WarningReport), ct).ConfigureAwait(false);
         }
 
-        if (blocking.Count > 0)
+        if (report.Blocking > 0)
         {
             throw new InvalidOperationException(
-                "NuGet restore reported high or critical vulnerability advisories:\n"
-                + string.Join('\n', blocking.Select(static finding => "- " + finding))
+                "NuGet restore reported high or critical vulnerability advisories or expired exceptions:\n"
+                + string.Join('\n', report.BlockingFindings.Select(static finding => "- " + finding))
                 + "\nUpdate the package or record a reviewed exception before merging.");
         }
     }
 
-    private static string Render(int advisory, SortedSet<string> blocking)
+    private static string Render(WarningReport report)
     {
         var text = new StringBuilder();
-        text.Append(CultureInfo.InvariantCulture, $"### NuGet restore and audit\n\n| Classification | Findings |\n| --- | ---: |\n| Blocking | {blocking.Count} |\n| Advisory | {advisory} |\n");
-        if (blocking.Count > 0)
+        text.Append(CultureInfo.InvariantCulture, $"### NuGet restore and audit\n\n| Classification | Findings |\n| --- | ---: |\n| Blocking | {report.Blocking} |\n| Advisory | {report.Advisory} |\n| Accepted | {report.Accepted} |\n");
+        if (report.Blocking > 0)
         {
             text.Append("\nBlocking findings:\n");
-            foreach (var finding in blocking)
+            foreach (var finding in report.BlockingFindings)
             {
                 text.Append("- ").Append(finding).Append('\n');
             }

@@ -44,11 +44,11 @@ internal static partial class WarningSummary
         var bytes = await BoundedFile.Read(path, MaxReportBytes, "A warning report", ct).ConfigureAwait(false);
         var report = JsonSerializer.Deserialize(bytes, WarningReportJsonContext.Default.WarningReport)
             ?? throw new InvalidDataException("A warning report is empty.");
-        if (!ToolName().IsMatch(report.Tool)
+        if (!IsToolName(report.Tool)
             || report.Blocking < 0
             || report.Advisory < 0
             || report.Accepted < 0
-            || report.BlockingFindings.Any(static finding => !Finding().IsMatch(finding)))
+            || report.BlockingFindings.Any(static finding => !IsFinding(finding)))
         {
             throw new InvalidDataException("A warning report has an invalid tool name, a negative count, or an invalid finding.");
         }
@@ -76,9 +76,15 @@ internal static partial class WarningSummary
         return text.Append('\n').ToString();
     }
 
+    /// <summary>Whether <paramref name="tool"/> is safe to render as a table cell.</summary>
+    internal static bool IsToolName(string tool) => ToolName().IsMatch(tool);
+
+    /// <summary>Whether <paramref name="finding"/> is safe to render as a list item.</summary>
+    internal static bool IsFinding(string finding) => Finding().IsMatch(finding);
+
     [GeneratedRegex(@"\A[A-Za-z0-9][A-Za-z0-9 ._-]{0,39}\z", RegexOptions.CultureInvariant)]
     private static partial Regex ToolName();
 
-    [GeneratedRegex(@"\A[A-Za-z0-9][A-Za-z0-9 ._:@+-]{0,199}\z", RegexOptions.CultureInvariant)]
+    [GeneratedRegex(@"\A[A-Za-z0-9][A-Za-z0-9 ._:@+/-]{0,199}\z", RegexOptions.CultureInvariant)]
     private static partial Regex Finding();
 }

@@ -426,6 +426,8 @@ dotnet tool run sharedkernel-ci -- verify-restore-warnings --log restore.log --r
 - `--summary <path>` appends a table of blocking and advisory counts, plus the blocking findings, so a pull request
   shows them without opening the log. Only the warning code, package id, and package version are copied from the log.
 - `--report <path>` writes the totals as a warning report for `warning-summary`, also when the command fails.
+- `--exceptions <path>` reads a [warning exception ledger](#warning-exception-ledger). Findings it covers count as
+  accepted and no longer block; an expired exception is reported as a blocking `expired <rule> <scope>` finding.
 - The log is read up to 16 MiB. The command starts no process and uses no network, and it does not change how the
   restore runs, so `--locked-mode` and the audit settings stay as the repository configures them.
 
@@ -449,10 +451,44 @@ A report is one JSON object that any step can write; `verify-restore-warnings --
 - `blockingFindings` names each blocking finding by a stable rule and subject. Advisory findings are only counted, so a
   legacy backlog never produces annotations or a long list.
 - The command rejects unknown, repeated, or missing properties, negative counts, and a tool name or finding that has a
-  character outside letters, digits, space, and `._:@+-` (findings), so a report cannot start a table cell, line, or
+  character outside letters, digits, space, and `._:@+/-` (findings), so a report cannot start a table cell, line, or
   link in the summary. It reads each report up to 1 MiB, starts no process, and uses no network.
 - `--summary <path>` appends to the file; without it the table goes to standard output. A missing or invalid report
   fails the command and writes nothing, so a step that did not run cannot look like a step that passed.
+
+### warning-report
+
+Writes the warning report of a step that has no log to classify, such as a linter or a test run. In GitHub Actions,
+pass the step outcome (`steps.<id>.outcome`) through an environment variable:
+
+```sh
+dotnet tool run sharedkernel-ci -- warning-report --tool "Markdown lint" --outcome "$MARKDOWN_OUTCOME" --report markdown-warnings.json
+```
+
+- `--outcome success` reports `--advisory <count>` advisory findings (default 0); `--outcome failure` also reports one
+  blocking finding, `<tool> failed`. The command succeeds in both cases: the step itself already failed the job.
+- Any other outcome, such as `skipped` or `cancelled`, fails the command and writes nothing, so a step that did not run
+  cannot look like a pass in the summary.
+- The tool name follows the same character rules as `warning-summary`, and each tool may appear once, so name matrix
+  slices apart.
+
+### Warning exception ledger
+
+A JSON file kept with the configuration it excuses lists the reviewed exceptions. `verify-restore-warnings --exceptions`
+reads it; later producers can reuse it.
+
+```json
+{"exceptions":[{"tool":"NuGet restore","rule":"NU1903","scope":"System.Foo","baseline":1,"rationale":"Upstream fix pending.","owner":"Dependency owners","expires":"2027-01-22"}]}
+```
+
+- `rule` is the first word of a finding. `scope` must match the start of the rest of the finding at a word or `/` boundary,
+  so `System.Foo` covers `System.Foo 1.0.0` but not `System.FooBar 1.0.0`.
+- `baseline` caps how many findings the exception accepts; blocking findings are accepted before advisory ones. A finding
+  above the cap or outside the scope keeps its classification, so a baseline cannot absorb new findings.
+- `expires` is the last day (UTC) the exception counts. After it the exception accepts nothing and is reported as blocking
+  until renewed or removed.
+- Unknown or repeated properties, a baseline below 1, a blank or control-character rationale or owner, and a tool, rule, or
+  scope outside the report character rules are rejected. The file is read up to 256 KiB.
 
 ### verify-commit-message
 
