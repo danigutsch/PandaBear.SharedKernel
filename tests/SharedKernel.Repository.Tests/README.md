@@ -9,6 +9,6 @@ boundary, packaging, and CI configuration conventions of the repository.
   of `.config/sharedkernel-ci.json`.
 - The other tests run the CI tool against fake executables, release servers, and service hosts.
 
-## See also
+## See Also
 
 - [tests/README.md](../README.md)

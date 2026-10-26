@@ -6,15 +6,16 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Aspire hosting integration for a local Grafana LGTM observability stack.
 
-## Usage example
+## Usage
 
 ```csharp
-builder.AddGrafanaLgtmStack("observability");
+builder.AddGrafanaLgtmStack(configurationRoot: "observability");
 ```
 
 The stack adds Grafana, Loki, Tempo, Prometheus, and an OpenTelemetry Collector gateway that applies a shared privacy
-configuration before it forwards the telemetry of the AppHost. Each resource is also available on its own, for example
-`AddGrafana`, `AddLoki`, and `AddOpenTelemetryCollectorGateway`.
+configuration before it forwards the telemetry of the AppHost. `configurationRoot` holds the `grafana`, `loki`,
+`otel-collector` (`privacy.yaml` and `config.yaml`), `prometheus`, and `tempo` configuration. Each resource is also available on
+its own, for example `AddGrafana`, `AddLoki`, and `AddOpenTelemetryCollectorGateway`. The images are pinned by tag and digest.
 
 ## Package identity and availability
 

@@ -25,7 +25,8 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <remarks>
     /// Resources that export OTLP telemetry wait until the collector is healthy and send to its gRPC endpoint, or to its HTTP
     /// endpoint when their <c>OTEL_EXPORTER_OTLP_PROTOCOL</c> is <c>http/protobuf</c> or <c>http/json</c>.
-    /// This version of the package defaults to the <inheritdoc cref="GrafanaLgtmContainerImageTags.OpenTelemetryCollectorTag"/> tag of the collector container image.
+    /// The resource is excluded from the manifest, because it is meant for local development.
+    /// This version of the package pins the collector container image by digest to its <inheritdoc cref="GrafanaLgtmContainerImageTags.OpenTelemetryCollectorTag"/> tag.
     /// </remarks>
     public static IResourceBuilder<OpenTelemetryCollectorResource> AddOpenTelemetryCollectorGateway(
         this IDistributedApplicationBuilder builder,
@@ -113,7 +114,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// extension method then the dependent resource will wait until Grafana is able to service requests.
     /// </para>
     /// Anonymous access with the Admin role is enabled and the resource is excluded from the manifest, because it is meant for local development.
-    /// This version of the package defaults to the <inheritdoc cref="GrafanaLgtmContainerImageTags.GrafanaTag"/> tag of the <inheritdoc cref="GrafanaLgtmContainerImageTags.GrafanaImage"/> container image.
+    /// This version of the package uses the <inheritdoc cref="GrafanaLgtmContainerImageTags.GrafanaImage"/> container image, pinned by digest to its <inheritdoc cref="GrafanaLgtmContainerImageTags.GrafanaTag"/> tag.
     /// </remarks>
     public static IResourceBuilder<GrafanaResource> AddGrafana(
         this IDistributedApplicationBuilder builder,
@@ -167,7 +168,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// extension method then the dependent resource will wait until Loki is able to service requests.
     /// </para>
     /// The resource is excluded from the manifest, because it is meant for local development.
-    /// This version of the package defaults to the <inheritdoc cref="GrafanaLgtmContainerImageTags.LokiTag"/> tag of the <inheritdoc cref="GrafanaLgtmContainerImageTags.LokiImage"/> container image.
+    /// This version of the package uses the <inheritdoc cref="GrafanaLgtmContainerImageTags.LokiImage"/> container image, pinned by digest to its <inheritdoc cref="GrafanaLgtmContainerImageTags.LokiTag"/> tag.
     /// </remarks>
     public static IResourceBuilder<LokiResource> AddLoki(
         this IDistributedApplicationBuilder builder,
@@ -211,7 +212,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// <returns>A reference to the <see cref="IResourceBuilder{T}"/>.</returns>
     /// <remarks>
     /// The resource is excluded from the manifest, because it is meant for local development.
-    /// This version of the package defaults to the <inheritdoc cref="GrafanaLgtmContainerImageTags.TempoTag"/> tag of the <inheritdoc cref="GrafanaLgtmContainerImageTags.TempoImage"/> container image.
+    /// This version of the package uses the <inheritdoc cref="GrafanaLgtmContainerImageTags.TempoImage"/> container image, pinned by digest to its <inheritdoc cref="GrafanaLgtmContainerImageTags.TempoTag"/> tag.
     /// </remarks>
     public static IResourceBuilder<TempoResource> AddTempo(
         this IDistributedApplicationBuilder builder,
@@ -259,7 +260,7 @@ public static class GrafanaLgtmStackResourceExtensions
     /// extension method then the dependent resource will wait until Prometheus is able to service requests.
     /// </para>
     /// The resource is excluded from the manifest, because it is meant for local development.
-    /// This version of the package defaults to the <inheritdoc cref="GrafanaLgtmContainerImageTags.PrometheusTag"/> tag of the <inheritdoc cref="GrafanaLgtmContainerImageTags.PrometheusImage"/> container image.
+    /// This version of the package uses the <inheritdoc cref="GrafanaLgtmContainerImageTags.PrometheusImage"/> container image, pinned by digest to its <inheritdoc cref="GrafanaLgtmContainerImageTags.PrometheusTag"/> tag.
     /// </remarks>
     public static IResourceBuilder<PrometheusResource> AddPrometheus(
         this IDistributedApplicationBuilder builder,

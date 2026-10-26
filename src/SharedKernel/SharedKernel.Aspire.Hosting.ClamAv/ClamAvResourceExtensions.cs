@@ -22,7 +22,7 @@ public static class ClamAvResourceExtensions
     /// using the <see cref="ResourceBuilderExtensions.WaitFor{T}(IResourceBuilder{T}, IResourceBuilder{IResource})"/>
     /// extension method then the dependent resource will wait until the ClamAV daemon is able to service requests.
     /// </para>
-    /// This version of the package defaults to the <inheritdoc cref="ClamAvContainerImageTags.Tag"/> tag of the <inheritdoc cref="ClamAvContainerImageTags.Image"/> container image.
+    /// This version of the package uses the <inheritdoc cref="ClamAvContainerImageTags.Image"/> container image, pinned by digest to its <inheritdoc cref="ClamAvContainerImageTags.Tag"/> tag.
     /// </remarks>
     public static IResourceBuilder<ClamAvResource> AddClamAv(this IDistributedApplicationBuilder builder, [ResourceName] string name)
     {
@@ -65,7 +65,7 @@ public static class ClamAvResourceExtensions
     public static IResourceBuilder<ClamAvResource> WithDataBindMount(this IResourceBuilder<ClamAvResource> builder, string source, bool isReadOnly = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
-        ArgumentNullException.ThrowIfNull(source);
+        ArgumentException.ThrowIfNullOrWhiteSpace(source);
 
         return builder.WithBindMount(source, DefinitionsPath, isReadOnly);
     }
@@ -86,17 +86,17 @@ public static class ClamAvResourceExtensions
     /// <summary>
     /// Configures whether the FreshClam daemon runs in a ClamAV container resource.
     /// </summary>
-    /// <param name="resource">The resource builder.</param>
-    /// <param name="enabled"><see langword="true"/> to run the FreshClam daemon, which updates the virus definitions; otherwise <see langword="false"/>. The default is <see langword="true"/>.</param>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="enabled"><see langword="true"/> to run the FreshClam daemon, which updates the virus definitions; otherwise <see langword="false"/>.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
     /// <remarks>
-    /// Disable FreshClam when the virus definitions are supplied by the image, a mounted volume, or another update process.
+    /// FreshClam runs unless it is disabled. Disable it when the virus definitions are supplied by the image, a mounted volume, or another update process.
     /// </remarks>
-    public static IResourceBuilder<ClamAvResource> WithFreshClam(this IResourceBuilder<ClamAvResource> resource, bool enabled)
+    public static IResourceBuilder<ClamAvResource> WithFreshClam(this IResourceBuilder<ClamAvResource> builder, bool enabled)
     {
-        ArgumentNullException.ThrowIfNull(resource);
+        ArgumentNullException.ThrowIfNull(builder);
 
-        return enabled ? resource : resource.WithEnvironment("CLAMAV_NO_FRESHCLAMD", "true");
+        return builder.WithEnvironment("CLAMAV_NO_FRESHCLAMD", enabled ? "false" : "true");
     }
 
     /// <summary>

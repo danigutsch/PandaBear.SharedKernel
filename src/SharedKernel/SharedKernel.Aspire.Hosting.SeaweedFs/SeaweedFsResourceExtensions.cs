@@ -19,12 +19,12 @@ public static class SeaweedFsResourceExtensions
     /// <remarks>
     /// <para>
     /// The S3 access key and secret key are generated as the secret parameters <c>{name}-access-key</c> and
-    /// <c>{name}-secret-key</c>, so unsigned requests are rejected. This resource includes built-in health checks.
-    /// When this resource is referenced as a dependency using the
+    /// <c>{name}-secret-key</c>, so unsigned requests are rejected. This resource includes a built-in health check of the
+    /// SeaweedFS master. When this resource is referenced as a dependency using the
     /// <see cref="ResourceBuilderExtensions.WaitFor{T}(IResourceBuilder{T}, IResourceBuilder{IResource})"/>
-    /// extension method then the dependent resource will wait until SeaweedFS is able to service requests.
+    /// extension method then the dependent resource will wait until the master is healthy.
     /// </para>
-    /// This version of the package defaults to the <inheritdoc cref="SeaweedFsContainerImageTags.Tag"/> tag of the <inheritdoc cref="SeaweedFsContainerImageTags.Image"/> container image.
+    /// This version of the package uses the <inheritdoc cref="SeaweedFsContainerImageTags.Image"/> container image, pinned by digest to its <inheritdoc cref="SeaweedFsContainerImageTags.Tag"/> tag.
     /// </remarks>
     public static IResourceBuilder<SeaweedFsResource> AddSeaweedFs(
         this IDistributedApplicationBuilder builder,
@@ -85,7 +85,7 @@ public static class SeaweedFsResourceExtensions
     public static IResourceBuilder<SeaweedFsResource> WithDataBindMount(this IResourceBuilder<SeaweedFsResource> builder, string source, bool isReadOnly = false)
     {
         ArgumentNullException.ThrowIfNull(builder);
-        ArgumentNullException.ThrowIfNull(source);
+        ArgumentException.ThrowIfNullOrWhiteSpace(source);
 
         return builder.WithBindMount(source, DataPath, isReadOnly);
     }

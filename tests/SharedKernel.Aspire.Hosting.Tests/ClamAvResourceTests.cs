@@ -111,20 +111,39 @@ public sealed class ClamAvResourceTests
     }
 
     [Fact]
-    public async Task WithFreshClam_false_disables_the_update_daemon()
+    public async Task WithFreshClam_sets_whether_the_update_daemon_runs()
     {
         // Arrange
         var builder = DistributedApplication.CreateBuilder([]);
         var enabled = builder.AddClamAv("enabled").WithFreshClam(true);
         var disabled = builder.AddClamAv("disabled").WithFreshClam(false);
+        var enabledAgain = builder.AddClamAv("enabled-again").WithFreshClam(false).WithFreshClam(true);
 
         // Act
         var enabledVariables = await EnvironmentVariables.Of(enabled.Resource);
         var disabledVariables = await EnvironmentVariables.Of(disabled.Resource);
+        var enabledAgainVariables = await EnvironmentVariables.Of(enabledAgain.Resource);
 
         // Assert
-        enabledVariables.ContainsKey("CLAMAV_NO_FRESHCLAMD").ShouldBeFalse();
+        enabledVariables["CLAMAV_NO_FRESHCLAMD"].ShouldBe("false");
         disabledVariables["CLAMAV_NO_FRESHCLAMD"].ShouldBe("true");
+        enabledAgainVariables["CLAMAV_NO_FRESHCLAMD"].ShouldBe("false");
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void WithDataBindMount_rejects_a_blank_source(string source)
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var clamAv = builder.AddClamAv("clamav");
+
+        // Act
+        var action = () => clamAv.WithDataBindMount(source);
+
+        // Assert
+        action.ShouldThrow<ArgumentException>().ParamName.ShouldBe("source");
     }
 
     [Fact]

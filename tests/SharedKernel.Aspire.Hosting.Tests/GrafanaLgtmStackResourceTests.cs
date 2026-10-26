@@ -23,7 +23,7 @@ public sealed class GrafanaLgtmStackResourceTests
         image.Image.ShouldBe("grafana/grafana");
         image.SHA256.ShouldBe("b5b59bfc7561634c2d7b136c4543d702ebcc94a3da477f21ff26f89ffd4214fa");
         endpoint.TargetPort.ShouldBe(3000);
-        grafana.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldHaveSingleItem();
+        grafana.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldHaveSingleItem().Key.ShouldBe("grafana_http_/api/health_200_check");
         grafana.Resource.PrimaryEndpoint.EndpointName.ShouldBe("http");
     }
 
@@ -43,7 +43,7 @@ public sealed class GrafanaLgtmStackResourceTests
         image.Image.ShouldBe("grafana/loki");
         image.SHA256.ShouldBe("a74594532eec4cc313401beedc4dd2708c43674c032084b1aeb87c14a5be1745");
         endpoint.TargetPort.ShouldBe(3100);
-        loki.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldHaveSingleItem();
+        loki.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldHaveSingleItem().Key.ShouldBe("loki_http_/ready_200_check");
         loki.Resource.PrimaryEndpoint.EndpointName.ShouldBe("http");
     }
 
@@ -63,7 +63,7 @@ public sealed class GrafanaLgtmStackResourceTests
         image.Image.ShouldBe("prom/prometheus");
         image.SHA256.ShouldBe("63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996");
         endpoint.TargetPort.ShouldBe(9090);
-        prometheus.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldHaveSingleItem();
+        prometheus.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldHaveSingleItem().Key.ShouldBe("prometheus_http_/-/ready_200_check");
         prometheus.Resource.PrimaryEndpoint.EndpointName.ShouldBe("http");
     }
 

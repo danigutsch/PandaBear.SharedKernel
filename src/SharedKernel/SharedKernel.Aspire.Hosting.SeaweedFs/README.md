@@ -6,7 +6,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Aspire hosting integration for a SeaweedFS container with an authenticated S3-compatible API.
 
-## Usage example
+## Usage
 
 ```csharp
 var storage = builder.AddSeaweedFs("seaweedfs", bucketDefault: "media")
@@ -14,7 +14,8 @@ var storage = builder.AddSeaweedFs("seaweedfs", bucketDefault: "media")
 ```
 
 The S3 credentials are the secret parameters `{name}-access-key` and `{name}-secret-key`, so unsigned requests are rejected.
-Without `WithDataVolume` or `WithDataBindMount` the stored objects live and die with the container.
+Without `WithDataVolume` or `WithDataBindMount` the stored objects live and die with the container. The image is pinned by tag
+and digest.
 
 ## Package identity and availability
 

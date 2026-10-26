@@ -26,7 +26,7 @@ public sealed class SeaweedFsResourceTests
         endpoints.ShouldAllSatisfy(endpoint => endpoint.IsExternal.ShouldBeFalse());
         endpoints.ShouldContain(endpoint => endpoint.Name == SeaweedFsResource.S3EndpointName && endpoint.TargetPort == 8333);
         endpoints.ShouldContain(endpoint => endpoint.Name == "master" && endpoint.TargetPort == 9333);
-        seaweedFs.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldHaveSingleItem();
+        seaweedFs.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldHaveSingleItem().Key.ShouldBe("seaweed_master_/cluster/healthz_200_check");
         seaweedFs.Resource.PrimaryEndpoint.EndpointName.ShouldBe(SeaweedFsResource.S3EndpointName);
     }
 
@@ -127,6 +127,22 @@ public sealed class SeaweedFsResourceTests
         // Assert
         var s3 = seaweedFs.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem(endpoint => endpoint.Name == SeaweedFsResource.S3EndpointName);
         s3.Port.ShouldBe(18333);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void WithDataBindMount_rejects_a_blank_source(string source)
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var seaweedFs = builder.AddSeaweedFs("seaweed", "media");
+
+        // Act
+        var action = () => seaweedFs.WithDataBindMount(source);
+
+        // Assert
+        action.ShouldThrow<ArgumentException>().ParamName.ShouldBe("source");
     }
 
     [Theory]

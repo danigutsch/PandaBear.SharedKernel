@@ -6,7 +6,7 @@ Packages remain preview (prerelease); stable packages, tags, and releases requir
 
 Aspire hosting integration for a private ClamAV container.
 
-## Usage example
+## Usage
 
 ```csharp
 var clamAv = builder.AddClamAv("clamav")
@@ -19,7 +19,7 @@ builder.AddProject<Projects.Api>("api")
 
 The container exposes `clamd` on a private TCP endpoint and is healthy once it answers `PING`. Without `WithDataVolume` or
 `WithDataBindMount` the virus definitions live and die with the container. Use `WithFreshClam(false)` when the definitions come
-from the image or another update process.
+from the image or another update process. The image is pinned by tag and digest.
 
 ## Package identity and availability
 
