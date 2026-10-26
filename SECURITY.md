@@ -8,7 +8,7 @@ All packages are previews. Only the latest preview candidate receives security f
 
 ## Reporting a vulnerability
 
-Report a suspected vulnerability privately. A dedicated security contact or advisory channel has not yet been configured, and GitHub private vulnerability reporting is not yet enabled; arrange a private report with the repository owner before sharing details. Do not put credentials, customer data, or exploit details in public issues. Do not assume a private channel exists until this section names one.
+Report a suspected vulnerability privately through GitHub private vulnerability reporting: open the repository's [Security tab](https://github.com/danigutsch/PandaBear.SharedKernel/security) and choose "Report a vulnerability". Do not put credentials, customer data, or exploit details in public issues or pull requests.
 
 A vulnerability is a flaw in a package or tool of this repository that lets an attacker break confidentiality, integrity, or availability, or that leaks credentials or personal data through telemetry or diagnostics. Reports are handled under coordinated disclosure: the repository owner confirms the report, prepares a fix in a private channel, and publishes the fix and its description together. No fixed response or fix times are promised.
 
