@@ -90,6 +90,21 @@ public sealed class ResultShouldAssertionTests
     }
 
     [Fact]
+    public void ShouldHaveValidationError_accepts_the_nullable_error_details_of_a_result()
+    {
+        // Arrange
+        var invalid = Result.Invalid("Invalid id", "Id", "Id is required");
+        var success = Result.Ok();
+        Action missingError = () => success.ErrorDetails.ShouldHaveValidationError("Id", "Id is required");
+
+        // Act
+        invalid.ErrorDetails.ShouldHaveValidationError("Id", "Id is required");
+
+        // Assert
+        missingError.ShouldThrow<Xunit.Sdk.NotNullException>();
+    }
+
+    [Fact]
     public void Success_and_failure_assertions_reject_the_opposite_outcome()
     {
         // Arrange

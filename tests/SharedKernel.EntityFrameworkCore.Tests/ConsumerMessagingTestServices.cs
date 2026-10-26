@@ -33,7 +33,7 @@ internal static class ConsumerMessagingTestServices
         services.AddDbContext<ConsumerOutboxDbContext>(options =>
         {
             options.UseInMemoryDatabase(resolvedDatabaseName);
-            services.ApplyDbContextOptionConfigurations<ConsumerOutboxDbContext>(options);
+            services.ApplyDbContextOptionConfigurations<ConsumerOutboxDbContext>(options, enableDevelopmentDiagnostics: false);
         });
         configureServices?.Invoke(services);
 
@@ -110,7 +110,7 @@ internal static class ConsumerMessagingTestServices
         services.AddDbContext<ConsumerTransportDbContext>(options =>
         {
             options.UseInMemoryDatabase(Guid.NewGuid().ToString("N"));
-            services.ApplyDbContextOptionConfigurations<ConsumerTransportDbContext>(options);
+            services.ApplyDbContextOptionConfigurations<ConsumerTransportDbContext>(options, enableDevelopmentDiagnostics: false);
         });
 
         var provider = services.BuildServiceProvider(new ServiceProviderOptions

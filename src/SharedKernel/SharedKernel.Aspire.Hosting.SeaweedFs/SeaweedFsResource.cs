@@ -18,6 +18,11 @@ public sealed class SeaweedFsResource(
     /// </summary>
     public const string S3EndpointName = "s3";
 
+    /// <summary>
+    /// The name of the opt-in local-development Filer UI endpoint added by <c>WithFilerUi</c>.
+    /// </summary>
+    public const string FilerUiEndpointName = "filer-ui";
+
     private EndpointReference? _primaryEndpoint;
 
     /// <summary>

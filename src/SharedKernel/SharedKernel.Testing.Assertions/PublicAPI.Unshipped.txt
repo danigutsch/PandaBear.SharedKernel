@@ -16,8 +16,8 @@ static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeSucc
 static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeSuccess(this PandaBear.Results.Result actual, string! userMessage) -> void
 static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeSuccess<T>(this PandaBear.Results.Result<T> actual) -> T
 static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeSuccess<T>(this PandaBear.Results.Result<T> actual, string! userMessage) -> T
-static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldHaveValidationError(this PandaBear.Results.ResultError! actual, string! field, params string![]! expectedMessages) -> void
-static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldHaveValidationError(this PandaBear.Results.ResultError! actual, string! field, string![]! expectedMessages, string! userMessage) -> void
+static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldHaveValidationError(this PandaBear.Results.ResultError? actual, string! field, params string![]! expectedMessages) -> void
+static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldHaveValidationError(this PandaBear.Results.ResultError? actual, string! field, string![]! expectedMessages, string! userMessage) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldAllSatisfy<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Action<T>! action) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldAllSatisfy<T>(this System.Collections.Generic.IEnumerable<T>! actual, System.Action<T>! action, string! userMessage) -> void
 static PandaBear.Testing.Assertions.ShouldAssertionExtensions.ShouldBe(this double actual, double expected, int precision) -> void

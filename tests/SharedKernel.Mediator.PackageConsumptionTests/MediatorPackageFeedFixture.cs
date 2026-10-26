@@ -26,6 +26,9 @@ public sealed class MediatorPackageFeedFixture : IAsyncLifetime
 
     internal string RepositoryRoot { get; private set; } = null!;
 
+    internal PackageConsumptionWorkspace CreateWorkspace(string projectName) =>
+        new(RepositoryRoot, FeedPath, PackageVersion, projectName);
+
     /// <inheritdoc />
     public async ValueTask InitializeAsync()
     {

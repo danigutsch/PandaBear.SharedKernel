@@ -8,7 +8,7 @@ Reusable Entity Framework Core composition, registration, and transaction primit
 
 ## Usage
 
-Implement `IDbContextConfiguration<TContext>` to compose model configuration and use the package registration extensions in the owning host. `EfCoreCommandTransactionScope` supplies reusable command transaction mechanics. Consumers retain DbContext ownership, database provider configuration, schemas, migrations, and application transaction policy. Development diagnostics must remain scoped to development use.
+Implement `IDbContextConfiguration<TContext>` to compose model configuration and use the package registration extensions in the owning host. `EfCoreCommandTransactionScope` supplies reusable command transaction mechanics. Consumers retain DbContext ownership, database provider configuration, schemas, migrations, and application transaction policy. `ApplyDbContextOptionConfigurations` enables detailed errors and sensitive data logging for every context when the host passes `enableDevelopmentDiagnostics: true`; pass it only in local development.
 
 ## Install and example
 

@@ -7,6 +7,7 @@
 
     <ItemGroup>
         <Using Include="PandaBear.Testing.Assertions" />
+        <Using Include="PandaBear.Testing.Packaging" />
         <Using Include="Xunit" />
     </ItemGroup>
 
@@ -20,6 +21,7 @@
     <ItemGroup>
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing.Assertions\SharedKernel.Testing.Assertions.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Testing\SharedKernel.Testing.csproj" />
+        <ProjectReference Include="..\SharedKernel.Testing.Packaging\SharedKernel.Testing.Packaging.csproj" />
     </ItemGroup>
 
 </Project>

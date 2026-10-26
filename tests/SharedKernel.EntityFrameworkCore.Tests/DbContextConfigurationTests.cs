@@ -17,7 +17,7 @@ public sealed class DbContextConfigurationTests
         var options = new DbContextOptionsBuilder<TestDbContext>();
 
         // Act
-        services.ApplyDbContextOptionConfigurations<TestDbContext>(options);
+        services.ApplyDbContextOptionConfigurations<TestDbContext>(options, enableDevelopmentDiagnostics: false);
 
         // Assert
         calls.ShouldBe(["first-options", "second-options"]);
@@ -45,22 +45,21 @@ public sealed class DbContextConfigurationTests
         var options = new DbContextOptionsBuilder<TestDbContext>();
 
         // Act
-        services.ApplyDbContextOptionConfigurations<TestDbContext>(options);
+        services.ApplyDbContextOptionConfigurations<TestDbContext>(options, enableDevelopmentDiagnostics: false);
 
         // Assert
         options.Options.Extensions.ShouldBeEmpty();
     }
 
     [Fact]
-    public void Enables_development_diagnostics_when_registered()
+    public void Enables_development_diagnostics_for_every_context_when_requested()
     {
         // Arrange
         var services = DbContextConfigurationTestServices.Create();
-        services.AddDbContextDevelopmentDiagnostics<TestDbContext>();
         var options = new DbContextOptionsBuilder<TestDbContext>();
 
         // Act
-        services.ApplyDbContextOptionConfigurations<TestDbContext>(options);
+        services.ApplyDbContextOptionConfigurations<TestDbContext>(options, enableDevelopmentDiagnostics: true);
 
         // Assert
         var coreOptions = options.Options.FindExtension<CoreOptionsExtension>();
@@ -70,17 +69,21 @@ public sealed class DbContextConfigurationTests
     }
 
     [Fact]
-    public void Add_development_diagnostics_rejects_missing_services()
+    public void Leaves_development_diagnostics_off_by_default()
     {
         // Arrange
-        IServiceCollection? services = null;
-        Action addDiagnostics = () => services!.AddDbContextDevelopmentDiagnostics<TestDbContext>();
+        var services = DbContextConfigurationTestServices.Create();
+        var options = new DbContextOptionsBuilder<TestDbContext>();
 
         // Act
-        var exception = addDiagnostics.ShouldThrow<ArgumentNullException>();
+        services.ApplyDbContextOptionConfigurations<TestDbContext>(options, enableDevelopmentDiagnostics: false);
 
         // Assert
-        exception.ParamName.ShouldBe("services");
+        var coreOptions = options.Options.FindExtension<CoreOptionsExtension>();
+        var sensitiveDataLogging = coreOptions?.IsSensitiveDataLoggingEnabled ?? false;
+        var detailedErrors = coreOptions?.DetailedErrorsEnabled ?? false;
+        sensitiveDataLogging.ShouldBeFalse();
+        detailedErrors.ShouldBeFalse();
     }
 
     [Fact]
@@ -121,7 +124,7 @@ public sealed class DbContextConfigurationTests
         // Arrange
         IServiceCollection? services = null;
         var options = new DbContextOptionsBuilder<TestDbContext>();
-        Action applyConfigurations = () => services!.ApplyDbContextOptionConfigurations<TestDbContext>(options);
+        Action applyConfigurations = () => services!.ApplyDbContextOptionConfigurations<TestDbContext>(options, enableDevelopmentDiagnostics: false);
 
         // Act
         var exception = applyConfigurations.ShouldThrow<ArgumentNullException>();
@@ -136,35 +139,12 @@ public sealed class DbContextConfigurationTests
         // Arrange
         var services = DbContextConfigurationTestServices.Create();
         DbContextOptionsBuilder? options = null;
-        Action applyConfigurations = () => services.ApplyDbContextOptionConfigurations<TestDbContext>(options!);
+        Action applyConfigurations = () => services.ApplyDbContextOptionConfigurations<TestDbContext>(options!, enableDevelopmentDiagnostics: false);
 
         // Act
         var exception = applyConfigurations.ShouldThrow<ArgumentNullException>();
 
         // Assert
         exception.ParamName.ShouldBe("options");
-    }
-
-    [Fact]
-    public void Development_diagnostics_configuration_rejects_missing_builders()
-    {
-        // Arrange
-        IDbContextConfiguration<TestDbContext> configuration = new DevelopmentDiagnosticsOptionsConfiguration<TestDbContext>();
-        DbContextOptionsBuilder? options = null;
-        ModelConfigurationBuilder? conventions = null;
-        ModelBuilder? model = null;
-        Action configureOptions = () => configuration.ConfigureOptions(options!);
-        Action configureConventions = () => configuration.ConfigureConventions(conventions!);
-        Action configureModel = () => configuration.ConfigureModel(model!);
-
-        // Act
-        var optionsException = configureOptions.ShouldThrow<ArgumentNullException>();
-        var conventionsException = configureConventions.ShouldThrow<ArgumentNullException>();
-        var modelException = configureModel.ShouldThrow<ArgumentNullException>();
-
-        // Assert
-        optionsException.ParamName.ShouldBe("optionsBuilder");
-        conventionsException.ParamName.ShouldBe("configurationBuilder");
-        modelException.ParamName.ShouldBe("modelBuilder");
     }
 }

@@ -14,7 +14,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     public async Task Abstractions_package_can_be_consumed_by_a_fresh_project()
     {
         // Arrange
-        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorAbstractionsConsumer");
+        using var workspace = packageFeed.CreateWorkspace("MediatorAbstractionsConsumer");
         workspace.WriteProject(
             $$"""
             <Project Sdk="Microsoft.NET.Sdk">
@@ -55,7 +55,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     public async Task Runtime_and_source_generator_packages_can_be_consumed_by_a_fresh_project()
     {
         // Arrange
-        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorGeneratedConsumer");
+        using var workspace = packageFeed.CreateWorkspace("MediatorGeneratedConsumer");
         GeneratedMediatorPackageConsumerProjects.Write(workspace, packageFeed);
 
         // Act
@@ -77,7 +77,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     public async Task Mediator_and_integration_event_generators_compose_without_runtime_type_recovery()
     {
         // Arrange
-        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MessagingGeneratedConsumer");
+        using var workspace = packageFeed.CreateWorkspace("MessagingGeneratedConsumer");
         GeneratedMessagingPackageConsumerProjects.Write(workspace, packageFeed);
 
         // Act
@@ -112,7 +112,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     public async Task Runtime_and_source_generator_packages_can_be_published_by_a_fresh_project()
     {
         // Arrange
-        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorPublishedConsumer");
+        using var workspace = packageFeed.CreateWorkspace("MediatorPublishedConsumer");
         GeneratedMediatorPackageConsumerProjects.Write(workspace, packageFeed);
 
         // Act
@@ -130,7 +130,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     public async Task Runtime_and_source_generator_packages_report_aot_publish_metrics()
     {
         // Arrange
-        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorAotMetricsConsumer");
+        using var workspace = packageFeed.CreateWorkspace("MediatorAotMetricsConsumer");
         GeneratedMediatorPackageConsumerProjects.Write(workspace, packageFeed);
         var runtimeIdentifier = PackageConsumptionMetrics.GetCurrentRuntimeIdentifier();
 
@@ -178,7 +178,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     public async Task Analyzer_package_produces_diagnostics_for_missing_cancellation_forwarding()
     {
         // Arrange
-        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorAnalyzerConsumer");
+        using var workspace = packageFeed.CreateWorkspace("MediatorAnalyzerConsumer");
         workspace.WriteProject(
             $$"""
             <Project Sdk="Microsoft.NET.Sdk">
@@ -223,7 +223,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     public async Task Code_fix_package_forwards_available_cancellation_token()
     {
         // Arrange
-        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorCodeFixConsumer");
+        using var workspace = packageFeed.CreateWorkspace("MediatorCodeFixConsumer");
         workspace.WriteProject(
             $$"""
             <Project Sdk="Microsoft.NET.Sdk">
@@ -274,7 +274,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
     public async Task Abstractions_are_available_transitively_through_runtime_package()
     {
         // Arrange
-        using var workspace = new PackageConsumptionWorkspace(packageFeed, "MediatorTransitiveConsumer");
+        using var workspace = packageFeed.CreateWorkspace("MediatorTransitiveConsumer");
         workspace.WriteProject(
             $$"""
             <Project Sdk="Microsoft.NET.Sdk">
@@ -319,7 +319,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         const string libraryName = "MediatorLibraryModule";
         const string consumerName = "MediatorLibraryConsumer";
 
-        using var workspace = new PackageConsumptionWorkspace(packageFeed, consumerName);
+        using var workspace = packageFeed.CreateWorkspace(consumerName);
 
         workspace.WriteAdditionalProject(
             libraryName,
@@ -416,7 +416,7 @@ public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageF
         const string moduleName = "MediatorModuleA";
         const string appName = "MediatorComposedApp";
 
-        using var workspace = new PackageConsumptionWorkspace(packageFeed, appName);
+        using var workspace = packageFeed.CreateWorkspace(appName);
 
         workspace.WriteAdditionalProject(
             moduleName,

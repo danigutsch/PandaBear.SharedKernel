@@ -2,7 +2,6 @@
 const PandaBear.EntityFrameworkCore.SharedKernelSchemas.Messaging = "messaging" -> string!
 PandaBear.EntityFrameworkCore.CurrentSaveChangesDbContext
 PandaBear.EntityFrameworkCore.DbContextConfigurationServiceCollectionExtensions
-PandaBear.EntityFrameworkCore.DbContextDevelopmentDiagnosticsServiceCollectionExtensions
 PandaBear.EntityFrameworkCore.EfCoreCommandTransactionScope
 PandaBear.EntityFrameworkCore.IDbContextConfiguration<TContext>
 PandaBear.EntityFrameworkCore.IDbContextConfiguration<TContext>.ConfigureConventions(Microsoft.EntityFrameworkCore.ModelConfigurationBuilder! configurationBuilder) -> void
@@ -13,6 +12,5 @@ PandaBear.EntityFrameworkCore.SharedKernelSchemas
 static PandaBear.EntityFrameworkCore.CurrentSaveChangesDbContext.Current.get -> Microsoft.EntityFrameworkCore.DbContext?
 static PandaBear.EntityFrameworkCore.CurrentSaveChangesDbContext.Enter(Microsoft.EntityFrameworkCore.DbContext! dbContext) -> System.IDisposable!
 static PandaBear.EntityFrameworkCore.DbContextConfigurationServiceCollectionExtensions.AddDbContextConfiguration<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, PandaBear.EntityFrameworkCore.IDbContextConfiguration<TContext!>! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-static PandaBear.EntityFrameworkCore.DbContextConfigurationServiceCollectionExtensions.ApplyDbContextOptionConfigurations<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! options) -> void
-static PandaBear.EntityFrameworkCore.DbContextDevelopmentDiagnosticsServiceCollectionExtensions.AddDbContextDevelopmentDiagnostics<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static PandaBear.EntityFrameworkCore.DbContextConfigurationServiceCollectionExtensions.ApplyDbContextOptionConfigurations<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.EntityFrameworkCore.DbContextOptionsBuilder! options, bool enableDevelopmentDiagnostics) -> void
 static PandaBear.EntityFrameworkCore.EfCoreCommandTransactionScope.Execute<TResponse>(Microsoft.EntityFrameworkCore.DbContext! dbContext, System.Func<System.Threading.Tasks.ValueTask<TResponse>>! next, System.Threading.CancellationToken ct) -> System.Threading.Tasks.ValueTask<TResponse>

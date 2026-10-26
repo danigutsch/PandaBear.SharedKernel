@@ -1,30 +1,32 @@
 using System.Runtime.InteropServices;
 
-namespace PandaBear.Mediator.PackageConsumptionTests;
+namespace PandaBear.Testing.Packaging;
 
 /// <summary>
-/// Creates isolated consumer projects that restore packages from the temporary mediator feed.
+/// Creates isolated consumer projects that restore packages from a temporary local NuGet feed. Package-specific project content and assertions stay with the calling test project.
 /// </summary>
-internal sealed class PackageConsumptionWorkspace : IDisposable
+public sealed class PackageConsumptionWorkspace : IDisposable
 {
     /// <summary>
     /// Initializes a new temporary package-consumption workspace.
     /// </summary>
-    /// <param name="packageFeed">The packed mediator package feed fixture.</param>
+    /// <param name="repositoryRoot">The repository root whose <c>global.json</c> pins the SDK of the consumer.</param>
+    /// <param name="feedPath">The local feed directory that holds the packed packages.</param>
+    /// <param name="packageVersion">The version of the packed packages that <see cref="GetPackageReference"/> references.</param>
     /// <param name="projectName">The project name used inside the workspace.</param>
-    public PackageConsumptionWorkspace(MediatorPackageFeedFixture packageFeed, string projectName)
+    public PackageConsumptionWorkspace(string repositoryRoot, string feedPath, string packageVersion, string projectName)
     {
-        PackageFeed = packageFeed;
+        PackageVersion = packageVersion;
         RootPath = Path.Combine(Path.GetTempPath(), $"{projectName}-{Guid.NewGuid():N}");
         ProjectDirectory = Path.Combine(RootPath, projectName);
         ProjectFilePath = Path.Combine(ProjectDirectory, projectName + ".csproj");
 
         Directory.CreateDirectory(ProjectDirectory);
-        File.Copy(Path.Combine(packageFeed.RepositoryRoot, "global.json"), Path.Combine(RootPath, "global.json"));
-        File.WriteAllText(Path.Combine(RootPath, "NuGet.Config"), CreateNuGetConfig(packageFeed.FeedPath));
+        File.Copy(Path.Combine(repositoryRoot, "global.json"), Path.Combine(RootPath, "global.json"));
+        File.WriteAllText(Path.Combine(RootPath, "NuGet.Config"), CreateNuGetConfig(feedPath));
     }
 
-    private MediatorPackageFeedFixture PackageFeed
+    private string PackageVersion
     {
         get;
     }
@@ -51,6 +53,8 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     /// <param name="files">The source files to write into the consumer project.</param>
     public void WriteProject(string projectFileContent, params (string FileName, string Content)[] files)
     {
+        ArgumentNullException.ThrowIfNull(files);
+
         File.WriteAllText(ProjectFilePath, projectFileContent);
 
         foreach (var file in files)
@@ -140,6 +144,8 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     /// <param name="files">The source files to write into the additional project.</param>
     public void WriteAdditionalProject(string projectName, string projectFileContent, params (string FileName, string Content)[] files)
     {
+        ArgumentNullException.ThrowIfNull(files);
+
         var projectDirectory = Path.Combine(RootPath, projectName);
         Directory.CreateDirectory(projectDirectory);
         File.WriteAllText(Path.Combine(projectDirectory, projectName + ".csproj"), projectFileContent);
@@ -187,7 +193,7 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     /// <summary>
     /// Runs <c>dotnet format</c> targeting the primary project and applies fixes for the specified diagnostic.
     /// </summary>
-    /// <param name="diagnosticId">The diagnostic identifier to fix (e.g. <c>SKMED004</c>).</param>
+    /// <param name="diagnosticId">The diagnostic identifier to fix (for example <c>SKMED004</c>).</param>
     /// <returns>The dotnet format output.</returns>
     public Task<string> Format(string diagnosticId)
     {
@@ -195,7 +201,7 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
     }
 
     /// <summary>
-    /// Gets a package-reference XML fragment for the shared mediator packages.
+    /// Gets a package-reference XML fragment for a packed package.
     /// </summary>
     /// <param name="packageId">The package identifier.</param>
     /// <param name="additionalAttributes">Optional extra attributes to append to the package reference.</param>
@@ -206,7 +212,7 @@ internal sealed class PackageConsumptionWorkspace : IDisposable
             ? string.Empty
             : " " + additionalAttributes.Trim();
 
-        return $"""<PackageReference Include="{packageId}" Version="{PackageFeed.PackageVersion}"{attributes} />""";
+        return $"""<PackageReference Include="{packageId}" Version="{PackageVersion}"{attributes} />""";
     }
 
     /// <inheritdoc />

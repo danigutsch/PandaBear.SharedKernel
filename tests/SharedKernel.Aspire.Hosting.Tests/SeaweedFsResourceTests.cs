@@ -130,6 +130,50 @@ public sealed class SeaweedFsResourceTests
         s3.Port.ShouldBe(18333);
     }
 
+    [Fact]
+    public void WithFilerUi_exposes_the_filer_endpoint_in_run_mode()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var seaweedFs = builder.AddSeaweedFs("seaweed", "media");
+
+        // Act
+        seaweedFs.WithFilerUi();
+
+        // Assert
+        var filer = seaweedFs.Resource.Annotations.OfType<EndpointAnnotation>().ShouldHaveSingleItem(endpoint => endpoint.Name == SeaweedFsResource.FilerUiEndpointName);
+        filer.TargetPort.ShouldBe(8888);
+        filer.IsExternal.ShouldBeTrue();
+        filer.UriScheme.ShouldBe("http");
+    }
+
+    [Fact]
+    public void WithFilerUi_adds_no_endpoint_when_publishing()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder(new DistributedApplicationOptions { Args = ["--publisher", "manifest", "--output-path", "manifest.json"] });
+        var seaweedFs = builder.AddSeaweedFs("seaweed", "media");
+
+        // Act
+        seaweedFs.WithFilerUi();
+
+        // Assert
+        seaweedFs.Resource.Annotations.OfType<EndpointAnnotation>().ShouldNotContain(endpoint => endpoint.Name == SeaweedFsResource.FilerUiEndpointName);
+    }
+
+    [Fact]
+    public void AddSeaweedFs_exposes_no_filer_endpoint_by_default()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+
+        // Act
+        var seaweedFs = builder.AddSeaweedFs("seaweed", "media");
+
+        // Assert
+        seaweedFs.Resource.Annotations.OfType<EndpointAnnotation>().ShouldNotContain(endpoint => endpoint.Name == SeaweedFsResource.FilerUiEndpointName);
+    }
+
     [Theory]
     [InlineData("")]
     [InlineData(" ")]

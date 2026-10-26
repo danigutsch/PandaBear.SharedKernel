@@ -73,7 +73,7 @@ Sources checked on 2026-10-21:
 Use `result.ShouldBeSuccess()` to verify success; for `Result<T>` it returns the value.
 Use `result.ShouldBeFailure(ResultStatus.Invalid, ResultErrorCodes.Invalid)` to verify both the
 status and stable code and retrieve the error. Then assert exact ordered field messages with
-`error.ShouldHaveValidationError("Id", "Id is required.")`. Both result assertions reject
+`error.ShouldHaveValidationError("Id", "Id is required.")`; it also accepts `result.ErrorDetails` directly and fails when the details are null. Both result assertions reject
 uninitialized results. Keep the Results library's own status and invariant tests explicit.
 
 `first.ShouldHaveGeneratedIdentitySemantics(second, different)` verifies generated GUID identity
