@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using PandaBear.Mediator.SourceGenerator;
-using PandaBear.Testing.Roslyn;
+using SharedHarness = PandaBear.Testing.Roslyn.GeneratorTestHarness;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Collections.Immutable;
@@ -36,13 +36,11 @@ internal static class GeneratorTestHarness
         var syntaxTrees = sources
             .Select(static source => CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview)))
             .ToArray();
-        var references = GetMetadataReferences(additionalReferences, includeMediatorReference);
+        IEnumerable<MetadataReference> mediator = includeMediatorReference
+            ? [MetadataReference.CreateFromFile(typeof(IRequest<>).Assembly.Location)]
+            : [];
 
-        return CSharpCompilation.Create(
-            assemblyName: assemblyName,
-            syntaxTrees: syntaxTrees,
-            references: references,
-            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+        return SharedHarness.CreateCompilation(syntaxTrees, assemblyName, [.. mediator, .. additionalReferences ?? []]);
     }
 
     public static string RunGenerator(
@@ -76,15 +74,11 @@ internal static class GeneratorTestHarness
         ImmutableDictionary<string, string>? globalOptions,
         bool trackIncrementalGeneratorSteps)
     {
-        var generator = new SharedKernelMediatorGenerator();
-        GeneratorDriver driver = CSharpGeneratorDriver.Create(
-            generators: [generator.AsSourceGenerator()],
-            additionalTexts: [],
-            parseOptions: (CSharpParseOptions?)compilation.SyntaxTrees.FirstOrDefault()?.Options,
-            optionsProvider: (Microsoft.CodeAnalysis.Diagnostics.AnalyzerConfigOptionsProvider)new TestAnalyzerConfigOptionsProvider(globalOptions),
-            driverOptions: new GeneratorDriverOptions(
-                disabledOutputs: IncrementalGeneratorOutputKind.None,
-                trackIncrementalGeneratorSteps: trackIncrementalGeneratorSteps));
+        var driver = SharedHarness.CreateDriver(
+            [new SharedKernelMediatorGenerator()],
+            (CSharpParseOptions?)compilation.SyntaxTrees.FirstOrDefault()?.Options,
+            globalOptions,
+            trackIncrementalGeneratorSteps);
 
         driver = driver.RunGenerators(compilation);
         return (driver, driver.GetRunResult());
@@ -121,15 +115,7 @@ internal static class GeneratorTestHarness
         GeneratorDriverRunResult runResult,
         string hintName = GeneratedHintNames.DiscoveryReport)
     {
-        var generatedSource = runResult.Results.Single().GeneratedSources.SingleOrDefault(
-            source => string.Equals(source.HintName, hintName, StringComparison.Ordinal));
-
-        if (generatedSource.SourceText is null)
-        {
-            throw new InvalidOperationException($"Generated source not found: {hintName}");
-        }
-
-        return generatedSource.SourceText.ToString();
+        return SharedHarness.GetGeneratedSource(runResult, hintName);
     }
 
     public static MetadataReference CreateMetadataReference(
@@ -162,31 +148,5 @@ internal static class GeneratorTestHarness
         }
 
         return stream.ToArray();
-    }
-
-    private static List<MetadataReference> GetMetadataReferences(
-        IEnumerable<MetadataReference>? additionalReferences,
-        bool includeMediatorReference)
-    {
-        var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        ArgumentException.ThrowIfNullOrEmpty(trustedPlatformAssemblies);
-
-        var references = trustedPlatformAssemblies
-            .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
-            .Select(static path => MetadataReference.CreateFromFile(path))
-            .Cast<MetadataReference>()
-            .ToList();
-
-        if (includeMediatorReference)
-        {
-            references.Add(MetadataReference.CreateFromFile(typeof(IRequest<>).Assembly.Location));
-        }
-
-        if (additionalReferences is not null)
-        {
-            references.AddRange(additionalReferences);
-        }
-
-        return references;
     }
 }

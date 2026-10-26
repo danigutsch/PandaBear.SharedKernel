@@ -60,3 +60,30 @@ correlation when tests intentionally share a static source. SKTEST010 enforces d
 SKTEST016 keeps explicitly named SUT construction out of a complete explicit AAA Act block. Neither has an
 automatic move/inference fix. SKSTYLE014 requires TimeProvider for wall-clock reads; pass controlled providers
 for time-dependent assertions rather than depending on elapsed real time.
+
+## Testing package boundaries
+
+Each testing package owns one kind of helper and takes only the dependencies that kind needs. Add a helper to the package that
+already owns its kind; add a package only when a new kind needs a dependency that no existing package may take.
+
+| Package | Owns | May depend on |
+| --- | --- | --- |
+| `SharedKernel.Testing` | Traits, environment scopes, temporary directories | Test framework only |
+| `SharedKernel.Testing.Assertions` | `Should*` assertions for xUnit, `Result` and entity identity | `SharedKernel.Results` |
+| `SharedKernel.Testing.Http` | Assertions on HTTP responses and problem details | `SharedKernel.Testing.Assertions` |
+| `SharedKernel.Testing.AspNetCore` | Web application factory helpers | ASP.NET Core testing |
+| `SharedKernel.Testing.Web` | bUnit element assertions | bUnit |
+| `SharedKernel.Testing.Playwright` | Playwright assertions | Playwright |
+| `SharedKernel.Testing.Mediator` | Reference mediator test dispatcher | `SharedKernel.Mediator.Abstractions` |
+| `SharedKernel.Testing.Data` and `SharedKernel.Testing.Snapshots` | Deterministic data and snapshot text helpers | No SharedKernel package |
+| `SharedKernel.Testing.Roslyn` | Compilation, analyzer, and generator test harnesses | Roslyn |
+| `SharedKernel.Testing.Analyzers` and `SharedKernel.Testing.CodeFixes` | Analyzers and code fixes for test conventions | Roslyn; code fixes depend on the analyzers |
+| `SharedKernel.IntegrationTesting` | Aspire and PostgreSQL integration-test helpers | Aspire testing |
+| `SharedKernel.Npgsql.Testing` | PostgreSQL database leases and xUnit fixtures | `SharedKernel.IntegrationTesting` |
+| `SharedKernel.Testing.Contracts` | Contract test marker and trait contracts | No SharedKernel package |
+
+Projects under `tests/` that are not packable (`SharedKernel.Testing.Packaging`, `SharedKernel.CodeFixes.Testing`,
+`SharedKernel.Testing.Integration`, `SharedKernel.Testing.Scenarios`, `SharedKernel.Testing.System`, and
+`SharedKernel.Npgsql.Testing.Host`) serve this repository's own suites and are not part of the public surface. Assertion
+packages never depend on a browser, web, or database package, so a consumer takes only the assertions it uses.
+

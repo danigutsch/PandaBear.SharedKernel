@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
 using PandaBear.AuditTrail.SourceGenerator;
-using PandaBear.Testing.Roslyn;
+using SharedHarness = PandaBear.Testing.Roslyn.GeneratorTestHarness;
 
 namespace PandaBear.AuditTrail.GeneratorTests;
 
@@ -22,56 +22,25 @@ internal static class AuditTrailGeneratorTestHarness
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview));
 
-        return CSharpCompilation.Create(
-            assemblyName: "SharedKernel.AuditTrail.Tests.Dynamic",
-            syntaxTrees: [syntaxTree],
-            references: GetMetadataReferences(),
-            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+        return SharedHarness.CreateCompilation(
+            [syntaxTree],
+            "SharedKernel.AuditTrail.Tests.Dynamic",
+            [
+                MetadataReference.CreateFromFile(typeof(IAuditTrailEntry).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(Domain.IDomainEvent).Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location),
+            ]);
     }
 
     public static AuditTrailGeneratorRun RunGeneratorDriver(CSharpCompilation compilation)
     {
-        var generator = new AuditTrailMappingGenerator();
-        GeneratorDriver driver = CSharpGeneratorDriver.Create(
-            generators: [generator.AsSourceGenerator()],
-            additionalTexts: [],
-            parseOptions: (CSharpParseOptions?)compilation.SyntaxTrees.First().Options,
-            optionsProvider: new TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>.Empty));
+        var runResult = SharedHarness.RunAndUpdate([new AuditTrailMappingGenerator()], compilation, out var outputCompilation, out var diagnostics);
 
-        driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out var diagnostics);
-
-        return new AuditTrailGeneratorRun(
-            driver.GetRunResult(),
-            (CSharpCompilation)outputCompilation,
-            diagnostics);
+        return new AuditTrailGeneratorRun(runResult, outputCompilation, diagnostics);
     }
 
-    public static string GetGeneratedSource(GeneratorDriverRunResult runResult)
-    {
-        var generatedSource = runResult.Results.Single().GeneratedSources.SingleOrDefault(
-            source => string.Equals(source.HintName, GeneratedHintName, StringComparison.Ordinal));
-
-        return generatedSource.SourceText is null
-            ? throw new InvalidOperationException($"Generated source not found: {GeneratedHintName}")
-            : generatedSource.SourceText.ToString();
-    }
-
-    private static List<MetadataReference> GetMetadataReferences()
-    {
-        var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        ArgumentException.ThrowIfNullOrEmpty(trustedPlatformAssemblies);
-
-        var references = trustedPlatformAssemblies
-            .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
-            .Select(static path => MetadataReference.CreateFromFile(path))
-            .Cast<MetadataReference>()
-            .ToList();
-
-        references.Add(MetadataReference.CreateFromFile(typeof(IAuditTrailEntry).Assembly.Location));
-        references.Add(MetadataReference.CreateFromFile(typeof(Domain.IDomainEvent).Assembly.Location));
-        references.Add(MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location));
-        return references;
-    }
+    public static string GetGeneratedSource(GeneratorDriverRunResult runResult) =>
+        SharedHarness.GetGeneratedSource(runResult, GeneratedHintName);
 }
 
 internal sealed record AuditTrailGeneratorRun(

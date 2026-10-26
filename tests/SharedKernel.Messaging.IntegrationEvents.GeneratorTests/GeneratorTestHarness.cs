@@ -1,17 +1,18 @@
-using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
 using PandaBear.Domain;
 using PandaBear.Mediator;
 using PandaBear.Messaging.IntegrationEvents.SourceGenerator;
-using PandaBear.Testing.Roslyn;
+using SharedHarness = PandaBear.Testing.Roslyn.GeneratorTestHarness;
 
 namespace PandaBear.Messaging.IntegrationEvents.GeneratorTests;
 
 internal static class GeneratorTestHarness
 {
     public const string GeneratedHintName = "SharedKernel.Messaging.IntegrationEvents.GeneratedIntegrationEvents.g.cs";
+
+    private const string AssemblyName = "SharedKernel.Messaging.IntegrationEvents.Tests.Dynamic";
 
     private const string DefaultUsings = """
         using System;
@@ -24,11 +25,7 @@ internal static class GeneratorTestHarness
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(DefaultUsings + source, new CSharpParseOptions(LanguageVersion.Preview));
 
-        return CSharpCompilation.Create(
-            assemblyName: "SharedKernel.Messaging.IntegrationEvents.Tests.Dynamic",
-            syntaxTrees: [syntaxTree],
-            references: GetMetadataReferences(),
-            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+        return SharedHarness.CreateCompilation([syntaxTree], AssemblyName, GetMetadataReferences());
     }
 
     public static CSharpCompilation CreateCompilation(IEnumerable<string> sources)
@@ -38,11 +35,7 @@ internal static class GeneratorTestHarness
             new CSharpParseOptions(LanguageVersion.Preview),
             path: $"Source{index:D4}.cs"));
 
-        return CSharpCompilation.Create(
-            assemblyName: "SharedKernel.Messaging.IntegrationEvents.Tests.Dynamic",
-            syntaxTrees: syntaxTrees,
-            references: GetMetadataReferences(),
-            options: new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+        return SharedHarness.CreateCompilation(syntaxTrees, AssemblyName, GetMetadataReferences());
     }
 
     public static GeneratorDriverRunResult RunGeneratorDriver(
@@ -53,44 +46,19 @@ internal static class GeneratorTestHarness
         CSharpCompilation compilation,
         params IIncrementalGenerator[] generators)
     {
-        var sourceGenerators = generators.Length == 0
-            ? [new IntegrationEventMappingGenerator().AsSourceGenerator()]
-            : generators.Select(static generator => generator.AsSourceGenerator()).ToArray();
-        GeneratorDriver driver = CSharpGeneratorDriver.Create(
-            generators: sourceGenerators,
-            additionalTexts: [],
-            parseOptions: (CSharpParseOptions?)compilation.SyntaxTrees.First().Options,
-            optionsProvider: new TestAnalyzerConfigOptionsProvider(ImmutableDictionary<string, string>.Empty));
-
-        driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out var outputCompilation, out _);
-        return (driver.GetRunResult(), (CSharpCompilation)outputCompilation);
+        IIncrementalGenerator[] selected = generators.Length == 0 ? [new IntegrationEventMappingGenerator()] : generators;
+        var runResult = SharedHarness.RunAndUpdate(selected, compilation, out var outputCompilation, out _);
+        return (runResult, outputCompilation);
     }
 
-    public static string GetGeneratedSource(GeneratorDriverRunResult runResult)
-    {
-        var generatedSource = runResult.Results.SelectMany(static result => result.GeneratedSources).SingleOrDefault(
-            source => string.Equals(source.HintName, GeneratedHintName, StringComparison.Ordinal));
+    public static string GetGeneratedSource(GeneratorDriverRunResult runResult) =>
+        SharedHarness.GetGeneratedSource(runResult, GeneratedHintName);
 
-        return generatedSource.SourceText is null
-            ? throw new InvalidOperationException($"Generated source not found: {GeneratedHintName}")
-            : generatedSource.SourceText.ToString();
-    }
-
-    private static List<MetadataReference> GetMetadataReferences()
-    {
-        var trustedPlatformAssemblies = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
-        ArgumentException.ThrowIfNullOrEmpty(trustedPlatformAssemblies);
-
-        var references = trustedPlatformAssemblies
-            .Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
-            .Select(static path => MetadataReference.CreateFromFile(path))
-            .Cast<MetadataReference>()
-            .ToList();
-
-        references.Add(MetadataReference.CreateFromFile(typeof(IDomainEvent).Assembly.Location));
-        references.Add(MetadataReference.CreateFromFile(typeof(IRequest<>).Assembly.Location));
-        references.Add(MetadataReference.CreateFromFile(typeof(IIntegrationEvent).Assembly.Location));
-        references.Add(MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location));
-        return references;
-    }
+    private static MetadataReference[] GetMetadataReferences() =>
+    [
+        MetadataReference.CreateFromFile(typeof(IDomainEvent).Assembly.Location),
+        MetadataReference.CreateFromFile(typeof(IRequest<>).Assembly.Location),
+        MetadataReference.CreateFromFile(typeof(IIntegrationEvent).Assembly.Location),
+        MetadataReference.CreateFromFile(typeof(IServiceCollection).Assembly.Location),
+    ];
 }
