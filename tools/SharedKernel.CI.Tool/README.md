@@ -416,7 +416,7 @@ Classifies the NuGet warnings in the saved output of a `dotnet restore` run:
 
 ```sh
 dotnet restore App.slnx --locked-mode 2>&1 | tee restore.log
-dotnet tool run sharedkernel-ci -- verify-restore-warnings --log restore.log --summary "$GITHUB_STEP_SUMMARY"
+dotnet tool run sharedkernel-ci -- verify-restore-warnings --log restore.log --report restore-warnings.json
 ```
 
 - `NU1903` (high) and `NU1904` (critical) vulnerability advisories block: the command exits 2 and names each
@@ -425,8 +425,34 @@ dotnet tool run sharedkernel-ci -- verify-restore-warnings --log restore.log --s
 - Every other NuGet warning, including `NU1901` and `NU1902` advisories, stays advisory and is counted in the summary.
 - `--summary <path>` appends a table of blocking and advisory counts, plus the blocking findings, so a pull request
   shows them without opening the log. Only the warning code, package id, and package version are copied from the log.
+- `--report <path>` writes the totals as a warning report for `warning-summary`, also when the command fails.
 - The log is read up to 16 MiB. The command starts no process and uses no network, and it does not change how the
   restore runs, so `--locked-mode` and the audit settings stay as the repository configures them.
+
+### warning-summary
+
+Renders the warning reports of several CI tools as one table of blocking, advisory, and accepted totals, followed by
+the blocking findings. Run it after the verification steps, whatever their result, so a failed step still appears:
+
+```sh
+dotnet tool run sharedkernel-ci -- warning-summary --report restore-warnings.json --report lint-warnings.json --summary "$GITHUB_STEP_SUMMARY"
+```
+
+A report is one JSON object that any step can write; `verify-restore-warnings --report` writes the first producer:
+
+```json
+{"tool":"NuGet restore","blocking":1,"advisory":2,"accepted":0,"blockingFindings":["NU1903 System.Foo 1.0.0"]}
+```
+
+- `tool` names the producer; reports of the same tool are refused. `blocking`, `advisory` and `accepted` are counts of
+  findings that fail the check, stay visible, and are covered by a reviewed exception or baseline.
+- `blockingFindings` names each blocking finding by a stable rule and subject. Advisory findings are only counted, so a
+  legacy backlog never produces annotations or a long list.
+- The command rejects unknown, repeated, or missing properties, negative counts, and a tool name or finding that has a
+  character outside letters, digits, space, and `._:@+-` (findings), so a report cannot start a table cell, line, or
+  link in the summary. It reads each report up to 1 MiB, starts no process, and uses no network.
+- `--summary <path>` appends to the file; without it the table goes to standard output. A missing or invalid report
+  fails the command and writes nothing, so a step that did not run cannot look like a step that passed.
 
 ### verify-commit-message
 

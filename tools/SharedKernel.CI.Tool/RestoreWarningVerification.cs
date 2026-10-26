@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace PandaBear.CI.Tool;
@@ -16,9 +17,9 @@ internal static partial class RestoreWarningVerification
     // NU1903 is a high and NU1904 a critical severity advisory; NU1901 and NU1902 are low and moderate.
     private static readonly string[] BlockingCodes = ["NU1903", "NU1904"];
 
-    /// <summary>Verifies the log, appends a summary when requested, and fails when a blocking advisory is present.</summary>
+    /// <summary>Verifies the log, appends a summary and writes a warning report when requested, and fails when a blocking advisory is present.</summary>
     /// <exception cref="InvalidOperationException">The log contains a high or critical vulnerability advisory.</exception>
-    public static async Task Verify(string logPath, string? summaryPath, CancellationToken ct)
+    public static async Task Verify(string logPath, string? summaryPath, string? reportPath, CancellationToken ct)
     {
         var log = Encoding.UTF8.GetString(await BoundedFile.Read(logPath, MaxLogBytes, "The restore log", ct).ConfigureAwait(false));
         var findings = new SortedSet<string>(StringComparer.Ordinal);
@@ -41,6 +42,12 @@ internal static partial class RestoreWarningVerification
         if (summaryPath is not null)
         {
             await File.AppendAllTextAsync(summaryPath, Render(findings.Count - blocking.Count, blocking), ct).ConfigureAwait(false);
+        }
+
+        if (reportPath is not null)
+        {
+            var report = new WarningReport("NuGet restore", blocking.Count, findings.Count - blocking.Count, 0, [.. blocking]);
+            await File.WriteAllBytesAsync(reportPath, JsonSerializer.SerializeToUtf8Bytes(report, WarningReportJsonContext.Default.WarningReport), ct).ConfigureAwait(false);
         }
 
         if (blocking.Count > 0)

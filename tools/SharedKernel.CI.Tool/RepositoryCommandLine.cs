@@ -52,6 +52,7 @@ internal static partial class RepositoryCommandLine
         root.Subcommands.Add(CreateStageCandidate(workingDirectory, staging));
         root.Subcommands.Add(CreateVerifyCommitMessage(workingDirectory));
         root.Subcommands.Add(CreateVerifyRestoreWarnings(workingDirectory));
+        root.Subcommands.Add(CreateWarningSummary(workingDirectory));
         root.Subcommands.Add(CreateRunMutationTests(workingDirectory, run));
         return root;
     }
@@ -515,18 +516,49 @@ internal static partial class RepositoryCommandLine
         var logOption = PathOption("--log", "Output of a dotnet restore run that reports NuGet warnings.", "path");
         logOption.Required = true;
         var summaryOption = PathOption("--summary", "GitHub Actions step summary file that receives the classification. Appended to.", "path");
+        var reportOption = PathOption("--report", "File that receives the warning report for warning-summary. Replaced if it exists.", "path");
         var command = new Command(
             "verify-restore-warnings",
             "Fail when a dotnet restore log reports a high or critical NuGet vulnerability advisory; lower severities and other NuGet warnings stay advisory in the summary.")
         {
             logOption,
             summaryOption,
+            reportOption,
         };
         command.SetAction((parseResult, ct) => Execute(
             parseResult,
             (_, _) => RestoreWarningVerification.Verify(
                 Path.GetFullPath(parseResult.GetRequiredValue(logOption), workingDirectory),
                 parseResult.GetValue(summaryOption) is { } summary ? Path.GetFullPath(summary, workingDirectory) : null,
+                parseResult.GetValue(reportOption) is { } report ? Path.GetFullPath(report, workingDirectory) : null,
+                ct),
+            ct));
+        return command;
+    }
+
+    private static Command CreateWarningSummary(string workingDirectory)
+    {
+        var reportOption = new Option<string[]>("--report")
+        {
+            Description = "Warning report JSON file of one tool, such as the one verify-restore-warnings --report writes. Repeat for several tools.",
+            HelpName = "path",
+            Required = true,
+            AllowMultipleArgumentsPerToken = false,
+        };
+        var summaryOption = PathOption("--summary", "GitHub Actions step summary file that receives the table. Appended to; standard output without it.", "path");
+        var command = new Command(
+            "warning-summary",
+            "Render the warning reports of several CI tools as one table of blocking, advisory, and accepted totals, with the blocking findings.")
+        {
+            reportOption,
+            summaryOption,
+        };
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            (output, _) => WarningSummary.Write(
+                [.. parseResult.GetRequiredValue(reportOption).Select(path => Path.GetFullPath(path, workingDirectory))],
+                parseResult.GetValue(summaryOption) is { } summary ? Path.GetFullPath(summary, workingDirectory) : null,
+                output,
                 ct),
             ct));
         return command;
