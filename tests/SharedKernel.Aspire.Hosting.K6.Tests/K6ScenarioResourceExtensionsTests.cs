@@ -187,6 +187,37 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
     }
 
     [Fact]
+    public void AddK6Scenario_replaces_a_linked_log_file_without_writing_through_the_link()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        var results = Path.Combine(_root, "results");
+        Directory.CreateDirectory(results);
+        var decoy = Path.Combine(_root, "decoy.txt");
+        File.WriteAllText(decoy, "decoy");
+        foreach (var name in new[] { "k6.log", "k6-console.log" })
+        {
+            File.CreateSymbolicLink(Path.Combine(results, name), decoy);
+        }
+
+        // Act
+        DistributedApplication.CreateBuilder([]).AddK6Scenario("smoke", _root, "scenarios/smoke.js", results);
+
+        // Assert
+        File.ReadAllText(decoy).ShouldBe("decoy");
+        foreach (var name in new[] { "k6.log", "k6-console.log" })
+        {
+            var path = Path.Combine(results, name);
+            new FileInfo(path).LinkTarget.ShouldBeNull();
+            new FileInfo(path).Length.ShouldBe(0);
+        }
+    }
+
+    [Fact]
     public async Task WithK6ClientCredentials_passes_the_token_endpoint_client_and_secret_as_environment()
     {
         // Arrange
