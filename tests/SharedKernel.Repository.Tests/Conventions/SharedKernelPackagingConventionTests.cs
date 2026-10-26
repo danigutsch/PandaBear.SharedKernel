@@ -16,6 +16,10 @@ public static class SharedKernelPackagingConventionTests
 
         // Act
         var violations = projectFiles
+            .Where(project => !string.Equals(
+                SharedKernelPackagingConventionTestFiles.GetProperty(project, "IsPackable"),
+                "false",
+                StringComparison.OrdinalIgnoreCase))
             .SelectMany(SharedKernelPackagingConventionTestFiles.GetPackageMetadataViolations)
             .Order(StringComparer.Ordinal)
             .ToArray();

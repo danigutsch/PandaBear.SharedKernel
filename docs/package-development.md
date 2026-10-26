@@ -78,7 +78,7 @@ Source generators follow one contract:
   `AnalyzerReleases` files. Shipped and unshipped IDs go in `AnalyzerReleases.Shipped.md` and `AnalyzerReleases.Unshipped.md`.
 - A generator that ships MSBuild assets adds them under `buildTransitive`. Only the mediator generator does; the others need none.
 - Public generated API is documented or internal.
-- Every generator has a package-consumption test that restores the packed package, builds a fresh project, and finds the generated file by its hint name: mediator and integration events in `SharedKernel.Mediator.PackageConsumptionTests`, domain and results in `SharedKernelGeneratorPackageConsumptionTests`, and audit trail in `SharedKernel.AuditTrail.GeneratorTests`. The results generator ships inside `PandaBear.SharedKernel.Results`, so a consumer references that package alone; referencing the standalone `PandaBear.SharedKernel.Results.SourceGenerator` package as well loads the generator twice and fails with CS0101.
+- Every generator has a package-consumption test that restores the packed package, builds a fresh project, and finds the generated file by its hint name: mediator and integration events in `SharedKernel.Mediator.PackageConsumptionTests`, domain and results in `SharedKernelGeneratorPackageConsumptionTests`, and audit trail in `SharedKernel.AuditTrail.GeneratorTests`. The results generator ships inside `PandaBear.SharedKernel.Results`, so a consumer references that package alone. The results generator has no standalone package.
 - Each generator's tests assert the hint names of the files it emits, so a rename fails a test.
 
 Convention tests check the README, the generated-file header, and `#nullable enable` for every generator project.

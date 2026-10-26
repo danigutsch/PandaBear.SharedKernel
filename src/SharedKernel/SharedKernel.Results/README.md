@@ -4,7 +4,7 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Transport-neutral result and option primitives make expected success/failure paths explicit. Use `Result` or `Result<T>` for operations, `Option<T>` for optional values, and the composition extensions for synchronous, task, and value-task flows. `ResultError`, `ResultStatus`, validation errors, and stable error codes carry failure details. The package bundles its error-catalog generator; do not also install the separate Results.SourceGenerator package.
+Transport-neutral result and option primitives make expected success/failure paths explicit. Use `Result` or `Result<T>` for operations, `Option<T>` for optional values, and the composition extensions for synchronous, task, and value-task flows. `ResultError`, `ResultStatus`, validation errors, and stable error codes carry failure details. The package bundles its error-catalog generator, which has no standalone package.
 
 ## Install
 
