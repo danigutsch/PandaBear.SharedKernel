@@ -11,7 +11,7 @@ Classify findings by demonstrated impact and confidence. An actionable security,
 | Package/API/platform evidence | Missing required API compatibility, package-consumption, hash, or platform evidence prevents the corresponding candidate claim. Keep unavailable evidence pending. |
 | Coverage | Existing local `coverlet.MTP` collection supplies evidence only for instrumented runs. There is no configured coverage percentage gate or hosted coverage service here. |
 
-The standalone repository has no current Sonar, Dependency Review, or Secret Scan workflow. Do not describe application-owned checks, changed-code coverage thresholds, or hosted metrics as library enforcement. Review dependencies, secrets, and known unsafe behavior regardless of which automated services exist; never classify confirmed secrets or missing security analysis as ordinary cosmetic debt.
+The standalone repository has no current Dependency Review or Secret Scan workflow. Do not describe application-owned checks, changed-code coverage thresholds, or hosted metrics as library enforcement. Review dependencies, secrets, and known unsafe behavior regardless of which automated services exist; never classify confirmed secrets or missing security analysis as ordinary cosmetic debt.
 
 Do not hide required failures using ignored exit codes, `continue-on-error`, broad catch wrappers, or unconditional successful aggregation. Clearly distinguish passed, failed, and not-run checks. Advisory work must be identified explicitly and must not contain blocker work.
 

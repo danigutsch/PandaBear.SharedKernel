@@ -26,7 +26,7 @@ measures instrumented managed modules in the test process; separate application/
 reports are evidence for those projects, not whole-repository coverage trends. This repository does not currently enforce a coverage percentage.
 
 Build gates retain SDK analyzers (`AnalysisMode=All`), SharedKernel analyzers, warnings as errors, public API checks, dependency vulnerability auditing,
-and package-consumption checks. No remote SonarCloud upload or proprietary coverage collector is required.
+and package-consumption checks. No remote analysis upload or proprietary coverage collector is required.
 
 `SharedKernel.CI.Tool` packs as the `sharedkernel-ci` tool and also builds from a sparse checkout of its own directory
 and `tools/Shared`. Selection follows `.config/sharedkernel-ci.json`: it selects the test projects that depend on the
