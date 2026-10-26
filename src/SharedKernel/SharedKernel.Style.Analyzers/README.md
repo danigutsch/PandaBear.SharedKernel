@@ -29,6 +29,7 @@ the default .NET analyzer set.
 | `SKSTYLE012` | Warning; requires catalog | Replace exact registered C# string literals with the named canonical field. |
 | `SKSTYLE013` | Warning; requires catalog | Correct malformed or ambiguous governed-literal metadata. |
 | `SKSTYLE014` | Warning | Use TimeProvider for wall-clock reads. |
+| `SKSTYLE015` | Disabled | Require `PropertyNameCaseInsensitive = true` on API JSON serializer contexts. |
 
 ## Configuration
 
@@ -264,3 +265,18 @@ including derived provider types. It preserves `DateTimeOffset` via `GetUtcNow()
 via `GetUtcNow().UtcDateTime`, and checks that the edited project compiles. Missing or ambiguous providers receive
 no fix. Local `DateTime.Now`/`Today` conversions require a deliberate timezone and `DateTime.Kind` policy, so those
 remain diagnostic-only. Fix All is not offered for provider selection.
+
+## SKSTYLE015
+
+Disabled by default. Enable it for scopes whose `JsonSerializerContext` types deserialize external API payloads, so
+property-name casing drift between the payload and generated DTOs cannot break reads:
+
+```ini
+[tools/**/*Api*JsonContext.cs]
+dotnet_diagnostic.SKSTYLE015.severity = warning
+```
+
+A context passes when its `[JsonSourceGenerationOptions]` sets `PropertyNameCaseInsensitive = true` or uses
+`JsonSerializerDefaults.Web`. Contexts for local, intentionally case-sensitive contracts stay out of the enabled scope,
+or use a normal diagnostic suppression. The code fix adds the attribute, adds the named argument, or flips an explicit
+`false`, preserving every other option. Fix All is not offered. The fix never adds runtime reflection.

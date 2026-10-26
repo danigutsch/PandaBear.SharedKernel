@@ -21,7 +21,8 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
             StyleDiagnosticIds.DomainEventSuffix,
             StyleDiagnosticIds.SuccessOnlyResultMethod,
-            StyleDiagnosticIds.DirectCurrentTime
+            StyleDiagnosticIds.DirectCurrentTime,
+            StyleDiagnosticIds.CaseInsensitiveJsonContext
         ];
 
     /// <inheritdoc />
@@ -68,6 +69,11 @@ public sealed class SharedKernelStyleCodeFixProvider : CodeFixProvider
             if (diagnostic.Id == StyleDiagnosticIds.DomainEventSuffix)
             {
                 await RenameDomainEventTypeCodeFix.Register(context, diagnostic).ConfigureAwait(false);
+            }
+
+            if (diagnostic.Id == StyleDiagnosticIds.CaseInsensitiveJsonContext)
+            {
+                await CaseInsensitiveJsonContextCodeFix.Register(context, diagnostic).ConfigureAwait(false);
             }
 
             if (diagnostic.Id == StyleDiagnosticIds.SuccessOnlyResultMethod)

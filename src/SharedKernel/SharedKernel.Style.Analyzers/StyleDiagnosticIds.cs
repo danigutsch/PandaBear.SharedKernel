@@ -68,4 +68,7 @@ public static class StyleDiagnosticIds
 
     /// <summary>Diagnostic emitted for invalid governed-literal metadata.</summary>
     public const string InvalidGovernedLiteralCatalog = "SKSTYLE013";
+
+    /// <summary>Diagnostic emitted for an API JSON serializer context without case-insensitive property names.</summary>
+    public const string CaseInsensitiveJsonContext = "SKSTYLE015";
 }

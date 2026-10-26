@@ -27,6 +27,7 @@ public sealed class SharedKernelStyleAnalyzerTests
             StyleDiagnosticIds.GovernedLiteral,
             StyleDiagnosticIds.InvalidGovernedLiteralCatalog,
             StyleDiagnosticIds.DirectCurrentTime,
+            StyleDiagnosticIds.CaseInsensitiveJsonContext,
         ];
 
         // Act

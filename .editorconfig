@@ -265,3 +265,7 @@ dotnet_diagnostic.SKSTYLE004.severity = suggestion
 [*]
 sharedkernel_style_allow_async_suffix_overrides = true
 sharedkernel_style_allow_async_suffix_interface_implementations = true
+
+# GitHub API payloads must match property names case-insensitively (SKSTYLE015).
+[tools/SharedKernel.RepoConfig.Tool/GitHubProjectJsonContext.cs]
+dotnet_diagnostic.SKSTYLE015.severity = warning
