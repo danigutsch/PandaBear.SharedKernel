@@ -17,6 +17,13 @@ The S3 credentials are the secret parameters `{name}-access-key` and `{name}-sec
 Without `WithDataVolume` or `WithDataBindMount` the stored objects live and die with the container. The image is pinned by tag
 and digest.
 
+### Filer UI (local development only)
+
+`WithFilerUi()` exposes the Filer UI that `weed mini` already serves on port `8888` as an external `filer-ui` endpoint with a
+dashboard link. The UI has no authentication and allows reading and changing every stored object, so use it only on a
+development machine. The endpoint is added in run mode only; publish manifests and resources that never call the method keep
+every endpoint internal.
+
 ## Package identity and availability
 
 Package ID: `PandaBear.SharedKernel.Aspire.Hosting.SeaweedFs`. C# namespace: `PandaBear.Aspire.Hosting.SeaweedFs`. Assembly/project identity: `SharedKernel.Aspire.Hosting.SeaweedFs`.

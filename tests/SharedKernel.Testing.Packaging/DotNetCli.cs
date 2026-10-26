@@ -1,12 +1,12 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace PandaBear.Mediator.PackageConsumptionTests;
+namespace PandaBear.Testing.Packaging;
 
 /// <summary>
 /// Runs focused dotnet CLI commands for package-consumption tests.
 /// </summary>
-internal static class DotNetCli
+public static class DotNetCli
 {
     /// <summary>
     /// Executes a dotnet CLI command and throws when the command fails.
@@ -16,6 +16,8 @@ internal static class DotNetCli
     /// <returns>The combined standard output and error text.</returns>
     public static async Task<string> Run(string workingDirectory, params string[] arguments)
     {
+        ArgumentNullException.ThrowIfNull(arguments);
+
         using var process = new Process();
         process.StartInfo = new ProcessStartInfo
         {

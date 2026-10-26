@@ -8,6 +8,7 @@ namespace Aspire.Hosting;
 public static class SeaweedFsResourceExtensions
 {
     private const string DataPath = "/data";
+    private const int FilerPort = 8888;
 
     /// <summary>
     /// Adds a SeaweedFS container with an authenticated S3-compatible API to the application model.
@@ -101,5 +102,29 @@ public static class SeaweedFsResourceExtensions
         ArgumentNullException.ThrowIfNull(builder);
 
         return builder.WithEndpoint(SeaweedFsResource.S3EndpointName, endpoint => endpoint.Port = port);
+    }
+
+    /// <summary>
+    /// Exposes the SeaweedFS Filer UI, which <c>weed mini</c> already serves, on a host endpoint for local development.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    /// <remarks>
+    /// The Filer UI gives unauthenticated read and write access to every stored object. It is a development and operator tool,
+    /// not an independently secured service. The endpoint is added only in run mode, so publish manifests never expose it, and
+    /// resources that never call this method keep every endpoint internal.
+    /// </remarks>
+    public static IResourceBuilder<SeaweedFsResource> WithFilerUi(this IResourceBuilder<SeaweedFsResource> builder)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+
+        if (!builder.ApplicationBuilder.ExecutionContext.IsRunMode)
+        {
+            return builder;
+        }
+
+        return builder
+            .WithEndpoint(targetPort: FilerPort, name: SeaweedFsResource.FilerUiEndpointName, scheme: "http", isExternal: true)
+            .WithUrlForEndpoint(SeaweedFsResource.FilerUiEndpointName, url => url.DisplayText = "Filer UI");
     }
 }

@@ -56,4 +56,12 @@ with `sharedkernel-version verify-consumer --candidate <candidate.json> -- <comm
 Linux and Windows consume the same hashed artifacts before stable promotion. Repository and Source Link metadata target the public repository; candidate validation records source and symbol evidence separately.
 
 
+### Package-consumption tests
+
+`tests/SharedKernel.Testing.Packaging` holds the generic helpers: `NuGetPackageBuilder`, `DotNetCli`, and
+`PackageConsumptionWorkspace`, which writes consumer projects that restore only from a local feed. Put code in that project when it knows
+nothing about one package. Add a package-specific consumer test project, such as `tests/SharedKernel.Mediator.PackageConsumptionTests`, when a
+package needs its own feed contents, consumer project templates, or assertions on generated output; it creates workspaces from its feed
+fixture and keeps those templates and assertions to itself. Add no CI lane for such a project unless its measured runtime justifies one.
+
 For setup, coding, and NativeAOT prerequisites, see [development guidance](development.md). For preview versions and candidate policy, see [release policy](release-policy.md).

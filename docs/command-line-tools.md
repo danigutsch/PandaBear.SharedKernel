@@ -9,6 +9,9 @@ the consuming repository supplies them, as [Consumer configuration](#consumer-co
   `PackageReadmeFile`, as described in [Create a .NET tool](https://learn.microsoft.com/dotnet/core/tools/global-tools-how-to-create)
   and the [pack target](https://learn.microsoft.com/nuget/reference/msbuild-targets#pack-target). Command names
   start with `sharedkernel-`.
+- Executable tools live under `tools/` and libraries, analyzers, and generators under `src/SharedKernel`, whatever they
+  do and whoever consumes them. `SharedKernel.Testing.CodeFixRunner` is a `PackAsTool` project, so it stays in `tools/`
+  beside the analyzers it applies; its test project is `tests/SharedKernel.Testing.CodeFixRunner.Tests`.
 - Candidates pack the tools named in `SharedKernelPackagePlanner.PackagedTools`. A convention test requires every
   `PackAsTool` project in that list, except `SharedKernel.VaultManager.Tool`, which candidates do not ship.
 - `SharedKernel.CI.Tool` and `SharedKernel.RepoConfig.Tool` also run from source before a candidate exists. They

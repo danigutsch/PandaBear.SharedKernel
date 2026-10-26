@@ -214,6 +214,9 @@
           "xunit.v3.assert": "[4.0.0, )"
         }
       },
+      "sharedkernel.testing.packaging": {
+        "type": "Project"
+      },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "CentralTransitive",
         "requested": "[10.0.13, )",

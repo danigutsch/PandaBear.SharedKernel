@@ -29,18 +29,29 @@ public static class DbContextConfigurationServiceCollectionExtensions
     }
 
     /// <summary>
-    /// Applies registered DbContext options configurations in registration order.
+    /// Applies registered DbContext options configurations in registration order, after the development diagnostics when requested.
     /// </summary>
     /// <param name="services">The service collection containing configuration instances.</param>
     /// <param name="options">The EF Core options builder.</param>
+    /// <param name="enableDevelopmentDiagnostics">
+    /// Whether to enable detailed errors and sensitive data logging. Pass <see langword="true"/> only in local development:
+    /// sensitive data logging writes parameter values to the log.
+    /// </param>
     /// <typeparam name="TContext">The DbContext type being configured.</typeparam>
     public static void ApplyDbContextOptionConfigurations<TContext>(
         this IServiceCollection services,
-        DbContextOptionsBuilder options)
+        DbContextOptionsBuilder options,
+        bool enableDevelopmentDiagnostics)
         where TContext : DbContext
     {
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(options);
+
+        if (enableDevelopmentDiagnostics)
+        {
+            options.EnableDetailedErrors();
+            options.EnableSensitiveDataLogging();
+        }
 
         foreach (var descriptor in services)
         {

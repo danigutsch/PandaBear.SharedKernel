@@ -93,24 +93,23 @@ public static class ResultShouldAssertionExtensions
         WithUserMessage(userMessage, () => actual.ShouldBeFailure(expectedStatus, expectedCode));
 
     /// <summary>Verifies the exact ordered messages for one validation field, allowing other fields.</summary>
-    /// <param name="actual">The error details.</param>
+    /// <param name="actual">The error details; the assertion fails when they are null.</param>
     /// <param name="field">The case-sensitive field name.</param>
     /// <param name="expectedMessages">The expected messages in order.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="actual"/> is null.</exception>
-    public static void ShouldHaveValidationError(this ResultError actual, string field, params string[] expectedMessages)
+    public static void ShouldHaveValidationError(this ResultError? actual, string field, params string[] expectedMessages)
     {
-        ArgumentNullException.ThrowIfNull(actual);
-        var errors = actual.ValidationErrors.ShouldNotBeNull();
+        var error = actual.ShouldNotBeNull();
+        var errors = error.ValidationErrors.ShouldNotBeNull();
         errors.TryGetValue(field, out var messages).ShouldBeTrue($"Expected validation field '{field}'.");
         messages.ShouldNotBeNull().ShouldBe(expectedMessages);
     }
 
     /// <summary>Verifies the exact ordered messages for one validation field, allowing other fields.</summary>
-    /// <param name="actual">The error details.</param>
+    /// <param name="actual">The error details; the assertion fails when they are null.</param>
     /// <param name="field">The case-sensitive field name.</param>
     /// <param name="expectedMessages">The expected messages in order.</param>
     /// <param name="userMessage">Why the test expects the assertion to hold; the failure message starts with it.</param>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="actual"/> is null. Also thrown when <paramref name="userMessage"/> is null.</exception>
-    public static void ShouldHaveValidationError(this ResultError actual, string field, string[] expectedMessages, string userMessage) =>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userMessage"/> is null.</exception>
+    public static void ShouldHaveValidationError(this ResultError? actual, string field, string[] expectedMessages, string userMessage) =>
         WithUserMessage(userMessage, () => actual.ShouldHaveValidationError(field, expectedMessages));
 }
