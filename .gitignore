@@ -155,8 +155,6 @@ _ReSharper*/
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
 .idea/**/mongoSettings.xml
-.idea/**/sonarlint/
-.idea/**/sonarlint.xml
 .idea/**/httpRequests/
 .idea/**/caches/
 .idea/**/*.iml
@@ -405,4 +403,3 @@ tmp/
 .env.local
 .env.*.local
 .local/
-.sonarqube/
