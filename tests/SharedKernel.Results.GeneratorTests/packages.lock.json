@@ -222,9 +222,6 @@
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
-      "PandaBear.SharedKernel.Results.SourceGenerator": {
-        "type": "Project"
-      },
       "PandaBear.SharedKernel.Testing.Assertions": {
         "type": "Project",
         "dependencies": {
@@ -237,6 +234,9 @@
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "[5.6.0, )"
         }
+      },
+      "sharedkernel.results.sourcegenerator": {
+        "type": "Project"
       },
       "Microsoft.CodeAnalysis.Analyzers": {
         "type": "CentralTransitive",

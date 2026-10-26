@@ -87,3 +87,24 @@ Projects under `tests/` that are not packable (`SharedKernel.Testing.Packaging`,
 `SharedKernel.Npgsql.Testing.Host`) serve this repository's own suites and are not part of the public surface. Assertion
 packages never depend on a browser, web, or database package, so a consumer takes only the assertions it uses.
 
+
+## Test project ownership
+
+Every packable project under `src/SharedKernel` has a test project in its reference closure: a project under `tests/` that
+references `xunit.v3.mtp-v2` and reaches the source project through `ProjectReference` items. Application-level execution
+never substitutes for that coverage. The convention tests in `tests/SharedKernel.Repository.Tests/Conventions` fail when a
+packable project has no such test project and no entry in the reviewed exception list of
+`SharedKernelTestOwnershipConventionTests`, and when an exception names a project that a test project reaches.
+
+| Kind | Direct owner | Also required |
+| --- | --- | --- |
+| Library | A `SharedKernel.<Name>.Tests` project that exercises its public behavior | Public API baselines |
+| Provider module (PostgreSQL, ClamAV, K6) | A test project that runs against the real provider or its Aspire resource | The shared server rules in [development guidance](development.md#postgresql-test-servers) |
+| Analyzer | `SharedKernel.<Name>.Analyzers.Tests` with diagnostic and no-diagnostic cases | Repository convention tests for the package layout |
+| Source generator | `SharedKernel.<Name>.GeneratorTests` with snapshot and hint-name assertions | A package-consumption test that builds a fresh project from the packed package |
+| Code fix | `SharedKernel.<Name>.CodeFixes.Tests` with before and after sources | Code-fix runner coverage where the fix ships in a testing package |
+| Package-consumption test | A test project such as `SharedKernel.Mediator.PackageConsumptionTests` that restores packed packages from a local feed | No CI lane unless its runtime justifies one |
+
+A generator that ships inside another package, such as the results generator inside `PandaBear.SharedKernel.Results`, is not
+packable and keeps its own `GeneratorTests` project. A project whose only content is a migration placeholder, such as
+`SharedKernel.Functional`, is a reviewed exception with its reason beside the exception.

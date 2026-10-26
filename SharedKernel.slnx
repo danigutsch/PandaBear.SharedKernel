@@ -81,6 +81,7 @@
   <Project Path="tests/SharedKernel.DocumentRendering.Tests/SharedKernel.DocumentRendering.Tests.csproj" />
   <Project Path="tests/SharedKernel.Domain.Analyzers.Tests/SharedKernel.Domain.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Domain.CodeFixes.Tests/SharedKernel.Domain.CodeFixes.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Domain.EntityFrameworkCore.Tests/SharedKernel.Domain.EntityFrameworkCore.Tests.csproj" />
   <Project Path="tests/SharedKernel.Domain.GeneratorTests/SharedKernel.Domain.GeneratorTests.csproj" />
   <Project Path="tests/SharedKernel.Domain.Tests/SharedKernel.Domain.Tests.csproj" />
   <Project Path="tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj" />
@@ -112,6 +113,7 @@
   <Project Path="tests/SharedKernel.PlaywrightMcp.Tool.Tests/SharedKernel.PlaywrightMcp.Tool.Tests.csproj" />
   <Project Path="tests/SharedKernel.Results.AspNet.Tests/SharedKernel.Results.AspNet.Tests.csproj" />
   <Project Path="tests/SharedKernel.Results.GeneratorTests/SharedKernel.Results.GeneratorTests.csproj" />
+  <Project Path="tests/SharedKernel.Scheduling.Tests/SharedKernel.Scheduling.Tests.csproj" />
   <Project Path="tests/SharedKernel.Style.Analyzers.Tests/SharedKernel.Style.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Style.CodeFixes.Tests/SharedKernel.Style.CodeFixes.Tests.csproj" />
   <Project Path="tests/SharedKernel.Testing.Analyzers.Tests/SharedKernel.Testing.Analyzers.Tests.csproj" />
