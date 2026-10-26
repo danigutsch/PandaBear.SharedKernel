@@ -115,7 +115,7 @@ internal static class ProcessRunner
         while (await reader.ReadLineAsync(CancellationToken.None).ConfigureAwait(false) is { } line)
         {
             text.AppendLine(line);
-            await Console.Error.WriteLineAsync($"[{timeProvider.GetUtcNow():HH:mm:ss}] {line}").ConfigureAwait(false);
+            await Console.Error.WriteLineAsync(string.Create(CultureInfo.InvariantCulture, $"[{timeProvider.GetUtcNow():HH:mm:ss}] {line}")).ConfigureAwait(false);
         }
 
         return text.ToString();
