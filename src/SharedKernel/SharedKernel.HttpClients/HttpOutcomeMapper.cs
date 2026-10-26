@@ -318,7 +318,10 @@ public static class HttpOutcomeMapper
             var value = JsonSerializer.Deserialize(body.Content, valueJson);
             return value is null
                 ? Status<TValue>(HttpOutcomeKind.MalformedBody, response.StatusCode, MalformedBodyMessage)
-                : Succeeded(response.StatusCode, value, response.Headers.Location);
+                : Succeeded(response.StatusCode, value, response.Headers.Location) with
+                {
+                    ETag = response.Headers.ETag?.ToString()
+                };
         }
         catch (Exception exception) when (exception is JsonException or ArgumentException)
         {
