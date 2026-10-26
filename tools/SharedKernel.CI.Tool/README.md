@@ -332,7 +332,8 @@ sharedkernel-ci install-playwright --project <path> [--browser <name>]... [--wit
 Evaluates the project's `OutputPath` with `dotnet msbuild <project> -getProperty:OutputPath`, with
 `-p:Configuration=<name>` when `--configuration` is given, normalizes its `\` and `/` separators, resolves it from the
 project directory, and runs `pwsh <output>/playwright.ps1 install`, with `--with-deps` for `--with-dependencies`, `--only-shell` for `--only-shell`, and
-the browsers. Without `--browser`, Playwright installs its default browsers. Build the project first; the command fails
+the browsers. Without `--browser`, Playwright installs its default browsers. The tool writes each line of the installer to standard error with its UTC time as it arrives, then reports the
+duration of the evaluation and the installer. Build the project first; the command fails
 when the output has no `playwright.ps1`.
 
 ### coverage

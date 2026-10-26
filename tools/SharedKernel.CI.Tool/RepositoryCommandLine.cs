@@ -16,8 +16,12 @@ internal static partial class RepositoryCommandLine
     /// <summary>Creates the command tree with the Git, network, and clock access that the tool uses.</summary>
     /// <param name="workingDirectory">Directory that relative <c>--root</c>, <c>--event</c>, and <c>--file</c> paths resolve from.</param>
     /// <param name="run">Runs a child process and returns its standard output.</param>
-    public static RootCommand Create(string workingDirectory, Func<string, string[], string, CancellationToken, Task<string>> run) =>
-        Create(workingDirectory, run, ProcessRunner.RunConfigured, CandidateStagingServices.Default);
+    /// <param name="runInstaller">Runs the Playwright installer, whose output is long; none runs it with <paramref name="run"/>.</param>
+    public static RootCommand Create(
+        string workingDirectory,
+        Func<string, string[], string, CancellationToken, Task<string>> run,
+        Func<string, string[], string, CancellationToken, Task<string>>? runInstaller = null) =>
+        Create(workingDirectory, run, ProcessRunner.RunConfigured, CandidateStagingServices.Default, runInstaller: runInstaller);
 
     /// <summary>Creates the command tree.</summary>
     /// <param name="workingDirectory">Directory that relative <c>--root</c>, <c>--event</c>, and <c>--file</c> paths resolve from.</param>
@@ -25,22 +29,25 @@ internal static partial class RepositoryCommandLine
     /// <param name="runConfigured">Runs a child process after its start information is adjusted, such as OpenAPI generation with its own environment.</param>
     /// <param name="staging">Supplies what <c>stage-candidate</c> uses to reach Git, the network, and the clock.</param>
     /// <param name="startService">Starts the process of a slice's service from its start information; none starts it with <see cref="Process.Start(ProcessStartInfo)"/>.</param>
+    /// <param name="runInstaller">Runs the Playwright installer, whose output is long; none runs it with <paramref name="run"/>.</param>
     public static RootCommand Create(
         string workingDirectory,
         Func<string, string[], string, CancellationToken, Task<string>> run,
         Func<string, string[], string, Action<ProcessStartInfo>, CancellationToken, Task<string>> runConfigured,
         CandidateStagingServices staging,
-        Func<ProcessStartInfo, Process>? startService = null)
+        Func<ProcessStartInfo, Process>? startService = null,
+        Func<string, string[], string, CancellationToken, Task<string>>? runInstaller = null)
     {
+        runInstaller ??= run;
         var root = new RootCommand(
             "Selects and runs affected test projects, generates OpenAPI documents, installs Playwright browsers, verifies changed-code coverage, stages package candidates, verifies commit messages, and runs mutation tests.");
 
         // Consumer caller tests parse command lines with [diagram] without running them.
         root.Directives.Add(new DiagramDirective());
         root.Subcommands.Add(CreateSelect(workingDirectory, run));
-        root.Subcommands.Add(CreateRun(workingDirectory, run, runConfigured, startService));
+        root.Subcommands.Add(CreateRun(workingDirectory, run, runConfigured, startService, runInstaller));
         root.Subcommands.Add(CreateOpenApi(workingDirectory, runConfigured));
-        root.Subcommands.Add(CreateInstallPlaywright(workingDirectory, run));
+        root.Subcommands.Add(CreateInstallPlaywright(workingDirectory, runInstaller));
         root.Subcommands.Add(CreateCoverage(workingDirectory, run));
         root.Subcommands.Add(CreateStageCandidate(workingDirectory, staging));
         root.Subcommands.Add(CreateVerifyCommitMessage(workingDirectory));
@@ -114,7 +121,8 @@ internal static partial class RepositoryCommandLine
         string workingDirectory,
         Func<string, string[], string, CancellationToken, Task<string>> run,
         Func<string, string[], string, Action<ProcessStartInfo>, CancellationToken, Task<string>> runConfigured,
-        Func<ProcessStartInfo, Process>? startService)
+        Func<ProcessStartInfo, Process>? startService,
+        Func<string, string[], string, CancellationToken, Task<string>> runInstaller)
     {
         var sliceOption = new Option<string[]>("--slice")
         {
@@ -204,7 +212,8 @@ internal static partial class RepositoryCommandLine
                     output,
                     error,
                     ct,
-                    startService: startService);
+                    startService: startService,
+                    runInstaller: runInstaller);
             },
             ct));
         return command;

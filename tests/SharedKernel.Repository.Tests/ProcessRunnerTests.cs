@@ -21,6 +21,20 @@ public sealed class ProcessRunnerTests
     }
 
     [Fact]
+    public async Task Streaming_a_process_still_returns_its_standard_output()
+    {
+        // Arrange
+        using var directory = new TemporaryDirectory();
+        var (fileName, arguments) = TestShell.Command("echo selected", "Write-Output selected");
+
+        // Act
+        var output = await ProcessRunner.RunStreaming(fileName, arguments, directory.Path, TestContext.Current.CancellationToken);
+
+        // Assert
+        output.Trim().ShouldBe("selected");
+    }
+
+    [Fact]
     public async Task Failed_process_reports_its_exit_code_and_standard_error()
     {
         // Arrange
