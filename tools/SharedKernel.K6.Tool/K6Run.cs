@@ -91,6 +91,18 @@ internal static class K6Run
         }
 
         Directory.CreateDirectory(runDirectory);
+        if (container is not null && !OperatingSystem.IsWindows())
+        {
+            // The k6 image runs as an unprivileged user that is not the host user. Only the run directory that this
+            // call created is shared; the sticky bit keeps that user from deleting or replacing files it does not own.
+            File.SetUnixFileMode(
+                runDirectory,
+                UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute
+                | UnixFileMode.GroupRead | UnixFileMode.GroupWrite | UnixFileMode.GroupExecute
+                | UnixFileMode.OtherRead | UnixFileMode.OtherWrite | UnixFileMode.OtherExecute
+                | UnixFileMode.StickyBit);
+        }
+
         await error.WriteLineAsync("Results: " + relativeRunDirectory).ConfigureAwait(false);
 
         ManagedHost? host = null;
@@ -188,9 +200,10 @@ internal static class K6Run
         startInfo.ArgumentList.Add(ContainerScripts);
         startInfo.ArgumentList.Add(options.Image ?? container.Image);
         AddK6Arguments(startInfo, ContainerResults + "/" + SummaryFile, variables, options.K6Arguments, ContainerScripts + "/" + script);
+        int exitCode;
         try
         {
-            return await ChildProcess.Run(startInfo, ct).ConfigureAwait(false);
+            exitCode = await ChildProcess.Run(startInfo, ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -198,6 +211,11 @@ internal static class K6Run
             await RemoveContainer(engine, name, options.Root, error).ConfigureAwait(false);
             throw;
         }
+
+        // k6 exits 0 when it cannot write the end-of-test summary, so a missing file is a failed run.
+        return exitCode == 0 && !File.Exists(Path.Combine(runDirectory, SummaryFile))
+            ? throw new InvalidOperationException($"k6 exited 0 but wrote no {SummaryFile} in the results directory of the run. The container user must be able to write the results directory.")
+            : exitCode;
     }
 
     private static async Task RemoveContainer(string engine, string name, string root, TextWriter error)

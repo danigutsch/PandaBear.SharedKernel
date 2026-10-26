@@ -46,7 +46,7 @@ public sealed class K6HostTests
         await using var server = new HealthServer();
         using var repository = new K6TestRepository(K6HostScenario.Configuration());
         var host = repository.AddFake("app-host", body: K6HostScenario.Ready("http://[::]:" + K6HostScenario.Port(server)) + "exec /bin/sleep 300");
-        var podman = repository.AddFake("podman");
+        var podman = repository.AddFake("podman", body: K6TestRepository.WritesContainerSummary);
 
         // Act
         var exitCode = await repository.Invoke(["run", "--scenario", "upload", "--container"], TestContext.Current.CancellationToken);
