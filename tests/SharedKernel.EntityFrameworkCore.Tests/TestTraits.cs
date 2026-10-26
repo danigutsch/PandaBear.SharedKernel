@@ -14,5 +14,7 @@ internal static class TestTraits
 
     public const string CommandTransactionScopeCapability = "command-transaction-scope";
 
+    public const string DomainEventDispatchCapability = "domain-event-dispatch";
+
     public const string ProviderGuardCategory = "provider-guard";
 }

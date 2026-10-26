@@ -81,8 +81,8 @@
   <Project Path="tests/SharedKernel.DocumentRendering.Tests/SharedKernel.DocumentRendering.Tests.csproj" />
   <Project Path="tests/SharedKernel.Domain.Analyzers.Tests/SharedKernel.Domain.Analyzers.Tests.csproj" />
   <Project Path="tests/SharedKernel.Domain.CodeFixes.Tests/SharedKernel.Domain.CodeFixes.Tests.csproj" />
-  <Project Path="tests/SharedKernel.Domain.GeneratorTests/SharedKernel.Domain.GeneratorTests.csproj" />
   <Project Path="tests/SharedKernel.Domain.EntityFrameworkCore.Tests/SharedKernel.Domain.EntityFrameworkCore.Tests.csproj" />
+  <Project Path="tests/SharedKernel.Domain.GeneratorTests/SharedKernel.Domain.GeneratorTests.csproj" />
   <Project Path="tests/SharedKernel.Domain.Tests/SharedKernel.Domain.Tests.csproj" />
   <Project Path="tests/SharedKernel.EntityFrameworkCore.Tests/SharedKernel.EntityFrameworkCore.Tests.csproj" />
   <Project Path="tests/SharedKernel.EventSourcing.Npgsql.Tests/SharedKernel.EventSourcing.Npgsql.Tests.csproj" />
