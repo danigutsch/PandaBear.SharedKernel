@@ -405,6 +405,12 @@ internal static partial class CiConfigurationFile
                 throw Invalid(path + "[" + index.ToString(CultureInfo.InvariantCulture) + "] must be an environment variable name.");
             }
 
+            // The minimal environment exists to keep credentials out of the build, so a list cannot bring them back.
+            if (CredentialName().IsMatch(names[index]))
+            {
+                throw Invalid(path + "[" + index.ToString(CultureInfo.InvariantCulture) + "] must not name a credential variable.");
+            }
+
             if (!seen.Add(names[index]))
             {
                 throw Invalid(path + " repeats " + names[index] + ".");
@@ -428,6 +434,9 @@ internal static partial class CiConfigurationFile
 
     [GeneratedRegex(@"\A[a-z][a-z0-9-]*\z", RegexOptions.CultureInvariant)]
     private static partial Regex Browser();
+
+    [GeneratedRegex("TOKEN|SECRET|PASSWORD|PASSWD|KEY|CREDENTIAL", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
+    private static partial Regex CredentialName();
 
     // An MSBuild property name and an environment variable name share this shape.
     [GeneratedRegex(@"\A[A-Za-z_][A-Za-z0-9_]*\z", RegexOptions.CultureInvariant)]
