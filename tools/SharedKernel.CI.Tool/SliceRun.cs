@@ -120,7 +120,7 @@ internal static class SliceRun
             {
                 var name = target.Name;
                 await Phase("openapi-" + name, () => runConfigured(
-                    OpenApiGeneration.DotnetHostPath(), OpenApiGeneration.Arguments(target, false, options.Configuration), root, OpenApiGeneration.ApplyEnvironment, ct))
+                    OpenApiGeneration.DotnetHostPath(), OpenApiGeneration.Arguments(target, false, options.Configuration), root, startInfo => OpenApiGeneration.ApplyEnvironment(startInfo, target.PreserveEnvironment), ct))
                     .ConfigureAwait(false);
             }
 

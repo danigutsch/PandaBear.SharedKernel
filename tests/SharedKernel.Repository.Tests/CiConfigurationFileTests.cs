@@ -16,6 +16,23 @@ public sealed class CiConfigurationFileTests : IDisposable
     private readonly RepositoryTestScope scope = new();
 
     [Fact]
+    public async Task An_OpenApi_target_reads_its_optional_preserved_environment_variables()
+    {
+        // Arrange
+        scope.WriteFile(".config/sharedkernel-ci.json", RepositoryTestScope.DefaultConfiguration.Replace(
+            "\"version\": 1,",
+            "\"version\": 1,\n  \"openApi\": [{ \"name\": \"admin\", \"project\": \"src/Admin/Admin.csproj\", \"generateProperty\": \"G\", \"refreshProperty\": \"R\", \"preserveEnvironment\": [\"REMOTE_CONTAINERS\"] }],",
+            StringComparison.Ordinal));
+
+        // Act
+        var configuration = await CiConfigurationFile.Read(scope.Root, TestContext.Current.CancellationToken);
+
+        // Assert
+        var target = configuration.OpenApi.ShouldNotBeNull().ShouldHaveSingleItem();
+        target.PreserveEnvironment.ShouldBe(["REMOTE_CONTAINERS"]);
+    }
+
+    [Fact]
     public async Task The_configuration_is_read_with_its_optional_OpenApi_and_slice_settings()
     {
         // Arrange
@@ -106,6 +123,8 @@ public sealed class CiConfigurationFileTests : IDisposable
     [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [{ \"name\": \"admin\", \"project\": \"src/A/A.csproj\", \"generateProperty\": \"G;X=1\", \"refreshProperty\": \"R\" }],", ": $.openApi[0].generateProperty must be an MSBuild property name.")]
     [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [{ \"name\": \"admin\", \"project\": \"src/A/A.csproj\", \"generateProperty\": \"G\", \"refreshProperty\": \"-p:R\" }],", ": $.openApi[0].refreshProperty must be an MSBuild property name.")]
     [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [" + AdminTarget + ", " + AdminTarget + "],", ": $.openApi[1].name repeats the OpenAPI target admin.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [{ \"name\": \"admin\", \"project\": \"src/A/A.csproj\", \"generateProperty\": \"G\", \"refreshProperty\": \"R\", \"preserveEnvironment\": [\"A=B\"] }],", ": $.openApi[0].preserveEnvironment[0] must be an environment variable name.")]
+    [InlineData("\"version\": 1,", "\"version\": 1, \"openApi\": [{ \"name\": \"admin\", \"project\": \"src/A/A.csproj\", \"generateProperty\": \"G\", \"refreshProperty\": \"R\", \"preserveEnvironment\": [\"A\", \"A\"] }],", ": $.openApi[0].preserveEnvironment repeats A.")]
     [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 101, \"include\": [\"src/*\"], \"exclude\": [], \"symbolDirectories\": [\"src\"] },", ": $.coverage.thresholdPercent must be from 0 to 100.")]
     [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 80, \"include\": [], \"exclude\": [], \"symbolDirectories\": [\"src\"] },", ": $.coverage.include must name at least one pattern.")]
     [InlineData("\"version\": 1,", "\"version\": 1, \"coverage\": { \"thresholdPercent\": 80, \"include\": [\"src/*\"], \"exclude\": [\"src\\\\*\"], \"symbolDirectories\": [\"src\"] },", ": $.coverage.exclude[0] must be a non-empty value with '/' separators.")]

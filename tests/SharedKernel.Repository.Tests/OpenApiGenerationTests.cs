@@ -294,6 +294,81 @@ public sealed class OpenApiGenerationTests : IDisposable
         startInfo.Environment.ContainsKey("LOCALAPPDATA").ShouldBeFalse();
     }
 
+    [Fact]
+    public void Generation_environment_preserves_only_the_listed_variables_that_have_a_value()
+    {
+        // Arrange
+        var startInfo = new ProcessStartInfo(Path.Combine(Path.GetTempPath(), "dotnet")) { WorkingDirectory = scope.Root };
+        startInfo.Environment["REMOTE_CONTAINERS"] = "true";
+        startInfo.Environment["EMPTY_VARIABLE"] = " ";
+        startInfo.Environment["GITHUB_TOKEN"] = "token";
+
+        // Act
+        OpenApiGeneration.ApplyEnvironment(startInfo, ["REMOTE_CONTAINERS", "EMPTY_VARIABLE", "ABSENT_VARIABLE"]);
+
+        // Assert
+        startInfo.Environment["REMOTE_CONTAINERS"].ShouldBe("true");
+        startInfo.Environment.ContainsKey("EMPTY_VARIABLE").ShouldBeFalse();
+        startInfo.Environment.ContainsKey("ABSENT_VARIABLE").ShouldBeFalse();
+        startInfo.Environment.ContainsKey("GITHUB_TOKEN").ShouldBeFalse();
+    }
+
+    [Fact]
+    public void A_listed_variable_does_not_replace_the_generation_settings()
+    {
+        // Arrange
+        var startInfo = new ProcessStartInfo(Path.Combine(Path.GetTempPath(), "dotnet")) { WorkingDirectory = scope.Root };
+        startInfo.Environment["ASPNETCORE_ENVIRONMENT"] = "Production";
+        startInfo.Environment["PATH"] = "/parent/bin";
+
+        // Act
+        OpenApiGeneration.ApplyEnvironment(startInfo, ["ASPNETCORE_ENVIRONMENT", "PATH"]);
+
+        // Assert
+        startInfo.Environment["ASPNETCORE_ENVIRONMENT"].ShouldBe("OpenApiGeneration");
+        startInfo.Environment["PATH"].ShouldNotContain("/parent/bin", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Each_target_builds_with_its_own_preserved_variables()
+    {
+        // Arrange
+        scope.WriteFile(".config/sharedkernel-ci.json", RepositoryTestScope.DefaultConfiguration.Replace(
+            "\"version\": 1,",
+            """
+            "version": 1,
+              "openApi": [
+                { "name": "admin", "project": "src/Admin/Admin.csproj", "generateProperty": "GenerateAdmin", "refreshProperty": "RefreshAdmin", "preserveEnvironment": ["PRESERVED_FOR_ADMIN"] },
+                { "name": "catalog", "project": "src/Catalog/Catalog.csproj", "generateProperty": "GenerateCatalog", "refreshProperty": "RefreshCatalog" }
+              ],
+            """,
+            StringComparison.Ordinal));
+        var configuration = await CiConfigurationFile.Read(scope.Root, TestContext.Current.CancellationToken);
+        var environments = new List<IDictionary<string, string?>>();
+
+        // Act
+        await OpenApiGeneration.Run(
+            scope.Root,
+            configuration,
+            [],
+            false,
+            null,
+            (fileName, _, workingDirectory, configure, _) =>
+            {
+                var startInfo = new ProcessStartInfo(fileName) { WorkingDirectory = workingDirectory };
+                startInfo.Environment["PRESERVED_FOR_ADMIN"] = "kept";
+                configure(startInfo);
+                environments.Add(startInfo.Environment);
+                return Task.FromResult(string.Empty);
+            },
+            TextWriter.Null,
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        environments[0]["PRESERVED_FOR_ADMIN"].ShouldBe("kept");
+        environments[1].ContainsKey("PRESERVED_FOR_ADMIN").ShouldBeFalse();
+    }
+
     /// <inheritdoc />
     public void Dispose() => scope.Dispose();
 }

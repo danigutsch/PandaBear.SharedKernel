@@ -117,6 +117,7 @@ internal static partial class CiConfigurationFile
             // The property reaches dotnet build as -p:<name>=true, so it cannot carry another property or a switch.
             ValidateProperty(target.GenerateProperty, path + ".generateProperty");
             ValidateProperty(target.RefreshProperty, path + ".refreshProperty");
+            ValidatePreservedEnvironment(target.PreserveEnvironment ?? [], path + ".preserveEnvironment");
         }
 
         if (configuration.Slices.Length == 0)
@@ -393,6 +394,23 @@ internal static partial class CiConfigurationFile
 
     /// <summary>Reports whether <paramref name="name"/> is, in any case, a variable that holds a GitHub token and that the tool removes from the service's environment.</summary>
     public static bool IsTokenVariable(string name) => TokenVariables.Contains(name, StringComparer.OrdinalIgnoreCase);
+
+    private static void ValidatePreservedEnvironment(string[] names, string path)
+    {
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        for (var index = 0; index < names.Length; index++)
+        {
+            if (names[index] is null || !Identifier().IsMatch(names[index]))
+            {
+                throw Invalid(path + "[" + index.ToString(CultureInfo.InvariantCulture) + "] must be an environment variable name.");
+            }
+
+            if (!seen.Add(names[index]))
+            {
+                throw Invalid(path + " repeats " + names[index] + ".");
+            }
+        }
+    }
 
     private static void ValidateProperty(string value, string path)
     {
