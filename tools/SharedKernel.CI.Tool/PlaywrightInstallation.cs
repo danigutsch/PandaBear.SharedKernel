@@ -18,6 +18,7 @@ internal static class PlaywrightInstallation
     /// <param name="run">Runs a child process and returns its standard output.</param>
     /// <param name="ct">Cancels the processes.</param>
     /// <param name="timeout">How long both processes together may run, or <see langword="null"/> for <see cref="DefaultTimeout"/>.</param>
+    /// <param name="onlyShell">Whether to install only the headless shell of Chromium, not the full browser.</param>
     /// <returns>The installer's standard output, preceded by the duration of each step.</returns>
     /// <exception cref="InvalidOperationException">The build output has no <c>playwright.ps1</c>.</exception>
     /// <exception cref="TimeoutException">The installation did not finish within <paramref name="timeout"/>; its process is stopped first.</exception>
@@ -29,13 +30,14 @@ internal static class PlaywrightInstallation
         string? configuration,
         Func<string, string[], string, CancellationToken, Task<string>> run,
         CancellationToken ct,
-        TimeSpan? timeout = null)
+        TimeSpan? timeout = null,
+        bool onlyShell = false)
     {
         using var timeoutSource = CancellationTokenSource.CreateLinkedTokenSource(ct);
         timeoutSource.CancelAfter(timeout ?? DefaultTimeout);
         try
         {
-            return await Install(root, project, browsers, withDependencies, configuration, run, timeoutSource.Token).ConfigureAwait(false);
+            return await Install(root, project, browsers, withDependencies, onlyShell, configuration, run, timeoutSource.Token).ConfigureAwait(false);
         }
         catch (OperationCanceledException exception) when (!ct.IsCancellationRequested)
         {
@@ -48,6 +50,7 @@ internal static class PlaywrightInstallation
         string project,
         IEnumerable<string> browsers,
         bool withDependencies,
+        bool onlyShell,
         string? configuration,
         Func<string, string[], string, CancellationToken, Task<string>> run,
         CancellationToken ct)
@@ -66,7 +69,7 @@ internal static class PlaywrightInstallation
             throw new InvalidOperationException("playwright.ps1 is not in the build output of " + project + "; build it first.");
         }
 
-        string[] install = [script, "install", .. withDependencies ? ["--with-deps"] : Array.Empty<string>(), .. browsers];
+        string[] install = [script, "install", .. withDependencies ? ["--with-deps"] : Array.Empty<string>(), .. onlyShell ? ["--only-shell"] : Array.Empty<string>(), .. browsers];
         var installStarted = Stopwatch.GetTimestamp();
         var output = await run("pwsh", install, root, ct).ConfigureAwait(false);
         return string.Create(

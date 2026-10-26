@@ -91,6 +91,26 @@ public sealed class PlaywrightInstallationTests : IDisposable
     }
 
     [Fact]
+    public async Task Only_the_headless_shell_is_installed_when_requested()
+    {
+        // Arrange
+        scope.WriteFile("tests/Core.Tests/bin/Debug/net10.0/playwright.ps1", "# installer");
+        var processes = new ProcessLog((fileName, _, _) => Task.FromResult(fileName == "dotnet" ? "bin/Debug/net10.0/" : string.Empty));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(
+            scope.Root,
+            ["install-playwright", "--project", Project, "--browser", "chromium", "--with-dependencies", "--only-shell"],
+            processes.Run,
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        processes.Commands[1].ShouldBe(
+            "pwsh " + Path.Combine(scope.Root, "tests", "Core.Tests", "bin", "Debug", "net10.0", "playwright.ps1") + " install --with-deps --only-shell chromium");
+    }
+
+    [Fact]
     public async Task The_output_reports_how_long_each_step_took()
     {
         // Arrange

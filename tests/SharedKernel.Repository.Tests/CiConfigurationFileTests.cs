@@ -39,6 +39,24 @@ public sealed class CiConfigurationFileTests : IDisposable
         configuration.DefaultSlice.ShouldBe("library");
     }
 
+    [Theory]
+    [InlineData("", false)]
+    [InlineData(", \"onlyShell\": true", true)]
+    public async Task A_slice_playwright_section_reads_whether_to_install_only_the_headless_shell(string onlyShell, bool expected)
+    {
+        // Arrange
+        scope.WriteFile(".config/sharedkernel-ci.json", RepositoryTestScope.DefaultConfiguration.Replace(
+            Library,
+            "\"name\": \"library\", \"projects\": [\"tests/Core.Tests/Core.Tests.csproj\"], \"playwright\": { \"project\": \"tests/Core.Tests/Core.Tests.csproj\", \"browsers\": [\"chromium\"]" + onlyShell + " }",
+            StringComparison.Ordinal));
+
+        // Act
+        var configuration = await CiConfigurationFile.Read(scope.Root, TestContext.Current.CancellationToken);
+
+        // Assert
+        configuration.Slices.ShouldHaveSingleItem().Playwright.ShouldNotBeNull().OnlyShell.ShouldBe(expected);
+    }
+
     [Fact]
     public async Task A_slice_service_defaults_its_timeouts_to_an_image_pull_and_a_container_stop()
     {
