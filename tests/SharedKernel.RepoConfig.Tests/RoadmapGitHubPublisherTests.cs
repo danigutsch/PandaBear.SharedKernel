@@ -26,7 +26,7 @@ public sealed class RoadmapGitHubPublisherTests
         var publisher = new RoadmapGitHubPublisher(workspace.RootPath, httpClient);
 
         // Act
-        var publication = await publisher.Publish(plan, changes, PullRequestBody, TestContext.Current.CancellationToken);
+        var publication = await publisher.Publish(plan, plan.BaseSha, changes, PullRequestBody, TestContext.Current.CancellationToken);
         var treeRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/git/trees", StringComparison.Ordinal));
         var commitRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/git/commits", StringComparison.Ordinal));
         var refRequest = handler.Requests.ShouldHaveSingleItem(request => request.PathAndQuery.EndsWith("/git/refs", StringComparison.Ordinal));
@@ -77,6 +77,7 @@ public sealed class RoadmapGitHubPublisherTests
         // Act
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             PullRequestBody,
             TestContext.Current.CancellationToken);
@@ -109,6 +110,7 @@ public sealed class RoadmapGitHubPublisherTests
         // Act
         _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             PullRequestBody,
             TestContext.Current.CancellationToken);
@@ -139,6 +141,7 @@ public sealed class RoadmapGitHubPublisherTests
         // Act
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             PullRequestBody,
             TestContext.Current.CancellationToken);
@@ -166,6 +169,7 @@ public sealed class RoadmapGitHubPublisherTests
         // Act
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             PullRequestBody,
             TestContext.Current.CancellationToken);
@@ -190,6 +194,7 @@ public sealed class RoadmapGitHubPublisherTests
         // Act
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             PullRequestBody,
             TestContext.Current.CancellationToken);
@@ -216,6 +221,7 @@ public sealed class RoadmapGitHubPublisherTests
         // Act
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             PullRequestBody,
             TestContext.Current.CancellationToken);
@@ -246,6 +252,7 @@ public sealed class RoadmapGitHubPublisherTests
         // Act
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             PullRequestBody,
             TestContext.Current.CancellationToken);
@@ -284,6 +291,7 @@ public sealed class RoadmapGitHubPublisherTests
         // Act
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             PullRequestBody,
             TestContext.Current.CancellationToken);
@@ -320,6 +328,7 @@ public sealed class RoadmapGitHubPublisherTests
         var action = () => RoadmapGitHubPublisher.Preview(
             workspace.RootPath,
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             TestContext.Current.CancellationToken);
         var exception = await action.ShouldThrow<InvalidOperationException>();
@@ -343,6 +352,7 @@ public sealed class RoadmapGitHubPublisherTests
         var preview = await RoadmapGitHubPublisher.Preview(
             workspace.RootPath,
             plan,
+            plan.BaseSha,
             changes,
             TestContext.Current.CancellationToken);
 
@@ -367,6 +377,7 @@ public sealed class RoadmapGitHubPublisherTests
         // Act
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             PullRequestBody,
             TestContext.Current.CancellationToken);
@@ -394,6 +405,7 @@ public sealed class RoadmapGitHubPublisherTests
         // Act
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             PullRequestBody,
             TestContext.Current.CancellationToken);
@@ -423,6 +435,7 @@ public sealed class RoadmapGitHubPublisherTests
         // Act
         Func<Task> action = async () => _ = await publisher.Publish(
             RoadmapAutomationTestPlan.Create(),
+            RoadmapAutomationTestPlan.BaseSha,
             changes,
             PullRequestBody,
             TestContext.Current.CancellationToken);

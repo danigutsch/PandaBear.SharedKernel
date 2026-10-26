@@ -1015,6 +1015,15 @@ internal static class RepoConfigVerifier
         {
             issues.Add(new RepoConfigIssue(relativePath, "integrations.github.intake.closedStatus must be a configured closed status."));
         }
+
+        if (intake.TryGetProperty("notPlannedStatus", out _))
+        {
+            var notPlannedStatus = GetString(intake, "notPlannedStatus");
+            if (string.IsNullOrWhiteSpace(notPlannedStatus) || !closedStatuses.Contains(notPlannedStatus, StringComparer.Ordinal))
+            {
+                issues.Add(new RepoConfigIssue(relativePath, "integrations.github.intake.notPlannedStatus must be a configured closed status."));
+            }
+        }
     }
 
     private static void VerifyGitHubProjectTarget(JsonElement github, string relativePath, List<RepoConfigIssue> issues)

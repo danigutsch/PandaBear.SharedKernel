@@ -164,4 +164,108 @@ public sealed class RoadmapAutomationServiceTests
         seal.PathCount.ShouldBe(1);
         seal.ResultDigest.Length.ShouldBe(64);
     }
+
+    [Fact]
+    public async Task Result_seal_binds_to_the_current_head_when_main_moved_after_planning()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        RoadmapAutomationTestSetup.Configure(workspace);
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
+        [
+            GitHubRoadmapSnapshotTestOperations.Issue(100, "Closed item", "CLOSED")
+        ];
+        var plan = await RoadmapAutomationTestSetup.CreatePlan(
+            workspace,
+            snapshot,
+            TestContext.Current.CancellationToken);
+        await RoadmapAutomationTestSetup.ApplyPlan(
+            workspace,
+            plan,
+            snapshot,
+            TestContext.Current.CancellationToken,
+            RoadmapAutomationTestPlan.DifferentSha);
+        await RoadmapAutomationTestSetup.RefreshReconciliation(
+            workspace,
+            snapshot,
+            TestContext.Current.CancellationToken,
+            RoadmapAutomationTestPlan.DifferentSha);
+        using var sealHandler = new TestHttpMessageHandler();
+        GitHubRoadmapSnapshotTestOperations.Enqueue(sealHandler, snapshot, RoadmapAutomationTestPlan.DifferentSha);
+        using var sealClient = new HttpClient(sealHandler);
+        var sealing = new RoadmapAutomationService(
+            workspace.RootPath,
+            sealClient,
+            RoadmapAutomationTestGit.Create(
+                RoadmapGitStatusTestData.Ordinary("roadmap/reconciliation/open-issues-test.json"),
+                RoadmapAutomationTestPlan.DifferentSha));
+
+        // Act
+        var seal = await sealing.SealResult(
+            plan.PlanDigest,
+            new string('c', 64),
+            "owner/repository",
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        plan.BaseSha.ShouldBe(RoadmapAutomationTestPlan.BaseSha);
+        seal.BaseSha.ShouldBe(RoadmapAutomationTestPlan.DifferentSha);
+    }
+
+    [Theory]
+    [InlineData("NOT_PLANNED", "NOT_PLANNED")]
+    [InlineData("COMPLETED", "COMPLETED")]
+    [InlineData(null, "COMPLETED")]
+    public async Task Plan_carries_the_close_outcome_of_each_required_transition(string? stateReason, string expected)
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        RoadmapAutomationTestSetup.Configure(workspace);
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
+        [
+            GitHubRoadmapSnapshotTestOperations.Issue(100, "Closed item", "CLOSED") with { StateReason = stateReason }
+        ];
+
+        // Act
+        var plan = await RoadmapAutomationTestSetup.CreatePlan(
+            workspace,
+            snapshot,
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        plan.RequiredClosedTransitions.ShouldHaveSingleItem().CloseReason.ShouldBe(expected);
+    }
+
+    [Fact]
+    public async Task Apply_plan_records_a_not_planned_close_outcome_in_the_manifest_only_when_it_is_not_completed()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        RoadmapAutomationTestSetup.Configure(workspace);
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
+        [
+            GitHubRoadmapSnapshotTestOperations.Issue(100, "Dropped item", "CLOSED") with { StateReason = "NOT_PLANNED" }
+        ];
+        var plan = await RoadmapAutomationTestSetup.CreatePlan(
+            workspace,
+            snapshot,
+            TestContext.Current.CancellationToken);
+
+        // Act
+        await RoadmapAutomationTestSetup.ApplyPlan(
+            workspace,
+            plan,
+            snapshot,
+            TestContext.Current.CancellationToken);
+        await RoadmapAutomationTestSetup.RefreshReconciliation(
+            workspace,
+            snapshot,
+            TestContext.Current.CancellationToken);
+        using var manifest = JsonDocument.Parse(workspace.ReadFile("roadmap/reconciliation/open-issues-test.json"));
+        var transition = manifest.RootElement.GetProperty("closedItemTransitions").EnumerateArray().ShouldHaveSingleItem();
+
+        // Assert
+        transition.GetProperty("roadmapItem").GetString().ShouldBe("RM-018");
+        transition.GetProperty("closeReason").GetString().ShouldBe("NOT_PLANNED");
+    }
 }

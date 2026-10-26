@@ -215,6 +215,10 @@ internal static class RoadmapTemplates
                         "closedStatus": {
                           "type": "string",
                           "minLength": 1
+                        },
+                        "notPlannedStatus": {
+                          "type": "string",
+                          "minLength": 1
                         }
                       },
                       "additionalProperties": false

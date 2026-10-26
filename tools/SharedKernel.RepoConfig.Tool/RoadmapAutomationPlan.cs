@@ -118,7 +118,7 @@ internal sealed class RoadmapAutomationPlan
         string snapshotDigest,
         string repositoryInputDigest,
         string reconciliationManifest,
-        IReadOnlyDictionary<int, string> baselineClosedTransitions,
+        IReadOnlyList<RoadmapClosedItemTransition> baselineClosedTransitions,
         IReadOnlyList<RoadmapClosedItemTransition> requiredClosedTransitions,
         bool snapshotChanged)
     {
@@ -132,10 +132,7 @@ internal sealed class RoadmapAutomationPlan
         var normalizedSnapshotDigest = ValidateDigest(snapshotDigest, "GitHub snapshot digest");
         var normalizedInputDigest = ValidateDigest(repositoryInputDigest, "repository input digest");
         var normalizedManifest = ValidateManifestPath(reconciliationManifest);
-        var baseline = baselineClosedTransitions
-            .OrderBy(transition => transition.Key)
-            .Select(transition => new RoadmapClosedItemTransition(transition.Key, transition.Value))
-            .ToArray();
+        var baseline = baselineClosedTransitions.OrderBy(transition => transition.Issue).ToArray();
         ValidateTransitions(baseline);
         var required = requiredClosedTransitions.OrderBy(transition => transition.Issue).ToArray();
         ValidateTransitions(required);
@@ -287,6 +284,7 @@ internal sealed class RoadmapAutomationPlan
                 writer.WriteStartObject();
                 writer.WriteNumber("issue", transition.Issue);
                 writer.WriteString("roadmapItem", transition.RoadmapItem);
+                writer.WriteString("closeReason", transition.CloseReason);
                 writer.WriteEndObject();
             }
 
@@ -295,9 +293,6 @@ internal sealed class RoadmapAutomationPlan
 
         return Convert.ToHexStringLower(SHA256.HashData(stream.ToArray()));
     }
-
-    internal static string ComputeTransitionsDigest(IReadOnlyDictionary<int, string> transitions) =>
-        ComputeTransitionsDigest(transitions.Select(transition => new RoadmapClosedItemTransition(transition.Key, transition.Value)));
 
     internal static void ValidateRoadmapItemId(string roadmapItem)
     {
@@ -366,6 +361,7 @@ internal sealed class RoadmapAutomationPlan
             writer.WriteStartObject();
             writer.WriteNumber("issue", transition.Issue);
             writer.WriteString("roadmapItem", transition.RoadmapItem);
+            writer.WriteString("closeReason", transition.CloseReason);
             writer.WriteEndObject();
         }
 
@@ -386,11 +382,12 @@ internal sealed class RoadmapAutomationPlan
         {
             ValidateObjectProperties(
                 entry,
-                ["issue", "roadmapItem"],
+                ["issue", "roadmapItem", "closeReason"],
                 "Roadmap automation plan closure transition has an unsupported shape.");
             transitions.Add(new RoadmapClosedItemTransition(
                 GetRequiredInteger(entry, "issue"),
-                GetRequiredString(entry, "roadmapItem")));
+                GetRequiredString(entry, "roadmapItem"),
+                GetRequiredString(entry, "closeReason")));
         }
 
         var result = transitions.ToArray();
@@ -425,6 +422,11 @@ internal sealed class RoadmapAutomationPlan
         {
             ArgumentNullException.ThrowIfNull(transition);
             ValidateRoadmapItemId(transition.RoadmapItem);
+            if (!RoadmapCloseReason.IsValid(transition.CloseReason))
+            {
+                throw new InvalidOperationException("Roadmap automation plan contains an invalid close reason.");
+            }
+
             if (transition.Issue < 1
                 || !issues.Add(transition.Issue)
                 || !itemIds.Add(transition.RoadmapItem))
@@ -462,7 +464,7 @@ internal sealed class RoadmapAutomationPlan
         return path;
     }
 
-    private static string ValidateSha(string value, string name)
+    internal static string ValidateSha(string value, string name)
     {
         if (!IsLowerHex(value, 40))
         {

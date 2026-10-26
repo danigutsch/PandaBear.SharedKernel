@@ -6,18 +6,19 @@ internal static class RoadmapAutomationTestSetup
         TemporaryRepoConfigWorkspace workspace,
         RoadmapAutomationPlan plan,
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string head = RoadmapAutomationTestPlan.BaseSha)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(plan);
         ArgumentNullException.ThrowIfNull(snapshot);
         using var handler = new TestHttpMessageHandler();
-        GitHubRoadmapSnapshotTestOperations.Enqueue(handler, snapshot);
+        GitHubRoadmapSnapshotTestOperations.Enqueue(handler, snapshot, head);
         using var httpClient = new HttpClient(handler);
         var service = new RoadmapAutomationService(
             workspace.RootPath,
             httpClient,
-            RoadmapAutomationTestGit.Create());
+            RoadmapAutomationTestGit.Create(head: head));
         await service.ApplyPlan(plan.PlanDigest, "owner/repository", cancellationToken);
     }
 
@@ -111,12 +112,13 @@ internal static class RoadmapAutomationTestSetup
     public static async Task RefreshReconciliation(
         TemporaryRepoConfigWorkspace workspace,
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string head = RoadmapAutomationTestPlan.BaseSha)
     {
         ArgumentNullException.ThrowIfNull(workspace);
         ArgumentNullException.ThrowIfNull(snapshot);
         using var handler = new TestHttpMessageHandler();
-        GitHubRoadmapSnapshotTestOperations.Enqueue(handler, snapshot);
+        GitHubRoadmapSnapshotTestOperations.Enqueue(handler, snapshot, head);
         using var httpClient = new HttpClient(handler);
         var reconciler = new GitHubRoadmapReconciler(RoadmapProject.Load(workspace.RootPath), httpClient);
         _ = await reconciler.Apply(cancellationToken);

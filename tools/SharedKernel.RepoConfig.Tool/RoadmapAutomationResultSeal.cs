@@ -71,6 +71,7 @@ internal sealed class RoadmapAutomationResultSeal
 
     public static RoadmapAutomationResultSeal Create(
         RoadmapAutomationPlan plan,
+        string baseSha,
         string artifactDigest,
         string resultDigest,
         int pathCount,
@@ -87,7 +88,7 @@ internal sealed class RoadmapAutomationResultSeal
         var unsigned = new RoadmapAutomationResultSeal(
             plan.PlanDigest,
             normalizedArtifactDigest,
-            plan.BaseSha,
+            RoadmapAutomationPlan.ValidateSha(baseSha, "base SHA"),
             plan.SnapshotDigest,
             normalizedResultDigest,
             pathCount,

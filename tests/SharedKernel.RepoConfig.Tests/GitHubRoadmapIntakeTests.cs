@@ -661,6 +661,164 @@ public sealed class GitHubRoadmapIntakeTests
     }
 
     [Fact]
+    public async Task GitHub_import_transitions_a_not_planned_item_to_the_configured_not_planned_status()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var firstOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var firstError = new StringWriter(CultureInfo.InvariantCulture);
+        using var secondOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var secondError = new StringWriter(CultureInfo.InvariantCulture);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
+        workspace.WriteFile(
+            "roadmap/config.json",
+            workspace.ReadFile("roadmap/config.json")
+                .Replace("\"closedStatus\": \"done\"", "\"closedStatus\": \"done\",\n        \"notPlannedStatus\": \"dropped\"", StringComparison.Ordinal));
+        GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
+        [
+            GitHubRoadmapSnapshotTestOperations.Issue(101, "New open issue", "OPEN"),
+            GitHubRoadmapSnapshotTestOperations.Issue(100, "Closed imported issue", "CLOSED")
+        ];
+        GitHubRoadmapSnapshotTestOperations.Configure(
+            workspace,
+            """
+            {
+              "repository": "owner/repository",
+              "mechanicalPriorityOverride": {
+                "firstItemNumber": 18,
+                "reach": 1,
+                "impact": "1 plus direct open blockers, capped at impactCap.",
+                "impactCap": 5,
+                "confidence": 0.1,
+                "effort": { "type: epic": 8, "type: feature": 5, "type: enabler": 3, "type: docs": 2, "type: chore": 2, "default": 3 },
+                "order": "Existing reviewed orders remain first; imported work uses topological order, score descending, then canonical ID."
+              },
+              "blockerEdges": [],
+              "closedItemTransitions": [{ "issue": 100, "roadmapItem": "RM-018", "closeReason": "NOT_PLANNED" }],
+              "directCanonicalPrimaries": [],
+              "childrenOfCanonicalPrimaries": [],
+              "unmappedStructuralRoots": [],
+              "needsHuman": [101],
+              "integrity": {
+                "expectedIssueCount": 1,
+                "expectedDirectCanonicalPrimaryCount": 0,
+                "expectedChildrenOfCanonicalPrimaryCount": 0,
+                "expectedUnmappedStructuralRootCount": 0,
+                "expectedNeedsHumanCount": 1,
+                "expectedBlockerEdgeCount": 0,
+                "dispositionsAreDisjoint": true,
+                "dispositionsCoverSnapshot": true
+              }
+            }
+            """,
+            snapshot);
+        using var firstHandler = new TestHttpMessageHandler();
+        GitHubRoadmapSnapshotTestOperations.Enqueue(firstHandler, snapshot);
+        using var firstHttpClient = new HttpClient(firstHandler);
+
+        // Act
+        var firstExitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], firstOutput, firstError, workspace.RootPath, firstHttpClient, TestContext.Current.CancellationToken);
+        var stateAfterFirstApply = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
+        using var transitionedItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-018-github-100.json"));
+        using var newOpenItem = JsonDocument.Parse(workspace.ReadFile("roadmap/items/RM-019-github-101.json"));
+        using var orderDocument = JsonDocument.Parse(workspace.ReadFile("roadmap/order.json"));
+        using var secondHandler = new TestHttpMessageHandler();
+        GitHubRoadmapSnapshotTestOperations.Enqueue(secondHandler, snapshot);
+        using var secondHttpClient = new HttpClient(secondHandler);
+        var secondExitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], secondOutput, secondError, workspace.RootPath, secondHttpClient, TestContext.Current.CancellationToken);
+        var stateAfterSecondApply = GitHubRoadmapIntakeTestOperations.ReadRoadmapState(workspace);
+        var transitionedRoot = transitionedItem.RootElement;
+        var newOpenRoot = newOpenItem.RootElement;
+        var transitionedBlocks = transitionedRoot.GetProperty("blocks").EnumerateArray().Select(item => item.GetString() ?? string.Empty).ToArray();
+        var newOpenBlockers = newOpenRoot.GetProperty("blockedBy").EnumerateArray().Select(item => item.GetString() ?? string.Empty).ToArray();
+        var orderedItems = orderDocument.RootElement.GetProperty("items").EnumerateArray().Select(item => item.GetString() ?? string.Empty).ToArray();
+
+        // Assert
+        firstExitCode.ShouldBe(0);
+        firstOutput.ToString().ShouldContain("import: transitioned 1 imported roadmap item to closed support.", StringComparison.Ordinal);
+        firstError.ToString().ShouldBe(string.Empty);
+        transitionedRoot.GetProperty("status").GetString().ShouldBe("dropped");
+        transitionedRoot.GetProperty("triage").GetString().ShouldBe("untriaged");
+        transitionedRoot.TryGetProperty("order", out _).ShouldBeFalse();
+        transitionedRoot.TryGetProperty("scoring", out _).ShouldBeFalse();
+        transitionedBlocks.ShouldBe([]);
+        newOpenBlockers.ShouldBe([]);
+        orderedItems.ShouldBe(["RM-001", "RM-019"]);
+        secondExitCode.ShouldBe(0);
+        secondOutput.ToString().ShouldContain("import: roadmap already matches the reconciliation manifest.", StringComparison.Ordinal);
+        secondError.ToString().ShouldBe(string.Empty);
+        stateAfterSecondApply.ShouldBe(stateAfterFirstApply);
+    }
+
+
+    [Fact]
+    public async Task GitHub_import_rejects_a_not_planned_transition_without_a_configured_not_planned_status()
+    {
+        // Arrange
+        using var workspace = new TemporaryRepoConfigWorkspace();
+        using var initOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var initError = new StringWriter(CultureInfo.InvariantCulture);
+        using var firstOutput = new StringWriter(CultureInfo.InvariantCulture);
+        using var firstError = new StringWriter(CultureInfo.InvariantCulture);
+        var actualResult = await RepoConfigToolRunner.Run(["init", "--root", workspace.RootPath], initOutput, initError, workspace.RootPath, TestContext.Current.CancellationToken);
+        actualResult.ShouldBe(0);
+        GitHubRoadmapIntakeTestOperations.AddImportedOpenItem(workspace);
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot =
+        [
+            GitHubRoadmapSnapshotTestOperations.Issue(101, "New open issue", "OPEN"),
+            GitHubRoadmapSnapshotTestOperations.Issue(100, "Closed imported issue", "CLOSED")
+        ];
+        GitHubRoadmapSnapshotTestOperations.Configure(
+            workspace,
+            """
+            {
+              "repository": "owner/repository",
+              "mechanicalPriorityOverride": {
+                "firstItemNumber": 18,
+                "reach": 1,
+                "impact": "1 plus direct open blockers, capped at impactCap.",
+                "impactCap": 5,
+                "confidence": 0.1,
+                "effort": { "type: epic": 8, "type: feature": 5, "type: enabler": 3, "type: docs": 2, "type: chore": 2, "default": 3 },
+                "order": "Existing reviewed orders remain first; imported work uses topological order, score descending, then canonical ID."
+              },
+              "blockerEdges": [],
+              "closedItemTransitions": [{ "issue": 100, "roadmapItem": "RM-018", "closeReason": "NOT_PLANNED" }],
+              "directCanonicalPrimaries": [],
+              "childrenOfCanonicalPrimaries": [],
+              "unmappedStructuralRoots": [],
+              "needsHuman": [101],
+              "integrity": {
+                "expectedIssueCount": 1,
+                "expectedDirectCanonicalPrimaryCount": 0,
+                "expectedChildrenOfCanonicalPrimaryCount": 0,
+                "expectedUnmappedStructuralRootCount": 0,
+                "expectedNeedsHumanCount": 1,
+                "expectedBlockerEdgeCount": 0,
+                "dispositionsAreDisjoint": true,
+                "dispositionsCoverSnapshot": true
+              }
+            }
+            """,
+            snapshot);
+        using var firstHandler = new TestHttpMessageHandler();
+        GitHubRoadmapSnapshotTestOperations.Enqueue(firstHandler, snapshot);
+        using var firstHttpClient = new HttpClient(firstHandler);
+
+        // Act
+        var exitCode = await RepoConfigToolRunner.Run(["github", "import", "--force", "--root", workspace.RootPath], firstOutput, firstError, workspace.RootPath, firstHttpClient, TestContext.Current.CancellationToken);
+
+        // Assert
+        exitCode.ShouldNotBe(0);
+        firstError.ToString().ShouldContain("integrations.github.intake.notPlannedStatus", StringComparison.Ordinal);
+        workspace.ReadFile("roadmap/items/RM-018-github-100.json").ShouldNotContain("\"done\"", StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task GitHub_import_preserves_exact_blocker_links_during_a_closed_transition()
     {
         // Arrange

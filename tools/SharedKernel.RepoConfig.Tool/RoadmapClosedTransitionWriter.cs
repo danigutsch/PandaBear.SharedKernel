@@ -18,7 +18,7 @@ internal static class RoadmapClosedTransitionWriter
             throw new InvalidOperationException("Roadmap reconciliation manifest root must be a JSON object.");
         }
 
-        Dictionary<int, string> transitions = [];
+        Dictionary<int, (string RoadmapItem, string CloseReason)> transitions = [];
         HashSet<string> itemIds = new(StringComparer.Ordinal);
         var foundTransitions = false;
         foreach (var property in document.RootElement.EnumerateObject())
@@ -48,7 +48,17 @@ internal static class RoadmapClosedTransitionWriter
 
                 var roadmapItem = itemElement.GetString() ?? string.Empty;
                 RoadmapAutomationPlan.ValidateRoadmapItemId(roadmapItem);
-                if (!transitions.TryAdd(issue, roadmapItem) || !itemIds.Add(roadmapItem))
+                var closeReason = RoadmapCloseReason.Completed;
+                if (entry.TryGetProperty("closeReason", out var reasonElement))
+                {
+                    closeReason = reasonElement.ValueKind == JsonValueKind.String ? reasonElement.GetString() ?? string.Empty : string.Empty;
+                    if (!string.Equals(closeReason, RoadmapCloseReason.NotPlanned, StringComparison.Ordinal))
+                    {
+                        throw new InvalidOperationException("Roadmap reconciliation manifest closed item transitions are invalid.");
+                    }
+                }
+
+                if (!transitions.TryAdd(issue, (roadmapItem, closeReason)) || !itemIds.Add(roadmapItem))
                 {
                     throw new InvalidOperationException("Roadmap reconciliation manifest closed item transitions are invalid.");
                 }
@@ -66,7 +76,8 @@ internal static class RoadmapClosedTransitionWriter
             RoadmapAutomationPlan.ValidateRoadmapItemId(transition.RoadmapItem);
             if (transitions.TryGetValue(transition.Issue, out var existing))
             {
-                if (!string.Equals(existing, transition.RoadmapItem, StringComparison.Ordinal))
+                if (!string.Equals(existing.RoadmapItem, transition.RoadmapItem, StringComparison.Ordinal)
+                    || !string.Equals(existing.CloseReason, transition.CloseReason, StringComparison.Ordinal))
                 {
                     throw new InvalidOperationException("Roadmap automation closure approval conflicts with the reconciliation manifest.");
                 }
@@ -79,7 +90,12 @@ internal static class RoadmapClosedTransitionWriter
                 throw new InvalidOperationException("Roadmap automation closure approval conflicts with the reconciliation manifest.");
             }
 
-            transitions.Add(transition.Issue, transition.RoadmapItem);
+            if (!RoadmapCloseReason.IsValid(transition.CloseReason))
+            {
+                throw new InvalidOperationException("Roadmap automation closure approval conflicts with the reconciliation manifest.");
+            }
+
+            transitions.Add(transition.Issue, (transition.RoadmapItem, transition.CloseReason));
         }
 
         using var stream = new MemoryStream();
@@ -100,7 +116,12 @@ internal static class RoadmapClosedTransitionWriter
                 {
                     writer.WriteStartObject();
                     writer.WriteNumber("issue", transition.Key);
-                    writer.WriteString("roadmapItem", transition.Value);
+                    writer.WriteString("roadmapItem", transition.Value.RoadmapItem);
+                    if (!string.Equals(transition.Value.CloseReason, RoadmapCloseReason.Completed, StringComparison.Ordinal))
+                    {
+                        writer.WriteString("closeReason", transition.Value.CloseReason);
+                    }
+
                     writer.WriteEndObject();
                 }
 

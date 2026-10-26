@@ -7,6 +7,7 @@ namespace PandaBear.RepoConfig.Tests;
 internal static class GitHubRoadmapSnapshotTestOperations
 {
     public const string Repository = "owner/repository";
+    public const string DefaultOid = "1111111111111111111111111111111111111111";
 
     public static void Configure(
         TemporaryRepoConfigWorkspace workspace,
@@ -25,12 +26,15 @@ internal static class GitHubRoadmapSnapshotTestOperations
             root.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
     }
 
-    public static void Enqueue(TestHttpMessageHandler handler, IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot)
+    public static void Enqueue(
+        TestHttpMessageHandler handler,
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot,
+        string oid = DefaultOid)
     {
         ArgumentNullException.ThrowIfNull(handler);
         ArgumentNullException.ThrowIfNull(snapshot);
 
-        handler.Enqueue(CreateOpenIssuesResponse(snapshot));
+        handler.Enqueue(CreateOpenIssuesResponse(snapshot, oid));
         foreach (var issue in snapshot
             .Where(issue => string.Equals(issue.State, "CLOSED", StringComparison.Ordinal))
             .OrderBy(issue => issue.Number))
@@ -38,10 +42,12 @@ internal static class GitHubRoadmapSnapshotTestOperations
             EnqueueIssue(handler, issue);
         }
 
-        handler.Enqueue(CreateRepositoryCommitResponse());
+        handler.Enqueue(CreateRepositoryCommitResponse(oid));
     }
 
-    public static HttpResponseMessage CreateOpenIssuesResponse(IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot)
+    public static HttpResponseMessage CreateOpenIssuesResponse(
+        IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot,
+        string oid = DefaultOid)
     {
         ArgumentNullException.ThrowIfNull(snapshot);
 
@@ -57,7 +63,7 @@ internal static class GitHubRoadmapSnapshotTestOperations
             writer.WriteStartObject();
             writer.WritePropertyName("target");
             writer.WriteStartObject();
-            writer.WriteString("oid", "1111111111111111111111111111111111111111");
+            writer.WriteString("oid", oid);
             writer.WriteEndObject();
             writer.WriteEndObject();
             writer.WritePropertyName("issues");
@@ -85,11 +91,11 @@ internal static class GitHubRoadmapSnapshotTestOperations
         };
     }
 
-    public static HttpResponseMessage CreateRepositoryCommitResponse() =>
+    public static HttpResponseMessage CreateRepositoryCommitResponse(string oid = DefaultOid) =>
         new(HttpStatusCode.OK)
         {
             Content = new StringContent(
-                "{\"data\":{\"repository\":{\"defaultBranchRef\":{\"target\":{\"oid\":\"1111111111111111111111111111111111111111\"}}}}}",
+                "{\"data\":{\"repository\":{\"defaultBranchRef\":{\"target\":{\"oid\":\"" + oid + "\"}}}}}",
                 System.Text.Encoding.UTF8,
                 "application/json")
         };
@@ -127,6 +133,11 @@ internal static class GitHubRoadmapSnapshotTestOperations
         writer.WriteNumber("number", issue.Number);
         writer.WriteString("title", issue.Title);
         writer.WriteString("state", issue.State);
+        if (issue.StateReason is not null)
+        {
+            writer.WriteString("stateReason", issue.StateReason);
+        }
+
         writer.WritePropertyName("labels");
         writer.WriteStartObject();
         writer.WritePropertyName("nodes");

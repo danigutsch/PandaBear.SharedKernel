@@ -8,6 +8,8 @@ internal sealed class GitHubRoadmapReconcileClient
 {
     private const int MaxConnectionPages = 100;
     private const int MaxIssuePages = 100;
+    private const int MaxSnapshotAttempts = 3;
+    private const string DefaultBranchMovedMessage = "GitHub reconciliation default branch changed while reading the snapshot.";
     private const int MaxResponseBytes = 8 * 1024 * 1024;
     private const int MaxSupplementalIssues = 2000;
     private const string ReconcileQuery = """
@@ -21,6 +23,7 @@ internal sealed class GitHubRoadmapReconcileClient
                 number
                 title
                 state
+                stateReason
                 labels(first:100){nodes{name}pageInfo{hasNextPage endCursor}}
                 parent{number state repository{nameWithOwner}}
                 subIssues(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}}
@@ -33,7 +36,7 @@ internal sealed class GitHubRoadmapReconcileClient
         }
         """;
 
-    private const string IssueQuery = "query($owner:String!,$name:String!,$number:Int!){repository(owner:$owner,name:$name){issueOrPullRequest(number:$number){__typename ... on Issue{id number title state labels(first:100){nodes{name}pageInfo{hasNextPage endCursor}} parent{number state repository{nameWithOwner}} subIssues(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blockedBy(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blocking(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}}}}}}";
+    private const string IssueQuery = "query($owner:String!,$name:String!,$number:Int!){repository(owner:$owner,name:$name){issueOrPullRequest(number:$number){__typename ... on Issue{id number title state stateReason labels(first:100){nodes{name}pageInfo{hasNextPage endCursor}} parent{number state repository{nameWithOwner}} subIssues(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blockedBy(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}} blocking(first:100){nodes{number state repository{nameWithOwner}}pageInfo{hasNextPage endCursor}}}}}}";
     private const string RepositoryCommitQuery = "query($owner:String!,$name:String!){repository(owner:$owner,name:$name){defaultBranchRef{target{oid}}}}";
     private static readonly TimeSpan SnapshotTimeout = TimeSpan.FromMinutes(2);
     private readonly HttpClient _httpClient;
@@ -67,12 +70,23 @@ internal sealed class GitHubRoadmapReconcileClient
             timeout.Token);
         try
         {
-            return await ReadSnapshotCore(
-                repository,
-                requiredIssueNumbers,
-                project,
-                resolveExternalReferences,
-                snapshotCancellation.Token).ConfigureAwait(false);
+            for (var attempt = 1; ; attempt++)
+            {
+                try
+                {
+                    return await ReadSnapshotCore(
+                        repository,
+                        requiredIssueNumbers,
+                        project,
+                        resolveExternalReferences,
+                        snapshotCancellation.Token).ConfigureAwait(false);
+                }
+                catch (InvalidOperationException exception) when (attempt < MaxSnapshotAttempts
+                    && string.Equals(exception.Message, DefaultBranchMovedMessage, StringComparison.Ordinal))
+                {
+                    // Only the default-branch commit moved; the whole snapshot is read again.
+                }
+            }
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -350,7 +364,7 @@ internal sealed class GitHubRoadmapReconcileClient
     {
         if (!string.Equals(expected, actual, StringComparison.Ordinal))
         {
-            throw new InvalidOperationException("GitHub reconciliation default branch changed while reading the snapshot.");
+            throw new InvalidOperationException(DefaultBranchMovedMessage);
         }
     }
 
@@ -483,7 +497,8 @@ internal sealed class GitHubRoadmapReconcileClient
             blockedBy,
             blocking)
         {
-            NodeId = GetNullableString(root, "id")
+            NodeId = GetNullableString(root, "id"),
+            StateReason = GetNullableString(root, "stateReason")
         };
     }
 
