@@ -6,6 +6,11 @@ namespace PandaBear.RepoConfig.Tool;
 
 internal sealed class GitHubProjectClient(HttpClient httpClient)
 {
+    // One client serves one sync run, so field definitions and item membership are read once per target and reused.
+    private string? _cachedProjectId;
+    private IReadOnlyList<GitHubProjectResponse.ProjectField>? _fields;
+    private Dictionary<string, string>? _itemIdsByIssueId;
+
     public async Task VerifyTarget(GitHubProjectTarget target, CancellationToken cancellationToken)
     {
         const string Query = "query($id:ID!){node(id:$id){... on ProjectV2{id number owner{... on User{login} ... on Organization{login}}}}}";
@@ -50,12 +55,20 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
         var itemId = response.Data?.AddProjectV2ItemById?.Item?.Id;
         return string.IsNullOrWhiteSpace(itemId)
             ? throw new InvalidOperationException("GitHub Project item could not be added.")
-            : itemId;
+            : RememberItem(target, issueId, itemId);
     }
 
     public async Task<string?> FindItemId(GitHubProjectTarget target, string issueId, CancellationToken cancellationToken)
     {
+        ResetCacheForOtherProject(target);
+        _itemIdsByIssueId ??= await ReadItemIds(target, cancellationToken).ConfigureAwait(false);
+        return _itemIdsByIssueId.TryGetValue(issueId, out var itemId) ? itemId : null;
+    }
+
+    private async Task<Dictionary<string, string>> ReadItemIds(GitHubProjectTarget target, CancellationToken cancellationToken)
+    {
         const string Query = "query($id:ID!,$after:String){node(id:$id){... on ProjectV2{items(first:100,after:$after){nodes{id content{... on Issue{id}}}pageInfo{hasNextPage endCursor}}}}}";
+        Dictionary<string, string> itemIds = new(StringComparer.Ordinal);
         string? cursor = null;
         GitHubProjectResponse.ProjectItemConnection items;
         do
@@ -74,25 +87,53 @@ internal sealed class GitHubProjectClient(HttpClient httpClient)
             }, GitHubProjectJsonContext.Default.ProjectResponse, response => response.Errors, cancellationToken).ConfigureAwait(false);
             items = response.Data?.Node?.Items
                 ?? throw new InvalidOperationException("GitHub Project items could not be read.");
-            var item = items.Nodes?.FirstOrDefault(item => string.Equals(item.Content?.Id, issueId, StringComparison.Ordinal));
-            if (!string.IsNullOrWhiteSpace(item?.Id))
+            foreach (var item in items.Nodes ?? [])
             {
-                return item.Id;
+                if (!string.IsNullOrWhiteSpace(item.Id) && !string.IsNullOrWhiteSpace(item.Content?.Id))
+                {
+                    itemIds.TryAdd(item.Content.Id, item.Id);
+                }
             }
 
             cursor = items.PageInfo?.EndCursor;
         }
         while (items.PageInfo?.HasNextPage == true);
 
-        return null;
+        return itemIds;
+    }
+
+    private string RememberItem(GitHubProjectTarget target, string issueId, string itemId)
+    {
+        ResetCacheForOtherProject(target);
+        _itemIdsByIssueId?[issueId] = itemId;
+        return itemId;
+    }
+
+    private void ResetCacheForOtherProject(GitHubProjectTarget target)
+    {
+        if (string.Equals(_cachedProjectId, target.Id, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _cachedProjectId = target.Id;
+        _fields = null;
+        _itemIdsByIssueId = null;
     }
 
     public async Task<IReadOnlyList<GitHubProjectResponse.ProjectField>> GetFields(GitHubProjectTarget target, CancellationToken cancellationToken)
     {
+        ResetCacheForOtherProject(target);
+        if (_fields is not null)
+        {
+            return _fields;
+        }
+
         const string Query = "query($id:ID!){node(id:$id){... on ProjectV2{fields(first:100){nodes{__typename ... on ProjectV2FieldCommon{id name dataType} ... on ProjectV2SingleSelectField{options{id name}}}}}}}";
         var response = await Send(Query, writer => writer.WriteString("id", target.Id), GitHubProjectJsonContext.Default.ProjectResponse, result => result.Errors, cancellationToken).ConfigureAwait(false);
-        return response.Data?.Node?.Fields?.Nodes
+        _fields = response.Data?.Node?.Fields?.Nodes
             ?? throw new InvalidOperationException("GitHub Project fields could not be read.");
+        return _fields;
     }
 
     public async Task<IReadOnlyList<GitHubProjectItemResponse.FieldValue>> GetFieldValues(string itemId, CancellationToken cancellationToken)

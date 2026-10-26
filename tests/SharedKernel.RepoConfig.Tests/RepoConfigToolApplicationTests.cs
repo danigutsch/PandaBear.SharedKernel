@@ -2591,6 +2591,70 @@ public sealed class RepoConfigToolApplicationTests
     }
 
     [Fact]
+    public async Task GitHub_project_client_pages_item_membership_once_for_many_lookups()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": { \"items\": { \"nodes\": [{ \"id\": \"item-1\", \"content\": { \"id\": \"issue-1\" } }], \"pageInfo\": { \"hasNextPage\": true, \"endCursor\": \"cursor-1\" } } } } }");
+        handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": { \"items\": { \"nodes\": [{ \"id\": \"item-2\", \"content\": { \"id\": \"issue-2\" } }], \"pageInfo\": { \"hasNextPage\": false, \"endCursor\": null } } } } }");
+        using var httpClient = new HttpClient(handler);
+        var client = new GitHubProjectClient(httpClient);
+        var target = new GitHubProjectTarget("project-id", "owner", 1);
+
+        // Act
+        var first = await client.FindItemId(target, "issue-1", TestContext.Current.CancellationToken);
+        var second = await client.FindItemId(target, "issue-2", TestContext.Current.CancellationToken);
+        var missing = await client.FindItemId(target, "issue-3", TestContext.Current.CancellationToken);
+
+        // Assert
+        first.ShouldBe("item-1");
+        second.ShouldBe("item-2");
+        missing.ShouldBeNull();
+        handler.Requests.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task GitHub_project_client_remembers_an_added_item_for_later_lookups()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": { \"items\": { \"nodes\": [], \"pageInfo\": { \"hasNextPage\": false, \"endCursor\": null } } } } }");
+        handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"addProjectV2ItemById\": { \"item\": { \"id\": \"new-item\" } } } }");
+        using var httpClient = new HttpClient(handler);
+        var client = new GitHubProjectClient(httpClient);
+        var target = new GitHubProjectTarget("project-id", "owner", 1);
+
+        // Act
+        var before = await client.FindItemId(target, "issue-1", TestContext.Current.CancellationToken);
+        before.ShouldBeNull();
+        await client.AddIssue(target, "issue-1", TestContext.Current.CancellationToken);
+        var itemId = await client.FindItemId(target, "issue-1", TestContext.Current.CancellationToken);
+
+        // Assert
+        itemId.ShouldBe("new-item");
+        handler.Requests.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task GitHub_project_client_reads_field_definitions_once_per_target()
+    {
+        // Arrange
+        using var handler = new TestHttpMessageHandler();
+        handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": { \"fields\": { \"nodes\": [{ \"id\": \"field-1\", \"name\": \"Roadmap score\", \"dataType\": \"NUMBER\" }] } } } }");
+        using var httpClient = new HttpClient(handler);
+        var client = new GitHubProjectClient(httpClient);
+        var target = new GitHubProjectTarget("project-id", "owner", 1);
+
+        // Act
+        var first = await client.GetFields(target, TestContext.Current.CancellationToken);
+        var second = await client.GetFields(target, TestContext.Current.CancellationToken);
+
+        // Assert
+        second.ShouldBeSameAs(first);
+        handler.Requests.Count.ShouldBe(1);
+    }
+
+    [Fact]
     public async Task GitHub_project_target_accepts_case_insensitive_owner_login()
     {
         // Arrange
