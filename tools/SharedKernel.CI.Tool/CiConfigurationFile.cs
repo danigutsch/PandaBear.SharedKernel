@@ -411,6 +411,12 @@ internal static partial class CiConfigurationFile
                 throw Invalid(path + "[" + index.ToString(CultureInfo.InvariantCulture) + "] must not name a credential variable.");
             }
 
+            // A loader or startup hook runs code in the build, which the minimal environment also keeps out.
+            if (LoaderName().IsMatch(names[index]))
+            {
+                throw Invalid(path + "[" + index.ToString(CultureInfo.InvariantCulture) + "] must not name a loader or runtime-hook variable.");
+            }
+
             if (!seen.Add(names[index]))
             {
                 throw Invalid(path + " repeats " + names[index] + ".");
@@ -435,8 +441,11 @@ internal static partial class CiConfigurationFile
     [GeneratedRegex(@"\A[a-z][a-z0-9-]*\z", RegexOptions.CultureInvariant)]
     private static partial Regex Browser();
 
-    [GeneratedRegex("TOKEN|SECRET|PASSWORD|PASSWD|KEY|CREDENTIAL", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
+    [GeneratedRegex("TOKEN|SECRET|PASS|AUTH|KEY|CREDENTIAL|PRIVATE|CERT|CONNECTION|SAS|SIGNATURE", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
     private static partial Regex CredentialName();
+
+    [GeneratedRegex(@"\A(?:LD_|DYLD_|DOTNET_STARTUP_HOOKS\z)", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
+    private static partial Regex LoaderName();
 
     // An MSBuild property name and an environment variable name share this shape.
     [GeneratedRegex(@"\A[A-Za-z_][A-Za-z0-9_]*\z", RegexOptions.CultureInvariant)]
