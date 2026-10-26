@@ -1,33 +1,52 @@
-using Aspire.Hosting.ApplicationModel;
-
-namespace Aspire.Hosting;
+namespace Aspire.Hosting.ApplicationModel;
 
 /// <summary>
-/// Represents an authenticated SeaweedFS S3-compatible container and its configured parameters.
+/// A resource that represents a SeaweedFS container with an S3-compatible API.
 /// </summary>
+/// <param name="name">The name of the resource.</param>
+/// <param name="accessKeyParameter">The parameter that contains the S3 access key.</param>
+/// <param name="secretKeyParameter">The parameter that contains the S3 secret key.</param>
+/// <param name="bucketParameter">The parameter that contains the default bucket name.</param>
 public sealed class SeaweedFsResource(
-    string name,
+    [ResourceName] string name,
     ParameterResource accessKeyParameter,
     ParameterResource secretKeyParameter,
     ParameterResource bucketParameter) : ContainerResource(name)
 {
     /// <summary>
-    /// Gets the SeaweedFS S3 endpoint name.
+    /// The name of the S3 endpoint.
     /// </summary>
     public const string S3EndpointName = "s3";
 
+    private EndpointReference? _primaryEndpoint;
+
     /// <summary>
-    /// Gets the owned S3 access-key parameter.
+    /// Gets the primary endpoint for the SeaweedFS S3 API.
+    /// </summary>
+    public EndpointReference PrimaryEndpoint => _primaryEndpoint ??= new(this, S3EndpointName);
+
+    /// <summary>
+    /// Gets the host endpoint reference for this resource.
+    /// </summary>
+    public EndpointReferenceExpression Host => PrimaryEndpoint.Property(EndpointProperty.Host);
+
+    /// <summary>
+    /// Gets the port endpoint reference for this resource.
+    /// </summary>
+    public EndpointReferenceExpression Port => PrimaryEndpoint.Property(EndpointProperty.Port);
+
+    /// <summary>
+    /// Gets the parameter that contains the S3 access key.
     /// </summary>
     public ParameterResource AccessKeyParameter { get; } = accessKeyParameter;
 
     /// <summary>
-    /// Gets the owned S3 secret-key parameter.
+    /// Gets the parameter that contains the S3 secret key.
     /// </summary>
     public ParameterResource SecretKeyParameter { get; } = secretKeyParameter;
 
     /// <summary>
-    /// Gets the configured S3 bucket parameter.
+    /// Gets the parameter that contains the default bucket name.
     /// </summary>
     public ParameterResource BucketParameter { get; } = bucketParameter;
 }

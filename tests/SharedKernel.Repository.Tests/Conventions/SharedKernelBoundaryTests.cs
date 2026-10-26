@@ -178,7 +178,6 @@ public sealed class SharedKernelBoundaryTests
         seaweedFsText.ShouldContain("builder.AddParameter($\"{name}-bucket\", bucketDefault)", StringComparison.Ordinal);
         seaweedFsText.ShouldContain("string bucketDefault)", StringComparison.Ordinal);
         seaweedFsText.ShouldNotContain("Catalog__MediaObjectStorage", StringComparison.Ordinal);
-        seaweedFsText.ShouldContain("DcpPublisher:ResourceNameSuffix", StringComparison.Ordinal);
     }
 
     [Fact]
@@ -335,23 +334,20 @@ public sealed class SharedKernelBoundaryTests
     public void Observability_stack_uses_pinned_container_images()
     {
         // Arrange
-        var sharedHostingText = File.ReadAllText(Path.Combine(
-            GetRepositoryRoot(),
-            "src",
-            "SharedKernel",
-            "SharedKernel.Aspire.Hosting.Grafana",
-            "GrafanaLgtmStackResourceExtensions.cs"));
+        var hostingRoot = Path.Combine(GetRepositoryRoot(), "src", "SharedKernel", "SharedKernel.Aspire.Hosting.Grafana");
+        var extensionsText = File.ReadAllText(Path.Combine(hostingRoot, "GrafanaLgtmStackResourceExtensions.cs"));
+        var imageTagsText = File.ReadAllText(Path.Combine(hostingRoot, "GrafanaLgtmContainerImageTags.cs"));
 
         // Act
-        var imageDigestCalls = sharedHostingText.Split("WithImageSHA256(").Length - 1;
+        var imageDigestCalls = extensionsText.Split("WithImageSHA256(").Length - 1;
 
         // Assert
         imageDigestCalls.ShouldBe(5);
-        sharedHostingText.ShouldContain("OpenTelemetryCollectorImageDigest", StringComparison.Ordinal);
-        sharedHostingText.ShouldContain("GrafanaImageDigest", StringComparison.Ordinal);
-        sharedHostingText.ShouldContain("LokiImageDigest", StringComparison.Ordinal);
-        sharedHostingText.ShouldContain("TempoImageDigest", StringComparison.Ordinal);
-        sharedHostingText.ShouldContain("PrometheusImageDigest", StringComparison.Ordinal);
+        imageTagsText.ShouldContain("OpenTelemetryCollectorDigest", StringComparison.Ordinal);
+        imageTagsText.ShouldContain("GrafanaDigest", StringComparison.Ordinal);
+        imageTagsText.ShouldContain("LokiDigest", StringComparison.Ordinal);
+        imageTagsText.ShouldContain("TempoDigest", StringComparison.Ordinal);
+        imageTagsText.ShouldContain("PrometheusDigest", StringComparison.Ordinal);
     }
 
     [Fact]

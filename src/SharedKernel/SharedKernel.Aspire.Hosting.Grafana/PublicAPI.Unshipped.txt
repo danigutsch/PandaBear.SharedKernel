@@ -1,11 +1,23 @@
 #nullable enable
 Aspire.Hosting.ApplicationModel.GrafanaResource
 Aspire.Hosting.ApplicationModel.GrafanaResource.GrafanaResource(string! name) -> void
+Aspire.Hosting.ApplicationModel.GrafanaResource.Host.get -> Aspire.Hosting.ApplicationModel.EndpointReferenceExpression!
+Aspire.Hosting.ApplicationModel.GrafanaResource.Port.get -> Aspire.Hosting.ApplicationModel.EndpointReferenceExpression!
+Aspire.Hosting.ApplicationModel.GrafanaResource.PrimaryEndpoint.get -> Aspire.Hosting.ApplicationModel.EndpointReference!
 Aspire.Hosting.ApplicationModel.LokiResource
+Aspire.Hosting.ApplicationModel.LokiResource.Host.get -> Aspire.Hosting.ApplicationModel.EndpointReferenceExpression!
 Aspire.Hosting.ApplicationModel.LokiResource.LokiResource(string! name) -> void
+Aspire.Hosting.ApplicationModel.LokiResource.Port.get -> Aspire.Hosting.ApplicationModel.EndpointReferenceExpression!
+Aspire.Hosting.ApplicationModel.LokiResource.PrimaryEndpoint.get -> Aspire.Hosting.ApplicationModel.EndpointReference!
 Aspire.Hosting.ApplicationModel.PrometheusResource
+Aspire.Hosting.ApplicationModel.PrometheusResource.Host.get -> Aspire.Hosting.ApplicationModel.EndpointReferenceExpression!
+Aspire.Hosting.ApplicationModel.PrometheusResource.Port.get -> Aspire.Hosting.ApplicationModel.EndpointReferenceExpression!
+Aspire.Hosting.ApplicationModel.PrometheusResource.PrimaryEndpoint.get -> Aspire.Hosting.ApplicationModel.EndpointReference!
 Aspire.Hosting.ApplicationModel.PrometheusResource.PrometheusResource(string! name) -> void
 Aspire.Hosting.ApplicationModel.TempoResource
+Aspire.Hosting.ApplicationModel.TempoResource.Host.get -> Aspire.Hosting.ApplicationModel.EndpointReferenceExpression!
+Aspire.Hosting.ApplicationModel.TempoResource.Port.get -> Aspire.Hosting.ApplicationModel.EndpointReferenceExpression!
+Aspire.Hosting.ApplicationModel.TempoResource.PrimaryEndpoint.get -> Aspire.Hosting.ApplicationModel.EndpointReference!
 Aspire.Hosting.ApplicationModel.TempoResource.TempoResource(string! name) -> void
 Aspire.Hosting.GrafanaLgtmStackDefaults
 Aspire.Hosting.GrafanaLgtmStackResourceExtensions
@@ -30,3 +42,7 @@ static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.AddLoki(this Aspire.Hos
 static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.AddOpenTelemetryCollectorGateway(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name, string! privacyConfigurationFile, string! routingConfigurationFile) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.OpenTelemetryCollectorResource!>!
 static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.AddPrometheus(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name, string! configurationFile) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.PrometheusResource!>!
 static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.AddTempo(this Aspire.Hosting.IDistributedApplicationBuilder! builder, string! name, string! configurationFile) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.TempoResource!>!
+static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.WithHostPort(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.GrafanaResource!>! builder, int? port) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.GrafanaResource!>!
+static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.WithHostPort(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.LokiResource!>! builder, int? port) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.LokiResource!>!
+static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.WithHostPort(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.PrometheusResource!>! builder, int? port) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.PrometheusResource!>!
+static Aspire.Hosting.GrafanaLgtmStackResourceExtensions.WithHostPort(this Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.TempoResource!>! builder, int? port) -> Aspire.Hosting.ApplicationModel.IResourceBuilder<Aspire.Hosting.ApplicationModel.TempoResource!>!

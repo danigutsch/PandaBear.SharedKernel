@@ -1,6 +1,27 @@
 namespace Aspire.Hosting.ApplicationModel;
 
 /// <summary>
-/// Represents a Tempo trace backend resource in an Aspire AppHost model.
+/// A resource that represents a Tempo container.
 /// </summary>
-public sealed class TempoResource([ResourceName] string name) : ContainerResource(name);
+/// <param name="name">The name of the resource.</param>
+public sealed class TempoResource([ResourceName] string name) : ContainerResource(name)
+{
+    internal const string OtlpGrpcEndpointName = "otlp-grpc";
+
+    private EndpointReference? _primaryEndpoint;
+
+    /// <summary>
+    /// Gets the primary endpoint for the Tempo OTLP gRPC receiver.
+    /// </summary>
+    public EndpointReference PrimaryEndpoint => _primaryEndpoint ??= new(this, OtlpGrpcEndpointName);
+
+    /// <summary>
+    /// Gets the host endpoint reference for this resource.
+    /// </summary>
+    public EndpointReferenceExpression Host => PrimaryEndpoint.Property(EndpointProperty.Host);
+
+    /// <summary>
+    /// Gets the port endpoint reference for this resource.
+    /// </summary>
+    public EndpointReferenceExpression Port => PrimaryEndpoint.Property(EndpointProperty.Port);
+}

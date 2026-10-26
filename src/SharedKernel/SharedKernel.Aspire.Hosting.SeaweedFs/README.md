@@ -4,23 +4,18 @@
 
 Packages remain preview (prerelease); stable packages, tags, and releases require separate authorization.
 
-Reusable .NET Aspire hosting extensions for authenticated local SeaweedFS S3
-storage.
+Aspire hosting integration for a SeaweedFS container with an authenticated S3-compatible API.
 
-The package adds a pinned `chrislusf/seaweedfs` container resource, internal S3
-and master endpoints, `/data` storage that persists between AppHost runs, and a
-master health check.
+## Usage
 
-The data lives in the named volume `{name}-data`, so a restarted AppHost reuses
-it. When the `DcpPublisher:ResourceNameSuffix` configuration value is set, the
-resource is an isolated instance, such as a parallel test run. It then gets an
-anonymous volume that the container runtime removes together with the
-container, because the named volume of an isolated instance is never reused and
-would stay behind after every run.
+```csharp
+var storage = builder.AddSeaweedFs("seaweedfs", bucketDefault: "media")
+                     .WithDataVolume();
+```
 
-S3 credentials are supplied through Aspire parameters and passed to the server
-container with `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, so unsigned S3
-requests are rejected.
+The S3 credentials are the secret parameters `{name}-access-key` and `{name}-secret-key`, so unsigned requests are rejected.
+Without `WithDataVolume` or `WithDataBindMount` the stored objects live and die with the container. The image is pinned by tag
+and digest.
 
 ## Package identity and availability
 

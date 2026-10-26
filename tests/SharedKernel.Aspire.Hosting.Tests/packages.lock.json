@@ -599,6 +599,13 @@
           "Microsoft.Extensions.Diagnostics.HealthChecks": "[10.0.13, )"
         }
       },
+      "PandaBear.SharedKernel.Aspire.Hosting.Grafana": {
+        "type": "Project",
+        "dependencies": {
+          "Aspire.Hosting": "[13.6.1, )",
+          "CommunityToolkit.Aspire.Hosting.OpenTelemetryCollector": "[13.6.0, )"
+        }
+      },
       "PandaBear.SharedKernel.Aspire.Hosting.SeaweedFs": {
         "type": "Project",
         "dependencies": {
@@ -651,6 +658,15 @@
           "StreamJsonRpc": "2.25.29",
           "System.IO.Hashing": "10.0.12",
           "YamlDotNet": "18.1.0"
+        }
+      },
+      "CommunityToolkit.Aspire.Hosting.OpenTelemetryCollector": {
+        "type": "CentralTransitive",
+        "requested": "[13.6.0, )",
+        "resolved": "13.6.0",
+        "contentHash": "EWoSi7U0QJACD3gsi/CMr4ssQcLLzXbZVVp58HjOS4XLXgnxFmD9BVdTBIgoMN1c+vXg9vT8MHMz/qrP+hqfbA==",
+        "dependencies": {
+          "Aspire.Hosting": "13.6.0"
         }
       },
       "MessagePack": {
