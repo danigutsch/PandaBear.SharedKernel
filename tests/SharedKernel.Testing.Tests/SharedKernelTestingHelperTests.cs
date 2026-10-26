@@ -190,9 +190,11 @@ public sealed class SharedKernelTestingHelperTests
     [Fact]
     public void Exception_assertions_return_expected_inner_exception()
     {
+        // Arrange
+        Action invocation = () => throw new TargetInvocationException(new InvalidOperationException("expected"));
+
         // Act
-        var exception = ExceptionAssertions.ThrowsInner<InvalidOperationException>(
-            () => throw new TargetInvocationException(new InvalidOperationException("expected")));
+        var exception = invocation.ShouldThrowInner<InvalidOperationException>();
 
         // Assert
         exception.Message.ShouldBe("expected");
@@ -202,8 +204,8 @@ public sealed class SharedKernelTestingHelperTests
     public void Exception_assertions_reject_unexpected_inner_exception()
     {
         // Arrange
-        Action action = () => ExceptionAssertions.ThrowsInner<ArgumentException>(
-            () => throw new TargetInvocationException(new InvalidOperationException("expected")));
+        Action invocation = () => throw new TargetInvocationException(new InvalidOperationException("expected"));
+        Action action = () => invocation.ShouldThrowInner<ArgumentException>();
         var argumentExceptionName = typeof(ArgumentException).FullName;
 
         // Act
@@ -218,7 +220,8 @@ public sealed class SharedKernelTestingHelperTests
     public static void Exception_assertions_reject_missing_reflection_exception()
     {
         // Arrange
-        Action action = () => ExceptionAssertions.ThrowsInner<InvalidOperationException>(() => { });
+        Action invocation = () => { };
+        Action action = () => invocation.ShouldThrowInner<InvalidOperationException>();
         var targetInvocationExceptionName = typeof(TargetInvocationException).FullName;
 
         // Act

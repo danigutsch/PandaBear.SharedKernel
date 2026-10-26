@@ -262,6 +262,9 @@
           "Microsoft.CodeAnalysis.CSharp": "[5.6.0, )"
         }
       },
+      "sharedkernel.testing.packaging": {
+        "type": "Project"
+      },
       "Microsoft.CodeAnalysis.Analyzers": {
         "type": "CentralTransitive",
         "requested": "[5.6.0, )",

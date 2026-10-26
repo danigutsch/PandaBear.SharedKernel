@@ -8,7 +8,7 @@ Reusable xUnit assertion extensions for SharedKernel test suites.
 
 ## Usage
 
-Import `PandaBear.Testing.Assertions` for `ShouldBe` and collection assertions. Use `ExceptionAssertions.ThrowsInner<TException>` when validating wrapped failures. Keep assertions tied to observable behavior and use the comparer/precision overloads when equality semantics require them.
+Import `PandaBear.Testing.Assertions` for `ShouldBe` and collection assertions. Use `ShouldThrowInner<TException>()` on an action when validating failures wrapped in a `TargetInvocationException`. Keep assertions tied to observable behavior and use the comparer/precision overloads when equality semantics require them.
 
 Pass the reason that an assertion holds as `userMessage`. Every `Should*` assertion takes it after its other arguments. `ShouldBeTrue` and `ShouldBeFalse` take it as an optional argument and report xUnit's own `TrueException` or `FalseException`, whose message is `userMessage` alone when one is given, without xUnit's expected and actual lines. The other assertions report a failure as an `XunitException` whose message starts with `userMessage` and whose inner exception is the original failure, including failures that are not xUnit assertions, such as the `XmlException` of `ShouldBeWellFormedHtmlDocument`. `ArgumentException`, `OperationCanceledException`, and dynamic skips pass through unchanged, and a null `userMessage` throws `ArgumentNullException` before the assertion runs. To assert the specific xUnit exception type that an assertion throws, such as `EqualException`, use the overload that takes no message.
 

@@ -55,7 +55,8 @@ public sealed class CloudEventMapperTests
         var genericMethod = method.MakeGenericMethod(typeof(TestIntegrationEvent));
 
         // Act
-        var argumentException = ExceptionAssertions.ThrowsInner<ArgumentNullException>(() => genericMethod.Invoke(null, [null, metadata]));
+        Action invoke = () => genericMethod.Invoke(null, [null, metadata]);
+        var argumentException = invoke.ShouldThrowInner<ArgumentNullException>();
 
         // Assert
         argumentException.ParamName.ShouldBe("integrationEvent");
@@ -70,7 +71,8 @@ public sealed class CloudEventMapperTests
         var genericMethod = method.MakeGenericMethod(typeof(TestIntegrationEvent));
 
         // Act
-        var argumentException = ExceptionAssertions.ThrowsInner<ArgumentNullException>(() => genericMethod.Invoke(null, [integrationEvent, null]));
+        Action invoke = () => genericMethod.Invoke(null, [integrationEvent, null]);
+        var argumentException = invoke.ShouldThrowInner<ArgumentNullException>();
 
         // Assert
         argumentException.ParamName.ShouldBe("metadata");
