@@ -88,6 +88,20 @@ public sealed class GrafanaLgtmStackResourceTests
     }
 
     [Fact]
+    public async Task AddGrafana_enables_anonymous_local_access()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+        var grafana = builder.AddGrafana("grafana", ConfigurationRoot);
+
+        // Act
+        var environmentVariables = await EnvironmentVariables.Of(grafana.Resource);
+
+        // Assert
+        environmentVariables["GF_AUTH_ANONYMOUS_ENABLED"].ShouldBe("true");
+    }
+
+    [Fact]
     public void WithHostPort_sets_the_host_port_of_the_primary_endpoint()
     {
         // Arrange

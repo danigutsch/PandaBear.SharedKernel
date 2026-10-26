@@ -27,6 +27,7 @@ public sealed class SeaweedFsResourceTests
         endpoints.ShouldContain(endpoint => endpoint.Name == SeaweedFsResource.S3EndpointName && endpoint.TargetPort == 8333);
         endpoints.ShouldContain(endpoint => endpoint.Name == "master" && endpoint.TargetPort == 9333);
         seaweedFs.Resource.Annotations.OfType<HealthCheckAnnotation>().ShouldHaveSingleItem().Key.ShouldBe("seaweed_master_/cluster/healthz_200_check");
+        seaweedFs.Resource.Annotations.OfType<ContainerLifetimeAnnotation>().ShouldBeEmpty();
         seaweedFs.Resource.PrimaryEndpoint.EndpointName.ShouldBe(SeaweedFsResource.S3EndpointName);
     }
 
@@ -158,5 +159,18 @@ public sealed class SeaweedFsResourceTests
 
         // Assert
         action.ShouldThrow<ArgumentException>().ParamName.ShouldBe("bucketDefault");
+    }
+
+    [Fact]
+    public void AddSeaweedFs_rejects_a_null_default_bucket()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+
+        // Act
+        var action = () => builder.AddSeaweedFs("seaweed", null!);
+
+        // Assert
+        action.ShouldThrow<ArgumentNullException>().ParamName.ShouldBe("bucketDefault");
     }
 }
