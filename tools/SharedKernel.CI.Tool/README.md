@@ -140,6 +140,7 @@ the file and the JSON path of the problem.
 | `slices[].openApi` | Optional names of `openApi` targets that the slice generates after its build and before its tests run. |
 | `slices[].playwright.project` | Optional; a test project that the slice lists, whose build output holds `playwright.ps1`. `run --install-playwright` installs the browsers when this project is selected. |
 | `slices[].playwright.browsers` | The browsers to install, such as `chromium`: lowercase letters, digits, and `-`, starting with a letter. At least one. |
+| `slices[].playwright.onlyShell` | Optional, default `false`: install only the headless shell of Chromium, not the full browser. Set it when the slice's tests never run headed. |
 | `slices[].service.project` | Optional section. A project of the solution that is not a test project and that no slice lists. `run` starts it with `dotnet run` before the slice's tests and stops it after them; see [Services](#services). |
 | `slices[].service.readyFileVariable` | The environment variable, in the service's environment, that names the file where the service writes its value: letters, digits, and `_`, not starting with a digit, and not `GH_TOKEN` or `GITHUB_TOKEN`. |
 | `slices[].service.valueVariable` | The environment variable that carries the written value into the slice's test run, and only there. It follows the rules of `readyFileVariable`, differs from it, and differs from the `valueVariable` of every other slice. |
@@ -241,7 +242,7 @@ The run writes one solution filter, `tests.slnf`, of the selected test projects 
 3. for each `openApi` target of the slices, in order, the target's build with its generate property, as `openapi
    generate` runs it, with `-c <configuration>`;
 4. with `--install-playwright`, `install-playwright` for each slice whose `playwright.project` is selected, with its
-   browsers, `--configuration <configuration>`, and, with `--playwright-dependencies`, `--with-dependencies`;
+   browsers, `--configuration <configuration>`, `--only-shell` when `playwright.onlyShell` is set, and, with `--playwright-dependencies`, `--with-dependencies`;
 5. for each slice with a `service`, in configuration order, the service, as [Services](#services) describes;
 6. one `dotnet test --solution tests.slnf -c <configuration> --no-build --no-restore --results-directory results`, with
    native MTP module scheduling and no module-parallelism cap, and after it the stop of the services in reverse order.
@@ -325,12 +326,12 @@ not reach the build. Restore the projects first. A configuration without `openAp
 ### install-playwright
 
 ```text
-sharedkernel-ci install-playwright --project <path> [--browser <name>]... [--with-dependencies] [--configuration <name>] [--root <path>]
+sharedkernel-ci install-playwright --project <path> [--browser <name>]... [--with-dependencies] [--only-shell] [--configuration <name>] [--root <path>]
 ```
 
 Evaluates the project's `OutputPath` with `dotnet msbuild <project> -getProperty:OutputPath`, with
 `-p:Configuration=<name>` when `--configuration` is given, normalizes its `\` and `/` separators, resolves it from the
-project directory, and runs `pwsh <output>/playwright.ps1 install`, with `--with-deps` for `--with-dependencies`, and
+project directory, and runs `pwsh <output>/playwright.ps1 install`, with `--with-deps` for `--with-dependencies`, `--only-shell` for `--only-shell`, and
 the browsers. Without `--browser`, Playwright installs its default browsers. Build the project first; the command fails
 when the output has no `playwright.ps1`.
 

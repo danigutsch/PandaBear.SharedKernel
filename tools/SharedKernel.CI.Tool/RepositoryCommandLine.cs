@@ -276,6 +276,10 @@ internal static partial class RepositoryCommandLine
         {
             Description = "Also install the operating system dependencies of the browsers.",
         };
+        var onlyShellOption = new Option<bool>("--only-shell")
+        {
+            Description = "Install only the headless shell of Chromium, not the full browser. For tests that never run headed.",
+        };
         var configurationOption = CreateConfigurationOption(null);
         var rootOption = CreateRootOption();
         var command = new Command(
@@ -284,6 +288,7 @@ internal static partial class RepositoryCommandLine
             projectOption,
             browserOption,
             dependenciesOption,
+            onlyShellOption,
             configurationOption,
             rootOption,
         };
@@ -299,7 +304,8 @@ internal static partial class RepositoryCommandLine
                     parseResult.GetValue(dependenciesOption),
                     parseResult.GetValue(configurationOption),
                     run,
-                    ct).ConfigureAwait(false)).ConfigureAwait(false);
+                    ct,
+                    onlyShell: parseResult.GetValue(onlyShellOption)).ConfigureAwait(false)).ConfigureAwait(false);
             },
             ct));
         return command;

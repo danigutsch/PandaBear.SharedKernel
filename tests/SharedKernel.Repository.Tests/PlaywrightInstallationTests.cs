@@ -1,3 +1,6 @@
+using System.Text.RegularExpressions;
+using PandaBear.CI.Tool;
+
 namespace PandaBear.Repository.Tests;
 
 public sealed class PlaywrightInstallationTests : IDisposable
@@ -85,6 +88,73 @@ public sealed class PlaywrightInstallationTests : IDisposable
         // Assert
         result.ExitCode.ShouldBe(1);
         processes.Calls.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task Only_the_headless_shell_is_installed_when_requested()
+    {
+        // Arrange
+        scope.WriteFile("tests/Core.Tests/bin/Debug/net10.0/playwright.ps1", "# installer");
+        var processes = new ProcessLog((fileName, _, _) => Task.FromResult(fileName == "dotnet" ? "bin/Debug/net10.0/" : string.Empty));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(
+            scope.Root,
+            ["install-playwright", "--project", Project, "--browser", "chromium", "--with-dependencies", "--only-shell"],
+            processes.Run,
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        processes.Commands[1].ShouldBe(
+            "pwsh " + Path.Combine(scope.Root, "tests", "Core.Tests", "bin", "Debug", "net10.0", "playwright.ps1") + " install --with-deps --only-shell chromium");
+    }
+
+    [Fact]
+    public async Task The_output_reports_how_long_each_step_took()
+    {
+        // Arrange
+        scope.WriteFile("tests/Core.Tests/bin/Debug/net10.0/playwright.ps1", "# installer");
+        var processes = new ProcessLog((fileName, _, _) => Task.FromResult(fileName == "dotnet" ? "bin/Debug/net10.0/" : "installed"));
+
+        // Act
+        var result = await RepositoryToolInvocation.Run(
+            scope.Root, ["install-playwright", "--project", Project], processes.Run, TestContext.Current.CancellationToken);
+
+        // Assert
+        result.ExitCode.ShouldBe(0, result.Error);
+        Regex.IsMatch(result.Error, @"^playwright: msbuild evaluation took \d+\.\ds; install took \d+\.\ds").ShouldBeTrue();
+        result.Error.ShouldContain("installed", StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task A_stalled_installer_is_stopped_with_a_timeout()
+    {
+        // Arrange
+        scope.WriteFile("tests/Core.Tests/bin/Debug/net10.0/playwright.ps1", "# installer");
+
+        // Act
+        var action = async () => await PlaywrightInstallation.Run(
+            scope.Root,
+            Project,
+            [],
+            false,
+            null,
+            async (fileName, _, _, ct) =>
+            {
+                if (fileName == "dotnet")
+                {
+                    return "bin/Debug/net10.0/";
+                }
+
+                await Task.Delay(Timeout.InfiniteTimeSpan, ct);
+                return string.Empty;
+            },
+            TestContext.Current.CancellationToken,
+            TimeSpan.FromMilliseconds(100));
+
+        // Assert
+        (await action.ShouldThrow<TimeoutException>()).Message.ShouldContain("did not finish within", StringComparison.Ordinal);
     }
 
     /// <inheritdoc />
