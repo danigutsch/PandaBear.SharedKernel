@@ -2,9 +2,9 @@ using PandaBear.Testing;
 
 namespace PandaBear.Mediator.PackageConsumptionTests;
 
+[Collection(MediatorPackageFeedSharing.Name)]
 [Trait(SharedKernelTestTraitNames.CategoryName, "PackageConsumption")]
 public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)
-    : IClassFixture<MediatorPackageFeedFixture>
 {
     private const string GeneratedAsyncScopeCreation =
         "await using var scope = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.CreateAsyncScope(scopeFactory);";

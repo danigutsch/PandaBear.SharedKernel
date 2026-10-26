@@ -4,6 +4,7 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <IsAotCompatible>false</IsAotCompatible>
         <IsPackable>false</IsPackable>
+        <GovernedLiteralProject>true</GovernedLiteralProject>
         <RootNamespace>PandaBear.Results.SourceGenerator</RootNamespace>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>

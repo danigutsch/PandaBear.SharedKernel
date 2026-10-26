@@ -45,6 +45,28 @@ public sealed class DomainEventDispatchTests
     }
 
     [Fact]
+    public async Task A_retried_save_after_a_failed_save_does_not_dispatch_the_same_event_again()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        var dispatcher = new RecordingDomainEventDispatcher();
+        await using var provider = OrderServices.BuildProvider(dispatcher, new FailOnceSaveInterceptor());
+        await using var scope = provider.CreateAsyncScope();
+        var context = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+        var order = new Order { Id = 9 };
+        order.Place();
+        context.Orders.Add(order);
+        var firstSave = async () => await context.SaveChangesAsync(ct);
+        _ = await firstSave.ShouldThrow<InvalidOperationException>();
+
+        // Act
+        _ = await context.SaveChangesAsync(ct);
+
+        // Assert
+        dispatcher.Dispatched.ShouldBe([new OrderPlacedDomainEvent(9)]);
+    }
+
+    [Fact]
     public async Task Synchronous_save_changes_is_rejected()
     {
         // Arrange
