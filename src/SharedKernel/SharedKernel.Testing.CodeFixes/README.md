@@ -18,6 +18,8 @@ This Roslyn component is reserved for focused fixes that pair with the diagnosti
 - `SKTEST003` adds configured required trait metadata to a test method.
 - `SKTEST004` extracts a static helper method to a dedicated helper file when it does not use test-instance state.
 - `SKTEST005` adds a placeholder serial collection justification attribute.
+- `SKTEST006` rewrites direct xUnit assertions to the repository `Should*` wrappers where the mapping is one to one: `Equal` and `NotEqual` (two arguments, a comparer or `ignoreCase` third argument where it maps), `True`, `False`, `Null`, `NotNull`, `Empty`, `NotEmpty`, `Contains` and `DoesNotContain` (value or predicate), `InRange`, `Same`, `Single` (one argument) and `All`. `Assert.Multiple` and any call whose arguments do not map one to one receive no fix, because the replacement needs a decision about assertion intent.
+
 - `SKTEST009` replaces trait string literals with the constant identified by the analyzer.
 - `SKTEST011` inlines an adjacent one-use assertion lambda and removes its declaration only when semantic rebinding preserves the exact overload. It preserves comments and named arguments; ambiguous or unsafe rewrites and Fix All are unavailable.
 
@@ -28,6 +30,10 @@ This Roslyn component is reserved for focused fixes that pair with the diagnosti
 
 The naming fix preserves canonical keywords and diagnostic identifiers. See
 [test assertion conventions](../../../docs/TEST_GUIDELINES.md) for examples.
+
+## Assertion code-fix scope
+
+The decision for the xUnit assertion analyzer is: the `SKTEST006` analyzer is the enforcement mechanism, and the code fix covers only the one-to-one rewrites listed above. No further rewrites are added. The measurement behind it counts direct `Assert.*` calls under `tests/`: the only occurrences are 40 calls inside the source strings of four analyzer and code-fix fixture files (`SharedKernelTestingAnalyzerTests`, `SharedKernelTestingCodeFixProviderTests`, `CodeFixRunnerTestProject`, `CodeFixRunEngineTests`), and the repository's own test code contains none. The remaining unmapped call, `Assert.Multiple`, needs a semantic choice and stays a manual migration. Revisit the scope when a consuming repository reports repeated direct assertions that the current rewrites do not cover.
 
 ## Suppression policy
 
