@@ -28,7 +28,8 @@ internal static class SliceRun
         TextWriter error,
         CancellationToken ct,
         TimeProvider? timeProvider = null,
-        Func<ProcessStartInfo, Process>? startService = null)
+        Func<ProcessStartInfo, Process>? startService = null,
+        Func<string, string[], string, CancellationToken, Task<string>>? runInstaller = null)
     {
         var time = timeProvider ?? TimeProvider.System;
         var start = startService ?? ProcessRunner.Start;
@@ -135,7 +136,7 @@ internal static class SliceRun
                     foreach (var install in playwright)
                     {
                         log.Append(await PlaywrightInstallation.Run(
-                            root, install.Project, install.Browsers, options.PlaywrightDependencies, options.Configuration, run, ct, onlyShell: install.OnlyShell).ConfigureAwait(false));
+                            root, install.Project, install.Browsers, options.PlaywrightDependencies, options.Configuration, runInstaller ?? run, ct, onlyShell: install.OnlyShell).ConfigureAwait(false));
                     }
 
                     return log.ToString();

@@ -8,7 +8,7 @@ using PandaBear.CI.Tool;
 // terminal for that long. A service that needs longer is left to finish alone, as it was before, and its closed input still
 // tells it to stop. Derive the budget from the services' stopTimeoutSeconds if that ever matters.
 var configuration = new InvocationConfiguration { ProcessTerminationTimeout = TimeSpan.FromSeconds(90) };
-return await RepositoryCommandLine.Create(Environment.CurrentDirectory, ProcessRunner.Run)
+return await RepositoryCommandLine.Create(Environment.CurrentDirectory, ProcessRunner.Run, ProcessRunner.RunStreaming)
     .Parse(args)
     .InvokeAsync(configuration)
     .ConfigureAwait(false);
