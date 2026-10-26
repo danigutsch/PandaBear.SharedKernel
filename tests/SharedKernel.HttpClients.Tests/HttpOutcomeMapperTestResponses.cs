@@ -13,6 +13,13 @@ internal static class HttpOutcomeMapperTestResponses
         };
     }
 
+    public static HttpResponseMessage JsonWithETag(HttpStatusCode statusCode, string json, string entityTag)
+    {
+        var response = Json(statusCode, json);
+        response.Headers.ETag = System.Net.Http.Headers.EntityTagHeaderValue.Parse(entityTag);
+        return response;
+    }
+
     public static HttpResponseMessage Empty(HttpStatusCode statusCode)
     {
         return new HttpResponseMessage(statusCode)

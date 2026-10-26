@@ -33,6 +33,14 @@ public sealed record HttpOutcome<TValue>
     }
 
     /// <summary>
+    /// Gets the response ETag header exactly as received, including any weak-validator prefix, when retained for a successful outcome.
+    /// </summary>
+    public string? ETag
+    {
+        get; init;
+    }
+
+    /// <summary>
     /// Gets the response Location header when retained for a successful outcome.
     /// </summary>
     public Uri? Location

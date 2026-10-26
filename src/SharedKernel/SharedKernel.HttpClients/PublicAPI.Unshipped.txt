@@ -22,6 +22,8 @@ PandaBear.HttpClients.HttpOutcome.StatusCode.init -> void
 PandaBear.HttpClients.HttpOutcome.ValidationErrors.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string![]!>?
 PandaBear.HttpClients.HttpOutcome.ValidationErrors.init -> void
 PandaBear.HttpClients.HttpOutcome<TValue>
+PandaBear.HttpClients.HttpOutcome<TValue>.ETag.get -> string?
+PandaBear.HttpClients.HttpOutcome<TValue>.ETag.init -> void
 PandaBear.HttpClients.HttpOutcome<TValue>.Kind.get -> PandaBear.HttpClients.HttpOutcomeKind
 PandaBear.HttpClients.HttpOutcome<TValue>.Kind.init -> void
 PandaBear.HttpClients.HttpOutcome<TValue>.Location.get -> System.Uri?

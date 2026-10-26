@@ -42,6 +42,52 @@ public sealed class HttpOutcomeMapperTests
         handler.ObservedRequestUri.ShouldBe(new Uri("https://catalog.example.test/tours"));
     }
 
+    [Theory]
+    [InlineData("\"v1\"")]
+    [InlineData("W/\"v1\"")]
+    public async Task Send_retains_the_response_entity_tag_unchanged_on_success(string entityTag)
+    {
+        // Arrange
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
+            HttpOutcomeMapperTestResponses.JsonWithETag(HttpStatusCode.OK, "{\"name\":\"Lisbon\"}", entityTag)));
+        using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
+
+        // Act
+        var outcome = await HttpOutcomeMapper.Send(
+            client,
+            new HttpRequestMessage(HttpMethod.Get, "/tours"),
+            HttpStatusCode.OK,
+            Json.HttpOutcomeMapperTestPayload,
+            Json.ContractValidationProblemDto,
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        outcome.Kind.ShouldBe(HttpOutcomeKind.Succeeded);
+        outcome.ETag.ShouldBe(entityTag);
+    }
+
+    [Fact]
+    public async Task Send_leaves_the_entity_tag_unset_when_the_response_has_none()
+    {
+        // Arrange
+        using var handler = new HttpOutcomeMapperTestHandler((_, _) => Task.FromResult(
+            HttpOutcomeMapperTestResponses.Json(HttpStatusCode.OK, "{\"name\":\"Lisbon\"}")));
+        using var client = new HttpClient(handler, disposeHandler: false) { BaseAddress = new Uri("https://catalog.example.test") };
+
+        // Act
+        var outcome = await HttpOutcomeMapper.Send(
+            client,
+            new HttpRequestMessage(HttpMethod.Get, "/tours"),
+            HttpStatusCode.OK,
+            Json.HttpOutcomeMapperTestPayload,
+            Json.ContractValidationProblemDto,
+            TestContext.Current.CancellationToken);
+
+        // Assert
+        outcome.Kind.ShouldBe(HttpOutcomeKind.Succeeded);
+        outcome.ETag.ShouldBeNull();
+    }
+
     [Fact]
     public async Task Send_returns_not_found_without_reading_a_body()
     {
