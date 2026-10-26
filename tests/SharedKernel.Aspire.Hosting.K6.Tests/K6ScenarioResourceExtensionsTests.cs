@@ -137,9 +137,53 @@ public sealed class K6ScenarioResourceExtensionsTests : IDisposable
         // Assert
         var (arguments, _) = await K6ResourceInspector.Evaluate(k6.Resource);
         arguments[0].ShouldBe("run");
-        arguments[^1].ShouldBe("/scripts/scenarios/smoke.js");
+        arguments.ShouldContain("/scripts/scenarios/smoke.js");
         arguments.ShouldNotContain("--vus");
         arguments.ShouldNotContain("--duration");
+    }
+
+    [Fact]
+    public async Task AddK6Scenario_writes_the_k6_log_and_console_output_to_files_in_the_results_mount()
+    {
+        // Arrange
+        var builder = DistributedApplication.CreateBuilder([]);
+
+        // Act
+        var k6 = builder.AddK6Scenario("smoke", _root, "scenarios/smoke.js", Path.Combine(_root, "results"));
+
+        // Assert
+        var (arguments, _) = await K6ResourceInspector.Evaluate(k6.Resource);
+        arguments.ShouldContain("--log-output=file=/results/k6.log");
+        arguments.ShouldContain("--console-output=/results/k6-console.log");
+        arguments.ShouldContain("/scripts/scenarios/smoke.js");
+        k6.Resource.Annotations.OfType<ContainerRuntimeArgsCallbackAnnotation>().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void AddK6Scenario_prepares_empty_log_files_that_the_container_user_can_append_to()
+    {
+        // Arrange
+        if (OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        var results = Path.Combine(_root, "results");
+        Directory.CreateDirectory(results);
+        File.WriteAllText(Path.Combine(results, "k6.log"), "left over from an earlier run");
+
+        // Act
+        DistributedApplication.CreateBuilder([]).AddK6Scenario("smoke", _root, "scenarios/smoke.js", results);
+
+        // Assert
+        var shared = UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead | UnixFileMode.GroupWrite
+            | UnixFileMode.OtherRead | UnixFileMode.OtherWrite;
+        foreach (var name in new[] { "k6.log", "k6-console.log" })
+        {
+            var path = Path.Combine(results, name);
+            new FileInfo(path).Length.ShouldBe(0);
+            File.GetUnixFileMode(path).ShouldBe(shared);
+        }
     }
 
     [Fact]

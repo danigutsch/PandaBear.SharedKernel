@@ -23,6 +23,10 @@ var k6 = builder.AddK6Scenario("admin-smoke", scriptDirectory, "scenarios/admin-
   `/results`. The helper library is written to the per-user data folder. On Linux and macOS a results directory that
   the call creates is made writable for the container user with the sticky bit set; an existing results directory keeps
   its mode and must already allow the container user to write.
+- k6 writes its own log to `k6.log` and the script's `console` output to `k6-console.log` in `resultsDirectory`,
+  so a failed run can be read on the host without a container log driver. Both files are emptied when the AppHost
+  builds the resource and appended to by each run. The library scripts never print the token or
+  the client secret; treat both log files like the summary file when a scenario script logs more.
 - The script must stay under `scriptDirectory`. No `--vus` or `--duration` flag is passed, so the script's own `options`
   decide the load.
 - `WithK6ClientCredentials` waits for the identity provider and passes `SK_K6_TOKEN_URL`, `SK_K6_CLIENT_ID`,

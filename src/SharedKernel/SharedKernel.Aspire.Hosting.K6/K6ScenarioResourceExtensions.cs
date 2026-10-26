@@ -12,6 +12,8 @@ public static class K6ScenarioResourceExtensions
     private const string ScriptsTarget = "/scripts";
     private const string LibraryTarget = "/k6lib";
     private const string ResultsTarget = "/results";
+    private const string LogName = "k6.log";
+    private const string ConsoleName = "k6-console.log";
 
     /// <summary>
     /// Adds a k6 container that runs one script and starts only when requested from the dashboard or the Aspire CLI.
@@ -19,6 +21,10 @@ public static class K6ScenarioResourceExtensions
     /// <remarks>
     /// The image is pinned by tag and digest. The script directory and the helper library (<c>/k6lib/auth.js</c>
     /// and <c>/k6lib/summary.js</c>) mount read-only; the results directory mounts writable at <c>/results</c>.
+    /// k6 writes its own log (<c>k6.log</c>, for example a failed token request) and the script's <c>console</c> output
+    /// (<c>k6-console.log</c>) to files in the results directory, so a run can be read after the container exits
+    /// without a container log driver. Both files are emptied when this method runs and appended to by each run; treat
+    /// them like the summary file, because they are part of the run results.
     /// On Linux and macOS a results directory that this call creates is made writable for the container user with the
     /// sticky bit set; an existing results directory keeps its mode and must already allow the container user to write.
     /// </remarks>
@@ -61,6 +67,9 @@ public static class K6ScenarioResourceExtensions
                 | UnixFileMode.StickyBit);
         }
 
+        PrepareLogFile(Path.Combine(results, LogName));
+        PrepareLogFile(Path.Combine(results, ConsoleName));
+
         return builder.AddK6(name)
             .WithImageTag(ImageTag)
             .WithImageSHA256(ImageDigest)
@@ -68,6 +77,7 @@ public static class K6ScenarioResourceExtensions
             .WithBindMount(K6Library.Materialize(), LibraryTarget, isReadOnly: true)
             .WithBindMount(results, ResultsTarget)
             .WithScript(ScriptsTarget + "/" + script.Replace('\\', '/'))
+            .WithArgs("--log-output=file=" + ResultsTarget + "/" + LogName, "--console-output=" + ResultsTarget + "/" + ConsoleName)
             .WithExplicitStart();
     }
 
@@ -107,5 +117,25 @@ public static class K6ScenarioResourceExtensions
             .WithEnvironment("SK_K6_CLIENT_ID", clientId)
             .WithEnvironment("SK_K6_CLIENT_SECRET", clientSecret)
             .WaitFor(identityProvider);
+    }
+
+    /// <summary>
+    /// Empties a log file and makes it shared. k6 creates its own log file readable by the container user only, but it
+    /// keeps the mode of a file that exists, so the host user can read what the container appends.
+    /// </summary>
+    private static void PrepareLogFile(string path)
+    {
+        // A link is replaced instead of written through.
+        if (new FileInfo(path).LinkTarget is not null)
+        {
+            File.Delete(path);
+        }
+
+        File.WriteAllBytes(path, []);
+        if (!OperatingSystem.IsWindows())
+        {
+            File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.GroupRead
+                | UnixFileMode.GroupWrite | UnixFileMode.OtherRead | UnixFileMode.OtherWrite);
+        }
     }
 }
