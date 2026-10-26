@@ -21,9 +21,10 @@ public sealed class GovernedLiteralRepositoryTests
         var repository = root.ShouldNotBeNull().FullName;
         var projects = XDocument.Load(Path.Combine(repository, "SharedKernel.slnx")).Descendants("Project")
             .Select(project => Path.Combine(repository, project.Attribute("Path")!.Value.Replace('\\', '/')))
-            .Where(project => XDocument.Load(project).Descendants("PackageId")
-                .Any(id => id.Value.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal))
-                && !XDocument.Load(project).Descendants("IsPackable").Any(value => value.Value == "false"));
+            .Where(project => XDocument.Load(project).Descendants("GovernedLiteralProject").Any(value => value.Value == "true")
+                || (XDocument.Load(project).Descendants("PackageId")
+                    .Any(id => id.Value.StartsWith("PandaBear.SharedKernel.", StringComparison.Ordinal))
+                && !XDocument.Load(project).Descendants("IsPackable").Any(value => value.Value == "false")));
         var compilations = new List<CSharpCompilation>();
         foreach (var project in projects)
         {

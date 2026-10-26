@@ -1,7 +1,7 @@
 <Project>
     <!-- Export actual compiler inputs for the repository-wide governed-constant test. -->
     <Target Name="RecordGovernedLiteralInputs" AfterTargets="CoreCompile"
-            Condition="$([System.String]::Copy('$(PackageId)').StartsWith('PandaBear.SharedKernel.')) and '$(IsPackable)' != 'false'">
+            Condition="'$(GovernedLiteralProject)' == 'true' or ($([System.String]::Copy('$(PackageId)').StartsWith('PandaBear.SharedKernel.')) and '$(IsPackable)' != 'false')">
         <PropertyGroup>
             <GovernedLiteralInputsDirectory>$(MSBuildThisFileDirectory)TestResults/governed-literals/$(Configuration)/$(MSBuildProjectName)</GovernedLiteralInputsDirectory>
         </PropertyGroup>

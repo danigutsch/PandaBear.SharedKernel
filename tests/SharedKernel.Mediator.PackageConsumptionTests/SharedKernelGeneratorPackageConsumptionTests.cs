@@ -2,9 +2,9 @@ using PandaBear.Testing;
 
 namespace PandaBear.Mediator.PackageConsumptionTests;
 
+[Collection(MediatorPackageFeedSharing.Name)]
 [Trait(SharedKernelTestTraitNames.CategoryName, "PackageConsumption")]
 public sealed class SharedKernelGeneratorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)
-    : IClassFixture<MediatorPackageFeedFixture>
 {
     [Fact]
     public async Task Domain_source_generator_package_generates_model_support_in_a_fresh_project()

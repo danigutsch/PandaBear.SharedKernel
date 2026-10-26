@@ -24,6 +24,22 @@ public sealed class PollingBackgroundServiceTests
     }
 
     [Fact]
+    public async Task Stops_calling_batches_after_the_one_that_processes_nothing_until_the_interval_elapses()
+    {
+        // Arrange
+        var ct = TestContext.Current.CancellationToken;
+        using var service = new ScriptedPollingService(NullLogger.Instance, "waiting", TimeSpan.FromHours(1), 2, 1, 0);
+
+        // Act
+        await service.StartAsync(ct);
+        await service.ScriptConsumed.WaitAsync(TimeSpan.FromSeconds(30), ct);
+        await service.StopAsync(ct);
+
+        // Assert
+        service.BatchCalls.ShouldBe(3, "the cycle drains until a batch processes nothing, then waits a full interval");
+    }
+
+    [Fact]
     public async Task Keeps_polling_after_a_batch_fails_and_logs_the_failure_type_only()
     {
         // Arrange
