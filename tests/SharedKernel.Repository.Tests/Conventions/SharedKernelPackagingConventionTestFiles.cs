@@ -35,7 +35,11 @@ internal static class SharedKernelPackagingConventionTestFiles
             yield return $"{projectPath}: PackageTags is required.";
         }
 
-        if (File.Exists(Path.Combine(projectDirectory, "README.md")))
+        if (!File.Exists(Path.Combine(projectDirectory, "README.md")))
+        {
+            yield return $"{projectPath}: README.md is required next to every packable project.";
+        }
+        else
         {
             if (GetProperty(document, "PackageReadmeFile") != "README.md")
             {
@@ -114,7 +118,7 @@ internal static class SharedKernelPackagingConventionTestFiles
         return entries;
     }
 
-    private static string GetProperty(XDocument document, string propertyName)
+    public static string GetProperty(XDocument document, string propertyName)
     {
         return document.Descendants()
             .FirstOrDefault(element => string.Equals(element.Name.LocalName, propertyName, StringComparison.Ordinal))

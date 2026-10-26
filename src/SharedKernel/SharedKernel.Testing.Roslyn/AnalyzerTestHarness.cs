@@ -39,6 +39,8 @@ public static class AnalyzerTestHarness
             new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
     }
 
+    internal static ImmutableArray<MetadataReference> GetTrustedPlatformReferences() => TrustedPlatformReferences.Value;
+
     private static IEnumerable<MetadataReference> GetMetadataReferences(IEnumerable<Assembly>? additionalReferenceAssemblies)
     {
         foreach (var reference in TrustedPlatformReferences.Value)
