@@ -7,7 +7,8 @@ public sealed class AuditTrailPackageConsumptionTests(AuditTrailPackageFeedFixtu
     public async Task Source_generator_package_supplies_every_generated_code_dependency()
     {
         // Arrange
-        using var workspace = new AuditTrailPackageConsumptionWorkspace(packageFeed);
+        using var workspace = packageFeed.CreateWorkspace("Consumer");
+        AuditTrailConsumerProject.Write(workspace);
 
         // Act
         var buildOutput = await workspace.Build();

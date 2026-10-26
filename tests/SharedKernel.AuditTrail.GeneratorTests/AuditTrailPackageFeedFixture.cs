@@ -1,3 +1,5 @@
+using PandaBear.Testing.Packaging;
+
 namespace PandaBear.AuditTrail.GeneratorTests;
 
 public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
@@ -19,6 +21,9 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
 
     internal string RepositoryRoot { get; private set; } = null!;
 
+    internal PackageConsumptionWorkspace CreateWorkspace(string projectName) =>
+        new(RepositoryRoot, FeedPath, PackageVersion, projectName);
+
     public async ValueTask InitializeAsync()
     {
         RepositoryRoot = FindRepositoryRoot();
@@ -29,7 +34,7 @@ public sealed class AuditTrailPackageFeedFixture : IAsyncLifetime
         foreach (var relativeProjectPath in PackageProjects)
         {
             var projectPath = Path.Combine(RepositoryRoot, relativeProjectPath);
-            _ = await AuditTrailPackageConsumptionWorkspace.RunDotNet(
+            _ = await DotNetCli.Run(
                 RepositoryRoot,
                 "pack",
                 projectPath,

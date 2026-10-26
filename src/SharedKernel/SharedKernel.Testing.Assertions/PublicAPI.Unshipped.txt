@@ -1,13 +1,11 @@
 #nullable enable
 PandaBear.Testing.Assertions.EntityIdentityShouldAssertionExtensions
-PandaBear.Testing.Assertions.ExceptionAssertions
 PandaBear.Testing.Assertions.ResultShouldAssertionExtensions
 PandaBear.Testing.Assertions.ShouldAssertionExtensions
 static PandaBear.Testing.Assertions.EntityIdentityShouldAssertionExtensions.ShouldBeUuidV7(this System.Guid id) -> void
 static PandaBear.Testing.Assertions.EntityIdentityShouldAssertionExtensions.ShouldBeUuidV7(this System.Guid id, string! userMessage) -> void
 static PandaBear.Testing.Assertions.EntityIdentityShouldAssertionExtensions.ShouldHaveGeneratedIdentitySemantics<T>(this T! first, T! second, T! different) -> void
 static PandaBear.Testing.Assertions.EntityIdentityShouldAssertionExtensions.ShouldHaveGeneratedIdentitySemantics<T>(this T! first, T! second, T! different, string! userMessage) -> void
-static PandaBear.Testing.Assertions.ExceptionAssertions.ThrowsInner<TException>(System.Action! action) -> TException!
 static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeFailure(this PandaBear.Results.Result actual, PandaBear.Results.ResultStatus expectedStatus, string! expectedCode) -> PandaBear.Results.ResultError!
 static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeFailure(this PandaBear.Results.Result actual, PandaBear.Results.ResultStatus expectedStatus, string! expectedCode, string! userMessage) -> PandaBear.Results.ResultError!
 static PandaBear.Testing.Assertions.ResultShouldAssertionExtensions.ShouldBeFailure<T>(this PandaBear.Results.Result<T> actual, PandaBear.Results.ResultStatus expectedStatus, string! expectedCode) -> PandaBear.Results.ResultError!
