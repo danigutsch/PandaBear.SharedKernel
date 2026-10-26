@@ -51,6 +51,7 @@ internal static partial class RepositoryCommandLine
         root.Subcommands.Add(CreateCoverage(workingDirectory, run));
         root.Subcommands.Add(CreateStageCandidate(workingDirectory, staging));
         root.Subcommands.Add(CreateVerifyCommitMessage(workingDirectory));
+        root.Subcommands.Add(CreateVerifyRestoreWarnings(workingDirectory));
         root.Subcommands.Add(CreateRunMutationTests(workingDirectory, run));
         return root;
     }
@@ -505,6 +506,28 @@ internal static partial class RepositoryCommandLine
             (_, _) => parseResult.GetValue(eventOption) is { } eventPath
                 ? CommitMessageVerification.VerifyEvent(Path.GetFullPath(eventPath, workingDirectory), ct)
                 : CommitMessageVerification.VerifyFile(Path.GetFullPath(parseResult.GetRequiredValue(fileOption), workingDirectory), ct),
+            ct));
+        return command;
+    }
+
+    private static Command CreateVerifyRestoreWarnings(string workingDirectory)
+    {
+        var logOption = PathOption("--log", "Output of a dotnet restore run that reports NuGet warnings.", "path");
+        logOption.Required = true;
+        var summaryOption = PathOption("--summary", "GitHub Actions step summary file that receives the classification. Appended to.", "path");
+        var command = new Command(
+            "verify-restore-warnings",
+            "Fail when a dotnet restore log reports a high or critical NuGet vulnerability advisory; lower severities and other NuGet warnings stay advisory in the summary.")
+        {
+            logOption,
+            summaryOption,
+        };
+        command.SetAction((parseResult, ct) => Execute(
+            parseResult,
+            (_, _) => RestoreWarningVerification.Verify(
+                Path.GetFullPath(parseResult.GetRequiredValue(logOption), workingDirectory),
+                parseResult.GetValue(summaryOption) is { } summary ? Path.GetFullPath(summary, workingDirectory) : null,
+                ct),
             ct));
         return command;
     }
