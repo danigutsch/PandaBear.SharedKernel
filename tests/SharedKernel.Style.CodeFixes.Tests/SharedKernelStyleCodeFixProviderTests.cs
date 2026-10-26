@@ -1578,7 +1578,8 @@ public sealed class SharedKernelStyleCodeFixProviderTests
                 Analyzers.StyleDiagnosticIds.BroadOperationCanceledExceptionFilter,
                 Analyzers.StyleDiagnosticIds.DomainEventSuffix,
                 Analyzers.StyleDiagnosticIds.SuccessOnlyResultMethod,
-                Analyzers.StyleDiagnosticIds.DirectCurrentTime
+                Analyzers.StyleDiagnosticIds.DirectCurrentTime,
+                Analyzers.StyleDiagnosticIds.CaseInsensitiveJsonContext
             ]);
     }
 

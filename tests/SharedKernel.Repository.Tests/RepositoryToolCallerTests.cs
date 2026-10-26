@@ -71,6 +71,8 @@ public sealed class RepositoryToolCallerTests
                     + " --repository danigutsch/PandaBear.SharedKernel",
                 "stage-candidate --pin .config/sharedkernel-candidate.json --library-root <sharedkernel-checkout> --output .local/sharedkernel-feed"
                     + " --feed <packages>",
+                "verify-restore-warnings --log restore.log --report restore-warnings.json",
+                "warning-summary --report restore-warnings.json --report lint-warnings.json --summary $GITHUB_STEP_SUMMARY",
                 "verify-commit-message --file $1",
                 "run-mutation-tests",
             ],

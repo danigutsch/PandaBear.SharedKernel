@@ -16,3 +16,4 @@ SKSTYLE011 | IO | Disabled | Review whole-input reads in size-sensitive code; en
 SKSTYLE012 | Style | Warning | Replace registered direct C# string literals with their canonical constant
 SKSTYLE013 | Style | Warning | Governed literal catalog must be valid and unambiguous
 SKSTYLE014 | Style | Warning | Use TimeProvider for current time
+SKSTYLE015 | Style | Disabled | Require case-insensitive property names on API JSON contexts; enable for API payload scopes

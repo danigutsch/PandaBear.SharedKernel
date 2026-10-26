@@ -138,6 +138,7 @@ public sealed partial class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
             SuccessOnlyResultMethodRule,
             OptionalResultMethodRule,
             UnboundedWholeReadRule,
+            CaseInsensitiveJsonContextRule,
             GovernedLiteralAnalysis.LiteralRule,
             GovernedLiteralAnalysis.CatalogRule);
 
@@ -185,6 +186,15 @@ public sealed partial class SharedKernelStyleAnalyzer : DiagnosticAnalyzer
         context.RegisterSymbolAction(
             symbolContext => AnalyzeNamedType(symbolContext, domainEventType),
             SymbolKind.NamedType);
+
+        var serializerContextType = context.Compilation.GetTypeByMetadataName("System.Text.Json.Serialization.JsonSerializerContext");
+        var jsonOptionsAttributeType = context.Compilation.GetTypeByMetadataName("System.Text.Json.Serialization.JsonSourceGenerationOptionsAttribute");
+        if (serializerContextType is not null && jsonOptionsAttributeType is not null)
+        {
+            context.RegisterSymbolAction(
+                symbolContext => AnalyzeJsonContext(symbolContext, serializerContextType, jsonOptionsAttributeType),
+                SymbolKind.NamedType);
+        }
 
         context.RegisterSyntaxNodeAction(
             AnalyzeCatchFilter,
