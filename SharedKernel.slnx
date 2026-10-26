@@ -22,7 +22,6 @@
   <Project Path="src/SharedKernel/SharedKernel.EntityFrameworkCore/SharedKernel.EntityFrameworkCore.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.EventSourcing/SharedKernel.EventSourcing.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.EventSourcing.Npgsql/SharedKernel.EventSourcing.Npgsql.csproj" />
-  <Project Path="src/SharedKernel/SharedKernel.Functional/SharedKernel.Functional.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.HttpCaching.AspNetCore/SharedKernel.HttpCaching.AspNetCore.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.HttpClients/SharedKernel.HttpClients.csproj" />
   <Project Path="src/SharedKernel/SharedKernel.Idempotency.Abstractions/SharedKernel.Idempotency.Abstractions.csproj" />
