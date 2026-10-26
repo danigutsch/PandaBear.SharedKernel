@@ -46,7 +46,8 @@ internal static class OpenApiGeneration
         var host = DotnetHostPath();
         foreach (var target in selected)
         {
-            await error.WriteAsync(await runConfigured(host, Arguments(target, refresh, buildConfiguration), root, ApplyEnvironment, ct).ConfigureAwait(false))
+            await error.WriteAsync(await runConfigured(
+                host, Arguments(target, refresh, buildConfiguration), root, startInfo => ApplyEnvironment(startInfo, target.PreserveEnvironment), ct).ConfigureAwait(false))
                 .ConfigureAwait(false);
         }
     }
@@ -72,10 +73,13 @@ internal static class OpenApiGeneration
 
     /// <summary>
     /// Replaces the child environment with the profile and temporary directories, the repository NuGet cache when the
-    /// parent uses it, a <c>PATH</c> of the dotnet host and system directories, and the OpenAPI generation settings.
+    /// parent uses it, the variables that the target lists, a <c>PATH</c> of the dotnet host and system directories, and the
+    /// OpenAPI generation settings, which a listed variable cannot replace.
     /// </summary>
+    /// <param name="startInfo">The process start information whose environment is replaced.</param>
+    /// <param name="preserved">Names of parent environment variables to keep when they have a value.</param>
     /// <exception cref="InvalidOperationException">The process does not start an absolute dotnet host.</exception>
-    public static void ApplyEnvironment(ProcessStartInfo startInfo)
+    public static void ApplyEnvironment(ProcessStartInfo startInfo, IReadOnlyCollection<string>? preserved = null)
     {
         if (!Path.IsPathFullyQualified(startInfo.FileName))
         {
@@ -86,6 +90,14 @@ internal static class OpenApiGeneration
         var preservedVariables = isWindows ? WindowsPreservedEnvironmentVariables : UnixPreservedEnvironmentVariables;
         var preservedEnvironment = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var variable in preservedVariables)
+        {
+            if (startInfo.Environment.TryGetValue(variable, out var value) && !string.IsNullOrWhiteSpace(value))
+            {
+                preservedEnvironment[variable] = value;
+            }
+        }
+
+        foreach (var variable in preserved ?? [])
         {
             if (startInfo.Environment.TryGetValue(variable, out var value) && !string.IsNullOrWhiteSpace(value))
             {

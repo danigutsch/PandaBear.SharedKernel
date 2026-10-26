@@ -108,7 +108,8 @@ the file and the JSON path of the problem.
       "name": "admin",
       "project": "src/Admin.Api/Admin.Api.csproj",
       "generateProperty": "GenerateAdminOpenApiArtifacts",
-      "refreshProperty": "RefreshAdminOpenApiArtifacts"
+      "refreshProperty": "RefreshAdminOpenApiArtifacts",
+      "preserveEnvironment": ["REMOTE_CONTAINERS"]
     }
   ],
   "coverage": {
@@ -149,6 +150,7 @@ the file and the JSON path of the problem.
 | `openApi[].project` | The project that `dotnet build` builds for the target. |
 | `openApi[].generateProperty` | The MSBuild property set to `true` to generate the documents: letters, digits, and `_`, not starting with a digit. |
 | `openApi[].refreshProperty` | The MSBuild property set to `true` to generate the documents and refresh their committed copies. |
+| `openApi[].preserveEnvironment` | Optional names of parent environment variables, letters, digits, and `_`, not starting with a digit and none repeated, that the target's build keeps when they have a value, in addition to the fixed minimal environment. The list is for non-secret flags: a name containing `TOKEN`, `SECRET`, `PASSWORD`, `PASSWD`, `KEY`, or `CREDENTIAL`, in any case, is an error. The names cannot replace `PATH` or the OpenAPI generation settings. |
 | `coverage.thresholdPercent` | Optional section, required by `coverage`. The least share, from 0 to 100, of the changed executable lines and conditions that the tests cover. |
 | `coverage.include` | Path patterns of the source files whose added lines count. At least one. |
 | `coverage.exclude` | Path patterns of included files whose added lines do not count, such as generated code. |
@@ -315,7 +317,7 @@ order: `dotnet build --no-restore <project> -p:<generateProperty>=true`, or `<re
 build runs through the dotnet host that runs the tool, from the root, with an environment that keeps only `HOME` and
 `TMPDIR` (on Windows `TEMP`, `TMP`, `USERPROFILE`, `APPDATA`, `LOCALAPPDATA`, `SystemRoot`, and `ComSpec`),
 `NUGET_PACKAGES` when it is the repository's `.nuget/packages`, and a `PATH` of the dotnet host directory and the system
-directories. It sets `ASPNETCORE_ENVIRONMENT` and `DOTNET_ENVIRONMENT` to `OpenApiGeneration`, the host environment
+directories, plus the variables that the target's `preserveEnvironment` lists. It sets `ASPNETCORE_ENVIRONMENT` and `DOTNET_ENVIRONMENT` to `OpenApiGeneration`, the host environment
 that `PandaBear.OpenApi.OpenApiGenerationMode` recognizes, turns off telemetry and the first-run experience, and
 disables OpenTelemetry export. Credentials, connection strings, proxies, and startup hooks of the parent environment do
 not reach the build. Restore the projects first. A configuration without `openApi` targets fails the command.

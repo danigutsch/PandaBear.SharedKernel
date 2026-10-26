@@ -117,6 +117,7 @@ internal static partial class CiConfigurationFile
             // The property reaches dotnet build as -p:<name>=true, so it cannot carry another property or a switch.
             ValidateProperty(target.GenerateProperty, path + ".generateProperty");
             ValidateProperty(target.RefreshProperty, path + ".refreshProperty");
+            ValidatePreservedEnvironment(target.PreserveEnvironment ?? [], path + ".preserveEnvironment");
         }
 
         if (configuration.Slices.Length == 0)
@@ -394,6 +395,29 @@ internal static partial class CiConfigurationFile
     /// <summary>Reports whether <paramref name="name"/> is, in any case, a variable that holds a GitHub token and that the tool removes from the service's environment.</summary>
     public static bool IsTokenVariable(string name) => TokenVariables.Contains(name, StringComparer.OrdinalIgnoreCase);
 
+    private static void ValidatePreservedEnvironment(string[] names, string path)
+    {
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        for (var index = 0; index < names.Length; index++)
+        {
+            if (names[index] is null || !Identifier().IsMatch(names[index]))
+            {
+                throw Invalid(path + "[" + index.ToString(CultureInfo.InvariantCulture) + "] must be an environment variable name.");
+            }
+
+            // The minimal environment exists to keep credentials out of the build, so a list cannot bring them back.
+            if (CredentialName().IsMatch(names[index]))
+            {
+                throw Invalid(path + "[" + index.ToString(CultureInfo.InvariantCulture) + "] must not name a credential variable.");
+            }
+
+            if (!seen.Add(names[index]))
+            {
+                throw Invalid(path + " repeats " + names[index] + ".");
+            }
+        }
+    }
+
     private static void ValidateProperty(string value, string path)
     {
         if (!Identifier().IsMatch(value))
@@ -410,6 +434,9 @@ internal static partial class CiConfigurationFile
 
     [GeneratedRegex(@"\A[a-z][a-z0-9-]*\z", RegexOptions.CultureInvariant)]
     private static partial Regex Browser();
+
+    [GeneratedRegex("TOKEN|SECRET|PASSWORD|PASSWD|KEY|CREDENTIAL", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
+    private static partial Regex CredentialName();
 
     // An MSBuild property name and an environment variable name share this shape.
     [GeneratedRegex(@"\A[A-Za-z_][A-Za-z0-9_]*\z", RegexOptions.CultureInvariant)]
