@@ -22,7 +22,6 @@ public sealed class ReviewWindowTests : IDisposable
     /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
-    /// <summary>Enter in the fields pane takes the value of the selected member column for the selected field.</summary>
     [Fact]
     public void Enter_takes_the_value_of_the_selected_member_column()
     {
@@ -45,7 +44,6 @@ public sealed class ReviewWindowTests : IDisposable
         session.Pending.IsEmpty.ShouldBeTrue();
     }
 
-    /// <summary>Pressing a takes the selected member for every conflicting field.</summary>
     [Fact]
     public void Pressing_a_takes_the_selected_member_for_every_conflicting_field()
     {
@@ -76,7 +74,6 @@ public sealed class ReviewWindowTests : IDisposable
         ]);
     }
 
-    /// <summary>Pressing e drops the selected field and the delete key removes that decision again.</summary>
     [Fact]
     public void Pressing_e_drops_the_selected_field_and_delete_removes_the_decision()
     {
@@ -101,7 +98,6 @@ public sealed class ReviewWindowTests : IDisposable
         session.Pending.Fields.ShouldHaveSingleItem().FieldPath.ShouldBe(FieldPaths.LoginPassword);
     }
 
-    /// <summary>Pressing v reveals the selected field and pressing it again masks it, without making the review dirty.</summary>
     [Fact]
     public void Pressing_v_reveals_and_masks_the_selected_field()
     {
@@ -126,7 +122,6 @@ public sealed class ReviewWindowTests : IDisposable
         session.IsDirty.ShouldBeFalse();
     }
 
-    /// <summary>Pressing s splits the selected member out of its group and selects the group left behind.</summary>
     [Fact]
     public void Pressing_s_splits_the_selected_member_out_of_its_group()
     {
@@ -146,7 +141,6 @@ public sealed class ReviewWindowTests : IDisposable
         window.SelectedGroup.ShouldNotBeNull().MemberKeys.ShouldBe([KeeperKey]);
     }
 
-    /// <summary>The notes keys decide on the selected member's notes, and the share key asks for confirmation before sharing the rest.</summary>
     [Fact]
     public void Notes_keys_decide_on_the_selected_member_and_the_share_key_asks_before_sharing_the_rest()
     {
@@ -171,7 +165,6 @@ public sealed class ReviewWindowTests : IDisposable
         session.Decisions.FindNotes(other).ShouldBe(NotesDecision.Share);
     }
 
-    /// <summary>The finding keys accept, reject, clear, and reveal the selected finding.</summary>
     [Fact]
     public void Finding_keys_accept_reject_clear_and_reveal_the_selected_finding()
     {
@@ -203,7 +196,6 @@ public sealed class ReviewWindowTests : IDisposable
         shown.Value.ShouldContain(NotesPassword, StringComparison.Ordinal);
     }
 
-    /// <summary>Marking a group with m and pressing l on another group links the two and clears the mark.</summary>
     [Fact]
     public void Pressing_m_and_l_links_the_marked_group_with_the_selected_group()
     {
@@ -228,7 +220,6 @@ public sealed class ReviewWindowTests : IDisposable
         window.SelectedGroup.ShouldNotBeNull().MemberKeys.ShouldBe([OriginKey(keeper), OriginKey(bitwarden)]);
     }
 
-    /// <summary>F7 steps through the group filters and wraps around, and typing in the search field narrows the groups.</summary>
     [Fact]
     public void F7_changes_the_filter_and_the_search_field_narrows_the_groups()
     {
@@ -262,7 +253,6 @@ public sealed class ReviewWindowTests : IDisposable
         window.SelectedGroup.ShouldNotBeNull().Name.ShouldBe("Wifi");
     }
 
-    /// <summary>Ctrl+S saves the decisions file and leaves no unsaved changes.</summary>
     [Fact]
     public void Ctrl_s_saves_the_decisions_file()
     {
@@ -286,7 +276,6 @@ public sealed class ReviewWindowTests : IDisposable
         dialogs.QuitQuestions.ShouldBeEmpty();
     }
 
-    /// <summary>Ctrl+W asks for the export password once and writes the merged vault with the chosen values.</summary>
     [Fact]
     public void Ctrl_w_asks_for_the_export_password_and_writes_the_merged_vault()
     {
@@ -310,7 +299,6 @@ public sealed class ReviewWindowTests : IDisposable
         BitwardenJsonReader.Read(json, "merged.json").Items.ShouldHaveSingleItem().Login.ShouldNotBeNull().Password.ShouldBe(BitwardenPassword);
     }
 
-    /// <summary>Ctrl+W reports how many attachments to upload after the import.</summary>
     [Fact]
     public void Ctrl_w_says_how_many_attachments_to_upload_after_the_import()
     {
@@ -336,7 +324,6 @@ public sealed class ReviewWindowTests : IDisposable
         window.Message.ShouldContain("1 attachment(s) to upload after the import", StringComparison.Ordinal);
     }
 
-    /// <summary>Ctrl+W with a decision still pending shows why in an error, asks no password, and writes nothing.</summary>
     [Fact]
     public void Ctrl_w_while_a_decision_is_pending_shows_why_and_asks_no_password()
     {
@@ -358,7 +345,6 @@ public sealed class ReviewWindowTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
-    /// <summary>Write problems are shown as messages that contain no secret values and leave an existing output untouched.</summary>
     [Fact]
     public void Problems_show_messages_without_values()
     {
@@ -384,7 +370,6 @@ public sealed class ReviewWindowTests : IDisposable
         File.ReadAllText(output).ShouldBe("fixture existing output");
     }
 
-    /// <summary>F1 shows the list of every key.</summary>
     [Fact]
     public void F1_lists_every_key()
     {
@@ -402,7 +387,6 @@ public sealed class ReviewWindowTests : IDisposable
         dialogs.Help.ShouldHaveSingleItem().ShouldBe(ReviewKeys.All);
     }
 
-    /// <summary>Quitting with unsaved decisions asks first, and canceling keeps the review open.</summary>
     [Fact]
     public void Quitting_with_unsaved_decisions_asks_first_and_cancel_keeps_the_review_open()
     {
@@ -428,7 +412,6 @@ public sealed class ReviewWindowTests : IDisposable
         session.IsDirty.ShouldBeTrue();
     }
 
-    /// <summary>Choosing save when quitting writes the decisions file before the window closes.</summary>
     [Fact]
     public void Quitting_with_save_writes_the_decisions_file_first()
     {
@@ -452,7 +435,6 @@ public sealed class ReviewWindowTests : IDisposable
         File.Exists(decisionsPath).ShouldBeTrue();
     }
 
-    /// <summary>Quitting without changes, or stopping the window on cancellation, asks no question.</summary>
     [Fact]
     public void Quitting_without_changes_and_stopping_on_cancellation_ask_nothing()
     {

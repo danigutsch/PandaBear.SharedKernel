@@ -288,8 +288,8 @@ or use a normal diagnostic suppression. The code fix adds the attribute, adds th
 A file that declares exactly one top-level type must be named after it: `Result.cs` for `Result`, and `Result{T}.cs` for
 `Result<T>`, so a generic type and its non-generic sibling never share a path. Type-name suffixes that repeat arity are
 reported separately by `SKSTYLE005`. Partial types, files with several top-level types (`SKSTYLE004`), nested types, files without a
-path, and generated files are not checked. The diagnostic has no code fix because a rename or move changes the project
-layout and every path that refers to it. Types that share a name across namespaces and cannot share a file name take a
+path, and generated files are not checked. The code fix renames the file in place and is not offered when the target name is
+taken. Types that share a name across namespaces and cannot share a file name take a
 scoped `.editorconfig` exception with an owner and removal condition.
 
 ## SKSTYLE017
@@ -298,7 +298,7 @@ scoped `.editorconfig` exception with an owner and removal condition.
 types, methods, constructors, properties, fields, enum members, and events that are internal, or public inside an internal
 type. Private members are not checked. Any XML documentation comment satisfies the rule, including `<inheritdoc />`. A
 property synthesized from a positional record parameter is documented by the matching `<param name="...">` element on the
-record, and a partial type or method is documented when any part is. Overrides, explicit interface implementations,
+record, and a partial type or method is documented when any part is. xunit test methods (any method with an attribute deriving from `Xunit.FactAttribute`, including `[Theory]`) are never required to be documented. Overrides, explicit interface implementations,
 indexers, accessors, compiler-generated members, and generated code are not checked. Enable both rules everywhere through
 `.editorconfig`:
 
@@ -306,6 +306,15 @@ indexers, accessors, compiler-generated members, and generated code are not chec
 [*.cs]
 dotnet_diagnostic.CS1591.severity = warning
 dotnet_diagnostic.SKSTYLE017.severity = warning
+```
+
+Set `sharedkernel_style_document_public_members = true` for a scope to make the rule also cover public members, for example
+test projects where `CS1591` is switched off so that test methods can be skipped:
+
+```ini
+[tests/**.cs]
+dotnet_diagnostic.CS1591.severity = none
+sharedkernel_style_document_public_members = true
 ```
 
 A repository with a large backlog can stage the rollout per scope with `suggestion` severity, an owner, and a removal

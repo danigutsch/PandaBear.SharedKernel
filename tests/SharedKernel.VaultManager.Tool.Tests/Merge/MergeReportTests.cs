@@ -7,7 +7,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Merge;
 /// <summary>Tests the Markdown rendering of <see cref="MergeReport"/>.</summary>
 public sealed class MergeReportTests
 {
-    /// <summary>The Markdown report counts two different groups, three auto-resolved and one unresolved conflict, names the item and field, and contains none of the passwords, TOTP secret, or notes values.</summary>
     [Fact]
     public void Report_markdown_contains_no_values()
     {

@@ -11,7 +11,6 @@ public sealed class BitwardenZipReaderTests : IDisposable
     /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
-    /// <summary>The Report item and the item named "a/b: c" receive the files of their sanitized attachment folders with size and path, and items carry the zip file name as source.</summary>
     [Fact]
     public void Read_attaches_files_to_items_whose_sanitized_name_matches_unambiguously()
     {
@@ -27,7 +26,6 @@ public sealed class BitwardenZipReaderTests : IDisposable
         items.ShouldHaveSingleItem(item => item.Origin.OriginalId == "i1").Origin.SourceFile.ShouldBe("export.zip");
     }
 
-    /// <summary>A zip whose data.json declares the folders "Work" and "Empty" keeps both and puts its note in "Work".</summary>
     [Fact]
     public void Read_keeps_the_folders_that_the_export_declares()
     {
@@ -47,7 +45,6 @@ public sealed class BitwardenZipReaderTests : IDisposable
         result.Export.Items.ShouldHaveSingleItem().FolderPath.ShouldBe("Work");
     }
 
-    /// <summary>The two items named "Dup" get no attachments and the result warns about the "Dup" and "Dup_1" folders.</summary>
     [Fact]
     public void Read_does_not_guess_when_several_items_share_a_name()
     {
@@ -60,7 +57,6 @@ public sealed class BitwardenZipReaderTests : IDisposable
         result.Warnings.ShouldContain(warning => warning.Contains("\"Dup_1\"", StringComparison.Ordinal));
     }
 
-    /// <summary>The "Orphan" attachment folder, which matches no item, produces a warning that names it.</summary>
     [Fact]
     public void Read_warns_about_attachment_folders_without_matching_item()
     {
@@ -71,7 +67,6 @@ public sealed class BitwardenZipReaderTests : IDisposable
         result.Warnings.ShouldContain(warning => warning.Contains("\"Orphan\"", StringComparison.Ordinal));
     }
 
-    /// <summary>The unassigned folders Dup and Dup_1 (two matching items each) and Orphan (none) are listed with their source file and files.</summary>
     [Fact]
     public void Read_lists_the_files_of_folders_that_match_no_item_or_several_items()
     {
@@ -94,7 +89,6 @@ public sealed class BitwardenZipReaderTests : IDisposable
         ]);
     }
 
-    /// <summary>A zip that holds only other.txt and no data.json throws InvalidDataException.</summary>
     [Fact]
     public void Read_zip_without_data_json_throws_invalid_data()
     {

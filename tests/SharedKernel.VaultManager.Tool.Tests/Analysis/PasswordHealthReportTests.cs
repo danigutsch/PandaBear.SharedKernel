@@ -10,7 +10,6 @@ public sealed class PasswordHealthReportTests
 {
     private const string Reused = "Fixture-Reused-Password-1";
 
-    /// <summary>Verifies that the report flags a password reused on different hosts and a password equal to the user name.</summary>
     [Fact]
     public void Password_health_flags_reuse_across_hosts_and_password_equal_to_username()
     {
@@ -38,7 +37,6 @@ public sealed class PasswordHealthReportTests
         issues.ShouldAllSatisfy(issue => issue.ToString().ShouldNotContain(Reused, StringComparison.Ordinal));
     }
 
-    /// <summary>Verifies that each item that shares a password lists at most three other items.</summary>
     [Theory]
     [InlineData(5)]
     [InlineData(1000)]
@@ -66,7 +64,6 @@ public sealed class PasswordHealthReportTests
         issues[1].RelatedItemNames.ShouldBe(["Site 1", "Site 3", "Site 4"]);
     }
 
-    /// <summary>Verifies that when many items share a password, the report counts the items on other hosts instead of listing them.</summary>
     [Fact]
     public void Password_health_counts_the_items_on_other_hosts_when_most_items_share_one_host()
     {
@@ -93,7 +90,6 @@ public sealed class PasswordHealthReportTests
         bank.RelatedItemCount.ShouldBe(201);
     }
 
-    /// <summary>Verifies that a password equal to the item name or the user name is reported.</summary>
     [Fact]
     public void Password_health_reports_a_password_equal_to_the_item_name_or_user_name_once_as_weak()
     {
@@ -117,7 +113,6 @@ public sealed class PasswordHealthReportTests
         ]);
     }
 
-    /// <summary>Verifies that a short password of one character class that equals the user name is reported.</summary>
     [Fact]
     public void Password_health_reports_a_short_single_class_password_equal_to_the_user_name_as_one_weak_issue()
     {
@@ -135,7 +130,6 @@ public sealed class PasswordHealthReportTests
         issue.RelatedItemCount.ShouldBe(0);
     }
 
-    /// <summary>Verifies that member checks count reuse only for members of other groups on other hosts.</summary>
     [Fact]
     public void Member_checks_count_reuse_only_by_members_of_other_groups_on_other_hosts()
     {
@@ -154,7 +148,6 @@ public sealed class PasswordHealthReportTests
         checks.SelectMany(group => group).ShouldAllSatisfy(check => check.Weak.ShouldBeFalse());
     }
 
-    /// <summary>Verifies that members of one group never count as reuse of each other.</summary>
     [Fact]
     public void Member_checks_do_not_count_members_of_one_group_as_reuse_on_other_hosts()
     {
@@ -171,7 +164,6 @@ public sealed class PasswordHealthReportTests
         checks[1].ShouldHaveSingleItem().Reused.ShouldBeTrue();
     }
 
-    /// <summary>Verifies that member checks find weak passwords and passwords that appear in another member's password history.</summary>
     [Fact]
     public void Member_checks_find_weak_passwords_and_passwords_in_another_member_history()
     {

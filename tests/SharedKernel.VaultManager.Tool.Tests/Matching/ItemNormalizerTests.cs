@@ -5,7 +5,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Matching;
 /// <summary>Tests <see cref="ItemNormalizer"/> comparison forms for hosts, usernames, titles, notes, and TOTP values.</summary>
 public sealed class ItemNormalizerTests
 {
-    /// <summary>Host strips scheme, "www.", credentials, port, path, query, and fragment from web addresses and lowercases them, while non-web schemes such as <c>androidapp://</c> and <c>mailto:</c> stay whole.</summary>
     [Theory]
     [InlineData("https://www.Example.com:8443/login?next=1#top", "example.com")]
     [InlineData("example.com/login", "example.com")]
@@ -31,7 +30,6 @@ public sealed class ItemNormalizerTests
         host.ShouldBe(expected);
     }
 
-    /// <summary>Host returns null for an empty string, whitespace only, or a scheme with no host.</summary>
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
@@ -45,7 +43,6 @@ public sealed class ItemNormalizerTests
         host.ShouldBeNull();
     }
 
-    /// <summary>Username is trimmed and lowercased, title collapses whitespace runs to single spaces and lowercases, and notes unify line endings to LF and trim trailing whitespace.</summary>
     [Fact]
     public void Username_title_and_notes_are_normalized()
     {
@@ -60,7 +57,6 @@ public sealed class ItemNormalizerTests
         notes.ShouldBe("one\ntwo\nthree");
     }
 
-    /// <summary>A title written with a decomposed accent and embedded BEL and NUL characters normalizes to the same "café wifi" as the plain composed title.</summary>
     [Fact]
     public void Title_equates_unicode_forms_and_drops_control_characters()
     {
@@ -73,7 +69,6 @@ public sealed class ItemNormalizerTests
         composed.ShouldBe("café wifi");
     }
 
-    /// <summary>The TOTP key of an otpauth URI or raw value is its upper-cased Base32 secret without spaces, dashes, padding, or percent-encoding, and falls back to the upper-cased text without separators when no secret exists.</summary>
     [Theory]
     [InlineData("otpauth://totp/Example:alice?secret=jbsw%20y3dp-ehpk3pxp%3D%3D&issuer=Example", "JBSWY3DPEHPK3PXP")]
     [InlineData("jbsw y3dp-ehpk 3pxp==", "JBSWY3DPEHPK3PXP")]
@@ -88,7 +83,6 @@ public sealed class ItemNormalizerTests
         key.ShouldBe(expected);
     }
 
-    /// <summary>Values that produce identical codes, such as differing labels or issuers, explicit default algorithm, digits, and period, or a spaced raw secret, yield equal TOTP keys.</summary>
     [Theory]
     [InlineData("otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP&issuer=Example", "otpauth://totp/Other:bob?secret=JBSWY3DPEHPK3PXP")]
     [InlineData("otpauth://totp/Other?secret=JBSWY3DPEHPK3PXP&algorithm=sha1&digits=6&period=30", "jbsw y3dp ehpk 3pxp")]
@@ -103,7 +97,6 @@ public sealed class ItemNormalizerTests
         firstKey.ShouldBe(secondKey);
     }
 
-    /// <summary>The same secret with non-default digits, period, or algorithm, or as a Steam value, yields a TOTP key different from the plain secret because the codes differ.</summary>
     [Theory]
     [InlineData("otpauth://totp/Example?secret=JBSWY3DPEHPK3PXP&digits=8", "JBSWY3DPEHPK3PXP")]
     [InlineData("otpauth://totp/Example?secret=JBSWY3DPEHPK3PXP&period=60", "JBSWY3DPEHPK3PXP")]

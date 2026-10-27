@@ -6,7 +6,6 @@ namespace PandaBear.K6.Tool.Tests;
 /// <summary>Tests parsing and help of the k6 command line.</summary>
 public sealed class K6CommandLineTests
 {
-    /// <summary>Verifies that invalid option combinations exit 1 with an error and create no run directory.</summary>
     [Theory]
     [InlineData("run")]
     [InlineData("run --scenario smoke --image " + K6TestRepository.Image)]
@@ -27,7 +26,6 @@ public sealed class K6CommandLineTests
         repository.RunDirectories().ShouldBe([]);
     }
 
-    /// <summary>Verifies that invalid <c>--image</c> usage reports the rule that was broken.</summary>
     [Theory]
     [InlineData("--image requires --container.", "run --scenario smoke --image " + K6TestRepository.Image)]
     [InlineData("--image requires an image reference pinned by digest, such as grafana/k6:<tag>@sha256:<digest>.", "run --scenario smoke --container --image registry.example/k6:1.0")]
@@ -43,7 +41,6 @@ public sealed class K6CommandLineTests
         repository.Error.ToString().ShouldContain(message, StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that the diagram directive exits 0 for a parsable command line and 1 otherwise, without running k6.</summary>
     [Theory]
     [InlineData("run --scenario smoke", 0)]
     [InlineData("run --scenario smoke --container --image " + K6TestRepository.Image + " --allow-external-target --allow-http-debug --allow-remote-output --root . -- --vus 2", 0)]
@@ -61,7 +58,6 @@ public sealed class K6CommandLineTests
         repository.RunDirectories().ShouldBe([]);
     }
 
-    /// <summary>Verifies that help exits 0 and lists the run command and each of its options.</summary>
     [Fact]
     public async Task Help_lists_the_run_command_and_its_options()
     {
@@ -80,7 +76,6 @@ public sealed class K6CommandLineTests
         }
     }
 
-    /// <summary>Verifies that every command line shown in the README parses to the run command.</summary>
     [Fact]
     public void Every_readme_command_line_parses_to_the_run_command()
     {

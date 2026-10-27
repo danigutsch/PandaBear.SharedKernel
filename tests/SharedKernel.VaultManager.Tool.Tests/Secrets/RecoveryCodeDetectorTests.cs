@@ -5,7 +5,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 /// <summary>Tests how the secret scanner detects blocks of recovery codes.</summary>
 public sealed class RecoveryCodeDetectorTests
 {
-    /// <summary>Google recovery codes in two columns separated by spaces are detected as one high-confidence block.</summary>
     [Fact]
     public void Google_codes_in_two_columns_with_spaces_are_one_block()
     {
@@ -24,7 +23,6 @@ public sealed class RecoveryCodeDetectorTests
         finding.Confidence.ShouldBe(Confidence.High);
     }
 
-    /// <summary>Numbered recovery codes with used markers are detected as one block that spans the numbered lines.</summary>
     [Fact]
     public void Numbered_codes_with_used_markers_are_detected()
     {
@@ -43,7 +41,6 @@ public sealed class RecoveryCodeDetectorTests
         finding.Location.LastLine.ShouldBe(11);
     }
 
-    /// <summary>Dates, phone numbers, amounts, and number sequences are not mistaken for recovery codes.</summary>
     [Theory]
     [InlineData("2024-01-0{0}")]
     [InlineData("+49 30 1234567{0}")]
@@ -62,7 +59,6 @@ public sealed class RecoveryCodeDetectorTests
         findings.ShouldNotContain(finding => finding.Kind == SecretKind.RecoveryCodes);
     }
 
-    /// <summary>Four codes, or codes of mixed shapes, are not reported as a recovery code block.</summary>
     [Fact]
     public void Four_codes_or_mixed_shapes_are_not_a_block()
     {
@@ -79,7 +75,6 @@ public sealed class RecoveryCodeDetectorTests
         mixedFindings.ShouldNotContain(finding => finding.Kind == SecretKind.RecoveryCodes);
     }
 
-    /// <summary>A single Microsoft recovery code under a recovery key heading is detected and proposed for a hidden field.</summary>
     [Fact]
     public void Single_microsoft_recovery_code_under_recovery_key_is_detected()
     {
@@ -96,7 +91,6 @@ public sealed class RecoveryCodeDetectorTests
         finding.ProposedTarget.ShouldBe(PlacementTarget.Hidden("Recovery codes"));
     }
 
-    /// <summary>A Steam maFile yields its shared secret as a TOTP finding and its revocation code as a recovery code finding.</summary>
     [Fact]
     public void Steam_mafile_shared_secret_becomes_steam_totp()
     {

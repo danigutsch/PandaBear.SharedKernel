@@ -3,7 +3,6 @@ namespace PandaBear.K6.Tool.Tests;
 /// <summary>Tests validation and rewriting of the k6 target URL.</summary>
 public sealed class K6TargetTests
 {
-    /// <summary>Verifies that loopback URLs are accepted and normalized by trimming whitespace and the trailing slash.</summary>
     [Theory]
     [InlineData("http://localhost:5000", "http://localhost:5000")]
     [InlineData("https://localhost:5001/", "https://localhost:5001")]
@@ -19,7 +18,6 @@ public sealed class K6TargetTests
         K6Target.Format(target).ShouldBe(expected);
     }
 
-    /// <summary>Verifies that non-loopback targets are rejected unless external targets are allowed.</summary>
     [Theory]
     [InlineData("https://example.com")]
     [InlineData("http://host.docker.internal:5000")]
@@ -38,7 +36,6 @@ public sealed class K6TargetTests
         allowed.ShouldBeNull();
     }
 
-    /// <summary>Verifies that user information and non-HTTP URLs are rejected even when external targets are allowed.</summary>
     [Theory]
     [InlineData("http://localhost:80@evil.example", "APP_BASE_URL must not include user information.")]
     [InlineData("ftp://localhost", "APP_BASE_URL must be an absolute http:// or https:// URL.")]
@@ -55,7 +52,6 @@ public sealed class K6TargetTests
         exception.ShouldBeOfType<InvalidOperationException>().Message.ShouldBe(message);
     }
 
-    /// <summary>Verifies that loopback and unspecified hosts are rewritten to <c>host.docker.internal</c> for containers.</summary>
     [Theory]
     [InlineData("http://localhost:5000", "http://host.docker.internal:5000")]
     [InlineData("http://127.0.0.1:5000/api/", "http://host.docker.internal:5000/api")]
@@ -73,7 +69,6 @@ public sealed class K6TargetTests
         target.ShouldBe(expected);
     }
 
-    /// <summary>Verifies that unspecified host addresses become <c>127.0.0.1</c> and other values are left unchanged.</summary>
     [Theory]
     [InlineData("http://0.0.0.0:5000", "http://127.0.0.1:5000/")]
     [InlineData("http://[::]:5000/", "http://127.0.0.1:5000/")]

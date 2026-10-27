@@ -13,7 +13,6 @@ public sealed class ScanCommandTests : IDisposable
     /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
-    /// <summary>Scanning a Keeper export with recovery codes and a Bitwarden login with a short password prints the item, finding, and weak-password counts to standard output, leaves standard error empty, and writes no extra file.</summary>
     [Fact]
     public async Task Scan_summarizes_findings_and_password_health_on_standard_output()
     {
@@ -42,7 +41,6 @@ public sealed class ScanCommandTests : IDisposable
         Directory.GetFiles(directory).Length.ShouldBe(2);
     }
 
-    /// <summary>Scanning a Bitwarden zip whose attachment folders match no single item reports 2 attachments to upload after the import.</summary>
     [Fact]
     public async Task Scan_counts_the_files_of_attachment_folders_that_match_no_single_item_among_the_attachments_to_upload()
     {
@@ -57,7 +55,6 @@ public sealed class ScanCommandTests : IDisposable
         run.Output.ShouldEndWith("\nAttachments to upload after the import: 2\n", StringComparison.Ordinal);
     }
 
-    /// <summary>The report option replaces an older vault report with a markdown report that has secret-findings and password-health sections, and on Unix narrows its mode to owner read and write only.</summary>
     [Fact]
     public async Task Scan_writes_the_full_report_readable_only_by_its_owner_and_replaces_an_old_one()
     {
@@ -85,7 +82,6 @@ public sealed class ScanCommandTests : IDisposable
         }
     }
 
-    /// <summary>Pointing the report option at an existing decisions file exits with code 3, prints the not-a-vault-report error, and leaves the file's content unchanged.</summary>
     [Fact]
     public async Task Scan_never_replaces_an_existing_file_that_is_not_a_vault_report()
     {
@@ -104,7 +100,6 @@ public sealed class ScanCommandTests : IDisposable
         after.ShouldBe("{\"version\":2,\"groups\":[]}");
     }
 
-    /// <summary>Passing an input file as its own report path exits with code 3, warns that it may be the same file as an input, and leaves the input unchanged.</summary>
     [Fact]
     public async Task Scan_never_writes_the_report_over_an_input()
     {
@@ -122,7 +117,6 @@ public sealed class ScanCommandTests : IDisposable
         after.ShouldBe(before);
     }
 
-    /// <summary>A report path such as BITWARDEN.json that differs from an input only in letter case exits with code 3 and the error explains that paths are compared ignoring case.</summary>
     [Fact]
     public async Task Scan_refuses_a_report_path_that_differs_from_an_input_only_in_case_and_says_why()
     {
@@ -139,7 +133,6 @@ public sealed class ScanCommandTests : IDisposable
         run.Error.ShouldBe("The report file '" + report + "' may be the same file as an input file: paths are compared after resolving symbolic links and ignoring case. Choose another path.\n", StringComparer.Ordinal);
     }
 
-    /// <summary>A report path inside a symbolic link to the input's directory exits with code 3 and leaves the input unchanged; skipped where symbolic links cannot be created.</summary>
     [Fact(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanCreateSymbolicLinks), Skip = "This system does not let the test create symbolic links.")]
     public async Task Scan_never_writes_the_report_over_an_input_reached_through_a_linked_directory()
     {
@@ -161,7 +154,6 @@ public sealed class ScanCommandTests : IDisposable
         after.ShouldBe(before);
     }
 
-    /// <summary>A report path in a directory that does not exist exits with code 3 and a "does not exist" error without printing any output.</summary>
     [Fact]
     public async Task Scan_fails_before_reading_inputs_when_the_report_directory_does_not_exist()
     {

@@ -20,7 +20,6 @@ public sealed class VaultReportTests : IDisposable
     /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
-    /// <summary>The report, the decisions file, and the printed result never contain a vault value such as a password, TOTP secret, recovery code, or private key.</summary>
     [Fact]
     public void Report_decisions_file_and_result_text_never_contain_vault_values()
     {
@@ -70,7 +69,6 @@ public sealed class VaultReportTests : IDisposable
         report.ShouldContain("`" + github.Findings[0].Id + "` | yes |", StringComparison.Ordinal);
     }
 
-    /// <summary>The report combines the merge summary, secret findings, password health, attachments to upload, and warnings, and starts with why the vault was not written.</summary>
     [Fact]
     public void Report_combines_merge_findings_password_health_uploads_and_warnings()
     {
@@ -113,7 +111,6 @@ public sealed class VaultReportTests : IDisposable
         report.ShouldNotContain("\r", StringComparison.Ordinal);
     }
 
-    /// <summary>The report status counts the fields and findings that still need a decision.</summary>
     [Theory]
     [InlineData(false, "0 field(s) and 1 finding(s)")]
     [InlineData(true, "1 field(s) and 1 finding(s)")]
@@ -135,7 +132,6 @@ public sealed class VaultReportTests : IDisposable
         report.ShouldStartWith("# Vault report\n\nThe merged vault was not written because " + counts + " need a decision.", StringComparison.Ordinal);
     }
 
-    /// <summary>The report lists the files of attachment folders shared by two items named Bank so they can be uploaded by hand.</summary>
     [Fact]
     public void Report_lists_the_files_of_attachment_folders_that_two_items_named_bank_share_for_upload_by_hand()
     {
@@ -156,7 +152,6 @@ public sealed class VaultReportTests : IDisposable
             "| Bank_1 | contract.txt | bitwarden.zip, `attachments/Bank_1/contract.txt` | 2 |");
     }
 
-    /// <summary>The report replaces control characters in item names, folder names, file names, and warnings.</summary>
     [Fact]
     public void Report_replaces_control_characters_in_item_names_folder_names_file_names_and_warnings()
     {
@@ -190,7 +185,6 @@ public sealed class VaultReportTests : IDisposable
         report.ShouldContain("attachment \"scan\uFFFD[5m.pdf\" is listed but not included in the zip.", StringComparison.Ordinal);
     }
 
-    /// <summary>A changed group whose item name holds a line separator stays on its own heading line and injects no extra heading.</summary>
     [Fact]
     public void Report_keeps_a_changed_group_whose_item_name_holds_a_line_separator_on_its_heading_line()
     {
@@ -211,7 +205,6 @@ public sealed class VaultReportTests : IDisposable
         report.ShouldNotContain("\u2028", StringComparison.Ordinal);
     }
 
-    /// <summary>A password equal to the item name or user name is listed only as weak, without naming that reason.</summary>
     [Fact]
     public void Report_lists_a_password_equal_to_the_item_name_or_user_name_only_as_weak()
     {
@@ -231,7 +224,6 @@ public sealed class VaultReportTests : IDisposable
         result.PasswordHealth.Issues.ShouldAllSatisfy(issue => issue.ToString().ShouldNotContain("Equals", StringComparison.Ordinal));
     }
 
-    /// <summary>A short single-class password equal to the user name is listed once as weak without naming any reason.</summary>
     [Fact]
     public void Report_lists_a_short_single_class_password_equal_to_the_user_name_once_without_naming_the_reason()
     {
@@ -250,7 +242,6 @@ public sealed class VaultReportTests : IDisposable
         reasons.ShouldAllSatisfy(reason => health.ShouldNotContain(reason, StringComparison.Ordinal));
     }
 
-    /// <summary>The report names up to three other items that reuse a password and counts the rest as "and N more".</summary>
     [Fact]
     public void Report_names_three_other_items_that_reuse_a_password_and_counts_the_rest()
     {

@@ -15,7 +15,6 @@ public sealed class DecisionsFileTests : IDisposable
     /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
-    /// <summary>Group decisions and match overrides survive serialization as version 2 JSON that contains none of the conflicting passwords or notes values.</summary>
     [Fact]
     public void Decisions_round_trip_and_contain_no_values()
     {
@@ -48,7 +47,6 @@ public sealed class DecisionsFileTests : IDisposable
         reread.Overrides.Splits.ShouldBe(decisions.Overrides.Splits);
     }
 
-    /// <summary>Notes decisions, including a Share entry with its name, position, and hash, round trip, while a file with no notes section reads as an empty list and serializing no notes omits the section.</summary>
     [Fact]
     public void Notes_decisions_round_trip_and_files_without_them_still_read()
     {
@@ -71,7 +69,6 @@ public sealed class DecisionsFileTests : IDisposable
         withoutNotes.Notes.ShouldBeEmpty();
     }
 
-    /// <summary>Deserializing a file with two notes entries for the same origin key throws <see cref="InvalidDataException"/> mentioning "two notes entries".</summary>
     [Fact]
     public void Notes_decisions_reject_two_entries_for_one_item()
     {
@@ -87,7 +84,6 @@ public sealed class DecisionsFileTests : IDisposable
         exception.Message.ShouldContain("two notes entries", StringComparison.Ordinal);
     }
 
-    /// <summary>WithNotes replaces entries for items it names, drops pending entries for items it omits, keeps non-pending entries, and FindNotes returns Pending for an unknown item.</summary>
     [Fact]
     public void Notes_updates_replace_entries_and_drop_stale_pending_ones()
     {
@@ -106,7 +102,6 @@ public sealed class DecisionsFileTests : IDisposable
         updated.FindNotes("a|b|f").ShouldBe(NotesDecision.Pending);
     }
 
-    /// <summary>Accepted and rejected finding choices for two items round trip and can be looked up by origin key and finding ID, while the JSON omits secret values and an unknown pair yields null.</summary>
     [Fact]
     public void Decisions_with_finding_decisions_round_trip_without_values()
     {
@@ -138,7 +133,6 @@ public sealed class DecisionsFileTests : IDisposable
         reread.FindFinding(BitwardenKey, "notes-password@notes:42").ShouldBeNull();
     }
 
-    /// <summary>The serialized JSON spells out the Member, Empty, and Pending choice kinds and the Accepted, Rejected, and Pending finding decisions by name.</summary>
     [Fact]
     public void Decisions_name_choice_kinds_and_finding_decisions_in_the_file()
     {
@@ -158,7 +152,6 @@ public sealed class DecisionsFileTests : IDisposable
         names.ShouldAllSatisfy(name => json.ShouldContain(name, StringComparison.Ordinal));
     }
 
-    /// <summary>A pending field choice with its options and a pending finding round trip without password values, Find and FindFinding report no decision for them, and rerunning the merge still leaves the conflict unresolved.</summary>
     [Fact]
     public void Pending_entries_round_trip_without_values_and_load_as_no_decision()
     {
@@ -190,7 +183,6 @@ public sealed class DecisionsFileTests : IDisposable
         rerun.Unresolved.ShouldHaveSingleItem().FieldPath.ShouldBe(conflict.FieldPath);
     }
 
-    /// <summary>A version 2 file with no findings section loads with an empty findings list.</summary>
     [Fact]
     public void Decisions_written_without_a_findings_section_still_load()
     {
@@ -201,7 +193,6 @@ public sealed class DecisionsFileTests : IDisposable
         decisions.Findings.ShouldBeEmpty();
     }
 
-    /// <summary>Lowercase "member" and "rejected" names in a hand-edited file load as the Member field choice and Rejected finding decision.</summary>
     [Fact]
     public void Decisions_edited_by_hand_with_lowercase_names_load()
     {
@@ -216,7 +207,6 @@ public sealed class DecisionsFileTests : IDisposable
         decisions.Find("g", "notes").ShouldBe(FieldChoice.Member("notes", "k"));
     }
 
-    /// <summary>Finding entries with a blank origin key, an empty finding ID, a numeric or missing decision, or null choices make deserialization throw <see cref="InvalidDataException"/>.</summary>
     [Theory]
     [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"findings":[{"originKey":" ","choices":[]}]}""")]
     [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"","decision":"accepted"}]}]}""")]
@@ -232,7 +222,6 @@ public sealed class DecisionsFileTests : IDisposable
         action.ShouldThrow<InvalidDataException>();
     }
 
-    /// <summary>Files declaring version 1 or 3 are rejected with an <see cref="InvalidDataException"/> that names the supported "version 2".</summary>
     [Theory]
     [InlineData("""{"version":1,"groups":[],"links":[],"splits":[]}""")]
     [InlineData("""{"version":3,"groups":[],"links":[],"splits":[]}""")]
@@ -248,7 +237,6 @@ public sealed class DecisionsFileTests : IDisposable
         exception.Message.ShouldContain("version 2", StringComparison.Ordinal);
     }
 
-    /// <summary>Field choices that lack the origin key of a Member kind, carry a numeric kind, or omit the kind make deserialization throw <see cref="InvalidDataException"/>.</summary>
     [Theory]
     [InlineData("""{"version":2,"groups":[{"groupKey":"g","choices":[{"fieldPath":"notes","kind":"member"}]}],"links":[],"splits":[]}""")]
     [InlineData("""{"version":2,"groups":[{"groupKey":"g","choices":[{"fieldPath":"notes","kind":7}]}],"links":[],"splits":[]}""")]
@@ -262,7 +250,6 @@ public sealed class DecisionsFileTests : IDisposable
         action.ShouldThrow<InvalidDataException>();
     }
 
-    /// <summary>A property the format does not define, at the top level or nested in groups, options, links, or findings, is rejected with a message containing its JSON path.</summary>
     [Theory]
     [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"finding":[{"originKey":"k","choices":[{"findingId":"f","decision":"Rejected"}]}]}""", "$.finding")]
     [InlineData("""{"version":2,"groups":[{"groupKey":"g","choices":[{"fieldPath":"notes","kind":"Member","origin":"k"}]}],"links":[],"splits":[]}""", "$.groups[0].choices[0].origin")]
@@ -281,7 +268,6 @@ public sealed class DecisionsFileTests : IDisposable
         exception.Message.ShouldContain(" " + jsonPath + " ", StringComparison.Ordinal);
     }
 
-    /// <summary>A property that appears twice, including with different casing, is rejected with a message containing its JSON path.</summary>
     [Theory]
     [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"f","decision":"Rejected"}]}],"findings":[]}""", "$.findings")]
     [InlineData("""{"version":2,"groups":[],"links":[],"splits":[],"findings":[{"originKey":"k","choices":[{"findingId":"f","decision":"Rejected"}]}],"Findings":[]}""", "$.Findings")]
@@ -302,7 +288,6 @@ public sealed class DecisionsFileTests : IDisposable
         exception.Message.ShouldContain(" " + jsonPath + " ", StringComparison.Ordinal);
     }
 
-    /// <summary>Reading a file with an unknown property throws an error naming the file path and "$.finding" but never echoing the property's value.</summary>
     [Fact]
     public void Read_names_the_file_and_the_json_path_of_an_unknown_property_without_its_value()
     {
@@ -323,7 +308,6 @@ public sealed class DecisionsFileTests : IDisposable
         message.ShouldNotContain(Value, StringComparison.Ordinal);
     }
 
-    /// <summary>An item name with an apostrophe and accent is written as typed, a name with tab and escape control characters is escaped, and both read back exactly.</summary>
     [Fact]
     public void Decisions_file_writes_item_names_as_typed_and_reads_them_back_exactly()
     {
@@ -349,7 +333,6 @@ public sealed class DecisionsFileTests : IDisposable
         options.Select(option => option.ItemName).ShouldBe([Name, controlName]);
     }
 
-    /// <summary>Right-to-left override, isolate, zero-width, soft-hyphen, and tag characters in an item name are written as <c>\u</c> escapes, never raw, and read back as the original name.</summary>
     [Fact]
     public void Decisions_file_escapes_format_characters_in_item_names_and_reads_them_back_exactly()
     {
@@ -373,7 +356,6 @@ public sealed class DecisionsFileTests : IDisposable
         reread.Findings.ShouldHaveSingleItem().ItemName.ShouldBe(name);
     }
 
-    /// <summary>Reading a path with no file returns the shared <see cref="MergeDecisions.None"/> instance and does not create the file.</summary>
     [Fact]
     public void Read_returns_no_decisions_when_the_file_does_not_exist()
     {
@@ -388,7 +370,6 @@ public sealed class DecisionsFileTests : IDisposable
         File.Exists(path).ShouldBeFalse();
     }
 
-    /// <summary>Writing over an existing group-readable file replaces its content, leaves it with owner-only permissions on Unix, and Read loads the written group decision.</summary>
     [Fact]
     public void Write_replaces_the_file_readable_only_by_its_owner_and_read_loads_it()
     {

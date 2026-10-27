@@ -11,7 +11,6 @@ public sealed class MergeDecisionsTests
     private const string OtherOriginKey = "bitwarden|bitwarden.json|bw-1";
     private const string GroupKey = "0000000000000000";
 
-    /// <summary>A high-confidence finding applies when no decision exists and stops applying once the decisions reject it.</summary>
     [Fact]
     public void Applies_pre_accepted_finding_unless_the_decisions_reject_it()
     {
@@ -28,7 +27,6 @@ public sealed class MergeDecisionsTests
         rejected.ShouldBeFalse();
     }
 
-    /// <summary>A medium-confidence finding does not apply without a decision, applies once accepted for its own item, and does not apply to a different item.</summary>
     [Fact]
     public void Applies_proposed_finding_only_when_the_decisions_accept_it_for_that_item()
     {
@@ -47,7 +45,6 @@ public sealed class MergeDecisionsTests
         otherItem.ShouldBeFalse();
     }
 
-    /// <summary>A finding choice holding the default <see cref="FindingDecision"/> value does not apply a medium-confidence finding.</summary>
     [Fact]
     public void Default_finding_decision_does_not_apply_a_proposed_finding()
     {
@@ -62,7 +59,6 @@ public sealed class MergeDecisionsTests
         applies.ShouldBeFalse();
     }
 
-    /// <summary>Pending finding choices are not decisions: FindFinding returns null, a proposed finding stays unapplied, and a pre-accepted high-confidence finding still applies.</summary>
     [Fact]
     public void Pending_finding_decision_counts_as_no_decision()
     {
@@ -88,7 +84,6 @@ public sealed class MergeDecisionsTests
         preAcceptedApplies.ShouldBeTrue();
     }
 
-    /// <summary>Find returns null for a pending choice in one group decision and still returns a member choice that a later decision of the same group key holds.</summary>
     [Fact]
     public void Pending_field_choice_counts_as_no_decision_and_a_later_decision_still_counts()
     {
@@ -110,7 +105,6 @@ public sealed class MergeDecisionsTests
         password.ShouldBe(member);
     }
 
-    /// <summary>WithPending keeps member choices, links, and non-pending finding decisions, replaces pending field and finding entries with the current unresolved conflicts, and adds a group for a new conflict.</summary>
     [Fact]
     public void Pending_entries_are_rebuilt_while_decisions_and_overrides_are_kept()
     {
@@ -162,7 +156,6 @@ public sealed class MergeDecisionsTests
         updated.Findings[1].Choices.ShouldBe([new FindingChoice("proposed@fields[0].value:0", FindingDecision.Pending)]);
     }
 
-    /// <summary>A member choice naming an origin key that is not in the conflict's members is replaced by a pending entry listing the real members, while an Empty choice is kept.</summary>
     [Fact]
     public void Member_choice_naming_an_item_outside_its_group_is_no_decision_and_its_pending_entry_takes_its_place()
     {
@@ -183,7 +176,6 @@ public sealed class MergeDecisionsTests
         choices[1].ShouldBe(empty);
     }
 
-    /// <summary>WithPending with no conflicts or findings removes pending-only groups and items, leaving empty group and finding lists.</summary>
     [Fact]
     public void Pending_entries_are_dropped_from_groups_and_items_left_without_choices()
     {

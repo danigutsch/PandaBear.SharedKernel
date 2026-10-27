@@ -8,7 +8,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 /// <summary>Tests that <see cref="SshKeyNormalizer"/> derives public keys and fingerprints, rewrites keys as PKCS#8, and falls back to secure notes without losing key text.</summary>
 public sealed class SshKeyNormalizerTests
 {
-    /// <summary>An Ed25519 OpenSSH key with a matching stored public key keeps that public key and its comment, gains the derived fingerprint, and produces no extra fields or conversion notes.</summary>
     [Fact]
     public void Normalize_fills_the_fingerprint_and_keeps_a_matching_stored_public_key_with_its_comment()
     {
@@ -29,7 +28,6 @@ public sealed class SshKeyNormalizerTests
         normalized.ConversionNotes.ShouldBeEmpty();
     }
 
-    /// <summary>A stored ECDSA public key that does not belong to the Ed25519 private key is replaced by the derived public key, saved in a "Public key (from source)" field, and explained in a conversion note.</summary>
     [Fact]
     public void Normalize_uses_the_derived_public_key_and_keeps_a_stored_one_that_names_another_key()
     {
@@ -48,7 +46,6 @@ public sealed class SshKeyNormalizerTests
         normalized.ConversionNotes.ShouldHaveSingleItem().ShouldContain("does not match the private key", StringComparison.Ordinal);
     }
 
-    /// <summary>A stored MD5-style fingerprint that differs from the derived SHA-256 fingerprint is replaced by the derived one and saved in a "Key fingerprint (from source)" field.</summary>
     [Fact]
     public void Normalize_keeps_a_stored_fingerprint_that_differs_from_the_derived_one()
     {
@@ -66,7 +63,6 @@ public sealed class SshKeyNormalizerTests
         normalized.Fields.ShouldBe([new CustomField("Key fingerprint (from source)", StoredFingerprint, CustomFieldType.Text)]);
     }
 
-    /// <summary>A 2048-bit RSA PKCS#1 private key becomes a PKCS#8 key with a derived <c>ssh-rsa</c> public key and SHA256 fingerprint, and one conversion note mentions PKCS#8.</summary>
     [Fact]
     public void Normalize_rewrites_a_pkcs1_rsa_key_as_pkcs8_and_notes_it()
     {
@@ -85,7 +81,6 @@ public sealed class SshKeyNormalizerTests
         normalized.ConversionNotes.ShouldHaveSingleItem().ShouldContain("PKCS#8", StringComparison.Ordinal);
     }
 
-    /// <summary>A "host:" line stored after a PKCS#1 key moves into a hidden "Private key (other text)" field, and the conversion notes name the field without repeating the line.</summary>
     [Fact]
     public void Normalize_keeps_text_stored_after_a_pkcs1_key_in_a_hidden_field()
     {
@@ -105,7 +100,6 @@ public sealed class SshKeyNormalizerTests
         normalized.ConversionNotes.ShouldAllSatisfy(note => note.ShouldNotContain(HostLine, StringComparison.Ordinal));
     }
 
-    /// <summary>When an RSA key follows a SEC1 P-256 key, only the first is converted to PKCS#8 with an <c>ecdsa-sha2-nistp256</c> public key, and the second goes unaltered into the hidden other-text field without appearing in notes.</summary>
     [Fact]
     public void Normalize_keeps_a_second_key_stored_after_a_sec1_key_in_a_hidden_field()
     {
@@ -126,7 +120,6 @@ public sealed class SshKeyNormalizerTests
         normalized.ConversionNotes.ShouldAllSatisfy(note => note.ShouldNotContain(secondKey.Split('\n')[1], StringComparison.Ordinal));
     }
 
-    /// <summary>A label line before an OpenSSH Ed25519 key is moved to the hidden other-text field so the key slot holds exactly the key block.</summary>
     [Fact]
     public void Normalize_keeps_only_the_first_key_block_in_the_key_slot_whatever_its_format()
     {
@@ -145,7 +138,6 @@ public sealed class SshKeyNormalizerTests
         normalized.ConversionNotes.ShouldHaveSingleItem().ShouldContain("\"Private key (other text)\"", StringComparison.Ordinal);
     }
 
-    /// <summary>A label before and a host line after the key are joined with LF line endings into one hidden other-text field.</summary>
     [Fact]
     public void Normalize_keeps_text_stored_before_and_after_the_key_in_one_hidden_field()
     {
@@ -164,7 +156,6 @@ public sealed class SshKeyNormalizerTests
         normalized.Fields.ShouldBe([new CustomField(SshKeyNormalizer.OtherTextField, Label + "\n" + HostLine, CustomFieldType.Hidden)]);
     }
 
-    /// <summary>An encrypted OpenSSH key followed by an RSA key makes a secure note whose hidden private-key field holds the whole stored text unchanged.</summary>
     [Fact]
     public void Normalize_keeps_both_keys_when_the_first_key_cannot_be_converted()
     {
@@ -181,7 +172,6 @@ public sealed class SshKeyNormalizerTests
         normalized.Fields.ShouldBe([new CustomField(SshKeyNormalizer.PrivateKeyField, stored, CustomFieldType.Hidden)]);
     }
 
-    /// <summary>An SSH key item that already has a public key and fingerprint is returned as the same instance even when its private-key text has a label and a second key around the first.</summary>
     [Fact]
     public void Normalize_leaves_text_around_the_key_of_a_complete_ssh_key_item_in_its_key_slot()
     {
@@ -198,7 +188,6 @@ public sealed class SshKeyNormalizerTests
         normalized.SshKey.ShouldNotBeNull().PrivateKey.ShouldBe(stored);
     }
 
-    /// <summary>A SEC1 key with explicit curve parameters becomes a secure note with the PEM kept in a hidden field and a note about the unsupported ECDSA curve that repeats no PEM line.</summary>
     [Fact]
     public void Normalize_turns_a_sec1_key_with_explicit_curve_parameters_into_a_secure_note_that_keeps_the_key()
     {
@@ -220,7 +209,6 @@ public sealed class SshKeyNormalizerTests
         pem.Split('\n').ShouldAllSatisfy(line => note.ShouldNotContain(line, StringComparison.Ordinal));
     }
 
-    /// <summary>An encrypted OpenSSH key becomes a secure note that keeps the existing Hostname field and adds hidden private-key and public-key fields, with a note that encrypted keys are not converted and no key line in it.</summary>
     [Fact]
     public void Normalize_turns_a_key_that_cannot_be_converted_into_a_secure_note_that_keeps_the_key()
     {
@@ -249,7 +237,6 @@ public sealed class SshKeyNormalizerTests
         note.ShouldNotContain(pem.Split('\n')[1], StringComparison.Ordinal);
     }
 
-    /// <summary>A PKCS#1 RSA or SEC1 EC key block whose body is not valid base64 becomes a secure note keeping the PEM in a hidden field, with a "key body is not base64" note that repeats no PEM line.</summary>
     [Theory]
     [InlineData("RSA PRIVATE KEY")]
     [InlineData("EC PRIVATE KEY")]
@@ -271,7 +258,6 @@ public sealed class SshKeyNormalizerTests
         pem.Split('\n').ShouldAllSatisfy(line => note.ShouldNotContain(line, StringComparison.Ordinal));
     }
 
-    /// <summary>An SSH key item holding only a public key becomes a secure note with that public key in a text field and a "no private key" conversion note.</summary>
     [Fact]
     public void Normalize_turns_an_ssh_key_item_without_a_private_key_into_a_secure_note()
     {
@@ -287,7 +273,6 @@ public sealed class SshKeyNormalizerTests
         normalized.ConversionNotes.ShouldHaveSingleItem().ShouldContain("no private key", StringComparison.Ordinal);
     }
 
-    /// <summary>An SSH key item with private key, public key, and fingerprint already set, and a secure note, are each returned as the same instance.</summary>
     [Fact]
     public void Normalize_leaves_complete_ssh_keys_and_other_items_unchanged()
     {

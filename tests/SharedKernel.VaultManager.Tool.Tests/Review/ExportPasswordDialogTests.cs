@@ -10,7 +10,6 @@ public sealed class ExportPasswordDialogTests
 {
     private const string Password = "fixture export password";
 
-    /// <summary>Two matching entries of at least twelve characters close the dialog and become its result.</summary>
     [Fact]
     public void Matching_entries_of_at_least_twelve_characters_are_the_result()
     {
@@ -31,7 +30,6 @@ public sealed class ExportPasswordDialogTests
         dialog.StopRequested.ShouldBeTrue();
     }
 
-    /// <summary>An entry that is too short or does not match its confirmation keeps the dialog open, returns no result, and never echoes either entry in the problem text.</summary>
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -61,7 +59,6 @@ public sealed class ExportPasswordDialogTests
         dialog.Problem.ShouldNotContain(second, StringComparison.Ordinal);
     }
 
-    /// <summary>Pressing Escape closes the dialog with no password.</summary>
     [Fact]
     public void Escape_cancels_without_a_password()
     {

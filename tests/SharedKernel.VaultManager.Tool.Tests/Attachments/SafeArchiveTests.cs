@@ -6,7 +6,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Attachments;
 /// <summary>Tests safe opening and reading of zip archives and their limits.</summary>
 public sealed class SafeArchiveTests
 {
-    /// <summary>Verifies that opening lists the file entries with their measured size and kind.</summary>
     [Fact]
     public void Open_lists_file_entries_with_measured_size_and_kind()
     {
@@ -22,7 +21,6 @@ public sealed class SafeArchiveTests
         archive.Find("missing").ShouldBeNull();
     }
 
-    /// <summary>Verifies that reading returns the entry bytes and that reading text skips binary entries.</summary>
     [Fact]
     public void ReadAllBytes_returns_entry_content_and_text_reading_skips_binaries()
     {
@@ -41,7 +39,6 @@ public sealed class SafeArchiveTests
         binaryText.ShouldBeNull();
     }
 
-    /// <summary>Verifies that the SHA-256 of an entry is the digest of its bytes for text and binary entries.</summary>
     [Fact]
     public void ComputeSha256_returns_the_digest_of_the_entry_bytes_for_text_and_binaries()
     {
@@ -60,7 +57,6 @@ public sealed class SafeArchiveTests
         binaryDigest.ShouldBe(System.Security.Cryptography.SHA256.HashData(binary));
     }
 
-    /// <summary>Verifies that an archive whose actual expansion ratio is too high is rejected.</summary>
     [Fact]
     public void Open_rejects_compression_ratio_bomb_measured_on_actual_bytes()
     {
@@ -76,7 +72,6 @@ public sealed class SafeArchiveTests
         exception.Message.ShouldContain("ratio", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that an archive with more entries than the limit is rejected.</summary>
     [Fact]
     public void Open_rejects_more_entries_than_the_limit()
     {
@@ -93,7 +88,6 @@ public sealed class SafeArchiveTests
         exception.Message.ShouldContain("entries", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that an archive whose expanded size exceeds the limit is rejected.</summary>
     [Fact]
     public void Open_rejects_expanded_size_above_the_limit()
     {
@@ -113,7 +107,6 @@ public sealed class SafeArchiveTests
         exception.Message.ShouldContain("expanded", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that entry paths that would escape the archive are rejected.</summary>
     [Theory]
     [InlineData("../evil.txt")]
     [InlineData("files/../../evil.txt")]
@@ -136,7 +129,6 @@ public sealed class SafeArchiveTests
         exception.Message.ShouldNotContain("evil", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that archives nested two levels deep open.</summary>
     [Fact]
     public void Open_allows_nesting_up_to_two_levels()
     {
@@ -152,7 +144,6 @@ public sealed class SafeArchiveTests
         archive.Entries.ShouldHaveSingleItem().Kind.ShouldBe(AttachmentKind.Zip);
     }
 
-    /// <summary>Verifies that archives nested more than two levels deep are rejected.</summary>
     [Fact]
     public void Open_rejects_nesting_deeper_than_two_levels()
     {
@@ -171,7 +162,6 @@ public sealed class SafeArchiveTests
         exception.Message.ShouldContain("nested", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a path traversal inside a nested archive is rejected.</summary>
     [Fact]
     public void Open_rejects_traversal_inside_nested_archive()
     {
@@ -185,7 +175,6 @@ public sealed class SafeArchiveTests
         action.ShouldThrow<InvalidDataException>();
     }
 
-    /// <summary>Verifies that data that is not a zip is rejected.</summary>
     [Fact]
     public void Open_rejects_data_that_is_not_a_zip()
     {
@@ -196,7 +185,6 @@ public sealed class SafeArchiveTests
         action.ShouldThrow<InvalidDataException>();
     }
 
-    /// <summary>Verifies that the default limits have the documented values.</summary>
     [Fact]
     public void Default_limits_match_the_design()
     {

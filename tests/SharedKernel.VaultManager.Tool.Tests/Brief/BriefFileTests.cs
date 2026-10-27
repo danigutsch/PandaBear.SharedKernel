@@ -14,7 +14,6 @@ public sealed class BriefFileTests : IDisposable
     /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
-    /// <summary>Verifies that a brief reads back as written and the file is readable only by its owner.</summary>
     [Fact]
     public void Brief_round_trips_and_is_written_readable_only_by_its_owner()
     {
@@ -58,7 +57,6 @@ public sealed class BriefFileTests : IDisposable
         }
     }
 
-    /// <summary>Verifies that a brief that repeats a group, member, or finding is rejected.</summary>
     [Theory]
     [InlineData("group", "two groups with the key g1")]
     [InlineData("member", "lists keeper|keeper.json|rec-1 twice")]
@@ -80,7 +78,6 @@ public sealed class BriefFileTests : IDisposable
         exception.Message.ShouldContain(named, StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a brief with unknown, repeated, or missing properties, or another version, is rejected.</summary>
     [Theory]
     [InlineData("""{"version":1,"inputs":[],"summary":{"items":0,"mergedGroups":0,"conflictsResolvedByPolicy":0,"fieldsNeedingDecision":0,"findings":0,"findingsApplied":0,"findingsNeedingDecision":0,"passwordIssues":0,"attachmentsToUpload":0},"groups":[],"suggestions":[],"extra":1}""", "$.extra")]
     [InlineData("""{"version":1,"inputs":[],"summary":{"items":0,"mergedGroups":0,"conflictsResolvedByPolicy":0,"fieldsNeedingDecision":0,"findings":0,"findingsApplied":0,"findingsNeedingDecision":0,"passwordIssues":0,"attachmentsToUpload":0},"groups":[],"groups":[],"suggestions":[]}""", "$.groups")]

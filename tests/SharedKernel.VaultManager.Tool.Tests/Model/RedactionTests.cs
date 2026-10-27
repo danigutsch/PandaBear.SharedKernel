@@ -7,7 +7,6 @@ public sealed class RedactionTests
 {
     private const string Secret = "fixture-secret-value";
 
-    /// <summary>The printed item, custom field, login, passkey, card, identity, SSH key, and password history entry never contain the secret, while the item still prints its visible name.</summary>
     [Fact]
     public void ToString_of_secret_bearing_records_never_contains_values()
     {
@@ -51,7 +50,6 @@ public sealed class RedactionTests
         printed[0].ShouldContain("visible name", StringComparison.Ordinal);
     }
 
-    /// <summary>A printed attachment reference shows its file name but not its SHA-256 content hash.</summary>
     [Fact]
     public void ToString_of_an_attachment_never_contains_its_content_hash()
     {

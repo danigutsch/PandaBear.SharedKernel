@@ -9,7 +9,6 @@ namespace PandaBear.PlaywrightMcp.Tool.Tests;
 [Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 public sealed class PlaywrightMcpApplicationTests
 {
-    /// <summary>Verifies that the runtime is started against the current local Docker context and exits 0.</summary>
     [Fact]
     public async Task Uses_the_current_local_docker_context_for_runtime()
     {
@@ -56,7 +55,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that a remote current Docker context is refused with exit code 1.</summary>
     [Fact]
     public async Task Rejects_a_remote_current_docker_context()
     {
@@ -78,7 +76,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldContain("Refusing non-local Docker context 'remote-builder'", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that the exit code of the attached container is the tool's exit code and nothing is printed.</summary>
     [Fact]
     public async Task Returns_the_attached_container_exit_code()
     {
@@ -111,7 +108,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that a failing context inspection exits 1 with its error and starts no runtime.</summary>
     [Fact]
     public async Task Fails_closed_when_docker_context_inspection_fails()
     {
@@ -154,7 +150,6 @@ public sealed class PlaywrightMcpApplicationTests
         ]);
     }
 
-    /// <summary>Verifies that an already cancelled run starts no process and reports the cancellation.</summary>
     [Fact]
     public async Task Pre_cancelled_execution_does_not_start_a_process()
     {
@@ -181,7 +176,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldContain("Playwright MCP was cancelled", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a relative <c>PATH</c> entry never resolves the runtime executable.</summary>
     [Fact]
     public void Relative_path_entries_cannot_resolve_a_container_runtime()
     {
@@ -192,7 +186,6 @@ public sealed class PlaywrightMcpApplicationTests
         executable.ShouldBeNull();
     }
 
-    /// <summary>Verifies that a non-executable file in <c>PATH</c> is skipped when resolving the runtime.</summary>
     [Fact]
     public void Files_without_an_execute_bit_cannot_resolve_a_container_runtime()
     {
@@ -219,7 +212,6 @@ public sealed class PlaywrightMcpApplicationTests
         resolvedPath.ShouldBe(expectedPath, "A file without an execute bit cannot start, so the next PATH entry supplies the runtime.");
     }
 
-    /// <summary>Verifies that Podman outside rootless mode is refused before the runtime starts.</summary>
     [Fact]
     public async Task Rejects_non_rootless_podman_before_runtime_start()
     {
@@ -244,7 +236,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldContain("requires local rootless Podman mode", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that cancelling a run force-removes the container by name.</summary>
     [Fact]
     public async Task Cancellation_force_removes_the_named_container()
     {
@@ -289,7 +280,6 @@ public sealed class PlaywrightMcpApplicationTests
         cleanupStartInfo.ArgumentList.ShouldContain(static argument => argument.StartsWith("sharedkernel-playwright-mcp-", StringComparison.Ordinal));
     }
 
-    /// <summary>Verifies that a failed removal after cancellation reports the container name and the engine's error.</summary>
     [Fact]
     public async Task Reports_failed_cancellation_cleanup_with_the_container_name()
     {
@@ -322,7 +312,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldContain("permission denied", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that <c>prepare</c> returns the exit code of the image pull and runs no container cleanup.</summary>
     [Fact]
     public async Task Prepare_returns_pull_exit_code_without_runtime_cleanup()
     {
@@ -365,7 +354,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that <c>clean</c> returns the exit code of the image removal and runs no container cleanup.</summary>
     [Fact]
     public async Task Clean_returns_image_remove_exit_code_without_runtime_cleanup()
     {
@@ -405,7 +393,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that <c>prepare</c> and <c>clean</c> send the engine's output to standard error and keep standard output empty.</summary>
     [Theory]
     [InlineData("prepare")]
     [InlineData("clean")]
@@ -439,7 +426,6 @@ public sealed class PlaywrightMcpApplicationTests
             "engine output" + Environment.NewLine + "engine warning" + Environment.NewLine);
     }
 
-    /// <summary>Verifies that a failing engine check exits 1 with its message before the runtime starts.</summary>
     [Theory]
     [InlineData("docker", "Docker current-context inspection failed: preflight denied")]
     [InlineData("podman", "Podman rootless inspection failed: preflight denied")]
@@ -468,7 +454,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldContain(expectedMessage, StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that an invalid current context name is rejected before the context is inspected.</summary>
     [Theory]
     [InlineData(" ")]
     [InlineData("default\rremote")]
@@ -497,7 +482,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldContain("Docker returned an invalid current context name.", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a runtime process that fails to start triggers container removal before the error is reported.</summary>
     [Theory]
     [InlineData("invalid", "runtime failed")]
     [InlineData("win32", "Could not start Playwright MCP: runtime failed")]
@@ -551,7 +535,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldContain(expectedMessage, StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a Podman cleanup failure after the runtime exits is reported with the container name.</summary>
     [Fact]
     public async Task Podman_cleanup_failures_are_reported_after_runtime_exit()
     {
@@ -582,7 +565,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldContain("permission denied", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a container removal timeout is reported with the container name and a manual removal hint.</summary>
     [Fact]
     public async Task Cleanup_timeout_is_reported_with_the_container_name()
     {
@@ -614,7 +596,6 @@ public sealed class PlaywrightMcpApplicationTests
         environment.Error.ToString().ShouldContain("Remove it manually.", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a quoted absolute <c>PATH</c> entry resolves the built tool executable.</summary>
     [Fact]
     public void Resolves_the_built_tool_from_a_quoted_absolute_path_entry()
     {
@@ -633,7 +614,6 @@ public sealed class PlaywrightMcpApplicationTests
         executable.ShouldBe(Path.Combine(AppContext.BaseDirectory, expectedFileName));
     }
 
-    /// <summary>Verifies that the process runner executes the built tool and captures its standard error.</summary>
     [Fact]
     public async Task Run_process_executes_the_built_tool_and_captures_standard_error()
     {
@@ -675,7 +655,6 @@ public sealed class PlaywrightMcpApplicationTests
         result.StandardError.ShouldContain("Playwright MCP requires Docker or Podman.", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that cancelling the process runner kills the running child and still surfaces the cancellation.</summary>
     [Fact]
     public async Task Cancellation_is_preserved_after_terminating_a_running_child()
     {
@@ -695,7 +674,6 @@ public sealed class PlaywrightMcpApplicationTests
         child.IsRunning.ShouldBeFalse();
     }
 
-    /// <summary>Verifies that the process runner forwards each output line while the child is still running.</summary>
     [Fact]
     public async Task Run_process_forwards_each_output_line_while_the_child_runs()
     {

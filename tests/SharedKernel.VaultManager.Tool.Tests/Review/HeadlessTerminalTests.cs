@@ -7,7 +7,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Review;
 [Collection(HeadlessTerminal.Collection)]
 public sealed class HeadlessTerminalTests
 {
-    /// <summary>A headless application uses a fake clipboard instead of the developer's real one.</summary>
     [Fact]
     public void Headless_applications_copy_and_paste_with_a_fake_clipboard()
     {

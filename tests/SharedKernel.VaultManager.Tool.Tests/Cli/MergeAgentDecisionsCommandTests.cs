@@ -20,7 +20,6 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
     /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
-    /// <summary>Verifies that merge takes the agent decisions, checks them against the brief, and writes the vault.</summary>
     [Fact]
     public async Task Merge_takes_the_agent_decisions_from_the_brief_and_writes_the_vault()
     {
@@ -48,7 +47,6 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         DecisionsFile.Read(decisionsPath).Groups.ShouldHaveSingleItem().Choices.ShouldHaveSingleItem().Kind.ShouldBe(FieldChoiceKind.Pending);
     }
 
-    /// <summary>Verifies that a user decision wins over an agent decision on the same field.</summary>
     [Fact]
     public async Task The_user_decision_wins_over_the_agent_decision_on_the_same_field()
     {
@@ -86,7 +84,6 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         item.Notes.ShouldBe("fixture bitwarden notes");
     }
 
-    /// <summary>Verifies that merge refuses agent decisions outside the limits before it asks for any password.</summary>
     [Theory]
     [InlineData("empty choice", "is Empty")]
     [InlineData("link", "links are not allowed")]
@@ -132,7 +129,6 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         File.Exists(decisionsPath).ShouldBeFalse();
     }
 
-    /// <summary>Verifies that merge checks agent decisions against the inputs as read, so an edited brief cannot add a field.</summary>
     [Fact]
     public async Task Merge_checks_the_agent_decisions_against_the_inputs_as_read_so_an_edited_brief_adds_no_field()
     {
@@ -164,7 +160,6 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
-    /// <summary>Verifies that merge refuses a brief made from other input files before it asks for any password.</summary>
     [Fact]
     public async Task Merge_refuses_a_brief_of_other_input_files_before_any_password_prompt()
     {
@@ -188,7 +183,6 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
-    /// <summary>Verifies that the user can finish what the agent left undecided and the same agent file still applies.</summary>
     [Fact]
     public async Task The_user_finishes_what_the_agent_left_and_the_same_agent_file_still_applies()
     {
@@ -225,7 +219,6 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         item.Notes.ShouldBe("fixture keeper notes");
     }
 
-    /// <summary>Verifies that merge lists the pre-accepted findings that the agent rejects.</summary>
     [Fact]
     public async Task Merge_lists_the_pre_accepted_findings_that_the_agent_rejects()
     {
@@ -265,7 +258,6 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         codes.ShouldAllSatisfy(code => run.Output.ShouldNotContain(code, StringComparison.Ordinal));
     }
 
-    /// <summary>Verifies that merge with agent decisions needs the brief the agent read.</summary>
     [Fact]
     public async Task Merge_needs_the_brief_the_agent_read()
     {
@@ -281,7 +273,6 @@ public sealed class MergeAgentDecisionsCommandTests : IDisposable
         run.Error.ShouldContain("--agent-decisions needs --brief", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that merge refuses an agent decisions file that is also the decisions file.</summary>
     [Fact]
     public async Task Merge_refuses_an_agent_decisions_file_that_is_the_decisions_file()
     {

@@ -5,7 +5,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Cli;
 /// <summary>Tests that the command lines shown in the tool readme match the real command tree.</summary>
 public sealed class ToolReadmeTests
 {
-    /// <summary>Parsing every command line extracted from the readme against the real command tree yields no parse errors.</summary>
     [Fact]
     public void Every_command_line_in_the_tool_readme_parses_with_the_real_command_tree()
     {
@@ -23,7 +22,6 @@ public sealed class ToolReadmeTests
         failures.ShouldBeEmpty();
     }
 
-    /// <summary>The distinct commands that the readme's command lines resolve to include inspect, scan, and merge.</summary>
     [Fact]
     public void Tool_readme_shows_inspect_scan_and_merge()
     {

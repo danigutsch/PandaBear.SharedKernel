@@ -13,7 +13,6 @@ public sealed class LargeTextScanTests
 {
     private const string FieldPath = "attachment:notes.txt";
 
-    /// <summary>Scanning a large text finds every question and answer pair within the scan time budget.</summary>
     [Fact(Timeout = LargeTexts.ScanBudget)]
     public async Task ScanText_finds_every_question_and_answer_pair_of_a_large_text()
     {
@@ -27,7 +26,6 @@ public sealed class LargeTextScanTests
         ScanCoverage.ShouldReportEverySecretOrFlagItForReview(findings, answers, SecretKind.SecurityQuestion);
     }
 
-    /// <summary>Scanning a large log finds every access key ID within the scan time budget.</summary>
     [Fact(Timeout = LargeTexts.ScanBudget)]
     public async Task ScanText_finds_every_access_key_ID_of_a_large_log()
     {
@@ -41,7 +39,6 @@ public sealed class LargeTextScanTests
         ScanCoverage.ShouldReportEverySecretOrFlagItForReview(findings, keys, SecretKind.AccessKeyId);
     }
 
-    /// <summary>Scanning finds questions separated by long runs of blank lines within the scan time budget.</summary>
     [Fact(Timeout = LargeTexts.ScanBudget)]
     public async Task ScanText_finds_questions_separated_by_long_runs_of_blank_lines()
     {

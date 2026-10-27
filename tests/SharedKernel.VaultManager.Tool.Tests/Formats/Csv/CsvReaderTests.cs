@@ -5,7 +5,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Formats.Csv;
 /// <summary>Tests the CSV parser used by the CSV format readers.</summary>
 public sealed class CsvReaderTests
 {
-    /// <summary>The text "a,b,c" and "d,,f" on two lines yields two records, the second with an empty middle field.</summary>
     [Fact]
     public void Parse_splits_plain_fields_and_records()
     {
@@ -16,7 +15,6 @@ public sealed class CsvReaderTests
         records.Select(record => record.Fields).ShouldBe([["a", "b", "c"], ["d", "", "f"]]);
     }
 
-    /// <summary>Quoted fields keep embedded commas, doubled quotes, and CRLF and LF line breaks, and the record after a multi-line field reports line number 4.</summary>
     [Fact]
     public void Parse_reads_quoted_fields_with_commas_doubled_quotes_and_line_breaks()
     {
@@ -29,7 +27,6 @@ public sealed class CsvReaderTests
         records[1].LineNumber.ShouldBe(4);
     }
 
-    /// <summary>The same two records parse from CRLF text and LF text that each end with a line break, without a third empty record.</summary>
     [Fact]
     public void Parse_accepts_crlf_and_lf_line_endings_and_ignores_trailing_empty_line()
     {
@@ -42,7 +39,6 @@ public sealed class CsvReaderTests
         lf.Select(record => record.Fields).ShouldBe([["a", "b"], ["c", "d"]]);
     }
 
-    /// <summary>A leading U+FEFF is removed so the first field is "folder".</summary>
     [Fact]
     public void Parse_strips_byte_order_mark()
     {
@@ -54,7 +50,6 @@ public sealed class CsvReaderTests
         record.Fields[0].ShouldBe("folder");
     }
 
-    /// <summary>An empty string yields no records.</summary>
     [Fact]
     public void Parse_returns_no_records_for_empty_text()
     {
@@ -65,7 +60,6 @@ public sealed class CsvReaderTests
         records.ShouldBeEmpty();
     }
 
-    /// <summary>A quote opened on line 2 and never closed throws InvalidDataException that names line 2 and does not repeat the quoted secret.</summary>
     [Fact]
     public void Parse_unterminated_quote_throws_with_line_number_and_no_value()
     {
@@ -80,7 +74,6 @@ public sealed class CsvReaderTests
         exception.Message.ShouldNotContain("secret-value", StringComparison.Ordinal);
     }
 
-    /// <summary>A character directly after a closing quote, as in "a"b, throws InvalidDataException that names line 1.</summary>
     [Fact]
     public void Parse_text_after_closing_quote_throws_with_line_number()
     {
@@ -94,7 +87,6 @@ public sealed class CsvReaderTests
         exception.Message.ShouldContain("line 1", StringComparison.Ordinal);
     }
 
-    /// <summary>The string form of a parsed record does not contain its field values.</summary>
     [Fact]
     public void ToString_of_record_never_contains_values()
     {

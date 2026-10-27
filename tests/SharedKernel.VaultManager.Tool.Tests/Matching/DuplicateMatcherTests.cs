@@ -7,7 +7,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Matching;
 /// <summary>Tests how the duplicate matcher groups vault items and suggests related items.</summary>
 public sealed class DuplicateMatcherTests
 {
-    /// <summary>Two logins with the same host and a username that differs only in case and trailing space form one group with both members and origin keys and the status Different.</summary>
     [Fact]
     public void Match_same_host_and_username_groups_items()
     {
@@ -25,7 +24,6 @@ public sealed class DuplicateMatcherTests
         group.Status.ShouldBe(MatchStatus.Different);
     }
 
-    /// <summary>Logins whose addresses differ by a www prefix, scheme, port, path, query, or host case still form one group of three.</summary>
     [Fact]
     public void Match_www_scheme_and_path_are_ignored()
     {
@@ -44,7 +42,6 @@ public sealed class DuplicateMatcherTests
         result.Groups.ShouldHaveSingleItem().Members.Count.ShouldBe(3);
     }
 
-    /// <summary>Two logins on the same host with the usernames alice and bob form two separate groups, both with the status Unique.</summary>
     [Fact]
     public void Match_same_host_different_username_stays_separate()
     {
@@ -60,7 +57,6 @@ public sealed class DuplicateMatcherTests
         result.Groups.ShouldAllSatisfy(group => group.Status.ShouldBe(MatchStatus.Unique));
     }
 
-    /// <summary>Two notes whose titles differ only in spacing and case group together, a login with the same title stays in its own group, and the matcher suggests the same-title relation.</summary>
     [Fact]
     public void Match_title_and_type_fallback_without_uri()
     {
@@ -79,7 +75,6 @@ public sealed class DuplicateMatcherTests
         result.Suggestions.ShouldContain(suggestion => suggestion.Kind == MatchSuggestionKind.SameTitle);
     }
 
-    /// <summary>Logins for alice and bob on hosts that differ only by a www prefix stay in two groups and yield one same-host-different-username suggestion with both origin keys and names.</summary>
     [Fact]
     public void Match_same_host_only_is_suggested_not_grouped()
     {
@@ -100,7 +95,6 @@ public sealed class DuplicateMatcherTests
         suggestion.SecondName.ShouldBe("Mail for Bob");
     }
 
-    /// <summary>Group keys are 16 lowercase hex digits and are the same for equal items without IDs, copies of the items, and a reordered input, with three different content-based origin keys.</summary>
     [Fact]
     public void Match_group_keys_are_stable_across_runs()
     {
@@ -129,7 +123,6 @@ public sealed class DuplicateMatcherTests
         contentKeys.Distinct(StringComparer.Ordinal).Count().ShouldBe(3);
     }
 
-    /// <summary>With caller-supplied origin keys and a split override between the first two duplicates, the matcher yields three groups that report those keys and suggests the first and third items.</summary>
     [Fact]
     public void Match_with_supplied_origin_keys_uses_them_for_groups_overrides_and_suggestions()
     {
@@ -151,7 +144,6 @@ public sealed class DuplicateMatcherTests
             && string.Equals(suggestion.SecondOriginKey, "input|three", StringComparison.Ordinal));
     }
 
-    /// <summary>Supplying one origin key for two items, or the same key twice, throws ArgumentException.</summary>
     [Fact]
     public void Match_rejects_supplied_origin_keys_that_are_misaligned_or_repeated()
     {
@@ -166,7 +158,6 @@ public sealed class DuplicateMatcherTests
         repeated.ShouldThrow<ArgumentException>();
     }
 
-    /// <summary>A forced link joins two unlike logins into one group and a split separates two duplicates, leaving the groups [first, other] and [duplicate].</summary>
     [Fact]
     public void Match_forced_link_and_split_overrides_apply()
     {

@@ -10,7 +10,6 @@ public sealed class PasswordPromptsTests
     private const string ExportPassword = "fixture export password";
     private const string FilePassword = "fixture file password";
 
-    /// <summary>Verifies that prompts replace control characters in their text.</summary>
     [Fact]
     public async Task Prompts_replace_control_characters_in_their_text()
     {

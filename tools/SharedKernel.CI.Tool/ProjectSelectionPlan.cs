@@ -14,6 +14,7 @@ internal static class ProjectSelectionPlan
     /// <summary>The plan file in the selection directory.</summary>
     public const string PlanFileName = "selection.json";
 
+    /// <summary>Computes the test project selection for a revision range, writes the plan and its outputs, and exports them for GitHub Actions when an output file is given.</summary>
     public static async Task Write(
         string root,
         string directory,

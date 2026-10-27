@@ -5,7 +5,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 /// <summary>Tests the secret findings report.</summary>
 public sealed class FindingsReportTests
 {
-    /// <summary>The findings report never contains secret values in the Markdown or text format, only item names and kinds.</summary>
     [Fact]
     public void Findings_report_never_contains_secret_values()
     {
@@ -38,7 +37,6 @@ public sealed class FindingsReportTests
         markdown.ShouldContain("| Item |", StringComparison.Ordinal);
     }
 
-    /// <summary>The findings report replaces control characters in item names in both formats.</summary>
     [Fact]
     public void Findings_report_replaces_control_characters_in_item_names_in_both_formats()
     {
@@ -57,7 +55,6 @@ public sealed class FindingsReportTests
         text.ShouldStartWith("visible\uFFFD[31m item\uFFFD\t", StringComparison.Ordinal);
     }
 
-    /// <summary>A finding's string form, message, and location never contain the secret value or the question text.</summary>
     [Fact]
     public void Finding_to_string_never_contains_secret_values()
     {

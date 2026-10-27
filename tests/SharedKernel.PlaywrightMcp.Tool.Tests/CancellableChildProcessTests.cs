@@ -7,7 +7,6 @@ namespace PandaBear.PlaywrightMcp.Tool.Tests;
 [Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 public sealed class CancellableChildProcessTests
 {
-    /// <summary>Verifies that the child reports its identity, keeps running, and is gone after disposal.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -43,7 +42,6 @@ public sealed class CancellableChildProcessTests
         child.IsRunning.ShouldBeFalse();
     }
 
-    /// <summary>Verifies that cancelling the caller's token while waiting for readiness surfaces as an <see cref="OperationCanceledException"/> carrying that token.</summary>
     [Fact]
     public async Task Readiness_preserves_caller_cancellation()
     {
@@ -60,7 +58,6 @@ public sealed class CancellableChildProcessTests
         exception.CancellationToken.IsCancellationRequested.ShouldBeTrue();
     }
 
-    /// <summary>Verifies that a process with a different start time does not match a recorded identity, as when a process ID is reused.</summary>
     [Fact]
     public void Reused_process_ids_do_not_match_the_original_child_identity()
     {

@@ -10,9 +10,6 @@ public sealed class FormatDetectorTests : IDisposable
     /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
-    /// <summary>Each Keeper, Bitwarden, and unrelated sample file is detected as the expected format, with unrecognized zip, JSON, and text files detected as unknown.</summary>
-    /// <param name="sample">The name of the sample written by the sample factory.</param>
-    /// <param name="expected">The name of the expected format.</param>
     [Theory]
     [InlineData("keeper-json", "KeeperJson")]
     [InlineData("keeper-array", "KeeperJson")]
@@ -39,7 +36,6 @@ public sealed class FormatDetectorTests : IDisposable
         format.ShouldBe(Enum.Parse<VaultFileFormat>(expected));
     }
 
-    /// <summary>Keeper JSON content in a file named export.csv is still detected as Keeper JSON.</summary>
     [Fact]
     public void Detect_ignores_file_extension()
     {

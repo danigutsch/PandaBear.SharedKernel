@@ -13,7 +13,6 @@ public sealed class PasswordProtectedExportTests
     private static readonly KdfConfig FastPbkdf2 = new(KdfType.Pbkdf2Sha256, 5_000);
     private static readonly KdfConfig SmallArgon2id = new(KdfType.Argon2id, 2, 16, 1);
 
-    /// <summary>Encrypting an empty export with a 5,000-iteration PBKDF2 setting and decrypting it with the same password returns the original JSON.</summary>
     [Fact]
     public void Encrypt_then_decrypt_with_pbkdf2_returns_original_json()
     {
@@ -25,7 +24,6 @@ public sealed class PasswordProtectedExportTests
         decrypted.ShouldBe(EmptyExport);
     }
 
-    /// <summary>Encrypting an empty export with a small Argon2id setting and decrypting it with the same password returns the original JSON.</summary>
     [Fact]
     public void Encrypt_then_decrypt_with_argon2id_returns_original_json()
     {
@@ -37,7 +35,6 @@ public sealed class PasswordProtectedExportTests
         decrypted.ShouldBe(EmptyExport);
     }
 
-    /// <summary>The envelope is flagged encrypted and password protected, records the Argon2id kind and 16 memory, and holds validation and data strings that start with "2.".</summary>
     [Fact]
     public void Encrypt_writes_bitwarden_envelope_fields()
     {
@@ -54,8 +51,6 @@ public sealed class PasswordProtectedExportTests
         document["data"].ShouldNotBeNull().GetValue<string>().ShouldStartWith("2.", StringComparison.Ordinal);
     }
 
-    /// <summary>Decrypting the PBKDF2 and Argon2id fixtures that were generated outside this code with the fixture password returns the plain-small.json content.</summary>
-    /// <param name="fixture">The fixture file of the password-protected export.</param>
     [Theory]
     [InlineData("bitwarden/protected-pbkdf2.json")]
     [InlineData("bitwarden/protected-argon2id.json")]
@@ -68,7 +63,6 @@ public sealed class PasswordProtectedExportTests
         decrypted.ShouldBe(Fixture.Read("bitwarden/plain-small.json"));
     }
 
-    /// <summary>Decrypting with a wrong password throws InvalidDataException whose message says the password is wrong.</summary>
     [Fact]
     public void Decrypt_with_wrong_password_throws_invalid_data()
     {
@@ -83,7 +77,6 @@ public sealed class PasswordProtectedExportTests
         exception.Message.ShouldContain("password is wrong", StringComparison.Ordinal);
     }
 
-    /// <summary>Flipping one bit of the ciphertext in the data field makes decryption with the correct password throw InvalidDataException.</summary>
     [Fact]
     public void Decrypt_with_tampered_data_throws_invalid_data()
     {
@@ -100,11 +93,6 @@ public sealed class PasswordProtectedExportTests
         action.ShouldThrow<InvalidDataException>();
     }
 
-    /// <summary>Envelopes whose Argon2id memory, iterations, or parallelism, or whose PBKDF2 iterations, are out of range throw InvalidDataException.</summary>
-    /// <param name="kdfType">The key derivation type written into the envelope.</param>
-    /// <param name="iterations">The iteration count written into the envelope.</param>
-    /// <param name="memory">The Argon2id memory written into the envelope, or null.</param>
-    /// <param name="parallelism">The Argon2id parallelism written into the envelope, or null.</param>
     [Theory]
     [InlineData(1, 2, 1_000_000, 1)]
     [InlineData(1, 1, 16, 1)]
@@ -126,7 +114,6 @@ public sealed class PasswordProtectedExportTests
         action.ShouldThrow<InvalidDataException>();
     }
 
-    /// <summary>Decrypting a plain, unencrypted export throws InvalidDataException.</summary>
     [Fact]
     public void Decrypt_rejects_files_that_are_not_password_protected()
     {
@@ -138,7 +125,6 @@ public sealed class PasswordProtectedExportTests
         action.ShouldThrow<InvalidDataException>();
     }
 
-    /// <summary>The Argon2id library derives the tag 0d640df5... from the RFC 9106 section 5.3 inputs.</summary>
     [Fact]
     public void Argon2id_library_matches_rfc_9106_test_vector()
     {

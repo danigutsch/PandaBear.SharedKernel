@@ -3,7 +3,6 @@ namespace PandaBear.K6.Tool.Tests;
 /// <summary>Tests running k6 locally and in a container.</summary>
 public sealed class K6RunTests
 {
-    /// <summary>Verifies that local k6 gets the controlled arguments and environment in a timestamped run directory and its exit code is returned.</summary>
     [Fact]
     public async Task Local_k6_receives_the_controlled_arguments_and_its_exit_code_is_returned()
     {
@@ -45,7 +44,6 @@ public sealed class K6RunTests
         repository.Output.ToString().ShouldBe(string.Empty);
     }
 
-    /// <summary>Verifies that local k6 receives only the variables the tool allows.</summary>
     [Fact]
     public async Task Local_k6_runs_with_a_minimal_environment()
     {
@@ -68,7 +66,6 @@ public sealed class K6RunTests
             .ShouldBe([]);
     }
 
-    /// <summary>Verifies the container engine arguments: read-only script mount, results mount, and host alias for each engine.</summary>
     [Theory]
     [InlineData("podman", new string[0])]
     [InlineData("docker", new[] { "--add-host", "host.docker.internal:host-gateway" })]
@@ -124,7 +121,6 @@ public sealed class K6RunTests
         ]);
     }
 
-    /// <summary>Verifies that container runs create a run directory writable by the container user without opening the parent directory.</summary>
     [Fact]
     public async Task Container_runs_create_a_results_directory_that_the_container_user_can_write()
     {
@@ -152,7 +148,6 @@ public sealed class K6RunTests
         File.GetUnixFileMode(repository.ResultsDirectory).HasFlag(UnixFileMode.OtherWrite).ShouldBeFalse();
     }
 
-    /// <summary>Verifies that local runs do not widen the permissions of the run directory.</summary>
     [Fact]
     public async Task Local_runs_leave_the_mode_of_the_results_directory_alone()
     {
@@ -176,7 +171,6 @@ public sealed class K6RunTests
         mode.HasFlag(UnixFileMode.StickyBit).ShouldBeFalse();
     }
 
-    /// <summary>Verifies that a container run exiting 0 without <c>k6-summary.json</c> fails.</summary>
     [Fact]
     public async Task A_container_run_that_exits_0_without_a_summary_fails()
     {
@@ -198,7 +192,6 @@ public sealed class K6RunTests
         repository.Error.ToString().ShouldContain("exited 0 but wrote no k6-summary.json", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that <c>--image</c> overrides the configured container image.</summary>
     [Fact]
     public async Task The_image_option_replaces_the_configured_image()
     {
@@ -222,7 +215,6 @@ public sealed class K6RunTests
         podman.Arguments().ShouldNotContain(K6TestRepository.Image);
     }
 
-    /// <summary>Verifies that a missing or external target exits 2 before any run directory is created.</summary>
     [Theory]
     [InlineData(null, "APP_BASE_URL is required.")]
     [InlineData("https://example.com", "APP_BASE_URL must target a loopback host such as localhost, 127.0.0.1, or [::1] unless --allow-external-target is passed.")]
@@ -242,7 +234,6 @@ public sealed class K6RunTests
         repository.RunDirectories().ShouldBe([]);
     }
 
-    /// <summary>Verifies that an external target runs when external targets are allowed.</summary>
     [Fact]
     public async Task External_targets_run_when_allowed()
     {
@@ -264,7 +255,6 @@ public sealed class K6RunTests
         k6.Arguments().ShouldContain("APP_BASE_URL=https://staging.example");
     }
 
-    /// <summary>Verifies that a blocked k6 argument exits 2 before k6 starts.</summary>
     [Fact]
     public async Task Blocked_k6_arguments_fail_before_k6_starts()
     {
@@ -282,7 +272,6 @@ public sealed class K6RunTests
         repository.RunDirectories().ShouldBe([]);
     }
 
-    /// <summary>Verifies that a runner not found in an absolute PATH directory exits 2 with its name.</summary>
     [Theory]
     [InlineData("k6", new string[0])]
     [InlineData("podman", new[] { "--container" })]
@@ -300,7 +289,6 @@ public sealed class K6RunTests
         repository.Error.ToString().ShouldBe(runner + " was not found in an absolute PATH directory." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that a missing scenario script exits 2 naming the script and scenario.</summary>
     [Fact]
     public async Task A_missing_script_fails()
     {
@@ -318,7 +306,6 @@ public sealed class K6RunTests
         repository.Error.ToString().ShouldBe("The script perf/k6/scenarios/smoke.js of scenario smoke does not exist." + Environment.NewLine);
     }
 
-    /// <summary>Verifies that a symbolic link in the results path is rejected and nothing is written through it.</summary>
     [Fact]
     public async Task A_symbolic_link_in_the_results_directory_fails()
     {
@@ -343,7 +330,6 @@ public sealed class K6RunTests
         Directory.GetFileSystemEntries(outside.Path).ShouldBe([]);
     }
 
-    /// <summary>Verifies that cancelling a run kills the k6 process and exits 1.</summary>
     [Fact]
     public async Task Cancellation_kills_k6_and_exits_1()
     {

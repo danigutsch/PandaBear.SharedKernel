@@ -18,7 +18,6 @@ public sealed class SmallScreenTests : IDisposable
     /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
-    /// <summary>Writing with pending decisions on a zero-size terminal keeps the review running and shows the write blocker on the message line.</summary>
     [Fact]
     public void Writing_with_pending_decisions_on_a_zero_size_terminal_shows_the_problem_on_the_message_line()
     {
@@ -44,7 +43,6 @@ public sealed class SmallScreenTests : IDisposable
         session.IsDirty.ShouldBeTrue();
     }
 
-    /// <summary>Writing a password-protected vault on a zero-size terminal opens no password dialog, writes nothing, and tells the user the terminal is too small.</summary>
     [Fact]
     public void Writing_a_password_protected_vault_on_a_zero_size_terminal_writes_nothing_and_says_why()
     {
@@ -73,7 +71,6 @@ public sealed class SmallScreenTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
-    /// <summary>Quitting with unsaved decisions on a zero-size terminal keeps the review open with a too-small message, and saving then quitting still works.</summary>
     [Fact]
     public void Quitting_with_unsaved_decisions_on_a_zero_size_terminal_keeps_the_review_open_and_save_still_works()
     {
@@ -103,7 +100,6 @@ public sealed class SmallScreenTests : IDisposable
         File.Exists(decisionsPath).ShouldBeTrue();
     }
 
-    /// <summary>Opening the key list below the minimum terminal size shows no dialog and names the minimum columns and rows on the message line.</summary>
     [Theory]
     [InlineData(0, 0)]
     [InlineData(ReviewDialogs.MinimumWidth - 1, ReviewDialogs.MinimumHeight)]
@@ -133,7 +129,6 @@ public sealed class SmallScreenTests : IDisposable
         message.ShouldContain(ReviewDialogs.MinimumHeight + " rows", StringComparison.Ordinal);
     }
 
-    /// <summary>Every dialog opens on a terminal of exactly the minimum size.</summary>
     [Fact]
     public void Every_dialog_opens_on_a_terminal_of_the_minimum_size()
     {

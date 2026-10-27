@@ -7,7 +7,6 @@ public sealed class VaultCommandLineTests
 {
     private const string ExportPassword = "fixture export password";
 
-    /// <summary>The root command has exactly the subcommands inspect, scan, merge, review, catalog, and apply, in that order.</summary>
     [Fact]
     public void Root_command_offers_inspect_scan_merge_review_catalog_and_apply()
     {
@@ -18,7 +17,6 @@ public sealed class VaultCommandLineTests
         command.Subcommands.Select(subcommand => subcommand.Name).ShouldBe(["inspect", "scan", "merge", "review", "catalog", "apply"]);
     }
 
-    /// <summary>Running with --help exits with code 0, prints inspect, scan, merge, and review on standard output, and prints nothing to standard error.</summary>
     [Fact]
     public async Task Help_lists_the_commands_on_standard_output()
     {
@@ -32,7 +30,6 @@ public sealed class VaultCommandLineTests
         run.Error.ShouldBeEmpty();
     }
 
-    /// <summary>The merge command's help lists the output, decisions, policy (with its newest default), plaintext, report, and force options.</summary>
     [Fact]
     public async Task Merge_help_shows_every_option()
     {
@@ -46,7 +43,6 @@ public sealed class VaultCommandLineTests
         run.Error.ShouldBeEmpty();
     }
 
-    /// <summary>Running with --version exits with code 0 and prints the version to standard output, not standard error.</summary>
     [Fact]
     public async Task Version_writes_to_standard_output()
     {
@@ -59,8 +55,6 @@ public sealed class VaultCommandLineTests
         run.Error.ShouldBeEmpty();
     }
 
-    /// <summary>Command lines with missing, empty, or blank arguments or an unsupported policy exit with code 1, print the first parse error to standard error, and ask for no password.</summary>
-    /// <param name="args">The command-line arguments that fail to parse.</param>
     [Theory]
     [InlineData]
     [InlineData("review")]
@@ -105,7 +99,6 @@ public sealed class VaultCommandLineTests
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
-    /// <summary>An unrecognized argument containing escape, C1, and right-to-left override characters exits with code 1 and is echoed in the error with each replaced by U+FFFD.</summary>
     [Fact]
     public async Task Parse_errors_print_an_argument_without_its_escape_and_bidirectional_characters()
     {
@@ -123,7 +116,6 @@ public sealed class VaultCommandLineTests
         unprintable.ShouldAllSatisfy(character => printed.ShouldNotContain(character, StringComparison.Ordinal));
     }
 
-    /// <summary>A mistyped command containing an escape character exits with code 1 and the did-you-mean message shows it with U+FFFD instead of the escape.</summary>
     [Fact]
     public async Task Typo_corrections_print_an_argument_without_its_escape_characters()
     {
@@ -137,8 +129,6 @@ public sealed class VaultCommandLineTests
         printed.ShouldNotContain("\u001B", StringComparison.Ordinal);
     }
 
-    /// <summary>The merge command parses without errors when the policy is newest, ask, or prefer followed by an input file name.</summary>
-    /// <param name="policy">The policy option value.</param>
     [Theory]
     [InlineData("newest")]
     [InlineData("ask")]
@@ -155,8 +145,6 @@ public sealed class VaultCommandLineTests
         parseResult.Errors.ShouldBeEmpty();
     }
 
-    /// <summary>Arguments that start with an at sign parse without errors and stay in the token list as literal values instead of being expanded as response files.</summary>
-    /// <param name="args">The command-line arguments, some starting with an at sign.</param>
     [Theory]
     [InlineData("inspect", "@keeper.json")]
     [InlineData("scan", "@keeper.json", "--report", "@scan.md")]
@@ -174,7 +162,6 @@ public sealed class VaultCommandLineTests
         parseResult.Tokens.Select(token => token.Value).ShouldBe(args);
     }
 
-    /// <summary>A merge command line without the policy option parses without errors and the policy value is newest.</summary>
     [Fact]
     public void Policy_option_defaults_to_newest()
     {

@@ -3,8 +3,13 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tool;
 
+/// <summary>Computes a stable digest of GitHub issue snapshots.</summary>
 internal static class GitHubIssueSnapshotDigest
 {
+    /// <summary>Computes the digest over the open issues of the repository and the required issues.</summary>
+    /// <param name="issues">Issues in the snapshot.</param>
+    /// <param name="requiredIssueNumbers">Numbers of issues to include even when closed.</param>
+    /// <param name="repository">Repository the issues belong to.</param>
     public static string ComputeForOpenAndRequiredIssues(
         IEnumerable<GitHubRoadmapReconcileIssue> issues,
         IEnumerable<int> requiredIssueNumbers,
@@ -28,6 +33,8 @@ internal static class GitHubIssueSnapshotDigest
             || required.Contains(issue.Number)));
     }
 
+    /// <summary>Computes the digest over the issues, ordered by number.</summary>
+    /// <param name="issues">Issues to include.</param>
     public static string Compute(IEnumerable<GitHubRoadmapReconcileIssue> issues)
     {
         using var content = new MemoryStream();

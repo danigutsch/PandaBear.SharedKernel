@@ -7,7 +7,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Catalog;
 /// <summary>Tests building a catalog from a vault.</summary>
 public sealed class CatalogBuilderTests
 {
-    /// <summary>Verifies that the catalog shows metadata and contains no secret value.</summary>
     [Fact]
     public void Build_shows_metadata_and_withholds_every_secret_value()
     {
@@ -35,7 +34,6 @@ public sealed class CatalogBuilderTests
         built.Catalog.Source.ShouldBe(new CatalogSource("vault.json", "abc"));
     }
 
-    /// <summary>Verifies that notes without a share decision become pending entries.</summary>
     [Fact]
     public void Build_lists_notes_without_a_decision_as_pending_entries()
     {
@@ -50,7 +48,6 @@ public sealed class CatalogBuilderTests
         built.Counts.PendingNotes.ShouldBe(1);
     }
 
-    /// <summary>Verifies that notes appear only when the decisions file shares them.</summary>
     [Fact]
     public void Build_shows_notes_only_when_the_decisions_file_shares_them()
     {
@@ -64,7 +61,6 @@ public sealed class CatalogBuilderTests
         hidden.Catalog.Items.ShouldHaveSingleItem().Notes.ShouldBe(new CatalogNotes(NotesDecision.Hidden));
     }
 
-    /// <summary>Verifies that shared notes that changed since the decision are withheld.</summary>
     [Fact]
     public void Build_withholds_shared_notes_that_changed_since_they_were_shared()
     {
@@ -85,7 +81,6 @@ public sealed class CatalogBuilderTests
         CatalogFile.Serialize(built.Catalog).ShouldNotContain("edited after sharing", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that a share decision without a hash is bound to the current notes.</summary>
     [Fact]
     public void Build_binds_a_share_decision_without_a_hash_to_the_current_notes()
     {
@@ -103,7 +98,6 @@ public sealed class CatalogBuilderTests
         built.NotesUpdates.ShouldHaveSingleItem().NotesSha256.ShouldBe(ItemNotesDecision.HashOf(NotesText));
     }
 
-    /// <summary>Verifies that a user name that holds a secret finding is withheld.</summary>
     [Fact]
     public void Build_withholds_a_user_name_that_holds_a_secret_finding()
     {

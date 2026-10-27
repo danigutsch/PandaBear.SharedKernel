@@ -12,7 +12,6 @@ public sealed class MergerTests
     private const string KeeperTotp = "JBSWY3DPEHPK3PXP";
     private const string BitwardenTotp = "KRSXG5CTMVRXEZLU";
 
-    /// <summary>The newer item's password wins and the older item's TOTP is kept because the newer one has none; the older password moves to history with its timestamp and nothing is unresolved.</summary>
     [Fact]
     public void Merge_newer_duplicate_without_totp_keeps_older_totp()
     {
@@ -32,7 +31,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>A TOTP that only the newer item has is kept in the merged login with no unresolved conflict.</summary>
     [Fact]
     public void Merge_older_duplicate_without_totp_keeps_newer_totp()
     {
@@ -49,7 +47,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>When both items have different TOTP secrets, the newer secret is used and the older one is saved in a hidden "TOTP (from keeper.json)" custom field.</summary>
     [Fact]
     public void Merge_both_totp_different_keeps_newer_and_preserves_older_as_hidden_field()
     {
@@ -67,7 +64,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>The newer password becomes current and the older password is the single history entry, stamped with the older item's modification time.</summary>
     [Fact]
     public void Merge_newer_password_moves_older_password_to_history_with_its_timestamp()
     {
@@ -83,7 +79,6 @@ public sealed class MergerTests
         item.PasswordHistory.ShouldHaveSingleItem().ShouldBe(new PasswordHistoryEntry(OldPassword, Older));
     }
 
-    /// <summary>Two items with the same password produce no password history entries and no extra custom fields.</summary>
     [Fact]
     public void Merge_equal_passwords_add_no_history_entry()
     {
@@ -99,7 +94,6 @@ public sealed class MergerTests
         item.Fields.ShouldBeEmpty();
     }
 
-    /// <summary>For linked items, the older item's username is kept when the newer item's username is an empty string.</summary>
     [Fact]
     public void Merge_older_only_username_is_kept_when_newer_username_is_empty()
     {
@@ -115,7 +109,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>A newer password and TOTP made only of whitespace are treated as absent, so the older values stay, no history is added, and no conflict results.</summary>
     [Fact]
     public void Merge_whitespace_only_value_counts_as_absent()
     {
@@ -139,7 +132,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>Addresses from both items are combined, and one that differs only in case and a trailing slash appears once, keeping the newer item's spelling.</summary>
     [Fact]
     public void Merge_uris_are_unioned_without_normalized_duplicates()
     {
@@ -160,7 +152,6 @@ public sealed class MergerTests
         login.Uris.Select(uri => uri.Value).ShouldBe(["HTTPS://EXAMPLE.com/login/", "androidapp://com.example", "https://k-only.example.com"]);
     }
 
-    /// <summary>Custom fields from both items are combined, and a field that differs only in CRLF versus LF line endings is not duplicated.</summary>
     [Fact]
     public void Merge_custom_fields_are_unioned_and_identical_fields_are_not_duplicated()
     {
@@ -181,7 +172,6 @@ public sealed class MergerTests
         item.Fields.Select(field => field.Name).ShouldBe(["Shared", "Recovery", "PIN"]);
     }
 
-    /// <summary>Fields with the same name and value but different types merge into one field, keeping Hidden over Text and Boolean over Text.</summary>
     [Fact]
     public void Merge_fields_differing_only_in_type_are_kept_once_with_the_stricter_type()
     {
@@ -212,7 +202,6 @@ public sealed class MergerTests
             new CustomField("Remember", "true", CustomFieldType.Boolean));
     }
 
-    /// <summary>Passkeys from both items are kept once each, with a passkey present on both sides not duplicated.</summary>
     [Fact]
     public void Merge_passkeys_from_both_sides_are_kept()
     {
@@ -235,7 +224,6 @@ public sealed class MergerTests
         login.Fido2Credentials.Select(passkey => passkey.CredentialId).ShouldBe(["cred-b", "cred-k"]);
     }
 
-    /// <summary>Password histories from both items are combined newest first, with the entry present on both sides listed once.</summary>
     [Fact]
     public void Merge_password_histories_are_unioned_newest_first()
     {
@@ -256,7 +244,6 @@ public sealed class MergerTests
         item.PasswordHistory.Select(entry => entry.Password).ShouldBe(["h3", "h1", "h2"]);
     }
 
-    /// <summary>Conflicting short notes resolve to the newer notes, and the older notes are saved in a hidden "Notes (from keeper.json)" field.</summary>
     [Fact]
     public void Merge_notes_conflict_keeps_newer_notes_and_older_notes_as_hidden_field()
     {
@@ -278,7 +265,6 @@ public sealed class MergerTests
         item.Fields.ShouldContain(new CustomField("Notes (from keeper.json)", "older notes", CustomFieldType.Hidden));
     }
 
-    /// <summary>A losing note of 4,000 characters is appended to the winning notes under a "--- Notes from keeper.json ---" separator instead of being stored in a custom field.</summary>
     [Fact]
     public void Merge_long_losing_notes_are_appended_to_winner_notes()
     {
@@ -301,7 +287,6 @@ public sealed class MergerTests
         item.Fields.ShouldBeEmpty();
     }
 
-    /// <summary>A card number only the older card has is kept alongside the newer card's cardholder name, with no unresolved conflict.</summary>
     [Fact]
     public void Merge_card_number_present_only_in_older_card_is_kept()
     {
@@ -319,7 +304,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>Reprompt set on only one item and Favorite set on only the other are both true in the merged item.</summary>
     [Fact]
     public void Merge_reprompt_and_favorite_keep_stricter_or_true_value()
     {
@@ -341,7 +325,6 @@ public sealed class MergerTests
         item.Favorite.ShouldBeTrue();
     }
 
-    /// <summary>With no timestamps, differing passwords stay unresolved for both members, the first member's password is used, and the other goes to history stamped with the current time.</summary>
     [Fact]
     public void Merge_conflict_without_timestamps_is_unresolved_under_newest_policy()
     {
@@ -362,7 +345,6 @@ public sealed class MergerTests
         item.PasswordHistory.ShouldBe([new PasswordHistoryEntry(NewPassword, Now)]);
     }
 
-    /// <summary>A TOTP present on only one item is taken even when neither item has a timestamp, leaving nothing unresolved.</summary>
     [Fact]
     public void Merge_one_sided_value_without_timestamps_is_still_resolved()
     {
@@ -378,7 +360,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>Under the Ask policy the notes and password conflicts are reported unresolved, while the TOTP only the older item has is still filled in.</summary>
     [Fact]
     public void Merge_ask_policy_leaves_every_real_conflict_unresolved_but_fills_one_sided_values()
     {
@@ -404,7 +385,6 @@ public sealed class MergerTests
         item.PasswordHistory.ShouldBe([new PasswordHistoryEntry(OldPassword, Older)]);
     }
 
-    /// <summary>A folder path only the older item has is kept in the merged item when the newer item has no folder.</summary>
     [Fact]
     public void Merge_keeps_a_one_sided_folder_when_the_newer_member_has_none()
     {
@@ -423,7 +403,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>Different folders on items without timestamps produce one unresolved folder conflict naming both members.</summary>
     [Fact]
     public void Merge_folder_conflict_without_timestamps_is_unresolved_under_newest_policy()
     {
@@ -446,7 +425,6 @@ public sealed class MergerTests
         conflict.MemberOriginKeys.ShouldBe([KeeperKey, BitwardenKey]);
     }
 
-    /// <summary>Different folders stay an unresolved folder conflict under the Ask policy even though the items have timestamps.</summary>
     [Fact]
     public void Merge_ask_policy_leaves_a_folder_conflict_unresolved()
     {
@@ -467,7 +445,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldHaveSingleItem().FieldPath.ShouldBe(FieldPaths.Folder);
     }
 
-    /// <summary>A decision choosing the Keeper member for the folder field resolves the conflict, and the merged item gets the Keeper folder "Finance".</summary>
     [Fact]
     public void Merge_folder_decision_takes_the_chosen_member_folder()
     {
@@ -491,7 +468,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>The losing folder joins the existing "Additional folders" field, which lists each other folder on its own line and drops the winner's folder.</summary>
     [Fact]
     public void Merge_keeps_the_losing_folder_and_every_additional_folder_in_one_field()
     {
@@ -514,7 +490,6 @@ public sealed class MergerTests
         item.Fields.ShouldBe([new CustomField("Additional folders", "Personal\nFinance", CustomFieldType.Text)]);
     }
 
-    /// <summary>The prefer-source policy for keeper.json uses the older Keeper password despite the newer Bitwarden item, and the Bitwarden password goes to history.</summary>
     [Fact]
     public void Merge_prefer_source_policy_picks_source_and_preserves_loser()
     {
@@ -532,7 +507,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>A decision choosing Empty for the TOTP field removes the TOTP that one member had, without saving it in a custom field.</summary>
     [Fact]
     public void Merge_decision_choosing_empty_drops_value_from_result()
     {
@@ -552,7 +526,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>A decision choosing the older Keeper member for the password beats the default newest policy, and the report records the field as resolved by a decision.</summary>
     [Fact]
     public void Merge_decision_choosing_older_side_overrides_newest_policy()
     {
@@ -572,7 +545,6 @@ public sealed class MergerTests
         result.Report.Groups.ShouldHaveSingleItem().Fields.ShouldContain(new FieldResolution(FieldPaths.LoginPassword, ResolutionKind.Decision));
     }
 
-    /// <summary>A group of three items takes the newest password and the source file, the only TOTP, the union of addresses, the only notes, and a password history ordered newest first.</summary>
     [Fact]
     public void Merge_three_way_group_applies_rules_across_all_members()
     {
@@ -607,7 +579,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>Two identical items merge into one item with no extra fields or history, no group entries in the report, and the report counting one identical group.</summary>
     [Fact]
     public void Merge_identical_items_produce_single_item_and_no_report_entries()
     {
@@ -627,7 +598,6 @@ public sealed class MergerTests
         result.Unresolved.ShouldBeEmpty();
     }
 
-    /// <summary>Two items with different names and addresses are returned as they were, and the report counts two unique groups and no merged groups.</summary>
     [Fact]
     public void Merge_unmatched_items_pass_through_unchanged()
     {
@@ -650,7 +620,6 @@ public sealed class MergerTests
         result.Report.Groups.ShouldBeEmpty();
     }
 
-    /// <summary>When the newer item is a secure note and the older a login, the result is a secure note whose fields hold the login's name, username, password, TOTP, and address, with a conversion note.</summary>
     [Fact]
     public void Merge_type_change_keeps_other_type_data_as_hidden_fields()
     {
@@ -684,7 +653,6 @@ public sealed class MergerTests
         item.ConversionNotes.ShouldContain(note => note.Contains("Type Login", StringComparison.Ordinal));
     }
 
-    /// <summary>Two attachments with the same name and size but different content hashes are both kept.</summary>
     [Fact]
     public void Merge_keeps_two_files_with_one_name_and_size_whose_content_differs()
     {
@@ -705,7 +673,6 @@ public sealed class MergerTests
         item.Attachments.Select(attachment => attachment.SourcePath).ShouldBe(["attachments/Example/scan.pdf", "files/keeper-scan"]);
     }
 
-    /// <summary>Attachments without a content hash are never treated as duplicates, so one plus two same-named files yield three.</summary>
     [Fact]
     public void Merge_keeps_every_file_whose_content_is_unknown()
     {
@@ -726,7 +693,6 @@ public sealed class MergerTests
         item.Attachments.Count.ShouldBe(3);
     }
 
-    /// <summary>A file with the same content hash on both items is kept once, using the newer Bitwarden item's source path, and the Keeper-only file is kept as well.</summary>
     [Fact]
     public void Merge_keeps_one_copy_of_a_file_found_on_two_members_from_the_newest_member()
     {
@@ -747,7 +713,6 @@ public sealed class MergerTests
         item.Attachments.Select(attachment => attachment.SourcePath).ShouldBe(["attachments/Example/scan.pdf", "files/keeper-notes"]);
     }
 
-    /// <summary>Across 300 randomly generated item pairs and policies, every non-empty input value still appears somewhere in the merged item.</summary>
     [Fact]
     public void Merge_never_drops_a_non_empty_value()
     {

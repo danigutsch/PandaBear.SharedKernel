@@ -6,7 +6,6 @@ namespace PandaBear.VaultManager.Tool.Tests.Formats.Bitwarden;
 /// <summary>Tests the reader for Bitwarden CSV exports.</summary>
 public sealed class BitwardenCsvReaderTests
 {
-    /// <summary>The individual.csv login row maps its folder path, favorite and reprompt flags, notes, origin, custom fields, TOTP, username, password, and both URIs.</summary>
     [Fact]
     public void Read_individual_export_maps_login_fields_uris_and_flags()
     {
@@ -33,7 +32,6 @@ public sealed class BitwardenCsvReaderTests
         login.Uris.Select(uri => uri.Value).ShouldBe(["https://example.com", "https://accounts.example.com"]);
     }
 
-    /// <summary>The "Plain note" row becomes a secure note without login or folder, keeps its multi-line notes, and gets a conversion note about the archived state.</summary>
     [Fact]
     public void Read_individual_export_maps_notes_and_records_archived_items()
     {
@@ -50,7 +48,6 @@ public sealed class BitwardenCsvReaderTests
         item.ConversionNotes.ShouldContain(note => note.Contains("archived", StringComparison.Ordinal));
     }
 
-    /// <summary>In organization.csv the first collection "Shared" becomes the folder path, the second goes into an "Additional folders" field, and a conversion note mentions collections.</summary>
     [Fact]
     public void Read_organization_export_uses_first_collection_as_folder()
     {
@@ -65,7 +62,6 @@ public sealed class BitwardenCsvReaderTests
         item.Login.ShouldNotBeNull().Username.ShouldBe("bob");
     }
 
-    /// <summary>Reading a CSV export adds a warning that mentions JSON as the more complete format.</summary>
     [Fact]
     public void Read_warns_that_csv_omits_data_and_recommends_JSON()
     {
@@ -76,7 +72,6 @@ public sealed class BitwardenCsvReaderTests
         result.Warnings.ShouldContain(warning => warning.Contains("JSON", StringComparison.Ordinal));
     }
 
-    /// <summary>A data row with one column too few throws InvalidDataException naming line 2 without echoing the row's secret value.</summary>
     [Fact]
     public void Read_row_with_wrong_column_count_throws_with_line_number_and_no_value()
     {
@@ -92,7 +87,6 @@ public sealed class BitwardenCsvReaderTests
         exception.Message.ShouldNotContain("secret-value", StringComparison.Ordinal);
     }
 
-    /// <summary>A CSV whose header is "a,b,c" instead of the Bitwarden columns throws InvalidDataException.</summary>
     [Fact]
     public void Read_without_bitwarden_header_throws_invalid_data()
     {

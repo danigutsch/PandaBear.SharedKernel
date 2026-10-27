@@ -8,7 +8,6 @@ namespace PandaBear.PlaywrightMcp.Tool.Tests;
 [Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 public sealed class PlaywrightMcpCommandLineTests
 {
-    /// <summary>Verifies that root help exits 0 and describes the commands, image, and environment variables without starting a process.</summary>
     [Fact]
     public async Task Help_describes_the_commands_image_and_environment_without_starting_a_process()
     {
@@ -41,7 +40,6 @@ public sealed class PlaywrightMcpCommandLineTests
         environment.Error.ToString().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that help for each command shows its usage and description without starting a process.</summary>
     [Theory]
     [InlineData("serve", "Run the pinned Playwright MCP image as a stdio MCP server")]
     [InlineData("prepare", "Pull the pinned Playwright MCP image")]
@@ -73,7 +71,6 @@ public sealed class PlaywrightMcpCommandLineTests
         environment.Error.ToString().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that <c>--version</c> prints the informational assembly version and starts no process.</summary>
     [Fact]
     public async Task Version_prints_the_tool_version_without_starting_a_process()
     {
@@ -101,7 +98,6 @@ public sealed class PlaywrightMcpCommandLineTests
         environment.Error.ToString().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that every command line in the README parses without errors to the command or action it documents, and that every command is documented.</summary>
     [Fact]
     public void Readme_command_lines_select_their_command_or_the_help_and_version_actions()
     {
@@ -130,7 +126,6 @@ public sealed class PlaywrightMcpCommandLineTests
         rootCommand.Subcommands.ShouldAllSatisfy(command => selections.ShouldContain(command.Name));
     }
 
-    /// <summary>Verifies that the diagram directive prints the parse tree and exits 0 for valid command lines and non-zero otherwise, without starting a process.</summary>
     [Theory]
     [InlineData("serve", 0)]
     [InlineData("serve --hlep", 1)]
@@ -160,7 +155,6 @@ public sealed class PlaywrightMcpCommandLineTests
         environment.Output.ToString().ShouldContain("[ serve", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that omitting the command exits 1 with a usage message and starts no process.</summary>
     [Fact]
     public async Task Missing_command_fails_parsing_before_any_process_starts()
     {
@@ -186,7 +180,6 @@ public sealed class PlaywrightMcpCommandLineTests
         environment.Output.ToString().ShouldContain("Usage:", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that unrecognized arguments exit 1 with an error and start no process.</summary>
     [Theory]
     [InlineData("serve", "--allow-unrestricted-file-access")]
     [InlineData("serve", "--headless")]
@@ -219,7 +212,6 @@ public sealed class PlaywrightMcpCommandLineTests
             StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that each command exits 2 on a remote engine override before starting a process.</summary>
     [Theory]
     [InlineData("serve")]
     [InlineData("prepare")]
@@ -250,7 +242,6 @@ public sealed class PlaywrightMcpCommandLineTests
         environment.Output.ToString().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that cancelling the invocation stops the runtime and removes its container.</summary>
     [Fact]
     public async Task Cancelling_the_invocation_stops_the_runtime_and_removes_the_container()
     {
@@ -303,7 +294,6 @@ public sealed class PlaywrightMcpCommandLineTests
         environment.Output.ToString().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that <c>prepare</c> and <c>clean</c> report cancellation whether or not the engine fails after being cancelled.</summary>
     [Theory]
     [InlineData("prepare", false)]
     [InlineData("prepare", true)]
@@ -347,7 +337,6 @@ public sealed class PlaywrightMcpCommandLineTests
         environment.Output.ToString().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that <c>serve</c> removes the container with an uncancelled cleanup token and reports cancellation, whether or not the runtime fails.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -400,7 +389,6 @@ public sealed class PlaywrightMcpCommandLineTests
         environment.Output.ToString().ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that a cancelled engine check reports cancellation instead of an engine failure.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

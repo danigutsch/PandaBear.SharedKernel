@@ -7,7 +7,6 @@ public sealed class PlaywrightMcpCommandTests
 {
     private const string LocalDockerEndpoint = "unix:///var/run/docker.sock";
 
-    /// <summary>Verifies that the Docker context probe inspects the selected current context by name.</summary>
     [Fact]
     public void Docker_context_probe_pins_the_selected_current_context()
     {
@@ -37,7 +36,6 @@ public sealed class PlaywrightMcpCommandTests
         ]);
     }
 
-    /// <summary>Verifies that the Docker runtime command has no network, no redirected streams, and the hardened default options.</summary>
     [Fact]
     public void Docker_defaults_to_local_offline_network_isolation()
     {
@@ -108,7 +106,6 @@ public sealed class PlaywrightMcpCommandTests
         ]);
     }
 
-    /// <summary>Verifies that the network opt-in drops <c>--network=none</c>, maps the local host, and allows image responses.</summary>
     [Fact]
     public void Docker_network_opt_in_maps_the_local_host()
     {
@@ -129,7 +126,6 @@ public sealed class PlaywrightMcpCommandTests
         startInfo.ArgumentList.ShouldNotContain("--network=none");
     }
 
-    /// <summary>Verifies that the Podman runtime command forces local mode, disables the implicit read-only tmpfs, and drops capabilities and proxies.</summary>
     [Fact]
     public void Podman_forces_local_mode_and_disables_implicit_read_only_tmpfs()
     {
@@ -154,7 +150,6 @@ public sealed class PlaywrightMcpCommandTests
             .ArgumentList.ShouldContain("--ignore");
     }
 
-    /// <summary>Verifies that <c>prepare</c> pulls the exact pinned image with the selected engine.</summary>
     [Theory]
     [InlineData("docker", "--host", LocalDockerEndpoint)]
     [InlineData("podman", "--remote=false", null)]
@@ -183,7 +178,6 @@ public sealed class PlaywrightMcpCommandTests
         startInfo.ArgumentList.ToArray().ShouldBe(expectedArguments);
     }
 
-    /// <summary>Verifies that image pull and removal redirect the engine's output and error streams so the tool can forward them.</summary>
     [Fact]
     public void Image_pull_and_removal_capture_the_engine_output_and_errors()
     {
@@ -206,7 +200,6 @@ public sealed class PlaywrightMcpCommandTests
         remove.RedirectStandardError.ShouldBeTrue();
     }
 
-    /// <summary>Verifies that <c>clean</c> removes only the exact pinned image.</summary>
     [Fact]
     public void Clean_removes_only_the_exact_pinned_image()
     {
@@ -232,7 +225,6 @@ public sealed class PlaywrightMcpCommandTests
         ]);
     }
 
-    /// <summary>Verifies that Docker cleanup builds a probe that checks the named container is gone.</summary>
     [Fact]
     public void Docker_cleanup_verifies_that_the_named_container_is_absent()
     {
@@ -270,7 +262,6 @@ public sealed class PlaywrightMcpCommandTests
         ]);
     }
 
-    /// <summary>Verifies that the Podman rootless probe forces local mode.</summary>
     [Fact]
     public void Podman_rootless_probe_forces_local_mode()
     {
@@ -294,7 +285,6 @@ public sealed class PlaywrightMcpCommandTests
         ]);
     }
 
-    /// <summary>Verifies that Unix socket and local named pipe endpoints count as local.</summary>
     [Theory]
     [InlineData("unix:///var/run/docker.sock")]
     [InlineData("npipe:////./pipe/docker_engine")]
@@ -310,7 +300,6 @@ public sealed class PlaywrightMcpCommandTests
         isLocal.ShouldBeTrue();
     }
 
-    /// <summary>Verifies that TCP, SSH, and remote named pipe endpoints are rejected as remote.</summary>
     [Theory]
     [InlineData("tcp://remote.example:2375")]
     [InlineData("ssh://builder.example")]

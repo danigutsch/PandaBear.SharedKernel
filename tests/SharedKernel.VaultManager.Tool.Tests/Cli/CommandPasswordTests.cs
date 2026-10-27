@@ -13,7 +13,6 @@ public sealed class CommandPasswordTests : IDisposable
     /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
-    /// <summary>Verifies that merge without a terminal refuses an encrypted output before doing any work.</summary>
     [Fact]
     public async Task Merge_without_a_terminal_refuses_an_encrypted_output_before_any_work()
     {
@@ -36,7 +35,6 @@ public sealed class CommandPasswordTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
-    /// <summary>Verifies that merge without a terminal writes a plaintext output.</summary>
     [Fact]
     public async Task Merge_without_a_terminal_writes_a_plaintext_output()
     {
@@ -52,7 +50,6 @@ public sealed class CommandPasswordTests : IDisposable
         FormatDetector.Detect(output).ShouldBe(VaultFileFormat.BitwardenJson);
     }
 
-    /// <summary>Verifies that each command without a terminal refuses a password-protected input, naming it, before doing any work.</summary>
     [Theory]
     [InlineData("inspect")]
     [InlineData("scan")]
@@ -76,7 +73,6 @@ public sealed class CommandPasswordTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
-    /// <summary>Verifies that a protected input with unsupported key derivation is refused before its password is asked.</summary>
     [Theory]
     [InlineData("inspect", "kdfIterations", 1000, "PBKDF2 iterations must be between")]
     [InlineData("scan", "kdfType", 7, "Unsupported key derivation type")]
@@ -103,7 +99,6 @@ public sealed class CommandPasswordTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
-    /// <summary>Verifies that merge asks once for the password of a protected input.</summary>
     [Fact]
     public async Task Merge_asks_once_for_the_password_of_a_protected_input()
     {
@@ -121,7 +116,6 @@ public sealed class CommandPasswordTests : IDisposable
         File.Exists(output).ShouldBeTrue();
     }
 
-    /// <summary>Verifies that merge reads each input once and asks for its password once.</summary>
     [Fact]
     public async Task Merge_reads_each_input_once_and_asks_its_password_once()
     {
@@ -142,7 +136,6 @@ public sealed class CommandPasswordTests : IDisposable
         FormatDetector.Detect(output).ShouldBe(VaultFileFormat.BitwardenJson);
     }
 
-    /// <summary>Verifies that a wrong input password exits 3.</summary>
     [Fact]
     public async Task Wrong_input_password_exits_3()
     {
@@ -160,7 +153,6 @@ public sealed class CommandPasswordTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
-    /// <summary>Verifies that a failing password prompt exits 3 with its message.</summary>
     [Fact]
     public async Task Password_prompt_that_fails_exits_3_with_its_message()
     {
@@ -175,7 +167,6 @@ public sealed class CommandPasswordTests : IDisposable
         run.Error.ShouldContain("The test inputs are not password-protected.", StringComparison.Ordinal);
     }
 
-    /// <summary>Verifies that merge cancelled at the password prompt exits 1 and writes nothing.</summary>
     [Fact]
     public async Task Merge_canceled_at_the_password_prompt_exits_1_and_writes_nothing()
     {
@@ -195,7 +186,6 @@ public sealed class CommandPasswordTests : IDisposable
         Directory.GetFiles(directory).Length.ShouldBe(2);
     }
 
-    /// <summary>Verifies that each command cancelled before it starts exits 1.</summary>
     [Theory]
     [InlineData("inspect")]
     [InlineData("scan")]
@@ -216,7 +206,6 @@ public sealed class CommandPasswordTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
-    /// <summary>Verifies that an unexpected error exits 1 without showing the error message.</summary>
     [Fact]
     public async Task Unexpected_error_exits_1_without_showing_its_message()
     {

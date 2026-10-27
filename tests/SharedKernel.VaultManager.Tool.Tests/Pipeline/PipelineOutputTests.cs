@@ -18,7 +18,6 @@ public sealed class PipelineOutputTests : IDisposable
     /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
-    /// <summary>The default output is a password-protected Bitwarden export that hides the item password and asks for one new password, while a plaintext output is plain Bitwarden JSON that asks for none.</summary>
     [Fact]
     public void Run_writes_a_password_protected_export_unless_plaintext_is_requested()
     {
@@ -44,7 +43,6 @@ public sealed class PipelineOutputTests : IDisposable
         plaintextPrompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
-    /// <summary>On Unix, a newly created output file has owner read and write permission only.</summary>
     [Fact]
     public void Run_creates_the_output_readable_only_by_its_owner()
     {
@@ -64,7 +62,6 @@ public sealed class PipelineOutputTests : IDisposable
         }
     }
 
-    /// <summary>An existing output file without force makes Run throw an "already exists" error before it reads the missing input or asks for a password, and the file keeps its content.</summary>
     [Fact]
     public void Run_refuses_to_replace_an_existing_output_without_force_before_reading_inputs()
     {
@@ -85,7 +82,6 @@ public sealed class PipelineOutputTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
-    /// <summary>With force, an existing group-readable output file is replaced by Bitwarden JSON and ends with owner-only permissions on Unix.</summary>
     [Fact]
     public void Run_replaces_an_existing_output_with_force()
     {
@@ -111,7 +107,6 @@ public sealed class PipelineOutputTests : IDisposable
         }
     }
 
-    /// <summary>Naming an input file as the output makes Run throw <see cref="IOException"/> even with force, and the input keeps its content.</summary>
     [Fact]
     public void Run_refuses_to_write_over_an_input_file_even_with_force()
     {
@@ -129,7 +124,6 @@ public sealed class PipelineOutputTests : IDisposable
         File.ReadAllText(input).ShouldBe(json);
     }
 
-    /// <summary>An output path that reaches the input through a symbolic link to its directory is rejected as "also an input" even with force, and the input keeps its content.</summary>
     [Fact(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanCreateSymbolicLinks), Skip = "This system does not let the test create symbolic links.")]
     public void Run_refuses_to_write_over_an_input_reached_through_a_linked_directory_even_with_force()
     {
@@ -151,7 +145,6 @@ public sealed class PipelineOutputTests : IDisposable
         File.ReadAllText(input).ShouldBe(json);
     }
 
-    /// <summary>An output path through a symbolic link whose target uses a <c>..</c> step after another linked directory still resolves to the input and is rejected as "also an input" even with force.</summary>
     [Fact(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanCreateSymbolicLinks), Skip = "This system does not let the test create symbolic links.")]
     public void Run_refuses_to_write_over_an_input_reached_through_a_link_whose_target_steps_up_from_a_linked_directory_even_with_force()
     {
@@ -176,7 +169,6 @@ public sealed class PipelineOutputTests : IDisposable
         File.ReadAllText(input).ShouldBe(json);
     }
 
-    /// <summary>An output path that differs from the input only in letter case is rejected as "also an input" even with force, and no other file appears in the directory.</summary>
     [Fact]
     public void Run_refuses_to_write_over_an_input_named_with_different_case_even_with_force()
     {
@@ -197,7 +189,6 @@ public sealed class PipelineOutputTests : IDisposable
         Directory.GetFiles(directory).ShouldBe([input]);
     }
 
-    /// <summary>An output inside a directory that does not exist makes Run throw an error naming that directory before it reads inputs or asks for a password.</summary>
     [Fact]
     public void Run_refuses_an_output_in_a_missing_directory_before_reading_inputs()
     {
@@ -219,7 +210,6 @@ public sealed class PipelineOutputTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
-    /// <summary>An output path that is an existing directory makes Run throw an "is a directory" error even with force, before it reads inputs or asks for a password.</summary>
     [Fact]
     public void Run_refuses_an_output_path_that_is_a_directory_before_reading_inputs()
     {
@@ -239,7 +229,6 @@ public sealed class PipelineOutputTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
-    /// <summary>Both Run and Merge throw <see cref="ArgumentException"/> for an empty output path and never prompt for a new password.</summary>
     [Fact]
     public void Run_and_merge_reject_an_empty_output_path_as_an_argument_error_before_asking_for_a_password()
     {
@@ -260,7 +249,6 @@ public sealed class PipelineOutputTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
-    /// <summary>A new export password of "short" makes Run throw an error naming the minimum length after one prompt, and no output file is created.</summary>
     [Fact]
     public void Run_refuses_a_new_export_password_shorter_than_the_minimum_before_writing()
     {
@@ -281,7 +269,6 @@ public sealed class PipelineOutputTests : IDisposable
         Directory.GetFiles(directory).ShouldBe([input]);
     }
 
-    /// <summary>An input file with all permissions removed makes Run throw an <see cref="IOException"/> that names the input and wraps an <see cref="UnauthorizedAccessException"/>.</summary>
     [Fact(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanDenyAccess), Skip = "File permissions do not stop this process from reading files.")]
     public void Run_reports_an_input_it_may_not_read_as_a_file_error_that_names_the_input()
     {
@@ -304,7 +291,6 @@ public sealed class PipelineOutputTests : IDisposable
         exception.InnerException.ShouldBeOfType<UnauthorizedAccessException>();
     }
 
-    /// <summary>An output directory that is readable but not writable makes Run throw an <see cref="IOException"/> naming the output path and wrapping an <see cref="UnauthorizedAccessException"/>, and no file is created.</summary>
     [Fact(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanDenyAccess), Skip = "File permissions do not stop this process from writing files.")]
     public void Run_reports_an_output_directory_it_may_not_write_as_a_file_error_that_names_the_output()
     {
@@ -330,7 +316,6 @@ public sealed class PipelineOutputTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
-    /// <summary>An output directory without the search permission makes Run throw an <see cref="IOException"/> naming the output path and wrapping an <see cref="UnauthorizedAccessException"/>.</summary>
     [Fact(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanDenyAccess), Skip = "File permissions do not stop this process from writing files.")]
     public void Run_reports_an_output_directory_it_may_not_search_as_a_file_error_that_names_the_output()
     {
@@ -355,7 +340,6 @@ public sealed class PipelineOutputTests : IDisposable
         exception.InnerException.ShouldBeOfType<UnauthorizedAccessException>();
     }
 
-    /// <summary>An item name of 800 characters produces a "name is too long" write error, so Run writes no file and asks for no password.</summary>
     [Fact]
     public void Run_does_not_write_when_the_writer_reports_errors()
     {
@@ -376,7 +360,6 @@ public sealed class PipelineOutputTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
-    /// <summary>A Keeper note holding GitHub recovery codes yields one proposed finding with no decision, so Run reports it as a pending finding, writes no output, and asks for no password.</summary>
     [Fact]
     public void Run_does_not_write_while_a_proposed_finding_has_no_decision()
     {
@@ -404,7 +387,6 @@ public sealed class PipelineOutputTests : IDisposable
         result.PendingFindingCount.ShouldBe(1);
     }
 
-    /// <summary>After the proposed recovery-codes finding is rejected, Run has no pending findings and writes the output, in which the pre-accepted finding appears as a single "Recovery codes" field.</summary>
     [Fact]
     public void Run_writes_once_every_proposed_finding_is_decided_and_applies_pre_accepted_findings_without_a_decision()
     {
@@ -428,7 +410,6 @@ public sealed class PipelineOutputTests : IDisposable
         item.Fields.ShouldHaveSingleItem().Name.ShouldBe("Recovery codes");
     }
 
-    /// <summary>Keeper and Bitwarden logins with different passwords and no timestamps leave one unresolved login.password conflict, so Run writes no output and asks for no password.</summary>
     [Fact]
     public void Run_does_not_write_while_conflicts_need_a_decision()
     {

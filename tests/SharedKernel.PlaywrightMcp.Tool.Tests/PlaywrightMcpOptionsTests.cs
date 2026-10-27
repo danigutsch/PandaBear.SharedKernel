@@ -5,7 +5,6 @@ namespace PandaBear.PlaywrightMcp.Tool.Tests;
 [Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 public sealed class PlaywrightMcpOptionsTests
 {
-    /// <summary>Verifies that the only installed engine is chosen with network access off and image responses omitted.</summary>
     [Fact]
     public void Selects_the_only_installed_engine_with_secure_defaults()
     {
@@ -26,7 +25,6 @@ public sealed class PlaywrightMcpOptionsTests
         options.ImageResponses.ShouldBe("omit");
     }
 
-    /// <summary>Verifies that having both Docker and Podman requires <c>PLAYWRIGHT_MCP_ENGINE</c>.</summary>
     [Fact]
     public void Requires_explicit_selection_when_both_engines_are_installed()
     {
@@ -45,7 +43,6 @@ public sealed class PlaywrightMcpOptionsTests
         exception.Message.ShouldBe("Set PLAYWRIGHT_MCP_ENGINE to docker or podman when both are installed.");
     }
 
-    /// <summary>Verifies that host, context, and connection overrides that point to a remote engine are refused.</summary>
     [Theory]
     [InlineData("docker", "DOCKER_HOST", "tcp://remote.example:2375", "Refusing Docker host or context overrides for Playwright MCP.")]
     [InlineData("docker", "DOCKER_CONTEXT", "remote", "Refusing Docker host or context overrides for Playwright MCP.")]
@@ -73,7 +70,6 @@ public sealed class PlaywrightMcpOptionsTests
         exception.Message.ShouldBe(expectedMessage);
     }
 
-    /// <summary>Verifies that network access and image responses are enabled only by explicit environment values.</summary>
     [Fact]
     public void Requires_explicit_opt_in_for_network_and_image_responses()
     {
@@ -94,7 +90,6 @@ public sealed class PlaywrightMcpOptionsTests
         options.ImageResponses.ShouldBe("allow");
     }
 
-    /// <summary>Verifies that invalid network or image response values are rejected with a message naming the variable.</summary>
     [Theory]
     [InlineData("PLAYWRIGHT_MCP_NETWORK_ACCESS", "yes", "PLAYWRIGHT_MCP_NETWORK_ACCESS must be 0 or 1.")]
     [InlineData("PLAYWRIGHT_MCP_IMAGE_RESPONSES", "yes", "PLAYWRIGHT_MCP_IMAGE_RESPONSES must be allow or omit.")]
