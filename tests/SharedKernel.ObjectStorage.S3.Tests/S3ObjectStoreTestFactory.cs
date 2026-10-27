@@ -2,8 +2,10 @@ using Microsoft.Extensions.Options;
 
 namespace PandaBear.ObjectStorage.S3.Tests;
 
+/// <summary>Creates S3 object stores over a fake client for tests.</summary>
 internal static class S3ObjectStoreTestFactory
 {
+    /// <summary>Creates a store over the fake client.</summary>
     public static S3ObjectStore CreateStore(FakeAmazonS3Client client, bool autoProvisionBucket = true, TimeProvider? timeProvider = null)
     {
         return new S3ObjectStore(client, Options.Create(new S3ObjectStoreOptions

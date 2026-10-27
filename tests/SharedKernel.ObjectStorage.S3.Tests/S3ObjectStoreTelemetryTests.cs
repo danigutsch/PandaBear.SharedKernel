@@ -2,6 +2,7 @@ using System.Diagnostics;
 
 namespace PandaBear.ObjectStorage.S3.Tests;
 
+/// <summary>Tests the activities that S3 object store operations emit.</summary>
 public sealed class S3ObjectStoreTelemetryTests
 {
     [Fact]
