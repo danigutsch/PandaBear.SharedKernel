@@ -13,15 +13,23 @@ namespace PandaBear.VaultManager.Tool.Tests.Brief;
 /// </summary>
 internal static class BriefSamples
 {
+    /// <summary>The key of the sample group.</summary>
     public const string GroupKey = "4943740a016f2549";
+    /// <summary>The origin key of the first sample login, which has website addresses.</summary>
     public const string First = "keeper|keeper.json|rec-1";
+    /// <summary>The origin key of the second sample login.</summary>
     public const string Second = "bitwarden|bitwarden.json|bw-1";
+    /// <summary>The ID of a pre-accepted finding in the first login's notes.</summary>
     public const string PreAccepted = "notes-recovery-code@notes:22";
+    /// <summary>The ID of a finding in the first login's notes that needs a decision.</summary>
     public const string Proposed = "notes-password@notes:10";
 
+    /// <summary>The ID of a user name finding in the first login's notes that an agent may not accept.</summary>
     public const string Username = "notes-username@notes:30";
+    /// <summary>The ID of a pre-accepted private key finding in the second login's notes that an agent may not reject.</summary>
     public const string PrivateKey = "private-key@notes:0";
 
+    /// <summary>Builds the sample brief document.</summary>
     public static BriefDocument Document() => new(
         BriefFile.CurrentVersion,
         ["keeper.json", "bitwarden.json"],

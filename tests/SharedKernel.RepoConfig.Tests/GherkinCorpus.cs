@@ -6,6 +6,7 @@ namespace PandaBear.RepoConfig.Tests;
 /// </summary>
 internal static class GherkinCorpus
 {
+    /// <summary>The repository configuration whose Gherkin section applies the corpus rules.</summary>
     public const string Configuration = """
         {
           "version": 1,
@@ -26,6 +27,7 @@ internal static class GherkinCorpus
     // 150 code points outside the Basic Multilingual Plane: within the limit, although 300 UTF-16 code units long.
     private static readonly string WideScenarioName = string.Concat(Enumerable.Repeat("\U0001F600", 150));
 
+    /// <summary>The corpus files by repository path, with the content of each.</summary>
     public static IReadOnlyDictionary<string, string> Files
     {
         get;
@@ -70,6 +72,7 @@ internal static class GherkinCorpus
         ["docs/outside.feature"] = "Feature:\t \n",
     };
 
+    /// <summary>The issues that <c>verify-gherkin</c> reports for the whole corpus.</summary>
     public static IReadOnlyList<string> Issues
     {
         get;
@@ -118,6 +121,7 @@ internal static class GherkinCorpus
         "- tests/corpus/trailing.feature: Line 5: Trailing whitespace is not allowed.",
     ];
 
+    /// <summary>The issues that <c>verify-gherkin</c> reports when it is given explicit paths.</summary>
     public static IReadOnlyList<string> ExplicitPathIssues
     {
         get;

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the GitHub roadmap publisher's tree, commit, reference, and pull request requests and the checks it makes between them.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RoadmapGitHubPublisherTests
 {

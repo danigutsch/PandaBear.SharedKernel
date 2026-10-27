@@ -1,5 +1,8 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests the verify-links command against seeded Git repositories of Markdown files.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class VerifyLinksCommandTests

@@ -3,6 +3,7 @@ using System.Text.Json;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests how GitHub roadmap import treats items it has already imported.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class GitHubRoadmapIntakeExistingItemTests
 {

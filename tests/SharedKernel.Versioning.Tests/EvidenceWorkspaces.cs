@@ -5,6 +5,9 @@ namespace PandaBear.Versioning.Tests;
 /// <summary>Deletes the package consumption evidence workspaces that an invocation names in its output or errors.</summary>
 internal sealed partial class EvidenceWorkspaces(CommandLineInvocation invocation) : IDisposable
 {
+    /// <summary>
+    /// Deletes each evidence workspace directory in the temporary path named in the invocation's output or error text.
+    /// </summary>
     public void Dispose()
     {
         var names = WorkspaceName().Matches(invocation.Output)

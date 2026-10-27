@@ -4,11 +4,15 @@ using System.Text.Json.Nodes;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Test helpers that build GitHub roadmap snapshots and the HTTP responses that serve them.</summary>
 internal static class GitHubRoadmapSnapshotTestOperations
 {
+    /// <summary>The repository that the fake snapshot describes.</summary>
     public const string Repository = "owner/repository";
+    /// <summary>The default branch commit identifier that the fake responses report.</summary>
     public const string DefaultOid = "1111111111111111111111111111111111111111";
 
+    /// <summary>Writes a reconciliation manifest whose snapshot digest is computed from the given snapshot.</summary>
     public static void Configure(
         TemporaryRepoConfigWorkspace workspace,
         string reconciliationManifest,
@@ -26,6 +30,7 @@ internal static class GitHubRoadmapSnapshotTestOperations
             root.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
     }
 
+    /// <summary>Queues the open issues page, the lookups of closed issues, and the default branch commit that serve the snapshot.</summary>
     public static void Enqueue(
         TestHttpMessageHandler handler,
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot,
@@ -45,6 +50,7 @@ internal static class GitHubRoadmapSnapshotTestOperations
         handler.Enqueue(CreateRepositoryCommitResponse(oid));
     }
 
+    /// <summary>Creates the GraphQL response that lists the open issues of the snapshot.</summary>
     public static HttpResponseMessage CreateOpenIssuesResponse(
         IReadOnlyList<GitHubRoadmapReconcileIssue> snapshot,
         string oid = DefaultOid)
@@ -91,6 +97,7 @@ internal static class GitHubRoadmapSnapshotTestOperations
         };
     }
 
+    /// <summary>Creates the GraphQL response that reports the default branch commit.</summary>
     public static HttpResponseMessage CreateRepositoryCommitResponse(string oid = DefaultOid) =>
         new(HttpStatusCode.OK)
         {
@@ -100,6 +107,7 @@ internal static class GitHubRoadmapSnapshotTestOperations
                 "application/json")
         };
 
+    /// <summary>Creates a snapshot issue, defaulting the labels and relations to empty.</summary>
     public static GitHubRoadmapReconcileIssue Issue(
         int number,
         string title,
@@ -118,6 +126,7 @@ internal static class GitHubRoadmapSnapshotTestOperations
             blockedBy ?? [],
             blocking ?? []);
 
+    /// <summary>Creates a relation to an issue, in <see cref="Repository"/> unless another repository is given.</summary>
     public static GitHubRoadmapReconcileRelation Relation(int number, string state, string repository = Repository) =>
         new(number, repository, state);
 

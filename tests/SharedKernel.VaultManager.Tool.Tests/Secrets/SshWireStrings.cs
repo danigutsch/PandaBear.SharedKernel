@@ -5,6 +5,7 @@ namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 /// <summary>Splits an SSH wire-format blob into its length-prefixed strings.</summary>
 internal static class SshWireStrings
 {
+    /// <summary>Returns each four-byte length-prefixed string in <paramref name="blob"/>.</summary>
     public static List<byte[]> Read(byte[] blob)
     {
         var strings = new List<byte[]>();

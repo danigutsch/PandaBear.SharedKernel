@@ -2,8 +2,10 @@ using System.Net;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Test helpers that configure a roadmap workspace for GitHub Project synchronization and queue its responses.</summary>
 internal static class GitHubProjectSyncTestOperations
 {
+    /// <summary>Adds a Project V2 target to the roadmap configuration.</summary>
     public static void EnableProjectTarget(TemporaryRepoConfigWorkspace workspace)
     {
         ArgumentNullException.ThrowIfNull(workspace);
@@ -15,6 +17,7 @@ internal static class GitHubProjectSyncTestOperations
             StringComparison.Ordinal));
     }
 
+    /// <summary>Links the default roadmap item to a GitHub issue number.</summary>
     public static void MapDefaultItem(TemporaryRepoConfigWorkspace workspace, int issueNumber = 997)
     {
         ArgumentNullException.ThrowIfNull(workspace);
@@ -26,6 +29,7 @@ internal static class GitHubProjectSyncTestOperations
             StringComparison.Ordinal));
     }
 
+    /// <summary>Queues the responses for a sync where the project already holds the issue item.</summary>
     public static void EnqueueExistingProjectItem(
         TestHttpMessageHandler handler,
         string projectFields,
@@ -45,6 +49,7 @@ internal static class GitHubProjectSyncTestOperations
         handler.EnqueueJson(HttpStatusCode.OK, fieldValues);
     }
 
+    /// <summary>Queues the responses for a preview where the project already holds the issue item.</summary>
     public static void EnqueueExistingProjectPreflight(
         TestHttpMessageHandler handler,
         string projectFields,
@@ -61,6 +66,7 @@ internal static class GitHubProjectSyncTestOperations
         handler.EnqueueJson(HttpStatusCode.OK, fieldValues);
     }
 
+    /// <summary>Queues the responses for a preview where the project does not yet hold the issue item.</summary>
     public static void EnqueueMissingProjectPreflight(TestHttpMessageHandler handler, string projectFields)
     {
         ArgumentNullException.ThrowIfNull(handler);
@@ -72,6 +78,7 @@ internal static class GitHubProjectSyncTestOperations
         handler.EnqueueJson(HttpStatusCode.OK, "{ \"data\": { \"node\": { \"items\": { \"nodes\": [], \"pageInfo\": { \"hasNextPage\": false, \"endCursor\": null } } } } }");
     }
 
+    /// <summary>Queues the responses for a sync that adds the issue to the project.</summary>
     public static void EnqueueMissingProjectItem(
         TestHttpMessageHandler handler,
         string projectFields,
@@ -92,6 +99,7 @@ internal static class GitHubProjectSyncTestOperations
         handler.EnqueueJson(HttpStatusCode.OK, fieldValues);
     }
 
+    /// <summary>Returns a project fields response that holds the given fields and a valid status field.</summary>
     public static string ProjectFieldsWithValidStatus(string additionalFields)
     {
         ArgumentNullException.ThrowIfNull(additionalFields);
@@ -104,6 +112,7 @@ internal static class GitHubProjectSyncTestOperations
             """;
     }
 
+    /// <summary>Returns a project fields response with every roadmap field and the given status options.</summary>
     public static string CompleteProjectFields(string statusOptions)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(statusOptions);

@@ -5,11 +5,13 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Brief;
 
+/// <summary>Tests reading and writing the brief file.</summary>
 public sealed class BriefFileTests : IDisposable
 {
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
     private readonly string directory = Directory.CreateTempSubdirectory("vault-brief-file-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

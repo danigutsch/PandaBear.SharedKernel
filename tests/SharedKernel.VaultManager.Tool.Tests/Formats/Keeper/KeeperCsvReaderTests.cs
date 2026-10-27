@@ -4,6 +4,7 @@ using static PandaBear.VaultManager.Tool.Tests.Formats.Keeper.KeeperTestData;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Keeper;
 
+/// <summary>Tests the reader for Keeper CSV exports.</summary>
 public sealed class KeeperCsvReaderTests
 {
     [Fact]

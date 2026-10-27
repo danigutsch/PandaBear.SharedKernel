@@ -14,6 +14,7 @@ internal sealed class HealthServer : IAsyncDisposable
     private readonly Task _accepting;
     private readonly int _status;
 
+    /// <summary>Starts listening on an ephemeral loopback port that answers every request with <c>status</c>.</summary>
     public HealthServer(int status = 200)
     {
         _status = status;
@@ -21,8 +22,10 @@ internal sealed class HealthServer : IAsyncDisposable
         _accepting = Accept();
     }
 
+    /// <summary>The loopback port the listener is bound to.</summary>
     public int Port => ((IPEndPoint)_listener.LocalEndpoint).Port;
 
+    /// <summary>The request line of each request received, in arrival order.</summary>
     public ConcurrentQueue<string> Requests { get; } = new();
 
     private async Task Accept()
@@ -54,6 +57,7 @@ internal sealed class HealthServer : IAsyncDisposable
         }
     }
 
+    /// <summary>Stops accepting connections and waits for the accept loop to finish.</summary>
     public async ValueTask DisposeAsync()
     {
         await _stop.CancelAsync();

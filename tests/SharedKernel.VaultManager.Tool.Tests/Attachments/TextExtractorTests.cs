@@ -3,6 +3,7 @@ using PandaBear.VaultManager.Tool.Attachments;
 
 namespace PandaBear.VaultManager.Tool.Tests.Attachments;
 
+/// <summary>Tests extraction of text from attachments within size and line limits.</summary>
 public sealed class TextExtractorTests
 {
     [Fact]

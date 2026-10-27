@@ -3,6 +3,7 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests how private keys are inspected and converted to SSH key items.</summary>
 public sealed class SshKeyConverterTests
 {
     [Fact]

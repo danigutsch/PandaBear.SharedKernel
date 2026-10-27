@@ -14,13 +14,18 @@ internal sealed class RepositoryLocalGit
         EnvironmentVariables = environmentVariables;
     }
 
+    /// <summary>Gets the environment variables that put the fake <c>git</c> ahead of the real one and name its marker file.</summary>
     public IReadOnlyDictionary<string, string?> EnvironmentVariables
     {
         get;
     }
 
+    /// <summary>Gets a value indicating whether the fake <c>git</c> was executed, shown by its marker file existing.</summary>
     public bool Ran => File.Exists(_markerPath);
 
+    /// <summary>Writes an executable fake <c>git</c> script into <paramref name="rootPath"/> and builds the environment that reaches it through a relative <c>PATH</c> entry.</summary>
+    /// <param name="rootPath">The repository root that receives the script.</param>
+    /// <param name="cancellationToken">The token that cancels writing the script.</param>
     public static async Task<RepositoryLocalGit> Create(string rootPath, CancellationToken cancellationToken)
     {
         if (OperatingSystem.IsWindows())

@@ -5,6 +5,7 @@ using PandaBear.VaultManager.Tool.Tests.Review;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests that command output shows item names and paths with escape sequences, line separators, and bidirectional overrides replaced.</summary>
 public sealed class PrintableOutputTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
@@ -17,6 +18,7 @@ public sealed class PrintableOutputTests : IDisposable
 
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-printable-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

@@ -1,5 +1,6 @@
 namespace PandaBear.K6.Tool.Tests;
 
+/// <summary>Tests validation and rewriting of the k6 target URL.</summary>
 public sealed class K6TargetTests
 {
     [Theory]

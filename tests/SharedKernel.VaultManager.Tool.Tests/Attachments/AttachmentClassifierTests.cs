@@ -3,6 +3,7 @@ using PandaBear.VaultManager.Tool.Attachments;
 
 namespace PandaBear.VaultManager.Tool.Tests.Attachments;
 
+/// <summary>Tests classification of attachments by content and file name.</summary>
 public sealed class AttachmentClassifierTests
 {
     [Theory]

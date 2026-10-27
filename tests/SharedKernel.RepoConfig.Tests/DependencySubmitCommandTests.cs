@@ -5,6 +5,7 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the <c>dependency submit</c> command.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class DependencySubmitCommandTests

@@ -2,6 +2,9 @@ using System.ComponentModel;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Tests how the text-encoding verifier handles misbehaving, hanging, and spoofed Git processes.
+/// </summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 [Collection(RepoConfigToolEnvironmentGroup.Name)]
 public sealed class TextEncodingProcessTests

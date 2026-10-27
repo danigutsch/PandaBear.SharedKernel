@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests the secret findings report.</summary>
 public sealed class FindingsReportTests
 {
     [Fact]

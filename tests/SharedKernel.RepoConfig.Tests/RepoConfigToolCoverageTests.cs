@@ -2,6 +2,7 @@ using System.Globalization;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the repo config command line for argument errors, init, diff, set, get, GitHub sync failures, and verify output.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RepoConfigToolCoverageTests
 {

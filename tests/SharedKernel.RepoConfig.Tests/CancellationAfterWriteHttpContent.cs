@@ -3,6 +3,9 @@ using System.Text;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>HTTP content that writes a fixed UTF-8 body to the request stream and then runs a callback, so a test can cancel after the body was sent.</summary>
+/// <param name="content">The text written as the request body.</param>
+/// <param name="afterWrite">Runs once the body has been written to the stream.</param>
 internal sealed class CancellationAfterWriteHttpContent(string content, Action afterWrite) : HttpContent
 {
     private readonly byte[] _content = Encoding.UTF8.GetBytes(content);

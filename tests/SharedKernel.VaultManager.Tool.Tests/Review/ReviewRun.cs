@@ -10,6 +10,7 @@ namespace PandaBear.VaultManager.Tool.Tests.Review;
 /// <summary>Invokes the review command with a fake terminal, capturing every output like the real command tree tests do.</summary>
 internal static class ReviewRun
 {
+    /// <summary>Runs <c>review</c> with <paramref name="args"/> against <paramref name="terminal"/> and returns the exit code, output, and error text.</summary>
     public static async Task<CommandLineRun> Invoke(VaultCommandEnvironment environment, FakeTerminal terminal, IReadOnlyList<string> args, CancellationToken ct)
     {
         var command = new RootCommand("Review command test.") { ReviewCommand.Create(environment, terminal.Terminal()) };

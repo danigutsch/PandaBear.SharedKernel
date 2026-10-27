@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the node identity that GitHub roadmap import records.</summary>
 public sealed class GitHubRoadmapNewIdentityTests
 {
     [Fact]

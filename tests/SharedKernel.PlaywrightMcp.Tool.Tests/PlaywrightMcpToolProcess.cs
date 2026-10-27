@@ -3,6 +3,7 @@ using System.Globalization;
 
 namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
+/// <summary>The built Playwright MCP tool running as a separate process, with its output captured.</summary>
 internal sealed class PlaywrightMcpToolProcess : IAsyncDisposable
 {
     private static readonly string[] IsolatedVariables =
@@ -27,6 +28,7 @@ internal sealed class PlaywrightMcpToolProcess : IAsyncDisposable
         _standardError = process.StandardError.ReadToEndAsync(CancellationToken.None);
     }
 
+    /// <summary>Starts the tool with <c>serve</c>, the given <c>PATH</c>, and the engine and host variables removed.</summary>
     public static PlaywrightMcpToolProcess StartServer(string path)
     {
         var fileName = OperatingSystem.IsWindows()
@@ -56,6 +58,7 @@ internal sealed class PlaywrightMcpToolProcess : IAsyncDisposable
         return new PlaywrightMcpToolProcess(process);
     }
 
+    /// <summary>Sends SIGTERM to the tool process and fails if the signal could not be sent.</summary>
     public async Task SendTerminationSignal(CancellationToken ct)
     {
         var startInfo = new ProcessStartInfo("/bin/sh") { UseShellExecute = false };
@@ -72,12 +75,14 @@ internal sealed class PlaywrightMcpToolProcess : IAsyncDisposable
         }
     }
 
+    /// <summary>Waits for the tool to exit and returns its exit code and captured output.</summary>
     public async Task<ProcessResult> WaitForExit(CancellationToken ct)
     {
         await _process.WaitForExitAsync(ct);
         return new ProcessResult(_process.ExitCode, await _standardOutput, await _standardError);
     }
 
+    /// <summary>Kills the process tree if still running and releases the process.</summary>
     public async ValueTask DisposeAsync()
     {
         if (!_process.HasExited)

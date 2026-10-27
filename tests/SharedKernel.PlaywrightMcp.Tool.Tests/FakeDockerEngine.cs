@@ -2,10 +2,12 @@ using System.Globalization;
 
 namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
+/// <summary>A fake <c>docker</c> script that logs every call, answers context queries, and sleeps while running or removing a container.</summary>
 internal sealed class FakeDockerEngine : IDisposable
 {
     private readonly TemporaryDirectory _directory = new();
 
+    /// <summary>Writes the executable <c>docker</c> script, whose container removal takes <c>removalDelaySeconds</c>.</summary>
     public FakeDockerEngine(int removalDelaySeconds)
     {
         if (OperatingSystem.IsWindows())
@@ -35,18 +37,22 @@ internal sealed class FakeDockerEngine : IDisposable
             UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
     }
 
+    /// <summary>The directory that holds the <c>docker</c> script and so can serve as <c>PATH</c>.</summary>
     public string DirectoryPath => _directory.Path;
 
+    /// <summary>The file the script appends each call's arguments to.</summary>
     public string LogPath
     {
         get;
     }
 
+    /// <summary>Reads the logged calls, or an empty string when nothing was logged.</summary>
     public string ReadLog()
     {
         return File.Exists(LogPath) ? File.ReadAllText(LogPath) : string.Empty;
     }
 
+    /// <summary>Waits until the log shows a <c>run --rm</c> call.</summary>
     public async Task WaitUntilRuntimeStarts(CancellationToken ct)
     {
         while (!ReadLog().Contains(" run --rm ", StringComparison.Ordinal))
@@ -55,6 +61,7 @@ internal sealed class FakeDockerEngine : IDisposable
         }
     }
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose()
     {
         _directory.Dispose();

@@ -3,6 +3,7 @@ using PandaBear.VaultManager.Tool.Model;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Bitwarden;
 
+/// <summary>Tests the reader for Bitwarden CSV exports.</summary>
 public sealed class BitwardenCsvReaderTests
 {
     [Fact]

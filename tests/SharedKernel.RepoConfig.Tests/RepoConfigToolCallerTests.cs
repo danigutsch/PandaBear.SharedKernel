@@ -1,5 +1,6 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Checks that the repo-config command lines used in the repository's workflow files match the tool's command tree.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraits.CommandLineCategory)]
 public sealed class RepoConfigToolCallerTests
 {

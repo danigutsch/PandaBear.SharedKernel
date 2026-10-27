@@ -2,6 +2,7 @@ using PandaBear.VaultManager.Tool.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 
+/// <summary>Tests the console-backed <see cref="VaultCommandEnvironment"/>.</summary>
 public sealed class VaultCommandEnvironmentTests
 {
     [Fact]

@@ -2,12 +2,14 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests the inspect command.</summary>
 public sealed class InspectCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const string FilePassword = "fixture file password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-inspect-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
     [Fact]

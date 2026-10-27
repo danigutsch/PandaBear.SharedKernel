@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Tests the download, verification, and extraction of the pinned Node.js and Dev Container CLI archives.</summary>
 public sealed class DevcontainerCliBootstrapTests
 {
     [Fact]

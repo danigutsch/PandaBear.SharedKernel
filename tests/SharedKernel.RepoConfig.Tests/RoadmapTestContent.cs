@@ -1,7 +1,9 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>Roadmap config and item JSON documents used as test inputs.</summary>
 internal static class RoadmapTestContent
 {
+    /// <summary>A config with <c>sourceOfTruth</c> set to <c>github</c>, empty statuses, ordering <c>rank</c>, scoring model <c>WSJF</c>, and a string for GitHub <c>enabled</c>.</summary>
     public const string InvalidConfigJson = """
         {
           "schemaVersion": "1.0",
@@ -32,6 +34,7 @@ internal static class RoadmapTestContent
         }
         """;
 
+    /// <summary>An item with a wrong id prefix, unknown type and status, out-of-range scoring values, and a string where <c>blockedBy</c> needs an array.</summary>
     public const string InvalidItemJson = """
         {
           "$schema": "../schema/roadmap-item.schema.json",
@@ -56,6 +59,7 @@ internal static class RoadmapTestContent
         }
         """;
 
+    /// <summary>A ready issue <c>RM-002</c> under <c>RM-001</c>, order 20, mapped to GitHub issue 997 and with no blockers.</summary>
     public const string IssueWithGitHubMappingJson = """
         {
           "$schema": "../schema/roadmap-item.schema.json",
@@ -90,6 +94,7 @@ internal static class RoadmapTestContent
         }
         """;
 
+    /// <summary>A ready issue <c>RM-002</c> under <c>RM-001</c> with order 5, so it sorts ahead of its parent epic.</summary>
     public const string HigherPriorityIssueJson = """
         {
           "$schema": "../schema/roadmap-item.schema.json",
@@ -119,6 +124,7 @@ internal static class RoadmapTestContent
         }
         """;
 
+    /// <summary>A ready enabler <c>RM-003</c> under <c>RM-001</c> with order 30 and no blockers.</summary>
     public const string UnblockedEnablerJson = """
         {
           "$schema": "../schema/roadmap-item.schema.json",
@@ -148,6 +154,7 @@ internal static class RoadmapTestContent
         }
         """;
 
+    /// <summary>A ready issue <c>RM-002</c> marked <c>untriaged</c>, mapped to GitHub issue 997, before priority evidence exists.</summary>
     public const string UntriagedIssueJson = """
         {
           "$schema": "../schema/roadmap-item.schema.json",
@@ -176,6 +183,7 @@ internal static class RoadmapTestContent
         }
         """;
 
+    /// <summary>A ready issue <c>RM-002</c> that is blocked by its parent epic <c>RM-001</c>.</summary>
     public const string BlockedIssueJson = """
         {
           "$schema": "../schema/roadmap-item.schema.json",

@@ -1,5 +1,8 @@
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// Factory for the Git repository used by JSON verification tests.
+/// </summary>
 internal static class VerifyJsonTestRepository
 {
     /// <summary>Creates a Git repository whose untracked package cache holds JSON that verification must not read.</summary>

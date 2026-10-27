@@ -3,6 +3,7 @@ using PandaBear.VaultManager.Tool.IO;
 
 namespace PandaBear.VaultManager.Tool.Tests.IO;
 
+/// <summary>Tests the text writer that replaces unprintable characters before they reach the wrapped writer.</summary>
 public sealed class PrintableTextWriterTests
 {
     [Theory]

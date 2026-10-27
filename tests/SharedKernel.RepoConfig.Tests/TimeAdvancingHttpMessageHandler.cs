@@ -3,6 +3,10 @@ using Microsoft.Extensions.Time.Testing;
 
 namespace PandaBear.RepoConfig.Tests;
 
+/// <summary>
+/// HTTP message handler that serves canned GitHub issue responses and advances the fake clock by 30 seconds when the third response body is disposed.
+/// </summary>
+/// <param name="timeProvider">The fake clock advanced by the third response.</param>
 internal sealed class TimeAdvancingHttpMessageHandler(FakeTimeProvider timeProvider) : HttpMessageHandler
 {
     private readonly FakeTimeProvider _timeProvider = timeProvider;
