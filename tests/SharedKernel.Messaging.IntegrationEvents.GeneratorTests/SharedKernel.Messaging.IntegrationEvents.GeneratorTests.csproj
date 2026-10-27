@@ -27,6 +27,8 @@
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Mediator.SourceGenerator\SharedKernel.Mediator.SourceGenerator.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Messaging.IntegrationEvents\SharedKernel.Messaging.IntegrationEvents.csproj" />
         <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Messaging.IntegrationEvents.SourceGenerator\SharedKernel.Messaging.IntegrationEvents.SourceGenerator.csproj" />
+        <ProjectReference Include="..\..\src\SharedKernel\SharedKernel.Messaging.Protobuf\SharedKernel.Messaging.Protobuf.csproj" />
+        <ProjectReference Include="..\SharedKernel.Messaging.Protobuf.TestContracts\SharedKernel.Messaging.Protobuf.TestContracts.csproj" />
     </ItemGroup>
 
 </Project>

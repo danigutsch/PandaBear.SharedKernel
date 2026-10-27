@@ -1,0 +1,18 @@
+#nullable enable
+const PandaBear.Messaging.Protobuf.ProtobufContentTypes.EventFormat = "application/cloudevents+protobuf" -> string!
+const PandaBear.Messaging.Protobuf.ProtobufContentTypes.Payload = "application/protobuf" -> string!
+PandaBear.Messaging.Protobuf.ProtobufContentTypes
+PandaBear.Messaging.Protobuf.ProtobufEventEnvelopeFormat
+PandaBear.Messaging.Protobuf.ProtobufIntegrationEventSerializer
+PandaBear.Messaging.Protobuf.ProtobufIntegrationEventSerializer.ProtobufIntegrationEventSerializer(PandaBear.Messaging.IntegrationEvents.IIntegrationEventSerializer? fallback = null) -> void
+PandaBear.Messaging.Protobuf.ProtobufIntegrationEventSerializer.Serialize<TIntegrationEvent>(TIntegrationEvent integrationEvent) -> string!
+PandaBear.Messaging.Protobuf.ProtobufIntegrationEventSerializer.SerializePayload<TIntegrationEvent>(TIntegrationEvent integrationEvent) -> PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload!
+static PandaBear.Messaging.Protobuf.ProtobufEventEnvelopeFormat.Decode(System.ReadOnlyMemory<byte> message) -> PandaBear.Messaging.EventEnvelope!
+static PandaBear.Messaging.Protobuf.ProtobufEventEnvelopeFormat.Encode(PandaBear.Messaging.IEventEnvelope! envelope) -> byte[]!
+static PandaBear.Messaging.Protobuf.ProtobufIntegrationEventSerializer.Deserialize<TIntegrationEvent>(string! payload) -> TIntegrationEvent
+PandaBear.Messaging.Protobuf.ProtobufIntegrationEventConsumerServiceCollectionExtensions
+static PandaBear.Messaging.Protobuf.ProtobufIntegrationEventConsumerServiceCollectionExtensions.AddProtobufIntegrationEventConsumer<TIntegrationEvent, THandler>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer
+PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.EventType.get -> string!
+PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.EventType.init -> void
+PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer.ProtobufGeneratedConsumer(string! EventType) -> void

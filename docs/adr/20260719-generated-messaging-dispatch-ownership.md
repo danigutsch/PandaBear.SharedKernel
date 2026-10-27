@@ -72,10 +72,13 @@ skip the decorator and weaken duplicate-delivery protection.
 ## Consequences
 
 - Missing and duplicate integration-event consumer handlers fail compilation with `SKMSG001` and
-  `SKMSG002`; duplicate consumer event types fail compilation with `SKMSG003`; invalid registered
-  contract types fail compilation with `SKMSG006`.
-- The generated publisher constructor holds the scope factory and closed JSON metadata, not scoped
-  handlers. Closed handler registrations remain visible to DI validation and are resolved only inside
+  `SKMSG002`; duplicate consumer event types within one payload format fail compilation with
+  `SKMSG003`; invalid registered contract types fail compilation with `SKMSG006`.
+- Protobuf messages (`Google.Protobuf.IMessage`) need no JSON metadata: the generated serializer writes
+  mapped ones as base64 with `application/protobuf`, and the generated publisher delivers consumers
+  registered with `AddProtobufIntegrationEventConsumer` from a Base64 `application/protobuf` envelope.
+- The generated publisher constructor holds the scope factory and closed JSON metadata for JSON
+  consumers, not scoped handlers. Closed handler registrations remain visible to DI validation and are resolved only inside
   an envelope's asynchronously disposed child scope.
 - Adding a contract requires explicit metadata and generated host composition.
 - Dynamic runtime registries are not retained without a demonstrated dynamic caller.

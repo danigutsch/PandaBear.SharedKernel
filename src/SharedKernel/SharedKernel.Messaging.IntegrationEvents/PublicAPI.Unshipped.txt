@@ -34,3 +34,12 @@ PandaBear.Messaging.IntegrationEvents.IRetryableMessage.Attempts.get -> int
 PandaBear.Messaging.IntegrationEvents.IRetryableMessage.LastAttemptAt.get -> System.DateTimeOffset?
 PandaBear.Messaging.IntegrationEvents.IRetryableMessage.LastError.get -> string?
 PandaBear.Messaging.IntegrationEvents.IRetryableMessage.NextAttemptAt.get -> System.DateTimeOffset?
+PandaBear.Messaging.IntegrationEvents.IIntegrationEventSerializer.SerializePayload<TIntegrationEvent>(TIntegrationEvent integrationEvent) -> PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload!
+PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload
+PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.DataContentType.get -> string!
+PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.DataContentType.init -> void
+PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.Encoding.get -> PandaBear.Messaging.EventPayloadEncoding
+PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.Encoding.init -> void
+PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.Payload.get -> string!
+PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.Payload.init -> void
+PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload.SerializedIntegrationEventPayload(string! Payload, PandaBear.Messaging.EventPayloadEncoding Encoding, string! DataContentType) -> void

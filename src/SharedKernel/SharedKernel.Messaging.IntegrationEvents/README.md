@@ -75,6 +75,11 @@ resolve to the only registered context, or to the context chosen with
 `AsDefaultOutbox()` / `AsDefaultInbox()`). When several contexts register one and none is chosen, resolving
 the unkeyed service throws instead of silently binding whichever registered first. Register an
 `IIntegrationEventSerializer` globally or keyed by context.
+`IIntegrationEventSerializer.SerializePayload` returns the payload with its `EventPayloadEncoding` and content type;
+its default implementation wraps `Serialize` as `application/json`. A serializer for another format, such as the
+Protobuf serializer in `SharedKernel.Messaging.Protobuf`, overrides it, and the outbox records what it reports.
+The generator emits that override for mapped Protobuf messages, which need no `JsonTypeInfo<T>`; see the
+`SharedKernel.Messaging.Protobuf` README.
 
 Transport producers register only context-keyed `IEventEnvelopePublisher` instances. Relays prefer their
 context-keyed publisher and otherwise require an unkeyed application publisher. Transport consumers

@@ -16,6 +16,10 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
     private const string AttributeName = "PandaBear.Messaging.IntegrationEvents.IntegrationEventMappingAttribute";
     private const string DomainEventInterfaceName = "PandaBear.Domain.IDomainEvent";
     private const string IntegrationEventInterfaceName = "PandaBear.Messaging.IntegrationEvents.IIntegrationEvent";
+    private const string ProtobufMessageInterfaceName = "Google.Protobuf.IMessage";
+    private const string ProtobufPayloadContentType = "application/protobuf";
+    private const string ProtobufRegistrationExtensionsTypeName = "PandaBear.Messaging.Protobuf.ProtobufIntegrationEventConsumerServiceCollectionExtensions";
+    private const string ProtobufConsumerApiName = "AddProtobufIntegrationEventConsumer";
     private const string IntegrationEventHandlerInterfaceName = "PandaBear.Messaging.IntegrationEvents.IIntegrationEventHandler<TIntegrationEvent>";
     private const string RegistrationExtensionsTypeName = "PandaBear.Messaging.IntegrationEvents.IntegrationEventConsumerServiceCollectionExtensions";
     private const string GeneratedHintName = "SharedKernel.Messaging.IntegrationEvents.GeneratedIntegrationEvents.g.cs";
@@ -65,7 +69,8 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
     private static readonly DiagnosticDescriptor InvalidIntegrationEventContract = new(
         "SKMSG006",
         "Registered integration-event contract is invalid",
-        "Registered integration-event contract '{0}' must be a concrete, closed class or struct accessible to generated code",
+        "Registered integration-event contract '{0}' must be a concrete, closed class or struct accessible to generated code; " +
+        "a Protobuf consumer must also implement Google.Protobuf.IMessage and have a public parameterless constructor",
         "SharedKernel.Messaging",
         DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -202,10 +207,10 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
 
             var duplicateEventTypeGroups = registrations
                 .Where(static registration => registration.IsConsumer && registration.EventType is not null)
-                .GroupBy(static registration => registration.EventType!, StringComparer.Ordinal)
+                .GroupBy(static registration => (EventType: registration.EventType!, registration.IsProtobuf))
                 .Select(static group => new
                 {
-                    EventType = group.Key,
+                    EventType = group.Key.EventType,
                     ConsumerTypes = group.Select(static registration => registration.IntegrationEventType)
                         .Distinct(StringComparer.Ordinal)
                         .OrderBy(static type => type, StringComparer.Ordinal)
@@ -306,7 +311,8 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
                 domainEvent.ToDisplayString(FullyQualifiedFormat),
                 integrationEvent.ToDisplayString(FullyQualifiedFormat),
                 $"Dispatch{Sanitize(domainEvent.ToDisplayString())}",
-                EscapeIdentifier(method.Name)),
+                EscapeIdentifier(method.Name),
+                Implements(integrationEvent, ProtobufMessageInterfaceName)),
             methodDisplayName,
             location);
     }
@@ -322,7 +328,7 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
             _ => null
         };
         if (invokedName is null ||
-            invokedName.Identifier.ValueText is not ("AddIntegrationEventContract" or "AddIntegrationEventConsumer"))
+            invokedName.Identifier.ValueText is not ("AddIntegrationEventContract" or "AddIntegrationEventConsumer" or ProtobufConsumerApiName))
         {
             return null;
         }
@@ -347,12 +353,15 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
         }
 
         var integrationEventTypeName = integrationEventType.ToDisplayString(FullyQualifiedFormat);
-        var location = invokedName is GenericNameSyntax { TypeArgumentList.Arguments.Count: 1 } genericName
+        var location = invokedName is GenericNameSyntax { TypeArgumentList.Arguments.Count: 1 or 2 } genericName
             ? genericName.TypeArgumentList.Arguments[0].GetLocation()
             : invocation.GetLocation();
-        var hasNullableTypeArgument = invokedName is GenericNameSyntax { TypeArgumentList.Arguments.Count: 1 } registrationName &&
+        var hasNullableTypeArgument = invokedName is GenericNameSyntax { TypeArgumentList.Arguments.Count: 1 or 2 } registrationName &&
             registrationName.TypeArgumentList.Arguments[0] is NullableTypeSyntax;
-        if (hasNullableTypeArgument || !IsValidIntegrationEventContract(integrationEventType))
+        var isProtobufConsumer = method.Name == ProtobufConsumerApiName;
+        if (hasNullableTypeArgument ||
+            !IsValidIntegrationEventContract(integrationEventType) ||
+            (isProtobufConsumer && !IsValidProtobufConsumerContract(integrationEventType)))
         {
             return new IntegrationEventRegistrationCandidate(null, integrationEventTypeName, location);
         }
@@ -360,8 +369,9 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
         return new IntegrationEventRegistrationCandidate(
             new IntegrationEventRegistrationModel(
                 integrationEventTypeName,
-                method.Name == "AddIntegrationEventConsumer",
-                ResolveEventType(invocation, integrationEventType, context.SemanticModel, cancellationToken)),
+                method.Name is "AddIntegrationEventConsumer" or ProtobufConsumerApiName,
+                ResolveEventType(invocation, integrationEventType, context.SemanticModel, cancellationToken),
+                isProtobufConsumer),
             integrationEventTypeName,
             location);
     }
@@ -372,12 +382,12 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
         SemanticModel semanticModel,
         CancellationToken cancellationToken)
     {
-        if (invokedName is GenericNameSyntax { TypeArgumentList.Arguments.Count: 1 } genericName)
+        if (invokedName is GenericNameSyntax { TypeArgumentList.Arguments.Count: 1 or 2 } genericName)
         {
             return semanticModel.GetTypeInfo(genericName.TypeArgumentList.Arguments[0], cancellationToken).Type;
         }
 
-        return method.TypeArguments.Length == 1 ? method.TypeArguments[0] : null;
+        return method.TypeArguments.Length is 1 or 2 ? method.TypeArguments[0] : null;
     }
 
     private static string? ResolveEventType(
@@ -490,6 +500,12 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
             IsContractTypeAccessibleToGeneratedCode(namedType);
     }
 
+    private static bool IsValidProtobufConsumerContract(ITypeSymbol type) =>
+        type is INamedTypeSymbol namedType &&
+        Implements(namedType, ProtobufMessageInterfaceName) &&
+        namedType.InstanceConstructors.Any(static constructor =>
+            constructor.DeclaredAccessibility == Accessibility.Public && constructor.Parameters.Length == 0);
+
     private static bool ContainsTypeParameters(ITypeSymbol type)
     {
         return type switch
@@ -532,10 +548,16 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
 
     private static bool IsRegistrationApi(IMethodSymbol method, Compilation compilation)
     {
-        var registrationExtensions = compilation.GetTypeByMetadataName(RegistrationExtensionsTypeName);
         var originalMethod = (method.ReducedFrom ?? method).OriginalDefinition;
+        return IsMemberOfRegistrationType(compilation, RegistrationExtensionsTypeName, method.Name, originalMethod) ||
+            IsMemberOfRegistrationType(compilation, ProtobufRegistrationExtensionsTypeName, method.Name, originalMethod);
+    }
+
+    private static bool IsMemberOfRegistrationType(Compilation compilation, string typeName, string methodName, IMethodSymbol originalMethod)
+    {
+        var registrationExtensions = compilation.GetTypeByMetadataName(typeName);
         return registrationExtensions is not null &&
-            registrationExtensions.GetMembers(method.Name)
+            registrationExtensions.GetMembers(methodName)
                 .OfType<IMethodSymbol>()
                 .Any(candidate => SymbolEqualityComparer.Default.Equals(candidate.OriginalDefinition, originalMethod));
     }
@@ -585,16 +607,28 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
             .OrderBy(static handler => handler.IntegrationEventType, StringComparer.Ordinal)
             .ThenBy(static handler => handler.HandlerType, StringComparer.Ordinal)
             .ToArray();
+        // A mapped Protobuf message is serialized as binary; an explicit JSON registration of the same type keeps it on JSON.
+        var jsonRegisteredTypes = registrations
+            .Where(static registration => !registration.IsProtobuf)
+            .Select(static registration => registration.IntegrationEventType)
+            .ToArray();
+        var protobufTypes = mappings
+            .Where(static mapping => mapping.IsProtobuf)
+            .Select(static mapping => mapping.IntegrationEventType)
+            .Concat(registrations.Where(static registration => registration.IsProtobuf).Select(static registration => registration.IntegrationEventType))
+            .Where(type => !jsonRegisteredTypes.Contains(type, StringComparer.Ordinal))
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
         var builder = new StringBuilder("// <auto-generated />\n#nullable enable\n\nnamespace PandaBear.Messaging.IntegrationEvents.Generated\n{\n\n");
 
         if (contractTypes.Length > 0)
         {
-            EmitSerializer(builder, contractTypes);
+            EmitSerializer(builder, contractTypes, protobufTypes);
         }
 
         if (consumerTypes.Length > 0)
         {
-            EmitEnvelopePublisher(builder, consumerHandlers);
+            EmitEnvelopePublisher(builder, consumerHandlers, protobufTypes);
         }
 
         if (mappings.Length > 0)
@@ -607,18 +641,33 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
             builder,
             mappings.Length > 0,
             contractTypes,
-            consumerHandlers);
+            consumerHandlers,
+            protobufTypes);
         return builder.ToString();
     }
 
-    private static void EmitSerializer(StringBuilder builder, string[] contractTypes)
+    private static void EmitSerializer(StringBuilder builder, string[] contractTypes, string[] protobufTypes)
     {
-        builder.AppendLine("internal sealed class GeneratedIntegrationEventSerializer(");
-        for (var index = 0; index < contractTypes.Length; index++)
+        var jsonIndexes = Enumerable.Range(0, contractTypes.Length)
+            .Where(index => !protobufTypes.Contains(contractTypes[index], StringComparer.Ordinal))
+            .ToArray();
+        const string serializerInterface = "global::PandaBear.Messaging.IntegrationEvents.IIntegrationEventSerializer";
+        builder.Append("internal sealed class GeneratedIntegrationEventSerializer");
+        if (jsonIndexes.Length == 0)
         {
-            builder.Append("    global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<").Append(contractTypes[index]).Append("> jsonTypeInfo").Append(index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture));
-            builder.AppendLine(index == contractTypes.Length - 1 ? ") : global::PandaBear.Messaging.IntegrationEvents.IIntegrationEventSerializer" : ",");
+            builder.Append(" : ").AppendLine(serializerInterface);
         }
+        else
+        {
+            builder.AppendLine("(");
+            for (var position = 0; position < jsonIndexes.Length; position++)
+            {
+                var index = jsonIndexes[position];
+                builder.Append("    global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<").Append(contractTypes[index]).Append("> jsonTypeInfo").Append(index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture));
+                builder.AppendLine(position == jsonIndexes.Length - 1 ? ") : " + serializerInterface : ",");
+            }
+        }
+
         builder.AppendLine("{");
         builder.AppendLine("    public string Serialize<TIntegrationEvent>(TIntegrationEvent integrationEvent) where TIntegrationEvent : global::PandaBear.Messaging.IntegrationEvents.IIntegrationEvent");
         builder.AppendLine("    {");
@@ -627,27 +676,60 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
         builder.AppendLine("        {");
         for (var index = 0; index < contractTypes.Length; index++)
         {
-            builder.Append("            ").Append(contractTypes[index]).Append(" typed when integrationEvent.GetType() == typeof(").Append(contractTypes[index]).Append(") => global::System.Text.Json.JsonSerializer.Serialize(typed, jsonTypeInfo").Append(index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)).AppendLine("),");
+            builder.Append("            ").Append(contractTypes[index]).Append(" typed when integrationEvent.GetType() == typeof(").Append(contractTypes[index]).Append(") => ");
+            if (protobufTypes.Contains(contractTypes[index], StringComparer.Ordinal))
+            {
+                builder.AppendLine("global::System.Convert.ToBase64String(global::Google.Protobuf.MessageExtensions.ToByteArray(typed)),");
+            }
+            else
+            {
+                builder.Append("global::System.Text.Json.JsonSerializer.Serialize(typed, jsonTypeInfo").Append(index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)).AppendLine("),");
+            }
         }
         builder.AppendLine("            _ => throw new global::System.NotSupportedException($\"Integration event type '{integrationEvent.GetType().FullName}' is not registered for durable serialization.\"),");
         builder.AppendLine("        };");
         builder.AppendLine("    }");
+        if (protobufTypes.Length > 0)
+        {
+            builder.AppendLine();
+            builder.AppendLine("    public global::PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload SerializePayload<TIntegrationEvent>(TIntegrationEvent integrationEvent) where TIntegrationEvent : global::PandaBear.Messaging.IntegrationEvents.IIntegrationEvent");
+            builder.AppendLine("    {");
+            builder.AppendLine("        var payload = Serialize(integrationEvent);");
+            builder.AppendLine("        return integrationEvent switch");
+            builder.AppendLine("        {");
+            foreach (var protobufType in protobufTypes.OrderBy(static type => type, StringComparer.Ordinal))
+            {
+                builder.Append("            ").Append(protobufType).Append(" when integrationEvent.GetType() == typeof(").Append(protobufType).Append(") => new global::PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload(payload, global::PandaBear.Messaging.EventPayloadEncoding.Base64, \"").Append(ProtobufPayloadContentType).AppendLine("\"),");
+            }
+
+            builder.AppendLine("            _ => new global::PandaBear.Messaging.IntegrationEvents.SerializedIntegrationEventPayload(payload, global::PandaBear.Messaging.EventPayloadEncoding.Json, \"application/json\"),");
+            builder.AppendLine("        };");
+            builder.AppendLine("    }");
+        }
+
         builder.AppendLine("}");
         builder.AppendLine();
     }
 
     private static void EmitEnvelopePublisher(
         StringBuilder builder,
-        IntegrationEventHandlerModel[] consumerHandlers)
+        IntegrationEventHandlerModel[] consumerHandlers,
+        string[] protobufTypes)
     {
         var consumerTypes = consumerHandlers.Select(static handler => handler.IntegrationEventType).ToArray();
+        var jsonIndexes = Enumerable.Range(0, consumerTypes.Length)
+            .Where(index => !protobufTypes.Contains(consumerTypes[index], StringComparer.Ordinal))
+            .ToArray();
         builder.AppendLine("internal sealed class GeneratedIntegrationEventEnvelopePublisher(");
-        builder.AppendLine("    global::Microsoft.Extensions.DependencyInjection.IServiceScopeFactory scopeFactory,");
-        for (var index = 0; index < consumerTypes.Length; index++)
+        builder.Append("    global::Microsoft.Extensions.DependencyInjection.IServiceScopeFactory scopeFactory");
+        for (var position = 0; position < jsonIndexes.Length; position++)
         {
+            var index = jsonIndexes[position];
+            builder.AppendLine(",");
             builder.Append("    global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<").Append(consumerTypes[index]).Append("> jsonTypeInfo").Append(index.ToString("D4", System.Globalization.CultureInfo.InvariantCulture));
-            builder.AppendLine(index == consumerTypes.Length - 1 ? ") : global::PandaBear.Messaging.IEventEnvelopePublisher" : ",");
         }
+
+        builder.AppendLine(") : global::PandaBear.Messaging.IEventEnvelopePublisher");
         builder.AppendLine("{");
         builder.AppendLine("    public async global::System.Threading.Tasks.ValueTask Publish(global::PandaBear.Messaging.EventEnvelope envelope, global::System.Threading.CancellationToken ct)");
         builder.AppendLine("    {");
@@ -656,11 +738,27 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
         for (var contractIndex = 0; contractIndex < consumerTypes.Length; contractIndex++)
         {
             var consumerType = consumerTypes[contractIndex];
-            builder.Append("        if (global::System.String.Equals(envelope.EventType, ").Append(consumerType).AppendLine(".EventType, global::System.StringComparison.Ordinal))");
+            var isProtobuf = protobufTypes.Contains(consumerType, StringComparer.Ordinal);
+            builder.Append("        if (global::System.String.Equals(envelope.EventType, ").Append(consumerType).Append(".EventType, global::System.StringComparison.Ordinal)");
+            if (isProtobuf)
+            {
+                builder.Append(" && envelope.PayloadEncoding == global::PandaBear.Messaging.EventPayloadEncoding.Base64 && global::System.String.Equals(envelope.DataContentType, \"").Append(ProtobufPayloadContentType).Append("\", global::System.StringComparison.OrdinalIgnoreCase)");
+            }
+
+            builder.AppendLine(")");
             builder.AppendLine("        {");
             builder.AppendLine("            if (envelope.Payload is null) throw new global::System.InvalidOperationException($\"Integration event '{envelope.EventType}' payload is required.\");");
-            builder.Append("            var integrationEvent = global::System.Text.Json.JsonSerializer.Deserialize(envelope.Payload, jsonTypeInfo").Append(contractIndex.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)).AppendLine(")");
-            builder.AppendLine("                ?? throw new global::System.InvalidOperationException($\"Integration event '{envelope.EventType}' payload could not be deserialized.\");");
+            if (isProtobuf)
+            {
+                builder.Append("            var integrationEvent = new ").Append(consumerType).AppendLine("();");
+                builder.AppendLine("            global::Google.Protobuf.MessageExtensions.MergeFrom(integrationEvent, global::System.Convert.FromBase64String(envelope.Payload));");
+            }
+            else
+            {
+                builder.Append("            var integrationEvent = global::System.Text.Json.JsonSerializer.Deserialize(envelope.Payload, jsonTypeInfo").Append(contractIndex.ToString("D4", System.Globalization.CultureInfo.InvariantCulture)).AppendLine(")");
+                builder.AppendLine("                ?? throw new global::System.InvalidOperationException($\"Integration event '{envelope.EventType}' payload could not be deserialized.\");");
+            }
+
             builder.AppendLine("            await using var scope = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.CreateAsyncScope(scopeFactory);");
             builder.Append("            var handler = global::Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<global::PandaBear.Messaging.IntegrationEvents.IIntegrationEventHandler<")
                 .Append(consumerType)
@@ -721,7 +819,8 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
         StringBuilder builder,
         bool hasMappings,
         string[] contractTypes,
-        IntegrationEventHandlerModel[] consumerHandlers)
+        IntegrationEventHandlerModel[] consumerHandlers,
+        string[] protobufTypes)
     {
         builder.AppendLine("namespace Microsoft.Extensions.DependencyInjection");
         builder.AppendLine("{");
@@ -757,6 +856,15 @@ public sealed class IntegrationEventMappingGenerator : IIncrementalGenerator
                 .Append(">, ")
                 .Append(consumerHandler.HandlerType)
                 .AppendLine(">(services);");
+        }
+        foreach (var protobufConsumer in consumerHandlers
+            .Select(static handler => handler.IntegrationEventType)
+            .Where(type => protobufTypes.Contains(type, StringComparer.Ordinal))
+            .Distinct(StringComparer.Ordinal))
+        {
+            builder.Append("        global::Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddSingleton(services, new global::PandaBear.Messaging.Protobuf.ProtobufGeneratedConsumer(")
+                .Append(protobufConsumer)
+                .AppendLine(".EventType));");
         }
         if (consumerHandlers.Length > 0)
         {

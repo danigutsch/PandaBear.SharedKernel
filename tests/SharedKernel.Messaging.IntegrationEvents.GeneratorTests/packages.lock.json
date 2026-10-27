@@ -250,6 +250,15 @@
       "PandaBear.SharedKernel.Messaging.IntegrationEvents.SourceGenerator": {
         "type": "Project"
       },
+      "PandaBear.SharedKernel.Messaging.Protobuf": {
+        "type": "Project",
+        "dependencies": {
+          "CloudNative.CloudEvents": "[2.9.0, )",
+          "CloudNative.CloudEvents.Protobuf": "[2.9.0, )",
+          "Google.Protobuf": "[3.36.1, )",
+          "PandaBear.SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )"
+        }
+      },
       "PandaBear.SharedKernel.Results": {
         "type": "Project"
       },
@@ -268,6 +277,35 @@
         "dependencies": {
           "Microsoft.CodeAnalysis.CSharp": "[5.6.0, )"
         }
+      },
+      "sharedkernel.messaging.protobuf.testcontracts": {
+        "type": "Project",
+        "dependencies": {
+          "Google.Protobuf": "[3.36.1, )",
+          "PandaBear.SharedKernel.Messaging.IntegrationEvents": "[0.1.0-alpha.0, )"
+        }
+      },
+      "CloudNative.CloudEvents": {
+        "type": "CentralTransitive",
+        "requested": "[2.9.0, )",
+        "resolved": "2.9.0",
+        "contentHash": "Qh8/MS3YBI78Q5+AVXN/hNQZkhFW5OyDHdn4Wi05ZzlylKOsTypBiQQ1u0U8iOZ24HMe8Hc0VH2CIwnY4YTGEA=="
+      },
+      "CloudNative.CloudEvents.Protobuf": {
+        "type": "CentralTransitive",
+        "requested": "[2.9.0, )",
+        "resolved": "2.9.0",
+        "contentHash": "uH4wCjp651282ePf7pnN/5SNoeuAeR95KJvmTVl27W3sWEWO4pIxqZvVi60EZXUkmVQS0/HtjioTre+7AM2kvA==",
+        "dependencies": {
+          "CloudNative.CloudEvents": "2.9.0",
+          "Google.Protobuf": "3.35.1"
+        }
+      },
+      "Google.Protobuf": {
+        "type": "CentralTransitive",
+        "requested": "[3.36.1, )",
+        "resolved": "3.36.1",
+        "contentHash": "77AqPEoaY1ODE+syYBHti0jXiwQq0J/fUr/fRyYhNlc9oKtH5dZZEr/OLKtdKNVG83PRnCYB2r8B80ZrObzOGQ=="
       },
       "Microsoft.CodeAnalysis.Analyzers": {
         "type": "CentralTransitive",

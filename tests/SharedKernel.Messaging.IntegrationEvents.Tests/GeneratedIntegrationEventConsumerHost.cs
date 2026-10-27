@@ -1,10 +1,12 @@
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.Extensions.DependencyInjection;
+using PandaBear.Messaging.Protobuf;
+using PandaBear.Messaging.Protobuf.TestContracts;
 
 namespace PandaBear.Messaging.IntegrationEvents.Tests;
 
 /// <summary>
-/// A service provider with scoped capturing handlers, JSON consumers for both test events and the generated integration event registrations, used to test generated dispatch.
+/// A service provider with scoped capturing handlers, JSON consumers for both test events, a Protobuf consumer and the generated integration event registrations, used to test generated dispatch.
 /// </summary>
 internal sealed class GeneratedIntegrationEventConsumerHost : IDisposable
 {
@@ -58,6 +60,7 @@ internal sealed class GeneratedIntegrationEventConsumerHost : IDisposable
             TestUpdatedIntegrationEvent.EventType,
             updatedJsonTypeInfo);
         services.AddGeneratedIntegrationEvents();
+        services.AddProtobufIntegrationEventConsumer<TourCreated, CapturingTourCreatedHandler>();
 
         var provider = services.BuildServiceProvider(new ServiceProviderOptions
         {

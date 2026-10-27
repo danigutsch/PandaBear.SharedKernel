@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package sharedkernel.tests;
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "PandaBear.Messaging.Protobuf.TestContracts";
+
+message OrderPlaced {
+  string id = 1;
+  google.protobuf.Timestamp occurred = 2;
+  string order_number = 3;
+}
