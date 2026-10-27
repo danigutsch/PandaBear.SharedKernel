@@ -1,8 +1,8 @@
 using System.Reflection;
 
-/// <summary>Helpers for discovery report and call graph tests.</summary>
 namespace PandaBear.Mediator.GeneratorTests;
 
+/// <summary>Assertion helpers for the generator discovery report tests.</summary>
 internal static class GeneratorDiscoveryReportTestsHelpers
 {
     /// <summary>Asserts that every expected segment occurs in the text, each one after the previous one.</summary>
