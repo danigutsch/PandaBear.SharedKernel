@@ -95,84 +95,19 @@ cannot distinguish the two. `scheme` is the authentication scheme that raised th
 and exception messages are never logged or used as tags. A request with an invalid token raises both
 `authentication_failed` and `challenge`; alert on one event value, not the sum.
 
-## Alert rule templates
+## Alerting
 
-These are templates, not defaults. Copy them, then choose every value in angle brackets for your
-service. The metric names assume an OpenTelemetry-to-Prometheus export that keeps the instrument name
-and the tags. Exporters differ: the OpenTelemetry Prometheus conventions append `_total` to a monotonic counter
-unless the name already ends in it (these instrument names already do, so they stay unchanged), and some pipelines
-add unit suffixes or rewrite dots. Query your backend for the stored names first, then adjust every selector
-below (for example `unhandled_exceptions` if your pipeline strips `_total`). The `job` label stands for whatever
-label identifies the service in your setup, and `{{ ... }}` is the alert annotation templating.
+This repository ships no alert rules; the service owner chooses thresholds, routing and severity. Useful signals:
 
-The expressions are syntax-unverified: this repository does not run `promtool check rules` or `vmalert -dryRun`
-against them. Run one of those against your edited rules, and test them against your own data, before you rely on them.
+- Error rate: the ratio of 5xx responses to all responses, from your HTTP server metrics.
+- New failure mode: an `error_type` series on `unhandled_exceptions_total` that was absent during the previous baseline
+  window. A counter series does not exist until its first increment, so a new series starts at 1 and `increase()` or
+  `rate()` never sees it. Test for series presence (`max_over_time(...)` combined with `unless` and `offset`) instead.
+- Authentication failures: `authentication_events_total` with `event="authentication_failed"` against a historical
+  baseline plus a floor, so a single failure on a quiet service does not alert.
+- Rate limiting: sustained `rate_limit_rejections_total` for one `policy`.
 
-A counter series does not exist until its first increment, so a brand-new series starts at 1 and `increase()` or
-`rate()` over a window sees only one sample. The first-seen rule below therefore tests series presence with
-`max_over_time` instead of using `increase()`; the spike rule pads missing series with zero.
-
-```yaml
-# TEMPLATE - not a recommendation. Choose each <parameter> before use.
-groups:
-  - name: <service>-errors
-    rules:
-      # 5xx ratio over a window. Needs an HTTP request counter that has a status code label;
-      # <http_requests_metric> and <status_label> depend on your instrumentation (for the ASP.NET Core
-      # server metrics exported to Prometheus, typically http_server_request_duration_seconds_count and
-      # http_response_status_code). Both sides are sums of rates over the same window.
-      - alert: <Service>High5xxRatio
-        expr: |
-          sum by (job) (rate(<http_requests_metric>{job="<job>",<status_label>=~"5.."}[<window>]))
-            /
-          sum by (job) (rate(<http_requests_metric>{job="<job>"}[<window>]))
-            > <ratio_threshold>
-        for: <for_duration>
-        labels: { severity: <severity> }
-        annotations:
-          summary: "5xx ratio above <ratio_threshold> for {{ $labels.job }}"
-
-      # First-seen error_type: a series present in the last <recent> that did not exist in the <baseline> before it.
-      # Presence, not increase(): a new counter series starts at 1 and increase() would miss it.
-      - alert: <Service>NewErrorType
-        expr: |
-          sum by (error_type) (max_over_time(unhandled_exceptions_total{job="<job>"}[<recent>]))
-            unless
-          sum by (error_type) (max_over_time(unhandled_exceptions_total{job="<job>"}[<baseline>] offset <recent>))
-        labels: { severity: <severity> }
-        annotations:
-          summary: "New unhandled error type {{ $labels.error_type }}"
-
-      # Spike in authentication failures against the same window one week earlier. A job with no series a week ago
-      # is padded with zero so that the floor, not a missing series, decides.
-      - alert: <Service>AuthFailureSpike
-        expr: |
-          sum by (job) (rate(authentication_events_total{job="<job>",event="authentication_failed"}[<window>]))
-            > <multiplier> *
-          (
-            (
-              sum by (job) (rate(authentication_events_total{job="<job>",event="authentication_failed"}[<window>] offset 7d))
-              or
-              sum by (job) (rate(authentication_events_total{job="<job>",event="authentication_failed"}[<window>])) * 0
-            )
-            + <floor>
-          )
-        for: <for_duration>
-        labels: { severity: <severity> }
-        annotations:
-          summary: "Authentication failures for {{ $labels.job }} are {{ $value }}/s, above <multiplier> times last week"
-
-      # Optional: sustained rate-limit rejections for one policy.
-      - alert: <Service>RateLimitRejections
-        expr: sum by (job, policy) (rate(rate_limit_rejections_total{job="<job>"}[<window>])) > <rate_threshold>
-        for: <for_duration>
-        labels: { severity: <severity> }
-        annotations:
-          summary: "Policy {{ $labels.policy }} is rejecting {{ $value }} requests/s for {{ $labels.job }}"
-```
-
-For the first-seen rule, `<baseline>` is typically `7d` and `<recent>` a few minutes to an hour; the rule fires once
-per new `error_type` while it is inside the `<recent>` window. In a VictoriaMetrics-compatible `vmalert` the same
-expressions run as MetricsQL; `max_over_time`, `offset`, `unless` and `or` are valid in both. `<floor>` stops a zero
-baseline from alerting on a single failure; choose it from your normal traffic. A `rate()` needs two samples, so the
-very first failures of a new series are not seen by the spike rule; the first-seen rule is the one for brand-new series.
+Metric names assume an OpenTelemetry-to-Prometheus export that keeps the instrument name and the tags. Exporters
+differ (suffixes, unit handling, rewritten dots), so query your backend for the stored names before writing a rule.
+These rules have not been run against a real Prometheus or `vmalert`; check yours with `promtool check rules` or
+`vmalert -dryRun` and test them on your own data.

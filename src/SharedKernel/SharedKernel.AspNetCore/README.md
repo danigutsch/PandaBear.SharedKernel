@@ -40,7 +40,7 @@ Opt in with `services.AddUnhandledExceptionHandler()` (and `app.UseExceptionHand
 `services.AddSecurityEventTelemetry()` for bounded JWT bearer failure, challenge and forbidden events and rate-limit
 rejections. Exception messages, tokens and claims never reach the response, log or metric tags. See
 [ASP.NET Core error and security telemetry](../../../docs/aspnetcore-error-and-security-telemetry.md) for names, tags
-and alert rule templates.
+and alerting guidance.
 
 ## Package identity and availability
 
