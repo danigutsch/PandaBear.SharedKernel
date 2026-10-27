@@ -67,6 +67,31 @@ public sealed class SharedKernelIOAnalyzerTests
     }
 
     [Fact]
+    public async Task Copy_to_memory_stream_from_http_content_stream_reports_skio001()
+    {
+        // Arrange
+        const string source = """
+            namespace Demo;
+
+            public sealed class Intake
+            {
+                public async Task Accept(HttpContent content)
+                {
+                    await using var input = await content.ReadAsStreamAsync();
+                    using var buffer = new MemoryStream();
+                    await input.CopyToAsync(buffer);
+                }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldHaveSingleItem().Id.ShouldBe("SKIO001");
+    }
+
+    [Fact]
     public async Task Copy_to_memory_stream_from_request_body_reports_skio001()
     {
         // Arrange

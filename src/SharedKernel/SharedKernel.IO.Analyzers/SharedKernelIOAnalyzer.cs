@@ -68,14 +68,13 @@ public sealed class SharedKernelIOAnalyzer : DiagnosticAnalyzer
         var method = invocation.TargetMethod;
         var owner = method.ContainingType;
         var buffers = false;
-        var model = GetRoot(invocation).SemanticModel;
 
         if (method.Name is "CopyTo" or "CopyToAsync" && Inherits(owner, types.Stream))
         {
             buffers = invocation.Arguments.Length > 0
                 && Inherits(Unwrap(invocation.Arguments[0].Value).Type, types.MemoryStream)
                 && invocation.Instance is { } source
-                && IsIntake(model, types, source, 0);
+                && IsIntake(GetRoot(invocation).SemanticModel, types, source, 0);
         }
         else if (method.Name == "ReadAsByteArrayAsync" && Inherits(owner, types.HttpContent))
         {
@@ -83,7 +82,7 @@ public sealed class SharedKernelIOAnalyzer : DiagnosticAnalyzer
         }
         else if (method.Name is "ReadToEnd" or "ReadToEndAsync" && Inherits(owner, types.TextReader))
         {
-            buffers = invocation.Instance is { } reader && IsIntake(model, types, reader, 0);
+            buffers = invocation.Instance is { } reader && IsIntake(GetRoot(invocation).SemanticModel, types, reader, 0);
         }
 
         if (buffers && !HasLengthBound(GetRoot(invocation)))
