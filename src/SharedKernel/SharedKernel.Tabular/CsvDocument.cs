@@ -1,3 +1,4 @@
+using System.Text;
 using PandaBear.Results;
 
 namespace PandaBear.Tabular;
@@ -44,7 +45,73 @@ public sealed class CsvDocument
             return CsvErrors.HeadersMustContainAtLeastOneColumn().ConvertError<CsvDocument>();
         }
 
-        var headerRow = CsvRow.Parse(lines[0]);
+        return Build(CsvRow.Parse(lines[0]), lines.Skip(1).Select(CsvRow.Parse), requiredHeaderNames);
+    }
+
+    /// <summary>
+    /// Parses UTF-8 CSV bytes into a document with headers and rows without decoding the whole content to text.
+    /// </summary>
+    /// <param name="content">Full UTF-8 CSV content, where the first line is the header row. A byte order mark is not removed.</param>
+    /// <param name="requiredHeaderNames">Optional list of required headers that must exist in the CSV header row.</param>
+    /// <returns>The same document or error as <see cref="Parse(string, IReadOnlyList{string}?)"/> returns for the decoded text.</returns>
+    public static Result<CsvDocument> ParseUtf8(ReadOnlySpan<byte> content, IReadOnlyList<string>? requiredHeaderNames = null)
+    {
+        var rows = new List<CsvRow>();
+        CsvRow? headerRow = null;
+        var fields = new List<string>();
+        var remaining = content;
+        while (true)
+        {
+            var lineEnd = remaining.IndexOf((byte)'\n');
+            var line = lineEnd < 0 ? remaining : remaining[..lineEnd];
+            if (!line.IsEmpty && line[^1] == (byte)'\r')
+            {
+                line = line[..^1];
+            }
+
+            if (headerRow is null)
+            {
+                var headerLine = Encoding.UTF8.GetString(line).Trim();
+                if (string.IsNullOrWhiteSpace(headerLine))
+                {
+                    return CsvErrors.HeadersMustContainAtLeastOneColumn().ConvertError<CsvDocument>();
+                }
+
+                headerRow = CsvRow.Parse(headerLine);
+            }
+            else
+            {
+                rows.Add(ParseRow(line, fields));
+            }
+
+            if (lineEnd < 0)
+            {
+                return Build(headerRow, rows, requiredHeaderNames);
+            }
+
+            remaining = remaining[(lineEnd + 1)..];
+        }
+    }
+
+    private static CsvRow ParseRow(ReadOnlySpan<byte> line, List<string> fields)
+    {
+        fields.Clear();
+        while (true)
+        {
+            var comma = line.IndexOf((byte)',');
+            var field = comma < 0 ? line : line[..comma];
+            fields.Add(Encoding.UTF8.GetString(field).Trim());
+            if (comma < 0)
+            {
+                return CsvRow.FromValues([.. fields]);
+            }
+
+            line = line[(comma + 1)..];
+        }
+    }
+
+    private static Result<CsvDocument> Build(CsvRow headerRow, IEnumerable<CsvRow> rows, IReadOnlyList<string>? requiredHeaderNames)
+    {
         var headers = Enumerable.Range(0, headerRow.Count).Select(i => headerRow[i]).ToArray();
 
         var missingRequiredHeader = requiredHeaderNames?
@@ -60,10 +127,6 @@ public sealed class CsvDocument
         {
             return CsvErrors.RequiredHeaderMissing(missingRequiredHeader).ConvertError<CsvDocument>();
         }
-
-        var rows = lines
-            .Skip(1)
-            .Select(CsvRow.Parse);
 
         return Create(headers, [.. rows]);
     }

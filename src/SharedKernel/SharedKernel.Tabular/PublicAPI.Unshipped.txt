@@ -12,3 +12,4 @@ static PandaBear.Tabular.CsvDocument.Create(System.Collections.Generic.IReadOnly
 static PandaBear.Tabular.CsvDocument.Parse(string! content, System.Collections.Generic.IReadOnlyList<string!>? requiredHeaderNames = null) -> PandaBear.Results.Result<PandaBear.Tabular.CsvDocument!>
 static PandaBear.Tabular.CsvRow.Parse(string! csvLine) -> PandaBear.Tabular.CsvRow!
 static PandaBear.Tabular.DuplicateRowScanner.FindDuplicateLineNumbers(PandaBear.Tabular.CsvDocument! document, System.Func<PandaBear.Tabular.CsvRow!, string?>! keySelector, System.Collections.Generic.IEqualityComparer<string!>? comparer = null) -> System.Collections.Generic.IReadOnlyList<int>!
+static PandaBear.Tabular.CsvDocument.ParseUtf8(System.ReadOnlySpan<byte> content, System.Collections.Generic.IReadOnlyList<string!>? requiredHeaderNames = null) -> PandaBear.Results.Result<PandaBear.Tabular.CsvDocument!>

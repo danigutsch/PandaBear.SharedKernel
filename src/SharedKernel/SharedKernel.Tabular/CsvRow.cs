@@ -68,6 +68,11 @@ public sealed class CsvRow
         return true;
     }
 
+    /// <summary>Creates a row from already split and trimmed fields.</summary>
+    /// <param name="values">The trimmed fields, which the row takes ownership of.</param>
+    /// <returns>A row retaining the fields.</returns>
+    internal static CsvRow FromValues(string[] values) => new(values);
+
     /// <summary>Splits a line on every comma and trims each field.</summary>
     /// <param name="csvLine">The line to split.</param>
     /// <returns>A row retaining empty fields.</returns>
