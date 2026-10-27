@@ -1,5 +1,8 @@
 namespace PandaBear.Results.Tests;
 
+/// <summary>
+/// Tests converting, mapping, binding, and ensuring on results, including failure short-circuiting.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
 public sealed class ResultCompositionTests

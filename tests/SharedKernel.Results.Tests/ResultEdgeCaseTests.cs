@@ -1,5 +1,8 @@
 namespace PandaBear.Results.Tests;
 
+/// <summary>
+/// Tests Result edge cases: value access on failures, null guards, string formatting, uninitialized and malformed results, and Ensure with invalid errors.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.EdgeCaseCategory)]
 public sealed class ResultEdgeCaseTests

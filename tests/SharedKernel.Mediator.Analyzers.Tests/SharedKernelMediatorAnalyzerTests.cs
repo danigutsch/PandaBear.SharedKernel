@@ -3,6 +3,7 @@ using PandaBear.Testing.Roslyn;
 
 namespace PandaBear.Mediator.Analyzers.Tests;
 
+/// <summary>Tests the mediator analyzer rules for handler signatures, cancellation handling, pipeline arity, stream handlers and editorconfig options.</summary>
 public sealed class SharedKernelMediatorAnalyzerTests
 {
     [Fact]

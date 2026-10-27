@@ -9,8 +9,6 @@ namespace PandaBear.Tooling;
 /// </summary>
 internal static class CandidateManifest
 {
-    /// <summary>Returns the path of the single <c>candidate.json</c> found recursively under the directory, and throws when there is not exactly one.</summary>
-    /// <param name="directory">Directory to search.</param>
     public static string Find(string directory)
     {
         if (!Directory.Exists(directory))
@@ -24,8 +22,6 @@ internal static class CandidateManifest
             : throw new ArgumentException($"Candidate directory must contain exactly one candidate.json, searched recursively: {directory}.");
     }
 
-    /// <summary>Reads the manifest and verifies it, returning its JSON object; throws when it is empty or lacks package hashes.</summary>
-    /// <param name="path">Path of the <c>candidate.json</c> file.</param>
     public static JsonObject ReadAndVerify(string path)
     {
         var evidence = JsonNode.Parse(File.ReadAllText(path))?.AsObject()

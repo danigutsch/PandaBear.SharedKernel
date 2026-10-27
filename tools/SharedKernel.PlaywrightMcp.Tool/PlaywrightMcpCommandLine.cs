@@ -3,7 +3,6 @@ using System.Diagnostics;
 
 namespace PandaBear.PlaywrightMcp.Tool;
 
-/// <summary>Builds the command-line interface of the Playwright MCP tool.</summary>
 internal static class PlaywrightMcpCommandLine
 {
     private const string Description = $"""
@@ -16,7 +15,6 @@ internal static class PlaywrightMcpCommandLine
           PLAYWRIGHT_MCP_IMAGE_RESPONSES  allow sends images to the MCP client; default omit
         """;
 
-    /// <summary>Creates the root command with its serve, prepare, and clean subcommands.</summary>
     public static RootCommand Create(
         Func<string, string?> getEnvironmentVariable,
         Func<string, string?> resolveExecutable,

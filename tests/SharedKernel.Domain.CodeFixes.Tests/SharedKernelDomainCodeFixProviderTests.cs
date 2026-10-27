@@ -5,6 +5,7 @@ using PandaBear.Domain.Analyzers;
 
 namespace PandaBear.Domain.CodeFixes.Tests;
 
+/// <summary>Tests the code fix provider that makes non-private domain property setters private.</summary>
 public sealed class SharedKernelDomainCodeFixProviderTests
 {
     [Theory]

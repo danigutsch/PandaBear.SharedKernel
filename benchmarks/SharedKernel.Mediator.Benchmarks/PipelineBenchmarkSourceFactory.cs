@@ -8,19 +8,11 @@ namespace PandaBear.Mediator.Benchmarks;
 /// </summary>
 internal static class PipelineBenchmarkSourceFactory
 {
-    /// <summary>Request shape that uses a class.</summary>
     public const string ClassShape = "Class";
-    /// <summary>Request shape that uses a struct.</summary>
     public const string StructShape = "Struct";
-    /// <summary>Completion mode in which pipeline behaviors complete synchronously.</summary>
     public const string SynchronousCompletion = "Synchronous";
-    /// <summary>Completion mode in which pipeline behaviors complete asynchronously.</summary>
     public const string AsynchronousCompletion = "Asynchronous";
 
-    /// <summary>Builds a synthetic C# source with a request of the given shape and a pipeline of the given depth and completion mode.</summary>
-    /// <param name="requestShape">Either <see cref="ClassShape" /> or <see cref="StructShape" />.</param>
-    /// <param name="pipelineDepth">Number of pipeline behaviors; must not be negative.</param>
-    /// <param name="completionMode">Either <see cref="SynchronousCompletion" /> or <see cref="AsynchronousCompletion" />.</param>
     public static string CreateSource(string requestShape, int pipelineDepth, string completionMode)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(pipelineDepth);

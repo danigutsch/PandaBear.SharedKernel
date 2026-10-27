@@ -1,5 +1,8 @@
 namespace PandaBear.Results.Tests;
 
+/// <summary>
+/// Tests collecting invalid results in ValidationErrors and converting them into a single result.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.ResultCapability)]
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CoreBehaviorCategory)]
 public sealed class ValidationErrorsTests

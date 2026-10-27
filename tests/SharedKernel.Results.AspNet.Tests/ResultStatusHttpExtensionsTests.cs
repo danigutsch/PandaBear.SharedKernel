@@ -2,6 +2,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace PandaBear.Results.AspNet.Tests;
 
+/// <summary>
+/// Tests the mapping from ResultStatus values to HTTP status codes.
+/// </summary>
 public sealed class ResultStatusHttpExtensionsTests
 {
     [Theory]

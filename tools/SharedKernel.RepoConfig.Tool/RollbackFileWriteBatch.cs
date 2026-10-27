@@ -5,10 +5,8 @@ namespace PandaBear.RepoConfig.Tool;
 
 // Each replacement is atomic; managed failures roll back the completed replacements.
 // Process termination can leave a completed prefix and is outside this batch's contract.
-/// <summary>Applies a set of file replacements under a scope lock and rolls completed replacements back on failure.</summary>
 internal static class RollbackFileWriteBatch
 {
-    /// <summary>Locks <paramref name="lockScope"/>, runs <paramref name="verifyPreconditions"/>, and atomically replaces each file in <paramref name="writes"/>.</summary>
     public static void Apply(string lockScope, IReadOnlyList<AtomicFileWrite> writes, Action? verifyPreconditions = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(lockScope);
@@ -228,7 +226,6 @@ internal static class RollbackFileWriteBatch
     private static string CreateUniqueSiblingPath(string path, string extension) =>
         $"{path}.{Guid.NewGuid():N}.{extension}";
 
-    /// <summary>Throws when <paramref name="normalizedPath"/> falls outside <paramref name="normalizedScope"/> or is otherwise not an allowed write target.</summary>
     internal static void ValidateWritePath(string normalizedScope, string normalizedPath)
     {
         normalizedScope = Path.TrimEndingDirectorySeparator(Path.GetFullPath(normalizedScope));

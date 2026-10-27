@@ -4,6 +4,10 @@ namespace PandaBear.Mediator.PackageConsumptionTests;
 
 [Collection(MediatorPackageFeedSharing.Name)]
 [Trait(SharedKernelTestTraitNames.CategoryName, "PackageConsumption")]
+/// <summary>
+/// Builds, runs, and publishes fresh consumer projects against the packed Mediator packages to prove abstractions, runtime, source generator, analyzer, and code fix work for package consumers.
+/// </summary>
+/// <param name="packageFeed">The shared local package feed the consumer workspaces restore from.</param>
 public sealed class SharedKernelMediatorPackageConsumptionTests(MediatorPackageFeedFixture packageFeed)
 {
     private const string GeneratedAsyncScopeCreation =

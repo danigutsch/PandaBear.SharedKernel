@@ -1,5 +1,8 @@
 namespace PandaBear.Results.Tests;
 
+/// <summary>
+/// Tests Match, Map, and Bind on options, including empty options and projections to value types.
+/// </summary>
 [Trait(Testing.SharedKernelTestTraitNames.CapabilityName, TestTraits.OptionCapability)]
 [Trait(Testing.SharedKernelTestTraitNames.CategoryName, TestTraits.CompositionCategory)]
 [Trait(Testing.SharedKernelTestTraitNames.TheoryName, TestTraits.MatchSemanticsTheory)]
