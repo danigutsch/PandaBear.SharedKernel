@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Globalization;
 
 namespace PandaBear.Style.Analyzers.Tests;
@@ -186,5 +187,51 @@ public sealed class MemberDocumentationAnalyzerTests
 
         // Assert
         diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.UndocumentedMember);
+    }
+
+    [Theory]
+    [InlineData("[Fact]")]
+    [InlineData("[Theory]\n    [InlineData(1)]")]
+    public async Task Test_methods_are_not_checked(string attributes)
+    {
+        // Arrange
+        var source = $$"""
+            /// <summary>Tests.</summary>
+            internal sealed class TourTests
+            {
+                {{attributes}}
+                public void Run(int value = 0) { }
+            }
+            """;
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source);
+
+        // Assert
+        diagnostics.ShouldNotContain(static candidate => candidate.Id == StyleDiagnosticIds.UndocumentedMember);
+    }
+
+    [Fact]
+    public async Task Public_option_reports_public_members_but_still_skips_test_methods()
+    {
+        // Arrange
+        const string source = """
+            /// <summary>Tests.</summary>
+            public sealed class TourTests
+            {
+                [Fact]
+                public void Run() { }
+
+                public void Helper() { }
+            }
+            """;
+        var options = ImmutableDictionary<string, string>.Empty.Add("sharedkernel_style_document_public_members", "true");
+
+        // Act
+        var diagnostics = await AnalyzerTestHarness.GetAnalyzerDiagnostics(source, options);
+
+        // Assert
+        var diagnostic = diagnostics.ShouldHaveSingleItem(static candidate => candidate.Id == StyleDiagnosticIds.UndocumentedMember);
+        diagnostic.GetMessage(CultureInfo.InvariantCulture).ShouldContain("Helper", StringComparison.Ordinal);
     }
 }
