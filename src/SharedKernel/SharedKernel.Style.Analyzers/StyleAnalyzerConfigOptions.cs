@@ -4,7 +4,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace PandaBear.Style.Analyzers;
 
 /// <summary>
-/// Captures the analyzer-config switches that shape async-suffix rule behavior.
+/// Captures the analyzer-config switches that shape style-rule behavior, such as async-suffix handling and public-member documentation.
 /// </summary>
 internal readonly struct StyleAnalyzerConfigOptions(bool allowAsyncSuffixOverrides, bool allowAsyncSuffixInterfaceImplementations, bool documentPublicMembers = false)
 {
