@@ -6,8 +6,10 @@ using static PandaBear.VaultManager.Tool.Tests.Catalog.CatalogFixture;
 
 namespace PandaBear.VaultManager.Tool.Tests.Catalog;
 
+/// <summary>Tests the description of changes that applying a catalog makes.</summary>
 public sealed class CatalogChangesTests
 {
+    /// <summary>Verifies that an unedited catalog gives no changes and no removals.</summary>
     [Fact]
     public void An_unedited_catalog_gives_no_changes_and_no_removals()
     {
@@ -37,6 +39,7 @@ public sealed class CatalogChangesTests
         written.Login.ShouldNotBeNull().Uris.ShouldBe(item.Login!.Uris);
     }
 
+    /// <summary>Verifies that an unedited catalog keeps shared notes that consist only of white space.</summary>
     [Fact]
     public void An_unedited_catalog_keeps_shared_notes_that_hold_only_white_space()
     {
@@ -60,6 +63,7 @@ public sealed class CatalogChangesTests
         result.Vault.ShouldNotBeNull().Items.ShouldHaveSingleItem().Notes.ShouldBe("\n");
     }
 
+    /// <summary>Verifies that reordered text fields and additional folders are described as changes.</summary>
     [Fact]
     public void Apply_describes_reordered_text_fields_and_additional_folders()
     {
@@ -78,6 +82,7 @@ public sealed class CatalogChangesTests
         result.ChangedItems.ShouldBe(1);
     }
 
+    /// <summary>Verifies that each kind of change to an item produces its description.</summary>
     [Theory]
     [InlineData("rename", "renamed to \"GitHub (work)\"", false)]
     [InlineData("move", "moved from folder \"Work\" to \"Work/Code\"", false)]
@@ -150,6 +155,7 @@ public sealed class CatalogChangesTests
         });
     }
 
+    /// <summary>Verifies that removing the favorite flag is described.</summary>
     [Fact]
     public void Apply_describes_an_item_that_is_no_longer_a_favorite()
     {
@@ -164,6 +170,7 @@ public sealed class CatalogChangesTests
         result.Removals.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that reordered addresses are described as a reorder, not as additions or removals.</summary>
     [Fact]
     public void Apply_describes_reordered_addresses_without_adding_or_removing_them()
     {
@@ -184,6 +191,7 @@ public sealed class CatalogChangesTests
         result.Removals.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that text fields are paired by value first and by name second.</summary>
     [Fact]
     public void Apply_pairs_text_fields_by_value_then_by_name()
     {
@@ -214,6 +222,7 @@ public sealed class CatalogChangesTests
         result.Removals.ShouldBe([Prefix + "text field \"A\" removed", Prefix + "text field \"B\" changed"]);
     }
 
+    /// <summary>Verifies that notes added to an item that had none are described.</summary>
     [Fact]
     public void Apply_describes_notes_added_to_an_item_without_notes()
     {
@@ -228,6 +237,7 @@ public sealed class CatalogChangesTests
         result.Removals.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that edited shared notes are described.</summary>
     [Theory]
     [InlineData("fixture edited notes", "notes edited", false)]
     [InlineData(" ", "notes emptied", true)]
@@ -241,6 +251,7 @@ public sealed class CatalogChangesTests
         result.Removals.Contains(Prefix + line).ShouldBe(isRemoval);
     }
 
+    /// <summary>Verifies that notes moved into a hidden field are described.</summary>
     [Fact]
     public void Apply_describes_notes_moved_into_a_hidden_field()
     {
@@ -252,6 +263,7 @@ public sealed class CatalogChangesTests
         result.Removals.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that added and removed folders of the vault are described.</summary>
     [Fact]
     public void Apply_describes_added_and_removed_folders_of_the_vault()
     {

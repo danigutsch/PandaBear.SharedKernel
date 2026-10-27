@@ -4,6 +4,7 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests how command actions end when they are cancelled.</summary>
 public sealed class CommandActionTests
 {
     private const string ExportPassword = "fixture export password";
@@ -12,6 +13,7 @@ public sealed class CommandActionTests
     // Ends a blocked test thread when the code under test is wrong; a passing run never waits for it.
     private static readonly TimeSpan SafetyTimeout = TimeSpan.FromSeconds(30);
 
+    /// <summary>Verifies that cancelled work outside a password prompt ends before the command exits 1.</summary>
     [Fact]
     public async Task Work_canceled_outside_a_password_prompt_ends_before_the_command_exits_1()
     {
@@ -42,6 +44,7 @@ public sealed class CommandActionTests
         endedBeforeExit.ShouldBeTrue();
     }
 
+    /// <summary>Verifies that work that keeps running after cancellation is waited for, but for less than the process termination timeout.</summary>
     [Fact]
     public async Task Work_that_keeps_running_after_cancellation_is_waited_for_less_than_the_process_termination_timeout()
     {
@@ -72,6 +75,7 @@ public sealed class CommandActionTests
         stopTimeout.ShouldBeLessThan(new InvocationConfiguration().ProcessTerminationTimeout.ShouldNotBeNull());
     }
 
+    /// <summary>Verifies that cancellation at a password prompt exits 1 without waiting for the answer.</summary>
     [Fact]
     public async Task Work_canceled_at_a_password_prompt_exits_1_without_waiting_for_the_answer()
     {

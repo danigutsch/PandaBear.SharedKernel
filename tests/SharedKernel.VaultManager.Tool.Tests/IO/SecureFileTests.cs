@@ -2,13 +2,16 @@ using PandaBear.VaultManager.Tool.IO;
 
 namespace PandaBear.VaultManager.Tool.Tests.IO;
 
+/// <summary>Tests that secure file writes are owner-only, atomic, and cancelable.</summary>
 public sealed class SecureFileTests : IDisposable
 {
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
     private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-tests-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>A new file holds the written content and, on Unix, has owner read and write permission only.</summary>
     [Fact]
     public void WriteAllText_creates_file_readable_only_by_owner()
     {
@@ -26,6 +29,7 @@ public sealed class SecureFileTests : IDisposable
         }
     }
 
+    /// <summary>Writing without overwrite to a path that exists throws IOException and leaves the existing content.</summary>
     [Fact]
     public void WriteAllText_refuses_to_replace_existing_file_without_overwrite()
     {
@@ -41,6 +45,7 @@ public sealed class SecureFileTests : IDisposable
         File.ReadAllText(path).ShouldBe("existing");
     }
 
+    /// <summary>Overwriting a file that is readable by group and others replaces its content and, on Unix, leaves owner read and write permission only.</summary>
     [Fact]
     public void WriteAllText_overwrite_replaces_content_and_narrows_permissions()
     {
@@ -63,6 +68,7 @@ public sealed class SecureFileTests : IDisposable
         }
     }
 
+    /// <summary>After a successful write the directory holds only the target file.</summary>
     [Fact]
     public void WriteAllText_leaves_no_temporary_files()
     {
@@ -76,6 +82,7 @@ public sealed class SecureFileTests : IDisposable
         Directory.GetFiles(directory).ShouldBe([path]);
     }
 
+    /// <summary>A write with an already canceled token throws OperationCanceledException and leaves the directory empty, with neither a temporary file nor the target.</summary>
     [Fact]
     public void WriteAllText_with_a_token_canceled_before_the_move_leaves_neither_a_temporary_file_nor_the_file()
     {
@@ -92,6 +99,7 @@ public sealed class SecureFileTests : IDisposable
         Directory.GetFileSystemEntries(directory).ShouldBeEmpty();
     }
 
+    /// <summary>With an already canceled token and a path in a missing directory the write throws OperationCanceledException rather than the IO error that creating the temporary file would cause.</summary>
     [Fact]
     public void WriteAllText_with_a_canceled_token_stops_before_it_creates_the_temporary_file()
     {
@@ -110,6 +118,7 @@ public sealed class SecureFileTests : IDisposable
         Directory.GetFileSystemEntries(directory).ShouldBeEmpty();
     }
 
+    /// <summary>An overwriting write with an already canceled token throws OperationCanceledException, keeps the existing content, and leaves no temporary file.</summary>
     [Fact]
     public void WriteAllText_with_a_token_canceled_before_the_move_keeps_the_file_it_would_replace()
     {
@@ -128,6 +137,7 @@ public sealed class SecureFileTests : IDisposable
         Directory.GetFileSystemEntries(directory).ShouldBe([path]);
     }
 
+    /// <summary>Overwriting a path that is a directory throws IOException, leaves the directory empty, and removes the temporary file.</summary>
     [Fact]
     public void WriteAllText_deletes_its_temporary_file_when_the_file_cannot_be_moved_into_place()
     {

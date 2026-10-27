@@ -8,8 +8,10 @@ using static PandaBear.VaultManager.Tool.Tests.Brief.BriefSamples;
 
 namespace PandaBear.VaultManager.Tool.Tests.Brief;
 
+/// <summary>Tests which agent decisions are accepted against the limits of a brief and how they combine with user decisions.</summary>
 public sealed class AgentDecisionsTests
 {
+    /// <summary>Verifies that an agent may choose a member's value for a field and decide the findings that the brief lists.</summary>
     [Fact]
     public void An_agent_may_take_a_member_value_and_decide_the_findings_the_brief_lists()
     {
@@ -26,6 +28,7 @@ public sealed class AgentDecisionsTests
         problems.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that agent decisions outside the limits of the brief are refused.</summary>
     [Theory]
     [InlineData("empty choice", "is Empty")]
     [InlineData("link", "links are not allowed")]
@@ -76,6 +79,7 @@ public sealed class AgentDecisionsTests
         problems.ShouldHaveSingleItem().ShouldContain(problem, StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a user decision wins over an agent decision on the same field and finding.</summary>
     [Fact]
     public void The_user_decision_wins_on_the_same_field_and_finding()
     {
@@ -102,6 +106,7 @@ public sealed class AgentDecisionsTests
         combined.Notes.ShouldBe(user.Notes);
     }
 
+    /// <summary>Verifies that pre-accepted findings that the agent rejects are listed, except those the user decided.</summary>
     [Fact]
     public void Pre_accepted_findings_the_agent_rejects_are_listed_unless_the_user_decided_them()
     {
@@ -143,6 +148,7 @@ public sealed class AgentDecisionsTests
         item.Choices.ShouldBe([new FindingChoice(preAccepted.Id, FindingDecision.Rejected)]);
     }
 
+    /// <summary>Verifies that finding decisions that change which items match, or empty a value that was chosen, are reported as conflicts.</summary>
     [Fact]
     public void Finding_decisions_that_change_which_items_match_or_empty_a_chosen_value_are_conflicts()
     {
@@ -166,6 +172,7 @@ public sealed class AgentDecisionsTests
         emptiedConflicts.ShouldHaveSingleItem().ShouldContain("login.password", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that the effective agent decisions omit what the user already decided.</summary>
     [Fact]
     public void Effective_agent_decisions_leave_out_what_the_user_decides()
     {

@@ -10,13 +10,16 @@ using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;
 
 namespace PandaBear.VaultManager.Tool.Tests.Review;
 
+/// <summary>Tests the review session: grouping and filtering, masked and revealed values, field and finding decisions, and linking and splitting items.</summary>
 public sealed class ReviewSessionTests : IDisposable
 {
     private const string NotesPassword = "Gh-notes-Passw0rd!";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-review-session-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Notes decisions are set, replaced, and removed per item, mark the review dirty, and an unknown item is refused.</summary>
     [Fact]
     public void Notes_decisions_are_set_replaced_and_removed_per_item()
     {
@@ -42,6 +45,7 @@ public sealed class ReviewSessionTests : IDisposable
         missing.ShouldThrow<ArgumentException>();
     }
 
+    /// <summary>Sharing notes without findings shares only plain notes and skips notes that hold a finding or already have a decision.</summary>
     [Fact]
     public void Sharing_notes_without_findings_skips_notes_that_hold_a_finding_or_a_decision()
     {
@@ -65,6 +69,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.Decisions.FindNotes(OriginKey(github)).ShouldBe(NotesDecision.Pending);
     }
 
+    /// <summary>Groups filter by pending, conflicting, identical, and unique status.</summary>
     [Fact]
     public void Groups_filter_by_pending_conflicting_identical_and_unique_status()
     {
@@ -90,6 +95,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.Groups(GroupFilter.Unique, null).ShouldHaveSingleItem().MemberKeys.ShouldBe([OriginKey(wifi)]);
     }
 
+    /// <summary>Groups filter by findings and by suggested matches.</summary>
     [Fact]
     public void Groups_filter_by_findings_and_by_suggested_matches()
     {
@@ -114,6 +120,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.Groups(GroupFilter.Unique, null).Count.ShouldBe(3);
     }
 
+    /// <summary>Searching finds groups by member name ignoring case and surrounding spaces.</summary>
     [Theory]
     [InlineData("exam")]
     [InlineData("EXAMPLE")]
@@ -133,6 +140,7 @@ public sealed class ReviewSessionTests : IDisposable
         found.ShouldHaveSingleItem().Name.ShouldBe("Example");
     }
 
+    /// <summary>Fields list each member value, mask the password by default, and flag a differing password as an unresolved conflict.</summary>
     [Fact]
     public void Fields_show_each_member_value_and_mask_the_password_by_default()
     {
@@ -159,6 +167,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.Members(group.Key).Select(member => member.SourceFile).ShouldBe([KeeperFile, BitwardenFile]);
     }
 
+    /// <summary>Revealing a field shows its values until it is masked again, without making the review dirty.</summary>
     [Fact]
     public void Revealing_a_field_shows_its_values_until_it_is_masked_again()
     {
@@ -181,6 +190,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.IsDirty.ShouldBeFalse();
     }
 
+    /// <summary>Secret fields are masked by default and no secret value shows before it is revealed.</summary>
     [Fact]
     public void Secret_fields_are_masked_by_default_and_no_secret_shows_before_it_is_revealed()
     {
@@ -240,6 +250,7 @@ public sealed class ReviewSessionTests : IDisposable
         shown.ShouldContain("PIN field", StringComparison.Ordinal);
     }
 
+    /// <summary>Identity numbers and the credentials and queries of website addresses are masked by default.</summary>
     [Fact]
     public void Identity_numbers_and_the_credentials_and_queries_of_websites_are_masked_by_default()
     {
@@ -267,6 +278,7 @@ public sealed class ReviewSessionTests : IDisposable
         shown.ShouldContain("Carol", StringComparison.Ordinal);
     }
 
+    /// <summary>Choosing a member decides the field, marks the review dirty, and changes the merged result.</summary>
     [Fact]
     public void Choosing_a_member_decides_the_field_and_marks_the_review_dirty()
     {
@@ -288,6 +300,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.Groups(GroupFilter.Pending, null).ShouldBeEmpty();
     }
 
+    /// <summary>Choosing a member for every conflict decides each conflicting field in one call.</summary>
     [Fact]
     public void Choosing_a_member_for_every_conflict_decides_each_conflicting_field()
     {
@@ -317,6 +330,7 @@ public sealed class ReviewSessionTests : IDisposable
         merged.Login.ShouldNotBeNull().Password.ShouldBe(BitwardenPassword);
     }
 
+    /// <summary>Choosing empty drops a value that only one member holds.</summary>
     [Fact]
     public void Choosing_empty_drops_a_value_that_only_one_member_holds()
     {
@@ -343,6 +357,7 @@ public sealed class ReviewSessionTests : IDisposable
         FieldOf(session, groupKey, FieldPaths.LoginTotp).Resolution.ShouldBe(ResolutionKind.Decision);
     }
 
+    /// <summary>Clearing a choice leaves the field to the merge policy again and marks the review dirty.</summary>
     [Fact]
     public void Clearing_a_choice_leaves_the_field_to_the_policy_again()
     {
@@ -360,6 +375,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.IsDirty.ShouldBeTrue();
     }
 
+    /// <summary>Choosing an item outside the group, or a member for a list field, is refused and changes no decision.</summary>
     [Fact]
     public void Choosing_an_item_outside_the_group_or_a_member_for_a_list_is_refused()
     {
@@ -378,6 +394,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.IsDirty.ShouldBeFalse();
     }
 
+    /// <summary>Accepting a proposed finding moves its secret into the login and leaves nothing pending.</summary>
     [Fact]
     public void Accepting_a_proposed_finding_moves_its_secret_and_leaves_nothing_pending()
     {
@@ -399,6 +416,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.IsDirty.ShouldBeTrue();
     }
 
+    /// <summary>Rejecting a pre-accepted finding leaves its secret in the notes until the decision is cleared.</summary>
     [Fact]
     public void Rejecting_a_pre_accepted_finding_leaves_its_secret_in_place_until_the_decision_is_cleared()
     {
@@ -423,6 +441,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.Result.Merged.Items.ShouldHaveSingleItem().Notes.ShouldNotBeNull().ShouldNotContain(codes[0], StringComparison.Ordinal);
     }
 
+    /// <summary>Finding values are masked until the finding is revealed, without making the review dirty.</summary>
     [Fact]
     public void Finding_values_are_masked_until_the_finding_is_revealed()
     {
@@ -443,6 +462,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.IsDirty.ShouldBeFalse();
     }
 
+    /// <summary>Notes that hold a finding are masked by default.</summary>
     [Fact]
     public void Notes_that_hold_a_finding_are_masked_by_default()
     {
@@ -460,6 +480,7 @@ public sealed class ReviewSessionTests : IDisposable
         notes.Values.ShouldBe([ReviewText.Mask]);
     }
 
+    /// <summary>User names that hold a finding stay masked after the finding is rejected and show only once revealed.</summary>
     [Fact]
     public void User_names_that_hold_a_finding_are_masked_also_after_the_finding_is_rejected()
     {
@@ -492,6 +513,7 @@ public sealed class ReviewSessionTests : IDisposable
         FieldOf(session, seededGroup, FieldPaths.LoginUsername).Values.ShouldBe([seed]);
     }
 
+    /// <summary>An accepted finding that placement leaves in place shows the reason instead of being applied.</summary>
     [Fact]
     public void An_accepted_finding_that_placement_leaves_in_place_shows_why_instead_of_applied()
     {
@@ -516,6 +538,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.Result.Merged.Items.ShouldHaveSingleItem().Notes.ShouldNotBeNull().ShouldContain(huge, StringComparison.Ordinal);
     }
 
+    /// <summary>Masked custom fields show their names on one line with control characters replaced.</summary>
     [Fact]
     public void Masked_custom_fields_show_their_names_on_one_line()
     {
@@ -534,6 +557,7 @@ public sealed class ReviewSessionTests : IDisposable
         fields.Values.ShouldBe(["�]0;TITLE�PIN: " + ReviewText.Mask]);
     }
 
+    /// <summary>Linking two items puts them into one group and records the link.</summary>
     [Fact]
     public void Linking_two_items_puts_them_into_one_group()
     {
@@ -552,6 +576,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.IsDirty.ShouldBeTrue();
     }
 
+    /// <summary>Linking items that a split keeps apart removes the split.</summary>
     [Fact]
     public void Linking_items_that_a_split_keeps_apart_removes_the_split()
     {
@@ -570,6 +595,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.Groups(GroupFilter.All, null).ShouldHaveSingleItem().MemberKeys.ShouldBe([KeeperKey, BitwardenKey]);
     }
 
+    /// <summary>Splitting an item moves it into a group of its own and records the split.</summary>
     [Fact]
     public void Splitting_an_item_moves_it_into_a_group_of_its_own()
     {
@@ -586,6 +612,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.IsDirty.ShouldBeTrue();
     }
 
+    /// <summary>Pending entries in the decisions count as no decision.</summary>
     [Fact]
     public void Pending_entries_of_the_decisions_count_as_no_decision()
     {
@@ -603,6 +630,7 @@ public sealed class ReviewSessionTests : IDisposable
         session.IsDirty.ShouldBeFalse();
     }
 
+    /// <summary>Printing revealed fields and findings shows no secret values.</summary>
     [Fact]
     public void Revealed_fields_and_findings_print_no_values()
     {

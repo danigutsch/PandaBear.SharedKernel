@@ -8,6 +8,7 @@ using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests that command output never contains vault values.</summary>
 public sealed class CommandSecrecyTests : IDisposable
 {
     private const string OldPassword = "fixture-old-keeper-password";
@@ -19,8 +20,10 @@ public sealed class CommandSecrecyTests : IDisposable
     private const string ExportPassword = "fixture export password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-secrecy-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Verifies that the output, reports, and decisions files of the commands never contain vault values.</summary>
     [Fact]
     public async Task Command_output_reports_and_decisions_never_contain_vault_values()
     {
@@ -76,6 +79,7 @@ public sealed class CommandSecrecyTests : IDisposable
         texts.ShouldAllSatisfy(text => values.ShouldAllSatisfy(value => text.ShouldNotContain(value, StringComparison.Ordinal)));
     }
 
+    /// <summary>Verifies that the brief that merge writes never contains secret values.</summary>
     [Fact]
     public async Task Merge_brief_never_contains_secret_values()
     {

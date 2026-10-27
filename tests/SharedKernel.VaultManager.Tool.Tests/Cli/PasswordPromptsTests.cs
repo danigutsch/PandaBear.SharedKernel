@@ -4,11 +4,13 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests the text of the password prompts.</summary>
 public sealed class PasswordPromptsTests
 {
     private const string ExportPassword = "fixture export password";
     private const string FilePassword = "fixture file password";
 
+    /// <summary>Verifies that prompts replace control characters in their text.</summary>
     [Fact]
     public async Task Prompts_replace_control_characters_in_their_text()
     {

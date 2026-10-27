@@ -4,8 +4,10 @@ using PandaBear.VaultManager.Tool.Tests.Merge;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests which field and address values the review shows and which it masks or withholds.</summary>
 public sealed class ShownValuesTests
 {
+    /// <summary>A text field without a finding is shown.</summary>
     [Fact]
     public void A_text_field_without_a_finding_is_shown()
     {
@@ -19,6 +21,7 @@ public sealed class ShownValuesTests
         shown.ShouldBeTrue();
     }
 
+    /// <summary>A hidden, boolean, or linked field is not shown.</summary>
     [Theory]
     [InlineData((int)CustomFieldType.Hidden)]
     [InlineData((int)CustomFieldType.Boolean)]
@@ -35,6 +38,7 @@ public sealed class ShownValuesTests
         shown.ShouldBeFalse();
     }
 
+    /// <summary>A text field with a finding in its value or name is not shown.</summary>
     [Fact]
     public void A_text_field_with_a_finding_in_its_value_or_name_is_not_shown()
     {
@@ -50,6 +54,7 @@ public sealed class ShownValuesTests
         shownWithNameFinding.ShouldBeFalse();
     }
 
+    /// <summary>The additional folders field is recognized and not shown as a text field.</summary>
     [Fact]
     public void The_additional_folders_field_is_not_shown_as_a_text_field()
     {
@@ -71,6 +76,7 @@ public sealed class ShownValuesTests
         hiddenIsAdditionalFolders.ShouldBeFalse();
     }
 
+    /// <summary>Addresses with user info, a query, or a fragment are masked after the part that is safe to show.</summary>
     [Theory]
     [InlineData("https://alice:fixture-uri-secret@example.com/reset?token=fixture-uri-token", "https://***@example.com/reset?***")]
     [InlineData("https://example.com/login#fixture-fragment", "https://example.com/login#***")]
@@ -93,6 +99,7 @@ public sealed class ShownValuesTests
         isMasked.ShouldBeTrue();
     }
 
+    /// <summary>Addresses that hold a secret finding are masked after their scheme.</summary>
     [Theory]
     [InlineData("slack-webhook-url", "https://***")]
     [InlineData("connection-string", "***")]
@@ -108,6 +115,7 @@ public sealed class ShownValuesTests
         shown.ShouldBe(masked);
     }
 
+    /// <summary>A user name that holds a secret finding is withheld.</summary>
     [Fact]
     public void A_user_name_that_holds_a_secret_finding_is_withheld()
     {
@@ -127,6 +135,7 @@ public sealed class ShownValuesTests
         username.ShouldBeNull();
     }
 
+    /// <summary>Addresses without user info, a query, or a fragment are shown as they are.</summary>
     [Fact]
     public void Addresses_without_user_info_a_query_or_a_fragment_are_shown_as_they_are()
     {
@@ -139,6 +148,7 @@ public sealed class ShownValuesTests
         isMasked.ShouldBeFalse();
     }
 
+    /// <summary>A user name is withheld while a finding lies in it and shown when the finding lies elsewhere.</summary>
     [Fact]
     public void A_user_name_is_withheld_while_a_finding_lies_in_it()
     {

@@ -5,8 +5,10 @@ using static PandaBear.VaultManager.Tool.Tests.Catalog.CatalogFixture;
 
 namespace PandaBear.VaultManager.Tool.Tests.Catalog;
 
+/// <summary>Tests reading and writing the catalog file.</summary>
 public sealed class CatalogFileTests
 {
+    /// <summary>Verifies that items without a folder, notes, user name, or addresses read back as written.</summary>
     [Fact]
     public void Catalog_round_trips_items_without_folder_notes_user_name_or_addresses()
     {
@@ -26,6 +28,7 @@ public sealed class CatalogFileTests
         reread.Items[0].Notes.ShouldBe(catalog.Items[0].Notes);
     }
 
+    /// <summary>Verifies that a catalog with unknown or missing properties, or another version, is rejected.</summary>
     [Theory]
     [InlineData("""{"version":1,"source":{"file":"v.json","sha256":"a"},"folders":[],"items":[],"extra":1}""")]
     [InlineData("""{"version":2,"source":{"file":"v.json","sha256":"a"},"folders":[],"items":[]}""")]

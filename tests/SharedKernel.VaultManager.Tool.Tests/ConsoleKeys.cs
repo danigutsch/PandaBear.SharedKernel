@@ -1,5 +1,6 @@
 namespace PandaBear.VaultManager.Tool.Tests;
 
+/// <summary>Builds scripted console key readers for tests that type into password and prompt input.</summary>
 internal static class ConsoleKeys
 {
     /// <summary>Returns a key reader that types each line and presses Enter. A backspace character presses Backspace.</summary>

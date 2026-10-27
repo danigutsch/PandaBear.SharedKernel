@@ -11,6 +11,7 @@ using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 
+/// <summary>Tests the vault pipeline: loading, scanning, merging, secret placement, attachment listing, and writing the merged export.</summary>
 public sealed class VaultPipelineTests : IDisposable
 {
     private const string OldPassword = "fixture-old-keeper-password";
@@ -19,8 +20,10 @@ public sealed class VaultPipelineTests : IDisposable
     private const string ExportPassword = "fixture export password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-pipeline-tests-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>The merged vault keeps the folders of every input, including empty ones.</summary>
     [Fact]
     public void Run_keeps_the_folders_of_every_input_in_the_merged_vault()
     {
@@ -36,6 +39,7 @@ public sealed class VaultPipelineTests : IDisposable
         result.Merged.Folders.ShouldBe(["Team/Empty", "Archive"]);
     }
 
+    /// <summary>A run keeps the newer Bitwarden password and the Keeper TOTP, moves the old password into history, and writes an encrypted export.</summary>
     [Fact]
     public void Run_keeps_the_newer_bitwarden_password_the_keeper_totp_and_the_old_password_in_history()
     {
@@ -65,6 +69,7 @@ public sealed class VaultPipelineTests : IDisposable
         history.LastUsedDate.ShouldBe(KeeperModified);
     }
 
+    /// <summary>A run places pre-accepted recovery codes in a hidden field and leaves the proposed notes password in the notes.</summary>
     [Fact]
     public void Run_places_pre_accepted_recovery_codes_and_leaves_the_proposed_notes_password_in_notes()
     {
@@ -96,6 +101,7 @@ public sealed class VaultPipelineTests : IDisposable
         codes.ShouldAllSatisfy(code => notes.ShouldNotContain(code, StringComparison.Ordinal));
     }
 
+    /// <summary>Accepting decisions moves recovery codes and a notes password into their fields and leaves the notes clean.</summary>
     [Fact]
     public void Run_moves_recovery_codes_and_an_accepted_notes_password_into_their_fields()
     {
@@ -122,6 +128,7 @@ public sealed class VaultPipelineTests : IDisposable
         result.PlacementProblems.ShouldBeEmpty();
     }
 
+    /// <summary>A finding rejected in the decisions is left in the notes, and a proposed finding accepted there is applied.</summary>
     [Fact]
     public void Run_skips_a_finding_rejected_in_decisions_and_applies_a_proposed_one_accepted_there()
     {
@@ -151,6 +158,7 @@ public sealed class VaultPipelineTests : IDisposable
         notes.ShouldNotContain(NotesPassword, StringComparison.Ordinal);
     }
 
+    /// <summary>Items found in only one input pass through unchanged and count as unique groups.</summary>
     [Fact]
     public void Run_passes_through_items_found_in_only_one_input()
     {
@@ -172,6 +180,7 @@ public sealed class VaultPipelineTests : IDisposable
         result.HasUnresolvedConflicts.ShouldBeFalse();
     }
 
+    /// <summary>A Keeper SSH key without a fingerprint is completed with the fingerprint and public key.</summary>
     [Fact]
     public void Run_completes_a_keeper_ssh_key_that_has_no_fingerprint()
     {
@@ -194,6 +203,7 @@ public sealed class VaultPipelineTests : IDisposable
         key.PrivateKey.ShouldBe(PemFixtures.Ed25519OpenSsh());
     }
 
+    /// <summary>A Keeper SSH key whose body is not Base64 is written as a secure note that keeps the key in a hidden field.</summary>
     [Fact]
     public void Run_writes_a_keeper_ssh_key_whose_body_is_not_base64_as_a_secure_note_that_keeps_the_key()
     {
@@ -217,6 +227,7 @@ public sealed class VaultPipelineTests : IDisposable
         item.Fields.ShouldBe([new CustomField(SshKeyNormalizer.PrivateKeyField, privateKey, CustomFieldType.Hidden)]);
     }
 
+    /// <summary>A Keeper SSH key with explicit curve parameters is written as a secure note that keeps the key and reports no finding.</summary>
     [Fact]
     public void Run_writes_a_keeper_ssh_key_with_explicit_curve_parameters_as_a_secure_note_that_keeps_the_key()
     {
@@ -240,6 +251,7 @@ public sealed class VaultPipelineTests : IDisposable
         item.Fields.ShouldBe([new CustomField(SshKeyNormalizer.PrivateKeyField, privateKey, CustomFieldType.Hidden)]);
     }
 
+    /// <summary>Text stored around a Keeper SSH key is written to a hidden field of the key item.</summary>
     [Fact]
     public void Run_writes_text_stored_around_a_keeper_ssh_key_to_a_hidden_field_of_the_key_item()
     {
@@ -261,6 +273,7 @@ public sealed class VaultPipelineTests : IDisposable
         item.Fields.ShouldBe([new CustomField(SshKeyNormalizer.OtherTextField, Label + "\n" + HostLine, CustomFieldType.Hidden)]);
     }
 
+    /// <summary>Recovery codes in a Commander zip attachment are scanned as a finding and the file is listed for manual upload.</summary>
     [Fact]
     public void Run_scans_recovery_codes_in_a_commander_zip_attachment_and_lists_the_file_for_upload()
     {
@@ -288,6 +301,7 @@ public sealed class VaultPipelineTests : IDisposable
         result.ManualAttachments.ShouldBe([new ManualAttachment("GitHub backup", "github-recovery-codes.txt", "keeper.zip", "files/file-codes")]);
     }
 
+    /// <summary>Attachments missing from the export are listed for download from the source vault.</summary>
     [Fact]
     public void Run_lists_attachments_missing_from_the_export_for_download_from_the_source_vault()
     {
@@ -303,6 +317,7 @@ public sealed class VaultPipelineTests : IDisposable
         result.ManualAttachments.ShouldBe([new ManualAttachment("GitHub backup", "github-recovery-codes.txt", "keeper.json", null)]);
     }
 
+    /// <summary>Two attachments with the same file name on one Keeper item are listed separately.</summary>
     [Fact]
     public void Run_lists_two_attachments_with_one_file_name_on_one_keeper_item_separately()
     {
@@ -321,6 +336,7 @@ public sealed class VaultPipelineTests : IDisposable
         ]);
     }
 
+    /// <summary>Two files with the same name and size on one Commander item are listed separately.</summary>
     [Fact]
     public void Run_lists_two_files_with_one_name_and_size_on_one_commander_item_separately()
     {
@@ -342,6 +358,7 @@ public sealed class VaultPipelineTests : IDisposable
         ]);
     }
 
+    /// <summary>A file found on two merged items is listed once per item file.</summary>
     [Fact]
     public void Run_lists_a_file_found_on_two_merged_items_once()
     {
@@ -367,6 +384,7 @@ public sealed class VaultPipelineTests : IDisposable
         ]);
     }
 
+    /// <summary>Files with the same name and size but different content on two merged items are listed separately.</summary>
     [Fact]
     public void Run_lists_files_with_one_name_and_size_but_different_content_on_two_merged_items_separately()
     {
@@ -392,6 +410,7 @@ public sealed class VaultPipelineTests : IDisposable
         ]);
     }
 
+    /// <summary>A file found in two exports is listed once, from the newest item.</summary>
     [Fact]
     public void Run_lists_a_file_found_in_two_exports_once_from_the_newest_item()
     {
@@ -413,6 +432,7 @@ public sealed class VaultPipelineTests : IDisposable
         result.ManualAttachments.ShouldBe([new ManualAttachment("GitHub", "scan.pdf", "bitwarden.zip", "attachments/GitHub/scan.pdf")]);
     }
 
+    /// <summary>Same-named attachments missing from the export on two merged items are listed separately.</summary>
     [Fact]
     public void Run_lists_same_named_attachments_missing_from_the_export_on_two_merged_items_separately()
     {
@@ -434,6 +454,7 @@ public sealed class VaultPipelineTests : IDisposable
         ]);
     }
 
+    /// <summary>Origin keys stay unique when an input ID equals the key of an item created by placement.</summary>
     [Fact]
     public void Run_keeps_origin_keys_unique_when_an_input_ID_equals_the_key_of_a_created_item()
     {
@@ -455,6 +476,7 @@ public sealed class VaultPipelineTests : IDisposable
         created.Origin.OriginalId.ShouldBe(createdId + "#2");
     }
 
+    /// <summary>Merge applies new decisions to a scanned vault without reading the inputs or asking for passwords again.</summary>
     [Fact]
     public void Merge_applies_new_decisions_to_a_scanned_vault_without_reading_the_inputs_again()
     {
@@ -481,6 +503,7 @@ public sealed class VaultPipelineTests : IDisposable
         prompts.FilePasswordPrompts.ShouldBeEmpty();
     }
 
+    /// <summary>Merge checks the output path before merging and refuses an input file or a missing directory.</summary>
     [Fact]
     public void Merge_checks_the_output_before_merging_a_scanned_vault()
     {
@@ -505,6 +528,7 @@ public sealed class VaultPipelineTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
+    /// <summary>Scan warns when an input archive can no longer be opened and reports no findings for its items.</summary>
     [Fact]
     public void Scan_warns_when_an_input_archive_can_no_longer_be_opened()
     {
@@ -524,6 +548,7 @@ public sealed class VaultPipelineTests : IDisposable
         scanned.Warnings.ShouldHaveSingleItem().ShouldStartWith("keeper.zip: attachments were not scanned", StringComparison.Ordinal);
     }
 
+    /// <summary>Load and run both keep the files of attachment folders that two items named Bank share, without listing them as manual attachments.</summary>
     [Fact]
     public void Load_and_run_keep_the_files_of_attachment_folders_that_two_items_named_bank_share()
     {
@@ -549,6 +574,7 @@ public sealed class VaultPipelineTests : IDisposable
         result.ManualAttachments.ShouldBeEmpty();
     }
 
+    /// <summary>Load names an input with malformed content and keeps the reader error inside.</summary>
     [Fact]
     public void Load_names_an_input_whose_content_is_malformed_and_keeps_the_reader_error_inside()
     {
@@ -569,6 +595,7 @@ public sealed class VaultPipelineTests : IDisposable
         readerError.InnerException.ShouldBeAssignableTo<JsonException>();
     }
 
+    /// <summary>Load names a Bitwarden input that holds a null item.</summary>
     [Fact]
     public void Load_names_a_bitwarden_input_that_holds_a_null_item()
     {
@@ -585,6 +612,7 @@ public sealed class VaultPipelineTests : IDisposable
         exception.Message.ShouldBe("bitwarden.json: Item 1 of the Bitwarden export is null.");
     }
 
+    /// <summary>Load throws when given no inputs.</summary>
     [Fact]
     public void Load_needs_at_least_one_input()
     {
@@ -597,6 +625,7 @@ public sealed class VaultPipelineTests : IDisposable
         action.ShouldThrow<ArgumentException>();
     }
 
+    /// <summary>Items created by placement are named after their source and finding, stay stable across runs, and merge across inputs.</summary>
     [Fact]
     public void Run_names_items_created_by_placement_after_their_source_and_finding_and_merges_them()
     {
@@ -624,6 +653,7 @@ public sealed class VaultPipelineTests : IDisposable
         first.Merged.Items.ShouldHaveSingleItem(item => item.Type == VaultItemType.SecureNote).Notes.ShouldBe("deploy key");
     }
 
+    /// <summary>Each card found in one note is written as its own item, whichever source the policy prefers.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -649,6 +679,7 @@ public sealed class VaultPipelineTests : IDisposable
         cards.ShouldAllSatisfy(card => card.Fields.ShouldBeEmpty());
     }
 
+    /// <summary>Items created from the same note in both inputs merge by their numbered names.</summary>
     [Fact]
     public void Run_merges_items_created_from_the_same_note_in_both_inputs_by_their_numbered_names()
     {
@@ -672,6 +703,7 @@ public sealed class VaultPipelineTests : IDisposable
         cards.ShouldAllSatisfy(card => card.Fields.ShouldBeEmpty());
     }
 
+    /// <summary>Each SSH key found in one note is written as its own item, whichever source the policy prefers.</summary>
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
@@ -698,6 +730,7 @@ public sealed class VaultPipelineTests : IDisposable
         keys.ShouldAllSatisfy(key => key.Fields.ShouldBeEmpty());
     }
 
+    /// <summary>A second key stored with an SSH key is written as its own item.</summary>
     [Fact]
     public void Run_writes_a_second_key_stored_with_an_ssh_key_as_its_own_item()
     {
@@ -721,6 +754,7 @@ public sealed class VaultPipelineTests : IDisposable
         items.ShouldAllSatisfy(item => item.Fields.ShouldBeEmpty());
     }
 
+    /// <summary>An item changed by an accepted finding keeps its origin key.</summary>
     [Fact]
     public void Run_keeps_the_origin_key_of_an_item_changed_by_an_accepted_finding()
     {

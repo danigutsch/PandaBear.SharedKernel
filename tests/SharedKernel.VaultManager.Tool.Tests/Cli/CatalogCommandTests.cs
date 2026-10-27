@@ -5,6 +5,7 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests the catalog and apply commands together.</summary>
 public sealed class CatalogCommandTests : IDisposable
 {
     private const string Password = "fixture-catalog-cli-password";
@@ -12,8 +13,10 @@ public sealed class CatalogCommandTests : IDisposable
     private const string ExportPassword = "fixture export password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-catalog-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Verifies that cataloging, editing, and applying renames and moves an item and shows no secret.</summary>
     [Fact]
     public async Task Catalog_then_apply_renames_and_moves_an_item_without_showing_secrets()
     {
@@ -57,6 +60,7 @@ public sealed class CatalogCommandTests : IDisposable
         written.Folders.ShouldBe(["Work", "Work/Code"]);
     }
 
+    /// <summary>Verifies that apply refuses a catalog made from another version of the vault.</summary>
     [Fact]
     public async Task Apply_refuses_a_catalog_made_from_another_version_of_the_vault()
     {
@@ -77,6 +81,7 @@ public sealed class CatalogCommandTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
+    /// <summary>Verifies that apply writes nothing while the catalog sets notes that were withheld.</summary>
     [Fact]
     public async Task Apply_writes_nothing_while_the_catalog_sets_withheld_notes()
     {
@@ -100,6 +105,7 @@ public sealed class CatalogCommandTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
+    /// <summary>Verifies that apply names the attachments to upload only when it writes the vault.</summary>
     [Fact]
     public async Task Apply_names_the_attachments_to_upload_only_when_it_writes_the_vault()
     {

@@ -3,12 +3,16 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.IO;
 
+/// <summary>Tests the detection of two paths that name the same file through symbolic links.</summary>
 public sealed class FilePathsTests : IDisposable
 {
     private readonly string directory = Directory.CreateTempSubdirectory("vault-file-paths-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>A link whose target steps up with ".." after passing through another link resolves relative to the directory that link points to, so the output path through the link names the input file, for relative and absolute targets.</summary>
+    /// <param name="absoluteTarget">Whether the link target is an absolute path.</param>
     [Theory(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanCreateSymbolicLinks), Skip = "This system does not let the test create symbolic links.")]
     [InlineData(false)]
     [InlineData(true)]
@@ -34,6 +38,7 @@ public sealed class FilePathsTests : IDisposable
         same.ShouldBeTrue();
     }
 
+    /// <summary>A file link and a directory link with "." segments in their targets both lead to the input file, while another file name in the linked directory does not.</summary>
     [Fact(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanCreateSymbolicLinks), Skip = "This system does not let the test create symbolic links.")]
     public void MayNameSameFile_follows_a_file_link_and_relative_links_with_dot_segments()
     {
@@ -55,6 +60,7 @@ public sealed class FilePathsTests : IDisposable
         otherFile.ShouldBeFalse();
     }
 
+    /// <summary>Two links that point to each other make resolving a path below them throw IOException that mentions symbolic links.</summary>
     [Fact(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanCreateSymbolicLinks), Skip = "This system does not let the test create symbolic links.")]
     public void ResolveLinks_rejects_links_that_form_a_loop()
     {

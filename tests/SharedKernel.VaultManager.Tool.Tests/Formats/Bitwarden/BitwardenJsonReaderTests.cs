@@ -4,8 +4,10 @@ using PandaBear.VaultManager.Tool.Model;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Bitwarden;
 
+/// <summary>Tests the reader for Bitwarden JSON exports.</summary>
 public sealed class BitwardenJsonReaderTests
 {
+    /// <summary>The full.json login maps its folder, flags, credentials, TOTP, URIs with the exact match mode, passkey, password history, hidden field, origin, and modified time.</summary>
     [Fact]
     public void Read_maps_login_fields_folder_history_and_passkeys()
     {
@@ -31,6 +33,7 @@ public sealed class BitwardenJsonReaderTests
         login.LastModified.ShouldBe(DateTimeOffset.Parse("2026-03-04T05:06:07Z", CultureInfo.InvariantCulture));
     }
 
+    /// <summary>The secure note, card, identity, and SSH key items of full.json keep their note body, card number, passport number, and key fingerprint and folder.</summary>
     [Fact]
     public void Read_maps_note_card_identity_and_ssh_key_items()
     {
@@ -46,6 +49,7 @@ public sealed class BitwardenJsonReaderTests
         ssh.SshKey.ShouldNotBeNull().KeyFingerprint.ShouldBe("SHA256:fixture");
     }
 
+    /// <summary>The "Deleted note" item of full.json is not among the items read.</summary>
     [Fact]
     public void Read_skips_deleted_items()
     {
@@ -56,6 +60,7 @@ public sealed class BitwardenJsonReaderTests
         items.ShouldNotContain(item => item.Name == "Deleted note");
     }
 
+    /// <summary>The type 6 bank account item becomes a secure note whose IBAN and bank name are kept as hidden fields and whose conversion note names the unknown type.</summary>
     [Fact]
     public void Read_unknown_item_type_becomes_secure_note_with_hidden_fields_and_note()
     {
@@ -70,6 +75,7 @@ public sealed class BitwardenJsonReaderTests
         bank.ConversionNotes.ShouldContain(note => note.Contains("type 6", StringComparison.Ordinal));
     }
 
+    /// <summary>An encrypted export with an account key validation entry throws InvalidDataException whose message says it is account-restricted.</summary>
     [Fact]
     public void Read_account_restricted_export_throws_with_explanation()
     {
@@ -84,6 +90,7 @@ public sealed class BitwardenJsonReaderTests
         exception.Message.ShouldContain("account-restricted", StringComparison.Ordinal);
     }
 
+    /// <summary>An item in collections c1 and c2 gets the folder "Shared", an "Additional folders" field holding "Other", and one conversion note.</summary>
     [Fact]
     public void Read_organization_export_uses_first_collection_as_folder()
     {
@@ -103,6 +110,7 @@ public sealed class BitwardenJsonReaderTests
         item.ConversionNotes.ShouldHaveSingleItem();
     }
 
+    /// <summary>The export's folder list keeps "Work" and the unused "Empty" folder and drops the folder whose name is blank.</summary>
     [Fact]
     public void Read_keeps_every_named_folder_including_folders_that_hold_no_item()
     {
@@ -119,6 +127,7 @@ public sealed class BitwardenJsonReaderTests
         export.Folders.ShouldBe(["Work", "Empty"]);
     }
 
+    /// <summary>With both a folder and a collection, the folder wins as the folder path, the collection goes to an "Additional folders" field, and an item without a folder uses the collection as its folder.</summary>
     [Fact]
     public void Read_export_with_folders_and_collections_keeps_both()
     {
@@ -140,6 +149,7 @@ public sealed class BitwardenJsonReaderTests
         export.Items[1].Fields.ShouldBeEmpty();
     }
 
+    /// <summary>An item whose folderId matches no folder gets no folder path and one conversion note that mentions the folder.</summary>
     [Fact]
     public void Read_notes_a_folder_ID_that_names_no_folder()
     {
@@ -157,6 +167,7 @@ public sealed class BitwardenJsonReaderTests
         item.ConversionNotes.ShouldHaveSingleItem().ShouldContain("folder", StringComparison.Ordinal);
     }
 
+    /// <summary>Text that is not JSON throws InvalidDataException.</summary>
     [Fact]
     public void Read_invalid_JSON_throws_invalid_data()
     {
@@ -167,6 +178,9 @@ public sealed class BitwardenJsonReaderTests
         action.ShouldThrow<InvalidDataException>();
     }
 
+    /// <summary>A null item, folder, collection, field, history, collection ID, URI, or passkey entry throws InvalidDataException whose message names the entry by its position and holds no value.</summary>
+    /// <param name="json">The export JSON containing the null entry.</param>
+    /// <param name="message">The expected exception message.</param>
     [Theory]
     [InlineData("""{"encrypted":false,"folders":[],"items":[{"id":"i","type":2,"name":"n"},null]}""", "Item 2 of the Bitwarden export is null.")]
     [InlineData("""{"encrypted":false,"folders":[{"id":"f","name":"Work"},null],"items":[]}""", "Folder 2 of the Bitwarden export is null.")]
@@ -188,6 +202,9 @@ public sealed class BitwardenJsonReaderTests
         exception.Message.ShouldBe(message);
     }
 
+    /// <summary>When the first and third folder or collection share an ID, reading throws InvalidDataException that names entries 1 and 3.</summary>
+    /// <param name="list">The name of the JSON list that repeats an ID, folders or collections.</param>
+    /// <param name="message">The expected exception message.</param>
     [Theory]
     [InlineData("folders", "Folders 1 and 3 of the Bitwarden export have the same ID.")]
     [InlineData("collections", "Collections 1 and 3 of the Bitwarden export have the same ID.")]
@@ -205,6 +222,7 @@ public sealed class BitwardenJsonReaderTests
         exception.Message.ShouldBe(message);
     }
 
+    /// <summary>A deleted item with null field and URI entries is skipped without error, leaving only the "Kept" item.</summary>
     [Fact]
     public void Read_ignores_null_entries_of_deleted_items_it_does_not_read()
     {

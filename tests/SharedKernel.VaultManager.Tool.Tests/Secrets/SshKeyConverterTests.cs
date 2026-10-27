@@ -3,8 +3,10 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests how private keys are inspected and converted to SSH key items.</summary>
 public sealed class SshKeyConverterTests
 {
+    /// <summary>The fingerprint and public key of the Ed25519 fixture match ssh-keygen and the private key is kept.</summary>
     [Fact]
     public void Ssh_fingerprint_matches_ssh_keygen()
     {
@@ -19,6 +21,7 @@ public sealed class SshKeyConverterTests
         conversion.Problem.ShouldBeNull();
     }
 
+    /// <summary>An ECDSA PKCS#8 key derives the nistp256 public key and its SHA-256 fingerprint.</summary>
     [Fact]
     public void Ecdsa_pkcs8_key_derives_nistp256_public_key()
     {
@@ -40,6 +43,7 @@ public sealed class SshKeyConverterTests
         key.KeyFingerprint.ShouldBe("SHA256:" + Convert.ToBase64String(SHA256.HashData(blob)).TrimEnd('='));
     }
 
+    /// <summary>An RSA public key encodes the exponent and then the modulus as SSH multiple precision integers.</summary>
     [Fact]
     public void Rsa_public_key_encodes_exponent_then_modulus_as_mpints()
     {
@@ -57,6 +61,7 @@ public sealed class SshKeyConverterTests
         strings[2].ShouldBe([0x00, .. parameters.Modulus!]);
     }
 
+    /// <summary>An Ed25519 PKCS#8 key converts only when a public key is supplied.</summary>
     [Fact]
     public void Ed25519_pkcs8_key_needs_a_supplied_public_key()
     {
@@ -76,6 +81,7 @@ public sealed class SshKeyConverterTests
         key.KeyFingerprint.ShouldBe(PemFixtures.Ed25519Fingerprint);
     }
 
+    /// <summary>DSA keys, security keys, and oversized keys are flagged with a reason and not converted.</summary>
     [Theory]
     [InlineData("ssh-dss", 64, "DSA")]
     [InlineData("sk-ssh-ed25519@openssh.com", 64, "security key")]
@@ -95,6 +101,7 @@ public sealed class SshKeyConverterTests
         conversion.Problem.ShouldNotBeNull().ShouldContain(reason, StringComparison.Ordinal);
     }
 
+    /// <summary>PKCS#1 and SEC1 keys whose body is not Base64 are flagged and not converted.</summary>
     [Theory]
     [InlineData("RSA PRIVATE KEY", false)]
     [InlineData("RSA PRIVATE KEY", true)]
@@ -116,6 +123,7 @@ public sealed class SshKeyConverterTests
         conversion.Problem.ShouldBe("key body is not base64");
     }
 
+    /// <summary>A SEC1 key with nonzero padding bits converts to the same key as its canonical form.</summary>
     [Fact]
     public void Sec1_key_with_nonzero_padding_bits_converts_like_its_canonical_form()
     {
@@ -131,6 +139,7 @@ public sealed class SshKeyConverterTests
         conversion.Key.ShouldNotBeNull().PrivateKey.ShouldBe(PemFixtures.Pkcs8(ecdsa));
     }
 
+    /// <summary>An EC key on a curve the platform does not implement is flagged and not converted.</summary>
     [Fact]
     public void Ec_key_on_a_curve_the_platform_does_not_implement_is_flagged_not_converted()
     {
@@ -142,6 +151,7 @@ public sealed class SshKeyConverterTests
         conversion.Problem.ShouldBe("unsupported ECDSA curve");
     }
 
+    /// <summary>EC keys with explicit curve parameters are flagged and not converted.</summary>
     [Fact]
     public void Ec_keys_with_explicit_curve_parameters_are_flagged_not_converted()
     {
@@ -160,6 +170,7 @@ public sealed class SshKeyConverterTests
         pkcs8.Problem.ShouldBe("unsupported ECDSA curve");
     }
 
+    /// <summary>Inspection flags EC keys with explicit curve parameters the same way conversion does.</summary>
     [Fact]
     public void Inspection_flags_ec_keys_with_explicit_curve_parameters_as_conversion_does()
     {
@@ -178,6 +189,7 @@ public sealed class SshKeyConverterTests
         pkcs8.Problem.ShouldBe("unsupported ECDSA curve");
     }
 
+    /// <summary>Inspection flags an EC key on a named curve that SSH does not support.</summary>
     [Fact]
     public void Inspection_flags_an_ec_key_on_a_named_curve_ssh_does_not_support()
     {
@@ -189,6 +201,7 @@ public sealed class SshKeyConverterTests
         inspection.Problem.ShouldBe("unsupported ECDSA curve");
     }
 
+    /// <summary>Inspection accepts EC keys on the curves SSH names.</summary>
     [Fact]
     public void Inspection_accepts_ec_keys_on_the_curves_ssh_names()
     {
@@ -209,6 +222,7 @@ public sealed class SshKeyConverterTests
         });
     }
 
+    /// <summary>Inspection flags encrypted PKCS#8 and OpenSSH keys, and an encrypted OpenSSH key cannot be converted.</summary>
     [Fact]
     public void Encrypted_keys_are_flagged_by_inspection()
     {

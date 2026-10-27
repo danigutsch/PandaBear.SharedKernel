@@ -5,10 +5,12 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests the secret scanner: what it finds in item text, how confident it is, and where it proposes to place each finding.</summary>
 public sealed class SecretScannerTests
 {
     private static readonly SecretScanner Scanner = SecretScanner.Default;
 
+    /// <summary>A GitHub recovery code block in the notes is found with high confidence and proposed for a hidden recovery codes field.</summary>
     [Fact]
     public void Scan_github_recovery_codes_block_in_notes_proposes_hidden_recovery_codes_field()
     {
@@ -28,6 +30,7 @@ public sealed class SecretScannerTests
         item.Notes.ShouldNotBeNull().Substring(finding.Location.Start, finding.Location.Length).ShouldBe(codes);
     }
 
+    /// <summary>Eight-digit runs with no keyword and no block are not recovery codes.</summary>
     [Fact]
     public void Scan_eight_digit_runs_without_keyword_or_block_are_not_recovery_codes()
     {
@@ -42,6 +45,7 @@ public sealed class SecretScannerTests
         findings.ShouldNotContain(finding => finding.Kind == SecretKind.RecoveryCodes);
     }
 
+    /// <summary>An otpauth URI in the notes is proposed as the login TOTP with its algorithm, digits, and period preserved.</summary>
     [Fact]
     public void Scan_otpauth_uri_in_notes_proposes_login_totp_with_parameters_preserved()
     {
@@ -66,6 +70,7 @@ public sealed class SecretScannerTests
         placed.Problems.ShouldBeEmpty();
     }
 
+    /// <summary>A Base32 seed under a 2FA key heading is proposed as the login TOTP.</summary>
     [Fact]
     public void Scan_base32_seed_under_2fa_key_proposes_login_totp()
     {
@@ -82,6 +87,7 @@ public sealed class SecretScannerTests
         finding.ProposedTarget.ShouldBe(PlacementTarget.LoginTotp);
     }
 
+    /// <summary>A second TOTP goes to a hidden field when the login already has a TOTP.</summary>
     [Fact]
     public void Scan_second_totp_goes_to_hidden_totp_field_when_login_totp_exists()
     {
@@ -98,6 +104,7 @@ public sealed class SecretScannerTests
         finding.ProposedTarget.ShouldBe(PlacementTarget.Hidden("TOTP (2)"));
     }
 
+    /// <summary>A TOTP seed in the password field is reported as misfiled and moved to the TOTP.</summary>
     [Fact]
     public void Scan_totp_seed_in_password_field_is_reported_as_misfiled()
     {
@@ -118,6 +125,7 @@ public sealed class SecretScannerTests
         login.Totp.ShouldNotBeNull().ShouldContain(secret, StringComparison.Ordinal);
     }
 
+    /// <summary>A password line in the notes fills an empty login password and leaves the other notes text.</summary>
     [Fact]
     public void Scan_password_line_in_notes_fills_empty_login_password()
     {
@@ -136,6 +144,7 @@ public sealed class SecretScannerTests
         placed.Item.Notes.ShouldBe("Shared account\nAsk Bob first.");
     }
 
+    /// <summary>A password line in the notes becomes a hidden field when the login already has a password.</summary>
     [Fact]
     public void Scan_password_line_in_notes_becomes_hidden_field_when_password_exists()
     {
@@ -155,6 +164,7 @@ public sealed class SecretScannerTests
         placed.Item.Notes.ShouldBeNull();
     }
 
+    /// <summary>Security question lines become hidden fields named after the question.</summary>
     [Fact]
     public void Scan_security_question_lines_become_question_named_hidden_fields()
     {
@@ -176,6 +186,7 @@ public sealed class SecretScannerTests
         placed.Item.Notes.ShouldBeNull();
     }
 
+    /// <summary>A Luhn-valid card number is found as a card item proposal, and a Luhn-invalid one is not.</summary>
     [Fact]
     public void Scan_luhn_valid_card_number_is_detected_and_luhn_invalid_is_not()
     {
@@ -198,6 +209,7 @@ public sealed class SecretScannerTests
         rescanned.ShouldHaveCount(1);
     }
 
+    /// <summary>An IBAN with a bad checksum is not found, while a valid one is.</summary>
     [Fact]
     public void Scan_iban_with_bad_checksum_is_not_detected()
     {
@@ -214,6 +226,7 @@ public sealed class SecretScannerTests
         bad.ShouldNotContain(finding => finding.Kind == SecretKind.Iban);
     }
 
+    /// <summary>A BIP39 phrase with a valid checksum is a high-confidence seed phrase, and one with an invalid checksum is not.</summary>
     [Fact]
     public void Scan_bip39_phrase_with_valid_checksum_is_high_confidence_and_invalid_is_not()
     {
@@ -233,6 +246,7 @@ public sealed class SecretScannerTests
         bad.ShouldNotContain(found => found.Kind == SecretKind.SeedPhrase && found.Confidence >= Confidence.Medium);
     }
 
+    /// <summary>An OpenSSH private key in the notes is proposed as an SSH key item with the computed public key and fingerprint.</summary>
     [Fact]
     public void Scan_openssh_private_key_in_notes_proposes_ssh_key_item_with_computed_public_key()
     {
@@ -256,6 +270,7 @@ public sealed class SecretScannerTests
         placed.Item.Notes.ShouldBe("deploy key\nrotate yearly");
     }
 
+    /// <summary>A PKCS#1 RSA key is converted to PKCS#8 for the SSH key item, with the same modulus.</summary>
     [Fact]
     public void Scan_pkcs1_rsa_key_is_converted_to_pkcs8_for_ssh_key_item()
     {
@@ -278,6 +293,7 @@ public sealed class SecretScannerTests
         imported.ExportParameters(false).Modulus.ShouldBe(rsa.ExportParameters(false).Modulus);
     }
 
+    /// <summary>An encrypted private key of each format is flagged for review and kept in a hidden field instead of being converted.</summary>
     [Theory]
     [InlineData("pkcs8")]
     [InlineData("proc-type")]
@@ -307,6 +323,7 @@ public sealed class SecretScannerTests
         placed.Item.Fields.ShouldHaveSingleItem().Value.ShouldBe(pem);
     }
 
+    /// <summary>An EC key with explicit curve parameters is flagged for review and proposed for a hidden field that placement fills without a problem.</summary>
     [Fact]
     public void Scan_ec_key_with_explicit_curve_parameters_in_notes_proposes_a_hidden_field_that_placement_fills_without_a_problem()
     {
@@ -332,6 +349,7 @@ public sealed class SecretScannerTests
         placed.Item.Notes.ShouldBe("deploy key");
     }
 
+    /// <summary>A key that fills a hidden field and cannot become an SSH key item produces no finding.</summary>
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -353,6 +371,7 @@ public sealed class SecretScannerTests
         findings.ShouldBeEmpty();
     }
 
+    /// <summary>A convertible key that fills a hidden field is still proposed as an SSH key item.</summary>
     [Fact]
     public void Scan_still_proposes_an_ssh_key_item_for_a_convertible_key_that_fills_a_hidden_field()
     {
@@ -371,6 +390,7 @@ public sealed class SecretScannerTests
         finding.ProposedTarget.ShouldBe(PlacementTarget.NewSshKeyItem);
     }
 
+    /// <summary>A GitHub token with a valid checksum is high confidence and pre-accepted, and one with a bad checksum is low confidence.</summary>
     [Fact]
     public void Scan_github_token_with_valid_checksum_is_high_confidence()
     {
@@ -392,6 +412,7 @@ public sealed class SecretScannerTests
         bad.IsPreAccepted.ShouldBeFalse();
     }
 
+    /// <summary>A Postgres URI with a password is split into login fields and keeps the full connection string in a field.</summary>
     [Fact]
     public void Scan_postgres_uri_with_password_splits_into_login_fields()
     {
@@ -416,6 +437,7 @@ public sealed class SecretScannerTests
         placed.Item.Notes.ShouldBe("Primary database");
     }
 
+    /// <summary>Placeholders and UUIDs are rejected.</summary>
     [Fact]
     public void Scan_placeholders_and_uuids_are_rejected()
     {
@@ -443,6 +465,7 @@ public sealed class SecretScannerTests
         findings.ShouldBeEmpty();
     }
 
+    /// <summary>A regex timeout produces a needs-review finding that moves nothing.</summary>
     [Fact]
     public void Scan_regex_timeout_produces_needs_review_finding()
     {
@@ -468,6 +491,7 @@ public sealed class SecretScannerTests
         finding.ProposedTarget.Kind.ShouldBe(PlacementTargetKind.NotMoved);
     }
 
+    /// <summary>A regex timeout in one window still flags the later windows of the rule.</summary>
     [Fact]
     public void Scan_regex_timeout_in_one_window_still_flags_the_later_windows_of_the_rule()
     {
@@ -496,6 +520,7 @@ public sealed class SecretScannerTests
         timeouts.ShouldContain(found => found.Location.Start < SecondRun && found.Location.Start + found.Location.Length >= notes.Length);
     }
 
+    /// <summary>A window whose match timed out once is run again and its finding is reported.</summary>
     [Fact]
     public void Scan_runs_a_window_whose_match_timed_out_once_again_and_reports_its_finding()
     {
@@ -525,6 +550,7 @@ public sealed class SecretScannerTests
         checks.ShouldBe(2);
     }
 
+    /// <summary>Once three windows of a rule time out, the rest of the text is flagged as one finding.</summary>
     [Fact]
     public void Scan_flags_the_remaining_windows_of_a_rule_as_one_finding_once_three_of_its_windows_time_out()
     {
@@ -553,6 +579,7 @@ public sealed class SecretScannerTests
         rest.Message.ShouldBe("Slow rule pattern timed out 3 times; review the rest of this text manually");
     }
 
+    /// <summary>A Bitwarden account recovery code is flagged for review and not moved, and the placement problem does not repeat the code.</summary>
     [Fact]
     public void Scan_bitwarden_account_recovery_code_is_flagged_not_moved()
     {
@@ -574,6 +601,7 @@ public sealed class SecretScannerTests
         placed.Problems.ShouldHaveSingleItem().ShouldNotContain(code, StringComparison.Ordinal);
     }
 
+    /// <summary>An otpauth migration payload is decoded into the login TOTP and an extra TOTP field, and an HOTP entry is reported as a problem.</summary>
     [Fact]
     public void Scan_otpauth_migration_payload_is_decoded()
     {
@@ -602,6 +630,7 @@ public sealed class SecretScannerTests
         placed.Item.Notes.ShouldBe(uri);
     }
 
+    /// <summary>Prose paragraphs produce nothing above suggestion confidence.</summary>
     [Fact]
     public void Scan_prose_paragraphs_produce_nothing_above_suggestion()
     {
@@ -615,6 +644,7 @@ public sealed class SecretScannerTests
         findings.ShouldAllSatisfy(finding => finding.Confidence.ShouldBe(Confidence.Suggestion));
     }
 
+    /// <summary>A Luhn-valid card number in a text field is reported as misfiled and moved to a hidden field.</summary>
     [Fact]
     public void Scan_luhn_valid_card_number_in_text_field_is_reported_as_misfiled()
     {
@@ -635,6 +665,7 @@ public sealed class SecretScannerTests
         field.Value.ShouldBe(number);
     }
 
+    /// <summary>A PIN in the password field of a bank item is reported as misfiled.</summary>
     [Fact]
     public void Scan_pin_in_password_field_of_bank_item_is_reported_as_misfiled()
     {
@@ -651,6 +682,7 @@ public sealed class SecretScannerTests
         finding.ProposedTarget.ShouldBe(PlacementTarget.Hidden("PIN"));
     }
 
+    /// <summary>A recovery code file name raises the confidence for digit codes, while the same codes in an unrelated file name are not recovery codes.</summary>
     [Fact]
     public void Scan_text_recovery_code_file_name_raises_confidence_for_digit_codes()
     {

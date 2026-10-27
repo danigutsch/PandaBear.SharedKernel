@@ -3,8 +3,10 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests how accepted secret findings move from notes into the fields of an item or into new items.</summary>
 public sealed class SecretPlacerTests
 {
+    /// <summary>Placing with no accepted finding leaves the item unchanged and creates nothing.</summary>
     [Fact]
     public void Place_rejected_finding_leaves_item_unchanged()
     {
@@ -22,6 +24,7 @@ public sealed class SecretPlacerTests
         placed.Problems.ShouldBeEmpty();
     }
 
+    /// <summary>An accepted finding is removed from the notes of the placed item, while the original item keeps its notes.</summary>
     [Fact]
     public void Place_accepted_finding_removes_source_text_from_notes_only_after_accept()
     {
@@ -44,6 +47,7 @@ public sealed class SecretPlacerTests
         password.ShouldBeNull();
     }
 
+    /// <summary>A value over the field budget stays in the notes and is reported as a problem without repeating the value.</summary>
     [Fact]
     public void Place_value_over_field_budget_stays_in_notes_and_is_reported()
     {
@@ -65,6 +69,7 @@ public sealed class SecretPlacerTests
         problem.ShouldNotContain(huge, StringComparison.Ordinal);
     }
 
+    /// <summary>A finding whose location no longer matches the text is reported instead of cutting the wrong text.</summary>
     [Fact]
     public void Place_stale_location_is_reported_instead_of_cutting_wrong_text()
     {
@@ -85,6 +90,7 @@ public sealed class SecretPlacerTests
         placed.Problems.ShouldHaveSingleItem();
     }
 
+    /// <summary>A card number in a card note creates a card item and leaves the remaining note text.</summary>
     [Fact]
     public void Place_card_number_from_card_note_creates_card_item()
     {
@@ -106,6 +112,7 @@ public sealed class SecretPlacerTests
         placed.Item.Notes.ShouldBe("Travel card");
     }
 
+    /// <summary>Items created from one source item get numbered names.</summary>
     [Fact]
     public void Place_numbers_the_names_of_items_created_from_one_source_item()
     {
@@ -127,6 +134,7 @@ public sealed class SecretPlacerTests
         placed.Item.Name.ShouldBe("Bank cards");
     }
 
+    /// <summary>A token fills an empty password, and a later token goes to a hidden field named after its rule.</summary>
     [Fact]
     public void Place_token_fills_empty_password_and_names_later_tokens_by_rule()
     {
@@ -147,6 +155,7 @@ public sealed class SecretPlacerTests
         placed.Item.Notes.ShouldBeNull();
     }
 
+    /// <summary>Labeled tokens keep their labels as field names.</summary>
     [Fact]
     public void Place_labeled_tokens_keep_their_labels_as_field_names()
     {
@@ -168,6 +177,7 @@ public sealed class SecretPlacerTests
         password.ShouldBeNull();
     }
 
+    /// <summary>Placing recovery codes keeps the header text in the notes.</summary>
     [Fact]
     public void Place_recovery_codes_keeps_header_text_in_notes()
     {
@@ -187,6 +197,7 @@ public sealed class SecretPlacerTests
         field.Value.ShouldBe(codes);
     }
 
+    /// <summary>An attachment finding reads the supplied text and never edits the notes.</summary>
     [Fact]
     public void Place_attachment_finding_reads_supplied_text_and_never_edits_notes()
     {

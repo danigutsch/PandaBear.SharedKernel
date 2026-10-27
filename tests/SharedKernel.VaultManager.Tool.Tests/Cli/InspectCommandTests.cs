@@ -2,14 +2,17 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests the inspect command.</summary>
 public sealed class InspectCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const string FilePassword = "fixture file password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-inspect-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Verifies that inspect reports the format, counts, folders, times, attachments, and warnings of each input.</summary>
     [Fact]
     public async Task Inspect_reports_format_counts_folders_times_attachments_and_warnings_per_input()
     {
@@ -56,6 +59,7 @@ public sealed class InspectCommandTests : IDisposable
             """.ReplaceLineEndings("\n"), StringComparer.Ordinal);
     }
 
+    /// <summary>Verifies that inspect lists declared folders that hold no item.</summary>
     [Fact]
     public async Task Inspect_lists_declared_folders_that_hold_no_item()
     {
@@ -70,6 +74,7 @@ public sealed class InspectCommandTests : IDisposable
         run.Output.ShouldContain("  Folders: 1\n    Archive/Old\n  Folders without items: 1\n", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that inspect asks once for the password of a protected input.</summary>
     [Fact]
     public async Task Inspect_asks_once_for_the_password_of_a_protected_input()
     {
@@ -86,6 +91,7 @@ public sealed class InspectCommandTests : IDisposable
         prompts.FilePasswordPrompts.ShouldBe(["Password for protected.json"]);
     }
 
+    /// <summary>Verifies that inspect reports the readable inputs and exits 3 because of an unreadable one.</summary>
     [Fact]
     public async Task Inspect_reports_the_readable_inputs_and_exits_3_for_an_unreadable_one()
     {
@@ -103,6 +109,7 @@ public sealed class InspectCommandTests : IDisposable
         run.Error.ShouldStartWith("missing.json: ", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that inspect takes an argument starting with <c>@</c> as a file name and shows no vault values.</summary>
     [Fact]
     public async Task Inspect_takes_an_argument_starting_with_at_as_a_file_name_and_shows_no_vault_values()
     {
@@ -120,6 +127,7 @@ public sealed class InspectCommandTests : IDisposable
         values.ShouldAllSatisfy(value => run.Error.ShouldNotContain(value, StringComparison.Ordinal));
     }
 
+    /// <summary>Verifies that inspect replaces control characters in folder names.</summary>
     [Fact]
     public async Task Inspect_replaces_control_characters_in_folder_names()
     {
@@ -137,6 +145,7 @@ public sealed class InspectCommandTests : IDisposable
         controls.ShouldAllSatisfy(control => run.Output.ShouldNotContain(control));
     }
 
+    /// <summary>Verifies that inspect names an input it cannot read.</summary>
     [Theory]
     [InlineData("export.txt", "not an export\n", "not recognized")]
     [InlineData("restricted.json", """{"encrypted":true,"encKeyValidation_DO_NOT_EDIT":"2.x","data":"2.x"}""", "account-restricted")]

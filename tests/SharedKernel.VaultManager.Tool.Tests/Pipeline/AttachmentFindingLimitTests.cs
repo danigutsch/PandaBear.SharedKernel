@@ -6,13 +6,16 @@ using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Pipeline;
 
+/// <summary>Tests the cap on findings that <see cref="VaultPipeline"/> lists for one attachment.</summary>
 public sealed class AttachmentFindingLimitTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-attachment-limit-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>An attachment near the maximum extractable size with more answers than the limit lists exactly <see cref="VaultPipeline.MaxAttachmentFindings"/> findings and adds a warning that it was scanned only in part.</summary>
     [Fact(Timeout = LargeTexts.ScanBudget)]
     public async Task Scan_lists_at_most_the_finding_limit_of_a_large_attachment_and_warns_that_it_was_scanned_in_part()
     {

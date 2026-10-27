@@ -8,14 +8,17 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests merging with a decisions file.</summary>
 public sealed class MergeDecisionsCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-decisions-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Verifies that merge without a decisions file exits 2 and asks for one.</summary>
     [Fact]
     public async Task Merge_without_a_decisions_file_exits_2_and_asks_for_one()
     {
@@ -37,6 +40,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         Directory.GetFiles(directory).Length.ShouldBe(2);
     }
 
+    /// <summary>Verifies that pending field entries list the members and that choosing a member resolves them.</summary>
     [Fact]
     public async Task Pending_field_entries_list_the_members_and_a_member_choice_resolves_them()
     {
@@ -78,6 +82,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         DecisionsFile.Read(decisionsPath).Groups.ShouldHaveSingleItem().Choices.ShouldBe([FieldChoice.Member(FieldPaths.LoginPassword, CliInputs.BitwardenKey)]);
     }
 
+    /// <summary>Verifies that pending finding entries name only proposed findings and that accepting them applies them.</summary>
     [Fact]
     public async Task Pending_finding_entries_name_proposed_findings_only_and_accepting_them_applies_them()
     {
@@ -114,6 +119,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         merged.Fields.ShouldHaveSingleItem().Value.ShouldBe(string.Join('\n', codes));
     }
 
+    /// <summary>Verifies that updating the decisions file keeps its decisions and overrides.</summary>
     [Fact]
     public async Task Updating_the_decisions_file_keeps_its_decisions_and_overrides()
     {
@@ -141,6 +147,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         updated.Findings.ShouldHaveSingleItem().Choices.ShouldBe([new FindingChoice(codesId, FindingDecision.Rejected), new FindingChoice(passwordId, FindingDecision.Pending)]);
     }
 
+    /// <summary>Verifies that merge warns about decisions that match nothing, so a typo is not ignored.</summary>
     [Fact]
     public async Task Merge_warns_about_decisions_that_match_nothing_so_a_typo_is_not_ignored()
     {
@@ -190,6 +197,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         merged.Fields.ShouldHaveSingleItem(field => field.Type == CustomFieldType.Hidden).Value.ShouldBe(string.Join('\n', codes));
     }
 
+    /// <summary>Verifies that merge rejects a decisions file with a misspelled section instead of applying findings the section was meant to reject.</summary>
     [Fact]
     public async Task Merge_rejects_a_decisions_file_with_a_misspelled_section_instead_of_applying_findings_it_rejects()
     {
@@ -216,6 +224,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         after.ShouldBe(json);
     }
 
+    /// <summary>Verifies that merge rejects a decisions file with a repeated section instead of applying findings the section was meant to reject.</summary>
     [Fact]
     public async Task Merge_rejects_a_decisions_file_with_a_repeated_section_instead_of_applying_findings_it_rejects()
     {
@@ -255,6 +264,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         after.ShouldBe(json);
     }
 
+    /// <summary>Verifies that a member decision naming an item outside its group is warned about and replaced by a pending entry.</summary>
     [Fact]
     public async Task Member_decision_naming_an_item_outside_its_group_is_warned_about_and_replaced_by_a_pending_entry()
     {
@@ -280,6 +290,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
+    /// <summary>Verifies that merge warnings replace control characters from the decisions file.</summary>
     [Fact]
     public async Task Merge_warnings_replace_control_characters_from_the_decisions_file()
     {
@@ -298,6 +309,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         run.Error.ShouldBe("Warning: decisions for group 0000\uFFFD[2J \uFFFD0000 match no merged group and are ignored.\n", StringComparer.Ordinal);
     }
 
+    /// <summary>Verifies that merge with the ask policy leaves every conflict to the decisions file.</summary>
     [Fact]
     public async Task Merge_with_the_ask_policy_leaves_every_conflict_to_the_decisions_file()
     {
@@ -315,6 +327,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
+    /// <summary>Verifies that merge reports an invalid decisions file and leaves it unchanged.</summary>
     [Fact]
     public async Task Merge_reports_an_invalid_decisions_file_and_leaves_it_unchanged()
     {
@@ -333,6 +346,7 @@ public sealed class MergeDecisionsCommandTests : IDisposable
         after.ShouldBe("""{"version":1,"groups":[],"links":[],"splits":[]}""");
     }
 
+    /// <summary>Verifies that the merge report lists the decisions that are needed.</summary>
     [Fact]
     public async Task Merge_report_lists_the_decisions_needed()
     {

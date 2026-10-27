@@ -2,8 +2,10 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests the validators that confirm a candidate secret: card numbers, Base32 seeds, BIP39 phrases, JWTs, token checksums, and age keys.</summary>
 public sealed class SecretValidatorTests
 {
+    /// <summary>The card number validator accepts each supported brand prefix with a valid length and names the brand.</summary>
     [Theory]
     [InlineData("4", 13, "Visa")]
     [InlineData("4", 16, "Visa")]
@@ -38,6 +40,7 @@ public sealed class SecretValidatorTests
         actual.ShouldBe(brand);
     }
 
+    /// <summary>The card number validator rejects a prefix with the wrong length for its brand or an unknown prefix.</summary>
     [Theory]
     [InlineData("34", 16)]
     [InlineData("4", 15)]
@@ -56,6 +59,7 @@ public sealed class SecretValidatorTests
         valid.ShouldBeFalse();
     }
 
+    /// <summary>A Base32 secret needs at least eighty bits and only Base32 characters.</summary>
     [Fact]
     public void Base32_secret_needs_at_least_eighty_bits()
     {
@@ -70,6 +74,7 @@ public sealed class SecretValidatorTests
         invalid.ShouldBeFalse();
     }
 
+    /// <summary>The BIP39 checksum accepts every standard entropy length.</summary>
     [Theory]
     [InlineData(16)]
     [InlineData(20)]
@@ -88,6 +93,7 @@ public sealed class SecretValidatorTests
         valid.ShouldBeTrue();
     }
 
+    /// <summary>A phrase that fails the BIP39 checksum but carries the Electrum seed version prefix is found as a high-confidence Electrum seed.</summary>
     [Fact]
     public void Electrum_seed_version_prefix_is_recognized_when_bip39_checksum_fails()
     {
@@ -103,6 +109,7 @@ public sealed class SecretValidatorTests
         finding.Confidence.ShouldBe(Confidence.High);
     }
 
+    /// <summary>A JWT header must decode to JSON that has an algorithm.</summary>
     [Fact]
     public void Jwt_header_must_decode_to_json_with_alg()
     {
@@ -117,6 +124,7 @@ public sealed class SecretValidatorTests
         garbage.ShouldBeFalse();
     }
 
+    /// <summary>GitHub and npm token checksums accept tokens from an independent generator and reject a tampered one, and CRC-32 matches the standard check value.</summary>
     [Fact]
     public void Github_and_npm_checksums_round_trip_with_independent_generator()
     {
@@ -137,6 +145,7 @@ public sealed class SecretValidatorTests
         checksum.ShouldBe(0xCBF43926u);
     }
 
+    /// <summary>An age identity needs a valid bech32 checksum.</summary>
     [Fact]
     public void Age_identity_requires_valid_bech32_checksum()
     {

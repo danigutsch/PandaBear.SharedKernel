@@ -6,14 +6,17 @@ using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests the merge command: its output files, overwrite guards, summary, and failures.</summary>
 public sealed class MergeCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-merge-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Verifies that merge writes a password-protected export that only its owner can read.</summary>
     [Fact]
     public async Task Merge_writes_a_password_protected_export_readable_only_by_its_owner()
     {
@@ -40,6 +43,7 @@ public sealed class MergeCommandTests : IDisposable
         }
     }
 
+    /// <summary>Verifies that merge never replaces an existing file that is not a vault report.</summary>
     [Fact]
     public async Task Merge_never_replaces_an_existing_file_that_is_not_a_vault_report()
     {
@@ -59,6 +63,7 @@ public sealed class MergeCommandTests : IDisposable
         after.ShouldBe("{\"version\":2,\"groups\":[]}");
     }
 
+    /// <summary>Verifies that merge with <c>--plaintext</c> writes unencrypted JSON and asks for no password.</summary>
     [Fact]
     public async Task Merge_with_plaintext_writes_unencrypted_json_without_asking_for_a_password()
     {
@@ -77,6 +82,7 @@ public sealed class MergeCommandTests : IDisposable
         FormatDetector.Detect(output).ShouldBe(VaultFileFormat.BitwardenJson);
     }
 
+    /// <summary>Verifies that merge summarizes the merge on standard output.</summary>
     [Fact]
     public async Task Merge_summarizes_the_merge_on_standard_output()
     {
@@ -103,6 +109,7 @@ public sealed class MergeCommandTests : IDisposable
             """.ReplaceLineEndings("\n"), StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that merge cancelled while merging exits 1 and leaves neither the output nor a temporary file.</summary>
     [Theory]
     [InlineData(true)]
     [InlineData(false)]
@@ -129,6 +136,7 @@ public sealed class MergeCommandTests : IDisposable
         files.ShouldBe([.. inputs.Order(StringComparer.Ordinal)]);
     }
 
+    /// <summary>Verifies that merge counts files of attachment folders that match no single item among the attachments to upload.</summary>
     [Fact]
     public async Task Merge_counts_the_files_of_attachment_folders_that_match_no_single_item_among_the_attachments_to_upload()
     {
@@ -144,6 +152,7 @@ public sealed class MergeCommandTests : IDisposable
         run.Output.ShouldContain("\nAttachments to upload after the import: 2\n", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that merge refuses to replace an existing output without <c>--force</c> before reading inputs.</summary>
     [Fact]
     public async Task Merge_refuses_to_replace_an_existing_output_without_force_before_reading_inputs()
     {
@@ -164,6 +173,7 @@ public sealed class MergeCommandTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that merge with <c>--force</c> replaces an existing output with one that only its owner can read.</summary>
     [Fact]
     public async Task Merge_with_force_replaces_an_existing_output_readable_only_by_its_owner()
     {
@@ -187,6 +197,7 @@ public sealed class MergeCommandTests : IDisposable
         }
     }
 
+    /// <summary>Verifies that merge never writes over an input, even with <c>--force</c>.</summary>
     [Fact]
     public async Task Merge_never_writes_over_an_input_even_with_force()
     {
@@ -204,6 +215,7 @@ public sealed class MergeCommandTests : IDisposable
         after.ShouldBe(before);
     }
 
+    /// <summary>Verifies that merge never writes a report or decisions file over an input or the output.</summary>
     [Theory]
     [InlineData("--report")]
     [InlineData("--decisions")]
@@ -228,6 +240,7 @@ public sealed class MergeCommandTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
+    /// <summary>Verifies that merge never writes a report or decisions file over an input or the output that is reached through a linked directory.</summary>
     [Theory(SkipType = typeof(FileSystemProbes), SkipUnless = nameof(FileSystemProbes.CanCreateSymbolicLinks), Skip = "This system does not let the test create symbolic links.")]
     [InlineData("--report")]
     [InlineData("--decisions")]
@@ -255,6 +268,7 @@ public sealed class MergeCommandTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
+    /// <summary>Verifies that a merge that cannot write the report after the vault says the vault was written and exits 3.</summary>
     [Fact]
     public async Task Merge_that_cannot_write_the_report_after_the_vault_says_the_vault_was_written_and_exits_3()
     {
@@ -279,6 +293,7 @@ public sealed class MergeCommandTests : IDisposable
         BitwardenJsonReader.Read(json, "merged.json").Items.ShouldHaveSingleItem();
     }
 
+    /// <summary>Verifies that merge fails before reading inputs when the output directory does not exist.</summary>
     [Fact]
     public async Task Merge_fails_before_reading_inputs_when_the_output_directory_does_not_exist()
     {
@@ -297,6 +312,7 @@ public sealed class MergeCommandTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that merge writes nothing when Bitwarden would reject the import.</summary>
     [Fact]
     public async Task Merge_does_not_write_when_bitwarden_would_reject_the_import()
     {
@@ -319,6 +335,7 @@ public sealed class MergeCommandTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that merge names an input it cannot read before it asks for passwords.</summary>
     [Theory]
     [InlineData("missing.json", null, "missing.json")]
     [InlineData("export.txt", "not an export\n", "not recognized")]
@@ -342,6 +359,7 @@ public sealed class MergeCommandTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
+    /// <summary>Verifies that merge takes conflicting values from the preferred input.</summary>
     [Fact]
     public async Task Merge_takes_conflicting_values_from_the_preferred_input()
     {
@@ -359,6 +377,7 @@ public sealed class MergeCommandTests : IDisposable
         item.PasswordHistory.ShouldHaveSingleItem().Password.ShouldBe(CliInputs.BitwardenPassword);
     }
 
+    /// <summary>Verifies that merge writes a report that only its owner can read.</summary>
     [Fact]
     public async Task Merge_writes_the_report_readable_only_by_its_owner()
     {

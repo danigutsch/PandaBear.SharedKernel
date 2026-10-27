@@ -5,6 +5,7 @@ using PandaBear.VaultManager.Tool.Tests.Review;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests that command output shows item names and paths with escape sequences, line separators, and bidirectional overrides replaced.</summary>
 public sealed class PrintableOutputTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
@@ -17,8 +18,10 @@ public sealed class PrintableOutputTests : IDisposable
 
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-printable-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Inspect output, the merge error output, and the merge report show an item name containing an escape, a C1 introducer, a line separator, and an override as its printable form, with exit codes 0 and 2.</summary>
     [Fact]
     public async Task Inspect_merge_and_the_merge_report_show_item_names_without_controls_line_separators_or_overrides()
     {
@@ -44,6 +47,7 @@ public sealed class PrintableOutputTests : IDisposable
         });
     }
 
+    /// <summary>The review summary lists the attachment-less item under its printable name and neither output stream contains any unprintable character.</summary>
     [Fact]
     public async Task Review_summary_shows_item_names_without_controls_line_separators_or_overrides()
     {
@@ -72,6 +76,7 @@ public sealed class PrintableOutputTests : IDisposable
         });
     }
 
+    /// <summary>A decisions file whose group key matches no merged group yields exit code 0 and a warning that prints the key with its unprintable characters replaced.</summary>
     [Fact]
     public async Task Review_warns_about_decisions_that_match_nothing_without_controls_line_separators_or_overrides()
     {
@@ -89,6 +94,7 @@ public sealed class PrintableOutputTests : IDisposable
         run.Error.ShouldBe("Warning: decisions for group 0000\uFFFD[2J \uFFFD \uFFFD0000 match no merged group and are ignored.\n", StringComparer.Ordinal);
     }
 
+    /// <summary>Saving decisions and writing the merged vault to paths containing unprintable characters prints both paths in printable form and leaves no unprintable character in the output.</summary>
     [Fact]
     public async Task Review_summary_shows_the_files_it_saved_and_wrote_without_controls_line_separators_or_overrides()
     {

@@ -11,8 +11,10 @@ public sealed class ReviewAppTests : IDisposable
 {
     private readonly string directory = Directory.CreateTempSubdirectory("vault-review-app-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Canceling the review while the key list is open closes the list, leaves no open session, and exits with code 1.</summary>
     [Fact]
     public void Canceling_while_the_key_list_is_open_closes_it_and_ends_the_review_with_exit_code_1()
     {
@@ -29,6 +31,7 @@ public sealed class ReviewAppTests : IDisposable
         run.OpenSessions.ShouldBe(0);
     }
 
+    /// <summary>Canceling the review while a write problem is shown closes the problem dialog, leaves no open session, and exits with code 1.</summary>
     [Fact]
     public void Canceling_while_a_problem_is_shown_closes_it_and_ends_the_review_with_exit_code_1()
     {
@@ -45,6 +48,7 @@ public sealed class ReviewAppTests : IDisposable
         run.OpenSessions.ShouldBe(0);
     }
 
+    /// <summary>Canceling the review while the quit question is open exits with code 1 and leaves the decisions dirty and unsaved.</summary>
     [Fact]
     public void Canceling_while_the_quit_question_is_open_ends_the_review_without_saving()
     {
@@ -65,6 +69,7 @@ public sealed class ReviewAppTests : IDisposable
         File.Exists(decisionsPath).ShouldBeFalse();
     }
 
+    /// <summary>Canceling the review while the export password is requested exits with code 1 and writes no export.</summary>
     [Fact]
     public void Canceling_while_the_export_password_is_asked_writes_nothing()
     {

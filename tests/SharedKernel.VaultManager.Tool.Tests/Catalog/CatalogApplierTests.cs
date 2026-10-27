@@ -5,8 +5,10 @@ using static PandaBear.VaultManager.Tool.Tests.Catalog.CatalogFixture;
 
 namespace PandaBear.VaultManager.Tool.Tests.Catalog;
 
+/// <summary>Tests applying an edited catalog to a vault.</summary>
 public sealed class CatalogApplierTests
 {
+    /// <summary>Verifies that applying an unedited catalog leaves the vault unchanged.</summary>
     [Fact]
     public void Apply_of_an_unedited_catalog_changes_nothing()
     {
@@ -30,6 +32,7 @@ public sealed class CatalogApplierTests
         result.Vault.Folders.ShouldBe(["Archive"]);
     }
 
+    /// <summary>Verifies that applying takes the edited parts of the catalog and keeps all secrets from the vault.</summary>
     [Fact]
     public void Apply_takes_the_edited_parts_and_keeps_every_secret()
     {
@@ -74,6 +77,7 @@ public sealed class CatalogApplierTests
         result.Vault.Folders.ShouldBe(["Archive", "Empty"]);
     }
 
+    /// <summary>Verifies that notes the user chooses to hide move into a hidden custom field.</summary>
     [Fact]
     public void Apply_moves_notes_the_user_hides_into_a_hidden_field()
     {
@@ -90,6 +94,7 @@ public sealed class CatalogApplierTests
         item.Fields.ShouldContain(new CustomField(CatalogApplier.HiddenNotesField, NotesText, CustomFieldType.Hidden));
     }
 
+    /// <summary>Verifies that withheld notes stay as they are when the share decision changed after the catalog was made.</summary>
     [Fact]
     public void Apply_keeps_withheld_notes_when_the_decision_changed_after_the_catalog()
     {
@@ -105,6 +110,7 @@ public sealed class CatalogApplierTests
         item.Notes.ShouldBe(NotesText);
     }
 
+    /// <summary>Verifies that edited notes text is refused when the share decision is bound to other notes.</summary>
     [Fact]
     public void Apply_refuses_notes_text_when_the_share_decision_is_bound_to_other_notes()
     {
@@ -124,6 +130,7 @@ public sealed class CatalogApplierTests
         result.Problems.ShouldHaveSingleItem().ShouldContain("the decisions file does not", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a catalog that changes something it may not is rejected.</summary>
     [Theory]
     [InlineData("withheld notes text")]
     [InlineData("notes shared only in the catalog")]

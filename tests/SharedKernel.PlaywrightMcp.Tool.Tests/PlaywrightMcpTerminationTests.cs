@@ -1,9 +1,11 @@
 namespace PandaBear.PlaywrightMcp.Tool.Tests;
 
+/// <summary>Tests how the tool process reacts to a termination signal.</summary>
 [Trait(TestTraitNames.CategoryName, TestTraitValues.SecurityCategory)]
 [Trait(TestTraitNames.ScopeName, SharedKernelTestTraitNames.UnitScope)]
 public sealed class PlaywrightMcpTerminationTests
 {
+    /// <summary>Verifies that SIGTERM makes the tool exit 1 with a cancellation error, but only after the container removal finished.</summary>
     [Fact]
     public async Task Termination_signal_waits_for_container_removal_before_exiting()
     {

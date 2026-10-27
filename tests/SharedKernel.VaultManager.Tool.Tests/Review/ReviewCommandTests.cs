@@ -10,14 +10,17 @@ using PandaBear.VaultManager.Tool.Tests.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Review;
 
+/// <summary>Tests the <c>review</c> command: terminal and argument checks, password prompts, decisions and output files, and the messages it prints.</summary>
 public sealed class ReviewCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const string FilePassword = "fixture file password";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-review-command-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Review without a terminal exits with code 3 and points to the merge command with a decisions file.</summary>
     [Fact]
     public async Task Review_without_a_terminal_exits_3_and_points_to_merge_with_a_decisions_file()
     {
@@ -37,6 +40,7 @@ public sealed class ReviewCommandTests : IDisposable
         prompts.FilePasswordPrompts.ShouldBeEmpty();
     }
 
+    /// <summary>Review with redirected output exits with code 3 before it prompts for or reads any input.</summary>
     [Fact]
     public async Task Review_with_redirected_output_exits_3_before_reading_any_input()
     {
@@ -54,6 +58,7 @@ public sealed class ReviewCommandTests : IDisposable
         terminal.Sessions.ShouldBeEmpty();
     }
 
+    /// <summary>Root help lists the review command and review help shows every option.</summary>
     [Fact]
     public async Task Help_lists_review_and_review_help_shows_every_option()
     {
@@ -73,6 +78,7 @@ public sealed class ReviewCommandTests : IDisposable
         review.Error.ShouldBeEmpty();
     }
 
+    /// <summary>The command lines in the tool README that start with review parse without errors in the real command tree.</summary>
     [Fact]
     public void Tool_readme_shows_review_and_its_command_lines_parse_with_the_real_tree()
     {
@@ -87,6 +93,7 @@ public sealed class ReviewCommandTests : IDisposable
         reviews.ShouldAllSatisfy(args => command.Parse(args).Errors.ShouldBeEmpty());
     }
 
+    /// <summary>The tool README lists every review key.</summary>
     [Fact]
     public void Tool_readme_lists_every_review_key()
     {
@@ -97,6 +104,7 @@ public sealed class ReviewCommandTests : IDisposable
         ReviewKeys.All.ShouldAllSatisfy(key => readme.ShouldContain("`" + key.Key + "`", StringComparison.Ordinal));
     }
 
+    /// <c>--plaintext</c> or <c>--force</c> without <c>--output</c> is an invalid command line that names <c>--output</c> and starts no session.
     [Theory]
     [InlineData("--plaintext")]
     [InlineData("--force")]
@@ -114,6 +122,7 @@ public sealed class ReviewCommandTests : IDisposable
         terminal.Sessions.ShouldBeEmpty();
     }
 
+    /// <summary>An output that is also an input is refused with exit code 3 before any password is asked.</summary>
     [Fact]
     public async Task Review_refuses_an_output_that_is_an_input_before_asking_for_passwords()
     {
@@ -132,6 +141,7 @@ public sealed class ReviewCommandTests : IDisposable
         terminal.Sessions.ShouldBeEmpty();
     }
 
+    /// <summary>An existing output without <c>--force</c> is refused with exit code 3 before any password is asked.</summary>
     [Fact]
     public async Task Review_refuses_an_existing_output_without_force_before_asking_for_passwords()
     {
@@ -152,6 +162,7 @@ public sealed class ReviewCommandTests : IDisposable
         terminal.Sessions.ShouldBeEmpty();
     }
 
+    /// <summary>An unreadable input is named in the error with exit code 3 before any password is asked.</summary>
     [Fact]
     public async Task Review_names_an_unreadable_input_before_asking_for_passwords()
     {
@@ -169,6 +180,7 @@ public sealed class ReviewCommandTests : IDisposable
         terminal.Sessions.ShouldBeEmpty();
     }
 
+    /// <summary>Input passwords are asked on the console once, before the review UI starts, and the session holds the opened vault.</summary>
     [Fact]
     public async Task Review_asks_input_passwords_on_the_console_before_the_ui_starts()
     {
@@ -187,6 +199,7 @@ public sealed class ReviewCommandTests : IDisposable
         terminal.Sessions.ShouldHaveSingleItem().Result.Merged.Items.ShouldHaveSingleItem().Name.ShouldBe("Example");
     }
 
+    /// <summary>A wrong input password exits with code 3, never prints the password, and starts no UI.</summary>
     [Fact]
     public async Task Wrong_input_password_exits_3_without_starting_the_ui()
     {
@@ -203,6 +216,7 @@ public sealed class ReviewCommandTests : IDisposable
         terminal.Sessions.ShouldBeEmpty();
     }
 
+    /// <summary>Saving in the UI writes the decisions file, and the next run starts from it with no pending decisions.</summary>
     [Fact]
     public async Task Review_saves_to_the_decisions_file_and_starts_from_it_the_next_time()
     {
@@ -233,6 +247,7 @@ public sealed class ReviewCommandTests : IDisposable
         reopened.Decisions.Groups.ShouldHaveSingleItem().Choices.ShouldBe([FieldChoice.Member(FieldPaths.LoginPassword, CliInputs.KeeperKey)]);
     }
 
+    /// <summary>Writing in the UI writes the merged vault as unencrypted JSON to the output, says so, and prints no password.</summary>
     [Fact]
     public async Task Review_writes_the_merged_vault_to_the_output_and_says_so()
     {
@@ -259,6 +274,7 @@ public sealed class ReviewCommandTests : IDisposable
         FormatDetector.Detect(output).ShouldBe(VaultFileFormat.BitwardenJson);
     }
 
+    /// <summary>The review counts the attachments to upload after quitting and lists each one once the merged vault was written.</summary>
     [Fact]
     public async Task Review_counts_the_attachments_to_upload_and_lists_them_once_it_wrote_the_merged_vault()
     {
@@ -293,6 +309,7 @@ public sealed class ReviewCommandTests : IDisposable
             StringComparison.Ordinal);
     }
 
+    /// <summary>The review counts and lists the files of attachment folders that match more than one item and tells the user to upload each to the right item.</summary>
     [Fact]
     public async Task Review_counts_and_lists_the_files_of_attachment_folders_that_match_no_single_item()
     {
@@ -323,6 +340,7 @@ public sealed class ReviewCommandTests : IDisposable
             StringComparison.Ordinal);
     }
 
+    /// <summary>After writing, the review prints the write warnings and placement problems of the written vault without printing the oversized value.</summary>
     [Fact]
     public async Task Review_prints_the_write_warnings_and_placement_problems_of_the_written_vault()
     {
@@ -371,6 +389,7 @@ public sealed class ReviewCommandTests : IDisposable
         run.Error.ShouldNotContain(huge, StringComparison.Ordinal);
     }
 
+    /// <summary>A review canceled before it starts exits with code 1, prints nothing, and starts no UI.</summary>
     [Fact]
     public async Task Review_canceled_before_it_starts_exits_1_without_starting_the_ui()
     {

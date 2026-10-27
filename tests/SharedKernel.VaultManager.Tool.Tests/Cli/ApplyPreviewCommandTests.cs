@@ -5,14 +5,17 @@ using static PandaBear.VaultManager.Tool.Tests.Cli.PreviewInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests the dry run and the removal guard of the apply command.</summary>
 public sealed class ApplyPreviewCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture preview export password";
     private const string Item = "bitwarden|vault.json|bw-github (\"GitHub\"): ";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-apply-preview-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Verifies that a dry run lists the changes and removals and writes no file.</summary>
     [Fact]
     public async Task Dry_run_lists_the_changes_and_removals_and_writes_nothing()
     {
@@ -63,6 +66,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         });
     }
 
+    /// <summary>Verifies that a dry run checks the output path and says that applying with <c>--allow-removals</c> makes the removals.</summary>
     [Fact]
     public async Task Dry_run_checks_the_output_and_says_that_apply_with_allow_removals_makes_the_removals()
     {
@@ -87,6 +91,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         existing.Error.ShouldContain("may be the same file as an input file", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a dry run of an unedited catalog lists no changes.</summary>
     [Fact]
     public async Task Dry_run_of_an_unedited_catalog_lists_no_changes()
     {
@@ -108,6 +113,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         ]);
     }
 
+    /// <summary>Verifies that a dry run of a catalog with a problem exits 3.</summary>
     [Fact]
     public async Task Dry_run_of_a_catalog_with_a_problem_exits_3()
     {
@@ -125,6 +131,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         run.Output.ShouldNotContain("The dry run wrote nothing", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a dry run of a name longer than Bitwarden allows exits 3.</summary>
     [Fact]
     public async Task Dry_run_of_a_name_over_the_bitwarden_limit_exits_3()
     {
@@ -142,6 +149,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         run.Output.ShouldNotContain("The dry run wrote nothing", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a dry run shows format and control characters of a name in escaped form.</summary>
     [Fact]
     public async Task Dry_run_shows_format_and_control_characters_of_a_name_escaped()
     {
@@ -160,6 +168,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         run.Output.ShouldNotContain("\u001B", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that a dry run shows non-ASCII letters of an address in escaped form.</summary>
     [Fact]
     public async Task Dry_run_shows_letters_outside_ascii_in_an_address_escaped()
     {
@@ -177,6 +186,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         run.Output.ShouldNotContain("\u0430", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that apply refuses removals without <c>--allow-removals</c> and writes nothing.</summary>
     [Fact]
     public async Task Apply_refuses_removals_without_allow_removals_and_writes_nothing()
     {
@@ -199,6 +209,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that apply with <c>--allow-removals</c> writes the vault.</summary>
     [Fact]
     public async Task Apply_with_allow_removals_writes_the_vault()
     {
@@ -218,6 +229,7 @@ public sealed class ApplyPreviewCommandTests : IDisposable
         written.Items.ShouldHaveSingleItem().Fields.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that apply with neither an output nor a dry run fails parsing.</summary>
     [Fact]
     public async Task Apply_without_output_or_dry_run_fails_parsing()
     {

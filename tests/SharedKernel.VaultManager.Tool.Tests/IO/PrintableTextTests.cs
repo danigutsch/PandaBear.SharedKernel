@@ -2,8 +2,12 @@ using PandaBear.VaultManager.Tool.IO;
 
 namespace PandaBear.VaultManager.Tool.Tests.IO;
 
+/// <summary>Tests that text is made safe for printing on one line.</summary>
 public sealed class PrintableTextTests
 {
+    /// <summary>Escape, C1, DEL, NUL, and bell characters become U+FFFD, while a CRLF and a tab each become a space.</summary>
+    /// <param name="text">The text to make printable.</param>
+    /// <param name="expected">The expected printable text.</param>
     [Theory]
     [InlineData("Bank\u001b[2J", "Bank\uFFFD[2J")]
     [InlineData("Bank\u009b31m", "Bank\uFFFD31m")]
@@ -18,6 +22,9 @@ public sealed class PrintableTextTests
         printable.ShouldBe(expected);
     }
 
+    /// <summary>A line separator or paragraph separator followed by a heading marker becomes a space, so the marker cannot start a new line.</summary>
+    /// <param name="text">The text to make printable.</param>
+    /// <param name="expected">The expected printable text.</param>
     [Theory]
     [InlineData("Bank\u2028# Injected heading", "Bank # Injected heading")]
     [InlineData("Bank\u2029# Injected heading", "Bank # Injected heading")]
@@ -30,6 +37,9 @@ public sealed class PrintableTextTests
         printable.ShouldBe(expected);
     }
 
+    /// <summary>Right-to-left overrides, embeddings, and isolates become U+FFFD so text such as "invoice" and "txt.exe" cannot be shown reordered.</summary>
+    /// <param name="text">The text to make printable.</param>
+    /// <param name="expected">The expected printable text.</param>
     [Theory]
     [InlineData("invoice\u202Etxt.exe", "invoice\uFFFDtxt.exe")]
     [InlineData("\u2066Bank\u2069", "\uFFFDBank\uFFFD")]
@@ -43,6 +53,8 @@ public sealed class PrintableTextTests
         printable.ShouldBe(expected);
     }
 
+    /// <summary>A C0, DEL, or C1 control character between "before" and "after" is replaced by the replacement character.</summary>
+    /// <param name="controlCharacter">The code of the control character.</param>
     [Theory]
     [InlineData(0x00)]
     [InlineData(0x07)]
@@ -65,6 +77,8 @@ public sealed class PrintableTextTests
         printable.ShouldBe(string.Concat("before", PrintableText.Replacement, "after"));
     }
 
+    /// <summary>A tab, line feed, or carriage return between "before" and "after" is shown as one space.</summary>
+    /// <param name="character">The code of the whitespace character.</param>
     [Theory]
     [InlineData(0x09)]
     [InlineData(0x0A)]
@@ -81,6 +95,8 @@ public sealed class PrintableTextTests
         printable.ShouldBe("before after");
     }
 
+    /// <summary>Text with a pipe, accented letters, emoji, a no-break space, or Hebrew letters with direction marks comes back as the very same string instance.</summary>
+    /// <param name="text">The text that holds no control character.</param>
     [Theory]
     [InlineData("Bank | Visa ü €")]
     [InlineData("Bob's Café Bank \u00A0€ 😀")]
@@ -94,6 +110,7 @@ public sealed class PrintableTextTests
         printable.ShouldBeSameAs(text);
     }
 
+    /// <summary>A table cell escapes the pipe as a backslash and pipe while it still replaces the control character and line separator.</summary>
     [Fact]
     public void TableCell_also_escapes_the_cell_separator()
     {

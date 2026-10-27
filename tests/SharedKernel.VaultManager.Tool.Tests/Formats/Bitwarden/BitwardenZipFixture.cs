@@ -1,7 +1,9 @@
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Bitwarden;
 
+/// <summary>Builds a Bitwarden zip export whose attachment folders match one, several, or no item.</summary>
 internal static class BitwardenZipFixture
 {
+    /// <summary>The data.json content with the items "Report", two named "Dup", and "a/b: c".</summary>
     public const string DataJson = """
         {"encrypted":false,"folders":[],"items":[
           {"id":"i1","type":2,"name":"Report","secureNote":{"type":0}},
@@ -11,6 +13,9 @@ internal static class BitwardenZipFixture
         ]}
         """;
 
+    /// <summary>Writes export.zip, which holds data.json plus attachment folders for Report, Dup, Dup_1, a_b_ c, and Orphan, into a directory.</summary>
+    /// <param name="directory">The existing directory to write into.</param>
+    /// <returns>The path of the zip file.</returns>
     public static string Write(string directory)
     {
         string path = Path.Combine(directory, "export.zip");

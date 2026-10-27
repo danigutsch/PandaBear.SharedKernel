@@ -13,6 +13,7 @@ internal static class MergeValueGenerator
     private static readonly string[] Hosts = ["https://example.com", "https://one.example.com", "https://two.example.com"];
     private static readonly DateTimeOffset?[] Times = [null, MergeFixture.Older, MergeFixture.Newer];
 
+    /// <summary>Generates a Keeper item and a Bitwarden item from random pool values, with fixed origin keys <c>k1</c> and <c>b1</c> and random timestamps.</summary>
     public static (VaultItem First, VaultItem Second) Pair(Random random)
     {
         var first = Item(random) with
@@ -27,6 +28,7 @@ internal static class MergeValueGenerator
         return (first, second);
     }
 
+    /// <summary>Picks randomly between the Ask policy, a prefer-Keeper-file policy, and the default policy.</summary>
     public static MergePolicy Policy(Random random) => random.Next(4) switch
     {
         0 => new MergePolicy(MergePolicyKind.Ask),

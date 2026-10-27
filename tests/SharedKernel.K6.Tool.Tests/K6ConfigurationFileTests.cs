@@ -1,5 +1,6 @@
 namespace PandaBear.K6.Tool.Tests;
 
+/// <summary>Tests loading and validation of the k6 configuration file.</summary>
 public sealed class K6ConfigurationFileTests
 {
     private const string Host = """
@@ -13,6 +14,7 @@ public sealed class K6ConfigurationFileTests
         }
         """;
 
+    /// <summary>Verifies that a missing configuration file exits 2 and the error names the file.</summary>
     [Fact]
     public async Task A_missing_configuration_fails_with_the_file_name()
     {
@@ -28,6 +30,7 @@ public sealed class K6ConfigurationFileTests
         repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json does not exist." + Environment.NewLine);
     }
 
+    /// <summary>Verifies that unknown, missing, or duplicate properties exit 2 with the JSON path of the problem.</summary>
     [Theory]
     [InlineData("""{ "version": 1, "scriptDirectory": "perf/k6", "resultsDirectory": "perf/results", "scenarios": [], "extra": 1 }""", "$.extra")]
     [InlineData("""{ "version": 1, "scriptDirectory": "perf/k6", "resultsDirectory": "perf/results", "scenarios": [{ "name": "smoke", "script": "a.js" }] }""", "$.scenarios[0]")]
@@ -46,6 +49,7 @@ public sealed class K6ConfigurationFileTests
         repository.Error.ToString().ShouldStartWith($".config/sharedkernel-k6.json is not valid at {path}", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that invalid top-level values exit 2 with a message naming the JSON path.</summary>
     [Theory]
     [InlineData("\"version\": 1", "\"version\": 2", "$.version must be 1.")]
     [InlineData("\"perf/k6\"", "\"/perf/k6\"", "$.scriptDirectory must be a repository-relative path with '/' separators and without empty, '.', or '..' segments.")]
@@ -72,6 +76,7 @@ public sealed class K6ConfigurationFileTests
         repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json: " + message + Environment.NewLine);
     }
 
+    /// <summary>Verifies that invalid scenario host values exit 2 with a message naming the JSON path.</summary>
     [Theory]
     [InlineData("\"app-host\"", "\"./app-host\"", "$.scenarios[0].host.command must be a command name: letters, digits, '.', '_', and '-', without a path.")]
     [InlineData("\"APP_READY_FILE\"", "\"GITHUB_TOKEN\"", "$.scenarios[0].host.readyFileVariable names GITHUB_TOKEN, which the tool never passes to a child process.")]
@@ -95,6 +100,7 @@ public sealed class K6ConfigurationFileTests
         repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json: " + message + Environment.NewLine);
     }
 
+    /// <summary>Verifies that two scenarios with the same name are rejected.</summary>
     [Fact]
     public async Task Repeated_scenario_names_fail()
     {
@@ -111,6 +117,7 @@ public sealed class K6ConfigurationFileTests
         repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json: $.scenarios[1].name repeats the scenario smoke." + Environment.NewLine);
     }
 
+    /// <summary>Verifies that selecting an undefined scenario lists the configured scenario names.</summary>
     [Fact]
     public async Task An_unknown_scenario_fails_with_the_configured_names()
     {
@@ -125,6 +132,7 @@ public sealed class K6ConfigurationFileTests
         repository.Error.ToString().ShouldBe(".config/sharedkernel-k6.json defines no scenario stress. Scenarios: smoke." + Environment.NewLine);
     }
 
+    /// <summary>Verifies that <c>--container</c> without a container section in the configuration is rejected.</summary>
     [Fact]
     public async Task Container_runs_require_the_container_section()
     {

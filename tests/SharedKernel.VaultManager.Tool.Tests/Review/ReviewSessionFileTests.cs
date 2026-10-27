@@ -11,14 +11,17 @@ using static PandaBear.VaultManager.Tool.Tests.Review.ReviewVaults;
 
 namespace PandaBear.VaultManager.Tool.Tests.Review;
 
+/// <summary>Tests that a review session saves decisions and writes the merged export to its files.</summary>
 public sealed class ReviewSessionFileTests : IDisposable
 {
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
     private const string NotesPassword = "Gh-notes-Passw0rd!";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-review-files-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Saved decisions read back as the same decisions, with pending entries for the findings still undecided.</summary>
     [Fact]
     public void Saved_decisions_read_back_as_the_same_decisions_with_pending_entries_for_what_is_left()
     {
@@ -58,6 +61,7 @@ public sealed class ReviewSessionFileTests : IDisposable
         reopened.IsDirty.ShouldBeFalse();
     }
 
+    /// <summary>The saved decisions file is readable only by its owner and holds none of the secret values.</summary>
     [Fact]
     public void Saved_decisions_file_is_readable_only_by_its_owner_and_holds_no_values()
     {
@@ -82,6 +86,7 @@ public sealed class ReviewSessionFileTests : IDisposable
         }
     }
 
+    /// <summary>Saving a session that has no decisions file throws and leaves the decisions dirty.</summary>
     [Fact]
     public void Saving_without_a_decisions_file_is_refused()
     {
@@ -98,6 +103,7 @@ public sealed class ReviewSessionFileTests : IDisposable
         session.IsDirty.ShouldBeTrue();
     }
 
+    /// <summary>Writing is refused with a count of open fields while a field still needs a decision, and no file is created.</summary>
     [Fact]
     public void Nothing_is_written_while_a_field_needs_a_decision()
     {
@@ -114,6 +120,7 @@ public sealed class ReviewSessionFileTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
+    /// <summary>Writing is refused with a count of open findings while a proposed finding still needs a decision, and no file is created.</summary>
     [Fact]
     public void Nothing_is_written_while_a_proposed_finding_needs_a_decision()
     {
@@ -130,6 +137,7 @@ public sealed class ReviewSessionFileTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
+    /// <summary>The written export decrypts with the entered password, holds the chosen password and the other as history, and is readable only by its owner.</summary>
     [Fact]
     public void Written_export_decrypts_with_the_entered_password_and_is_readable_only_by_its_owner()
     {
@@ -152,6 +160,7 @@ public sealed class ReviewSessionFileTests : IDisposable
         }
     }
 
+    /// <summary>Writing with no password produces unencrypted Bitwarden JSON with the chosen password.</summary>
     [Fact]
     public void Plaintext_output_is_written_as_unencrypted_json_without_a_password()
     {
@@ -168,6 +177,7 @@ public sealed class ReviewSessionFileTests : IDisposable
         BitwardenJsonReader.Read(File.ReadAllText(output), "merged.json").Items.ShouldHaveSingleItem().Login.ShouldNotBeNull().Password.ShouldBe(KeeperPassword);
     }
 
+    /// <summary>An encrypted output refuses a missing, empty, or shorter than twelve characters password and creates no file.</summary>
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -188,6 +198,7 @@ public sealed class ReviewSessionFileTests : IDisposable
         File.Exists(output).ShouldBeFalse();
     }
 
+    /// <summary>An existing output is kept when writing without force and is replaced when writing with force.</summary>
     [Fact]
     public void Existing_output_is_kept_without_force_and_replaced_with_force()
     {
@@ -211,6 +222,7 @@ public sealed class ReviewSessionFileTests : IDisposable
         FormatDetector.Detect(output).ShouldBe(VaultFileFormat.BitwardenJson);
     }
 
+    /// <summary>An output that is also an input file is never written and the input keeps its content.</summary>
     [Fact]
     public void Output_that_is_an_input_is_never_written()
     {
@@ -230,6 +242,7 @@ public sealed class ReviewSessionFileTests : IDisposable
         File.ReadAllText(input).ShouldBe("fixture input");
     }
 
+    /// <summary>Writing a session that has no output file throws and creates no file.</summary>
     [Fact]
     public void Writing_without_an_output_file_is_refused()
     {

@@ -8,6 +8,7 @@ using static PandaBear.VaultManager.Tool.Tests.Pipeline.PipelineInputs;
 
 namespace PandaBear.VaultManager.Tool.Tests.Brief;
 
+/// <summary>Tests which groups, members, and findings a brief lists and what it withholds.</summary>
 public sealed class BriefBuilderTests : IDisposable
 {
     private const string KeeperKey = "keeper|keeper.json|rec-1";
@@ -18,8 +19,10 @@ public sealed class BriefBuilderTests : IDisposable
     private const string BitwardenNotes = "Bitwarden notes about the account";
     private readonly string directory = Directory.CreateTempSubdirectory("vault-brief-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Verifies that the brief lists only groups with a field or finding that needs a decision.</summary>
     [Fact]
     public void Brief_lists_only_the_groups_that_need_a_decision()
     {
@@ -59,6 +62,7 @@ public sealed class BriefBuilderTests : IDisposable
         brief.Summary.ShouldBe(new BriefSummary(Items: 2, MergedGroups: 2, ConflictsResolvedByPolicy: 0, FieldsNeedingDecision: 1, Findings: 0, FindingsApplied: 0, FindingsNeedingDecision: 0, PasswordIssues: 0, AttachmentsToUpload: 0));
     }
 
+    /// <summary>Verifies that the brief shows names, folders, safe user names, masked addresses, and shared notes, and nothing else.</summary>
     [Fact]
     public void Brief_shows_names_folders_safe_user_names_masked_addresses_and_shared_notes_only()
     {
@@ -97,6 +101,7 @@ public sealed class BriefBuilderTests : IDisposable
         withheld.ShouldAllSatisfy(value => json.ShouldNotContain(value, StringComparison.Ordinal));
     }
 
+    /// <summary>Verifies that the brief withholds notes whose share decision is for other text and user names that hold a finding.</summary>
     [Fact]
     public void Brief_withholds_notes_shared_for_other_text_and_user_names_that_hold_a_finding()
     {
@@ -126,6 +131,7 @@ public sealed class BriefBuilderTests : IDisposable
         BriefFile.Serialize(brief).ShouldNotContain(KeeperNotes, StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that the brief flags that passwords differ without containing them.</summary>
     [Fact]
     public void Brief_flags_passwords_without_showing_them()
     {
@@ -154,6 +160,7 @@ public sealed class BriefBuilderTests : IDisposable
         group.Members.Select(member => member.Newest).ShouldBe([false, true]);
     }
 
+    /// <summary>Verifies that an item that is alone in its group is listed when one of its findings needs a decision.</summary>
     [Fact]
     public void Brief_lists_the_findings_of_a_single_item_whose_finding_needs_a_decision()
     {
@@ -183,6 +190,7 @@ public sealed class BriefBuilderTests : IDisposable
         json.ShouldNotContain("Gh-brief-Passw0rd!", StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that shared notes holding a finding are withheld whether or not the finding applies.</summary>
     [Fact]
     public void Brief_withholds_shared_notes_that_hold_a_finding_whether_it_applies_or_not()
     {
@@ -217,6 +225,7 @@ public sealed class BriefBuilderTests : IDisposable
         codes.ShouldAllSatisfy(code => json.ShouldNotContain(code, StringComparison.Ordinal));
     }
 
+    /// <summary>Verifies that the brief shows user names and addresses exactly as the inputs hold them.</summary>
     [Fact]
     public void Brief_shows_user_names_and_addresses_only_as_the_inputs_hold_them()
     {
@@ -248,6 +257,7 @@ public sealed class BriefBuilderTests : IDisposable
         withheld.ShouldAllSatisfy(value => json.ShouldNotContain(value, StringComparison.Ordinal));
     }
 
+    /// <summary>Verifies that an address with a masked host gives no host in the brief.</summary>
     [Fact]
     public void Brief_gives_no_host_for_an_address_whose_host_is_masked()
     {
@@ -265,6 +275,7 @@ public sealed class BriefBuilderTests : IDisposable
         members.ShouldAllSatisfy(member => member.Host.ShouldBeNull());
     }
 
+    /// <summary>Verifies that the brief gives a host only for addresses that have a host name.</summary>
     [Fact]
     public void Brief_gives_a_host_only_for_an_address_with_a_host_name()
     {
@@ -282,6 +293,7 @@ public sealed class BriefBuilderTests : IDisposable
         members.ShouldAllSatisfy(member => member.Host.ShouldBeNull());
     }
 
+    /// <summary>Verifies that an agent may not accept a finding whose field name comes from withheld text.</summary>
     [Fact]
     public void An_agent_may_not_accept_a_finding_whose_field_takes_its_name_from_withheld_text()
     {
@@ -301,6 +313,7 @@ public sealed class BriefBuilderTests : IDisposable
         finding.AgentMayAccept.ShouldBeFalse();
     }
 
+    /// <summary>Verifies that the name field of a group marks the name the merge keeps.</summary>
     [Fact]
     public void The_name_field_marks_the_name_the_merge_keeps()
     {
@@ -318,6 +331,7 @@ public sealed class BriefBuilderTests : IDisposable
         BriefRun.Field(group, FieldPaths.Name).Holders.Select(holder => (holder.Value, holder.Newest)).ShouldBe([((string?)"Example", false), ("Example Bank", true)]);
     }
 
+    /// <summary>Verifies that the brief records the names of the input files it was made from.</summary>
     [Fact]
     public void Brief_records_the_input_files_it_was_made_from()
     {
@@ -335,6 +349,7 @@ public sealed class BriefBuilderTests : IDisposable
         brief.Inputs.ShouldBe(["keeper.json", "bitwarden.json"]);
     }
 
+    /// <summary>Verifies that the brief lists the links the matcher suggests between items.</summary>
     [Fact]
     public void Brief_lists_suggested_links()
     {

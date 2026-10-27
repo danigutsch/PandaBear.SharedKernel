@@ -4,8 +4,10 @@ using static PandaBear.VaultManager.Tool.Tests.Formats.Keeper.KeeperTestData;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Keeper;
 
+/// <summary>Tests the reader for Keeper CSV exports.</summary>
 public sealed class KeeperCsvReaderTests
 {
+    /// <summary>The "Example login" row of commander.csv maps its record ID, quoted notes, nested folder path, a permissions conversion note, TOTP, URIs, and typed custom fields.</summary>
     [Fact]
     public void Read_commander_login_row_maps_typed_pairs_folders_and_quoted_notes()
     {
@@ -32,6 +34,7 @@ public sealed class KeeperCsvReaderTests
         ]);
     }
 
+    /// <summary>The card row fills cardholder, number, expiry, and code with the PIN kept as a hidden field, and the passport row fills the identity names and passport number with the birth date kept as a field.</summary>
     [Fact]
     public void Read_commander_card_and_passport_rows_fill_typed_slots()
     {
@@ -55,6 +58,7 @@ public sealed class KeeperCsvReaderTests
         passport.Fields.ShouldBe([Field("birthDate", "1990-01-15")]);
     }
 
+    /// <summary>In web.csv the English labels map the login's TOTP and security code, the passport to an identity, and the bank row to a secure note with one combined hidden "Bank Account" field.</summary>
     [Fact]
     public void Read_web_rows_map_english_labels_and_combined_values()
     {
@@ -77,6 +81,7 @@ public sealed class KeeperCsvReaderTests
         bank.Fields.ShouldBe([Field("Bank Account", "Type: Checking, Account Number: 12345678, Routing Number: 021000021", CustomFieldType.Hidden)]);
     }
 
+    /// <summary>Reading a Keeper CSV adds a warning that mentions JSON as the more complete format.</summary>
     [Fact]
     public void Read_warns_that_csv_loses_structure_and_recommends_JSON()
     {
@@ -87,6 +92,7 @@ public sealed class KeeperCsvReaderTests
         result.Warnings.ShouldContain(warning => warning.Contains("JSON", StringComparison.Ordinal));
     }
 
+    /// <summary>A row with too few columns yields no items and a warning that names line 1 without repeating the row's value.</summary>
     [Fact]
     public void Read_short_rows_are_skipped_with_line_number_warning_and_no_value()
     {
@@ -99,6 +105,7 @@ public sealed class KeeperCsvReaderTests
         result.Warnings.ShouldAllSatisfy(warning => warning.ShouldNotContain("secret-value", StringComparison.Ordinal));
     }
 
+    /// <summary>A quoted field that is never closed throws InvalidDataException.</summary>
     [Fact]
     public void Read_unterminated_quote_throws_invalid_data()
     {

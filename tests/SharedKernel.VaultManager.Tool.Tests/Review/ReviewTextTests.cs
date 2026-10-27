@@ -2,8 +2,10 @@ using PandaBear.VaultManager.Tool.Review;
 
 namespace PandaBear.VaultManager.Tool.Tests.Review;
 
+/// <summary>Tests that <see cref="ReviewText"/> makes text safe to show on one terminal line.</summary>
 public sealed class ReviewTextTests
 {
+    /// <summary>Terminal control characters and bidirectional overrides become the replacement character and tabs become spaces.</summary>
     [Theory]
     [InlineData("Bank\u001b[2J", "Bank\uFFFD[2J")]
     [InlineData("Bank\u009b31m", "Bank\uFFFD31m")]
@@ -19,6 +21,7 @@ public sealed class ReviewTextTests
         shown.ShouldBe(expected);
     }
 
+    /// <summary>Every kind of line break becomes the line break marker.</summary>
     [Theory]
     [InlineData("two\nlines")]
     [InlineData("two\r\nlines")]

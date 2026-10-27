@@ -2,8 +2,10 @@ using PandaBear.VaultManager.Tool.Secrets;
 
 namespace PandaBear.VaultManager.Tool.Tests.Secrets;
 
+/// <summary>Tests the index that finds kept secret locations overlapping a new one.</summary>
 public sealed class OverlapIndexTests
 {
+    /// <summary>The index reports an overlap exactly when comparing every kept location does, across blocks, fields, and empty locations.</summary>
     [Fact]
     public void FindOverlap_agrees_with_comparing_every_kept_location_across_blocks_fields_and_empty_locations()
     {
@@ -38,6 +40,7 @@ public sealed class OverlapIndexTests
         reported.Zip(candidates.Where((_, number) => actual[number])).ShouldAllSatisfy(pair => OverlapIndex.Overlaps(pair.First, pair.Second).ShouldBeTrue());
     }
 
+    /// <summary>The index reports overlaps for locations that share text and for empty locations strictly inside another, but not for touching ones.</summary>
     [Theory]
     [InlineData(10, 0, true)]
     [InlineData(5, 0, false)]

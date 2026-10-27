@@ -6,10 +6,12 @@ using PandaBear.VaultManager.Tool.Model;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Bitwarden;
 
+/// <summary>Tests the writer for Bitwarden JSON exports, including its size limits and warnings.</summary>
 public sealed class BitwardenJsonWriterTests
 {
     private static readonly ItemOrigin Origin = new("test", "test.json", null, null);
 
+    /// <summary>Writing the full.json vault and reading the result back reports no errors and keeps each item's type, name, folder, notes, flags, fields, login data, card, identity, SSH key, and password history.</summary>
     [Fact]
     public void Write_then_read_round_trips_every_item_type()
     {
@@ -47,6 +49,7 @@ public sealed class BitwardenJsonWriterTests
         }
     }
 
+    /// <summary>Two secure notes in the folder "Work" produce one folder entry that both items reference by ID, a secureNote object of type 0 on each item, and an unencrypted export.</summary>
     [Fact]
     public void Write_emits_shared_folder_IDs_and_secure_note_object()
     {
@@ -74,6 +77,7 @@ public sealed class BitwardenJsonWriterTests
         document["encrypted"].ShouldNotBeNull().GetValue<bool>().ShouldBeFalse();
     }
 
+    /// <summary>An item in "Team/Shared/Web" and a declared empty folder "Archive/Old" yield folder entries for every parent path in sorted order.</summary>
     [Fact]
     public void Write_emits_parent_folders_and_declared_folders_that_hold_no_item()
     {
@@ -91,6 +95,7 @@ public sealed class BitwardenJsonWriterTests
             .ShouldBe(["Archive", "Archive/Old", "Team", "Team/Shared", "Team/Shared/Web"]);
     }
 
+    /// <summary>A vault with no items and the declared folder "Empty" still has that folder after it is written and read back.</summary>
     [Fact]
     public void Write_then_read_keeps_folders_that_hold_no_item()
     {
@@ -104,6 +109,7 @@ public sealed class BitwardenJsonWriterTests
         reread.Folders.ShouldBe(["Empty"]);
     }
 
+    /// <summary>Of seven password history entries the five newest stay as history and the two oldest become hidden fields, with one warning.</summary>
     [Fact]
     public void Write_moves_history_beyond_five_entries_into_hidden_fields()
     {
@@ -124,6 +130,7 @@ public sealed class BitwardenJsonWriterTests
         result.Warnings.ShouldHaveSingleItem();
     }
 
+    /// <summary>An 8,000-character note yields one error that mentions notes, while the written JSON still holds the full note.</summary>
     [Fact]
     public void Write_reports_values_over_encrypted_limits_without_truncating()
     {
@@ -139,6 +146,7 @@ public sealed class BitwardenJsonWriterTests
         BitwardenJsonReader.Read(result.Json, "w.json").Items.ShouldHaveSingleItem().Notes.ShouldBe(longNotes);
     }
 
+    /// <summary>A 4,000-character password and hidden field value produce two errors and neither contains the secret text.</summary>
     [Fact]
     public void Write_errors_never_contain_values()
     {
@@ -161,6 +169,7 @@ public sealed class BitwardenJsonWriterTests
         result.Errors.ShouldAllSatisfy(error => error.ShouldNotContain(secret, StringComparison.Ordinal));
     }
 
+    /// <summary>Errors for an 800-character field name and a question-like field name identify the field by position only, while a short name such as "API key" may be quoted, and no error repeats the long text.</summary>
     [Fact]
     public void Write_errors_name_custom_fields_with_long_names_by_position_only()
     {
@@ -194,6 +203,7 @@ public sealed class BitwardenJsonWriterTests
         result.Errors.ShouldAllSatisfy(error => error.ShouldNotContain("third grade", StringComparison.Ordinal));
     }
 
+    /// <summary>5,000 items with 20 one-character custom fields give one warning about an estimated import request over 20,000,000 bytes even though the export JSON plus a third stays below that limit.</summary>
     [Fact]
     public void Write_warns_when_the_estimated_import_request_of_many_short_values_exceeds_the_vaultwarden_limit()
     {
@@ -224,6 +234,7 @@ public sealed class BitwardenJsonWriterTests
         BitwardenLimits.VaultwardenImportBytes.ShouldBe(20_000_000);
     }
 
+    /// <summary>Only the login with two passkeys gets a warning, which starts with the item name and the passkey count and contains neither key values nor credential IDs, and there are no errors.</summary>
     [Fact]
     public void Write_warns_about_a_login_with_more_than_one_passkey_without_its_values()
     {
@@ -264,6 +275,7 @@ public sealed class BitwardenJsonWriterTests
         result.Errors.ShouldBeEmpty();
     }
 
+    /// <summary>500 secure notes with 20 short custom fields each produce no warnings.</summary>
     [Fact]
     public void Write_does_not_warn_about_the_import_request_of_an_export_well_under_the_limit()
     {
@@ -286,6 +298,7 @@ public sealed class BitwardenJsonWriterTests
         result.Warnings.ShouldBeEmpty();
     }
 
+    /// <summary>1,800 logins with 50 URIs each stay below the import limit without the 153-byte checksum per URI but produce an estimate warning once the checksums are counted.</summary>
     [Fact]
     public void Write_counts_the_encrypted_checksum_that_a_client_sends_with_each_login_URI()
     {
@@ -313,6 +326,7 @@ public sealed class BitwardenJsonWriterTests
         result.Warnings.ShouldHaveSingleItem().ShouldContain("estimated", StringComparison.Ordinal);
     }
 
+    /// <summary>24,000 nearly empty identities give no warning because the estimate uses compact JSON, although the indented export would push it above the import limit.</summary>
     [Fact]
     public void Write_estimates_the_import_request_from_compact_JSON_without_the_indentation_of_the_export()
     {
@@ -339,6 +353,8 @@ public sealed class BitwardenJsonWriterTests
         result.Warnings.ShouldBeEmpty();
     }
 
+    /// <summary>The computed encrypted length of a value equals the length of the data string that password-protected export encryption produces for it, including for empty, block-sized, and multibyte values.</summary>
+    /// <param name="value">The plain text value to encrypt.</param>
     [Theory]
     [InlineData("")]
     [InlineData("short")]

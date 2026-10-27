@@ -6,12 +6,15 @@ using static PandaBear.VaultManager.Tool.Tests.Formats.Keeper.KeeperTestData;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats.Keeper;
 
+/// <summary>Tests the reader for Keeper JSON and zip exports.</summary>
 public sealed class KeeperJsonReaderTests : IDisposable
 {
     private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-keeper-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>A shared folder with a backslash path and records filed under shared and personal folders give the declared folders "Team/Empty", "Team/Web", and "Personal".</summary>
     [Fact]
     public void Read_keeps_shared_folders_and_record_folders_as_declared_folders()
     {
@@ -28,6 +31,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         export.Folders.ShouldBe(["Team/Empty", "Team/Web", "Personal"]);
     }
 
+    /// <summary>The folder name "A/B" in "Bills\A/B" becomes "A-B" in the folder path "Bills/A-B" and a conversion note quotes the original name.</summary>
     [Fact]
     public void Read_replaces_a_slash_in_a_folder_name_and_notes_the_original_name()
     {
@@ -43,6 +47,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         item.ConversionNotes.ShouldContain(note => note.Contains("\"A/B\"", StringComparison.Ordinal));
     }
 
+    /// <summary>The "Example login" record of commander.json maps its notes, nested folder, origin with timestamp, credentials, TOTP, URIs, and typed custom fields including the extra folder.</summary>
     [Fact]
     public void Read_commander_login_maps_login_totps_uris_fields_folders_and_timestamp()
     {
@@ -72,6 +77,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         ]);
     }
 
+    /// <summary>The "Example login" record gets conversion notes that mention its other folder, permissions, references, and schema.</summary>
     [Fact]
     public void Read_commander_login_records_unrepresentable_data_in_conversion_notes()
     {
@@ -86,6 +92,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         item.ConversionNotes.ShouldContain(note => note.Contains("schema", StringComparison.Ordinal));
     }
 
+    /// <summary>Reading commander.json warns about shared folder permissions without repeating the member's email address.</summary>
     [Fact]
     public void Read_commander_export_warns_about_shared_folder_permissions_without_values()
     {
@@ -97,6 +104,9 @@ public sealed class KeeperJsonReaderTests : IDisposable
         result.Warnings.ShouldAllSatisfy(warning => warning.ShouldNotContain("member@example.com", StringComparison.Ordinal));
     }
 
+    /// <summary>Each titled record type in commander.json becomes the expected vault item type: login, secure note, identity, or card.</summary>
+    /// <param name="title">The title of the record in commander.json.</param>
+    /// <param name="expected">The name of the expected item type.</param>
     [Theory]
     [InlineData("Example login", "Login")]
     [InlineData("Checking account", "SecureNote")]
@@ -130,6 +140,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         item.Type.ShouldBe(Enum.Parse<VaultItemType>(expected));
     }
 
+    /// <summary>The "Example card" record fills the card number, code, expiry, and cardholder, has no login, and keeps the PIN as a hidden field and the username as a text field.</summary>
     [Fact]
     public void Read_bank_card_fills_card_data_and_keeps_pin_and_login_as_fields()
     {
@@ -148,6 +159,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         item.Fields.ShouldBe([Field("PIN", "4321", CustomFieldType.Hidden), Field("Username", "card-user")]);
     }
 
+    /// <summary>The "Checking account" record keeps its combined account and routing numbers in a hidden field and its name in a text field.</summary>
     [Fact]
     public void Read_bank_account_keeps_account_numbers_hidden_in_bitwarden_format()
     {
@@ -163,6 +175,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         ]);
     }
 
+    /// <summary>The address, contact, passport, social security, driver license, and birth certificate records fill the matching identity slots, with leftover values such as dates and a second phone kept as fields.</summary>
     [Fact]
     public void Read_identity_records_fill_identity_slots()
     {
@@ -200,6 +213,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         birth.Fields.ShouldBe([Field("birthDate", "1990-01-15")]);
     }
 
+    /// <summary>Records such as the secure note, editor license, health plan, server, database, PAM machine, and custom API record keep their values as text, hidden, or date fields, and the scanned file keeps its attachment name.</summary>
     [Fact]
     public void Read_maps_hidden_text_and_date_fields_of_other_record_types()
     {
@@ -225,6 +239,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
             .ShouldBe([new AttachmentRef("scan.pdf", null, null)]);
     }
 
+    /// <summary>An SSH key record without a private key has no SSH key data and keeps the username, hidden passphrase, and public key as fields.</summary>
     [Fact]
     public void Read_ssh_key_record_without_private_key_becomes_note_with_passphrase_and_public_key()
     {
@@ -242,6 +257,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         ]);
     }
 
+    /// <summary>An SSH key record holding a generated ECDSA private key becomes an SSH key item with that key and the public key, and keeps the username, hidden password, hostname, and port as fields.</summary>
     [Fact]
     public void Read_ssh_key_record_with_private_key_becomes_ssh_key_item()
     {
@@ -265,6 +281,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         ]);
     }
 
+    /// <summary>A Keeper passkey becomes a FIDO2 credential with the b64-prefixed ID, relying party, user name and handle, counter, creation date, and an unpadded key that signs data which the original public key verifies.</summary>
     [Fact]
     public void Read_passkey_becomes_fido2_credential_whose_key_signs_for_the_original_public_key()
     {
@@ -296,6 +313,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         original.VerifyData(data, signature, HashAlgorithmName.SHA256).ShouldBeTrue();
     }
 
+    /// <summary>A passkey whose private scalar is not valid yields no FIDO2 credential, one hidden "passkey" field, and one warning that repeats neither the invalid nor the original scalar.</summary>
     [Fact]
     public void Read_invalid_passkey_is_kept_as_hidden_field_and_warns_without_values()
     {
@@ -320,6 +338,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         warning.ShouldNotContain(privateScalar, StringComparison.Ordinal);
     }
 
+    /// <summary>The web.json export maps its numbered record keys to the origin ID without a timestamp, unescapes the folder path, converts the legacy TOTP into a hidden field, and names an untitled note "--".</summary>
     [Fact]
     public void Read_web_export_parses_numbered_keys_legacy_totp_escaped_folders_and_has_no_timestamp()
     {
@@ -343,6 +362,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         untitled.Type.ShouldBe(VaultItemType.SecureNote);
     }
 
+    /// <summary>A JSON array of records without the surrounding object reads as one login item named "Bare".</summary>
     [Fact]
     public void Read_accepts_bare_record_array()
     {
@@ -355,6 +375,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         item.Type.ShouldBe(VaultItemType.Login);
     }
 
+    /// <summary>Text that is not JSON throws InvalidDataException.</summary>
     [Fact]
     public void Read_invalid_JSON_throws_invalid_data()
     {
@@ -365,6 +386,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         action.ShouldThrow<InvalidDataException>();
     }
 
+    /// <summary>In a zip export the listed scan.pdf attaches with its size and entry path, and the listed but absent missing.txt attaches without them and causes one warning that names it.</summary>
     [Fact]
     public void ReadZip_attaches_files_by_file_uid_and_warns_about_missing_files()
     {
@@ -382,6 +404,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         result.Warnings.ShouldHaveSingleItem().ShouldContain("missing.txt", StringComparison.Ordinal);
     }
 
+    /// <summary>A zip warns, in order, about the listed attachment that is missing from the zip, the file entry no record lists, and the entry outside the attachment folder that is ignored.</summary>
     [Fact]
     public void ReadZip_warns_about_files_no_record_lists_and_about_other_entries()
     {
@@ -405,6 +428,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         ]);
     }
 
+    /// <summary>A zip that holds only data.json and no export.json throws InvalidDataException.</summary>
     [Fact]
     public void ReadZip_without_export_json_throws_invalid_data()
     {
@@ -417,6 +441,7 @@ public sealed class KeeperJsonReaderTests : IDisposable
         action.ShouldThrow<InvalidDataException>();
     }
 
+    /// <summary>The exception for a records value of the wrong type, the commander.json warnings, and its conversion notes never contain any fixture secret value.</summary>
     [Fact]
     public void Read_warnings_and_errors_never_contain_values()
     {

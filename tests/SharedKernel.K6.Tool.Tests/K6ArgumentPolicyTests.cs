@@ -1,9 +1,11 @@
 namespace PandaBear.K6.Tool.Tests;
 
+/// <summary>Tests the rules that block k6 arguments the tool controls or considers unsafe.</summary>
 public sealed class K6ArgumentPolicyTests
 {
     private static readonly string[] Controlled = ["APP_BASE_URL", "APP_PROFILE", "K6_NO_USAGE_REPORT"];
 
+    /// <summary>Verifies that <c>--include-system-env-vars</c> is rejected because it would pass the whole environment to the script.</summary>
     [Theory]
     [InlineData("--include-system-env-vars")]
     [InlineData("--include-system-env-vars=false")]
@@ -20,6 +22,7 @@ public sealed class K6ArgumentPolicyTests
             .ShouldBe("--include-system-env-vars is not allowed: it passes the whole k6 environment to the script.");
     }
 
+    /// <summary>Verifies that <c>--http-debug</c> is rejected unless HTTP debugging is explicitly allowed.</summary>
     [Theory]
     [InlineData("--http-debug")]
     [InlineData("--http-debug=full")]
@@ -38,6 +41,7 @@ public sealed class K6ArgumentPolicyTests
         allowed.ShouldBeNull();
     }
 
+    /// <summary>Verifies that custom k6 outputs are rejected unless remote outputs are explicitly allowed.</summary>
     [Theory]
     [InlineData("--out", "json=leak.json")]
     [InlineData("--out=json=leak.json", null)]
@@ -61,6 +65,7 @@ public sealed class K6ArgumentPolicyTests
         allowed.ShouldBeNull();
     }
 
+    /// <summary>Verifies that <c>--summary-export</c> is always rejected because the tool writes the summary itself.</summary>
     [Theory]
     [InlineData("--summary-export")]
     [InlineData("--summary-export=leak.json")]
@@ -77,6 +82,7 @@ public sealed class K6ArgumentPolicyTests
             .ShouldBe("--summary-export is not allowed: the tool writes k6-summary.json to the directory of the run.");
     }
 
+    /// <summary>Verifies that <c>--insecure-skip-tls-verify</c> is rejected.</summary>
     [Theory]
     [InlineData("--insecure-skip-tls-verify")]
     [InlineData("--insecure-skip-tls-verify=true")]
@@ -93,6 +99,7 @@ public sealed class K6ArgumentPolicyTests
             .ShouldBe("--insecure-skip-tls-verify is not allowed.");
     }
 
+    /// <summary>Verifies that <c>-e</c> and <c>--env</c> cannot set variables the tool takes from the scenario configuration.</summary>
     [Theory]
     [InlineData("-e", "APP_BASE_URL=http://evil.example")]
     [InlineData("--env", "K6_NO_USAGE_REPORT=false")]
@@ -112,6 +119,7 @@ public sealed class K6ArgumentPolicyTests
             .ShouldBe($"-e and --env cannot set {name}, which the tool sets from the scenario configuration.");
     }
 
+    /// <summary>Verifies that environment variables and options the tool does not control pass through.</summary>
     [Theory]
     [InlineData("--env", "K6_TAGS=profile=smoke")]
     [InlineData("-e", "OTHER=1")]
@@ -129,6 +137,7 @@ public sealed class K6ArgumentPolicyTests
         exception.ShouldBeNull();
     }
 
+    /// <summary>Verifies that short options with attached values or bundled letters are rejected.</summary>
     [Theory]
     [InlineData("-eAPP_BASE_URL=http://evil.example")]
     [InlineData("-e=APP_BASE_URL=http://evil.example")]

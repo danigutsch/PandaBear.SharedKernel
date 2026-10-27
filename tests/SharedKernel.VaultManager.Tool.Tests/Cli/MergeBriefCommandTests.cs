@@ -4,14 +4,17 @@ using PandaBear.VaultManager.Tool.Tests.Pipeline;
 
 namespace PandaBear.VaultManager.Tool.Tests.Cli;
 
+/// <summary>Tests the brief that the merge command writes.</summary>
 public sealed class MergeBriefCommandTests : IDisposable
 {
     private const string ExportPassword = "fixture export password";
     private const UnixFileMode OwnerOnly = UnixFileMode.UserRead | UnixFileMode.UserWrite;
     private readonly string directory = Directory.CreateTempSubdirectory("vault-cli-brief-").FullName;
 
+    /// <summary>Deletes the temporary directory.</summary>
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Verifies that merge writes the brief also when fields need a decision.</summary>
     [Fact]
     public async Task Merge_writes_the_brief_also_when_fields_need_a_decision()
     {
@@ -41,6 +44,7 @@ public sealed class MergeBriefCommandTests : IDisposable
         }
     }
 
+    /// <summary>Verifies that a merge that writes the vault writes an empty brief and replaces an earlier one.</summary>
     [Fact]
     public async Task Merge_that_writes_the_vault_writes_an_empty_brief_and_replaces_an_earlier_one()
     {
@@ -63,6 +67,7 @@ public sealed class MergeBriefCommandTests : IDisposable
         brief.Summary.Items.ShouldBe(1);
     }
 
+    /// <summary>Verifies that merge replaces a brief that an editor saved with a byte order mark.</summary>
     [Fact]
     public async Task Merge_replaces_a_brief_that_an_editor_saved_with_a_byte_order_mark()
     {
@@ -83,6 +88,7 @@ public sealed class MergeBriefCommandTests : IDisposable
         run.Output.ShouldContain("Brief: " + briefPath, StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that merge refuses a brief path that names a file that is not a brief.</summary>
     [Fact]
     public async Task Merge_refuses_a_brief_path_that_names_a_file_that_is_not_a_brief()
     {
@@ -103,6 +109,7 @@ public sealed class MergeBriefCommandTests : IDisposable
         prompts.NewPasswordPrompts.ShouldBeEmpty();
     }
 
+    /// <summary>Verifies that merge refuses a brief path that is an input or another file it writes.</summary>
     [Theory]
     [InlineData("output")]
     [InlineData("decisions")]

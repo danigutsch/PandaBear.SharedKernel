@@ -10,6 +10,7 @@ namespace PandaBear.VaultManager.Tool.Tests.Review;
 /// </summary>
 internal static class CanceledReview
 {
+    /// <summary>Runs the review for <paramref name="session"/>, presses <paramref name="key"/> to open a dialog, cancels while the dialog is open, and reports the dialog title, whether it closed, and the remaining session count.</summary>
     public static CanceledReviewRun Run(ReviewSession session, Key key)
     {
         using IApplication app = HeadlessTerminal.Start();

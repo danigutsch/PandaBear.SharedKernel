@@ -1,7 +1,9 @@
 namespace PandaBear.K6.Tool.Tests;
 
+/// <summary>Tests the managed host that a scenario can start before k6 runs.</summary>
 public sealed class K6HostTests
 {
+    /// <summary>Verifies that k6 targets the host only after the ready file and health check succeed, and that the host stops when k6 ends.</summary>
     [Fact]
     public async Task K6_targets_the_host_after_its_ready_file_and_health_check_and_the_host_stops_after_k6()
     {
@@ -34,6 +36,7 @@ public sealed class K6HostTests
         repository.Error.ToString().ShouldContain("Host ready: http://127.0.0.1:" + K6HostScenario.Port(server) + Environment.NewLine, StringComparison.Ordinal);
     }
 
+    /// <summary>Verifies that container runs bind the host to all addresses and point the container at <c>host.docker.internal</c>.</summary>
     [Fact]
     public async Task Container_runs_bind_the_host_to_every_address_and_target_it_through_the_host_alias()
     {
@@ -57,6 +60,7 @@ public sealed class K6HostTests
         podman.Arguments().ShouldContain("APP_UPLOAD_URL=http://host.docker.internal:" + K6HostScenario.Port(server));
     }
 
+    /// <summary>Verifies that a host exiting early fails the run with its error output and never starts k6.</summary>
     [Fact]
     public async Task A_host_that_exits_before_it_is_ready_fails_without_starting_k6()
     {
@@ -84,6 +88,7 @@ public sealed class K6HostTests
         k6.Started.ShouldBeFalse();
     }
 
+    /// <summary>Verifies that a missing ready file times out, stops the host, and never starts k6.</summary>
     [Fact]
     public async Task A_host_that_never_writes_its_ready_file_times_out()
     {
@@ -107,6 +112,7 @@ public sealed class K6HostTests
         ProcessState.IsRunning(host.ProcessId()).ShouldBeFalse();
     }
 
+    /// <summary>Verifies that a host whose health endpoint never succeeds times out and k6 is not started.</summary>
     [Fact]
     public async Task An_unhealthy_host_times_out()
     {
@@ -130,6 +136,7 @@ public sealed class K6HostTests
         k6.Started.ShouldBeFalse();
     }
 
+    /// <summary>Verifies that a host reporting a non-loopback URL fails the run before k6 starts.</summary>
     [Fact]
     public async Task A_host_that_reports_an_external_address_fails()
     {

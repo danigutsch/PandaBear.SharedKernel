@@ -3,12 +3,17 @@ using PandaBear.VaultManager.Tool.Model;
 
 namespace PandaBear.VaultManager.Tool.Tests.Formats;
 
+/// <summary>Tests that the vault file reader picks the reader for a file's format and reports unreadable input.</summary>
 public sealed class VaultFileReaderTests : IDisposable
 {
     private readonly string directory = Directory.CreateTempSubdirectory("vault-manager-read-").FullName;
 
+    /// <inheritdoc />
     public void Dispose() => Directory.Delete(directory, recursive: true);
 
+    /// <summary>Reading a Keeper or Bitwarden JSON or CSV sample returns items whose origin provider is that vendor, without asking for a password.</summary>
+    /// <param name="sample">The name of the sample written by the sample factory.</param>
+    /// <param name="provider">The expected provider name of every item.</param>
     [Theory]
     [InlineData("keeper-json", "keeper")]
     [InlineData("keeper-csv", "keeper")]
@@ -27,6 +32,9 @@ public sealed class VaultFileReaderTests : IDisposable
         result.Export.Items.ShouldAllSatisfy(item => item.Origin.Provider.ShouldBe(provider));
     }
 
+    /// <summary>An export with one or two items that carry a deletion date yields only the kept item and a singular or plural warning that tells the user to restore and export again.</summary>
+    /// <param name="deleted">The number of trashed items in the export.</param>
+    /// <param name="warning">The expected warning text.</param>
     [Theory]
     [InlineData(1, "1 item in the trash was skipped. Restore it in Bitwarden and export again to keep it.")]
     [InlineData(2, "2 items in the trash were skipped. Restore them in Bitwarden and export again to keep them.")]
@@ -46,6 +54,7 @@ public sealed class VaultFileReaderTests : IDisposable
         result.Warnings.ShouldBe([warning]);
     }
 
+    /// <summary>A password-protected export makes the reader ask for the password once, passing the file name protected.json, and then returns items.</summary>
     [Fact]
     public void Read_password_protected_export_asks_for_the_file_password_by_file_name()
     {
@@ -65,6 +74,7 @@ public sealed class VaultFileReaderTests : IDisposable
         result.Export.Items.ShouldNotBeEmpty();
     }
 
+    /// <summary>An account-restricted Bitwarden export throws InvalidDataException whose message says it is account-restricted, without asking for a password.</summary>
     [Fact]
     public void Read_account_restricted_export_throws_with_explanation()
     {
@@ -79,6 +89,7 @@ public sealed class VaultFileReaderTests : IDisposable
         exception.Message.ShouldContain("account-restricted", StringComparison.Ordinal);
     }
 
+    /// <summary>A plain text file in no known format throws InvalidDataException.</summary>
     [Fact]
     public void Read_unknown_format_throws_invalid_data()
     {
@@ -90,6 +101,7 @@ public sealed class VaultFileReaderTests : IDisposable
         action.ShouldThrow<InvalidDataException>();
     }
 
+    /// <summary>An input path that is a directory named export.json throws IOException whose message holds the path and says it is a directory.</summary>
     [Fact]
     public void Read_reports_an_input_that_is_a_directory_by_its_path()
     {
@@ -105,6 +117,7 @@ public sealed class VaultFileReaderTests : IDisposable
         exception.Message.ShouldContain("is a directory", StringComparison.Ordinal);
     }
 
+    /// <summary>A sparse file one byte over the maximum input size throws InvalidDataException saying it is too large.</summary>
     [Fact]
     public void Read_rejects_files_larger_than_the_input_cap_before_reading()
     {
@@ -124,6 +137,7 @@ public sealed class VaultFileReaderTests : IDisposable
         exception.Message.ShouldContain("too large", StringComparison.Ordinal);
     }
 
+    /// <summary>A Keeper zip holding export.json with one login record returns that record as a login item.</summary>
     [Fact]
     public void Read_zip_exports_return_items_from_the_archive()
     {
